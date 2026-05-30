@@ -45,6 +45,7 @@
 <!-- Things that catch you out in this project -->
 - **datuition.com.au is intentionally pre-launch** — DNS still on GoDaddy with expired self-signed cert. Vercel alias (`https://da-tuition-website.vercel.app`) is the current live target. Sitemap/schema/canonical URLs forward-point at the canonical domain as launch prep — do NOT change them. Smoke testing the canonical will fail with TLS errors until DNS launches. (See `~/.claude/projects/.../memory/project_dns_pre_launch.md`)
 - **Phase 3a meta tags are inert HTML comments** in `index.html` — uncomment + paste real values when GSC/Bing/GA4 IDs land. Workflow documented in `docs/seo/phase-3a-handoff.md`.
+- **Homepage hero stats come from `src/data/site-stats.ts`, not `src/components/Hero.tsx`** — the homepage renders an inline `HeroTransparent` in `src/pages/Index.tsx`. If the homepage still shows `450 families`, update `siteStats.reviewCount`; Vite HMR was verified working on 2026-05-30.
 
 ---
 
@@ -56,9 +57,9 @@
 ## Session Log
 <!-- Last 3 sessions only - keeps context fresh -->
 <!-- Format: - [DATE]: Summary | Next -->
+- [2026-05-30]: Verified Vite HMR works. Homepage `450 families` text comes from `src/data/site-stats.ts` via inline `HeroTransparent` in `src/pages/Index.tsx`; `src/components/Hero.tsx` is not the rendered homepage hero. Updated session shortcut scripts so Start Session pulls latest changes and starts Vite, and End Session validates/commits/pulls-rebases/pushes. | Next: use Start Session -> edit -> End Session for team workflow; decide whether `siteStats.reviewCount` should become `999`.
 - [2026-04-08]: SEO Phase 3a foundations shipped (4702d37 + 19c0a4a). Privacy policy live, Hero CTA fixed, GBP/consent docs written, inert GSC/Bing/GA4 placeholders staged. T1 closed (already shipped in ef66ff7). T2/T3/T4 opened. Discovered datuition.com.au pre-launch state. | Next: wait on Jared for DNS launch + Phase 3a handoffs, or tackle T2/T3/T4
 - [2026-04-08 earlier]: CEO-led verification of #T1 — found all 6 mobile fixes already shipped in ef66ff7 (2026-03-31). Closed T1, opened T2 for lint backlog. | Next: T2 when prioritized
-- [2026-03-30]: Mobile optimization + content deduplication audit via CEO-led team | Next: implement fixes
 
 
 

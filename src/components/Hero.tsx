@@ -25,11 +25,11 @@ const Hero = () => {
                   <Star key={i} size={16} className="fill-yellow-400 text-yellow-400" />
                 ))}
               </div>
-              <span className="font-medium">5.0 rating from 500+ families</span>
+              <span className="font-medium">5.0 rating from 999+ families</span>
             </div>
 
             {/* Main Headline */}
-            <h1 className="text-4xl lg:text-6xl font-bold leading-tight">
+            <h1 className="text-4xl lg:text-6xl font-bold leading-tight text-red-600">
               Where Every Child's{' '}
               <span className="gradient-text">Potential</span>{' '}
               Becomes Their{' '}
