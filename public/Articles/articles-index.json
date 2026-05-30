@@ -1,0 +1,328 @@
+[
+  {
+    "id": "all-or-nothing",
+    "title": "The 'All or Nothing' Mentality",
+    "slug": "all-or-nothing",
+    "excerpt": "Why perfectionism hurts progress and how to escape the 'all or nothing' trap.",
+    "author": "Ms Leyna",
+    "category": "Mindset",
+    "publishedDate": "2025-08-16",
+    "readTime": "6 min read",
+    "featured": true,
+    "heroImage": "/Articles/images/all-or-nothing-hero.jpg",
+    "tags": [
+      "YouthStyle",
+      "Mindset",
+      "Perfectionism",
+      "Growth"
+    ]
+  },
+  {
+    "id": "study-tips-for-success",
+    "title": "Study Tips for Academic Success: A Guide for Students",
+    "slug": "study-tips-for-success",
+    "excerpt": "Effective study habits are the cornerstone of academic success. After 20 years of helping students achieve their educational goals, we've compiled the most impactful strategies that consistently lead to improved performance and confidence.",
+    "author": "DA Tuition Team",
+    "category": "Study Tips",
+    "publishedDate": "2025-08-15",
+    "readTime": "8 min read",
+    "featured": true,
+    "heroImage": "/Articles/images/study-tips-hero.jpg",
+    "tags": [
+      "StudyTips",
+      "AcademicSuccess",
+      "LearningStrategies",
+      "StudentLife",
+      "Education"
+    ]
+  },
+  {
+    "id": "preparing-for-naplan",
+    "title": "NAPLAN Preparation: A Complete Guide for Students and Parents",
+    "slug": "preparing-for-naplan",
+    "excerpt": "The National Assessment Program – Literacy and Numeracy (NAPLAN) is a crucial milestone in every Australian student's educational journey. This comprehensive guide provides targeted preparation strategies to help students achieve their best possible results.",
+    "author": "Michael Thompson, English & Literacy Specialist",
+    "category": "Test Preparation",
+    "publishedDate": "2025-08-12",
+    "readTime": "15 min read",
+    "featured": true,
+    "heroImage": "/Articles/images/naplan-prep-hero.jpg",
+    "tags": [
+      "NAPLAN",
+      "TestPreparation",
+      "LiteracySkills",
+      "NumeracySkills",
+      "StudentSuccess",
+      "AcademicSupport",
+      "EducationAustralia"
+    ]
+  },
+  {
+    "id": "building-confidence-in-math",
+    "title": "Building Confidence in Mathematics: From Fear to Success",
+    "slug": "building-confidence-in-math",
+    "excerpt": "Mathematics anxiety affects millions of students worldwide, creating a barrier between them and their academic potential. Discover how to transform from math-phobic to math-confident through targeted strategies and supportive guidance.",
+    "author": "Sarah Chen, Senior Math Tutor",
+    "category": "Mathematics",
+    "publishedDate": "2025-08-10",
+    "readTime": "12 min read",
+    "featured": true,
+    "heroImage": "/Articles/images/math-confidence-hero.jpg",
+    "tags": [
+      "MathConfidence",
+      "MathAnxiety",
+      "LearningStrategies",
+      "Mathematics",
+      "StudentSuccess",
+      "Education"
+    ]
+  },
+  {
+    "id": "effective-homework-habits",
+    "title": "Effective Homework Habits: Building Success One Assignment at a Time",
+    "slug": "effective-homework-habits",
+    "excerpt": "Homework doesn't have to be a daily battle. With the right strategies, systems, and mindset, it can become a productive part of your child's learning routine that builds independence, reinforces classroom learning, and develops crucial life skills.",
+    "author": "Lisa Chen, Educational Psychologist",
+    "category": "Study Skills",
+    "publishedDate": "2025-08-08",
+    "readTime": "18 min read",
+    "featured": false,
+    "heroImage": "/Articles/images/homework-habits-hero.jpg",
+    "tags": [
+      "HomeworkHabits",
+      "StudySkills",
+      "TimeManagement",
+      "ParentingTips",
+      "AcademicSuccess",
+      "LearningStrategies",
+      "StudentSupport"
+    ]
+  },
+  {
+    "id": "choosing-right-tutor",
+    "title": "Choosing the Right Tutor: A Parent's Complete Guide",
+    "slug": "choosing-right-tutor",
+    "excerpt": "Selecting the right tutor for your child is one of the most important educational decisions you'll make. This comprehensive guide will help you navigate the process of finding, evaluating, and choosing a tutor who will truly make a difference in your child's learning journey.",
+    "author": "DA Tuition Team",
+    "category": "Parenting Tips",
+    "publishedDate": "2025-08-05",
+    "readTime": "15 min read",
+    "featured": false,
+    "heroImage": "/Articles/images/choosing-tutor-hero.jpg",
+    "tags": [
+      "TutorSelection",
+      "ParentingTips",
+      "Education",
+      "AcademicSupport",
+      "LearningSuccess",
+      "StudentSupport"
+    ]
+  },
+  {
+    "id": "transition-to-high-school",
+    "title": "Navigating the Transition to High School: A Guide for Students and Parents",
+    "slug": "transition-to-high-school",
+    "excerpt": "The transition from primary to secondary school marks one of the most significant changes in a young person's educational journey. This comprehensive guide will help you navigate this important milestone with confidence and success.",
+    "author": "Rebecca Martinez, Secondary Education Specialist",
+    "category": "Student Transitions",
+    "publishedDate": "2025-08-03",
+    "readTime": "20 min read",
+    "featured": false,
+    "heroImage": "/Articles/images/high-school-transition-hero.jpg",
+    "tags": [
+      "HighSchoolTransition",
+      "StudentSupport",
+      "AcademicSuccess",
+      "StudySkills",
+      "ParentingTips",
+      "SecondaryEducation",
+      "TeenDevelopment"
+    ]
+  },
+  {
+    "id": "science-fair-success",
+    "title": "Science Fair Success: From Idea to Award-Winning Project",
+    "slug": "science-fair-success",
+    "excerpt": "Science fairs offer students an incredible opportunity to explore their curiosity, develop research skills, and experience the excitement of scientific discovery. This comprehensive guide will help you navigate the journey from initial idea to presentation day.",
+    "author": "Dr. James Wu, Science Education Consultant",
+    "category": "Project-Based Learning",
+    "publishedDate": "2025-07-30",
+    "readTime": "22 min read",
+    "featured": false,
+    "heroImage": "/Articles/images/science-fair-hero.jpg",
+    "tags": [
+      "ScienceFair",
+      "STEMEducation",
+      "ProjectBasedLearning",
+      "ScientificMethod",
+      "StudentResearch",
+      "ScienceSkills",
+      "AcademicCompetition"
+    ]
+  },
+  {
+    "id": "reading-comprehension-strategies",
+    "title": "Mastering Reading Comprehension: Strategies for Every Student",
+    "slug": "reading-comprehension-strategies",
+    "excerpt": "Reading comprehension forms the foundation of academic success across all subjects. Whether your child is struggling with basic comprehension or looking to develop advanced analytical skills, these strategies will help build stronger, more confident readers.",
+    "author": "Emma Thompson, Literacy Specialist",
+    "category": "Reading Skills",
+    "publishedDate": "2025-07-25",
+    "readTime": "25 min read",
+    "featured": false,
+    "heroImage": "/Articles/images/reading-comprehension-hero.jpg",
+    "tags": [
+      "ReadingComprehension",
+      "LiteracySkills",
+      "ReadingStrategies",
+      "StudentSuccess",
+      "LearningSupport",
+      "AcademicSkills",
+      "EducationalSupport"
+    ]
+  },
+  {
+    "id": "growing",
+    "title": "Growing… 🐝",
+    "slug": "growing",
+    "excerpt": "A youth-focused piece: Growing… 🐝.",
+    "author": "DA Tuition Team",
+    "category": "Mindset",
+    "publishedDate": "2025-08-16",
+    "readTime": "5 min read",
+    "featured": false,
+    "heroImage": "/Articles/images/growing-hero.jpg",
+    "tags": [
+      "Mindset",
+      "Youth"
+    ]
+  },
+  {
+    "id": "learning-styles",
+    "title": "Find Out More About Your Learning Style",
+    "slug": "learning-styles",
+    "excerpt": "A youth-focused piece: Find Out More About Your Learning Style.",
+    "author": "DA Tuition Team",
+    "category": "Mindset",
+    "publishedDate": "2025-08-16",
+    "readTime": "5 min read",
+    "featured": false,
+    "heroImage": "/Articles/images/learning-styles-hero.jpg",
+    "tags": [
+      "Mindset",
+      "Youth"
+    ]
+  },
+  {
+    "id": "teachers-tea-time",
+    "title": "Teacher'S Tea Time",
+    "slug": "teachers-tea-time",
+    "excerpt": "A youth-focused piece: Teacher'S Tea Time.",
+    "author": "DA Tuition Team",
+    "category": "Mindset",
+    "publishedDate": "2025-08-16",
+    "readTime": "5 min read",
+    "featured": false,
+    "heroImage": "/Articles/images/teachers-tea-time-hero.jpg",
+    "tags": [
+      "Mindset",
+      "Youth"
+    ]
+  },
+  {
+    "id": "phone-button",
+    "title": "To Pick Up, Or Not Pick Up The Phone, Would You Press The Button?",
+    "slug": "phone-button",
+    "excerpt": "A youth-focused piece: To Pick Up, Or Not Pick Up The Phone, Would You Press The Button?.",
+    "author": "DA Tuition Team",
+    "category": "Mindset",
+    "publishedDate": "2025-08-16",
+    "readTime": "5 min read",
+    "featured": false,
+    "heroImage": "/Articles/images/phone-button-hero.jpg",
+    "tags": [
+      "Mindset",
+      "Youth"
+    ]
+  },
+  {
+    "id": "inner-writer",
+    "title": "Unlocking Your Child'S Inner Writer: Tips For Success",
+    "slug": "inner-writer",
+    "excerpt": "A youth-focused piece: Unlocking Your Child'S Inner Writer: Tips For Success.",
+    "author": "DA Tuition Team",
+    "category": "Mindset",
+    "publishedDate": "2025-08-16",
+    "readTime": "5 min read",
+    "featured": false,
+    "heroImage": "/Articles/images/inner-writer-hero.jpg",
+    "tags": [
+      "Mindset",
+      "Youth"
+    ]
+  },
+  {
+    "id": "timeless-story",
+    "title": "A Timeless Story…",
+    "slug": "timeless-story",
+    "excerpt": "A youth-focused piece: A Timeless Story….",
+    "author": "DA Tuition Team",
+    "category": "Mindset",
+    "publishedDate": "2025-08-16",
+    "readTime": "5 min read",
+    "featured": false,
+    "heroImage": "/Articles/images/timeless-story-hero.jpg",
+    "tags": [
+      "Mindset",
+      "Youth"
+    ]
+  },
+  {
+    "id": "changing-perspectives",
+    "title": "How Changing Perspectives Unlocks Your Potential",
+    "slug": "changing-perspectives",
+    "excerpt": "A youth-focused piece: How Changing Perspectives Unlocks Your Potential.",
+    "author": "DA Tuition Team",
+    "category": "Mindset",
+    "publishedDate": "2025-08-16",
+    "readTime": "5 min read",
+    "featured": false,
+    "heroImage": "/Articles/images/changing-perspectives-hero.jpg",
+    "tags": [
+      "Mindset",
+      "Youth"
+    ]
+  },
+  {
+    "id": "the-journey",
+    "title": "The Journey",
+    "slug": "the-journey",
+    "excerpt": "A youth-focused piece: The Journey.",
+    "author": "DA Tuition Team",
+    "category": "Mindset",
+    "publishedDate": "2025-08-16",
+    "readTime": "5 min read",
+    "featured": false,
+    "heroImage": "/Articles/images/the-journey-hero.jpg",
+    "tags": [
+      "Mindset",
+      "Youth"
+    ]
+  },
+  {
+    "id": "hsc-formula",
+    "title": "# The Hsc Formula",
+    "slug": "hsc-formula",
+    "excerpt": "A youth-focused piece: # The Hsc Formula.",
+    "author": "DA Tuition Team",
+    "category": "Mindset",
+    "publishedDate": "2025-08-16",
+    "readTime": "5 min read",
+    "featured": false,
+    "heroImage": "/Articles/images/hsc-formula-hero.jpg",
+    "tags": [
+      "Mindset",
+      "Youth"
+    ]
+  }
+]

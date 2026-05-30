@@ -1,0 +1,9 @@
+# Selina Ho
+
+## Appreciation
+
+Besides studying for exams, it is truly the motivation that drives me to getting places. There are times where I don’t feel my best and confident for exams, and this is where you go to others to find help and motivation. I really do thank all the tutors from DA that push me to do my best. I never was the kid that would be first in the grade, instead I would be in the low seventies. Even after a bad result for an exam, having motivation and a good support network of people around you will take you places. Likewise, your tutors are really good people that can help you find that motivation and drive to do better. If anything, have the mindset of someone that is first in the grade. No one that’s first in the grade hates the subject, never studies, and has a negative mindset. Live your dreams and goals, and eventually they will happen with the motivation from others and willpower of yours!
+
+## Advice for current students
+
+Being first isn’t easy, the hard work is never the actual studying itself either. My biggest piece of advice I wish I knew is to find comfort in making mistakes and learning from them. I used to view mistakes as the end-all-be-all. It really isn’t: it takes a change of mindset to see it different. Tutor is a great place to make mistakes, you will find that it is much better to make them at DA as well. When studying for an exam, I like to write all my mistakes onto a separate paper and stick it somewhere on my room. I can’t lie, it hurts to see them, but it’s the pain that makes it unforgettable. Despite the pain, find comfort in making them because the more you make, the more you can perfect yourself. Besides the mental challenge of mistakes, physically writing them down and seeing them will prevent you from making mistakes again ever.

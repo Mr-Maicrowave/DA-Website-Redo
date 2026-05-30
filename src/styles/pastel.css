@@ -1,0 +1,56 @@
+@layer components {
+  /* Pastel section card styles for All-or-Nothing */
+  .pastel-card { @apply rounded-2xl p-6 md:p-8 border shadow-sm mb-6; }
+  .pastel-blue { background: #e0e7ff; border-color: #c7d2fe; }
+  .pastel-yellow { background: #fff1c9; border-color: #fde68a; }
+  .pastel-pink { background: #f9e3e6; border-color: #fecdd3; }
+  .pastel-green { background: #dcfce7; border-color: #bbf7d0; }
+
+  /* All-or-Nothing bespoke layout */
+  .aon-green-text { color: #b7d2b3; }
+  .aon-subhead-blue { color: #8fb1ff; }
+  .aon-subhead-purple { color: #c9a5eb; }
+  .aon-banner { background: #cfe0ff; color: #ffffff; }
+  .aon-footer-bar { background: #cfe0ff; color: #ffffff; }
+  .aon-card-pink { background: #f9e3e6; border-color: #f3cfd4; }
+  .aon-card-yellow { background: #fff1c9; border-color: #fde3a1; }
+
+  /* Study Tips hero layout */
+  .study-banner { background: #d9f2ff; color: #075985; }
+  .study-subhead-green { color: #34d399; }
+  .study-subhead-teal { color: #0ea5a4; }
+  .study-card-blue { background: #e6f0ff; border-color: #cfe0ff; }
+  .study-card-mint { background: #e9fff5; border-color: #c8f7e9; }
+  .study-card-cream { background: #fff7e6; border-color: #fdeacb; }
+
+  /* Generic themes for other categories */
+  /* English */
+  .english-card-lilac { background: #f3e8ff; border-color: #e9d5ff; }
+  .english-card-peach { background: #ffe8d6; border-color: #ffd6a5; }
+  .english-card-sky { background: #e0f2fe; border-color: #bae6fd; }
+
+  /* Science */
+  .science-card-mint { background: #e8fff3; border-color: #c8f7e9; }
+  .science-card-lime { background: #f0fdf4; border-color: #dcfce7; }
+  .science-card-ice { background: #e6f7ff; border-color: #cfeeff; }
+
+  /* Mathematics */
+  .math-card-ivory { background: #fffaf0; border-color: #fdecc8; }
+  .math-card-slate { background: #eef2f7; border-color: #e2e8f0; }
+  .math-card-sky { background: #e6f0ff; border-color: #cfe0ff; }
+
+  /* Parenting */
+  .parenting-card-blush { background: #fde2e4; border-color: #fac5c9; }
+  .parenting-card-sand { background: #fff7e6; border-color: #fdeacb; }
+  .parenting-card-sky { background: #e0f2fe; border-color: #bae6fd; }
+
+  /* Neutral */
+  .neutral-card { background: #f8fafc; border-color: #e2e8f0; }
+
+  /* Translucent variants to let global gradient show through */
+  .pastel-blue-soft { background: rgba(224, 231, 255, 0.6); border-color: rgba(199, 210, 254, 0.6); backdrop-filter: blur(8px); }
+  .pastel-green-soft { background: rgba(220, 252, 231, 0.6); border-color: rgba(187, 247, 208, 0.6); backdrop-filter: blur(8px); }
+  .english-card-lilac-soft { background: rgba(243, 232, 255, 0.6); border-color: rgba(233, 213, 255, 0.6); backdrop-filter: blur(8px); }
+  .science-card-mint-soft { background: rgba(232, 255, 243, 0.6); border-color: rgba(200, 247, 233, 0.6); backdrop-filter: blur(8px); }
+
+}

@@ -1,0 +1,54 @@
+name: Production Smoke Test
+
+# Runs after Vercel marks a deployment as Ready. Vercel publishes
+# deployment_status events to GitHub once it finishes building/promoting,
+# so this fires only after the URL is actually serving.
+#
+# Also exposes manual dispatch so you can run it on demand against any URL.
+
+on:
+  deployment_status:
+  workflow_dispatch:
+    inputs:
+      base_url:
+        description: 'URL to smoke test'
+        required: false
+        default: 'https://da-tuition-website.vercel.app'
+
+jobs:
+  smoke:
+    name: Smoke test ${{ github.event.deployment_status.environment || 'production' }}
+    # Only run on successful production deployments (or manual dispatch)
+    if: ${{ github.event_name == 'workflow_dispatch' || (github.event.deployment_status.state == 'success' && github.event.deployment_status.environment == 'Production') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Cache Puppeteer browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/puppeteer
+          key: ${{ runner.os }}-puppeteer-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-puppeteer-
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run smoke test
+        # Always smoke against the production alias, NOT deployment_status.environment_url.
+        # Vercel returns the deployment-specific URL (e.g. da-tuition-website-xxx.vercel.app)
+        # which is gated by Vercel SSO deployment protection (HTTP 401), so it's
+        # unreachable from CI. The aliased production hostname is not protected.
+        env:
+          BASE: ${{ inputs.base_url || 'https://da-tuition-website.vercel.app' }}
+        run: npm run smoke

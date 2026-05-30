@@ -1,0 +1,364 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## Project Overview
+
+React-based tutoring website for DA Tuition, an Australian K-12 educational service. Built with React 18, TypeScript, Vite, and shadcn/ui component library.
+
+## Development Commands
+
+```bash
+# Start development server (port 8080)
+npm run dev
+
+# Build for production  
+npm run build
+
+# Build for development mode (quick syntax/compilation check)
+npm run build:dev
+
+# Run linting (syntax check)
+npm run lint
+
+# Preview production build
+npm run preview
+
+# Optimize newsletter images (when needed)
+npm run optimize:newsletters
+```
+
+## Quick Testing Commands
+
+When implementing changes, run these commands to verify syntax and compilation:
+
+```bash
+# Quick syntax check (runs immediately)
+npm run lint
+
+# Build test (checks if everything compiles)
+npm run build:dev
+
+# Start dev server at http://localhost:8080
+npm run dev
+```
+
+## Tech Stack & Architecture
+
+**Frontend:** React 18.3.1 + TypeScript + Vite with SWC
+**Styling:** Tailwind CSS with shadcn/ui component library
+**Routing:** React Router DOM v6 with BrowserRouter
+**State Management:** TanStack Query (React Query)
+**Forms:** React Hook Form + Zod validation
+**UI Components:** Radix UI primitives, shadcn/ui, Lucide icons
+**Markdown:** react-markdown with rehype-raw and remark-gfm
+**Additional:** date-fns, embla-carousel, recharts, sonner (toast notifications)
+
+## Code Structure
+
+```
+/src
+├── components/          # Page-specific components (Hero, Navigation, Footer, etc.)
+├── components/ui/       # shadcn/ui reusable components (40+ components)
+├── components/articles/ # Article-specific components (SectionedMarkdown, etc.)
+├── components/reviews/  # Review system components (DualRowCarousel, ReviewModal)
+├── components/teachers/ # Teacher profile components and filtering
+├── data/               # Static data files (reviews.json, teachers.ts)
+├── hooks/              # Custom React hooks (use-mobile, use-toast)
+├── lib/                # Utility functions (utils.ts)
+├── lib/markdown/       # Markdown processing utilities (sectionize.ts)
+├── pages/              # Route components (14 pages including demos)
+├── App.tsx            # Route configuration and providers
+└── main.tsx           # App entry point
+```
+
+## Routes
+
+### Main Pages
+- `/` - Home page with section transitions
+- `/articles` - Blog article listing with search
+- `/articles/:slug` - Individual article view
+- `/reviews` - Google reviews showcase
+- `/interview` - Interview booking with principal
+- `/appreciation-advice` - Testimonials and appreciation
+- `/faq` - Frequently asked questions
+- `/our-approach` - Teaching methodology
+- `/our-teachers` - Teacher profiles page
+- `/success-stories` - Student success stories
+- `/why-choose-da` - Value proposition page
+
+### Educational Programs
+- `/subjects` - Subject overview page
+- `/subjects/english` - English tutoring
+- `/subjects/mathematics` - Mathematics tutoring
+- `/subjects/science` - Science tutoring
+- `/subjects/business-studies` - Business Studies tutoring
+- `/subjects/legal-studies` - Legal Studies tutoring
+- `/programs/primary-school` - Primary school programs
+- `/programs/high-school` - High school programs
+- `/programs/hsc` - HSC preparation
+- `/hsc-excellence` - HSC excellence program
+- `/learning-formats` - Learning format options
+
+### Locations
+- `/locations/canley-heights` - Canley Heights center
+
+### Prototypes & Demos
+- `/find-teacher` - Teacher search interface
+- `/teachers-enhanced` - Enhanced teacher profiles
+- `/plain` - Plain version of home page
+- `/color-comparison`, `/color-transitions`, `/natural-transitions`
+- `/simple-colors`, `/fresh-transitions`
+- `/prototype/teacher-cards` - Teacher card comparison
+
+### System Routes
+- `*` - 404 NotFound page (catch-all)
+
+## Component System
+
+The project uses shadcn/ui for the component library. Components are pre-configured in `components/ui/` with consistent theming through CSS variables defined in `src/index.css`.
+
+### Design System
+- **Color Palette:** Blue/Orange/Green brand colors, pastel card themes per subject
+- **Animations:** fade-in, slide-up, float, flip-card
+- **Typography:** Tailwind Typography plugin enabled
+- **Styles:** Additional styles in `src/styles/` (da-colors.css, pastel.css)
+
+### Custom CSS Classes (src/index.css)
+- `.btn-primary` - Gradient blue button with hover effects
+- `.btn-secondary` - Outlined blue button
+- `.card-hover` - Card hover animation (lift and shadow)
+- `.gradient-text` - Blue gradient text effect
+- `.flip-card-*` - 3D flip card animations for teacher profiles
+
+## Development Workflow
+
+### Path Aliases
+- Use `@/` for src imports (configured in vite.config.ts and tsconfig.json)
+- Example: `import { Button } from "@/components/ui/button"`
+
+### TypeScript Configuration
+- Relaxed strictness settings (no implicit any allowed, no unused checks)
+- Project references enabled for app and node configs
+- Skip library type checking enabled
+
+### Working with Claude Code
+
+1. **Before Making Changes:**
+   - Read existing files to understand patterns
+   - Check nearby components for conventions
+   - Verify libraries are already installed in package.json
+
+2. **During Implementation:**
+   - Follow existing code patterns exactly
+   - Use existing components from `components/ui/`
+   - Test with `npm run lint` after changes
+   - Use `npm run build:dev` to verify compilation
+
+3. **Component Creation:**
+   - Look at existing components for structure
+   - Follow naming conventions (PascalCase for components)
+   - Use TypeScript interfaces for props
+   - Import UI components from `@/components/ui/`
+
+## JSX/TSX Error Prevention
+
+### Critical Rules:
+
+1. **Multi-line JSX Return Structure:**
+   ```tsx
+   // ✅ CORRECT
+   return (
+     <div>
+       <Component />
+     </div>
+   );
+   ```
+
+2. **After Removing Elements:**
+   - Run `npm run lint` immediately
+   - Verify all brackets match: `{` with `}`, `(` with `)`
+   - Check all tags have closing tags
+
+3. **Map Functions:**
+   ```tsx
+   {items.map((item) => (
+     <div key={item.id}>
+       {item.content}
+     </div>
+   ))}
+   ```
+
+## Key Configurations
+
+- **Vite:** Development server on port 8080, SWC for fast compilation
+- **ESLint:** Flat config, React hooks plugin, unused vars disabled
+- **Tailwind:** Extended theme with brand colors and custom animations
+- **App Structure:** QueryClientProvider → TooltipProvider → BrowserRouter → Routes
+
+## Page Components
+
+### New Pages Added (2025)
+The website has been expanded with numerous dedicated pages for improved SEO and user navigation:
+
+- **FAQ Page:** Comprehensive Q&A covering enrollment, scheduling, pricing, and teaching approach
+- **Our Approach:** Detailed explanation of teaching methodology and philosophy
+- **Our Teachers:** Full teacher profiles with qualifications and experience
+- **Success Stories:** Student achievements and testimonials
+- **Why Choose DA:** Value proposition and differentiators
+- **Subject Pages:** Dedicated pages for English, Mathematics, Science, Business Studies, Legal Studies
+- **Program Pages:** Specific pages for Primary School, High School, HSC
+- **HSC Excellence:** Specialized HSC preparation program details
+- **Learning Formats:** Different learning options (group, individual, online)
+
+## Recent Updates (August 2025)
+
+### Markdown Processing System
+- **SectionedMarkdown Component:** Splits markdown by H2/H3 headings with paragraph chunking
+- **Category-based layouts:** Different card/flow layouts per article category
+- **Chunking thresholds:** Configurable per category (paragraphs and characters)
+- **Within-section splitting:** Long sections split by paragraphs while preserving heading
+
+### Google Reviews Integration
+- 393 real testimonials in `/src/data/reviews.json`
+- Dual-row carousel with opposing scroll directions
+- Components: ReviewCarouselCard, DualRowCarousel, ReviewModal
+- All reviews are 5-star rated from actual families
+
+### Award Recognition Component
+- Showcases Outstanding Education Service award (Fairfield City Local Business Awards 2025)
+- Embedded video player with ceremony footage
+- Grid layout with perfect bottom alignment for award tiles
+
+### Blog System
+- 8 comprehensive educational articles (2,500+ words each)
+- Articles stored in `/public/articles/` as markdown files
+- Article metadata in `/public/articles/articles-index.json`
+- Full-featured article viewer with markdown rendering and sharing
+- SectionedMarkdown component for optimized article display
+
+### Appreciation & Advice Page
+- New route `/appreciation-advice` with AppreciationAdvice component
+- AppreciationShowcase component for testimonials display
+- Integrated with existing review and appreciation system
+
+## Section Transition System
+
+The website uses a smooth color transition system between sections. Each section has its own gradient background that seamlessly blends into the next.
+
+### How It Works
+1. **Components have transparent backgrounds** - All section components (GoogleReviewsCarousel, HowWereDifferent, etc.) have no background colors
+2. **Index.tsx defines section gradients** - Each section is wrapped in a div with a specific gradient background
+3. **Gradients connect at boundaries** - The end color of one section matches the start color of the next
+
+### Color Flow
+- Hero: Light gray → Soft blue
+- Reviews: Blue → Teal
+- Appreciation: Teal (continuous)
+- How We're Different: Teal → Light green
+- Awards: Light green → Golden
+- Teachers: Golden → Green
+- Programs: Green → Yellow
+- Contact: Yellow → Warm tones
+- Footer: Warm fade out
+
+### Adding New Sections
+1. Create component without background colors
+2. Wrap in Index.tsx with gradient div:
+```tsx
+<div 
+  className="gradient-transition"
+  style={{ 
+    background: 'linear-gradient(180deg, START_COLOR 0%, END_COLOR 100%)'
+  }}
+>
+  <div className="transparent-section">
+    <YourComponent />
+  </div>
+</div>
+```
+3. Match START_COLOR to previous section's END_COLOR
+
+### Key Files
+- `src/pages/Index.tsx` - Section gradient definitions
+- `src/index.css` - Transition helper classes
+- `src/components/SmoothTransitions.tsx` - Reusable transition component
+
+## Design Review Workflow
+
+### Quick Visual Check
+When making UI changes, follow these steps:
+
+1. **Identify Changes**: List all modified components and pages
+2. **Navigate**: Visit each affected page in development
+3. **Verify Design**: Check against `/context/design-principles.md`
+4. **Validate Features**: Ensure functionality works as expected
+5. **Check Criteria**: Verify acceptance criteria are met
+6. **Screenshot**: Capture desktop viewport for reference
+7. **Console Check**: Ensure no browser errors
+
+### Comprehensive Design Review
+For significant UI features or visual PRs, trigger the design review agent:
+
+```
+@agent-design-review
+```
+
+This will perform a 7-phase comprehensive review:
+- Phase 0: Preparation and setup
+- Phase 1: User flow testing
+- Phase 2: Responsiveness validation
+- Phase 3: Visual consistency
+- Phase 4: Accessibility compliance
+- Phase 5: Edge case handling
+- Phase 6: Code quality
+- Phase 7: Content and errors
+
+### Design Standards
+- **Principles**: `/context/design-principles.md`
+- **Style Guide**: `/context/style-guide.md`
+- **Agent Instructions**: `/context/design-review-agent.md`
+
+### Visual Testing Commands
+```bash
+# Run visual tests (when Playwright is configured)
+npm run test:visual
+
+# Check accessibility
+npm run test:a11y
+
+# Validate responsive design
+npm run test:responsive
+```
+
+## Quality Assurance Checklist
+
+Before committing UI changes:
+- [ ] Colors meet WCAG contrast requirements
+- [ ] All interactive elements have hover/focus states
+- [ ] Mobile experience is optimized
+- [ ] Animations are smooth (300ms transitions)
+- [ ] No console errors
+- [ ] Components follow design system
+- [ ] Accessibility standards met
+- [ ] Cross-browser tested
+
+## Testing
+
+Currently, there are no automated tests in the codebase. Testing is done manually through:
+- Linting with `npm run lint`
+- Type checking via TypeScript compilation
+- Build verification with `npm run build:dev`
+- Manual UI testing in development server
+
+## Business Context
+
+Australian tutoring service focusing on K-12 education with emphasis on "Beyond Academic Excellence" - building confidence and supporting the whole child. Target audience is parents seeking premium, personalized tutoring services.
+
+### Business Information
+- **Address:** Level 1/229 Canley Vale Rd, Canley Heights NSW 2166
+- **Phone:** 0401 940 207
+- **Hours:** Tue-Fri 5pm-9pm, Sat 9am-6pm, Sun 10am-7pm
+- **Note:** "Book Consultation" (not "free consultation")
+- **Service Model:** Small group tutoring (3-5 students) with personalized attention
+- **Experience:** 20+ years, 650+ students helped since 2005

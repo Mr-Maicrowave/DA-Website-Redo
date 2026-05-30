@@ -1,0 +1,47 @@
+/* 
+ * DA Tuition Color System - Simplified
+ * Based on the physical tutoring center's vibrant interior colors
+ */
+
+:root {
+  /* Primary Brand Colors */
+  --da-green: #A4D65E;       /* Lime green walls */
+  --da-teal: #5ECCC5;        /* Teal/turquoise walls */
+  --da-blue: #6B9AC4;        /* Blue walls */
+  --da-red: #E94B3C;         /* Red accents */
+  --da-yellow: #FFC914;      /* Yellow accents */
+  --da-white: #FFFFFF;       /* White */
+  --da-wood: #E6DFD0;        /* Light wood tone */
+
+  /* Semi-transparent versions for watercolor effects */
+  --da-green-wash: rgba(164, 214, 94, 0.3);
+  --da-teal-wash: rgba(94, 204, 197, 0.3);
+  --da-blue-wash: rgba(107, 154, 196, 0.3);
+  --da-red-wash: rgba(233, 75, 60, 0.3);
+  --da-yellow-wash: rgba(255, 201, 20, 0.3);
+  
+  /* Basic gradients */
+  --da-gradient-green-teal: linear-gradient(135deg, var(--da-green) 0%, var(--da-teal) 100%);
+  --da-gradient-rainbow: linear-gradient(90deg, var(--da-red), var(--da-yellow), var(--da-green), var(--da-teal), var(--da-blue));
+}
+
+/* Simple watercolor background classes */
+.da-watercolor-green {
+  background-color: var(--da-green-wash);
+}
+
+.da-watercolor-teal {
+  background-color: var(--da-teal-wash);
+}
+
+.da-watercolor-blue {
+  background-color: var(--da-blue-wash);
+}
+
+.da-watercolor-red {
+  background-color: var(--da-red-wash);
+}
+
+.da-watercolor-yellow {
+  background-color: var(--da-yellow-wash);
+}

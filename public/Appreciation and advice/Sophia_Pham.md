@@ -1,0 +1,9 @@
+# Sophia Pham
+
+## Appreciation
+
+I definitely think that by developing an early mindset that I could be first, that I was capable of doing well no matter what enabled me to be able to do well in school. With help from DA, and my tutor Miss Linda, who encouraged me throughout the process, pushing me to work harder, I was able to maintain confidence in myself that reflected in my school exams. I was able to consistently do well with much practice, because that is the only way perfection is reached. Putting myself in a positive environment and mindset allowed me to focus on reaching my goals and strive to be the best. I would say that being granted the opportunity to complete generous homework and communicate with my peers in my DA classroom enabled me to learn better, grasp concepts faster and therefore perform better in school. I would always go into an exam room being confident that I understood the material being assessed, and this is the major factor that I believe set me apart from the rest of my grade.
+
+## Advice for current students
+
+For others who are hoping to achieve the same results as I have had, I would say that consistency is the most important concept that a student should learn before studying. It isn’t being consistent for a day, or for a couple of weeks or months, it’s about showing dedication year after year. Getting a question or two wrong in practice is important, so you can learn from your mistakes and persevere, especially in your exam, rather than giving up. I certainly believe that mistakes are meant to be made, because that is how we grow, so you shouldn’t be discouraged when you don’t understand a topic or make a silly mistake. This only pushes us to do better, to check our work, and to focus on our consistency and accuracy, particularly under pressure. I truly believe that anyone is capable of achieving great results in school, because it really only roots back to your drive and passion for greatness.

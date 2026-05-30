@@ -1,0 +1,24 @@
+# # The Hsc Formula
+
+*Published: August 16, 2025*  
+*Author: DA Tuition Team*  
+*Category: Mindset*
+
+# The HSC Formula
+*By William Dinh*
+
+It goes without saying that the phrase ‘hard work pays off’ is salient in the academic canon and gives students and parents direction toward ‘success’. Without a doubt, I agree, it's a true statement; hard work has been the catalyst of all my moments of celebration thus far but it’s only one frame in the movie that is the HSC. 
+
+I too was blinded by that philosophy and saw myself mindlessly ‘working hard’ and studying up to 15 hours a day before my exams. I can’t say that it paid off all the time though when some of my marks reflected a different scene - the type of horror scene you might start screaming in fear from. I knew, as a playwright for my own HSC story, I’d need to change something - my mindset.
+
+***
+Every film, in all its opulence boils down to the curation of unique characters, backed by state of the art camera work and most importantly cohesion in its conception. In the conception of my own film, introspection saw itself as the cohesion I needed.
+I am no different to you - I was a North Sydney Boys High student about 2 months ago, on a 2 hour long commute from down here, in south-western Sydney, to up north, wishing I could close this chapter of my life - the HSC. Peril and chaos were akin to me in this period of time as I found myself spiraling in a loop of paradoxes, questioning whether I was doing it right even if those before me reassured me I would be okay, or questioning whether I even wanted to reach for my aspirations. Hopefully not, but maybe similar to you, I isolated myself from everyone around me because I’d thought I was the only character in this film. I was vulnerable and denied any confidence that things would be okay. Funnily enough, whilst reading things for inspiration begrudgingly for my Mod C piece, I found myself sitting down, more calm than before, provoked by a line from Smith’s Theory of Moral Sentiments;
+
+"To what purpose is all the toil and bustle of this world? What is the end of avarice and ambition, of the pursuit of wealth, of power and pre-eminence? Is it to supply the necessities of nature? The wages of the meanest labourer can supply them. What then are the advantages of that great purpose of human life which we call bettering our condition?”
+- Adam Smith, The Theory of Moral Sentiments (Edinburgh, 1759):
+
+And so, my long train rides had turned into a sanctuary for me to self reflect and recognise what I wanted for myself, away from the pressures of my own expectation and the beckoning migrant voices of my parents. Self reflection served as a salvific avenue for me to see that I wasn’t a savant-like protagonist in this movie - my friends and family were all characters that wanted to see my character grow. It also allowed me to recognise that I didn’t want my movie to end with a whimper, but wanted it to instead end with sunshine casting itself down on me, with my arm around my friends named humility and vulnerability.
+
+I implore YOU, whether you’re a parent of a stressed year 12 student, or the student yourself, to take the time and allow vulnerability to be the sidekick in your HSC movie that helps you realise that there is more to just the 4 words; ‘hard work pays off’. It must be in cohesion with the frames of you recognising what you want to achieve, understanding how to get there and being open to asking for guidance because that's the build up for a great action movie.
+
