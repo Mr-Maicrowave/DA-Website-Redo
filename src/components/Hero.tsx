@@ -25,7 +25,7 @@ const Hero = () => {
                   <Star key={i} size={16} className="fill-yellow-400 text-yellow-400" />
                 ))}
               </div>
-              <span className="font-medium">5.0 rating from 450+ families</span>
+              <span className="font-medium">5.0 rating from 500+ families</span>
             </div>
 
             {/* Main Headline */}
