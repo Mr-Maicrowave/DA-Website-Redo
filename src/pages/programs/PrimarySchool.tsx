@@ -1,363 +1,254 @@
-import React from 'react';
+import React, { useState } from 'react';
 import NavigationNew from '@/components/NavigationNew';
 import FooterNew from '@/components/FooterNew';
 import StickyBookButton from '@/components/StickyBookButton';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { BookOpen, Sparkles, Trophy, Heart, CheckCircle, ArrowRight, Quote, Clock, GraduationCap, Users } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import SEO from '@/components/SEO';
-import { siteStats } from '@/data/site-stats';
+
+const c = {
+  navy: '#0c1f4a',
+  navyMid: '#1a3870',
+  gold: '#b8860b',
+  goldLight: '#d4a017',
+  goldPale: '#fdf6dc',
+  pink: '#fce7f3',
+  pinkMid: '#f9a8d4',
+  pinkText: '#9d174d',
+  purple: '#f3e8ff',
+  purpleMid: '#c084fc',
+  purpleText: '#6b21a8',
+  green: '#dcfce7',
+  greenMid: '#86efac',
+  greenText: '#166534',
+  blue: '#dbeafe',
+  blueMid: '#93c5fd',
+  blueText: '#1d4ed8',
+  white: '#ffffff',
+  muted: '#4a5568',
+  border: '#e2e8f0',
+  soft: '#f8fafc',
+};
+
+const testimonials = [
+  { text: '"My son went from struggling with his times tables to <strong>topping his class in one term.</strong> He actually looks forward to Saturdays now."', name: 'Sarah L.', role: 'Mum of a Year 4 student', initials: 'SL', accent: c.pink, accentMid: c.pinkMid, accentText: c.pinkText },
+  { text: '"Our daughter was so anxious about reading aloud. After just <strong>six weeks at DA Tuition,</strong> she was putting her hand up in class."', name: 'Jessica M.', role: 'Mum of a Year 2 student', initials: 'JM', accent: c.purple, accentMid: c.purpleMid, accentText: c.purpleText },
+  { text: '"We enrolled before Year 3 NAPLAN. He ended up in <strong>the top band in reading and numeracy.</strong> He stopped saying he was bad at school."', name: 'David K.', role: 'Dad of a Year 3 student', initials: 'DK', accent: c.pink, accentMid: c.pinkMid, accentText: c.pinkText },
+  { text: '"Our daughter got into <strong>her first-choice selective school.</strong> The bigger win was watching her stop saying "I\'m not smart."', name: 'Priya C.', role: 'Mum of a Year 6 student', initials: 'PC', accent: c.purple, accentMid: c.purpleMid, accentText: c.purpleText },
+];
+
+const fitItems = [
+  { bg: 'rgba(252,231,243,0.55)', border: c.pinkMid, text: 'Want to <strong>address gaps</strong> before they compound into bigger problems' },
+  { bg: 'rgba(243,232,255,0.55)', border: c.purpleMid, text: 'Have a child who is <strong>capable but not yet</strong> performing to their potential' },
+  { bg: 'rgba(219,234,254,0.55)', border: c.blueMid, text: 'Want <strong>NAPLAN preparation</strong> woven naturally into regular lessons' },
+  { bg: 'rgba(220,252,231,0.55)', border: c.greenMid, text: 'Are looking for <strong>extension work</strong> for a child ahead of their class' },
+  { bg: 'rgba(252,231,243,0.55)', border: c.pinkMid, text: 'Want their child entering each year with <strong>confidence and momentum</strong>' },
+  { bg: 'rgba(243,232,255,0.55)', border: c.purpleMid, text: 'Value <strong>regular communication</strong> and transparent progress updates' },
+];
 
 const PrimarySchool = () => {
-  const features = [
-    {
-      icon: BookOpen,
-      title: "Strong Foundations",
-      description: "Building essential literacy and numeracy skills that last a lifetime"
-    },
-    {
-      icon: Trophy,
-      title: "Academic Excellence",
-      description: "Building strong foundations in all core subjects"
-    },
-    {
-      icon: Sparkles,
-      title: "Critical Thinking",
-      description: "Developing problem-solving and analytical skills for future success"
-    },
-    {
-      icon: Heart,
-      title: "Confidence Building",
-      description: "Nurturing self-belief and a love for learning in every child"
-    }
-  ];
+  const [tIdx, setTIdx] = useState(0);
 
-  const yearLevels = [
-    {
-      year: "Kindergarten",
-      focus: ["Letter recognition", "Basic counting", "Fine motor skills", "Reading readiness"],
-      color: "bg-accent-yellow/10 border-accent-yellow/20",
-      iconColor: "text-accent-yellow"
-    },
-    {
-      year: "Years 1-2",
-      focus: ["Phonics mastery", "Addition & subtraction", "Reading comprehension", "Writing sentences"],
-      color: "bg-accent-pink/10 border-accent-pink/20",
-      iconColor: "text-accent-pink"
-    },
-    {
-      year: "Years 3-4",
-      focus: ["Times tables", "Paragraph writing", "Reading skills", "Problem solving"],
-      color: "bg-accent-teal/10 border-accent-teal/20",
-      iconColor: "text-accent-teal"
-    },
-    {
-      year: "Years 5-6",
-      focus: ["Fractions & decimals", "Essay structure", "Advanced writing", "Critical thinking"],
-      color: "bg-accent-purple/10 border-accent-purple/20",
-      iconColor: "text-accent-purple"
-    }
-  ];
+  const prev = () => setTIdx(i => (i - 1 + testimonials.length) % testimonials.length);
+  const next = () => setTIdx(i => (i + 1) % testimonials.length);
 
-  const benefits = [
-    "Small group tutoring (3-5 students) or classes matched to your child's needs",
-    "Specially designed curriculum for examination excellence",
-    "Regular progress reports to keep parents informed",
-    "Assessment preparation and exam technique mastery",
-    "Fun, engaging lessons that make learning enjoyable",
-    "No entrance exams - every child is welcome"
-  ];
+  const t = testimonials[tIdx];
+  const t2 = testimonials[(tIdx + 1) % testimonials.length];
 
   return (
-    <div className="min-h-screen bg-brand-canvas overflow-x-hidden pt-[120px]">
+    <div className="min-h-screen overflow-x-hidden pt-[120px]" style={{ background: c.white, color: c.navy, fontFamily: "'Segoe UI', system-ui, sans-serif" }}>
       <SEO
-        title="Primary School Tutoring (K-6)"
-        description="Build strong foundations in literacy and numeracy with our specialized K-6 primary school tutoring program at DA Tuition."
+        title="Primary School Tutoring (K–6) | DA Tuition"
+        description="Personalised K–6 tutoring that builds unshakeable confidence, strengthens foundations, and turns every child into a capable independent learner."
         canonicalUrl="/programs/primary-school"
       />
       <NavigationNew />
       <StickyBookButton />
 
-      <main className="max-w-[1400px] mx-auto space-y-24 lg:space-y-32 pb-32 px-4 sm:px-6 lg:px-8">
+      {/* HERO */}
+      <section style={{ background: 'linear-gradient(135deg, #f0f4ff 0%, #fce7f3 40%, #f3e8ff 70%, #f0fff4 100%)', padding: '88px 52px 80px', textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
+        <div style={{ position: 'absolute', top: -60, right: -60, width: 360, height: 360, borderRadius: '50%', background: 'radial-gradient(circle, rgba(192,132,252,0.2), transparent 65%)', pointerEvents: 'none' }} />
+        <div style={{ position: 'absolute', bottom: -60, left: -60, width: 300, height: 300, borderRadius: '50%', background: 'radial-gradient(circle, rgba(134,239,172,0.2), transparent 65%)', pointerEvents: 'none' }} />
+        <div style={{ display: 'inline-block', fontSize: '0.75rem', fontWeight: 800, letterSpacing: '2.5px', textTransform: 'uppercase', color: c.gold, background: c.goldPale, border: `1.5px solid ${c.goldLight}`, padding: '6px 20px', borderRadius: 999, marginBottom: 22 }}>
+          Year 1–6 Primary School · NSW Curriculum Aligned
+        </div>
+        <h1 style={{ fontSize: 'clamp(2.6rem, 5.5vw, 4.2rem)', fontWeight: 900, lineHeight: 1.1, letterSpacing: '-2px', color: c.navy, marginBottom: 20 }}>
+          Where Every Child's<br /><em style={{ fontStyle: 'normal', color: c.blueText }}>Potential Blooms</em>
+        </h1>
+        <p style={{ fontSize: '1.12rem', color: c.muted, maxWidth: 600, margin: '0 auto 40px', lineHeight: 1.78 }}>
+          Personalised tutoring that builds <strong style={{ color: c.navy }}>unshakeable confidence</strong>, strengthens foundations, and turns every child into a capable, independent learner — from Kindergarten to Year 6.
+        </p>
+        <div style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap' }}>
+          <a href="/#contact" style={{ background: c.navy, color: '#fff', border: 'none', padding: '15px 34px', borderRadius: 12, fontSize: '1rem', fontWeight: 800, cursor: 'pointer', textDecoration: 'none', display: 'inline-block' }}>
+            Book a Free Consultation
+          </a>
+          <a href="#year-groups" style={{ background: c.white, color: c.navy, border: `2px solid ${c.navy}`, padding: '15px 34px', borderRadius: 12, fontSize: '1rem', fontWeight: 700, cursor: 'pointer', textDecoration: 'none', display: 'inline-block' }}>
+            See Our Programs ↓
+          </a>
+        </div>
+      </section>
 
-        {/* Hero Section */}
-        <section className="relative rounded-[2.5rem] overflow-hidden shadow-2xl mx-4 sm:mx-0 mt-6 mb-16">
-          <div className="absolute inset-0">
-            <img src="/images/v3/primary_school.jpg" alt="Primary School Class" className="w-full h-full object-cover" />
-            {/* Beautiful dark navy wash for perfect text readability */}
-            <div className="absolute inset-0 bg-brand-navy/80 mix-blend-multiply"></div>
-            {/* Optional gradient for extra text pop */}
-            <div className="absolute inset-0 bg-gradient-to-t from-brand-navy/90 via-brand-navy/50 to-brand-navy/30"></div>
+      {/* STATS */}
+      <div style={{ background: c.navy, padding: '30px 52px', display: 'flex', justifyContent: 'center', flexWrap: 'wrap', borderBottom: `3px solid ${c.goldLight}` }}>
+        {[
+          { num: '20+', label: 'Years Serving Families' },
+          { num: '500+', label: 'Students Transformed' },
+          { num: '98%', label: 'Parent Satisfaction' },
+          { num: '1–6', label: 'All Year Groups Covered' },
+        ].map((s, i) => (
+          <div key={i} style={{ textAlign: 'center', padding: '10px 50px', borderRight: i < 3 ? '1px solid rgba(255,255,255,0.15)' : 'none' }}>
+            <div style={{ fontSize: '2.2rem', fontWeight: 900, color: c.goldLight, lineHeight: 1, marginBottom: 4 }}>{s.num}</div>
+            <div style={{ fontSize: '0.82rem', color: 'rgba(255,255,255,0.7)', fontWeight: 500 }}>{s.label}</div>
           </div>
+        ))}
+      </div>
 
-          <div className="relative z-10 max-w-4xl mx-auto text-center py-12 sm:py-16 lg:py-24 px-6">
-            <div className="inline-flex items-center justify-center space-x-2 bg-white/10 backdrop-blur-md rounded-full px-6 py-2 border border-white/20 mb-8">
-              <Sparkles className="w-5 h-5 text-brand-gold" />
-              <span className="text-sm font-bold text-white tracking-wide uppercase">Kindergarten to Year 6</span>
+      {/* YEAR NAV */}
+      <div id="year-groups" style={{ background: c.soft, borderBottom: `2px solid ${c.border}`, padding: '52px 52px 48px', textAlign: 'center' }}>
+        <div style={{ fontSize: '0.78rem', fontWeight: 800, letterSpacing: '2.5px', textTransform: 'uppercase', color: c.muted, marginBottom: 24 }}>Select your child's year group</div>
+        <div style={{ display: 'flex', justifyContent: 'center', gap: 20, flexWrap: 'wrap' }}>
+          {[
+            { label: 'Year 1 – Year 2', desc: 'Phonics, reading & early maths', to: '/programs/early-years', topColor: c.pinkMid, hoverBg: c.pink },
+            { label: 'Year 3 – Year 4', desc: 'NAPLAN prep & comprehension', to: '/programs/year-3-4', topColor: c.purpleMid, hoverBg: c.purple },
+            { label: 'Year 5 – Year 6', desc: 'Selective prep & high school ready', to: '/programs/year-5-6', topColor: c.greenMid, hoverBg: c.green },
+          ].map((tile, i) => (
+            <Link key={i} to={tile.to} style={{ background: c.white, border: `2px solid ${c.border}`, borderTop: `4px solid ${tile.topColor}`, borderRadius: 20, padding: '28px 36px', textDecoration: 'none', color: c.navy, minWidth: 220, textAlign: 'center', boxShadow: '0 2px 12px rgba(12,31,74,0.06)', display: 'block', transition: 'all .25s' }}
+              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = 'translateY(-5px)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 14px 36px rgba(12,31,74,0.14)'; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = ''; (e.currentTarget as HTMLElement).style.boxShadow = '0 2px 12px rgba(12,31,74,0.06)'; }}
+            >
+              <div style={{ fontSize: '1.08rem', fontWeight: 900, marginBottom: 5 }}>{tile.label}</div>
+              <div style={{ fontSize: '0.82rem', color: c.muted }}>{tile.desc}</div>
+              <div style={{ marginTop: 12, fontSize: '1.1rem', color: tile.topColor }}>→</div>
+            </Link>
+          ))}
+        </div>
+      </div>
+
+      {/* PILLARS */}
+      <div style={{ padding: '76px 52px', maxWidth: 1140, margin: '0 auto' }}>
+        <div style={{ fontSize: '0.74rem', fontWeight: 800, letterSpacing: '2.5px', textTransform: 'uppercase', color: c.gold, marginBottom: 10 }}>Our Three Pillars</div>
+        <h2 style={{ fontSize: 'clamp(1.8rem, 3vw, 2.6rem)', fontWeight: 900, letterSpacing: '-1px', color: c.navy, marginBottom: 18, lineHeight: 1.2 }}>Built for Every Stage of Primary School</h2>
+        <p style={{ fontSize: '1.05rem', color: c.muted, maxWidth: 680, lineHeight: 1.82 }}>
+          Our program is grounded in <strong style={{ color: c.goldLight }}>three core pillars</strong> that work together — giving every child the skills, confidence, and thinking habits they need to thrive at every level.
+        </p>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 24, marginTop: 44 }}>
+          {[
+            { emoji: '📚', title: 'Strong Foundations', desc: '<strong>Phonics, reading fluency, handwriting,</strong> and number sense built through structured, age-appropriate practice that sticks for life.', points: ['Phonics & decoding skills', 'Reading fluency & comprehension', 'Number sense & place value'], topColor: c.pinkMid, iconBg: c.pink },
+            { emoji: '🎯', title: 'Academic Excellence', desc: '<strong>English and Maths aligned to the NSW Curriculum,</strong> with extension work for students ready to go further and be genuinely challenged.', points: ['100% NSW Curriculum aligned', 'Extension tasks for advanced learners', 'NAPLAN preparation built in'], topColor: c.purpleMid, iconBg: c.purple },
+            { emoji: '💡', title: 'Critical Thinking', desc: '<strong>Problem-solving tasks, comprehension strategies,</strong> and worded questions that build truly independent thinkers who don\'t give up.', points: ['Multi-step problem solving', 'Inferencing & text analysis', 'Independent study habits'], topColor: c.greenMid, iconBg: c.green },
+          ].map((p, i) => (
+            <div key={i} style={{ background: c.white, border: `2px solid ${c.border}`, borderTop: `5px solid ${p.topColor}`, borderRadius: 22, padding: 36, transition: 'all .28s', boxShadow: '0 2px 14px rgba(12,31,74,0.05)', cursor: 'default' }}
+              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = 'translateY(-6px)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 18px 44px rgba(12,31,74,0.12)'; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = ''; (e.currentTarget as HTMLElement).style.boxShadow = '0 2px 14px rgba(12,31,74,0.05)'; }}
+            >
+              <div style={{ width: 56, height: 56, borderRadius: 16, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.6rem', marginBottom: 22, background: p.iconBg }}>{p.emoji}</div>
+              <div style={{ fontSize: '1.18rem', fontWeight: 900, marginBottom: 12, color: c.navy }}>{p.title}</div>
+              <p style={{ fontSize: '0.93rem', color: c.muted, lineHeight: 1.7, marginBottom: 20 }} dangerouslySetInnerHTML={{ __html: p.desc }} />
+              <ul style={{ listStyle: 'none', padding: 0 }}>
+                {p.points.map((pt, j) => (
+                  <li key={j} style={{ fontSize: '0.88rem', color: c.navy, padding: '5px 0 5px 22px', position: 'relative', lineHeight: 1.5 }}>
+                    <span style={{ position: 'absolute', left: 0, color: i === 0 ? c.pinkText : i === 1 ? c.purpleText : c.greenText, fontWeight: 900 }}>✓</span>
+                    {pt}
+                  </li>
+                ))}
+              </ul>
             </div>
+          ))}
+        </div>
+      </div>
 
-            <h1 className="text-3xl sm:text-4xl lg:text-7xl font-extrabold text-white mb-6 tracking-tight leading-tight drop-shadow-lg">
-              Primary School <br />
-              <span className="text-brand-gold">Tutoring</span>
-            </h1>
-
-            <p className="text-xl text-white/90 max-w-2xl mx-auto leading-relaxed drop-shadow-md">
-              Building strong foundations with joy, confidence, and care—because every child deserves to love learning.
-            </p>
-          </div>
-        </section>
-
-        {/* Intro Bento Box */}
-        <section className="relative">
-          <div className="bg-white rounded-[2rem] p-8 md:p-12 shadow-xl shadow-brand-navy/5 border border-brand-navy/5">
-            <div className="grid md:grid-cols-2 gap-12 items-center">
-              <div>
-                <h2 className="text-3xl font-extrabold text-brand-navy mb-6">Where Every Child's Potential Blooms</h2>
-                <div className="space-y-4 text-lg text-brand-navy/70 leading-relaxed">
-                  <p>
-                    At DA Tuition, we believe the primary years are the most crucial for building a strong educational foundation.
-                    These formative years shape not just academic skills, but also a child's confidence, curiosity, and love for learning.
-                  </p>
-                  <p>
-                    Our primary school program goes beyond worksheets and rote learning. We create a nurturing environment where
-                    children feel safe to make mistakes, ask questions, and discover their unique strengths. With no entrance exams
-                    and a heart-centered approach, we welcome every child exactly where they are.
-                  </p>
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                {features.map((feature, index) => (
-                  <div key={index} className="bg-brand-canvas rounded-2xl p-6 transition-all duration-300 hover:shadow-md hover:-translate-y-1">
-                    <feature.icon className="w-8 h-8 text-brand-blue mb-4" />
-                    <h3 className="font-bold text-brand-navy mb-2">{feature.title}</h3>
-                    <p className="text-sm text-brand-navy/70 leading-snug">{feature.description}</p>
+      {/* APPROACH */}
+      <div style={{ background: c.soft, borderTop: `2px solid ${c.border}`, borderBottom: `2px solid ${c.border}` }}>
+        <div style={{ padding: '76px 52px', maxWidth: 1140, margin: '0 auto' }}>
+          <div style={{ fontSize: '0.74rem', fontWeight: 800, letterSpacing: '2.5px', textTransform: 'uppercase', color: c.gold, marginBottom: 10 }}>How We Teach</div>
+          <h2 style={{ fontSize: 'clamp(1.8rem, 3vw, 2.6rem)', fontWeight: 900, letterSpacing: '-1px', color: c.navy, marginBottom: 14, lineHeight: 1.2 }}>Our Approach</h2>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 54, alignItems: 'center', marginTop: 48 }} className="approach-grid-responsive">
+            <div>
+              <p style={{ color: c.muted, fontSize: '1.02rem', lineHeight: 1.82, marginBottom: 18 }}>At DA Tuition, we believe <strong style={{ color: c.navy }}>every child learns differently.</strong> Our tutors build genuine relationships with each student and adapt to what actually works — not a script.</p>
+              <p style={{ color: c.muted, fontSize: '1.02rem', lineHeight: 1.82, marginBottom: 26 }}>We follow the <strong style={{ color: c.navy }}>NSW Curriculum</strong> so everything reinforces and extends what your child is already doing in school — never in conflict with it.</p>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                {[
+                  { emoji: '👥', iconBg: c.pink, title: 'Small Groups (3–4 Students)', sub: 'Every child is noticed, supported, and genuinely challenged.' },
+                  { emoji: '📊', iconBg: c.purple, title: 'Regular Parent Reports', sub: 'Written progress updates every term — you always know where your child stands.' },
+                  { emoji: '⭐', iconBg: c.green, title: 'Positive Reinforcement', sub: 'Confidence and capability built together, every single session.' },
+                ].map((ap, i) => (
+                  <div key={i} style={{ display: 'flex', gap: 14, alignItems: 'flex-start', background: c.white, border: `2px solid ${c.border}`, borderRadius: 14, padding: '16px 18px', boxShadow: '0 2px 8px rgba(12,31,74,0.04)' }}>
+                    <div style={{ flexShrink: 0, width: 38, height: 38, borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.1rem', background: ap.iconBg }}>{ap.emoji}</div>
+                    <div>
+                      <strong style={{ color: c.navy, display: 'block', marginBottom: 2, fontSize: '0.94rem', fontWeight: 800 }}>{ap.title}</strong>
+                      <span style={{ fontSize: '0.9rem', color: c.muted, lineHeight: 1.55 }}>{ap.sub}</span>
+                    </div>
                   </div>
                 ))}
               </div>
             </div>
-          </div>
-        </section>
-
-        {/* Visual Proof / Authentic Environment */}
-        <section>
-          <div className="grid md:grid-cols-2 gap-6">
-            <div className="rounded-[2rem] overflow-hidden shadow-xl aspect-video md:aspect-auto md:h-[400px] border border-brand-navy/5">
-              <img src="/images/v3/primary_school.jpg" alt="Active Primary School Class" className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" />
-            </div>
-            <div className="rounded-[2rem] overflow-hidden shadow-xl aspect-video md:aspect-auto md:h-[400px] border border-brand-navy/5">
-              <img src="/images/v3/small_group_tutoring.jpg" alt="Small Group Tutoring" className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" />
-            </div>
-          </div>
-        </section>
-
-        {/* Year Level Breakdown - Bento Grid */}
-        <section>
-          <div className="text-center max-w-2xl mx-auto mb-12">
-            <h2 className="text-3xl md:text-4xl font-extrabold text-brand-navy mb-4">
-              Tailored Support for Every Level
-            </h2>
-            <p className="text-lg text-brand-navy/70">
-              Our curriculum is carefully aligned with NSW standards while providing enrichment and support where your child needs it most.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-6">
-            {yearLevels.map((level, index) => (
-              <div key={index} className={`rounded-3xl p-8 border ${level.color} transition-all duration-300 hover:shadow-lg`}>
-                <h3 className="text-2xl font-black text-brand-navy mb-6">{level.year}</h3>
-                <ul className="space-y-4">
-                  {level.focus.map((item, idx) => (
-                    <li key={idx} className="flex items-start">
-                      <CheckCircle className={`w-5 h-5 ${level.iconColor} mt-0.5 mr-3 flex-shrink-0`} />
-                      <span className="text-brand-navy font-medium leading-tight">{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* The DA Difference & Testimonial */}
-        <section>
-          <div className="grid lg:grid-cols-12 gap-6">
-            <div className="lg:col-span-7 bg-brand-navy rounded-[2rem] p-8 md:p-12 text-white shadow-xl">
-              <h2 className="text-3xl font-extrabold mb-8">The DA Tuition Difference</h2>
-              <div className="space-y-4">
-                {benefits.map((benefit, index) => (
-                  <div key={index} className="flex items-start bg-white/5 rounded-xl p-4 border border-white/10">
-                    <Heart className="w-5 h-5 text-accent-pink mt-0.5 mr-4 flex-shrink-0" />
-                    <span className="font-medium text-white/90">{benefit}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="lg:col-span-5 bg-white rounded-[2rem] p-8 md:p-12 border border-brand-navy/5 shadow-xl shadow-brand-navy/5 flex flex-col justify-center relative overflow-hidden">
-              <div className="absolute -right-10 -top-10 w-40 h-40 bg-accent-yellow/20 rounded-full blur-[40px] pointer-events-none"></div>
-
-              <Quote className="w-12 h-12 text-brand-blue/20 mb-6" />
-              <blockquote className="text-xl text-brand-navy font-medium italic leading-relaxed mb-8 relative z-10">
-                "Having gone to many other tutoring places before DA tuition, I have seen my results improved in my 4 years of being here... Providing me with the support and knowledge for me to excel in my subjects, as well as making my time here the most enjoying and memory making worthy."
-              </blockquote>
-              <div className="flex items-center space-x-4 relative z-10">
-                <div className="w-12 h-12 bg-accent-teal rounded-full flex items-center justify-center text-brand-navy font-bold text-xl">T</div>
+            {/* Testimonial card */}
+            <div style={{ background: c.white, border: `2px solid ${c.border}`, borderTop: `4px solid ${c.goldLight}`, borderRadius: 24, padding: '32px 28px', boxShadow: '0 6px 24px rgba(12,31,74,0.08)', position: 'relative', overflow: 'hidden' }}>
+              <div style={{ fontSize: '0.72rem', fontWeight: 800, letterSpacing: '2px', textTransform: 'uppercase', color: c.gold, marginBottom: 16 }}>What Parents Tell Us</div>
+              <div style={{ fontSize: '2.8rem', lineHeight: 1, color: c.pinkMid, marginBottom: 4 }}>"</div>
+              <p style={{ fontSize: '0.97rem', color: c.navy, lineHeight: 1.75, fontStyle: 'italic', marginBottom: 20, minHeight: 90 }} dangerouslySetInnerHTML={{ __html: t.text }} />
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 }}>
+                <div style={{ width: 44, height: 44, borderRadius: '50%', background: t.accent, border: `2.5px solid ${t.accentMid}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 900, color: t.accentText, fontSize: '0.95rem' }}>{t.initials}</div>
                 <div>
-                  <p className="font-bold text-brand-navy">Tiffany Lang</p>
-                  <p className="text-sm text-brand-navy/60 font-medium">DA Tuition Student</p>
+                  <div style={{ fontSize: '0.92rem', fontWeight: 800, color: c.navy }}>{t.name}</div>
+                  <div style={{ fontSize: '0.78rem', color: c.muted }}>{t.role}</div>
+                  <div style={{ color: c.goldLight, fontSize: '0.85rem', letterSpacing: 2 }}>★★★★★</div>
+                </div>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div style={{ display: 'flex', gap: 8 }}>
+                  {testimonials.map((_, i) => (
+                    <button key={i} onClick={() => setTIdx(i)} style={{ width: i === tIdx ? 26 : 8, height: 8, borderRadius: 4, border: 'none', background: i === tIdx ? c.navy : c.border, cursor: 'pointer', transition: 'all .2s', padding: 0 }} />
+                  ))}
+                </div>
+                <div style={{ display: 'flex', gap: 8 }}>
+                  {[{ label: '←', fn: prev }, { label: '→', fn: next }].map((btn, i) => (
+                    <button key={i} onClick={btn.fn} style={{ width: 36, height: 36, borderRadius: '50%', border: `2px solid ${c.border}`, background: c.white, cursor: 'pointer', fontSize: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{btn.label}</button>
+                  ))}
                 </div>
               </div>
             </div>
           </div>
-        </section>
+        </div>
+      </div>
 
-        {/* Timetable Section */}
-        <section className="py-16 bg-gray-50">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold text-brand-navy mb-4">Class Timetable</h2>
-              <p className="text-lg text-brand-midnight/70 italic">Flexible sessions to fit your family's schedule</p>
+      {/* FIT */}
+      <div style={{ padding: '76px 52px', maxWidth: 1140, margin: '0 auto' }}>
+        <div style={{ fontSize: '0.74rem', fontWeight: 800, letterSpacing: '2.5px', textTransform: 'uppercase', color: c.gold, marginBottom: 10 }}>Is This Right for Us?</div>
+        <h2 style={{ fontSize: 'clamp(1.8rem, 3vw, 2.6rem)', fontWeight: 900, letterSpacing: '-1px', color: c.navy, marginBottom: 18, lineHeight: 1.2 }}>This program is for families who…</h2>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 18, marginTop: 40 }}>
+          {fitItems.map((item, i) => (
+            <div key={i} style={{ background: item.bg, border: `2px solid ${item.border}`, borderRadius: 16, padding: '22px 24px', display: 'flex', gap: 14, alignItems: 'flex-start', transition: 'all .22s' }}
+              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = 'translateY(-3px)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 10px 28px rgba(12,31,74,0.1)'; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = ''; (e.currentTarget as HTMLElement).style.boxShadow = ''; }}
+            >
+              <div style={{ width: 30, height: 30, background: c.goldPale, border: `2px solid ${c.goldLight}`, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', color: c.gold, fontWeight: 900, fontSize: '0.9rem', flexShrink: 0, marginTop: 1 }}>✓</div>
+              <div style={{ fontSize: '0.92rem', color: c.muted, lineHeight: 1.58 }} dangerouslySetInnerHTML={{ __html: item.text }} />
             </div>
+          ))}
+        </div>
+      </div>
 
-            <div className="grid md:grid-cols-3 gap-8">
-              <Card className="border-brand-blue/10">
-                <CardContent className="p-8 text-center">
-                  <Clock className="w-10 h-10 text-brand-blue mx-auto mb-4" />
-                  <h3 className="text-xl font-bold mb-2">After School</h3>
-                  <p className="text-brand-blue font-bold text-lg mb-4">Tue – Fri</p>
-                  <p className="text-brand-midnight/70">Sessions starting from</p>
-                  <p className="text-2xl font-black text-brand-navy">5:00 PM</p>
-                </CardContent>
-              </Card>
+      {/* CTA */}
+      <div style={{ textAlign: 'center', padding: '96px 52px', background: c.navy, borderTop: `4px solid ${c.goldLight}` }}>
+        <h2 style={{ fontSize: 'clamp(2rem, 3.5vw, 3rem)', fontWeight: 900, letterSpacing: '-1.2px', marginBottom: 18, color: c.white, lineHeight: 1.15 }}>
+          Give Your Child the Strongest<br />Possible Start
+        </h2>
+        <p style={{ fontSize: '1.08rem', color: 'rgba(255,255,255,0.75)', maxWidth: 540, margin: '0 auto 38px', lineHeight: 1.75 }}>
+          No entrance exam. No pressure. We gently assess your child in the first session and tailor the program from there.
+        </p>
+        <a href="/#contact" style={{ background: c.goldLight, color: c.navy, border: 'none', padding: '17px 38px', borderRadius: 14, fontSize: '1rem', fontWeight: 900, cursor: 'pointer', textDecoration: 'none', display: 'inline-block' }}>
+          Book Your Free Consultation →
+        </a>
+        <div style={{ marginTop: 18, fontSize: '0.82rem', color: 'rgba(255,255,255,0.45)' }}>
+          Free 20-minute consultation &nbsp;·&nbsp; No obligation &nbsp;·&nbsp; Limited spots each term
+        </div>
+      </div>
 
-              <Card className="border-brand-blue/10 shadow-xl scale-105 relative z-10">
-                <div className="absolute top-0 inset-x-0 h-1.5 bg-brand-blue rounded-t-xl"></div>
-                <CardContent className="p-8 text-center">
-                  <Clock className="w-10 h-10 text-brand-blue mx-auto mb-4" />
-                  <h3 className="text-xl font-bold mb-2">Saturdays</h3>
-                  <p className="text-brand-blue font-bold text-lg mb-4">Full Day</p>
-                  <p className="text-brand-midnight/70">Sessions available</p>
-                  <p className="text-2xl font-black text-brand-navy">9 AM – 6 PM</p>
-                </CardContent>
-              </Card>
-
-              <Card className="border-brand-blue/10">
-                <CardContent className="p-8 text-center">
-                  <Clock className="w-10 h-10 text-brand-blue mx-auto mb-4" />
-                  <h3 className="text-xl font-bold mb-2">Sundays</h3>
-                  <p className="text-brand-blue font-bold text-lg mb-4">Weekend Sessions</p>
-                  <p className="text-brand-midnight/70">Sessions available</p>
-                  <p className="text-2xl font-black text-brand-navy">10 AM – 7 PM</p>
-                </CardContent>
-              </Card>
-            </div>
-
-            <div className="mt-12 bg-white rounded-2xl p-6 text-center border border-brand-blue/10 max-w-2xl mx-auto">
-              <p className="text-brand-midnight/80">
-                <span className="font-bold text-brand-blue">Note:</span> Individual class times vary by grade and subject. 
-                Contact us for current availability and to find the perfect slot for your child.
-              </p>
-            </div>
-          </div>
-        </section>
-
-        {/* Discover More Section */}
-        <section className="py-16">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-3xl font-bold text-brand-navy mb-8 text-center">Explore Our Other Programs</h2>
-            <div className="grid md:grid-cols-3 gap-6">
-              <Link to="/programs/high-school" className="group">
-                <Card className="hover:shadow-xl transition-all duration-300 border-brand-blue/10 h-full">
-                  <CardContent className="p-6">
-                    <div className="w-12 h-12 bg-brand-blue/10 rounded-full flex items-center justify-center mb-4 group-hover:bg-brand-blue transition-colors">
-                      <GraduationCap className="w-6 h-6 text-brand-blue group-hover:text-white transition-colors" />
-                    </div>
-                    <h3 className="text-xl font-bold mb-2 group-hover:text-brand-blue transition-colors">High School (7-10)</h3>
-                    <p className="text-brand-navy/70 text-sm mb-4">Build strong fundamentals and develop confident learning habits for the junior high years.</p>
-                    <div className="flex items-center text-brand-blue font-bold text-sm">
-                      Learn More <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                    </div>
-                  </CardContent>
-                </Card>
-              </Link>
-
-              <Link to="/subjects" className="group">
-                <Card className="hover:shadow-xl transition-all duration-300 border-brand-blue/10 h-full">
-                  <CardContent className="p-6">
-                    <div className="w-12 h-12 bg-accent-teal/10 rounded-full flex items-center justify-center mb-4 group-hover:bg-accent-teal transition-colors">
-                      <BookOpen className="w-6 h-6 text-accent-teal group-hover:text-brand-navy transition-colors" />
-                    </div>
-                    <h3 className="text-xl font-bold mb-2 group-hover:text-accent-teal transition-colors">Our Subjects</h3>
-                    <p className="text-brand-navy/70 text-sm mb-4">From creative writing to advanced calculus, explore the full range of subjects we offer.</p>
-                    <div className="flex items-center text-accent-teal font-bold text-sm">
-                      View Subjects <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                    </div>
-                  </CardContent>
-                </Card>
-              </Link>
-
-              <Link to="/find-teacher" className="group">
-                <Card className="hover:shadow-xl transition-all duration-300 border-brand-blue/10 h-full">
-                  <CardContent className="p-6">
-                    <div className="w-12 h-12 bg-accent-pink/10 rounded-full flex items-center justify-center mb-4 group-hover:bg-accent-pink transition-colors">
-                      <Users className="w-6 h-6 text-accent-pink group-hover:text-white transition-colors" />
-                    </div>
-                    <h3 className="text-xl font-bold mb-2 group-hover:text-accent-pink transition-colors">Find a Teacher</h3>
-                    <p className="text-brand-navy/70 text-sm mb-4">Meet our team of exceptional educators and find the perfect match for your child.</p>
-                    <div className="flex items-center text-accent-pink font-bold text-sm">
-                      Meet the Team <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                    </div>
-                  </CardContent>
-                </Card>
-              </Link>
-            </div>
-          </div>
-        </section>
-
-        {/* CTA Section - Fixed Contrast */}
-        <section>
-          <div className="bg-brand-blue rounded-[2rem] p-12 md:p-16 text-center shadow-2xl relative overflow-hidden">
-            {/* Abstract background shapes */}
-            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-white/10 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/3"></div>
-            <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-brand-navy/20 rounded-full blur-[80px] translate-y-1/2 -translate-x-1/3"></div>
-
-            <div className="relative z-10 max-w-3xl mx-auto">
-              <h2 className="text-4xl md:text-5xl font-extrabold text-white mb-6">
-                Give Your Child the Foundation They Deserve
-              </h2>
-              <p className="text-xl text-white/90 mb-10 font-medium max-w-2xl mx-auto">
-                Join {siteStats.reviewCount} families who've discovered the joy of learning with DA Tuition.
-                No entrance exams, just genuine care for your child's success.
-              </p>
-
-              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                <Button 
-                  size="lg" 
-                  className="bg-brand-gold text-brand-navy hover:bg-yellow-400 font-bold px-8 h-14 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all"
-                  onClick={() => window.location.href = '/#contact'}
-                >
-                  Book Interview
-                  <ArrowRight className="ml-2 w-5 h-5" />
-                </Button>
-                <Button 
-                  size="lg" 
-                  variant="outline" 
-                  className="bg-transparent border-2 border-white text-white hover:bg-white hover:text-brand-navy font-bold px-8 h-14 rounded-xl transition-all"
-                  onClick={() => window.location.href = '/#contact'}
-                >
-                  Request Program Guide
-                </Button>
-              </div>
-
-              <p className="mt-8 text-white/80 font-medium tracking-wide">
-                Or call us at <a href="tel:0401940207" className="underline hover:text-white transition-colors">0401 940 207</a>
-              </p>
-            </div>
-          </div>
-        </section>
-
-      </main>
+      <style>{`
+        @media (max-width: 768px) {
+          .approach-grid-responsive { grid-template-columns: 1fr !important; }
+        }
+      `}</style>
 
       <FooterNew />
     </div>

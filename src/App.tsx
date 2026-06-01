@@ -35,6 +35,9 @@ import Subjects from "./pages/Subjects";
 // Program pages
 import PrimarySchool from "./pages/programs/PrimarySchool";
 import HighSchool from "./pages/programs/HighSchool";
+import EarlyYears from "./pages/programs/EarlyYears";
+import Year34 from "./pages/programs/Year34";
+import Year56 from "./pages/programs/Year56";
 // Subject pages
 import Mathematics from "./pages/subjects/Mathematics";
 import English from "./pages/subjects/English";
@@ -82,6 +85,9 @@ const AnimatedRoutes = () => {
 
         {/* Program Routes */}
         <Route path="/programs/primary-school" element={<PageTransition><PrimarySchool /></PageTransition>} />
+        <Route path="/programs/early-years" element={<PageTransition><EarlyYears /></PageTransition>} />
+        <Route path="/programs/year-3-4" element={<PageTransition><Year34 /></PageTransition>} />
+        <Route path="/programs/year-5-6" element={<PageTransition><Year56 /></PageTransition>} />
         <Route path="/programs/high-school" element={<PageTransition><HighSchool /></PageTransition>} />
         <Route path="/programs/hsc" element={<PageTransition><HSCExcellence /></PageTransition>} />
 
