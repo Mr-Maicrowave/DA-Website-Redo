@@ -46,9 +46,9 @@ const HeroTransparent = () => {
             {/* Main Headline */}
             <h1 className="text-4xl lg:text-6xl font-extrabold text-green-600 leading-tight tracking-tight">
               <TextReveal text="Where Every Child's" />
-              <div className="gradient-text"><TextReveal text="Potential" delay={0.4} /></div>
+              <div style={{ color: 'red' }}><TextReveal text="Potential" delay={0.4} /></div>
               <TextReveal text="Becomes Their" delay={0.6} />
-              <div className="gradient-text"><TextReveal text="Reality" delay={1.0} /></div>
+              <div style={{ color: 'yellow' }}><TextReveal text="Reality" delay={1.0} /></div>
             </h1>
 
             {/* Subheadline */}
