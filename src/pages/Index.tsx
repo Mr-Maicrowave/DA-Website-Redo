@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import NavigationNew from '@/components/NavigationNew';
 import FooterNew from '@/components/FooterNew';
 import TrustBar from '@/components/TrustBar';
@@ -12,6 +13,7 @@ import AwardRecognition from '@/components/AwardRecognition';
 import GoogleReviewsCarousel from '@/components/GoogleReviewsCarousel';
 import TextReveal from '@/components/animations/TextReveal';
 import ParallaxImage from '@/components/animations/ParallaxImage';
+import DAParticleIntro from '@/components/animations/DAParticleIntro';
 import SEO from '@/components/SEO';
 import { siteStats } from '@/data/site-stats';
 import { organizationSchema, localBusinessSchema } from '@/lib/seo/schema';
@@ -114,8 +116,15 @@ const HeroTransparent = () => {
 };
 
 const Index = () => {
+  // intro animation state — once complete the main page fades in
+  const [introComplete, setIntroComplete] = useState(false);
+
   return (
     <div className="min-h-screen bg-brand-canvas overflow-x-hidden pt-[120px]">
+      {/* ── Particle intro overlay ──────────────────────────── */}
+      {!introComplete && (
+        <DAParticleIntro onComplete={() => setIntroComplete(true)} />
+      )}
       <SEO
         canonicalUrl="/"
         jsonLd={[
@@ -123,6 +132,16 @@ const Index = () => {
           localBusinessSchema(siteStats.reviewCount),
         ]}
       />
+      {/* ── Main content — fades in after intro ────────────── */}
+      <div
+        style={{
+          opacity:    introComplete ? 1 : 0,
+          transition: 'opacity 0.8s ease',
+          // prevent interaction while invisible
+          pointerEvents: introComplete ? 'auto' : 'none',
+        }}
+      >
+
       {/* Navigation - floating glassmorphism */}
       <NavigationNew />
 
@@ -179,6 +198,8 @@ const Index = () => {
 
       {/* Footer */}
       <FooterNew />
+
+      </div>{/* end fade-in wrapper */}
     </div>
   );
 };
