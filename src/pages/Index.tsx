@@ -13,7 +13,7 @@ import AwardRecognition from '@/components/AwardRecognition';
 import GoogleReviewsCarousel from '@/components/GoogleReviewsCarousel';
 import TextReveal from '@/components/animations/TextReveal';
 import ParallaxImage from '@/components/animations/ParallaxImage';
-import DAParticleIntro from '@/components/animations/DAParticleIntro';
+import DALogoIntro from '@/components/animations/DALogoIntro';
 import SEO from '@/components/SEO';
 import { siteStats } from '@/data/site-stats';
 import { organizationSchema, localBusinessSchema } from '@/lib/seo/schema';
@@ -43,19 +43,27 @@ const HeroTransparent = () => {
               <span className="font-medium text-brand-navy">{siteStats.googleRating} rating from {siteStats.reviewCount} families</span>
             </div>
 
+            {/* Brand identity line */}
+            <p className="text-sm font-semibold tracking-[0.18em] text-brand-blue/70 uppercase mb-2">
+              DA Tuition
+            </p>
+
             {/* Main Headline */}
-            <h1 className="text-4xl lg:text-6xl font-extrabold text-green-600 leading-tight tracking-tight">
-              <TextReveal text="Where Every Child's" />
-              <div style={{ color: 'red' }}><TextReveal text="Potential" delay={0.4} /></div>
-              <TextReveal text="Becomes Their" delay={0.6} />
-              <div style={{ color: 'yellow' }}><TextReveal text="Reality" delay={1.0} /></div>
+            <h1 className="text-4xl lg:text-6xl font-extrabold text-brand-navy leading-tight tracking-tight">
+              <TextReveal text="Premium Tutoring for" />
+              <TextReveal text="Academic Excellence" delay={0.4} />
             </h1>
 
-            {/* Subheadline */}
-            <p className="text-xl text-brand-navy/70 leading-relaxed max-w-2xl">
-              At DA Tuition, we help you choose the program that matches your child and the learning format that works best for them.
-              For over {siteStats.yearsExperience} years, we've been creating personalized educational experiences where students don't just improve their grades—they
-              discover their confidence, build resilience, and unlock their true potential.
+            {/* Tagline */}
+            <p className="text-lg font-medium text-brand-blue/80 italic mt-2">
+              Trusted by Families. Transforming Futures.
+            </p>
+
+            {/* Supporting text */}
+            <p className="text-xl text-brand-navy/70 leading-relaxed max-w-2xl mt-4">
+              Personalised academic support in Mathematics, Science, and English.
+              For over {siteStats.yearsExperience} years, we've helped {siteStats.studentsHelped} students
+              build confidence, resilience, and real academic results.
             </p>
 
             {/* Trust Indicators */}
@@ -76,13 +84,21 @@ const HeroTransparent = () => {
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button 
-                size="lg" 
+              <Button
+                size="lg"
                 className="btn-primary group"
                 onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
               >
-                Book Interview
+                Book a Trial Lesson
                 <ArrowRight size={20} className="ml-2 group-hover:translate-x-1 transition-transform" />
+              </Button>
+              <Button
+                size="lg"
+                variant="outline"
+                className="btn-secondary group"
+                onClick={() => document.getElementById('programs')?.scrollIntoView({ behavior: 'smooth' })}
+              >
+                View Programs
               </Button>
             </div>
 
@@ -123,7 +139,7 @@ const Index = () => {
     <div className="min-h-screen bg-brand-canvas overflow-x-hidden pt-[120px]">
       {/* ── Particle intro overlay ──────────────────────────── */}
       {!introComplete && (
-        <DAParticleIntro onComplete={() => setIntroComplete(true)} />
+        <DALogoIntro onComplete={() => setIntroComplete(true)} />
       )}
       <SEO
         canonicalUrl="/"
