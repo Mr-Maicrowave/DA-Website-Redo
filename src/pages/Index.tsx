@@ -4,128 +4,119 @@ import FooterNew from '@/components/FooterNew';
 import TrustBar from '@/components/TrustBar';
 import StickyBookButton from '@/components/StickyBookButton';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Star } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import HowWereDifferent from '@/components/HowWereDifferent';
 import TeachersPreview from '@/components/TeachersPreview';
 import Programs from '@/components/Programs';
 import Contact from '@/components/Contact';
 import AwardRecognition from '@/components/AwardRecognition';
 import GoogleReviewsCarousel from '@/components/GoogleReviewsCarousel';
-import TextReveal from '@/components/animations/TextReveal';
-import ParallaxImage from '@/components/animations/ParallaxImage';
-
+import DALogoShine from '@/components/animations/DALogoShine';
 import SEO from '@/components/SEO';
 import { siteStats } from '@/data/site-stats';
 import { organizationSchema, localBusinessSchema } from '@/lib/seo/schema';
 
-// Custom Hero component without background
+// Hero — centered layout with shining logo, warm cream background
 const HeroTransparent = () => {
+  const logoSize = typeof window !== 'undefined'
+    ? Math.min(Math.round(window.innerWidth * 0.38), 320)
+    : 320;
+
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Background Pattern - Center Energy Colors */}
-      <div className="absolute inset-0 opacity-30 pointer-events-none">
-        <div className="absolute top-20 left-20 w-[400px] h-[400px] bg-accent-teal/20 rounded-full mix-blend-multiply filter blur-[80px] animate-float"></div>
-        <div className="absolute top-40 right-20 w-[400px] h-[400px] bg-accent-pink/20 rounded-full mix-blend-multiply filter blur-[80px] animate-float" style={{ animationDelay: '2s' }}></div>
-        <div className="absolute bottom-20 left-1/2 w-[400px] h-[400px] bg-accent-yellow/20 rounded-full mix-blend-multiply filter blur-[80px] animate-float" style={{ animationDelay: '4s' }}></div>
+    <section
+      className="relative min-h-screen flex flex-col items-center justify-center text-center overflow-hidden px-6"
+      style={{
+        background: `
+          radial-gradient(ellipse 60% 50% at 50% 38%, rgba(212,175,55,0.13) 0%, transparent 65%),
+          radial-gradient(ellipse 90% 70% at 50% 50%, rgba(26,42,110,0.06) 0%, transparent 80%),
+          linear-gradient(180deg, #f5f0e8 0%, #ede5d4 60%, #f0ead8 100%)
+        `,
+      }}
+    >
+      {/* Shining DA Logo */}
+      <div className="mb-10 mt-8">
+        <DALogoShine size={logoSize} />
       </div>
 
-      <div className="relative w-full max-w-[2000px] mx-auto pt-20 pb-32 overflow-visible">
-        <div className="grid lg:grid-cols-2 lg:gap-8 items-center min-h-[70vh]">
-          {/* Content */}
-          <div className="space-y-8 animate-fade-in px-4 sm:px-6 lg:pl-12 xl:pl-20 lg:pr-8 z-20 relative lg:max-w-3xl">
-            {/* Trust Badge */}
-            <div className="flex items-center space-x-2 text-sm text-brand-navy">
-              <div className="flex items-center space-x-1">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} size={16} className="fill-accent-yellow text-accent-yellow" />
-                ))}
-              </div>
-              <span className="font-medium text-brand-navy">{siteStats.googleRating} rating from {siteStats.reviewCount} families</span>
+      {/* Headline */}
+      <h1 className="text-4xl lg:text-6xl font-extrabold leading-tight tracking-tight mb-4"
+        style={{ color: '#0d1640' }}>
+        Premium Tutoring for<br />Academic Excellence
+      </h1>
+
+      {/* Tagline */}
+      <p className="text-lg font-medium italic mb-5" style={{ color: 'rgba(184,134,11,0.90)' }}>
+        Trusted by Families. Transforming Futures.
+      </p>
+
+      {/* Supporting text */}
+      <p className="text-lg max-w-xl leading-relaxed mb-10" style={{ color: 'rgba(26,26,70,0.58)' }}>
+        Personalised academic support in Mathematics, Science, and English.<br />
+        Over {siteStats.yearsExperience} years helping {siteStats.studentsHelped} students build
+        real confidence and results.
+      </p>
+
+      {/* CTA Buttons */}
+      <div className="flex flex-col sm:flex-row gap-4 mb-12">
+        <Button
+          size="lg"
+          onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
+          style={{
+            background: 'linear-gradient(135deg,#c9a227,#e8c040)',
+            color: '#1a1a00',
+            border: 'none',
+            borderRadius: '50px',
+            padding: '15px 36px',
+            fontWeight: 800,
+            boxShadow: '0 4px 20px rgba(212,175,55,0.40)',
+          }}
+        >
+          Book a Trial Lesson
+          <ArrowRight size={18} className="ml-2" />
+        </Button>
+        <Button
+          size="lg"
+          variant="outline"
+          onClick={() => document.getElementById('programs')?.scrollIntoView({ behavior: 'smooth' })}
+          style={{
+            background: 'transparent',
+            color: '#1a2a6e',
+            border: '2px solid rgba(26,42,110,0.35)',
+            borderRadius: '50px',
+            padding: '13px 36px',
+            fontWeight: 700,
+          }}
+        >
+          View Programs
+        </Button>
+      </div>
+
+      {/* Stats bar */}
+      <div
+        className="flex flex-wrap justify-center divide-x overflow-hidden rounded-2xl"
+        style={{
+          border: '1px solid rgba(212,175,55,0.30)',
+          background: 'rgba(255,255,255,0.60)',
+          backdropFilter: 'blur(12px)',
+          boxShadow: '0 4px 24px rgba(26,42,110,0.08)',
+          divideColor: 'rgba(212,175,55,0.20)',
+        }}
+      >
+        {[
+          { num: siteStats.yearsExperience, label: 'Years Experience' },
+          { num: siteStats.studentsHelped,  label: 'Students Helped' },
+          { num: '5.0 ★',                  label: 'Google Rating' },
+          { num: siteStats.reviewCount,     label: 'Reviews' },
+        ].map((s, i) => (
+          <div key={i} className="px-8 py-5 text-center" style={{ borderRight: i < 3 ? '1px solid rgba(212,175,55,0.20)' : 'none' }}>
+            <div className="text-2xl font-extrabold" style={{ background: 'linear-gradient(135deg,#b8860b,#d4af37)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+              {s.num}
             </div>
-
-            {/* Brand identity line */}
-            <p className="text-sm font-semibold tracking-[0.18em] text-brand-blue/70 uppercase mb-2">
-              DA Tuition
-            </p>
-
-            {/* Main Headline */}
-            <h1 className="text-4xl lg:text-6xl font-extrabold text-brand-navy leading-tight tracking-tight">
-              <TextReveal text="Premium Tutoring for" />
-              <TextReveal text="Academic Excellence" delay={0.4} />
-            </h1>
-
-            {/* Tagline */}
-            <p className="text-lg font-medium text-brand-blue/80 italic mt-2">
-              Trusted by Families. Transforming Futures.
-            </p>
-
-            {/* Supporting text */}
-            <p className="text-xl text-brand-navy/70 leading-relaxed max-w-2xl mt-4">
-              Personalised academic support in Mathematics, Science, and English.
-              For over {siteStats.yearsExperience} years, we've helped {siteStats.studentsHelped} students
-              build confidence, resilience, and real academic results.
-            </p>
-
-            {/* Trust Indicators */}
-            <div className="grid grid-cols-3 gap-4 sm:gap-6 py-6">
-              <div className="text-center">
-                <div className="text-2xl sm:text-3xl font-extrabold text-brand-blue">{siteStats.yearsExperience}</div>
-                <div className="text-xs sm:text-sm text-brand-navy/60 font-medium">Years Experience</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl sm:text-3xl font-extrabold text-brand-blue">{siteStats.studentsHelped}</div>
-                <div className="text-xs sm:text-sm text-brand-navy/60 font-medium">Students Helped</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl sm:text-3xl font-extrabold text-accent-green">5.0 ★</div>
-                <div className="text-xs sm:text-sm text-brand-navy/60 font-medium">Google Rating</div>
-              </div>
-            </div>
-
-            {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Button
-                size="lg"
-                className="btn-primary group"
-                onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
-              >
-                Book a Trial Lesson
-                <ArrowRight size={20} className="ml-2 group-hover:translate-x-1 transition-transform" />
-              </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                className="btn-secondary group"
-                onClick={() => document.getElementById('programs')?.scrollIntoView({ behavior: 'smooth' })}
-              >
-                View Programs
-              </Button>
-            </div>
-
-            {/* Social Proof */}
-            <p className="text-sm text-brand-navy/60 font-medium">
-              Join {siteStats.reviewCount} families who've discovered what's possible at DA Tuition
-            </p>
-          </div>
-
-          {/* Hero Image - Taking up full right side */}
-          <div className="relative animate-slide-up h-full w-full lg:absolute lg:right-0 lg:top-0 lg:w-[55%] lg:h-full z-10 pt-12 lg:pt-0 pb-12 lg:pb-0 px-4 lg:px-0">
-            <div className="relative h-[400px] lg:h-full w-full flex items-center justify-center lg:pl-16">
-              {/* Image Container with its own hidden overflow for parallax */}
-              <div className="rounded-2xl lg:rounded-none lg:rounded-l-3xl shadow-2xl overflow-hidden w-full h-[90%] lg:h-full relative z-0">
-                <ParallaxImage
-                  src="/images/v3/hero_team.jpg"
-                  alt="DA Tuition Center"
-                  offset={40}
-                  className="w-full h-full"
-                />
-              </div>
-
-              {/* Gradient Overlay for Fade Effect (Left to Right) */}
-              <div className="hidden lg:block absolute inset-y-0 left-0 w-1/2 bg-gradient-to-r from-brand-canvas via-brand-canvas/80 to-transparent z-10 pointer-events-none" />
+            <div className="text-xs font-semibold uppercase tracking-widest mt-1" style={{ color: 'rgba(26,26,70,0.45)' }}>
+              {s.label}
             </div>
           </div>
-        </div>
+        ))}
       </div>
     </section>
   );
@@ -133,7 +124,7 @@ const HeroTransparent = () => {
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-brand-canvas overflow-x-hidden pt-[120px]">
+    <div className="min-h-screen overflow-x-hidden pt-[120px]" style={{ background: '#f5f0e8' }}>
       <SEO
         canonicalUrl="/"
         jsonLd={[
