@@ -18,14 +18,10 @@ if not defined hasChanges (
 )
 
 echo.
-set /p msg="Describe your changes (e.g. updated pricing section): "
-if "%msg%"=="" (
-  echo.
-  echo Commit message cannot be blank. Nothing was uploaded.
-  echo.
-  pause
-  exit /b 1
-)
+for /f "usebackq delims=" %%i in (`powershell -NoProfile -Command "Get-Date -Format 'yyyy-MM-dd HH:mm'"`) do set "msg=Website updates %%i"
+
+echo Saving changes with commit message:
+echo %msg%
 
 git add .
 git commit -m "%msg%"

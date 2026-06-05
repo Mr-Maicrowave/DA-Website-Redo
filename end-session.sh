@@ -16,19 +16,29 @@ if [ -z "$(git status --porcelain)" ]; then
 fi
 
 echo ""
-read -p "Describe your changes (e.g. updated pricing section): " msg
+msg="Website updates $(date '+%Y-%m-%d %H:%M')"
 
-if [ -z "$msg" ]; then
+echo "Saving changes with commit message:"
+echo "$msg"
+
+git add .
+if ! git commit -m "$msg"; then
   echo ""
-  echo "Commit message cannot be blank. Nothing was uploaded."
-  echo ""
+  echo "Commit failed. Please check the message above."
   exit 1
 fi
 
-git add .
-git commit -m "$msg"
-git pull --rebase
-git push
+if ! git pull --rebase; then
+  echo ""
+  echo "Git pull/rebase failed. Please ask for help before pushing."
+  exit 1
+fi
+
+if ! git push; then
+  echo ""
+  echo "Upload failed. Please check the message above."
+  exit 1
+fi
 
 echo ""
 echo "Done! Your changes have been saved to GitHub."
