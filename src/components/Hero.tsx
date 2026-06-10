@@ -44,7 +44,7 @@ const Hero = () => {
             </p>
 
             {/* Trust Indicators */}
-            <div className="grid grid-cols-3 gap-4 sm:gap-6 py-6">
+            <div className="grid grid-cols-4 gap-4 sm:gap-6 py-6">
               <div className="text-center">
                 <div className="text-2xl sm:text-3xl font-bold text-brand-blue-dark">20+</div>
                 <div className="text-xs sm:text-sm text-brand-midnight/80">Years Experience</div>
@@ -54,8 +54,12 @@ const Hero = () => {
                 <div className="text-xs sm:text-sm text-brand-midnight/80">Students Helped</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl sm:text-3xl font-bold text-brand-blue-dark">95%</div>
-                <div className="text-xs sm:text-sm text-brand-midnight/80">HSC Success Rate</div>
+                <div className="text-2xl sm:text-3xl font-bold text-brand-blue-dark">5 Stars</div>
+                <div className="text-xs sm:text-sm text-brand-midnight/80">Google Rating</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl sm:text-3xl font-bold text-brand-blue-dark">450+</div>
+                <div className="text-xs sm:text-sm text-brand-midnight/80">Families Joined</div>
               </div>
             </div>
 
