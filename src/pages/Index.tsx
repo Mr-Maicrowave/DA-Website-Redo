@@ -13,6 +13,7 @@ import GoogleReviewsCarousel from '@/components/GoogleReviewsCarousel';
 import TextReveal from '@/components/animations/TextReveal';
 import ParallaxImage from '@/components/animations/ParallaxImage';
 import SEO from '@/components/SEO';
+import StatsSection from '@/components/StatsSection';
 import { siteStats } from '@/data/site-stats';
 import { organizationSchema, localBusinessSchema } from '@/lib/seo/schema';
 
@@ -146,6 +147,11 @@ const Index = () => {
         <div className="relative px-4 sm:px-6 lg:px-8">
           <div className="absolute -left-32 top-10 w-96 h-96 bg-accent-yellow/10 rounded-full blur-3xl -z-10" />
           <GoogleReviewsCarousel />
+        </div>
+
+        {/* Stats / By the Numbers Section */}
+        <div className="relative -mx-4 sm:-mx-6 lg:-mx-8 rounded-3xl overflow-hidden">
+          <StatsSection />
         </div>
 
         {/* How We're Different Section */}
