@@ -4,6 +4,7 @@ import FooterNew from '@/components/FooterNew';
 import StickyBookButton from '@/components/StickyBookButton';
 import { Link } from 'react-router-dom';
 import SEO from '@/components/SEO';
+import { BookOpen, Hash, Brain, Leaf, Search, Users, Gamepad2, BarChart2 } from 'lucide-react';
 
 const c = {
   navy: '#0c1f4a', navyMid: '#1a3870',
@@ -31,10 +32,10 @@ const curriculumRows = [
 ];
 
 const approachSteps = [
-  { num: '1', title: 'We Start With a Diagnostic', desc: "Before teaching a single thing, we assess exactly where your child is — what they know, what they're almost ready for, and what's causing them to stumble. No guesswork, ever." },
-  { num: '2', title: 'Small Groups, Big Attention', desc: 'Our K–Y2 groups are capped at just 4 students so every child gets genuine individual attention — not just a seat in a class where they go unnoticed.' },
-  { num: '3', title: 'Hands-On, Playful Learning', desc: 'Young children learn through doing. We use games, manipulatives, visual tools, and stories — because engaged kids learn faster and remember far more.' },
-  { num: '4', title: 'Regular Progress Updates', desc: "You'll receive written progress updates every term so you always know exactly how your child is going — and what to reinforce at home between sessions." },
+  { Icon: Search, title: 'We Start With a Diagnostic', desc: "Before teaching a single thing, we assess exactly where your child is — what they know, what they're almost ready for, and what's causing them to stumble. No guesswork, ever." },
+  { Icon: Users, title: 'Small Groups, Big Attention', desc: 'Our K–Y2 groups are capped at just 4 students so every child gets genuine individual attention — not just a seat in a class where they go unnoticed.' },
+  { Icon: Gamepad2, title: 'Hands-On, Playful Learning', desc: 'Young children learn through doing. We use games, manipulatives, visual tools, and stories — because engaged kids learn faster and remember far more.' },
+  { Icon: BarChart2, title: 'Regular Progress Updates', desc: "You'll receive written progress updates every term so you always know exactly how your child is going — and what to reinforce at home between sessions." },
 ];
 
 const fitPoints = [
@@ -109,16 +110,16 @@ const EarlyYears = () => {
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 22 }}>
           {[
-            { emoji: '📚', title: 'Reading Is the Gateway Skill', desc: 'Every subject — <strong>maths, science, history</strong> — demands reading. Children who <strong>read fluently by Year 2</strong> have a <strong>compounding advantage</strong> that grows every single year.' },
-            { emoji: '🔢', title: "Number Sense Can't Be Rushed", desc: 'Understanding <em>why</em> numbers work — not just <strong>memorising facts</strong> — is what separates a child who <strong>struggles with maths</strong> from one who <strong>genuinely loves it</strong>.' },
-            { emoji: '🧠', title: 'Confidence Is Formed Early', desc: 'How a child feels about school in <strong>Year 1–2 shapes their identity as a learner</strong> for years. We build <strong>confidence alongside skills</strong> so they believe they can do hard things.' },
-            { emoji: '🌱', title: 'Early Gaps Widen Fast', desc: 'A <strong>small gap at school entry</strong> becomes a <strong>significant gap by Year 4</strong>. Addressing it early is <strong>faster, less stressful, and far more effective</strong> than catching up later.' },
+            { Icon: BookOpen, color: c.pinkText, bg: c.pink, title: 'Reading Is the Gateway Skill', desc: 'Every subject — <strong>maths, science, history</strong> — demands reading. Children who <strong>read fluently by Year 2</strong> have a <strong>compounding advantage</strong> that grows every single year.' },
+            { Icon: Hash, color: c.purpleText, bg: c.purple, title: "Number Sense Can't Be Rushed", desc: 'Understanding <em>why</em> numbers work — not just <strong>memorising facts</strong> — is what separates a child who <strong>struggles with maths</strong> from one who <strong>genuinely loves it</strong>.' },
+            { Icon: Brain, color: c.blueText, bg: c.blue, title: 'Confidence Is Formed Early', desc: 'How a child feels about school in <strong>Year 1–2 shapes their identity as a learner</strong> for years. We build <strong>confidence alongside skills</strong> so they believe they can do hard things.' },
+            { Icon: Leaf, color: c.greenText, bg: c.green, title: 'Early Gaps Widen Fast', desc: 'A <strong>small gap at school entry</strong> becomes a <strong>significant gap by Year 4</strong>. Addressing it early is <strong>faster, less stressful, and far more effective</strong> than catching up later.' },
           ].map((card, i) => (
             <div key={i} style={{ background: c.white, border: `2px solid ${c.border}`, borderTop: `4px solid ${c.pinkMid}`, borderRadius: 20, padding: '32px 28px', boxShadow: '0 2px 14px rgba(12,31,74,0.05)', transition: 'all .28s' }}
               onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = 'translateY(-5px)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 14px 36px rgba(12,31,74,0.12)'; }}
               onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = ''; (e.currentTarget as HTMLElement).style.boxShadow = '0 2px 14px rgba(12,31,74,0.05)'; }}
             >
-              <div style={{ fontSize: '2.2rem', marginBottom: 16 }}>{card.emoji}</div>
+              <div style={{ width: 48, height: 48, borderRadius: 14, background: card.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16 }}><card.Icon size={24} color={card.color} /></div>
               <h3 style={{ fontSize: '1.05rem', fontWeight: 800, color: c.navy, marginBottom: 10 }}>{card.title}</h3>
               <p style={{ fontSize: '0.9rem', color: c.muted, lineHeight: 1.7 }} dangerouslySetInnerHTML={{ __html: card.desc }} />
             </div>
@@ -198,7 +199,7 @@ const EarlyYears = () => {
               onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = 'translateY(-4px)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 12px 32px rgba(12,31,74,0.1)'; }}
               onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = ''; (e.currentTarget as HTMLElement).style.boxShadow = '0 2px 12px rgba(12,31,74,0.05)'; }}
             >
-              <div style={{ width: 42, height: 42, borderRadius: 12, background: c.pink, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem', fontWeight: 900, color: c.pinkText, marginBottom: 18 }}>{step.num}</div>
+              <div style={{ width: 42, height: 42, borderRadius: 12, background: c.pink, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 18 }}><step.Icon size={22} color={c.pinkText} /></div>
               <h3 style={{ fontSize: '1.05rem', fontWeight: 800, color: c.navy, marginBottom: 10 }}>{step.title}</h3>
               <p style={{ fontSize: '0.9rem', color: c.muted, lineHeight: 1.7 }}>{step.desc}</p>
             </div>

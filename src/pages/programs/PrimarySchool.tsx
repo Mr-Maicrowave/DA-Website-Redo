@@ -4,6 +4,7 @@ import FooterNew from '@/components/FooterNew';
 import StickyBookButton from '@/components/StickyBookButton';
 import { Link } from 'react-router-dom';
 import SEO from '@/components/SEO';
+import { BookOpen, Target, Lightbulb, Users, BarChart2, Star } from 'lucide-react';
 
 const c = {
   navy: '#0c1f4a',
@@ -132,15 +133,15 @@ const PrimarySchool = () => {
         </p>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 24, marginTop: 44 }}>
           {[
-            { emoji: '📚', title: 'Strong Foundations', desc: '<strong>Phonics, reading fluency, handwriting,</strong> and number sense built through structured, age-appropriate practice that sticks for life.', points: ['Phonics & decoding skills', 'Reading fluency & comprehension', 'Number sense & place value'], topColor: c.pinkMid, iconBg: c.pink },
-            { emoji: '🎯', title: 'Academic Excellence', desc: '<strong>English and Maths aligned to the NSW Curriculum,</strong> with extension work for students ready to go further and be genuinely challenged.', points: ['100% NSW Curriculum aligned', 'Extension tasks for advanced learners', 'NAPLAN preparation built in'], topColor: c.purpleMid, iconBg: c.purple },
-            { emoji: '💡', title: 'Critical Thinking', desc: '<strong>Problem-solving tasks, comprehension strategies,</strong> and worded questions that build truly independent thinkers who don\'t give up.', points: ['Multi-step problem solving', 'Inferencing & text analysis', 'Independent study habits'], topColor: c.greenMid, iconBg: c.green },
+            { Icon: BookOpen, title: 'Strong Foundations', desc: '<strong>Phonics, reading fluency, handwriting,</strong> and number sense built through structured, age-appropriate practice that sticks for life.', points: ['Phonics & decoding skills', 'Reading fluency & comprehension', 'Number sense & place value'], topColor: c.pinkMid, iconBg: c.pink, iconColor: c.pinkText },
+            { Icon: Target, title: 'Academic Excellence', desc: '<strong>English and Maths aligned to the NSW Curriculum,</strong> with extension work for students ready to go further and be genuinely challenged.', points: ['100% NSW Curriculum aligned', 'Extension tasks for advanced learners', 'NAPLAN preparation built in'], topColor: c.purpleMid, iconBg: c.purple, iconColor: c.purpleText },
+            { Icon: Lightbulb, title: 'Critical Thinking', desc: '<strong>Problem-solving tasks, comprehension strategies,</strong> and worded questions that build truly independent thinkers who don\'t give up.', points: ['Multi-step problem solving', 'Inferencing & text analysis', 'Independent study habits'], topColor: c.greenMid, iconBg: c.green, iconColor: c.greenText },
           ].map((p, i) => (
             <div key={i} style={{ background: c.white, border: `2px solid ${c.border}`, borderTop: `5px solid ${p.topColor}`, borderRadius: 22, padding: 36, transition: 'all .28s', boxShadow: '0 2px 14px rgba(12,31,74,0.05)', cursor: 'default' }}
               onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = 'translateY(-6px)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 18px 44px rgba(12,31,74,0.12)'; }}
               onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = ''; (e.currentTarget as HTMLElement).style.boxShadow = '0 2px 14px rgba(12,31,74,0.05)'; }}
             >
-              <div style={{ width: 56, height: 56, borderRadius: 16, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.6rem', marginBottom: 22, background: p.iconBg }}>{p.emoji}</div>
+              <div style={{ width: 56, height: 56, borderRadius: 16, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 22, background: p.iconBg }}><p.Icon size={26} color={p.iconColor} /></div>
               <div style={{ fontSize: '1.18rem', fontWeight: 900, marginBottom: 12, color: c.navy }}>{p.title}</div>
               <p style={{ fontSize: '0.93rem', color: c.muted, lineHeight: 1.7, marginBottom: 20 }} dangerouslySetInnerHTML={{ __html: p.desc }} />
               <ul style={{ listStyle: 'none', padding: 0 }}>
@@ -167,12 +168,12 @@ const PrimarySchool = () => {
               <p style={{ color: c.muted, fontSize: '1.02rem', lineHeight: 1.82, marginBottom: 26 }}>We follow the <strong style={{ color: c.navy }}>NSW Curriculum</strong> so everything reinforces and extends what your child is already doing in school — never in conflict with it.</p>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                 {[
-                  { emoji: '👥', iconBg: c.pink, title: 'Small Groups (3–4 Students)', sub: 'Every child is noticed, supported, and genuinely challenged.' },
-                  { emoji: '📊', iconBg: c.purple, title: 'Regular Parent Reports', sub: 'Written progress updates every term — you always know where your child stands.' },
-                  { emoji: '⭐', iconBg: c.green, title: 'Positive Reinforcement', sub: 'Confidence and capability built together, every single session.' },
+                  { Icon: Users, iconBg: c.pink, iconColor: c.pinkText, title: 'Small Groups (3–4 Students)', sub: 'Every child is noticed, supported, and genuinely challenged.' },
+                  { Icon: BarChart2, iconBg: c.purple, iconColor: c.purpleText, title: 'Regular Parent Reports', sub: 'Written progress updates every term — you always know where your child stands.' },
+                  { Icon: Star, iconBg: c.green, iconColor: c.greenText, title: 'Positive Reinforcement', sub: 'Confidence and capability built together, every single session.' },
                 ].map((ap, i) => (
                   <div key={i} style={{ display: 'flex', gap: 14, alignItems: 'flex-start', background: c.white, border: `2px solid ${c.border}`, borderRadius: 14, padding: '16px 18px', boxShadow: '0 2px 8px rgba(12,31,74,0.04)' }}>
-                    <div style={{ flexShrink: 0, width: 38, height: 38, borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.1rem', background: ap.iconBg }}>{ap.emoji}</div>
+                    <div style={{ flexShrink: 0, width: 38, height: 38, borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', background: ap.iconBg }}><ap.Icon size={20} color={ap.iconColor} /></div>
                     <div>
                       <strong style={{ color: c.navy, display: 'block', marginBottom: 2, fontSize: '0.94rem', fontWeight: 800 }}>{ap.title}</strong>
                       <span style={{ fontSize: '0.9rem', color: c.muted, lineHeight: 1.55 }}>{ap.sub}</span>

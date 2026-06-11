@@ -4,6 +4,7 @@ import FooterNew from '@/components/FooterNew';
 import StickyBookButton from '@/components/StickyBookButton';
 import { Link } from 'react-router-dom';
 import SEO from '@/components/SEO';
+import { FileText, BarChart2, Users, RefreshCw, Layers, TrendingUp, BookOpen, Star } from 'lucide-react';
 
 const c = {
   navy: '#0c1f4a', navyMid: '#1a3870',
@@ -33,11 +34,11 @@ const napalnChecklist = [
 ];
 
 const approachPoints = [
-  { icon: '📚', bg: c.purple, title: 'NSW Curriculum aligned', sub: 'We reinforce and extend, never conflict with school' },
-  { icon: '📝', bg: c.pink, title: 'NAPLAN preparation built in', sub: 'Every lesson develops tested skills naturally' },
-  { icon: '👥', bg: c.green, title: 'Small groups (3–4 students)', sub: 'Every child is seen and heard every session' },
-  { icon: '📊', bg: c.blue, title: 'Term-by-term progress reports', sub: 'You always know where your child stands' },
-  { icon: '⭐', bg: c.goldPale, title: 'Positive, encouraging environment', sub: 'Confidence and capability built together' },
+  { Icon: BookOpen, iconColor: c.purpleText, bg: c.purple, title: 'NSW Curriculum aligned', sub: 'We reinforce and extend, never conflict with school' },
+  { Icon: FileText, iconColor: c.pinkText, bg: c.pink, title: 'NAPLAN preparation built in', sub: 'Every lesson develops tested skills naturally' },
+  { Icon: Users, iconColor: c.greenText, bg: c.green, title: 'Small groups (3–4 students)', sub: 'Every child is seen and heard every session' },
+  { Icon: BarChart2, iconColor: c.blueText, bg: c.blue, title: 'Term-by-term progress reports', sub: 'You always know where your child stands' },
+  { Icon: Star, iconColor: c.gold, bg: c.goldPale, title: 'Positive, encouraging environment', sub: 'Confidence and capability built together' },
 ];
 
 const fitPoints = [
@@ -83,12 +84,12 @@ const Year34 = () => {
       {/* NAPLAN banner */}
       <div style={{ background: `linear-gradient(135deg, ${c.purple} 0%, #ede9fe 100%)`, borderTop: `3px solid ${c.purpleMid}`, borderBottom: `3px solid ${c.purpleMid}`, padding: '20px 52px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 20, flexWrap: 'wrap' }}>
         {[
-          { icon: '📝', title: 'NAPLAN Years 3 & 5', sub: 'We build real skills — not just test tricks' },
-          { icon: '📊', title: 'NSW Curriculum Aligned', sub: "Reinforces exactly what's taught at school" },
-          { icon: '👥', title: 'Small Groups (3–4 Students)', sub: 'Real individual attention every session' },
+          { Icon: FileText, title: 'NAPLAN Years 3 & 5', sub: 'We build real skills — not just test tricks' },
+          { Icon: BarChart2, title: 'NSW Curriculum Aligned', sub: "Reinforces exactly what's taught at school" },
+          { Icon: Users, title: 'Small Groups (3–4 Students)', sub: 'Real individual attention every session' },
         ].map((b, i) => (
           <div key={i} style={{ background: c.white, border: `2px solid ${c.purpleMid}`, borderRadius: 14, padding: '10px 22px', display: 'flex', alignItems: 'center', gap: 10 }}>
-            <span style={{ fontSize: '1.4rem' }}>{b.icon}</span>
+            <b.Icon size={22} color={c.purpleText} />
             <div>
               <div style={{ fontSize: '0.88rem', fontWeight: 800, color: c.purpleText, lineHeight: 1.3 }}>{b.title}</div>
               <div style={{ fontSize: '0.75rem', color: c.muted }}>{b.sub}</div>
@@ -128,16 +129,16 @@ const Year34 = () => {
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 22 }}>
           {[
-            { emoji: '🔄', title: 'The Big Shift Happens Now', desc: 'In <strong>Year 3, school changes dramatically</strong>. Children move from <strong>learning foundational skills</strong> to <strong>applying them across every subject</strong>. This transition catches many families off guard.' },
-            { emoji: '📝', title: 'NAPLAN Is on the Horizon', desc: '<strong>Year 3 NAPLAN</strong> tests <strong>reading, writing, language conventions, and numeracy</strong>. Strong performance here builds <strong>momentum — and genuine confidence</strong> — heading into upper primary.' },
-            { emoji: '🧩', title: 'Gaps Compound Quickly', desc: "A child who doesn't fully grasp <strong>multiplication in Year 3</strong> will struggle with <strong>fractions in Year 4</strong>, <strong>algebra in Year 7</strong>, and beyond. <strong>These years are the time to close gaps</strong> — not later." },
-            { emoji: '🚀', title: 'Confidence Becomes Identity', desc: 'The children who thrive in Year 3–4 develop an identity as <strong>"someone who\'s good at school."</strong> We help every child <strong>own that story</strong> — regardless of where they\'re starting from.' },
+            { Icon: RefreshCw, color: c.purpleText, bg: c.purple, title: 'The Big Shift Happens Now', desc: 'In <strong>Year 3, school changes dramatically</strong>. Children move from <strong>learning foundational skills</strong> to <strong>applying them across every subject</strong>. This transition catches many families off guard.' },
+            { Icon: FileText, color: c.pinkText, bg: c.pink, title: 'NAPLAN Is on the Horizon', desc: '<strong>Year 3 NAPLAN</strong> tests <strong>reading, writing, language conventions, and numeracy</strong>. Strong performance here builds <strong>momentum — and genuine confidence</strong> — heading into upper primary.' },
+            { Icon: Layers, color: c.blueText, bg: c.blue, title: 'Gaps Compound Quickly', desc: "A child who doesn't fully grasp <strong>multiplication in Year 3</strong> will struggle with <strong>fractions in Year 4</strong>, <strong>algebra in Year 7</strong>, and beyond. <strong>These years are the time to close gaps</strong> — not later." },
+            { Icon: TrendingUp, color: c.greenText, bg: c.green, title: 'Confidence Becomes Identity', desc: 'The children who thrive in Year 3–4 develop an identity as <strong>"someone who\'s good at school."</strong> We help every child <strong>own that story</strong> — regardless of where they\'re starting from.' },
           ].map((card, i) => (
             <div key={i} style={{ background: c.white, border: `2px solid ${c.border}`, borderTop: `4px solid ${c.purpleMid}`, borderRadius: 20, padding: '32px 28px', boxShadow: '0 2px 14px rgba(12,31,74,0.05)', transition: 'all .28s' }}
               onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = 'translateY(-5px)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 14px 36px rgba(12,31,74,0.12)'; }}
               onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = ''; (e.currentTarget as HTMLElement).style.boxShadow = '0 2px 14px rgba(12,31,74,0.05)'; }}
             >
-              <div style={{ fontSize: '2.2rem', marginBottom: 16 }}>{card.emoji}</div>
+              <div style={{ width: 48, height: 48, borderRadius: 14, background: card.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16 }}><card.Icon size={24} color={card.color} /></div>
               <h3 style={{ fontSize: '1.05rem', fontWeight: 800, color: c.navy, marginBottom: 10 }}>{card.title}</h3>
               <p style={{ fontSize: '0.9rem', color: c.muted, lineHeight: 1.7 }} dangerouslySetInnerHTML={{ __html: card.desc }} />
             </div>
@@ -228,7 +229,7 @@ const Year34 = () => {
                 onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = c.goldLight; (e.currentTarget as HTMLElement).style.boxShadow = '0 6px 20px rgba(12,31,74,0.1)'; }}
                 onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = c.border; (e.currentTarget as HTMLElement).style.boxShadow = '0 2px 8px rgba(12,31,74,0.04)'; }}
               >
-                <div style={{ flexShrink: 0, width: 38, height: 38, borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.1rem', background: ap.bg }}>{ap.icon}</div>
+                <div style={{ flexShrink: 0, width: 38, height: 38, borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', background: ap.bg }}><ap.Icon size={20} color={ap.iconColor} /></div>
                 <div>
                   <strong style={{ color: c.navy, display: 'block', marginBottom: 2, fontSize: '0.94rem', fontWeight: 800 }}>{ap.title}</strong>
                   <span style={{ fontSize: '0.88rem', color: c.muted }}>{ap.sub}</span>

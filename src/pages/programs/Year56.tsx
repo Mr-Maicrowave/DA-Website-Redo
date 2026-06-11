@@ -4,6 +4,7 @@ import FooterNew from '@/components/FooterNew';
 import StickyBookButton from '@/components/StickyBookButton';
 import { Link } from 'react-router-dom';
 import SEO from '@/components/SEO';
+import { FileText, Building2, GraduationCap, BookOpen, Users, BarChart2, Zap, Clock } from 'lucide-react';
 
 const c = {
   navy: '#0c1f4a', navyMid: '#1a3870',
@@ -34,11 +35,11 @@ const hsChecklist = [
 ];
 
 const approachPoints = [
-  { icon: '🏫', bg: c.green, title: 'Selective school preparation', sub: 'Specific skills for OC, selective, and scholarship exams' },
-  { icon: '📝', bg: c.blue, title: 'NAPLAN Year 5 aligned', sub: 'We target tested domains throughout the year' },
-  { icon: '👥', bg: c.pink, title: 'Small groups (3–4 students)', sub: 'Senior students get individual coaching, not a lecture' },
-  { icon: '🎓', bg: c.purple, title: 'High school transition support', sub: 'Building the study habits that Year 7 demands' },
-  { icon: '📊', bg: c.goldPale, title: 'Term progress reports', sub: 'Transparent, specific feedback for parents every term' },
+  { Icon: Building2, iconColor: c.greenText, bg: c.green, title: 'Selective school preparation', sub: 'Specific skills for OC, selective, and scholarship exams' },
+  { Icon: FileText, iconColor: c.blueText, bg: c.blue, title: 'NAPLAN Year 5 aligned', sub: 'We target tested domains throughout the year' },
+  { Icon: Users, iconColor: c.pinkText, bg: c.pink, title: 'Small groups (3–4 students)', sub: 'Senior students get individual coaching, not a lecture' },
+  { Icon: GraduationCap, iconColor: c.purpleText, bg: c.purple, title: 'High school transition support', sub: 'Building the study habits that Year 7 demands' },
+  { Icon: BarChart2, iconColor: c.gold, bg: c.goldPale, title: 'Term progress reports', sub: 'Transparent, specific feedback for parents every term' },
 ];
 
 const fitPoints = [
@@ -88,13 +89,13 @@ const Year56 = () => {
       {/* Urgency banner */}
       <div style={{ background: `linear-gradient(135deg, ${c.green} 0%, #d1fae5 100%)`, borderTop: `3px solid ${c.greenMid}`, borderBottom: `3px solid ${c.greenMid}`, padding: '18px 52px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 32, flexWrap: 'wrap' }}>
         {[
-          { icon: '⚡', text: 'Limited Places This Term', highlight: 'Filling Fast' },
-          { icon: '🏫', text: 'Selective School Prep', highlight: null },
-          { icon: '📝', text: 'Year 5 NAPLAN Ready', highlight: null },
-          { icon: '🎓', text: 'High School Transition Support', highlight: null },
+          { Icon: Zap, text: 'Limited Places This Term', highlight: 'Filling Fast' },
+          { Icon: Building2, text: 'Selective School Prep', highlight: null },
+          { Icon: FileText, text: 'Year 5 NAPLAN Ready', highlight: null },
+          { Icon: GraduationCap, text: 'High School Transition Support', highlight: null },
         ].map((item, i) => (
           <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: '0.9rem', fontWeight: 700, color: c.navy }}>
-            <span style={{ fontSize: '1.3rem' }}>{item.icon}</span>
+            <item.Icon size={20} color={c.greenText} />
             {item.text}
             {item.highlight && <span style={{ background: c.navy, color: '#fff', fontSize: '0.78rem', fontWeight: 800, padding: '4px 14px', borderRadius: 999, whiteSpace: 'nowrap' }}>{item.highlight}</span>}
           </div>
@@ -132,16 +133,16 @@ const Year56 = () => {
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 22 }}>
           {[
-            { emoji: '📝', title: 'Year 5 NAPLAN', desc: '<strong>Year 5 NAPLAN results matter</strong> for <strong>selective school applications</strong>, <strong>scholarship eligibility</strong>, and the <strong>academic streaming decisions</strong> that shape your child\'s high school experience.' },
-            { emoji: '🏫', title: 'Selective School Entry', desc: 'Selective school and scholarship exams require a <strong>very specific skill set</strong> — well beyond the regular curriculum. <strong>Preparation needs to start early</strong> and be <strong>strategic</strong> to be effective.' },
-            { emoji: '🎓', title: 'High School Readiness', desc: '<strong>Year 7 demands significantly more</strong> independent thinking and organisation. Children who enter high school with <strong>strong foundations thrive</strong> — those who don\'t <strong>often struggle silently</strong>.' },
-            { emoji: '📚', title: 'Advanced Content Mastery', desc: 'Year 5–6 maths and English move into <strong>abstract reasoning, algebra, extended analysis</strong>, and <strong>sophisticated writing</strong> — skills that require <strong>explicit teaching</strong>, not just practice.' },
+            { Icon: FileText, color: c.blueText, bg: c.blue, title: 'Year 5 NAPLAN', desc: '<strong>Year 5 NAPLAN results matter</strong> for <strong>selective school applications</strong>, <strong>scholarship eligibility</strong>, and the <strong>academic streaming decisions</strong> that shape your child\'s high school experience.' },
+            { Icon: Building2, color: c.greenText, bg: c.green, title: 'Selective School Entry', desc: 'Selective school and scholarship exams require a <strong>very specific skill set</strong> — well beyond the regular curriculum. <strong>Preparation needs to start early</strong> and be <strong>strategic</strong> to be effective.' },
+            { Icon: GraduationCap, color: c.purpleText, bg: c.purple, title: 'High School Readiness', desc: '<strong>Year 7 demands significantly more</strong> independent thinking and organisation. Children who enter high school with <strong>strong foundations thrive</strong> — those who don\'t <strong>often struggle silently</strong>.' },
+            { Icon: BookOpen, color: c.pinkText, bg: c.pink, title: 'Advanced Content Mastery', desc: 'Year 5–6 maths and English move into <strong>abstract reasoning, algebra, extended analysis</strong>, and <strong>sophisticated writing</strong> — skills that require <strong>explicit teaching</strong>, not just practice.' },
           ].map((card, i) => (
             <div key={i} style={{ background: c.white, border: `2px solid ${c.border}`, borderTop: `4px solid ${c.greenMid}`, borderRadius: 20, padding: '32px 28px', boxShadow: '0 2px 14px rgba(12,31,74,0.05)', transition: 'all .28s' }}
               onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = 'translateY(-5px)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 14px 36px rgba(12,31,74,0.12)'; }}
               onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = ''; (e.currentTarget as HTMLElement).style.boxShadow = '0 2px 14px rgba(12,31,74,0.05)'; }}
             >
-              <div style={{ fontSize: '2.2rem', marginBottom: 16 }}>{card.emoji}</div>
+              <div style={{ width: 48, height: 48, borderRadius: 14, background: card.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16 }}><card.Icon size={24} color={card.color} /></div>
               <h3 style={{ fontSize: '1.05rem', fontWeight: 800, color: c.navy, marginBottom: 10 }}>{card.title}</h3>
               <p style={{ fontSize: '0.9rem', color: c.muted, lineHeight: 1.7 }} dangerouslySetInnerHTML={{ __html: card.desc }} />
             </div>
@@ -234,7 +235,7 @@ const Year56 = () => {
                 onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = c.goldLight; (e.currentTarget as HTMLElement).style.boxShadow = '0 6px 20px rgba(12,31,74,0.1)'; }}
                 onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = c.border; (e.currentTarget as HTMLElement).style.boxShadow = '0 2px 8px rgba(12,31,74,0.04)'; }}
               >
-                <div style={{ flexShrink: 0, width: 38, height: 38, borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.1rem', background: ap.bg }}>{ap.icon}</div>
+                <div style={{ flexShrink: 0, width: 38, height: 38, borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', background: ap.bg }}><ap.Icon size={20} color={ap.iconColor} /></div>
                 <div>
                   <strong style={{ color: c.navy, display: 'block', marginBottom: 2, fontSize: '0.94rem', fontWeight: 800 }}>{ap.title}</strong>
                   <span style={{ fontSize: '0.88rem', color: c.muted }}>{ap.sub}</span>
@@ -248,7 +249,7 @@ const Year56 = () => {
       {/* Scarcity */}
       <div style={{ maxWidth: 860, margin: '0 auto 0', padding: '0 52px 60px' }}>
         <div style={{ background: `linear-gradient(135deg, ${c.green} 0%, #d1fae5 100%)`, border: `2px solid ${c.greenMid}`, borderRadius: 20, padding: '28px 32px', display: 'flex', alignItems: 'flex-start', gap: 20 }}>
-          <span style={{ fontSize: '2.4rem', flexShrink: 0 }}>⏳</span>
+          <div style={{ flexShrink: 0, width: 48, height: 48, borderRadius: 12, background: c.green, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Clock size={26} color={c.greenText} /></div>
           <div>
             <h3 style={{ fontSize: '1.12rem', fontWeight: 900, color: c.navy, marginBottom: 8 }}>Year 5–6 Spots Fill Quickly Each Term</h3>
             <p style={{ fontSize: '0.92rem', color: c.muted, lineHeight: 1.7 }}>Our senior primary program is our most in-demand offering. We keep groups intentionally small — which means we can only accept a limited number of students each term. <strong style={{ color: c.navy }}>Families who enquire early secure their place. Those who wait often miss out.</strong></p>
