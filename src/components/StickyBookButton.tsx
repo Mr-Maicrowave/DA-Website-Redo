@@ -1,86 +1,52 @@
-import { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { Calendar, X, Phone, ArrowRight } from 'lucide-react';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const StickyBookButton = () => {
-  const [isVisible, setIsVisible] = useState(false);
-  const [isMinimized, setIsMinimized] = useState(false);
+  const navigate  = useNavigate();
+  const location  = useLocation();
 
-  useEffect(() => {
-    const handleScroll = () => {
-      // Show button after scrolling 300px
-      setIsVisible(window.scrollY > 300);
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  if (!isVisible) return null;
-
-  if (isMinimized) {
-    return (
-      <button
-        onClick={() => setIsMinimized(false)}
-        className="fixed bottom-6 right-6 z-50 hidden md:flex bg-brand-highlight hover:bg-blue-600 text-white rounded-full p-4 shadow-2xl hover:shadow-3xl transition-all animate-bounce-slow"
-      >
-        <Calendar className="w-6 h-6" />
-      </button>
-    );
-  }
+  // Hide on the booking page itself
+  if (location.pathname === '/book-interview') return null;
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 animate-slide-up hidden md:block">
-      <div className="bg-white rounded-2xl shadow-2xl p-6 max-w-sm border-2 border-brand-blue/20">
-        {/* Close button */}
-        <button
-          onClick={() => setIsMinimized(true)}
-          className="absolute top-2 right-2 text-gray-400 hover:text-brand-midnight/80"
-        >
-          <X className="w-5 h-5" />
-        </button>
-
-        {/* Content */}
-        <div className="space-y-4">
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
-            <span className="text-sm font-semibold text-brand-midnight/80">Waitlist Active</span>
-          </div>
-
-          <div>
-            <h3 className="font-bold text-lg text-brand-midnight mb-1">
-              Book Interview
-            </h3>
-            <p className="text-sm text-brand-midnight/80">
-              Due to high demand, spots are limited. Secure an interview to join our waiting list.
-            </p>
-          </div>
-
-          <div className="space-y-2">
-            <Button
-              className="w-full bg-brand-blue hover:bg-brand-blue-dark text-white group"
-              onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
-            >
-              <Calendar className="w-4 h-4 mr-2" />
-              Book Interview
-              <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
-            </Button>
-
-            <a
-              href="tel:0401940207"
-              className="flex items-center justify-center gap-2 w-full py-2 text-sm text-brand-blue hover:text-brand-blue-dark transition-colors"
-            >
-              <Phone className="w-4 h-4" />
-              <span className="font-semibold">0401 940 207</span>
-            </a>
-          </div>
-
-          <div className="text-xs text-center text-brand-midnight/70 font-semibold bg-blue-50 py-2 rounded-lg mt-2 border border-blue-100">
-            Accepting for Term 1 2026
-          </div>
-        </div>
-      </div>
-    </div>
+    <button
+      onClick={() => navigate('/book-interview')}
+      onMouseEnter={e => {
+        const el = e.currentTarget as HTMLButtonElement;
+        el.style.transform = 'translateY(-2px) scale(1.04)';
+        el.style.boxShadow = '0 12px 40px rgba(201,162,39,.65), 0 2px 8px rgba(0,0,0,.3)';
+      }}
+      onMouseLeave={e => {
+        const el = e.currentTarget as HTMLButtonElement;
+        el.style.transform = 'translateY(0) scale(1)';
+        el.style.boxShadow = '0 8px 32px rgba(201,162,39,.55), 0 2px 8px rgba(0,0,0,.25)';
+      }}
+      style={{
+        position: 'fixed',
+        bottom: 100,
+        right: 32,
+        zIndex: 9999,
+        display: 'flex',
+        alignItems: 'center',
+        gap: 10,
+        padding: '14px 26px',
+        borderRadius: 50,
+        border: 'none',
+        cursor: 'pointer',
+        fontFamily: "'DM Sans', 'Inter', sans-serif",
+        fontWeight: 800,
+        fontSize: '.82rem',
+        letterSpacing: '.06em',
+        textTransform: 'uppercase',
+        background: 'linear-gradient(135deg, #C9A227, #E8C040)',
+        color: '#0A1628',
+        boxShadow: '0 8px 32px rgba(201,162,39,.55), 0 2px 8px rgba(0,0,0,.25)',
+        transform: 'translateY(0)',
+        transition: 'all .3s cubic-bezier(.34,1.56,.64,1)',
+      }}
+    >
+      <span style={{ fontSize: '1rem' }}>✦</span>
+      Book Interview
+    </button>
   );
 };
 
