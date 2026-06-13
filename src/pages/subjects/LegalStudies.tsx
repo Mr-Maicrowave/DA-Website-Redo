@@ -107,12 +107,7 @@ const LegalStudies = () => {
               HSC Legal Excellence. Master the Australian legal system through case analysis and critical evaluation.
             </p>
 
-            <div className="flex justify-center">
-              <Button size="lg" className="bg-purple-500 text-white hover:bg-purple-600 font-bold px-8 h-14 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all">
-                Book Interview
-                <ArrowRight className="ml-2 w-5 h-5" />
-              </Button>
-            </div>
+
           </div>
         </section>
       </div>
@@ -334,10 +329,7 @@ const LegalStudies = () => {
             Master legal thinking and achieve the Band 6 results you deserve
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" className="bg-white text-purple-600 hover:bg-purple-50">
-              Book Interview
-            </Button>
-            <Button size="lg" variant="outline" className="bg-transparent text-white border-white hover:bg-white/10">
+<Button size="lg" variant="outline" className="bg-transparent text-white border-white hover:bg-white/10">
               Call 0401 940 207
             </Button>
           </div>

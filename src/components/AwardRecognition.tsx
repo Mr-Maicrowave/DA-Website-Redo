@@ -52,10 +52,7 @@ const AwardRecognition = () => {
             </p>
             
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-6">
-              <Button size="lg" className="btn-primary">
-                Book Interview
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
+
               <a 
                 href="https://business.fairfieldcity.nsw.gov.au/Business-Awards/Fairfield-City-Local-Business-Awards"
                 target="_blank"

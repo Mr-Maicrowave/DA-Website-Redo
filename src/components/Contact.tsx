@@ -90,11 +90,7 @@ const Contact = () => {
               </select>
             </div>
 
-            <Button type="submit" className="w-full btn-primary py-3 text-lg">
-              Book Interview
-            </Button>
-
-            <p className="text-sm text-brand-midnight/70 text-center">
+<p className="text-sm text-brand-midnight/70 text-center">
               No obligation • Personalized assessment • Customized recommendations
             </p>
           </form>

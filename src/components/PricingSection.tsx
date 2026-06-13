@@ -38,11 +38,7 @@ const PricingSection = () => {
               </ul>
               <Button
                 size="lg"
-                className="btn-primary w-full mt-8 shadow-lg"
-                onClick={() => window.location.href = '/#contact'}
-              >
-                Book Interview <ArrowRight className="ml-2 w-5 h-5" />
-              </Button>
+
             </CardContent>
           </Card>
 

@@ -350,12 +350,7 @@ const FAQ = () => {
 
           <Button 
             size="lg" 
-            className="bg-white text-blue-600 hover:bg-gray-100"
-            onClick={() => window.location.href = '/#contact'}
-          >
-            Book Interview
-            <ChevronRight className="ml-2 w-5 h-5" />
-          </Button>
+
         </div>
       </section>
 

@@ -140,12 +140,7 @@ export const TeacherCard: React.FC<TeacherCardProps> = ({
                 className="w-full bg-brand-highlight hover:bg-brand-highlight/90 text-white group"
                 onClick={(e) => {
                   e.stopPropagation();
-                  handleClick();
-                }}
-              >
-                Book Interview
-                <ArrowRight size={16} className="ml-2 group-hover:translate-x-1 transition-transform" />
-              </Button>
+
             </div>
           </div>
         </motion.div>

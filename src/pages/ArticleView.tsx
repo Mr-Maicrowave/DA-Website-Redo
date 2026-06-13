@@ -435,8 +435,7 @@ const ArticleView = () => {
             Book a free assessment to create a personalized learning plan.
           </p>
           <Link to="/contact">
-            <Button size="lg" className="bg-white text-blue-600 hover:bg-blue-50">Book Interview</Button>
-          </Link>
+</Link>
         </div>
       </article>
 

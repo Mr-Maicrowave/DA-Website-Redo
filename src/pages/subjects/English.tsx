@@ -106,12 +106,7 @@ const English = () => {
               From Literacy Foundations to Extension 2. Developing confident communicators through expert teaching and comprehensive support.
             </p>
 
-            <div className="flex justify-center">
-              <Button size="lg" className="bg-pink-500 text-white hover:bg-pink-600 font-bold px-8 h-14 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all">
-                Book Interview
-                <ArrowRight className="ml-2 w-5 h-5" />
-              </Button>
-            </div>
+
           </div>
         </section>
       </div>
@@ -399,10 +394,7 @@ const English = () => {
             Join our comprehensive English programs and develop the skills for academic success
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" className="bg-white text-pink-600 hover:bg-pink-50">
-              Book Interview
-            </Button>
-            <Button size="lg" variant="outline" className="bg-transparent text-white border-white hover:bg-white/10">
+<Button size="lg" variant="outline" className="bg-transparent text-white border-white hover:bg-white/10">
               View Writing Samples
             </Button>
           </div>

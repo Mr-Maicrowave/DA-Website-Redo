@@ -187,10 +187,7 @@ const FooterNew = () => {
 
               <div className="mt-6">
                 <Link to="/#contact">
-                  <button className="bg-brand-blue hover:bg-brand-blue-dark text-white px-6 py-3 rounded-lg transition-colors w-full">
-                    Book Interview
-                  </button>
-                </Link>
+</Link>
               </div>
             </div>
           </div>

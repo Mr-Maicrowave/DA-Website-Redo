@@ -402,13 +402,7 @@ const Subjects = () => {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button
-                size="lg"
-                className="w-full sm:w-auto bg-white text-brand-navy hover:bg-gray-100"
-              >
-                Book Interview
-              </Button>
-              <a href="tel:0401940207">
+<a href="tel:0401940207">
                 <Button
                   size="lg"
                   variant="outline"

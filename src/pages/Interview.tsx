@@ -354,7 +354,7 @@ And lastly, I hope the parents who entrusted us with their children will, when t
                         to="/#contact"
                         className="inline-flex items-center bg-white text-brand-blue-dark px-8 py-3 rounded-xl font-bold hover:bg-gray-100 transition-all relative z-10 shadow-lg"
                       >
-                        Book Interview <ArrowRight className="ml-2 w-5 h-5" />
+                        Contact Us
                       </Link>
                     </div>
                   </div>
@@ -443,7 +443,7 @@ And lastly, I hope the parents who entrusted us with their children will, when t
                     className="btn-primary inline-flex items-center group-hover:scale-105 transition-transform duration-300 px-8 py-4 text-lg"
                   >
                     <MessageCircle className="w-5 h-5 mr-2" />
-                    Book Interview
+                    Get in Touch
                   </Link>
 
                   <Link

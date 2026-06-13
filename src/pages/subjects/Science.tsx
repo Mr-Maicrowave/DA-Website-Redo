@@ -83,12 +83,7 @@ const Science = () => {
               Master complex scientific concepts in Physics and Chemistry through expert guidance and systematic learning.
             </p>
 
-            <div className="flex justify-center">
-              <Button size="lg" className="bg-green-500 text-white hover:bg-green-600 font-bold px-8 h-14 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all">
-                Book Interview
-                <ArrowRight className="ml-2 w-5 h-5" />
-              </Button>
-            </div>
+
           </div>
         </section>
       </div>
@@ -314,10 +309,7 @@ const Science = () => {
             Join our comprehensive science programs and achieve the Band 6 results you deserve
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" className="bg-white text-green-600 hover:bg-green-50">
-              Book Interview
-            </Button>
-            <Button size="lg" variant="outline" className="bg-transparent text-white border-white hover:bg-white/10">
+<Button size="lg" variant="outline" className="bg-transparent text-white border-white hover:bg-white/10">
               Call 0401 940 207
             </Button>
           </div>

@@ -217,12 +217,7 @@ const Programs = () => {
 
                   <Button 
                     className="w-full group-hover:bg-brand-midnight group-hover:text-white transition-colors" 
-                    variant="outline"
-                    onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
-                  >
-                    Book Interview
-                    <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
-                  </Button>
+
                 </div>
               </motion.div>
             ))}

@@ -303,12 +303,7 @@ const HSC = () => {
               <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
                 <Button 
                   size="lg" 
-                  className="bg-brand-gold text-brand-navy hover:bg-yellow-400 font-bold px-8 h-14 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all"
-                  onClick={() => window.location.href = '/#contact'}
-                >
-                  Book Interview
-                  <ArrowRight className="ml-2 w-5 h-5" />
-                </Button>
+
                 <Button 
                   size="lg" 
                   variant="outline" 

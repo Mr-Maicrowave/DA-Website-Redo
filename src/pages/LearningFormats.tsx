@@ -463,10 +463,7 @@ const LearningFormats = () => {
             Book a consultation to discover whether small groups or classes will best support your child's success
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" className="bg-white text-brand-navy hover:bg-gray-100">
-              Book Interview
-            </Button>
-            <Button size="lg" variant="outline" className="text-white border-white hover:bg-white/10 bg-transparent">
+<Button size="lg" variant="outline" className="text-white border-white hover:bg-white/10 bg-transparent">
               Call 0401 940 207
             </Button>
           </div>

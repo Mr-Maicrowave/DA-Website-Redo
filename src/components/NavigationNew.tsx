@@ -287,20 +287,6 @@ const NavigationNew = () => {
                   <span className="hidden xl:inline whitespace-nowrap text-sm">0401 940 207</span>
                 </a>
 
-                <Button
-                  className="btn-primary group text-sm whitespace-nowrap"
-                  onClick={() => {
-                    const contactSection = document.getElementById('contact');
-                    if (contactSection) {
-                      contactSection.scrollIntoView({ behavior: 'smooth' });
-                    } else {
-                      window.location.href = '/#contact';
-                    }
-                  }}
-                >
-                  Book Interview
-                  <span className="ml-1 group-hover:translate-x-1 transition-transform inline-block">→</span>
-                </Button>
               </div>
             </div>
 
@@ -395,21 +381,6 @@ const NavigationNew = () => {
                   Contact
                 </a>
 
-                <Button
-                  className="btn-primary w-full mt-4 group"
-                  onClick={() => {
-                    setIsOpen(false);
-                    const contactSection = document.getElementById('contact');
-                    if (contactSection) {
-                      contactSection.scrollIntoView({ behavior: 'smooth' });
-                    } else {
-                      window.location.href = '/#contact';
-                    }
-                  }}
-                >
-                  Book Interview
-                  <span className="ml-1 group-hover:translate-x-1 transition-transform inline-block">→</span>
-                </Button>
               </div>
             </div>
           )}

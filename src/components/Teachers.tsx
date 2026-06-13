@@ -219,12 +219,7 @@ const Teachers = () => {
           Book a consultation to find the perfect fit for your child.
         </p>
         <Button
-          className="btn-primary group"
-          onClick={() => navigate('/interview')}
-        >
-          Book Interview
-          <ArrowRight size={20} className="ml-2 group-hover:translate-x-1 transition-transform" />
-        </Button>
+
       </div>
     </div>
   </section>;

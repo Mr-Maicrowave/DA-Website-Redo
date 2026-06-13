@@ -125,13 +125,7 @@ const AwardsSection = () => {
                             <p className="text-brand-midnight/70 mb-4 text-sm">
                                 Join the tuition centre that delivers proven results with a personal touch.
                             </p>
-                            <Button
-                                className="w-full bg-brand-highlight hover:bg-brand-highlight/90 text-white font-bold h-12 rounded-xl text-lg shadow-lg shadow-brand-highlight/20"
-                                onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
-                            >
-                                Book Interview
-                            </Button>
-                        </div>
+</div>
                     </motion.div>
                 </div>
             </div>

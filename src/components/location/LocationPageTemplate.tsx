@@ -157,12 +157,7 @@ const LocationPageTemplate = ({ content }: LocationPageTemplateProps) => {
                         <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
                             <Button
                                 size="lg"
-                                className="btn-primary group"
-                                onClick={() => (window.location.href = '/#contact')}
-                            >
-                                Book Interview
-                                <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                            </Button>
+
                             <a href="tel:0401940207">
                                 <Button size="lg" variant="outline">
                                     Call Now: 0401 940 207
@@ -412,12 +407,7 @@ const LocationPageTemplate = ({ content }: LocationPageTemplateProps) => {
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
                         <Button
                             size="lg"
-                            className="btn-primary group"
-                            onClick={() => (window.location.href = '/#contact')}
-                        >
-                            Book Interview
-                            <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                        </Button>
+
                         <Button
                             size="lg"
                             variant="outline"

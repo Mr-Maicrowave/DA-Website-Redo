@@ -320,12 +320,7 @@ const OurApproach = () => {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button
-                size="lg"
-                className="w-full sm:w-auto bg-white text-brand-blue hover:bg-gray-100"
-              >
-                Book Interview
-                <ArrowRight className="ml-2 w-5 h-5" />
-              </Button>
+
               <Link to="/success-stories">
                 <Button
                   size="lg"

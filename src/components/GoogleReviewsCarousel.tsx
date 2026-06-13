@@ -93,13 +93,7 @@ const GoogleReviewsCarousel: React.FC<GoogleReviewsCarouselProps> = ({
           <p className="text-sm sm:text-base text-brand-midnight/80 mb-4">
             Ready to join the families who've discovered their potential?
           </p>
-          <button 
-            className="btn-primary px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-medium hover:scale-105 transition-transform text-sm sm:text-base"
-            onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
-          >
-            Book Interview
-          </button>
-        </div>
+</div>
       </div>
 
       {/* Review Modal */}
