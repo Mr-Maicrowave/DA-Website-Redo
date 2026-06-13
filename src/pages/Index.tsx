@@ -352,6 +352,14 @@ const PhilosophyBackedSection = () => {
 
   const ease = [0.22, 1, 0.36, 1] as const;
 
+  // Fire confetti once when section enters view
+  useEffect(() => {
+    if (inView && !confettiFired.v) {
+      confettiFired.v = true;
+      setTimeout(fireConfetti, 300);
+    }
+  }, [inView]);
+
   return (
   <section ref={sectionRef} style={{ background: C.navy, padding: '160px 24px', position: 'relative', overflow: 'hidden' }}>
 
