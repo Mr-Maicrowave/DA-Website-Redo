@@ -260,11 +260,23 @@ const STATS_DATA = [
   { val: '450+',    label: 'Five-Star Reviews'     },
 ];
 
-const PhilosophyBackedSection = () => (
-  <section style={{ background: C.navy, padding: '160px 24px', position: 'relative', overflow: 'hidden' }}>
+const PhilosophyBackedSection = () => {
+  const sectionRef = useRef(null);
+  const inView = useInView(sectionRef, { once: true, margin: '-100px' });
+  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ['start end', 'end start'] });
 
-    {/* Atmosphere: layered depth — not a single flat glow */}
-    <div style={{ position: 'absolute', inset: 0, background: `radial-gradient(ellipse 70% 80% at 10% 60%, rgba(201,162,39,.055) 0%, transparent 65%)`, pointerEvents: 'none' }} />
+  // Gentle parallax — left column drifts up slightly faster than right
+  const leftY  = useTransform(scrollYProgress, [0, 1], ['18px', '-18px']);
+  const rightY = useTransform(scrollYProgress, [0, 1], ['10px', '-10px']);
+  const glowY  = useTransform(scrollYProgress, [0, 1], ['6%',  '-6%']);
+
+  const ease = [0.22, 1, 0.36, 1] as const;
+
+  return (
+  <section ref={sectionRef} style={{ background: C.navy, padding: '160px 24px', position: 'relative', overflow: 'hidden' }}>
+
+    {/* Atmosphere: layered depth — parallax glow */}
+    <motion.div style={{ y: glowY, position: 'absolute', inset: 0, background: `radial-gradient(ellipse 70% 80% at 10% 60%, rgba(201,162,39,.055) 0%, transparent 65%)`, pointerEvents: 'none' }} />
     <div style={{ position: 'absolute', inset: 0, background: `radial-gradient(ellipse 50% 50% at 85% 20%, rgba(10,22,40,.6) 0%, transparent 70%)`, pointerEvents: 'none' }} />
 
     {/* Top border — hairline gold */}
@@ -278,47 +290,65 @@ const PhilosophyBackedSection = () => (
     }}>
 
       {/* ── LEFT: Philosophy (dominant) ── */}
-      <div>
+      <motion.div style={{ y: leftY }}>
         {/* Eyebrow */}
-        <div style={{
-          fontFamily: sans, fontSize: '.63rem', fontWeight: 600,
-          letterSpacing: '.24em', textTransform: 'uppercase' as const,
-          color: 'rgba(201,162,39,.55)', marginBottom: '36px',
-        }}>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={inView ? { opacity: 1 } : {}}
+          transition={{ duration: 1.2, delay: 0.05, ease: 'easeOut' }}
+          style={{
+            fontFamily: sans, fontSize: '.63rem', fontWeight: 600,
+            letterSpacing: '.24em', textTransform: 'uppercase' as const,
+            color: 'rgba(201,162,39,.55)', marginBottom: '36px',
+          }}>
           Philosophy Backed By Results
-        </div>
+        </motion.div>
 
         {/* Headline */}
-        <h2 style={{
-          fontFamily: serif, fontWeight: 400,
-          fontSize: 'clamp(2.4rem,4vw,3.4rem)',
-          lineHeight: 1.18, letterSpacing: '-.025em',
-          color: C.white, margin: '0 0 40px',
-        }}>
+        <motion.h2
+          initial={{ opacity: 0, y: 22 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 1.1, delay: 0.15, ease }}
+          style={{
+            fontFamily: serif, fontWeight: 400,
+            fontSize: 'clamp(2.4rem,4vw,3.4rem)',
+            lineHeight: 1.18, letterSpacing: '-.025em',
+            color: C.white, margin: '0 0 40px',
+          }}>
           A child's starting point should never be mistaken for{' '}
           <em style={{ fontStyle: 'italic', fontWeight: 300, color: C.gold }}>their potential.</em>
-        </h2>
+        </motion.h2>
 
-        {/* Gold accent rule — fades right */}
-        <div style={{ width: '48px', height: '1px', background: `linear-gradient(90deg, ${C.gold}, transparent)`, marginBottom: '36px' }} />
+        {/* Gold accent rule — draws itself left to right */}
+        <motion.div
+          initial={{ scaleX: 0, opacity: 0 }}
+          animate={inView ? { scaleX: 1, opacity: 1 } : {}}
+          transition={{ duration: 1.0, delay: 0.38, ease }}
+          style={{ width: '48px', height: '1px', background: `linear-gradient(90deg, ${C.gold}, transparent)`, marginBottom: '36px', transformOrigin: 'left' }} />
 
         {/* Body */}
-        <p style={{
-          fontFamily: sans, fontWeight: 300,
-          fontSize: '.875rem', lineHeight: 2,
-          color: 'rgba(250,250,248,.38)',
-          letterSpacing: '.012em', marginBottom: '48px',
-        }}>
+        <motion.p
+          initial={{ opacity: 0, y: 14 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 1.1, delay: 0.46, ease }}
+          style={{
+            fontFamily: sans, fontWeight: 300,
+            fontSize: '.875rem', lineHeight: 2,
+            color: 'rgba(250,250,248,.38)',
+            letterSpacing: '.012em', marginBottom: '48px',
+          }}>
           At DA Tuition, we believe meaningful growth begins when students feel known, supported and challenged thoughtfully.
-        </p>
+        </motion.p>
 
         {/* Pull quote */}
-        <div style={{
-          borderLeft: `1px solid rgba(201,162,39,.40)`,
-          paddingLeft: '24px',
-          paddingTop: '4px',
-          paddingBottom: '4px',
-        }}>
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 1.1, delay: 0.58, ease }}
+          style={{
+            borderLeft: `1px solid rgba(201,162,39,.40)`,
+            paddingLeft: '24px', paddingTop: '4px', paddingBottom: '4px',
+          }}>
           <p style={{
             fontFamily: serif, fontStyle: 'italic', fontWeight: 300,
             fontSize: 'clamp(1rem,1.6vw,1.14rem)',
@@ -327,20 +357,29 @@ const PhilosophyBackedSection = () => (
           }}>
             "We are not simply trying to improve marks. We are trying to strengthen the child behind the result."
           </p>
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
 
       {/* ── RIGHT: Stats — evidence, not KPIs ── */}
-      <div style={{ position: 'relative' }}>
-        {/* Vertical gold thread on the left edge of the stats column */}
-        <div style={{
-          position: 'absolute', top: 0, bottom: 0, left: '-32px',
-          width: '1px',
-          background: `linear-gradient(180deg, transparent, rgba(201,162,39,.20) 15%, rgba(201,162,39,.20) 85%, transparent)`,
-        }} />
+      <motion.div style={{ position: 'relative', y: rightY }}>
+        {/* Vertical gold thread */}
+        <motion.div
+          initial={{ scaleY: 0, opacity: 0 }}
+          animate={inView ? { scaleY: 1, opacity: 1 } : {}}
+          transition={{ duration: 1.4, delay: 0.3, ease }}
+          style={{
+            position: 'absolute', top: 0, bottom: 0, left: '-32px',
+            width: '1px',
+            background: `linear-gradient(180deg, transparent, rgba(201,162,39,.20) 15%, rgba(201,162,39,.20) 85%, transparent)`,
+            transformOrigin: 'top',
+          }} />
 
         {STATS_DATA.map((s, i) => (
-          <div key={i}>
+          <motion.div
+            key={i}
+            initial={{ opacity: 0, y: 14 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 1.0, delay: 0.28 + i * 0.1, ease }}>
             {i > 0 && (
               <div style={{ height: '1px', background: `linear-gradient(90deg, rgba(201,162,39,.14), rgba(201,162,39,.06) 60%, transparent)` }} />
             )}
@@ -363,13 +402,14 @@ const PhilosophyBackedSection = () => (
                 {s.label}
               </div>
             </div>
-          </div>
+          </motion.div>
         ))}
-      </div>
+      </motion.div>
 
     </div>
   </section>
-);
+  );
+};
 
 // ══════════════════════════════════════════════════════════════
 //  PROGRAMS
