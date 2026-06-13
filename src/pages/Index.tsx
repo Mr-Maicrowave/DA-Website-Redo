@@ -231,6 +231,11 @@ const HeroSection = () => {
       <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, delay: 0.68 }}
         style={{ display: 'flex', gap: '14px', flexWrap: 'wrap', justifyContent: 'center', marginBottom: '60px' }}>
+        <motion.button whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
+          onClick={() => navigate('/interview')}
+          style={{ fontFamily: sans, background: C.gold, color: C.navy, border: 'none', padding: '14px 40px', borderRadius: '4px', fontSize: '.9rem', fontWeight: 700, cursor: 'pointer', letterSpacing: '.04em', textTransform: 'uppercase' }}>
+          Book Interview
+        </motion.button>
         <motion.button whileHover={{ scale: 1.03, background: 'rgba(10,22,40,.07)' }} whileTap={{ scale: 0.97 }}
           onClick={() => document.getElementById('programs')?.scrollIntoView({ behavior: 'smooth' })}
           style={{ fontFamily: sans, background: 'transparent', color: C.navy, border: `1.5px solid rgba(10,22,40,.30)`, padding: '14px 40px', borderRadius: '4px', fontSize: '.9rem', fontWeight: 700, cursor: 'pointer', letterSpacing: '.04em', textTransform: 'uppercase' }}>
