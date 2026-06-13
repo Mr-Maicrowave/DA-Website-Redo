@@ -136,11 +136,6 @@ export const TeacherCard: React.FC<TeacherCardProps> = ({
             </div>
 
             <div className="p-4 bg-white/5 border-t border-white/10">
-              <Button
-                className="w-full bg-brand-highlight hover:bg-brand-highlight/90 text-white group"
-                onClick={(e) => {
-                  e.stopPropagation();
-
             </div>
           </div>
         </motion.div>

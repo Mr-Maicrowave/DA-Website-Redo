@@ -158,9 +158,6 @@ const CanleyHeights = () => {
             </div>
 
             <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
-              <Button 
-                size="lg" 
-
               <a href="tel:0401940207">
                 <Button size="lg" variant="outline">
                   Call Now: 0401 940 207
@@ -426,11 +423,8 @@ const CanleyHeights = () => {
           </Card>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button 
-              size="lg" 
-
-            <Button 
-              size="lg" 
+            <Button
+              size="lg"
               variant="outline"
               onClick={() => window.open('https://maps.google.com/?q=229+Canley+Vale+Rd+Canley+Heights+NSW+2166', '_blank')}
             >

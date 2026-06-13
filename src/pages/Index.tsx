@@ -251,32 +251,125 @@ const HeroSection = () => {
 };
 
 // ══════════════════════════════════════════════════════════════
-//  PHILOSOPHY
+//  PHILOSOPHY BACKED BY RESULTS
 // ══════════════════════════════════════════════════════════════
-const PhilosophySection = () => {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: '-80px' });
-  return (
-    <section ref={ref} style={{ background: C.navy, padding: '120px 24px', overflow: 'hidden' }}>
-      <div style={{ maxWidth: '1100px', margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '80px', alignItems: 'center' }}>
-        <motion.div variants={fadeUp} initial="hidden" animate={inView ? 'visible' : 'hidden'}>
-          <div style={{ fontFamily: serif, fontWeight: 300, fontSize: 'clamp(5rem,10vw,10rem)', lineHeight: 1, color: 'transparent', WebkitTextStroke: `1px rgba(201,162,39,.38)`, letterSpacing: '-.04em' }}>20+</div>
-          <div style={{ fontFamily: sans, fontSize: '.7rem', letterSpacing: '.15em', textTransform: 'uppercase', color: C.gold, marginTop: '12px', fontWeight: 700 }}>Years of Excellence</div>
-        </motion.div>
-        <motion.div variants={fadeUp} initial="hidden" animate={inView ? 'visible' : 'hidden'}>
-          <div style={{ fontFamily: sans, fontSize: '.7rem', letterSpacing: '.16em', textTransform: 'uppercase', color: C.gold, marginBottom: '20px', fontWeight: 700 }}>Our Philosophy</div>
-          <p style={{ fontFamily: serif, fontWeight: 300, fontStyle: 'italic', fontSize: 'clamp(1.6rem,2.8vw,2.4rem)', lineHeight: 1.46, color: C.white, letterSpacing: '.01em' }}>
-            "We don't just teach subjects — we shape the minds, habits, and confidence that carry students far beyond the classroom."
+const STATS_DATA = [
+  { val: '20+',     label: 'Years of Excellence'  },
+  { val: '10,000+', label: 'Students Supported'   },
+  { val: '5.0 ★',   label: 'Google Rating'        },
+  { val: '450+',    label: 'Five-Star Reviews'     },
+];
+
+const PhilosophyBackedSection = () => (
+  <section style={{ background: C.navy, padding: '160px 24px', position: 'relative', overflow: 'hidden' }}>
+
+    {/* Atmosphere: layered depth — not a single flat glow */}
+    <div style={{ position: 'absolute', inset: 0, background: `radial-gradient(ellipse 70% 80% at 10% 60%, rgba(201,162,39,.055) 0%, transparent 65%)`, pointerEvents: 'none' }} />
+    <div style={{ position: 'absolute', inset: 0, background: `radial-gradient(ellipse 50% 50% at 85% 20%, rgba(10,22,40,.6) 0%, transparent 70%)`, pointerEvents: 'none' }} />
+
+    {/* Top border — hairline gold */}
+    <div style={{ position: 'absolute', top: 0, left: '24px', right: '24px', height: '1px', background: `linear-gradient(90deg, transparent, rgba(201,162,39,.25) 20%, rgba(201,162,39,.25) 80%, transparent)` }} />
+    {/* Bottom border — hairline gold */}
+    <div style={{ position: 'absolute', bottom: 0, left: '24px', right: '24px', height: '1px', background: `linear-gradient(90deg, transparent, rgba(201,162,39,.15) 20%, rgba(201,162,39,.15) 80%, transparent)` }} />
+
+    <div style={{
+      maxWidth: '1100px', margin: '0 auto', position: 'relative',
+      display: 'grid', gridTemplateColumns: '55fr 45fr', gap: '120px', alignItems: 'center',
+    }}>
+
+      {/* ── LEFT: Philosophy (dominant) ── */}
+      <div>
+        {/* Eyebrow */}
+        <div style={{
+          fontFamily: sans, fontSize: '.63rem', fontWeight: 600,
+          letterSpacing: '.24em', textTransform: 'uppercase' as const,
+          color: 'rgba(201,162,39,.55)', marginBottom: '36px',
+        }}>
+          Philosophy Backed By Results
+        </div>
+
+        {/* Headline */}
+        <h2 style={{
+          fontFamily: serif, fontWeight: 400,
+          fontSize: 'clamp(2.4rem,4vw,3.4rem)',
+          lineHeight: 1.18, letterSpacing: '-.025em',
+          color: C.white, margin: '0 0 40px',
+        }}>
+          A child's starting point should never be mistaken for{' '}
+          <em style={{ fontStyle: 'italic', fontWeight: 300, color: C.gold }}>their potential.</em>
+        </h2>
+
+        {/* Gold accent rule — fades right */}
+        <div style={{ width: '48px', height: '1px', background: `linear-gradient(90deg, ${C.gold}, transparent)`, marginBottom: '36px' }} />
+
+        {/* Body */}
+        <p style={{
+          fontFamily: sans, fontWeight: 300,
+          fontSize: '.875rem', lineHeight: 2,
+          color: 'rgba(250,250,248,.38)',
+          letterSpacing: '.012em', marginBottom: '48px',
+        }}>
+          At DA Tuition, we believe meaningful growth begins when students feel known, supported and challenged thoughtfully.
+        </p>
+
+        {/* Pull quote */}
+        <div style={{
+          borderLeft: `1px solid rgba(201,162,39,.40)`,
+          paddingLeft: '24px',
+          paddingTop: '4px',
+          paddingBottom: '4px',
+        }}>
+          <p style={{
+            fontFamily: serif, fontStyle: 'italic', fontWeight: 300,
+            fontSize: 'clamp(1rem,1.6vw,1.14rem)',
+            lineHeight: 1.78, letterSpacing: '.01em',
+            color: 'rgba(250,250,248,.55)', margin: 0,
+          }}>
+            "We are not simply trying to improve marks. We are trying to strengthen the child behind the result."
           </p>
-          <div style={{ width: '48px', height: '1.5px', background: `linear-gradient(90deg,${C.gold},transparent)`, margin: '28px 0' }} />
-          <p style={{ fontFamily: sans, fontSize: '.97rem', lineHeight: 1.78, color: 'rgba(250,250,248,.50)', maxWidth: '520px' }}>
-            Personalised academic support in Mathematics, Science, and English for every stage — from Primary to HSC. Small groups. Expert teachers. Real results.
-          </p>
-        </motion.div>
+        </div>
       </div>
-    </section>
-  );
-};
+
+      {/* ── RIGHT: Stats — evidence, not KPIs ── */}
+      <div style={{ position: 'relative' }}>
+        {/* Vertical gold thread on the left edge of the stats column */}
+        <div style={{
+          position: 'absolute', top: 0, bottom: 0, left: '-32px',
+          width: '1px',
+          background: `linear-gradient(180deg, transparent, rgba(201,162,39,.20) 15%, rgba(201,162,39,.20) 85%, transparent)`,
+        }} />
+
+        {STATS_DATA.map((s, i) => (
+          <div key={i}>
+            {i > 0 && (
+              <div style={{ height: '1px', background: `linear-gradient(90deg, rgba(201,162,39,.14), rgba(201,162,39,.06) 60%, transparent)` }} />
+            )}
+            <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '16px', padding: '34px 0' }}>
+              <div style={{
+                fontFamily: serif, fontWeight: 400,
+                fontSize: 'clamp(2.2rem,3.6vw,3.2rem)',
+                color: C.goldL, letterSpacing: '-.03em', lineHeight: 1,
+                flexShrink: 0,
+              }}>
+                {s.val}
+              </div>
+              <div style={{
+                fontFamily: sans, fontWeight: 400,
+                fontSize: '.6rem', letterSpacing: '.18em',
+                textTransform: 'uppercase' as const,
+                color: 'rgba(201,162,39,.40)',
+                textAlign: 'right' as const, lineHeight: 1.6,
+              }}>
+                {s.label}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+    </div>
+  </section>
+);
 
 // ══════════════════════════════════════════════════════════════
 //  PROGRAMS
@@ -312,47 +405,6 @@ const ProgramsSection = () => {
   );
 };
 
-// ══════════════════════════════════════════════════════════════
-//  STATS — scroll-triggered pop + count-up + confetti
-// ══════════════════════════════════════════════════════════════
-const STATS = [
-  { val: 20,    suffix: '+',  label: 'Years Experience', delay: 0   },
-  { val: 10000, suffix: '+',  label: 'Students Helped',  delay: 200 },
-  { val: 5,     suffix: '★',  label: 'Google Rating',    delay: 400 },
-  { val: 450,   suffix: '+',  label: 'Five-Star Reviews', delay: 600 },
-];
-
-const StatsSection = () => (
-  <section style={{
-    background: C.navy, padding: '100px 24px',
-    position: 'relative', overflow: 'hidden',
-  }}>
-    <div style={{ position: 'absolute', inset: 0, background: `radial-gradient(ellipse 70% 60% at 50% 50%, rgba(201,162,39,.07) 0%, transparent 70%)`, pointerEvents: 'none' }} />
-
-    <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
-      {/* Heading */}
-      <div style={{ textAlign: 'center', marginBottom: '64px' }}>
-        <div style={{ fontFamily: sans, fontSize: '.7rem', fontWeight: 700, letterSpacing: '.17em', textTransform: 'uppercase', color: C.gold, marginBottom: '14px' }}>By the Numbers</div>
-        <h2 style={{ fontFamily: serif, fontWeight: 500, fontSize: 'clamp(2rem,4vw,3.2rem)', color: C.white, letterSpacing: '-.02em' }}>
-          Two Decades of <em style={{ fontStyle: 'italic', color: C.gold }}>Proven Results</em>
-        </h2>
-      </div>
-
-      {/* Stat cards — each observes itself */}
-      <div style={{
-        display: 'grid', gridTemplateColumns: 'repeat(4,1fr)',
-        borderRadius: '16px', overflow: 'hidden',
-        border: `1px solid rgba(201,162,39,.18)`,
-      }}>
-        {STATS.map((s, i) => (
-          <div key={i} style={{ borderRight: i < STATS.length - 1 ? '1px solid rgba(201,162,39,.14)' : 'none' }}>
-            <StatCard target={s.val} suffix={s.suffix} label={s.label} delay={s.delay} />
-          </div>
-        ))}
-      </div>
-    </div>
-  </section>
-);
 
 // ══════════════════════════════════════════════════════════════
 //  THE DA DIFFERENCE — premium philosophy section
@@ -688,9 +740,8 @@ const Index = () => (
     <main>
       <HeroSection />
       <MarqueeStrip />
-      <PhilosophySection />
+      <PhilosophyBackedSection />
       <ProgramsSection />
-      <StatsSection />
       <WhySection />
       <QuoteSection />
       <ReviewsSection />

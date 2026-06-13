@@ -348,9 +348,6 @@ const FAQ = () => {
             </div>
           </div>
 
-          <Button 
-            size="lg" 
-
         </div>
       </section>
 
