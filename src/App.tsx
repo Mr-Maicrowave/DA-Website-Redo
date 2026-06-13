@@ -47,7 +47,8 @@ import LegalStudies from "./pages/subjects/LegalStudies";
 import Testimonials from "./pages/Testimonials";
 import TestimonialDetail from "./pages/TestimonialDetail";
 import ScrollToTop from "./components/ScrollToTop";
-import FloatingCTA from "@/components/FloatingCTA";
+import BookInterview from "./pages/BookInterview";
+import StickyBookButton from "@/components/StickyBookButton";
 
 const queryClient = new QueryClient();
 
@@ -60,6 +61,7 @@ const AnimatedRoutes = () => {
         <Route path="/" element={<PageTransition><Index /></PageTransition>} />
 
         <Route path="/interview" element={<PageTransition><Interview /></PageTransition>} />
+        <Route path="/book-interview" element={<PageTransition><BookInterview /></PageTransition>} />
         <Route path="/reviews" element={<Navigate to="/success-stories" replace />} />
         <Route path="/find-teacher" element={<PageTransition><FindTeacher /></PageTransition>} />
         <Route path="/teachers" element={<Navigate to="/find-teacher" replace />} />
@@ -119,7 +121,7 @@ const App = () => (
         <BrowserRouter>
           <CustomCursor />
           <ScrollProgress />
-          <FloatingCTA />
+          <StickyBookButton />
           <div
             className="min-h-screen overflow-x-hidden gradient-transition"
             style={{
