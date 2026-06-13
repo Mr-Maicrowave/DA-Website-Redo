@@ -254,11 +254,86 @@ const HeroSection = () => {
 //  PHILOSOPHY BACKED BY RESULTS
 // ══════════════════════════════════════════════════════════════
 const STATS_DATA = [
-  { val: '20+',     label: 'Years of Excellence'  },
-  { val: '10,000+', label: 'Students Supported'   },
-  { val: '5.0 ★',   label: 'Google Rating'        },
-  { val: '450+',    label: 'Five-Star Reviews'     },
+  { target: 20,    decimals: 0, suffix: '+',  label: 'Years of Excellence', triggerDelay: 0   },
+  { target: 10000, decimals: 0, suffix: '+',  label: 'Students Supported',  triggerDelay: 200 },
+  { target: 5,     decimals: 1, suffix: ' ★', label: 'Google Rating',       triggerDelay: 400 },
+  { target: 450,   decimals: 0, suffix: '+',  label: 'Five-Star Reviews',   triggerDelay: 600 },
 ];
+
+// ── Subtle gold sparkle — 6 tiny particles, radiates then fades ──
+const SPARKLE_ANGLES = [0, 60, 120, 180, 240, 300];
+const GoldSparkle = ({ active }: { active: boolean }) => {
+  if (!active) return null;
+  return (
+    <span style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none' }}>
+      {SPARKLE_ANGLES.map((angle, i) => {
+        const rad = (angle * Math.PI) / 180;
+        const dist = 18 + (i % 2) * 8;
+        return (
+          <motion.span
+            key={i}
+            initial={{ x: 0, y: 0, opacity: 0.75, scale: 1 }}
+            animate={{ x: Math.cos(rad) * dist, y: Math.sin(rad) * dist, opacity: 0, scale: 0.2 }}
+            transition={{ duration: 0.6, delay: i * 0.035, ease: 'easeOut' }}
+            style={{
+              position: 'absolute', top: '35%', left: '35%',
+              width: 3, height: 3, borderRadius: '50%',
+              background: '#C9A227', display: 'block',
+            }}
+          />
+        );
+      })}
+    </span>
+  );
+};
+
+// ── Count-up number — fires once when inView, then sparkles ──
+const CountUpStat = ({ target, decimals = 0, suffix, triggerDelay, inView }: {
+  target: number; decimals?: number; suffix: string;
+  triggerDelay: number; inView: boolean;
+}) => {
+  const reduced = useRef(typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const [count, setCount]   = useState(reduced.current ? target : 0);
+  const [sparkle, setSparkle] = useState(false);
+  const ran = useRef(false);
+
+  useEffect(() => {
+    if (!inView || ran.current) return;
+    ran.current = true;
+    if (reduced.current) { setCount(target); return; }
+
+    const timer = setTimeout(() => {
+      const duration = 1800;
+      const t0 = performance.now();
+      const tick = (now: number) => {
+        const p = Math.min((now - t0) / duration, 1);
+        const eased = 1 - Math.pow(1 - p, 3);
+        setCount(eased * target);
+        if (p < 1) {
+          requestAnimationFrame(tick);
+        } else {
+          setCount(target);
+          setSparkle(true);
+          setTimeout(() => setSparkle(false), 850);
+        }
+      };
+      requestAnimationFrame(tick);
+    }, triggerDelay);
+
+    return () => clearTimeout(timer);
+  }, [inView, target, triggerDelay]);
+
+  const display = decimals > 0
+    ? count.toFixed(decimals)
+    : Math.round(count).toLocaleString();
+
+  return (
+    <span style={{ position: 'relative', display: 'inline-block' }}>
+      {display}{suffix}
+      {!reduced.current && <GoldSparkle active={sparkle} />}
+    </span>
+  );
+};
 
 const PhilosophyBackedSection = () => {
   const sectionRef = useRef(null);
@@ -392,7 +467,13 @@ const PhilosophyBackedSection = () => {
                 color: C.goldL, letterSpacing: '-.03em', lineHeight: 1,
                 flexShrink: 0,
               }}>
-                {s.val}
+                <CountUpStat
+                  target={s.target}
+                  decimals={s.decimals}
+                  suffix={s.suffix}
+                  triggerDelay={s.triggerDelay}
+                  inView={inView}
+                />
               </div>
               <div style={{
                 fontFamily: sans, fontWeight: 400,
