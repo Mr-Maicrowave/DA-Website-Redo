@@ -301,7 +301,7 @@ const PhilosophyBackedSection = () => {
             letterSpacing: '.24em', textTransform: 'uppercase' as const,
             color: 'rgba(201,162,39,.55)', marginBottom: '36px',
           }}>
-          Philosophy Backed By Results
+          Our Philosophy
         </motion.div>
 
         {/* Headline */}
@@ -337,7 +337,9 @@ const PhilosophyBackedSection = () => {
             color: 'rgba(250,250,248,.38)',
             letterSpacing: '.012em', marginBottom: '48px',
           }}>
-          At DA Tuition, we believe meaningful growth begins when students feel known, supported and challenged thoughtfully.
+          Every student deserves to be known before they are judged.
+          We have found that confidence almost always arrives before results do —
+          and that meaningful change only comes when a student feels genuinely guided, not simply instructed.
         </motion.p>
 
         {/* Pull quote */}
