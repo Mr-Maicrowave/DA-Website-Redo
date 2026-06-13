@@ -260,25 +260,26 @@ const STATS_DATA = [
   { target: 450,   decimals: 0, suffix: '+',  label: 'Five-Star Reviews',   triggerDelay: 600 },
 ];
 
-// ── Subtle gold sparkle — 6 tiny particles, radiates then fades ──
-const SPARKLE_ANGLES = [0, 60, 120, 180, 240, 300];
+// ── Subtle gold sparkle — particles radiate from the number ──
+const SPARKLE_ANGLES = [0, 45, 90, 135, 180, 225, 270, 315];
 const GoldSparkle = ({ active }: { active: boolean }) => {
   if (!active) return null;
   return (
-    <span style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none' }}>
+    <span style={{ position: 'absolute', top: '50%', left: '30%', pointerEvents: 'none', zIndex: 10 }}>
       {SPARKLE_ANGLES.map((angle, i) => {
         const rad = (angle * Math.PI) / 180;
-        const dist = 18 + (i % 2) * 8;
+        const dist = 24 + (i % 3) * 10;
         return (
           <motion.span
             key={i}
-            initial={{ x: 0, y: 0, opacity: 0.75, scale: 1 }}
-            animate={{ x: Math.cos(rad) * dist, y: Math.sin(rad) * dist, opacity: 0, scale: 0.2 }}
-            transition={{ duration: 0.6, delay: i * 0.035, ease: 'easeOut' }}
+            initial={{ x: 0, y: 0, opacity: 1, scale: 1 }}
+            animate={{ x: Math.cos(rad) * dist, y: Math.sin(rad) * dist, opacity: 0, scale: 0 }}
+            transition={{ duration: 0.75, delay: i * 0.03, ease: 'easeOut' }}
             style={{
-              position: 'absolute', top: '35%', left: '35%',
-              width: 3, height: 3, borderRadius: '50%',
-              background: '#C9A227', display: 'block',
+              position: 'absolute', top: 0, left: 0,
+              width: 5, height: 5, borderRadius: '50%',
+              background: '#E8C040', display: 'block',
+              boxShadow: '0 0 4px 1px rgba(232,192,64,.6)',
             }}
           />
         );
@@ -298,11 +299,15 @@ const CountUpStat = ({ target, decimals = 0, suffix, triggerDelay, inView }: {
   const ran = useRef(false);
 
   useEffect(() => {
-    if (!inView || ran.current) return;
-    ran.current = true;
-    if (reduced.current) { setCount(target); return; }
+    if (!inView) return;
 
+    // timer fires after delay — ran guard lives INSIDE so React StrictMode
+    // double-effect doesn't mark it complete before the timer actually fires
     const timer = setTimeout(() => {
+      if (ran.current) return;
+      ran.current = true;
+      if (reduced.current) { setCount(target); return; }
+
       const duration = 1800;
       const t0 = performance.now();
       const tick = (now: number) => {
@@ -314,7 +319,7 @@ const CountUpStat = ({ target, decimals = 0, suffix, triggerDelay, inView }: {
         } else {
           setCount(target);
           setSparkle(true);
-          setTimeout(() => setSparkle(false), 850);
+          setTimeout(() => setSparkle(false), 900);
         }
       };
       requestAnimationFrame(tick);
