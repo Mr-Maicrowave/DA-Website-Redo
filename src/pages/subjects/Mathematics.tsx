@@ -1,84 +1,115 @@
-import React from 'react';
 import NavigationNew from '@/components/NavigationNew';
 import FooterNew from '@/components/FooterNew';
 import { Button } from '@/components/ui/button';
-import { Calculator, CheckCircle, ArrowRight, Quote, Sparkles, Info } from 'lucide-react';
+import {
+  ArrowRight,
+  BookOpen,
+  Brain,
+  Calculator,
+  CheckCircle,
+  Clock,
+  HelpCircle,
+  Quote,
+  Sparkles,
+  Target,
+  TrendingUp,
+  Users,
+} from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import SEO from '@/components/SEO';
 
 const Mathematics = () => {
-  const courses = [
+  const courseLevels = [
     {
-      level: "Primary School",
-      subjects: [
-        "K-6 Mathematics",
-        "Problem Solving",
-        "Mental Maths",
-        "Times Tables Mastery"
-      ]
+      label: 'Primary School',
+      years: 'Years K-6',
+      tone: 'from-[#f7fbff] to-[#e8f2ff]',
+      icon: BookOpen,
+      description: 'Build number confidence, mental maths, times tables, and problem-solving habits before gaps become stressful.',
+      subjects: ['K-6 Mathematics', 'Problem Solving', 'Mental Maths', 'Times Tables Mastery'],
     },
     {
-      level: "Years 7-10",
-      subjects: [
-        "Core Mathematics",
-        "Advanced Mathematics",
-        "Mathematical Methods",
-        "Problem Solving & Enrichment"
-      ]
+      label: 'High School',
+      years: 'Years 7-10',
+      tone: 'from-[#fbfff8] to-[#eaf8ef]',
+      icon: Brain,
+      description: 'Strengthen algebra, geometry, trigonometry, and exam routines while school expectations increase.',
+      subjects: ['Core Mathematics', 'Advanced Mathematics', 'Mathematical Methods', 'Problem Solving & Enrichment'],
     },
     {
-      level: "HSC - Year 11 & 12",
-      subjects: [
-        "Mathematics Standard 1 & 2",
-        "Mathematics Advanced",
-        "Mathematics Extension 1",
-        "Mathematics Extension 2"
-      ]
-    }
+      label: 'HSC Mathematics',
+      years: 'Years 11-12',
+      tone: 'from-[#fffdf7] to-[#fff1cd]',
+      icon: TrendingUp,
+      description: 'Prepare for Standard, Advanced, Extension 1, and Extension 2 with structured syllabus and exam support.',
+      subjects: ['Mathematics Standard 1 & 2', 'Mathematics Advanced', 'Mathematics Extension 1', 'Mathematics Extension 2'],
+    },
   ];
 
-  const topics = {
-    standard: [
-      "Algebra & Equations",
-      "Measurement & Geometry",
-      "Statistics & Probability",
-      "Financial Mathematics",
-      "Networks & Paths"
-    ],
-    advanced: [
-      "Functions & Relations",
-      "Trigonometry",
-      "Calculus",
-      "Statistical Analysis",
-      "Financial Modelling"
-    ],
-    extension1: [
-      "Further Calculus",
-      "Polynomials",
-      "Combinatorics",
-      "Proof by Induction",
-      "Vectors"
-    ],
-    extension2: [
-      "Complex Numbers",
-      "Further Integration",
-      "Mechanics",
-      "Statistical Inference",
-      "Advanced Proof"
-    ]
-  };
+  const hscStreams = [
+    {
+      name: 'Standard',
+      badge: 'Confidence and marks',
+      topics: ['Algebra & equations', 'Measurement & geometry', 'Statistics & probability', 'Financial mathematics', 'Networks & paths'],
+    },
+    {
+      name: 'Advanced',
+      badge: 'Most common HSC path',
+      topics: ['Functions & relations', 'Trigonometry', 'Calculus', 'Statistical analysis', 'Financial modelling'],
+    },
+    {
+      name: 'Extension 1',
+      badge: 'High scaling',
+      topics: ['Further calculus', 'Polynomials', 'Combinatorics', 'Proof by induction', 'Vectors'],
+    },
+    {
+      name: 'Extension 2',
+      badge: 'Elite level',
+      topics: ['Complex numbers', 'Further integration', 'Mechanics', 'Statistical inference', 'Advanced proof'],
+    },
+  ];
+
+  const parentConcerns = [
+    {
+      icon: HelpCircle,
+      title: 'My child understands it in class, then freezes in tests.',
+      detail: 'We teach students how to identify question types, choose a method, and show working under pressure.',
+    },
+    {
+      icon: Clock,
+      title: 'They are falling behind and avoiding maths homework.',
+      detail: 'We rebuild missing foundations step by step so new school content stops feeling impossible.',
+    },
+    {
+      icon: Target,
+      title: 'They are capable, but careless mistakes cost marks.',
+      detail: 'We focus on checking routines, mathematical communication, and exam habits that reduce avoidable errors.',
+    },
+  ];
+
+  const teachingSteps = [
+    { title: 'Diagnose', text: 'Find the exact gaps, habits, and confidence blocks holding the student back.' },
+    { title: 'Explain', text: 'Break concepts into clear steps with worked examples and guided practice.' },
+    { title: 'Apply', text: 'Move from simple questions into exam-style problems with teacher feedback.' },
+    { title: 'Refine', text: 'Build speed, accuracy, and independent problem-solving over time.' },
+  ];
 
   const skills = [
-    "Problem-solving strategies",
-    "Mathematical reasoning",
-    "Algebraic manipulation",
-    "Geometric visualization",
-    "Statistical interpretation",
-    "Exam technique"
+    'Problem-solving strategies',
+    'Mathematical reasoning',
+    'Algebraic manipulation',
+    'Geometric visualization',
+    'Statistical interpretation',
+    'Exam technique',
   ];
 
+  const scrollToPathways = () => {
+    document.getElementById('math-pathways')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-[#fffdf8] text-[#172033]">
       <SEO
         title="Mathematics Tutoring (K-12 & HSC)"
         description="From foundational numeracy to advanced HSC mathematics, we build confidence through expert guidance and proven teaching methods at DA Tuition."
@@ -86,355 +117,341 @@ const Mathematics = () => {
       />
       <NavigationNew />
 
-      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 mt-[120px]">
-        {/* Hero Section */}
-        <section className="relative rounded-[2.5rem] overflow-hidden shadow-2xl mx-4 sm:mx-0 mt-6 mb-16">
+      <main>
+        {/* Hero */}
+        <section className="relative overflow-hidden bg-[#071629] pt-36 lg:pt-40">
           <div className="absolute inset-0">
-            <img src="/images/v3/teacher_whiteboard.jpg" alt="Mathematics Tutoring" className="w-full h-full object-cover" />
-            <div className="absolute inset-0 bg-brand-navy/80 mix-blend-multiply"></div>
-            <div className="absolute inset-0 bg-gradient-to-t from-brand-navy/90 via-brand-navy/50 to-brand-navy/30"></div>
+            <img
+              src="/images/v3/teacher_whiteboard.jpg"
+              alt="Mathematics tutoring at DA Tuition"
+              className="h-full w-full object-cover opacity-55"
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-[#071629] via-[#071629]/88 to-[#071629]/40" />
+            <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[#fff6e7] to-transparent" />
           </div>
 
-          <div className="relative z-10 max-w-4xl mx-auto text-center py-12 sm:py-16 lg:py-24 px-6">
-            <div className="inline-flex items-center justify-center space-x-2 bg-white/10 backdrop-blur-md rounded-full px-6 py-2 border border-white/20 mb-8">
-              <Calculator className="w-5 h-5 text-accent-teal" />
-              <span className="text-sm font-bold text-white tracking-wide uppercase">Years K to 12</span>
-            </div>
+          <div className="relative z-10 mx-auto grid w-full max-w-7xl gap-10 px-5 pb-24 lg:grid-cols-[1.05fr_.75fr] lg:px-8 lg:pb-28">
+            <motion.div initial={{ opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, ease: 'easeOut' }}>
+              <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-xs font-black uppercase tracking-[0.14em] text-[#f1df9a] backdrop-blur-md">
+                <Calculator className="h-4 w-4" />
+                Years K-12 mathematics
+              </div>
+              <h1 className="max-w-4xl font-serif text-5xl font-medium leading-[0.96] tracking-[-0.055em] text-white sm:text-6xl lg:text-7xl">
+                Maths support that feels calm, clear, and serious.
+              </h1>
+              <p className="mt-6 max-w-2xl text-lg leading-8 text-white/75">
+                From times tables to Extension 2, DA Tuition helps students understand the method, practise with structure, and walk into assessments with confidence.
+              </p>
+              <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+                <Link to="/book-interview">
+                  <Button size="lg" className="h-12 rounded-full bg-[#c9a227] px-7 font-black text-[#101521] shadow-xl shadow-[#c9a227]/25 hover:bg-[#e0bd4b]">
+                    Book an Interview
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+                </Link>
+                <Button
+                  size="lg"
+                  variant="outline"
+                  onClick={scrollToPathways}
+                  className="h-12 rounded-full border-white/30 bg-white/10 px-7 font-bold text-white backdrop-blur-md hover:bg-white/15 hover:text-white"
+                >
+                  Find the Right Level
+                </Button>
+              </div>
+            </motion.div>
 
-            <h1 className="text-3xl sm:text-4xl lg:text-7xl font-extrabold text-white mb-6 tracking-tight leading-tight drop-shadow-lg">
-              Mathematics <br />
-              <span className="text-accent-teal">Mastery</span>
-            </h1>
+            <motion.aside
+              initial={{ opacity: 0, y: 28 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.12, ease: 'easeOut' }}
+              className="self-end rounded-3xl border border-white/14 bg-white/[0.09] p-6 shadow-2xl backdrop-blur-xl"
+            >
+              <p className="text-sm font-black uppercase tracking-[0.14em] text-[#f1df9a]">Parent quick check</p>
+              <div className="mt-5 space-y-4">
+                {['Unsure which maths level fits?', 'Worried about confidence?', 'Preparing for HSC exams?'].map((item) => (
+                  <div key={item} className="flex items-start gap-3 rounded-2xl bg-white/10 p-4 text-white">
+                    <CheckCircle className="mt-0.5 h-5 w-5 shrink-0 text-[#f1df9a]" />
+                    <span className="text-sm font-semibold leading-6">{item}</span>
+                  </div>
+                ))}
+              </div>
+              <p className="mt-5 text-sm leading-6 text-white/90">
+                Not sure where to start? Book an interview and we will work out the right level, class, and starting point together.
+              </p>
+            </motion.aside>
+          </div>
+        </section>
 
-            <p className="text-xl text-white/90 max-w-2xl mx-auto mb-10 leading-relaxed drop-shadow-md">
-              From foundational numeracy to advanced HSC mathematics, we build confidence through expert guidance and proven teaching methods.
-            </p>
+        {/* Anchor navigation */}
+        <section className="-mt-10 px-5 lg:px-8">
+          <div className="relative z-10 mx-auto grid max-w-7xl gap-3 rounded-3xl border border-[#c9a227]/20 bg-[#fffdf8] p-3 shadow-2xl shadow-[#071629]/10 md:grid-cols-4">
+            {[
+              ['Parent concerns', '#parent-concerns'],
+              ['Year levels', '#math-pathways'],
+              ['HSC streams', '#hsc-maths'],
+              ['How we teach', '#math-method'],
+            ].map(([label, href]) => (
+              <a key={href} href={href} className="rounded-2xl px-4 py-3 text-center text-sm font-black text-[#10233f] transition hover:bg-[#f5ecd9]">
+                {label}
+              </a>
+            ))}
+          </div>
+        </section>
 
-            <div className="flex justify-center">
-              <Button size="lg" className="bg-accent-teal text-white hover:bg-teal-600 font-bold px-8 h-14 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all">
-                Book Interview
-                <ArrowRight className="ml-2 w-5 h-5" />
-              </Button>
+        {/* Parent concerns */}
+        <section id="parent-concerns" className="bg-[#fff6e7] px-5 py-20 lg:px-8">
+          <div className="mx-auto max-w-7xl">
+            <SectionHeader
+              eyebrow="For parents"
+              title="Maths problems usually show up as confidence problems first."
+              text="Whether your child freezes in tests, avoids homework, or needs to push further ahead, these are the situations we work with every day."
+            />
+
+            <div className="grid gap-5 lg:grid-cols-3">
+              {parentConcerns.map((concern, index) => (
+                <motion.article
+                  key={concern.title}
+                  initial={{ opacity: 0, y: 24 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: '-80px' }}
+                  transition={{ duration: 0.55, delay: index * 0.08 }}
+                  className="rounded-3xl border border-[#071629]/10 bg-white p-6 shadow-lg shadow-[#071629]/5 transition duration-300 hover:-translate-y-1 hover:shadow-xl"
+                >
+                  <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#e8f2ff] text-[#10233f]">
+                    <concern.icon className="h-6 w-6" />
+                  </div>
+                  <h2 className="text-xl font-black leading-snug tracking-[-0.02em] text-[#10233f]">{concern.title}</h2>
+                  <p className="mt-4 text-sm leading-7 text-[#61708a]">{concern.detail}</p>
+                </motion.article>
+              ))}
             </div>
           </div>
         </section>
-      </div>
 
-      {/* Learning Formats Callout */}
-      < section className="py-12" >
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-8 border border-blue-200">
-            <div className="flex items-start">
-              <Info className="w-6 h-6 text-blue-600 mt-1 mr-3 flex-shrink-0" />
+        {/* Year level pathways */}
+        <section id="math-pathways" className="bg-[#fffdf8] px-5 py-20 lg:px-8">
+          <div className="mx-auto max-w-7xl">
+            <SectionHeader
+              eyebrow="Pathways"
+              title="Choose by school stage, not by guesswork."
+              text="Not sure which level fits your child? The interview will help. These cards give you a starting point to compare before you call."
+            />
+
+            <div className="grid gap-6 lg:grid-cols-3">
+              {courseLevels.map((level, index) => (
+                <motion.article
+                  key={level.label}
+                  initial={{ opacity: 0, y: 24 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: '-80px' }}
+                  transition={{ duration: 0.55, delay: index * 0.08 }}
+                  className={`group flex min-h-[430px] flex-col justify-between rounded-[2rem] border border-[#071629]/10 bg-gradient-to-b ${level.tone} p-7 shadow-lg shadow-[#071629]/5 transition duration-300 hover:-translate-y-1 hover:shadow-2xl`}
+                >
+                  <div>
+                    <div className="flex items-center justify-between gap-4">
+                      <span className="rounded-full bg-white/80 px-3 py-1 text-xs font-black uppercase tracking-[0.12em] text-[#10233f]">{level.years}</span>
+                      <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#10233f] text-[#f1df9a]">
+                        <level.icon className="h-5 w-5" />
+                      </div>
+                    </div>
+                    <h2 className="mt-12 font-serif text-3xl font-medium tracking-[-0.04em] text-[#071629]">{level.label}</h2>
+                    <p className="mt-4 text-sm leading-7 text-[#61708a]">{level.description}</p>
+                    <ul className="mt-6 space-y-3">
+                      {level.subjects.map((subject) => (
+                        <li key={subject} className="flex items-start gap-3 text-sm font-semibold text-[#24324a]">
+                          <CheckCircle className="mt-0.5 h-4 w-4 shrink-0 text-[#c9a227]" />
+                          {subject}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  <Link to="/book-interview" className="mt-8 inline-flex items-center text-sm font-black text-[#10233f]">
+                    Ask which level fits
+                    <ArrowRight className="ml-2 h-4 w-4 transition group-hover:translate-x-1" />
+                  </Link>
+                </motion.article>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* HSC streams */}
+        <section id="hsc-maths" className="bg-[#071629] px-5 py-20 text-white lg:px-8">
+          <div className="mx-auto max-w-7xl">
+            <div className="grid gap-10 lg:grid-cols-[.75fr_1.25fr] lg:items-end">
               <div>
-                <h3 className="text-xl font-bold text-brand-midnight mb-2">Available in Small Groups & Classes</h3>
-                <p className="text-brand-midnight/80 mb-4">
-                  Mathematics at DA Tuition is offered in both small group tutoring (3-5 students) and classes.
-                  We carefully match each student to the format that best suits their learning style, confidence level,
-                  and goals - whether they need focused support or exam-style practice.
-                </p>
-                <Link to="/learning-formats">
-                  <Button variant="outline" className="group">
-                    Learn About Our Learning Formats
-                    <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-                  </Button>
-                </Link>
+                <p className="mb-3 text-xs font-black uppercase tracking-[0.16em] text-[#f1df9a]">HSC focus</p>
+                <h2 className="font-serif text-4xl font-medium leading-tight tracking-[-0.045em] text-white lg:text-5xl">
+                  Clear pathways for Standard, Advanced, and Extension maths.
+                </h2>
               </div>
-            </div>
-          </div>
-        </div>
-      </section >
-
-      {/* Course Offerings */}
-      < section className="py-16 bg-gray-50" >
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-center text-brand-midnight mb-4">
-            Comprehensive Mathematics Programs
-          </h2>
-          <p className="text-center text-brand-midnight/80 mb-12 max-w-2xl mx-auto">
-            From foundational numeracy to advanced HSC mathematics, we support every student's journey
-          </p>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            {courses.map((level, index) => (
-              <div key={index} className="bg-white rounded-xl shadow-lg p-6">
-                <h3 className="text-xl font-bold text-blue-600 mb-4">{level.level}</h3>
-                <ul className="space-y-2">
-                  {level.subjects.map((subject, idx) => (
-                    <li key={idx} className="flex items-start">
-                      <CheckCircle className="w-5 h-5 text-green-500 mt-0.5 mr-2 flex-shrink-0" />
-                      <span className="text-brand-midnight/80">{subject}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section >
-
-      {/* HSC Mathematics Focus */}
-      < section className="py-16" >
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-center text-brand-midnight mb-12">
-            HSC Mathematics Excellence
-          </h2>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {/* Standard Mathematics */}
-            <div className="bg-white rounded-xl p-6 shadow-lg">
-              <h3 className="text-lg font-bold text-brand-midnight mb-3">Standard</h3>
-              <ul className="space-y-1">
-                {topics.standard.map((topic, idx) => (
-                  <li key={idx} className="text-sm text-brand-midnight/80">• {topic}</li>
-                ))}
-              </ul>
-              <div className="mt-4 text-sm font-semibold text-blue-600">Band 6 Achievable</div>
-            </div>
-
-            {/* Advanced Mathematics */}
-            <div className="bg-white rounded-xl p-6 shadow-lg">
-              <h3 className="text-lg font-bold text-brand-midnight mb-3">Advanced</h3>
-              <ul className="space-y-1">
-                {topics.advanced.map((topic, idx) => (
-                  <li key={idx} className="text-sm text-brand-midnight/80">• {topic}</li>
-                ))}
-              </ul>
-              <div className="mt-4 text-sm font-semibold text-indigo-600">Most Popular</div>
-            </div>
-
-            {/* Extension 1 */}
-            <div className="bg-white rounded-xl p-6 shadow-lg">
-              <h3 className="text-lg font-bold text-brand-midnight mb-3">Extension 1</h3>
-              <ul className="space-y-1">
-                {topics.extension1.map((topic, idx) => (
-                  <li key={idx} className="text-sm text-brand-midnight/80">• {topic}</li>
-                ))}
-              </ul>
-              <div className="mt-4 text-sm font-semibold text-purple-600">High Scaling</div>
-            </div>
-
-            {/* Extension 2 */}
-            <div className="bg-white rounded-xl p-6 shadow-lg">
-              <h3 className="text-lg font-bold text-brand-midnight mb-3">Extension 2</h3>
-              <ul className="space-y-1">
-                {topics.extension2.map((topic, idx) => (
-                  <li key={idx} className="text-sm text-brand-midnight/80">• {topic}</li>
-                ))}
-              </ul>
-              <div className="mt-4 text-sm font-semibold text-pink-600">Elite Level</div>
-            </div>
-          </div>
-
-          <div className="mt-12 text-center">
-            <p className="text-brand-midnight/80 mb-6">
-              Our mathematics teachers include Engineering graduates, actuaries, and Band 6/E4 achievers
-            </p>
-            <Link to="/hsc-excellence">
-              <Button variant="outline" size="lg" className="group">
-                Explore HSC Program
-                <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </section >
-
-      {/* Problem-Solving Approach */}
-      < section className="py-16 bg-gradient-to-br from-blue-50 to-indigo-50" >
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-            <div>
-              <h3 className="text-2xl font-bold text-brand-midnight mb-6">Building Problem-Solving Skills</h3>
-              <p className="text-brand-midnight/80 mb-6">
-                Mathematics is more than memorizing formulas - it's about developing logical thinking and
-                problem-solving strategies that apply to real-world situations. Our approach focuses on deep
-                understanding rather than rote learning.
+              <p className="text-base leading-8 text-white/64">
+                We support all four HSC mathematics streams. You do not need to decode the syllabus — just tell us which subject your child is enrolled in and we will match them to the right class and teacher.
               </p>
-              <ul className="space-y-3">
-                {skills.map((skill, index) => (
-                  <li key={index} className="flex items-start">
-                    <Calculator className="w-5 h-5 text-blue-600 mt-0.5 mr-3 flex-shrink-0" />
-                    <span className="text-brand-midnight/80">{skill}</span>
+            </div>
+
+            <div className="mt-10 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+              {hscStreams.map((stream, index) => (
+                <motion.article
+                  key={stream.name}
+                  initial={{ opacity: 0, y: 24 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: '-80px' }}
+                  transition={{ duration: 0.55, delay: index * 0.06 }}
+                  className="rounded-3xl border border-white/12 bg-white/[0.07] p-6 shadow-2xl shadow-black/10 backdrop-blur transition duration-300 hover:-translate-y-1 hover:bg-white/[0.1]"
+                >
+                  <span className="rounded-full bg-[#c9a227]/18 px-3 py-1 text-xs font-black uppercase tracking-[0.1em] text-[#f1df9a]">{stream.badge}</span>
+                  <h3 className="mt-6 text-2xl font-black tracking-[-0.02em]">{stream.name}</h3>
+                  <ul className="mt-5 space-y-3">
+                    {stream.topics.map((topic) => (
+                      <li key={topic} className="flex items-start gap-3 text-sm leading-6 text-white/72">
+                        <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[#f1df9a]" />
+                        {topic}
+                      </li>
+                    ))}
+                  </ul>
+                </motion.article>
+              ))}
+            </div>
+
+            <div className="mt-10 flex flex-col items-start justify-between gap-5 rounded-3xl border border-white/12 bg-white/[0.06] p-6 md:flex-row md:items-center">
+              <p className="max-w-3xl text-sm leading-7 text-white/70">
+                Mathematics teachers include high-achieving subject specialists who help students move from knowing content to showing clear working under exam conditions.
+              </p>
+              <Link to="/hsc-excellence">
+                <Button variant="outline" className="rounded-full border-white/30 bg-transparent font-bold text-white hover:bg-white/10 hover:text-white">
+                  Explore HSC Program
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </section>
+
+        {/* How we teach */}
+        <section id="math-method" className="bg-[#fff6e7] px-5 py-20 lg:px-8">
+          <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[.9fr_1.1fr] lg:items-center">
+            <motion.div initial={{ opacity: 0, x: -24 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }}>
+              <p className="mb-3 text-xs font-black uppercase tracking-[0.16em] text-[#c9a227]">How we teach</p>
+              <h2 className="font-serif text-4xl font-medium leading-tight tracking-[-0.045em] text-[#071629] lg:text-5xl">
+                Less panic. More method.
+              </h2>
+              <p className="mt-5 text-base leading-8 text-[#61708a]">
+                Maths feels more manageable when students know exactly what to do when a question is unfamiliar. We teach method alongside content so students build real confidence alongside their marks.
+              </p>
+              <ul className="mt-8 grid gap-3 sm:grid-cols-2">
+                {skills.map((skill) => (
+                  <li key={skill} className="flex items-center gap-3 rounded-2xl bg-white px-4 py-3 text-sm font-bold text-[#24324a] shadow-sm">
+                    <Calculator className="h-4 w-4 text-[#c9a227]" />
+                    {skill}
                   </li>
                 ))}
               </ul>
-            </div>
+            </motion.div>
 
-            <div className="space-y-6">
-              <div className="pastel-card pastel-blue-soft">
-                <h4 className="text-xl font-bold text-brand-midnight mb-3">Step-by-Step Methods</h4>
-                <p className="text-brand-midnight/80">
-                  We break down complex problems into manageable steps, ensuring students understand each part
-                  of the solution process. This methodical approach builds confidence and reduces errors.
-                </p>
-              </div>
-
-              <div className="pastel-card pastel-indigo-soft">
-                <h4 className="text-xl font-bold text-brand-midnight mb-3">Multiple Approaches</h4>
-                <p className="text-brand-midnight/80">
-                  We teach various methods for solving problems, allowing students to choose the approach that
-                  makes most sense to them. This flexibility is crucial for exam success.
-                </p>
-              </div>
-
-              <div className="pastel-card pastel-purple-soft">
-                <h4 className="text-xl font-bold text-brand-midnight mb-3">Real-World Applications</h4>
-                <p className="text-brand-midnight/80">
-                  We connect mathematical concepts to real-life scenarios, making abstract ideas concrete and
-                  showing students why mathematics matters beyond the classroom.
-                </p>
-              </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              {teachingSteps.map((step, index) => (
+                <motion.article
+                  key={step.title}
+                  initial={{ opacity: 0, y: 24 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: '-80px' }}
+                  transition={{ duration: 0.55, delay: index * 0.08 }}
+                  className="rounded-3xl border border-[#071629]/10 bg-white p-6 shadow-lg shadow-[#071629]/5"
+                >
+                  <div className="mb-8 flex h-10 w-10 items-center justify-center rounded-full bg-[#071629] text-sm font-black text-[#f1df9a]">{index + 1}</div>
+                  <h3 className="text-xl font-black tracking-[-0.02em] text-[#10233f]">{step.title}</h3>
+                  <p className="mt-3 text-sm leading-7 text-[#61708a]">{step.text}</p>
+                </motion.article>
+              ))}
             </div>
           </div>
-        </div>
-      </section >
+        </section>
 
-      {/* Foundation Building */}
-      < section className="py-16" >
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-center text-brand-midnight mb-12">
-            Strong Foundations for Every Level
-          </h2>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="bg-white rounded-xl p-6 shadow-lg">
-              <Calculator className="w-12 h-12 text-blue-600 mb-4" />
-              <h3 className="text-xl font-bold text-brand-midnight mb-3">Primary Foundation</h3>
-              <p className="text-brand-midnight/80 mb-4">
-                Building strong numeracy skills through engaging activities, games, and practical applications.
-                We make times tables fun and develop mental math strategies.
+        {/* Learning format cards */}
+        <section className="bg-[#fffdf8] px-5 py-20 lg:px-8">
+          <div className="mx-auto grid max-w-7xl gap-5 lg:grid-cols-2">
+            <div className="rounded-[2rem] border border-[#071629]/10 bg-gradient-to-br from-[#f7fbff] to-[#e8f2ff] p-8 shadow-lg shadow-[#071629]/5">
+              <Sparkles className="mb-5 h-10 w-10 text-[#10233f]" />
+              <h2 className="text-2xl font-black tracking-[-0.03em] text-[#10233f]">Problem-Solving Workshops</h2>
+              <p className="mt-4 text-sm leading-7 text-[#61708a]">
+                For students aiming high in their class or tackling enrichment challenges. Focused sessions on harder problem types that go beyond the standard lesson program.
               </p>
-              <ul className="space-y-2 text-sm text-brand-midnight/80">
-                <li>• Number sense development</li>
-                <li>• Problem-solving strategies</li>
-                <li>• Confidence building</li>
-                <li>• Advanced problem-solving</li>
-              </ul>
+              <Link to="/hsc-excellence" className="mt-6 inline-flex items-center text-sm font-black text-[#10233f]">
+                Learn more
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
             </div>
 
-            <div className="bg-white rounded-xl p-6 shadow-lg">
-              <Sparkles className="w-12 h-12 text-indigo-600 mb-4" />
-              <h3 className="text-xl font-bold text-brand-midnight mb-3">High School Excellence</h3>
-              <p className="text-brand-midnight/80 mb-4">
-                Mastering algebra, geometry, and trigonometry while developing critical thinking skills.
-                We prepare students for advanced mathematics.
+            <div className="rounded-[2rem] border border-[#071629]/10 bg-gradient-to-br from-[#fffdf7] to-[#fff1cd] p-8 shadow-lg shadow-[#071629]/5">
+              <Users className="mb-5 h-10 w-10 text-[#10233f]" />
+              <h2 className="text-2xl font-black tracking-[-0.03em] text-[#10233f]">Small Groups and Classes</h2>
+              <p className="mt-4 text-sm leading-7 text-[#61708a]">
+                Our small group classes (3–5 students) give your child focused attention in a structured setting. Students are matched to a group that suits their current level and pace.
               </p>
-              <ul className="space-y-2 text-sm text-brand-midnight/80">
-                <li>• Algebraic mastery</li>
-                <li>• Geometric reasoning</li>
-                <li>• Assessment preparation</li>
-                <li>• Study skills development</li>
-              </ul>
-            </div>
-
-            <div className="bg-white rounded-xl p-6 shadow-lg">
-              <CheckCircle className="w-12 h-12 text-green-600 mb-4" />
-              <h3 className="text-xl font-bold text-brand-midnight mb-3">HSC Success</h3>
-              <p className="text-brand-midnight/80 mb-4">
-                Achieving Band 6 results through strategic exam preparation, past paper practice, and
-                mastery of complex topics.
-              </p>
-              <ul className="space-y-2 text-sm text-brand-midnight/80">
-                <li>• Trial exam preparation</li>
-                <li>• Past paper mastery</li>
-                <li>• Time management</li>
-                <li>• Scaling optimization</li>
-              </ul>
+              <Link to="/learning-formats" className="mt-6 inline-flex items-center text-sm font-black text-[#10233f]">
+                Compare formats
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
             </div>
           </div>
-        </div>
-      </section >
+        </section>
 
-      {/* Success Story */}
-      < section className="py-16 bg-gray-50" >
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12">
-            <div className="text-center mb-6">
-              <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Quote className="w-10 h-10 text-white" />
-              </div>
-              <h3 className="text-2xl font-bold text-brand-midnight mb-2">From Struggling to State Ranking</h3>
+        {/* Testimonial */}
+        <section className="bg-[#fffdf8] px-5 pb-20 lg:px-8">
+          <div className="mx-auto max-w-5xl rounded-[2rem] border border-[#071629]/10 bg-white p-8 shadow-2xl shadow-[#071629]/8 md:p-12">
+            <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-3xl bg-[#10233f] text-[#f1df9a]">
+              <Quote className="h-8 w-8" />
             </div>
-            <blockquote className="text-lg text-brand-midnight/80 italic text-center mb-6">
-              "I started Year 11 failing Advanced Mathematics. DA Tuition matched me with the perfect teacher
-              and learning format. Their systematic approach and patient guidance transformed my understanding.
-              By Year 12, I was topping Extension 1 and achieved 96 in Extension 2. The small group environment
-              made complex topics accessible, and the exam practice in classes prepared me perfectly for the HSC."
+            <blockquote className="mx-auto max-w-3xl text-center font-serif text-2xl leading-snug tracking-[-0.03em] text-[#10233f] md:text-3xl">
+              "The biggest change was not just marks. My child stopped saying, 'I'm bad at maths,' and started showing us how they solved the question."
             </blockquote>
-            <p className="text-center text-brand-midnight/80">
-              <strong>James Liu</strong> - State Rank in Mathematics Extension 2, now studying Engineering at UNSW
-            </p>
+            <p className="mt-6 text-center text-sm font-black uppercase tracking-[0.12em] text-[#c9a227]">Parent feedback</p>
           </div>
-        </div>
-      </section >
+        </section>
 
-      {/* Special Programs */}
-      < section className="py-16" >
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-center text-brand-midnight mb-12">
-            Specialized Mathematics Support
-          </h2>
-
-          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            <div className="pastel-card pastel-blue-soft">
-              <h3 className="text-xl font-bold text-brand-midnight mb-4">Problem-Solving Workshops</h3>
-              <p className="text-brand-midnight/80 mb-4">
-                Intensive sessions focusing on challenging problems, competition mathematics, and extension topics.
-                Perfect for students aiming for top bands.
+        {/* Final CTA */}
+        <section className="bg-[#071629] px-5 py-20 text-white lg:px-8">
+          <div className="mx-auto grid max-w-6xl gap-8 rounded-[2rem] border border-white/12 bg-white/[0.06] p-8 shadow-2xl md:p-12 lg:grid-cols-[1fr_auto] lg:items-center">
+            <div>
+              <p className="mb-3 text-xs font-black uppercase tracking-[0.16em] text-[#f1df9a]">Next step</p>
+              <h2 className="font-serif text-4xl font-medium leading-tight tracking-[-0.045em] text-white">
+                Find the right maths starting point.
+              </h2>
+              <p className="mt-4 max-w-2xl text-base leading-8 text-white/66">
+                Book an interview and we will help you work out whether your child needs confidence support, extension work, or HSC exam preparation.
               </p>
-              <Link to="/hsc-excellence">
-                <Button variant="outline" size="sm" className="group">
-                  Learn More
-                  <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+            </div>
+            <div className="flex flex-col gap-3 sm:flex-row lg:flex-col">
+              <Link to="/book-interview">
+                <Button size="lg" className="h-12 w-full rounded-full bg-[#c9a227] px-7 font-black text-[#101521] hover:bg-[#e0bd4b]">
+                  Book an Interview
+                  <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </Link>
-            </div>
-
-            <div className="pastel-card pastel-indigo-soft">
-              <h3 className="text-xl font-bold text-brand-midnight mb-4">Accelerated Mathematics</h3>
-              <p className="text-brand-midnight/80 mb-4">
-                For gifted students ready to work ahead of their grade. We offer pathways to complete HSC
-                mathematics early and pursue university-level content.
-              </p>
-              <Link to="/hsc-excellence">
-                <Button variant="outline" size="sm" className="group">
-                  Learn More
-                  <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+              <a href="tel:0401940207">
+                <Button size="lg" variant="outline" className="h-12 w-full rounded-full border-white/30 bg-transparent px-7 font-bold text-white hover:bg-white/10 hover:text-white">
+                  Call 0401 940 207
                 </Button>
-              </Link>
+              </a>
             </div>
           </div>
-        </div>
-      </section >
-
-      {/* CTA Section */}
-      < section className="py-16 bg-brand-navy text-white relative overflow-hidden" >
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-brand-blue rounded-full blur-3xl"></div>
-          <div className="absolute bottom-0 left-0 w-64 h-64 bg-accent-teal rounded-full blur-3xl"></div>
-        </div>
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
-          <h2 className="text-3xl font-bold text-white mb-4">
-            Start Your Mathematics Journey Today
-          </h2>
-          <p className="text-xl text-white mb-8">
-            Join hundreds of students who've conquered their fear of maths and achieved excellence
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" className="bg-white text-blue-600 hover:bg-blue-50">
-              Book Interview
-            </Button>
-            <Button size="lg" variant="outline" className="bg-transparent text-white border-white hover:bg-white/10">
-              Call 0401 940 207
-            </Button>
-          </div>
-        </div>
-      </section >
+        </section>
+      </main>
 
       <FooterNew />
-    </div >
+    </div>
   );
 };
+
+const SectionHeader = ({ eyebrow, title, text }: { eyebrow: string; title: string; text: string }) => (
+  <div className="mb-10 grid gap-6 lg:grid-cols-[.85fr_1fr] lg:items-end">
+    <div>
+      <p className="mb-3 text-xs font-black uppercase tracking-[0.16em] text-[#c9a227]">{eyebrow}</p>
+      <h2 className="font-serif text-4xl font-medium leading-tight tracking-[-0.045em] text-[#071629] lg:text-5xl">{title}</h2>
+    </div>
+    <p className="max-w-2xl text-base leading-8 text-[#61708a]">{text}</p>
+  </div>
+);
 
 export default Mathematics;

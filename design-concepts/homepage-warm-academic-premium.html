@@ -1,0 +1,580 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>DA Tuition - Warm Academic Premium Concept</title>
+  <style>
+    :root {
+      --navy: #071629;
+      --navy-2: #10233f;
+      --ink: #172033;
+      --muted: #61708a;
+      --cream: #f7f2e9;
+      --paper: #fffdf8;
+      --gold: #c9a227;
+      --gold-soft: #f1df9a;
+      --blue-soft: #e7f0ff;
+      --green-soft: #e9f8ef;
+      --rose-soft: #fdecef;
+      --amber-soft: #fff4d7;
+      --line: rgba(7, 22, 41, 0.12);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background: var(--paper);
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    .nav {
+      position: fixed;
+      top: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 20;
+      width: min(1180px, calc(100% - 32px));
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 14px 12px 18px;
+      border: 1px solid rgba(255, 255, 255, 0.48);
+      border-radius: 18px;
+      background: rgba(255, 253, 248, 0.86);
+      backdrop-filter: blur(18px);
+      box-shadow: 0 18px 60px rgba(7, 22, 41, 0.12);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      color: var(--navy);
+    }
+
+    .brand-mark {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      background: var(--navy);
+      color: var(--gold-soft);
+      font-weight: 900;
+      box-shadow: inset 0 0 0 1px rgba(241, 223, 154, 0.28);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      color: rgba(23, 32, 51, 0.74);
+      font-size: 0.92rem;
+      font-weight: 700;
+    }
+
+    .nav-cta,
+    .button-primary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      padding: 0 18px;
+      border-radius: 999px;
+      border: 0;
+      background: linear-gradient(135deg, var(--gold), #e7c85d);
+      color: #101521;
+      font-weight: 900;
+      box-shadow: 0 12px 30px rgba(201, 162, 39, 0.28);
+    }
+
+    .button-secondary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      padding: 0 18px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.36);
+      color: #fffdf8;
+      font-weight: 800;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .hero {
+      min-height: 92vh;
+      display: grid;
+      align-items: end;
+      position: relative;
+      overflow: hidden;
+      background: var(--navy);
+      color: white;
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(90deg, rgba(7, 22, 41, 0.92) 0%, rgba(7, 22, 41, 0.72) 42%, rgba(7, 22, 41, 0.32) 100%),
+        url("../public/images/v3/hero_entrance.jpg") center / cover no-repeat;
+      transform: scale(1.02);
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: auto 0 0;
+      height: 180px;
+      background: linear-gradient(180deg, transparent, var(--cream));
+    }
+
+    .hero-inner {
+      position: relative;
+      z-index: 2;
+      width: min(1180px, calc(100% - 40px));
+      margin: 0 auto;
+      padding: 150px 0 110px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      color: var(--gold-soft);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 780px;
+      margin: 24px 0 20px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(3rem, 7vw, 6.6rem);
+      line-height: 0.94;
+      letter-spacing: -0.055em;
+      font-weight: 500;
+    }
+
+    .hero-copy {
+      max-width: 620px;
+      color: rgba(255, 253, 248, 0.76);
+      font-size: clamp(1.05rem, 1.5vw, 1.22rem);
+      line-height: 1.7;
+      margin: 0 0 32px;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .trust-panel {
+      position: relative;
+      z-index: 4;
+      width: min(1180px, calc(100% - 40px));
+      margin: -70px auto 0;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      background: var(--paper);
+      border: 1px solid rgba(201, 162, 39, 0.18);
+      border-radius: 22px;
+      box-shadow: 0 26px 80px rgba(7, 22, 41, 0.13);
+      overflow: hidden;
+    }
+
+    .trust-item {
+      padding: 26px 22px;
+      border-right: 1px solid var(--line);
+    }
+
+    .trust-item:last-child { border-right: 0; }
+
+    .trust-number {
+      font-family: Georgia, "Times New Roman", serif;
+      color: var(--navy);
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      line-height: 1;
+      margin-bottom: 7px;
+    }
+
+    .trust-label {
+      color: var(--muted);
+      font-size: 0.83rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    section {
+      padding: 100px 20px;
+    }
+
+    .cream { background: var(--cream); }
+
+    .wrap {
+      width: min(1180px, 100%);
+      margin: 0 auto;
+    }
+
+    .section-head {
+      display: grid;
+      grid-template-columns: minmax(0, 0.8fr) minmax(0, 1fr);
+      gap: 42px;
+      align-items: end;
+      margin-bottom: 38px;
+    }
+
+    .kicker {
+      color: var(--gold);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    h2 {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-weight: 500;
+      font-size: clamp(2.1rem, 4vw, 4rem);
+      line-height: 1.02;
+      letter-spacing: -0.045em;
+      color: var(--navy);
+    }
+
+    .section-lede {
+      color: var(--muted);
+      line-height: 1.75;
+      font-size: 1.02rem;
+      max-width: 620px;
+      margin: 0;
+    }
+
+    .program-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .program-card {
+      min-height: 330px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 26px;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: white;
+      box-shadow: 0 10px 35px rgba(7, 22, 41, 0.06);
+    }
+
+    .program-card.primary { background: linear-gradient(180deg, white, var(--blue-soft)); }
+    .program-card.high { background: linear-gradient(180deg, white, var(--green-soft)); }
+    .program-card.hsc { background: linear-gradient(180deg, white, var(--amber-soft)); }
+
+    .pill {
+      width: max-content;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: rgba(7, 22, 41, 0.08);
+      color: var(--navy);
+      font-size: 0.78rem;
+      font-weight: 900;
+    }
+
+    .program-card h3 {
+      margin: 42px 0 12px;
+      font-size: 1.45rem;
+      letter-spacing: -0.025em;
+      color: var(--navy);
+    }
+
+    .program-card p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    .learn-link {
+      margin-top: 24px;
+      color: var(--navy);
+      font-weight: 900;
+    }
+
+    .proof {
+      background: var(--navy);
+      color: white;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .proof::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 15% 20%, rgba(201, 162, 39, 0.18), transparent 32%),
+        radial-gradient(circle at 85% 70%, rgba(99, 154, 255, 0.14), transparent 28%);
+    }
+
+    .proof .wrap {
+      position: relative;
+      display: grid;
+      grid-template-columns: 0.9fr 1.1fr;
+      gap: 56px;
+      align-items: center;
+    }
+
+    .proof h2 { color: white; }
+
+    .quote-card {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 24px;
+      padding: 34px;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    }
+
+    .quote-card p {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(1.5rem, 3vw, 2.35rem);
+      line-height: 1.28;
+      color: rgba(255, 253, 248, 0.92);
+    }
+
+    .quote-meta {
+      margin-top: 26px;
+      color: var(--gold-soft);
+      font-weight: 900;
+    }
+
+    .method-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    .method {
+      padding: 24px;
+      border-radius: 18px;
+      background: white;
+      border: 1px solid var(--line);
+    }
+
+    .method strong {
+      display: block;
+      color: var(--navy);
+      margin-bottom: 10px;
+      font-size: 1.02rem;
+    }
+
+    .method span {
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 0.94rem;
+    }
+
+    .cta-band {
+      background: linear-gradient(135deg, var(--navy), var(--navy-2));
+      color: white;
+      border-radius: 28px;
+      padding: 46px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 28px;
+      box-shadow: 0 28px 90px rgba(7, 22, 41, 0.25);
+    }
+
+    .cta-band h2 {
+      color: white;
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      margin-bottom: 12px;
+    }
+
+    .cta-band p {
+      color: rgba(255, 253, 248, 0.7);
+      margin: 0;
+      line-height: 1.65;
+    }
+
+    @media (max-width: 860px) {
+      .nav-links { display: none; }
+      .trust-panel,
+      .program-grid,
+      .method-grid,
+      .proof .wrap,
+      .section-head,
+      .cta-band {
+        grid-template-columns: 1fr;
+      }
+      .trust-item { border-right: 0; border-bottom: 1px solid var(--line); }
+      .trust-item:last-child { border-bottom: 0; }
+      section { padding: 72px 18px; }
+      .hero-inner { padding-bottom: 94px; }
+      .cta-band { padding: 32px 24px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="nav">
+    <a class="brand" href="#">
+      <span class="brand-mark">DA</span>
+      <span>DA Tuition</span>
+    </a>
+    <nav class="nav-links" aria-label="Primary navigation">
+      <a href="#">Programs</a>
+      <a href="#">Subjects</a>
+      <a href="#">Why DA</a>
+      <a href="#">Success Stories</a>
+      <a href="#">Location</a>
+    </nav>
+    <a class="nav-cta" href="#">Book Interview</a>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-inner">
+        <div class="eyebrow">Canley Heights tutoring since 2005</div>
+        <h1>Serious learning, delivered with heart.</h1>
+        <p class="hero-copy">
+          DA Tuition helps students build stronger foundations, sharper exam skills, and genuine confidence through small-group teaching, experienced educators, and a culture parents can trust.
+        </p>
+        <div class="hero-actions">
+          <a class="button-primary" href="#">Book an Interview</a>
+          <a class="button-secondary" href="#">Explore Programs</a>
+        </div>
+      </div>
+    </section>
+
+    <div class="trust-panel" aria-label="DA Tuition trust indicators">
+      <div class="trust-item">
+        <div class="trust-number">20+</div>
+        <div class="trust-label">Years experience</div>
+      </div>
+      <div class="trust-item">
+        <div class="trust-number">10k+</div>
+        <div class="trust-label">Students helped</div>
+      </div>
+      <div class="trust-item">
+        <div class="trust-number">450+</div>
+        <div class="trust-label">Parent reviews</div>
+      </div>
+      <div class="trust-item">
+        <div class="trust-number">5.0</div>
+        <div class="trust-label">Google rating</div>
+      </div>
+    </div>
+
+    <section class="cream">
+      <div class="wrap">
+        <div class="section-head">
+          <div>
+            <div class="kicker">Programs</div>
+            <h2>Choose the pathway that fits your child.</h2>
+          </div>
+          <p class="section-lede">
+            The premium foundation stays consistent across the site. The softer pastel layer appears here, where parents need to compare stages quickly and students should feel welcomed.
+          </p>
+        </div>
+
+        <div class="program-grid">
+          <article class="program-card primary">
+            <div>
+              <span class="pill">Years K-6</span>
+              <h3>Primary Foundations</h3>
+              <p>Build confidence in literacy, numeracy, and school habits before gaps become harder to close.</p>
+            </div>
+            <a class="learn-link" href="#">View primary programs -></a>
+          </article>
+
+          <article class="program-card high">
+            <div>
+              <span class="pill">Years 7-10</span>
+              <h3>High School Growth</h3>
+              <p>Strengthen core subjects, study routines, and exam confidence through clear weekly structure.</p>
+            </div>
+            <a class="learn-link" href="#">View high school -></a>
+          </article>
+
+          <article class="program-card hsc">
+            <div>
+              <span class="pill">Years 11-12</span>
+              <h3>HSC Excellence</h3>
+              <p>Sharpen syllabus knowledge, assessment strategy, and Band 6 thinking with focused support.</p>
+            </div>
+            <a class="learn-link" href="#">View HSC program -></a>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="proof">
+      <div class="wrap">
+        <div>
+          <div class="kicker">Proof</div>
+          <h2>Trust signals should feel calm, not loud.</h2>
+          <p class="section-lede" style="color: rgba(255,253,248,.68); margin-top: 20px;">
+            Dark navy and gold work best for results, reviews, awards, HSC pages, and conversion sections. They make the brand feel established without needing gimmicks.
+          </p>
+        </div>
+        <div class="quote-card">
+          <p>"The best tutoring decision we've made. The teachers understood our child, not just the syllabus."</p>
+          <div class="quote-meta">Parent review - Canley Heights</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="cream">
+      <div class="wrap">
+        <div class="section-head">
+          <div>
+            <div class="kicker">Method</div>
+            <h2>Clear, repeatable, parent-friendly.</h2>
+          </div>
+          <p class="section-lede">
+            This is where the site should reduce anxiety. Parents need to understand what happens after they enquire and why DA is different.
+          </p>
+        </div>
+
+        <div class="method-grid">
+          <div class="method"><strong>1. Interview</strong><span>Understand the student, goals, concerns, and current school context.</span></div>
+          <div class="method"><strong>2. Match</strong><span>Recommend the right group, teacher, level, and subject pathway.</span></div>
+          <div class="method"><strong>3. Teach</strong><span>Use structured lessons, targeted practice, and clear feedback every week.</span></div>
+          <div class="method"><strong>4. Grow</strong><span>Track confidence, consistency, and academic improvement over time.</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap">
+        <div class="cta-band">
+          <div>
+            <h2>Find the right starting point.</h2>
+            <p>Book an interview and we will help you decide whether DA Tuition is the right fit for your child.</p>
+          </div>
+          <a class="button-primary" href="#">Book Interview</a>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

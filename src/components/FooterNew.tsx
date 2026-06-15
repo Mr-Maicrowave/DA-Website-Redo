@@ -1,11 +1,11 @@
-import { Facebook, Instagram, Youtube, Mail, Phone, MapPin, Clock, Award } from 'lucide-react';
+import { Phone, MapPin, Clock, Award } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const FooterNew = () => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-gray-900 text-gray-300">
+    <footer className="text-gray-300" style={{ background: '#0A1628' }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid md:grid-cols-2 lg:grid-cols-6 gap-8">
           {/* Company Info */}
@@ -21,17 +21,6 @@ const FooterNew = () => {
             <div className="flex items-center gap-2 mb-4">
               <Award className="w-5 h-5 text-yellow-500" />
               <span className="text-sm">Outstanding Education Service 2025</span>
-            </div>
-            <div className="flex space-x-4">
-              <a href="#" className="text-gray-400 hover:text-white transition-colors">
-                <Facebook size={20} />
-              </a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors">
-                <Instagram size={20} />
-              </a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors">
-                <Youtube size={20} />
-              </a>
             </div>
           </div>
 
@@ -185,13 +174,6 @@ const FooterNew = () => {
                 </div>
               </div>
 
-              <div className="mt-6">
-                <Link to="/#contact">
-                  <button className="bg-brand-blue hover:bg-brand-blue-dark text-white px-6 py-3 rounded-lg transition-colors w-full">
-                    Book Interview
-                  </button>
-                </Link>
-              </div>
             </div>
           </div>
         </div>
@@ -201,15 +183,15 @@ const FooterNew = () => {
           <h4 className="text-white font-bold mb-4">Subjects We Teach</h4>
           <div className="flex flex-wrap gap-4 text-sm">
             <Link to="/subjects/mathematics" className="hover:text-white transition-colors">Mathematics</Link>
-            <span className="text-brand-midnight/80">•</span>
+            <span className="text-gray-500">•</span>
             <Link to="/subjects/english" className="hover:text-white transition-colors">English</Link>
-            <span className="text-brand-midnight/80">•</span>
+            <span className="text-gray-500">•</span>
             <Link to="/subjects/science" className="hover:text-white transition-colors">Science</Link>
-            <span className="text-brand-midnight/80">•</span>
+            <span className="text-gray-500">•</span>
             <Link to="/subjects/business-studies" className="hover:text-white transition-colors">Business Studies</Link>
-            <span className="text-brand-midnight/80">•</span>
+            <span className="text-gray-500">•</span>
             <Link to="/subjects/legal-studies" className="hover:text-white transition-colors">Legal Studies</Link>
-            <span className="text-brand-midnight/80">•</span>
+            <span className="text-gray-500">•</span>
             <span className="text-gray-400">Physics • Chemistry • Biology</span>
           </div>
         </div>
@@ -218,7 +200,8 @@ const FooterNew = () => {
         <div className="border-t border-gray-800 mt-8 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <p className="text-gray-400 text-sm">
-              © {currentYear} DA Tuition. All rights reserved. ABN: 58 123 456 789
+              {/* TODO: Replace with real ABN before launch */}
+              © {currentYear} DA Tuition. All rights reserved.
             </p>
             <div className="flex space-x-6 mt-4 md:mt-0">
               <Link to="/privacy-policy" className="text-gray-400 hover:text-white text-sm transition-colors">Privacy Policy</Link>

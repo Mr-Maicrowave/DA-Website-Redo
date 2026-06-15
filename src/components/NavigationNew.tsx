@@ -77,14 +77,6 @@ const NavigationNew = () => {
     }
   ];
 
-  const successItems = [
-    {
-      title: "Success Stories & Reviews",
-      href: "/success-stories",
-      description: "Achievements, 450+ Google reviews, testimonials & student wisdom"
-    }
-  ];
-
   const handleNavClick = (href: string) => {
     setIsOpen(false);
 
@@ -197,31 +189,9 @@ const NavigationNew = () => {
                   </HoverCardContent>
                 </HoverCard>
 
-                {/* Success Stories Dropdown */}
-                <HoverCard openDelay={120} closeDelay={180}>
-                  <HoverCardTrigger asChild>
-                    <button type="button" className="px-2 xl:px-3 py-2 text-sm xl:text-base text-brand-midnight/80 hover:text-brand-blue-dark transition-colors inline-flex items-center gap-1 whitespace-nowrap">
-                      Success Stories <ChevronDown className="h-4 w-4" />
-                    </button>
-                  </HoverCardTrigger>
-                  <HoverCardContent align="center" side="bottom" sideOffset={4} className="p-0 w-auto">
-                    <ul className="grid w-[350px] gap-3 p-4">
-                      {successItems.map((item) => (
-                        <li key={item.href}>
-                          <Link
-                            to={item.href}
-                            className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
-                          >
-                            <div className="text-sm font-medium leading-none">{item.title}</div>
-                            <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                              {item.description}
-                            </p>
-                          </Link>
-                        </li>
-                      ))}
-                    </ul>
-                  </HoverCardContent>
-                </HoverCard>
+                <Link to="/success-stories" className="px-2 xl:px-3 py-2 text-sm xl:text-base text-brand-midnight/80 hover:text-brand-blue-dark transition-colors whitespace-nowrap">
+                  Success Stories
+                </Link>
 
                 {/* Resources Dropdown */}
                 <HoverCard openDelay={120} closeDelay={180}>
@@ -286,21 +256,12 @@ const NavigationNew = () => {
                   <Phone className="w-4 h-4 mr-1 xl:mr-2 shrink-0" />
                   <span className="hidden xl:inline whitespace-nowrap text-sm">0401 940 207</span>
                 </a>
-
-                <Button
-                  className="btn-primary group text-sm whitespace-nowrap"
-                  onClick={() => {
-                    const contactSection = document.getElementById('contact');
-                    if (contactSection) {
-                      contactSection.scrollIntoView({ behavior: 'smooth' });
-                    } else {
-                      window.location.href = '/#contact';
-                    }
-                  }}
+                <Link
+                  to="/book-interview"
+                  className="inline-flex items-center rounded-full bg-[#C9A227] px-4 py-2 text-xs font-black uppercase tracking-[0.08em] text-[#0A1628] transition-colors hover:bg-[#E8C040] whitespace-nowrap shadow-md"
                 >
                   Book Interview
-                  <span className="ml-1 group-hover:translate-x-1 transition-transform inline-block">→</span>
-                </Button>
+                </Link>
               </div>
             </div>
 
@@ -372,20 +333,13 @@ const NavigationNew = () => {
                   ))}
                 </div>
 
-                {/* Mobile Success Stories Section */}
-                <div className="space-y-2">
-                  <div className="font-semibold text-brand-midnight py-3 border-b">Success Stories</div>
-                  {successItems.map((item) => (
-                    <Link
-                      key={item.href}
-                      to={item.href}
-                      onClick={() => setIsOpen(false)}
-                      className="block pl-4 text-brand-midnight/80 hover:text-brand-blue-dark py-3"
-                    >
-                      {item.title}
-                    </Link>
-                  ))}
-                </div>
+                <Link
+                  to="/success-stories"
+                  onClick={() => setIsOpen(false)}
+                  className="block text-brand-midnight/80 hover:text-brand-blue-dark font-medium py-3"
+                >
+                  Success Stories
+                </Link>
 
                 <a
                   href="#contact"
@@ -395,21 +349,6 @@ const NavigationNew = () => {
                   Contact
                 </a>
 
-                <Button
-                  className="btn-primary w-full mt-4 group"
-                  onClick={() => {
-                    setIsOpen(false);
-                    const contactSection = document.getElementById('contact');
-                    if (contactSection) {
-                      contactSection.scrollIntoView({ behavior: 'smooth' });
-                    } else {
-                      window.location.href = '/#contact';
-                    }
-                  }}
-                >
-                  Book Interview
-                  <span className="ml-1 group-hover:translate-x-1 transition-transform inline-block">→</span>
-                </Button>
               </div>
             </div>
           )}
