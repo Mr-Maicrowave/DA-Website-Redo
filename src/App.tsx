@@ -47,7 +47,6 @@ import LegalStudies from "./pages/subjects/LegalStudies";
 import Testimonials from "./pages/Testimonials";
 import TestimonialDetail from "./pages/TestimonialDetail";
 import ScrollToTop from "./components/ScrollToTop";
-import FloatingCTA from "@/components/FloatingCTA";
 
 const queryClient = new QueryClient();
 
@@ -119,7 +118,6 @@ const App = () => (
         <BrowserRouter>
           <CustomCursor />
           <ScrollProgress />
-          <FloatingCTA />
           <div
             className="min-h-screen overflow-x-hidden gradient-transition"
             style={{
