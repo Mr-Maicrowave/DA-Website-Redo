@@ -6,8 +6,8 @@
 
 import { useRef, useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { BookOpen, GraduationCap, School } from 'lucide-react';
-import { motion, useInView, useScroll, useTransform } from 'framer-motion';
+import { BookOpen, GraduationCap, School, Play, X } from 'lucide-react';
+import { motion, AnimatePresence, useInView, useScroll, useTransform, useAnimationControls } from 'framer-motion';
 import NavigationNew from '@/components/NavigationNew';
 import FooterNew from '@/components/FooterNew';
 import AwardRecognition from '@/components/AwardRecognition';
@@ -255,6 +255,64 @@ const HeroSection = () => {
 // ══════════════════════════════════════════════════════════════
 //  PHILOSOPHY BACKED BY RESULTS
 // ══════════════════════════════════════════════════════════════
+// ─────────────────────────────────────────────────────────────────────────────
+//  PHILOSOPHY_STAGES — image replacement guide
+//
+//  Each stage has an `image` path. Current values are temporary placeholders
+//  from the existing site photo library so the layout renders immediately.
+//
+//  When you have real DA photos, drop them into /public/images/philosophy/
+//  and update ONLY the `image` field for each stage below.
+//
+//  Recommended spec per photo:
+//    Size: 1200 × 800 px  |  Format: JPG  |  Max file size: 250 KB
+//    Style: natural light, warm/neutral tones, candid (not posed)
+// ─────────────────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
+//  PHILOSOPHY_STAGES
+//  Each stage is one chapter of the DA educational philosophy.
+//
+//  Image replacement guide
+//  ───────────────────────
+//  Drop photos into /public/images/philosophy/ then update the `image` field.
+//  Recommended: 1600 × 1067 px  |  JPG  |  < 300 KB  |  natural, warm light
+//
+//  Stage 1 — ▶ REPLACE: student working alone, quiet focus, warm window light
+//  Stage 2 — ▶ REPLACE: tutor one-on-one with student, attentive, close frame
+//  Stage 3 — ▶ REPLACE: student actively engaged — hand up or mid-explanation
+//  Stage 4 — ▶ REPLACE: warm tutor–student moment, encouraging, candid
+// ─────────────────────────────────────────────────────────────────────────────
+const PHILOSOPHY_STAGES = [
+  {
+    stage: 1,
+    label: 'Known',
+    title: 'Students deserve to be known before they are judged.',
+    supporting: 'Every student arrives with a different story. We take the time to understand where they are — because the gap between their starting point and their potential is exactly where real growth lives.',
+    image: '/images/v3/warm_interaction.jpg',
+  },
+  {
+    stage: 2,
+    label: 'Belief',
+    title: 'Confidence often comes before achievement.',
+    supporting: 'We have seen it hundreds of times: the moment a student believes they can, the results follow. Building that belief is not a side effect of our teaching — it is the purpose of it.',
+    image: '/images/v3/classroom_active.jpg',
+  },
+  {
+    stage: 3,
+    label: 'Understanding',
+    title: 'Understanding matters more than memorisation.',
+    supporting: 'Real mastery is knowing why something works, not just that it does. We teach students to think deeply, so knowledge becomes theirs permanently — not just until the exam.',
+    image: '/images/v3/small_group_tutoring.jpg',
+  },
+  {
+    stage: 4,
+    label: 'Growth',
+    title: 'We strengthen the child behind the result.',
+    supporting: 'Marks improve when students feel capable, seen, and guided. Our goal is not to chase grades — it is to build the resilience, curiosity, and self-belief that make sustained excellence possible.',
+    image: '/images/v3/collaborative_learning.jpg',
+  },
+];
+
 const STATS_DATA = [
   { target: 20,    decimals: 0, suffix: '+',  label: 'Years of Excellence', triggerDelay: 0   },
   { target: 10000, decimals: 0, suffix: '+',  label: 'Students Supported',  triggerDelay: 200 },
@@ -343,169 +401,1255 @@ const CountUpStat = ({ target, decimals = 0, suffix, triggerDelay, inView }: {
 };
 
 const PhilosophyBackedSection = () => {
-  const sectionRef = useRef(null);
-  const inView = useInView(sectionRef, { once: true, margin: '-100px' });
-  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ['start end', 'end start'] });
-
-  // Gentle parallax — left column drifts up slightly faster than right
-  const leftY  = useTransform(scrollYProgress, [0, 1], ['18px', '-18px']);
-  const rightY = useTransform(scrollYProgress, [0, 1], ['10px', '-10px']);
-  const glowY  = useTransform(scrollYProgress, [0, 1], ['6%',  '-6%']);
-
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const inView = useInView(sectionRef, { once: true, margin: '-60px' });
   const ease = [0.22, 1, 0.36, 1] as const;
 
-  // Fire confetti once when section enters view
+  const [activeIndex, setActiveIndex] = useState(0);
+  const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
+
+  // ── Auto-rotation ─────────────────────────────────────────────
+  const reducedMotion = useRef(
+    typeof window !== 'undefined' &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  ).current;
+
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const stopRotation = () => {
+    if (timerRef.current !== null) { clearInterval(timerRef.current); timerRef.current = null; }
+  };
+  const startRotation = () => {
+    if (reducedMotion) return;
+    stopRotation();
+    timerRef.current = setInterval(() => {
+      setActiveIndex(prev => (prev + 1) % PHILOSOPHY_STAGES.length);
+    }, 5500);
+  };
+  const goTo = (i: number) => {
+    setActiveIndex(i);
+    startRotation();
+    // Move DOM focus to the newly active tab so keyboard users stay oriented
+    tabRefs.current[i]?.focus();
+  };;
+
   useEffect(() => {
-    if (inView && !confettiFired.v) {
-      confettiFired.v = true;
-      setTimeout(fireConfetti, 300);
-    }
-  }, [inView]);
+    if (!inView) return;
+    startRotation();
+    const onVisibility = () => { document.hidden ? stopRotation() : startRotation(); };
+    document.addEventListener('visibilitychange', onVisibility);
+    return () => { stopRotation(); document.removeEventListener('visibilitychange', onVisibility); };
+  }, [inView]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-  <section ref={sectionRef} style={{ background: C.navy, padding: '160px 24px', position: 'relative', overflow: 'hidden' }}>
+    <section
+      ref={sectionRef}
+      aria-label="Our philosophy and results"
+      style={{ background: C.navy, overflow: 'hidden' }}
+    >
+      <style>{`
+        /* Mobile: stack image above content */
+        @media (max-width: 768px) {
+          .phi-journey { grid-template-columns: 1fr !important; }
+          .phi-img-col { min-height: 300px; aspect-ratio: 16/8; }
+        }
 
-    {/* Atmosphere: layered depth — parallax glow */}
-    <motion.div style={{ y: glowY, position: 'absolute', inset: 0, background: `radial-gradient(ellipse 70% 80% at 10% 60%, rgba(201,162,39,.055) 0%, transparent 65%)`, pointerEvents: 'none' }} />
-    <div style={{ position: 'absolute', inset: 0, background: `radial-gradient(ellipse 50% 50% at 85% 20%, rgba(10,22,40,.6) 0%, transparent 70%)`, pointerEvents: 'none' }} />
+        /* ── Philosophy stage tabs ── */
 
-    {/* Top border — hairline gold */}
-    <div style={{ position: 'absolute', top: 0, left: '24px', right: '24px', height: '1px', background: `linear-gradient(90deg, transparent, rgba(201,162,39,.25) 20%, rgba(201,162,39,.25) 80%, transparent)` }} />
-    {/* Bottom border — hairline gold */}
-    <div style={{ position: 'absolute', bottom: 0, left: '24px', right: '24px', height: '1px', background: `linear-gradient(90deg, transparent, rgba(201,162,39,.15) 20%, rgba(201,162,39,.15) 80%, transparent)` }} />
+        /* Suppress mobile tap flash */
+        .phi-tab { -webkit-tap-highlight-color: transparent; }
 
-    <div style={{
-      maxWidth: '1100px', margin: '0 auto', position: 'relative',
-      display: 'grid', gridTemplateColumns: '55fr 45fr', gap: '120px', alignItems: 'center',
-    }}>
+        /* Number: default → hover → active */
+        .phi-tab-num {
+          color: rgba(201,162,39,.20);
+          transition: color 220ms ease;
+        }
+        .phi-tab:not([aria-selected="true"]):hover .phi-tab-num {
+          color: rgba(201,162,39,.50);
+        }
+        .phi-tab[aria-selected="true"] .phi-tab-num {
+          color: #C9A227;
+          transition: color 650ms ease;
+        }
 
-      {/* ── LEFT: Philosophy (dominant) ── */}
-      <motion.div style={{ y: leftY }}>
-        {/* Eyebrow */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={inView ? { opacity: 1 } : {}}
-          transition={{ duration: 1.2, delay: 0.05, ease: 'easeOut' }}
+        /* Label: default → hover → active */
+        .phi-tab-lbl {
+          color: rgba(201,162,39,.14);
+          transition: color 220ms ease;
+        }
+        .phi-tab:not([aria-selected="true"]):hover .phi-tab-lbl {
+          color: rgba(201,162,39,.38);
+        }
+        .phi-tab[aria-selected="true"] .phi-tab-lbl {
+          color: rgba(201,162,39,.55);
+          transition: color 650ms ease;
+        }
+
+        /* Keyboard focus: thin gold outline, no browser default */
+        .phi-tab:focus-visible {
+          outline: 1px solid rgba(201,162,39,.40);
+          outline-offset: 6px;
+          border-radius: 2px;
+        }
+
+        /* Reduced motion: kill colour transitions on the tabs */
+        @media (prefers-reduced-motion: reduce) {
+          .phi-tab-num,
+          .phi-tab-lbl { transition: none !important; }
+        }
+      `}</style>
+
+      {/* ════════════════════════════════════════════════════════════
+           PHILOSOPHY JOURNEY
+           Two equal panels: image left, content right.
+           No max-width — the image bleeds to the section edge,
+           giving it the same visual weight as the text.
+         ════════════════════════════════════════════════════════════ */}
+      <div
+        className="phi-journey"
+        style={{
+          display: 'grid',
+          gridTemplateColumns: '1.1fr 0.9fr',
+          alignItems: 'stretch',
+          minHeight: 'clamp(620px, 82vh, 960px)',
+        }}
+      >
+
+        {/* ── IMAGE PANEL ─────────────────────────────────────────────
+             All 4 images mounted, crossfade via CSS opacity.
+             Right-edge gradient bleeds into the content panel.
+             Image: saturate enough to feel real, not oversaturated.
+          ── */}
+        <div
+          className="phi-img-col"
+          style={{ position: 'relative', overflow: 'hidden', alignSelf: 'stretch' }}
+        >
+          {PHILOSOPHY_STAGES.map((stage, i) => (
+            <img
+              key={stage.stage}
+              src={stage.image}
+              alt=""
+              aria-hidden="true"
+              loading={i === 0 ? 'eager' : 'lazy'}
+              decoding="async"
+              style={{
+                position: 'absolute', inset: 0,
+                width: '100%', height: '100%',
+                objectFit: 'cover', objectPosition: 'center 30%',
+                filter: 'saturate(0.62) brightness(0.92)',
+                opacity: i === activeIndex ? 1 : 0,
+                // Ken Burns: active image slowly zooms in over 7s; inactive resets quietly
+                transform: i === activeIndex ? 'scale(1.035)' : 'scale(1)',
+                transition: reducedMotion
+                  ? 'none'
+                  : i === activeIndex
+                    ? 'opacity 1600ms ease-in-out, transform 7000ms ease-out'
+                    : 'opacity 900ms ease-in-out, transform 1200ms ease-in-out',
+              }}
+            />
+          ))}
+
+          {/* Top vignette */}
+          <div style={{
+            position: 'absolute', inset: 0, pointerEvents: 'none',
+            background: 'linear-gradient(to bottom, rgba(10,22,40,.32) 0%, transparent 28%)',
+          }} />
+
+          {/* Bottom vignette — grounds the image, prevents it floating */}
+          <div style={{
+            position: 'absolute', inset: 0, pointerEvents: 'none',
+            background: 'linear-gradient(to top, rgba(10,22,40,.50) 0%, transparent 38%)',
+          }} />
+
+          {/* Right-edge blend — image dissolves into the content panel */}
+          <div style={{
+            position: 'absolute', inset: 0, pointerEvents: 'none',
+            background: 'linear-gradient(to right, transparent 68%, rgba(10,22,40,.60) 84%, rgba(10,22,40,1) 100%)',
+          }} />
+        </div>
+
+        {/* ── CONTENT PANEL ───────────────────────────────────────────
+             Flex column: eyebrow + indicator pinned top.
+             Spacer lets the image breathe between nav and statement.
+             Philosophy text anchors to the lower third.
+             Pause rotation on hover/focus (WCAG 2.2.2).
+          ── */}
+        <div
+          onMouseEnter={stopRotation}
+          onMouseLeave={startRotation}
+          onFocusCapture={stopRotation}
+          onBlurCapture={startRotation}
           style={{
-            fontFamily: sans, fontSize: '.63rem', fontWeight: 600,
-            letterSpacing: '.24em', textTransform: 'uppercase' as const,
-            color: 'rgba(201,162,39,.55)', marginBottom: '36px',
-          }}>
-          Our Philosophy
-        </motion.div>
+            background: C.navy,
+            display: 'flex', flexDirection: 'column',
+            justifyContent: 'flex-start',
+            padding: 'clamp(52px, 6vw, 80px) clamp(44px, 5.5vw, 76px)',
+            position: 'relative',
+          }}
+        >
+          {/* Left-edge gold hairline — separates panels on desktop */}
+          <div style={{
+            position: 'absolute', top: '10%', bottom: '10%', left: 0,
+            width: '1px',
+            background: 'linear-gradient(to bottom, transparent, rgba(201,162,39,.18) 30%, rgba(201,162,39,.18) 70%, transparent)',
+          }} />
 
-        {/* Headline */}
+          {/* Eyebrow */}
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={inView ? { opacity: 1 } : {}}
+            transition={{ duration: 1.0, ease: 'easeOut' }}
+            style={{
+              fontFamily: sans, fontSize: '.58rem', fontWeight: 500,
+              letterSpacing: '.28em', textTransform: 'uppercase' as const,
+              color: 'rgba(201,162,39,.50)', margin: '0 0 22px',
+            }}
+          >
+            Our Philosophy
+          </motion.p>
+
+          {/* ── Stage navigator ─────────────────────────────────────
+               Number + label per stage. Active: full gold.
+               Inactive: barely there (22% opacity).
+               The track segment slides to the active position.
+            ── */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={inView ? { opacity: 1 } : {}}
+            transition={{ duration: 1.0, delay: 0.08, ease: 'easeOut' }}
+            style={{ marginBottom: 'clamp(28px, 3.5vw, 40px)' }}
+          >
+            <div
+              role="tablist"
+              aria-label="Philosophy stages"
+              style={{ display: 'flex', marginBottom: '12px' }}
+            >
+              {PHILOSOPHY_STAGES.map((stage, i) => (
+                <button
+                  ref={el => { tabRefs.current[i] = el; }}
+                  key={i}
+                  role="tab"
+                  aria-selected={i === activeIndex}
+                  aria-label={`Show philosophy stage ${i + 1}: ${stage.label}`}
+                  tabIndex={i === activeIndex ? 0 : -1}
+                  onClick={() => goTo(i)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'ArrowRight') {
+                      e.preventDefault();
+                      goTo((i + 1) % PHILOSOPHY_STAGES.length);
+                    } else if (e.key === 'ArrowLeft') {
+                      e.preventDefault();
+                      goTo((i - 1 + PHILOSOPHY_STAGES.length) % PHILOSOPHY_STAGES.length);
+                    } else if (e.key === 'Home') {
+                      e.preventDefault();
+                      goTo(0);
+                    } else if (e.key === 'End') {
+                      e.preventDefault();
+                      goTo(PHILOSOPHY_STAGES.length - 1);
+                    }
+                  }}
+                  className="phi-tab"
+                  style={{
+                    flex: 1, background: 'none', border: 'none',
+                    cursor: 'pointer', padding: '0 0 8px 0',
+                    textAlign: 'left' as const,
+                    display: 'flex', flexDirection: 'column', gap: '7px',
+                  }}
+                >
+                  <span
+                    className="phi-tab-num"
+                    style={{
+                      display: 'block',
+                      fontFamily: serif, fontSize: '.68rem', fontWeight: 400,
+                      letterSpacing: '.08em', lineHeight: 1,
+                    }}
+                  >
+                    {String(stage.stage).padStart(2, '0')}
+                  </span>
+                  <span
+                    className="phi-tab-lbl"
+                    style={{
+                      display: 'block',
+                      fontFamily: sans, fontSize: '.56rem', fontWeight: 500,
+                      letterSpacing: '.14em', textTransform: 'uppercase' as const,
+                      lineHeight: 1,
+                    }}
+                  >
+                    {stage.label}
+                  </span>
+                </button>
+              ))}
+            </div>
+
+            {/* Sliding track */}
+            <div style={{ position: 'relative', height: '1px', background: 'rgba(201,162,39,.10)' }}>
+              <div style={{
+                position: 'absolute', top: 0, height: '1px',
+                left: `${(activeIndex / PHILOSOPHY_STAGES.length) * 100}%`,
+                width: `${(1 / PHILOSOPHY_STAGES.length) * 100}%`,
+                background: C.gold,
+                transition: reducedMotion ? 'none' : 'left 650ms cubic-bezier(0.22, 1, 0.36, 1)',
+              }} />
+            </div>
+          </motion.div>
+
+          {/* ── Philosophy statement ────────────────────────────────
+               AnimatePresence mode="wait": old content exits fully
+               before new content enters. Clean, sequential, editorial.
+               Both exit (250ms) and enter (680ms) feel deliberate.
+            ── */}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeIndex}
+              initial={reducedMotion ? false : { opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={reducedMotion ? {} : { opacity: 0, y: -10 }}
+              transition={{
+                duration: reducedMotion ? 0 : 0.68,
+                ease: [0.22, 1, 0.36, 1],
+              }}
+              aria-live="polite"
+              aria-atomic="true"
+            >
+              {/* Stage statement */}
+              <h2 style={{
+                fontFamily: serif, fontWeight: 300,
+                fontSize: 'clamp(1.65rem, 2.6vw, 2.75rem)',
+                lineHeight: 1.22, letterSpacing: '-.024em',
+                color: C.white, margin: '0 0 24px',
+              }}>
+                {PHILOSOPHY_STAGES[activeIndex].title}
+              </h2>
+
+              {/* Thin gold separator — draws in after the headline settles */}
+              <motion.div
+                initial={{ width: 0, opacity: 0 }}
+                animate={{ width: '44px', opacity: 0.55 }}
+                transition={{ duration: 0.7, delay: 0.28, ease: [0.22, 1, 0.36, 1] }}
+                style={{
+                  height: '1px', marginBottom: '22px',
+                  background: `linear-gradient(90deg, ${C.gold}, transparent)`,
+                }}
+              />
+
+              {/* Supporting paragraph */}
+              <p style={{
+                fontFamily: sans, fontWeight: 300,
+                fontSize: '.85rem', lineHeight: 1.82,
+                color: 'rgba(250,250,248,.55)',
+                letterSpacing: '.008em',
+                margin: 0, maxWidth: '28em',
+              }}>
+                {PHILOSOPHY_STAGES[activeIndex].supporting}
+              </p>
+            </motion.div>
+          </AnimatePresence>
+
+        </div>
+      </div>
+
+    </section>
+  );
+};
+
+// ══════════════════════════════════════════════════════════════
+//  IMPACT & RECOGNITION
+//  Dark navy, premium school prospectus aesthetic.
+//  Left: award display + modal.  Right: 2×2 stats grid.
+// ══════════════════════════════════════════════════════════════
+const ImpactRecognitionSection = () => {
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const inView = useInView(sectionRef, { once: true, margin: '-80px' });
+  const [modalOpen, setModalOpen] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  // Apple decelerate curve: starts quickly, settles into position smoothly
+  const ease = [0.25, 0.46, 0.45, 0.94] as const;
+  // Slower, more considered entrance for hero elements
+  const easeHero = [0.16, 1, 0.3, 1] as const;
+  // Gold glow pulse controls
+  const glowControls = useAnimationControls();
+
+  const reducedMotion = useRef(
+    typeof window !== 'undefined' &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  ).current;
+
+  // Start gold glow pulse once award has entered (1.6s after inView)
+  useEffect(() => {
+    if (inView && !reducedMotion) {
+      glowControls.start({
+        opacity: [0.55, 1.0, 0.65, 0.95, 0.55],
+        transition: {
+          duration: 7.5,
+          ease: 'easeInOut',
+          repeat: Infinity,
+          repeatType: 'loop',
+          delay: 1.6,
+        },
+      });
+    }
+  }, [inView, reducedMotion, glowControls]);
+
+  const closeModal = () => {
+    setModalOpen(false);
+    if (videoRef.current) {
+      videoRef.current.pause();
+      videoRef.current.currentTime = 0;
+    }
+  };
+
+  // Escape key + body-scroll lock
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') closeModal(); };
+    if (modalOpen) {
+      document.addEventListener('keydown', onKey);
+      document.body.style.overflow = 'hidden';
+    }
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      document.body.style.overflow = '';
+    };
+  }, [modalOpen]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  return (
+    <>
+      <section
+        ref={sectionRef}
+        aria-label="Impact and recognition"
+        style={{ background: '#F5F0E8', position: 'relative', overflow: 'hidden' }}
+      >
+        <style>{`
+          /* Responsive grid */
+          @media (max-width: 900px) {
+            .ir-cols { grid-template-columns: 1fr !important; }
+          }
+
+          /* ── Pillar cards (cream background) ────────────────────────── */
+          .wwwon-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 1px;
+            background: rgba(10,22,40,.07); /* gap colour between cards */
+          }
+          @media (max-width: 1024px) { .wwwon-grid { grid-template-columns: repeat(3, 1fr); } }
+          @media (max-width: 600px)  { .wwwon-grid { grid-template-columns: 1fr 1fr; } }
+          @media (max-width: 380px)  { .wwwon-grid { grid-template-columns: 1fr; } }
+
+          .wwwon-card {
+            background: #F5F0E8;
+            padding: clamp(32px, 4vw, 48px) clamp(22px, 2.8vw, 36px);
+            cursor: default;
+            transition: background 360ms ease, transform 360ms cubic-bezier(0.22,1,0.36,1);
+          }
+          .wwwon-card:hover {
+            background: #EDE6D8;
+            transform: translateY(-4px);
+          }
+          .wwwon-num {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: .72rem; font-weight: 300; letter-spacing: .12em;
+            color: rgba(201,162,39,.50);
+            display: block; margin-bottom: 28px;
+            transition: color 360ms ease;
+          }
+          .wwwon-card:hover .wwwon-num { color: rgba(201,162,39,.80); }
+          .wwwon-line {
+            width: 28px; height: 1px; margin-bottom: 22px;
+            background: linear-gradient(90deg, rgba(201,162,39,.40), transparent);
+            transition: width 360ms cubic-bezier(0.22,1,0.36,1), opacity 360ms ease;
+          }
+          .wwwon-card:hover .wwwon-line { width: 42px; opacity: .90; }
+          .wwwon-title {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: clamp(.95rem, 1.3vw, 1.12rem);
+            font-weight: 400; line-height: 1.30; letter-spacing: -.012em;
+            color: rgba(10,22,40,.82);
+            margin: 0 0 14px;
+            transition: color 360ms ease;
+          }
+          .wwwon-card:hover .wwwon-title { color: rgba(10,22,40,.98); }
+          .wwwon-body {
+            font-family: 'DM Sans', 'Inter', sans-serif;
+            font-size: .78rem; font-weight: 300; line-height: 1.82;
+            letter-spacing: .004em;
+            color: rgba(10,22,40,.45);
+            margin: 0;
+            transition: color 360ms ease;
+          }
+          .wwwon-card:hover .wwwon-body { color: rgba(10,22,40,.68); }
+          @media (prefers-reduced-motion: reduce) {
+            .wwwon-card { transition: none !important; }
+            .wwwon-card:hover { transform: none !important; }
+            .wwwon-num, .wwwon-line, .wwwon-title, .wwwon-body { transition: none !important; }
+          }
+
+          /* ── Award image inner container — matches video 4/3 frame ─── */
+          .ir-award-inner {
+            aspect-ratio: 4 / 3;
+            display: flex; align-items: center; justify-content: center;
+            background: #FDFAF5;
+            border-radius: 5px;
+            overflow: hidden;
+          }
+          .ir-award-inner img {
+            width: 100%; height: 100%;
+            object-fit: contain;
+            display: block;
+          }
+
+          /* ── Award frame ────────────────────────────────────────────── */
+          .ir-award-frame {
+            transition:
+              box-shadow 600ms cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              transform 600ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+          }
+          .ir-award-frame:hover {
+            transform: translateY(-3px);
+            box-shadow:
+              0 2px 6px rgba(201,162,39,.14),
+              0 22px 64px rgba(10,22,40,.15),
+              0 52px 90px rgba(10,22,40,.08),
+              inset 0 1px 0 rgba(255,255,255,.90),
+              inset 0 0 0 1px rgba(255,255,255,.50) !important;
+          }
+          @media (prefers-reduced-motion: reduce) {
+            .ir-award-frame { transition: none !important; }
+            .ir-award-frame:hover { transform: none !important; }
+          }
+
+          /* ── Recognition story lead ──────────────────────────────────── */
+          .ir-story-lead {
+            border-left: 2px solid rgba(201,162,39,.24);
+            padding-left: 20px;
+          }
+
+          /* ── Video thumbnail ─────────────────────────────────────────── */
+          .ir-thumb-wrap {
+            cursor: pointer;
+            display: block;
+            width: 100%;
+          }
+          .ir-thumb-frame {
+            position: relative;
+            overflow: hidden;
+            border-radius: 14px;
+            aspect-ratio: 4 / 3;
+            border: 1px solid rgba(10,22,40,.08);
+            box-shadow:
+              0 8px 24px rgba(10,22,40,.10),
+              0 32px 72px rgba(10,22,40,.18),
+              0 60px 100px rgba(10,22,40,.08);
+            transition:
+              box-shadow 600ms cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              border-color 600ms ease;
+          }
+          .ir-thumb-wrap:hover .ir-thumb-frame {
+            border-color: rgba(201,162,39,.20);
+            box-shadow:
+              0 12px 32px rgba(10,22,40,.13),
+              0 40px 80px rgba(10,22,40,.22),
+              0 72px 110px rgba(10,22,40,.09);
+          }
+          .ir-thumb-frame img {
+            width: 100%; height: 100%; display: block;
+            object-fit: cover;
+            filter: saturate(0.80) brightness(0.86);
+            transition:
+              transform 900ms cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              filter 600ms ease;
+          }
+          .ir-thumb-wrap:hover .ir-thumb-frame img {
+            transform: scale(1.03);
+            filter: saturate(0.88) brightness(0.78);
+          }
+          .ir-thumb-overlay {
+            position: absolute; inset: 0; pointer-events: none;
+            background: linear-gradient(
+              to top,
+              rgba(3,6,14,.72) 0%,
+              rgba(3,6,14,.14) 52%,
+              transparent 100%
+            );
+          }
+          .ir-thumb-badge {
+            position: absolute; top: 18px; left: 20px;
+            font-family: 'DM Sans', 'Inter', sans-serif;
+            font-size: .50rem; font-weight: 500; letter-spacing: .16em;
+            text-transform: uppercase;
+            color: rgba(250,250,248,.72);
+            background: rgba(3,6,14,.48);
+            border: 1px solid rgba(255,255,255,.12);
+            border-radius: 3px; padding: 5px 11px;
+            backdrop-filter: blur(8px);
+          }
+          .ir-thumb-play {
+            position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px; height: 80px; border-radius: 50%;
+            background: rgba(250,250,248,.10);
+            border: 1px solid rgba(201,162,39,.48);
+            display: flex; align-items: center; justify-content: center;
+            color: rgba(232,192,64,.94);
+            backdrop-filter: blur(12px);
+            transition:
+              background 500ms ease,
+              border-color 500ms ease,
+              box-shadow 500ms ease,
+              transform 500ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+          }
+          .ir-thumb-wrap:hover .ir-thumb-play {
+            background: rgba(201,162,39,.14);
+            border-color: rgba(201,162,39,.70);
+            transform: translate(-50%, -50%) scale(1.06);
+            box-shadow:
+              0 0 32px rgba(201,162,39,.24),
+              0 0 10px rgba(201,162,39,.14);
+          }
+          .ir-thumb-caption-wrap {
+            margin-top: 22px;
+            padding-left: 2px;
+          }
+          .ir-thumb-caption-title {
+            font-family: 'DM Sans', 'Inter', sans-serif;
+            font-size: 1.20rem; font-weight: 500; letter-spacing: .006em;
+            color: rgba(10,22,40,.68);
+            margin: 0 0 10px; line-height: 1.4;
+            transition: color 300ms ease;
+          }
+          .ir-thumb-caption-sub {
+            font-family: 'DM Sans', 'Inter', sans-serif;
+            font-size: .92rem; font-weight: 300; letter-spacing: .04em;
+            color: rgba(10,22,40,.40);
+            margin: 0 0 3px; line-height: 1.6;
+            transition: color 300ms ease;
+          }
+          .ir-thumb-caption-sub:last-child { margin-bottom: 0; }
+          .ir-thumb-wrap:hover .ir-thumb-caption-title { color: rgba(10,22,40,.82); }
+          .ir-thumb-wrap:hover .ir-thumb-caption-sub  { color: rgba(10,22,40,.58); }
+          .ir-thumb-wrap:focus-visible {
+            outline: 1px solid rgba(201,162,39,.50);
+            outline-offset: 6px; border-radius: 12px;
+          }
+          @media (prefers-reduced-motion: reduce) {
+            .ir-thumb-frame img { transition: none !important; }
+            .ir-thumb-wrap:hover .ir-thumb-frame img { transform: none !important; }
+            .ir-thumb-play { transition: none !important; }
+          }
+        `}</style>
+
+        {/* Top edge: very faint gold rule separating from previous section */}
+        <div style={{
+          position: 'absolute', top: 0, left: 0, right: 0, height: '1px',
+          background: 'linear-gradient(90deg, transparent, rgba(201,162,39,.30) 25%, rgba(201,162,39,.30) 75%, transparent)',
+        }} />
+
+        <div style={{
+          maxWidth: '1200px', margin: '0 auto', position: 'relative',
+          padding: 'clamp(64px, 8vw, 108px) clamp(24px, 5vw, 72px)',
+        }}>
+
+          {/* ── FULL-WIDTH HEADER ───────────────────────────────────────── */}
+          <div style={{ maxWidth: '760px', marginBottom: 'clamp(48px, 6vw, 80px)' }}>
+
+            <motion.p
+              initial={reducedMotion ? false : { opacity: 0 }}
+              animate={inView ? { opacity: 1 } : {}}
+              transition={{ duration: 1.2, ease: 'easeOut' }}
+              style={{
+                fontFamily: sans, fontSize: '.52rem', fontWeight: 600,
+                letterSpacing: '.32em', textTransform: 'uppercase',
+                color: C.gold, margin: '0 0 28px',
+              }}
+            >
+              Trusted by Local Families Since 2005
+            </motion.p>
+
+            <motion.h2
+              initial={reducedMotion ? false : { opacity: 0, y: 36, filter: 'blur(10px)' }}
+              animate={inView ? { opacity: 1, y: 0, filter: 'blur(0px)' } : {}}
+              transition={{ duration: 1.30, delay: 0.10, ease: easeHero }}
+              style={{
+                fontFamily: serif, fontWeight: 300,
+                fontSize: 'clamp(2.4rem, 3.8vw, 4.4rem)',
+                lineHeight: 1.10, letterSpacing: '-.028em',
+                color: C.navy, margin: '0 0 20px',
+              }}
+            >
+              The Community Noticed<br />
+              What Families Already Knew.
+            </motion.h2>
+
+            <motion.div
+              initial={reducedMotion ? false : { scaleX: 0, opacity: 0 }}
+              animate={inView ? { scaleX: 1, opacity: 0.55 } : {}}
+              transition={{ duration: 0.80, delay: 0.22, ease: [0.25, 1, 0.5, 1] }}
+              style={{
+                width: '40px', height: '1px', marginBottom: '22px',
+                background: `linear-gradient(90deg, ${C.gold}, transparent)`,
+                transformOrigin: 'left',
+              }}
+            />
+
+            <motion.p
+              initial={reducedMotion ? false : { opacity: 0, y: 16, filter: 'blur(4px)' }}
+              animate={inView ? { opacity: 1, y: 0, filter: 'blur(0px)' } : {}}
+              transition={{ duration: 1.10, delay: 0.32, ease }}
+              style={{
+                fontFamily: sans, fontWeight: 300,
+                fontSize: 'clamp(1.10rem, 1.5vw, 1.25rem)',
+                lineHeight: 1.76,
+                color: 'rgba(10,22,40,.50)',
+                letterSpacing: '.002em', margin: 0,
+              }}
+            >
+              For more than twenty years, DA families have watched their children grow —
+              in confidence first, then in results. This recognition reflects what those
+              families experienced, and what the wider community came to see.
+            </motion.p>
+          </div>
+
+          {/* ── MEDIA GRID: award image | video thumbnail ────────────────── */}
+          <div
+            className="ir-cols"
+            style={{
+              display: 'grid',
+              gridTemplateColumns: '1fr 1fr',
+              gap: 'clamp(24px, 4vw, 48px)',
+              alignItems: 'start',
+              marginBottom: 'clamp(40px, 5vw, 64px)',
+            }}
+          >
+
+            {/* ── Award image ───────────────────────────────────────────── */}
+            <motion.div
+              initial={reducedMotion ? false : { opacity: 0, y: 28, filter: 'blur(8px)' }}
+              animate={inView ? { opacity: 1, y: 0, filter: 'blur(0px)' } : {}}
+              transition={{ duration: 1.30, delay: 0.40, ease: easeHero }}
+            >
+              <div
+                className="ir-award-frame"
+                style={{
+                  padding: '16px',
+                  background: '#FDFAF5',
+                  border: '1px solid rgba(201,162,39,.52)',
+                  borderRadius: '14px',
+                  boxShadow: [
+                    '0 2px 6px rgba(201,162,39,.10)',
+                    '0 16px 48px rgba(10,22,40,.12)',
+                    '0 40px 80px rgba(10,22,40,.07)',
+                    'inset 0 1px 0 rgba(255,255,255,.90)',
+                  ].join(', '),
+                }}
+              >
+                <div
+                  className="ir-award-inner"
+                  style={{ border: '1px solid rgba(201,162,39,.22)' }}
+                >
+                  <img
+                    src="/Photos and Videos/2025_FAIR_WINNER_LBA.jpg"
+                    alt="Fairfield City Local Business Awards — Outstanding Education Service, Winner 2025"
+                  />
+                </div>
+              </div>
+
+              {/* Award caption */}
+              <div style={{ marginTop: '20px', paddingLeft: '2px' }}>
+                <motion.p
+                  initial={reducedMotion ? false : { opacity: 0 }}
+                  animate={inView ? { opacity: 1 } : {}}
+                  transition={{ duration: 1.0, delay: 0.64, ease: 'easeOut' }}
+                  style={{
+                    fontFamily: serif, fontWeight: 400,
+                    fontSize: '1.15rem', lineHeight: 1.45,
+                    color: 'rgba(10,22,40,.72)', margin: '0 0 6px',
+                  }}
+                >
+                  Fairfield City Local Business Awards
+                </motion.p>
+                <motion.p
+                  initial={reducedMotion ? false : { opacity: 0 }}
+                  animate={inView ? { opacity: 1 } : {}}
+                  transition={{ duration: 1.0, delay: 0.72, ease: 'easeOut' }}
+                  style={{
+                    fontFamily: sans, fontWeight: 500,
+                    fontSize: '.78rem', lineHeight: 1.5,
+                    letterSpacing: '.10em', textTransform: 'uppercase',
+                    color: C.gold, margin: 0,
+                  }}
+                >
+                  Winner — Outstanding Education Service 2025
+                </motion.p>
+              </div>
+            </motion.div>
+
+            {/* ── Video thumbnail ───────────────────────────────────────── */}
+            <motion.div
+              initial={reducedMotion ? false : { opacity: 0, y: 28, filter: 'blur(6px)' }}
+              animate={inView ? { opacity: 1, y: 0, filter: 'blur(0px)' } : {}}
+              transition={{ duration: 1.10, delay: 0.46, ease }}
+            >
+              <div
+                className="ir-thumb-wrap"
+                role="button"
+                tabIndex={0}
+                aria-label="Watch the DA Tuition award ceremony — 45 seconds"
+                onClick={() => setModalOpen(true)}
+                onKeyDown={e => e.key === 'Enter' && setModalOpen(true)}
+              >
+                <div className="ir-thumb-frame">
+                  <img
+                    src="/Photos and Videos/EP6_0216.jpg"
+                    alt="Award ceremony footage — DA Tuition Outstanding Education Service 2025"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <div className="ir-thumb-overlay" aria-hidden="true" />
+                  <span className="ir-thumb-badge" aria-hidden="true">45 seconds</span>
+                  <div className="ir-thumb-play" aria-hidden="true">
+                    <Play size={26} strokeWidth={1.3} style={{ marginLeft: '3px' }} />
+                  </div>
+                </div>
+                <div className="ir-thumb-caption-wrap">
+                  <p className="ir-thumb-caption-title">Award Ceremony Highlights</p>
+                  <p className="ir-thumb-caption-sub">Outstanding Education Service</p>
+                  <p className="ir-thumb-caption-sub">Winner Interview &amp; Recognition</p>
+                </div>
+              </div>
+            </motion.div>
+
+          </div>
+
+        </div>
+      </section>
+
+      {/* ── CINEMATIC VIDEO MODAL ───────────────────────────────────── */}
+      <AnimatePresence>
+        {modalOpen && (
+          <motion.div
+            key="ir-modal-backdrop"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.55, ease: 'easeInOut' }}
+            onClick={closeModal}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Award ceremony video — Outstanding Education Service"
+            style={{
+              position: 'fixed', inset: 0, zIndex: 1000,
+              /* Deep cinematic black with a warm undertone */
+              background: 'rgba(3,6,14,.96)',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: 'clamp(20px, 5vw, 52px)',
+              /* Faint radial spotlight centred behind the video */
+              backgroundImage: 'radial-gradient(ellipse 70% 55% at 50% 52%, rgba(201,162,39,.04) 0%, transparent 65%)',
+            }}
+          >
+            {/* Close — fixed top-right corner */}
+            <motion.button
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.4, delay: 0.5 }}
+              onClick={closeModal}
+              aria-label="Close video"
+              style={{
+                position: 'fixed', top: 'clamp(18px, 3vw, 28px)', right: 'clamp(18px, 3vw, 28px)',
+                zIndex: 1001,
+                background: 'rgba(255,255,255,.06)',
+                border: '1px solid rgba(255,255,255,.12)',
+                borderRadius: '50%',
+                width: '44px', height: '44px',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                color: 'rgba(250,250,248,.70)',
+                cursor: 'pointer',
+                backdropFilter: 'blur(8px)',
+                transition: 'background 220ms ease, border-color 220ms ease, color 220ms ease',
+              }}
+              onMouseEnter={e => {
+                (e.currentTarget as HTMLButtonElement).style.background = 'rgba(201,162,39,.15)';
+                (e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(201,162,39,.40)';
+                (e.currentTarget as HTMLButtonElement).style.color = C.goldL;
+              }}
+              onMouseLeave={e => {
+                (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,255,255,.06)';
+                (e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(255,255,255,.12)';
+                (e.currentTarget as HTMLButtonElement).style.color = 'rgba(250,250,248,.70)';
+              }}
+            >
+              <X size={16} strokeWidth={1.5} />
+            </motion.button>
+
+            {/* Content wrapper — stops click-through to backdrop */}
+            <motion.div
+              initial={{ opacity: 0, y: 28 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 16 }}
+              transition={{ duration: 0.62, ease: [0.22, 1, 0.36, 1] }}
+              onClick={e => e.stopPropagation()}
+              style={{
+                width: '100%',
+                maxWidth: '1020px',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: '0',
+              }}
+            >
+              {/* ── Title card ─────────────────────────────────────────── */}
+              <motion.div
+                initial={{ opacity: 0, y: 14 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.7, delay: 0.14, ease: [0.22, 1, 0.36, 1] }}
+                style={{ textAlign: 'center', marginBottom: 'clamp(22px, 3.5vw, 36px)' }}
+              >
+                {/* Gold rule above title */}
+                <motion.div
+                  initial={{ scaleX: 0, opacity: 0 }}
+                  animate={{ scaleX: 1, opacity: 1 }}
+                  transition={{ duration: 0.7, delay: 0.28, ease: [0.22, 1, 0.36, 1] }}
+                  style={{
+                    width: '48px', height: '1px', margin: '0 auto 20px',
+                    background: `linear-gradient(90deg, transparent, ${C.gold}, transparent)`,
+                    transformOrigin: 'center',
+                  }}
+                />
+
+                <motion.p
+                  initial={{ opacity: 0, letterSpacing: '.35em' }}
+                  animate={{ opacity: 1, letterSpacing: '.24em' }}
+                  transition={{ duration: 0.9, delay: 0.22, ease: [0.22, 1, 0.36, 1] }}
+                  style={{
+                    fontFamily: sans, fontSize: '.54rem', fontWeight: 600,
+                    letterSpacing: '.24em', textTransform: 'uppercase',
+                    color: 'rgba(201,162,39,.55)', margin: '0 0 14px',
+                  }}
+                >
+                  Award Ceremony
+                </motion.p>
+
+                <motion.h2
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.80, delay: 0.30, ease: [0.22, 1, 0.36, 1] }}
+                  style={{
+                    fontFamily: serif, fontWeight: 300,
+                    fontSize: 'clamp(1.4rem, 2.8vw, 2.4rem)',
+                    lineHeight: 1.18, letterSpacing: '-.022em',
+                    color: C.white, margin: '0 0 10px',
+                  }}
+                >
+                  Outstanding Education Service Award
+                </motion.h2>
+
+                <motion.p
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.7, delay: 0.40 }}
+                  style={{
+                    fontFamily: sans, fontWeight: 300,
+                    fontSize: '.72rem', letterSpacing: '.10em',
+                    textTransform: 'uppercase',
+                    color: 'rgba(250,250,248,.28)', margin: 0,
+                  }}
+                >
+                  Fairfield City Local Business Awards 2025
+                </motion.p>
+              </motion.div>
+
+              {/* ── Video frame ────────────────────────────────────────── */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.97 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.98 }}
+                transition={{ duration: 0.65, delay: 0.18, ease: [0.22, 1, 0.36, 1] }}
+                style={{
+                  width: '100%', position: 'relative',
+                  /* Cinematic letterbox framing lines */
+                  borderTop: '1px solid rgba(201,162,39,.14)',
+                  borderBottom: '1px solid rgba(201,162,39,.14)',
+                  /* Thin gold edge on sides */
+                  outline: '1px solid rgba(201,162,39,.08)',
+                  boxShadow: `
+                    0 0 0 1px rgba(201,162,39,.06),
+                    0 40px 100px rgba(0,0,0,.80),
+                    0 8px 32px rgba(0,0,0,.60),
+                    inset 0 0 80px rgba(3,6,14,.20)
+                  `,
+                }}
+              >
+                <video
+                  ref={videoRef}
+                  controls
+                  autoPlay
+                  style={{
+                    width: '100%', display: 'block',
+                    /* Slight warmth to match award gold tone */
+                    filter: 'saturate(1.04) contrast(1.02)',
+                  }}
+                >
+                  <source
+                    src="/Photos and Videos/08 Oustanding Education Service _DA tuition_02_FairField.mp4"
+                    type="video/mp4"
+                  />
+                </video>
+              </motion.div>
+
+              {/* ── Caption below video ─────────────────────────────────── */}
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.7, delay: 0.55 }}
+                style={{
+                  fontFamily: sans, fontWeight: 300,
+                  fontSize: '.62rem', letterSpacing: '.10em',
+                  textTransform: 'uppercase', textAlign: 'center',
+                  color: 'rgba(250,250,248,.18)',
+                  margin: 'clamp(16px, 2.5vw, 22px) 0 0',
+                }}
+              >
+                Press <kbd style={{
+                  fontFamily: sans, fontSize: '.58rem',
+                  padding: '2px 7px', borderRadius: '3px',
+                  background: 'rgba(255,255,255,.07)',
+                  border: '1px solid rgba(255,255,255,.12)',
+                  color: 'rgba(250,250,248,.35)',
+                  letterSpacing: '.06em',
+                }}>Esc</kbd> to close
+              </motion.p>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
+  );
+};
+
+// ══════════════════════════════════════════════════════════════
+//  ACHIEVEMENTS — standalone statistics section
+//  Navy background, off-white + gold palette.
+// ══════════════════════════════════════════════════════════════
+
+// Vertical offsets create a cascading diagonal — stat 1 anchors
+// the top, each subsequent stat drops slightly lower.
+const ACH_STATS = [
+  { target: 20,    decimals: 0, suffix: '+',  label: 'Years of Excellence', delay: 0,    offset: '0px'                         },
+  { target: 10000, decimals: 0, suffix: '+',  label: 'Students Supported',  delay: 0.10, offset: 'clamp(28px, 4vw, 48px)'      },
+  { target: 5,     decimals: 1, suffix: ' ★', label: 'Google Rating',       delay: 0.18, offset: 'clamp(14px, 2vw, 24px)'      },
+  { target: 450,   decimals: 0, suffix: '+',  label: 'Five-Star Reviews',   delay: 0.26, offset: 'clamp(40px, 5.5vw, 64px)'    },
+];
+
+// ── Gold particle burst — canvas-based, fires once when `active` flips true ──
+const GoldParticles = ({ active, delay = 0 }: { active: boolean; delay?: number }) => {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const firedRef  = useRef(false);
+
+  useEffect(() => {
+    if (!active || firedRef.current) return;
+    const timer = setTimeout(() => {
+      firedRef.current = true;
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      const W = canvas.width  = canvas.offsetWidth;
+      const H = canvas.height = canvas.offsetHeight;
+      const cx = W / 2;
+      const cy = H * 0.38; // cluster near the number
+
+      // Spawn 14 particles
+      const particles = Array.from({ length: 14 }, () => {
+        const angle  = Math.random() * Math.PI * 2;
+        const speed  = 0.6 + Math.random() * 1.4;
+        const radius = 1.4 + Math.random() * 2.0;
+        const gold   = Math.random() > 0.4
+          ? `rgba(201,162,39,`   // deeper gold
+          : `rgba(232,192,64,`;  // bright gold
+        return {
+          x: cx + (Math.random() - 0.5) * 24,
+          y: cy + (Math.random() - 0.5) * 16,
+          vx: Math.cos(angle) * speed * 0.7,
+          vy: Math.sin(angle) * speed - 1.2, // bias upward
+          r: radius,
+          alpha: 0.90 + Math.random() * 0.10,
+          decay: 0.012 + Math.random() * 0.016,
+          color: gold,
+        };
+      });
+
+      let raf: number;
+      const draw = () => {
+        ctx.clearRect(0, 0, W, H);
+        let alive = false;
+        for (const p of particles) {
+          p.x  += p.vx;
+          p.y  += p.vy;
+          p.vy += 0.04; // gentle gravity
+          p.vx *= 0.97;
+          p.alpha -= p.decay;
+          if (p.alpha <= 0) continue;
+          alive = true;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+          ctx.fillStyle = `${p.color}${p.alpha.toFixed(3)})`;
+          ctx.fill();
+        }
+        if (alive) raf = requestAnimationFrame(draw);
+      };
+      raf = requestAnimationFrame(draw);
+      return () => cancelAnimationFrame(raf);
+    }, delay);
+    return () => clearTimeout(timer);
+  }, [active, delay]);
+
+  return (
+    <canvas
+      ref={canvasRef}
+      aria-hidden="true"
+      style={{
+        position: 'absolute', inset: 0,
+        width: '100%', height: '100%',
+        pointerEvents: 'none',
+      }}
+    />
+  );
+};
+
+const AchievementsSection = () => {
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true, margin: '-80px' });
+  const ease = [0.22, 1, 0.36, 1] as const;
+
+  return (
+    <section
+      ref={ref}
+      aria-label="DA Tuition achievements and results"
+      style={{ background: '#041B3D', overflow: 'hidden' }}
+    >
+      <style>{`
+        @media (max-width: 640px) {
+          .ach-stats-row { grid-template-columns: 1fr 1fr !important; row-gap: clamp(48px, 8vw, 64px) !important; }
+        }
+      `}</style>
+
+      <div style={{
+        maxWidth: '1100px', margin: '0 auto',
+        padding: 'clamp(80px, 9vw, 120px) clamp(24px, 5vw, 72px)',
+        textAlign: 'center',
+      }}>
+
+        {/* ── CENTERED HEADING ── */}
         <motion.h2
-          initial={{ opacity: 0, y: 22 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 1.1, delay: 0.15, ease }}
+          initial={{ opacity: 0, y: 24, filter: 'blur(8px)' }}
+          animate={inView ? { opacity: 1, y: 0, filter: 'blur(0px)' } : {}}
+          transition={{ duration: 1.20, ease: [0.16, 1, 0.3, 1] }}
           style={{
-            fontFamily: serif, fontWeight: 400,
-            fontSize: 'clamp(2.4rem,4vw,3.4rem)',
-            lineHeight: 1.18, letterSpacing: '-.025em',
-            color: C.white, margin: '0 0 40px',
-          }}>
-          A child's starting point should never be mistaken for{' '}
-          <em style={{ fontStyle: 'italic', fontWeight: 300, color: C.gold }}>their potential.</em>
+            fontFamily: serif, fontWeight: 300,
+            fontSize: 'clamp(2.2rem, 3.6vw, 3.8rem)',
+            lineHeight: 1.16, letterSpacing: '-.026em',
+            color: '#F5F0E8', margin: '0 auto clamp(12px, 2vw, 18px)',
+            maxWidth: '680px',
+          }}
+        >
+          When Confidence Grows,<br />Results Follow.
         </motion.h2>
 
-        {/* Gold accent rule — draws itself left to right */}
+        {/* Gold rule */}
         <motion.div
           initial={{ scaleX: 0, opacity: 0 }}
           animate={inView ? { scaleX: 1, opacity: 1 } : {}}
-          transition={{ duration: 1.0, delay: 0.38, ease }}
-          style={{ width: '48px', height: '1px', background: `linear-gradient(90deg, ${C.gold}, transparent)`, marginBottom: '36px', transformOrigin: 'left' }} />
-
-        {/* Body */}
-        <motion.p
-          initial={{ opacity: 0, y: 14 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 1.1, delay: 0.46, ease }}
+          transition={{ duration: 0.9, delay: 0.18, ease: [0.25, 1, 0.5, 1] }}
           style={{
-            fontFamily: sans, fontWeight: 300,
-            fontSize: '.875rem', lineHeight: 2,
-            color: 'rgba(250,250,248,.72)',
-            letterSpacing: '.012em', marginBottom: '48px',
-          }}>
-          Every student deserves to be known before they are judged.
-          We have found that confidence almost always arrives before results do —
-          and that meaningful change only comes when a student feels genuinely guided, not simply instructed.
-        </motion.p>
+            width: '48px', height: '1px', margin: '0 auto clamp(56px, 7vw, 88px)',
+            background: `linear-gradient(90deg, transparent, ${C.gold}, transparent)`,
+            transformOrigin: 'center',
+          }}
+        />
 
-        {/* Pull quote */}
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 1.1, delay: 0.58, ease }}
+        {/* ── STATS ROW ── */}
+        <div
+          className="ach-stats-row"
           style={{
-            borderLeft: `1px solid rgba(201,162,39,.40)`,
-            paddingLeft: '24px', paddingTop: '4px', paddingBottom: '4px',
-          }}>
-          <p style={{
-            fontFamily: serif, fontStyle: 'italic', fontWeight: 300,
-            fontSize: 'clamp(1rem,1.6vw,1.14rem)',
-            lineHeight: 1.78, letterSpacing: '.01em',
-            color: 'rgba(250,250,248,.55)', margin: 0,
-          }}>
-            "We are not simply trying to improve marks. We are trying to strengthen the child behind the result."
-          </p>
-        </motion.div>
-      </motion.div>
+            display: 'grid',
+            gridTemplateColumns: 'repeat(4, 1fr)',
+            columnGap: 'clamp(16px, 3vw, 32px)',
+            alignItems: 'start',
+          }}
+        >
+          {ACH_STATS.map((s, i) => {
+            const revealDelay = 0.28 + i * 0.30; // 300ms between each
+            const particleDelay = Math.round(revealDelay * 1000) + 200;
+            return (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 28 }}
+                animate={inView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 1.0, delay: revealDelay, ease: [0.22, 1, 0.36, 1] }}
+                style={{ position: 'relative' }}
+              >
+                {/* Gold particles — fire once per stat as it enters */}
+                <GoldParticles active={inView} delay={particleDelay} />
 
-      {/* ── RIGHT: Stats — evidence, not KPIs ── */}
-      <motion.div style={{ position: 'relative', y: rightY }}>
-        {/* Vertical gold thread */}
-        <motion.div
-          initial={{ scaleY: 0, opacity: 0 }}
-          animate={inView ? { scaleY: 1, opacity: 1 } : {}}
-          transition={{ duration: 1.4, delay: 0.3, ease }}
-          style={{
-            position: 'absolute', top: 0, bottom: 0, left: '-32px',
-            width: '1px',
-            background: `linear-gradient(180deg, transparent, rgba(201,162,39,.20) 15%, rgba(201,162,39,.20) 85%, transparent)`,
-            transformOrigin: 'top',
-          }} />
+                {/* Subtle gold glow behind number */}
+                <div style={{
+                  position: 'absolute',
+                  top: '10%', left: '50%', transform: 'translateX(-50%)',
+                  width: '120px', height: '60px',
+                  background: `radial-gradient(ellipse, rgba(201,162,39,${i === 0 ? '.18' : '.10'}) 0%, transparent 70%)`,
+                  filter: 'blur(16px)',
+                  pointerEvents: 'none',
+                }} />
 
-        {STATS_DATA.map((s, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0, y: 14 }}
-            animate={inView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 1.0, delay: 0.28 + i * 0.1, ease }}>
-            {i > 0 && (
-              <div style={{ height: '1px', background: `linear-gradient(90deg, rgba(201,162,39,.14), rgba(201,162,39,.06) 60%, transparent)` }} />
-            )}
-            <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '16px', padding: '34px 0' }}>
-              <div style={{
-                fontFamily: serif, fontWeight: 400,
-                fontSize: 'clamp(2.2rem,3.6vw,3.2rem)',
-                color: C.goldL, letterSpacing: '-.03em', lineHeight: 1,
-                flexShrink: 0,
-              }}>
-                <CountUpStat
-                  target={s.target}
-                  decimals={s.decimals}
-                  suffix={s.suffix}
-                  triggerDelay={s.triggerDelay}
-                  inView={inView}
-                />
-              </div>
-              <div style={{
-                fontFamily: sans, fontWeight: 400,
-                fontSize: '.6rem', letterSpacing: '.18em',
-                textTransform: 'uppercase' as const,
-                color: 'rgba(201,162,39,.70)',
-                textAlign: 'right' as const, lineHeight: 1.6,
-              }}>
-                {s.label}
-              </div>
-            </div>
-          </motion.div>
-        ))}
-      </motion.div>
+                {/* Number */}
+                <div style={{
+                  position: 'relative',
+                  fontFamily: serif, fontWeight: 300,
+                  fontSize: 'clamp(3.2rem, 5.5vw, 6.0rem)',
+                  lineHeight: 1, letterSpacing: '-.040em',
+                  color: i === 0 ? C.goldL : '#F5F0E8',
+                  marginBottom: '20px',
+                }}>
+                  <CountUpStat
+                    target={s.target}
+                    decimals={s.decimals}
+                    suffix={s.suffix}
+                    triggerDelay={Math.round(revealDelay * 1000)}
+                    inView={inView}
+                  />
+                </div>
 
-    </div>
-  </section>
+                {/* Gold divider */}
+                <div style={{
+                  width: '28px', height: '1px', margin: '0 auto 16px',
+                  background: i === 0
+                    ? C.gold
+                    : 'rgba(201,162,39,.32)',
+                }} />
+
+                {/* Label */}
+                <p style={{
+                  fontFamily: sans, fontWeight: 500,
+                  fontSize: '.54rem', letterSpacing: '.20em',
+                  textTransform: 'uppercase',
+                  color: i === 0
+                    ? 'rgba(232,192,64,.90)'
+                    : 'rgba(245,240,232,.38)',
+                  margin: 0, lineHeight: 1.5,
+                }}>
+                  {s.label}
+                </p>
+              </motion.div>
+            );
+          })}
+        </div>
+
+      </div>
+    </section>
   );
 };
 
@@ -837,19 +1981,6 @@ const ReviewsSection = () => {
 // ══════════════════════════════════════════════════════════════
 //  AWARD RECOGNITION
 // ══════════════════════════════════════════════════════════════
-const AwardSection = () => {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: '-60px' });
-  return (
-    <section ref={ref} style={{ background: C.navy, padding: '100px 24px' }}>
-      <motion.div variants={fadeUp} initial="hidden" animate={inView ? 'visible' : 'hidden'} style={{ textAlign: 'center', marginBottom: '52px' }}>
-        <div style={{ fontFamily: sans, fontSize: '.7rem', fontWeight: 700, letterSpacing: '.16em', textTransform: 'uppercase', color: C.gold, marginBottom: '14px' }}>Recognition</div>
-        <h2 style={{ fontFamily: serif, fontWeight: 600, fontSize: 'clamp(2rem,4vw,3.4rem)', color: C.white, letterSpacing: '-.02em' }}>Award-Winning Service</h2>
-      </motion.div>
-      <motion.div variants={fadeIn} initial="hidden" animate={inView ? 'visible' : 'hidden'}><AwardRecognition /></motion.div>
-    </section>
-  );
-};
 
 // ══════════════════════════════════════════════════════════════
 //  TEACHERS
@@ -923,11 +2054,13 @@ const Index = () => (
       <HeroSection />
       <MarqueeStrip />
       <PhilosophyBackedSection />
+      <ImpactRecognitionSection />
+      <AchievementsSection />
       <ProgramsSection />
       <WhySection />
       <QuoteSection />
       <ReviewsSection />
-      <AwardSection />
+
       <TeachersSection />
       <ClosingCTASection />
     </main>
