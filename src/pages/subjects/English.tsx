@@ -301,6 +301,7 @@ function YearSkillPanel({ year }: { year: typeof primaryYears[0] }) {
 
 const English = () => {
   const [hsYr, setHsYr] = useState('y78');
+  const [activeStep, setActiveStep] = useState(0);
 
   const activeHsYear = highSchoolYears.find((y) => y.id === hsYr)!;
 
@@ -441,27 +442,92 @@ const English = () => {
                       </p>
                     </div>
 
-                    {/* Vertical timeline */}
+                    {/* Vertical timeline — interactive */}
                     <div className="px-6 pt-5 pb-4">
                       <p className="mb-5 text-[13.5px] font-semibold text-[#172033]">Senior lesson process</p>
                       <div className="relative pl-9">
-                        {/* Vertical line */}
-                        <div className="absolute left-[13px] top-1.5 bottom-1.5 w-0.5 bg-gradient-to-b from-[#c9a227] to-[#e8e6e0]" />
+                        {/* Track line — fills up to active step */}
+                        <div className="absolute left-[13px] top-1.5 bottom-1.5 w-0.5 bg-[#e8e6e0]" />
+                        <div
+                          className="absolute left-[13px] top-1.5 w-0.5 bg-gradient-to-b from-[#c9a227] to-[#e8d97a] transition-all duration-500"
+                          style={{ height: `${((activeStep + 0.5) / seniorProcess.length) * 100}%` }}
+                        />
 
-                        {seniorProcess.map((s, i) => (
-                          <div key={s.num} className={`relative mb-4 last:mb-0`}>
-                            {/* Dot */}
-                            <div className="absolute -left-9 top-[6px] flex h-[22px] w-[22px] items-center justify-center rounded-full border-2 border-[#e8e6e0] bg-white text-[9px] font-bold text-[#172033]/50"
-                              style={i === 0 ? { background: '#c9a227', borderColor: '#c9a227', color: '#101521' } : {}}>
-                              {s.num}
+                        {seniorProcess.map((s, i) => {
+                          const isActive = i === activeStep;
+                          const isPast = i < activeStep;
+                          return (
+                            <div
+                              key={s.num}
+                              className="relative mb-3 last:mb-0 cursor-pointer"
+                              onClick={() => setActiveStep(i)}
+                            >
+                              {/* Dot */}
+                              <div
+                                className="absolute -left-9 top-[7px] flex h-[22px] w-[22px] items-center justify-center rounded-full border-2 text-[9px] font-bold transition-all duration-300"
+                                style={
+                                  isActive
+                                    ? { background: '#c9a227', borderColor: '#c9a227', color: '#101521', boxShadow: '0 0 0 4px rgba(201,162,39,0.18)' }
+                                    : isPast
+                                    ? { background: '#c9a227', borderColor: '#c9a227', color: '#101521' }
+                                    : { background: 'white', borderColor: '#e8e6e0', color: 'rgba(23,32,51,0.4)' }
+                                }
+                              >
+                                {isPast && !isActive ? (
+                                  <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
+                                    <path d="M1 4l2.5 2.5L9 1" stroke="#101521" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                                  </svg>
+                                ) : s.num}
+                              </div>
+
+                              {/* Card */}
+                              <div
+                                className={`rounded-xl border px-4 py-3 transition-all duration-300 ${
+                                  isActive
+                                    ? 'border-[#c9a227]/40 bg-[#fdf8ec] shadow-sm'
+                                    : isPast
+                                    ? 'border-[#e8e6e0] bg-[#f7f5f0] opacity-70'
+                                    : 'border-[#e8e6e0] bg-[#f7f5f0] hover:border-[#c9a227]/30 hover:bg-[#fdf8ec]/60'
+                                }`}
+                              >
+                                <div className="flex items-center justify-between">
+                                  <p className={`text-[12.5px] font-bold transition-colors duration-200 ${isActive ? 'text-[#7a5c0a]' : 'text-[#172033]'}`}>
+                                    {s.title}
+                                  </p>
+                                  {!isActive && (
+                                    <span className="text-[10px] text-[#172033]/30 font-medium">Step {s.num}</span>
+                                  )}
+                                </div>
+                                {isActive && (
+                                  <p className="mt-1.5 text-[11.5px] leading-relaxed text-[#172033]/65">
+                                    {s.desc}
+                                  </p>
+                                )}
+                              </div>
                             </div>
-                            {/* Card */}
-                            <div className="rounded-xl border border-[#e8e6e0] bg-[#f7f5f0] px-4 py-3">
-                              <p className="text-[12.5px] font-bold text-[#172033]">{s.title}</p>
-                              <p className="mt-1 text-[11.5px] leading-relaxed text-[#172033]/60">{s.desc}</p>
-                            </div>
-                          </div>
-                        ))}
+                          );
+                        })}
+                      </div>
+
+                      {/* Prev / Next controls */}
+                      <div className="mt-5 flex items-center justify-between">
+                        <button
+                          onClick={() => setActiveStep((p) => Math.max(0, p - 1))}
+                          disabled={activeStep === 0}
+                          className="rounded-full border border-[#e8e6e0] bg-white px-4 py-1.5 text-[11.5px] font-semibold text-[#172033]/60 transition-all hover:border-[#c9a227]/50 hover:text-[#7a5c0a] disabled:opacity-30 disabled:cursor-not-allowed"
+                        >
+                          ← Previous
+                        </button>
+                        <span className="text-[11px] text-[#172033]/40 font-medium">
+                          {activeStep + 1} of {seniorProcess.length}
+                        </span>
+                        <button
+                          onClick={() => setActiveStep((p) => Math.min(seniorProcess.length - 1, p + 1))}
+                          disabled={activeStep === seniorProcess.length - 1}
+                          className="rounded-full border border-[#e8e6e0] bg-white px-4 py-1.5 text-[11.5px] font-semibold text-[#172033]/60 transition-all hover:border-[#c9a227]/50 hover:text-[#7a5c0a] disabled:opacity-30 disabled:cursor-not-allowed"
+                        >
+                          Next →
+                        </button>
                       </div>
                     </div>
 
@@ -537,4 +603,3 @@ const English = () => {
 };
 
 export default English;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
