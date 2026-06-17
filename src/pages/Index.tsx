@@ -4,10 +4,10 @@
  * Inspired by: korowa.vic.edu.au
  */
 
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState, useCallback } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { BookOpen, GraduationCap, School, Play, X } from 'lucide-react';
-import { motion, AnimatePresence, useInView, useScroll, useTransform, useAnimationControls } from 'framer-motion';
+import { motion, AnimatePresence, useInView, useScroll, useTransform, useAnimationControls, useMotionValue, animate as fmAnimate } from 'framer-motion';
 import NavigationNew from '@/components/NavigationNew';
 import FooterNew from '@/components/FooterNew';
 import AwardRecognition from '@/components/AwardRecognition';
@@ -348,26 +348,26 @@ const GoldSparkle = ({ active }: { active: boolean }) => {
   );
 };
 
-// ── Count-up number — fires once when inView, then sparkles ──
+// ── Count-up number — re-triggers every time inView flips true ──
 const CountUpStat = ({ target, decimals = 0, suffix, triggerDelay, inView }: {
   target: number; decimals?: number; suffix: string;
   triggerDelay: number; inView: boolean;
 }) => {
   const reduced = useRef(typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
-  const [count, setCount]   = useState(reduced.current ? target : 0);
-  const [sparkle, setSparkle] = useState(false);
-  const ran = useRef(false);
+  const [count, setCount] = useState(reduced.current ? target : 0);
+  const rafRef = useRef<number | null>(null);
 
   useEffect(() => {
-    if (!inView) return;
+    // Reset to 0 when leaving viewport
+    if (!inView) {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      if (!reduced.current) setCount(0);
+      return;
+    }
 
-    // timer fires after delay — ran guard lives INSIDE so React StrictMode
-    // double-effect doesn't mark it complete before the timer actually fires
+    if (reduced.current) { setCount(target); return; }
+
     const timer = setTimeout(() => {
-      if (ran.current) return;
-      ran.current = true;
-      if (reduced.current) { setCount(target); return; }
-
       const duration = 1800;
       const t0 = performance.now();
       const tick = (now: number) => {
@@ -375,29 +375,25 @@ const CountUpStat = ({ target, decimals = 0, suffix, triggerDelay, inView }: {
         const eased = 1 - Math.pow(1 - p, 3);
         setCount(eased * target);
         if (p < 1) {
-          requestAnimationFrame(tick);
+          rafRef.current = requestAnimationFrame(tick);
         } else {
           setCount(target);
-          setSparkle(true);
-          setTimeout(() => setSparkle(false), 900);
         }
       };
-      requestAnimationFrame(tick);
+      rafRef.current = requestAnimationFrame(tick);
     }, triggerDelay);
 
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(timer);
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    };
   }, [inView, target, triggerDelay]);
 
   const display = decimals > 0
     ? count.toFixed(decimals)
     : Math.round(count).toLocaleString();
 
-  return (
-    <span style={{ position: 'relative', display: 'inline-block' }}>
-      {display}{suffix}
-      {!reduced.current && <GoldSparkle active={sparkle} />}
-    </span>
-  );
+  return <span>{display}{suffix}</span>;
 };
 
 const PhilosophyBackedSection = () => {
@@ -1434,220 +1430,266 @@ const ImpactRecognitionSection = () => {
 //  Navy background, off-white + gold palette.
 // ══════════════════════════════════════════════════════════════
 
-// Vertical offsets create a cascading diagonal — stat 1 anchors
-// the top, each subsequent stat drops slightly lower.
 const ACH_STATS = [
-  { target: 20,    decimals: 0, suffix: '+',  label: 'Years of Excellence', delay: 0,    offset: '0px'                         },
-  { target: 10000, decimals: 0, suffix: '+',  label: 'Students Supported',  delay: 0.10, offset: 'clamp(28px, 4vw, 48px)'      },
-  { target: 5,     decimals: 1, suffix: ' ★', label: 'Google Rating',       delay: 0.18, offset: 'clamp(14px, 2vw, 24px)'      },
-  { target: 450,   decimals: 0, suffix: '+',  label: 'Five-Star Reviews',   delay: 0.26, offset: 'clamp(40px, 5.5vw, 64px)'    },
+  { target: 20,    decimals: 0, suffix: '+', caption: 'TWO DECADES OF GUIDANCE' },
+  { target: 10000, decimals: 0, suffix: '+', caption: 'STUDENTS SUPPORTED'      },
+  { target: 5,     decimals: 1, suffix: '',  caption: 'TRUSTED BY FAMILIES'     },
+  { target: 450,   decimals: 0, suffix: '+', caption: 'FIVE-STAR STORIES'       },
 ];
 
-// ── Gold particle burst — canvas-based, fires once when `active` flips true ──
-const GoldParticles = ({ active, delay = 0 }: { active: boolean; delay?: number }) => {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const firedRef  = useRef(false);
-
-  useEffect(() => {
-    if (!active || firedRef.current) return;
-    const timer = setTimeout(() => {
-      firedRef.current = true;
-      const canvas = canvasRef.current;
-      if (!canvas) return;
-      const ctx = canvas.getContext('2d');
-      if (!ctx) return;
-
-      const W = canvas.width  = canvas.offsetWidth;
-      const H = canvas.height = canvas.offsetHeight;
-      const cx = W / 2;
-      const cy = H * 0.38; // cluster near the number
-
-      // Spawn 14 particles
-      const particles = Array.from({ length: 14 }, () => {
-        const angle  = Math.random() * Math.PI * 2;
-        const speed  = 0.6 + Math.random() * 1.4;
-        const radius = 1.4 + Math.random() * 2.0;
-        const gold   = Math.random() > 0.4
-          ? `rgba(201,162,39,`   // deeper gold
-          : `rgba(232,192,64,`;  // bright gold
-        return {
-          x: cx + (Math.random() - 0.5) * 24,
-          y: cy + (Math.random() - 0.5) * 16,
-          vx: Math.cos(angle) * speed * 0.7,
-          vy: Math.sin(angle) * speed - 1.2, // bias upward
-          r: radius,
-          alpha: 0.90 + Math.random() * 0.10,
-          decay: 0.012 + Math.random() * 0.016,
-          color: gold,
-        };
-      });
-
-      let raf: number;
-      const draw = () => {
-        ctx.clearRect(0, 0, W, H);
-        let alive = false;
-        for (const p of particles) {
-          p.x  += p.vx;
-          p.y  += p.vy;
-          p.vy += 0.04; // gentle gravity
-          p.vx *= 0.97;
-          p.alpha -= p.decay;
-          if (p.alpha <= 0) continue;
-          alive = true;
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-          ctx.fillStyle = `${p.color}${p.alpha.toFixed(3)})`;
-          ctx.fill();
-        }
-        if (alive) raf = requestAnimationFrame(draw);
-      };
-      raf = requestAnimationFrame(draw);
-      return () => cancelAnimationFrame(raf);
-    }, delay);
-    return () => clearTimeout(timer);
-  }, [active, delay]);
-
-  return (
-    <canvas
-      ref={canvasRef}
-      aria-hidden="true"
-      style={{
-        position: 'absolute', inset: 0,
-        width: '100%', height: '100%',
-        pointerEvents: 'none',
-      }}
-    />
-  );
-};
-
 const AchievementsSection = () => {
-  const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, margin: '-80px' });
-  const ease = [0.22, 1, 0.36, 1] as const;
+  const ref     = useRef<HTMLDivElement>(null);
+  const inView  = useInView(ref, { once: false, margin: '-100px' });
+  const easeHero = [0.16, 1, 0.3,  1] as const;
+  const easeOut  = [0.22, 1, 0.36, 1] as const;
+
+  // Each stat's absolute position within the stage container.
+  // top values create the staircase; left creates the left-to-right drift.
+  const pos = [
+    { left: '2%',  top:   0, delay: 0.00 },
+    { left: '27%', top: 180, delay: 0.18 },
+    { left: '52%', top: 330, delay: 0.36 },
+    { left: '76%', top: 470, delay: 0.54 },
+  ];
+
+  // Number sizes: first stat larger for visual hierarchy
+  const numSizes = [
+    'clamp(5.8rem, 10.5vw, 13.0rem)',
+    'clamp(4.8rem,  8.8vw, 10.5rem)',
+    'clamp(4.8rem,  8.8vw, 10.5rem)',
+    'clamp(4.8rem,  8.8vw, 10.5rem)',
+  ];
+
+  // Journey line: smooth bezier through the approximate center of each number.
+  // ViewBox 0 0 1000 720 — scaled to fill the stage container.
+  // Anchor points (x, y):
+  //   Stat 0 → (130, 90)   left=2% of 1000 + half stat width~110 = 130;  top 0  + ~90
+  //   Stat 1 → (380, 255)  left=270+110=380;  top 180 + ~75
+  //   Stat 2 → (630, 405)  left=520+110=630;  top 330 + ~75
+  //   Stat 3 → (870, 545)  left=760+110=870;  top 470 + ~75
+  // S-curve: each segment uses symmetric control points so the curve arrives
+  // horizontally at each anchor — feels organic, not chart-like.
+  const journeyPath =
+    'M 130 90 C 255 90 255 255 380 255 C 505 255 505 405 630 405 C 755 405 755 545 870 545';
 
   return (
     <section
       ref={ref}
-      aria-label="DA Tuition achievements and results"
-      style={{ background: '#041B3D', overflow: 'hidden' }}
+      aria-label="DA Tuition achievements"
+      style={{ background: C.navy, overflow: 'hidden' }}
     >
       <style>{`
-        @media (max-width: 640px) {
-          .ach-stats-row { grid-template-columns: 1fr 1fr !important; row-gap: clamp(48px, 8vw, 64px) !important; }
+        /* ── Mobile: collapse absolute stage to flow grid ── */
+        @media (max-width: 760px) {
+          .ach-stage {
+            position: static !important;
+            min-height: auto !important;
+            display: grid !important;
+            grid-template-columns: 1fr 1fr !important;
+            gap: 52px 24px !important;
+            padding-bottom: 0 !important;
+          }
+          .ach-stat {
+            position: static !important;
+            width: auto !important;
+            left: auto !important;
+            top: auto !important;
+          }
+          .ach-journey { display: none !important; }
+        }
+        @media (max-width: 440px) {
+          .ach-stage { grid-template-columns: 1fr !important; }
         }
       `}</style>
 
       <div style={{
-        maxWidth: '1100px', margin: '0 auto',
-        padding: 'clamp(80px, 9vw, 120px) clamp(24px, 5vw, 72px)',
-        textAlign: 'center',
+        maxWidth: '1200px', margin: '0 auto',
+        padding: 'clamp(80px, 9vw, 120px) clamp(24px, 5vw, 80px)',
       }}>
 
-        {/* ── CENTERED HEADING ── */}
-        <motion.h2
-          initial={{ opacity: 0, y: 24, filter: 'blur(8px)' }}
-          animate={inView ? { opacity: 1, y: 0, filter: 'blur(0px)' } : {}}
-          transition={{ duration: 1.20, ease: [0.16, 1, 0.3, 1] }}
-          style={{
-            fontFamily: serif, fontWeight: 300,
-            fontSize: 'clamp(2.2rem, 3.6vw, 3.8rem)',
-            lineHeight: 1.16, letterSpacing: '-.026em',
-            color: '#F5F0E8', margin: '0 auto clamp(12px, 2vw, 18px)',
-            maxWidth: '680px',
-          }}
-        >
-          When Confidence Grows,<br />Results Follow.
-        </motion.h2>
+        {/* ── Heading ── */}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr',
+          gap: 'clamp(32px, 6vw, 96px)',
+          alignItems: 'end',
+          marginBottom: 'clamp(56px, 8vw, 96px)',
+        }}>
+          <motion.h2
+            initial={{ opacity: 0, y: 24 }}
+            animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
+            transition={{ duration: 1.20, ease: easeHero }}
+            style={{
+              fontFamily: serif, fontWeight: 300,
+              fontSize: 'clamp(2.6rem, 4.2vw, 5.0rem)',
+              lineHeight: 1.10, letterSpacing: '-.030em',
+              color: '#F5F0E8', margin: 0,
+            }}
+          >
+            When Confidence<br />Grows, Results<br />Follow.
+          </motion.h2>
 
-        {/* Gold rule */}
-        <motion.div
-          initial={{ scaleX: 0, opacity: 0 }}
-          animate={inView ? { scaleX: 1, opacity: 1 } : {}}
-          transition={{ duration: 0.9, delay: 0.18, ease: [0.25, 1, 0.5, 1] }}
-          style={{
-            width: '48px', height: '1px', margin: '0 auto clamp(56px, 7vw, 88px)',
-            background: `linear-gradient(90deg, transparent, ${C.gold}, transparent)`,
-            transformOrigin: 'center',
-          }}
-        />
-
-        {/* ── STATS ROW ── */}
-        <div
-          className="ach-stats-row"
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(4, 1fr)',
-            columnGap: 'clamp(16px, 3vw, 32px)',
-            alignItems: 'start',
-          }}
-        >
-          {ACH_STATS.map((s, i) => {
-            const revealDelay = 0.28 + i * 0.30; // 300ms between each
-            const particleDelay = Math.round(revealDelay * 1000) + 200;
-            return (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 28 }}
-                animate={inView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 1.0, delay: revealDelay, ease: [0.22, 1, 0.36, 1] }}
-                style={{ position: 'relative' }}
-              >
-                {/* Gold particles — fire once per stat as it enters */}
-                <GoldParticles active={inView} delay={particleDelay} />
-
-                {/* Subtle gold glow behind number */}
-                <div style={{
-                  position: 'absolute',
-                  top: '10%', left: '50%', transform: 'translateX(-50%)',
-                  width: '120px', height: '60px',
-                  background: `radial-gradient(ellipse, rgba(201,162,39,${i === 0 ? '.18' : '.10'}) 0%, transparent 70%)`,
-                  filter: 'blur(16px)',
-                  pointerEvents: 'none',
-                }} />
-
-                {/* Number */}
-                <div style={{
-                  position: 'relative',
-                  fontFamily: serif, fontWeight: 300,
-                  fontSize: 'clamp(3.2rem, 5.5vw, 6.0rem)',
-                  lineHeight: 1, letterSpacing: '-.040em',
-                  color: i === 0 ? C.goldL : '#F5F0E8',
-                  marginBottom: '20px',
-                }}>
-                  <CountUpStat
-                    target={s.target}
-                    decimals={s.decimals}
-                    suffix={s.suffix}
-                    triggerDelay={Math.round(revealDelay * 1000)}
-                    inView={inView}
-                  />
-                </div>
-
-                {/* Gold divider */}
-                <div style={{
-                  width: '28px', height: '1px', margin: '0 auto 16px',
-                  background: i === 0
-                    ? C.gold
-                    : 'rgba(201,162,39,.32)',
-                }} />
-
-                {/* Label */}
-                <p style={{
-                  fontFamily: sans, fontWeight: 500,
-                  fontSize: '.54rem', letterSpacing: '.20em',
-                  textTransform: 'uppercase',
-                  color: i === 0
-                    ? 'rgba(232,192,64,.90)'
-                    : 'rgba(245,240,232,.38)',
-                  margin: 0, lineHeight: 1.5,
-                }}>
-                  {s.label}
-                </p>
-              </motion.div>
-            );
-          })}
+          <motion.p
+            initial={{ opacity: 0, y: 16 }}
+            animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 }}
+            transition={{ duration: 1.10, delay: 0.14, ease: easeOut }}
+            style={{
+              fontFamily: sans, fontWeight: 300,
+              fontSize: 'clamp(.88rem, 1.1vw, 1.0rem)',
+              lineHeight: 1.84,
+              color: 'rgba(245,240,232,.36)',
+              margin: 0,
+            }}
+          >
+            For more than twenty years, DA Tuition has helped students
+            build confidence, strengthen their habits, and achieve
+            meaningful academic growth — one family at a time.
+          </motion.p>
         </div>
 
+        {/* ── Stats stage — absolute positioning creates the true staircase ── */}
+        <div
+          className="ach-stage"
+          style={{
+            position: 'relative',
+            minHeight: '720px',
+            paddingBottom: '40px',
+          }}
+        >
+          {/* ── Gold journey line — thin SVG bezier, draws in on scroll ── */}
+          <svg
+            className="ach-journey"
+            aria-hidden="true"
+            viewBox="0 0 1000 720"
+            preserveAspectRatio="none"
+            style={{
+              position: 'absolute', inset: 0,
+              width: '100%', height: '100%',
+              pointerEvents: 'none',
+              zIndex: 0,
+              overflow: 'visible',
+            }}
+          >
+            <motion.path
+              d={journeyPath}
+              fill="none"
+              stroke="rgba(201,162,39,0.20)"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              initial={{ pathLength: 0, opacity: 0 }}
+              animate={inView
+                ? { pathLength: 1, opacity: 1 }
+                : { pathLength: 0, opacity: 0 }}
+              transition={{ duration: 2.4, delay: 0.5, ease: [0.4, 0, 0.2, 1] }}
+            />
+            {/* Small gold dots at each anchor — appear as the line draws through */}
+            {[
+              { cx: 130, cy:  90 },
+              { cx: 380, cy: 255 },
+              { cx: 630, cy: 405 },
+              { cx: 870, cy: 545 },
+            ].map((pt, i) => (
+              <motion.circle
+                key={i}
+                cx={pt.cx}
+                cy={pt.cy}
+                r={3.5}
+                fill="rgba(201,162,39,0.45)"
+                initial={{ opacity: 0 }}
+                animate={inView ? { opacity: 1 } : { opacity: 0 }}
+                transition={{ duration: 0.40, delay: 0.90 + i * 0.22 }}
+              />
+            ))}
+          </svg>
+
+          {/* ── Stat cells ── */}
+          {ACH_STATS.map((s, i) => (
+            <motion.div
+              key={i}
+              className="ach-stat"
+              initial={{ opacity: 0, y: 28 }}
+              animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 28 }}
+              transition={{ duration: 1.15, delay: pos[i].delay, ease: easeOut }}
+              style={{
+                position: 'absolute',
+                left: pos[i].left,
+                top: pos[i].top,
+                width: '22%',
+                zIndex: 1,
+              }}
+            >
+              {/* Number — large italic serif */}
+              <div style={{
+                fontFamily: serif, fontWeight: 300,
+                fontStyle: 'italic',
+                fontSize: numSizes[i],
+                lineHeight: 1,
+                letterSpacing: '-.040em',
+                color: i === 0 ? C.goldL : '#F5F0E8',
+                marginBottom: 'clamp(18px, 2.2vw, 30px)',
+                whiteSpace: 'nowrap',
+              }}>
+                <CountUpStat
+                  target={s.target}
+                  decimals={s.decimals}
+                  suffix={i === 2 ? '' : s.suffix}
+                  triggerDelay={Math.round(pos[i].delay * 1000)}
+                  inView={inView}
+                />
+                {i === 2 && (
+                  <span style={{
+                    fontStyle: 'normal',
+                    fontSize: '0.36em',
+                    verticalAlign: '0.80em',
+                    lineHeight: 1,
+                    marginLeft: '0.10em',
+                    color: C.gold,
+                    letterSpacing: 0,
+                  }}>★</span>
+                )}
+              </div>
+
+              {/* Divider — gold for first, ivory for rest */}
+              <motion.div
+                initial={{ scaleX: 0 }}
+                animate={inView ? { scaleX: 1 } : { scaleX: 0 }}
+                transition={{
+                  duration: 0.80,
+                  delay: pos[i].delay + 0.22,
+                  ease: [0.25, 1, 0.5, 1],
+                }}
+                style={{
+                  height: '1px',
+                  background: i === 0
+                    ? 'linear-gradient(90deg, rgba(201,162,39,.65), rgba(201,162,39,.08))'
+                    : 'linear-gradient(90deg, rgba(245,240,232,.26), transparent)',
+                  transformOrigin: 'left',
+                  marginBottom: 'clamp(16px, 2.0vw, 22px)',
+                }}
+              />
+
+              {/* Caption — uppercase, letter-spaced, clearly readable */}
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={inView ? { opacity: 1 } : { opacity: 0 }}
+                transition={{ duration: 0.90, delay: pos[i].delay + 0.38 }}
+                style={{
+                  fontFamily: sans, fontWeight: 500,
+                  fontSize: 'clamp(.80rem, 1.0vw, .94rem)',
+                  letterSpacing: '.22em',
+                  textTransform: 'uppercase',
+                  color: i === 0
+                    ? 'rgba(232,192,64,.88)'
+                    : 'rgba(245,240,232,.66)',
+                  margin: 0, lineHeight: 1.7,
+                }}
+              >
+                {s.caption}
+              </motion.p>
+            </motion.div>
+          ))}
+
+        </div>
       </div>
     </section>
   );
@@ -1959,19 +2001,496 @@ const QuoteSection = () => {
 };
 
 // ══════════════════════════════════════════════════════════════
-//  REVIEWS
+//  REVIEWS — premium editorial carousel
 // ══════════════════════════════════════════════════════════════
+
+// Tags map each review to the 5 filter categories
+const CAROUSEL_REVIEWS = [
+  {
+    id: 'cr-1',
+    tags: ['Results', 'Tutors', 'HSC'],
+    category: 'HSC English',
+    author: 'Katelin Trinh',
+    yearLevel: 'Year 12',
+    preview: "From 15th to 6th in my final HSC ranking — and Band 5–6 across every English assessment. Miss Jenny didn't just lift my marks; she gave me a genuine love for the subject.",
+    full: "I am so grateful for DA Tuition for helping me improve my English results and boosting my confidence in the subject. My tutor Ms Jenny has been exceptionally patient, kind, knowledgeable and always willing to go above and beyond for her students to succeed. Thanks to her, I had a drastic improvement in my assessment rank, moving from 15th to 6th in my final HSC assessment, and I received Band 5–6 across all my English assignments. Beyond academics, Ms Jenny also inspired me to develop a genuine passion for English. The staff are incredibly friendly and supportive, and the learning environment is excellent. Highly recommended to anyone looking to excel.",
+  },
+  {
+    id: 'cr-2',
+    tags: ['Confidence', 'Results', 'Family', 'HSC'],
+    category: 'HSC Mathematics',
+    author: 'Bryant Lam',
+    yearLevel: 'Year 12',
+    preview: "Eight years at DA. Five Band 6s in the HSC. The tutors here don't just teach subjects — they help you fall in love with learning.",
+    full: "Being a student at DA for the last 8 years has been an absolute life changer. DA has guided and supported me to achieve academic excellence — first through the selective school program, then all the way through the HSC. Despite having confidence issues in my academic abilities, these tutors drew out my best ability and motivated me to strive for success. Ms Amanda's passion for mathematics was infectious and made me hungry to improve. Through DA I achieved five Band 6s in the HSC exam and the ATAR that made my parents proud. If you're looking for a place to develop a strong foundation and achieve your maximum potential, DA is the place for you.",
+  },
+  {
+    id: 'cr-3',
+    tags: ['Confidence', 'Family'],
+    category: 'A Place of Family',
+    author: 'Lisa Vu',
+    yearLevel: 'Year 12',
+    preview: "I began as a below-average student who received detentions and hated school. Eight years later, I leave with a bright future ahead — and a gratitude I will carry for life.",
+    full: "DA Tuition is not just an educational environment but a place of upbringing and encouragement. As a committed student of 8 years, DA staff are not just teachers but family — promoters of success who bring out the best in every individual. Initially, I was a below-average student who did not concern myself with success. By being with Miss Linda, she advanced my understanding of what it means to be prosperous, guiding me through hard times by not only lifting my grades but also my perspective. I am now looking forward to a bright future, in gratitude and appreciation to all the tutors I have had. Lisa Vu — Cecil Hills High School — Year 12",
+  },
+  {
+    id: 'cr-4',
+    tags: ['Confidence', 'Results', 'Tutors'],
+    category: 'Mathematics',
+    author: 'Emily Nguyen',
+    yearLevel: '',
+    preview: "I used to be an above-average student at best. After joining DA in Year 5, I now achieve marks in the high 90s — 2nd in my grade, and 100% on my most recent exam.",
+    full: "I've been going to DA Tuition since Year 5, and I can't explain how much this place has helped me improve academically throughout the years. With the help of Miss Linda and Miss Lai, my test results are now in the high 90s — including 2nd place in maths in my grade and 100% on my recent test. My confidence in learning has improved significantly and I'm now determined to achieve above 90% for all my tests. I can't thank DA and the teachers enough for their expertise and engaging lessons. With these incredible teachers and the great learning environment, I'm looking forward to continuing my journey here.",
+  },
+  {
+    id: 'cr-5',
+    tags: ['Results', 'Tutors', 'HSC'],
+    category: 'HSC English',
+    author: 'Lillian Pham',
+    yearLevel: 'Year 12',
+    preview: "English was my least favourite subject. Within weeks of joining DA, my marks improved dramatically — I jumped a significant number of ranks in my cohort.",
+    full: "I had Miss Selina from the second term of my HSC year and I wish I had joined sooner. Prior to joining DA, English was my least favourite subject and my marks definitely reflected that. Although it had only been several weeks since I started English tutoring with Miss Selina, my marks for the second assessment task improved dramatically and I jumped up a significant number of ranks in my cohort. My essay writing and creative writing skills have improved so much since I started. She makes classes enjoyable, and I am more motivated than ever to do well in English. Lillian Pham — Prairiewood High School — Year 12",
+  },
+  {
+    id: 'cr-6',
+    tags: ['Confidence', 'Results', 'Family', 'HSC'],
+    category: 'Nine Years at DA',
+    author: 'Connor Mangala',
+    yearLevel: 'Year 12',
+    preview: "Miss Lai and Mr Bunsea helped me realise what I was truly capable of. I'm now enrolled in my dream university course — results I never knew I could achieve.",
+    full: "I am always so grateful for all the tutors who have seen me grow over the past 9 years I have been at DA. Specifically, I want to thank Miss Lai and Mr Bunsea for helping me realise that I needed to take my learning seriously in my senior years — that my future self was depending on me. Without them I wouldn't have received the marks and ATAR I never knew I could achieve, and I wouldn't have been accepted into my dream university course.",
+  },
+  {
+    id: 'cr-7',
+    tags: ['Results', 'Tutors'],
+    category: 'Mathematics',
+    author: 'Diana Nguyen',
+    yearLevel: '',
+    preview: "Mr Bunsea took me from a C average to 94% and first in my class — in a single term. I've never been more grateful for a teacher.",
+    full: "Before going to DA, I was a C average student in maths. After going to DA and having Mr Bunsea as my tutor, he made the most difficult concepts so easy to understand. In my first term with him, he pulled me from a C to a B grade. I continued with him and finally achieved 94% on my latest maths exam — first in my class. I really appreciate his dedication. The teachers at DA are extremely hardworking and caring, always willing to go out of their way to make sure students get the results they deserve. Diana Nguyen.",
+  },
+  {
+    id: 'cr-8',
+    tags: ['Confidence', 'Results', 'Tutors', 'Family'],
+    category: 'Four Years at DA',
+    author: 'Tiffany Lang',
+    yearLevel: '',
+    preview: "Having been to many tutoring centres before DA, the difference is clear. My results, my confidence, and my love of learning have all transformed here.",
+    full: "Having gone to many other tutoring places before DA Tuition, I have seen my results improve over my 4 years of being here. Ms Lai, Mr Danny and Mr Bunsea have stuck with me to the end of my high schooling years, providing me with the support and knowledge to excel in my subjects, as well as making my time here the most enjoyable and memory-making experience. I truly think that DA Tuition is a great recommendation for any student.",
+  },
+];
+
+const REVIEW_FILTERS = ['Confidence', 'Results', 'Tutors', 'Family', 'HSC'] as const;
+
 const ReviewsSection = () => {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: '-60px' });
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const wrapRef    = useRef<HTMLDivElement>(null);
+  const inView     = useInView(sectionRef, { once: true, margin: '-60px' });
+
+  const [current,      setCurrent]      = useState(0);
+  const [expanded,     setExpanded]     = useState<string | null>(null);
+  const [cardW,        setCardW]        = useState(760);
+  const [activeFilter, setActiveFilter] = useState<string | null>(null);
+  const [fading,       setFading]       = useState(false);
+
+  const GAP = 24;
+  const x   = useMotionValue(0);
+
+  // Derived: filter is cheap (8 items), no useMemo needed
+  const filteredReviews = activeFilter
+    ? CAROUSEL_REVIEWS.filter(r => r.tags.includes(activeFilter))
+    : CAROUSEL_REVIEWS;
+
+  // Measure card width
+  useEffect(() => {
+    const measure = () => {
+      if (!wrapRef.current) return;
+      const w   = wrapRef.current.offsetWidth;
+      const vw  = window.innerWidth;
+      const frac = vw <= 540 ? 0.86 : vw <= 900 ? 0.78 : 0.72;
+      setCardW(Math.round(w * frac));
+    };
+    measure();
+    const ro = new ResizeObserver(measure);
+    if (wrapRef.current) ro.observe(wrapRef.current);
+    return () => ro.disconnect();
+  }, []);
+
+  const goTo = useCallback((idx: number, len: number) => {
+    const n = Math.max(0, Math.min(len - 1, idx));
+    setCurrent(n);
+    fmAnimate(x, -(n * (cardW + GAP)), { type: 'spring', stiffness: 340, damping: 38 });
+  }, [cardW, x]);
+
+  const handleDragEnd = (
+    _: unknown,
+    { offset, velocity }: { offset: { x: number }; velocity: { x: number } }
+  ) => {
+    const snap = cardW * 0.22;
+    const len  = filteredReviews.length;
+    if (velocity.x < -400 || offset.x < -snap) goTo(current + 1, len);
+    else if (velocity.x > 400 || offset.x > snap) goTo(current - 1, len);
+    else goTo(current, len);
+  };
+
+  // Filter change: fade out → reset → switch → fade in
+  const handleFilterChange = (cat: string) => {
+    const next = activeFilter === cat ? null : cat;
+    setFading(true);
+    setTimeout(() => {
+      setActiveFilter(next);
+      setCurrent(0);
+      setExpanded(null);
+      fmAnimate(x, 0, { duration: 0 });
+      setFading(false);
+    }, 200);
+  };
+
+  const maxDrag = -((filteredReviews.length - 1) * (cardW + GAP));
+  const easeOut = [0.22, 1, 0.36, 1] as const;
+
   return (
-    <section ref={ref} style={{ background: C.cream, padding: '100px 0' }}>
-      <motion.div variants={stagger} initial="hidden" animate={inView ? 'visible' : 'hidden'}>
-        <motion.div variants={fadeUp} style={{ textAlign: 'center', marginBottom: '52px', padding: '0 24px' }}>
-          <div style={{ fontFamily: sans, fontSize: '.7rem', fontWeight: 700, letterSpacing: '.16em', textTransform: 'uppercase', color: C.gold, marginBottom: '14px' }}>Families Love DA</div>
-          <h2 style={{ fontFamily: serif, fontWeight: 600, fontSize: 'clamp(2rem,4vw,3.4rem)', color: C.navy, letterSpacing: '-.02em' }}>393 Five-Star Reviews</h2>
+    <section
+      ref={sectionRef}
+      aria-label="Family reviews"
+      style={{
+        background: C.cream,
+        paddingTop:    'clamp(80px,9vw,120px)',
+        paddingBottom: 'clamp(80px,9vw,120px)',
+        overflow: 'hidden',
+      }}
+    >
+      {/* ── Header ── */}
+      <div style={{ padding: '0 clamp(24px,6vw,80px)', marginBottom: 'clamp(36px,5vw,52px)' }}>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 1.0, ease: easeOut }}
+        >
+          <div style={{
+            fontFamily: sans, fontWeight: 700,
+            fontSize: '.70rem', letterSpacing: '.17em',
+            textTransform: 'uppercase', color: C.gold,
+            marginBottom: '16px',
+          }}>
+            Families Love DA
+          </div>
+          <h2 style={{
+            fontFamily: serif, fontWeight: 300,
+            fontSize: 'clamp(2.4rem,4.0vw,4.4rem)',
+            letterSpacing: '-.028em', lineHeight: 1.08,
+            color: C.navy, margin: 0,
+          }}>
+            450 Five-Star Reviews
+          </h2>
         </motion.div>
-        <motion.div variants={fadeIn}><GoogleReviewsCarousel /></motion.div>
+      </div>
+
+      {/* ── Category filters ── */}
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={inView ? { opacity: 1, y: 0 } : {}}
+        transition={{ duration: 0.80, delay: 0.15, ease: easeOut }}
+        style={{
+          padding: '0 clamp(24px,6vw,80px)',
+          marginBottom: 'clamp(36px,5vw,56px)',
+          display: 'flex',
+          flexWrap: 'wrap',
+          gap: '10px',
+        }}
+      >
+        {REVIEW_FILTERS.map((cat) => {
+          const isActive = activeFilter === cat;
+          return (
+            <button
+              key={cat}
+              onClick={() => handleFilterChange(cat)}
+              style={{
+                height: '38px',
+                padding: '0 20px',
+                borderRadius: '100px',
+                border: `1.5px solid ${isActive ? C.gold : 'rgba(10,22,40,0.20)'}`,
+                background: isActive ? C.gold : 'transparent',
+                color: isActive ? '#FFFFFF' : 'rgba(10,22,40,0.62)',
+                fontFamily: sans, fontWeight: 500,
+                fontSize: '.70rem', letterSpacing: '.14em',
+                textTransform: 'uppercase',
+                cursor: 'pointer',
+                transition: 'all 0.26s cubic-bezier(0.22,1,0.36,1)',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              {cat}
+            </button>
+          );
+        })}
+      </motion.div>
+
+      {/* ── Carousel track (fades on filter switch) ── */}
+      <motion.div
+        animate={{ opacity: fading ? 0 : 1 }}
+        transition={{ duration: 0.18 }}
+      >
+        <div ref={wrapRef} style={{ overflow: 'hidden' }}>
+          <motion.div
+            drag="x"
+            dragConstraints={{ left: maxDrag, right: 0 }}
+            dragElastic={0.05}
+            dragMomentum={false}
+            onDragEnd={handleDragEnd}
+            style={{
+              x,
+              display: 'flex',
+              gap: `${GAP}px`,
+              paddingLeft:  'clamp(24px,6vw,80px)',
+              paddingRight: 'clamp(24px,6vw,80px)',
+              cursor: 'grab',
+              userSelect: 'none',
+            }}
+          >
+            {filteredReviews.map((r, i) => {
+              const isActive   = i === current;
+              const isExpanded = expanded === r.id;
+              return (
+                <motion.div
+                  key={r.id}
+                  initial={{ opacity: 0, y: 28 }}
+                  animate={inView ? { opacity: 1, y: 0 } : {}}
+                  transition={{ duration: 0.80, delay: Math.min(i * 0.05, 0.20), ease: easeOut }}
+                  style={{
+                    width: cardW,
+                    flexShrink: 0,
+                    minHeight: 'clamp(440px,56vw,520px)',
+                    background: '#FFFFFF',
+                    padding: 'clamp(36px,4vw,56px) clamp(32px,3.5vw,52px)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    borderLeft: `2px solid ${isActive ? C.gold : 'transparent'}`,
+                    transition: 'border-color 0.40s ease',
+                    pointerEvents: 'auto',
+                    boxSizing: 'border-box',
+                  }}
+                >
+                  {/* ── Header: category left, stars right ── */}
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    marginBottom: 'clamp(40px,5vw,56px)',
+                  }}>
+                    <span style={{
+                      fontFamily: sans, fontWeight: 600,
+                      fontSize: '.60rem', letterSpacing: '.24em',
+                      textTransform: 'uppercase',
+                      color: C.gold,
+                    }}>
+                      {r.category}
+                    </span>
+                    <span style={{
+                      fontSize: '.78rem', letterSpacing: '.14em',
+                      color: C.gold,
+                      userSelect: 'none',
+                    }}>
+                      ★★★★★
+                    </span>
+                  </div>
+
+                  {/* ── Quote — hero element ── */}
+                  <p style={{
+                    fontFamily: serif, fontWeight: 300,
+                    fontStyle: 'italic',
+                    fontSize: 'clamp(1.26rem,1.75vw,1.60rem)',
+                    lineHeight: 1.62,
+                    letterSpacing: '-.016em',
+                    color: C.navy,
+                    margin: 0,
+                  }}>
+                    {/* Integrated opening mark — large, gold, flows with text */}
+                    <span style={{
+                      fontStyle: 'normal',
+                      fontSize: '1.30em',
+                      lineHeight: 0,
+                      verticalAlign: '-0.22em',
+                      color: C.gold,
+                      marginRight: '0.04em',
+                      opacity: 0.70,
+                    }}>&ldquo;</span>
+                    {isExpanded ? r.full : r.preview}
+                  </p>
+
+                  {/* ── Footer — pushed to bottom via marginTop: auto ── */}
+                  <div style={{ marginTop: 'auto', paddingTop: 'clamp(36px,4.5vw,52px)' }}>
+
+                    {/* Gold gradient rule */}
+                    <div style={{
+                      height: '1px',
+                      background: 'linear-gradient(90deg, rgba(201,162,39,.45), rgba(201,162,39,.05))',
+                      marginBottom: 'clamp(20px,2.5vw,26px)',
+                    }} />
+
+                    {/* Name + year level */}
+                    <div style={{
+                      display: 'flex',
+                      alignItems: 'baseline',
+                      gap: '14px',
+                      marginBottom: 'clamp(16px,2vw,20px)',
+                    }}>
+                      <span style={{
+                        fontFamily: sans, fontWeight: 500,
+                        fontSize: '.84rem', letterSpacing: '.04em',
+                        color: C.navy,
+                      }}>
+                        {r.author}
+                      </span>
+                      {r.yearLevel && (
+                        <span style={{
+                          fontFamily: sans, fontWeight: 300,
+                          fontSize: '.72rem', letterSpacing: '.06em',
+                          color: 'rgba(10,22,40,0.40)',
+                        }}>
+                          {r.yearLevel}
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Read Full Story */}
+                    <button
+                      onClick={(e) => { e.stopPropagation(); setExpanded(isExpanded ? null : r.id); }}
+                      style={{
+                        background: 'none', border: 'none', padding: 0,
+                        fontFamily: sans, fontWeight: 400,
+                        fontSize: '.68rem', letterSpacing: '.16em',
+                        textTransform: 'uppercase',
+                        color: C.gold,
+                        cursor: 'pointer',
+                        display: 'inline-flex', alignItems: 'center', gap: '8px',
+                        opacity: 0.85,
+                      }}
+                    >
+                      {isExpanded ? 'Close Story ↑' : 'Read Full Story →'}
+                    </button>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </motion.div>
+        </div>
+
+        {/* ── Navigation: dots + arrows ── */}
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          padding: 'clamp(32px,4vw,52px) clamp(24px,6vw,80px) 0',
+        }}>
+          {/* Pill dots */}
+          <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+            {filteredReviews.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => goTo(i, filteredReviews.length)}
+                aria-label={`Go to review ${i + 1}`}
+                style={{
+                  width:  i === current ? '26px' : '7px',
+                  height: '7px',
+                  borderRadius: '4px',
+                  background: i === current ? C.gold : 'rgba(10,22,40,0.16)',
+                  border: 'none', padding: 0, cursor: 'pointer',
+                  transition: 'all 0.32s cubic-bezier(0.22,1,0.36,1)',
+                }}
+              />
+            ))}
+          </div>
+
+          {/* Prev / Next arrows */}
+          <div style={{ display: 'flex', gap: '10px' }}>
+            {([
+              { lbl: '←', dir: -1, disabled: current === 0 },
+              { lbl: '→', dir:  1, disabled: current === filteredReviews.length - 1 },
+            ] as const).map(({ lbl, dir, disabled }) => (
+              <button
+                key={lbl}
+                onClick={() => goTo(current + dir, filteredReviews.length)}
+                disabled={disabled}
+                aria-label={lbl === '←' ? 'Previous review' : 'Next review'}
+                style={{
+                  width: '48px', height: '48px',
+                  borderRadius: '50%',
+                  background: 'transparent',
+                  border: `1.5px solid ${disabled ? 'rgba(10,22,40,0.12)' : 'rgba(10,22,40,0.28)'}`,
+                  color: disabled ? 'rgba(10,22,40,0.22)' : C.navy,
+                  fontFamily: sans, fontSize: '1.05rem',
+                  cursor: disabled ? 'default' : 'pointer',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  transition: 'all 0.22s ease',
+                }}
+              >
+                {lbl}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* ── Footer: count + supporting line + CTA ── */}
+        <div style={{
+          padding: 'clamp(52px,7vw,80px) clamp(24px,6vw,80px) 0',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          gap: '24px',
+        }}>
+          {/* Left: stat + sentence */}
+          <div>
+            <div style={{
+              fontFamily: serif, fontWeight: 300,
+              fontSize: 'clamp(1.8rem,3.0vw,2.8rem)',
+              letterSpacing: '-.024em', lineHeight: 1.1,
+              color: C.navy,
+              marginBottom: '10px',
+            }}>
+              450 Five-Star Reviews
+            </div>
+            <p style={{
+              fontFamily: sans, fontWeight: 300,
+              fontSize: 'clamp(.82rem,1.0vw,.92rem)',
+              letterSpacing: '.012em', lineHeight: 1.7,
+              color: 'rgba(10,22,40,0.48)',
+              margin: 0,
+            }}>
+              These are only a few of the stories our families chose to share.
+            </p>
+          </div>
+
+          {/* Right: secondary CTA */}
+          <a
+            href="https://www.google.com/maps/place/DA+Tuition/@-33.8717491,150.9282683,17z/data=!4m8!3m7!1s0x6b12bd1e45e49a8b:0x69b2c4a45f28e5a7!8m2!3d-33.8717491!4d150.9282683!9m1!1b1"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              display: 'inline-flex', alignItems: 'center', gap: '10px',
+              fontFamily: sans, fontWeight: 400,
+              fontSize: '.72rem', letterSpacing: '.16em',
+              textTransform: 'uppercase',
+              color: 'rgba(10,22,40,0.58)',
+              textDecoration: 'none',
+              borderBottom: '1px solid rgba(10,22,40,0.20)',
+              paddingBottom: '3px',
+              transition: 'color 0.22s ease, border-color 0.22s ease',
+            }}
+            onMouseEnter={e => {
+              (e.currentTarget as HTMLAnchorElement).style.color = C.navy;
+              (e.currentTarget as HTMLAnchorElement).style.borderColor = 'rgba(10,22,40,0.50)';
+            }}
+            onMouseLeave={e => {
+              (e.currentTarget as HTMLAnchorElement).style.color = 'rgba(10,22,40,0.58)';
+              (e.currentTarget as HTMLAnchorElement).style.borderColor = 'rgba(10,22,40,0.20)';
+            }}
+          >
+            View All Google Reviews
+            <span style={{ fontSize: '.85em', opacity: 0.70 }}>↗</span>
+          </a>
+        </div>
       </motion.div>
     </section>
   );
