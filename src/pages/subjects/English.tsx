@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import NavigationNew from '@/components/NavigationNew';
 import FooterNew from '@/components/FooterNew';
 import { Button } from '@/components/ui/button';
@@ -180,6 +180,10 @@ const highSchoolYears = [
       { area: 'Vocabulary', items: ['Academic expression', 'Analytical verbs'] },
     ],
     tags: ['TEEL Paragraph Structure', 'Text Analysis', 'Creative Writing', 'Assessment Preparation'],
+    parentConcern: 'Parents often worry when their child enters high school and begins receiving more complex English tasks. Students may struggle with analysing texts, identifying techniques, writing TEEL or PEEL paragraphs, using quotes, or understanding what teachers expect in assessments.',
+    parentDA: 'DA Tuition helps students build the essential foundations of high school English. We teach students how to understand novels, films, poems, plays, and short stories, while developing their ability to identify techniques, explain themes, use evidence, and structure analytical responses.',
+    studentConcern: 'Students in Years 7–8 may feel confused by terms like "analysis," "technique," "theme," or "evidence." They may understand the story but struggle to explain deeper meanings or write paragraphs that sound sophisticated.',
+    studentDA: 'We simplify high school English by teaching clear structures and giving students guided examples before they write independently. Students learn how to break down questions, analyse quotes, organise paragraphs, and express their ideas with greater confidence.',
   },
   {
     id: 'y910',
@@ -196,6 +200,10 @@ const highSchoolYears = [
       { area: 'Exams', items: ['Timed writing and planning', 'Adapting to exam questions'] },
     ],
     tags: ['Stronger Essay Writing', 'Deeper Textual Analysis', 'Timed Exam Practice', 'Senior English Preparation'],
+    parentConcern: 'In Years 9–10, parents may become concerned that their child\'s marks are not improving despite effort. Students may write responses that are too general, rely on retelling the plot, struggle with essay structure, or lack the depth needed for senior English.',
+    parentDA: 'DA Tuition helps students move from simple responses to more developed and analytical writing. We focus on thesis development, argument building, quote integration, technique analysis, creative and discursive writing, and timed assessment preparation.',
+    studentConcern: 'Students in Years 9–10 may feel overwhelmed by essays, unseen questions, quote analysis, and time pressure. They may also feel unsure about how to make their writing sound more sophisticated or how to move beyond basic explanations.',
+    studentDA: 'We teach students how to build stronger arguments, analyse texts with purpose, and write in a more controlled and confident way. Through structured lessons, targeted feedback, and exam-style practice, students learn how to approach assessments with clearer direction and less uncertainty.',
   },
   {
     id: 'y1112',
@@ -205,6 +213,10 @@ const highSchoolYears = [
     intro: '',
     skills: [],
     tags: ['HSC Essay Preparation', 'Module-Based Text Analysis', 'Draft Feedback and Editing', 'Trial and HSC Exam Prep'],
+    parentConcern: 'Parents often worry about whether their child truly understands what senior English requires. Common concerns include uncertainty around HSC modules, weak essay structure, unclear arguments, limited textual analysis, poor time management, and not knowing what markers are looking for.',
+    parentDA: 'DA Tuition helps students approach senior English with clarity, confidence, and purpose. Guided by tutors who have successfully navigated the HSC, students learn what strong responses require: clear arguments, direct engagement with the question, strong textual evidence, and sophisticated expression.',
+    studentConcern: 'Students in Years 11–12 may feel overwhelmed by the pressure of assessments, trials, and the HSC. Many are unsure whether their essays are strong enough, whether they are answering the question properly, or how to adapt their ideas under exam conditions.',
+    studentDA: 'We help students move beyond memorisation by developing genuine understanding, flexible thinking, and confident writing. Through structured guidance, personalised feedback, and ongoing tutor assistance, students learn how to refine their ideas and approach senior English with greater control.',
   },
 ];
 
@@ -302,8 +314,14 @@ function YearSkillPanel({ year }: { year: typeof primaryYears[0] }) {
 const English = () => {
   const [hsYr, setHsYr] = useState('y78');
   const [activeStep, setActiveStep] = useState(0);
+  const [openAcc, setOpenAcc] = useState<'parents' | 'students' | null>(null);
+
+  useEffect(() => { setOpenAcc(null); }, [hsYr]);
 
   const activeHsYear = highSchoolYears.find((y) => y.id === hsYr)!;
+
+  const toggleAcc = (which: 'parents' | 'students') =>
+    setOpenAcc((prev) => (prev === which ? null : which));
 
   return (
     <div className="min-h-screen bg-[#fffdf8] text-[#172033]">
@@ -546,6 +564,101 @@ const English = () => {
                     </div>
                   </div>
                 )}
+
+                {/* ── Parent & Student Concerns Accordion ── */}
+                <div className="border-t border-[#e8e6e0] px-5 py-5">
+                  {/* Eyebrow */}
+                  <div className="mb-4 flex items-center gap-2">
+                    <span className="rounded-full bg-[#071629] px-3 py-1 text-[9.5px] font-bold uppercase tracking-[0.12em] text-[#f1df9a]">
+                      For parents &amp; students
+                    </span>
+                    <div className="h-px flex-1 bg-[#e8e6e0]" />
+                  </div>
+
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                    {/* Parents accordion */}
+                    <div className="overflow-hidden rounded-2xl border border-[#e8e6e0]">
+                      <button
+                        onClick={() => toggleAcc('parents')}
+                        className="flex w-full items-center justify-between gap-3 px-4 py-3.5 text-left transition-colors"
+                        style={{ background: openAcc === 'parents' ? '#fdf8ec' : '#faf8f4' }}
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-[#fdf0c0]">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#b45309" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                            </svg>
+                          </div>
+                          <span className="text-[12.5px] font-semibold text-[#172033]">What parents worry about</span>
+                        </div>
+                        <svg
+                          width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                          className="shrink-0 text-[#172033]/40 transition-transform duration-300"
+                          style={{ transform: openAcc === 'parents' ? 'rotate(180deg)' : 'rotate(0deg)' }}
+                        >
+                          <polyline points="6 9 12 15 18 9"/>
+                        </svg>
+                      </button>
+
+                      {openAcc === 'parents' && (
+                        <div className="border-t border-[#f0e0a0] bg-[#fffdf8] px-4 pb-4 pt-3">
+                          <p className="text-[12.5px] leading-relaxed text-[#172033]/65">
+                            {activeHsYear.parentConcern}
+                          </p>
+                          <div className="mt-3 rounded-xl border border-[#e8c96a] bg-[#fdf3d0] px-4 py-3">
+                            <p className="mb-1.5 text-[10px] font-bold uppercase tracking-[0.09em] text-[#7a5c0a]">
+                              How DA addresses it
+                            </p>
+                            <p className="text-[13px] font-semibold leading-relaxed text-[#4a3500]">
+                              {activeHsYear.parentDA}
+                            </p>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Students accordion */}
+                    <div className="overflow-hidden rounded-2xl border border-[#e8e6e0]">
+                      <button
+                        onClick={() => toggleAcc('students')}
+                        className="flex w-full items-center justify-between gap-3 px-4 py-3.5 text-left transition-colors"
+                        style={{ background: openAcc === 'students' ? '#eff6ff' : '#faf8f4' }}
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-[#dbeafe]">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#1d4ed8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/>
+                            </svg>
+                          </div>
+                          <span className="text-[12.5px] font-semibold text-[#172033]">What students struggle with</span>
+                        </div>
+                        <svg
+                          width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                          className="shrink-0 text-[#172033]/40 transition-transform duration-300"
+                          style={{ transform: openAcc === 'students' ? 'rotate(180deg)' : 'rotate(0deg)' }}
+                        >
+                          <polyline points="6 9 12 15 18 9"/>
+                        </svg>
+                      </button>
+
+                      {openAcc === 'students' && (
+                        <div className="border-t border-[#bfdbfe] bg-[#f8fbff] px-4 pb-4 pt-3">
+                          <p className="text-[12.5px] leading-relaxed text-[#172033]/65">
+                            {activeHsYear.studentConcern}
+                          </p>
+                          <div className="mt-3 rounded-xl border border-[#93c5fd] bg-[#dbeafe] px-4 py-3">
+                            <p className="mb-1.5 text-[10px] font-bold uppercase tracking-[0.09em] text-[#1d4ed8]">
+                              How DA supports students
+                            </p>
+                            <p className="text-[13px] font-semibold leading-relaxed text-[#1e3a8a]">
+                              {activeHsYear.studentDA}
+                            </p>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
 
                 {/* Key areas (all HS years) */}
                 <div className="border-t border-[#e8e6e0] px-5 py-5">
