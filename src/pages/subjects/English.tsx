@@ -666,14 +666,14 @@ const English = () => {
                         <div
                           key={i}
                           className="group relative overflow-hidden rounded-xl border border-[#e0ddd7]"
-                          style={{ height: '10.5rem' }}
+                          style={{ height: '12rem' }}
                         >
                           {/* Front */}
                           <div className="absolute inset-0 flex flex-col bg-[#f7f5f0] p-4 transition-opacity duration-300 group-hover:opacity-0">
                             <p className="mb-2 text-[9px] font-bold uppercase tracking-[0.1em] text-[#172033]/30">
                               Concern {i + 1}
                             </p>
-                            <p className="flex-1 text-[12.5px] font-bold leading-[1.45] text-[#172033]">
+                            <p className="flex-1 text-[14.5px] font-bold leading-[1.4] text-[#172033]">
                               {card.concern}
                             </p>
                             <p className="mt-2 text-[10px] text-[#9b8a6a]">Hover to see how DA helps</p>
@@ -706,14 +706,14 @@ const English = () => {
                         <div
                           key={i}
                           className="group relative overflow-hidden rounded-xl border border-[#e0ddd7]"
-                          style={{ height: '10.5rem' }}
+                          style={{ height: '12rem' }}
                         >
                           {/* Front */}
                           <div className="absolute inset-0 flex flex-col bg-[#f7f5f0] p-4 transition-opacity duration-300 group-hover:opacity-0">
                             <p className="mb-2 text-[9px] font-bold uppercase tracking-[0.1em] text-[#172033]/30">
                               Struggle {i + 1}
                             </p>
-                            <p className="flex-1 text-[12.5px] font-bold leading-[1.45] text-[#172033]">
+                            <p className="flex-1 text-[14.5px] font-bold leading-[1.4] text-[#172033]">
                               {card.concern}
                             </p>
                             <p className="mt-2 text-[10px] text-[#7ba4d4]">Hover to see how DA helps</p>
