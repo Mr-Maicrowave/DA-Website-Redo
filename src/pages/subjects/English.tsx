@@ -2,7 +2,7 @@ import { useState } from 'react';
 import NavigationNew from '@/components/NavigationNew';
 import FooterNew from '@/components/FooterNew';
 import { Button } from '@/components/ui/button';
-import { BookOpen, ArrowRight, CheckCircle, MessageCircle } from 'lucide-react';
+import { BookOpen, ArrowRight, CheckCircle, MessageCircle, Clock, ListChecks } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import SEO from '@/components/SEO';
@@ -360,24 +360,24 @@ function YearSkillPanel({ year }: { year: typeof primaryYears[0] }) {
   return (
     <div className="animate-fadeIn">
       {/* Header */}
-      <div className="border-b border-[#e8e6e0] px-6 py-5">
-        <span className="mb-2 inline-block rounded-md bg-amber-100 px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-amber-800">
+      <div className="border-b border-[#e8e6e0] px-9 py-8">
+        <span className="mb-3 inline-block rounded-md bg-amber-100 px-4 py-1.5 text-[13px] font-bold uppercase tracking-widest text-amber-800">
           {year.pill}
         </span>
-        <h3 className="font-serif text-[1.3rem] font-medium text-[#172033]">{year.heading}</h3>
-        <p className="mt-1.5 text-[13px] leading-relaxed text-[#172033]/65">{year.intro}</p>
+        <h3 className="font-serif text-[2rem] font-medium text-[#172033]">{year.heading}</h3>
+        <p className="mt-3 text-[17px] leading-relaxed text-[#172033]/65">{year.intro}</p>
       </div>
 
       {/* Skills */}
       {year.skills.length > 0 && (
-        <div className="grid grid-cols-2 gap-3 p-5 sm:grid-cols-3 lg:grid-cols-5">
+        <div className="grid grid-cols-2 gap-4 p-7 sm:grid-cols-3 lg:grid-cols-5">
           {year.skills.map((s) => (
-            <div key={s.area} className="rounded-xl bg-[#f7f5f0] p-3.5">
-              <p className="mb-2 text-[9.5px] font-bold uppercase tracking-[0.1em] text-[#172033]/50">{s.area}</p>
-              <ul className="space-y-1">
+            <div key={s.area} className="rounded-xl bg-[#f7f5f0] p-5">
+              <p className="mb-3 text-[12px] font-bold uppercase tracking-[0.1em] text-[#172033]/50">{s.area}</p>
+              <ul className="space-y-2">
                 {s.items.map((item) => (
-                  <li key={item} className="flex items-start gap-1.5 text-[11.5px] leading-snug text-[#172033]">
-                    <span className="mt-[5px] h-1 w-1 shrink-0 rounded-full bg-[#c9a227]" />
+                  <li key={item} className="flex items-start gap-2 text-[15px] leading-snug text-[#172033]">
+                    <span className="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-[#c9a227]" />
                     {item}
                   </li>
                 ))}
@@ -388,9 +388,9 @@ function YearSkillPanel({ year }: { year: typeof primaryYears[0] }) {
       )}
 
       {/* Tags */}
-      <div className="flex flex-wrap gap-2 px-5 pb-5">
+      <div className="flex flex-wrap gap-3 px-7 pb-7">
         {year.tags.map((tag) => (
-          <span key={tag} className="rounded-full border border-blue-200 bg-blue-50 px-3.5 py-1.5 text-[11px] font-medium text-blue-700">
+          <span key={tag} className="rounded-full border border-blue-200 bg-blue-50 px-5 py-2 text-[14px] font-medium text-blue-700">
             {tag}
           </span>
         ))}
@@ -404,6 +404,47 @@ function YearSkillPanel({ year }: { year: typeof primaryYears[0] }) {
 const English = () => {
   const [hsYr, setHsYr] = useState('y78');
   const [activeStep, setActiveStep] = useState(0);
+  const [activeConcern, setActiveConcern] = useState<string | null>(null);
+
+  const concerns = [
+    { label: 'Essay writing', text: 'Our structured essay program teaches PEEL, argument scaffolding, and tutor-marked drafts — so every essay improves, not just passes.' },
+    { label: 'Reading speed', text: 'We train students in close reading and inference so they stop skimming and start understanding what texts actually ask.' },
+    { label: 'HSC prep', text: 'Module-specific coaching, past paper practice, and written feedback on every response — so students walk into the HSC exam prepared.' },
+    { label: 'Confidence', text: 'Small classes and weekly tutor check-ins mean students are never lost in the crowd — they ask questions and get real answers.' },
+    { label: 'Spelling & grammar', text: 'Embedded across every lesson — we treat accuracy as a skill, not a talent, and correct it every single session.' },
+    { label: 'Exam technique', text: 'Timed practise, question deconstruction, and response frameworks students can apply to any unseen text or question.' },
+  ];
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxPage, setLightboxPage] = useState(0);
+
+  const [essayPreviewOpen, setEssayPreviewOpen] = useState(false);
+  const [essayLightboxOpen, setEssayLightboxOpen] = useState(false);
+  const [essayLightboxPage, setEssayLightboxPage] = useState(0);
+
+  const essayPages = [
+    { src: '/samples/essay_page_1.png', label: 'Page 1' },
+    { src: '/samples/essay_page_2.png', label: 'Page 2' },
+    { src: null, label: 'End of preview' },
+  ];
+
+  const openEssayLightbox = (page = 0) => { setEssayLightboxPage(page); setEssayLightboxOpen(true); };
+  const closeEssayLightbox = () => setEssayLightboxOpen(false);
+  const prevEssayPage = () => setEssayLightboxPage((p) => Math.max(0, p - 1));
+  const nextEssayPage = () => setEssayLightboxPage((p) => Math.min(essayPages.length - 1, p + 1));
+
+  const previewPages = [
+    { src: '/samples/lear_page_1.png', label: 'Cover' },
+    { src: '/samples/lear_page_3.png', label: 'Character map' },
+    { src: '/samples/lear_page_9.png', label: 'Analysis' },
+    { src: '/samples/lear_page_15.png', label: 'Activities' },
+    { src: null, label: 'End of preview' },
+  ];
+
+  const openLightbox = (page = 0) => { setLightboxPage(page); setLightboxOpen(true); };
+  const closeLightbox = () => setLightboxOpen(false);
+  const prevPage = () => setLightboxPage((p) => Math.max(0, p - 1));
+  const nextPage = () => setLightboxPage((p) => Math.min(previewPages.length - 1, p + 1));
 
   const activeHsYear = highSchoolYears.find((y) => y.id === hsYr)!;
 
@@ -442,7 +483,14 @@ const English = () => {
               </div>
 
               <h1 className="max-w-2xl font-serif text-4xl font-medium leading-[1.05] tracking-tight text-white sm:text-5xl lg:text-6xl">
-                English support that grows with your child.
+                <motion.span
+                  initial={{ color: '#ffffff' }}
+                  animate={{ color: '#f1df9a' }}
+                  transition={{ duration: 1.2, delay: 0.5, ease: 'easeInOut' }}
+                  style={{ display: 'inline' }}
+                >
+                  English
+                </motion.span>{' '}support that grows with your child.
               </h1>
 
               <p className="mt-5 max-w-xl text-[15px] leading-relaxed text-white/70">
@@ -465,30 +513,53 @@ const English = () => {
               </div>
             </motion.div>
 
-            {/* Right — quick-check card */}
+            {/* Right — concern picker */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.15, ease: 'easeOut' }}
-              className="hidden self-end lg:block pb-12"
+              transition={{ duration: 0.7, delay: 0.25, ease: 'easeOut' }}
+              className="hidden lg:flex lg:items-center"
             >
-              <div className="rounded-2xl border border-white/15 bg-white/10 p-5 backdrop-blur-md">
-                <p className="mb-3 text-[9px] font-black uppercase tracking-[0.14em] text-[#f1df9a]">
-                  Parent quick check
+              <div className="w-full rounded-2xl border border-[#e8d98a] bg-[#fffdf8] p-7 shadow-2xl">
+                <p className="mb-1 text-[10px] font-black uppercase tracking-[0.12em] text-[#7a5c0a]">
+                  What's your biggest concern?
                 </p>
-                {[
-                  'Unsure which level fits?',
-                  'Worried about writing or reading skills?',
-                  'Preparing for HSC English?',
-                ].map((item) => (
-                  <div
-                    key={item}
-                    className="mb-2 flex items-center gap-2 rounded-lg bg-white/10 px-3 py-2 text-[11px] font-semibold text-white last:mb-0"
-                  >
-                    <CheckCircle className="h-3.5 w-3.5 shrink-0 text-[#f1df9a]" />
-                    {item}
-                  </div>
-                ))}
+                <p className="mb-5 text-[12px] text-[#9b8a6a]">Tap one to see how DA helps.</p>
+
+                <div className="mb-5 flex flex-wrap gap-2">
+                  {concerns.map((c) => (
+                    <button
+                      key={c.label}
+                      onClick={() => setActiveConcern(activeConcern === c.label ? null : c.label)}
+                      className="rounded-full px-4 py-2 text-[12px] font-600 transition-all duration-200"
+                      style={
+                        activeConcern === c.label
+                          ? { background: '#c9a227', color: '#101521', fontWeight: 700 }
+                          : { background: '#f5f0e8', border: '1px solid #d9c98a', color: '#5c4a1e', fontWeight: 600 }
+                      }
+                    >
+                      {c.label}
+                    </button>
+                  ))}
+                </div>
+
+                <div
+                  className="min-h-[72px] rounded-xl border border-[#e8c96a] bg-[#fef9ef] px-5 py-4 transition-all duration-300"
+                >
+                  {activeConcern ? (
+                    <p className="text-[13px] leading-relaxed text-[#3d2800]">
+                      {concerns.find((c) => c.label === activeConcern)?.text}
+                    </p>
+                  ) : (
+                    <p className="text-[12px] text-[#b8a070]">Select a concern above to see how we help.</p>
+                  )}
+                </div>
+
+                <Link to="/contact" className="mt-5 block">
+                  <Button className="h-11 w-full rounded-xl bg-[#c9a227] text-sm font-bold text-[#101521] hover:bg-[#b8911f]">
+                    Book an Interview <ArrowRight className="ml-1.5 h-4 w-4" />
+                  </Button>
+                </Link>
               </div>
             </motion.div>
           </div>
@@ -515,7 +586,13 @@ const English = () => {
 
 
         {/* ── Interactive Content Area ── */}
-        <section className="mx-auto max-w-7xl px-5 lg:px-8">
+        <motion.section
+          className="mx-auto max-w-7xl px-5 lg:px-8"
+          initial={{ opacity: 0, y: 48 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-80px' }}
+          transition={{ duration: 0.65, ease: 'easeOut' }}
+        >
           <div className="rounded-b-3xl border border-t-0 border-[#e8e6e0] bg-white shadow-sm">
             <div>
                 {/* Years 7-8 and 9-10 skill panels */}
@@ -527,18 +604,18 @@ const English = () => {
                 {hsYr === 'y1112' && (
                   <div className="animate-fadeIn">
                     {/* Header */}
-                    <div className="border-b border-[#e8e6e0] px-6 py-5">
-                      <span className="mb-2 inline-block rounded-md bg-amber-100 px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-amber-800">
+                    <div className="border-b border-[#e8e6e0] px-9 py-8">
+                      <span className="mb-3 inline-block rounded-md bg-amber-100 px-4 py-1.5 text-[13px] font-bold uppercase tracking-widest text-amber-800">
                         {activeHsYear.pill}
                       </span>
-                      <h3 className="font-serif text-[1.3rem] font-medium text-[#172033]">{activeHsYear.heading}</h3>
-                      <p className="mt-3 text-[13px] leading-relaxed text-[#172033]/70">
+                      <h3 className="font-serif text-[2rem] font-medium text-[#172033]">{activeHsYear.heading}</h3>
+                      <p className="mt-4 text-[17px] leading-relaxed text-[#172033]/70">
                         Our Years 11–12 English program is designed to take the uncertainty out of HSC English.
                         Guided by tutors who have succeeded in the HSC and understand the expectations of
                         high-level responses, students learn how to think critically, write with purpose, and
                         approach each module with confidence.
                       </p>
-                      <p className="mt-3 text-[13px] leading-relaxed text-[#172033]/70">
+                      <p className="mt-4 text-[17px] leading-relaxed text-[#172033]/70">
                         At DA Tuition, we focus on more than memorisation. We help students understand what
                         strong writing looks like, what markers value, and how to develop responses that are
                         clear, insightful, and adaptable across assessments, trials, and the HSC.
@@ -546,13 +623,13 @@ const English = () => {
                     </div>
 
                     {/* Vertical timeline — interactive */}
-                    <div className="px-6 pt-5 pb-4">
-                      <p className="mb-5 text-[13.5px] font-semibold text-[#172033]">Senior lesson process</p>
-                      <div className="relative pl-9">
-                        {/* Track line — fills up to active step */}
-                        <div className="absolute left-[13px] top-1.5 bottom-1.5 w-0.5 bg-[#e8e6e0]" />
+                    <div className="px-9 pt-8 pb-6">
+                      <p className="mb-7 text-[17px] font-semibold text-[#172033]">Senior lesson process</p>
+                      <div className="relative pl-[4.5rem]">
+                        {/* Track line */}
+                        <div className="absolute left-[22px] top-2 bottom-2 w-0.5 bg-[#e8e6e0]" />
                         <div
-                          className="absolute left-[13px] top-1.5 w-0.5 bg-gradient-to-b from-[#c9a227] to-[#e8d97a] transition-all duration-500"
+                          className="absolute left-[22px] top-2 w-0.5 bg-gradient-to-b from-[#c9a227] to-[#e8d97a] transition-all duration-500"
                           style={{ height: `${((activeStep + 0.5) / seniorProcess.length) * 100}%` }}
                         />
 
@@ -562,22 +639,22 @@ const English = () => {
                           return (
                             <div
                               key={s.num}
-                              className="relative mb-3 last:mb-0 cursor-pointer"
+                              className="relative mb-5 last:mb-0 cursor-pointer"
                               onClick={() => setActiveStep(i)}
                             >
                               {/* Dot */}
                               <div
-                                className="absolute -left-9 top-[7px] flex h-[22px] w-[22px] items-center justify-center rounded-full border-2 text-[9px] font-bold transition-all duration-300"
+                                className="absolute -left-[4.5rem] top-[10px] flex h-[34px] w-[34px] items-center justify-center rounded-full border-2 text-[13px] font-bold transition-all duration-300"
                                 style={
                                   isActive
-                                    ? { background: '#c9a227', borderColor: '#c9a227', color: '#101521', boxShadow: '0 0 0 4px rgba(201,162,39,0.18)' }
+                                    ? { background: '#c9a227', borderColor: '#c9a227', color: '#101521', boxShadow: '0 0 0 6px rgba(201,162,39,0.18)' }
                                     : isPast
                                     ? { background: '#c9a227', borderColor: '#c9a227', color: '#101521' }
                                     : { background: 'white', borderColor: '#e8e6e0', color: 'rgba(23,32,51,0.4)' }
                                 }
                               >
                                 {isPast && !isActive ? (
-                                  <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
+                                  <svg width="14" height="11" viewBox="0 0 10 8" fill="none">
                                     <path d="M1 4l2.5 2.5L9 1" stroke="#101521" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
                                   </svg>
                                 ) : s.num}
@@ -585,7 +662,7 @@ const English = () => {
 
                               {/* Card */}
                               <div
-                                className={`rounded-xl border px-4 py-3 transition-all duration-300 ${
+                                className={`rounded-xl border px-6 py-5 transition-all duration-300 ${
                                   isActive
                                     ? 'border-[#c9a227]/40 bg-[#fdf8ec] shadow-sm'
                                     : isPast
@@ -594,15 +671,15 @@ const English = () => {
                                 }`}
                               >
                                 <div className="flex items-center justify-between">
-                                  <p className={`text-[12.5px] font-bold transition-colors duration-200 ${isActive ? 'text-[#7a5c0a]' : 'text-[#172033]'}`}>
+                                  <p className={`text-[16px] font-bold transition-colors duration-200 ${isActive ? 'text-[#7a5c0a]' : 'text-[#172033]'}`}>
                                     {s.title}
                                   </p>
                                   {!isActive && (
-                                    <span className="text-[10px] text-[#172033]/30 font-medium">Step {s.num}</span>
+                                    <span className="text-[13px] text-[#172033]/30 font-medium">Step {s.num}</span>
                                   )}
                                 </div>
                                 {isActive && (
-                                  <p className="mt-1.5 text-[11.5px] leading-relaxed text-[#172033]/65">
+                                  <p className="mt-2.5 text-[15px] leading-relaxed text-[#172033]/65">
                                     {s.desc}
                                   </p>
                                 )}
@@ -613,21 +690,21 @@ const English = () => {
                       </div>
 
                       {/* Prev / Next controls */}
-                      <div className="mt-5 flex items-center justify-between">
+                      <div className="mt-7 flex items-center justify-between">
                         <button
                           onClick={() => setActiveStep((p) => Math.max(0, p - 1))}
                           disabled={activeStep === 0}
-                          className="rounded-full border border-[#e8e6e0] bg-white px-4 py-1.5 text-[11.5px] font-semibold text-[#172033]/60 transition-all hover:border-[#c9a227]/50 hover:text-[#7a5c0a] disabled:opacity-30 disabled:cursor-not-allowed"
+                          className="rounded-full border border-[#e8e6e0] bg-white px-6 py-2.5 text-[15px] font-semibold text-[#172033]/60 transition-all hover:border-[#c9a227]/50 hover:text-[#7a5c0a] disabled:opacity-30 disabled:cursor-not-allowed"
                         >
                           ← Previous
                         </button>
-                        <span className="text-[11px] text-[#172033]/40 font-medium">
+                        <span className="text-[14px] text-[#172033]/40 font-medium">
                           {activeStep + 1} of {seniorProcess.length}
                         </span>
                         <button
                           onClick={() => setActiveStep((p) => Math.min(seniorProcess.length - 1, p + 1))}
                           disabled={activeStep === seniorProcess.length - 1}
-                          className="rounded-full border border-[#e8e6e0] bg-white px-4 py-1.5 text-[11.5px] font-semibold text-[#172033]/60 transition-all hover:border-[#c9a227]/50 hover:text-[#7a5c0a] disabled:opacity-30 disabled:cursor-not-allowed"
+                          className="rounded-full border border-[#e8e6e0] bg-white px-6 py-2.5 text-[15px] font-semibold text-[#172033]/60 transition-all hover:border-[#c9a227]/50 hover:text-[#7a5c0a] disabled:opacity-30 disabled:cursor-not-allowed"
                         >
                           Next →
                         </button>
@@ -635,14 +712,14 @@ const English = () => {
                     </div>
 
                     {/* Pastel tags */}
-                    <div className="flex flex-wrap gap-2 px-6 pb-5">
+                    <div className="flex flex-wrap gap-3 px-9 pb-7">
                       {[
                         { label: 'HSC Essay Preparation', cls: 'bg-blue-50 border-blue-200 text-blue-700' },
                         { label: 'Module-Based Text Analysis', cls: 'bg-blue-50 border-blue-200 text-blue-700' },
                         { label: 'Draft Feedback and Editing', cls: 'bg-blue-50 border-blue-200 text-blue-700' },
                         { label: 'Trial and HSC Exam Prep', cls: 'bg-blue-50 border-blue-200 text-blue-700' },
                       ].map(({ label, cls }) => (
-                        <span key={label} className={`rounded-full border px-3.5 py-1.5 text-[11px] font-medium ${cls}`}>
+                        <span key={label} className={`rounded-full border px-5 py-2 text-[14px] font-medium ${cls}`}>
                           {label}
                         </span>
                       ))}
@@ -651,42 +728,39 @@ const English = () => {
                 )}
 
                 {/* ── Year-specific Concern Cards (slide reveal) ── */}
-                <div className="border-t border-[#e8e6e0] px-5 py-5">
+                <div className="border-t border-[#e8e6e0] bg-gradient-to-b from-[#fef9ef] to-[#fffdf8] px-5 py-7">
 
                   {/* For Parents */}
-                  <div className="mb-6">
-                    <div className="mb-3 flex items-center gap-2">
+                  <div className="mb-7">
+                    <div className="mb-4 flex items-center gap-2">
                       <span className="rounded-full bg-[#071629] px-3 py-1 text-[9px] font-bold uppercase tracking-[0.12em] text-[#f1df9a]">
                         For Parents · {activeHsYear.label}
                       </span>
-                      <div className="h-px flex-1 bg-[#e8e6e0]" />
+                      <div className="h-px flex-1 bg-[#e8c96a]/40" />
                     </div>
                     <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
                       {activeHsYear.parentCards.map((card, i) => (
                         <div
                           key={i}
-                          className="group relative overflow-hidden rounded-xl border border-[#e0ddd7]"
-                          style={{ height: '12rem' }}
+                          className="group relative overflow-hidden rounded-xl border border-[#e8d98a]/60 shadow-sm"
+                          style={{ height: '13rem' }}
                         >
                           {/* Front */}
-                          <div className="absolute inset-0 flex flex-col bg-[#f7f5f0] p-4 transition-opacity duration-300 group-hover:opacity-0">
-                            <p className="mb-2 text-[9px] font-bold uppercase tracking-[0.1em] text-[#172033]/30">
-                              Concern {i + 1}
+                          <div className="absolute inset-0 flex flex-col items-center justify-center bg-white p-5 text-center transition-opacity duration-300 group-hover:opacity-0">
+                            <p className="text-[17.5px] font-bold leading-[1.4] text-[#172033]">
+                              &ldquo;{card.concern}&rdquo;
                             </p>
-                            <p className="flex-1 text-[14.5px] font-bold leading-[1.4] text-[#172033]">
-                              {card.concern}
-                            </p>
-                            <p className="mt-2 text-[10px] text-[#9b8a6a]">Hover to see how DA helps</p>
+                            <p className="mt-3 text-[10px] text-[#9b8a6a]">Hover to see how DA helps</p>
                           </div>
                           {/* Back */}
-                          <div className="absolute inset-0 flex translate-y-full flex-col border-t-[3px] border-[#c9a227] bg-[#fdf8ec] p-4 transition-transform duration-[350ms] ease-in-out group-hover:translate-y-0">
-                            <p className="mb-2 border-b border-[#f0d08a] pb-2 text-[10.5px] font-bold leading-snug text-[#172033]">
+                          <div className="absolute inset-0 flex translate-y-full flex-col border-t-[3px] border-[#c9a227] bg-[#fdf8ec] p-5 transition-transform duration-[350ms] ease-in-out group-hover:translate-y-0">
+                            <p className="mb-2 border-b border-[#f0d08a] pb-2 text-[13px] font-bold leading-snug text-[#172033]">
                               {card.shortTitle}
                             </p>
-                            <p className="mb-2 text-[9px] font-bold uppercase tracking-[0.1em] text-[#7a5c0a]">
+                            <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.1em] text-[#7a5c0a]">
                               How DA can help
                             </p>
-                            <p className="flex-1 text-[11.5px] leading-[1.5] text-[#5c4a1e]">{card.help}</p>
+                            <p className="flex-1 text-[14.5px] leading-[1.55] text-[#5c4a1e]">{card.help}</p>
                           </div>
                         </div>
                       ))}
@@ -695,38 +769,35 @@ const English = () => {
 
                   {/* For Students */}
                   <div>
-                    <div className="mb-3 flex items-center gap-2">
+                    <div className="mb-4 flex items-center gap-2">
                       <span className="rounded-full bg-[#1e3a8a] px-3 py-1 text-[9px] font-bold uppercase tracking-[0.12em] text-[#bfdbfe]">
                         For Students · {activeHsYear.label}
                       </span>
-                      <div className="h-px flex-1 bg-[#e8e6e0]" />
+                      <div className="h-px flex-1 bg-[#93c5fd]/40" />
                     </div>
                     <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
                       {activeHsYear.studentCards.map((card, i) => (
                         <div
                           key={i}
-                          className="group relative overflow-hidden rounded-xl border border-[#e0ddd7]"
-                          style={{ height: '12rem' }}
+                          className="group relative overflow-hidden rounded-xl border border-[#bfdbfe]/60 shadow-sm"
+                          style={{ height: '13rem' }}
                         >
                           {/* Front */}
-                          <div className="absolute inset-0 flex flex-col bg-[#f7f5f0] p-4 transition-opacity duration-300 group-hover:opacity-0">
-                            <p className="mb-2 text-[9px] font-bold uppercase tracking-[0.1em] text-[#172033]/30">
-                              Struggle {i + 1}
+                          <div className="absolute inset-0 flex flex-col items-center justify-center bg-white p-5 text-center transition-opacity duration-300 group-hover:opacity-0">
+                            <p className="text-[17.5px] font-bold leading-[1.4] text-[#172033]">
+                              &ldquo;{card.concern}&rdquo;
                             </p>
-                            <p className="flex-1 text-[14.5px] font-bold leading-[1.4] text-[#172033]">
-                              {card.concern}
-                            </p>
-                            <p className="mt-2 text-[10px] text-[#7ba4d4]">Hover to see how DA helps</p>
+                            <p className="mt-3 text-[10px] text-[#7ba4d4]">Hover to see how DA helps</p>
                           </div>
                           {/* Back */}
-                          <div className="absolute inset-0 flex translate-y-full flex-col border-t-[3px] border-[#3b82f6] bg-[#eff6ff] p-4 transition-transform duration-[350ms] ease-in-out group-hover:translate-y-0">
-                            <p className="mb-2 border-b border-[#bfdbfe] pb-2 text-[10.5px] font-bold leading-snug text-[#172033]">
+                          <div className="absolute inset-0 flex translate-y-full flex-col border-t-[3px] border-[#3b82f6] bg-[#eff6ff] p-5 transition-transform duration-[350ms] ease-in-out group-hover:translate-y-0">
+                            <p className="mb-2 border-b border-[#bfdbfe] pb-2 text-[13px] font-bold leading-snug text-[#172033]">
                               {card.shortTitle}
                             </p>
-                            <p className="mb-2 text-[9px] font-bold uppercase tracking-[0.1em] text-[#1d4ed8]">
+                            <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.1em] text-[#1d4ed8]">
                               How DA can help
                             </p>
-                            <p className="flex-1 text-[11.5px] leading-[1.5] text-[#1e3a8a]">{card.help}</p>
+                            <p className="flex-1 text-[14.5px] leading-[1.55] text-[#1e3a8a]">{card.help}</p>
                           </div>
                         </div>
                       ))}
@@ -735,55 +806,458 @@ const English = () => {
 
                 </div>
 
-                {/* Key areas (all HS years) */}
-                <div className="border-t border-[#e8e6e0] px-5 py-5">
-                  <p className="mb-3 text-[13.5px] font-semibold text-[#172033]">
-                    Key areas of support across Years 7–12
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    {hsKeyAreas.map(({ label, cls }) => (
-                      <span key={label} className={`rounded-full border px-3.5 py-1.5 text-[11px] font-medium ${cls}`}>
-                        {label}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Support beyond the classroom */}
-                <div className="mx-5 mb-5 rounded-xl bg-[#071629] px-5 py-4">
-                  <div className="flex items-start gap-3">
-                    <MessageCircle className="mt-0.5 h-5 w-5 shrink-0 text-[#f1df9a]" />
-                    <div>
-                      <p className="mb-1 text-[12px] font-bold text-[#f1df9a]">Support beyond the classroom</p>
-                      <p className="text-[11.5px] leading-relaxed text-white/70">
-                        Years 7–12 students receive 24/7 access to learning resources and tutor assistance
-                        outside of class — allowing them to ask questions, revise content, and get help exactly
-                        when they need it.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* CTA bar */}
-                <div className="flex flex-wrap items-center justify-between gap-4 rounded-b-3xl bg-[#071629] px-6 py-4">
-                  <div>
-                    <p className="text-[13px] font-semibold text-white">Ready to get started?</p>
-                    <p className="text-[12px] text-white/60">We'll find the right class and level for your child.</p>
-                  </div>
-                  <Link to="/contact">
-                    <Button className="h-10 rounded-full bg-[#c9a227] px-5 text-sm font-bold text-[#101521] hover:bg-[#b8911f]">
-                      Book an Interview <ArrowRight className="ml-1.5 h-4 w-4" />
-                    </Button>
-                  </Link>
-                </div>
               </div>
 
           </div>
+        </motion.section>
+
+        {/* ── Sample Booklet Preview (Years 9–10 only) ── */}
+        {hsYr === 'y910' && <motion.section
+          className="mx-auto mt-8 max-w-7xl px-5 lg:px-8"
+          initial={{ opacity: 0, y: 48 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-80px' }}
+          transition={{ duration: 0.65, ease: 'easeOut' }}
+        >
+          <div className="overflow-hidden rounded-2xl border border-[#e8e6e0] bg-white shadow-sm">
+
+            {/* Split top row */}
+            <div className="grid sm:grid-cols-[3fr_2fr]">
+              {/* Left — pitch */}
+              <div className="border-b border-[#e8e6e0] p-14 sm:border-b-0 sm:border-r">
+                <span className="mb-5 inline-flex items-center gap-2 rounded-full border border-[#e8c96a] bg-[#fef9ef] px-4 py-1.5 text-[13px] font-bold uppercase tracking-[0.08em] text-[#7a5c0a]">
+                  <BookOpen className="h-4 w-4" /> Years 9–10 · King Lear
+                </span>
+                <h3 className="mt-3 font-serif text-[2rem] font-medium leading-snug text-[#172033]">
+                  See inside a DA lesson booklet
+                </h3>
+                <p className="mt-4 text-[17px] leading-relaxed text-[#172033]/70">
+                  Every session comes with a purpose-built student booklet. Students work through
+                  context, character analysis, close reading, and scaffolded writing tasks — all
+                  designed to build skill and confidence progressively.
+                </p>
+                <button
+                  onClick={() => setPreviewOpen((o) => !o)}
+                  className="mt-8 inline-flex items-center gap-3 rounded-full bg-[#071629] px-8 py-4 text-[15px] font-bold text-[#f1df9a] transition-colors hover:bg-[#162d4e]"
+                >
+                  {previewOpen ? 'Close preview' : 'Preview sample pages'}
+                  <ArrowRight className={`h-5 w-5 transition-transform duration-300 ${previewOpen ? 'rotate-90' : ''}`} />
+                </button>
+              </div>
+
+              {/* Right — cover with gold shadow stack */}
+              <div className="flex items-center justify-center bg-[#fafaf8] p-14">
+                <div className="relative">
+                  <div className="absolute left-4 top-4 h-full w-full rounded-xl bg-[#c9a227]/25" />
+                  <img
+                    src="/samples/lear_page_1.png"
+                    alt="King Lear student booklet cover"
+                    className="relative z-10 w-72 rounded-xl shadow-xl transition-transform duration-200 hover:scale-[1.03]"
+                    onClick={() => openLightbox(0)}
+                    style={{ cursor: 'zoom-in' }}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Expandable page strip */}
+            {previewOpen && (
+              <div className="animate-fadeIn border-t border-[#e8e6e0] bg-[#fafaf8] px-14 py-10">
+                <p className="mb-6 text-[13px] font-bold uppercase tracking-[0.09em] text-[#172033]/35">
+                  Sample preview · 4 of 18 pages shown
+                </p>
+                <div className="flex items-end gap-6 overflow-x-auto pb-3">
+                  {[
+                    { src: '/samples/lear_page_1.png', label: 'Cover', idx: 0 },
+                    { src: '/samples/lear_page_3.png', label: 'Character map', idx: 1 },
+                    { src: '/samples/lear_page_9.png', label: 'Analysis', idx: 2 },
+                    { src: '/samples/lear_page_15.png', label: 'Activities', idx: 3 },
+                  ].map(({ src, label, idx }) => (
+                    <div key={label} className="flex flex-shrink-0 flex-col items-center gap-3">
+                      <img
+                        src={src}
+                        alt={label}
+                        className="h-72 rounded-lg shadow-md transition-transform duration-200 hover:scale-[1.03]"
+                        onClick={() => openLightbox(idx)}
+                        style={{ cursor: 'zoom-in' }}
+                      />
+                      <span className="text-[13px] text-[#172033]/45">{label}</span>
+                    </div>
+                  ))}
+
+                  {/* End card */}
+                  <div className="flex flex-shrink-0 flex-col items-center gap-3">
+                    <div className="flex h-72 w-48 flex-col items-center justify-center rounded-lg bg-[#071629] px-6 text-center shadow-md">
+                      <p className="mb-3 text-[15px] font-bold leading-snug text-[#f1df9a]">
+                        End of preview
+                      </p>
+                      <p className="mb-5 text-[13px] leading-snug text-white/50">
+                        Want to see more of what we do?
+                      </p>
+                      <Link to="/contact">
+                        <Button className="h-9 rounded-full bg-[#c9a227] px-5 text-[13px] font-bold text-[#071629] hover:bg-[#b8911f]">
+                          Book an interview
+                        </Button>
+
+                      </Link>
+                    </div>
+                    <span className="text-[13px] text-transparent select-none">·</span>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </motion.section>}
+
+        {/* ── Essay Feedback Preview (Years 11–12 only) ── */}
+        {hsYr === 'y1112' && <motion.section
+          className="mx-auto mt-8 max-w-7xl px-5 lg:px-8"
+          initial={{ opacity: 0, y: 48 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-80px' }}
+          transition={{ duration: 0.65, ease: 'easeOut' }}
+        >
+          <div className="overflow-hidden rounded-2xl border border-[#e8e6e0] bg-white shadow-sm">
+
+            {/* Split top row */}
+            <div className="grid sm:grid-cols-[3fr_2fr]">
+              {/* Left — pitch */}
+              <div className="border-b border-[#e8e6e0] p-14 sm:border-b-0 sm:border-r">
+                <span className="mb-5 inline-flex items-center gap-2 rounded-full border border-[#e8c96a] bg-[#fef9ef] px-4 py-1.5 text-[13px] font-bold uppercase tracking-[0.08em] text-[#7a5c0a]">
+                  <CheckCircle className="h-4 w-4" /> Years 11–12 · Sample Feedback
+                </span>
+                <h3 className="mt-3 font-serif text-[2rem] font-medium leading-snug text-[#172033]">
+                  See the quality of feedback we give students
+                </h3>
+                <p className="mt-4 text-[17px] leading-relaxed text-[#172033]/70">
+                  Every essay and response our students submit comes back with detailed, personalised
+                  feedback. This is a real example of the guidance a Year 11–12 student receives — line
+                  by line, with clear direction on how to improve.
+                </p>
+                <button
+                  onClick={() => setEssayPreviewOpen((o) => !o)}
+                  className="mt-8 inline-flex items-center gap-3 rounded-full bg-[#071629] px-8 py-4 text-[15px] font-bold text-[#f1df9a] transition-colors hover:bg-[#162d4e]"
+                >
+                  {essayPreviewOpen ? 'Close preview' : 'Preview sample feedback'}
+                  <ArrowRight className={`h-5 w-5 transition-transform duration-300 ${essayPreviewOpen ? 'rotate-90' : ''}`} />
+                </button>
+              </div>
+
+              {/* Right — page 1 thumbnail */}
+              <div className="flex items-center justify-center bg-[#fafaf8] p-14">
+                <div className="relative">
+                  <div className="absolute left-4 top-4 h-full w-full rounded-xl bg-[#c9a227]/25" />
+                  <img
+                    src="/samples/essay_page_1.png"
+                    alt="Sample student essay feedback"
+                    className="relative z-10 w-72 rounded-xl shadow-xl transition-transform duration-200 hover:scale-[1.03]"
+                    onClick={() => openEssayLightbox(0)}
+                    style={{ cursor: 'zoom-in' }}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Expandable page strip */}
+            {essayPreviewOpen && (
+              <div className="animate-fadeIn border-t border-[#e8e6e0] bg-[#fafaf8] px-14 py-10">
+                <p className="mb-6 text-[13px] font-bold uppercase tracking-[0.09em] text-[#172033]/35">
+                  Sample preview · 2 pages shown
+                </p>
+                <div className="flex items-end gap-6 overflow-x-auto pb-3">
+                  {[
+                    { src: '/samples/essay_page_1.png', label: 'Page 1', idx: 0 },
+                    { src: '/samples/essay_page_2.png', label: 'Page 2', idx: 1 },
+                  ].map(({ src, label, idx }) => (
+                    <div key={label} className="flex flex-shrink-0 flex-col items-center gap-3">
+                      <img
+                        src={src}
+                        alt={label}
+                        className="h-72 rounded-lg shadow-md transition-transform duration-200 hover:scale-[1.03]"
+                        onClick={() => openEssayLightbox(idx)}
+                        style={{ cursor: 'zoom-in' }}
+                      />
+                      <span className="text-[13px] text-[#172033]/45">{label}</span>
+                    </div>
+                  ))}
+
+                  {/* End card */}
+                  <div className="flex flex-shrink-0 flex-col items-center gap-3">
+                    <div className="flex h-72 w-48 flex-col items-center justify-center rounded-lg bg-[#071629] px-6 text-center shadow-md">
+                      <p className="mb-3 text-[15px] font-bold leading-snug text-[#f1df9a]">End of preview</p>
+                      <p className="mb-5 text-[13px] leading-snug text-white/50">
+                        Want to see more of what we do?
+                      </p>
+                      <Link to="/contact">
+                        <Button className="h-9 rounded-full bg-[#c9a227] px-5 text-[13px] font-bold text-[#071629] hover:bg-[#b8911f]">
+                          Book an interview
+                        </Button>
+                      </Link>
+                    </div>
+                    <span className="text-[13px] text-transparent select-none">·</span>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </motion.section>}
+
+        {/* ── 3 Differentiator Banners ── */}
+        <section className="mt-8 bg-[#eee9df] px-5 py-12 lg:px-8">
+          <div className="mx-auto max-w-7xl grid grid-cols-1 gap-5 sm:grid-cols-3">
+            {[
+              {
+                Icon: Clock,
+                bold: '24/7',
+                heading: 'Ongoing support beyond the classroom',
+                body: 'With round-the-clock access to resources and tutor assistance, students get help exactly when they need it — not just during class hours.',
+              },
+              {
+                Icon: ListChecks,
+                bold: 'Structured',
+                heading: 'Structured learning, not random worksheets',
+                body: 'Every lesson follows a clear learning purpose, building on the last. Students make meaningful progress each week — not just complete tasks.',
+              },
+              {
+                Icon: MessageCircle,
+                bold: 'Feedback',
+                heading: 'Feedback that turns mistakes into progress',
+                body: 'Mistakes are never ignored. Through corrections and detailed written feedback, students understand exactly where they went wrong and how to improve.',
+              },
+            ].map(({ Icon, bold, heading, body }, idx) => (
+              <motion.div
+                key={heading}
+                className="overflow-hidden rounded-2xl shadow-lg"
+                style={{ border: '1px solid #0e2545', background: '#fffbe8' }}
+                initial={{ opacity: 0, y: 48 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-60px' }}
+                transition={{ duration: 0.55, ease: 'easeOut', delay: idx * 0.12 }}
+              >
+                {/* Top — dark navy */}
+                <div className="bg-[#071629] px-8 pt-8 pb-7">
+                  <div
+                    className="mb-5 inline-flex h-12 w-12 items-center justify-center rounded-xl"
+                    style={{ background: 'rgba(201,162,39,0.13)' }}
+                  >
+                    <Icon className="h-6 w-6 text-[#c9a227]" />
+                  </div>
+                  <p className="mb-1 text-[22px] font-black tracking-tight text-[#f1df9a]">{bold}</p>
+                  <h3 className="text-[1rem] font-bold leading-snug text-white/85">{heading}</h3>
+                </div>
+                {/* Gold separator */}
+                <div className="h-[2px] w-full bg-[#c9a227]" />
+                {/* Body */}
+                <div className="px-8 py-7" style={{ background: '#fffbe8' }}>
+                  <p className="text-[14.5px] leading-relaxed" style={{ color: '#5c4a1e' }}>{body}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
         </section>
+
+        {/* ── Key areas + Support + CTA (always shown, after previews) ── */}
+        <motion.section
+          className="mx-auto mt-8 max-w-7xl px-5 lg:px-8"
+          initial={{ opacity: 0, y: 48 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-80px' }}
+          transition={{ duration: 0.65, ease: 'easeOut' }}
+        >
+          <div className="overflow-hidden rounded-2xl border border-[#e8e6e0] bg-white shadow-sm">
+
+            {/* Key areas */}
+            <div className="px-6 py-5">
+              <p className="mb-3 text-[13.5px] font-semibold text-[#172033]">
+                Key areas of support across Years 7–12
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {hsKeyAreas.map(({ label, cls }) => (
+                  <span key={label} className={`rounded-full border px-3.5 py-1.5 text-[11px] font-medium ${cls}`}>
+                    {label}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* CTA bar */}
+            <div className="flex flex-wrap items-center justify-between gap-4 rounded-b-2xl bg-[#071629] px-6 py-4">
+              <div>
+                <p className="text-[13px] font-semibold text-white">Ready to get started?</p>
+                <p className="text-[12px] text-white/60">We'll find the right class and level for your child.</p>
+              </div>
+              <Link to="/contact">
+                <Button className="h-10 rounded-full bg-[#c9a227] px-5 text-sm font-bold text-[#101521] hover:bg-[#b8911f]">
+                  Book an Interview <ArrowRight className="ml-1.5 h-4 w-4" />
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </motion.section>
 
         {/* Spacer */}
         <div className="h-20" />
       </main>
+
+      {/* ── Lightbox ── */}
+      {lightboxOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm"
+          onClick={closeLightbox}
+        >
+          {/* Panel — stop propagation so clicking inside doesn't close */}
+          <div
+            className="relative flex max-h-[90vh] w-full max-w-3xl flex-col items-center px-16"
+            onClick={(e) => e.stopPropagation()}
+          >
+
+            {/* Close */}
+            <button
+              onClick={closeLightbox}
+              className="absolute right-0 top-0 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors"
+              aria-label="Close preview"
+            >
+              ✕
+            </button>
+
+            {/* Page indicator */}
+            <p className="mb-4 text-[13px] font-medium text-white/50">
+              {lightboxPage + 1} / {previewPages.length} &nbsp;·&nbsp; {previewPages[lightboxPage].label}
+            </p>
+
+            {/* Content */}
+            {previewPages[lightboxPage].src ? (
+              <img
+                src={previewPages[lightboxPage].src!}
+                alt={previewPages[lightboxPage].label}
+                className="max-h-[72vh] w-auto rounded-xl shadow-2xl object-contain"
+              />
+            ) : (
+              /* End card */
+              <div className="flex h-[72vh] w-[51vh] flex-col items-center justify-center rounded-xl bg-[#071629] px-12 text-center shadow-2xl">
+                <p className="mb-4 text-[32px] font-bold text-[#f1df9a]">End of preview</p>
+                <p className="mb-10 text-[18px] leading-relaxed text-white/60">
+                  Book an interview to see our full curriculum and find the right class for your child.
+                </p>
+                <Link to="/contact" onClick={closeLightbox}>
+                  <Button className="h-14 rounded-full bg-[#c9a227] px-8 text-[16px] font-bold text-[#071629] hover:bg-[#b8911f]">
+                    Book an interview
+                  </Button>
+                </Link>
+              </div>
+            )}
+
+            {/* Arrows */}
+            <div className="mt-6 flex items-center gap-6">
+              <button
+                onClick={prevPage}
+                disabled={lightboxPage === 0}
+                className="flex h-12 w-12 items-center justify-center rounded-full bg-white/10 text-white transition-all hover:bg-white/20 disabled:opacity-25"
+                aria-label="Previous page"
+              >
+                ←
+              </button>
+
+              {/* Dot indicators */}
+              <div className="flex gap-2">
+                {previewPages.map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setLightboxPage(i)}
+                    className={`h-2 rounded-full transition-all ${i === lightboxPage ? 'w-6 bg-[#c9a227]' : 'w-2 bg-white/30 hover:bg-white/50'}`}
+                    aria-label={`Go to page ${i + 1}`}
+                  />
+                ))}
+              </div>
+
+              <button
+                onClick={nextPage}
+                disabled={lightboxPage === previewPages.length - 1}
+                className="flex h-12 w-12 items-center justify-center rounded-full bg-white/10 text-white transition-all hover:bg-white/20 disabled:opacity-25"
+                aria-label="Next page"
+              >
+                →
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── Essay Lightbox ── */}
+      {essayLightboxOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-sm"
+          onClick={closeEssayLightbox}
+        >
+          <div
+            className="relative flex max-h-[96vh] w-[92vw] max-w-5xl flex-col items-center"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={closeEssayLightbox}
+              className="absolute -right-4 -top-4 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors"
+              aria-label="Close preview"
+            >
+              ✕
+            </button>
+
+            <p className="mb-3 text-[13px] font-medium text-white/50">
+              {essayLightboxPage + 1} / {essayPages.length} &nbsp;·&nbsp; {essayPages[essayLightboxPage].label}
+            </p>
+
+            {essayPages[essayLightboxPage].src ? (
+              <div className="w-full overflow-y-auto rounded-xl shadow-2xl" style={{ maxHeight: '82vh' }}>
+                <img
+                  src={essayPages[essayLightboxPage].src!}
+                  alt={essayPages[essayLightboxPage].label}
+                  className="block w-full"
+                />
+              </div>
+            ) : (
+              <div className="flex h-[72vh] w-[51vh] flex-col items-center justify-center rounded-xl bg-[#071629] px-12 text-center shadow-2xl">
+                <p className="mb-4 text-[32px] font-bold text-[#f1df9a]">End of preview</p>
+                <p className="mb-10 text-[18px] leading-relaxed text-white/60">
+                  Book an interview to see our full curriculum and the level of support your child will receive.
+                </p>
+                <Link to="/contact" onClick={closeEssayLightbox}>
+                  <Button className="h-14 rounded-full bg-[#c9a227] px-8 text-[16px] font-bold text-[#071629] hover:bg-[#b8911f]">
+                    Book an interview
+                  </Button>
+                </Link>
+              </div>
+            )}
+
+            <div className="mt-6 flex items-center gap-6">
+              <button
+                onClick={prevEssayPage}
+                disabled={essayLightboxPage === 0}
+                className="flex h-12 w-12 items-center justify-center rounded-full bg-white/10 text-white transition-all hover:bg-white/20 disabled:opacity-25"
+                aria-label="Previous page"
+              >
+                ←
+              </button>
+              <div className="flex gap-2">
+                {essayPages.map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setEssayLightboxPage(i)}
+                    className={`h-2 rounded-full transition-all ${i === essayLightboxPage ? 'w-6 bg-[#c9a227]' : 'w-2 bg-white/30 hover:bg-white/50'}`}
+                    aria-label={`Go to page ${i + 1}`}
+                  />
+                ))}
+              </div>
+              <button
+                onClick={nextEssayPage}
+                disabled={essayLightboxPage === essayPages.length - 1}
+                className="flex h-12 w-12 items-center justify-center rounded-full bg-white/10 text-white transition-all hover:bg-white/20 disabled:opacity-25"
+                aria-label="Next page"
+              >
+                →
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <FooterNew />
     </div>
