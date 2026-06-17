@@ -1,420 +1,596 @@
-import React from 'react';
+import { useState } from 'react';
 import NavigationNew from '@/components/NavigationNew';
 import FooterNew from '@/components/FooterNew';
 import { Button } from '@/components/ui/button';
-import { BookOpen, PenTool, MessageCircle, CheckCircle, ArrowRight, Quote, Sparkles, Info } from 'lucide-react';
+import { BookOpen, ArrowRight, CheckCircle, MessageCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import SEO from '@/components/SEO';
 
-const English = () => {
-  const courses = [
-    {
-      level: "Primary School",
-      subjects: [
-        "K-6 English & Literacy",
-        "Reading Comprehension",
-        "Creative Writing",
-        "Grammar & Spelling"
-      ]
-    },
-    {
-      level: "Years 7-10",
-      subjects: [
-        "Core English",
-        "Essay Writing",
-        "Text Analysis",
-        "Creative Writing"
-      ]
-    },
-    {
-      level: "HSC - Year 11 & 12",
-      subjects: [
-        "English Standard",
-        "English Advanced",
-        "English Extension 1",
-        "English Extension 2"
-      ]
-    }
-  ];
+// ─── Data ────────────────────────────────────────────────────────────────────
 
-  const hscModules = {
-    standard: [
-      "Contemporary Possibilities",
-      "Close Study of Literature",
-      "Language, Identity & Culture",
-      "Craft of Writing"
+const primaryYears = [
+  {
+    id: 'y12',
+    label: 'Years 1–2',
+    pill: 'Early literacy · confidence · foundations',
+    heading: 'Building Strong Foundations',
+    intro:
+      'Our Years 1–2 English program helps young students build the foundations of reading, writing, spelling, and comprehension. Lessons are gentle, structured, and encouraging — helping students develop confidence from the very beginning.',
+    skills: [
+      {
+        area: 'Reading',
+        items: ['Phonics and sounding out words', 'Sight words and fluency', 'Reading with expression'],
+      },
+      {
+        area: 'Writing',
+        items: ['Sentence writing', 'Capital letters and full stops', 'Handwriting basics'],
+      },
+      {
+        area: 'Spelling',
+        items: ['Common spelling patterns', 'High-frequency words'],
+      },
+      {
+        area: 'Comprehension',
+        items: ['Retelling stories', 'Identifying characters and events', 'Answering simple questions'],
+      },
+      {
+        area: 'Confidence',
+        items: ['Building vocabulary', 'Explaining ideas clearly', 'Enjoying reading and writing'],
+      },
     ],
-    advanced: [
-      "Textual Conversations",
-      "Critical Study of Literature",
-      "Texts & Human Experiences",
-      "Craft of Writing"
+    tags: ['Phonics and Reading Fluency', 'Sentence Writing', 'Spelling Foundations', 'Confidence with Words'],
+  },
+  {
+    id: 'y34',
+    label: 'Years 3–4',
+    pill: 'Comprehension · paragraph writing · grammar',
+    heading: 'Growing Confident Readers and Writers',
+    intro:
+      'In Years 3–4, students begin developing deeper reading and writing skills. We help students move beyond simple answers by teaching them how to explain ideas, organise paragraphs, and write with more detail.',
+    skills: [
+      {
+        area: 'Reading',
+        items: ['Fluency and expression', 'Vocabulary building'],
+      },
+      {
+        area: 'Comprehension',
+        items: ['Literal and inferential questions', 'Main ideas and character feelings'],
+      },
+      {
+        area: 'Writing',
+        items: ['Paragraph and creative writing', 'Persuasive writing'],
+      },
+      {
+        area: 'Grammar',
+        items: ['Punctuation and sentence variety', 'Adjectives, verbs, conjunctions'],
+      },
+      {
+        area: 'Exam Skills',
+        items: ['Word families and spelling rules', 'Answering in full sentences'],
+      },
     ],
-    extension1: [
-      "Literary Worlds",
-      "Literary Homelands",
-      "Intersecting Worlds",
-      "Reimagined Worlds"
+    tags: ['Reading for Meaning', 'Paragraph Writing', 'Creative and Persuasive Writing', 'Vocabulary and Grammar'],
+  },
+  {
+    id: 'y56',
+    label: 'Years 5–6',
+    pill: 'Stronger writing · deeper thinking · high school readiness',
+    heading: 'Preparing for Upper Primary and High School',
+    intro:
+      'Our Years 5–6 program prepares students for the jump into high school English. Students learn how to write stronger paragraphs, answer comprehension questions with evidence, and express their ideas with clarity and confidence.',
+    skills: [
+      {
+        area: 'Comprehension',
+        items: ['Inference and author purpose', 'Evidence-based answers'],
+      },
+      {
+        area: 'Writing',
+        items: ['Narrative and persuasive writing', 'Informative and reflective writing'],
+      },
+      {
+        area: 'Paragraphs',
+        items: ['Topic sentences and examples', 'Linking and explaining ideas'],
+      },
+      {
+        area: 'Vocabulary',
+        items: ['Figurative language', 'Stronger word choice'],
+      },
+      {
+        area: 'Exam Skills',
+        items: ['Planning and time management', 'Editing and answering the question'],
+      },
     ],
-    extension2: [
-      "Major Work Development",
-      "Critical Response",
-      "Imaginative Portfolio",
-      "Research & Reflection"
-    ]
-  };
+    tags: ['High School Readiness', 'Comprehension with Evidence', 'Assessment Confidence', 'Extended Writing'],
+  },
+];
 
-  const writingSkills = [
-    "Essay structure and argumentation",
-    "Creative writing techniques",
-    "Critical analysis and evaluation",
-    "Textual evidence integration",
-    "Sophisticated vocabulary development",
-    "Grammar and syntax mastery"
-  ];
+const termWeeks = [
+  {
+    label: 'Weeks 1–7',
+    title: 'Concept Learning',
+    desc: 'Structured booklets covering 10 key concepts per term. Every lesson opens with Corrections — reviewing homework mistakes before moving on.',
+    bg: 'bg-blue-50 border-blue-200',
+    labelColor: 'text-blue-700',
+  },
+  {
+    label: 'Week 8',
+    title: 'Exam Revision',
+    desc: 'Students revisit major concepts and practise applying skills to exam-style questions.',
+    bg: 'bg-amber-50 border-amber-200',
+    labelColor: 'text-amber-700',
+  },
+  {
+    label: 'Week 9',
+    title: 'Consolidation Exam',
+    desc: 'An exam-style task builds confidence under pressure and prepares students for school assessments.',
+    bg: 'bg-green-50 border-green-200',
+    labelColor: 'text-green-700',
+  },
+  {
+    label: 'Week 10',
+    title: 'Exam Review',
+    desc: 'Students go through their exam in detail, correct mistakes, and revisit challenging concepts.',
+    bg: 'bg-teal-50 border-teal-200',
+    labelColor: 'text-teal-700',
+  },
+];
 
+const lessonSteps = [
+  {
+    num: '1',
+    title: 'Corrections',
+    desc: 'Review homework or previous mistakes with teacher guidance — understanding errors, not just moving past them.',
+  },
+  {
+    num: '2',
+    title: 'Concept Teaching',
+    desc: 'A key English skill is introduced through clear explanations and worked examples.',
+  },
+  {
+    num: '3',
+    title: 'Guided Practice',
+    desc: 'Students practise with teacher support, asking questions and building confidence.',
+  },
+  {
+    num: '4',
+    title: 'Independent Application',
+    desc: 'Students apply the concept through writing, comprehension, grammar, vocabulary, or exam-style activities.',
+  },
+  {
+    num: '5',
+    title: 'Homework',
+    desc: 'Structured homework reinforces the lesson and prepares students for the following week.',
+  },
+];
+
+const highSchoolYears = [
+  {
+    id: 'y78',
+    label: 'Years 7–8',
+    pill: 'Essay foundations · text analysis · structured responses',
+    heading: 'Building High School English Skills',
+    intro:
+      'Years 7–8 are where students begin learning the core skills of high school English — analysing texts, structuring paragraphs, using evidence, and developing stronger written expression.',
+    skills: [
+      { area: 'Reading', items: ['Novels, films, poetry, short stories', 'Layers of meaning'] },
+      { area: 'Analysis', items: ['Techniques, themes, characters', 'Author purpose and messages'] },
+      { area: 'Writing', items: ['TEEL/PEEL paragraphs', 'Short answers and creative writing'] },
+      { area: 'Essay Skills', items: ['Thesis statements', 'Topic sentences', 'Evidence integration'] },
+      { area: 'Vocabulary', items: ['Academic expression', 'Analytical verbs'] },
+    ],
+    tags: ['TEEL Paragraph Structure', 'Text Analysis', 'Creative Writing', 'Assessment Preparation'],
+  },
+  {
+    id: 'y910',
+    label: 'Years 9–10',
+    pill: 'Sophisticated analysis · essay writing · exam readiness',
+    heading: 'Strengthening Analysis and Assessment Confidence',
+    intro:
+      'Our Years 9–10 program helps students move from basic responses to stronger, more sophisticated analysis — building arguments, integrating evidence, and writing clearly under exam conditions.',
+    skills: [
+      { area: 'Essay Writing', items: ['Thesis development', 'Strong arguments', 'Body paragraph structure'] },
+      { area: 'Analysis', items: ['Techniques, themes, context', 'Characterisation and author purpose'] },
+      { area: 'Text Types', items: ['Essays, speeches, feature articles', 'Creative and discursive writing'] },
+      { area: 'Evidence', items: ['Quote selection and integration', 'Detailed explanation'] },
+      { area: 'Exams', items: ['Timed writing and planning', 'Adapting to exam questions'] },
+    ],
+    tags: ['Stronger Essay Writing', 'Deeper Textual Analysis', 'Timed Exam Practice', 'Senior English Preparation'],
+  },
+  {
+    id: 'y1112',
+    label: 'Years 11–12',
+    pill: 'Advanced writing · critical analysis · HSC performance',
+    heading: 'Senior English and HSC Preparation',
+    intro: '',
+    skills: [],
+    tags: ['HSC Essay Preparation', 'Module-Based Text Analysis', 'Draft Feedback and Editing', 'Trial and HSC Exam Prep'],
+  },
+];
+
+const seniorProcess = [
+  {
+    num: '1',
+    title: 'Rubric Deconstruction',
+    desc: 'Students unpack the module rubric so they understand exactly what the syllabus requires them to demonstrate.',
+  },
+  {
+    num: '2',
+    title: 'Textual Analysis',
+    desc: 'Prescribed texts analysed through themes, techniques, context, values, and author purpose.',
+  },
+  {
+    num: '3',
+    title: 'Guided Response Building',
+    desc: 'Thesis statements, topic sentences, quote analysis, and structured body paragraphs built with support.',
+  },
+  {
+    num: '4',
+    title: 'Draft Development',
+    desc: 'Students complete a first draft with guidance, applying ideas and structures developed in class.',
+  },
+  {
+    num: '5',
+    title: 'Personalised Feedback',
+    desc: 'Prompt, detailed feedback with specific suggestions for improvement after every draft submission.',
+  },
+  {
+    num: '6',
+    title: 'Refinement and Exam Prep',
+    desc: 'Students adapt essays to different questions and build confidence in timed exam conditions.',
+  },
+];
+
+const hsKeyAreas = [
+  { label: 'Text analysis', cls: 'bg-blue-50 border-blue-200 text-blue-700' },
+  { label: 'TEEL/PEEL structure', cls: 'bg-purple-50 border-purple-200 text-purple-700' },
+  { label: 'Essay and thesis writing', cls: 'bg-amber-50 border-amber-200 text-amber-700' },
+  { label: 'Creative writing', cls: 'bg-rose-50 border-rose-200 text-rose-700' },
+  { label: 'Quote integration', cls: 'bg-green-50 border-green-200 text-green-700' },
+  { label: 'Timed exam practice', cls: 'bg-teal-50 border-teal-200 text-teal-700' },
+  { label: 'Academic vocabulary', cls: 'bg-indigo-50 border-indigo-200 text-indigo-700' },
+  { label: 'Assessment preparation', cls: 'bg-orange-50 border-orange-200 text-orange-700' },
+];
+
+// ─── Sub-components ───────────────────────────────────────────────────────────
+
+function YearSkillPanel({ year }: { year: typeof primaryYears[0] }) {
   return (
-    <div className="min-h-screen bg-white">
-      <SEO
-        title="English Tutoring (K-12 & HSC)"
-        description="From Literacy Foundations to Extension 2. Developing confident communicators through expert teaching and comprehensive support at DA Tuition."
-        canonicalUrl="/subjects/english"
-      />
-      <NavigationNew />
-
-      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 mt-[120px]">
-        {/* Hero Section */}
-        <section className="relative rounded-[2.5rem] overflow-hidden shadow-2xl mx-4 sm:mx-0 mt-6 mb-16">
-          <div className="absolute inset-0">
-            <img src="/images/v3/teacher_screen.jpg" alt="English Tutoring" className="w-full h-full object-cover" />
-            <div className="absolute inset-0 bg-brand-navy/80 mix-blend-multiply"></div>
-            <div className="absolute inset-0 bg-gradient-to-t from-brand-navy/90 via-brand-navy/50 to-brand-navy/30"></div>
-          </div>
-
-          <div className="relative z-10 max-w-4xl mx-auto text-center py-12 sm:py-16 lg:py-24 px-6">
-            <div className="inline-flex items-center justify-center space-x-2 bg-white/10 backdrop-blur-md rounded-full px-6 py-2 border border-white/20 mb-8">
-              <BookOpen className="w-5 h-5 text-pink-400" />
-              <span className="text-sm font-bold text-white tracking-wide uppercase">Years K to 12</span>
-            </div>
-
-            <h1 className="text-3xl sm:text-4xl lg:text-7xl font-extrabold text-white mb-6 tracking-tight leading-tight drop-shadow-lg">
-              English <br />
-              <span className="text-pink-400">Excellence</span>
-            </h1>
-
-            <p className="text-xl text-white/90 max-w-2xl mx-auto mb-10 leading-relaxed drop-shadow-md">
-              From Literacy Foundations to Extension 2. Developing confident communicators through expert teaching and comprehensive support.
-            </p>
-
-            <div className="flex justify-center">
-              <Button size="lg" className="bg-pink-500 text-white hover:bg-pink-600 font-bold px-8 h-14 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all">
-                Book Interview
-                <ArrowRight className="ml-2 w-5 h-5" />
-              </Button>
-            </div>
-          </div>
-        </section>
+    <div className="animate-fadeIn">
+      {/* Header */}
+      <div className="border-b border-[#e8e6e0] px-6 py-5">
+        <span className="mb-2 inline-block rounded-md bg-amber-100 px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-amber-800">
+          {year.pill}
+        </span>
+        <h3 className="font-serif text-[1.3rem] font-medium text-[#172033]">{year.heading}</h3>
+        <p className="mt-1.5 text-[13px] leading-relaxed text-[#172033]/65">{year.intro}</p>
       </div>
 
-      {/* Learning Formats Callout */}
-      <section className="py-12">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-2xl p-8 border border-purple-200">
-            <div className="flex items-start">
-              <Info className="w-6 h-6 text-purple-600 mt-1 mr-3 flex-shrink-0" />
-              <div>
-                <h3 className="text-xl font-bold text-brand-midnight mb-2">Available in Small Groups & Classes</h3>
-                <p className="text-brand-midnight/80 mb-4">
-                  English at DA Tuition is offered in both small group tutoring (3-5 students) and classes.
-                  Small groups foster rich discussions and peer feedback, while classes provide exam practice
-                  and structured essay competitions. We match each student to their ideal learning environment.
-                </p>
-                <Link to="/learning-formats">
-                  <Button variant="outline" className="group">
-                    Learn About Our Learning Formats
-                    <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-                  </Button>
-                </Link>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Course Offerings */}
-      <section className="py-16 bg-gray-50">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-center text-brand-midnight mb-4">
-            Comprehensive English Programs
-          </h2>
-          <p className="text-center text-brand-midnight/80 mb-12 max-w-2xl mx-auto">
-            From early literacy to HSC Extension 2, we nurture every student's communication skills
-          </p>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            {courses.map((level, index) => (
-              <div key={index} className="bg-white rounded-xl shadow-lg p-6">
-                <h3 className="text-xl font-bold text-purple-600 mb-4">{level.level}</h3>
-                <ul className="space-y-2">
-                  {level.subjects.map((subject, idx) => (
-                    <li key={idx} className="flex items-start">
-                      <CheckCircle className="w-5 h-5 text-green-500 mt-0.5 mr-2 flex-shrink-0" />
-                      <span className="text-brand-midnight/80">{subject}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* HSC English Focus */}
-      <section className="py-16">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-center text-brand-midnight mb-12">
-            HSC English Mastery
-          </h2>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {/* Standard English */}
-            <div className="bg-white rounded-xl p-6 shadow-lg">
-              <h3 className="text-lg font-bold text-brand-midnight mb-3">English Standard</h3>
+      {/* Skills */}
+      {year.skills.length > 0 && (
+        <div className="grid grid-cols-2 gap-3 p-5 sm:grid-cols-3 lg:grid-cols-5">
+          {year.skills.map((s) => (
+            <div key={s.area} className="rounded-xl bg-[#f7f5f0] p-3.5">
+              <p className="mb-2 text-[9.5px] font-bold uppercase tracking-[0.1em] text-[#172033]/50">{s.area}</p>
               <ul className="space-y-1">
-                {hscModules.standard.map((module, idx) => (
-                  <li key={idx} className="text-sm text-brand-midnight/80">• {module}</li>
-                ))}
-              </ul>
-              <div className="mt-4 text-sm font-semibold text-purple-600">Band 6 Achievable</div>
-            </div>
-
-            {/* Advanced English */}
-            <div className="bg-white rounded-xl p-6 shadow-lg">
-              <h3 className="text-lg font-bold text-brand-midnight mb-3">English Advanced</h3>
-              <ul className="space-y-1">
-                {hscModules.advanced.map((module, idx) => (
-                  <li key={idx} className="text-sm text-brand-midnight/80">• {module}</li>
-                ))}
-              </ul>
-              <div className="mt-4 text-sm font-semibold text-pink-600">Critical Thinking</div>
-            </div>
-
-            {/* Extension 1 */}
-            <div className="bg-white rounded-xl p-6 shadow-lg">
-              <h3 className="text-lg font-bold text-brand-midnight mb-3">Extension 1</h3>
-              <ul className="space-y-1">
-                {hscModules.extension1.map((module, idx) => (
-                  <li key={idx} className="text-sm text-brand-midnight/80">• {module}</li>
-                ))}
-              </ul>
-              <div className="mt-4 text-sm font-semibold text-indigo-600">Literary Analysis</div>
-            </div>
-
-            {/* Extension 2 */}
-            <div className="bg-white rounded-xl p-6 shadow-lg">
-              <h3 className="text-lg font-bold text-brand-midnight mb-3">Extension 2</h3>
-              <ul className="space-y-1">
-                {hscModules.extension2.map((module, idx) => (
-                  <li key={idx} className="text-sm text-brand-midnight/80">• {module}</li>
-                ))}
-              </ul>
-              <div className="mt-4 text-sm font-semibold text-purple-600">Major Work</div>
-            </div>
-          </div>
-
-          <div className="mt-12 text-center">
-            <p className="text-brand-midnight/80 mb-6">
-              Our English teachers are published writers and Band 6/E4 achievers who understand the nuances of HSC success
-            </p>
-            <Link to="/hsc-excellence">
-              <Button variant="outline" size="lg" className="group">
-                Explore HSC Program
-                <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* Writing Skills Development */}
-      <section className="py-16 bg-gradient-to-br from-purple-50 to-pink-50">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-            <div>
-              <h3 className="text-2xl font-bold text-brand-midnight mb-6">Building Strong Writers</h3>
-              <p className="text-brand-midnight/80 mb-6">
-                Writing is a craft that improves through practice, feedback, and exposure to different styles.
-                Our comprehensive approach develops confident, articulate writers.
-              </p>
-              <ul className="space-y-3">
-                {writingSkills.map((skill, index) => (
-                  <li key={index} className="flex items-start">
-                    <PenTool className="w-5 h-5 text-purple-600 mt-0.5 mr-3 flex-shrink-0" />
-                    <span className="text-brand-midnight/80">{skill}</span>
+                {s.items.map((item) => (
+                  <li key={item} className="flex items-start gap-1.5 text-[11.5px] leading-snug text-[#172033]">
+                    <span className="mt-[5px] h-1 w-1 shrink-0 rounded-full bg-[#c9a227]" />
+                    {item}
                   </li>
                 ))}
               </ul>
             </div>
-
-            <div className="space-y-6">
-              <div className="pastel-card pastel-pink-soft">
-                <h4 className="text-xl font-bold text-brand-midnight mb-3">Essay Excellence</h4>
-                <p className="text-brand-midnight/80">
-                  Master the art of essay writing with structured approaches, sophisticated analysis,
-                  and compelling arguments that earn top marks.
-                </p>
-              </div>
-
-              <div className="pastel-card pastel-purple-soft">
-                <h4 className="text-xl font-bold text-brand-midnight mb-3">Creative Voice</h4>
-                <p className="text-brand-midnight/80">
-                  Develop your unique creative voice through workshops, peer feedback, and exposure
-                  to diverse writing styles and genres.
-                </p>
-              </div>
-
-              <div className="pastel-card pastel-indigo-soft">
-                <h4 className="text-xl font-bold text-brand-midnight mb-3">Text Analysis</h4>
-                <p className="text-brand-midnight/80">
-                  Learn to decode complex texts, identify techniques, and craft insightful responses
-                  that demonstrate deep understanding.
-                </p>
-              </div>
-            </div>
-          </div>
+          ))}
         </div>
-      </section>
+      )}
 
-      {/* Reading & Comprehension */}
-      <section className="py-16">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-center text-brand-midnight mb-12">
-            Developing Lifelong Readers
-          </h2>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="bg-white rounded-xl p-6 shadow-lg">
-              <BookOpen className="w-12 h-12 text-purple-600 mb-4" />
-              <h3 className="text-xl font-bold text-brand-midnight mb-3">Text Analysis</h3>
-              <p className="text-brand-midnight/80">
-                Students learn to decode complex texts, identify techniques, and understand authorial purpose
-                through systematic exploration.
-              </p>
-            </div>
-
-            <div className="bg-white rounded-xl p-6 shadow-lg">
-              <MessageCircle className="w-12 h-12 text-pink-600 mb-4" />
-              <h3 className="text-xl font-bold text-brand-midnight mb-3">Critical Discussion</h3>
-              <p className="text-brand-midnight/80">
-                Develop critical thinking through discussions where students challenge ideas, defend interpretations,
-                and explore multiple perspectives.
-              </p>
-            </div>
-
-            <div className="bg-white rounded-xl p-6 shadow-lg">
-              <Sparkles className="w-12 h-12 text-indigo-600 mb-4" />
-              <h3 className="text-xl font-bold text-brand-midnight mb-3">Creative Response</h3>
-              <p className="text-brand-midnight/80">
-                Students respond to texts creatively through writing, presentations, and projects that
-                demonstrate deep engagement with literature.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Success Story */}
-      <section className="py-16 bg-gray-50">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12">
-            <div className="text-center mb-6">
-              <div className="w-20 h-20 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Quote className="w-10 h-10 text-white" />
-              </div>
-              <h3 className="text-2xl font-bold text-brand-midnight mb-2">Finding My Voice</h3>
-            </div>
-            <blockquote className="text-lg text-brand-midnight/80 italic text-center mb-6">
-              "I was terrified of English - especially essay writing and analysis. But DA Tuition's systematic
-              approach and supportive teachers transformed my confidence. By Year 12, I was writing sophisticated
-              essays and achieved an E4 in Extension 2. The structured feedback and regular practice made all
-              the difference."
-            </blockquote>
-            <p className="text-center text-brand-midnight/80">
-              <strong>Sophie Chen</strong> - Now studying Creative Writing at UTS
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Special Programs */}
-      <section className="py-16">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-center text-brand-midnight mb-12">
-            Specialized English Support
-          </h2>
-
-          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            <div className="pastel-card pastel-purple-soft">
-              <h3 className="text-xl font-bold text-brand-midnight mb-4">Essay Writing Workshops</h3>
-              <p className="text-brand-midnight/80 mb-4">
-                Intensive workshops focusing on essay structure, argumentation, and sophisticated analysis
-                for HSC success.
-              </p>
-              <ul className="space-y-2">
-                <li className="text-brand-midnight/80">• Introduction and thesis development</li>
-                <li className="text-brand-midnight/80">• Body paragraph structure (PEEL/TEEL)</li>
-                <li className="text-brand-midnight/80">• Evidence integration</li>
-                <li className="text-brand-midnight/80">• Conclusion techniques</li>
-              </ul>
-            </div>
-
-            <div className="pastel-card pastel-pink-soft">
-              <h3 className="text-xl font-bold text-brand-midnight mb-4">Creative Writing Circle</h3>
-              <p className="text-brand-midnight/80 mb-4">
-                A supportive environment where students develop their creative voice through workshops
-                and collaborative storytelling.
-              </p>
-              <ul className="space-y-2">
-                <li className="text-brand-midnight/80">• Character development</li>
-                <li className="text-brand-midnight/80">• Plot and structure</li>
-                <li className="text-brand-midnight/80">• Descriptive techniques</li>
-                <li className="text-brand-midnight/80">• Genre exploration</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-16 bg-brand-navy text-white relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-accent-pink rounded-full blur-3xl"></div>
-          <div className="absolute bottom-0 left-0 w-64 h-64 bg-brand-blue rounded-full blur-3xl"></div>
-        </div>
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
-          <h2 className="text-3xl font-bold text-white mb-4">
-            Discover Your English Potential
-          </h2>
-          <p className="text-xl text-white/90 mb-8">
-            Join our comprehensive English programs and develop the skills for academic success
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" className="bg-white text-pink-600 hover:bg-pink-50">
-              Book Interview
-            </Button>
-            <Button size="lg" variant="outline" className="bg-transparent text-white border-white hover:bg-white/10">
-              View Writing Samples
-            </Button>
-          </div>
-          <p className="mt-6 text-sm text-purple-100">
-            Call <a href="tel:0401940207" className="underline">0401 940 207</a> to discuss your needs
-          </p>
-        </div>
-      </section>
-
-      <FooterNew />
+      {/* Tags */}
+      <div className="flex flex-wrap gap-2 px-5 pb-5">
+        {year.tags.map((tag, i) => {
+          const pastels = [
+            'bg-purple-50 border-purple-200 text-purple-700',
+            'bg-blue-50 border-blue-200 text-blue-700',
+            'bg-green-50 border-green-200 text-green-700',
+            'bg-amber-50 border-amber-200 text-amber-700',
+            'bg-rose-50 border-rose-200 text-rose-700',
+            'bg-teal-50 border-teal-200 text-teal-700',
+          ];
+          return (
+            <span key={tag} className={`rounded-full border px-3.5 py-1.5 text-[11px] font-medium ${pastels[i % pastels.length]}`}>
+              {tag}
+            </span>
+          );
+        })}
+      </div>
     </div>
   );
-};
+}
 
-export default English;
+// ─── Main Component ───────────────────────────────────────────────────────────
+
+const English = () => {
+  const [mainTab, setMainTab] = useState<'primary' | 'highschool'>('primary');
+  const [primaryYr, setPrimaryYr] = useState('y12');
+  const [hsYr, setHsYr] = useState('y78');
+
+  const activePrimaryYear = primaryYears.find((y) => y.id === primaryYr)!;
+  const activeHsYear = highSchoolYears.find((y) => y.id === hsYr)!;
+
+  return (
+    <div className="min-h-screen bg-[#fffdf8] text-[#172033]">
+      <SEO
+        title="English Tutoring (Years 1–12 & HSC)"
+        description="From early reading and spelling to senior essays and HSC preparation, DA Tuition helps students build English skills and confidence at every stage."
+        canonicalUrl="/subjects/english"
+      />
+      <NavigationNew />
+
+      <main>
+        {/* ── Hero ── */}
+        <section className="relative overflow-hidden bg-[#071629] pt-36 lg:pt-40">
+          <div className="absolute inset-0">
+            <img
+              src="/images/v3/teacher_screen.jpg"
+              alt="English tutoring at DA Tuition"
+              className="h-full w-full object-cover opacity-50"
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-[#071629] via-[#071629]/88 to-[#071629]/40" />
+          </div>
+
+          <div className="relative z-10 mx-auto grid w-full max-w-7xl gap-10 px-5 pb-0 lg:grid-cols-[1.1fr_.7fr] lg:px-8">
+            {/* Left */}
+            <motion.div
+              initial={{ opacity: 0, y: 28 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, ease: 'easeOut' }}
+              className="pb-10 lg:pb-14"
+            >
+              <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-xs font-black uppercase tracking-[0.14em] text-[#f1df9a] backdrop-blur-md">
+                <BookOpen className="h-4 w-4" />
+                Years 1–12 English
+              </div>
+
+              <h1 className="max-w-2xl font-serif text-4xl font-medium leading-[1.05] tracking-tight text-white sm:text-5xl lg:text-6xl">
+                English support that grows with your child.
+              </h1>
+
+              <p className="mt-5 max-w-xl text-[15px] leading-relaxed text-white/70">
+                From early reading and spelling to senior essays and HSC preparation, DA Tuition helps students
+                build the skills, confidence, and structure they need at every stage.
+              </p>
+
+              <div className="mt-7 flex flex-wrap gap-3">
+                <Link to="/contact">
+                  <Button className="h-11 rounded-full bg-[#c9a227] px-6 text-sm font-bold text-[#101521] hover:bg-[#b8911f]">
+                    Book an Interview <ArrowRight className="ml-1.5 h-4 w-4" />
+                  </Button>
+                </Link>
+                <button
+                  onClick={() => document.getElementById('english-levels')?.scrollIntoView({ behavior: 'smooth' })}
+                  className="h-11 rounded-full border border-white/30 bg-white/10 px-6 text-sm font-bold text-white hover:bg-white/15"
+                >
+                  Find the Right Level
+                </button>
+              </div>
+            </motion.div>
+
+            {/* Right — quick-check card */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.15, ease: 'easeOut' }}
+              className="hidden self-end lg:block pb-12"
+            >
+              <div className="rounded-2xl border border-white/15 bg-white/10 p-5 backdrop-blur-md">
+                <p className="mb-3 text-[9px] font-black uppercase tracking-[0.14em] text-[#f1df9a]">
+                  Parent quick check
+                </p>
+                {[
+                  'Unsure which level fits?',
+                  'Worried about writing or reading skills?',
+                  'Preparing for HSC English?',
+                ].map((item) => (
+                  <div
+                    key={item}
+                    className="mb-2 flex items-center gap-2 rounded-lg bg-white/10 px-3 py-2 text-[11px] font-semibold text-white last:mb-0"
+                  >
+                    <CheckCircle className="h-3.5 w-3.5 shrink-0 text-[#f1df9a]" />
+                    {item}
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+          </div>
+
+          {/* Main tabs — sit on the hero bottom edge */}
+          <div id="english-levels" className="relative z-10 mx-auto max-w-7xl px-5 lg:px-8">
+            <div className="flex border-t border-white/10">
+              {(['primary', 'highschool'] as const).map((tab) => (
+                <button
+                  key={tab}
+                  onClick={() => setMainTab(tab)}
+                  className={`flex-1 py-3.5 text-[11.5px] font-bold uppercase tracking-[0.06em] transition-all ${
+                    mainTab === tab
+                      ? 'border-t-2 border-[#f1df9a] bg-[#f1df9a]/08 text-[#f1df9a]'
+                      : 'text-white/40 hover:bg-white/05 hover:text-white/65'
+                  }`}
+                >
+                  {tab === 'primary' ? 'Primary (Years 1–6)' : 'High School (Years 7–12)'}
+                </button>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── Interactive Content Area ── */}
+        <section className="mx-auto max-w-7xl px-5 lg:px-8">
+          <div className="rounded-b-3xl border border-t-0 border-[#e8e6e0] bg-white shadow-sm">
+
+            {/* ════ PRIMARY PANEL ════ */}
+            {mainTab === 'primary' && (
+              <div>
+                {/* Year sub-tabs */}
+                <div className="flex border-b border-[#e8e6e0] bg-[#f7f5f0]">
+                  {primaryYears.map((y) => (
+                    <button
+                      key={y.id}
+                      onClick={() => setPrimaryYr(y.id)}
+                      className={`px-5 py-2.5 text-[11.5px] font-semibold transition-all ${
+                        primaryYr === y.id
+                          ? 'border-b-2 border-[#c9a227] bg-white text-[#7a5c0a]'
+                          : 'text-[#172033]/50 hover:text-[#172033]'
+                      }`}
+                    >
+                      {y.label}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Skills panel */}
+                <YearSkillPanel key={primaryYr} year={activePrimaryYear} />
+
+                {/* ── Shared Approach Section ── */}
+                <div className="mx-5 border-t-[3px] border-[#e8e6e0] pt-6 pb-6 lg:mx-6">
+                  {/* Eyebrow */}
+                  <div className="mb-3 flex items-center gap-3">
+                    <span className="rounded-md bg-[#071629] px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.12em] text-white">
+                      Years 1–6 · All classes
+                    </span>
+                    <div className="h-px flex-1 bg-[#e8e6e0]" />
+                  </div>
+
+                  <h2 className="font-serif text-[1.15rem] font-medium text-[#172033]">
+                    How we teach every primary lesson
+                  </h2>
+                  <p className="mt-1 max-w-2xl text-[12.5px] leading-relaxed text-[#172033]/60">
+                    Every DA Tuition primary class follows the same proven structure — regardless of year level.
+                    Each 10-week term is carefully sequenced so students build, practise, consolidate, and review
+                    their skills before moving on.
+                  </p>
+
+                  {/* 10-week term */}
+                  <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
+                    {termWeeks.map((w) => (
+                      <div key={w.label} className={`rounded-xl border p-3.5 ${w.bg}`}>
+                        <p className={`mb-1.5 text-[9px] font-bold uppercase tracking-[0.1em] ${w.labelColor}`}>
+                          {w.label}
+                        </p>
+                        <p className="mb-1 text-[12.5px] font-semibold text-[#172033]">{w.title}</p>
+                        <p className="text-[11px] leading-snug text-[#172033]/60">{w.desc}</p>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* 5-step lesson */}
+                  <h3 className="mt-6 mb-3 text-[13.5px] font-semibold text-[#172033]">
+                    What happens in each lesson
+                  </h3>
+                  <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+                    {lessonSteps.map((s) => (
+                      <div key={s.num} className="rounded-xl bg-[#f7f5f0] p-3.5">
+                        <p className="mb-1.5 text-[22px] font-light leading-none text-[#c9a227]">{s.num}</p>
+                        <p className="mb-1 text-[12px] font-bold text-[#172033]">{s.title}</p>
+                        <p className="text-[11px] leading-snug text-[#172033]/60">{s.desc}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* CTA bar */}
+                <div className="flex flex-wrap items-center justify-between gap-4 rounded-b-3xl bg-[#071629] px-6 py-4">
+                  <div>
+                    <p className="text-[13px] font-semibold text-white">Not sure which year group fits?</p>
+                    <p className="text-[12px] text-white/60">We'll identify your child's level together.</p>
+                  </div>
+                  <Link to="/contact">
+                    <Button className="h-10 rounded-full bg-[#c9a227] px-5 text-sm font-bold text-[#101521] hover:bg-[#b8911f]">
+                      Book an Interview <ArrowRight className="ml-1.5 h-4 w-4" />
+                    </Button>
+                  </Link>
+                </div>
+              </div>
+            )}
+
+            {/* ════ HIGH SCHOOL PANEL ════ */}
+            {mainTab === 'highschool' && (
+              <div>
+                {/* Year sub-tabs */}
+                <div className="flex border-b border-[#e8e6e0] bg-[#f7f5f0]">
+                  {highSchoolYears.map((y) => (
+                    <button
+                      key={y.id}
+                      onClick={() => setHsYr(y.id)}
+                      className={`px-5 py-2.5 text-[11.5px] font-semibold transition-all ${
+                        hsYr === y.id
+                          ? 'border-b-2 border-[#c9a227] bg-white text-[#7a5c0a]'
+                          : 'text-[#172033]/50 hover:text-[#172033]'
+                      }`}
+                    >
+                      {y.label}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Years 7-8 and 9-10 skill panels */}
+                {(hsYr === 'y78' || hsYr === 'y910') && (
+                  <YearSkillPanel key={hsYr} year={activeHsYear} />
+                )}
+
+                {/* Years 11-12 senior process — vertical timeline */}
+                {hsYr === 'y1112' && (
+                  <div className="animate-fadeIn">
+                    {/* Header */}
+                    <div className="border-b border-[#e8e6e0] px-6 py-5">
+                      <span className="mb-2 inline-block rounded-md bg-amber-100 px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-amber-800">
+                        {activeHsYear.pill}
+                      </span>
+                      <h3 className="font-serif text-[1.3rem] font-medium text-[#172033]">{activeHsYear.heading}</h3>
+                      <p className="mt-3 text-[13px] leading-relaxed text-[#172033]/70">
+                        Our Years 11–12 English program is designed to take the uncertainty out of HSC English.
+                        Guided by tutors who have succeeded in the HSC and understand the expectations of
+                        high-level responses, students learn how to think critically, write with purpose, and
+                        approach each module with confidence.
+                      </p>
+                      <p className="mt-3 text-[13px] leading-relaxed text-[#172033]/70">
+                        At DA Tuition, we focus on more than memorisation. We help students understand what
+                        strong writing looks like, what markers value, and how to develop responses that are
+                        clear, insightful, and adaptable across assessments, trials, and the HSC.
+                      </p>
+                    </div>
+
+                    {/* Vertical timeline */}
+                    <div className="px-6 pt-5 pb-4">
+                      <p className="mb-5 text-[13.5px] font-semibold text-[#172033]">Senior lesson process</p>
+                      <div className="relative pl-9">
+                        {/* Vertical line */}
+                        <div className="absolute left-[13px] top-1.5 bottom-1.5 w-0.5 bg-gradient-to-b from-[#c9a227] to-[#e8e6e0]" />
+
+                        {seniorProcess.map((s, i) => (
+                          <div key={s.num} className={`relative mb-4 last:mb-0`}>
+                            {/* Dot */}
+                            <div className="absolute -left-9 top-[6px] flex h-[22px] w-[22px] items-center justify-center rounded-full border-2 border-[#e8e6e0] bg-white text-[9px] font-bold text-[#172033]/50"
+                              style={i === 0 ? { background: '#c9a227', borderColor: '#c9a227', color: '#101521' } : {}}>
+                              {s.num}
+                            </div>
+                            {/* Card */}
+                            <div className="rounded-xl border border-[#e8e6e0] bg-[#f7f5f0] px-4 py-3">
+                              <p className="text-[12.5px] font-bold text-[#172033]">{s.title}</p>
+                              <p className="mt-1 text-[11.5px] leading-relaxed text-[#172033]/60">{s.desc}</p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Pastel tags */}
+                    <div className="flex flex-wrap gap-2 px-6 pb-5">
+                      {[
+                        { label: 'HSC Essay Preparation', cls: 'bg-purple-50 border-purple-200 text-purple-700' },
+                        { label: 'Module-Based Text Analysis', cls: 'bg-blue-50 border-blue-200 text-blue-700' },
+                        { label: 'Draft Feedback and Editing', cls: 'bg-green-50 border-green-200 text-green-700' },
+                        { label: 'Trial and HSC Exam Prep', cls: 'bg-amber-50 border-amber-200 text-amber-700' },
+                      ].map(({ label, cls }) => (
+                        <span key={label} className={`rounded-full border px-3.5 py-1.5 text-[11px] font-medium ${cls}`}>
+                          {label}
+             
