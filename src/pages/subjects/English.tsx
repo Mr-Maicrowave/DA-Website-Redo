@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import NavigationNew from '@/components/NavigationNew';
 import FooterNew from '@/components/FooterNew';
 import { Button } from '@/components/ui/button';
@@ -171,7 +171,7 @@ const highSchoolYears = [
     pill: 'Essay foundations · text analysis · structured responses',
     heading: 'Building High School English Skills',
     intro:
-      'Years 7–8 are where students begin learning the core skills of high school English — analysing texts, structuring paragraphs, using evidence, and developing stronger written expression.',
+      'Years 7–8 are where students begin learning the core skills of high school English. Analysing texts, structuring paragraphs, using evidence, and developing stronger written expression.',
     skills: [
       { area: 'Reading', items: ['Novels, films, poetry, short stories', 'Layers of meaning'] },
       { area: 'Analysis', items: ['Techniques, themes, characters', 'Author purpose and messages'] },
@@ -180,10 +180,40 @@ const highSchoolYears = [
       { area: 'Vocabulary', items: ['Academic expression', 'Analytical verbs'] },
     ],
     tags: ['TEEL Paragraph Structure', 'Text Analysis', 'Creative Writing', 'Assessment Preparation'],
-    parentConcern: 'Parents often worry when their child enters high school and begins receiving more complex English tasks. Students may struggle with analysing texts, identifying techniques, writing TEEL or PEEL paragraphs, using quotes, or understanding what teachers expect in assessments.',
-    parentDA: 'DA Tuition helps students build the essential foundations of high school English. We teach students how to understand novels, films, poems, plays, and short stories, while developing their ability to identify techniques, explain themes, use evidence, and structure analytical responses.',
-    studentConcern: 'Students in Years 7–8 may feel confused by terms like "analysis," "technique," "theme," or "evidence." They may understand the story but struggle to explain deeper meanings or write paragraphs that sound sophisticated.',
-    studentDA: 'We simplify high school English by teaching clear structures and giving students guided examples before they write independently. Students learn how to break down questions, analyse quotes, organise paragraphs, and express their ideas with greater confidence.',
+    parentCards: [
+      {
+        concern: 'My child was fine in primary school but suddenly feels lost in high school English.',
+        shortTitle: 'Suddenly lost in high school English',
+        help: 'We identify exactly where the gap is and rebuild from there. Students reconnect their existing skills with the higher expectations of high school English.',
+      },
+      {
+        concern: 'They just retell the story and do not know how to actually analyse it.',
+        shortTitle: 'Retelling without analysing',
+        help: 'We teach students the difference between retelling and analysing using clear models and guided practice so they learn to explain the how and why behind the text.',
+      },
+      {
+        concern: 'I am not sure the basics are solid enough to keep up as the work gets harder.',
+        shortTitle: 'Shaky foundations under pressure',
+        help: 'Our structured approach builds foundational skills systematically so students are not just keeping up. They are ahead of what is coming next.',
+      },
+    ],
+    studentCards: [
+      {
+        concern: 'I do not know what "analyse" actually means or how to do it.',
+        shortTitle: 'Not sure what analyse even means',
+        help: 'We break it down simply. You will learn what analysis looks like on the page and practise it step by step until it feels natural.',
+      },
+      {
+        concern: 'My teacher says to "go deeper" but I do not know what that looks like.',
+        shortTitle: 'Told to go deeper without knowing how',
+        help: 'We show you what going deeper looks like with real examples so you can see and replicate what stronger responses actually look like.',
+      },
+      {
+        concern: 'I can understand the text. I just do not know how to write about it.',
+        shortTitle: 'Understanding the text but stuck on writing',
+        help: 'We give you the structure and language to express what you already understand, turning your ideas into clear and confident written responses.',
+      },
+    ],
   },
   {
     id: 'y910',
@@ -191,7 +221,7 @@ const highSchoolYears = [
     pill: 'Sophisticated analysis · essay writing · exam readiness',
     heading: 'Strengthening Analysis and Assessment Confidence',
     intro:
-      'Our Years 9–10 program helps students move from basic responses to stronger, more sophisticated analysis — building arguments, integrating evidence, and writing clearly under exam conditions.',
+      'Our Years 9–10 program helps students move from basic responses to stronger, more sophisticated analysis. Building arguments, integrating evidence, and writing clearly under exam conditions.',
     skills: [
       { area: 'Essay Writing', items: ['Thesis development', 'Strong arguments', 'Body paragraph structure'] },
       { area: 'Analysis', items: ['Techniques, themes, context', 'Characterisation and author purpose'] },
@@ -200,10 +230,40 @@ const highSchoolYears = [
       { area: 'Exams', items: ['Timed writing and planning', 'Adapting to exam questions'] },
     ],
     tags: ['Stronger Essay Writing', 'Deeper Textual Analysis', 'Timed Exam Practice', 'Senior English Preparation'],
-    parentConcern: 'In Years 9–10, parents may become concerned that their child\'s marks are not improving despite effort. Students may write responses that are too general, rely on retelling the plot, struggle with essay structure, or lack the depth needed for senior English.',
-    parentDA: 'DA Tuition helps students move from simple responses to more developed and analytical writing. We focus on thesis development, argument building, quote integration, technique analysis, creative and discursive writing, and timed assessment preparation.',
-    studentConcern: 'Students in Years 9–10 may feel overwhelmed by essays, unseen questions, quote analysis, and time pressure. They may also feel unsure about how to make their writing sound more sophisticated or how to move beyond basic explanations.',
-    studentDA: 'We teach students how to build stronger arguments, analyse texts with purpose, and write in a more controlled and confident way. Through structured lessons, targeted feedback, and exam-style practice, students learn how to approach assessments with clearer direction and less uncertainty.',
+    parentCards: [
+      {
+        concern: 'They are putting in the effort but marks are stuck at the same level.',
+        shortTitle: 'Effort without results',
+        help: 'We identify what is holding the marks back and target it directly. Often it is structure, argument clarity or quote analysis, and we address each one systematically.',
+      },
+      {
+        concern: 'Their writing sounds okay but never seems to get above average.',
+        shortTitle: 'Writing that plateaus at average',
+        help: 'We teach students how to move beyond surface-level responses by developing stronger arguments, more precise analysis and controlled expression that markers reward.',
+      },
+      {
+        concern: 'I am worried they are not developing the skills they will need for senior English.',
+        shortTitle: 'Not ready for senior English',
+        help: 'Our Years 9 to 10 program is built with senior English in mind. Students develop the analytical habits and essay skills that make the transition to Years 11 and 12 manageable.',
+      },
+    ],
+    studentCards: [
+      {
+        concern: 'I work hard but my essays still feel like something is missing.',
+        shortTitle: 'Hard work but essays fall flat',
+        help: 'We help you pinpoint what is missing. Usually it is depth of analysis, strength of argument or the way evidence is explained, and we work on each one.',
+      },
+      {
+        concern: 'I do not know how to make my writing sound more sophisticated.',
+        shortTitle: 'Writing feels basic',
+        help: 'We teach you specific techniques for lifting your language, building more complex sentences and expressing ideas with greater precision and control.',
+      },
+      {
+        concern: 'I freeze when I have to write under time pressure in class or exams.',
+        shortTitle: 'Freezing under exam pressure',
+        help: 'We practise planning quickly, choosing the right ideas and writing under timed conditions so pressure becomes something you can manage rather than fear.',
+      },
+    ],
   },
   {
     id: 'y1112',
@@ -213,10 +273,40 @@ const highSchoolYears = [
     intro: '',
     skills: [],
     tags: ['HSC Essay Preparation', 'Module-Based Text Analysis', 'Draft Feedback and Editing', 'Trial and HSC Exam Prep'],
-    parentConcern: 'Parents often worry about whether their child truly understands what senior English requires. Common concerns include uncertainty around HSC modules, weak essay structure, unclear arguments, limited textual analysis, poor time management, and not knowing what markers are looking for.',
-    parentDA: 'DA Tuition helps students approach senior English with clarity, confidence, and purpose. Guided by tutors who have successfully navigated the HSC, students learn what strong responses require: clear arguments, direct engagement with the question, strong textual evidence, and sophisticated expression.',
-    studentConcern: 'Students in Years 11–12 may feel overwhelmed by the pressure of assessments, trials, and the HSC. Many are unsure whether their essays are strong enough, whether they are answering the question properly, or how to adapt their ideas under exam conditions.',
-    studentDA: 'We help students move beyond memorisation by developing genuine understanding, flexible thinking, and confident writing. Through structured guidance, personalised feedback, and ongoing tutor assistance, students learn how to refine their ideas and approach senior English with greater control.',
+    parentCards: [
+      {
+        concern: 'I do not know if they truly understand what senior English requires of them.',
+        shortTitle: 'Unclear on what is expected',
+        help: 'We break down exactly what the HSC requires. Students learn to read rubrics, understand module requirements and build responses that directly address what markers are looking for.',
+      },
+      {
+        concern: 'They know the texts well but their essay marks do not reflect that.',
+        shortTitle: 'Knowledge not translating to marks',
+        help: 'Knowing the text is only part of it. We teach students how to construct a clear argument, integrate evidence purposefully and write with the control that strong essays require.',
+      },
+      {
+        concern: 'I am worried about how they will perform under real HSC exam conditions.',
+        shortTitle: 'Worried about HSC performance',
+        help: 'We build exam confidence through timed practice, adaptable essay frameworks and question unpacking strategies so students can perform under pressure when it counts.',
+      },
+    ],
+    studentCards: [
+      {
+        concern: 'I do not know if my essays are actually answering the question properly.',
+        shortTitle: 'Not sure if essays are on track',
+        help: 'We teach you how to read a question carefully, build a direct and relevant thesis and make sure every paragraph stays focused on what was actually asked.',
+      },
+      {
+        concern: 'I feel like I am just memorising quotes without knowing how to use them well.',
+        shortTitle: 'Memorising quotes without knowing how to use them',
+        help: 'We shift the focus from memorisation to application. You will learn how to select quotes strategically and analyse them in a way that supports your argument.',
+      },
+      {
+        concern: 'In timed exams I panic and cannot write what I actually know.',
+        shortTitle: 'Panic in timed exams',
+        help: 'We practise planning and writing under exam conditions regularly so that when the real thing arrives, your response comes from preparation rather than panic.',
+      },
+    ],
   },
 ];
 
@@ -314,14 +404,8 @@ function YearSkillPanel({ year }: { year: typeof primaryYears[0] }) {
 const English = () => {
   const [hsYr, setHsYr] = useState('y78');
   const [activeStep, setActiveStep] = useState(0);
-  const [openAcc, setOpenAcc] = useState<'parents' | 'students' | null>(null);
-
-  useEffect(() => { setOpenAcc(null); }, [hsYr]);
 
   const activeHsYear = highSchoolYears.find((y) => y.id === hsYr)!;
-
-  const toggleAcc = (which: 'parents' | 'students') =>
-    setOpenAcc((prev) => (prev === which ? null : which));
 
   return (
     <div className="min-h-screen bg-[#fffdf8] text-[#172033]">
@@ -689,99 +773,89 @@ const English = () => {
                   </div>
                 )}
 
-                {/* ── Parent & Student Concerns Accordion ── */}
+                {/* ── Year-specific Concern Cards (slide reveal) ── */}
                 <div className="border-t border-[#e8e6e0] px-5 py-5">
-                  {/* Eyebrow */}
-                  <div className="mb-4 flex items-center gap-2">
-                    <span className="rounded-full bg-[#071629] px-3 py-1 text-[9.5px] font-bold uppercase tracking-[0.12em] text-[#f1df9a]">
-                      For parents &amp; students
-                    </span>
-                    <div className="h-px flex-1 bg-[#e8e6e0]" />
-                  </div>
 
-                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                    {/* Parents accordion */}
-                    <div className="overflow-hidden rounded-2xl border border-[#e8e6e0]">
-                      <button
-                        onClick={() => toggleAcc('parents')}
-                        className="flex w-full items-center justify-between gap-3 px-4 py-3.5 text-left transition-colors"
-                        style={{ background: openAcc === 'parents' ? '#fdf8ec' : '#faf8f4' }}
-                      >
-                        <div className="flex items-center gap-3">
-                          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-[#fdf0c0]">
-                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#b45309" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-                            </svg>
-                          </div>
-                          <span className="text-[12.5px] font-semibold text-[#172033]">What parents worry about</span>
-                        </div>
-                        <svg
-                          width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-                          className="shrink-0 text-[#172033]/40 transition-transform duration-300"
-                          style={{ transform: openAcc === 'parents' ? 'rotate(180deg)' : 'rotate(0deg)' }}
-                        >
-                          <polyline points="6 9 12 15 18 9"/>
-                        </svg>
-                      </button>
-
-                      {openAcc === 'parents' && (
-                        <div className="border-t border-[#f0e0a0] bg-[#fffdf8] px-4 pb-4 pt-3">
-                          <p className="text-[12.5px] leading-relaxed text-[#172033]/65">
-                            {activeHsYear.parentConcern}
-                          </p>
-                          <div className="mt-3 rounded-xl border border-[#e8c96a] bg-[#fdf3d0] px-4 py-3">
-                            <p className="mb-1.5 text-[10px] font-bold uppercase tracking-[0.09em] text-[#7a5c0a]">
-                              How DA addresses it
-                            </p>
-                            <p className="text-[13px] font-semibold leading-relaxed text-[#4a3500]">
-                              {activeHsYear.parentDA}
-                            </p>
-                          </div>
-                        </div>
-                      )}
+                  {/* For Parents */}
+                  <div className="mb-6">
+                    <div className="mb-3 flex items-center gap-2">
+                      <span className="rounded-full bg-[#071629] px-3 py-1 text-[9px] font-bold uppercase tracking-[0.12em] text-[#f1df9a]">
+                        For Parents · {activeHsYear.label}
+                      </span>
+                      <div className="h-px flex-1 bg-[#e8e6e0]" />
                     </div>
-
-                    {/* Students accordion */}
-                    <div className="overflow-hidden rounded-2xl border border-[#e8e6e0]">
-                      <button
-                        onClick={() => toggleAcc('students')}
-                        className="flex w-full items-center justify-between gap-3 px-4 py-3.5 text-left transition-colors"
-                        style={{ background: openAcc === 'students' ? '#eff6ff' : '#faf8f4' }}
-                      >
-                        <div className="flex items-center gap-3">
-                          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-[#dbeafe]">
-                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#1d4ed8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                              <path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/>
-                            </svg>
-                          </div>
-                          <span className="text-[12.5px] font-semibold text-[#172033]">What students struggle with</span>
-                        </div>
-                        <svg
-                          width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-                          className="shrink-0 text-[#172033]/40 transition-transform duration-300"
-                          style={{ transform: openAcc === 'students' ? 'rotate(180deg)' : 'rotate(0deg)' }}
+                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+                      {activeHsYear.parentCards.map((card, i) => (
+                        <div
+                          key={i}
+                          className="group relative overflow-hidden rounded-xl border border-[#e0ddd7]"
+                          style={{ height: '10.5rem' }}
                         >
-                          <polyline points="6 9 12 15 18 9"/>
-                        </svg>
-                      </button>
-
-                      {openAcc === 'students' && (
-                        <div className="border-t border-[#bfdbfe] bg-[#f8fbff] px-4 pb-4 pt-3">
-                          <p className="text-[12.5px] leading-relaxed text-[#172033]/65">
-                            {activeHsYear.studentConcern}
-                          </p>
-                          <div className="mt-3 rounded-xl border border-[#93c5fd] bg-[#dbeafe] px-4 py-3">
-                            <p className="mb-1.5 text-[10px] font-bold uppercase tracking-[0.09em] text-[#1d4ed8]">
-                              How DA supports students
+                          {/* Front */}
+                          <div className="absolute inset-0 flex flex-col bg-[#f7f5f0] p-4 transition-opacity duration-300 group-hover:opacity-0">
+                            <p className="mb-2 text-[9px] font-bold uppercase tracking-[0.1em] text-[#172033]/30">
+                              Concern {i + 1}
                             </p>
-                            <p className="text-[13px] font-semibold leading-relaxed text-[#1e3a8a]">
-                              {activeHsYear.studentDA}
+                            <p className="flex-1 text-[12.5px] font-bold leading-[1.45] text-[#172033]">
+                              {card.concern}
                             </p>
+                            <p className="mt-2 text-[10px] text-[#9b8a6a]">Hover to see how DA helps</p>
+                          </div>
+                          {/* Back */}
+                          <div className="absolute inset-0 flex translate-y-full flex-col border-t-[3px] border-[#c9a227] bg-[#fdf8ec] p-4 transition-transform duration-[350ms] ease-in-out group-hover:translate-y-0">
+                            <p className="mb-2 border-b border-[#f0d08a] pb-2 text-[10.5px] font-bold leading-snug text-[#172033]">
+                              {card.shortTitle}
+                            </p>
+                            <p className="mb-2 text-[9px] font-bold uppercase tracking-[0.1em] text-[#7a5c0a]">
+                              How DA can help
+                            </p>
+                            <p className="flex-1 text-[11.5px] leading-[1.5] text-[#5c4a1e]">{card.help}</p>
                           </div>
                         </div>
-                      )}
+                      ))}
                     </div>
                   </div>
+
+                  {/* For Students */}
+                  <div>
+                    <div className="mb-3 flex items-center gap-2">
+                      <span className="rounded-full bg-[#1e3a8a] px-3 py-1 text-[9px] font-bold uppercase tracking-[0.12em] text-[#bfdbfe]">
+                        For Students · {activeHsYear.label}
+                      </span>
+                      <div className="h-px flex-1 bg-[#e8e6e0]" />
+                    </div>
+                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+                      {activeHsYear.studentCards.map((card, i) => (
+                        <div
+                          key={i}
+                          className="group relative overflow-hidden rounded-xl border border-[#e0ddd7]"
+                          style={{ height: '10.5rem' }}
+                        >
+                          {/* Front */}
+                          <div className="absolute inset-0 flex flex-col bg-[#f7f5f0] p-4 transition-opacity duration-300 group-hover:opacity-0">
+                            <p className="mb-2 text-[9px] font-bold uppercase tracking-[0.1em] text-[#172033]/30">
+                              Struggle {i + 1}
+                            </p>
+                            <p className="flex-1 text-[12.5px] font-bold leading-[1.45] text-[#172033]">
+                              {card.concern}
+                            </p>
+                            <p className="mt-2 text-[10px] text-[#7ba4d4]">Hover to see how DA helps</p>
+                          </div>
+                          {/* Back */}
+                          <div className="absolute inset-0 flex translate-y-full flex-col border-t-[3px] border-[#3b82f6] bg-[#eff6ff] p-4 transition-transform duration-[350ms] ease-in-out group-hover:translate-y-0">
+                            <p className="mb-2 border-b border-[#bfdbfe] pb-2 text-[10.5px] font-bold leading-snug text-[#172033]">
+                              {card.shortTitle}
+                            </p>
+                            <p className="mb-2 text-[9px] font-bold uppercase tracking-[0.1em] text-[#1d4ed8]">
+                              How DA can help
+                            </p>
+                            <p className="flex-1 text-[11.5px] leading-[1.5] text-[#1e3a8a]">{card.help}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
                 </div>
 
                 {/* Key areas (all HS years) */}
