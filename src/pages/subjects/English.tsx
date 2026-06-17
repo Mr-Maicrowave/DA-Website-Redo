@@ -243,13 +243,13 @@ const seniorProcess = [
 
 const hsKeyAreas = [
   { label: 'Text analysis', cls: 'bg-blue-50 border-blue-200 text-blue-700' },
-  { label: 'TEEL/PEEL structure', cls: 'bg-purple-50 border-purple-200 text-purple-700' },
-  { label: 'Essay and thesis writing', cls: 'bg-amber-50 border-amber-200 text-amber-700' },
-  { label: 'Creative writing', cls: 'bg-rose-50 border-rose-200 text-rose-700' },
-  { label: 'Quote integration', cls: 'bg-green-50 border-green-200 text-green-700' },
-  { label: 'Timed exam practice', cls: 'bg-teal-50 border-teal-200 text-teal-700' },
-  { label: 'Academic vocabulary', cls: 'bg-indigo-50 border-indigo-200 text-indigo-700' },
-  { label: 'Assessment preparation', cls: 'bg-orange-50 border-orange-200 text-orange-700' },
+  { label: 'TEEL/PEEL structure', cls: 'bg-blue-50 border-blue-200 text-blue-700' },
+  { label: 'Essay and thesis writing', cls: 'bg-blue-50 border-blue-200 text-blue-700' },
+  { label: 'Creative writing', cls: 'bg-blue-50 border-blue-200 text-blue-700' },
+  { label: 'Quote integration', cls: 'bg-blue-50 border-blue-200 text-blue-700' },
+  { label: 'Timed exam practice', cls: 'bg-blue-50 border-blue-200 text-blue-700' },
+  { label: 'Academic vocabulary', cls: 'bg-blue-50 border-blue-200 text-blue-700' },
+  { label: 'Assessment preparation', cls: 'bg-blue-50 border-blue-200 text-blue-700' },
 ];
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
@@ -287,21 +287,11 @@ function YearSkillPanel({ year }: { year: typeof primaryYears[0] }) {
 
       {/* Tags */}
       <div className="flex flex-wrap gap-2 px-5 pb-5">
-        {year.tags.map((tag, i) => {
-          const pastels = [
-            'bg-purple-50 border-purple-200 text-purple-700',
-            'bg-blue-50 border-blue-200 text-blue-700',
-            'bg-green-50 border-green-200 text-green-700',
-            'bg-amber-50 border-amber-200 text-amber-700',
-            'bg-rose-50 border-rose-200 text-rose-700',
-            'bg-teal-50 border-teal-200 text-teal-700',
-          ];
-          return (
-            <span key={tag} className={`rounded-full border px-3.5 py-1.5 text-[11px] font-medium ${pastels[i % pastels.length]}`}>
-              {tag}
-            </span>
-          );
-        })}
+        {year.tags.map((tag) => (
+          <span key={tag} className="rounded-full border border-blue-200 bg-blue-50 px-3.5 py-1.5 text-[11px] font-medium text-blue-700">
+            {tag}
+          </span>
+        ))}
       </div>
     </div>
   );
@@ -310,11 +300,8 @@ function YearSkillPanel({ year }: { year: typeof primaryYears[0] }) {
 // ─── Main Component ───────────────────────────────────────────────────────────
 
 const English = () => {
-  const [mainTab, setMainTab] = useState<'primary' | 'highschool'>('primary');
-  const [primaryYr, setPrimaryYr] = useState('y12');
   const [hsYr, setHsYr] = useState('y78');
 
-  const activePrimaryYear = primaryYears.find((y) => y.id === primaryYr)!;
   const activeHsYear = highSchoolYears.find((y) => y.id === hsYr)!;
 
   return (
@@ -403,20 +390,20 @@ const English = () => {
             </motion.div>
           </div>
 
-          {/* Main tabs — sit on the hero bottom edge */}
+          {/* Year tabs — sit on the hero bottom edge */}
           <div id="english-levels" className="relative z-10 mx-auto max-w-7xl px-5 lg:px-8">
             <div className="flex border-t border-white/10">
-              {(['primary', 'highschool'] as const).map((tab) => (
+              {highSchoolYears.map((y) => (
                 <button
-                  key={tab}
-                  onClick={() => setMainTab(tab)}
+                  key={y.id}
+                  onClick={() => setHsYr(y.id)}
                   className={`flex-1 py-3.5 text-[11.5px] font-bold uppercase tracking-[0.06em] transition-all ${
-                    mainTab === tab
+                    hsYr === y.id
                       ? 'border-t-2 border-[#f1df9a] bg-[#f1df9a]/08 text-[#f1df9a]'
                       : 'text-white/40 hover:bg-white/05 hover:text-white/65'
                   }`}
                 >
-                  {tab === 'primary' ? 'Primary (Years 1–6)' : 'High School (Years 7–12)'}
+                  {y.label}
                 </button>
               ))}
             </div>
@@ -426,112 +413,7 @@ const English = () => {
         {/* ── Interactive Content Area ── */}
         <section className="mx-auto max-w-7xl px-5 lg:px-8">
           <div className="rounded-b-3xl border border-t-0 border-[#e8e6e0] bg-white shadow-sm">
-
-            {/* ════ PRIMARY PANEL ════ */}
-            {mainTab === 'primary' && (
-              <div>
-                {/* Year sub-tabs */}
-                <div className="flex border-b border-[#e8e6e0] bg-[#f7f5f0]">
-                  {primaryYears.map((y) => (
-                    <button
-                      key={y.id}
-                      onClick={() => setPrimaryYr(y.id)}
-                      className={`px-5 py-2.5 text-[11.5px] font-semibold transition-all ${
-                        primaryYr === y.id
-                          ? 'border-b-2 border-[#c9a227] bg-white text-[#7a5c0a]'
-                          : 'text-[#172033]/50 hover:text-[#172033]'
-                      }`}
-                    >
-                      {y.label}
-                    </button>
-                  ))}
-                </div>
-
-                {/* Skills panel */}
-                <YearSkillPanel key={primaryYr} year={activePrimaryYear} />
-
-                {/* ── Shared Approach Section ── */}
-                <div className="mx-5 border-t-[3px] border-[#e8e6e0] pt-6 pb-6 lg:mx-6">
-                  {/* Eyebrow */}
-                  <div className="mb-3 flex items-center gap-3">
-                    <span className="rounded-md bg-[#071629] px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.12em] text-white">
-                      Years 1–6 · All classes
-                    </span>
-                    <div className="h-px flex-1 bg-[#e8e6e0]" />
-                  </div>
-
-                  <h2 className="font-serif text-[1.15rem] font-medium text-[#172033]">
-                    How we teach every primary lesson
-                  </h2>
-                  <p className="mt-1 max-w-2xl text-[12.5px] leading-relaxed text-[#172033]/60">
-                    Every DA Tuition primary class follows the same proven structure — regardless of year level.
-                    Each 10-week term is carefully sequenced so students build, practise, consolidate, and review
-                    their skills before moving on.
-                  </p>
-
-                  {/* 10-week term */}
-                  <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
-                    {termWeeks.map((w) => (
-                      <div key={w.label} className={`rounded-xl border p-3.5 ${w.bg}`}>
-                        <p className={`mb-1.5 text-[9px] font-bold uppercase tracking-[0.1em] ${w.labelColor}`}>
-                          {w.label}
-                        </p>
-                        <p className="mb-1 text-[12.5px] font-semibold text-[#172033]">{w.title}</p>
-                        <p className="text-[11px] leading-snug text-[#172033]/60">{w.desc}</p>
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* 5-step lesson */}
-                  <h3 className="mt-6 mb-3 text-[13.5px] font-semibold text-[#172033]">
-                    What happens in each lesson
-                  </h3>
-                  <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
-                    {lessonSteps.map((s) => (
-                      <div key={s.num} className="rounded-xl bg-[#f7f5f0] p-3.5">
-                        <p className="mb-1.5 text-[22px] font-light leading-none text-[#c9a227]">{s.num}</p>
-                        <p className="mb-1 text-[12px] font-bold text-[#172033]">{s.title}</p>
-                        <p className="text-[11px] leading-snug text-[#172033]/60">{s.desc}</p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* CTA bar */}
-                <div className="flex flex-wrap items-center justify-between gap-4 rounded-b-3xl bg-[#071629] px-6 py-4">
-                  <div>
-                    <p className="text-[13px] font-semibold text-white">Not sure which year group fits?</p>
-                    <p className="text-[12px] text-white/60">We'll identify your child's level together.</p>
-                  </div>
-                  <Link to="/contact">
-                    <Button className="h-10 rounded-full bg-[#c9a227] px-5 text-sm font-bold text-[#101521] hover:bg-[#b8911f]">
-                      Book an Interview <ArrowRight className="ml-1.5 h-4 w-4" />
-                    </Button>
-                  </Link>
-                </div>
-              </div>
-            )}
-
-            {/* ════ HIGH SCHOOL PANEL ════ */}
-            {mainTab === 'highschool' && (
-              <div>
-                {/* Year sub-tabs */}
-                <div className="flex border-b border-[#e8e6e0] bg-[#f7f5f0]">
-                  {highSchoolYears.map((y) => (
-                    <button
-                      key={y.id}
-                      onClick={() => setHsYr(y.id)}
-                      className={`px-5 py-2.5 text-[11.5px] font-semibold transition-all ${
-                        hsYr === y.id
-                          ? 'border-b-2 border-[#c9a227] bg-white text-[#7a5c0a]'
-                          : 'text-[#172033]/50 hover:text-[#172033]'
-                      }`}
-                    >
-                      {y.label}
-                    </button>
-                  ))}
-                </div>
-
+            <div>
                 {/* Years 7-8 and 9-10 skill panels */}
                 {(hsYr === 'y78' || hsYr === 'y910') && (
                   <YearSkillPanel key={hsYr} year={activeHsYear} />
@@ -586,11 +468,73 @@ const English = () => {
                     {/* Pastel tags */}
                     <div className="flex flex-wrap gap-2 px-6 pb-5">
                       {[
-                        { label: 'HSC Essay Preparation', cls: 'bg-purple-50 border-purple-200 text-purple-700' },
+                        { label: 'HSC Essay Preparation', cls: 'bg-blue-50 border-blue-200 text-blue-700' },
                         { label: 'Module-Based Text Analysis', cls: 'bg-blue-50 border-blue-200 text-blue-700' },
-                        { label: 'Draft Feedback and Editing', cls: 'bg-green-50 border-green-200 text-green-700' },
-                        { label: 'Trial and HSC Exam Prep', cls: 'bg-amber-50 border-amber-200 text-amber-700' },
+                        { label: 'Draft Feedback and Editing', cls: 'bg-blue-50 border-blue-200 text-blue-700' },
+                        { label: 'Trial and HSC Exam Prep', cls: 'bg-blue-50 border-blue-200 text-blue-700' },
                       ].map(({ label, cls }) => (
                         <span key={label} className={`rounded-full border px-3.5 py-1.5 text-[11px] font-medium ${cls}`}>
                           {label}
-             
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Key areas (all HS years) */}
+                <div className="border-t border-[#e8e6e0] px-5 py-5">
+                  <p className="mb-3 text-[13.5px] font-semibold text-[#172033]">
+                    Key areas of support across Years 7–12
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {hsKeyAreas.map(({ label, cls }) => (
+                      <span key={label} className={`rounded-full border px-3.5 py-1.5 text-[11px] font-medium ${cls}`}>
+                        {label}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Support beyond the classroom */}
+                <div className="mx-5 mb-5 rounded-xl bg-[#071629] px-5 py-4">
+                  <div className="flex items-start gap-3">
+                    <MessageCircle className="mt-0.5 h-5 w-5 shrink-0 text-[#f1df9a]" />
+                    <div>
+                      <p className="mb-1 text-[12px] font-bold text-[#f1df9a]">Support beyond the classroom</p>
+                      <p className="text-[11.5px] leading-relaxed text-white/70">
+                        Years 7–12 students receive 24/7 access to learning resources and tutor assistance
+                        outside of class — allowing them to ask questions, revise content, and get help exactly
+                        when they need it.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* CTA bar */}
+                <div className="flex flex-wrap items-center justify-between gap-4 rounded-b-3xl bg-[#071629] px-6 py-4">
+                  <div>
+                    <p className="text-[13px] font-semibold text-white">Ready to get started?</p>
+                    <p className="text-[12px] text-white/60">We'll find the right class and level for your child.</p>
+                  </div>
+                  <Link to="/contact">
+                    <Button className="h-10 rounded-full bg-[#c9a227] px-5 text-sm font-bold text-[#101521] hover:bg-[#b8911f]">
+                      Book an Interview <ArrowRight className="ml-1.5 h-4 w-4" />
+                    </Button>
+                  </Link>
+                </div>
+              </div>
+
+          </div>
+        </section>
+
+        {/* Spacer */}
+        <div className="h-20" />
+      </main>
+
+      <FooterNew />
+    </div>
+  );
+};
+
+export default English;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
