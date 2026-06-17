@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import NavigationNew from '@/components/NavigationNew';
 import FooterNew from '@/components/FooterNew';
 import { Button } from '@/components/ui/button';
-import { BookOpen, ArrowRight, CheckCircle, MessageCircle } from 'lucide-react';
+import { BookOpen, ArrowRight, CheckCircle, MessageCircle, HelpCircle, TrendingUp, Award, Pencil, FileCheck, Clock } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import SEO from '@/components/SEO';
@@ -424,6 +424,130 @@ const English = () => {
                 >
                   {y.label}
                 </button>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── For Parents Banner ── */}
+        <section className="bg-[#fffdf8] px-5 py-16 lg:px-8">
+          <div className="mx-auto max-w-7xl">
+            {/* Header */}
+            <div className="mb-10 grid gap-6 lg:grid-cols-[.85fr_1fr] lg:items-end">
+              <div>
+                <div className="mb-4 inline-block border-l-[3px] border-[#c9a227] pl-4">
+                  <p className="text-[10.5px] font-black uppercase tracking-[0.16em] text-[#c9a227]">For parents</p>
+                </div>
+                <h2 className="font-serif text-3xl font-medium leading-tight tracking-[-0.03em] text-[#071629] lg:text-4xl">
+                  It can be frustrating watching your child understand the text but struggle to put their ideas into words.
+                </h2>
+              </div>
+              <p className="max-w-2xl text-[15px] leading-8 text-[#61708a]">
+                We help bridge that gap with structure, support, and confidence. These are the concerns we hear most — and the situations we work with every day.
+              </p>
+            </div>
+
+            {/* Cards */}
+            <div className="grid gap-5 lg:grid-cols-3">
+              {[
+                {
+                  Icon: HelpCircle,
+                  iconBg: '#fdf3d0',
+                  iconColor: '#b45309',
+                  title: 'My child understands the text but can\'t explain it in writing.',
+                  detail: 'We teach students how to move from understanding to analysis — identifying techniques, using evidence, and structuring clear, confident responses.',
+                },
+                {
+                  Icon: TrendingUp,
+                  iconBg: '#fdf3d0',
+                  iconColor: '#b45309',
+                  title: 'Their marks aren\'t improving despite the effort they\'re putting in.',
+                  detail: 'We focus on what markers actually value: clear arguments, direct engagement with the question, and controlled, purposeful writing.',
+                },
+                {
+                  Icon: Award,
+                  iconBg: '#fdf3d0',
+                  iconColor: '#b45309',
+                  title: 'I don\'t know if they\'re truly ready for senior English or the HSC.',
+                  detail: 'Our tutors have navigated the HSC themselves — they know exactly what\'s expected and guide students to meet those standards with confidence.',
+                },
+              ].map(({ Icon, iconBg, iconColor, title, detail }, i) => (
+                <motion.article
+                  key={title}
+                  initial={{ opacity: 0, y: 24 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: '-80px' }}
+                  transition={{ duration: 0.55, delay: i * 0.08 }}
+                  className="rounded-3xl border border-[#071629]/10 bg-white p-6 shadow-lg shadow-[#071629]/5 transition duration-300 hover:-translate-y-1 hover:shadow-xl"
+                >
+                  <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl" style={{ background: iconBg }}>
+                    <Icon className="h-6 w-6" style={{ color: iconColor }} />
+                  </div>
+                  <h3 className="text-[17px] font-black leading-snug tracking-[-0.02em] text-[#071629]">{title}</h3>
+                  <p className="mt-4 text-sm leading-7 text-[#61708a]">{detail}</p>
+                </motion.article>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── For Students Banner ── */}
+        <section className="bg-[#fffdf8] px-5 pb-16 lg:px-8">
+          <div className="mx-auto max-w-7xl">
+            {/* Header */}
+            <div className="mb-10 grid gap-6 lg:grid-cols-[.85fr_1fr] lg:items-end">
+              <div>
+                <div className="mb-4 inline-block border-l-[3px] border-[#3b82f6] pl-4">
+                  <p className="text-[10.5px] font-black uppercase tracking-[0.16em] text-[#3b82f6]">For students</p>
+                </div>
+                <h2 className="font-serif text-3xl font-medium leading-tight tracking-[-0.03em] text-[#071629] lg:text-4xl">
+                  You don't have to figure English out alone.
+                </h2>
+              </div>
+              <p className="max-w-2xl text-[15px] leading-8 text-[#61708a]">
+                We guide you step by step so writing feels clearer, less stressful, and more achievable. Here's what students tell us before they start.
+              </p>
+            </div>
+
+            {/* Cards */}
+            <div className="grid gap-5 lg:grid-cols-3">
+              {[
+                {
+                  Icon: Pencil,
+                  iconBg: '#dbeafe',
+                  iconColor: '#1d4ed8',
+                  title: 'I understand the text but don\'t know what to write about it.',
+                  detail: 'We teach you how to move from "I get it" to "I can prove it" — using structured paragraphs, quote analysis, and clear thesis statements.',
+                },
+                {
+                  Icon: FileCheck,
+                  iconBg: '#dbeafe',
+                  iconColor: '#1d4ed8',
+                  title: 'I don\'t know if my essays are actually good enough.',
+                  detail: 'Every draft gets personalised feedback with specific improvements, so you always know exactly what to work on next.',
+                },
+                {
+                  Icon: Clock,
+                  iconBg: '#dbeafe',
+                  iconColor: '#1d4ed8',
+                  title: 'I freeze when I see an unseen exam question.',
+                  detail: 'We practise exam conditions, question unpacking, and adaptable response strategies so you can approach any question with a clear plan.',
+                },
+              ].map(({ Icon, iconBg, iconColor, title, detail }, i) => (
+                <motion.article
+                  key={title}
+                  initial={{ opacity: 0, y: 24 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: '-80px' }}
+                  transition={{ duration: 0.55, delay: i * 0.08 }}
+                  className="rounded-3xl border border-[#071629]/10 bg-white p-6 shadow-lg shadow-[#071629]/5 transition duration-300 hover:-translate-y-1 hover:shadow-xl"
+                >
+                  <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl" style={{ background: iconBg }}>
+                    <Icon className="h-6 w-6" style={{ color: iconColor }} />
+                  </div>
+                  <h3 className="text-[17px] font-black leading-snug tracking-[-0.02em] text-[#071629]">{title}</h3>
+                  <p className="mt-4 text-sm leading-7 text-[#61708a]">{detail}</p>
+                </motion.article>
               ))}
             </div>
           </div>
