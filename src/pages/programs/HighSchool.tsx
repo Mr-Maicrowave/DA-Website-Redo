@@ -1,415 +1,371 @@
-import React from 'react';
-import NavigationNew from '@/components/NavigationNew';
-import FooterNew from '@/components/FooterNew';
-import StickyBookButton from '@/components/StickyBookButton';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { GraduationCap, Target, Brain, Award, CheckCircle, ArrowRight, Quote, Clock, BookOpen, Users } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import SEO from '@/components/SEO';
-import { siteStats } from '@/data/site-stats';
+import NavigationNew from '@/components/NavigationNew';
+
+const focusRows = [
+  {
+    area: 'English and Essay Writing',
+    build: 'Analytical writing, close reading, text response',
+    skills: 'Thesis construction, evidence integration, language techniques',
+  },
+  {
+    area: 'Mathematics',
+    build: 'Algebra, geometry, statistics, calculus foundations',
+    skills: 'Problem-solving, working mathematically, exam technique',
+    highlight: true,
+  },
+  {
+    area: 'Sciences',
+    build: 'Physics, Chemistry, Biology concepts and inquiry skills',
+    skills: 'Scientific reasoning, data analysis, extended response writing',
+  },
+  {
+    area: 'HSIE / Humanities',
+    build: 'Geography, History, critical thinking, source analysis',
+    skills: 'Argument structure, perspective taking, extended response',
+    highlight: true,
+  },
+  {
+    area: 'Exam and Study Skills',
+    build: 'Organisation, note-taking, revision strategies',
+    skills: 'Time management, past-paper practice, reducing exam anxiety',
+  },
+];
+
+const stakesCards = [
+  {
+    title: 'The Curriculum Gets Serious',
+    text: 'Year 7 introduces abstract concepts: algebra, essay writing, scientific reasoning. These compound year on year. Students who build strong foundations early keep more options open all the way to the HSC.',
+  },
+  {
+    title: 'Habits Form Now or Not at All',
+    text: 'The study habits a student develops in Years 7-8 determine how they handle the pressure of Years 11-12. We teach method, not just content.',
+  },
+  {
+    title: 'Selective and Scholarship Pressure',
+    text: 'Many families are managing Year 9-10 class selection or scholarship applications at the same time. Our tutors know what selective and private schools are looking for.',
+  },
+  {
+    title: 'Confidence Decides Outcomes',
+    text: 'A teenager who believes they can do hard things will attempt hard things. We build that belief deliberately, through visible progress every session.',
+  },
+];
+
+const approachCards = [
+  {
+    title: 'We Diagnose Before We Teach',
+    text: "We identify exactly where each student's gaps are and why. Then we fix the root cause, not just the symptom.",
+  },
+  {
+    title: 'Small Groups, Expert Attention',
+    text: 'High school groups are capped at 5 students. Every student gets individual feedback every session, not just group instruction.',
+  },
+  {
+    title: 'Past Papers and Exam Technique',
+    text: 'From Year 8 onwards we integrate past paper practice, marking criteria, and time-pressure drills so students know exactly how to perform on test day.',
+  },
+  {
+    title: 'Parent Visibility at Every Step',
+    text: 'You receive a written progress update every term. You will never wonder whether the lessons are working.',
+  },
+];
+
+const fitItems = [
+  'Your child is finding the jump from primary to high school harder than expected',
+  'Marks are inconsistent: strong in class, weaker in exams',
+  'Your teenager lacks confidence in one or more subjects',
+  'You want selective school or scholarship preparation built into the program',
+  'Your child needs better study habits before Year 11 hits',
+  'You want written progress updates, not just anecdotal feedback',
+];
 
 const HighSchool = () => {
-  const features = [
-    {
-      icon: Brain,
-      title: "Critical Thinking",
-      description: "Developing analytical skills for complex problem solving"
-    },
-    {
-      icon: Target,
-      title: "Exam Excellence",
-      description: "Strategic preparation for assessments and yearly exams"
-    },
-    {
-      icon: GraduationCap,
-      title: "HSC Foundation",
-      description: "Building skills essential for senior success"
-    },
-    {
-      icon: Award,
-      title: "Study Skills",
-      description: "Time management and effective learning techniques"
-    }
-  ];
-
-  const yearLevels = [
-    {
-      year: "Year 7",
-      focus: ["Transition support from primary", "Organization skills", "Research methods", "Essay foundations"],
-      color: "bg-accent-yellow/10 border-accent-yellow/20",
-      iconColor: "text-accent-yellow"
-    },
-    {
-      year: "Year 8",
-      focus: ["Advanced algebra", "Science report writing", "Critical analysis", "Study routines"],
-      color: "bg-accent-pink/10 border-accent-pink/20",
-      iconColor: "text-accent-pink"
-    },
-    {
-      year: "Year 9",
-      focus: ["Subject selection guidance", "Extended responses", "Advanced mathematics", "Exam techniques"],
-      color: "bg-accent-teal/10 border-accent-teal/20",
-      iconColor: "text-accent-teal"
-    },
-    {
-      year: "Year 10",
-      focus: ["RoSA preparation", "HSC subject selection", "Advanced writing", "Career exploration"],
-      color: "bg-accent-purple/10 border-accent-purple/20",
-      iconColor: "text-accent-purple"
-    }
-  ];
-
-  const subjects = [
-    "Mathematics (Core & Advanced)",
-    "English (Standard & Advanced)",
-    "Sciences (Physics, Chemistry, Biology)",
-    "Commerce & Economics"
-  ];
-
   return (
-    <div className="min-h-screen bg-brand-canvas overflow-x-hidden pt-[120px]">
+    <div className="hs-page">
       <SEO
-        title="High School Tutoring (Years 7-10)"
-        description="Empowering students through the crucial middle years with confidence, clarity, and academic excellence at DA Tuition."
+        title="High School Tutoring Years 7-10"
+        description="Years 7-10 tutoring at DA Tuition builds the skills, habits, and confidence students need for senior school and beyond."
         canonicalUrl="/programs/high-school"
       />
+
+      <style>{`
+        .hs-page {
+          --navy:#0c1f4a; --navy-mid:#1a3870;
+          --gold:#b8860b; --gold-light:#d4a017; --gold-pale:#fdf6dc;
+          --blue:#dbeafe; --blue-mid:#93c5fd; --blue-text:#1d4ed8; --blue-deep:#2563eb; --blue-dark:#1e40af;
+          --white:#ffffff; --text:#0c1f4a; --muted:#4a5568; --border:#e2e8f0; --soft:#f8fafc;
+          min-height: 100vh;
+          background: var(--white);
+          color: var(--text);
+          font-family: 'Segoe UI', system-ui, sans-serif;
+          line-height: 1.6;
+          padding-top: 120px;
+        }
+
+        .hs-page *, .hs-page *::before, .hs-page *::after { box-sizing: border-box; }
+
+        .hs-breadcrumb { background: var(--soft); border-bottom: 1px solid var(--border); padding: 14px 52px; font-size: .82rem; color: var(--muted); }
+        .hs-breadcrumb a { color: var(--navy); text-decoration: none; font-weight: 600; }
+        .hs-breadcrumb a:hover { text-decoration: underline; }
+        .hs-breadcrumb span { margin: 0 8px; }
+
+        .hs-sibling-tabs { background: var(--white); border-bottom: 2px solid var(--border); display: flex; justify-content: center; overflow-x: auto; }
+        .hs-stab { padding: 14px 32px; font-size: .88rem; font-weight: 700; text-decoration: none; color: var(--muted); border-bottom: 3px solid transparent; margin-bottom: -2px; white-space: nowrap; transition: all .2s; }
+        .hs-stab:hover { color: var(--navy); }
+        .hs-stab.active { color: var(--blue-dark); border-bottom-color: var(--blue-deep); }
+
+        .hs-urgency-banner { background: linear-gradient(135deg,var(--blue) 0%,#bfdbfe 100%); border-top: 3px solid var(--blue-mid); border-bottom: 3px solid var(--blue-mid); padding: 16px 52px; display: flex; align-items: center; justify-content: center; gap: 32px; flex-wrap: wrap; }
+        .hs-urgency-item { display: flex; align-items: center; gap: 10px; font-size: .88rem; font-weight: 700; color: var(--navy); }
+        .hs-urgency-highlight { background: var(--navy); color: #fff; font-size: .75rem; font-weight: 800; padding: 3px 12px; border-radius: 999px; white-space: nowrap; }
+
+        .hs-hero { background: linear-gradient(160deg,#eff6ff 0%,#dbeafe 50%,#e0e7ff 100%); padding: 80px 52px 72px; text-align: center; border-bottom: 1px solid var(--border); }
+        .hs-hero-tag { display: inline-block; font-size: .72rem; font-weight: 800; letter-spacing: 3px; text-transform: uppercase; color: var(--blue-dark); background: #fff; border: 1.5px solid var(--blue-mid); padding: 6px 20px; border-radius: 4px; margin-bottom: 24px; }
+        .hs-hero h1 { font-size: clamp(2.4rem,5vw,3.6rem); font-weight: 900; line-height: 1.1; letter-spacing: -1.5px; color: var(--navy); margin: 0 0 20px; text-wrap: balance; }
+        .hs-hero h1 em { font-style: normal; color: var(--blue-dark); }
+        .hs-hero-sub { font-size: 1.1rem; color: var(--muted); max-width: 560px; margin: 0 auto 40px; line-height: 1.75; text-wrap: pretty; }
+        .hs-hero-btns { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-bottom: 36px; }
+        .hs-btn-navy { background: var(--navy); color: #fff; border: none; padding: 14px 32px; border-radius: 8px; font-size: .97rem; font-weight: 800; cursor: pointer; transition: all .2s; text-decoration: none; display: inline-block; }
+        .hs-btn-navy:hover { background: var(--navy-mid); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(12,31,74,.3); }
+        .hs-btn-outline { background: var(--white); color: var(--navy); border: 2px solid var(--navy); padding: 14px 32px; border-radius: 8px; font-size: .97rem; font-weight: 700; cursor: pointer; transition: all .2s; text-decoration: none; display: inline-block; }
+        .hs-btn-outline:hover { background: var(--blue); transform: translateY(-2px); }
+        .hs-hero-badge { display: inline-flex; align-items: center; gap: 14px; background: #fff; border: 1.5px solid var(--blue-mid); border-radius: 8px; padding: 12px 22px; box-shadow: 0 2px 10px rgba(37,99,235,.1); }
+        .hs-hero-badge-bold { font-size: .92rem; font-weight: 800; color: var(--navy); }
+        .hs-hero-badge-small { font-size: .76rem; color: var(--muted); margin-top: 2px; }
+
+        .hs-section { padding: 72px 52px; }
+        .hs-section-tag { display: inline-block; font-size: .7rem; font-weight: 800; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); background: var(--gold-pale); border: 1px solid #e8d280; padding: 5px 16px; border-radius: 4px; margin-bottom: 16px; }
+        .hs-section-h2 { font-size: clamp(1.8rem,3.2vw,2.6rem); font-weight: 900; letter-spacing: -1px; color: var(--navy); margin: 0 0 14px; text-wrap: balance; }
+        .hs-section-sub { font-size: 1.03rem; color: var(--muted); max-width: 620px; line-height: 1.7; margin: 0 0 40px; text-wrap: pretty; }
+        .hs-center { text-align: center; }
+        .hs-section-sub.hs-center { margin: 0 auto 40px; }
+
+        .hs-stakes-section { background: var(--soft); }
+        .hs-stakes-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(240px,1fr)); gap: 20px; max-width: 1100px; margin: 0 auto; }
+        .hs-stakes-card { background: var(--white); border-radius: 12px; padding: 28px 24px; border: 1.5px solid var(--border); border-top: 4px solid var(--blue-deep); box-shadow: 0 2px 8px rgba(12,31,74,.05); transition: all .22s; }
+        .hs-stakes-card:hover { transform: translateY(-4px); box-shadow: 0 10px 28px rgba(37,99,235,.1); border-color: var(--blue-mid); background: var(--blue); }
+        .hs-stakes-card h3 { font-size: 1rem; font-weight: 800; color: var(--navy); margin: 0 0 10px; }
+        .hs-stakes-card p { font-size: .9rem; color: var(--muted); line-height: 1.7; margin: 0; }
+
+        .hs-focus-section { background: var(--white); }
+        .hs-focus-wrap { max-width: 920px; margin: 0 auto; overflow-x: auto; border-radius: 12px; box-shadow: 0 4px 20px rgba(12,31,74,.07); border: 1.5px solid var(--border); }
+        .hs-focus-table { width: 100%; border-collapse: collapse; }
+        .hs-focus-table thead th { background: var(--navy); color: #fff; padding: 15px 22px; font-size: .85rem; font-weight: 800; text-align: left; letter-spacing: .3px; }
+        .hs-focus-table tbody tr { border-bottom: 1px solid var(--border); transition: background .18s; }
+        .hs-focus-table tbody tr:last-child { border-bottom: none; }
+        .hs-focus-table tbody tr:hover { background: var(--blue); }
+        .hs-focus-table tbody tr.highlight-row { background: #f0f7ff; }
+        .hs-focus-table tbody tr.highlight-row:hover { background: var(--blue); }
+        .hs-focus-table td { padding: 15px 22px; font-size: .9rem; color: var(--text); }
+        .hs-focus-table td:first-child { font-weight: 800; color: var(--blue-dark); min-width: 180px; }
+
+        .hs-approach-section { background: var(--white); }
+        .hs-approach-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(240px,1fr)); gap: 20px; max-width: 1100px; margin: 0 auto; }
+        .hs-approach-card { background: var(--soft); border-radius: 12px; padding: 28px 24px; border: 1.5px solid var(--border); border-left: 4px solid var(--blue-deep); transition: all .22s; }
+        .hs-approach-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(37,99,235,.1); background: var(--blue); }
+        .hs-approach-num { width: 32px; height: 32px; border-radius: 6px; background: var(--blue); display: flex; align-items: center; justify-content: center; font-size: .85rem; font-weight: 900; color: var(--blue-dark); margin-bottom: 14px; }
+        .hs-approach-card h3 { font-size: 1rem; font-weight: 800; color: var(--navy); margin: 0 0 9px; }
+        .hs-approach-card p { font-size: .9rem; color: var(--muted); line-height: 1.7; margin: 0; }
+
+        .hs-testi-section { background: var(--soft); text-align: center; }
+        .hs-testi-card { max-width: 660px; margin: 0 auto; background: var(--white); border: 1.5px solid var(--border); border-top: 4px solid var(--blue-deep); border-radius: 12px; padding: 44px 40px; box-shadow: 0 6px 28px rgba(12,31,74,.07); }
+        .hs-testi-stars { color: var(--gold-light); font-size: 1.3rem; letter-spacing: 4px; margin-bottom: 20px; }
+        .hs-testi-quote-icon { font-size: 3rem; line-height: 1; color: var(--blue-mid); margin-bottom: 8px; }
+        .hs-testi-text { font-size: 1.05rem; color: var(--text); line-height: 1.8; font-style: italic; margin: 0 0 28px; text-wrap: pretty; }
+        .hs-testi-text strong { font-style: normal; color: var(--navy); }
+        .hs-testi-author { display: flex; align-items: center; justify-content: center; gap: 14px; }
+        .hs-testi-avatar { width: 46px; height: 46px; border-radius: 50%; background: var(--blue); border: 2px solid var(--blue-mid); display: flex; align-items: center; justify-content: center; font-size: 1rem; font-weight: 900; color: var(--blue-dark); }
+        .hs-testi-name { font-size: .9rem; font-weight: 800; color: var(--navy); text-align: left; }
+        .hs-testi-role { font-size: .79rem; color: var(--muted); text-align: left; }
+
+        .hs-fit-section { background: var(--blue); border-top: 2px solid var(--blue-mid); border-bottom: 2px solid var(--blue-mid); }
+        .hs-fit-inner { max-width: 820px; margin: 0 auto; }
+        .hs-fit-list { list-style: none; display: grid; grid-template-columns: repeat(auto-fit,minmax(320px,1fr)); gap: 12px; margin: 0 0 36px; padding: 0; }
+        .hs-fit-list li { display: flex; align-items: flex-start; gap: 12px; font-size: .95rem; color: var(--text); line-height: 1.6; }
+        .hs-fit-check { width: 24px; height: 24px; min-width: 24px; background: var(--gold-pale); border: 1.5px solid var(--gold-light); border-radius: 5px; display: flex; align-items: center; justify-content: center; font-size: .82rem; color: var(--gold); margin-top: 2px; }
+        .hs-fit-cta-row { text-align: center; margin-top: 8px; }
+
+        .hs-cta-section { background: var(--navy); border-top: 4px solid var(--gold); padding: 80px 52px; text-align: center; }
+        .hs-cta-section h2 { font-size: clamp(1.9rem,3.8vw,2.8rem); font-weight: 900; color: #fff; letter-spacing: -1px; margin: 0 0 16px; text-wrap: balance; }
+        .hs-cta-section p { font-size: 1.03rem; color: rgba(255,255,255,.72); max-width: 540px; margin: 0 auto 36px; line-height: 1.72; text-wrap: pretty; }
+        .hs-btn-gold { background: var(--gold-light); color: var(--navy); border: none; padding: 15px 36px; border-radius: 8px; font-size: 1rem; font-weight: 900; cursor: pointer; transition: all .2s; text-decoration: none; display: inline-block; }
+        .hs-btn-gold:hover { background: var(--gold); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(184,134,11,.4); }
+        .hs-cta-note { margin-top: 18px !important; margin-bottom: 0 !important; font-size: .82rem !important; color: rgba(255,255,255,.45) !important; }
+
+        .hs-footer { background: var(--navy); border-top: 1px solid rgba(255,255,255,.1); padding: 28px 52px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px; }
+        .hs-footer-logo { font-size: 1rem; font-weight: 900; color: #fff; }
+        .hs-footer-logo span { color: var(--gold-light); }
+        .hs-footer p { font-size: .8rem; color: rgba(255,255,255,.45); margin: 0; }
+
+        @media (max-width: 768px) {
+          .hs-page { padding-top: 104px; }
+          .hs-hero, .hs-section, .hs-cta-section { padding-left: 20px; padding-right: 20px; }
+          .hs-breadcrumb, .hs-urgency-banner { padding-left: 20px; padding-right: 20px; }
+          .hs-sibling-tabs { justify-content: flex-start; }
+          .hs-stab { padding: 14px 20px; }
+          .hs-testi-card { padding: 28px 20px; }
+          .hs-fit-list { grid-template-columns: 1fr; }
+          .hs-footer { padding: 20px; flex-direction: column; align-items: flex-start; }
+        }
+      `}</style>
+
       <NavigationNew />
-      <StickyBookButton />
 
-      <main className="max-w-[1400px] mx-auto space-y-24 lg:space-y-32 pb-32 px-4 sm:px-6 lg:px-8">
+      <div className="hs-breadcrumb">
+        <Link to="/">Home</Link><span>&rsaquo;</span>
+        <Link to="/#programs">Programs</Link><span>&rsaquo;</span>
+        High School
+      </div>
 
-        {/* Hero Section */}
-        <section className="relative rounded-[2.5rem] overflow-hidden shadow-2xl mx-4 sm:mx-0 mt-6 mb-16">
-          <div className="absolute inset-0">
-            <img src="/images/v3/high_energy_class.jpg" alt="High School Class" className="w-full h-full object-cover" />
-            {/* Beautiful dark navy wash for perfect text readability */}
-            <div className="absolute inset-0 bg-brand-navy/80 mix-blend-multiply"></div>
-            {/* Optional gradient for extra text pop */}
-            <div className="absolute inset-0 bg-gradient-to-t from-brand-navy/90 via-brand-navy/50 to-brand-navy/30"></div>
+      <div className="hs-sibling-tabs">
+        <Link className="hs-stab active" to="/programs/high-school">High School (Y7-10)</Link>
+        <Link className="hs-stab" to="/hsc-excellence">HSC Excellence (Y11-12)</Link>
+      </div>
+
+      <div className="hs-urgency-banner">
+        <div className="hs-urgency-item">Limited Places This Term <div className="hs-urgency-highlight">Filling Fast</div></div>
+        <div className="hs-urgency-item">Years 7-10 Programs</div>
+        <div className="hs-urgency-item">Selective School Preparation</div>
+        <div className="hs-urgency-item">HSC Ready from Year 7</div>
+      </div>
+
+      <main>
+        <div className="hs-hero">
+          <div className="hs-hero-tag">HIGH SCHOOL TUITION &middot; YEARS 7-10</div>
+          <h1>The Years That Shape <em>Everything</em></h1>
+          <p className="hs-hero-sub">
+            Years 7-10 are where academic trajectories lock in. Our small-group tutoring builds the skills,
+            habits, and confidence your child needs to perform well in senior school and beyond.
+          </p>
+          <div className="hs-hero-btns">
+            <Link className="hs-btn-navy" to="/book-interview">Book a Free Trial Lesson</Link>
+            <a className="hs-btn-outline" href="#programs">See Our Programs</a>
           </div>
-
-          <div className="relative z-10 max-w-4xl mx-auto text-center py-12 sm:py-16 lg:py-24 px-6">
-            <div className="inline-flex items-center justify-center space-x-2 bg-white/10 backdrop-blur-md rounded-full px-6 py-2 border border-white/20 mb-8">
-              <GraduationCap className="w-5 h-5 text-brand-gold" />
-              <span className="text-sm font-bold text-white tracking-wide uppercase">Years 7 to 10</span>
+          <div className="hs-hero-badge">
+            <div>
+              <div className="hs-hero-badge-bold">Selective School and HSC Preparation</div>
+              <div className="hs-hero-badge-small">Built into every session from Year 7</div>
             </div>
+          </div>
+        </div>
 
-            <h1 className="text-3xl sm:text-4xl lg:text-7xl font-extrabold text-white mb-6 tracking-tight leading-tight drop-shadow-lg">
-              High School <br />
-              <span className="text-brand-gold">Tutoring</span>
-            </h1>
-
-            <p className="text-xl text-white/90 max-w-2xl mx-auto leading-relaxed drop-shadow-md">
-              Empowering students through the crucial middle years with confidence, clarity, and academic excellence.
+        <section className="hs-section hs-stakes-section" id="programs">
+          <div className="hs-center">
+            <div className="hs-section-tag">WHY THIS STAGE IS CRITICAL</div>
+            <h2 className="hs-section-h2">What Makes Years 7-10 So Important</h2>
+            <p className="hs-section-sub hs-center">
+              The move from primary to secondary school is the most significant academic shift a child faces. Here is what is at stake.
             </p>
+          </div>
+          <div className="hs-stakes-grid">
+            {stakesCards.map((card) => (
+              <article className="hs-stakes-card" key={card.title}>
+                <h3>{card.title}</h3>
+                <p>{card.text}</p>
+              </article>
+            ))}
           </div>
         </section>
 
-        {/* Intro Bento Box */}
-        <section className="relative">
-          <div className="bg-white rounded-[2rem] p-8 md:p-12 shadow-xl shadow-brand-navy/5 border border-brand-navy/5">
-            <div className="grid md:grid-cols-2 gap-12 items-center">
-              <div>
-                <h2 className="text-3xl font-extrabold text-brand-navy mb-6">Navigating the Journey Together</h2>
-                <div className="space-y-4 text-lg text-brand-navy/70 leading-relaxed">
-                  <p>
-                    The transition to high school brings new challenges: multiple teachers, increased workload, and growing
-                    academic expectations. At DA Tuition, we understand these pressures and provide the support system every
-                    teenager needs to thrive, not just survive.
-                  </p>
-                  <p>
-                    Our high school program isn't about overwhelming students with more work. It's about working smarter,
-                    building confidence, and developing the skills that will serve them throughout their academic career and beyond.
-                  </p>
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                {features.map((feature, index) => (
-                  <div key={index} className="bg-brand-canvas rounded-2xl p-6 transition-all duration-300 hover:shadow-md hover:-translate-y-1">
-                    <feature.icon className="w-8 h-8 text-brand-blue mb-4" />
-                    <h3 className="font-bold text-brand-navy mb-2">{feature.title}</h3>
-                    <p className="text-sm text-brand-navy/70 leading-snug">{feature.description}</p>
-                  </div>
+        <section className="hs-section hs-focus-section">
+          <div className="hs-center">
+            <div className="hs-section-tag">CURRICULUM COVERAGE</div>
+            <h2 className="hs-section-h2">Year 7-10 Curriculum Focus Areas</h2>
+            <p className="hs-section-sub hs-center">Aligned to the NSW syllabus and structured to build on what your child already knows.</p>
+          </div>
+          <div className="hs-focus-wrap">
+            <table className="hs-focus-table">
+              <thead>
+                <tr>
+                  <th>Focus Area</th>
+                  <th>What We Build</th>
+                  <th>Key Skills Developed</th>
+                </tr>
+              </thead>
+              <tbody>
+                {focusRows.map((row) => (
+                  <tr className={row.highlight ? 'highlight-row' : undefined} key={row.area}>
+                    <td>{row.area}</td>
+                    <td>{row.build}</td>
+                    <td>{row.skills}</td>
+                  </tr>
                 ))}
-              </div>
-            </div>
+              </tbody>
+            </table>
           </div>
         </section>
 
-        {/* Visual Proof / Authentic Environment */}
-        <section>
-          <div className="rounded-[2rem] overflow-hidden shadow-xl h-[300px] md:h-[450px] relative group border border-brand-navy/5">
-            <img src="/images/v3/mission_plaque.jpg" alt="DA Tuition Mission Statement" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-            <div className="absolute inset-0 bg-brand-navy/5 mix-blend-overlay"></div>
+        <section className="hs-section hs-approach-section">
+          <div className="hs-center" style={{ marginBottom: 44 }}>
+            <div className="hs-section-tag">OUR APPROACH</div>
+            <h2 className="hs-section-h2">How We Teach High School</h2>
           </div>
-        </section>
-
-        {/* Year Level Breakdown - Bento Grid */}
-        <section>
-          <div className="text-center max-w-2xl mx-auto mb-12">
-            <h2 className="text-3xl md:text-4xl font-extrabold text-brand-navy mb-4">
-              Year-by-Year Support
-            </h2>
-            <p className="text-lg text-brand-navy/70">
-              Each year brings unique challenges and opportunities. Our curriculum adapts to meet students exactly where they are.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-6">
-            {yearLevels.map((level, index) => (
-              <div key={index} className={`rounded-3xl p-8 border ${level.color} transition-all duration-300 hover:shadow-lg`}>
-                <h3 className="text-2xl font-black text-brand-navy mb-6">{level.year}</h3>
-                <ul className="space-y-4">
-                  {level.focus.map((item, idx) => (
-                    <li key={idx} className="flex items-start">
-                      <CheckCircle className={`w-5 h-5 ${level.iconColor} mt-0.5 mr-3 flex-shrink-0`} />
-                      <span className="text-brand-navy font-medium leading-tight">{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+          <div className="hs-approach-grid">
+            {approachCards.map((card, index) => (
+              <article className="hs-approach-card" key={card.title}>
+                <div className="hs-approach-num">{index + 1}</div>
+                <h3>{card.title}</h3>
+                <p>{card.text}</p>
+              </article>
             ))}
           </div>
         </section>
 
-        {/* Study Skills & Support / Testimonial Combo */}
-        <section>
-          <div className="grid lg:grid-cols-12 gap-6">
-            <div className="lg:col-span-7 bg-brand-navy rounded-[2rem] p-8 md:p-12 text-white shadow-xl relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-64 h-64 bg-accent-teal/20 rounded-full blur-[60px] pointer-events-none -translate-y-1/2 translate-x-1/2"></div>
-              <h3 className="text-3xl font-extrabold mb-4 relative z-10">Beyond Subject Tutoring</h3>
-              <p className="text-white/80 mb-8 relative z-10 text-lg">
-                High school success requires more than just subject knowledge. We equip students with essential skills to excel independently.
-              </p>
-
-              <div className="grid sm:grid-cols-2 gap-4 relative z-10">
-                <div className="bg-white/5 rounded-xl p-4 border border-white/10">
-                  <h4 className="font-bold text-accent-yellow mb-2">Time Management</h4>
-                  <p className="text-sm text-white/80">Balancing multiple subjects and extracurriculars effectively.</p>
-                </div>
-                <div className="bg-white/5 rounded-xl p-4 border border-white/10">
-                  <h4 className="font-bold text-accent-pink mb-2">Note-Taking</h4>
-                  <p className="text-sm text-white/80">Effective structuring methods tailored for different subjects.</p>
-                </div>
-                <div className="bg-white/5 rounded-xl p-4 border border-white/10">
-                  <h4 className="font-bold text-brand-blue mb-2">Exam Preparation</h4>
-                  <p className="text-sm text-white/80">Strategic revision techniques and intelligent stress management.</p>
-                </div>
-                <div className="bg-white/5 rounded-xl p-4 border border-white/10">
-                  <h4 className="font-bold text-accent-teal mb-2">RoSA Preparation</h4>
-                  <p className="text-sm text-white/80">Crucial Year 10 milestone guidance and HSC pathing.</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="lg:col-span-5 bg-white rounded-[2rem] p-8 md:p-12 border border-brand-navy/5 shadow-xl shadow-brand-navy/5 flex flex-col justify-center relative overflow-hidden">
-              <div className="absolute -left-10 -bottom-10 w-40 h-40 bg-accent-purple/10 rounded-full blur-[40px] pointer-events-none"></div>
-
-              <Quote className="w-12 h-12 text-brand-blue/20 mb-6" />
-              <blockquote className="text-xl text-brand-navy font-medium italic leading-relaxed mb-8 relative z-10">
-                "My marks have been extremely excellent because she encourages us to try and do well. She makes any problem that we have so much easier to understand, which helps to improve our work... She will listen to any questions that I have, which makes it easier for me to improve because she gives me helpful advice that will benefit me during the exam, or in school."
-              </blockquote>
-              <div className="flex items-center space-x-4 relative z-10">
-                <div className="w-12 h-12 bg-accent-pink/20 rounded-full flex items-center justify-center text-accent-pink font-bold text-xl">C</div>
-                <div>
-                  <p className="font-bold text-brand-navy">Chau Ho</p>
-                  <p className="text-sm text-brand-navy/60 font-medium">Year 10 Student</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Subject Coverage */}
-        <section>
-          <div className="text-center max-w-2xl mx-auto mb-12">
-            <h2 className="text-3xl md:text-4xl font-extrabold text-brand-navy mb-4">
-              Comprehensive Subject Support
-            </h2>
-            <p className="text-lg text-brand-navy/70">
-              Expert tutoring across all core subjects, meticulously aligned with the NSW curriculum.
+        <section className="hs-section hs-testi-section">
+          <div className="hs-section-tag" style={{ marginBottom: 32 }}>Real Families, Real Results</div>
+          <div className="hs-testi-card">
+            <div className="hs-testi-stars" aria-label="Five star review">*****</div>
+            <div className="hs-testi-quote-icon">"</div>
+            <p className="hs-testi-text">
+              My son started Year 9 <strong>two years behind in maths</strong>. After two terms with DA Tuition he passed his
+              half-yearly with a B, something I genuinely did not think was possible. The progress updates kept us in the loop
+              the whole way through.
             </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto mb-12">
-            {subjects.map((subject, index) => (
-              <div key={index} className="bg-white rounded-[1.5rem] p-6 text-center border border-brand-navy/5 shadow-sm hover:shadow-md transition-shadow">
-                <h3 className="font-bold text-brand-navy">{subject}</h3>
-              </div>
-            ))}
-          </div>
-
-          <div className="text-center">
-            <Link to="/subjects">
-              <Button size="lg" className="bg-white text-brand-navy border-2 border-brand-navy/10 hover:border-brand-navy/20 hover:bg-brand-canvas transition-all rounded-xl font-bold">
-                Explore All Subjects
-                <ArrowRight className="ml-2 w-5 h-5" />
-              </Button>
-            </Link>
-          </div>
-        </section>
-
-        {/* Timetable Section */}
-        <section className="py-16 bg-gray-50">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold text-brand-navy mb-4">Class Timetable</h2>
-              <p className="text-lg text-brand-midnight/70 italic">Convenient sessions for busy high school students</p>
-            </div>
-
-            <div className="grid md:grid-cols-3 gap-8">
-              <Card className="border-brand-blue/10">
-                <CardContent className="p-8 text-center">
-                  <Clock className="w-10 h-10 text-brand-blue mx-auto mb-4" />
-                  <h3 className="text-xl font-bold mb-2">Weekday Evenings</h3>
-                  <p className="text-brand-blue font-bold text-lg mb-4">Tue – Fri</p>
-                  <p className="text-brand-midnight/70">Study sessions from</p>
-                  <p className="text-2xl font-black text-brand-navy">5:00 PM – 9:00 PM</p>
-                </CardContent>
-              </Card>
-
-              <Card className="border-brand-blue/10 shadow-xl scale-105 relative z-10">
-                <div className="absolute top-0 inset-x-0 h-1.5 bg-brand-blue rounded-t-xl"></div>
-                <CardContent className="p-8 text-center">
-                  <Clock className="w-10 h-10 text-brand-blue mx-auto mb-4" />
-                  <h3 className="text-xl font-bold mb-2">Saturdays</h3>
-                  <p className="text-brand-blue font-bold text-lg mb-4">Full Day Sessions</p>
-                  <p className="text-brand-midnight/70">Full day availability</p>
-                  <p className="text-2xl font-black text-brand-navy">9 AM – 6 PM</p>
-                </CardContent>
-              </Card>
-
-              <Card className="border-brand-blue/10">
-                <CardContent className="p-8 text-center">
-                  <Clock className="w-10 h-10 text-brand-blue mx-auto mb-4" />
-                  <h3 className="text-xl font-bold mb-2">Sundays</h3>
-                  <p className="text-brand-blue font-bold text-lg mb-4">Weekend Sessions</p>
-                  <p className="text-brand-midnight/70">Sessions available</p>
-                  <p className="text-2xl font-black text-brand-navy">10 AM – 7 PM</p>
-                </CardContent>
-              </Card>
-            </div>
-
-            <div className="mt-12 bg-white rounded-2xl p-6 text-center border border-brand-blue/10 max-w-2xl mx-auto">
-              <p className="text-brand-midnight/80">
-                <span className="font-bold text-brand-blue">Note:</span> Class durations for Years 7-10 are typically 2 hours. 
-                Contact us to check availability for specific subjects and year levels.
-              </p>
-            </div>
-          </div>
-        </section>
-
-        {/* Discover More Section */}
-        <section className="py-16">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-3xl font-bold text-brand-navy mb-8 text-center">Explore Our Other Programs</h2>
-            <div className="grid md:grid-cols-3 gap-6">
-              <Link to="/programs/primary-school" className="group">
-                <Card className="hover:shadow-xl transition-all duration-300 border-brand-blue/10 h-full">
-                  <CardContent className="p-6">
-                    <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mb-4 group-hover:bg-orange-500 transition-colors">
-                      <BookOpen className="w-6 h-6 text-orange-600 group-hover:text-white transition-colors" />
-                    </div>
-                    <h3 className="text-xl font-bold mb-2 group-hover:text-orange-600 transition-colors">Primary School (K-6)</h3>
-                    <p className="text-brand-navy/70 text-sm mb-4">Nurture a love of learning and build essential academic foundations for the primary years.</p>
-                    <div className="flex items-center text-orange-600 font-bold text-sm">
-                      Learn More <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                    </div>
-                  </CardContent>
-                </Card>
-              </Link>
-
-              <Link to="/hsc-excellence" className="group">
-                <Card className="hover:shadow-xl transition-all duration-300 border-brand-blue/10 h-full">
-                  <CardContent className="p-6">
-                    <div className="w-12 h-12 bg-brand-midnight/10 rounded-full flex items-center justify-center mb-4 group-hover:bg-brand-midnight transition-colors">
-                      <GraduationCap className="w-6 h-6 text-brand-midnight group-hover:text-white transition-colors" />
-                    </div>
-                    <h3 className="text-xl font-bold mb-2 group-hover:text-brand-midnight transition-colors">HSC Excellence (11-12)</h3>
-                    <p className="text-brand-navy/70 text-sm mb-4">Intensive HSC preparation with proven strategies for maximum ATAR results.</p>
-                    <div className="flex items-center text-brand-midnight font-bold text-sm">
-                      Learn More <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                    </div>
-                  </CardContent>
-                </Card>
-              </Link>
-
-              <Link to="/find-teacher" className="group">
-                <Card className="hover:shadow-xl transition-all duration-300 border-brand-blue/10 h-full">
-                  <CardContent className="p-6">
-                    <div className="w-12 h-12 bg-accent-pink/10 rounded-full flex items-center justify-center mb-4 group-hover:bg-accent-pink transition-colors">
-                      <Users className="w-6 h-6 text-accent-pink group-hover:text-white transition-colors" />
-                    </div>
-                    <h3 className="text-xl font-bold mb-2 group-hover:text-accent-pink transition-colors">Find a Teacher</h3>
-                    <p className="text-brand-navy/70 text-sm mb-4">Meet our team of exceptional educators and find the perfect match for your child.</p>
-                    <div className="flex items-center text-accent-pink font-bold text-sm">
-                      Meet the Team <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                    </div>
-                  </CardContent>
-                </Card>
-              </Link>
-            </div>
-          </div>
-        </section>
-
-        {/* Pathway to HSC / CTA Combo Section */}
-        <section>
-          <div className="bg-brand-blue rounded-[2rem] p-12 md:p-16 text-center shadow-2xl relative overflow-hidden">
-            {/* Abstract background shapes */}
-            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-white/10 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/3"></div>
-            <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-brand-navy/20 rounded-full blur-[80px] translate-y-1/2 -translate-x-1/3"></div>
-
-            <div className="relative z-10 max-w-3xl mx-auto">
-              <div className="inline-flex items-center justify-center space-x-2 bg-white/10 rounded-full px-6 py-2 border border-white/20 mb-8 backdrop-blur-sm">
-                <Award className="w-5 h-5 text-brand-gold" />
-                <span className="text-sm font-bold text-white tracking-wide">Pathway to HSC Success</span>
-              </div>
-
-              <h2 className="text-4xl md:text-5xl font-extrabold text-white mb-6">
-                Ready to Unlock Your Teen's Potential?
-              </h2>
-              <p className="text-xl text-white/90 mb-10 font-medium max-w-2xl mx-auto">
-                Years 7-10 lay the foundation for HSC success. Join hundreds of students achieving their personal best with DA Tuition.
-              </p>
-
-              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-10">
-                <Button 
-                  size="lg" 
-                  className="bg-brand-gold text-brand-navy hover:bg-yellow-400 font-bold px-8 h-14 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all w-full sm:w-auto"
-                  onClick={() => window.location.href = '/#contact'}
-                >
-                  Book Interview
-                  <ArrowRight className="ml-2 w-5 h-5" />
-                </Button>
-                <Button 
-                  size="lg" 
-                  variant="outline" 
-                  className="bg-transparent border-2 border-white text-white hover:bg-white hover:text-brand-navy font-bold px-8 h-14 rounded-xl transition-all w-full sm:w-auto"
-                  onClick={() => window.location.href = '/#contact'}
-                >
-                  Request Program Guide
-                </Button>
-              </div>
-
-              <div className="pt-8 border-t border-white/20 flex flex-col md:flex-row items-center justify-center gap-6">
-                <Link to="/hsc-excellence">
-                  <span className="text-white/90 hover:text-white font-bold underline underline-offset-4 decoration-white/40 hover:decoration-white transition-all flex items-center">
-                    Learn about our specialized HSC Program <ArrowRight className="ml-2 w-4 h-4" />
-                  </span>
-                </Link>
-                <span className="hidden md:inline text-white/30">•</span>
-                <span className="text-white/80 font-medium tracking-wide">
-                  Call us at <a href="tel:0401940207" className="text-white hover:text-brand-gold transition-colors">0401 940 207</a>
-                </span>
+            <div className="hs-testi-author">
+              <div className="hs-testi-avatar">M</div>
+              <div>
+                <div className="hs-testi-name">Mum of Year 9 student</div>
+                <div className="hs-testi-role">Parramatta</div>
               </div>
             </div>
           </div>
         </section>
 
+        <section className="hs-section hs-fit-section">
+          <div className="hs-fit-inner">
+            <div className="hs-center" style={{ marginBottom: 32 }}>
+              <div className="hs-section-tag">Is This Right For Us?</div>
+              <h2 className="hs-section-h2">DA Tuition High School Is Perfect If...</h2>
+            </div>
+            <ul className="hs-fit-list">
+              {fitItems.map((item) => (
+                <li key={item}>
+                  <div className="hs-fit-check">✓</div>
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+            <div className="hs-fit-cta-row">
+              <Link className="hs-btn-navy" to="/book-interview">Book a Free Trial Lesson</Link>
+            </div>
+          </div>
+        </section>
+
+        <div className="hs-cta-section">
+          <h2>Do Not Wait for the<br />Report Card</h2>
+          <p>
+            The sooner we identify the gaps, the easier they are to close. Book a free trial lesson: no entrance exam,
+            no lock-in contract. Just a session that shows you what is possible.
+          </p>
+          <Link className="hs-btn-gold" to="/book-interview">Book a Free Trial Lesson</Link>
+          <p className="hs-cta-note">No entrance exam &nbsp;&middot;&nbsp; No lock-in contract &nbsp;&middot;&nbsp; Limited spots each term</p>
+        </div>
       </main>
 
-      <FooterNew />
+      <footer className="hs-footer">
+        <div className="hs-footer-logo">DA <span>Tuition</span></div>
+        <p>&copy; 2025 DA Tuition &middot; Sydney, Australia</p>
+        <p>hello@datuition.com.au</p>
+      </footer>
     </div>
   );
 };

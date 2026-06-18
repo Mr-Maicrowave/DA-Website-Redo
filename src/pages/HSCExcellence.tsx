@@ -1,719 +1,379 @@
-import React from 'react';
-import NavigationNew from '@/components/NavigationNew';
-import FooterNew from '@/components/FooterNew';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { Trophy, GraduationCap, TrendingUp, Clock, Target, BookOpen, Award, Users, Calculator, FileText, Microscope, Globe, ArrowRight, CheckCircle, Star, Sparkles } from 'lucide-react';
-import reviewsData from '@/data/reviews.json';
 import { Link } from 'react-router-dom';
 import SEO from '@/components/SEO';
+import NavigationNew from '@/components/NavigationNew';
+
+const stakesCards = [
+  {
+    title: 'The ATAR Is Calculated on Everything',
+    text: 'Every internal assessment and every HSC exam contributes to the ATAR. There are no throw-away marks. We help students understand this and act on it from Day 1 of Year 11.',
+  },
+  {
+    title: 'Subject Selection Is Strategy',
+    text: 'Scaling, workload, and personal strengths all determine which subject combination gives your child the best ATAR. Our tutors have guided hundreds of families through this decision.',
+  },
+  {
+    title: 'The Gap Between Class and Exams',
+    text: 'Many strong students underperform in HSC exams because they have not been trained in HSC-specific technique. We close that gap systematically.',
+  },
+  {
+    title: 'Burnout Is a Real Risk',
+    text: 'Year 12 is a marathon. Students who do not manage time, energy, and stress through the year perform well below their potential in the final exams. We build good habits alongside knowledge.',
+  },
+];
+
+const focusRows = [
+  {
+    area: 'English Advanced and Standard',
+    build: 'Essay writing, close study of texts, Area of Study',
+    skills: 'Thesis, evidence, language techniques, multi-modal analysis',
+  },
+  {
+    area: 'Mathematics Advanced and Extension 1',
+    build: 'Calculus, statistics, algebra, proof',
+    skills: 'Working mathematically, exam strategy, speed and accuracy',
+    highlight: true,
+  },
+  {
+    area: 'Mathematics Extension 2',
+    build: 'Complex numbers, mechanics, harder 3-unit',
+    skills: 'Abstract reasoning, proof by induction, integration techniques',
+  },
+  {
+    area: 'Sciences (Physics / Chemistry / Biology)',
+    build: 'Depth studies, inquiry skills, extended response',
+    skills: 'Conceptual understanding, data analysis, HSC marking criteria',
+    highlight: true,
+  },
+  {
+    area: 'HSIE (Economics / Business / History / Legal Studies)',
+    build: 'Extended response, case studies, source analysis',
+    skills: 'Argument structure, current events application, time management',
+  },
+  {
+    area: 'Exam and Study Skills',
+    build: 'Past paper drilling, marking criteria, time-under-pressure',
+    skills: 'Peak performance strategy, stress management, peak-week preparation',
+    highlight: true,
+  },
+];
+
+const approachCards = [
+  {
+    title: 'Subject-Specialist Tutors Only',
+    text: 'Every HSC tutor at DA Tuition achieved a Band 6 (or equivalent high distinction) in the subject they teach. We do not compromise on this.',
+  },
+  {
+    title: 'Internal Assessment Strategy',
+    text: 'We do not just prepare students for the final exam. From Term 1 of Year 11 we work on internal task strategy, because 50% of the mark is already on the line.',
+  },
+  {
+    title: 'HSC Exam Technique as a Discipline',
+    text: 'Past papers, model answers, marking criteria. Every student knows exactly what a Band 6 response looks like before they sit the real thing.',
+  },
+  {
+    title: 'Progress Reports and Parent Check-Ins',
+    text: 'Written progress updates every term. Direct tutor access between sessions. You stay in the loop at every step.',
+  },
+];
+
+const fitItems = [
+  'Your child is entering Year 11 and wants to start strong from Day 1',
+  'Marks are inconsistent between internal tasks and exams',
+  'Your student is targeting an ATAR above 90, or above 99',
+  'They are struggling with specific subjects and need specialist help',
+  'You want a program built around the actual HSC marking criteria',
+  'Your child needs support managing Year 12 workload and stress',
+  'You want written progress updates, not just verbal reassurance',
+];
 
 const HSCExcellence = () => {
-  const subjects = {
-    mathematics: [
-      { name: "Mathematics Standard 1", band6Rate: "15%", topTeacher: "Alex C. (Band 6)" },
-      { name: "Mathematics Standard 2", band6Rate: "25%", topTeacher: "Sarah L. (Band 6)" },
-      { name: "Mathematics Advanced", band6Rate: "35%", topTeacher: "Michael Z. (97/100)" },
-      { name: "Mathematics Extension 1", band6Rate: "45%", topTeacher: "Jennifer K. (48/50)" },
-      { name: "Mathematics Extension 2", band6Rate: "55%", topTeacher: "David W. (State Rank 5)" }
-    ],
-    english: [
-      { name: "English Standard", band6Rate: "8%", topTeacher: "Emma T. (Band 6)" },
-      { name: "English Advanced", band6Rate: "18%", topTeacher: "Oliver M. (96/100)" },
-      { name: "English Extension 1", band6Rate: "35%", topTeacher: "Sophie R. (47/50)" },
-      { name: "English Extension 2", band6Rate: "40%", topTeacher: "James H. (48/50)" }
-    ],
-    sciences: [
-      { name: "Biology", band6Rate: "30%", topTeacher: "Dr. Lisa P. (98/100)" },
-      { name: "Chemistry", band6Rate: "35%", topTeacher: "Ryan C. (State Rank 8)" },
-      { name: "Physics", band6Rate: "32%", topTeacher: "Kevin L. (97/100)" },
-      { name: "Earth & Environmental", band6Rate: "28%", topTeacher: "Amy S. (Band 6)" }
-    ],
-    hsie: [
-      { name: "Business Studies", band6Rate: "20%", topTeacher: "Nathan B. (Band 6)" },
-      { name: "Legal Studies", band6Rate: "25%", topTeacher: "Grace W. (95/100)" }
-    ]
-  };
-
-  const atarGoals = [
-    { range: "99+", description: "Medicine, Law at top unis", students: "12% of our cohort" },
-    { range: "95+", description: "Engineering, Commerce", students: "28% of our cohort" },
-    { range: "90+", description: "Most university courses", students: "45% of our cohort" },
-    { range: "85+", description: "Wide range of options", students: "65% of our cohort" },
-    { range: "80+", description: "Many degree programs", students: "82% of our cohort" }
-  ];
-
-  const timeline = [
-    { term: "Term 4 (Year 11)", focus: "Foundation building", tasks: ["Content mastery", "Study habits", "Note-taking systems"] },
-    { term: "Term 1 (Year 12)", focus: "Depth studies begin", tasks: ["First assessments", "Essay writing", "Time management"] },
-    { term: "Term 2 (Year 12)", focus: "Trial preparation", tasks: ["Past papers", "Exam technique", "Stress management"] },
-    { term: "Term 3 (Year 12)", focus: "Final push", tasks: ["Revision strategies", "Practice exams", "ATAR optimization"] },
-    { term: "Term 4 (Year 12)", focus: "HSC Exams", tasks: ["Final preparation", "Exam execution", "University applications"] }
-  ];
-
-  const features = [
-    {
-      icon: Trophy,
-      title: "Top-Achieving Teachers",
-      description: "Learn from Band 6 Subject Teachers and recent HSC graduates"
-    },
-    {
-      icon: Users,
-      title: "Small Groups (3-5)",
-      description: "Personalized attention ensures every question is answered and every concept understood"
-    },
-    {
-      icon: Target,
-      title: "ATAR Focused",
-      description: "Strategic subject selection and study planning to maximize your ATAR"
-    },
-    {
-      icon: Clock,
-      title: "Flexible Scheduling",
-      description: "Evening and weekend sessions to fit around school and extracurriculars"
-    },
-    {
-      icon: BookOpen,
-      title: "Proprietary Curriculum",
-      description: "Specially created content for exam success - we teach concepts, not homework help"
-    },
-    {
-      icon: TrendingUp,
-      title: "Progress Tracking",
-      description: "Regular assessments and feedback to ensure continuous improvement"
-    }
-  ];
-
-
-
-
   return (
-    <div className="min-h-screen bg-brand-canvas pt-[100px]">
+    <div className="hsc-page">
       <SEO
-        title="HSC Tutoring Sydney — ATAR Preparation"
-        description="HSC preparation from Band 6 teachers across Maths, English, Sciences and HSIE. Proven ATAR results, small groups, and exam-focused curriculum in Canley Heights."
+        title="HSC Excellence Years 11-12"
+        description="HSC Excellence tutoring for Years 11-12 at DA Tuition, built for students targeting their best possible ATAR."
         canonicalUrl="/hsc-excellence"
       />
+
+      <style>{`
+        .hsc-page {
+          --navy:#0c1f4a; --navy-mid:#1a3870;
+          --gold:#b8860b; --gold-light:#d4a017; --gold-pale:#fdf6dc; --gold-mid:#e8c84a; --gold-dark:#92660a;
+          --white:#ffffff; --text:#0c1f4a; --muted:#4a5568; --border:#e2e8f0; --soft:#f8fafc;
+          --amber:#fef3c7; --amber-mid:#fcd34d;
+          min-height: 100vh;
+          background: var(--white);
+          color: var(--text);
+          font-family: 'Segoe UI', system-ui, sans-serif;
+          line-height: 1.6;
+          padding-top: 120px;
+        }
+
+        .hsc-page *, .hsc-page *::before, .hsc-page *::after { box-sizing: border-box; }
+
+        .hsc-breadcrumb { background: var(--soft); border-bottom: 1px solid var(--border); padding: 14px 52px; font-size: .82rem; color: var(--muted); }
+        .hsc-breadcrumb a { color: var(--navy); text-decoration: none; font-weight: 600; }
+        .hsc-breadcrumb a:hover { text-decoration: underline; }
+        .hsc-breadcrumb span { margin: 0 8px; }
+
+        .hsc-sibling-tabs { background: var(--white); border-bottom: 2px solid var(--border); display: flex; justify-content: center; overflow-x: auto; }
+        .hsc-stab { padding: 14px 32px; font-size: .88rem; font-weight: 700; text-decoration: none; color: var(--muted); border-bottom: 3px solid transparent; margin-bottom: -2px; white-space: nowrap; transition: all .2s; }
+        .hsc-stab:hover { color: var(--navy); }
+        .hsc-stab.active { color: var(--gold-dark); border-bottom-color: var(--gold-light); }
+
+        .hsc-urgency-banner { background: linear-gradient(135deg,var(--amber) 0%,#fef9c3 100%); border-top: 3px solid var(--amber-mid); border-bottom: 3px solid var(--amber-mid); padding: 16px 52px; display: flex; align-items: center; justify-content: center; gap: 32px; flex-wrap: wrap; }
+        .hsc-urgency-item { display: flex; align-items: center; gap: 10px; font-size: .88rem; font-weight: 700; color: var(--navy); }
+        .hsc-urgency-highlight { background: var(--navy); color: #fff; font-size: .75rem; font-weight: 800; padding: 3px 12px; border-radius: 999px; white-space: nowrap; }
+
+        .hsc-hero { background: linear-gradient(160deg,#fdf6dc 0%,#fef3c7 50%,#fef9c3 100%); padding: 80px 52px 72px; text-align: center; border-bottom: 1px solid #e8d280; }
+        .hsc-hero-tag { display: inline-block; font-size: .72rem; font-weight: 800; letter-spacing: 3px; text-transform: uppercase; color: var(--gold-dark); background: #fff; border: 1.5px solid var(--gold-mid); padding: 6px 20px; border-radius: 4px; margin-bottom: 24px; }
+        .hsc-hero h1 { font-size: clamp(2.4rem,5vw,3.6rem); font-weight: 900; line-height: 1.1; letter-spacing: -1.5px; color: var(--navy); margin: 0 0 20px; text-wrap: balance; }
+        .hsc-hero h1 em { font-style: normal; color: var(--gold-dark); }
+        .hsc-hero-sub { font-size: 1.1rem; color: var(--muted); max-width: 580px; margin: 0 auto 40px; line-height: 1.75; text-wrap: pretty; }
+        .hsc-hero-btns { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-bottom: 36px; }
+        .hsc-btn-navy { background: var(--navy); color: #fff; border: none; padding: 14px 32px; border-radius: 8px; font-size: .97rem; font-weight: 800; cursor: pointer; transition: all .2s; text-decoration: none; display: inline-block; }
+        .hsc-btn-navy:hover { background: var(--navy-mid); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(12,31,74,.3); }
+        .hsc-hero-badge { display: inline-flex; align-items: center; gap: 14px; background: #fff; border: 1.5px solid var(--gold-mid); border-radius: 8px; padding: 12px 22px; box-shadow: 0 2px 10px rgba(184,134,11,.12); }
+        .hsc-hero-badge-bold { font-size: .92rem; font-weight: 800; color: var(--navy); }
+        .hsc-hero-badge-small { font-size: .76rem; color: var(--muted); margin-top: 2px; }
+
+        .hsc-section { padding: 72px 52px; }
+        .hsc-section-tag { display: inline-block; font-size: .7rem; font-weight: 800; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); background: var(--gold-pale); border: 1px solid #e8d280; padding: 5px 16px; border-radius: 4px; margin-bottom: 16px; }
+        .hsc-section-h2 { font-size: clamp(1.8rem,3.2vw,2.6rem); font-weight: 900; letter-spacing: -1px; color: var(--navy); margin: 0 0 14px; text-wrap: balance; }
+        .hsc-section-sub { font-size: 1.03rem; color: var(--muted); max-width: 620px; line-height: 1.7; margin: 0 0 40px; text-wrap: pretty; }
+        .hsc-center { text-align: center; }
+        .hsc-section-sub.hsc-center { margin: 0 auto 40px; }
+
+        .hsc-stakes-section { background: var(--soft); }
+        .hsc-stakes-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(240px,1fr)); gap: 20px; max-width: 1100px; margin: 0 auto; }
+        .hsc-stakes-card { background: var(--white); border-radius: 12px; padding: 28px 24px; border: 1.5px solid var(--border); border-top: 4px solid var(--gold-light); box-shadow: 0 2px 8px rgba(12,31,74,.05); transition: all .22s; }
+        .hsc-stakes-card:hover { transform: translateY(-4px); box-shadow: 0 10px 28px rgba(184,134,11,.1); border-color: var(--gold-mid); background: var(--gold-pale); }
+        .hsc-stakes-card h3 { font-size: 1rem; font-weight: 800; color: var(--navy); margin: 0 0 10px; }
+        .hsc-stakes-card p { font-size: .9rem; color: var(--muted); line-height: 1.7; margin: 0; }
+
+        .hsc-focus-section { background: var(--white); }
+        .hsc-focus-wrap { max-width: 960px; margin: 0 auto; overflow-x: auto; border-radius: 12px; box-shadow: 0 4px 20px rgba(12,31,74,.07); border: 1.5px solid var(--border); }
+        .hsc-focus-table { width: 100%; border-collapse: collapse; }
+        .hsc-focus-table thead th { background: var(--navy); color: #fff; padding: 15px 22px; font-size: .85rem; font-weight: 800; text-align: left; letter-spacing: .3px; }
+        .hsc-focus-table tbody tr { border-bottom: 1px solid var(--border); transition: background .18s; }
+        .hsc-focus-table tbody tr:last-child { border-bottom: none; }
+        .hsc-focus-table tbody tr:hover { background: var(--gold-pale); }
+        .hsc-focus-table tbody tr.highlight-row { background: var(--amber); }
+        .hsc-focus-table tbody tr.highlight-row:hover { background: var(--gold-pale); }
+        .hsc-focus-table td { padding: 15px 22px; font-size: .9rem; color: var(--text); }
+        .hsc-focus-table td:first-child { font-weight: 800; color: var(--gold-dark); min-width: 200px; }
+
+        .hsc-approach-section { background: var(--soft); }
+        .hsc-approach-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(240px,1fr)); gap: 20px; max-width: 1100px; margin: 0 auto; }
+        .hsc-approach-card { background: var(--white); border-radius: 12px; padding: 28px 24px; border: 1.5px solid var(--border); border-left: 4px solid var(--gold-light); transition: all .22s; }
+        .hsc-approach-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(184,134,11,.1); background: var(--gold-pale); }
+        .hsc-approach-num { width: 32px; height: 32px; border-radius: 6px; background: var(--gold-pale); display: flex; align-items: center; justify-content: center; font-size: .85rem; font-weight: 900; color: var(--gold-dark); margin-bottom: 14px; border: 1px solid var(--gold-mid); }
+        .hsc-approach-card h3 { font-size: 1rem; font-weight: 800; color: var(--navy); margin: 0 0 9px; }
+        .hsc-approach-card p { font-size: .9rem; color: var(--muted); line-height: 1.7; margin: 0; }
+
+        .hsc-testi-section { background: var(--white); text-align: center; }
+        .hsc-testi-card { max-width: 660px; margin: 0 auto; background: var(--white); border: 1.5px solid var(--border); border-top: 4px solid var(--gold-light); border-radius: 12px; padding: 44px 40px; box-shadow: 0 6px 28px rgba(12,31,74,.07); }
+        .hsc-testi-stars { color: var(--gold-light); font-size: 1.3rem; letter-spacing: 4px; margin-bottom: 20px; }
+        .hsc-testi-quote-icon { font-size: 3rem; line-height: 1; color: var(--gold-mid); margin-bottom: 8px; }
+        .hsc-testi-text { font-size: 1.05rem; color: var(--text); line-height: 1.8; font-style: italic; margin: 0 0 28px; text-wrap: pretty; }
+        .hsc-testi-text strong { font-style: normal; color: var(--navy); }
+        .hsc-testi-author { display: flex; align-items: center; justify-content: center; gap: 14px; }
+        .hsc-testi-avatar { width: 46px; height: 46px; border-radius: 50%; background: var(--gold-pale); border: 2px solid var(--gold-mid); display: flex; align-items: center; justify-content: center; font-size: 1rem; font-weight: 900; color: var(--gold-dark); }
+        .hsc-testi-name { font-size: .9rem; font-weight: 800; color: var(--navy); text-align: left; }
+        .hsc-testi-role { font-size: .79rem; color: var(--muted); text-align: left; }
+
+        .hsc-fit-section { background: var(--amber); border-top: 2px solid var(--amber-mid); border-bottom: 2px solid var(--amber-mid); }
+        .hsc-fit-inner { max-width: 820px; margin: 0 auto; }
+        .hsc-fit-list { list-style: none; display: grid; grid-template-columns: repeat(auto-fit,minmax(320px,1fr)); gap: 12px; margin: 0 0 36px; padding: 0; }
+        .hsc-fit-list li { display: flex; align-items: flex-start; gap: 12px; font-size: .95rem; color: var(--text); line-height: 1.6; }
+        .hsc-fit-check { width: 24px; height: 24px; min-width: 24px; background: #fff; border: 1.5px solid var(--gold-light); border-radius: 5px; display: flex; align-items: center; justify-content: center; font-size: .82rem; color: var(--gold); margin-top: 2px; }
+        .hsc-fit-cta-row { text-align: center; margin-top: 8px; }
+
+        .hsc-cta-section { background: var(--navy); border-top: 4px solid var(--gold); padding: 80px 52px; text-align: center; }
+        .hsc-cta-section h2 { font-size: clamp(1.9rem,3.8vw,2.8rem); font-weight: 900; color: #fff; letter-spacing: -1px; margin: 0 0 16px; text-wrap: balance; }
+        .hsc-cta-section p { font-size: 1.03rem; color: rgba(255,255,255,.72); max-width: 540px; margin: 0 auto 36px; line-height: 1.72; text-wrap: pretty; }
+        .hsc-cta-btns { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-bottom: 20px; }
+        .hsc-btn-gold { background: var(--gold-light); color: var(--navy); border: none; padding: 15px 36px; border-radius: 8px; font-size: 1rem; font-weight: 900; cursor: pointer; transition: all .2s; text-decoration: none; display: inline-block; }
+        .hsc-btn-gold:hover { background: var(--gold); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(184,134,11,.4); }
+        .hsc-btn-outline-cta { background: transparent; color: #fff; border: 2px solid rgba(255,255,255,.35); padding: 15px 36px; border-radius: 8px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: all .2s; text-decoration: none; display: inline-block; }
+        .hsc-btn-outline-cta:hover { border-color: #fff; background: rgba(255,255,255,.08); }
+        .hsc-cta-note { font-size: .82rem !important; color: rgba(255,255,255,.45) !important; margin: 0 !important; }
+
+        .hsc-footer { background: var(--navy); border-top: 1px solid rgba(255,255,255,.1); padding: 28px 52px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px; }
+        .hsc-footer-logo { font-size: 1rem; font-weight: 900; color: #fff; }
+        .hsc-footer-logo span { color: var(--gold-light); }
+        .hsc-footer p { font-size: .8rem; color: rgba(255,255,255,.45); margin: 0; }
+
+        @media (max-width: 768px) {
+          .hsc-page { padding-top: 104px; }
+          .hsc-hero, .hsc-section, .hsc-cta-section { padding-left: 20px; padding-right: 20px; }
+          .hsc-breadcrumb, .hsc-urgency-banner { padding-left: 20px; padding-right: 20px; }
+          .hsc-sibling-tabs { justify-content: flex-start; }
+          .hsc-stab { padding: 14px 20px; }
+          .hsc-testi-card { padding: 28px 20px; }
+          .hsc-fit-list { grid-template-columns: 1fr; }
+          .hsc-footer { padding: 20px; flex-direction: column; align-items: flex-start; }
+        }
+      `}</style>
+
       <NavigationNew />
 
-      {/* Hero Section */}
-      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
-        <section className="relative rounded-[2.5rem] overflow-hidden shadow-2xl mt-6 mb-16">
-          <div className="absolute inset-0">
-            <img src="/images/v3/modern_classroom.jpg" alt="HSC Class" className="w-full h-full object-cover" />
-            <div className="absolute inset-0 bg-brand-navy/80 mix-blend-multiply"></div>
-            <div className="absolute inset-0 bg-gradient-to-t from-brand-navy/90 via-brand-navy/50 to-brand-navy/30"></div>
-          </div>
-
-          <div className="relative z-10 max-w-4xl mx-auto text-center py-12 sm:py-16 lg:py-24 px-6">
-            <div className="inline-flex items-center justify-center space-x-2 bg-white/10 backdrop-blur-md rounded-full px-6 py-2 border border-white/20 mb-8">
-              <GraduationCap className="w-5 h-5 text-brand-gold" />
-              <span className="text-sm font-bold text-white tracking-wide uppercase">HSC 2026 & 2027 Enrollments Open</span>
-            </div>
-
-            <h1 className="text-3xl sm:text-4xl lg:text-7xl font-extrabold text-white mb-6 tracking-tight leading-tight drop-shadow-lg">
-              HSC Excellence <br />
-              <span className="text-brand-gold">Program</span>
-            </h1>
-
-            <p className="text-xl text-white/90 max-w-3xl mx-auto mb-12 leading-relaxed drop-shadow-md">
-              Join hundreds of students who've achieved their dream ATARs through our specially
-              designed examination-focused curriculum. We don't do homework help - we teach for
-              understanding and exam excellence.
-            </p>
-
-            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
-              <Button 
-                size="lg" 
-                className="btn-primary group"
-                onClick={() => window.location.href = '/#contact'}
-              >
-                Book Interview
-                <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </Button>
-              <Button 
-                size="lg" 
-                variant="outline" 
-                className="bg-white/10 border-white/30 text-white hover:bg-white/20"
-                onClick={() => window.location.href = '/#contact'}
-              >
-                Request HSC Guide
-              </Button>
-            </div>
-
-            <p className="text-sm text-white/70">
-              Limited spots • Small groups only • Taught by Band 6 achievers
-            </p>
-          </div>
-        </section>
-
-
-        {/* ATAR Calculator Widget */}
-        <section className="relative max-w-4xl mx-auto px-4 mb-16">
-          <div className="bg-white rounded-[2rem] shadow-xl shadow-brand-navy/5 p-8 border border-brand-navy/5">
-            <h3 className="text-lg font-semibold mb-6 text-center text-brand-navy">Quick ATAR Goal Check</h3>
-            <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
-              {atarGoals.map((goal, index) => (
-                <div key={index} className="text-center p-4 rounded-xl hover:bg-brand-canvas cursor-pointer border border-transparent hover:border-brand-navy/10 transition-all">
-                  <div className="text-2xl font-bold text-brand-blue">{goal.range}</div>
-                  <div className="text-xs text-brand-navy/70 mt-2 leading-relaxed">{goal.description}</div>
-                </div>
-              ))}
-            </div>
-            <p className="text-sm text-brand-navy/60 mt-8 text-center font-medium">
-              82% of our students achieve an ATAR of 80+
-            </p>
-          </div>
-        </section>
+      <div className="hsc-breadcrumb">
+        <Link to="/">Home</Link><span>&rsaquo;</span>
+        <Link to="/#programs">Programs</Link><span>&rsaquo;</span>
+        HSC Excellence
       </div>
 
-      {/* Why HSC Matters */}
-      <section className="py-16 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold mb-4">Why Your HSC Result Matters</h2>
-            <p className="text-xl text-brand-midnight/80">The gateway to your future opportunities</p>
+      <div className="hsc-sibling-tabs">
+        <Link className="hsc-stab" to="/programs/high-school">High School (Y7-10)</Link>
+        <Link className="hsc-stab active" to="/hsc-excellence">HSC Excellence (Y11-12)</Link>
+      </div>
+
+      <div className="hsc-urgency-banner">
+        <div className="hsc-urgency-item">Limited Places This Term <div className="hsc-urgency-highlight">Filling Fast</div></div>
+        <div className="hsc-urgency-item">Years 11-12 HSC Preparation</div>
+        <div className="hsc-urgency-item">Band 6 Results Track Record</div>
+        <div className="hsc-urgency-item">Enrolments Now Open</div>
+      </div>
+
+      <main>
+        <div className="hsc-hero">
+          <div className="hsc-hero-tag">HSC EXCELLENCE &middot; YEARS 11-12</div>
+          <h1>The HSC Is <em>Two Years of Decisions</em></h1>
+          <p className="hsc-hero-sub">
+            Every subject choice, every assessment mark, every study hour counts toward the ATAR. DA Tuition's HSC
+            Excellence program is built for students who want to walk out with their best possible result.
+          </p>
+          <div className="hsc-hero-btns">
+            <Link className="hsc-btn-navy" to="/book-interview">Secure a Spot - Limited Places</Link>
           </div>
-
-          <div className="grid lg:grid-cols-3 gap-8">
-            <Card className="hover:shadow-xl transition-shadow">
-              <CardHeader>
-                <GraduationCap className="w-12 h-12 text-blue-500 mb-4" />
-                <CardTitle>University Entry</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-brand-midnight/80 mb-4">
-                  Your ATAR determines access to your preferred courses. Medicine requires 99+,
-                  Law 95+, Engineering 85+. Every mark counts.
-                </p>
-                <Badge variant="secondary">Direct pathway to top unis</Badge>
-              </CardContent>
-            </Card>
-
-            <Card className="hover:shadow-xl transition-shadow">
-              <CardHeader>
-                <Trophy className="w-12 h-12 text-yellow-500 mb-4" />
-                <CardTitle>Scholarships</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-brand-midnight/80 mb-4">
-                  High ATARs unlock academic scholarships worth $10,000-$40,000.
-                  Many unis offer automatic scholarships for 95+ ATARs.
-                </p>
-                <Badge variant="secondary">Financial rewards</Badge>
-              </CardContent>
-            </Card>
-
-            <Card className="hover:shadow-xl transition-shadow">
-              <CardHeader>
-                <Target className="w-12 h-12 text-green-500 mb-4" />
-                <CardTitle>Career Options</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-brand-midnight/80 mb-4">
-                  Top employers and graduate programs often have ATAR requirements.
-                  A strong HSC opens doors throughout your career.
-                </p>
-                <Badge variant="secondary">Long-term advantage</Badge>
-              </CardContent>
-            </Card>
+          <div className="hsc-hero-badge">
+            <div>
+              <div className="hsc-hero-badge-bold">100+ Band 6 Results</div>
+              <div className="hsc-hero-badge-small">Across English, Maths, Science and Humanities</div>
+            </div>
           </div>
         </div>
-      </section>
 
-      {/* Subject Coverage */}
-      <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold mb-4">Comprehensive Subject Support</h2>
-            <p className="text-xl text-brand-midnight/80">Expert tutoring across all HSC subjects</p>
+        <section className="hsc-section hsc-stakes-section" id="programs">
+          <div className="hsc-center">
+            <div className="hsc-section-tag">WHY THIS STAGE IS CRITICAL</div>
+            <h2 className="hsc-section-h2">What Makes the HSC the Most Important Two Years</h2>
+            <p className="hsc-section-sub hsc-center">The HSC is not just an exam. It is a two-year performance. Here is what we prepare students for.</p>
           </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {/* Mathematics */}
-            <Card className="hover:shadow-lg transition-shadow">
-              <CardHeader className="pb-4">
-                <div className="flex items-center justify-between">
-                  <Calculator className="w-8 h-8 text-blue-600" />
-                  <Badge className="bg-blue-100 text-blue-800">Most Popular</Badge>
-                </div>
-                <CardTitle className="mt-3">Mathematics</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ul className="space-y-3">
-                  {subjects.mathematics.map((subj, idx) => (
-                    <li key={idx} className="text-sm">
-                      <div className="font-medium text-brand-midnight">{subj.name}</div>
-                      <div className="text-xs text-brand-midnight/80 mt-1">
-                        Teacher: {subj.topTeacher}
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              </CardContent>
-            </Card>
-
-            {/* English */}
-            <Card className="hover:shadow-lg transition-shadow">
-              <CardHeader className="pb-4">
-                <div className="flex items-center justify-between">
-                  <FileText className="w-8 h-8 text-green-600" />
-                  <Badge className="bg-green-100 text-green-800">Compulsory</Badge>
-                </div>
-                <CardTitle className="mt-3">English</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ul className="space-y-3">
-                  {subjects.english.map((subj, idx) => (
-                    <li key={idx} className="text-sm">
-                      <div className="font-medium text-brand-midnight">{subj.name}</div>
-                      <div className="text-xs text-brand-midnight/80 mt-1">
-                        Teacher: {subj.topTeacher}
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              </CardContent>
-            </Card>
-
-            {/* Sciences */}
-            <Card className="hover:shadow-lg transition-shadow">
-              <CardHeader className="pb-4">
-                <div className="flex items-center justify-between">
-                  <Microscope className="w-8 h-8 text-purple-600" />
-                  <Badge className="bg-purple-100 text-purple-800">High Scaling</Badge>
-                </div>
-                <CardTitle className="mt-3">Sciences</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ul className="space-y-3">
-                  {subjects.sciences.map((subj, idx) => (
-                    <li key={idx} className="text-sm">
-                      <div className="font-medium text-brand-midnight">{subj.name}</div>
-                      <div className="text-xs text-brand-midnight/80 mt-1">
-                        Teacher: {subj.topTeacher}
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              </CardContent>
-            </Card>
-
-            {/* HSIE */}
-            <Card className="hover:shadow-lg transition-shadow">
-              <CardHeader className="pb-4">
-                <div className="flex items-center justify-between">
-                  <Globe className="w-8 h-8 text-orange-600" />
-                  <Badge className="bg-orange-100 text-orange-800">Popular</Badge>
-                </div>
-                <CardTitle className="mt-3">Humanities</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ul className="space-y-3">
-                  {subjects.hsie.map((subj, idx) => (
-                    <li key={idx} className="text-sm">
-                      <div className="font-medium text-brand-midnight">{subj.name}</div>
-                      <div className="text-xs text-brand-midnight/80 mt-1">
-                        Teacher: {subj.topTeacher}
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
-
-      {/* Features Grid */}
-      <section className="py-16 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold mb-4">The DA Tuition HSC Advantage</h2>
-            <p className="text-xl text-brand-midnight/80">What makes our program exceptional</p>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {features.map((feature, index) => {
-              const Icon = feature.icon;
-              return (
-                <div key={index} className="flex gap-4">
-                  <div className="flex-shrink-0">
-                    <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                      <Icon className="w-6 h-6 text-blue-600" />
-                    </div>
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-lg mb-2">{feature.title}</h3>
-                    <p className="text-brand-midnight/80">{feature.description}</p>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* Success Stories */}
-      <section className="py-16 bg-brand-navy text-white relative overflow-hidden">
-        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-5"></div>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold mb-4">Real Results from Real Students</h2>
-            <p className="text-xl opacity-90">What our families say</p>
-          </div>
-
-          <div className="grid lg:grid-cols-3 gap-8">
-            {reviewsData.reviews
-              .filter(review => review.rating >= 4 && (review.tags.includes('HSC') || review.tags.includes('Year 12') || review.subject.includes('HSC') || review.text.includes('HSC')))
-              .slice(0, 3)
-              .map((review, index) => (
-                <Card key={index} className="bg-white/10 backdrop-blur-sm border-white/20 flex flex-col h-full">
-                  <CardHeader className="pb-4">
-                    <div className="flex items-center justify-between mb-3">
-                      <Badge className="bg-white/20 text-white">{review.subject !== 'General' ? review.subject : 'HSC Preparation'}</Badge>
-                      <div className="flex">
-                        {[...Array(review.rating)].map((_, i) => (
-                          <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                        ))}
-                      </div>
-                    </div>
-                    <CardTitle className="text-white line-clamp-1">{review.author}</CardTitle>
-                    <p className="text-white/80 text-sm">Class of {review.date.substring(0, 4)}</p>
-                  </CardHeader>
-                  <CardContent className="flex-grow flex flex-col justify-between">
-                    <p className="text-white/90 italic mb-4 line-clamp-4 relative">"{review.text}"</p>
-
-                    {review.theme && (
-                      <div className="mt-auto pt-4 border-t border-white/10">
-                        <div className="text-white/80 text-sm font-medium">
-                          Highlight: <span className="text-brand-gold">{review.theme}</span>
-                        </div>
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-              ))}
-          </div>
-        </div>
-      </section>
-
-      {/* HSC Timeline */}
-      <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold mb-4">Your HSC Journey with DA Tuition</h2>
-            <p className="text-xl text-brand-midnight/80">Strategic support at every stage</p>
-          </div>
-
-          <div className="max-w-4xl mx-auto">
-            {timeline.map((period, index) => (
-              <div key={index} className="flex gap-4 mb-8">
-                <div className="flex-shrink-0">
-                  <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-500 text-white rounded-full flex items-center justify-center font-bold">
-                    {index + 1}
-                  </div>
-                </div>
-                <Card className="flex-grow">
-                  <CardContent className="p-6">
-                    <div className="flex justify-between items-start mb-3">
-                      <div>
-                        <h3 className="font-bold text-lg">{period.term}</h3>
-                        <p className="text-purple-600 font-medium">{period.focus}</p>
-                      </div>
-                      <Badge variant="outline">Term {index + 1}</Badge>
-                    </div>
-                    <ul className="space-y-2">
-                      {period.tasks.map((task, idx) => (
-                        <li key={idx} className="flex items-center text-brand-midnight/80">
-                          <CheckCircle className="w-4 h-4 text-green-500 mr-2" />
-                          {task}
-                        </li>
-                      ))}
-                    </ul>
-                  </CardContent>
-                </Card>
-              </div>
+          <div className="hsc-stakes-grid">
+            {stakesCards.map((card) => (
+              <article className="hsc-stakes-card" key={card.title}>
+                <h3>{card.title}</h3>
+                <p>{card.text}</p>
+              </article>
             ))}
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Teacher Spotlight */}
-      <section className="py-16 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <Card className="overflow-hidden">
-            <CardContent className="p-0">
-              <div className="lg:grid lg:grid-cols-2">
-                <div className="p-8 lg:p-12">
-                  <Badge className="mb-4 bg-purple-100 text-purple-800">Our Teachers</Badge>
-                  <h3 className="text-3xl font-bold mb-4">Learn from the Best</h3>
-                  <p className="text-brand-midnight/80 mb-6">
-                    What makes DA Tuition different? Our HSC teachers are recent graduates who achieved
-                    exceptional results. They understand the current syllabus, know what markers want,
-                    and remember exactly what it's like to be in your shoes.
-                  </p>
-
-                  <div className="space-y-4 mb-6">
-                    <div className="flex items-start">
-                      <Trophy className="w-6 h-6 text-purple-600 mr-3 flex-shrink-0 mt-0.5" />
-                      <div>
-                        <p className="font-semibold">Band 6 Subject Teachers</p>
-                        <p className="text-sm text-brand-midnight/80">All teachers scored in top 5%</p>
-                      </div>
-                    </div>
-                    <div className="flex items-start">
-                      <Award className="w-6 h-6 text-purple-600 mr-3 flex-shrink-0 mt-0.5" />
-                      <div>
-                        <p className="font-semibold">Subject Toppers</p>
-                        <p className="text-sm text-brand-midnight/80">Band 6 and State Rankings</p>
-                      </div>
-                    </div>
-                    <div className="flex items-start">
-                      <Sparkles className="w-6 h-6 text-purple-600 mr-3 flex-shrink-0 mt-0.5" />
-                      <div>
-                        <p className="font-semibold">Current & Relevant</p>
-                        <p className="text-sm text-brand-midnight/80">Recent grads know the latest syllabus</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <Button className="btn-primary">
-                    Meet Our HSC Teachers
-                    <ArrowRight className="ml-2 w-5 h-5" />
-                  </Button>
-                </div>
-
-                <div className="bg-gradient-to-br from-purple-100 to-blue-100 p-8 lg:p-12">
-                  <div className="space-y-4">
-                    <div className="bg-white rounded-xl p-6 shadow-lg">
-                      <p className="font-semibold mb-2">Michael Zhang</p>
-                      <p className="text-sm text-brand-midnight/80 mb-3">ATAR 99.85 | James Ruse 2023</p>
-                      <p className="text-sm italic">
-                        "I topped Mathematics Extension 2 with 100/100. I know exactly what it takes
-                        to achieve perfect marks and I pass on every strategy to my students."
-                      </p>
-                    </div>
-
-                    <div className="bg-white rounded-xl p-6 shadow-lg">
-                      <p className="font-semibold mb-2">Sophie Reynolds</p>
-                      <p className="text-sm text-brand-midnight/80 mb-3">ATAR 99.45 | North Sydney Girls 2023</p>
-                      <p className="text-sm italic">
-                        "English Advanced was my strongest subject (97/100). I help students decode
-                        what markers actually want and craft responses that stand out."
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </section>
-
-
-
-      {/* FAQ Section */}
-      <section className="py-16 bg-gray-50">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold mb-4">HSC Program FAQs</h2>
+        <section className="hsc-section hsc-focus-section">
+          <div className="hsc-center">
+            <div className="hsc-section-tag">SUBJECTS COVERED</div>
+            <h2 className="hsc-section-h2">HSC Excellence Curriculum Focus Areas</h2>
+            <p className="hsc-section-sub hsc-center">Every subject group has a dedicated tutor with HSC marking experience, not just content knowledge.</p>
           </div>
-
-          <div className="space-y-6">
-            <Card>
-              <CardContent className="p-6">
-                <h3 className="font-bold text-lg mb-3">When should we start HSC tutoring?</h3>
-                <p className="text-brand-midnight/80">
-                  Ideally, start at the beginning of Year 11 to build strong foundations. However,
-                  it's never too late - even students joining in Year 12 Term 2 see significant improvements.
-                  The key is consistent support through to the HSC exams.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardContent className="p-6">
-                <h3 className="font-bold text-lg mb-3">How do you match students with teachers?</h3>
-                <p className="text-brand-midnight/80">
-                  We carefully match based on subject needs, learning style, and personality. All our
-                  HSC teachers achieved Band 6 in the subjects they teach. We consider factors like
-                  the student's current level, goals, and preferred teaching approach.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardContent className="p-6">
-                <h3 className="font-bold text-lg mb-3">What resources do you provide?</h3>
-                <p className="text-brand-midnight/80">
-                  Students receive comprehensive study notes from high-performing schools, past HSC papers
-                  with worked solutions, practice questions sorted by topic, essay exemplars for English,
-                  and access to our online resource portal with video explanations.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardContent className="p-6">
-                <h3 className="font-bold text-lg mb-3">Can you help with subject selection?</h3>
-                <p className="text-brand-midnight/80">
-                  Absolutely! Our teachers provide strategic advice on subject selection to maximize ATAR.
-                  We consider scaling, your strengths, university prerequisites, and workload balance.
-                  Many students gain 5-10 ATAR points through better subject choices.
-                </p>
-              </CardContent>
-            </Card>
+          <div className="hsc-focus-wrap">
+            <table className="hsc-focus-table">
+              <thead>
+                <tr>
+                  <th>Subject / Focus Area</th>
+                  <th>What We Build</th>
+                  <th>Key Skills Developed</th>
+                </tr>
+              </thead>
+              <tbody>
+                {focusRows.map((row) => (
+                  <tr className={row.highlight ? 'highlight-row' : undefined} key={row.area}>
+                    <td>{row.area}</td>
+                    <td>{row.build}</td>
+                    <td>{row.skills}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Timetable Section */}
-      <section className="py-16 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-brand-navy mb-4">HSC Class Timetable</h2>
-            <p className="text-lg text-brand-midnight/70 italic">Intensive sessions designed for senior success</p>
+        <section className="hsc-section hsc-approach-section">
+          <div className="hsc-center" style={{ marginBottom: 44 }}>
+            <div className="hsc-section-tag">OUR APPROACH</div>
+            <h2 className="hsc-section-h2">How We Teach HSC Excellence</h2>
           </div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            <Card className="border-brand-blue/10">
-              <CardContent className="p-8 text-center">
-                <Clock className="w-10 h-10 text-brand-blue mx-auto mb-4" />
-                <h3 className="text-xl font-bold mb-2">Weekday Intensive</h3>
-                <p className="text-brand-blue font-bold text-lg mb-4">Tue – Fri</p>
-                <p className="text-brand-midnight/70">Focus sessions from</p>
-                <p className="text-2xl font-black text-brand-navy">5:00 PM – 9:00 PM</p>
-              </CardContent>
-            </Card>
-
-            <Card className="border-brand-blue/10 shadow-xl scale-105 relative z-10">
-              <div className="absolute top-0 inset-x-0 h-1.5 bg-brand-blue rounded-t-xl"></div>
-              <CardContent className="p-8 text-center">
-                <Clock className="w-10 h-10 text-brand-blue mx-auto mb-4" />
-                <h3 className="text-xl font-bold mb-2">Saturdays</h3>
-                <p className="text-brand-blue font-bold text-lg mb-4">Full Day Sessions</p>
-                <p className="text-brand-midnight/70">Full day availability</p>
-                <p className="text-2xl font-black text-brand-navy">9 AM – 6 PM</p>
-              </CardContent>
-            </Card>
-
-            <Card className="border-brand-blue/10">
-              <CardContent className="p-8 text-center">
-                <Clock className="w-10 h-10 text-brand-blue mx-auto mb-4" />
-                <h3 className="text-xl font-bold mb-2">Sundays</h3>
-                <p className="text-brand-blue font-bold text-lg mb-4">Weekend Sessions</p>
-                <p className="text-brand-midnight/70">Weekend sessions from</p>
-                <p className="text-2xl font-black text-brand-navy">10 AM – 7 PM</p>
-              </CardContent>
-            </Card>
+          <div className="hsc-approach-grid">
+            {approachCards.map((card, index) => (
+              <article className="hsc-approach-card" key={card.title}>
+                <div className="hsc-approach-num">{index + 1}</div>
+                <h3>{card.title}</h3>
+                <p>{card.text}</p>
+              </article>
+            ))}
           </div>
+        </section>
 
-          <div className="mt-12 bg-white rounded-2xl p-6 text-center border border-brand-blue/10 max-w-2xl mx-auto">
-            <p className="text-brand-midnight/80">
-              <span className="font-bold text-brand-blue">Note:</span> Sessions are 2 hours.
-              Contact us for subject-specific timetable details.
+        <section className="hsc-section hsc-testi-section">
+          <div className="hsc-section-tag" style={{ marginBottom: 32 }}>Real Families, Real Results</div>
+          <div className="hsc-testi-card">
+            <div className="hsc-testi-stars" aria-label="Five star review">*****</div>
+            <div className="hsc-testi-quote-icon">"</div>
+            <p className="hsc-testi-text">
+              Our daughter came into Year 12 thinking she would be lucky to get an <strong>ATAR of 80</strong>.
+              She finished with <strong>94.35</strong>. The tutors knew the HSC inside out: not just the content,
+              but how the markers think. That is the difference.
             </p>
+            <div className="hsc-testi-author">
+              <div className="hsc-testi-avatar">D</div>
+              <div>
+                <div className="hsc-testi-name">Dad of Year 12 student, Chatswood</div>
+                <div className="hsc-testi-role">ATAR 94.35</div>
+              </div>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Discover More Section */}
-      <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-brand-navy mb-8 text-center">Explore Our Other Programs</h2>
-          <div className="grid md:grid-cols-3 gap-6">
-            <Link to="/programs/high-school" className="group">
-              <Card className="hover:shadow-xl transition-all duration-300 border-brand-blue/10 h-full">
-                <CardContent className="p-6">
-                  <div className="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center mb-4 group-hover:bg-emerald-500 transition-colors">
-                    <Target className="w-6 h-6 text-emerald-600 group-hover:text-white transition-colors" />
-                  </div>
-                  <h3 className="text-xl font-bold mb-2 group-hover:text-emerald-600 transition-colors">High School (7-10)</h3>
-                  <p className="text-brand-navy/70 text-sm mb-4">Build strong fundamentals and develop confident learning habits for the junior high years.</p>
-                  <div className="flex items-center text-emerald-600 font-bold text-sm">
-                    Learn More <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                  </div>
-                </CardContent>
-              </Card>
-            </Link>
-
-            <Link to="/subjects" className="group">
-              <Card className="hover:shadow-xl transition-all duration-300 border-brand-blue/10 h-full">
-                <CardContent className="p-6">
-                  <div className="w-12 h-12 bg-accent-teal/10 rounded-full flex items-center justify-center mb-4 group-hover:bg-accent-teal transition-colors">
-                    <BookOpen className="w-6 h-6 text-accent-teal group-hover:text-brand-navy transition-colors" />
-                  </div>
-                  <h3 className="text-xl font-bold mb-2 group-hover:text-accent-teal transition-colors">Our Subjects</h3>
-                  <p className="text-brand-navy/70 text-sm mb-4">From creative writing to advanced calculus, explore the full range of subjects we offer.</p>
-                  <div className="flex items-center text-accent-teal font-bold text-sm">
-                    View Subjects <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                  </div>
-                </CardContent>
-              </Card>
-            </Link>
-
-            <Link to="/find-teacher" className="group">
-              <Card className="hover:shadow-xl transition-all duration-300 border-brand-blue/10 h-full">
-                <CardContent className="p-6">
-                  <div className="w-12 h-12 bg-accent-pink/10 rounded-full flex items-center justify-center mb-4 group-hover:bg-accent-pink transition-colors">
-                    <Users className="w-6 h-6 text-accent-pink group-hover:text-white transition-colors" />
-                  </div>
-                  <h3 className="text-xl font-bold mb-2 group-hover:text-accent-pink transition-colors">Find a Teacher</h3>
-                  <p className="text-brand-navy/70 text-sm mb-4">Meet our team of exceptional educators and find the perfect match for your child.</p>
-                  <div className="flex items-center text-accent-pink font-bold text-sm">
-                    Meet the Team <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                  </div>
-                </CardContent>
-              </Card>
-            </Link>
+        <section className="hsc-section hsc-fit-section">
+          <div className="hsc-fit-inner">
+            <div className="hsc-center" style={{ marginBottom: 32 }}>
+              <div className="hsc-section-tag">Is This Right For Us?</div>
+              <h2 className="hsc-section-h2">DA Tuition HSC Excellence Is Perfect If...</h2>
+            </div>
+            <ul className="hsc-fit-list">
+              {fitItems.map((item) => (
+                <li key={item}>
+                  <div className="hsc-fit-check">✓</div>
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+            <div className="hsc-fit-cta-row">
+              <Link className="hsc-btn-navy" to="/book-interview">Secure a Spot - Limited Places</Link>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* CTA Section */}
-      <section className="py-16 bg-brand-navy text-white relative overflow-hidden">
-        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-5"></div>
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <GraduationCap className="w-16 h-16 mx-auto mb-6 opacity-80" />
-          <h2 className="text-4xl font-bold mb-4">
-            Your HSC Success Starts Here
-          </h2>
-          <p className="text-xl mb-8 opacity-90">
-            Join hundreds of students achieving their dream ATARs.
-            Learn from teachers who've been exactly where you are and succeeded.
+        <div className="hsc-cta-section">
+          <h2>The HSC Does Not Wait.<br />Neither Should You.</h2>
+          <p>
+            Every term without the right support is a term of marks that cannot be recovered. Book a free consultation
+            and find out exactly what is possible for your child's ATAR.
           </p>
-
-          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 mb-8 max-w-2xl mx-auto">
-            <p className="text-lg font-semibold mb-2">Limited Spots for 2026 HSC</p>
-            <p className="opacity-90">Small groups filling fast • Enrolling now for Term 1</p>
+          <div className="hsc-cta-btns">
+            <Link className="hsc-btn-gold" to="/book-interview">Secure a Spot - Limited Places Available</Link>
+            <Link className="hsc-btn-outline-cta" to="/book-interview">Book an Interview Now</Link>
           </div>
-
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button 
-              size="lg" 
-              className="bg-white text-blue-600 hover:bg-gray-100"
-              onClick={() => window.location.href = '/#contact'}
-            >
-              Book Interview
-              <ArrowRight className="ml-2 w-5 h-5" />
-            </Button>
-            <a href="tel:0401940207">
-              <Button size="lg" variant="outline" className="bg-transparent border-white text-white hover:bg-white/20">
-                Call 0401 940 207
-              </Button>
-            </a>
-          </div>
-
-          <p className="mt-6 text-sm opacity-75">
-            Free trial lesson • ATAR improvement guaranteed • Taught by Band 6 achievers
-          </p>
+          <p className="hsc-cta-note">No entrance exam &nbsp;&middot;&nbsp; No lock-in contract &nbsp;&middot;&nbsp; Results guaranteed or full refund</p>
         </div>
-      </section>
+      </main>
 
-      <FooterNew />
+      <footer className="hsc-footer">
+        <div className="hsc-footer-logo">DA <span>Tuition</span></div>
+        <p>&copy; 2025 DA Tuition &middot; Sydney, Australia</p>
+        <p>hello@datuition.com.au</p>
+      </footer>
     </div>
   );
 };
