@@ -451,23 +451,27 @@ const Science = () => {
               transition={{ duration: 0.7, delay: 0.12, ease: 'easeOut' }}
               className="self-end rounded-3xl border border-white/14 bg-white/[0.09] p-6 shadow-2xl backdrop-blur-xl"
             >
-              <p className="text-sm font-black uppercase tracking-[0.14em] text-[#f1df9a]">Sound familiar?</p>
-              <div className="mt-5 space-y-3">
+              <p className="text-[8px] font-black uppercase tracking-[0.32em] text-[#f1df9a]/70">Does this sound familiar?</p>
+              <div className="mt-5 space-y-2.5">
                 {[
-                  'Struggling with scientific concepts?',
-                  'Need help preparing for HSC exams?',
-                  'Looking for stronger problem-solving skills?',
-                  'Want a clearer study structure?',
+                  'Science makes sense in class, but exam questions feel completely different?',
+                  'Spending hours memorising content but still losing marks?',
+                  'Struggling with calculations in Physics or Chemistry?',
+                  'Not sure how to structure extended responses for maximum marks?',
+                  'Finding HSC Biology, Chemistry or Physics overwhelming?',
+                  'Knowing the answer at home but blanking out in exams?',
                 ].map((item) => (
-                  <div key={item} className="flex items-start gap-3 rounded-2xl bg-white/10 p-4 text-white">
-                    <CheckCircle className="mt-0.5 h-5 w-5 shrink-0 text-[#f1df9a]" />
-                    <span className="text-sm font-semibold leading-6">{item}</span>
+                  <div key={item} className="flex items-start gap-3 text-white/90">
+                    <CheckCircle className="mt-0.5 h-4 w-4 shrink-0 text-[#f1df9a]" />
+                    <span className="text-[13px] leading-[1.6]">{item}</span>
                   </div>
                 ))}
               </div>
-              <p className="mt-5 text-sm leading-6 text-white/80">
-                Book an interview and we will work out the right subject, level, and starting point together.
-              </p>
+              <div className="mt-5 border-t border-white/10 pt-4">
+                <p className="text-[12.5px] leading-[1.75] text-white/60">
+                  Book an interview and we'll identify whether the issue is content knowledge, exam technique, response structure, calculations or confidence — then build a plan to address it.
+                </p>
+              </div>
             </motion.aside>
           </div>
         </section>

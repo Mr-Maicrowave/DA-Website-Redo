@@ -11,6 +11,7 @@ import ScrollProgress from "@/components/animations/ScrollProgress";
 import CustomCursor from "@/components/animations/CustomCursor";
 import Index from "./pages/Index";
 import Interview from "./pages/Interview";
+import BookInterview from "./pages/BookInterview";
 import Reviews from "./pages/Reviews";
 import NotFound from "./pages/NotFound";
 import FindTeacher from "./pages/FindTeacher";
@@ -59,6 +60,7 @@ const AnimatedRoutes = () => {
         <Route path="/" element={<PageTransition><Index /></PageTransition>} />
 
         <Route path="/interview" element={<PageTransition><Interview /></PageTransition>} />
+        <Route path="/book-interview" element={<PageTransition><BookInterview /></PageTransition>} />
         <Route path="/reviews" element={<Navigate to="/success-stories" replace />} />
         <Route path="/find-teacher" element={<PageTransition><FindTeacher /></PageTransition>} />
         <Route path="/teachers" element={<Navigate to="/find-teacher" replace />} />
