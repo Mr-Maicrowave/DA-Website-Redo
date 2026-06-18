@@ -5,14 +5,11 @@ import { Button } from '@/components/ui/button';
 import {
   ArrowRight,
   Atom,
-  Beaker,
   CheckCircle,
   ChevronLeft,
   ChevronRight,
   Clock,
-  Globe,
   HelpCircle,
-  Lightbulb,
   Target,
   TrendingUp,
   Zap,
@@ -40,15 +37,17 @@ const INNER_BONDS: [number, number][] = [[0,1],[1,2],[2,3],[3,4],[4,5],[5,0]];
 
 // Subject colour tokens
 const SUBJECT_COLORS: Record<string, { node: string; line: string; text: string }> = {
-  Physics:   { node: '#2563eb', line: '#2563eb', text: '#1e40af' },
-  Chemistry: { node: '#c9a227', line: '#c9a227', text: '#92740d' },
-  Biology:   { node: '#16a34a', line: '#16a34a', text: '#15803d' },
+  Physics:        { node: '#2563eb', line: '#2563eb', text: '#1e40af' },
+  Chemistry:      { node: '#c9a227', line: '#c9a227', text: '#92740d' },
+  Biology:        { node: '#16a34a', line: '#16a34a', text: '#15803d' },
+  'Earth Science': { node: '#0284c7', line: '#0284c7', text: '#0369a1' },
 };
 
 const SUBJECT_ICONS: Record<string, string> = {
-  Physics:   '⚡',
-  Chemistry: '🧪',
-  Biology:   '🧬',
+  Physics:        '⚡',
+  Chemistry:      '🧪',
+  Biology:        '🧬',
+  'Earth Science': '🌤️',
 };
 
 const WONDER_ITEMS = [
@@ -98,6 +97,22 @@ const WONDER_ITEMS = [
     svgX: 352, svgY: 382,
     connectX: 310, connectY: 276,  // → N3
     textX: 352, textY1: 408, textSize: 13.5,
+    textAnchor: 'middle' as const,
+  },
+  {
+    id: 'sky',
+    question: 'Why is the sky blue?',
+    line1: 'Why is the',
+    line2: 'sky blue?',
+    subject: 'Earth Science',
+    concepts: ['Light', 'Scattering', 'Atmosphere'],
+    explanation: 'Sunlight contains all colours of light. As sunlight travels through Earth\'s atmosphere, tiny particles scatter blue light more strongly than other colours. This scattered blue light reaches our eyes from every direction, making the sky appear blue.',
+    nswTopic: 'Light, Waves & The Atmosphere',
+    daConnection: 'Students learn how scientific concepts explain everyday observations. We connect Physics ideas to real-world examples so students understand why concepts work, not just what to memorise for exams.',
+    color: '#0284c7',
+    svgX: 230, svgY: 418,
+    connectX: 230, connectY: 322,   // → N3 — bottom vertex
+    textX: 230, textY1: 444, textSize: 13.5,
     textAnchor: 'middle' as const,
   },
   {
@@ -186,59 +201,128 @@ const SCIENCE_STORIES = [
 ];
 
 
+// ── HSC Subject editorial rows ───────────────────────────────────────────────
+const HSC_SUBJECTS = [
+  {
+    n: '01',
+    label: 'Biology',
+    badge: 'Life Sciences',
+    tagline: 'Understand life from cells to ecosystems.',
+    color: '#16a34a',
+    topics: ['Genetics & evolution', 'Human systems', 'Ecosystems', 'Scientific investigations'],
+    cta: 'Explore Biology',
+  },
+  {
+    n: '02',
+    label: 'Chemistry',
+    badge: 'Physical Sciences',
+    tagline: 'Master reactions, calculations and molecular thinking.',
+    color: '#c9a227',
+    topics: ['Chemical reactions', 'Stoichiometry', 'Equilibrium', 'Organic chemistry'],
+    cta: 'Explore Chemistry',
+  },
+  {
+    n: '03',
+    label: 'Physics',
+    badge: 'Physical Sciences',
+    tagline: 'Discover the principles that govern the universe.',
+    color: '#2563eb',
+    topics: ['Mechanics', 'Electricity & magnetism', 'Waves', 'Quantum physics'],
+    cta: 'Explore Physics',
+  },
+] as const;
+
+function HscSubjectRow({ s, index }: { s: typeof HSC_SUBJECTS[number]; index: number }) {
+  const [hovered, setHovered] = useState(false);
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: '-60px' }}
+      transition={{ duration: 0.45, delay: index * 0.1 }}
+      className="relative border-b border-[#071629]/10"
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      {/* Hover tint */}
+      <motion.div
+        className="pointer-events-none absolute inset-0"
+        animate={{ opacity: hovered ? 1 : 0 }}
+        transition={{ duration: 0.28 }}
+        style={{ background: `${s.color}0c` }}
+      />
+      {/* Left accent bar — grows from top */}
+      <motion.div
+        className="absolute left-0 top-0 bottom-0 w-[3px]"
+        style={{ background: s.color, transformOrigin: 'top center' }}
+        animate={{ scaleY: hovered ? 1 : 0, opacity: hovered ? 1 : 0 }}
+        initial={{ scaleY: 0, opacity: 0 }}
+        transition={{ duration: 0.32, ease: [0.16, 1, 0.3, 1] }}
+      />
+
+      <Link to="/interview" className="relative block px-6 py-8 lg:px-8 lg:py-10">
+        <div className="flex items-start gap-6 lg:gap-10">
+          {/* Editorial number */}
+          <span className="hidden shrink-0 pt-1 font-mono text-[10px] font-black tracking-[0.24em] text-[#071629]/20 lg:block w-7">
+            {s.n}
+          </span>
+
+          <div className="min-w-0 flex-1">
+            {/* Subject meta */}
+            <p className="mb-3 text-[8px] font-black uppercase tracking-[0.34em] text-[#071629]/30">
+              HSC Subject&ensp;·&ensp;{s.badge}
+            </p>
+            {/* Subject name */}
+            <motion.h3
+              className="font-serif text-2xl font-medium tracking-[-0.03em] lg:text-[1.75rem]"
+              animate={{ color: hovered ? s.color : '#071629' }}
+              transition={{ duration: 0.22 }}
+            >
+              HSC {s.label}
+            </motion.h3>
+            {/* Tagline */}
+            <p className="mt-2 text-[13px] leading-[1.65] text-[#61708a]">{s.tagline}</p>
+            {/* Topics — inline with dividers */}
+            <div className="mt-4 flex flex-wrap items-center gap-y-1">
+              {s.topics.map((topic, ti) => (
+                <span key={topic} className="inline-flex items-center">
+                  <span className="text-[11.5px] font-medium text-[#071629]/40">{topic}</span>
+                  {ti < s.topics.length - 1 && (
+                    <span className="mx-2.5 text-[#071629]/18 text-xs select-none">·</span>
+                  )}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          {/* CTA — slides in on hover, desktop only */}
+          <motion.div
+            className="hidden shrink-0 items-center gap-1.5 pt-1 text-[9.5px] font-black uppercase tracking-[0.16em] lg:flex"
+            animate={{ opacity: hovered ? 1 : 0, x: hovered ? 0 : 10 }}
+            transition={{ duration: 0.24, ease: 'easeOut' }}
+            style={{ color: s.color }}
+          >
+            {s.cta}
+            <ArrowRight className="h-3.5 w-3.5" />
+          </motion.div>
+        </div>
+
+        {/* Mobile CTA */}
+        <div className="mt-4 flex items-center gap-1.5 text-[10px] font-black uppercase tracking-[0.16em] lg:hidden" style={{ color: s.color }}>
+          {s.cta}
+          <ArrowRight className="h-3 w-3" />
+        </div>
+      </Link>
+    </motion.div>
+  );
+}
+
 const Science = () => {
   const [activeId, setActiveId] = useState<string>('lightning');
   const activeItem = WONDER_ITEMS.find(i => i.id === activeId)!;
   const constellationRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(constellationRef, { once: true, margin: '-120px' });
 
-  const sciencePathways = [
-    {
-      label: 'Biology',
-      badge: 'Life Sciences',
-      tagline: 'Understand life from cells to ecosystems.',
-      icon: Microscope,
-      dark: false,
-      accent: '#4a7a52',
-      accentBg: 'from-[#f0fff4] to-[#dcfce7]',
-      dotColor: 'bg-[#6B8F71]',
-      badgeColor: 'text-[#4a7a52] bg-[#6B8F71]/12',
-      iconBg: 'bg-[#4a7a52]',
-      ctaColor: 'text-[#4a7a52]',
-      topics: ['Module 1–8', 'Genetics', 'Evolution', 'Human systems', 'Ecosystems', 'Scientific investigations'],
-      cta: 'Explore Biology',
-    },
-    {
-      label: 'Chemistry',
-      badge: 'Physical Sciences',
-      tagline: 'Master reactions, calculations and molecular thinking.',
-      icon: FlaskConical,
-      dark: false,
-      accent: '#9a7a18',
-      accentBg: 'from-[#fffdf7] to-[#fff1cd]',
-      dotColor: 'bg-[#c9a227]',
-      badgeColor: 'text-[#9a7a18] bg-[#c9a227]/15',
-      iconBg: 'bg-[#9a7a18]',
-      ctaColor: 'text-[#9a7a18]',
-      topics: ['Module 1–8', 'Chemical reactions', 'Stoichiometry', 'Equilibrium', 'Organic chemistry', 'Analysis techniques'],
-      cta: 'Explore Chemistry',
-    },
-    {
-      label: 'Physics',
-      badge: 'Physical Sciences',
-      tagline: 'Discover the principles that govern the universe.',
-      icon: Zap,
-      dark: true,
-      accent: '#3b82f6',
-      accentBg: 'bg-[#071629]',
-      dotColor: 'bg-[#60a5fa]',
-      badgeColor: 'text-[#93c5fd] bg-[#3b82f6]/18',
-      iconBg: 'bg-[#3b82f6]',
-      ctaColor: 'text-[#93c5fd]',
-      topics: ['Module 1–8', 'Mechanics', 'Electricity', 'Waves', 'Quantum physics', 'Space and relativity'],
-      cta: 'Explore Physics',
-    },
-  ];
 
   const hscSubjects = [
     {
@@ -692,9 +776,9 @@ const Science = () => {
                     {/* Subtitle — whisper-quiet uppercase caption */}
                     <text x={230} y={242} textAnchor="middle"
                       fontFamily="Georgia,'Times New Roman',serif"
-                      fontSize={5.8} fill="#071629" opacity={0.30}
-                      style={{ letterSpacing: '1.5px' }}
-                    >CURIOSITY STARTS HERE</text>
+                      fontSize={5.2} fill="#071629" opacity={0.30}
+                      style={{ letterSpacing: '0.8px' }}
+                    >WHERE UNDERSTANDING BEGINS</text>
                   </motion.g>
 
                 </svg>
@@ -756,69 +840,81 @@ const Science = () => {
                   </motion.div>
                 </AnimatePresence>
 
-                <p className="mb-6 text-[9px] font-black uppercase tracking-[0.32em] text-[#c9a227]/60">
+                {/* Editorial section marker */}
+                <p className="mb-8 flex items-center gap-3 text-[8px] font-black uppercase tracking-[0.32em] text-[#c9a227]/50">
+                  <span className="inline-block h-px w-5 bg-[#c9a227]/40" />
                   Science Lens
                 </p>
 
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={activeId}
-                    initial={{ opacity: 0, y: 10 }}
+                    initial={{ opacity: 0, y: 8 }}
                     animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -6 }}
-                    transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-                    className="overflow-hidden rounded-2xl bg-white shadow-[0_6px_48px_rgba(7,22,41,0.07)]"
+                    exit={{ opacity: 0, y: -5 }}
+                    transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
                   >
-                    <div style={{ height: 3, background: SUBJECT_COLORS[activeItem.subject].node }} />
-                    <div className="p-6 lg:p-9">
-                      <div className="mb-7 flex items-center gap-3">
-                        <span
-                          className="rounded-full px-3.5 py-1 text-[8px] font-black uppercase tracking-[0.3em]"
-                          style={{
-                            background: `${SUBJECT_COLORS[activeItem.subject].node}14`,
-                            color: SUBJECT_COLORS[activeItem.subject].text,
-                          }}
-                        >
-                          {SUBJECT_ICONS[activeItem.subject]} {activeItem.subject}
-                        </span>
-                        <div
-                          className="h-px flex-1"
-                          style={{ background: `${SUBJECT_COLORS[activeItem.subject].node}22` }}
-                        />
-                      </div>
+                    {/* Left-border accent — subject-coloured, runs full height */}
+                    <div
+                      className="border-l-[1.5px] pl-6"
+                      style={{ borderColor: `${SUBJECT_COLORS[activeItem.subject].node}35` }}
+                    >
 
-                      <h3 className="mb-5 font-serif text-[1.75rem] font-medium leading-[1.2] tracking-[-0.03em] text-[#071629]">
+                      {/* Subject label */}
+                      <p
+                        className="mb-4 text-[7.5px] font-black uppercase tracking-[0.36em]"
+                        style={{ color: SUBJECT_COLORS[activeItem.subject].text }}
+                      >
+                        {SUBJECT_ICONS[activeItem.subject]}&nbsp;&nbsp;{activeItem.subject}
+                      </p>
+
+                      {/* Question — the visual focus */}
+                      <h3 className="mb-5 font-serif text-[1.65rem] font-medium leading-[1.18] tracking-[-0.035em] text-[#071629]">
                         {activeItem.question}
                       </h3>
 
-                      <div className="mb-6 h-[1.5px] w-10 bg-[#c9a227]/45" />
+                      {/* Short accent rule — inherits subject colour */}
+                      <div
+                        className="mb-6 h-px w-8"
+                        style={{ background: `${SUBJECT_COLORS[activeItem.subject].node}55` }}
+                      />
 
-                      <p className="mb-8 font-serif text-[15px] italic leading-[1.78] text-[#10233f]">
+                      {/* Explanation */}
+                      <p className="mb-9 font-serif text-[14.5px] italic leading-[1.88] text-[#10233f]/80">
                         {activeItem.explanation}
                       </p>
 
-                      <div className="mb-5 border-t border-[#071629]/7 pt-5">
-                        <p className="mb-1.5 text-[7.5px] font-black uppercase tracking-[0.3em] text-[#071629]/35">
+                      {/* NSW Topic */}
+                      <div
+                        className="mb-6 border-t pt-5"
+                        style={{ borderColor: `${SUBJECT_COLORS[activeItem.subject].node}18` }}
+                      >
+                        <p className="mb-1.5 text-[7px] font-black uppercase tracking-[0.36em] text-[#071629]/30">
                           NSW Science Topic
                         </p>
-                        <p className="font-serif text-[13.5px] font-medium text-[#10233f]">
+                        <p className="font-serif text-[13.5px] font-medium leading-[1.55] text-[#071629]/80">
                           {activeItem.nswTopic}
                         </p>
                       </div>
 
-                      <div className="rounded-xl bg-[#fff6e7] p-5">
-                        <p className="mb-2 text-[7.5px] font-black uppercase tracking-[0.3em] text-[#c9a227]/70">
+                      {/* At DA Tuition */}
+                      <div
+                        className="border-t pt-5"
+                        style={{ borderColor: `${SUBJECT_COLORS[activeItem.subject].node}18` }}
+                      >
+                        <p className="mb-2 text-[7px] font-black uppercase tracking-[0.36em] text-[#071629]/30">
                           At DA Tuition
                         </p>
-                        <p className="text-[12.5px] italic leading-[1.75] text-[#10233f]/75">
+                        <p className="text-[13px] italic leading-[1.88] text-[#10233f]/60">
                           {activeItem.daConnection}
                         </p>
                       </div>
+
                     </div>
                   </motion.div>
                 </AnimatePresence>
 
-                <p className="hidden lg:block mt-5 text-center text-[9.5px] text-[#071629]/35">
+                <p className="hidden lg:block mt-9 text-[8.5px] text-[#071629]/25">
                   Hover a question node to explore
                 </p>
               </motion.div>
@@ -976,118 +1072,83 @@ const Science = () => {
               text="Whether your child is building core scientific thinking in high school or preparing for HSC subject exams, DA has a structured program to match."
             />
 
-            {/* ── Large feature card: Years 7–10 ── */}
+            {/* ── Years 7–10 — primary editorial panel ── */}
             <motion.article
               initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-80px' }}
               transition={{ duration: 0.55 }}
-              className="group mb-6 flex flex-col overflow-hidden rounded-[2rem] border border-[#071629]/10 bg-gradient-to-br from-[#f0f7ff] to-[#dbeafe] shadow-lg shadow-[#071629]/8 transition duration-300 hover:-translate-y-1 hover:shadow-2xl lg:flex-row"
+              className="group relative overflow-hidden rounded-[2rem] border border-[#1d4ed8]/12 bg-gradient-to-br from-[#f0f7ff] to-[#dbeafe]"
             >
-              {/* Left: content */}
-              <div className="flex flex-1 flex-col p-8 lg:p-10">
-                <div className="flex items-center justify-between gap-4">
-                  <span className="rounded-full bg-[#1d4ed8]/12 px-3 py-1 text-xs font-black uppercase tracking-[0.12em] text-[#1d4ed8]">
+              <div className="flex flex-col lg:flex-row">
+                {/* Left: editorial content */}
+                <div className="flex flex-1 flex-col p-8 lg:p-12">
+                  <p className="mb-6 text-[8.5px] font-black uppercase tracking-[0.34em] text-[#1d4ed8]/60">
+                    Foundation Program · Years 7–10
+                  </p>
+
+                  <h2 className="font-serif text-4xl font-medium tracking-[-0.045em] text-[#071629] lg:text-[3.25rem] lg:leading-[1.06]">
                     Junior Science
-                  </span>
-                  <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#1d4ed8] text-white">
-                    <Atom className="h-5 w-5" />
+                  </h2>
+
+                  <p className="mt-4 max-w-lg text-[14.5px] italic leading-[1.85] text-[#3d4f6a]">
+                    Build strong foundations across Biology, Chemistry and Physics while developing scientific thinking, practical skills and exam confidence.
+                  </p>
+
+                  {/* Three subject lines — minimal, spaced */}
+                  <div className="mt-8 space-y-3 border-t border-[#1d4ed8]/10 pt-8">
+                    {[
+                      { name: 'Biology', sub: 'Cells, ecosystems, living systems', color: '#16a34a' },
+                      { name: 'Chemistry', sub: 'Particles, reactions, energy', color: '#c9a227' },
+                      { name: 'Physics', sub: 'Forces, waves, energy transfer', color: '#2563eb' },
+                    ].map(({ name, sub, color }) => (
+                      <div key={name} className="flex items-center gap-4">
+                        <span
+                          className="shrink-0 h-1 w-4 rounded-full"
+                          style={{ background: color }}
+                        />
+                        <span className="font-serif text-[15px] font-medium text-[#071629]">{name}</span>
+                        <span className="text-[12px] text-[#61708a]">— {sub}</span>
+                      </div>
+                    ))}
                   </div>
+
+                  <Link
+                    to="/interview"
+                    className="mt-8 inline-flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.16em] text-[#1d4ed8] transition"
+                  >
+                    Explore the program
+                    <ArrowRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-1" />
+                  </Link>
                 </div>
 
-                <h2 className="mt-8 font-serif text-4xl font-medium tracking-[-0.04em] text-[#071629] lg:text-5xl">
-                  Years 7–10 Science
-                </h2>
-                <p className="mt-3 text-base italic leading-7 text-[#61708a]">
-                  Build strong foundations across Biology, Chemistry and Physics while developing scientific thinking, practical skills and exam confidence.
-                </p>
-
-                <div className="my-6 h-px w-8 bg-[#071629]/15" />
-
-                <ul className="grid flex-1 gap-3 sm:grid-cols-2">
-                  {[
-                    'NSW Science syllabus',
-                    'Scientific investigations',
-                    'Biology foundations',
-                    'Chemistry foundations',
-                    'Physics foundations',
-                    'Exam preparation',
-                  ].map((topic) => (
-                    <li key={topic} className="flex items-center gap-3 text-sm font-semibold text-[#24324a]">
-                      <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[#1d4ed8]" />
-                      {topic}
-                    </li>
-                  ))}
-                </ul>
-
-                <Link
-                  to="/interview"
-                  className="mt-8 inline-flex items-center text-sm font-black text-[#1d4ed8] transition"
-                >
-                  Explore Years 7–10 Science
-                  <ArrowRight className="ml-2 h-4 w-4 transition group-hover:translate-x-1" />
-                </Link>
-              </div>
-
-              {/* Right: visual accent */}
-              <div className="hidden items-center justify-center bg-gradient-to-br from-[#1d4ed8]/8 to-[#1d4ed8]/18 px-12 lg:flex">
-                <div className="text-center">
-                  <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-full bg-[#1d4ed8]/15">
-                    <Atom className="h-12 w-12 text-[#1d4ed8]" />
+                {/* Right: typographic accent — desktop only */}
+                <div className="hidden shrink-0 items-end justify-end p-12 pb-10 lg:flex">
+                  <div className="text-right">
+                    <p
+                      className="font-serif font-medium leading-none tracking-[-0.05em] text-[#1d4ed8]/12"
+                      style={{ fontSize: 'clamp(5rem, 10vw, 8rem)' }}
+                    >
+                      Yr<br />7–10
+                    </p>
+                    <p className="mt-3 text-[10px] font-black uppercase tracking-[0.28em] text-[#1d4ed8]/30">
+                      Foundation Science
+                    </p>
                   </div>
-                  <p className="mt-5 font-serif text-5xl font-medium tracking-[-0.04em] text-[#071629]">Yr 7–10</p>
-                  <p className="mt-1 text-sm font-semibold text-[#61708a]">Foundation Science</p>
                 </div>
               </div>
             </motion.article>
 
-            {/* ── Three smaller HSC cards ── */}
-            <div className="grid gap-5 md:grid-cols-3">
-              {sciencePathways.map((path, index) => (
-                <motion.article
-                  key={path.label}
-                  initial={{ opacity: 0, y: 24 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: '-80px' }}
-                  transition={{ duration: 0.5, delay: index * 0.07 }}
-                  className={`group flex flex-col rounded-[1.5rem] border ${path.dark ? 'border-white/10' : 'border-[#071629]/10'} bg-gradient-to-b ${path.accentBg} p-6 shadow-md shadow-[#071629]/6 transition duration-300 hover:-translate-y-1 hover:shadow-xl`}
-                >
-                  <div className="flex items-center justify-between gap-4">
-                    <span className={`rounded-full px-3 py-1 text-xs font-black uppercase tracking-[0.12em] ${path.badgeColor}`}>
-                      HSC Subject
-                    </span>
-                    <div className={`flex h-9 w-9 items-center justify-center rounded-xl ${path.iconBg} text-white`}>
-                      <path.icon className="h-4 w-4" />
-                    </div>
-                  </div>
-
-                  <h3 className={`mt-6 font-serif text-2xl font-medium tracking-[-0.03em] ${path.dark ? 'text-white' : 'text-[#071629]'}`}>
-                    HSC {path.label}
-                  </h3>
-                  <p className={`mt-2 text-sm leading-6 ${path.dark ? 'text-white/60' : 'text-[#61708a]'}`}>
-                    {path.tagline}
-                  </p>
-
-                  <div className={`my-4 h-px w-6 ${path.dark ? 'bg-white/20' : 'bg-[#071629]/15'}`} />
-
-                  <ul className="flex-1 space-y-2">
-                    {path.topics.slice(0, 4).map((topic) => (
-                      <li key={topic} className={`flex items-center gap-2.5 text-xs font-semibold ${path.dark ? 'text-white/75' : 'text-[#24324a]'}`}>
-                        <span className={`h-1 w-1 shrink-0 rounded-full ${path.dotColor}`} />
-                        {topic}
-                      </li>
-                    ))}
-                  </ul>
-
-                  <Link
-                    to="/interview"
-                    className={`mt-6 inline-flex items-center text-xs font-black ${path.ctaColor} transition`}
-                  >
-                    {path.cta}
-                    <ArrowRight className="ml-1.5 h-3.5 w-3.5 transition group-hover:translate-x-1" />
-                  </Link>
-                </motion.article>
-              ))}
+            {/* ── HSC Subjects — editorial rows ── */}
+            <div className="mt-14">
+              <p className="mb-6 text-[8px] font-black uppercase tracking-[0.34em] text-[#071629]/30">
+                HSC Subjects
+              </p>
+              <div className="border-t border-[#071629]/10">
+                {HSC_SUBJECTS.map((s, i) => (
+                  <HscSubjectRow key={s.label} s={s} index={i} />
+                ))}
+              </div>
             </div>
           </div>
         </section>
@@ -1447,7 +1508,7 @@ const ScienceSuccessCarousel = () => {
 
         {/* Card */}
         <div
-          className="relative overflow-hidden"
+          className="relative px-8 lg:px-10"
           onTouchStart={e => { touchX.current = e.touches[0].clientX; }}
           onTouchEnd={e => {
             const dx = touchX.current - e.changedTouches[0].clientX;
@@ -1497,14 +1558,14 @@ const ScienceSuccessCarousel = () => {
           <button
             onClick={() => go(current - 1)}
             aria-label="Previous"
-            className="absolute left-0 top-1/2 -translate-x-1/2 -translate-y-1/2 hidden h-11 w-11 items-center justify-center rounded-full border border-[#071629]/14 bg-white shadow-lg transition hover:border-[#c9a227]/50 hover:shadow-xl lg:flex"
+            className="absolute left-0 top-1/2 -translate-y-1/2 hidden h-11 w-11 items-center justify-center rounded-full border border-[#071629]/14 bg-white shadow-lg transition hover:border-[#c9a227]/50 hover:shadow-xl lg:flex"
           >
             <ChevronLeft className="h-5 w-5 text-[#10233f]" />
           </button>
           <button
             onClick={() => go(current + 1)}
             aria-label="Next"
-            className="absolute right-0 top-1/2 translate-x-1/2 -translate-y-1/2 hidden h-11 w-11 items-center justify-center rounded-full border border-[#071629]/14 bg-white shadow-lg transition hover:border-[#c9a227]/50 hover:shadow-xl lg:flex"
+            className="absolute right-0 top-1/2 -translate-y-1/2 hidden h-11 w-11 items-center justify-center rounded-full border border-[#071629]/14 bg-white shadow-lg transition hover:border-[#c9a227]/50 hover:shadow-xl lg:flex"
           >
             <ChevronRight className="h-5 w-5 text-[#10233f]" />
           </button>
