@@ -258,7 +258,7 @@ const NavigationNew = () => {
                 </a>
                 <Link
                   to="/book-interview"
-                  className="inline-flex items-center rounded-full bg-[#C9A227] px-4 py-2 text-xs font-black uppercase tracking-[0.08em] text-[#0A1628] transition-colors hover:bg-[#E8C040] whitespace-nowrap shadow-md"
+                  className="inline-flex items-center rounded-full bg-[#D4AF37] px-4 py-2 text-xs font-black uppercase tracking-[0.08em] text-[#0A1B34] transition-colors hover:bg-[#F0C86A] whitespace-nowrap shadow-md"
                 >
                   Book Interview
                 </Link>

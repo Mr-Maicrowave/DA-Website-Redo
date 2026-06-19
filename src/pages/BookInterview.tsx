@@ -11,19 +11,19 @@ import FooterNew from '@/components/FooterNew';
 
 // ─── Palette ──────────────────────────────────────────────────────────────────
 const C = {
-  navy:   '#011638',
+  navy:   '#0A1B34',
   gold:   '#D4AF37',
-  cream:  '#F4EFE3',
+  cream:  '#F7F4EE',
   white:  '#FFFFFF',
   text:   '#1B2B4A',
-  // derived
+  // derived (navy = rgb(10,27,52))
   goldDim:    'rgba(212,175,55,0.65)',
   goldFaint:  'rgba(212,175,55,0.12)',
   goldRing:   'rgba(212,175,55,0.28)',
-  navyDim:    'rgba(1,22,56,0.45)',
-  navyFaint:  'rgba(1,22,56,0.07)',
-  creamBorder:'rgba(1,22,56,0.10)',
-  inputBg:    '#F9F5EC',
+  navyDim:    'rgba(10,27,52,0.45)',
+  navyFaint:  'rgba(10,27,52,0.07)',
+  creamBorder:'rgba(10,27,52,0.10)',
+  inputBg:    '#F9F5EE',
 } as const;
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -452,7 +452,7 @@ function DANote({ children }: { children: React.ReactNode }) {
     <motion.div
       className="mt-8 flex gap-3.5 rounded-xl px-5 py-4"
       style={{
-        background: `rgba(1,22,56,0.032)`,
+        background: `rgba(10,27,52,0.032)`,
         border: `1px solid ${C.gold}14`,
       }}
       initial={{ opacity: 0, y: 4 }}
@@ -726,7 +726,7 @@ function StudentCard({ student, index, onChange, onRemove, canRemove, errors }: 
       initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -6, scale: 0.98 }} transition={{ duration: 0.28 }}
       className="rounded-2xl overflow-hidden"
-      style={{ border: `1.5px solid ${C.creamBorder}`, boxShadow: '0 2px 12px rgba(1,22,56,0.05)' }}>
+      style={{ border: `1.5px solid ${C.creamBorder}`, boxShadow: '0 2px 12px rgba(10,27,52,0.05)' }}>
 
       {/* Card header */}
       <div className="flex items-center justify-between px-7 py-5"
@@ -1149,8 +1149,8 @@ const BookInterview = () => {
                 ? `1px solid ${C.gold}22`
                 : `1.5px solid rgba(212,175,55,0.18)`,
               boxShadow: isConfirmation
-                ? `0 8px 48px rgba(1,22,56,0.22), 0 2px 8px rgba(1,22,56,0.10)`
-                : `0 8px 48px rgba(1,22,56,0.08), 0 2px 12px rgba(1,22,56,0.05), 0 0 0 0.5px rgba(212,175,55,0.12)`,
+                ? `0 8px 48px rgba(10,27,52,0.22), 0 2px 8px rgba(10,27,52,0.10)`
+                : `0 8px 48px rgba(10,27,52,0.08), 0 2px 12px rgba(10,27,52,0.05), 0 0 0 0.5px rgba(212,175,55,0.12)`,
             }}
           >
             {/* Gold top bar — premium document seal */}
@@ -1171,17 +1171,17 @@ const BookInterview = () => {
               {/* Nav buttons */}
               {step < 3 && (
                 <div className={`mt-12 pt-8 flex gap-4 ${step > 1 ? 'justify-between' : 'justify-end'}`}
-                     style={{ borderTop: `1px solid rgba(1,22,56,0.07)` }}>
+                     style={{ borderTop: `1px solid rgba(10,27,52,0.07)` }}>
                   {step > 1 && (
                     <motion.button type="button" onClick={handleBack}
                       className="inline-flex items-center gap-2.5 rounded-xl px-7 py-4 text-[11px] font-bold uppercase"
                       style={{
-                        border: `1.5px solid rgba(1,22,56,0.11)`,
+                        border: `1.5px solid rgba(10,27,52,0.11)`,
                         color: `${C.text}45`,
                         background: 'transparent',
                         letterSpacing: '0.14em',
                       }}
-                      whileHover={{ y: -1, borderColor: 'rgba(1,22,56,0.22)', color: `${C.text}80` }}
+                      whileHover={{ y: -1, borderColor: 'rgba(10,27,52,0.22)', color: `${C.text}80` }}
                       whileTap={{ scale: 0.98 }} transition={{ duration: 0.15 }}>
                       <ArrowLeft className="w-3.5 h-3.5" />Back
                     </motion.button>
@@ -1192,11 +1192,11 @@ const BookInterview = () => {
                       background: C.navy,
                       color: C.white,
                       letterSpacing: '0.14em',
-                      boxShadow: `0 4px 24px rgba(1,22,56,0.20)`,
+                      boxShadow: `0 4px 24px rgba(10,27,52,0.20)`,
                     }}
                     whileHover={{
                       y: -2,
-                      boxShadow: `0 10px 32px rgba(1,22,56,0.26), 0 4px 16px rgba(212,175,55,0.16)`,
+                      boxShadow: `0 10px 32px rgba(10,27,52,0.26), 0 4px 16px rgba(212,175,55,0.16)`,
                     }}
                     whileTap={{ scale: 0.98, y: 0 }} transition={{ duration: 0.16 }}>
                     {step === 1 ? 'Continue to Student Details' : 'Send My Request'}

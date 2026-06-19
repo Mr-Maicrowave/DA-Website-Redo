@@ -64,19 +64,21 @@ export default {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
 				},
-				// V3 Physical-to-Digital Brand Colors
+				// DA Tuition Official Brand Colors
 				brand: {
-					navy: '#172554',     // Blue 950 - Trust & Authority
+					navy: '#0A1B34',     // DA Navy - Trust & Authority
 					blue: '#2563EB',     // Blue 600 - Energy & Identity
-					gold: '#F59E0B',     // Amber 500 - Primary CTAs
+					gold: '#D4AF37',     // DA Gold - Primary accents & CTAs
+					lightGold: '#F0C86A', // DA Light Gold - hover states
+					ivory: '#F7F4EE',    // DA Ivory - warm background
 					canvas: '#FAFAF9',   // Stone 50 - Main background
 					white: '#FFFFFF',    // Pure White - Cards
 					// Legacy aliases for non-refactored components
-					midnight: '#172554',
-					'blue-dark': '#172554',
+					midnight: '#0A1B34',
+					'blue-dark': '#0A1B34',
 					'blue-light': '#2563EB',
 					highlight: '#2563EB',
-					spark: '#F59E0B',
+					spark: '#D4AF37',
 					soft: '#FAFAF9',
 				},
 				sidebar: {

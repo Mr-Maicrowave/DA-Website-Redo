@@ -13,7 +13,6 @@ import FooterNew from '@/components/FooterNew';
 import AwardRecognition from '@/components/AwardRecognition';
 import GoogleReviewsCarousel from '@/components/GoogleReviewsCarousel';
 import TeachersPreview from '@/components/TeachersPreview';
-import DALogoShine from '@/components/animations/DALogoShine';
 import Confetti, { fireConfetti } from '@/components/animations/Confetti';
 import SEO from '@/components/SEO';
 import StatsSection from '@/components/StatsSection';
@@ -22,14 +21,14 @@ import { organizationSchema, localBusinessSchema } from '@/lib/seo/schema';
 
 // ─── Design tokens ────────────────────────────────────────────
 const C = {
-  navy:  '#0A1628',
-  navy2: '#0F1E38',
-  gold:  '#C9A227',
-  goldL: '#E8C040',
-  cream: '#F8F4EC',
+  navy:  '#0A1B34',
+  navy2: '#0F2244',
+  gold:  '#D4AF37',
+  goldL: '#F0C86A',
+  cream: '#F7F4EE',
   cream2:'#EDE5D4',
   white: '#FAFAF8',
-  muted: 'rgba(10,22,40,0.52)',
+  muted: 'rgba(10,27,52,0.52)',
 };
 const serif = "'Cormorant Garamond', Georgia, serif";
 const sans  = "'DM Sans', 'Inter', sans-serif";
@@ -146,7 +145,7 @@ const StatCard = ({ target, suffix, label, delay }: {
         fontWeight: 500,
         fontSize: 'clamp(3rem,5vw,4.8rem)',
         lineHeight: 1,
-        color: '#E8C040',
+        color: '#F0C86A',
         marginBottom: '16px',
         display: 'inline-block',
         transform: popped ? 'scale(1)' : 'scale(0.85)',
@@ -158,7 +157,7 @@ const StatCard = ({ target, suffix, label, delay }: {
       </div>
 
       {/* Gold rule */}
-      <div style={{ width: 32, height: 1, background: `linear-gradient(90deg,transparent,#C9A227,transparent)`, margin: '0 auto 16px' }} />
+      <div style={{ width: 32, height: 1, background: `linear-gradient(90deg,transparent,#D4AF37,transparent)`, margin: '0 auto 16px' }} />
 
       {/* Label */}
       <div style={{
@@ -167,7 +166,7 @@ const StatCard = ({ target, suffix, label, delay }: {
         fontWeight: 700,
         letterSpacing: '.13em',
         textTransform: 'uppercase' as const,
-        color: 'rgba(201,162,39,.65)',
+        color: 'rgba(212,175,55,.65)',
       }}>
         {label}
       </div>
@@ -178,11 +177,11 @@ const StatCard = ({ target, suffix, label, delay }: {
 // ─── Marquee ───────────────────────────────────────────────────
 const MARQUEE = ['Mathematics','English','Science','Legal Studies','Business Studies','HSC Excellence','20+ Years','650+ Students','5.0 ★ Rating','Award-Winning','Small Groups','Personalised Learning'];
 const MarqueeStrip = () => (
-  <div style={{ background: C.navy, borderTop: `1px solid rgba(201,162,39,.2)`, borderBottom: `1px solid rgba(201,162,39,.2)`, padding: '14px 0', overflow: 'hidden' }}>
+  <div style={{ background: C.navy, borderTop: `1px solid rgba(212,175,55,.2)`, borderBottom: `1px solid rgba(212,175,55,.2)`, padding: '14px 0', overflow: 'hidden' }}>
     <div style={{ display: 'flex', animation: 'marq 30s linear infinite', whiteSpace: 'nowrap', width: 'max-content' }}>
       {[...MARQUEE, ...MARQUEE].map((t, i) => (
         <span key={i} style={{ fontFamily: sans, fontSize: '.74rem', fontWeight: 700, letterSpacing: '.15em', textTransform: 'uppercase', color: C.gold, padding: '0 38px' }}>
-          {t}<span style={{ color: 'rgba(201,162,39,.3)', marginLeft: 38 }}>◆</span>
+          {t}<span style={{ color: 'rgba(212,175,55,.3)', marginLeft: 38 }}>◆</span>
         </span>
       ))}
     </div>
@@ -196,36 +195,61 @@ const MarqueeStrip = () => (
 const HeroSection = () => {
   const navigate = useNavigate();
   const { scrollY } = useScroll();
-  const logoY = useTransform(scrollY, [0, 500], [0, -55]);
-  const logoSize = typeof window !== 'undefined' ? Math.min(Math.round(window.innerWidth * 0.30), 270) : 250;
 
   return (
     <section style={{
       minHeight: '100vh', display: 'flex', flexDirection: 'column',
       alignItems: 'center', justifyContent: 'center', textAlign: 'center',
       padding: '120px 24px 80px', position: 'relative', overflow: 'hidden',
-      background: `radial-gradient(ellipse 55% 48% at 50% 36%, rgba(201,162,39,.11) 0%, transparent 68%),
+      background: `radial-gradient(ellipse 55% 48% at 50% 36%, rgba(212,175,55,.11) 0%, transparent 68%),
                    linear-gradient(180deg, ${C.cream} 0%, ${C.cream2} 55%, #E8DCC8 100%)`,
     }}>
-      {/* Shining logo */}
-      <motion.div style={{ y: logoY, marginBottom: '44px' }}
-        initial={{ opacity: 0, scale: 0.85 }} animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1] }}>
-        <DALogoShine size={logoSize} />
+      {/* ── DA Crest — primary visual centrepiece ── */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.92 }}
+        animate={{ opacity: 1, scale: 1, y: [0, -4, 0] }}
+        transition={{
+          opacity: { duration: 1.4, ease: [0.22, 1, 0.36, 1] },
+          scale:   { duration: 1.4, ease: [0.22, 1, 0.36, 1] },
+          y: { duration: 6, repeat: Infinity, ease: 'easeInOut', repeatType: 'mirror' as const, delay: 1.4 },
+        }}
+        style={{ marginBottom: 'clamp(12px, 1.6vw, 20px)', position: 'relative' }}
+      >
+        {/* Soft gold halo */}
+        <div style={{
+          position: 'absolute',
+          top: '50%', left: '50%',
+          transform: 'translate(-50%, -50%)',
+          width: '140%', height: '140%',
+          borderRadius: '50%',
+          background: `radial-gradient(ellipse 60% 60% at 50% 50%, rgba(212,175,55,0.16) 0%, rgba(212,175,55,0.05) 55%, transparent 75%)`,
+          pointerEvents: 'none',
+        }} />
+        <img
+          src="/images/da-logo.png"
+          alt="DA Tuition"
+          style={{
+            width: 'clamp(160px, 20vw, 260px)',
+            height: 'auto',
+            display: 'block',
+            margin: '0 auto',
+            position: 'relative',
+          }}
+        />
       </motion.div>
 
-      {/* Headline */}
-      <motion.h1 initial={{ opacity: 0, y: 38 }} animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
-        style={{ fontFamily: serif, fontWeight: 500, fontSize: 'clamp(2.8rem, 6vw, 5.4rem)', lineHeight: 1.05, letterSpacing: '-.025em', color: C.navy, marginBottom: '18px', maxWidth: '800px' }}>
+      {/* ── Headline ── */}
+      <motion.h1 initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
+        style={{ fontFamily: serif, fontWeight: 500, fontSize: 'clamp(2rem, 3.4vw, 3.8rem)', lineHeight: 1.1, letterSpacing: '-.018em', color: C.navy, marginBottom: '40px', maxWidth: '640px' }}>
         Where Ambition Meets<br />
         <em style={{ fontStyle: 'italic', color: C.gold }}>Academic Excellence</em>
       </motion.h1>
 
-      {/* Tagline */}
-      <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, delay: 0.52 }}
-        style={{ fontFamily: sans, fontSize: 'clamp(.95rem, 1.8vw, 1.12rem)', color: C.muted, marginBottom: '42px', letterSpacing: '.02em' }}>
+      {/* ── Tagline ── */}
+      <motion.p initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, delay: 0.6 }}
+        style={{ fontFamily: sans, fontSize: 'clamp(.85rem, 1.4vw, 1rem)', color: C.muted, marginBottom: '44px', letterSpacing: '.04em' }}>
         Trusted by Families. Transforming Futures.
       </motion.p>
 
@@ -234,9 +258,9 @@ const HeroSection = () => {
         transition={{ duration: 0.8, delay: 0.68 }}
         style={{ display: 'flex', gap: '14px', flexWrap: 'wrap', justifyContent: 'center', marginBottom: '60px' }}>
 
-        <motion.button whileHover={{ scale: 1.03, background: 'rgba(10,22,40,.07)' }} whileTap={{ scale: 0.97 }}
+        <motion.button whileHover={{ scale: 1.03, background: 'rgba(10,27,52,.07)' }} whileTap={{ scale: 0.97 }}
           onClick={() => document.getElementById('programs')?.scrollIntoView({ behavior: 'smooth' })}
-          style={{ fontFamily: sans, background: 'transparent', color: C.navy, border: `1.5px solid rgba(10,22,40,.30)`, padding: '14px 40px', borderRadius: '4px', fontSize: '.9rem', fontWeight: 700, cursor: 'pointer', letterSpacing: '.04em', textTransform: 'uppercase' }}>
+          style={{ fontFamily: sans, background: 'transparent', color: C.navy, border: `1.5px solid rgba(10,27,52,.30)`, padding: '14px 40px', borderRadius: '4px', fontSize: '.9rem', fontWeight: 700, cursor: 'pointer', letterSpacing: '.04em', textTransform: 'uppercase' }}>
           View Programs
         </motion.button>
       </motion.div>
@@ -338,7 +362,7 @@ const GoldSparkle = ({ active }: { active: boolean }) => {
             style={{
               position: 'absolute', top: 0, left: 0,
               width: 5, height: 5, borderRadius: '50%',
-              background: '#E8C040', display: 'block',
+              background: '#F0C86A', display: 'block',
               boxShadow: '0 0 4px 1px rgba(232,192,64,.6)',
             }}
           />
@@ -457,33 +481,33 @@ const PhilosophyBackedSection = () => {
 
         /* Number: default → hover → active */
         .phi-tab-num {
-          color: rgba(201,162,39,.20);
+          color: rgba(212,175,55,.20);
           transition: color 220ms ease;
         }
         .phi-tab:not([aria-selected="true"]):hover .phi-tab-num {
-          color: rgba(201,162,39,.50);
+          color: rgba(212,175,55,.50);
         }
         .phi-tab[aria-selected="true"] .phi-tab-num {
-          color: #C9A227;
+          color: #D4AF37;
           transition: color 650ms ease;
         }
 
         /* Label: default → hover → active */
         .phi-tab-lbl {
-          color: rgba(201,162,39,.14);
+          color: rgba(212,175,55,.14);
           transition: color 220ms ease;
         }
         .phi-tab:not([aria-selected="true"]):hover .phi-tab-lbl {
-          color: rgba(201,162,39,.38);
+          color: rgba(212,175,55,.38);
         }
         .phi-tab[aria-selected="true"] .phi-tab-lbl {
-          color: rgba(201,162,39,.55);
+          color: rgba(212,175,55,.55);
           transition: color 650ms ease;
         }
 
         /* Keyboard focus: thin gold outline, no browser default */
         .phi-tab:focus-visible {
-          outline: 1px solid rgba(201,162,39,.40);
+          outline: 1px solid rgba(212,175,55,.40);
           outline-offset: 6px;
           border-radius: 2px;
         }
@@ -548,19 +572,19 @@ const PhilosophyBackedSection = () => {
           {/* Top vignette */}
           <div style={{
             position: 'absolute', inset: 0, pointerEvents: 'none',
-            background: 'linear-gradient(to bottom, rgba(10,22,40,.32) 0%, transparent 28%)',
+            background: 'linear-gradient(to bottom, rgba(10,27,52,.32) 0%, transparent 28%)',
           }} />
 
           {/* Bottom vignette — grounds the image, prevents it floating */}
           <div style={{
             position: 'absolute', inset: 0, pointerEvents: 'none',
-            background: 'linear-gradient(to top, rgba(10,22,40,.50) 0%, transparent 38%)',
+            background: 'linear-gradient(to top, rgba(10,27,52,.50) 0%, transparent 38%)',
           }} />
 
           {/* Right-edge blend — image dissolves into the content panel */}
           <div style={{
             position: 'absolute', inset: 0, pointerEvents: 'none',
-            background: 'linear-gradient(to right, transparent 68%, rgba(10,22,40,.60) 84%, rgba(10,22,40,1) 100%)',
+            background: 'linear-gradient(to right, transparent 68%, rgba(10,27,52,.60) 84%, rgba(10,27,52,1) 100%)',
           }} />
         </div>
 
@@ -587,7 +611,7 @@ const PhilosophyBackedSection = () => {
           <div style={{
             position: 'absolute', top: '10%', bottom: '10%', left: 0,
             width: '1px',
-            background: 'linear-gradient(to bottom, transparent, rgba(201,162,39,.18) 30%, rgba(201,162,39,.18) 70%, transparent)',
+            background: 'linear-gradient(to bottom, transparent, rgba(212,175,55,.18) 30%, rgba(212,175,55,.18) 70%, transparent)',
           }} />
 
           {/* Eyebrow */}
@@ -598,7 +622,7 @@ const PhilosophyBackedSection = () => {
             style={{
               fontFamily: sans, fontSize: '.58rem', fontWeight: 500,
               letterSpacing: '.28em', textTransform: 'uppercase' as const,
-              color: 'rgba(201,162,39,.50)', margin: '0 0 22px',
+              color: 'rgba(212,175,55,.50)', margin: '0 0 22px',
             }}
           >
             Our Philosophy
@@ -678,7 +702,7 @@ const PhilosophyBackedSection = () => {
             </div>
 
             {/* Sliding track */}
-            <div style={{ position: 'relative', height: '1px', background: 'rgba(201,162,39,.10)' }}>
+            <div style={{ position: 'relative', height: '1px', background: 'rgba(212,175,55,.10)' }}>
               <div style={{
                 position: 'absolute', top: 0, height: '1px',
                 left: `${(activeIndex / PHILOSOPHY_STAGES.length) * 100}%`,
@@ -825,7 +849,7 @@ const ImpactRecognitionSection = () => {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
             gap: 1px;
-            background: rgba(10,22,40,.07); /* gap colour between cards */
+            background: rgba(10,27,52,.07); /* gap colour between cards */
           }
           @media (max-width: 1024px) { .wwwon-grid { grid-template-columns: repeat(3, 1fr); } }
           @media (max-width: 600px)  { .wwwon-grid { grid-template-columns: 1fr 1fr; } }
@@ -844,14 +868,14 @@ const ImpactRecognitionSection = () => {
           .wwwon-num {
             font-family: 'Cormorant Garamond', Georgia, serif;
             font-size: .72rem; font-weight: 300; letter-spacing: .12em;
-            color: rgba(201,162,39,.50);
+            color: rgba(212,175,55,.50);
             display: block; margin-bottom: 28px;
             transition: color 360ms ease;
           }
-          .wwwon-card:hover .wwwon-num { color: rgba(201,162,39,.80); }
+          .wwwon-card:hover .wwwon-num { color: rgba(212,175,55,.80); }
           .wwwon-line {
             width: 28px; height: 1px; margin-bottom: 22px;
-            background: linear-gradient(90deg, rgba(201,162,39,.40), transparent);
+            background: linear-gradient(90deg, rgba(212,175,55,.40), transparent);
             transition: width 360ms cubic-bezier(0.22,1,0.36,1), opacity 360ms ease;
           }
           .wwwon-card:hover .wwwon-line { width: 42px; opacity: .90; }
@@ -859,20 +883,20 @@ const ImpactRecognitionSection = () => {
             font-family: 'Cormorant Garamond', Georgia, serif;
             font-size: clamp(.95rem, 1.3vw, 1.12rem);
             font-weight: 400; line-height: 1.30; letter-spacing: -.012em;
-            color: rgba(10,22,40,.82);
+            color: rgba(10,27,52,.82);
             margin: 0 0 14px;
             transition: color 360ms ease;
           }
-          .wwwon-card:hover .wwwon-title { color: rgba(10,22,40,.98); }
+          .wwwon-card:hover .wwwon-title { color: rgba(10,27,52,.98); }
           .wwwon-body {
             font-family: 'DM Sans', 'Inter', sans-serif;
             font-size: .78rem; font-weight: 300; line-height: 1.82;
             letter-spacing: .004em;
-            color: rgba(10,22,40,.45);
+            color: rgba(10,27,52,.45);
             margin: 0;
             transition: color 360ms ease;
           }
-          .wwwon-card:hover .wwwon-body { color: rgba(10,22,40,.68); }
+          .wwwon-card:hover .wwwon-body { color: rgba(10,27,52,.68); }
           @media (prefers-reduced-motion: reduce) {
             .wwwon-card { transition: none !important; }
             .wwwon-card:hover { transform: none !important; }
@@ -902,9 +926,9 @@ const ImpactRecognitionSection = () => {
           .ir-award-frame:hover {
             transform: translateY(-3px);
             box-shadow:
-              0 2px 6px rgba(201,162,39,.14),
-              0 22px 64px rgba(10,22,40,.15),
-              0 52px 90px rgba(10,22,40,.08),
+              0 2px 6px rgba(212,175,55,.14),
+              0 22px 64px rgba(10,27,52,.15),
+              0 52px 90px rgba(10,27,52,.08),
               inset 0 1px 0 rgba(255,255,255,.90),
               inset 0 0 0 1px rgba(255,255,255,.50) !important;
           }
@@ -915,7 +939,7 @@ const ImpactRecognitionSection = () => {
 
           /* ── Recognition story lead ──────────────────────────────────── */
           .ir-story-lead {
-            border-left: 2px solid rgba(201,162,39,.24);
+            border-left: 2px solid rgba(212,175,55,.24);
             padding-left: 20px;
           }
 
@@ -930,21 +954,21 @@ const ImpactRecognitionSection = () => {
             overflow: hidden;
             border-radius: 14px;
             aspect-ratio: 4 / 3;
-            border: 1px solid rgba(10,22,40,.08);
+            border: 1px solid rgba(10,27,52,.08);
             box-shadow:
-              0 8px 24px rgba(10,22,40,.10),
-              0 32px 72px rgba(10,22,40,.18),
-              0 60px 100px rgba(10,22,40,.08);
+              0 8px 24px rgba(10,27,52,.10),
+              0 32px 72px rgba(10,27,52,.18),
+              0 60px 100px rgba(10,27,52,.08);
             transition:
               box-shadow 600ms cubic-bezier(0.25, 0.46, 0.45, 0.94),
               border-color 600ms ease;
           }
           .ir-thumb-wrap:hover .ir-thumb-frame {
-            border-color: rgba(201,162,39,.20);
+            border-color: rgba(212,175,55,.20);
             box-shadow:
-              0 12px 32px rgba(10,22,40,.13),
-              0 40px 80px rgba(10,22,40,.22),
-              0 72px 110px rgba(10,22,40,.09);
+              0 12px 32px rgba(10,27,52,.13),
+              0 40px 80px rgba(10,27,52,.22),
+              0 72px 110px rgba(10,27,52,.09);
           }
           .ir-thumb-frame img {
             width: 100%; height: 100%; display: block;
@@ -983,7 +1007,7 @@ const ImpactRecognitionSection = () => {
             transform: translate(-50%, -50%);
             width: 80px; height: 80px; border-radius: 50%;
             background: rgba(250,250,248,.10);
-            border: 1px solid rgba(201,162,39,.48);
+            border: 1px solid rgba(212,175,55,.48);
             display: flex; align-items: center; justify-content: center;
             color: rgba(232,192,64,.94);
             backdrop-filter: blur(12px);
@@ -994,12 +1018,12 @@ const ImpactRecognitionSection = () => {
               transform 500ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
           }
           .ir-thumb-wrap:hover .ir-thumb-play {
-            background: rgba(201,162,39,.14);
-            border-color: rgba(201,162,39,.70);
+            background: rgba(212,175,55,.14);
+            border-color: rgba(212,175,55,.70);
             transform: translate(-50%, -50%) scale(1.06);
             box-shadow:
-              0 0 32px rgba(201,162,39,.24),
-              0 0 10px rgba(201,162,39,.14);
+              0 0 32px rgba(212,175,55,.24),
+              0 0 10px rgba(212,175,55,.14);
           }
           .ir-thumb-caption-wrap {
             margin-top: 22px;
@@ -1008,22 +1032,22 @@ const ImpactRecognitionSection = () => {
           .ir-thumb-caption-title {
             font-family: 'DM Sans', 'Inter', sans-serif;
             font-size: 1.20rem; font-weight: 500; letter-spacing: .006em;
-            color: rgba(10,22,40,.68);
+            color: rgba(10,27,52,.68);
             margin: 0 0 10px; line-height: 1.4;
             transition: color 300ms ease;
           }
           .ir-thumb-caption-sub {
             font-family: 'DM Sans', 'Inter', sans-serif;
             font-size: .92rem; font-weight: 300; letter-spacing: .04em;
-            color: rgba(10,22,40,.40);
+            color: rgba(10,27,52,.40);
             margin: 0 0 3px; line-height: 1.6;
             transition: color 300ms ease;
           }
           .ir-thumb-caption-sub:last-child { margin-bottom: 0; }
-          .ir-thumb-wrap:hover .ir-thumb-caption-title { color: rgba(10,22,40,.82); }
-          .ir-thumb-wrap:hover .ir-thumb-caption-sub  { color: rgba(10,22,40,.58); }
+          .ir-thumb-wrap:hover .ir-thumb-caption-title { color: rgba(10,27,52,.82); }
+          .ir-thumb-wrap:hover .ir-thumb-caption-sub  { color: rgba(10,27,52,.58); }
           .ir-thumb-wrap:focus-visible {
-            outline: 1px solid rgba(201,162,39,.50);
+            outline: 1px solid rgba(212,175,55,.50);
             outline-offset: 6px; border-radius: 12px;
           }
           @media (prefers-reduced-motion: reduce) {
@@ -1036,7 +1060,7 @@ const ImpactRecognitionSection = () => {
         {/* Top edge: very faint gold rule separating from previous section */}
         <div style={{
           position: 'absolute', top: 0, left: 0, right: 0, height: '1px',
-          background: 'linear-gradient(90deg, transparent, rgba(201,162,39,.30) 25%, rgba(201,162,39,.30) 75%, transparent)',
+          background: 'linear-gradient(90deg, transparent, rgba(212,175,55,.30) 25%, rgba(212,175,55,.30) 75%, transparent)',
         }} />
 
         <div style={{
@@ -1094,7 +1118,7 @@ const ImpactRecognitionSection = () => {
                 fontFamily: sans, fontWeight: 300,
                 fontSize: 'clamp(1.10rem, 1.5vw, 1.25rem)',
                 lineHeight: 1.76,
-                color: 'rgba(10,22,40,.50)',
+                color: 'rgba(10,27,52,.50)',
                 letterSpacing: '.002em', margin: 0,
               }}
             >
@@ -1127,19 +1151,19 @@ const ImpactRecognitionSection = () => {
                 style={{
                   padding: '16px',
                   background: '#FDFAF5',
-                  border: '1px solid rgba(201,162,39,.52)',
+                  border: '1px solid rgba(212,175,55,.52)',
                   borderRadius: '14px',
                   boxShadow: [
-                    '0 2px 6px rgba(201,162,39,.10)',
-                    '0 16px 48px rgba(10,22,40,.12)',
-                    '0 40px 80px rgba(10,22,40,.07)',
+                    '0 2px 6px rgba(212,175,55,.10)',
+                    '0 16px 48px rgba(10,27,52,.12)',
+                    '0 40px 80px rgba(10,27,52,.07)',
                     'inset 0 1px 0 rgba(255,255,255,.90)',
                   ].join(', '),
                 }}
               >
                 <div
                   className="ir-award-inner"
-                  style={{ border: '1px solid rgba(201,162,39,.22)' }}
+                  style={{ border: '1px solid rgba(212,175,55,.22)' }}
                 >
                   <img
                     src="/Photos and Videos/2025_FAIR_WINNER_LBA.jpg"
@@ -1157,7 +1181,7 @@ const ImpactRecognitionSection = () => {
                   style={{
                     fontFamily: serif, fontWeight: 400,
                     fontSize: '1.15rem', lineHeight: 1.45,
-                    color: 'rgba(10,22,40,.72)', margin: '0 0 6px',
+                    color: 'rgba(10,27,52,.72)', margin: '0 0 6px',
                   }}
                 >
                   Fairfield City Local Business Awards
@@ -1241,7 +1265,7 @@ const ImpactRecognitionSection = () => {
               justifyContent: 'center',
               padding: 'clamp(20px, 5vw, 52px)',
               /* Faint radial spotlight centred behind the video */
-              backgroundImage: 'radial-gradient(ellipse 70% 55% at 50% 52%, rgba(201,162,39,.04) 0%, transparent 65%)',
+              backgroundImage: 'radial-gradient(ellipse 70% 55% at 50% 52%, rgba(212,175,55,.04) 0%, transparent 65%)',
             }}
           >
             {/* Close — fixed top-right corner */}
@@ -1266,8 +1290,8 @@ const ImpactRecognitionSection = () => {
                 transition: 'background 220ms ease, border-color 220ms ease, color 220ms ease',
               }}
               onMouseEnter={e => {
-                (e.currentTarget as HTMLButtonElement).style.background = 'rgba(201,162,39,.15)';
-                (e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(201,162,39,.40)';
+                (e.currentTarget as HTMLButtonElement).style.background = 'rgba(212,175,55,.15)';
+                (e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(212,175,55,.40)';
                 (e.currentTarget as HTMLButtonElement).style.color = C.goldL;
               }}
               onMouseLeave={e => {
@@ -1322,7 +1346,7 @@ const ImpactRecognitionSection = () => {
                   style={{
                     fontFamily: sans, fontSize: '.54rem', fontWeight: 600,
                     letterSpacing: '.24em', textTransform: 'uppercase',
-                    color: 'rgba(201,162,39,.55)', margin: '0 0 14px',
+                    color: 'rgba(212,175,55,.55)', margin: '0 0 14px',
                   }}
                 >
                   Award Ceremony
@@ -1366,12 +1390,12 @@ const ImpactRecognitionSection = () => {
                 style={{
                   width: '100%', position: 'relative',
                   /* Cinematic letterbox framing lines */
-                  borderTop: '1px solid rgba(201,162,39,.14)',
-                  borderBottom: '1px solid rgba(201,162,39,.14)',
+                  borderTop: '1px solid rgba(212,175,55,.14)',
+                  borderBottom: '1px solid rgba(212,175,55,.14)',
                   /* Thin gold edge on sides */
-                  outline: '1px solid rgba(201,162,39,.08)',
+                  outline: '1px solid rgba(212,175,55,.08)',
                   boxShadow: `
-                    0 0 0 1px rgba(201,162,39,.06),
+                    0 0 0 1px rgba(212,175,55,.06),
                     0 40px 100px rgba(0,0,0,.80),
                     0 8px 32px rgba(0,0,0,.60),
                     inset 0 0 80px rgba(3,6,14,.20)
@@ -1573,7 +1597,7 @@ const AchievementsSection = () => {
             <motion.path
               d={journeyPath}
               fill="none"
-              stroke="rgba(201,162,39,0.20)"
+              stroke="rgba(212,175,55,0.20)"
               strokeWidth="1.5"
               strokeLinecap="round"
               initial={{ pathLength: 0, opacity: 0 }}
@@ -1594,7 +1618,7 @@ const AchievementsSection = () => {
                 cx={pt.cx}
                 cy={pt.cy}
                 r={3.5}
-                fill="rgba(201,162,39,0.45)"
+                fill="rgba(212,175,55,0.45)"
                 initial={{ opacity: 0 }}
                 animate={inView ? { opacity: 1 } : { opacity: 0 }}
                 transition={{ duration: 0.40, delay: 0.90 + i * 0.22 }}
@@ -1661,7 +1685,7 @@ const AchievementsSection = () => {
                 style={{
                   height: '1px',
                   background: i === 0
-                    ? 'linear-gradient(90deg, rgba(201,162,39,.65), rgba(201,162,39,.08))'
+                    ? 'linear-gradient(90deg, rgba(212,175,55,.65), rgba(212,175,55,.08))'
                     : 'linear-gradient(90deg, rgba(245,240,232,.26), transparent)',
                   transformOrigin: 'left',
                   marginBottom: 'clamp(16px, 2.0vw, 22px)',
@@ -1715,9 +1739,9 @@ const ProgramsSection = () => {
           {PROGRAMS.map((p, i) => (
             <Link key={i} to={p.href} style={{ textDecoration: 'none', display: 'block' }}>
               <motion.div variants={fadeUp}
-                whileHover={{ y: -7, boxShadow: '0 24px 64px rgba(10,22,40,.13)' }}
-                style={{ background: '#fff', border: `1px solid rgba(201,162,39,.16)`, borderRadius: '16px', padding: '44px 36px', cursor: 'pointer', boxShadow: '0 4px 20px rgba(10,22,40,.06)', transition: 'box-shadow .35s', height: '100%' }}>
-                <p.Icon style={{ width: 28, height: 28, color: '#C9A227', marginBottom: '22px' }} />
+                whileHover={{ y: -7, boxShadow: '0 24px 64px rgba(10,27,52,.13)' }}
+                style={{ background: '#fff', border: `1px solid rgba(212,175,55,.16)`, borderRadius: '16px', padding: '44px 36px', cursor: 'pointer', boxShadow: '0 4px 20px rgba(10,27,52,.06)', transition: 'box-shadow .35s', height: '100%' }}>
+                <p.Icon style={{ width: 28, height: 28, color: '#D4AF37', marginBottom: '22px' }} />
                 <div style={{ fontFamily: sans, fontSize: '.65rem', letterSpacing: '.14em', textTransform: 'uppercase', color: C.gold, marginBottom: '8px', fontWeight: 700 }}>{p.sub}</div>
                 <h3 style={{ fontFamily: serif, fontSize: '1.65rem', fontWeight: 600, color: C.navy, marginBottom: '12px' }}>{p.name}</h3>
                 <p style={{ fontFamily: sans, fontSize: '.88rem', color: C.muted, lineHeight: 1.72 }}>{p.desc}</p>
@@ -1739,8 +1763,8 @@ const PHI_CARDS = [
   {
     icon: (
       <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="14" cy="10" r="5" stroke="#C9A227" strokeWidth="1.4"/>
-        <path d="M4 24c0-5.523 4.477-10 10-10s10 4.477 10 10" stroke="#C9A227" strokeWidth="1.4" strokeLinecap="round"/>
+        <circle cx="14" cy="10" r="5" stroke="#D4AF37" strokeWidth="1.4"/>
+        <path d="M4 24c0-5.523 4.477-10 10-10s10 4.477 10 10" stroke="#D4AF37" strokeWidth="1.4" strokeLinecap="round"/>
       </svg>
     ),
     title: 'Personal Connection',
@@ -1751,8 +1775,8 @@ const PHI_CARDS = [
   {
     icon: (
       <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M14 4 L14 8 M8.5 6.5 L11.5 9.5 M5 13 L9 13 M8.5 19.5 L11.5 16.5 M14 20 L14 24 M17.5 16.5 L20.5 19.5 M19 13 L23 13 M17.5 9.5 L20.5 6.5" stroke="#C9A227" strokeWidth="1.4" strokeLinecap="round"/>
-        <circle cx="14" cy="13" r="4" stroke="#C9A227" strokeWidth="1.4"/>
+        <path d="M14 4 L14 8 M8.5 6.5 L11.5 9.5 M5 13 L9 13 M8.5 19.5 L11.5 16.5 M14 20 L14 24 M17.5 16.5 L20.5 19.5 M19 13 L23 13 M17.5 9.5 L20.5 6.5" stroke="#D4AF37" strokeWidth="1.4" strokeLinecap="round"/>
+        <circle cx="14" cy="13" r="4" stroke="#D4AF37" strokeWidth="1.4"/>
       </svg>
     ),
     title: 'Confidence Before Results',
@@ -1763,8 +1787,8 @@ const PHI_CARDS = [
   {
     icon: (
       <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M6 22 L14 6 L22 22" stroke="#C9A227" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
-        <path d="M8.5 17 L19.5 17" stroke="#C9A227" strokeWidth="1.4" strokeLinecap="round"/>
+        <path d="M6 22 L14 6 L22 22" stroke="#D4AF37" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M8.5 17 L19.5 17" stroke="#D4AF37" strokeWidth="1.4" strokeLinecap="round"/>
       </svg>
     ),
     title: 'Excellence Through Understanding',
@@ -1788,10 +1812,10 @@ const PhiCard = ({ card, index, inView }: { card: typeof PHI_CARDS[0]; index: nu
         background: '#fff',
         borderRadius: 16,
         overflow: 'hidden',
-        border: `1px solid ${hovered ? 'rgba(201,162,39,.3)' : 'rgba(10,22,40,.07)'}`,
+        border: `1px solid ${hovered ? 'rgba(212,175,55,.3)' : 'rgba(10,27,52,.07)'}`,
         boxShadow: hovered
-          ? '0 40px 100px rgba(10,22,40,.12), 0 8px 32px rgba(10,22,40,.08)'
-          : '0 2px 20px rgba(10,22,40,.05)',
+          ? '0 40px 100px rgba(10,27,52,.12), 0 8px 32px rgba(10,27,52,.08)'
+          : '0 2px 20px rgba(10,27,52,.05)',
         transform: hovered ? 'translateY(-10px)' : 'translateY(0)',
         transition: 'all .55s cubic-bezier(.22,1,.36,1)',
         cursor: 'default',
@@ -1838,7 +1862,7 @@ const PhiCard = ({ card, index, inView }: { card: typeof PHI_CARDS[0]; index: nu
         {/* Gold rule — expands on hover */}
         <div style={{
           width: hovered ? 48 : 24, height: 1.5, borderRadius: 2,
-          background: `linear-gradient(90deg, #C9A227, transparent)`,
+          background: `linear-gradient(90deg, #D4AF37, transparent)`,
           marginBottom: 28,
           transition: 'width .5s cubic-bezier(.22,1,.36,1)',
         }} />
@@ -1860,7 +1884,7 @@ const PhiCard = ({ card, index, inView }: { card: typeof PHI_CARDS[0]; index: nu
           fontFamily: sans,
           fontSize: '.9rem',
           lineHeight: 1.82,
-          color: 'rgba(10,22,40,.55)',
+          color: 'rgba(10,27,52,.55)',
           marginBottom: 16,
         }}>{card.body1}</p>
 
@@ -1869,11 +1893,11 @@ const PhiCard = ({ card, index, inView }: { card: typeof PHI_CARDS[0]; index: nu
           fontFamily: sans,
           fontSize: '.9rem',
           lineHeight: 1.82,
-          color: hovered ? 'rgba(10,22,40,.75)' : 'rgba(10,22,40,.45)',
+          color: hovered ? 'rgba(10,27,52,.75)' : 'rgba(10,27,52,.45)',
           fontStyle: 'italic',
           marginTop: 'auto',
           paddingTop: 16,
-          borderTop: `1px solid ${hovered ? 'rgba(201,162,39,.2)' : 'rgba(10,22,40,.06)'}`,
+          borderTop: `1px solid ${hovered ? 'rgba(212,175,55,.2)' : 'rgba(10,27,52,.06)'}`,
           transition: 'color .4s, border-color .4s',
         }}>{card.body2}</p>
       </div>
@@ -1894,7 +1918,7 @@ const WhySection = () => {
       {/* Subtle dot grid */}
       <div style={{
         position: 'absolute', inset: 0,
-        backgroundImage: 'radial-gradient(rgba(10,22,40,.028) 1px, transparent 1px)',
+        backgroundImage: 'radial-gradient(rgba(10,27,52,.028) 1px, transparent 1px)',
         backgroundSize: '36px 36px',
         pointerEvents: 'none',
       }} />
@@ -1921,7 +1945,7 @@ const WhySection = () => {
             <em style={{
               fontStyle: 'italic',
               color: 'transparent',
-              backgroundImage: `linear-gradient(135deg, #8B6914, ${C.gold}, #C9A227)`,
+              backgroundImage: `linear-gradient(135deg, #8B6914, ${C.gold}, #D4AF37)`,
               WebkitBackgroundClip: 'text',
               backgroundClip: 'text',
             }}>known.</em>
@@ -1948,7 +1972,7 @@ const WhySection = () => {
             fontFamily: sans,
             fontWeight: 300,
             fontSize: 'clamp(1rem,1.6vw,1.18rem)',
-            color: 'rgba(10,22,40,.52)',
+            color: 'rgba(10,27,52,.52)',
             lineHeight: 1.88,
             maxWidth: 640,
             margin: '0 auto 100px',
@@ -1987,12 +2011,12 @@ const QuoteSection = () => {
       <div style={{ position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', width: '1px', height: '80px', background: `linear-gradient(180deg,transparent,${C.gold})` }} />
       <div style={{ position: 'absolute', bottom: 0, left: '50%', transform: 'translateX(-50%)', width: '1px', height: '80px', background: `linear-gradient(180deg,${C.gold},transparent)` }} />
       <motion.div variants={stagger} initial="hidden" animate={inView ? 'visible' : 'hidden'} style={{ maxWidth: '800px', margin: '0 auto' }}>
-        <motion.div variants={fadeUp} style={{ fontFamily: serif, fontSize: '4rem', color: 'rgba(201,162,39,.3)', lineHeight: 1, marginBottom: '16px' }}>❝</motion.div>
+        <motion.div variants={fadeUp} style={{ fontFamily: serif, fontSize: '4rem', color: 'rgba(212,175,55,.3)', lineHeight: 1, marginBottom: '16px' }}>❝</motion.div>
         <motion.p variants={fadeUp} style={{ fontFamily: serif, fontStyle: 'italic', fontWeight: 300, fontSize: 'clamp(1.8rem,4vw,3rem)', lineHeight: 1.44, color: C.white, letterSpacing: '.01em' }}>
           My daughter went from dreading maths to topping her class. DA Tuition didn't just improve her grades — they gave her back her confidence.
         </motion.p>
         <motion.div variants={fadeUp} style={{ width: '40px', height: '1px', background: C.gold, margin: '32px auto 18px' }} />
-        <motion.p variants={fadeUp} style={{ fontFamily: sans, fontSize: '.74rem', letterSpacing: '.14em', textTransform: 'uppercase', color: 'rgba(201,162,39,.80)', fontWeight: 600 }}>
+        <motion.p variants={fadeUp} style={{ fontFamily: sans, fontSize: '.74rem', letterSpacing: '.14em', textTransform: 'uppercase', color: 'rgba(212,175,55,.80)', fontWeight: 600 }}>
           Parent of Year 10 Student — Google Review, 5 Stars
         </motion.p>
       </motion.div>
@@ -2209,9 +2233,9 @@ const ReviewsSection = () => {
                 height: '38px',
                 padding: '0 20px',
                 borderRadius: '100px',
-                border: `1.5px solid ${isActive ? C.gold : 'rgba(10,22,40,0.20)'}`,
+                border: `1.5px solid ${isActive ? C.gold : 'rgba(10,27,52,0.20)'}`,
                 background: isActive ? C.gold : 'transparent',
-                color: isActive ? '#FFFFFF' : 'rgba(10,22,40,0.62)',
+                color: isActive ? '#FFFFFF' : 'rgba(10,27,52,0.62)',
                 fontFamily: sans, fontWeight: 500,
                 fontSize: '.70rem', letterSpacing: '.14em',
                 textTransform: 'uppercase',
@@ -2324,7 +2348,7 @@ const ReviewsSection = () => {
                     {/* Gold gradient rule */}
                     <div style={{
                       height: '1px',
-                      background: 'linear-gradient(90deg, rgba(201,162,39,.45), rgba(201,162,39,.05))',
+                      background: 'linear-gradient(90deg, rgba(212,175,55,.45), rgba(212,175,55,.05))',
                       marginBottom: 'clamp(20px,2.5vw,26px)',
                     }} />
 
@@ -2346,7 +2370,7 @@ const ReviewsSection = () => {
                         <span style={{
                           fontFamily: sans, fontWeight: 300,
                           fontSize: '.72rem', letterSpacing: '.06em',
-                          color: 'rgba(10,22,40,0.40)',
+                          color: 'rgba(10,27,52,0.40)',
                         }}>
                           {r.yearLevel}
                         </span>
@@ -2394,7 +2418,7 @@ const ReviewsSection = () => {
                   width:  i === current ? '26px' : '7px',
                   height: '7px',
                   borderRadius: '4px',
-                  background: i === current ? C.gold : 'rgba(10,22,40,0.16)',
+                  background: i === current ? C.gold : 'rgba(10,27,52,0.16)',
                   border: 'none', padding: 0, cursor: 'pointer',
                   transition: 'all 0.32s cubic-bezier(0.22,1,0.36,1)',
                 }}
@@ -2417,8 +2441,8 @@ const ReviewsSection = () => {
                   width: '48px', height: '48px',
                   borderRadius: '50%',
                   background: 'transparent',
-                  border: `1.5px solid ${disabled ? 'rgba(10,22,40,0.12)' : 'rgba(10,22,40,0.28)'}`,
-                  color: disabled ? 'rgba(10,22,40,0.22)' : C.navy,
+                  border: `1.5px solid ${disabled ? 'rgba(10,27,52,0.12)' : 'rgba(10,27,52,0.28)'}`,
+                  color: disabled ? 'rgba(10,27,52,0.22)' : C.navy,
                   fontFamily: sans, fontSize: '1.05rem',
                   cursor: disabled ? 'default' : 'pointer',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -2455,7 +2479,7 @@ const ReviewsSection = () => {
               fontFamily: sans, fontWeight: 300,
               fontSize: 'clamp(.82rem,1.0vw,.92rem)',
               letterSpacing: '.012em', lineHeight: 1.7,
-              color: 'rgba(10,22,40,0.48)',
+              color: 'rgba(10,27,52,0.48)',
               margin: 0,
             }}>
               These are only a few of the stories our families chose to share.
@@ -2472,19 +2496,19 @@ const ReviewsSection = () => {
               fontFamily: sans, fontWeight: 400,
               fontSize: '.72rem', letterSpacing: '.16em',
               textTransform: 'uppercase',
-              color: 'rgba(10,22,40,0.58)',
+              color: 'rgba(10,27,52,0.58)',
               textDecoration: 'none',
-              borderBottom: '1px solid rgba(10,22,40,0.20)',
+              borderBottom: '1px solid rgba(10,27,52,0.20)',
               paddingBottom: '3px',
               transition: 'color 0.22s ease, border-color 0.22s ease',
             }}
             onMouseEnter={e => {
               (e.currentTarget as HTMLAnchorElement).style.color = C.navy;
-              (e.currentTarget as HTMLAnchorElement).style.borderColor = 'rgba(10,22,40,0.50)';
+              (e.currentTarget as HTMLAnchorElement).style.borderColor = 'rgba(10,27,52,0.50)';
             }}
             onMouseLeave={e => {
-              (e.currentTarget as HTMLAnchorElement).style.color = 'rgba(10,22,40,0.58)';
-              (e.currentTarget as HTMLAnchorElement).style.borderColor = 'rgba(10,22,40,0.20)';
+              (e.currentTarget as HTMLAnchorElement).style.color = 'rgba(10,27,52,0.58)';
+              (e.currentTarget as HTMLAnchorElement).style.borderColor = 'rgba(10,27,52,0.20)';
             }}
           >
             View All Google Reviews
@@ -2526,8 +2550,8 @@ const ClosingCTASection = () => {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-60px' });
   return (
-    <section ref={ref} style={{ background: '#0A1628', padding: '120px 24px', textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
-      <div style={{ position: 'absolute', top: 0, left: '24px', right: '24px', height: '1px', background: 'linear-gradient(90deg, transparent, rgba(201,162,39,.25) 20%, rgba(201,162,39,.25) 80%, transparent)' }} />
+    <section ref={ref} style={{ background: '#0A1B34', padding: '120px 24px', textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
+      <div style={{ position: 'absolute', top: 0, left: '24px', right: '24px', height: '1px', background: 'linear-gradient(90deg, transparent, rgba(212,175,55,.25) 20%, rgba(212,175,55,.25) 80%, transparent)' }} />
       <motion.div variants={stagger} initial="hidden" animate={inView ? 'visible' : 'hidden'} style={{ maxWidth: '680px', margin: '0 auto' }}>
         <motion.div variants={fadeUp} style={{ fontFamily: sans, fontSize: '.68rem', fontWeight: 700, letterSpacing: '.18em', textTransform: 'uppercase' as const, color: C.gold, marginBottom: '20px' }}>
           Book a Consultation
@@ -2543,13 +2567,13 @@ const ClosingCTASection = () => {
             to="/book-interview"
             style={{
               display: 'inline-flex', alignItems: 'center', gap: '10px',
-              background: 'linear-gradient(135deg, #C9A227, #E8C040)',
-              color: '#0A1628',
+              background: 'linear-gradient(135deg, #D4AF37, #F0C86A)',
+              color: '#0A1B34',
               fontFamily: sans, fontWeight: 800,
               fontSize: '.82rem', letterSpacing: '.08em', textTransform: 'uppercase' as const,
               padding: '16px 44px', borderRadius: '50px',
               textDecoration: 'none',
-              boxShadow: '0 8px 32px rgba(201,162,39,.35)',
+              boxShadow: '0 8px 32px rgba(212,175,55,.35)',
               transition: 'box-shadow .3s ease',
             }}
           >

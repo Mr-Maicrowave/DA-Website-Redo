@@ -1,4 +1,4 @@
-﻿/**
+/**
  * DALogoShine.tsx
  * Apple-style moving light effect on the DA Tuition logo.
  *
@@ -16,12 +16,9 @@ interface Props {
 }
 
 export default function DALogoShine({ size = 320, className = '' }: Props) {
-  const canvasRef  = useRef<HTMLCanvasElement>(null);
-  const rafRef     = useRef<number>(0);
-  const pausedRef  = useRef(false);
-  const offsetRef  = useRef(0);        // accumulated time before any pause
-  const pausedAtRef = useRef(0);
-  const mouseRef   = useRef({ x: 0.5, y: 0.5 });
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const rafRef    = useRef<number>(0);
+  const mouseRef  = useRef({ x: 0.5, y: 0.5 });
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -29,13 +26,12 @@ export default function DALogoShine({ size = 320, className = '' }: Props) {
     const ctx = canvas.getContext('2d')!;
     const SZ = size, CX = SZ / 2, CY = SZ / 2;
 
-    // Load the real logo
     const img = new Image();
     img.src = '/images/da-logo-slogan.png';
 
     img.onload = () => {
       const frame = (ts: number) => {
-        const t = (offsetRef.current + ts) * 0.00040;
+        const t = ts * 0.00040;
 
         // 1. Base: draw the real logo
         ctx.clearRect(0, 0, SZ, SZ);
@@ -105,75 +101,16 @@ export default function DALogoShine({ size = 320, className = '' }: Props) {
     };
   }, [size]);
 
-  // Pause / play on click (like Apple's website)
-  const togglePause = () => {
-    if (pausedRef.current) {
-      offsetRef.current -= pausedAtRef.current;
-      pausedRef.current = false;
-      const canvas = canvasRef.current;
-      if (!canvas) return;
-      const ctx = canvas.getContext('2d')!;
-      const img = new Image();
-      img.src = '/images/da-logo-slogan.png';
-      img.onload = () => {
-        const frame = (ts: number) => {
-          const t = (offsetRef.current + ts) * 0.00040;
-          const SZ = size, CX = SZ / 2, CY = SZ / 2;
-          ctx.clearRect(0, 0, SZ, SZ);
-          ctx.globalCompositeOperation = 'source-over';
-          ctx.drawImage(img, 0, 0, SZ, SZ);
-          ctx.globalCompositeOperation = 'screen';
-          const hotAng = t * 0.55;
-          const hx = CX + Math.cos(hotAng) * SZ * 0.30;
-          const hy = CY + Math.sin(hotAng * 0.72) * SZ * 0.22;
-          const hot = ctx.createRadialGradient(hx, hy, 0, hx, hy, SZ * 0.44);
-          hot.addColorStop(0, `rgba(255,252,210,${0.82 + 0.10 * Math.sin(t * 2.2)})`);
-          hot.addColorStop(0.15, `rgba(255,235,140,0.55)`);
-          hot.addColorStop(0.40, 'rgba(220,180,60,0.20)');
-          hot.addColorStop(1, 'rgba(0,0,0,0)');
-          ctx.fillStyle = hot; ctx.fillRect(0, 0, SZ, SZ);
-          ctx.globalCompositeOperation = 'source-over';
-          rafRef.current = requestAnimationFrame(frame);
-        };
-        rafRef.current = requestAnimationFrame(frame);
-      };
-    } else {
-      cancelAnimationFrame(rafRef.current);
-      pausedAtRef.current = performance.now();
-      offsetRef.current += pausedAtRef.current;
-      pausedRef.current = true;
-    }
-  };
-
   return (
-    <div className="relative inline-block" style={{ width: size, height: size }}>
-      <canvas
-        ref={canvasRef}
-        width={size}
-        height={size}
-        className={className}
-        style={{
-          display: 'block',
-          filter: 'drop-shadow(0 8px 32px rgba(26,42,110,.18)) drop-shadow(0 2px 8px rgba(212,175,55,.22))',
-        }}
-      />
-      {/* Pause/play button — Apple-style, top-right corner */}
-      <button
-        onClick={togglePause}
-        title="Pause/play animation"
-        style={{
-          position: 'absolute', top: -8, right: -8,
-          width: 26, height: 26, borderRadius: '50%',
-          background: 'rgba(26,42,110,0.12)',
-          border: '1px solid rgba(26,42,110,0.25)',
-          color: 'rgba(26,42,110,0.7)',
-          fontSize: '0.55rem', cursor: 'pointer',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          backdropFilter: 'blur(10px)', transition: 'all 0.2s',
-        }}
-      >
-        ⏸
-      </button>
-    </div>
+    <canvas
+      ref={canvasRef}
+      width={size}
+      height={size}
+      className={className}
+      style={{
+        display: 'block',
+        filter: 'drop-shadow(0 8px 32px rgba(26,42,110,.18)) drop-shadow(0 2px 8px rgba(212,175,55,.22))',
+      }}
+    />
   );
 }
