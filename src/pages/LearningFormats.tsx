@@ -91,9 +91,9 @@ function MatchingEngine() {
   const oy = PATHWAY_ORDER.map((_, i) => 56 + i * (SVG_H - 112) / 4);
 
   return (
-    <section style={{ background: C.cream, padding: 'clamp(64px,8vw,100px) 0' }}>
+    <section style={{ background: C.cream, padding: 'clamp(80px,10vw,130px) 0' }}>
       <div style={wrap}>
-        <div style={{ textAlign: 'center', marginBottom: 52 }}>
+        <div style={{ textAlign: 'center', marginBottom: 64 }}>
           <p style={sectionLabel('The Assessment Process')}>The Assessment Process</p>
           <div style={{ ...goldRule, margin: '12px auto 20px' }} />
           <h2 style={{ fontFamily: serif, fontSize: 'clamp(28px,4vw,48px)', fontWeight: 400, color: C.navy, lineHeight: 1.15, marginBottom: 16 }}>
@@ -259,7 +259,7 @@ function CaseStudiesSlider() {
   const [active, setActive] = useState(0);
   const cs = CASE_STUDIES[active];
   return (
-    <section style={{ background: C.navyDark, padding: 'clamp(64px,8vw,100px) 0' }}>
+    <section style={{ background: C.navyDark, padding: 'clamp(80px,10vw,130px) 0' }}>
       <div style={wrap}>
         <div style={{ textAlign: 'center', marginBottom: 44 }}>
           <p style={{ fontFamily: sans, fontSize: 10, fontWeight: 700, letterSpacing: '0.22em', color: C.gold, textTransform: 'uppercase' as const, marginBottom: 12 }}>Student Profiles</p>
@@ -424,77 +424,111 @@ function PathwaysAccordion() {
   );
 }
 
-// ─── Comparison Table ──────────────────────────────────────────────────────────
-const CMP_ROWS = [
-  { feature: 'Group Size', small: '3–5 students', cls: 'Up to 15 students' },
-  { feature: 'Teacher Attention', small: 'High — every student is known individually', cls: 'Moderate — delivered to the group as a whole' },
-  { feature: 'Pacing', small: 'Adapted to the students in the room', cls: 'Follows the school curriculum timeline' },
-  { feature: 'Environment', small: 'Intimate, collaborative, low-pressure', cls: 'Structured, exam-ready, competitive' },
-  { feature: 'Best For', small: 'Confidence, targeted gaps, personalised support', cls: 'Exam prep, students with solid foundations' },
-  { feature: 'Typical Profile', small: 'Building confidence or closing academic gaps', cls: 'Performing steadily — ready for exam conditions' },
+// ─── Comparison Panels ─────────────────────────────────────────────────────────
+const SMALL_POINTS = [
+  '3–5 students per group',
+  'Every student is known personally',
+  'High teacher interaction throughout',
+  'Questions encouraged at all times',
+  'Strong confidence-building environment',
+  'Closes learning gaps effectively',
+  'Pace adapts to the students in the room',
+];
+const CLASS_POINTS = [
+  'Larger, structured class setting',
+  'Curriculum-paced lessons',
+  'Independent learning expected',
+  'Healthy academic competition',
+  'Strong exam preparation',
+  'Exposure to a wider range of problems',
+  'Students learn alongside ambitious peers',
 ];
 
 function ComparisonTable() {
   return (
-    <section style={{ background: C.white, padding: 'clamp(64px,8vw,100px) 0' }}>
+    <section style={{ background: C.cream, padding: 'clamp(80px,10vw,130px) 0' }}>
       <div style={wrap}>
-        <div style={{ marginBottom: 48 }}>
+        {/* Header */}
+        <div style={{ textAlign: 'center', marginBottom: 64 }}>
           <p style={sectionLabel('')}>Format Comparison</p>
-          <div style={goldRule} />
-          <h2 style={{ fontFamily: serif, fontSize: 'clamp(28px,4vw,44px)', fontWeight: 400, color: C.navy, lineHeight: 1.2, marginBottom: 16 }}>
-            Small Group vs Class<br /><em style={{ color: C.gold }}>Side by Side</em>
+          <div style={{ ...goldRule, margin: '12px auto 20px' }} />
+          <h2 style={{ fontFamily: serif, fontSize: 'clamp(28px,4vw,52px)', fontWeight: 400, color: C.navy, lineHeight: 1.1, marginBottom: 16 }}>
+            Small Group Learning<br />
+            <em style={{ color: C.gold }}>vs Class Environment</em>
           </h2>
-          <p style={{ fontFamily: sans, fontSize: 14, color: C.muted, maxWidth: 460, lineHeight: 1.75 }}>
-            Two formats. Different students. Understanding the distinction is the first step toward the right choice.
+          <p style={{ fontFamily: sans, fontSize: 14, color: C.muted, lineHeight: 1.7 }}>
+            Two excellent options. Designed for different students.
           </p>
         </div>
 
-        <div style={{ border: `1px solid ${C.navyBorder}`, borderRadius: 4, overflow: 'hidden' }}>
-          {/* Header */}
-          <div style={{ display: 'grid', gridTemplateColumns: '220px 1fr 1fr', background: C.navy }}>
-            <div style={{ padding: '16px 20px' }} />
-            <div style={{ padding: '16px 20px', borderLeft: '1px solid rgba(255,255,255,0.08)' }}>
-              <p style={{ fontFamily: sans, fontSize: 11, fontWeight: 700, letterSpacing: '0.12em', color: C.gold, textTransform: 'uppercase' as const }}>Small Group Learning</p>
-              <p style={{ fontFamily: sans, fontSize: 11, color: 'rgba(255,255,255,0.45)', marginTop: 3 }}>3–5 students</p>
+        {/* Two panels */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'clamp(16px,3vw,32px)', marginBottom: 40 }}>
+          {/* Small Group panel */}
+          <div style={{ background: C.navy, borderRadius: 4, padding: 'clamp(32px,4vw,52px)', display: 'flex', flexDirection: 'column' as const }}>
+            <div style={{ marginBottom: 32 }}>
+              <p style={{ fontFamily: sans, fontSize: 10, fontWeight: 700, letterSpacing: '0.18em', color: C.gold, textTransform: 'uppercase' as const, marginBottom: 10 }}>
+                Small Group Learning
+              </p>
+              <p style={{ fontFamily: serif, fontSize: 'clamp(32px,4vw,48px)', fontWeight: 400, color: C.white, lineHeight: 1.1 }}>3–5</p>
+              <p style={{ fontFamily: sans, fontSize: 12, color: 'rgba(255,255,255,0.38)', marginTop: 4, letterSpacing: '0.06em' }}>students per group</p>
             </div>
-            <div style={{ padding: '16px 20px', borderLeft: '1px solid rgba(255,255,255,0.08)' }}>
-              <p style={{ fontFamily: sans, fontSize: 11, fontWeight: 700, letterSpacing: '0.12em', color: 'rgba(255,255,255,0.70)', textTransform: 'uppercase' as const }}>Class Environment</p>
-              <p style={{ fontFamily: sans, fontSize: 11, color: 'rgba(255,255,255,0.38)', marginTop: 3 }}>Up to 15 students</p>
+            <div style={{ width: '100%', height: 1, background: 'rgba(255,255,255,0.08)', marginBottom: 28 }} />
+            <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 36px', display: 'flex', flexDirection: 'column' as const, gap: 14, flex: 1 }}>
+              {SMALL_POINTS.map(pt => (
+                <li key={pt} style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
+                  <div style={{ width: 5, height: 5, borderRadius: '50%', background: C.gold, flexShrink: 0, marginTop: 6 }} />
+                  <span style={{ fontFamily: sans, fontSize: 13, color: 'rgba(255,255,255,0.70)', lineHeight: 1.6 }}>{pt}</span>
+                </li>
+              ))}
+            </ul>
+            <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: 24 }}>
+              <p style={{ fontFamily: sans, fontSize: 10, fontWeight: 700, letterSpacing: '0.14em', color: C.gold, textTransform: 'uppercase' as const, marginBottom: 8 }}>
+                Best Suited For
+              </p>
+              <p style={{ fontFamily: serif, fontSize: 15, fontStyle: 'italic', color: 'rgba(255,255,255,0.75)', lineHeight: 1.6 }}>
+                Students needing support, confidence, accountability or targeted improvement
+              </p>
             </div>
           </div>
 
-          {CMP_ROWS.map((row, i) => (
-            <div key={row.feature} style={{ display: 'grid', gridTemplateColumns: '220px 1fr 1fr', borderTop: `1px solid ${C.navyBorder}`, background: i % 2 === 0 ? C.white : C.cream }}>
-              <div style={{ padding: '18px 20px', borderRight: `1px solid ${C.navyBorder}` }}>
-                <p style={{ fontFamily: sans, fontSize: 11, fontWeight: 700, color: C.navy, letterSpacing: '0.04em' }}>{row.feature}</p>
-              </div>
-              <div style={{ padding: '18px 20px', borderRight: `1px solid ${C.navyBorder}` }}>
-                <p style={{ fontFamily: sans, fontSize: 12, color: C.navy, lineHeight: 1.65 }}>{row.small}</p>
-              </div>
-              <div style={{ padding: '18px 20px' }}>
-                <p style={{ fontFamily: sans, fontSize: 12, color: C.muted, lineHeight: 1.65 }}>{row.cls}</p>
-              </div>
-            </div>
-          ))}
-
-          <div style={{ background: C.creamDeep, borderTop: `1px solid ${C.navyBorder}`, padding: '16px 20px', display: 'grid', gridTemplateColumns: '220px 1fr 1fr', gap: 0 }}>
-            <div />
-            <div style={{ padding: '0 0 0 0', borderLeft: 'none' }}>
-              <p style={{ fontFamily: sans, fontSize: 11, color: C.muted, fontStyle: 'italic', lineHeight: 1.6, paddingRight: 20 }}>
-                Often the first format we recommend — particularly for students who are building momentum or re-engaging with academic work.
+          {/* Class Environment panel */}
+          <div style={{ background: C.creamDeep, borderRadius: 4, padding: 'clamp(32px,4vw,52px)', display: 'flex', flexDirection: 'column' as const, border: `1px solid ${C.navyBorder}` }}>
+            <div style={{ marginBottom: 32 }}>
+              <p style={{ fontFamily: sans, fontSize: 10, fontWeight: 700, letterSpacing: '0.18em', color: C.muted, textTransform: 'uppercase' as const, marginBottom: 10 }}>
+                Class Environment
               </p>
+              <p style={{ fontFamily: serif, fontSize: 'clamp(32px,4vw,48px)', fontWeight: 400, color: C.navy, lineHeight: 1.1 }}>Structured</p>
+              <p style={{ fontFamily: sans, fontSize: 12, color: C.muted, marginTop: 4, letterSpacing: '0.06em' }}>curriculum-paced sessions</p>
             </div>
-            <div style={{ padding: '0 0 0 0' }}>
-              <p style={{ fontFamily: sans, fontSize: 11, color: C.muted, fontStyle: 'italic', lineHeight: 1.6 }}>
-                Appropriate for students whose foundation is solid and who are ready to work at pace under structured conditions.
+            <div style={{ width: '100%', height: 1, background: C.navyBorder, marginBottom: 28 }} />
+            <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 36px', display: 'flex', flexDirection: 'column' as const, gap: 14, flex: 1 }}>
+              {CLASS_POINTS.map(pt => (
+                <li key={pt} style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
+                  <div style={{ width: 5, height: 5, borderRadius: '50%', background: C.muted, flexShrink: 0, marginTop: 6 }} />
+                  <span style={{ fontFamily: sans, fontSize: 13, color: C.muted, lineHeight: 1.6 }}>{pt}</span>
+                </li>
+              ))}
+            </ul>
+            <div style={{ borderTop: `1px solid ${C.navyBorder}`, paddingTop: 24 }}>
+              <p style={{ fontFamily: sans, fontSize: 10, fontWeight: 700, letterSpacing: '0.14em', color: C.muted, textTransform: 'uppercase' as const, marginBottom: 8 }}>
+                Best Suited For
+              </p>
+              <p style={{ fontFamily: serif, fontSize: 15, fontStyle: 'italic', color: C.navy, lineHeight: 1.6 }}>
+                Students seeking structure, challenge and exam-focused preparation
               </p>
             </div>
           </div>
         </div>
 
-        <div style={{ marginTop: 24, textAlign: 'center' }}>
-          <p style={{ fontFamily: sans, fontSize: 12, color: C.muted, fontStyle: 'italic' }}>
-            Not sure which applies to your child? The placement assessment below will help clarify.
+        {/* Footer note + bridge */}
+        <div style={{ textAlign: 'center' }}>
+          <p style={{ fontFamily: sans, fontSize: 13, color: C.muted, fontStyle: 'italic', marginBottom: 28 }}>
+            There is no universally better option. The right environment depends on the student.
+          </p>
+          <div style={{ width: 1, height: 40, background: C.navyBorder, margin: '0 auto 20px' }} />
+          <p style={{ fontFamily: serif, fontSize: 'clamp(16px,2vw,20px)', color: C.navy, fontStyle: 'italic' }}>
+            Still not sure which environment suits your child?<br />
+            <em style={{ color: C.gold }}>Let's find out.</em>
           </p>
         </div>
       </div>
@@ -572,7 +606,7 @@ const LearningFormats = () => {
       <NavigationNew />
 
       {/* 1. Hero */}
-      <section style={{ background: C.navy, padding: 'clamp(120px,14vw,180px) 0 clamp(80px,10vw,120px)', textAlign: 'center' }}>
+      <section style={{ background: C.navy, padding: 'clamp(140px,16vw,200px) 0 clamp(100px,12vw,150px)', textAlign: 'center' }}>
         <div style={{ maxWidth: 680, margin: '0 auto', padding: '0 24px' }}>
           <p style={{ fontFamily: sans, fontSize: 10, fontWeight: 700, letterSpacing: '0.22em', color: C.gold, textTransform: 'uppercase' as const, marginBottom: 16 }}>Learning Formats</p>
           <div style={{ width: 32, height: 1, background: C.goldBorder, margin: '0 auto 28px' }} />
@@ -588,23 +622,17 @@ const LearningFormats = () => {
       {/* 2. Matching Engine */}
       <MatchingEngine />
 
-      {/* 3. Student Examples */}
+      {/* 3. Student Archetypes */}
       <CaseStudiesSlider />
 
-      {/* 4. Formats We Offer */}
-      <PathwaysAccordion />
-
-      {/* 5. Comparison Table */}
+      {/* 4. Comparison */}
       <ComparisonTable />
 
-      {/* 6 & 7. Placement Assessment + Results */}
+      {/* 5 & 6. Placement Assessment + Results */}
       <PlacementAssessment />
 
-      {/* 8. Why Parents Trust */}
-      <WhyParentsTrust />
-
-      {/* 9. CTA */}
-      <section style={{ background: C.navy, padding: 'clamp(64px,8vw,100px) 0', textAlign: 'center' }}>
+      {/* 6. CTA */}
+      <section style={{ background: C.navy, padding: 'clamp(80px,10vw,130px) 0', textAlign: 'center' }}>
         <div style={{ maxWidth: 580, margin: '0 auto', padding: '0 24px' }}>
           <p style={{ fontFamily: sans, fontSize: 10, fontWeight: 700, letterSpacing: '0.22em', color: C.gold, textTransform: 'uppercase' as const, marginBottom: 16 }}>Next Step</p>
           <div style={{ width: 32, height: 1, background: C.goldBorder, margin: '0 auto 28px' }} />
