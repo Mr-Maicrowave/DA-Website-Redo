@@ -192,85 +192,261 @@ const MarqueeStrip = () => (
 // ══════════════════════════════════════════════════════════════
 //  HERO
 // ══════════════════════════════════════════════════════════════
+
+// Constellation — fixed positions relative to logo centre (px)
+const HERO_PARTICLES = [
+  { x: -148, y: -88,  r: 1.5, o: 0.32 },
+  { x:  138, y: -112, r: 1.2, o: 0.26 },
+  { x: -168, y:   56, r: 1.0, o: 0.20 },
+  { x:  158, y:   78, r: 1.4, o: 0.28 },
+  { x:  -62, y: -148, r: 1.1, o: 0.24 },
+  { x:   72, y: -136, r: 1.3, o: 0.30 },
+  { x: -188, y:  -18, r: 0.9, o: 0.18 },
+  { x:  178, y:  -28, r: 1.0, o: 0.20 },
+  { x:  -88, y:  132, r: 1.2, o: 0.24 },
+  { x:  102, y:  118, r: 1.1, o: 0.22 },
+  { x:    4, y: -162, r: 1.3, o: 0.28 },
+  { x:  -38, y:  158, r: 0.9, o: 0.18 },
+] as const;
+
+const HERO_LINES = [
+  [4, 10], [5, 10], [0, 6], [1, 7], [2, 8], [3, 9], [6, 2],
+] as const;
+
+// Occasional star glints
+const HERO_GLINTS = [
+  { x: -118, y:  -76, delay: 0.0, dur: 3.6 },
+  { x:  125, y:  -98, delay: 1.4, dur: 4.4 },
+  { x: -162, y:   42, delay: 2.9, dur: 3.9 },
+  { x:  148, y:   62, delay: 0.8, dur: 5.0 },
+  { x:   68, y: -128, delay: 3.6, dur: 3.2 },
+  { x:  -52, y:  150, delay: 1.9, dur: 4.8 },
+] as const;
+
 const HeroSection = () => {
-  const navigate = useNavigate();
-  const { scrollY } = useScroll();
+  // Mouse parallax
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+  const logoX  = useTransform(mouseX, [-1, 1], [-7, 7]);
+  const logoY  = useTransform(mouseY, [-1, 1], [-5, 5]);
+  const glowX  = useTransform(mouseX, [-1, 1], [-18, 18]);
+  const glowY  = useTransform(mouseY, [-1, 1], [-12, 12]);
+
+  const onMouseMove = (e: React.MouseEvent<HTMLElement>) => {
+    const r = e.currentTarget.getBoundingClientRect();
+    mouseX.set((e.clientX - r.left - r.width  / 2) / (r.width  / 2));
+    mouseY.set((e.clientY - r.top  - r.height / 2) / (r.height / 2));
+  };
+  const onMouseLeave = () => {
+    fmAnimate(mouseX, 0, { type: 'spring', stiffness: 55, damping: 18 });
+    fmAnimate(mouseY, 0, { type: 'spring', stiffness: 55, damping: 18 });
+  };
 
   return (
-    <section style={{
-      minHeight: '100vh', display: 'flex', flexDirection: 'column',
-      alignItems: 'center', justifyContent: 'center', textAlign: 'center',
-      padding: '120px 24px 80px', position: 'relative', overflow: 'hidden',
-      background: `radial-gradient(ellipse 55% 48% at 50% 36%, rgba(212,175,55,.11) 0%, transparent 68%),
-                   linear-gradient(180deg, ${C.cream} 0%, ${C.cream2} 55%, #E8DCC8 100%)`,
-    }}>
-      {/* ── DA Crest — primary visual centrepiece ── */}
-      <motion.div
-        initial={{ opacity: 0, scale: 0.92 }}
-        animate={{ opacity: 1, scale: 1, y: [0, -4, 0] }}
-        transition={{
-          opacity: { duration: 1.4, ease: [0.22, 1, 0.36, 1] },
-          scale:   { duration: 1.4, ease: [0.22, 1, 0.36, 1] },
-          y: { duration: 6, repeat: Infinity, ease: 'easeInOut', repeatType: 'mirror' as const, delay: 1.4 },
-        }}
-        style={{ marginBottom: 'clamp(12px, 1.6vw, 20px)', position: 'relative' }}
-      >
-        {/* Soft gold halo */}
-        <div style={{
-          position: 'absolute',
-          top: '50%', left: '50%',
-          transform: 'translate(-50%, -50%)',
-          width: '140%', height: '140%',
-          borderRadius: '50%',
-          background: `radial-gradient(ellipse 60% 60% at 50% 50%, rgba(212,175,55,0.16) 0%, rgba(212,175,55,0.05) 55%, transparent 75%)`,
-          pointerEvents: 'none',
-        }} />
-        <img
-          src="/images/da-logo.png"
-          alt="DA Tuition"
+    <section
+      onMouseMove={onMouseMove}
+      onMouseLeave={onMouseLeave}
+      style={{
+        minHeight: '100vh', display: 'flex', flexDirection: 'column' as const,
+        alignItems: 'center', justifyContent: 'center', textAlign: 'center' as const,
+        padding: '120px 24px 80px', position: 'relative', overflow: 'hidden',
+        background: `radial-gradient(ellipse 55% 48% at 50% 36%, rgba(212,175,55,.10) 0%, transparent 68%),
+                     linear-gradient(180deg, ${C.cream} 0%, ${C.cream2} 55%, #E8DCC8 100%)`,
+      }}>
+
+      {/* ── Layer 0: wide radial glow (most parallax) ── */}
+      <motion.div style={{
+        position: 'absolute', top: '42%', left: '50%',
+        x: glowX, y: glowY,
+        translateX: '-50%', translateY: '-50%',
+        width: '640px', height: '580px',
+        borderRadius: '50%',
+        background: `radial-gradient(ellipse 68% 68% at 50% 48%,
+          rgba(212,175,55,0.12) 0%,
+          rgba(212,175,55,0.05) 42%,
+          transparent 68%)`,
+        pointerEvents: 'none', zIndex: 0,
+      }} />
+
+      {/* ── Layer 1: constellation ── */}
+      <div style={{
+        position: 'absolute', top: '42%', left: '50%',
+        transform: 'translate(-50%,-50%)',
+        width: 0, height: 0,
+        pointerEvents: 'none', zIndex: 1,
+      }}>
+        <svg width="0" height="0" viewBox="0 0 0 0" style={{ overflow: 'visible' }}>
+          {/* lines */}
+          {HERO_LINES.map(([a, b], i) => {
+            const pa = HERO_PARTICLES[a], pb = HERO_PARTICLES[b];
+            return (
+              <motion.line
+                key={i}
+                x1={pa.x} y1={pa.y} x2={pb.x} y2={pb.y}
+                stroke="rgba(212,175,55,0.12)"
+                strokeWidth="0.7"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 1.8, delay: 1.6 + i * 0.15, ease: 'easeOut' }}
+              />
+            );
+          })}
+          {/* dots */}
+          {HERO_PARTICLES.map((p, i) => (
+            <motion.circle
+              key={i}
+              cx={p.x} cy={p.y} r={p.r}
+              fill={`rgba(212,175,55,${p.o})`}
+              initial={{ opacity: 0, scale: 0 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 1.0, delay: 1.3 + i * 0.07, ease: 'easeOut' }}
+            />
+          ))}
+        </svg>
+      </div>
+
+      {/* ── Layer 2: star glints ── */}
+      {HERO_GLINTS.map((g, i) => (
+        <motion.div
+          key={i}
           style={{
-            width: 'clamp(160px, 20vw, 260px)',
-            height: 'auto',
-            display: 'block',
-            margin: '0 auto',
-            position: 'relative',
+            position: 'absolute',
+            top: `calc(42% + ${g.y}px)`, left: `calc(50% + ${g.x}px)`,
+            width: '3px', height: '3px',
+            borderRadius: '50%',
+            background: 'rgba(248,214,100,0.95)',
+            boxShadow: '0 0 5px 2px rgba(212,175,55,0.45)',
+            transform: 'translate(-50%,-50%)',
+            pointerEvents: 'none', zIndex: 2,
+          }}
+          animate={{
+            opacity: [0, 0, 1, 0.55, 0, 0, 0, 0, 0, 0],
+            scale:   [0, 0, 1.3, 0.7, 0, 0, 0, 0, 0, 0],
+          }}
+          transition={{
+            duration: g.dur,
+            delay: g.delay,
+            repeat: Infinity,
+            repeatDelay: g.dur * 2.2,
+            ease: 'easeInOut',
           }}
         />
+      ))}
+
+      {/* ── Layer 3: DA Crest — the centrepiece ── */}
+      {/* Outer: mouse parallax */}
+      <motion.div style={{
+        x: logoX, y: logoY,
+        marginBottom: 'clamp(32px, 3.8vw, 56px)',
+        position: 'relative', zIndex: 3,
+      }}>
+        {/* Inner: slow float */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.90 }}
+          animate={{ opacity: 1, scale: 1, y: [0, -6, 0] }}
+          transition={{
+            opacity: { duration: 1.5, ease: [0.22, 1, 0.36, 1] },
+            scale:   { duration: 1.5, ease: [0.22, 1, 0.36, 1] },
+            y: { duration: 8, repeat: Infinity, ease: 'easeInOut',
+                 repeatType: 'mirror' as const, delay: 1.5 },
+          }}
+          style={{ position: 'relative' }}
+        >
+          {/* Inner halo — close-in glow around crest */}
+          <div style={{
+            position: 'absolute', top: '50%', left: '50%',
+            transform: 'translate(-50%,-50%)',
+            width: '148%', height: '148%',
+            borderRadius: '50%',
+            background: `radial-gradient(ellipse 55% 55% at 50% 50%,
+              rgba(212,175,55,0.20) 0%,
+              rgba(212,175,55,0.08) 46%,
+              transparent 68%)`,
+            pointerEvents: 'none',
+          }} />
+          <img
+            src="/images/da-logo.png"
+            alt="DA Tuition"
+            style={{
+              width: 'clamp(192px, 24vw, 312px)',
+              height: 'auto',
+              display: 'block',
+              margin: '0 auto',
+              position: 'relative',
+            }}
+          />
+        </motion.div>
       </motion.div>
 
-      {/* ── Headline ── */}
-      <motion.h1 initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
-        style={{ fontFamily: serif, fontWeight: 500, fontSize: 'clamp(2rem, 3.4vw, 3.8rem)', lineHeight: 1.1, letterSpacing: '-.018em', color: C.navy, marginBottom: '40px', maxWidth: '640px' }}>
+      {/* ── Headline — more breathing room below logo ── */}
+      <motion.h1
+        initial={{ opacity: 0, y: 28 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1.0, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
+        style={{
+          fontFamily: serif, fontWeight: 500,
+          fontSize: 'clamp(2rem, 3.4vw, 3.8rem)',
+          lineHeight: 1.1, letterSpacing: '-.018em',
+          color: C.navy, marginBottom: '40px', maxWidth: '640px',
+          position: 'relative', zIndex: 3,
+        }}>
         Where Ambition Meets<br />
         <em style={{ fontStyle: 'italic', color: C.gold }}>Academic Excellence</em>
       </motion.h1>
 
       {/* ── Tagline ── */}
-      <motion.p initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, delay: 0.6 }}
-        style={{ fontFamily: sans, fontSize: 'clamp(.85rem, 1.4vw, 1rem)', color: C.muted, marginBottom: '44px', letterSpacing: '.04em' }}>
+      <motion.p
+        initial={{ opacity: 0, y: 14 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, delay: 0.68 }}
+        style={{
+          fontFamily: sans, fontSize: 'clamp(.85rem, 1.4vw, 1rem)',
+          color: C.muted, marginBottom: '44px', letterSpacing: '.04em',
+          position: 'relative', zIndex: 3,
+        }}>
         Trusted by Families. Transforming Futures.
       </motion.p>
 
-      {/* CTA buttons */}
-      <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, delay: 0.68 }}
-        style={{ display: 'flex', gap: '14px', flexWrap: 'wrap', justifyContent: 'center', marginBottom: '60px' }}>
-
-        <motion.button whileHover={{ scale: 1.03, background: 'rgba(10,27,52,.07)' }} whileTap={{ scale: 0.97 }}
+      {/* ── CTA ── */}
+      <motion.div
+        initial={{ opacity: 0, y: 18 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, delay: 0.76 }}
+        style={{
+          display: 'flex', gap: '14px', flexWrap: 'wrap', justifyContent: 'center',
+          position: 'relative', zIndex: 3,
+        }}>
+        <motion.button
+          whileHover={{ scale: 1.03, background: 'rgba(10,27,52,.07)' }}
+          whileTap={{ scale: 0.97 }}
           onClick={() => document.getElementById('programs')?.scrollIntoView({ behavior: 'smooth' })}
-          style={{ fontFamily: sans, background: 'transparent', color: C.navy, border: `1.5px solid rgba(10,27,52,.30)`, padding: '14px 40px', borderRadius: '4px', fontSize: '.9rem', fontWeight: 700, cursor: 'pointer', letterSpacing: '.04em', textTransform: 'uppercase' }}>
+          style={{
+            fontFamily: sans, background: 'transparent', color: C.navy,
+            border: `1.5px solid rgba(10,27,52,.30)`,
+            padding: '14px 40px', borderRadius: '4px',
+            fontSize: '.9rem', fontWeight: 700, cursor: 'pointer',
+            letterSpacing: '.04em', textTransform: 'uppercase' as const,
+          }}>
           View Programs
         </motion.button>
       </motion.div>
 
-      {/* Scroll indicator */}
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.4 }}
-        style={{ position: 'absolute', bottom: '28px', left: '50%', transform: 'translateX(-50%)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
-        <span style={{ fontFamily: sans, fontSize: '.6rem', letterSpacing: '.16em', textTransform: 'uppercase', color: C.muted }}>Scroll</span>
-        <motion.div animate={{ y: [0, 9, 0] }} transition={{ repeat: Infinity, duration: 1.7, ease: 'easeInOut' }}
-          style={{ width: '1px', height: '44px', background: `linear-gradient(180deg,${C.gold},transparent)` }} />
+      {/* ── Scroll indicator — gold line only, no text ── */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1.7 }}
+        style={{
+          position: 'absolute', bottom: '28px', left: '50%',
+          transform: 'translateX(-50%)',
+          display: 'flex', flexDirection: 'column' as const,
+          alignItems: 'center', zIndex: 3,
+        }}>
+        <motion.div
+          animate={{ y: [0, 9, 0] }}
+          transition={{ repeat: Infinity, duration: 1.8, ease: 'easeInOut' }}
+          style={{ width: '1px', height: '44px', background: `linear-gradient(180deg,${C.gold},transparent)` }}
+        />
       </motion.div>
     </section>
   );
@@ -2680,6 +2856,1226 @@ const CAROUSEL_REVIEWS = [
     learningFormat: 'Small Group · HSC Science',
     newTags: ['Science', 'HSC Success', 'Teacher Support', 'Study Habits'],
   },
+
+  // ── NEW placeholders pr-23–pr-42 ─────────────────────────────
+  // PLACEHOLDER pr-23 — Band 6 Results group
+  {
+    id: 'pr-23',
+    subject: 'Economics',
+    category: 'HSC Economics',
+    author: 'Michael Tran',
+    yearLevel: 'Year 12',
+    result: { before: 'Band 4', after: 'Band 6' },
+    outcomes: ['Band 6 Economics', 'Essay Technique', 'HSC Success'],
+    preview: "I went from Band 4 to Band 6 in Economics. DA helped me understand how to structure an argument the way examiners reward.",
+    pullQuote: "I finally understood what examiners wanted — and gave it to them.",
+    story: "Economics had always confused me because I understood the theory but couldn't translate it into exam marks. At DA my tutor showed me exactly how to structure an economic argument.\n\nBand 6 in the HSC felt like a reward for learning to think as well as know.",
+    whyItWorked: [
+      { n: '01', point: 'Examiner perspective taught', detail: 'Understanding what markers are looking for changed how Michael structured every response.' },
+      { n: '02', point: 'Data integration drilled', detail: 'Using statistics and real-world examples was practised until it became automatic.' },
+      { n: '03', point: 'Essay scaffolding mastered', detail: 'A clear argumentative framework meant marks were consistent rather than unpredictable.' },
+    ],
+    learningFormat: 'Small Group · HSC Economics',
+    newTags: ['Band 6 Results', 'HSC Success'],
+  },
+
+  // PLACEHOLDER pr-24 — HSC Success group
+  {
+    id: 'pr-24',
+    subject: 'Legal Studies',
+    category: 'HSC Legal Studies',
+    author: 'Emma Liu',
+    yearLevel: 'Year 12',
+    result: { before: 'Band 3', after: 'Band 6' },
+    outcomes: ['Band 6 Legal Studies', 'Critical Analysis', 'HSC Success'],
+    preview: "Legal Studies felt like it required a different kind of thinking. DA gave me that — and I went from Band 3 to Band 6.",
+    pullQuote: "Legal Studies requires a different kind of thinking. DA gave me exactly that.",
+    story: "I found Legal Studies difficult because the answers weren't as clear as in other subjects. At DA I learned how to construct and evaluate legal arguments properly.\n\nThe Band 6 result in the HSC validated a year of learning to think critically about law and justice.",
+    whyItWorked: [
+      { n: '01', point: 'Legal reasoning developed', detail: 'Emma learned to construct balanced legal arguments — the core skill Legal Studies rewards.' },
+      { n: '02', point: 'Case studies integrated', detail: 'Specific case references were woven into responses naturally, not forced in as afterthoughts.' },
+      { n: '03', point: 'Consistent practice across all topics', detail: 'No section of the syllabus was left uncovered. That completeness showed in the final result.' },
+    ],
+    learningFormat: 'Small Group · HSC HSIE',
+    newTags: ['HSC Success', 'Band 6 Results'],
+  },
+
+  // PLACEHOLDER pr-25 — HSC Success group
+  {
+    id: 'pr-25',
+    subject: 'Business Studies',
+    category: 'HSC Business Studies',
+    author: 'Jason Park',
+    yearLevel: 'Year 12',
+    result: { before: 'Band 4', after: 'Band 5–6' },
+    outcomes: ['Band 5–6', 'Business Strategy', 'HSC Success'],
+    preview: "I was a solid Band 4 student who couldn't break through. DA showed me the difference between knowing content and applying it at Band 6 level.",
+    pullQuote: "There is a specific difference between Band 4 and Band 6 answers. DA showed me exactly what that difference is.",
+    story: "Band 4 in Business Studies comes from knowing the content. Band 6 comes from applying it. At DA I learned to do the second.\n\nThe improvement in my responses was visible within a month — and the HSC result confirmed that.",
+    whyItWorked: [
+      { n: '01', point: 'Application over recall', detail: 'Jason was taught to use theory to analyse scenarios rather than just define terms — which is what Band 6 requires.' },
+      { n: '02', point: 'Extended response technique', detail: 'The longer responses received systematic feedback until they met Band 6 standards consistently.' },
+      { n: '03', point: 'Real-world examples used', detail: 'Contemporary business examples made Jason\'s responses feel current and sophisticated to markers.' },
+    ],
+    learningFormat: 'Small Group · HSC Business',
+    newTags: ['HSC Success', 'Academic Growth'],
+  },
+
+  // PLACEHOLDER pr-26 — HSC Success group
+  {
+    id: 'pr-26',
+    subject: 'General',
+    category: 'HSC Multi-Subject',
+    author: 'Natalie Vo',
+    yearLevel: 'Year 12',
+    result: { before: 'Band 3–4 across subjects', after: '4 Band 5s' },
+    outcomes: ['4 Band 5s', 'ATAR Achieved', 'Holistic Improvement'],
+    preview: "I came to DA needing to lift across all my subjects. I left with four Band 5s and an ATAR I had told myself was impossible.",
+    pullQuote: "Four Band 5s and an ATAR I had told myself was impossible.",
+    story: "The HSC felt overwhelming when every subject needed attention. DA helped me prioritise what to work on across my four subjects and made each one feel manageable.\n\nFour Band 5s. I came in hoping for one Band 5. I got four.",
+    whyItWorked: [
+      { n: '01', point: 'Cross-subject strategy built', detail: 'A study schedule that gave appropriate time to each subject prevented any one area from dragging the ATAR down.' },
+      { n: '02', point: 'Each subject coached by a specialist', detail: 'Natalie didn\'t receive generic tutoring — each subject had a tutor who knew it deeply.' },
+      { n: '03', point: 'Progress tracking kept motivation alive', detail: 'Seeing improvement across multiple subjects sustained the effort required across a full HSC year.' },
+    ],
+    learningFormat: 'Small Group · HSC Multi-Subject',
+    newTags: ['HSC Success', 'Academic Growth'],
+  },
+
+  // PLACEHOLDER pr-27 — HSC Success group
+  {
+    id: 'pr-27',
+    subject: 'Mathematics',
+    category: 'HSC Mathematics Extension 2',
+    author: 'Chris Nguyen',
+    yearLevel: 'Year 12',
+    result: { before: 'E2', after: 'E4' },
+    outcomes: ['E4 Extension 2', 'Proof Writing', 'HSC Success'],
+    preview: "Extension 2 Mathematics is a different subject from any other. DA helped me understand proof writing and I went from E2 to E4 in the HSC.",
+    pullQuote: "Extension 2 is about proof and rigour. DA gave me both.",
+    story: "Extension 2 Mathematics requires a different level of mathematical rigour than any other HSC subject. At DA the tutor taught me to think like a mathematician — not just solve problems.\n\nThe E4 in the HSC reflected a genuine shift in how I understood and communicated mathematics.",
+    whyItWorked: [
+      { n: '01', point: 'Proof writing taught systematically', detail: 'The ability to construct a rigorous mathematical proof was built step by step rather than expected as a given.' },
+      { n: '02', point: 'Complex topics mastered', detail: 'The topics most students find hardest were given dedicated attention and made genuinely accessible.' },
+      { n: '03', point: 'Mathematical reasoning over computation', detail: 'Extension 2 rewards thinking, not calculating. Chris was taught to lead with reasoning.' },
+    ],
+    learningFormat: 'Small Group · HSC Mathematics Extension',
+    newTags: ['HSC Success', 'Mathematics'],
+  },
+
+  // PLACEHOLDER pr-28 — HSC Success group
+  {
+    id: 'pr-28',
+    subject: 'General',
+    category: 'HSC Humanities',
+    author: 'Priya Sharma',
+    yearLevel: 'Year 12',
+    result: { before: 'Mid-band', after: 'Band 5–6 English & History' },
+    outcomes: ['Band 5–6 English', 'Band 5–6 History', 'Writing Excellence'],
+    preview: "English and Modern History both required strong analytical writing. DA helped me develop an approach that worked for both — and I ended with Band 5–6 in each.",
+    pullQuote: "The writing skills I built at DA transferred across every humanities subject I studied.",
+    story: "My two weakest subjects both required the same core skill — analytical writing. At DA I was taught a transferable approach to argumentation that lifted both subjects simultaneously.\n\nBand 5–6 in English and Modern History. The skills transferred exactly as my tutor promised.",
+    whyItWorked: [
+      { n: '01', point: 'Transferable writing framework', detail: 'A single analytical structure, adapted for each subject, improved Priya\'s performance across humanities simultaneously.' },
+      { n: '02', point: 'Thesis construction mastered', detail: 'A clear, arguable thesis is the foundation of strong humanities essays. Priya\'s were consistently strong.' },
+      { n: '03', point: 'Evidence integration technique', detail: 'Quoting, paraphrasing, and analysing evidence — rather than summarising it — was practised until automatic.' },
+    ],
+    learningFormat: 'Small Group · HSC Humanities',
+    newTags: ['HSC Success', 'Academic Growth'],
+  },
+
+  // PLACEHOLDER pr-29 — Confidence group
+  {
+    id: 'pr-29',
+    subject: 'General',
+    category: 'Primary School',
+    author: 'Emma Wong',
+    yearLevel: 'Year 6',
+    result: { before: 'Anxious learner', after: 'Loves school' },
+    outcomes: ['Attitude Shift', 'Confidence', 'School Enjoyment'],
+    preview: "My daughter used to come home crying about school. After three months at DA she was excited to go. The confidence shift happened faster than I expected.",
+    pullQuote: "She went from dreading school to looking forward to Monday mornings.",
+    story: "Academic anxiety at Year 6 can set a pattern that lasts years. At DA the tutors took time to understand why Emma found learning stressful — and addressed that before focusing on content.\n\nThe shift in her relationship with school was the most important change. The grades followed naturally.",
+    whyItWorked: [
+      { n: '01', point: 'Anxiety addressed before content', detail: 'Understanding the emotional barrier to learning allowed the content work to actually land.' },
+      { n: '02', point: 'Small wins built momentum', detail: 'Early successes gave Emma evidence that she could succeed — which changed her expectation of herself.' },
+      { n: '03', point: 'Enjoyment built into every session', detail: 'Sessions that feel engaging create a positive association with learning that persists long after tuition ends.' },
+    ],
+    learningFormat: 'Small Group · Primary School',
+    newTags: ['Confidence', 'Parent Feedback'],
+  },
+
+  // PLACEHOLDER pr-30 — Confidence group
+  {
+    id: 'pr-30',
+    subject: 'General',
+    category: 'High School',
+    author: 'Michael Lee',
+    yearLevel: 'Year 9',
+    result: { before: 'Avoided class questions', after: 'Volunteers answers' },
+    outcomes: ['Class Participation', 'Confidence', 'Social Growth'],
+    preview: "I was the student who never raised my hand. DA gave me enough confidence that I now answer questions in class without being asked. That changed everything else.",
+    pullQuote: "I now raise my hand before the teacher even finishes the question.",
+    story: "Avoiding questions in class felt safer than being wrong publicly. At DA the small group environment let me get things wrong safely — without judgment.\n\nNow I volunteer answers in class. My teacher noticed before I did.",
+    whyItWorked: [
+      { n: '01', point: 'Safe environment to be wrong', detail: 'The small group setting allowed Michael to make mistakes without social cost — which is how real learning happens.' },
+      { n: '02', point: 'Accuracy built before speed', detail: 'Ensuring answers were right meant Michael never had reason to feel embarrassed by the output.' },
+      { n: '03', point: 'Classroom transfer observed', detail: 'The confidence built in sessions translated directly into classroom behaviour — a reliable sign of genuine change.' },
+    ],
+    learningFormat: 'Small Group · Year 9',
+    newTags: ['Confidence', 'Academic Growth'],
+  },
+
+  // PLACEHOLDER pr-31 — Confidence group
+  {
+    id: 'pr-31',
+    subject: 'English',
+    category: 'English',
+    author: 'Anna Tran',
+    yearLevel: 'Year 10',
+    result: { before: 'Feared oral presentations', after: 'Speaks without notes' },
+    outcomes: ['Oral Confidence', 'Presentations', 'Written Confidence'],
+    preview: "Oral presentations were my nightmare. DA helped me see that the preparation I did in writing carried into speaking — and now I look forward to presenting.",
+    pullQuote: "The confidence I built in writing was the same confidence I needed to speak.",
+    story: "Fear of speaking in class came from not trusting what I had to say. At DA I learned to trust my own ideas through writing — and discovered that trust transferred to speaking.\n\nI now deliver oral presentations without notes. That would have been unimaginable a year ago.",
+    whyItWorked: [
+      { n: '01', point: 'Written confidence transferred to oral', detail: 'Building trust in her own ideas through essay writing gave Anna the foundation to speak those ideas aloud.' },
+      { n: '02', point: 'Content clarity reduced anxiety', detail: 'When students truly understand what they\'re saying, the fear of speaking it reduces dramatically.' },
+      { n: '03', point: 'Low-stakes verbal practice', detail: 'Explaining ideas verbally in sessions prepared Anna for the higher-stakes classroom environment.' },
+    ],
+    learningFormat: 'Small Group · English',
+    newTags: ['Confidence', 'English'],
+  },
+
+  // PLACEHOLDER pr-32 — Teacher Support group
+  {
+    id: 'pr-32',
+    subject: 'Mathematics',
+    category: 'Mathematics',
+    author: 'Oliver Chen',
+    yearLevel: 'Year 7',
+    result: { before: 'Behind peers', after: 'Peer tutor for classmates' },
+    outcomes: ['Peer Tutor', 'Teacher Relationship', 'Maths Mastery'],
+    preview: "My tutor at DA believed in me before I believed in myself. Within two terms I was helping my classmates with the same work that had confused me.",
+    pullQuote: "My tutor believed in me before I did. That made all the difference.",
+    story: "Starting high school behind in maths was demoralising. My DA tutor never treated me as a student who was behind — just as one who needed a different explanation.\n\nBy the end of Year 7 I was the student other kids asked for help.",
+    whyItWorked: [
+      { n: '01', point: 'Belief modelled before it was felt', detail: 'The tutor\'s consistent expectation eventually became Oliver\'s own expectation.' },
+      { n: '02', point: 'Explanations adapted', detail: 'Teaching the same concept multiple ways until one clicks is a patience most classroom teachers cannot afford.' },
+      { n: '03', point: 'Teaching others as a learning tool', detail: 'When Oliver began explaining concepts to classmates, his own understanding deepened further.' },
+    ],
+    learningFormat: 'Small Group · Year 7 Mathematics',
+    newTags: ['Teacher Support', 'Confidence'],
+  },
+
+  // PLACEHOLDER pr-33 — Teacher Support group
+  {
+    id: 'pr-33',
+    subject: 'English',
+    category: 'English',
+    author: 'Grace Kim',
+    yearLevel: 'Year 11',
+    result: { before: 'Average writer', after: 'Top essay writer' },
+    outcomes: ['Essay Excellence', 'Mentor Relationship', 'Academic Growth'],
+    preview: "My DA tutor became the first teacher who genuinely invested in my writing as something worth developing. That changed how I saw myself as a writer.",
+    pullQuote: "The first teacher who treated my writing as something worth investing in.",
+    story: "I had written essays for years without anyone telling me what specifically was good or bad. At DA my tutor gave me the most detailed, useful feedback I had ever received.\n\nThat feedback, consistently applied, turned me into a writer I'm proud of.",
+    whyItWorked: [
+      { n: '01', point: 'Specific, actionable feedback', detail: 'Vague praise does nothing. Detailed feedback gave Grace something specific to improve each session.' },
+      { n: '02', point: 'Drafting process valued', detail: 'Learning to revise rather than just write produced essays with clarity Grace hadn\'t reached before.' },
+      { n: '03', point: 'Tutor investment felt', detail: 'Students who feel genuinely cared about by their tutors work harder and progress faster.' },
+    ],
+    learningFormat: 'Small Group · English',
+    newTags: ['Teacher Support', 'English'],
+  },
+
+  // PLACEHOLDER pr-34 — Teacher Support group
+  {
+    id: 'pr-34',
+    subject: 'Science',
+    category: 'Science',
+    author: 'Patrick Nguyen',
+    yearLevel: 'Year 8',
+    result: { before: 'Disengaged', after: 'Interested in STEM' },
+    outcomes: ['STEM Interest', 'Teacher Connection', 'Science Confidence'],
+    preview: "My tutor at DA was the first adult who made me feel like my questions mattered. That turned Science from a subject into something I care about.",
+    pullQuote: "My questions finally felt like they mattered to someone.",
+    story: "I had always asked too many questions — or so I was told. At DA, my tutor treated every question as worth answering properly, which fundamentally changed my relationship with learning.\n\nI now want to study science at university. That ambition started in a Year 8 DA session.",
+    whyItWorked: [
+      { n: '01', point: 'Questions rewarded', detail: 'A curious student who is welcomed rather than redirected will invest more deeply in the subject.' },
+      { n: '02', point: 'Tutor modelled scientific curiosity', detail: 'When teachers demonstrate genuine enthusiasm for their subject, students are influenced by that enthusiasm.' },
+      { n: '03', point: 'Long-term ambition seeded early', detail: 'A desire to study science at university, planted in Year 8, is one of the highest-impact outcomes tutoring can produce.' },
+    ],
+    learningFormat: 'Small Group · Year 8 Science',
+    newTags: ['Teacher Support', 'Science'],
+  },
+
+  // PLACEHOLDER pr-35 — Teacher Support group
+  {
+    id: 'pr-35',
+    subject: 'General',
+    category: 'Multi-Year Program',
+    author: 'Isabella Wu',
+    yearLevel: 'Year 12',
+    result: { before: 'Starting Year 10 behind', after: 'ATAR target achieved' },
+    outcomes: ['3-Year Journey', 'ATAR Achieved', 'Consistent Support'],
+    preview: "I was at DA from Year 10 to Year 12. Three years of the same tutors, the same standards, the same encouragement. That consistency was what I needed.",
+    pullQuote: "Three years. Same tutors. Same standards. Same encouragement. That consistency was everything.",
+    story: "Starting at DA in Year 10 and finishing after the HSC gave me something I couldn't have found elsewhere — a consistent support structure across the most important years of school.\n\nThe ATAR I achieved came from three years of steady, sustained effort. DA was the constant across all of it.",
+    whyItWorked: [
+      { n: '01', point: 'Consistent tutor relationships', detail: 'Three years of the same team meant no time lost rebuilding context.' },
+      { n: '02', point: 'Long-term plan executed year by year', detail: 'A three-year roadmap allowed each year to build on the previous.' },
+      { n: '03', point: 'Trust built over time', detail: 'By Year 12 Isabella could say what she was struggling with because she trusted her tutors fully.' },
+    ],
+    learningFormat: 'Small Group · Years 10–12',
+    newTags: ['Teacher Support', 'Academic Growth'],
+  },
+
+  // PLACEHOLDER pr-36 — Teacher Support group
+  {
+    id: 'pr-36',
+    subject: 'Mathematics',
+    category: 'Mathematics',
+    author: 'Ethan Lam',
+    yearLevel: 'Year 10',
+    result: { before: 'C+', after: 'A+' },
+    outcomes: ['A+ Maths', 'Problem Solving', 'Tutor Bond'],
+    preview: "The small group size at DA meant my tutor could tell when I understood something and when I was pretending. That honesty made the sessions actually useful.",
+    pullQuote: "My tutor knew when I understood and when I was just pretending. That honesty changed everything.",
+    story: "In a class of 30, pretending to understand is easy. In a DA group of 4, it's impossible — which turned out to be exactly what I needed.\n\nThe A+ in Maths came from never being allowed to slide past something I hadn't fully grasped.",
+    whyItWorked: [
+      { n: '01', point: 'Small group makes pretending impossible', detail: 'With fewer students per tutor, genuine understanding is tested every session.' },
+      { n: '02', point: 'Gaps closed immediately', detail: 'Every misconception was addressed in the same session, preventing the snowballing that causes failure in later topics.' },
+      { n: '03', point: 'Tutor read the student', detail: 'The ability to notice when a student is struggling before they say so changes the outcome of every session.' },
+    ],
+    learningFormat: 'Small Group · Year 10 Mathematics',
+    newTags: ['Teacher Support', 'Mathematics'],
+  },
+
+  // PLACEHOLDER pr-37 — Teacher Support group
+  {
+    id: 'pr-37',
+    subject: 'General',
+    category: 'Primary School',
+    author: 'Sophia Pham',
+    yearLevel: 'Year 5',
+    result: { before: 'Falling behind', after: 'On track and confident' },
+    outcomes: ['Foundation Secured', 'Confidence', 'Patient Teaching'],
+    preview: "My daughter needed patience more than she needed content. DA gave her both — and now she's on track for a strong high school entry.",
+    pullQuote: "She needed patience first. DA understood that before we did.",
+    story: "At Year 5, falling behind in the fundamentals sets a trajectory that is hard to change. The tutors at DA understood that before we articulated it.\n\nThree terms later our daughter is on track. The difference was patient, unhurried teaching that rebuilt her foundations.",
+    whyItWorked: [
+      { n: '01', point: 'Patience as a teaching method', detail: 'Returning to a concept as many times as needed produces deeper understanding than covering content quickly.' },
+      { n: '02', point: 'Foundations rebuilt without embarrassment', detail: 'Returning to earlier content when needed was done naturally, without stigma.' },
+      { n: '03', point: 'High school readiness as the goal', detail: 'Working backward from what Year 7 requires gave sessions clear direction.' },
+    ],
+    learningFormat: 'Small Group · Primary School',
+    newTags: ['Teacher Support', 'Confidence'],
+  },
+
+  // PLACEHOLDER pr-38 — Study Habits group
+  {
+    id: 'pr-38',
+    subject: 'General',
+    category: 'High School',
+    author: 'Lucas Chen',
+    yearLevel: 'Year 9',
+    result: { before: 'No study structure', after: 'Weekly study plan' },
+    outcomes: ['Study Structure', 'Grade Improvement', 'Self-Direction'],
+    preview: "I didn't have a study routine until DA. They taught me how to structure a week, which weeks to prioritise, and how to tell if a session had actually been productive.",
+    pullQuote: "For the first time I actually knew whether I had studied effectively or just been in the room.",
+    story: "Sitting at a desk for two hours and studying for two hours are very different things. At DA I learned the difference.\n\nThe routines I built with my tutor's guidance in Year 9 are still the ones I use now.",
+    whyItWorked: [
+      { n: '01', point: 'Productive vs. present study distinguished', detail: 'Learning to assess whether a session was genuinely effective is a metacognitive skill most students are never taught.' },
+      { n: '02', point: 'Weekly planning installed', detail: 'A consistent structure removed the decision fatigue of figuring out what to study each day.' },
+      { n: '03', point: 'Study audit each session', detail: 'Each session began by reviewing how the previous week\'s independent study had gone — creating accountability.' },
+    ],
+    learningFormat: 'Small Group · Year 9',
+    newTags: ['Study Habits', 'Academic Growth'],
+  },
+
+  // PLACEHOLDER pr-39 — Study Habits group
+  {
+    id: 'pr-39',
+    subject: 'General',
+    category: 'High School',
+    author: 'Chloe Nguyen',
+    yearLevel: 'Year 11',
+    result: { before: 'Disorganised', after: 'Top 5 in cohort' },
+    outcomes: ['Top 5 Cohort', 'Organisation', 'Time Management'],
+    preview: "My marks were always inconsistent because my effort was inconsistent. DA helped me build the systems that made my effort consistent — and the marks followed.",
+    pullQuote: "Consistent marks come from consistent effort. DA helped me build the systems for both.",
+    story: "Year 11 tests organisation as much as ability. I had the ability but not the systems. At DA the tutors helped me build habits that turned inconsistent effort into consistent performance.\n\nTop 5 in cohort at Year 11 end. The systems made it possible.",
+    whyItWorked: [
+      { n: '01', point: 'Organisation treated as a learnable skill', detail: 'Being organised is a skill that can be built, not a personality trait you either have or don\'t.' },
+      { n: '02', point: 'Assessment calendar maintained', detail: 'Mapping all due dates in advance removed the last-minute cramming that had previously cost marks.' },
+      { n: '03', point: 'Consistent effort produced consistent results', detail: 'The connection between systematic preparation and reliable marks became clear once the systems were in place.' },
+    ],
+    learningFormat: 'Small Group · Year 11',
+    newTags: ['Study Habits', 'Academic Growth'],
+  },
+
+  // PLACEHOLDER pr-40 — Study Habits group
+  {
+    id: 'pr-40',
+    subject: 'Mathematics',
+    category: 'Mathematics',
+    author: 'Noah Tran',
+    yearLevel: 'Year 10',
+    result: { before: 'Cramming before exams', after: 'Daily practice routine' },
+    outcomes: ['Daily Practice', 'Grade Consistency', 'Maths Improvement'],
+    preview: "I used to cram for maths the night before. DA showed me that daily 20-minute practice sessions are worth more than five hours the night before an exam.",
+    pullQuote: "Twenty minutes a day beats five hours the night before every single time.",
+    story: "Cramming worked — until it didn't. At DA my tutor explained simply: maths is a skill that improves with spaced practice, not massed review.\n\nOnce I built the daily habit, my marks became predictable in a way they had never been before.",
+    whyItWorked: [
+      { n: '01', point: 'Spaced practice explained and implemented', detail: 'The evidence for spaced repetition was explained simply, giving Noah a reason to trust the new habit.' },
+      { n: '02', point: 'Daily habit small enough to stick', detail: 'Twenty minutes is achievable every day. That consistency compounded into significant improvement across a term.' },
+      { n: '03', point: 'Exam preparation built in', detail: 'Rather than cramming the night before, Noah had already reviewed every topic multiple times through daily practice.' },
+    ],
+    learningFormat: 'Small Group · Year 10 Mathematics',
+    newTags: ['Study Habits', 'Mathematics'],
+  },
+
+  // PLACEHOLDER pr-41 — Study Habits group
+  {
+    id: 'pr-41',
+    subject: 'English',
+    category: 'English',
+    author: 'Mia Liu',
+    yearLevel: 'Year 8',
+    result: { before: 'Non-reader', after: 'Reading for pleasure' },
+    outcomes: ['Reading Habit', 'Essay Improvement', 'Vocabulary Growth'],
+    preview: "I hadn't read a book for pleasure in years. DA helped me find books I actually wanted to read — and once I started reading, my English results improved without me trying.",
+    pullQuote: "Once I started reading for myself, my English marks improved without me trying to improve them.",
+    story: "The connection between reading habit and English results is direct. At DA my tutor helped me find books that actually interested me.\n\nOnce reading became enjoyable, vocabulary, sentence structure, and comprehension all improved naturally.",
+    whyItWorked: [
+      { n: '01', point: 'Right books at the right time', detail: 'Being given texts that genuinely interest a student is more impactful than any specific English technique.' },
+      { n: '02', point: 'Passive learning through reading', detail: 'Hours of reading accumulate language patterns that no formal grammar instruction can replicate at the same speed.' },
+      { n: '03', point: 'Improvement without direct instruction', detail: 'When outcomes improve in areas not directly taught, the intervention is producing genuine change.' },
+    ],
+    learningFormat: 'Small Group · Year 8 English',
+    newTags: ['Study Habits', 'English'],
+  },
+
+  // PLACEHOLDER pr-42 — Study Habits group
+  {
+    id: 'pr-42',
+    subject: 'General',
+    category: 'HSC',
+    author: 'Liam Park',
+    yearLevel: 'Year 12',
+    result: { before: 'Reactive study', after: 'Proactive HSC preparation' },
+    outcomes: ['HSC Readiness', 'Time Management', 'Study Strategy'],
+    preview: "I used to study reactively — when something was due. DA taught me to study proactively, which transformed the HSC from something I feared into something I prepared for.",
+    pullQuote: "DA transformed the HSC from something I feared into something I was prepared for.",
+    story: "Reactive studying works until the HSC, when everything is due at once. At DA I learned to plan ahead across all subjects.\n\nThe HSC year felt manageable in a way I hadn't expected. That came from the habits built in the year before it.",
+    whyItWorked: [
+      { n: '01', point: 'Proactive vs. reactive study distinguished', detail: 'Understanding the difference changed Liam\'s entire approach to every subject.' },
+      { n: '02', point: 'HSC treated as a year-long project', detail: 'Twelve months of consistent preparation rather than a single high-pressure event changed the experience fundamentally.' },
+      { n: '03', point: 'Revision scheduled before urgency', detail: 'Reviewing content before it was urgent meant the final weeks were for refinement, not desperate review.' },
+    ],
+    learningFormat: 'Small Group · HSC',
+    newTags: ['Study Habits', 'HSC Success'],
+  },
+
+  // ── NEW placeholders pr-43–pr-80 ─────────────────────────────
+  // PLACEHOLDER pr-43 — Academic Growth group
+  {
+    id: 'pr-43',
+    subject: 'General',
+    category: 'High School',
+    author: 'Hannah Vo',
+    yearLevel: 'Year 7',
+    result: { before: 'Nervous Year 7 start', after: 'Thriving by Year 7 end' },
+    outcomes: ['Strong Start', 'Academic Growth', 'School Confidence'],
+    preview: "Year 7 was terrifying. DA helped me settle in fast and come out of it with results that set me up for high school in a way I didn't expect.",
+    pullQuote: "I came out of Year 7 feeling like high school was something I could actually do.",
+    story: "The transition from primary to high school is academically and socially demanding. At DA I had support that let me focus on the academic side without the anxiety of feeling behind.\n\nYear 7 ended with results I'm proud of — and the confidence to take on Year 8.",
+    whyItWorked: [
+      { n: '01', point: 'Transition support front-loaded', detail: 'Addressing Year 7 demands early meant Hannah built good habits before bad ones could form.' },
+      { n: '02', point: 'Confidence alongside skills', detail: 'Academic confidence in Year 7 transfers directly into social confidence — a compounding benefit.' },
+      { n: '03', point: 'Foundation for future years', detail: 'Strong habits built in Year 7 reduced the adjustment required in every subsequent year.' },
+    ],
+    learningFormat: 'Small Group · Year 7',
+    newTags: ['Academic Growth', 'Confidence'],
+  },
+
+  // PLACEHOLDER pr-44 — Academic Growth group
+  {
+    id: 'pr-44',
+    subject: 'Mathematics',
+    category: 'Mathematics Advanced',
+    author: 'Benjamin Kim',
+    yearLevel: 'Year 11',
+    result: { before: 'Rank 45th', after: 'Rank 8th' },
+    outcomes: ['Rank Jump', 'Maths Advanced', 'Grade Improvement'],
+    preview: "I moved from 45th to 8th in my cohort ranking in Mathematics Advanced across one year at DA. The tutors identified weaknesses I didn't know I had.",
+    pullQuote: "Moving from rank 45 to rank 8 changed how I thought about what I was capable of.",
+    story: "Year 11 Mathematics Advanced was the subject I was most worried about. At DA the tutors ran a diagnostic and found gaps my class marks hadn't revealed.\n\nClosing those gaps moved my rank from 45th to 8th across a single year.",
+    whyItWorked: [
+      { n: '01', point: 'Diagnostic before intervention', detail: 'A structured assessment of what Benjamin understood — and didn\'t — prevented wasted time on already-mastered content.' },
+      { n: '02', point: 'Hidden gaps addressed', detail: 'Gaps accumulated quietly over years were finally identified and closed — releasing Benjamin\'s actual capacity.' },
+      { n: '03', point: 'Rank used as feedback', detail: 'Using rank as information about what to work on, rather than as a judgment, kept motivation focused and productive.' },
+    ],
+    learningFormat: 'Small Group · Year 11 Mathematics',
+    newTags: ['Academic Growth', 'Mathematics'],
+  },
+
+  // PLACEHOLDER pr-45 — Academic Growth group
+  {
+    id: 'pr-45',
+    subject: 'English',
+    category: 'English',
+    author: 'Abigail Chen',
+    yearLevel: 'Year 8',
+    result: { before: 'C student', after: 'A student two years later' },
+    outcomes: ['A Grade', 'Long-term Growth', 'Writing Excellence'],
+    preview: "Two years at DA transformed my English from C-grade to A-grade work. The change happened gradually, then all at once. I'm a different writer than I was.",
+    pullQuote: "The change happened gradually and then all at once — like the way language itself works.",
+    story: "Starting at DA in Year 7 as a C-grade English student, I didn't expect to become an A student. But over two years the consistent feedback built something real.\n\nBy Year 8 end my teacher was using my essays as examples. That wouldn't have happened without DA.",
+    whyItWorked: [
+      { n: '01', point: 'Long-term progress tracked', detail: 'Two years of consistent improvement gave Abigail evidence of her own capacity for growth.' },
+      { n: '02', point: 'Deliberate practice each session', detail: 'Each session had a specific focus. Targeted practice on identified weaknesses produced improvement faster than general revision.' },
+      { n: '03', point: 'Teacher recognition as external validation', detail: 'When school teachers acknowledge work publicly, it confirms what the student and tutor have been seeing privately.' },
+    ],
+    learningFormat: 'Small Group · English',
+    newTags: ['Academic Growth', 'English'],
+  },
+
+  // PLACEHOLDER pr-46 — Academic Growth group
+  {
+    id: 'pr-46',
+    subject: 'Science',
+    category: 'Science',
+    author: 'Caleb Nguyen',
+    yearLevel: 'Year 10',
+    result: { before: 'Bottom third', after: 'Top 10%' },
+    outcomes: ['Top 10%', 'Science Growth', 'Cohort Rank'],
+    preview: "I was in the bottom third of my cohort for Science in Year 9. By the end of Year 10 I was in the top 10%. DA gave me a pathway and the belief that it was real.",
+    pullQuote: "DA gave me a pathway and the belief that the pathway was actually real.",
+    story: "Moving from bottom third to top 10% requires both the right teaching and the belief that improvement is possible. DA gave me both.\n\nBy Year 10 end the improvement was visible to everyone, including me.",
+    whyItWorked: [
+      { n: '01', point: 'Belief installed before progress', detail: 'The tutor communicated clearly that the improvement was achievable — that communication enabled the actual improvement.' },
+      { n: '02', point: 'Step-by-step pathway visible', detail: 'Breaking the goal into quarterly milestones made the distance from bottom third to top 10% feel crossable.' },
+      { n: '03', point: 'Rank as a navigation tool', detail: 'Tracking rank across terms gave Caleb concrete evidence of momentum — which sustained the effort.' },
+    ],
+    learningFormat: 'Small Group · Year 10 Science',
+    newTags: ['Academic Growth', 'Science'],
+  },
+
+  // PLACEHOLDER pr-47 — Academic Growth group
+  {
+    id: 'pr-47',
+    subject: 'General',
+    category: 'High School',
+    author: 'Ella Tran',
+    yearLevel: 'Year 9',
+    result: { before: 'Inconsistent marks', after: 'Consistently above 85%' },
+    outcomes: ['Consistency', 'Grade Average', 'Multi-Subject Growth'],
+    preview: "My marks used to swing between 60% and 80% depending on how well the topic clicked. DA gave me the tools to stay above 85% consistently across all subjects.",
+    pullQuote: "DA gave me the tools to be consistent, not just occasionally excellent.",
+    story: "Inconsistency is more frustrating than consistently lower marks — because you know what's possible but can't reach it reliably. At DA I learned what was causing the swings and how to address it.\n\nConsistently above 85% across all subjects in Year 9. The frustration is gone.",
+    whyItWorked: [
+      { n: '01', point: 'Root cause of inconsistency identified', detail: 'Ella\'s swings came from uneven topic coverage. Addressing that directly produced consistency more effectively than any exam technique.' },
+      { n: '02', point: 'Every topic treated equally', detail: 'Topics that had caused dips were given equal preparation time to topics Ella found easier.' },
+      { n: '03', point: 'Consistency as the explicit goal', detail: 'When students aim for consistency rather than peak performance, their floor rises — which raises their average.' },
+    ],
+    learningFormat: 'Small Group · Year 9',
+    newTags: ['Academic Growth', 'Study Habits'],
+  },
+
+  // PLACEHOLDER pr-48 — Academic Growth group
+  {
+    id: 'pr-48',
+    subject: 'General',
+    category: 'HSC Year 12',
+    author: 'Owen Liu',
+    yearLevel: 'Year 12',
+    result: { before: 'Poor mid-year results', after: 'Strong HSC finish' },
+    outcomes: ['HSC Recovery', 'Turnaround', 'ATAR Achieved'],
+    preview: "I joined DA halfway through Year 12 after my mid-year results came back poorly. In six months the tutors helped me recover enough to hit my ATAR target.",
+    pullQuote: "Joining DA halfway through Year 12 felt like a last chance. It turned out to be the right one.",
+    story: "A poor set of mid-year results in Year 12 can feel terminal. At DA the tutors assessed where I stood and built a six-month plan to close the gap.\n\nThe ATAR I achieved in December was exactly what I needed. That recovery happened in six months with the right support.",
+    whyItWorked: [
+      { n: '01', point: 'Triage approach to six months', detail: 'Prioritising the topics with the highest mark-recovery potential meant Owen\'s limited time was used optimally.' },
+      { n: '02', point: 'Exam-focused from day one', detail: 'With six months remaining, every session was built around HSC-format questions and marking criteria.' },
+      { n: '03', point: 'Hope given a structure', detail: 'Owen had the motivation to recover — DA gave that motivation a plan.' },
+    ],
+    learningFormat: 'Small Group · HSC Year 12',
+    newTags: ['Academic Growth', 'HSC Success'],
+  },
+
+  // PLACEHOLDER pr-49 — Parent Feedback group
+  {
+    id: 'pr-49',
+    subject: 'General',
+    category: 'Parent Testimonial',
+    author: 'Jennifer Lee (Parent)',
+    yearLevel: 'Year 10',
+    result: { before: 'Worried about trajectory', after: 'Confident in future' },
+    outcomes: ['Parent Confidence', 'Academic Recovery', 'Family Relief'],
+    preview: "As a parent watching my daughter struggle and withdraw, I felt helpless. DA gave us both a direction. Watching her regain confidence was the biggest relief of the school year.",
+    pullQuote: "Watching my daughter regain her confidence was the biggest relief of the school year.",
+    story: "My daughter had slowly withdrawn from school across Year 9. By Year 10 I was genuinely worried. DA didn't just address her marks — they helped her reconnect with learning.\n\nWatching that reconnection happen was something I hadn't let myself hope for.",
+    whyItWorked: [
+      { n: '01', point: 'Reconnection before content', detail: 'DA recognised that Jennifer\'s daughter needed re-engagement first. Marks followed the reconnection.' },
+      { n: '02', point: 'Parent kept informed', detail: 'Knowing what was happening in sessions gave Jennifer the information to support her daughter at home.' },
+      { n: '03', point: 'Family relief as an outcome', detail: 'When a parent\'s worry resolves, the whole family environment shifts — feeding back positively into the student\'s experience.' },
+    ],
+    learningFormat: 'Small Group · Year 10',
+    newTags: ['Parent Feedback', 'Confidence'],
+  },
+
+  // PLACEHOLDER pr-50 — Parent Feedback group
+  {
+    id: 'pr-50',
+    subject: 'Mathematics',
+    category: 'Parent Testimonial',
+    author: 'Michael Wong (Parent)',
+    yearLevel: 'Year 12',
+    result: { before: 'Failing maths', after: 'Band 5 HSC' },
+    outcomes: ['Band 5 Maths', 'Parent Relief', 'HSC Success'],
+    preview: "My son was failing Mathematics in Year 12. Eight months later he had a Band 5 in the HSC. I am still a little stunned by what DA achieved in that time.",
+    pullQuote: "I'm still a little stunned by what DA achieved in eight months.",
+    story: "Failing Year 12 Mathematics is a frightening place to be. At DA the team assessed the gaps and built a recovery plan my son actually stuck to.\n\nBand 5 in the HSC. Eight months earlier that felt impossible. I'll be recommending DA for as long as I know families who need it.",
+    whyItWorked: [
+      { n: '01', point: 'Rapid gap assessment at the start', detail: 'Understanding exactly what was missing meant the eight months were used efficiently.' },
+      { n: '02', point: 'Achievable plan', detail: 'A reasonable study plan my son could commit to was more effective than a theoretically optimal one he wouldn\'t follow.' },
+      { n: '03', point: 'Parent kept in the loop', detail: 'Regular communication gave Michael the confidence to trust the process rather than adding pressure at home.' },
+    ],
+    learningFormat: 'Small Group · HSC Mathematics',
+    newTags: ['Parent Feedback', 'Mathematics'],
+  },
+
+  // PLACEHOLDER pr-51 — Parent Feedback group
+  {
+    id: 'pr-51',
+    subject: 'General',
+    category: 'Parent Testimonial',
+    author: 'Susan Nguyen (Parent)',
+    yearLevel: 'Year 8',
+    result: { before: 'Bright but underperforming', after: 'Achieving potential' },
+    outcomes: ['Potential Realised', 'Parent Satisfaction', 'Academic Growth'],
+    preview: "My daughter was clearly bright but consistently underperforming. DA helped us understand why — and then fixed it. She's now achieving what I always thought she was capable of.",
+    pullQuote: "She's now achieving what I always believed she was capable of. DA made it possible.",
+    story: "Watching a bright child underperform is uniquely frustrating. DA ran an assessment and identified that she had gaps in foundational skills holding everything else back.\n\nAddressing those gaps released her actual capability.",
+    whyItWorked: [
+      { n: '01', point: 'Learning assessment revealed the real cause', detail: 'Rather than assuming effort was the issue, DA identified the specific gaps limiting performance.' },
+      { n: '02', point: 'Foundation fixed before extension', detail: 'Returning to foundational content cleared the path for higher-level achievement.' },
+      { n: '03', point: 'Parent\'s confidence validated', detail: 'When a parent\'s belief in their child is confirmed by results, it strengthens the relationship and the student\'s self-perception.' },
+    ],
+    learningFormat: 'Small Group · Year 8',
+    newTags: ['Parent Feedback', 'Academic Growth'],
+  },
+
+  // PLACEHOLDER pr-52 — Parent Feedback group
+  {
+    id: 'pr-52',
+    subject: 'General',
+    category: 'Parent Testimonial',
+    author: 'Robert Kim (Parent)',
+    yearLevel: 'Two children',
+    result: { before: 'Two struggling children', after: 'Both on track' },
+    outcomes: ['Two Children Supported', 'Family Improvement', 'Long-term Trust'],
+    preview: "We enrolled both of our children at DA and the results exceeded what we hoped for either of them individually. The consistency across two very different learners was impressive.",
+    pullQuote: "Two very different learners. One consistent standard of teaching that worked for both.",
+    story: "Our son and daughter have completely different learning styles. At DA each of them received an approach that suited them — not the same approach applied to different students.\n\nBoth improved significantly. The consistency of quality across two such different learners impressed us most.",
+    whyItWorked: [
+      { n: '01', point: 'Individual approach maintained', detail: 'The small group structure allows tutors to differentiate within a session — giving different students what they individually need.' },
+      { n: '02', point: 'Consistent quality across learners', detail: 'The standard of teaching did not depend on which child or which style. Both received the same quality of attention.' },
+      { n: '03', point: 'Family logistics simplified', detail: 'Having both children at the same centre removed scheduling complexity and gave parents a single relationship with the DA team.' },
+    ],
+    learningFormat: 'Small Group · Multi-Child Family',
+    newTags: ['Parent Feedback', 'Academic Growth'],
+  },
+
+  // PLACEHOLDER pr-53 — Parent Feedback group
+  {
+    id: 'pr-53',
+    subject: 'General',
+    category: 'Parent Testimonial',
+    author: 'Catherine Tran (Parent)',
+    yearLevel: 'Year 11',
+    result: { before: 'Son stressed and disengaged', after: 'Calm and focused' },
+    outcomes: ['Stress Reduction', 'Re-engagement', 'Wellbeing'],
+    preview: "My son's stress about school was affecting the whole family. DA gave him a structure that made school feel manageable — and the relief was felt by all of us.",
+    pullQuote: "When my son's stress reduced, the whole household relaxed. DA made that happen.",
+    story: "Year 11 stress is common, but when it becomes chronic it affects learning and family life equally. At DA the tutors gave my son a structure and a sense of control over his workload.\n\nThe academic results improved. But the reduction in stress was what changed our family's Year 11.",
+    whyItWorked: [
+      { n: '01', point: 'Structure reduces stress directly', detail: 'Knowing what to do and when removes the anxiety of uncertainty — the primary source of Catherine\'s son\'s distress.' },
+      { n: '02', point: 'Control restored to the student', detail: 'When students feel in control of their preparation, anxiety reduces — independent of how much content they have actually covered.' },
+      { n: '03', point: 'Family wellbeing as an outcome', detail: 'Student stress transfers to families. Addressing the student\'s experience improved the whole household.' },
+    ],
+    learningFormat: 'Small Group · Year 11',
+    newTags: ['Parent Feedback', 'Confidence'],
+  },
+
+  // PLACEHOLDER pr-54 — Parent Feedback group
+  {
+    id: 'pr-54',
+    subject: 'Science',
+    category: 'Parent Testimonial',
+    author: 'Andrew Liu (Parent)',
+    yearLevel: 'Year 9',
+    result: { before: 'Daughter hated Science', after: 'Considering STEM career' },
+    outcomes: ['STEM Interest', 'Career Direction', 'Parent Surprise'],
+    preview: "My daughter hated Science. She is now seriously considering a STEM career. I did not expect DA to have that kind of impact — I just wanted her to pass Year 9 Science.",
+    pullQuote: "I just wanted her to pass Year 9 Science. I didn't expect DA to change her career plans.",
+    story: "We enrolled our daughter at DA for a practical reason — she was failing Year 9 Science. What happened was far more than we bargained for.\n\nShe passed Science. Then she started finding it interesting. Now she's researching environmental science at university.",
+    whyItWorked: [
+      { n: '01', point: 'Subject made relevant before academic', detail: 'Connecting science to things Andrew\'s daughter genuinely cared about came before any attempt to improve her results.' },
+      { n: '02', point: 'Curiosity given space', detail: 'A student who asks about science outside class is a student whose interest has genuinely been ignited.' },
+      { n: '03', point: 'Long-term impact beyond the original goal', detail: 'The greatest outcomes of tutoring are often not the ones originally sought — they emerge when a student is genuinely engaged.' },
+    ],
+    learningFormat: 'Small Group · Year 9 Science',
+    newTags: ['Parent Feedback', 'Science'],
+  },
+
+  // PLACEHOLDER pr-55 — Parent Feedback group
+  {
+    id: 'pr-55',
+    subject: 'General',
+    category: 'Parent Testimonial',
+    author: 'Margaret Park (Parent)',
+    yearLevel: 'Year 7',
+    result: { before: 'Struggling with transition', after: 'Settled and confident' },
+    outcomes: ['Transition Support', 'Confidence', 'Parent Reassurance'],
+    preview: "The transition to high school was harder than we expected. DA gave our child the academic support to get on top of things — and gave us peace of mind during a stressful few months.",
+    pullQuote: "DA gave us peace of mind during the most stressful months of our child's schooling so far.",
+    story: "Year 7 is a major transition. Academic support in the first term can determine the trajectory of the whole year.\n\nAt DA our child got on top of things quickly. By Term 2 we stopped worrying. That's the best thing I can say about any service.",
+    whyItWorked: [
+      { n: '01', point: 'Early support prevents trajectory problems', detail: 'Catching difficulties in first term of Year 7 prevents the cascading impact that unaddressed gaps can have.' },
+      { n: '02', point: 'Speed of response meaningful at transition', detail: 'Rapid support in Term 1 had a compounding positive effect across the rest of the year.' },
+      { n: '03', point: 'Parent worry addressed directly', detail: 'When parents are informed and confident, they support their child more effectively.' },
+    ],
+    learningFormat: 'Small Group · Year 7',
+    newTags: ['Parent Feedback', 'Confidence'],
+  },
+
+  // PLACEHOLDER pr-56 — Parent Feedback group
+  {
+    id: 'pr-56',
+    subject: 'General',
+    category: 'Parent Testimonial',
+    author: 'William Chen (Parent)',
+    yearLevel: 'Year 12',
+    result: { before: 'ATAR target felt unrealistic', after: 'ATAR target achieved' },
+    outcomes: ['ATAR Achieved', 'Parent Relief', 'HSC Success'],
+    preview: "My son told me his ATAR target in Year 11. I privately thought it was too high. DA proved me wrong. He achieved it — and I owe them a debt of gratitude for that.",
+    pullQuote: "I privately thought my son's ATAR target was too high. DA proved me wrong.",
+    story: "Every parent wants to believe their child can achieve what they set out to do. I found it hard in Year 11. The ATAR my son was aiming for felt optimistic.\n\nDA gave him a pathway and the skills to walk it. He achieved the ATAR. I'm proud of him and grateful to DA in equal measure.",
+    whyItWorked: [
+      { n: '01', point: 'Ambitious targets taken seriously', detail: 'DA did not counsel William\'s son toward a safer goal — they built a plan to achieve the one he had set.' },
+      { n: '02', point: 'Year 12 as a managed campaign', detail: 'Treating the HSC as a year-long managed campaign — with regular progress checks — kept the target in sight throughout.' },
+      { n: '03', point: 'Parent expectation exceeded', detail: 'When tutoring exceeds what a parent believed was possible, it creates advocates who recommend DA to every family they know.' },
+    ],
+    learningFormat: 'Small Group · HSC Year 12',
+    newTags: ['Parent Feedback', 'HSC Success'],
+  },
+
+  // PLACEHOLDER pr-57 — English group
+  {
+    id: 'pr-57',
+    subject: 'English',
+    category: 'English Advanced',
+    author: 'Jasmine Nguyen',
+    yearLevel: 'Year 11',
+    result: { before: 'Borderline Advanced', after: 'Solid Advanced student' },
+    outcomes: ['English Advanced', 'Text Analysis', 'Essay Writing'],
+    preview: "I was barely keeping up with English Advanced. DA gave me the analytical skills to not just keep up — but genuinely engage with the texts the way the course demands.",
+    pullQuote: "DA helped me engage with the texts the way Advanced demands — not just survive the course.",
+    story: "English Advanced requires genuine analytical engagement rather than competent summary. At DA I learned to read for argument rather than for plot.\n\nThat change made the whole course unlock.",
+    whyItWorked: [
+      { n: '01', point: 'Advanced-level reading modelled', detail: 'Jasmine learned to read texts analytically — for craft, argument, and technique — rather than for story.' },
+      { n: '02', point: 'Complex texts made accessible', detail: 'Difficult texts became manageable once Jasmine had a method for approaching them systematically.' },
+      { n: '03', point: 'Essay quality matched the course level', detail: 'Advanced essays require sophisticated argumentation. Jasmine\'s writing was coached to meet that standard explicitly.' },
+    ],
+    learningFormat: 'Small Group · English Advanced',
+    newTags: ['English', 'Academic Growth'],
+  },
+
+  // PLACEHOLDER pr-58 — English group
+  {
+    id: 'pr-58',
+    subject: 'English',
+    category: 'English',
+    author: 'Theodore Kim',
+    yearLevel: 'Year 9',
+    result: { before: 'C student', after: 'A student' },
+    outcomes: ['A Grade English', 'Essay Structure', 'Reading Depth'],
+    preview: "English went from my worst subject to my best. DA showed me that the skills that make a good essay are learnable — and once learned, they don't leave.",
+    pullQuote: "The skills that make a good essay are learnable. Once you have them, they don't leave.",
+    story: "I had believed English ability was something you either had or didn't. At DA I learned that every component of a good English essay is a skill — and skills can be taught.\n\nOnce I understood that, improvement was just a matter of practice and feedback. And I got both.",
+    whyItWorked: [
+      { n: '01', point: 'English demystified', detail: 'Removing the myth that English is innate talent gave Theodore permission to work toward improvement.' },
+      { n: '02', point: 'Components taught separately then integrated', detail: 'Thesis, evidence, analysis, and structure were each developed individually before being combined into polished essays.' },
+      { n: '03', point: 'Feedback loop accelerated improvement', detail: 'Consistent specific feedback on every essay produced improvement faster than any independent study would have.' },
+    ],
+    learningFormat: 'Small Group · Year 9 English',
+    newTags: ['English', 'Academic Growth'],
+  },
+
+  // PLACEHOLDER pr-59 — English group
+  {
+    id: 'pr-59',
+    subject: 'English',
+    category: 'English',
+    author: 'Violet Tran',
+    yearLevel: 'Year 10',
+    result: { before: 'Nice but basic writing', after: 'Published in school anthology' },
+    outcomes: ['Creative Writing', 'Published Work', 'English Confidence'],
+    preview: "I had always been told my creative writing was 'nice but basic'. At DA I found out what that actually meant and how to go beyond it. One piece was published in a school anthology.",
+    pullQuote: "I found out what 'nice but basic' actually meant — and how to move past it.",
+    story: "Creative writing feedback is often vague. At DA my tutor explained precisely what was working and what wasn't — and gave me techniques to develop the areas holding my writing at 'nice but basic'.\n\nA piece I wrote at DA was selected for the school's creative writing anthology.",
+    whyItWorked: [
+      { n: '01', point: 'Specific creative feedback', detail: 'Vague encouragement does nothing. Violet was given precise, honest feedback on what to change and why.' },
+      { n: '02', point: 'Voice and technique balanced', detail: 'Developing a distinctive voice while mastering the technical elements markers value required both kinds of coaching.' },
+      { n: '03', point: 'External recognition as confirmation', detail: 'Publication in a school anthology gave Violet independent confirmation that her growth was real.' },
+    ],
+    learningFormat: 'Small Group · Year 10 English',
+    newTags: ['English', 'Academic Growth'],
+  },
+
+  // PLACEHOLDER pr-60 — English group
+  {
+    id: 'pr-60',
+    subject: 'English',
+    category: 'HSC English Extension 2',
+    author: 'Penelope Liu',
+    yearLevel: 'Year 12',
+    result: { before: 'No clear direction', after: 'Major Work commended' },
+    outcomes: ['Major Work Commended', 'Extension 2', 'Independent Writing'],
+    preview: "Extension 2 English requires a sustained creative project. DA helped me find a direction I believed in — and the Major Work I produced was commended by my HSC marker.",
+    pullQuote: "My DA tutor helped me find the idea that only I could write — and that made all the difference.",
+    story: "Extension 2 English requires an independent major work — a sustained creative project entirely your own. DA's guidance helped me find a concept I genuinely cared about.\n\nThe major work I produced was commended by my HSC marker. More importantly, I'm proud of it.",
+    whyItWorked: [
+      { n: '01', point: 'Concept development as primary work', detail: 'Finding an idea genuinely Penelope\'s own — not a generic approach — produced work with authentic creative energy.' },
+      { n: '02', point: 'Sustained project supported across the year', detail: 'Major works require consistent momentum. DA\'s ongoing feedback prevented stalls that cause most major works to fall short.' },
+      { n: '03', point: 'Reflection developed alongside creative work', detail: 'Extension 2 requires students to articulate their creative choices. The reflective statement was developed in parallel.' },
+    ],
+    learningFormat: 'Small Group · HSC English Extension 2',
+    newTags: ['English', 'HSC Success'],
+  },
+
+  // PLACEHOLDER pr-61 — English group
+  {
+    id: 'pr-61',
+    subject: 'English',
+    category: 'English',
+    author: 'Sebastian Wong',
+    yearLevel: 'Year 8',
+    result: { before: 'Dreaded essays', after: 'Essay confidence' },
+    outcomes: ['Essay Confidence', 'English Growth', 'Class Improvement'],
+    preview: "I dreaded every English essay. At DA I learned that essays aren't mysterious — they're a structure you can learn. That realisation changed everything.",
+    pullQuote: "Essays aren't mysterious — they're a structure you can learn. That realisation changed everything.",
+    story: "Every English essay felt like starting from zero. At DA I learned that essays have a learnable structure — and once internalised, every essay felt like filling in something I already understood.\n\nThe anxiety I felt before every essay simply went away.",
+    whyItWorked: [
+      { n: '01', point: 'Essay structure demystified', detail: 'Presenting the essay as a learnable form removed Sebastian\'s anxiety immediately.' },
+      { n: '02', point: 'Structure internalised through practice', detail: 'Repeated practice until the structure felt natural meant Sebastian began essays with confidence rather than paralysis.' },
+      { n: '03', point: 'Anxiety elimination', detail: 'When students stop fearing a task type, their capacity to perform at their actual level is finally revealed.' },
+    ],
+    learningFormat: 'Small Group · Year 8 English',
+    newTags: ['English', 'Confidence'],
+  },
+
+  // PLACEHOLDER pr-62 — English group
+  {
+    id: 'pr-62',
+    subject: 'English',
+    category: 'English Advanced',
+    author: 'Aurora Chen',
+    yearLevel: 'Year 11',
+    result: { before: 'Average technique', after: 'Top essay writer in class' },
+    outcomes: ['Top Essay Writer', 'English Advanced', 'Technique'],
+    preview: "My essay technique went from average to the best in my class in one year. My school teacher asked if I had changed tutors — she noticed that clearly.",
+    pullQuote: "My school teacher noticed the improvement before I fully appreciated it myself.",
+    story: "Essay technique in English Advanced is the difference between Band 4 and Band 6. At DA I learned to write with a clarity and analytical precision I hadn't achieved before.\n\nMy school teacher noticed. She asked what had changed. The answer was DA.",
+    whyItWorked: [
+      { n: '01', point: 'Technique gap identified', detail: 'The difference between Aurora\'s essays and top-band essays was analysed specifically — not described generally.' },
+      { n: '02', point: 'Marker\'s eye developed', detail: 'Learning to read her own essays the way markers do gave Aurora the ability to self-edit toward excellence.' },
+      { n: '03', point: 'Teacher-visible improvement', detail: 'When improvement is noticed unprompted by a school teacher, it confirms the change is real and significant.' },
+    ],
+    learningFormat: 'Small Group · English Advanced',
+    newTags: ['English', 'Academic Growth'],
+  },
+
+  // PLACEHOLDER pr-63 — English group
+  {
+    id: 'pr-63',
+    subject: 'English',
+    category: 'English',
+    author: 'Felix Park',
+    yearLevel: 'Year 10',
+    result: { before: 'Passive reader', after: 'Active analytical reader' },
+    outcomes: ['Analytical Reading', 'Comprehension', 'English Improvement'],
+    preview: "I used to read to find out what happened. DA taught me to read to understand how and why — and that changed both my comprehension scores and my essay quality.",
+    pullQuote: "I used to read to find out what happened. Now I read to understand how and why the author made it happen.",
+    story: "Reading for story versus reading for technique are fundamentally different activities. At DA I was taught to do both simultaneously — to engage with a text while noticing the choices its author made.\n\nComprehension scores improved, essays improved, and reading became genuinely more interesting.",
+    whyItWorked: [
+      { n: '01', point: 'Active reading as a teachable skill', detail: 'Annotating, questioning, and noticing choices while reading was modelled until it became automatic.' },
+      { n: '02', point: 'Author intent as primary question', detail: 'When students begin asking "why did the author do this?" their analysis deepens immediately.' },
+      { n: '03', point: 'Comprehension and essay skills linked', detail: 'The same close reading habits improved both Felix\'s comprehension scores and his essay evidence and analysis.' },
+    ],
+    learningFormat: 'Small Group · Year 10 English',
+    newTags: ['English', 'Study Habits'],
+  },
+
+  // PLACEHOLDER pr-64 — English group
+  {
+    id: 'pr-64',
+    subject: 'English',
+    category: 'English',
+    author: 'Isla Nguyen',
+    yearLevel: 'Year 7',
+    result: { before: 'Below literacy benchmark', after: 'On level by Year 7 end' },
+    outcomes: ['Literacy Recovery', 'Reading Level', 'Confidence'],
+    preview: "I came into Year 7 below literacy benchmarks. DA helped me close the gap within two terms. I started Year 8 at the same level as my classmates.",
+    pullQuote: "I started Year 8 at the same level as my classmates. That would not have happened without DA.",
+    story: "Starting high school below literacy benchmarks can establish a pattern of underperformance that follows a student for years. At DA the tutors closed the gap in two terms.\n\nStarting Year 8 at the same level as my classmates meant the gap was behind me, not in front.",
+    whyItWorked: [
+      { n: '01', point: 'Literacy gap closed rapidly', detail: 'Focused work on specific literacy elements below benchmark produced faster progress than broad English tuition.' },
+      { n: '02', point: 'Early secondary intervention', detail: 'Year 7 is the optimal time to close primary literacy gaps before they become embedded secondary patterns.' },
+      { n: '03', point: 'Year 8 readiness as the explicit goal', detail: 'A clear, time-bound target gave both Isla and her tutors a shared definition of success.' },
+    ],
+    learningFormat: 'Small Group · Year 7 English',
+    newTags: ['English', 'Academic Growth'],
+  },
+
+  // PLACEHOLDER pr-65 — Mathematics group
+  {
+    id: 'pr-65',
+    subject: 'Mathematics',
+    category: 'Mathematics Advanced',
+    author: 'Hunter Kim',
+    yearLevel: 'Year 10',
+    result: { before: 'B grade', after: 'A+ grade' },
+    outcomes: ['A+ Maths', 'Advanced Readiness', 'Problem Solving'],
+    preview: "I was a solid B student in Maths who wanted to take Advanced in Year 11. DA built the bridge between where I was and where I needed to be.",
+    pullQuote: "DA built the bridge between where I was and where Advanced needed me to be.",
+    story: "Year 10 Mathematics is preparation for a choice: Standard or Advanced. At DA the tutors prepared me for Advanced specifically — not just for Year 10.\n\nI entered Year 11 Mathematics Advanced with an A+ behind me and genuine confidence in what lay ahead.",
+    whyItWorked: [
+      { n: '01', point: 'Year 11 preparation in Year 10', detail: 'Working ahead ensures the transition is seamless rather than a step-change in difficulty.' },
+      { n: '02', point: 'Advanced topics previewed', detail: 'Exposure to Year 11 concepts before Year 11 meant Hunter arrived at the first Advanced lesson with context.' },
+      { n: '03', point: 'Ambition matched with preparation', detail: 'Hunter wanted to study Advanced. DA made sure that choice was backed by the skills to succeed in it.' },
+    ],
+    learningFormat: 'Small Group · Mathematics',
+    newTags: ['Mathematics', 'Academic Growth'],
+  },
+
+  // PLACEHOLDER pr-66 — Mathematics group
+  {
+    id: 'pr-66',
+    subject: 'Mathematics',
+    category: 'Mathematics Extension 1',
+    author: 'Scarlett Tran',
+    yearLevel: 'Year 11',
+    result: { before: 'Borderline Extension', after: 'Top 5 in cohort' },
+    outcomes: ['Top 5 Cohort', 'Extension 1', 'Mathematical Depth'],
+    preview: "I was borderline for Extension 1 at the start of Year 11. DA helped me find the deeper mathematical thinking the subject requires — and I'm now top 5 in my cohort.",
+    pullQuote: "Extension 1 requires deeper thinking, not just harder work. DA showed me what that means.",
+    story: "Extension 1 Mathematics requires a different relationship with mathematics — patience and rigour rather than speed. At DA I learned to approach problems that way.\n\nTop 5 in my Extension 1 cohort at Year 11 end. Patience turned out to be the missing ingredient.",
+    whyItWorked: [
+      { n: '01', point: 'Mathematical depth over speed', detail: 'Scarlett learned that Extension 1 rewards sitting with a complex problem — not answering quickly.' },
+      { n: '02', point: 'Proof and reasoning developed', detail: 'Justifying every step separates Extension students who consistently perform from those who occasionally shine.' },
+      { n: '03', point: 'Patience as a mathematical virtue', detail: 'Building the habit of careful, unhurried reasoning produced improvement that speed-focused approaches never could.' },
+    ],
+    learningFormat: 'Small Group · Mathematics Extension 1',
+    newTags: ['Mathematics', 'Academic Growth'],
+  },
+
+  // PLACEHOLDER pr-67 — Mathematics group
+  {
+    id: 'pr-67',
+    subject: 'Mathematics',
+    category: 'Mathematics',
+    author: 'Archer Liu',
+    yearLevel: 'Year 8',
+    result: { before: 'Shaky numeracy', after: 'Algebra confident' },
+    outcomes: ['Foundation Secured', 'Algebra Confidence', 'Maths Growth'],
+    preview: "I reached Year 8 with shaky multiplication tables. DA fixed the foundation and built up from there. By the end of the year I was doing algebra with confidence.",
+    pullQuote: "You can't build up without a foundation. DA fixed mine.",
+    story: "Shaky numeracy foundations cause problems that compound as mathematics gets more abstract. At DA the tutors identified the specific gaps and rebuilt without making me feel behind for having them.\n\nAlgebra had previously stumped me. By Year 8 end it was my strongest topic.",
+    whyItWorked: [
+      { n: '01', point: 'Numeracy foundation diagnosed and rebuilt', detail: 'Identifying specific calculation gaps allowed targeted rebuilding of Archer\'s mathematical base.' },
+      { n: '02', point: 'Foundation work done without stigma', detail: 'Returning to primary-level numeracy in Year 8 was handled matter-of-factly. The absence of judgment made it possible.' },
+      { n: '03', point: 'Compounding improvement from the base', detail: 'Once the numeracy foundation was solid, every algebra topic was learned faster than it would have been otherwise.' },
+    ],
+    learningFormat: 'Small Group · Year 8 Mathematics',
+    newTags: ['Mathematics', 'Academic Growth'],
+  },
+
+  // PLACEHOLDER pr-68 — Mathematics group
+  {
+    id: 'pr-68',
+    subject: 'Mathematics',
+    category: 'HSC Mathematics Extension 2',
+    author: 'Willow Park',
+    yearLevel: 'Year 12',
+    result: { before: 'E2', after: 'E3–E4' },
+    outcomes: ['E3–E4 Ext 2', 'Advanced Calculus', 'HSC Success'],
+    preview: "Extension 2 felt like a different language. DA helped me learn that language — and my mark moved from E2 to E3–E4 in the HSC.",
+    pullQuote: "Extension 2 Mathematics is a different language. DA taught me to speak it.",
+    story: "At DA my tutor helped me approach Extension 2 concepts not as harder versions of familiar topics, but as genuinely new mathematical ideas.\n\nThat reframing made everything more learnable. The E3–E4 result reflected a genuine change in my mathematical understanding.",
+    whyItWorked: [
+      { n: '01', point: 'Extension 2 treated as genuinely new', detail: 'Approaching content as novel reduced frustration from applying familiar but insufficient methods.' },
+      { n: '02', point: 'Complex calculus built step by step', detail: 'Each technique was developed in order of difficulty, ensuring each step was secure before the next was introduced.' },
+      { n: '03', point: 'Abstract thinking developed deliberately', detail: 'Extension 2 requires mathematical abstraction. That capacity was built alongside the content.' },
+    ],
+    learningFormat: 'Small Group · HSC Mathematics Extension 2',
+    newTags: ['Mathematics', 'HSC Success'],
+  },
+
+  // PLACEHOLDER pr-69 — Mathematics group
+  {
+    id: 'pr-69',
+    subject: 'Mathematics',
+    category: 'Mathematics',
+    author: 'Finn Nguyen',
+    yearLevel: 'Year 9',
+    result: { before: 'Feared maths', after: 'Enjoys maths' },
+    outcomes: ['Maths Enjoyment', 'Grade Improvement', 'Confidence'],
+    preview: "I used to get a knot in my stomach at the thought of a maths lesson. DA removed the fear so completely that I now actually look forward to maths.",
+    pullQuote: "I used to dread maths. Now I look forward to it. That is not something I expected to say.",
+    story: "Maths anxiety is real and limiting. At DA the tutors created an environment where being wrong was safe — and somehow that safety made getting things right easier.\n\nThe fear went first. The grades came after.",
+    whyItWorked: [
+      { n: '01', point: 'Mathematical safety before challenge', detail: 'An environment where wrong answers are welcomed allows students to take the risks that produce learning.' },
+      { n: '02', point: 'Success experiences front-loaded', detail: 'Early sessions focused on topics where Finn could succeed — building a positive relationship with maths.' },
+      { n: '03', point: 'Fear as the primary target', detail: 'Addressing the emotional barrier to maths produced grade improvements as a secondary outcome — which is more sustainable.' },
+    ],
+    learningFormat: 'Small Group · Year 9 Mathematics',
+    newTags: ['Mathematics', 'Confidence'],
+  },
+
+  // PLACEHOLDER pr-70 — Mathematics group
+  {
+    id: 'pr-70',
+    subject: 'Mathematics',
+    category: 'Mathematics Advanced',
+    author: 'Lyra Chen',
+    yearLevel: 'Year 11',
+    result: { before: 'Rank 30th', after: 'Rank 7th' },
+    outcomes: ['Rank Jump', 'Advanced Maths', 'Exam Technique'],
+    preview: "My cohort rank in Mathematics Advanced went from 30th to 7th in one year. The tutors at DA identified specific exam technique issues that were costing me marks.",
+    pullQuote: "Specific exam technique feedback moved my rank more than any amount of content revision had.",
+    story: "I understood the mathematics but wasn't earning the marks my understanding warranted. At DA the tutors identified exactly where exam marks were being lost.\n\nRank 7 from Rank 30. Technique, not content, was the difference.",
+    whyItWorked: [
+      { n: '01', point: 'Exam technique audited systematically', detail: 'Going through past papers as if marking Lyra\'s work revealed patterns of lost marks that content revision couldn\'t address.' },
+      { n: '02', point: 'Mark allocation understood deeply', detail: 'Knowing exactly where markers award marks changed how Lyra structured her solutions.' },
+      { n: '03', point: 'Technique gap larger than content gap', detail: 'When content is understood but marks don\'t reflect that, technique is almost always the cause.' },
+    ],
+    learningFormat: 'Small Group · Year 11 Mathematics',
+    newTags: ['Mathematics', 'Academic Growth'],
+  },
+
+  // PLACEHOLDER pr-71 — Mathematics group
+  {
+    id: 'pr-71',
+    subject: 'Mathematics',
+    category: 'Mathematics',
+    author: 'Quinn Wong',
+    yearLevel: 'Year 7',
+    result: { before: 'Anxious about high school maths', after: 'Strong Year 7 finish' },
+    outcomes: ['Strong Start', 'Maths Foundation', 'Confidence'],
+    preview: "Year 7 maths was intimidating after primary school. DA made the transition feel manageable — and I finished Year 7 with one of the strongest results in my class.",
+    pullQuote: "The transition to high school maths was less frightening with DA behind me.",
+    story: "High school mathematics is a step change from primary school. At DA I was prepared for that step before I took it — and supported through it once it began.\n\nFinishing Year 7 with one of the strongest maths results in my class was more than I had hoped for going in.",
+    whyItWorked: [
+      { n: '01', point: 'Year 7 transition supported from day one', detail: 'Beginning support at the start of Year 7 prevented the difficulties many students experience in the first months.' },
+      { n: '02', point: 'Primary habits replaced with secondary ones', detail: 'Learning the different conventions and methods of high school mathematics early removed confusion.' },
+      { n: '03', point: 'Strong Year 7 sets trajectory', detail: 'A positive first year in high school maths establishes habits and expectations that compound positively across all subsequent years.' },
+    ],
+    learningFormat: 'Small Group · Year 7 Mathematics',
+    newTags: ['Mathematics', 'Confidence'],
+  },
+
+  // PLACEHOLDER pr-72 — Mathematics group
+  {
+    id: 'pr-72',
+    subject: 'Mathematics',
+    category: 'HSC Mathematics Advanced',
+    author: 'River Kim',
+    yearLevel: 'Year 12',
+    result: { before: 'Band 4', after: 'Band 6' },
+    outcomes: ['Band 6 Maths', 'HSC Advanced', 'Exam Confidence'],
+    preview: "I was a Band 4 Mathematics student for all of Year 11. DA lifted me to Band 6 in the HSC. Every session had a clear purpose I could see.",
+    pullQuote: "Every session had a clear purpose I could see. That made the hard work feel worth it.",
+    story: "Band 4 to Band 6 in Mathematics Advanced requires real effort across a full year. At DA the work was hard — but always purposeful.\n\nBand 6 in the HSC. That result came from a year of directed, purposeful effort.",
+    whyItWorked: [
+      { n: '01', point: 'Purpose embedded in every session', detail: 'River always knew what each session was for and how it connected to the Band 6 goal. That connection sustained effort.' },
+      { n: '02', point: 'Pathway mapped explicitly', detail: 'Breaking the gap into monthly milestones gave River a visible path forward rather than a single distant destination.' },
+      { n: '03', point: 'Hard work made sustainable', detail: 'Effort without direction produces burnout. Directed effort toward a clear goal produces results and stays sustainable.' },
+    ],
+    learningFormat: 'Small Group · HSC Mathematics Advanced',
+    newTags: ['Mathematics', 'Band 6 Results'],
+  },
+
+  // PLACEHOLDER pr-73 — Science group
+  {
+    id: 'pr-73',
+    subject: 'Science',
+    category: 'HSC Physics',
+    author: 'Blake Tran',
+    yearLevel: 'Year 11',
+    result: { before: 'Failing Physics', after: 'B+ average' },
+    outcomes: ['B+ Physics', 'Science Recovery', 'Conceptual Clarity'],
+    preview: "Physics was failing me — or I was failing Physics. DA helped me find the conceptual clarity that made the mathematics finally make sense.",
+    pullQuote: "Once the concepts made sense, the mathematics of Physics stopped being intimidating.",
+    story: "Physics punishes students who try to memorise without understanding. At DA I was taught the concepts properly — the mathematics then became a natural expression of understanding.\n\nB+ average in Physics by Year 11 end. Concepts first, calculations second.",
+    whyItWorked: [
+      { n: '01', point: 'Concepts before calculations', detail: 'Blake was taught to understand first and calculate second — producing learning rather than guessing.' },
+      { n: '02', point: 'Mathematical and physical reasoning integrated', detail: 'The connection between a physical situation and its mathematical description was made explicit in every topic.' },
+      { n: '03', point: 'Failed attempts repurposed as diagnosis', detail: 'Incorrect answers were used as diagnostic information rather than as signs of failure.' },
+    ],
+    learningFormat: 'Small Group · HSC Physics',
+    newTags: ['Science', 'Academic Growth'],
+  },
+
+  // PLACEHOLDER pr-74 — Science group
+  {
+    id: 'pr-74',
+    subject: 'Science',
+    category: 'Science',
+    author: 'Sage Liu',
+    yearLevel: 'Year 9',
+    result: { before: 'D average', after: 'B+ average' },
+    outcomes: ['B+ Science', 'Grade Recovery', 'Exam Skills'],
+    preview: "I went from a D average to B+ in Science across a single term at DA. The tutors showed me that exam answers have a structure that can be learned — and I learned it.",
+    pullQuote: "Science exam answers have a learnable structure. Once I knew it, the D average became a B+.",
+    story: "D grades in Science came from knowing the content but not knowing how to express it in exams. At DA the tutors showed me exactly what examiners want to see.\n\nOne term. D to B+. The content knowledge was always there. The expression was the gap.",
+    whyItWorked: [
+      { n: '01', point: 'Exam expression vs. content knowledge', detail: 'Sage knew more than her marks showed. DA addressed the gap between understanding and exam performance directly.' },
+      { n: '02', point: 'Answer structure templates', detail: 'Having a clear template for each question type removed uncertainty that had produced inconsistent responses.' },
+      { n: '03', point: 'One term sufficient', detail: 'When the diagnosis is accurate and the intervention is targeted, rapid improvement is achievable within a single term.' },
+    ],
+    learningFormat: 'Small Group · Year 9 Science',
+    newTags: ['Science', 'Academic Growth'],
+  },
+
+  // PLACEHOLDER pr-75 — Science group
+  {
+    id: 'pr-75',
+    subject: 'Science',
+    category: 'HSC Chemistry',
+    author: 'Phoenix Nguyen',
+    yearLevel: 'Year 12',
+    result: { before: 'Band 3', after: 'Band 5' },
+    outcomes: ['Band 5 Chemistry', 'Organic Chemistry', 'HSC Science'],
+    preview: "Organic Chemistry was the topic that was sinking my HSC Chemistry result. DA turned it from my worst topic to one of my most reliable. Band 3 to Band 5 in the HSC.",
+    pullQuote: "Organic Chemistry went from my worst topic to one of my most reliable.",
+    story: "Organic Chemistry is the topic most students find hardest in HSC Chemistry. At DA my tutor broke it into a logical structure that made the patterns visible.\n\nBand 3 to Band 5 in the HSC. Organic Chemistry was one of my strongest topics by exam day.",
+    whyItWorked: [
+      { n: '01', point: 'Pattern recognition in organic chemistry', detail: 'Teaching Phoenix to see the patterns made memorisation unnecessary and reduced apparent complexity.' },
+      { n: '02', point: 'Weakest topic made a strength', detail: 'Turning the topic most likely to cost band marks into a reliable strength had a disproportionate impact on the result.' },
+      { n: '03', point: 'Systematic approach to mechanisms', detail: 'Understanding why reactions happen — not just that they do — produced the depth Band 5 answers require.' },
+    ],
+    learningFormat: 'Small Group · HSC Chemistry',
+    newTags: ['Science', 'Band 6 Results'],
+  },
+
+  // PLACEHOLDER pr-76 — Science group
+  {
+    id: 'pr-76',
+    subject: 'Science',
+    category: 'HSC Biology',
+    author: 'Sterling Park',
+    yearLevel: 'Year 10',
+    result: { before: 'C+', after: 'A in Biology' },
+    outcomes: ['A Grade Biology', 'HSC Preparation', 'Science Growth'],
+    preview: "I started studying Biology at DA in Year 10 to prepare for the HSC. I ended Year 10 with an A — higher than I'd managed in any science subject before.",
+    pullQuote: "Starting HSC preparation in Year 10 gave me a head start I didn't know I needed.",
+    story: "Starting Biology tuition in Year 10 rather than Year 11 gave me time to build understanding without exam pressure. At DA the foundation I built across Year 10 made the Year 11 content approachable from day one.\n\nYear 10 ended with my strongest science result ever. Year 11 started with confidence.",
+    whyItWorked: [
+      { n: '01', point: 'Pre-HSC preparation across two years', detail: 'Beginning in Year 10 allowed HSC content to be built in a lower-pressure environment.' },
+      { n: '02', point: 'Biology frameworks established early', detail: 'The conceptual frameworks for HSC Biology were understood before Year 11 exam pressure arrived.' },
+      { n: '03', point: 'Confidence entering Year 11', detail: 'Starting Year 11 with already-familiar content is a significant advantage early preparation produces reliably.' },
+    ],
+    learningFormat: 'Small Group · Science',
+    newTags: ['Science', 'Academic Growth'],
+  },
+
+  // PLACEHOLDER pr-77 — Science group
+  {
+    id: 'pr-77',
+    subject: 'Science',
+    category: 'HSC Biology',
+    author: 'Ember Chen',
+    yearLevel: 'Year 11',
+    result: { before: 'Overwhelmed by content volume', after: 'Top of cohort' },
+    outcomes: ['Top of Cohort', 'Biology Excellence', 'Content Mastery'],
+    preview: "Biology has the highest content volume of any HSC science. DA gave me a system for managing that volume — and I topped my cohort at Year 11 end.",
+    pullQuote: "Biology is about managing volume. DA gave me the system to do that, and the rest followed.",
+    story: "HSC Biology requires managing an enormous amount of content. At DA I was given a systematic approach to organising and retaining it that made the volume manageable.\n\nTopping my cohort at Year 11 end came from applying that system consistently across the whole year.",
+    whyItWorked: [
+      { n: '01', point: 'Content management system taught', detail: 'Organising biology by syllabus dot points with built-in retrieval practice transformed the volume from overwhelming to manageable.' },
+      { n: '02', point: 'Active recall over passive re-reading', detail: 'Ember was taught to test herself rather than re-read — producing significantly better retention of high-volume content.' },
+      { n: '03', point: 'Consistent review schedule', detail: 'A structured review cycle ensured content learned at the start of the year remained accessible by the exam.' },
+    ],
+    learningFormat: 'Small Group · HSC Biology',
+    newTags: ['Science', 'Study Habits'],
+  },
+
+  // PLACEHOLDER pr-78 — Science group
+  {
+    id: 'pr-78',
+    subject: 'Science',
+    category: 'HSC Physics',
+    author: 'Cedar Wong',
+    yearLevel: 'Year 12',
+    result: { before: 'Band 4', after: 'Band 6' },
+    outcomes: ['Band 6 Physics', 'Quantum Understanding', 'HSC Science'],
+    preview: "Quantum mechanics in Physics was the topic I was dreading most. DA made it the topic I was most confident in by the HSC. Band 4 to Band 6.",
+    pullQuote: "DA turned quantum mechanics from the thing I was dreading most into my most confident topic.",
+    story: "Quantum mechanics and special relativity are the most conceptually challenging parts of HSC Physics. At DA my tutor spent real time building the conceptual foundation before touching the mathematics.\n\nBand 4 to Band 6 in the HSC. And quantum mechanics was the topic I answered first.",
+    whyItWorked: [
+      { n: '01', point: 'Concepts before formulas', detail: 'Understanding what quantum mechanics is actually saying before learning the equations produced deeper and more durable understanding.' },
+      { n: '02', point: 'Difficult topics given proportionate time', detail: 'Topics generating most exam anxiety received the most preparation time.' },
+      { n: '03', point: 'Hardest topic became most confident', detail: 'When a student\'s weakest area becomes their strongest, the overall effect on performance is disproportionately positive.' },
+    ],
+    learningFormat: 'Small Group · HSC Physics',
+    newTags: ['Science', 'Band 6 Results'],
+  },
+
+  // PLACEHOLDER pr-79 — Science group
+  {
+    id: 'pr-79',
+    subject: 'Science',
+    category: 'Science',
+    author: 'Luna Kim',
+    yearLevel: 'Year 8',
+    result: { before: 'Reluctant', after: 'Science Club member' },
+    outcomes: ['Science Passion', 'Extra-Curricular', 'Confidence'],
+    preview: "I joined Science Club in Year 8 because of the interest DA sparked. I wouldn't have thought to do that before — I barely wanted to attend science class.",
+    pullQuote: "I joined Science Club because of the curiosity DA sparked. That was not on my agenda when I enrolled.",
+    story: "Reluctance toward science was turned into genuine curiosity at DA. My tutor made experiments something I looked forward to rather than survived.\n\nJoining Science Club was my own idea — which means the interest was real, not performed.",
+    whyItWorked: [
+      { n: '01', point: 'Experiments as hooks for understanding', detail: 'Starting with observable phenomena and working back to theory made science feel real, not just a syllabus.' },
+      { n: '02', point: 'Tutor modelled scientific curiosity', detail: 'When teachers demonstrate genuine enthusiasm for their subject, students are influenced by that enthusiasm.' },
+      { n: '03', point: 'Science as community activity', detail: 'Joining Science Club extends learning beyond the classroom and builds connections with like-minded students.' },
+    ],
+    learningFormat: 'Small Group · Year 8 Science',
+    newTags: ['Science', 'Confidence'],
+  },
+
+  // PLACEHOLDER pr-80 — Science group
+  {
+    id: 'pr-80',
+    subject: 'Science',
+    category: 'HSC Science Dual',
+    author: 'Atlas Tran',
+    yearLevel: 'Year 12',
+    result: { before: 'Band 3 Chemistry & Biology', after: 'Band 5 both' },
+    outcomes: ['Band 5 Chemistry & Biology', 'Dual Science', 'HSC Success'],
+    preview: "Two HSC sciences at Band 3 going into the final term. DA helped me lift both to Band 5 by exam day. The tailored support across two subjects in parallel was exceptional.",
+    pullQuote: "Two Band 3s going in. Two Band 5s coming out. DA made both possible simultaneously.",
+    story: "Managing two HSC sciences at Band 3 required a plan I couldn't have built alone. At DA two specialists worked on Chemistry and Biology in parallel.\n\nBoth results moved to Band 5 by the HSC. The coordination between tutors made that possible.",
+    whyItWorked: [
+      { n: '01', point: 'Parallel subject specialists coordinated', detail: 'Two tutors who communicated about Atlas\'s overall workload meant neither subject was advanced at the expense of the other.' },
+      { n: '02', point: 'Shared study strategies across subjects', detail: 'Techniques that worked in Chemistry were adapted for Biology — reducing cognitive load of managing two approaches simultaneously.' },
+      { n: '03', point: 'Final term focused and targeted', detail: 'With limited time remaining, sessions were exclusively HSC-format questions answered in marking-criteria style.' },
+    ],
+    learningFormat: 'Small Group · HSC Science Dual',
+    newTags: ['Science', 'HSC Success'],
+  },
 ];
 
 const REVIEW_TAGS = [
@@ -2689,21 +4085,22 @@ const REVIEW_TAGS = [
   'English', 'Mathematics', 'Science',
 ] as const;
 
-// Explicit filter map — every keyword shows exactly 8 cards.
-// Real reviews: cr-1 through cr-8.
-// Placeholder reviews: pr-01 through pr-22 (replace with verified testimonials).
+// Filter map — every keyword shows exactly 8 unique students.
+// No student appears in more than one filter (except 'All Reviews' which shows the 8 real reviews).
+// Real reviews (cr-1 to cr-8): exclusively in 'All Reviews'.
+// Placeholders (pr-01 to pr-80): each assigned to exactly one filter — replace with verified testimonials.
 const FILTER_MAP: Record<string, string[]> = {
   'All Reviews':    ['cr-1','cr-2','cr-3','cr-4','cr-5','cr-6','cr-7','cr-8'],
-  'Band 6 Results': ['cr-1','cr-2','pr-01','pr-02','pr-05','pr-07','pr-17','pr-20'],
-  'HSC Success':    ['cr-1','cr-5','cr-6','pr-01','pr-02','pr-07','pr-10','pr-17'],
-  'Confidence':     ['cr-2','cr-3','cr-4','cr-6','cr-8','pr-05','pr-11','pr-13'],
-  'Teacher Support':['cr-1','cr-4','cr-7','pr-01','pr-06','pr-08','pr-14','pr-16'],
-  'Study Habits':   ['cr-8','pr-04','pr-07','pr-09','pr-11','pr-15','pr-16','pr-18'],
-  'Academic Growth':['cr-3','cr-4','cr-5','cr-7','pr-09','pr-10','pr-11','pr-13'],
-  'Parent Feedback':['cr-3','cr-8','pr-03','pr-06','pr-09','pr-12','pr-14','pr-16'],
-  'English':        ['cr-1','cr-5','pr-01','pr-05','pr-11','pr-16','pr-17','pr-18'],
-  'Mathematics':    ['cr-2','cr-4','cr-7','pr-02','pr-04','pr-07','pr-09','pr-13'],
-  'Science':        ['pr-03','pr-08','pr-10','pr-15','pr-19','pr-20','pr-21','pr-22'],
+  'Band 6 Results': ['pr-01','pr-02','pr-05','pr-07','pr-15','pr-17','pr-20','pr-23'],
+  'HSC Success':    ['pr-10','pr-12','pr-22','pr-24','pr-25','pr-26','pr-27','pr-28'],
+  'Confidence':     ['pr-04','pr-06','pr-08','pr-11','pr-13','pr-29','pr-30','pr-31'],
+  'Teacher Support':['pr-03','pr-16','pr-32','pr-33','pr-34','pr-35','pr-36','pr-37'],
+  'Study Habits':   ['pr-09','pr-18','pr-19','pr-38','pr-39','pr-40','pr-41','pr-42'],
+  'Academic Growth':['pr-14','pr-21','pr-43','pr-44','pr-45','pr-46','pr-47','pr-48'],
+  'Parent Feedback':['pr-49','pr-50','pr-51','pr-52','pr-53','pr-54','pr-55','pr-56'],
+  'English':        ['pr-57','pr-58','pr-59','pr-60','pr-61','pr-62','pr-63','pr-64'],
+  'Mathematics':    ['pr-65','pr-66','pr-67','pr-68','pr-69','pr-70','pr-71','pr-72'],
+  'Science':        ['pr-73','pr-74','pr-75','pr-76','pr-77','pr-78','pr-79','pr-80'],
 };
 
 type ReviewRecord = typeof CAROUSEL_REVIEWS[0];
@@ -3235,25 +4632,6 @@ const ReviewsSection = () => {
         display: 'flex', alignItems: 'center',
         justifyContent: 'space-between', flexWrap: 'wrap', gap: '24px',
       }}>
-        <div>
-          <div style={{
-            fontFamily: serif, fontWeight: 300,
-            fontSize: 'clamp(1.8rem,3.0vw,2.8rem)',
-            letterSpacing: '-.024em', lineHeight: 1.1,
-            color: C.navy, marginBottom: '10px',
-          }}>
-            450 Five-Star Reviews
-          </div>
-          <p style={{
-            fontFamily: sans, fontWeight: 300,
-            fontSize: 'clamp(.82rem,1.0vw,.92rem)',
-            letterSpacing: '.012em', lineHeight: 1.7,
-            color: 'rgba(10,27,52,0.48)', margin: 0,
-          }}>
-            These are only a few of the stories our families chose to share.
-          </p>
-        </div>
-
         <a
           href="https://www.google.com/maps/place/DA+Tuition/@-33.8717491,150.9282683,17z/data=!4m8!3m7!1s0x6b12bd1e45e49a8b:0x69b2c4a45f28e5a7!8m2!3d-33.8717491!4d150.9282683!9m1!1b1"
           target="_blank"
