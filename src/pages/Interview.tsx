@@ -8,7 +8,6 @@ import FooterNew from '@/components/FooterNew';
 // ─── Palette & typography ──────────────────────────────────────────────────────
 const C = {
   navy:       '#0A1B34',
-  navyDark:   '#060F1E',
   gold:       '#D4AF37',
   cream:      '#F7F4EE',
   creamDeep:  '#EDE5D4',
@@ -19,10 +18,10 @@ const C = {
 } as const;
 const serif = "'Cormorant Garamond', Georgia, serif";
 const sans  = "'DM Sans', 'Inter', sans-serif";
-const wrap: React.CSSProperties = { maxWidth: 860, margin: '0 auto', padding: '0 clamp(20px,4vw,48px)' };
-const wrapWide: React.CSSProperties = { maxWidth: 1100, margin: '0 auto', padding: '0 clamp(20px,4vw,48px)' };
+const wrap: React.CSSProperties        = { maxWidth: 860, margin: '0 auto', padding: '0 clamp(20px,4vw,48px)' };
+const wrapNarrow: React.CSSProperties  = { maxWidth: 660, margin: '0 auto', padding: '0 clamp(20px,4vw,48px)' };
 
-// ─── Selected Conversations ────────────────────────────────────────────────────
+// ─── Conversations ─────────────────────────────────────────────────────────────
 const CONVERSATIONS = [
   {
     n: '01',
@@ -158,248 +157,199 @@ That student not only improved academically but blossomed into a confident, moti
   },
 ];
 
-// ─── Why Families Component ────────────────────────────────────────────────────
-const WHY_CARDS = [
+// ─── Why Some Families ─────────────────────────────────────────────────────────
+const WHY_REASONS = [
   {
-    icon: (
-      <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-        <circle cx="14" cy="14" r="13" stroke="currentColor" strokeWidth="1.2" />
-        <path d="M14 8v7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-        <circle cx="14" cy="19" r="1" fill="currentColor" />
-      </svg>
-    ),
     n: '01',
     h: 'Major Confidence Concerns',
-    b: 'When a child no longer believes in their own ability. These conversations require more than a standard placement meeting — they benefit from the insight and care Amanda brings personally.',
+    b: 'When a child no longer believes in their own ability — and a standard placement meeting will not reach the heart of it.',
   },
   {
-    icon: (
-      <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-        <rect x="1" y="1" width="26" height="26" rx="2" stroke="currentColor" strokeWidth="1.2" />
-        <path d="M7 14h14M7 9h9M7 19h11" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
-      </svg>
-    ),
     n: '02',
     h: 'Significant Learning Gaps',
-    b: "When parents need clarity on the best pathway forward. Amanda's direct involvement helps families understand their options clearly — without the pressure of a standard enrolment process.",
+    b: 'When the family needs to understand, clearly and honestly, what the right path forward looks like.',
   },
   {
-    icon: (
-      <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-        <path d="M14 3L3 10v8l11 7 11-7v-8L14 3z" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round" />
-        <path d="M14 3v17M3 10l11 7 11-7" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round" />
-      </svg>
-    ),
     n: '03',
     h: 'Important Academic Decisions',
-    b: 'Subject selection, acceleration pathways and HSC planning. When the decisions a family makes in the next six months will shape the next six years, it is worth speaking with someone who has navigated these crossroads many times.',
+    b: 'Subject selection, acceleration, HSC strategy — when what is decided now shapes much of what follows.',
   },
   {
-    icon: (
-      <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-        <circle cx="14" cy="10" r="5" stroke="currentColor" strokeWidth="1.2" />
-        <path d="M5 24c0-4.418 4.03-8 9-8s9 3.582 9 8" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
-        <path d="M20 13l2 2 4-4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
-    ),
     n: '04',
     h: 'Complex Learning Situations',
-    b: 'When a deeper understanding is needed before recommending a program. Some students do not fit neatly into an enrolment category. These are the conversations Amanda finds most meaningful.',
+    b: 'Some students do not fit an enrolment category. These are the conversations Amanda finds most meaningful.',
   },
 ];
 
 function WhyFamilies() {
-  const [hovered, setHovered] = useState<number | null>(null);
   return (
-    <section style={{ background: C.creamDeep, padding: 'clamp(80px,10vw,130px) 0' }}>
-      <div style={wrapWide}>
+    <section style={{ background: C.creamDeep, padding: 'clamp(100px,12vw,160px) 0' }}>
+      <div style={wrapNarrow}>
+
         {/* Header */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.6fr', gap: 'clamp(40px,6vw,80px)', alignItems: 'end', marginBottom: 64 }}>
-          <div>
-            <p style={{ fontFamily: sans, fontSize: 9, fontWeight: 700, letterSpacing: '0.26em', color: C.gold, textTransform: 'uppercase' as const, marginBottom: 16 }}>
-              A Considered Conversation
-            </p>
-            <div style={{ width: 32, height: 1, background: C.gold, marginBottom: 20 }} />
-            <h2 style={{ fontFamily: serif, fontSize: 'clamp(28px,4vw,52px)', fontWeight: 400, color: C.navy, lineHeight: 1.08 }}>
-              Why Some Families<br />
-              Meet With Amanda<br />
-              <em style={{ color: C.gold }}>Personally</em>
-            </h2>
-          </div>
-          <div>
-            <p style={{ fontFamily: sans, fontSize: 15, color: C.muted, lineHeight: 1.85, marginBottom: 16 }}>
-              Most families never need a Principal Interview. For those who do, it tends to be one of the most valuable conversations they have.
-            </p>
-            <p style={{ fontFamily: sans, fontSize: 15, color: C.muted, lineHeight: 1.85 }}>
-              The four situations below are the ones Amanda most commonly steps into — not because a standard enrolment is insufficient, but because the situation genuinely calls for something more.
-            </p>
-          </div>
+        <div style={{ marginBottom: 'clamp(64px,8vw,96px)' }}>
+          <p style={{ fontFamily: sans, fontSize: 9, fontWeight: 700, letterSpacing: '0.26em', color: C.gold, textTransform: 'uppercase' as const, marginBottom: 20 }}>
+            A Considered Conversation
+          </p>
+          <h2 style={{ fontFamily: serif, fontSize: 'clamp(32px,5vw,56px)', fontWeight: 400, color: C.navy, lineHeight: 1.08, marginBottom: 28 }}>
+            Why Some Families<br />
+            Meet With Amanda<br />
+            <em style={{ color: C.gold }}>Personally</em>
+          </h2>
+          <p style={{ fontFamily: sans, fontSize: 15, color: C.muted, lineHeight: 1.9 }}>
+            Most families never need this. For those who do, it tends to be one of the most valuable conversations they have.
+          </p>
         </div>
 
-        {/* Cards */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 'clamp(10px,1.5vw,16px)' }}>
-          {WHY_CARDS.map((card, i) => {
-            const isHovered = hovered === i;
-            return (
-              <div
-                key={i}
-                onMouseEnter={() => setHovered(i)}
-                onMouseLeave={() => setHovered(null)}
-                style={{
-                  background: isHovered ? C.navy : C.white,
-                  border: `1px solid ${isHovered ? C.navy : C.navyBorder}`,
-                  borderRadius: 4,
-                  padding: 'clamp(24px,3vw,36px)',
-                  cursor: 'default',
-                  transition: 'background 0.3s ease, border-color 0.3s ease',
-                  display: 'flex', flexDirection: 'column' as const, gap: 0,
-                }}
-              >
-                {/* Icon */}
-                <div style={{
-                  color: isHovered ? C.gold : C.navy,
-                  opacity: isHovered ? 1 : 0.35,
-                  marginBottom: 24,
-                  transition: 'color 0.3s ease, opacity 0.3s ease',
-                }}>
-                  {card.icon}
-                </div>
-
-                {/* Number */}
-                <p style={{
-                  fontFamily: serif, fontSize: 12, fontStyle: 'italic',
-                  color: isHovered ? C.gold : C.muted,
-                  marginBottom: 12,
-                  transition: 'color 0.3s ease',
-                }}>
-                  {card.n}
-                </p>
-
-                {/* Heading */}
-                <h3 style={{
-                  fontFamily: sans, fontSize: 'clamp(14px,1.4vw,16px)', fontWeight: 700,
-                  color: isHovered ? C.white : C.navy,
-                  lineHeight: 1.4, marginBottom: 14,
-                  transition: 'color 0.3s ease',
-                }}>
-                  {card.h}
+        {/* Reasons — typeset list, no cards */}
+        {WHY_REASONS.map((item, i, arr) => (
+          <div
+            key={i}
+            style={{
+              borderTop: `1px solid ${C.navyBorder}`,
+              padding: 'clamp(32px,4vw,52px) 0',
+              ...(i === arr.length - 1 ? { borderBottom: `1px solid ${C.navyBorder}` } : {}),
+            }}
+          >
+            <div style={{ display: 'grid', gridTemplateColumns: '28px 1fr', gap: 28 }}>
+              <span style={{ fontFamily: serif, fontSize: 12, fontStyle: 'italic', color: C.gold, paddingTop: 7, flexShrink: 0 }}>
+                {item.n}
+              </span>
+              <div>
+                <h3 style={{ fontFamily: serif, fontSize: 'clamp(20px,2.5vw,30px)', fontWeight: 400, color: C.navy, lineHeight: 1.15, marginBottom: 12 }}>
+                  {item.h}
                 </h3>
-
-                {/* Divider */}
-                <div style={{
-                  width: isHovered ? 32 : 16, height: 1,
-                  background: isHovered ? C.gold : C.navyBorder,
-                  marginBottom: 16,
-                  transition: 'width 0.3s ease, background 0.3s ease',
-                }} />
-
-                {/* Body */}
-                <p style={{
-                  fontFamily: sans, fontSize: 13,
-                  color: isHovered ? 'rgba(255,255,255,0.60)' : C.muted,
-                  lineHeight: 1.8, flex: 1,
-                  transition: 'color 0.3s ease',
-                }}>
-                  {card.b}
+                <p style={{ fontFamily: sans, fontSize: 14, color: C.muted, lineHeight: 1.85 }}>
+                  {item.b}
                 </p>
               </div>
-            );
-          })}
-        </div>
+            </div>
+          </div>
+        ))}
 
-        {/* Footer note */}
-        <div style={{ marginTop: 48, display: 'flex', alignItems: 'center', gap: 20 }}>
-          <div style={{ height: 1, flex: 1, background: C.navyBorder }} />
-          <p style={{ fontFamily: serif, fontSize: 15, fontStyle: 'italic', color: C.muted, flexShrink: 0 }}>
-            A Principal Interview is not a standard enrolment meeting.
-          </p>
-          <div style={{ height: 1, flex: 1, background: C.navyBorder }} />
-        </div>
       </div>
     </section>
   );
 }
 
+// ─── Accordion item — shared between both conversation lists ───────────────────
+function ConvItem({
+  conv,
+  isOpen,
+  onToggle,
+}: {
+  conv: typeof CONVERSATIONS[0];
+  isOpen: boolean;
+  onToggle: () => void;
+}) {
+  return (
+    <div style={{ borderBottom: `1px solid ${C.navyBorder}` }}>
+      <button
+        onClick={onToggle}
+        style={{ width: '100%', background: 'none', border: 'none', cursor: 'pointer', padding: 'clamp(24px,3vw,36px) 0', display: 'flex', alignItems: 'flex-start', gap: 20, textAlign: 'left' }}
+      >
+        <span style={{ fontFamily: serif, fontSize: 12, fontStyle: 'italic', color: isOpen ? C.gold : 'rgba(10,27,52,0.22)', minWidth: 28, paddingTop: 5, flexShrink: 0 }}>
+          {conv.n}
+        </span>
+        <p style={{ fontFamily: serif, fontSize: 'clamp(17px,2vw,22px)', fontStyle: 'italic', color: C.navy, fontWeight: 400, lineHeight: 1.4, flex: 1 }}>
+          {conv.q}
+        </p>
+        <span style={{ fontFamily: sans, fontSize: 20, color: isOpen ? C.gold : 'rgba(10,27,52,0.22)', fontWeight: 300, flexShrink: 0, lineHeight: 1 }}>
+          {isOpen ? '×' : '+'}
+        </span>
+      </button>
+
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.35 }}
+            style={{ overflow: 'hidden' }}
+          >
+            <div style={{ paddingBottom: 44, paddingLeft: 48 }}>
+              {conv.a.split('\n\n').map((para, pi, all) => (
+                <p key={pi} style={{ fontFamily: sans, fontSize: 14, color: C.muted, lineHeight: 1.9, marginBottom: pi < all.length - 1 ? 18 : 0 }}>
+                  {para}
+                </p>
+              ))}
+              {conv.pull && (
+                <div style={{ marginTop: 32, paddingLeft: 20, borderLeft: `2px solid ${C.goldBorder}` }}>
+                  <p style={{ fontFamily: serif, fontSize: 'clamp(18px,2.2vw,24px)', fontStyle: 'italic', color: C.navy, lineHeight: 1.55 }}>
+                    "{conv.pull}"
+                  </p>
+                </div>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
 // ─── Page ──────────────────────────────────────────────────────────────────────
 const Interview: React.FC = () => {
-  const [open, setOpen] = useState<number | null>(null);
+  const [open, setOpen]               = useState<number | null>(null);
   const [moreExpanded, setMoreExpanded] = useState(false);
-  const [moreOpen, setMoreOpen] = useState<number | null>(null);
+  const [moreOpen, setMoreOpen]       = useState<number | null>(null);
 
   return (
     <div className="min-h-screen" style={{ background: C.cream }}>
       <SEO
         title="A Conversation With Amanda — DA Tuition"
-        description="Founder and Principal of DA Tuition. Speaking directly with Amanda is rare — reserved for families who require deeper educational guidance."
+        description="Founder and Principal of DA Tuition. Speaking directly with Amanda is reserved for families who require deeper educational guidance."
         canonicalUrl="/interview"
       />
       <NavigationNew />
 
       {/* ── 1. Hero ──────────────────────────────────────────────────────────── */}
       <section style={{ background: C.navy, minHeight: '100vh', display: 'flex', alignItems: 'center', position: 'relative', overflow: 'hidden' }}>
-        {/* Decorative ruled lines */}
+        {/* Subtle ruled lines */}
         <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
-          <div style={{ position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', width: 1, height: '100%', background: 'rgba(212,175,55,0.06)' }} />
-          <div style={{ position: 'absolute', top: '50%', left: 0, width: '100%', height: 1, background: 'rgba(212,175,55,0.04)' }} />
-          <div style={{ position: 'absolute', bottom: 60, left: 0, width: '100%', height: 1, background: 'rgba(212,175,55,0.06)' }} />
-          <div style={{ position: 'absolute', top: 60, left: 0, width: '100%', height: 1, background: 'rgba(212,175,55,0.06)' }} />
+          <div style={{ position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', width: 1, height: '100%', background: 'rgba(212,175,55,0.05)' }} />
+          <div style={{ position: 'absolute', top: 60, left: 0, width: '100%', height: 1, background: 'rgba(212,175,55,0.05)' }} />
+          <div style={{ position: 'absolute', bottom: 60, left: 0, width: '100%', height: 1, background: 'rgba(212,175,55,0.05)' }} />
         </div>
 
         <div style={{ width: '100%', padding: 'clamp(120px,14vw,160px) clamp(24px,6vw,80px) clamp(100px,12vw,140px)' }}>
-          <div style={{ maxWidth: 1100, margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1px 1fr', gap: 0, alignItems: 'center' }}>
+          <div style={{ maxWidth: 1100, margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1px 1fr', alignItems: 'center' }}>
 
-            {/* Left — identity */}
+            {/* Left */}
             <div style={{ paddingRight: 'clamp(40px,6vw,80px)' }}>
               <p style={{ fontFamily: sans, fontSize: 9, fontWeight: 700, letterSpacing: '0.28em', color: C.gold, textTransform: 'uppercase' as const, marginBottom: 32 }}>
                 The Principal Interview
               </p>
-              <h1 style={{ fontFamily: serif, fontSize: 'clamp(44px,6vw,84px)', fontWeight: 400, color: C.white, lineHeight: 1.04, marginBottom: 0 }}>
+              <h1 style={{ fontFamily: serif, fontSize: 'clamp(44px,6vw,84px)', fontWeight: 400, color: C.white, lineHeight: 1.04 }}>
                 A Conversation<br />
                 With Our<br />
                 <em style={{ color: C.gold }}>Founder.</em>
               </h1>
             </div>
 
-            {/* Vertical divider */}
-            <div style={{ width: 1, alignSelf: 'stretch', background: 'rgba(212,175,55,0.14)', margin: '0' }} />
+            {/* Gold hairline divider */}
+            <div style={{ width: 1, alignSelf: 'stretch', background: 'rgba(212,175,55,0.14)' }} />
 
-            {/* Right — context + CTAs */}
+            {/* Right */}
             <div style={{ paddingLeft: 'clamp(40px,6vw,80px)' }}>
-              <p style={{ fontFamily: sans, fontSize: 15, color: 'rgba(255,255,255,0.60)', lineHeight: 1.85, marginBottom: 12 }}>
+              <p style={{ fontFamily: sans, fontSize: 15, color: 'rgba(255,255,255,0.58)', lineHeight: 1.9, marginBottom: 14 }}>
                 Most families begin with our enrolment team.
               </p>
-              <p style={{ fontFamily: sans, fontSize: 15, color: 'rgba(255,255,255,0.42)', lineHeight: 1.85, marginBottom: 48 }}>
+              <p style={{ fontFamily: sans, fontSize: 15, color: 'rgba(255,255,255,0.38)', lineHeight: 1.9, marginBottom: 52 }}>
                 Occasionally, Amanda personally meets with families when deeper educational guidance is required.
               </p>
-
               <div style={{ display: 'flex', flexDirection: 'column' as const, gap: 12, alignItems: 'flex-start' }}>
                 <a href="#request">
-                  <button style={{
-                    padding: '14px 32px',
-                    background: C.gold, color: C.navy,
-                    fontFamily: sans, fontSize: 11, fontWeight: 700, letterSpacing: '0.10em',
-                    textTransform: 'uppercase' as const, border: 'none', borderRadius: 2, cursor: 'pointer',
-                  }}>
+                  <button style={{ padding: '14px 32px', background: C.gold, color: C.navy, fontFamily: sans, fontSize: 11, fontWeight: 700, letterSpacing: '0.10em', textTransform: 'uppercase' as const, border: 'none', borderRadius: 2, cursor: 'pointer' }}>
                     Request A Principal Interview
                   </button>
                 </a>
                 <a href="#amanda">
-                  <button style={{
-                    padding: '14px 32px',
-                    background: 'transparent', color: 'rgba(255,255,255,0.55)',
-                    fontFamily: sans, fontSize: 11, fontWeight: 600, letterSpacing: '0.10em',
-                    textTransform: 'uppercase' as const,
-                    border: '1px solid rgba(255,255,255,0.15)', borderRadius: 2, cursor: 'pointer',
-                  }}>
+                  <button style={{ padding: '14px 32px', background: 'transparent', color: 'rgba(255,255,255,0.45)', fontFamily: sans, fontSize: 11, fontWeight: 600, letterSpacing: '0.10em', textTransform: 'uppercase' as const, border: '1px solid rgba(255,255,255,0.14)', borderRadius: 2, cursor: 'pointer' }}>
                     Meet Amanda
                   </button>
                 </a>
-              </div>
-
-              <div style={{ marginTop: 48, paddingTop: 32, borderTop: '1px solid rgba(255,255,255,0.07)' }}>
-                <p style={{ fontFamily: sans, fontSize: 11, color: 'rgba(255,255,255,0.22)', letterSpacing: '0.08em', lineHeight: 1.7 }}>
-                  DA Tuition · Canley Heights · Founded 2005<br />20+ Years · 650+ Students
-                </p>
               </div>
             </div>
 
@@ -407,23 +357,21 @@ const Interview: React.FC = () => {
         </div>
       </section>
 
-      {/* ── 2. Founder Profile ───────────────────────────────────────────────── */}
+      {/* ── 2. Founder ───────────────────────────────────────────────────────── */}
       <section id="amanda" style={{ background: C.cream }}>
         <div style={{ maxWidth: 1300, margin: '0 auto', display: 'grid', gridTemplateColumns: '420px 1fr' }}>
 
-          {/* Left — portrait */}
-          <div style={{ position: 'relative', minHeight: 680 }}>
+          {/* Portrait */}
+          <div style={{ position: 'relative', minHeight: 720 }}>
             <img
               src="/images/v3/smiling_teacher.jpg"
               alt="Amanda Le — Founder and Principal, DA Tuition"
               style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top center' }}
             />
-            {/* Gradient overlay at bottom for name plate */}
-            <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '45%', background: 'linear-gradient(to top, rgba(10,27,52,0.92) 0%, transparent 100%)' }} />
-            {/* Name plate */}
-            <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: 'clamp(24px,3vw,40px)' }}>
-              <div style={{ width: 28, height: 1, background: C.gold, marginBottom: 12 }} />
-              <p style={{ fontFamily: serif, fontSize: 'clamp(22px,2.5vw,30px)', fontWeight: 400, color: C.white, lineHeight: 1.2, marginBottom: 4 }}>
+            <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '50%', background: 'linear-gradient(to top, rgba(10,27,52,0.94) 0%, transparent 100%)' }} />
+            <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: 'clamp(24px,3vw,44px)' }}>
+              <div style={{ width: 28, height: 1, background: C.gold, marginBottom: 14 }} />
+              <p style={{ fontFamily: serif, fontSize: 'clamp(22px,2.5vw,32px)', fontWeight: 400, color: C.white, lineHeight: 1.2, marginBottom: 6 }}>
                 Amanda Le
               </p>
               <p style={{ fontFamily: sans, fontSize: 10, fontWeight: 700, letterSpacing: '0.18em', color: C.gold, textTransform: 'uppercase' as const }}>
@@ -432,54 +380,44 @@ const Interview: React.FC = () => {
             </div>
           </div>
 
-          {/* Right — biography */}
-          <div style={{ padding: 'clamp(52px,7vw,96px) clamp(40px,5vw,80px)', display: 'flex', flexDirection: 'column' as const, justifyContent: 'center' }}>
+          {/* Biography */}
+          <div style={{ padding: 'clamp(64px,8vw,120px) clamp(40px,5vw,80px)', display: 'flex', flexDirection: 'column' as const, justifyContent: 'center' }}>
 
-            {/* Eyebrow */}
-            <p style={{ fontFamily: sans, fontSize: 9, fontWeight: 700, letterSpacing: '0.26em', color: C.gold, textTransform: 'uppercase' as const, marginBottom: 20 }}>
-              Founder Profile
-            </p>
-
-            {/* Name & title */}
-            <h2 style={{ fontFamily: serif, fontSize: 'clamp(36px,5vw,64px)', fontWeight: 400, color: C.navy, lineHeight: 1.06, marginBottom: 28 }}>
+            <h2 style={{ fontFamily: serif, fontSize: 'clamp(36px,5vw,64px)', fontWeight: 400, color: C.navy, lineHeight: 1.06, marginBottom: 8 }}>
               Amanda Le
             </h2>
-            <p style={{ fontFamily: sans, fontSize: 12, fontWeight: 700, letterSpacing: '0.14em', color: C.muted, textTransform: 'uppercase' as const, marginBottom: 36 }}>
+            <p style={{ fontFamily: sans, fontSize: 11, fontWeight: 700, letterSpacing: '0.14em', color: C.muted, textTransform: 'uppercase' as const, marginBottom: 48 }}>
               Founder & Principal — DA Tuition
             </p>
 
             {/* Credentials */}
-            <div style={{ display: 'flex', flexDirection: 'column' as const, gap: 14, marginBottom: 44, paddingBottom: 44, borderBottom: `1px solid ${C.navyBorder}` }}>
+            <div style={{ display: 'flex', flexDirection: 'column' as const, gap: 16, marginBottom: 56, paddingBottom: 56, borderBottom: `1px solid ${C.navyBorder}` }}>
               {[
-                ['20+ Years', 'In education — teaching, mentoring and leading'],
-                ['Founder', 'Established DA Tuition in 2005 in Canley Heights, NSW'],
-                ['650+ Students', 'Families served across Western Sydney since founding'],
+                ['20+ Years',        'In education — teaching, mentoring and leading'],
+                ['Founder',          'Established DA Tuition in 2005, Canley Heights NSW'],
+                ['650+ Students',    'Families guided across Western Sydney since founding'],
                 ['Award Recognised', 'Outstanding Education Service — Fairfield City Business Awards 2025'],
               ].map(([label, detail]) => (
-                <div key={label} style={{ display: 'grid', gridTemplateColumns: '100px 1fr', gap: 16, alignItems: 'baseline' }}>
+                <div key={label} style={{ display: 'grid', gridTemplateColumns: '108px 1fr', gap: 16, alignItems: 'baseline' }}>
                   <p style={{ fontFamily: sans, fontSize: 11, fontWeight: 700, color: C.navy }}>{label}</p>
-                  <p style={{ fontFamily: sans, fontSize: 13, color: C.muted, lineHeight: 1.6 }}>{detail}</p>
+                  <p style={{ fontFamily: sans, fontSize: 13, color: C.muted, lineHeight: 1.65 }}>{detail}</p>
                 </div>
               ))}
             </div>
 
             {/* Philosophy */}
-            <div style={{ marginBottom: 44 }}>
-              <p style={{ fontFamily: sans, fontSize: 9, fontWeight: 700, letterSpacing: '0.20em', color: C.gold, textTransform: 'uppercase' as const, marginBottom: 14 }}>
-                Personal Philosophy
-              </p>
-              <p style={{ fontFamily: sans, fontSize: 14, color: C.muted, lineHeight: 1.85, marginBottom: 14 }}>
+            <div style={{ marginBottom: 56 }}>
+              <p style={{ fontFamily: sans, fontSize: 14, color: C.muted, lineHeight: 1.9, marginBottom: 18 }}>
                 Amanda founded DA Tuition with a single conviction: most tutoring centres were solving the wrong problem. They focused on content delivery. She wanted to focus on the student.
               </p>
-              <p style={{ fontFamily: sans, fontSize: 14, color: C.muted, lineHeight: 1.85 }}>
+              <p style={{ fontFamily: sans, fontSize: 14, color: C.muted, lineHeight: 1.9 }}>
                 DA grew from that belief — a school that assesses before recommending, matches teachers deliberately, and measures success not in marks alone, but in the confidence a student carries into an examination room.
               </p>
             </div>
 
             {/* Pull quote */}
-            <div style={{ position: 'relative', paddingLeft: 28 }}>
-              <div style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: 2, background: C.gold, borderRadius: 1 }} />
-              <p style={{ fontFamily: serif, fontSize: 'clamp(18px,2.2vw,26px)', fontStyle: 'italic', color: C.navy, lineHeight: 1.5, marginBottom: 16 }}>
+            <div style={{ paddingLeft: 28, borderLeft: `2px solid ${C.gold}` }}>
+              <p style={{ fontFamily: serif, fontSize: 'clamp(20px,2.5vw,28px)', fontStyle: 'italic', color: C.navy, lineHeight: 1.55, marginBottom: 16 }}>
                 "Every child deserves to feel seen, valued and capable of achieving their fullest potential."
               </p>
               <p style={{ fontFamily: sans, fontSize: 10, fontWeight: 700, letterSpacing: '0.14em', color: C.gold, textTransform: 'uppercase' as const }}>
@@ -494,80 +432,44 @@ const Interview: React.FC = () => {
       {/* ── 3. Why Some Families ─────────────────────────────────────────────── */}
       <WhyFamilies />
 
-      {/* ── 4. Selected Conversations ────────────────────────────────────────── */}
-      <section style={{ background: C.cream, padding: 'clamp(80px,10vw,130px) 0' }}>
-        <div style={wrap}>
-          <div style={{ marginBottom: 56 }}>
-            <p style={{ fontFamily: sans, fontSize: 10, fontWeight: 700, letterSpacing: '0.22em', color: C.gold, textTransform: 'uppercase', marginBottom: 12 }}>
-              Selected Conversations
+      {/* ── 4. In Conversation ───────────────────────────────────────────────── */}
+      <section style={{ background: C.cream, padding: 'clamp(100px,12vw,160px) 0' }}>
+        <div style={wrapNarrow}>
+
+          {/* Header */}
+          <div style={{ marginBottom: 'clamp(56px,7vw,80px)' }}>
+            <p style={{ fontFamily: sans, fontSize: 9, fontWeight: 700, letterSpacing: '0.26em', color: C.gold, textTransform: 'uppercase' as const, marginBottom: 20 }}>
+              In Conversation
             </p>
-            <div style={{ width: 32, height: 1, background: C.gold, marginBottom: 20 }} />
-            <h2 style={{ fontFamily: serif, fontSize: 'clamp(28px,4vw,48px)', fontWeight: 400, color: C.navy, lineHeight: 1.15, marginBottom: 16 }}>
-              Five Questions.<br />
-              <em style={{ color: C.gold }}>Her Own Words.</em>
+            <div style={{ width: 32, height: 1, background: C.gold, marginBottom: 28 }} />
+            <h2 style={{ fontFamily: serif, fontSize: 'clamp(36px,5vw,64px)', fontWeight: 400, color: C.navy, lineHeight: 1.06 }}>
+              Amanda Le
             </h2>
-            <p style={{ fontFamily: sans, fontSize: 14, color: C.muted, lineHeight: 1.75 }}>
-              From a longer conversation. Selected for what they reveal about how Amanda thinks.
-            </p>
           </div>
 
+          {/* Five conversations */}
           <div style={{ borderTop: `1px solid ${C.navyBorder}` }}>
             {CONVERSATIONS.map((conv, i) => (
-              <div key={i} style={{ borderBottom: `1px solid ${C.navyBorder}` }}>
-                <button
-                  onClick={() => setOpen(open === i ? null : i)}
-                  style={{ width: '100%', background: 'none', border: 'none', cursor: 'pointer', padding: 'clamp(20px,3vw,28px) 0', display: 'flex', alignItems: 'flex-start', gap: 20, textAlign: 'left' }}
-                >
-                  <span style={{ fontFamily: serif, fontSize: 13, color: open === i ? C.gold : C.muted, fontStyle: 'italic', minWidth: 28, paddingTop: 3, flexShrink: 0 }}>{conv.n}</span>
-                  <p style={{ fontFamily: serif, fontSize: 'clamp(16px,2vw,20px)', fontStyle: 'italic', color: C.navy, fontWeight: 400, lineHeight: 1.4, flex: 1 }}>
-                    {conv.q}
-                  </p>
-                  <span style={{ fontFamily: sans, fontSize: 20, color: open === i ? C.gold : C.muted, fontWeight: 300, flexShrink: 0, lineHeight: 1 }}>
-                    {open === i ? '×' : '+'}
-                  </span>
-                </button>
-
-                <AnimatePresence>
-                  {open === i && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: 'auto', opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.3 }}
-                      style={{ overflow: 'hidden' }}
-                    >
-                      <div style={{ paddingBottom: 36, paddingLeft: 48 }}>
-                        {conv.a.split('\n\n').map((para, pi) => (
-                          <p key={pi} style={{ fontFamily: sans, fontSize: 14, color: C.muted, lineHeight: 1.85, marginBottom: pi < conv.a.split('\n\n').length - 1 ? 16 : 0 }}>
-                            {para}
-                          </p>
-                        ))}
-                        {conv.pull && (
-                          <div style={{ marginTop: 28, paddingLeft: 20, borderLeft: `2px solid ${C.goldBorder}` }}>
-                            <p style={{ fontFamily: serif, fontSize: 'clamp(17px,2vw,22px)', fontStyle: 'italic', color: C.navy, lineHeight: 1.5 }}>
-                              "{conv.pull}"
-                            </p>
-                          </div>
-                        )}
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
+              <ConvItem
+                key={i}
+                conv={conv}
+                isOpen={open === i}
+                onToggle={() => setOpen(open === i ? null : i)}
+              />
             ))}
           </div>
 
-          {/* ── More Conversations ─────────────────────────────────────────────── */}
-          <div style={{ marginTop: 48 }}>
+          {/* More Conversations — collapsed by default */}
+          <div style={{ marginTop: 52 }}>
             <button
               onClick={() => { setMoreExpanded(!moreExpanded); setMoreOpen(null); }}
-              style={{ display: 'flex', alignItems: 'center', gap: 16, background: 'none', border: 'none', cursor: 'pointer', padding: '16px 0', width: '100%' }}
+              style={{ display: 'flex', alignItems: 'center', gap: 20, background: 'none', border: 'none', cursor: 'pointer', padding: '20px 0', width: '100%' }}
             >
               <div style={{ flex: 1, height: 1, background: C.navyBorder }} />
-              <p style={{ fontFamily: sans, fontSize: 11, fontWeight: 700, letterSpacing: '0.18em', color: moreExpanded ? C.gold : C.muted, textTransform: 'uppercase', whiteSpace: 'nowrap', flexShrink: 0 }}>
+              <p style={{ fontFamily: sans, fontSize: 10, fontWeight: 700, letterSpacing: '0.20em', color: moreExpanded ? C.gold : 'rgba(10,27,52,0.32)', textTransform: 'uppercase' as const, whiteSpace: 'nowrap', flexShrink: 0 }}>
                 {moreExpanded ? 'Close' : 'More Conversations With Amanda'}
               </p>
-              <span style={{ fontFamily: sans, fontSize: 18, color: moreExpanded ? C.gold : C.muted, fontWeight: 300, flexShrink: 0 }}>
+              <span style={{ fontFamily: sans, fontSize: 18, color: moreExpanded ? C.gold : 'rgba(10,27,52,0.32)', fontWeight: 300, flexShrink: 0 }}>
                 {moreExpanded ? '×' : '+'}
               </span>
               <div style={{ flex: 1, height: 1, background: C.navyBorder }} />
@@ -584,47 +486,12 @@ const Interview: React.FC = () => {
                 >
                   <div style={{ borderTop: `1px solid ${C.navyBorder}`, marginTop: 8 }}>
                     {MORE_CONVERSATIONS.map((conv, i) => (
-                      <div key={i} style={{ borderBottom: `1px solid ${C.navyBorder}` }}>
-                        <button
-                          onClick={() => setMoreOpen(moreOpen === i ? null : i)}
-                          style={{ width: '100%', background: 'none', border: 'none', cursor: 'pointer', padding: 'clamp(20px,3vw,28px) 0', display: 'flex', alignItems: 'flex-start', gap: 20, textAlign: 'left' }}
-                        >
-                          <span style={{ fontFamily: serif, fontSize: 13, color: moreOpen === i ? C.gold : C.muted, fontStyle: 'italic', minWidth: 28, paddingTop: 3, flexShrink: 0 }}>{conv.n}</span>
-                          <p style={{ fontFamily: serif, fontSize: 'clamp(16px,2vw,20px)', fontStyle: 'italic', color: C.navy, fontWeight: 400, lineHeight: 1.4, flex: 1 }}>
-                            {conv.q}
-                          </p>
-                          <span style={{ fontFamily: sans, fontSize: 20, color: moreOpen === i ? C.gold : C.muted, fontWeight: 300, flexShrink: 0, lineHeight: 1 }}>
-                            {moreOpen === i ? '×' : '+'}
-                          </span>
-                        </button>
-
-                        <AnimatePresence>
-                          {moreOpen === i && (
-                            <motion.div
-                              initial={{ height: 0, opacity: 0 }}
-                              animate={{ height: 'auto', opacity: 1 }}
-                              exit={{ height: 0, opacity: 0 }}
-                              transition={{ duration: 0.3 }}
-                              style={{ overflow: 'hidden' }}
-                            >
-                              <div style={{ paddingBottom: 36, paddingLeft: 48 }}>
-                                {conv.a.split('\n\n').map((para, pi) => (
-                                  <p key={pi} style={{ fontFamily: sans, fontSize: 14, color: C.muted, lineHeight: 1.85, marginBottom: pi < conv.a.split('\n\n').length - 1 ? 16 : 0 }}>
-                                    {para}
-                                  </p>
-                                ))}
-                                {conv.pull && (
-                                  <div style={{ marginTop: 28, paddingLeft: 20, borderLeft: `2px solid ${C.goldBorder}` }}>
-                                    <p style={{ fontFamily: serif, fontSize: 'clamp(17px,2vw,22px)', fontStyle: 'italic', color: C.navy, lineHeight: 1.5 }}>
-                                      "{conv.pull}"
-                                    </p>
-                                  </div>
-                                )}
-                              </div>
-                            </motion.div>
-                          )}
-                        </AnimatePresence>
-                      </div>
+                      <ConvItem
+                        key={i}
+                        conv={conv}
+                        isOpen={moreOpen === i}
+                        onToggle={() => setMoreOpen(moreOpen === i ? null : i)}
+                      />
                     ))}
                   </div>
                 </motion.div>
@@ -636,160 +503,112 @@ const Interview: React.FC = () => {
       </section>
 
       {/* ── 5. What Happens During A Principal Interview ──────────────────────── */}
-      <section style={{ background: C.navy, padding: 'clamp(80px,10vw,130px) 0', position: 'relative', overflow: 'hidden' }}>
-        {/* Decorative ruled lines */}
-        <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
-          {[...Array(6)].map((_, i) => (
-            <div key={i} style={{ position: 'absolute', top: `${10 + i * 16}%`, left: 0, right: 0, height: 1, background: 'rgba(212,175,55,0.04)' }} />
-          ))}
-        </div>
+      <section style={{ background: C.navy, padding: 'clamp(100px,12vw,160px) 0', position: 'relative', overflow: 'hidden' }}>
+        {/* Single faint spine accent */}
+        <div style={{ position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', width: 1, height: '100%', background: 'rgba(212,175,55,0.04)', pointerEvents: 'none' }} />
 
-        <div style={wrap}>
+        <div style={wrapNarrow}>
+
           {/* Header */}
-          <div style={{ marginBottom: 'clamp(56px,8vw,96px)', textAlign: 'center' }}>
-            <p style={{ fontFamily: sans, fontSize: 10, fontWeight: 700, letterSpacing: '0.22em', color: C.gold, textTransform: 'uppercase' as const, marginBottom: 14 }}>
+          <div style={{ marginBottom: 'clamp(72px,10vw,120px)', textAlign: 'center' }}>
+            <p style={{ fontFamily: sans, fontSize: 9, fontWeight: 700, letterSpacing: '0.26em', color: C.gold, textTransform: 'uppercase' as const, marginBottom: 20 }}>
               The Process
             </p>
-            <div style={{ width: 32, height: 1, background: C.gold, margin: '0 auto 24px' }} />
-            <h2 style={{ fontFamily: serif, fontSize: 'clamp(28px,4vw,52px)', fontWeight: 400, color: C.white, lineHeight: 1.12 }}>
+            <div style={{ width: 32, height: 1, background: C.gold, margin: '0 auto 28px' }} />
+            <h2 style={{ fontFamily: serif, fontSize: 'clamp(28px,4vw,52px)', fontWeight: 400, color: C.white, lineHeight: 1.1 }}>
               What Happens During<br />
               <em style={{ color: C.gold }}>A Principal Interview?</em>
             </h2>
           </div>
 
-          {/* Vertical Journey */}
-          <div style={{ position: 'relative', maxWidth: 600, margin: '0 auto' }}>
-            {/* Continuous spine line */}
-            <div style={{ position: 'absolute', left: 19, top: 28, bottom: 28, width: 1, background: 'linear-gradient(180deg, rgba(212,175,55,0.6) 0%, rgba(212,175,55,0.15) 100%)' }} />
+          {/* Steps — titles only, let the words carry the weight */}
+          <div style={{ position: 'relative', maxWidth: 460, margin: '0 auto' }}>
+            {/* Fading spine */}
+            <div style={{ position: 'absolute', left: 19, top: 20, bottom: 20, width: 1, background: 'linear-gradient(180deg, rgba(212,175,55,0.45) 0%, rgba(212,175,55,0.08) 100%)' }} />
 
             {[
-              { n: '01', title: 'Understand Your Child', desc: 'Amanda begins by listening — to you, and to what you share about your child. No agenda. No assumptions.' },
-              { n: '02', title: 'Discuss Strengths & Challenges', desc: 'Together, you explore what your child does well and where they are finding it difficult, academically and emotionally.' },
-              { n: '03', title: 'Explore Goals', desc: 'Short-term targets and longer-term aspirations are considered side by side — what matters to your family, not a generic outcome.' },
-              { n: '04', title: 'Review Suitable Pathways', desc: 'Amanda walks you through the options that genuinely fit your child\'s profile. She does not present everything — only what is relevant.' },
-              { n: '05', title: 'Receive Honest Recommendations', desc: 'You receive a direct, considered view. If DA is the right environment, she will say so. If it is not, she will say that too.' },
-              { n: '06', title: 'Plan The Next Steps', desc: 'The conversation closes with a clear path forward — whether that is enrolment, further assessment, or simply knowing what to do next.' },
-            ].map((step, i, arr) => (
-              <div key={i} style={{ display: 'flex', gap: 32, marginBottom: i < arr.length - 1 ? 48 : 0, position: 'relative' }}>
+              'Understand Your Child',
+              'Discuss Strengths & Challenges',
+              'Explore Goals',
+              'Review Suitable Pathways',
+              'Receive Honest Recommendations',
+              'Plan The Next Steps',
+            ].map((title, i, arr) => (
+              <div key={i} style={{ display: 'flex', gap: 32, marginBottom: i < arr.length - 1 ? 56 : 0 }}>
                 {/* Node */}
-                <div style={{ flexShrink: 0, width: 40, display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: 4 }}>
-                  <div style={{
-                    width: 40, height: 40, borderRadius: '50%',
-                    border: `1px solid rgba(212,175,55,0.55)`,
-                    background: 'rgba(212,175,55,0.07)',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    flexShrink: 0,
-                  }}>
-                    <span style={{ fontFamily: serif, fontSize: 12, fontStyle: 'italic', color: C.gold }}>{step.n}</span>
-                  </div>
+                <div style={{ flexShrink: 0, width: 40, height: 40, borderRadius: '50%', border: '1px solid rgba(212,175,55,0.30)', background: 'rgba(212,175,55,0.04)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <span style={{ fontFamily: serif, fontSize: 11, fontStyle: 'italic', color: 'rgba(212,175,55,0.60)' }}>
+                    {String(i + 1).padStart(2, '0')}
+                  </span>
                 </div>
-
-                {/* Content */}
-                <div style={{ paddingTop: 8, paddingBottom: 4 }}>
-                  <p style={{ fontFamily: serif, fontSize: 'clamp(18px,2.2vw,24px)', fontWeight: 400, color: C.white, lineHeight: 1.2, marginBottom: 10 }}>
-                    {step.title}
-                  </p>
-                  <p style={{ fontFamily: sans, fontSize: 13, color: 'rgba(247,244,238,0.52)', lineHeight: 1.8 }}>
-                    {step.desc}
+                {/* Title */}
+                <div style={{ paddingTop: 10 }}>
+                  <p style={{ fontFamily: serif, fontSize: 'clamp(20px,2.5vw,26px)', fontWeight: 400, color: C.white, lineHeight: 1.2 }}>
+                    {title}
                   </p>
                 </div>
               </div>
             ))}
           </div>
 
-          {/* Final statement */}
-          <div style={{ marginTop: 'clamp(64px,9vw,104px)', textAlign: 'center' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 24, justifyContent: 'center', marginBottom: 28 }}>
-              <div style={{ flex: 1, maxWidth: 80, height: 1, background: 'rgba(212,175,55,0.3)' }} />
-              <div style={{ width: 6, height: 6, borderRadius: '50%', background: C.gold, opacity: 0.6 }} />
-              <div style={{ flex: 1, maxWidth: 80, height: 1, background: 'rgba(212,175,55,0.3)' }} />
+          {/* Closing statement */}
+          <div style={{ marginTop: 'clamp(80px,10vw,120px)', textAlign: 'center' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 20, justifyContent: 'center', marginBottom: 40 }}>
+              <div style={{ flex: 1, maxWidth: 64, height: 1, background: 'rgba(212,175,55,0.22)' }} />
+              <div style={{ width: 4, height: 4, borderRadius: '50%', background: 'rgba(212,175,55,0.45)' }} />
+              <div style={{ flex: 1, maxWidth: 64, height: 1, background: 'rgba(212,175,55,0.22)' }} />
             </div>
-            <p style={{ fontFamily: serif, fontSize: 'clamp(22px,3vw,38px)', fontWeight: 400, color: C.white, lineHeight: 1.3 }}>
+            <p style={{ fontFamily: serif, fontSize: 'clamp(24px,3.5vw,42px)', fontWeight: 400, color: C.white, lineHeight: 1.25 }}>
               This is not an assessment.
             </p>
-            <p style={{ fontFamily: serif, fontSize: 'clamp(22px,3vw,38px)', fontWeight: 400, fontStyle: 'italic', color: C.gold, lineHeight: 1.3, marginTop: 6 }}>
+            <p style={{ fontFamily: serif, fontSize: 'clamp(24px,3.5vw,42px)', fontWeight: 400, fontStyle: 'italic', color: C.gold, lineHeight: 1.25, marginTop: 8 }}>
               It is a conversation.
             </p>
           </div>
+
         </div>
       </section>
 
-      {/* ── 6. Request A Principal Interview ─────────────────────────────────── */}
-      <section id="request" style={{ background: C.creamDeep, padding: 'clamp(80px,10vw,130px) 0' }}>
-        <div style={wrap}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'clamp(40px,6vw,80px)', alignItems: 'start' }}>
-            <div>
-              <p style={{ fontFamily: sans, fontSize: 10, fontWeight: 700, letterSpacing: '0.22em', color: C.gold, textTransform: 'uppercase', marginBottom: 12 }}>
-                Request An Interview
-              </p>
-              <div style={{ width: 32, height: 1, background: C.gold, marginBottom: 20 }} />
-              <h2 style={{ fontFamily: serif, fontSize: 'clamp(26px,3.5vw,42px)', fontWeight: 400, color: C.navy, lineHeight: 1.15, marginBottom: 20 }}>
-                Speak Directly<br />
-                <em style={{ color: C.gold }}>With Amanda.</em>
-              </h2>
-              <p style={{ fontFamily: sans, fontSize: 14, color: C.muted, lineHeight: 1.8, marginBottom: 20 }}>
-                A Principal Interview is a private conversation — not a sales call. Amanda does not pitch programs or push enrolment. She listens, asks questions, and tells you honestly what she thinks.
-              </p>
-              <p style={{ fontFamily: sans, fontSize: 14, color: C.muted, lineHeight: 1.8 }}>
-                If DA is right for your child, she will say so. If it isn't, she will say that too.
-              </p>
-            </div>
-
-            <div style={{ background: C.navy, borderRadius: 4, padding: 'clamp(32px,4vw,48px)' }}>
-              <p style={{ fontFamily: sans, fontSize: 10, fontWeight: 700, letterSpacing: '0.18em', color: C.gold, textTransform: 'uppercase', marginBottom: 24 }}>
-                What to expect
-              </p>
-              {[
-                ['A private conversation', '30–45 minutes, no audience'],
-                ['No obligation', 'Amanda does not close enrolments in these meetings'],
-                ['Honest guidance', 'Her role is to help you find clarity, not to fill a spot'],
-                ['A starting point', 'Most families leave knowing exactly what to do next'],
-              ].map(([h, b]) => (
-                <div key={h} style={{ display: 'flex', gap: 14, marginBottom: 20 }}>
-                  <div style={{ width: 4, height: 4, borderRadius: '50%', background: C.gold, flexShrink: 0, marginTop: 8 }} />
-                  <div>
-                    <p style={{ fontFamily: sans, fontSize: 13, fontWeight: 700, color: C.white, marginBottom: 3 }}>{h}</p>
-                    <p style={{ fontFamily: sans, fontSize: 12, color: 'rgba(255,255,255,0.45)', lineHeight: 1.6 }}>{b}</p>
-                  </div>
-                </div>
-              ))}
-              <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: 24, marginTop: 8 }}>
-                <Link to="/#contact">
-                  <button style={{ width: '100%', padding: '15px 24px', background: C.gold, color: C.navy, fontFamily: sans, fontSize: 12, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', border: 'none', borderRadius: 2, cursor: 'pointer' }}>
-                    Request a Principal Interview
-                  </button>
-                </Link>
-                <p style={{ fontFamily: sans, fontSize: 11, color: 'rgba(255,255,255,0.25)', marginTop: 12, textAlign: 'center', fontStyle: 'italic' }}>
-                  Available by request only. Limited availability.
-                </p>
-              </div>
-            </div>
-          </div>
+      {/* ── 6. Request ───────────────────────────────────────────────────────── */}
+      <section id="request" style={{ background: C.cream, padding: 'clamp(100px,12vw,160px) 0' }}>
+        <div style={{ maxWidth: 560, margin: '0 auto', padding: '0 clamp(20px,4vw,48px)', textAlign: 'center' }}>
+          <p style={{ fontFamily: sans, fontSize: 9, fontWeight: 700, letterSpacing: '0.26em', color: C.gold, textTransform: 'uppercase' as const, marginBottom: 20 }}>
+            Request An Interview
+          </p>
+          <div style={{ width: 32, height: 1, background: C.goldBorder, margin: '0 auto 36px' }} />
+          <h2 style={{ fontFamily: serif, fontSize: 'clamp(32px,5vw,56px)', fontWeight: 400, color: C.navy, lineHeight: 1.1, marginBottom: 36 }}>
+            Speak Directly<br />
+            <em style={{ color: C.gold }}>With Amanda.</em>
+          </h2>
+          <p style={{ fontFamily: sans, fontSize: 15, color: C.muted, lineHeight: 1.9, marginBottom: 16 }}>
+            A Principal Interview is a private conversation — not a sales call. Amanda listens, asks questions, and tells you honestly what she thinks.
+          </p>
+          <p style={{ fontFamily: sans, fontSize: 15, color: C.muted, lineHeight: 1.9, marginBottom: 60 }}>
+            If DA is right for your child, she will say so. If it is not, she will say that too.
+          </p>
+          <Link to="/#contact">
+            <button style={{ padding: '16px 52px', background: C.gold, color: C.navy, fontFamily: sans, fontSize: 11, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase' as const, border: 'none', borderRadius: 2, cursor: 'pointer' }}>
+              Request A Principal Interview
+            </button>
+          </Link>
+          <p style={{ fontFamily: sans, fontSize: 11, color: 'rgba(10,27,52,0.28)', marginTop: 20 }}>
+            Available by request only.
+          </p>
         </div>
       </section>
 
       {/* ── 7. Final CTA ─────────────────────────────────────────────────────── */}
-      <section style={{ background: C.navy, padding: 'clamp(80px,10vw,130px) 0', textAlign: 'center' }}>
-        <div style={{ maxWidth: 560, margin: '0 auto', padding: '0 24px' }}>
-          <p style={{ fontFamily: sans, fontSize: 10, fontWeight: 700, letterSpacing: '0.22em', color: C.gold, textTransform: 'uppercase', marginBottom: 16 }}>
-            The First Step
-          </p>
-          <div style={{ width: 32, height: 1, background: C.goldBorder, margin: '0 auto 28px' }} />
-          <h2 style={{ fontFamily: serif, fontSize: 'clamp(28px,5vw,52px)', fontWeight: 400, color: C.white, lineHeight: 1.1, marginBottom: 16 }}>
+      <section style={{ background: C.navy, padding: 'clamp(120px,14vw,180px) 0', textAlign: 'center' }}>
+        <div style={{ maxWidth: 520, margin: '0 auto', padding: '0 24px' }}>
+          <h2 style={{ fontFamily: serif, fontSize: 'clamp(32px,5vw,58px)', fontWeight: 400, color: C.white, lineHeight: 1.1, marginBottom: 56 }}>
             Not every family needs this.<br />
             <em style={{ color: C.gold }}>Yours might.</em>
           </h2>
-          <p style={{ fontFamily: sans, fontSize: 14, color: 'rgba(255,255,255,0.45)', lineHeight: 1.8, marginBottom: 36 }}>
-            If you've read this far, there is probably something about your child's situation that a standard enrolment process doesn't fully address. That is exactly when Amanda speaks personally.
-          </p>
           <Link to="/#contact">
-            <button style={{ padding: '14px 40px', background: 'transparent', border: `1.5px solid ${C.gold}`, color: C.gold, fontFamily: sans, fontSize: 12, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', borderRadius: 2, cursor: 'pointer' }}>
+            <button style={{ padding: '14px 44px', background: 'transparent', border: '1px solid rgba(212,175,55,0.42)', color: C.gold, fontFamily: sans, fontSize: 11, fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase' as const, borderRadius: 2, cursor: 'pointer' }}>
               Request An Interview
             </button>
           </Link>
-          <p style={{ fontFamily: sans, fontSize: 12, color: 'rgba(255,255,255,0.22)', marginTop: 16 }}>
-            No commitment. No pitch. Just a conversation.
-          </p>
         </div>
       </section>
 
