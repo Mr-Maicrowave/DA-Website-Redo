@@ -1,468 +1,716 @@
-import { ArrowLeft, ArrowRight, Quote, User, Star, MessageCircle, ChevronRight, Mic } from 'lucide-react';
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import React, { useState, useEffect, useRef } from 'react';
 import SEO from '@/components/SEO';
 import NavigationNew from '@/components/NavigationNew';
 import FooterNew from '@/components/FooterNew';
-import { siteStats } from '@/data/site-stats';
-import { cn } from '@/lib/utils';
 
-const Interview = () => {
-  const [activeQuestion, setActiveQuestion] = useState(0);
-  const [scrollProgress, setScrollProgress] = useState(0);
-  const questionRefs = useRef<(HTMLDivElement | null)[]>([]);
+// ─── Palette & typography ──────────────────────────────────────────────────────
+const C = {
+  navy:       '#0A1B34',
+  navyDark:   '#060F1E',
+  gold:       '#D4AF37',
+  cream:      '#F7F4EE',
+  creamDeep:  '#EDE5D4',
+  white:      '#FFFFFF',
+  muted:      'rgba(10,27,52,0.52)',
+  goldBorder: 'rgba(212,175,55,0.22)',
+  navyBorder: 'rgba(10,27,52,0.10)',
+} as const;
+const serif = "'Cormorant Garamond', Georgia, serif";
+const sans  = "'DM Sans', 'Inter', sans-serif";
+const wrap: React.CSSProperties = { maxWidth: 860, margin: '0 auto', padding: '0 clamp(20px,4vw,48px)' };
+const wrapWide: React.CSSProperties = { maxWidth: 1100, margin: '0 auto', padding: '0 clamp(20px,4vw,48px)' };
 
-  const questions = [
-    {
-      question: "What inspired you to start this tutoring school, and what is the school's mission?",
-      answer: `From the very beginning, my vision has always been to create a sanctuary where every child feels seen, valued, and capable of achieving their fullest potential. Witnessing so many children lose confidence due to feeling unsupported or overwhelmed inspired me to establish a school that goes beyond academics.
+// ─── Selected Conversations ────────────────────────────────────────────────────
+const CONVERSATIONS = [
+  {
+    n: '01',
+    q: 'Why did you start DA Tuition?',
+    a: `From the very beginning, my vision has always been to create a place where every child feels seen, valued, and capable of achieving their fullest potential. Witnessing so many children lose confidence due to feeling unsupported or overwhelmed inspired me to build something different.
 
-I dreamed of a nurturing environment where students could rediscover their voice, believe in themselves, and transform impossibilities into achievements. Through love, care and devotion, we strive to show that with the right emotional guidance, every goal is attainable.
+I dreamed of a nurturing environment where students could rediscover their voice, believe in themselves, and transform impossibilities into achievements. Our mission has always been to walk alongside students on their journey — helping them overcome challenges while knowing they are never alone.`,
+    pull: 'Every child deserves to feel seen, valued, and capable of achieving their fullest potential.',
+  },
+  {
+    n: '02',
+    q: 'What makes DA different?',
+    a: `What makes DA truly special is the heart behind everything we do — the incredible teachers and the genuine care we pour into every child's journey.
 
-Our mission has always been to walk alongside students on their journey, helping them overcome challenges while knowing they are never alone.`,
-      pullQuote: "Every child deserves to feel seen, valued, and capable of achieving their fullest potential."
-    },
-    {
-      question: "What sets this tutoring school apart from others?",
-      answer: `What makes our tutoring school truly special is the heart behind everything we do. We have incredible teachers and genuine care we pour into every single child's journey.
+With over 20 years of teaching experience, I've learned that every child is unique. We meet them where they are, celebrate their wins, guide them through challenges, and remind them every day that they are capable of extraordinary things. We don't believe in one-size-fits-all methods. Instead, we personalise every class to address the student's specific needs — building a strong foundation and lasting confidence, not just marks on a report.`,
+    pull: 'We meet them where they are, celebrate their wins, and guide them through challenges.',
+  },
+  {
+    n: '03',
+    q: 'How do you decide what is right for a child?',
+    a: `When a student joins DA, we take the time to really get to know them — their strengths, their challenges, their goals, and the ways they learn best. It is never just about academics. We want them to feel confident, curious, and genuinely excited to be in the room.
 
-With over 20 years of teaching experience, I've learnt that every child is unique. We meet them where they are, celebrate their wins, guide them through challenges, and remind them every day that they're capable of extraordinary things.
+Together, we set realistic milestones and work toward them step by step. As students grow, we adapt to their needs — making sure they stay on track and continue to progress. The placement is never fixed. If a student has outgrown their group, or if a different environment would serve them better, we say so. We do not wait to be asked.`,
+    pull: 'The placement is never fixed. We adapt as students grow.',
+  },
+  {
+    n: '04',
+    q: 'What do students need most to succeed today?',
+    a: `Today's students face immense pressure — high expectations, constant comparison, and a world that moves faster than ever. Many struggle with self-doubt, fear of failure, and the quiet exhaustion of trying to keep up with everything at once.
 
-There are no entrance exams here, no barriers about who can or can't learn with us.
+To succeed in this environment, students need more than content knowledge. They need to be emotionally and mentally steady. That is why we make it a point in every lesson to help students build the confidence and resilience required to face challenges head-on. Knowing someone genuinely believes in you — that is often the difference between a student who pushes through and one who quietly gives up.`,
+    pull: 'Knowing someone genuinely believes in you — that is often the difference.',
+  },
+  {
+    n: '05',
+    q: 'What legacy do you hope DA leaves behind?',
+    a: `I don't expect anyone to remember me personally. What I hope they'll remember is the heart of this place — the team of teachers who came together with a shared belief: that every child deserves someone who truly believes in them.
 
-If a child wants to grow, succeed, and needs support, they are always welcome. This commitment means we take on challenges and help those who have lost hope or feel like giving up. It's a responsibility we embrace, and it fills me with pride to see the dedication of our team.
+Fifty years from now, I dream that the children we've helped will go out into the world as compassionate, capable individuals — carrying with them the values we tried to instil. A big heart. A willingness to make a difference. And the courage to help others wholeheartedly, just as we once did for them.`,
+    pull: "What I hope they'll remember is the heart of this place.",
+  },
+];
 
-Our tutors work tirelessly, and their talent shines through in every success, whether it's a perfect HSC score, a state ranking, or a child discovering a newfound confidence they never thought possible.
+// ─── More Conversations ────────────────────────────────────────────────────────
+const MORE_CONVERSATIONS = [
+  {
+    n: '06',
+    q: 'How do you ensure the quality of teaching at DA?',
+    a: `I hold our teachers to the highest standards — and they hold themselves to an even higher one. Our teachers undergo an extensive screening and training process before joining us. But beyond their qualifications, it is their heart and dedication that define the experience a student has.
 
-We don't believe in one-size-fits-all methods because every child's journey is different. Instead, we personalise every class to address their specific needs, helping them build a strong foundation and lasting confidence. Each lesson is crafted with care, ensuring it's not only useful but also inspiring and engaging. And when it comes to school assessments, it's a partnership between teacher and student that leads to outstanding results.`,
-      pullQuote: "We meet them where they are, celebrate their wins, and guide them through challenges."
-    },
-    {
-      question: "How do you ensure the quality of teaching at your school?",
-      answer: `I make sure that we all hold ourselves to the highest standards. Our teachers are the backbone of our school, and they undergo an extensive screening and training process before joining us. But beyond their qualifications, it's their heart and dedication that shine. They go above and beyond to ensure each child feels supported and challenged in the right way. We also provide continuous professional development and encourage collaboration among our staff to keep our methods fresh and effective.`,
-      pullQuote: "Beyond qualifications, it's their heart and dedication that shine."
-    },
-    {
-      question: "Can you share a success story of a student who achieved their dreams with your help?",
-      answer: `One story that still brings me to tears is a student who came to us struggling with self-doubt and low grades. He felt defeated, like he couldn't measure up to his peers. Through consistent guidance, encouragement, and a lot of heart-to-heart conversations, we began to see a transformation. That student not only improved academically but also blossomed into a confident, motivated individual. Today, he's a specialist doctor, and his parents still write to us, thanking our team for believing in their child when it mattered most. Stories like these remind us why we do what we do.`,
-      pullQuote: "Stories like these remind us why we do what we do."
-    },
-    {
-      question: "What role do values like empathy and encouragement play in your approach to education?",
-      answer: `Empathy is at the heart of everything we do. We recognise that academic challenges can be overwhelming, and students need a safe space to express their worries. Encouragement helps them see that mistakes are part of growth, building resilience and self-belief.
+They go above and beyond to ensure each child feels supported and challenged in the right way. We provide continuous professional development and encourage genuine collaboration among our staff — because great teaching is not static. It evolves.`,
+    pull: "Beyond their qualifications, it's their heart and dedication that define the experience.",
+  },
+  {
+    n: '07',
+    q: 'How does DA help students manage academic pressure?',
+    a: `We know how heavy academic pressure can feel. That is why we work hard to make DA a place where students feel safe — not just supported, but genuinely understood.
 
-We often remind our students that stumbling is okay, rather it's about how you rise afterward. By focusing on their strengths and helping them tackle weaknesses with patience, we instil confidence and optimism that extend far beyond the classroom.`,
-      pullQuote: "Empathy is at the heart of everything we do."
-    },
-    {
-      question: "How does your school help students manage the stress of academic pressure?",
-      answer: `We know how heavy academic pressure can feel, and that's why we work hard to make our school a haven for students. We teach them strategies to manage their workload, break tasks into achievable steps, and focus on progress rather than perfection. But more than that, we listen. Through classes, extra help outside of class, or simply being there for any student who needs to talk, we ensure they know they're never alone in this journey. Sometimes, all a child needs is someone to remind them that they're enough just as they are. Sometimes, just knowing someone believes in them is enough to lighten the load.`,
-      pullQuote: "Sometimes, all a child needs is someone to remind them that they're enough just as they are."
-    },
-    {
-      question: "What does a typical student journey look like at your school?",
-      answer: `When a student joins our school, we take the time to really get to know them, in terms of their strengths, challenges, and goals. It's not just about academics; we want them to feel confident, curious, and excited to learn. Together, we set realistic milestones and work towards them step by step.
+We teach strategies to manage workload, break tasks into achievable steps, and focus on progress rather than perfection. But more than that, we listen. Through classes, extra help outside of sessions, or simply being there when a student needs to talk — we ensure they know they are never alone in this. Sometimes, all a child needs is someone to remind them that they are enough just as they are.`,
+    pull: 'Sometimes, all a child needs is someone to remind them that they are enough just as they are.',
+  },
+  {
+    n: '08',
+    q: 'What does a typical student journey look like at DA?',
+    a: `When a student joins, we take the time to genuinely understand them — not just their current results, but who they are as a learner. From there, we work together to set realistic milestones and pursue them step by step.
 
-As students grow, we adapt to their needs, making sure they stay on track and continue to succeed. By the time students leave, they're not only better learners but also more confident and motivated individuals, ready to tackle whatever comes next.`,
-      pullQuote: "We want them to feel confident, curious, and excited to learn."
-    },
-    {
-      question: "Your school has received an incredible number of heartfelt Google reviews. What do you think resonates most with students and parents?",
-      answer: `Honestly, it's deeply humbling and joyous to read the heartfelt words of gratitude from our students and their families. Seeing how much they appreciate the dedication and sacrifices of their tutors is a profound reminder of why we do what we do. It fills me with pride to witness the difference our team makes. For us, these students are never just numbers or grades. They are individuals with dreams, fears, and limitless potential. Helping them unlock that potential is a privilege and an honour.
+As students grow, we adapt to their needs. Some students stay in the same format for years. Others move between programs as their confidence and capability evolve. By the time students leave DA, they are not only better learners — they are more confident and more capable individuals, ready to face whatever comes next.`,
+    pull: 'By the time students leave, they are not only better learners — they are more capable individuals.',
+  },
+  {
+    n: '09',
+    q: 'DA has received an extraordinary number of heartfelt reviews. What resonates most with families?',
+    a: `It is deeply humbling to read the words families share with us. What strikes me most is that the reviews rarely focus on results alone. They speak about how their child became happier, more motivated, more willing to try. They speak about teachers who stayed up late, who went beyond what was asked of them, who genuinely cared.
 
-Parents often share how their children have become happier, more motivated, and more confident since joining us, and knowing we've had such a positive impact on their lives is the most meaningful reward we could ever ask for.`,
-      pullQuote: "These students are never just numbers or grades. They are individuals with dreams, fears, and limitless potential."
-    },
-    {
-      question: "What challenges do students face today, and how does your school help them overcome these?",
-      answer: `Today's students face immense pressure to perform: high expectations, comparisons to others, limited time. Many struggle with self-doubt, fear of failure and distractions such as social media, gaming, and phones.
+For us, these students are never numbers or outcomes. They are individuals with dreams, fears, and limitless potential. Helping them unlock that potential is a privilege. And when a parent writes to tell us their child is now proud of themselves — that is the most meaningful reward we could ever receive.`,
+    pull: 'These students are never numbers or outcomes. They are individuals with limitless potential.',
+  },
+  {
+    n: '10',
+    q: 'What does it take to be a successful student in 2026?',
+    a: `Adaptability. Critical thinking. And above all, emotional and mental steadiness. The academic demands students face today are significant — but the internal demands are even greater.
 
-We address these by teaching focus, resilience, and healthy habits. We help students break challenges into smaller steps and view setbacks as learning opportunities. Most importantly, we remind them they're never judged or alone, ensuring they feel supported at every step.`,
-      pullQuote: "We remind them they're never judged or alone."
-    },
-    {
-      question: "What does it take to be a successful student in 2026?",
-      answer: `To be successful in 2026, I believe students need to be adaptable and think critically, but above all, they need to be emotionally and mentally strong. It's not easy to juggle everything that comes their way such as pressure from studies, friends and family concerns, but being able to stay steady through it all makes a huge difference.
+We know that emotions can take over and affect focus, motivation, and self-belief. That is why every lesson at DA is designed not just to deliver content, but to build the inner strength students need to face what comes next — in the examination room, and well beyond it.`,
+    pull: 'Every lesson is designed to build the inner strength students need.',
+  },
+  {
+    n: '11',
+    q: 'What role do empathy and encouragement play in how you teach?',
+    a: `Empathy is at the heart of everything we do. We recognise that academic challenges can feel overwhelming, and students need a safe space to express their worries without fear of judgement. Encouragement helps them see that mistakes are part of growth — building resilience and self-belief that extend far beyond the classroom.
 
-We know that emotions can sometimes take over and affect focus and motivation. That's why we make it a point in every lesson to help our students build the confidence and resilience they need to tackle challenges head-on and ultimately be successful and proud of themselves.`,
-      pullQuote: "Above all, they need to be emotionally and mentally strong."
-    },
-    {
-      question: "How do you think the students will perform in the HSC this year?",
-      answer: `We're genuinely proud of how hard our students and teachers have worked this year. So, we are confident about our students' performances in the HSC this year. We've seen their dedication and growth, and it's been incredible to watch them develop the confidence and study habits they needed to succeed.
+We often remind our students that stumbling is not failure. What matters is how they rise afterward. By focusing on their strengths and helping them tackle weaknesses with patience, we instil a confidence and optimism that stays with them long after they leave us.`,
+    pull: 'Stumbling is not failure. What matters is how they rise afterward.',
+  },
+  {
+    n: '12',
+    q: 'How does feedback from families guide the way DA works?',
+    a: `I hold feedback in the highest regard — it is how we grow. We are truly fortunate to receive such honest and open insights from both parents and students.
 
-Every year, we reflect on how we can do better, tweaking our teaching methods and adapting to what students need most. So, with this experience, we are looking forward to hearing about this year's HSC results.
+Parents often share how their children have become more confident, more focused, and genuinely happier. Students share experiences that offer insights or suggest adjustments that better align with how they learn. Each piece of feedback guides us to refine our approach and explore new ways to serve our students better. To us, feedback is our promise to continuously create the best possible environment for every child.`,
+    pull: 'Feedback is our promise to continuously create the best possible environment for every child.',
+  },
+  {
+    n: '13',
+    q: 'How can parents and teachers work together to achieve the best outcomes?',
+    a: `Education works best when parents, teachers, and students move in the same direction. Regular communication and honest dialogue help everyone stay aligned on goals and strategies — creating a foundation for real, sustained progress.
 
-Seeing the success of past years gives us even more reason to believe that this year's students are on track to achieve something truly special.`,
-      pullQuote: "This year's students are on track to achieve something truly special."
-    },
-    {
-      question: "What kind of feedback do you receive from parents and students, and how does it guide your work?",
-      answer: `I hold feedback in the highest regard. It's how we grow. We are truly fortunate to receive such open and honest insights from both parents and students. To us, feedback is our promise to continuously create the best possible learning environment for every child. While we initially relied on handwritten forms, I often worried some feedback might be overlooked or that students might feel hesitant to share openly. To address this, we introduced a seamless digital system where students can scan a QR code and share their thoughts directly with me - promptly and confidentially.
+Whether it is working through academic struggles or celebrating meaningful improvements, this shared effort creates a clear path forward. Our focus is always on what is best for the child. And when parents and teachers are genuinely working together, the student feels it — and rises to meet it.`,
+    pull: 'When parents and teachers are genuinely working together, the student rises to meet it.',
+  },
+  {
+    n: '14',
+    q: 'What are your long-term goals for DA Tuition?',
+    a: `To grow without losing the personal touch that makes this school what it is. We aim to reach more students, deepen our programs, and remain adaptable to the evolving needs of education.
 
-Parents often share how their children have become more confident, focused and happy. Students share heartfelt experiences, offering insights or suggestions for adjustments that align with their learning styles. Knowing that they feel truly cared for and understood is the greatest compliment we could ever receive. Each piece of feedback guides us to refine our methods and explore innovative ways to serve our students better.`,
-      pullQuote: "Knowing that they feel truly cared for and understood is the greatest compliment we could ever receive."
-    },
-    {
-      question: "How can parents and teachers work together with students to achieve the best outcomes?",
-      answer: `Education works best when parents, teachers, and students collaborate as a team. Regular parent-teacher meetings and honest communication helps everyone stay aligned on goals and strategies, creating a strong foundation for success. Whether it's tackling academic struggles or celebrating progress, this shared effort creates a clear path forward.
+But our goal has never changed: to make a lasting difference in the life of every child who comes through our doors. More resources, more reach — always in service of that same purpose.`,
+    pull: 'More resources, more reach — always in service of the same purpose.',
+  },
+  {
+    n: '15',
+    q: 'What do you find most rewarding about leading DA?',
+    a: `The transformation in a child's eyes when they realise they are capable, valued, and supported. That moment — when a student who once believed they could not do something finally sees that they can — is the most profound thing I have ever witnessed.
 
-By sharing insights and celebrating progress together, we ensure students feel supported and encouraged to reach their full potential. Our focus is always on what's best for the child, and this teamwork makes all the difference.`,
-      pullQuote: "Education works best when parents, teachers, and students collaborate as a team."
-    },
-    {
-      question: "What are your long-term goals for the school?",
-      answer: `Our long-term goal is to grow without losing the personal touch that makes our school special. We aim to reach more students, expand programs, and stay adaptable to the evolving needs of education. But above all, our goal remains the same: to make a lasting difference in the lives of every child who walks through our doors.`,
-      pullQuote: "To make a lasting difference in the lives of every child who walks through our doors."
-    },
-    {
-      question: "What do you find most rewarding about leading this school?",
-      answer: `If you ask our teachers, they will all say the same thing: the most rewarding part of our work is witnessing the transformation in a child's eyes when they realise they are capable, valued and supported. Watching students grow, overcome their fears, and achieve their dreams fills my heart with profound gratitude. Knowing that we've been even a small part of their journey, and that the lessons they've learned will guide them for a lifetime, is a privilege we cherish deeply.
+There are moments when I hear about our staff staying up late, preparing materials, writing personal notes of encouragement to their students. While I gently remind them to maintain balance, their willingness to go the extra mile fills me with immense pride. These selfless acts are a reflection of who they are — and why this school is what it is.`,
+    pull: "The moment a student who believed they couldn't finally sees that they can.",
+  },
+  {
+    n: '16',
+    q: 'Can you share a story of a student whose life changed at DA?',
+    a: `One story that still moves me deeply is a student who came to us struggling with self-doubt and low grades. He felt defeated — like he simply could not measure up to his peers. Through consistent guidance, encouragement, and many honest conversations, we began to see a transformation.
 
-There are moments when I hear about our staff staying up late into the night, tirelessly helping a student prepare for an assessment. While I gently remind them to focus on teaching time management, their willingness to go the extra mile fills me with immense pride. It's not uncommon for them to set aside their own work to prioritise their students' needs. These selfless acts reflect the extraordinary love they have for their students and the genuine joy they find in making a difference.
+That student not only improved academically but blossomed into a confident, motivated individual. Today, he is a specialist doctor. His parents still write to us, thanking our team for believing in their child when it mattered most. Stories like these remind us why we do what we do.`,
+    pull: 'His parents still write to us, thanking our team for believing in their child when it mattered most.',
+  },
+];
 
-It's moments like these that remind me why I treasure this team so much and why this work holds such profound meaning and fulfilment for all of us.`,
-      pullQuote: "The most rewarding part is witnessing the transformation in a child's eyes when they realise they are capable."
-    },
-    {
-      question: "What do you want people to remember most about the tutoring centre in 50 years?",
-      answer: `I don't expect anyone to remember me personally or the effort and dedication I've poured into this school. What I hope they'll remember is the heart of this place—the team of incredible teachers who came together with a shared belief in the right cause: to help children grow, overcome challenges, and discover the best in themselves.
+// ─── Why Families Component ────────────────────────────────────────────────────
+const WHY_CARDS = [
+  {
+    icon: (
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+        <circle cx="14" cy="14" r="13" stroke="currentColor" strokeWidth="1.2" />
+        <path d="M14 8v7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+        <circle cx="14" cy="19" r="1" fill="currentColor" />
+      </svg>
+    ),
+    n: '01',
+    h: 'Major Confidence Concerns',
+    b: 'When a child no longer believes in their own ability. These conversations require more than a standard placement meeting — they benefit from the insight and care Amanda brings personally.',
+  },
+  {
+    icon: (
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+        <rect x="1" y="1" width="26" height="26" rx="2" stroke="currentColor" strokeWidth="1.2" />
+        <path d="M7 14h14M7 9h9M7 19h11" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+      </svg>
+    ),
+    n: '02',
+    h: 'Significant Learning Gaps',
+    b: "When parents need clarity on the best pathway forward. Amanda's direct involvement helps families understand their options clearly — without the pressure of a standard enrolment process.",
+  },
+  {
+    icon: (
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+        <path d="M14 3L3 10v8l11 7 11-7v-8L14 3z" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round" />
+        <path d="M14 3v17M3 10l11 7 11-7" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round" />
+      </svg>
+    ),
+    n: '03',
+    h: 'Important Academic Decisions',
+    b: 'Subject selection, acceleration pathways and HSC planning. When the decisions a family makes in the next six months will shape the next six years, it is worth speaking with someone who has navigated these crossroads many times.',
+  },
+  {
+    icon: (
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+        <circle cx="14" cy="10" r="5" stroke="currentColor" strokeWidth="1.2" />
+        <path d="M5 24c0-4.418 4.03-8 9-8s9 3.582 9 8" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+        <path d="M20 13l2 2 4-4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    ),
+    n: '04',
+    h: 'Complex Learning Situations',
+    b: 'When a deeper understanding is needed before recommending a program. Some students do not fit neatly into an enrolment category. These are the conversations Amanda finds most meaningful.',
+  },
+];
 
-I hope the devotion, time, and care that every teacher has put into this school will be remembered and appreciated. That, to me, is the greatest reward for our team—to know that what we've done has mattered.
+function WhyFamilies() {
+  const [hovered, setHovered] = useState<number | null>(null);
+  return (
+    <section style={{ background: C.creamDeep, padding: 'clamp(80px,10vw,130px) 0' }}>
+      <div style={wrapWide}>
+        {/* Header */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.6fr', gap: 'clamp(40px,6vw,80px)', alignItems: 'end', marginBottom: 64 }}>
+          <div>
+            <p style={{ fontFamily: sans, fontSize: 9, fontWeight: 700, letterSpacing: '0.26em', color: C.gold, textTransform: 'uppercase' as const, marginBottom: 16 }}>
+              A Considered Conversation
+            </p>
+            <div style={{ width: 32, height: 1, background: C.gold, marginBottom: 20 }} />
+            <h2 style={{ fontFamily: serif, fontSize: 'clamp(28px,4vw,52px)', fontWeight: 400, color: C.navy, lineHeight: 1.08 }}>
+              Why Some Families<br />
+              Meet With Amanda<br />
+              <em style={{ color: C.gold }}>Personally</em>
+            </h2>
+          </div>
+          <div>
+            <p style={{ fontFamily: sans, fontSize: 15, color: C.muted, lineHeight: 1.85, marginBottom: 16 }}>
+              Most families never need a Principal Interview. For those who do, it tends to be one of the most valuable conversations they have.
+            </p>
+            <p style={{ fontFamily: sans, fontSize: 15, color: C.muted, lineHeight: 1.85 }}>
+              The four situations below are the ones Amanda most commonly steps into — not because a standard enrolment is insufficient, but because the situation genuinely calls for something more.
+            </p>
+          </div>
+        </div>
 
-Fifty years from now, I dream that the children we've helped will go out into the world as compassionate individuals, carrying with them the same values we've tried to instil: a big heart, a willingness to make a difference, and the courage to help those who need it wholeheartedly and proudly, just as we once did.
+        {/* Cards */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 'clamp(10px,1.5vw,16px)' }}>
+          {WHY_CARDS.map((card, i) => {
+            const isHovered = hovered === i;
+            return (
+              <div
+                key={i}
+                onMouseEnter={() => setHovered(i)}
+                onMouseLeave={() => setHovered(null)}
+                style={{
+                  background: isHovered ? C.navy : C.white,
+                  border: `1px solid ${isHovered ? C.navy : C.navyBorder}`,
+                  borderRadius: 4,
+                  padding: 'clamp(24px,3vw,36px)',
+                  cursor: 'default',
+                  transition: 'background 0.3s ease, border-color 0.3s ease',
+                  display: 'flex', flexDirection: 'column' as const, gap: 0,
+                }}
+              >
+                {/* Icon */}
+                <div style={{
+                  color: isHovered ? C.gold : C.navy,
+                  opacity: isHovered ? 1 : 0.35,
+                  marginBottom: 24,
+                  transition: 'color 0.3s ease, opacity 0.3s ease',
+                }}>
+                  {card.icon}
+                </div>
 
-And lastly, I hope the parents who entrusted us with their children will, when they look back, smile and remember this place as somewhere their child was truly happy, cared for, and taught not just with knowledge but with heart. That is the legacy we aspire to leave behind.`,
-      pullQuote: "That is the legacy we aspire to leave behind."
-    }
-  ];
+                {/* Number */}
+                <p style={{
+                  fontFamily: serif, fontSize: 12, fontStyle: 'italic',
+                  color: isHovered ? C.gold : C.muted,
+                  marginBottom: 12,
+                  transition: 'color 0.3s ease',
+                }}>
+                  {card.n}
+                </p>
 
-  const testimonialCards = [
-    {
-      id: 1,
-      name: "Bryant Lam",
-      role: "HSC Student",
-      quote: "Ms Amanda's passion for mathematics was infectious and it made me more hungry to be faster and accurate in the subject.",
-      rating: 5,
-      color: "from-blue-400 to-blue-600",
-      position: { top: "15%", right: "-10px" }
-    },
-    {
-      id: 2,
-      name: "Melissa Ly",
-      role: "St Johns Park High School",
-      quote: "I entered GAT class with Miss Amanda, this moment was a turning point for me, in my mind it allowed me to see that this was another chance to achieve my goals.",
-      rating: 5,
-      color: "from-orange-400 to-orange-600",
-      position: { top: "40%", left: "-10px" }
-    },
-    {
-      id: 3,
-      name: "Katelin Trinh",
-      role: "HSC Student",
-      quote: "The staff are incredibly friendly and supportive. The learning environment is excellent and allowed me to feel comfortable asking questions.",
-      rating: 5,
-      color: "from-green-400 to-green-600",
-      position: { top: "65%", right: "-10px" }
-    }
-  ];
+                {/* Heading */}
+                <h3 style={{
+                  fontFamily: sans, fontSize: 'clamp(14px,1.4vw,16px)', fontWeight: 700,
+                  color: isHovered ? C.white : C.navy,
+                  lineHeight: 1.4, marginBottom: 14,
+                  transition: 'color 0.3s ease',
+                }}>
+                  {card.h}
+                </h3>
 
-  interface TestimonialCard {
-    id: number;
-    name: string;
-    role: string;
-    quote: string;
-    rating: number;
-    color: string;
-    position: { top: string; right?: string; left?: string };
-  }
+                {/* Divider */}
+                <div style={{
+                  width: isHovered ? 32 : 16, height: 1,
+                  background: isHovered ? C.gold : C.navyBorder,
+                  marginBottom: 16,
+                  transition: 'width 0.3s ease, background 0.3s ease',
+                }} />
 
-  const mixedContent: Array<{ type: 'testimonial'; content: TestimonialCard } | { type: 'quote'; content: string }> = [
-    { type: 'testimonial', content: testimonialCards[0] },
-    { type: 'quote', content: "It's not easy but it's worth it" },
-    { type: 'testimonial', content: testimonialCards[1] },
-    { type: 'quote', content: "Knowing that they feel truly cared for and understood is the greatest compliment we could ever receive." },
-    { type: 'testimonial', content: testimonialCards[2] },
-    { type: 'quote', content: "Their voices and the joy we see in their progress inspire everything we do." },
-    { type: 'quote', content: "Knowing that we've been even a small part of their journey, and that the lessons they've learned will guide them for a lifetime, is a privilege we cherish deeply." }
-  ];
+                {/* Body */}
+                <p style={{
+                  fontFamily: sans, fontSize: 13,
+                  color: isHovered ? 'rgba(255,255,255,0.60)' : C.muted,
+                  lineHeight: 1.8, flex: 1,
+                  transition: 'color 0.3s ease',
+                }}>
+                  {card.b}
+                </p>
+              </div>
+            );
+          })}
+        </div>
 
-  // Handle scroll progress and active question
-  useEffect(() => {
-    const handleScroll = () => {
-      const scrollPosition = window.scrollY;
-      const windowHeight = window.innerHeight;
-      const documentHeight = document.documentElement.scrollHeight;
+        {/* Footer note */}
+        <div style={{ marginTop: 48, display: 'flex', alignItems: 'center', gap: 20 }}>
+          <div style={{ height: 1, flex: 1, background: C.navyBorder }} />
+          <p style={{ fontFamily: serif, fontSize: 15, fontStyle: 'italic', color: C.muted, flexShrink: 0 }}>
+            A Principal Interview is not a standard enrolment meeting.
+          </p>
+          <div style={{ height: 1, flex: 1, background: C.navyBorder }} />
+        </div>
+      </div>
+    </section>
+  );
+}
 
-      // Calculate scroll progress
-      const progress = (scrollPosition / (documentHeight - windowHeight)) * 100;
-      setScrollProgress(Math.min(progress, 100));
-
-      // Determine active question based on scroll position
-      let currentActive = 0;
-      questionRefs.current.forEach((ref, index) => {
-        if (ref && ref.offsetTop <= scrollPosition + windowHeight / 3) {
-          currentActive = index;
-        }
-      });
-      setActiveQuestion(currentActive);
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    handleScroll(); // Initial call
-
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  const scrollToQuestion = (index: number) => {
-    questionRefs.current[index]?.scrollIntoView({
-      behavior: 'smooth',
-      block: 'start'
-    });
-  };
-
-  const highlights = [
-    "It's not easy but it's worth it",
-    "Knowing that they feel truly cared for and understood is the greatest compliment we could ever receive.",
-    "Their voices and the joy we see in their progress inspire everything we do.",
-    "Knowing that we've been even a small part of their journey, and that the lessons they've learned will guide them for a lifetime, is a privilege we cherish deeply."
-  ];
+// ─── Page ──────────────────────────────────────────────────────────────────────
+const Interview: React.FC = () => {
+  const [open, setOpen] = useState<number | null>(null);
+  const [moreExpanded, setMoreExpanded] = useState(false);
+  const [moreOpen, setMoreOpen] = useState<number | null>(null);
 
   return (
-    <div className="min-h-screen">
-      <SEO 
-        title="Principal's Interview: Our Vision & Philosophy | DA Tuition"
-        description="Read an exclusive interview with the Principal of DA Tuition about our 'Beyond Academic Excellence' philosophy and our mission to build student confidence."
+    <div className="min-h-screen" style={{ background: C.cream }}>
+      <SEO
+        title="A Conversation With Amanda — DA Tuition"
+        description="Founder and Principal of DA Tuition. Speaking directly with Amanda is rare — reserved for families who require deeper educational guidance."
+        canonicalUrl="/interview"
       />
       <NavigationNew />
 
-      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 mt-[120px]">
-        {/* Header Section */}
-        <section className="relative rounded-[2.5rem] overflow-hidden shadow-2xl mx-4 sm:mx-0 mt-6 mb-16">
-          <div className="absolute inset-0">
-            <img src="/images/v3/teacher_screen.jpg" alt="DA Tuition Interview" className="w-full h-full object-cover object-top" />
-            <div className="absolute inset-0 bg-brand-navy/80 mix-blend-multiply"></div>
-            {/* Vibrant warm pastel glow */}
-            <div className="absolute inset-0 bg-gradient-to-tr from-brand-navy/90 via-amber-500/20 to-orange-400/30 mix-blend-overlay"></div>
-            <div className="absolute inset-0 bg-gradient-to-t from-brand-navy/90 via-brand-navy/60 to-transparent"></div>
-          </div>
-
-          <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-20 lg:py-28">
-            <Link
-              to="/"
-              className="inline-flex items-center text-white/80 hover:text-white transition-colors mb-8"
-            >
-              <ArrowLeft size={20} className="mr-2" />
-              Back to Home
-            </Link>
-
-            <h1 className="text-3xl sm:text-4xl lg:text-7xl font-extrabold text-white mb-6 tracking-tight leading-tight drop-shadow-lg">
-              Exclusive <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-orange-300 to-yellow-300">Interview</span>
-            </h1>
-
-            <p className="text-xl text-white/95 max-w-2xl mx-auto drop-shadow-md font-medium">
-              An intimate conversation with DA Tuition's Principal about education, empathy, and excellence.
-            </p>
-          </div>
-        </section>
-      </div>
-
-      {/* Magazine Layout Content */}
-      <section className="relative bg-white">
-        {/* Progress Bar */}
-        <div className="fixed top-0 left-0 w-full h-1 bg-gray-200 z-50">
-          <div
-            className="h-full bg-gradient-to-r from-brand-blue-light to-brand-orange transition-all duration-300"
-            style={{ width: `${scrollProgress}%` }}
-          />
+      {/* ── 1. Hero ──────────────────────────────────────────────────────────── */}
+      <section style={{ background: C.navy, minHeight: '100vh', display: 'flex', alignItems: 'center', position: 'relative', overflow: 'hidden' }}>
+        {/* Decorative ruled lines */}
+        <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
+          <div style={{ position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', width: 1, height: '100%', background: 'rgba(212,175,55,0.06)' }} />
+          <div style={{ position: 'absolute', top: '50%', left: 0, width: '100%', height: 1, background: 'rgba(212,175,55,0.04)' }} />
+          <div style={{ position: 'absolute', bottom: 60, left: 0, width: '100%', height: 1, background: 'rgba(212,175,55,0.06)' }} />
+          <div style={{ position: 'absolute', top: 60, left: 0, width: '100%', height: 1, background: 'rgba(212,175,55,0.06)' }} />
         </div>
 
+        <div style={{ width: '100%', padding: 'clamp(120px,14vw,160px) clamp(24px,6vw,80px) clamp(100px,12vw,140px)' }}>
+          <div style={{ maxWidth: 1100, margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1px 1fr', gap: 0, alignItems: 'center' }}>
 
-        {/* Main Content */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 relative">
-          {/* Questions and Answers */}
-          <div className="space-y-16">
-            {questions.map((item, index) => (
-              <React.Fragment key={index}>
-                <div
-                  ref={el => questionRefs.current[index] = el}
-                  className="scroll-mt-24"
+            {/* Left — identity */}
+            <div style={{ paddingRight: 'clamp(40px,6vw,80px)' }}>
+              <p style={{ fontFamily: sans, fontSize: 9, fontWeight: 700, letterSpacing: '0.28em', color: C.gold, textTransform: 'uppercase' as const, marginBottom: 32 }}>
+                The Principal Interview
+              </p>
+              <h1 style={{ fontFamily: serif, fontSize: 'clamp(44px,6vw,84px)', fontWeight: 400, color: C.white, lineHeight: 1.04, marginBottom: 0 }}>
+                A Conversation<br />
+                With Our<br />
+                <em style={{ color: C.gold }}>Founder.</em>
+              </h1>
+            </div>
+
+            {/* Vertical divider */}
+            <div style={{ width: 1, alignSelf: 'stretch', background: 'rgba(212,175,55,0.14)', margin: '0' }} />
+
+            {/* Right — context + CTAs */}
+            <div style={{ paddingLeft: 'clamp(40px,6vw,80px)' }}>
+              <p style={{ fontFamily: sans, fontSize: 15, color: 'rgba(255,255,255,0.60)', lineHeight: 1.85, marginBottom: 12 }}>
+                Most families begin with our enrolment team.
+              </p>
+              <p style={{ fontFamily: sans, fontSize: 15, color: 'rgba(255,255,255,0.42)', lineHeight: 1.85, marginBottom: 48 }}>
+                Occasionally, Amanda personally meets with families when deeper educational guidance is required.
+              </p>
+
+              <div style={{ display: 'flex', flexDirection: 'column' as const, gap: 12, alignItems: 'flex-start' }}>
+                <a href="#request">
+                  <button style={{
+                    padding: '14px 32px',
+                    background: C.gold, color: C.navy,
+                    fontFamily: sans, fontSize: 11, fontWeight: 700, letterSpacing: '0.10em',
+                    textTransform: 'uppercase' as const, border: 'none', borderRadius: 2, cursor: 'pointer',
+                  }}>
+                    Request A Principal Interview
+                  </button>
+                </a>
+                <a href="#amanda">
+                  <button style={{
+                    padding: '14px 32px',
+                    background: 'transparent', color: 'rgba(255,255,255,0.55)',
+                    fontFamily: sans, fontSize: 11, fontWeight: 600, letterSpacing: '0.10em',
+                    textTransform: 'uppercase' as const,
+                    border: '1px solid rgba(255,255,255,0.15)', borderRadius: 2, cursor: 'pointer',
+                  }}>
+                    Meet Amanda
+                  </button>
+                </a>
+              </div>
+
+              <div style={{ marginTop: 48, paddingTop: 32, borderTop: '1px solid rgba(255,255,255,0.07)' }}>
+                <p style={{ fontFamily: sans, fontSize: 11, color: 'rgba(255,255,255,0.22)', letterSpacing: '0.08em', lineHeight: 1.7 }}>
+                  DA Tuition · Canley Heights · Founded 2005<br />20+ Years · 650+ Students
+                </p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      {/* ── 2. Founder Profile ───────────────────────────────────────────────── */}
+      <section id="amanda" style={{ background: C.cream }}>
+        <div style={{ maxWidth: 1300, margin: '0 auto', display: 'grid', gridTemplateColumns: '420px 1fr' }}>
+
+          {/* Left — portrait */}
+          <div style={{ position: 'relative', minHeight: 680 }}>
+            <img
+              src="/images/v3/smiling_teacher.jpg"
+              alt="Amanda Le — Founder and Principal, DA Tuition"
+              style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top center' }}
+            />
+            {/* Gradient overlay at bottom for name plate */}
+            <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '45%', background: 'linear-gradient(to top, rgba(10,27,52,0.92) 0%, transparent 100%)' }} />
+            {/* Name plate */}
+            <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: 'clamp(24px,3vw,40px)' }}>
+              <div style={{ width: 28, height: 1, background: C.gold, marginBottom: 12 }} />
+              <p style={{ fontFamily: serif, fontSize: 'clamp(22px,2.5vw,30px)', fontWeight: 400, color: C.white, lineHeight: 1.2, marginBottom: 4 }}>
+                Amanda Le
+              </p>
+              <p style={{ fontFamily: sans, fontSize: 10, fontWeight: 700, letterSpacing: '0.18em', color: C.gold, textTransform: 'uppercase' as const }}>
+                Founder & Principal · DA Tuition
+              </p>
+            </div>
+          </div>
+
+          {/* Right — biography */}
+          <div style={{ padding: 'clamp(52px,7vw,96px) clamp(40px,5vw,80px)', display: 'flex', flexDirection: 'column' as const, justifyContent: 'center' }}>
+
+            {/* Eyebrow */}
+            <p style={{ fontFamily: sans, fontSize: 9, fontWeight: 700, letterSpacing: '0.26em', color: C.gold, textTransform: 'uppercase' as const, marginBottom: 20 }}>
+              Founder Profile
+            </p>
+
+            {/* Name & title */}
+            <h2 style={{ fontFamily: serif, fontSize: 'clamp(36px,5vw,64px)', fontWeight: 400, color: C.navy, lineHeight: 1.06, marginBottom: 28 }}>
+              Amanda Le
+            </h2>
+            <p style={{ fontFamily: sans, fontSize: 12, fontWeight: 700, letterSpacing: '0.14em', color: C.muted, textTransform: 'uppercase' as const, marginBottom: 36 }}>
+              Founder & Principal — DA Tuition
+            </p>
+
+            {/* Credentials */}
+            <div style={{ display: 'flex', flexDirection: 'column' as const, gap: 14, marginBottom: 44, paddingBottom: 44, borderBottom: `1px solid ${C.navyBorder}` }}>
+              {[
+                ['20+ Years', 'In education — teaching, mentoring and leading'],
+                ['Founder', 'Established DA Tuition in 2005 in Canley Heights, NSW'],
+                ['650+ Students', 'Families served across Western Sydney since founding'],
+                ['Award Recognised', 'Outstanding Education Service — Fairfield City Business Awards 2025'],
+              ].map(([label, detail]) => (
+                <div key={label} style={{ display: 'grid', gridTemplateColumns: '100px 1fr', gap: 16, alignItems: 'baseline' }}>
+                  <p style={{ fontFamily: sans, fontSize: 11, fontWeight: 700, color: C.navy }}>{label}</p>
+                  <p style={{ fontFamily: sans, fontSize: 13, color: C.muted, lineHeight: 1.6 }}>{detail}</p>
+                </div>
+              ))}
+            </div>
+
+            {/* Philosophy */}
+            <div style={{ marginBottom: 44 }}>
+              <p style={{ fontFamily: sans, fontSize: 9, fontWeight: 700, letterSpacing: '0.20em', color: C.gold, textTransform: 'uppercase' as const, marginBottom: 14 }}>
+                Personal Philosophy
+              </p>
+              <p style={{ fontFamily: sans, fontSize: 14, color: C.muted, lineHeight: 1.85, marginBottom: 14 }}>
+                Amanda founded DA Tuition with a single conviction: most tutoring centres were solving the wrong problem. They focused on content delivery. She wanted to focus on the student.
+              </p>
+              <p style={{ fontFamily: sans, fontSize: 14, color: C.muted, lineHeight: 1.85 }}>
+                DA grew from that belief — a school that assesses before recommending, matches teachers deliberately, and measures success not in marks alone, but in the confidence a student carries into an examination room.
+              </p>
+            </div>
+
+            {/* Pull quote */}
+            <div style={{ position: 'relative', paddingLeft: 28 }}>
+              <div style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: 2, background: C.gold, borderRadius: 1 }} />
+              <p style={{ fontFamily: serif, fontSize: 'clamp(18px,2.2vw,26px)', fontStyle: 'italic', color: C.navy, lineHeight: 1.5, marginBottom: 16 }}>
+                "Every child deserves to feel seen, valued and capable of achieving their fullest potential."
+              </p>
+              <p style={{ fontFamily: sans, fontSize: 10, fontWeight: 700, letterSpacing: '0.14em', color: C.gold, textTransform: 'uppercase' as const }}>
+                Amanda Le — Founder, DA Tuition
+              </p>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      {/* ── 3. Why Some Families ─────────────────────────────────────────────── */}
+      <WhyFamilies />
+
+      {/* ── 4. Selected Conversations ────────────────────────────────────────── */}
+      <section style={{ background: C.cream, padding: 'clamp(80px,10vw,130px) 0' }}>
+        <div style={wrap}>
+          <div style={{ marginBottom: 56 }}>
+            <p style={{ fontFamily: sans, fontSize: 10, fontWeight: 700, letterSpacing: '0.22em', color: C.gold, textTransform: 'uppercase', marginBottom: 12 }}>
+              Selected Conversations
+            </p>
+            <div style={{ width: 32, height: 1, background: C.gold, marginBottom: 20 }} />
+            <h2 style={{ fontFamily: serif, fontSize: 'clamp(28px,4vw,48px)', fontWeight: 400, color: C.navy, lineHeight: 1.15, marginBottom: 16 }}>
+              Five Questions.<br />
+              <em style={{ color: C.gold }}>Her Own Words.</em>
+            </h2>
+            <p style={{ fontFamily: sans, fontSize: 14, color: C.muted, lineHeight: 1.75 }}>
+              From a longer conversation. Selected for what they reveal about how Amanda thinks.
+            </p>
+          </div>
+
+          <div style={{ borderTop: `1px solid ${C.navyBorder}` }}>
+            {CONVERSATIONS.map((conv, i) => (
+              <div key={i} style={{ borderBottom: `1px solid ${C.navyBorder}` }}>
+                <button
+                  onClick={() => setOpen(open === i ? null : i)}
+                  style={{ width: '100%', background: 'none', border: 'none', cursor: 'pointer', padding: 'clamp(20px,3vw,28px) 0', display: 'flex', alignItems: 'flex-start', gap: 20, textAlign: 'left' }}
                 >
-                  <article className="grid lg:grid-cols-12 gap-8 items-start max-w-6xl mx-auto">
-                    {/* Question Column */}
-                    <div className="lg:col-span-5">
-                      <div className="sticky top-32">
-                        <div className="flex items-center mb-4">
-                          <span className="text-6xl lg:text-8xl font-bold text-brand-blue-light/20 mr-4">
-                            {(index + 1).toString().padStart(2, '0')}
-                          </span>
-                        </div>
-                        <h3 className="text-xl lg:text-2xl font-bold text-brand-midnight leading-tight">
-                          {item.question}
-                        </h3>
-                      </div>
-                    </div>
+                  <span style={{ fontFamily: serif, fontSize: 13, color: open === i ? C.gold : C.muted, fontStyle: 'italic', minWidth: 28, paddingTop: 3, flexShrink: 0 }}>{conv.n}</span>
+                  <p style={{ fontFamily: serif, fontSize: 'clamp(16px,2vw,20px)', fontStyle: 'italic', color: C.navy, fontWeight: 400, lineHeight: 1.4, flex: 1 }}>
+                    {conv.q}
+                  </p>
+                  <span style={{ fontFamily: sans, fontSize: 20, color: open === i ? C.gold : C.muted, fontWeight: 300, flexShrink: 0, lineHeight: 1 }}>
+                    {open === i ? '×' : '+'}
+                  </span>
+                </button>
 
-                    {/* Answer Column */}
-                    <div className="lg:col-span-7">
-                      <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-8 shadow-sm hover:shadow-md transition-all duration-300 border border-white/50">
-                        {/* Principal Avatar */}
-                        <div className="flex items-center mb-6">
-                          <div className="w-12 h-12 bg-gradient-to-br from-brand-blue-dark to-brand-blue-light rounded-full flex items-center justify-center mr-4 shadow-md">
-                            <User className="w-6 h-6 text-white" />
-                          </div>
-                          <div>
-                            <p className="font-semibold text-brand-midnight">Miss Amanda's Response</p>
-                            <p className="text-sm text-brand-midnight/80">DA Tuition Principal & Founder</p>
-                          </div>
-                        </div>
-
-                        {/* Answer with Drop Cap */}
-                        <div className="prose prose-lg max-w-none">
-                          <p className="text-brand-midnight/80 leading-relaxed first-letter:text-6xl first-letter:font-bold first-letter:text-brand-blue-dark first-letter:float-left first-letter:mr-3 first-letter:mt-1">
-                            {item.answer.split('\n\n').map((paragraph, pIndex) => (
-                              <span key={pIndex}>
-                                {pIndex === 0 ? paragraph : <><br /><br />{paragraph}</>}
-                              </span>
-                            ))}
+                <AnimatePresence>
+                  {open === i && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.3 }}
+                      style={{ overflow: 'hidden' }}
+                    >
+                      <div style={{ paddingBottom: 36, paddingLeft: 48 }}>
+                        {conv.a.split('\n\n').map((para, pi) => (
+                          <p key={pi} style={{ fontFamily: sans, fontSize: 14, color: C.muted, lineHeight: 1.85, marginBottom: pi < conv.a.split('\n\n').length - 1 ? 16 : 0 }}>
+                            {para}
                           </p>
-                        </div>
-
-                        {/* Pull Quote */}
-                        {item.pullQuote && (
-                          <div className="mt-8 pl-8 border-l-4 border-orange-300">
-                            <Quote className="text-orange-300 mb-2" size={24} />
-                            <p className="text-xl font-medium text-brand-midnight/80 italic">
-                              {item.pullQuote}
+                        ))}
+                        {conv.pull && (
+                          <div style={{ marginTop: 28, paddingLeft: 20, borderLeft: `2px solid ${C.goldBorder}` }}>
+                            <p style={{ fontFamily: serif, fontSize: 'clamp(17px,2vw,22px)', fontStyle: 'italic', color: C.navy, lineHeight: 1.5 }}>
+                              "{conv.pull}"
                             </p>
                           </div>
                         )}
                       </div>
-                    </div>
-                  </article>
-                </div>
-
-                {/* Mid-page CTA every 5 questions */}
-                {(index + 1) % 5 === 0 && index !== questions.length - 1 && (
-                  <div className="max-w-4xl mx-auto py-12">
-                    <div className="bg-gradient-to-r from-brand-blue to-brand-blue-dark rounded-3xl p-10 text-center text-white shadow-xl relative overflow-hidden">
-                      <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
-                      <h3 className="text-2xl font-bold mb-4 relative z-10">Inspired by our vision?</h3>
-                      <p className="mb-8 opacity-90 relative z-10">Discover how our heart-centered approach can help your child thrive.</p>
-                      <Link
-                        to="/#contact"
-                        className="inline-flex items-center bg-white text-brand-blue-dark px-8 py-3 rounded-xl font-bold hover:bg-gray-100 transition-all relative z-10 shadow-lg"
-                      >
-                        Book Interview <ArrowRight className="ml-2 w-5 h-5" />
-                      </Link>
-                    </div>
-                  </div>
-                )}
-              </React.Fragment>
-            ))}
-          </div>
-
-          {/* Mixed Testimonials and Quotes Section */}
-          <div className="mt-20 space-y-12">
-            <div className="text-center mb-16">
-              <h3 className="text-2xl font-bold text-brand-midnight mb-3">Voices from Our Community</h3>
-              <div className="w-16 h-0.5 bg-gradient-to-r from-brand-blue-light to-brand-orange mx-auto rounded-full"></div>
-            </div>
-
-            {mixedContent.map((item, index) => (
-              <div key={index}>
-                {item.type === 'quote' ? (
-                  // Heart Quote
-                  <div className="group relative bg-gradient-to-r from-blue-50/80 to-orange-50/40 hover:from-blue-50/90 hover:to-orange-50/60 rounded-2xl p-8 border-l-4 border-orange-300/60 hover:border-orange-400/80 backdrop-blur-sm shadow-sm hover:shadow-md transition-all duration-500 hover:-translate-y-1 max-w-4xl mx-auto">
-                    <div className="absolute top-4 right-4 w-8 h-8 bg-gradient-to-br from-blue-200/30 to-orange-200/30 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 transform scale-0 group-hover:scale-100"></div>
-
-                    <div className="flex items-start">
-                      <Quote className="text-orange-400/80 group-hover:text-orange-500 mr-6 mt-1 flex-shrink-0 transition-all duration-300 group-hover:scale-110" size={28} />
-                      <div className="flex-1">
-                        <p className="text-lg font-medium text-brand-midnight/80 group-hover:text-brand-midnight/80 italic leading-relaxed transition-colors duration-300">
-                          {item.content as string}
-                        </p>
-
-                        <div className="mt-4 h-0.5 w-0 group-hover:w-24 bg-gradient-to-r from-brand-blue-light to-orange-300 rounded-full transition-all duration-500 ease-out"></div>
-                      </div>
-                    </div>
-                  </div>
-                ) : (
-                  // Testimonial Card
-                  <div className="max-w-3xl mx-auto">
-                    <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-lg p-8 hover:scale-105 transition-transform duration-300 border border-gray-100">
-                      <div className="flex items-center mb-4">
-                        <div className={`w-12 h-12 bg-gradient-to-br ${(item.content as TestimonialCard).color} rounded-full flex items-center justify-center text-white font-bold mr-4`}>
-                          {(item.content as TestimonialCard).name.charAt(0)}
-                        </div>
-                        <div>
-                          <h5 className="font-semibold text-brand-midnight">{(item.content as TestimonialCard).name}</h5>
-                          <p className="text-sm text-brand-midnight/80">{(item.content as TestimonialCard).role}</p>
-                        </div>
-                      </div>
-                      <p className="text-brand-midnight/80 italic mb-4 text-lg">"{(item.content as TestimonialCard).quote}"</p>
-                      <div className="flex">
-                        {[...Array((item.content as TestimonialCard).rating)].map((_, i) => (
-                          <Star key={i} size={16} className="fill-yellow-400 text-yellow-400" />
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                )}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             ))}
           </div>
 
-          {/* Call to Action */}
-          <div className="mt-20 text-center">
-            <div className="group relative bg-gradient-to-br from-white/95 to-blue-50/60 backdrop-blur-sm rounded-3xl p-12 shadow-lg hover:shadow-xl border border-white/50 hover:border-blue-200/60 transition-all duration-500 overflow-hidden">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-orange-200/20 to-transparent rounded-full transform translate-x-8 -translate-y-8 group-hover:scale-150 transition-transform duration-700"></div>
-              <div className="absolute bottom-0 left-0 w-40 h-40 bg-gradient-to-tr from-blue-200/15 to-transparent rounded-full transform -translate-x-10 translate-y-10 group-hover:scale-125 transition-transform duration-700"></div>
+          {/* ── More Conversations ─────────────────────────────────────────────── */}
+          <div style={{ marginTop: 48 }}>
+            <button
+              onClick={() => { setMoreExpanded(!moreExpanded); setMoreOpen(null); }}
+              style={{ display: 'flex', alignItems: 'center', gap: 16, background: 'none', border: 'none', cursor: 'pointer', padding: '16px 0', width: '100%' }}
+            >
+              <div style={{ flex: 1, height: 1, background: C.navyBorder }} />
+              <p style={{ fontFamily: sans, fontSize: 11, fontWeight: 700, letterSpacing: '0.18em', color: moreExpanded ? C.gold : C.muted, textTransform: 'uppercase', whiteSpace: 'nowrap', flexShrink: 0 }}>
+                {moreExpanded ? 'Close' : 'More Conversations With Amanda'}
+              </p>
+              <span style={{ fontFamily: sans, fontSize: 18, color: moreExpanded ? C.gold : C.muted, fontWeight: 300, flexShrink: 0 }}>
+                {moreExpanded ? '×' : '+'}
+              </span>
+              <div style={{ flex: 1, height: 1, background: C.navyBorder }} />
+            </button>
 
-              <div className="relative z-10">
-                <div className="mb-6">
-                  <div className="w-16 h-16 bg-gradient-to-br from-brand-blue-light to-orange-400 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
-                    <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2ZM21 9V7L15 1L9 7V9L15 15L21 9Z" />
-                    </svg>
+            <AnimatePresence>
+              {moreExpanded && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.4 }}
+                  style={{ overflow: 'hidden' }}
+                >
+                  <div style={{ borderTop: `1px solid ${C.navyBorder}`, marginTop: 8 }}>
+                    {MORE_CONVERSATIONS.map((conv, i) => (
+                      <div key={i} style={{ borderBottom: `1px solid ${C.navyBorder}` }}>
+                        <button
+                          onClick={() => setMoreOpen(moreOpen === i ? null : i)}
+                          style={{ width: '100%', background: 'none', border: 'none', cursor: 'pointer', padding: 'clamp(20px,3vw,28px) 0', display: 'flex', alignItems: 'flex-start', gap: 20, textAlign: 'left' }}
+                        >
+                          <span style={{ fontFamily: serif, fontSize: 13, color: moreOpen === i ? C.gold : C.muted, fontStyle: 'italic', minWidth: 28, paddingTop: 3, flexShrink: 0 }}>{conv.n}</span>
+                          <p style={{ fontFamily: serif, fontSize: 'clamp(16px,2vw,20px)', fontStyle: 'italic', color: C.navy, fontWeight: 400, lineHeight: 1.4, flex: 1 }}>
+                            {conv.q}
+                          </p>
+                          <span style={{ fontFamily: sans, fontSize: 20, color: moreOpen === i ? C.gold : C.muted, fontWeight: 300, flexShrink: 0, lineHeight: 1 }}>
+                            {moreOpen === i ? '×' : '+'}
+                          </span>
+                        </button>
+
+                        <AnimatePresence>
+                          {moreOpen === i && (
+                            <motion.div
+                              initial={{ height: 0, opacity: 0 }}
+                              animate={{ height: 'auto', opacity: 1 }}
+                              exit={{ height: 0, opacity: 0 }}
+                              transition={{ duration: 0.3 }}
+                              style={{ overflow: 'hidden' }}
+                            >
+                              <div style={{ paddingBottom: 36, paddingLeft: 48 }}>
+                                {conv.a.split('\n\n').map((para, pi) => (
+                                  <p key={pi} style={{ fontFamily: sans, fontSize: 14, color: C.muted, lineHeight: 1.85, marginBottom: pi < conv.a.split('\n\n').length - 1 ? 16 : 0 }}>
+                                    {para}
+                                  </p>
+                                ))}
+                                {conv.pull && (
+                                  <div style={{ marginTop: 28, paddingLeft: 20, borderLeft: `2px solid ${C.goldBorder}` }}>
+                                    <p style={{ fontFamily: serif, fontSize: 'clamp(17px,2vw,22px)', fontStyle: 'italic', color: C.navy, lineHeight: 1.5 }}>
+                                      "{conv.pull}"
+                                    </p>
+                                  </div>
+                                )}
+                              </div>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </div>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+
+        </div>
+      </section>
+
+      {/* ── 5. Request A Principal Interview ─────────────────────────────────── */}
+      <section id="request" style={{ background: C.creamDeep, padding: 'clamp(80px,10vw,130px) 0' }}>
+        <div style={wrap}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'clamp(40px,6vw,80px)', alignItems: 'start' }}>
+            <div>
+              <p style={{ fontFamily: sans, fontSize: 10, fontWeight: 700, letterSpacing: '0.22em', color: C.gold, textTransform: 'uppercase', marginBottom: 12 }}>
+                Request An Interview
+              </p>
+              <div style={{ width: 32, height: 1, background: C.gold, marginBottom: 20 }} />
+              <h2 style={{ fontFamily: serif, fontSize: 'clamp(26px,3.5vw,42px)', fontWeight: 400, color: C.navy, lineHeight: 1.15, marginBottom: 20 }}>
+                Speak Directly<br />
+                <em style={{ color: C.gold }}>With Amanda.</em>
+              </h2>
+              <p style={{ fontFamily: sans, fontSize: 14, color: C.muted, lineHeight: 1.8, marginBottom: 20 }}>
+                A Principal Interview is a private conversation — not a sales call. Amanda does not pitch programs or push enrolment. She listens, asks questions, and tells you honestly what she thinks.
+              </p>
+              <p style={{ fontFamily: sans, fontSize: 14, color: C.muted, lineHeight: 1.8 }}>
+                If DA is right for your child, she will say so. If it isn't, she will say that too.
+              </p>
+            </div>
+
+            <div style={{ background: C.navy, borderRadius: 4, padding: 'clamp(32px,4vw,48px)' }}>
+              <p style={{ fontFamily: sans, fontSize: 10, fontWeight: 700, letterSpacing: '0.18em', color: C.gold, textTransform: 'uppercase', marginBottom: 24 }}>
+                What to expect
+              </p>
+              {[
+                ['A private conversation', '30–45 minutes, no audience'],
+                ['No obligation', 'Amanda does not close enrolments in these meetings'],
+                ['Honest guidance', 'Her role is to help you find clarity, not to fill a spot'],
+                ['A starting point', 'Most families leave knowing exactly what to do next'],
+              ].map(([h, b]) => (
+                <div key={h} style={{ display: 'flex', gap: 14, marginBottom: 20 }}>
+                  <div style={{ width: 4, height: 4, borderRadius: '50%', background: C.gold, flexShrink: 0, marginTop: 8 }} />
+                  <div>
+                    <p style={{ fontFamily: sans, fontSize: 13, fontWeight: 700, color: C.white, marginBottom: 3 }}>{h}</p>
+                    <p style={{ fontFamily: sans, fontSize: 12, color: 'rgba(255,255,255,0.45)', lineHeight: 1.6 }}>{b}</p>
                   </div>
                 </div>
-
-                <h3 className="text-3xl font-bold mb-6 text-brand-midnight group-hover:text-brand-blue-dark transition-colors duration-300">
-                  Ready to Join the <span className="gradient-text">DA Family</span>?
-                </h3>
-
-                <p className="text-lg text-brand-midnight/80 group-hover:text-brand-midnight/80 mb-8 max-w-2xl mx-auto leading-relaxed transition-colors duration-300">
-                  Let us help you choose the perfect program and learning format that matches your child's unique needs and learning style.
+              ))}
+              <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: 24, marginTop: 8 }}>
+                <Link to="/#contact">
+                  <button style={{ width: '100%', padding: '15px 24px', background: C.gold, color: C.navy, fontFamily: sans, fontSize: 12, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', border: 'none', borderRadius: 2, cursor: 'pointer' }}>
+                    Request a Principal Interview
+                  </button>
+                </Link>
+                <p style={{ fontFamily: sans, fontSize: 11, color: 'rgba(255,255,255,0.25)', marginTop: 12, textAlign: 'center', fontStyle: 'italic' }}>
+                  Available by request only. Limited availability.
                 </p>
-
-                <div className="space-y-4 sm:space-y-0 sm:space-x-4 sm:flex sm:justify-center">
-                  <Link
-                    to="/#contact"
-                    className="btn-primary inline-flex items-center group-hover:scale-105 transition-transform duration-300 px-8 py-4 text-lg"
-                  >
-                    <MessageCircle className="w-5 h-5 mr-2" />
-                    Book Interview
-                  </Link>
-
-                  <Link
-                    to="/"
-                    className="inline-flex items-center px-8 py-4 text-lg font-medium text-brand-blue-dark hover:text-brand-blue-light border-2 border-brand-blue-light hover:border-brand-blue-dark rounded-xl transition-all duration-300 hover:bg-blue-50/30"
-                  >
-                    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                    </svg>
-                    Visit Home Page
-                  </Link>
-                </div>
-
-                <div className="mt-8 text-sm text-brand-midnight/70">
-                  <p>Join {siteStats.reviewCount}+ families who've already discovered the DA difference</p>
-                </div>
               </div>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* ── 6. Final CTA ─────────────────────────────────────────────────────── */}
+      <section style={{ background: C.navy, padding: 'clamp(80px,10vw,130px) 0', textAlign: 'center' }}>
+        <div style={{ maxWidth: 560, margin: '0 auto', padding: '0 24px' }}>
+          <p style={{ fontFamily: sans, fontSize: 10, fontWeight: 700, letterSpacing: '0.22em', color: C.gold, textTransform: 'uppercase', marginBottom: 16 }}>
+            The First Step
+          </p>
+          <div style={{ width: 32, height: 1, background: C.goldBorder, margin: '0 auto 28px' }} />
+          <h2 style={{ fontFamily: serif, fontSize: 'clamp(28px,5vw,52px)', fontWeight: 400, color: C.white, lineHeight: 1.1, marginBottom: 16 }}>
+            Not every family needs this.<br />
+            <em style={{ color: C.gold }}>Yours might.</em>
+          </h2>
+          <p style={{ fontFamily: sans, fontSize: 14, color: 'rgba(255,255,255,0.45)', lineHeight: 1.8, marginBottom: 36 }}>
+            If you've read this far, there is probably something about your child's situation that a standard enrolment process doesn't fully address. That is exactly when Amanda speaks personally.
+          </p>
+          <Link to="/#contact">
+            <button style={{ padding: '14px 40px', background: 'transparent', border: `1.5px solid ${C.gold}`, color: C.gold, fontFamily: sans, fontSize: 12, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', borderRadius: 2, cursor: 'pointer' }}>
+              Request An Interview
+            </button>
+          </Link>
+          <p style={{ fontFamily: sans, fontSize: 12, color: 'rgba(255,255,255,0.22)', marginTop: 16 }}>
+            No commitment. No pitch. Just a conversation.
+          </p>
         </div>
       </section>
 
