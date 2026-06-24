@@ -635,7 +635,86 @@ const Interview: React.FC = () => {
         </div>
       </section>
 
-      {/* ── 5. Request A Principal Interview ─────────────────────────────────── */}
+      {/* ── 5. What Happens During A Principal Interview ──────────────────────── */}
+      <section style={{ background: C.navy, padding: 'clamp(80px,10vw,130px) 0', position: 'relative', overflow: 'hidden' }}>
+        {/* Decorative ruled lines */}
+        <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
+          {[...Array(6)].map((_, i) => (
+            <div key={i} style={{ position: 'absolute', top: `${10 + i * 16}%`, left: 0, right: 0, height: 1, background: 'rgba(212,175,55,0.04)' }} />
+          ))}
+        </div>
+
+        <div style={wrap}>
+          {/* Header */}
+          <div style={{ marginBottom: 'clamp(56px,8vw,96px)', textAlign: 'center' }}>
+            <p style={{ fontFamily: sans, fontSize: 10, fontWeight: 700, letterSpacing: '0.22em', color: C.gold, textTransform: 'uppercase' as const, marginBottom: 14 }}>
+              The Process
+            </p>
+            <div style={{ width: 32, height: 1, background: C.gold, margin: '0 auto 24px' }} />
+            <h2 style={{ fontFamily: serif, fontSize: 'clamp(28px,4vw,52px)', fontWeight: 400, color: C.white, lineHeight: 1.12 }}>
+              What Happens During<br />
+              <em style={{ color: C.gold }}>A Principal Interview?</em>
+            </h2>
+          </div>
+
+          {/* Vertical Journey */}
+          <div style={{ position: 'relative', maxWidth: 600, margin: '0 auto' }}>
+            {/* Continuous spine line */}
+            <div style={{ position: 'absolute', left: 19, top: 28, bottom: 28, width: 1, background: 'linear-gradient(180deg, rgba(212,175,55,0.6) 0%, rgba(212,175,55,0.15) 100%)' }} />
+
+            {[
+              { n: '01', title: 'Understand Your Child', desc: 'Amanda begins by listening — to you, and to what you share about your child. No agenda. No assumptions.' },
+              { n: '02', title: 'Discuss Strengths & Challenges', desc: 'Together, you explore what your child does well and where they are finding it difficult, academically and emotionally.' },
+              { n: '03', title: 'Explore Goals', desc: 'Short-term targets and longer-term aspirations are considered side by side — what matters to your family, not a generic outcome.' },
+              { n: '04', title: 'Review Suitable Pathways', desc: 'Amanda walks you through the options that genuinely fit your child\'s profile. She does not present everything — only what is relevant.' },
+              { n: '05', title: 'Receive Honest Recommendations', desc: 'You receive a direct, considered view. If DA is the right environment, she will say so. If it is not, she will say that too.' },
+              { n: '06', title: 'Plan The Next Steps', desc: 'The conversation closes with a clear path forward — whether that is enrolment, further assessment, or simply knowing what to do next.' },
+            ].map((step, i, arr) => (
+              <div key={i} style={{ display: 'flex', gap: 32, marginBottom: i < arr.length - 1 ? 48 : 0, position: 'relative' }}>
+                {/* Node */}
+                <div style={{ flexShrink: 0, width: 40, display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: 4 }}>
+                  <div style={{
+                    width: 40, height: 40, borderRadius: '50%',
+                    border: `1px solid rgba(212,175,55,0.55)`,
+                    background: 'rgba(212,175,55,0.07)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    flexShrink: 0,
+                  }}>
+                    <span style={{ fontFamily: serif, fontSize: 12, fontStyle: 'italic', color: C.gold }}>{step.n}</span>
+                  </div>
+                </div>
+
+                {/* Content */}
+                <div style={{ paddingTop: 8, paddingBottom: 4 }}>
+                  <p style={{ fontFamily: serif, fontSize: 'clamp(18px,2.2vw,24px)', fontWeight: 400, color: C.white, lineHeight: 1.2, marginBottom: 10 }}>
+                    {step.title}
+                  </p>
+                  <p style={{ fontFamily: sans, fontSize: 13, color: 'rgba(247,244,238,0.52)', lineHeight: 1.8 }}>
+                    {step.desc}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Final statement */}
+          <div style={{ marginTop: 'clamp(64px,9vw,104px)', textAlign: 'center' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 24, justifyContent: 'center', marginBottom: 28 }}>
+              <div style={{ flex: 1, maxWidth: 80, height: 1, background: 'rgba(212,175,55,0.3)' }} />
+              <div style={{ width: 6, height: 6, borderRadius: '50%', background: C.gold, opacity: 0.6 }} />
+              <div style={{ flex: 1, maxWidth: 80, height: 1, background: 'rgba(212,175,55,0.3)' }} />
+            </div>
+            <p style={{ fontFamily: serif, fontSize: 'clamp(22px,3vw,38px)', fontWeight: 400, color: C.white, lineHeight: 1.3 }}>
+              This is not an assessment.
+            </p>
+            <p style={{ fontFamily: serif, fontSize: 'clamp(22px,3vw,38px)', fontWeight: 400, fontStyle: 'italic', color: C.gold, lineHeight: 1.3, marginTop: 6 }}>
+              It is a conversation.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* ── 6. Request A Principal Interview ─────────────────────────────────── */}
       <section id="request" style={{ background: C.creamDeep, padding: 'clamp(80px,10vw,130px) 0' }}>
         <div style={wrap}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'clamp(40px,6vw,80px)', alignItems: 'start' }}>
@@ -689,7 +768,7 @@ const Interview: React.FC = () => {
         </div>
       </section>
 
-      {/* ── 6. Final CTA ─────────────────────────────────────────────────────── */}
+      {/* ── 7. Final CTA ─────────────────────────────────────────────────────── */}
       <section style={{ background: C.navy, padding: 'clamp(80px,10vw,130px) 0', textAlign: 'center' }}>
         <div style={{ maxWidth: 560, margin: '0 auto', padding: '0 24px' }}>
           <p style={{ fontFamily: sans, fontSize: 10, fontWeight: 700, letterSpacing: '0.22em', color: C.gold, textTransform: 'uppercase', marginBottom: 16 }}>
