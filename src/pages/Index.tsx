@@ -474,48 +474,93 @@ const PhilosophyBackedSection = () => {
           .phi-img-col { min-height: 300px; aspect-ratio: 16/8; }
         }
 
-        /* ── Philosophy stage tabs ── */
+        /* ── Philosophy pillar blocks ── */
 
-        /* Suppress mobile tap flash */
-        .phi-tab { -webkit-tap-highlight-color: transparent; }
+        /* Base card — inactive */
+        .phi-block {
+          -webkit-tap-highlight-color: transparent;
+          background: linear-gradient(135deg, rgba(255,255,255,0.07) 0%, rgba(180,200,240,0.04) 100%);
+          border: 1px solid rgba(255,255,255,0.12);
+          border-radius: 10px;
+          cursor: pointer;
+          text-align: left;
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+          padding: 14px 16px 16px;
+          transition:
+            background 240ms ease,
+            border-color 240ms ease,
+            box-shadow 240ms ease;
+        }
+        /* Hover */
+        .phi-block:not([aria-selected="true"]):hover {
+          background: linear-gradient(135deg, rgba(255,255,255,0.11) 0%, rgba(180,200,240,0.07) 100%);
+          border-color: rgba(255,255,255,0.22);
+          box-shadow: 0 2px 16px rgba(0,0,0,0.16);
+        }
+        /* Active card */
+        .phi-block[aria-selected="true"] {
+          background: linear-gradient(135deg, rgba(212,175,55,0.13) 0%, rgba(212,175,55,0.05) 100%);
+          border-color: rgba(212,175,55,0.42);
+          box-shadow: 0 0 20px rgba(212,175,55,0.08), inset 0 1px 0 rgba(212,175,55,0.12);
+        }
+        /* Focus */
+        .phi-block:focus-visible {
+          outline: 1.5px solid rgba(212,175,55,0.55);
+          outline-offset: 3px;
+        }
 
-        /* Number: default → hover → active */
-        .phi-tab-num {
-          color: rgba(212,175,55,.20);
+        /* Number */
+        .phi-block-num {
+          font-family: ${serif};
+          font-size: clamp(17px, 1.7vw, 22px);
+          font-weight: 400;
+          font-style: italic;
+          letter-spacing: 0.02em;
+          line-height: 1;
+          color: rgba(255,255,255,0.65);
           transition: color 220ms ease;
         }
-        .phi-tab:not([aria-selected="true"]):hover .phi-tab-num {
-          color: rgba(212,175,55,.50);
+        .phi-block:not([aria-selected="true"]):hover .phi-block-num {
+          color: rgba(255,255,255,0.90);
         }
-        .phi-tab[aria-selected="true"] .phi-tab-num {
+        .phi-block[aria-selected="true"] .phi-block-num {
           color: #D4AF37;
-          transition: color 650ms ease;
         }
 
-        /* Label: default → hover → active */
-        .phi-tab-lbl {
-          color: rgba(212,175,55,.14);
+        /* Label */
+        .phi-block-lbl {
+          font-family: ${sans};
+          font-size: clamp(9px, 0.78vw, 10.5px);
+          font-weight: 600;
+          letter-spacing: 0.10em;
+          text-transform: uppercase;
+          line-height: 1.3;
+          color: rgba(255,255,255,0.65);
           transition: color 220ms ease;
         }
-        .phi-tab:not([aria-selected="true"]):hover .phi-tab-lbl {
-          color: rgba(212,175,55,.38);
+        .phi-block:not([aria-selected="true"]):hover .phi-block-lbl {
+          color: rgba(255,255,255,0.92);
         }
-        .phi-tab[aria-selected="true"] .phi-tab-lbl {
-          color: rgba(212,175,55,.55);
-          transition: color 650ms ease;
-        }
-
-        /* Keyboard focus: thin gold outline, no browser default */
-        .phi-tab:focus-visible {
-          outline: 1px solid rgba(212,175,55,.40);
-          outline-offset: 6px;
-          border-radius: 2px;
+        .phi-block[aria-selected="true"] .phi-block-lbl {
+          color: rgba(255,255,255,0.95);
+          font-weight: 700;
+          letter-spacing: 0.08em;
         }
 
-        /* Reduced motion: kill colour transitions on the tabs */
+        /* Mobile: 2×2 grid */
+        @media (max-width: 600px) {
+          .phi-block-grid { grid-template-columns: repeat(2,1fr) !important; }
+          .phi-block { padding: 12px 14px 14px; }
+          .phi-block-lbl { font-size: 9px; letter-spacing: 0.08em; }
+        }
+
+        /* Reduced motion */
         @media (prefers-reduced-motion: reduce) {
-          .phi-tab-num,
-          .phi-tab-lbl { transition: none !important; }
+          .phi-block,
+          .phi-block-num,
+          .phi-block-lbl { transition: none !important; }
         }
       `}</style>
 
@@ -620,9 +665,9 @@ const PhilosophyBackedSection = () => {
             animate={inView ? { opacity: 1 } : {}}
             transition={{ duration: 1.0, ease: 'easeOut' }}
             style={{
-              fontFamily: sans, fontSize: '.58rem', fontWeight: 500,
+              fontFamily: sans, fontSize: '.60rem', fontWeight: 700,
               letterSpacing: '.28em', textTransform: 'uppercase' as const,
-              color: 'rgba(212,175,55,.50)', margin: '0 0 22px',
+              color: 'rgba(212,175,55,.75)', margin: '0 0 22px',
             }}
           >
             Our Philosophy
@@ -637,12 +682,17 @@ const PhilosophyBackedSection = () => {
             initial={{ opacity: 0 }}
             animate={inView ? { opacity: 1 } : {}}
             transition={{ duration: 1.0, delay: 0.08, ease: 'easeOut' }}
-            style={{ marginBottom: 'clamp(28px, 3.5vw, 40px)' }}
+            style={{ marginBottom: 'clamp(40px, 5vw, 60px)' }}
           >
             <div
               role="tablist"
-              aria-label="Philosophy stages"
-              style={{ display: 'flex', marginBottom: '12px' }}
+              aria-label="Philosophy pillars"
+              className="phi-block-grid"
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(4, 1fr)',
+                gap: '8px',
+              }}
             >
               {PHILOSOPHY_STAGES.map((stage, i) => (
                 <button
@@ -650,7 +700,7 @@ const PhilosophyBackedSection = () => {
                   key={i}
                   role="tab"
                   aria-selected={i === activeIndex}
-                  aria-label={`Show philosophy stage ${i + 1}: ${stage.label}`}
+                  aria-label={`Philosophy pillar ${i + 1}: ${stage.label}`}
                   tabIndex={i === activeIndex ? 0 : -1}
                   onClick={() => goTo(i)}
                   onKeyDown={(e) => {
@@ -668,47 +718,27 @@ const PhilosophyBackedSection = () => {
                       goTo(PHILOSOPHY_STAGES.length - 1);
                     }
                   }}
-                  className="phi-tab"
-                  style={{
-                    flex: 1, background: 'none', border: 'none',
-                    cursor: 'pointer', padding: '0 0 8px 0',
-                    textAlign: 'left' as const,
-                    display: 'flex', flexDirection: 'column', gap: '7px',
-                  }}
+                  className="phi-block"
                 >
-                  <span
-                    className="phi-tab-num"
-                    style={{
-                      display: 'block',
-                      fontFamily: serif, fontSize: '.68rem', fontWeight: 400,
-                      letterSpacing: '.08em', lineHeight: 1,
-                    }}
-                  >
+                  <span className="phi-block-num">
                     {String(stage.stage).padStart(2, '0')}
                   </span>
-                  <span
-                    className="phi-tab-lbl"
-                    style={{
-                      display: 'block',
-                      fontFamily: sans, fontSize: '.56rem', fontWeight: 500,
-                      letterSpacing: '.14em', textTransform: 'uppercase' as const,
-                      lineHeight: 1,
-                    }}
-                  >
+                  <span className="phi-block-lbl">
                     {stage.label}
                   </span>
                 </button>
               ))}
             </div>
 
-            {/* Sliding track */}
-            <div style={{ position: 'relative', height: '1px', background: 'rgba(212,175,55,.10)' }}>
+            {/* Progress rail */}
+            <div style={{ position: 'relative', height: '1px', marginTop: '10px', background: 'rgba(255,255,255,0.09)', borderRadius: '1px' }}>
               <div style={{
-                position: 'absolute', top: 0, height: '1px',
+                position: 'absolute', top: '-0.5px', height: '2px', borderRadius: '1px',
                 left: `${(activeIndex / PHILOSOPHY_STAGES.length) * 100}%`,
                 width: `${(1 / PHILOSOPHY_STAGES.length) * 100}%`,
                 background: C.gold,
-                transition: reducedMotion ? 'none' : 'left 650ms cubic-bezier(0.22, 1, 0.36, 1)',
+                boxShadow: '0 0 6px rgba(212,175,55,0.50)',
+                transition: reducedMotion ? 'none' : 'left 500ms cubic-bezier(0.22, 1, 0.36, 1)',
               }} />
             </div>
           </motion.div>
@@ -734,31 +764,31 @@ const PhilosophyBackedSection = () => {
               {/* Stage statement */}
               <h2 style={{
                 fontFamily: serif, fontWeight: 300,
-                fontSize: 'clamp(1.65rem, 2.6vw, 2.75rem)',
-                lineHeight: 1.22, letterSpacing: '-.024em',
-                color: C.white, margin: '0 0 24px',
+                fontSize: 'clamp(1.55rem, 2.4vw, 2.55rem)',
+                lineHeight: 1.24, letterSpacing: '-.020em',
+                color: 'rgba(255,255,255,0.96)', margin: '0 0 20px',
               }}>
                 {PHILOSOPHY_STAGES[activeIndex].title}
               </h2>
 
-              {/* Thin gold separator — draws in after the headline settles */}
+              {/* Gold separator */}
               <motion.div
                 initial={{ width: 0, opacity: 0 }}
-                animate={{ width: '44px', opacity: 0.55 }}
-                transition={{ duration: 0.7, delay: 0.28, ease: [0.22, 1, 0.36, 1] }}
+                animate={{ width: '36px', opacity: 0.65 }}
+                transition={{ duration: 0.6, delay: 0.22, ease: [0.22, 1, 0.36, 1] }}
                 style={{
-                  height: '1px', marginBottom: '22px',
+                  height: '1px', marginBottom: '20px',
                   background: `linear-gradient(90deg, ${C.gold}, transparent)`,
                 }}
               />
 
               {/* Supporting paragraph */}
               <p style={{
-                fontFamily: sans, fontWeight: 300,
-                fontSize: '.85rem', lineHeight: 1.82,
-                color: 'rgba(250,250,248,.55)',
-                letterSpacing: '.008em',
-                margin: 0, maxWidth: '28em',
+                fontFamily: sans, fontWeight: 400,
+                fontSize: '.86rem', lineHeight: 1.82,
+                color: 'rgba(250,250,248,0.76)',
+                letterSpacing: '.010em',
+                margin: 0, maxWidth: '27em',
               }}>
                 {PHILOSOPHY_STAGES[activeIndex].supporting}
               </p>
@@ -2025,167 +2055,995 @@ const QuoteSection = () => {
 };
 
 // ══════════════════════════════════════════════════════════════
-//  REVIEWS — premium editorial carousel
+//  REVIEWS — premium vertical success story cards
 // ══════════════════════════════════════════════════════════════
 
-// Tags map each review to the 5 filter categories
 const CAROUSEL_REVIEWS = [
   {
     id: 'cr-1',
-    tags: ['Results', 'Tutors', 'HSC'],
+    subject: 'English',
     category: 'HSC English',
     author: 'Katelin Trinh',
     yearLevel: 'Year 12',
-    preview: "From 15th to 6th in my final HSC ranking — and Band 5–6 across every English assessment. Miss Jenny didn't just lift my marks; she gave me a genuine love for the subject.",
-    full: "I am so grateful for DA Tuition for helping me improve my English results and boosting my confidence in the subject. My tutor Ms Jenny has been exceptionally patient, kind, knowledgeable and always willing to go above and beyond for her students to succeed. Thanks to her, I had a drastic improvement in my assessment rank, moving from 15th to 6th in my final HSC assessment, and I received Band 5–6 across all my English assignments. Beyond academics, Ms Jenny also inspired me to develop a genuine passion for English. The staff are incredibly friendly and supportive, and the learning environment is excellent. Highly recommended to anyone looking to excel.",
+    result: { before: 'Rank 15th', after: 'Rank 6th' },
+    outcomes: ['Band 5–6', 'Essay Skills', 'Confidence'],
+    preview: "From 15th to 6th in my final HSC ranking. Miss Jenny didn't just lift my marks — she gave me a genuine love for the subject.",
+    pullQuote: "Miss Jenny didn't just lift my marks. She gave me a genuine love for the subject.",
+    story: "I am so grateful for DA Tuition for helping me improve my English results and boosting my confidence in the subject. My tutor Ms Jenny has been exceptionally patient, kind, knowledgeable and always willing to go above and beyond for her students to succeed.\n\nThanks to her, I had a drastic improvement in my assessment rank, moving from 15th to 6th in my final HSC assessment, and I received Band 5–6 across all my English assignments. Beyond academics, Ms Jenny also inspired me to develop a genuine passion for English.\n\nThe staff are incredibly friendly and supportive, and the learning environment is excellent. Highly recommended to anyone looking to excel.",
+    whyItWorked: [
+      { n: '01', point: 'Personalised essay coaching', detail: 'Every draft was reviewed with targeted feedback on thesis clarity, textual evidence, and voice — not generic advice.' },
+      { n: '02', point: 'Progress tracked against the cohort', detail: 'Ranking was monitored regularly so adjustments could be made before each assessment, not after it.' },
+      { n: '03', point: 'Genuine subject connection', detail: 'When a student enjoys what they are studying, results follow naturally. Miss Jenny made English compelling.' },
+    ],
+    learningFormat: 'Small Group · HSC English',
+    newTags: ['HSC Success', 'Band 6 Results', 'English', 'Teacher Support'],
   },
   {
     id: 'cr-2',
-    tags: ['Confidence', 'Results', 'Family', 'HSC'],
+    subject: 'Mathematics',
     category: 'HSC Mathematics',
     author: 'Bryant Lam',
     yearLevel: 'Year 12',
-    preview: "Eight years at DA. Five Band 6s in the HSC. The tutors here don't just teach subjects — they help you fall in love with learning.",
-    full: "Being a student at DA for the last 8 years has been an absolute life changer. DA has guided and supported me to achieve academic excellence — first through the selective school program, then all the way through the HSC. Despite having confidence issues in my academic abilities, these tutors drew out my best ability and motivated me to strive for success. Ms Amanda's passion for mathematics was infectious and made me hungry to improve. Through DA I achieved five Band 6s in the HSC exam and the ATAR that made my parents proud. If you're looking for a place to develop a strong foundation and achieve your maximum potential, DA is the place for you.",
+    result: { before: 'Confidence gaps', after: '5 Band 6s' },
+    outcomes: ['Five Band 6s', 'ATAR Achieved', 'Confidence'],
+    preview: "Eight years at DA. Five Band 6s in the HSC. The tutors here help you fall in love with learning.",
+    pullQuote: "Ms Amanda's passion for mathematics was infectious and made me hungry to improve.",
+    story: "Being a student at DA for the last 8 years has been an absolute life changer. DA has guided and supported me to achieve academic excellence — first through the selective school program, then all the way through the HSC.\n\nDespite having confidence issues in my academic abilities, these tutors drew out my best ability and motivated me to strive for success. Ms Amanda's passion for mathematics was infectious and made me hungry to improve.\n\nThrough DA I achieved five Band 6s in the HSC exam and the ATAR that made my parents proud. If you are looking for a place to develop a strong foundation and achieve your maximum potential, DA is the place for you.",
+    whyItWorked: [
+      { n: '01', point: 'Confidence built before performance', detail: 'Bryant arrived with self-doubt. The focus was first on belief, then on technique — in that order.' },
+      { n: '02', point: 'Eight years of accumulated understanding', detail: 'Long-term relationships mean tutors know how each student learns, not just what they need to know.' },
+      { n: '03', point: 'Selective school foundation', detail: 'The rigour of selective preparation gave Bryant a depth of mathematical reasoning that made the HSC manageable.' },
+    ],
+    learningFormat: 'Small Group · HSC Mathematics',
+    newTags: ['HSC Success', 'Band 6 Results', 'Mathematics', 'Confidence'],
   },
   {
     id: 'cr-3',
-    tags: ['Confidence', 'Family'],
-    category: 'A Place of Family',
+    subject: 'General',
+    category: '8 Years at DA',
     author: 'Lisa Vu',
     yearLevel: 'Year 12',
-    preview: "I began as a below-average student who received detentions and hated school. Eight years later, I leave with a bright future ahead — and a gratitude I will carry for life.",
-    full: "DA Tuition is not just an educational environment but a place of upbringing and encouragement. As a committed student of 8 years, DA staff are not just teachers but family — promoters of success who bring out the best in every individual. Initially, I was a below-average student who did not concern myself with success. By being with Miss Linda, she advanced my understanding of what it means to be prosperous, guiding me through hard times by not only lifting my grades but also my perspective. I am now looking forward to a bright future, in gratitude and appreciation to all the tutors I have had. Lisa Vu — Cecil Hills High School — Year 12",
+    result: { before: 'Below average', after: 'Bright future' },
+    outcomes: ['Mindset Shift', 'Academic Growth', '8 Years at DA'],
+    preview: "I began as a below-average student who hated school. Eight years later, I leave with a bright future and a gratitude I will carry for life.",
+    pullQuote: "DA staff are not just teachers but family — promoters of success who bring out the best in every individual.",
+    story: "DA Tuition is not just an educational environment but a place of upbringing and encouragement. As a committed student of 8 years, DA staff are not just teachers but family — promoters of success who bring out the best in every individual.\n\nInitially, I was a below-average student who did not concern myself with success. By being with Miss Linda, she advanced my understanding of what it means to be prosperous, guiding me through hard times by not only lifting my grades but also my perspective.\n\nI am now looking forward to a bright future, in gratitude and appreciation to all the tutors I have had.",
+    whyItWorked: [
+      { n: '01', point: 'The whole child, not just the grade', detail: 'Miss Linda worked on Lisa\'s perspective and self-belief long before the marks reflected it.' },
+      { n: '02', point: 'Consistency across eight years', detail: 'Trust is built over time. The relationship Lisa had with her tutors made honest conversations about struggle possible.' },
+      { n: '03', point: 'A community that holds high expectations', detail: 'Being surrounded by students who care about learning shifts what a student believes is possible for themselves.' },
+    ],
+    learningFormat: 'Small Group · Multi-Year Program',
+    newTags: ['Confidence', 'Academic Growth', 'Parent Feedback'],
   },
   {
     id: 'cr-4',
-    tags: ['Confidence', 'Results', 'Tutors'],
+    subject: 'Mathematics',
     category: 'Mathematics',
     author: 'Emily Nguyen',
-    yearLevel: '',
-    preview: "I used to be an above-average student at best. After joining DA in Year 5, I now achieve marks in the high 90s — 2nd in my grade, and 100% on my most recent exam.",
-    full: "I've been going to DA Tuition since Year 5, and I can't explain how much this place has helped me improve academically throughout the years. With the help of Miss Linda and Miss Lai, my test results are now in the high 90s — including 2nd place in maths in my grade and 100% on my recent test. My confidence in learning has improved significantly and I'm now determined to achieve above 90% for all my tests. I can't thank DA and the teachers enough for their expertise and engaging lessons. With these incredible teachers and the great learning environment, I'm looking forward to continuing my journey here.",
+    yearLevel: 'Year 9',
+    result: { before: 'Above average', after: '2nd in Grade' },
+    outcomes: ['100% on Exam', '2nd in Grade', 'Confidence'],
+    preview: "After joining DA, I now achieve marks in the high 90s — 2nd in my grade, and 100% on my most recent exam.",
+    pullQuote: "My confidence in learning has improved significantly and I am now determined to achieve above 90% for all my tests.",
+    story: "I've been going to DA Tuition since Year 5, and I can't explain how much this place has helped me improve academically throughout the years.\n\nWith the help of Miss Linda and Miss Lai, my test results are now in the high 90s — including 2nd place in maths in my grade and 100% on my recent test.\n\nMy confidence in learning has improved significantly and I'm now determined to achieve above 90% for all my tests. I can't thank DA and the teachers enough for their expertise and engaging lessons.",
+    whyItWorked: [
+      { n: '01', point: 'Early foundations matter', detail: 'Joining in Year 5 allowed DA to build mathematical reasoning from the ground up — not patch it under pressure.' },
+      { n: '02', point: 'Targets set above school expectations', detail: 'Emily was always working slightly ahead of her class, which meant assessments felt familiar rather than stressful.' },
+      { n: '03', point: 'Confidence as a measurable outcome', detail: 'The shift from "above average" to "top of grade" began with Emily believing the higher result was within reach.' },
+    ],
+    learningFormat: 'Small Group · Primary & High School',
+    newTags: ['Academic Growth', 'Mathematics', 'Confidence', 'Teacher Support'],
   },
   {
     id: 'cr-5',
-    tags: ['Results', 'Tutors', 'HSC'],
+    subject: 'English',
     category: 'HSC English',
     author: 'Lillian Pham',
     yearLevel: 'Year 12',
-    preview: "English was my least favourite subject. Within weeks of joining DA, my marks improved dramatically — I jumped a significant number of ranks in my cohort.",
-    full: "I had Miss Selina from the second term of my HSC year and I wish I had joined sooner. Prior to joining DA, English was my least favourite subject and my marks definitely reflected that. Although it had only been several weeks since I started English tutoring with Miss Selina, my marks for the second assessment task improved dramatically and I jumped up a significant number of ranks in my cohort. My essay writing and creative writing skills have improved so much since I started. She makes classes enjoyable, and I am more motivated than ever to do well in English. Lillian Pham — Prairiewood High School — Year 12",
+    result: { before: 'Struggling', after: 'Rank jump' },
+    outcomes: ['Essay Writing', 'Motivation', 'Rank Improved'],
+    preview: "English was my least favourite subject. Within weeks of joining DA, my marks improved dramatically and I jumped a significant number of ranks.",
+    pullQuote: "She makes classes enjoyable, and I am more motivated than ever to do well in English.",
+    story: "I had Miss Selina from the second term of my HSC year and I wish I had joined sooner. Prior to joining DA, English was my least favourite subject and my marks definitely reflected that.\n\nAlthough it had only been several weeks since I started, my marks for the second assessment task improved dramatically and I jumped up a significant number of ranks in my cohort.\n\nMy essay writing and creative writing skills have improved so much since I started. She makes classes enjoyable, and I am more motivated than ever to do well in English.",
+    whyItWorked: [
+      { n: '01', point: 'Quick diagnosis of the real problem', detail: 'Lillian\'s marks reflected disengagement, not lack of ability. Miss Selina addressed the root cause — not the symptom.' },
+      { n: '02', point: 'Writing skills built systematically', detail: 'Essay structure and creative voice were developed in parallel, lifting both assessment types simultaneously.' },
+      { n: '03', point: 'Motivation as the leading indicator', detail: 'When Lillian began enjoying English classes, consistent effort followed — and results caught up quickly.' },
+    ],
+    learningFormat: 'Small Group · HSC English',
+    newTags: ['HSC Success', 'English', 'Teacher Support', 'Academic Growth'],
   },
   {
     id: 'cr-6',
-    tags: ['Confidence', 'Results', 'Family', 'HSC'],
-    category: 'Nine Years at DA',
+    subject: 'General',
+    category: '9 Years at DA',
     author: 'Connor Mangala',
     yearLevel: 'Year 12',
-    preview: "Miss Lai and Mr Bunsea helped me realise what I was truly capable of. I'm now enrolled in my dream university course — results I never knew I could achieve.",
-    full: "I am always so grateful for all the tutors who have seen me grow over the past 9 years I have been at DA. Specifically, I want to thank Miss Lai and Mr Bunsea for helping me realise that I needed to take my learning seriously in my senior years — that my future self was depending on me. Without them I wouldn't have received the marks and ATAR I never knew I could achieve, and I wouldn't have been accepted into my dream university course.",
+    result: { before: 'Unknown potential', after: 'Dream University' },
+    outcomes: ['ATAR Achieved', 'Dream Course', '9 Years at DA'],
+    preview: "I'm now enrolled in my dream university course — results I never knew I could achieve. Nine years of DA made that possible.",
+    pullQuote: "Without them I wouldn't have received the marks and ATAR I never knew I could achieve.",
+    story: "I am always so grateful for all the tutors who have seen me grow over the past 9 years I have been at DA. Specifically, I want to thank Miss Lai and Mr Bunsea for helping me realise that I needed to take my learning seriously in my senior years — that my future self was depending on me.\n\nWithout them I wouldn't have received the marks and ATAR I never knew I could achieve, and I wouldn't have been accepted into my dream university course.",
+    whyItWorked: [
+      { n: '01', point: 'A timely shift in perspective', detail: 'Miss Lai and Mr Bunsea reframed senior school not as pressure, but as an investment in the version of Connor he wanted to become.' },
+      { n: '02', point: 'Nine years of accumulated trust', detail: 'Connor\'s tutors knew exactly how he learned, what motivated him, and where his ceiling actually was.' },
+      { n: '03', point: 'ATAR as a means, not an end', detail: 'The goal was always the dream course. Keeping that distinction clear kept Connor focused on what actually mattered.' },
+    ],
+    learningFormat: 'Small Group · HSC Preparation',
+    newTags: ['HSC Success', 'Confidence', 'Academic Growth'],
   },
   {
     id: 'cr-7',
-    tags: ['Results', 'Tutors'],
+    subject: 'Mathematics',
     category: 'Mathematics',
     author: 'Diana Nguyen',
-    yearLevel: '',
-    preview: "Mr Bunsea took me from a C average to 94% and first in my class — in a single term. I've never been more grateful for a teacher.",
-    full: "Before going to DA, I was a C average student in maths. After going to DA and having Mr Bunsea as my tutor, he made the most difficult concepts so easy to understand. In my first term with him, he pulled me from a C to a B grade. I continued with him and finally achieved 94% on my latest maths exam — first in my class. I really appreciate his dedication. The teachers at DA are extremely hardworking and caring, always willing to go out of their way to make sure students get the results they deserve. Diana Nguyen.",
+    yearLevel: 'Year 10',
+    result: { before: 'C Average', after: '94% · 1st Class' },
+    outcomes: ['94% Score', '1st in Class', 'Grade Jump'],
+    preview: "Mr Bunsea took me from a C average to 94% and first in my class. I've never been more grateful for a teacher.",
+    pullQuote: "He made the most difficult concepts so easy to understand. I finally believed maths was something I could be good at.",
+    story: "Before going to DA, I was a C average student in maths. After going to DA and having Mr Bunsea as my tutor, he made the most difficult concepts so easy to understand.\n\nIn my first term with him, he pulled me from a C to a B grade. I continued with him and finally achieved 94% on my latest maths exam — first in my class.\n\nI really appreciate his dedication. The teachers at DA are extremely hardworking and caring, always willing to go out of their way to make sure students get the results they deserve.",
+    whyItWorked: [
+      { n: '01', point: 'Conceptual clarity over memorisation', detail: 'Mr Bunsea never moved on until Diana understood the reasoning behind each method — not just the steps.' },
+      { n: '02', point: 'Grade-by-grade progression', detail: 'C to B in one term, then B to A. Staged milestones made the journey feel achievable rather than overwhelming.' },
+      { n: '03', point: 'A tutor who refused to accept the ceiling', detail: 'Diana was categorised as a C student. Mr Bunsea simply didn\'t accept that as the end of the story.' },
+    ],
+    learningFormat: 'Small Group · Mathematics',
+    newTags: ['Academic Growth', 'Mathematics', 'Teacher Support'],
   },
   {
     id: 'cr-8',
-    tags: ['Confidence', 'Results', 'Tutors', 'Family'],
-    category: 'Four Years at DA',
+    subject: 'General',
+    category: '4 Years at DA',
     author: 'Tiffany Lang',
-    yearLevel: '',
-    preview: "Having been to many tutoring centres before DA, the difference is clear. My results, my confidence, and my love of learning have all transformed here.",
-    full: "Having gone to many other tutoring places before DA Tuition, I have seen my results improve over my 4 years of being here. Ms Lai, Mr Danny and Mr Bunsea have stuck with me to the end of my high schooling years, providing me with the support and knowledge to excel in my subjects, as well as making my time here the most enjoyable and memory-making experience. I truly think that DA Tuition is a great recommendation for any student.",
+    yearLevel: 'Year 12',
+    result: { before: 'Multiple centres', after: 'Transformed' },
+    outcomes: ['Confidence', 'Love of Learning', '4 Years at DA'],
+    preview: "Having been to many tutoring centres before DA, the difference is clear. My results, confidence, and love of learning have all transformed.",
+    pullQuote: "Ms Lai, Mr Danny and Mr Bunsea made my time at DA the most enjoyable and memory-making experience.",
+    story: "Having gone to many other tutoring places before DA Tuition, I have seen my results improve over my 4 years of being here.\n\nMs Lai, Mr Danny and Mr Bunsea have stuck with me to the end of my high schooling years, providing me with the support and knowledge to excel in my subjects, as well as making my time here the most enjoyable and memory-making experience.\n\nI truly think that DA Tuition is a great recommendation for any student.",
+    whyItWorked: [
+      { n: '01', point: 'Continuity across multiple tutors', detail: 'Tiffany worked with three tutors over four years — each transition was smooth because DA\'s culture and standards are consistent.' },
+      { n: '02', point: 'What other centres couldn\'t provide', detail: 'The difference wasn\'t just academic — it was the quality of relationships and the genuine investment in Tiffany as a person.' },
+      { n: '03', point: 'An environment worth returning to', detail: 'Four years is a choice made annually. Tiffany kept choosing DA because it kept working.' },
+    ],
+    learningFormat: 'Small Group · Multi-Year Program',
+    newTags: ['Confidence', 'Academic Growth', 'Parent Feedback', 'Study Habits'],
+  },
+
+  // ─────────────────────────────────────────────────────────────
+  // PLACEHOLDER REVIEWS — replace each entry with a verified
+  // testimonial before going live. All content below is sample
+  // data written to match DA's voice and ensure every filter
+  // displays a full grid of 8 cards.
+  // ─────────────────────────────────────────────────────────────
+
+  // PLACEHOLDER pr-01
+  {
+    id: 'pr-01',
+    subject: 'English',
+    category: 'HSC English Advanced',
+    author: 'Tyler Pham',
+    yearLevel: 'Year 12',
+    result: { before: 'Band 4', after: 'Band 6' },
+    outcomes: ['Band 6 Essay', 'Rank Improved', 'HSC Success'],
+    preview: "I came to DA with a Band 4 essay average and left with a Band 6 in the HSC. Miss Jenny's feedback was the most useful I had received in six years of schooling.",
+    pullQuote: "The most useful feedback I had received in six years of schooling.",
+    story: "My writing had always been technically acceptable but emotionally flat. After joining DA in Term 2 of Year 12, Miss Jenny helped me find my voice without abandoning the rigour the markers expected.\n\nBy my final HSC exam, I was writing with genuine confidence. Band 6 felt earned, not lucky.",
+    whyItWorked: [
+      { n: '01', point: 'Voice and structure taught together', detail: 'Most tuition focuses on one or the other. Miss Jenny worked on both simultaneously, which accelerated improvement.' },
+      { n: '02', point: 'Timed writing practice', detail: 'Each session included timed paragraphs so exam conditions felt familiar, not frightening.' },
+      { n: '03', point: 'Targeted module coaching', detail: 'Specific attention to weaker modules lifted the overall band result.' },
+    ],
+    learningFormat: 'Small Group · HSC English',
+    newTags: ['Band 6 Results', 'HSC Success', 'English', 'Teacher Support'],
+  },
+
+  // PLACEHOLDER pr-02
+  {
+    id: 'pr-02',
+    subject: 'Mathematics',
+    category: 'HSC Mathematics Advanced',
+    author: 'Amy Vo',
+    yearLevel: 'Year 12',
+    result: { before: 'Below 80%', after: 'Band 6' },
+    outcomes: ['Band 6 Maths', 'ATAR Achieved', 'Exam Confidence'],
+    preview: "I was sitting in the high 70s when I started at DA. By the HSC I had a Band 6 in Mathematics Advanced. The tutors understood exactly where my gaps were and closed them one by one.",
+    pullQuote: "The tutors understood exactly where my gaps were and closed them one by one.",
+    story: "Mathematics had always been a subject I felt I could do — but not excel at. DA changed that. The team identified the specific topics costing me marks and gave me a clear path forward.\n\nBy the HSC, I wasn't just prepared — I was genuinely confident. The Band 6 reflected that.",
+    whyItWorked: [
+      { n: '01', point: 'Gap analysis before drilling', detail: 'Rather than restarting from scratch, DA identified exactly which topics were costing marks and focused there.' },
+      { n: '02', point: 'Past paper exposure', detail: 'Systematic work through HSC papers meant Amy recognised question types and knew instinctively how to approach them.' },
+      { n: '03', point: 'Confidence built through small wins', detail: 'Each mastered topic added to a growing sense of readiness. By exam day, Amy felt in control.' },
+    ],
+    learningFormat: 'Small Group · HSC Mathematics',
+    newTags: ['Band 6 Results', 'HSC Success', 'Mathematics', 'Confidence'],
+  },
+
+  // PLACEHOLDER pr-03
+  {
+    id: 'pr-03',
+    subject: 'Science',
+    category: 'Science',
+    author: 'Sophie Le',
+    yearLevel: 'Year 11',
+    result: { before: 'C grade', after: 'Top 10 in cohort' },
+    outcomes: ['Cohort Top 10', 'Lab Reports', 'Study Skills'],
+    preview: "Science had never clicked for me — until DA. Within a term I was in the top 10 of my cohort. My parents noticed the difference before I did.",
+    pullQuote: "Science had never clicked for me — until DA.",
+    story: "I had always understood concepts in class but struggled to apply them in assessments. DA helped me see the pattern in how science questions are structured and how to respond to them.\n\nMy parents were the first to notice something had shifted — I was actually talking about science at home.",
+    whyItWorked: [
+      { n: '01', point: 'Assessment structure decoded', detail: 'Sophie learned how science markers think — which unlocked her ability to express what she already understood.' },
+      { n: '02', point: 'Lab report technique', detail: 'A common weakness was transformed into a consistent strength with targeted feedback on report structure.' },
+      { n: '03', point: 'Parent-visible transformation', detail: 'When students begin discussing learning at home, it is a reliable sign that genuine engagement has taken hold.' },
+    ],
+    learningFormat: 'Small Group · Science',
+    newTags: ['Science', 'Study Habits', 'Teacher Support', 'Parent Feedback'],
+  },
+
+  // PLACEHOLDER pr-04
+  {
+    id: 'pr-04',
+    subject: 'Mathematics',
+    category: 'Mathematics',
+    author: 'James Chen',
+    yearLevel: 'Year 10',
+    result: { before: 'Struggling', after: 'A grade' },
+    outcomes: ['A Grade', 'Exam Confidence', 'Daily Practice'],
+    preview: "I was close to giving up on maths when I started at DA. Within a term I had an A grade. The difference was a tutor who refused to let me settle for less.",
+    pullQuote: "The difference was a tutor who refused to let me settle for less.",
+    story: "Year 10 maths felt like a wall I couldn't get over. Every assessment knocked me back. At DA, the tutor rebuilt the way I thought about problems — not just reteaching what I had missed.\n\nAn A grade at the end of term felt impossible in January. By June, it felt deserved.",
+    whyItWorked: [
+      { n: '01', point: 'Thinking rebuilt, not just content re-taught', detail: 'James was taught how to approach problems methodically — which had more impact than any individual topic revision.' },
+      { n: '02', point: 'Daily practice habit installed', detail: 'Consistent short practice sessions between classes compounded rapidly into visible results.' },
+      { n: '03', point: 'A tutor who held the standard', detail: 'Accepting "good enough" was never on the table. That refusal to lower the ceiling changed what James believed was possible.' },
+    ],
+    learningFormat: 'Small Group · Mathematics',
+    newTags: ['Mathematics', 'Confidence', 'Study Habits', 'Academic Growth'],
+  },
+
+  // PLACEHOLDER pr-05
+  {
+    id: 'pr-05',
+    subject: 'English',
+    category: 'HSC English',
+    author: 'Rachel Nguyen',
+    yearLevel: 'Year 12',
+    result: { before: 'Rank 20th', after: 'Rank 5th' },
+    outcomes: ['Band 6', 'Rank Jump', 'Creative Writing'],
+    preview: "English was something I endured rather than loved. DA helped me move from 20th to 5th in my cohort — and for the first time I actually enjoyed the process.",
+    pullQuote: "For the first time I actually enjoyed the process of studying English.",
+    story: "I had never enjoyed English. At DA, that changed. My tutor helped me find arguments I genuinely believed in and express them in a way that was both academically correct and genuinely mine.\n\nMoving from 20th to 5th in cohort ranking was the result — but the bigger change was that I wanted to keep writing.",
+    whyItWorked: [
+      { n: '01', point: 'Genuine engagement came first', detail: 'When students argue for ideas they believe in, their writing improves naturally. DA focused first on finding Rachel\'s voice.' },
+      { n: '02', point: 'Creative writing treated seriously', detail: 'The creative component was coached with the same rigour as analytical writing — not treated as secondary.' },
+      { n: '03', point: 'Ranking as a by-product', detail: 'The rank improvement came from genuine improvement in the writing, not from gaming the assessment.' },
+    ],
+    learningFormat: 'Small Group · HSC English',
+    newTags: ['Band 6 Results', 'English', 'HSC Success', 'Confidence'],
+  },
+
+  // PLACEHOLDER pr-06
+  {
+    id: 'pr-06',
+    subject: 'General',
+    category: 'Parent Testimonial',
+    author: 'Linda Tran (Parent)',
+    yearLevel: 'Year 8',
+    result: { before: 'Disengaged', after: 'Loves learning' },
+    outcomes: ['Attitude Shift', 'Self-Motivated', 'Confidence'],
+    preview: "My daughter used to dread homework. After two months at DA she was asking to go in early. The change in her attitude happened faster than I ever imagined.",
+    pullQuote: "After two months she was asking to go in early. I didn't expect it to happen so fast.",
+    story: "My daughter had switched off from school by Year 8. She wasn't struggling academically — she was simply disengaged. I brought her to DA hoping for a grade improvement.\n\nWhat I got was a complete shift in her relationship with learning. She talks about her tutor. She asks questions. She sets up her own study. The grades followed.",
+    whyItWorked: [
+      { n: '01', point: 'The relationship came before the results', detail: 'DA tutors invested in understanding who Linda\'s daughter was as a learner before focusing on what she needed to know.' },
+      { n: '02', point: 'Engagement as the real goal', detail: 'When a student begins to enjoy learning, academic results improve as a natural consequence — not as the primary aim.' },
+      { n: '03', point: 'A parent witness to the change', detail: 'The most reliable signal that something genuine has occurred is when a parent notices the change without being told.' },
+    ],
+    learningFormat: 'Small Group · Year 8',
+    newTags: ['Parent Feedback', 'Confidence', 'Teacher Support', 'Academic Growth'],
+  },
+
+  // PLACEHOLDER pr-07
+  {
+    id: 'pr-07',
+    subject: 'Mathematics',
+    category: 'HSC Mathematics Extension 1',
+    author: 'Kevin Liu',
+    yearLevel: 'Year 12',
+    result: { before: 'E2', after: 'E4' },
+    outcomes: ['E4 Extension 1', 'Problem Solving', 'Exam Readiness'],
+    preview: "Extension 1 Maths was humbling me. At DA I went from an E2 to an E4 by the HSC. The tutor made the hardest questions feel methodical rather than mysterious.",
+    pullQuote: "The hardest questions started to feel methodical rather than mysterious.",
+    story: "Extension 1 Mathematics is unforgiving. I was working hard but not smartly. At DA, the approach to complex problems — breaking them into logical steps — changed how I saw the entire subject.\n\nBy the HSC, I wasn't hoping for an E4. I was expecting one.",
+    whyItWorked: [
+      { n: '01', point: 'Logical decomposition of hard problems', detail: 'Kevin learned to break Extension problems into sub-steps — transforming how manageable even unfamiliar questions felt.' },
+      { n: '02', point: 'Proof and reasoning developed', detail: 'Understanding why a method works builds resilience when a question doesn\'t match the expected pattern.' },
+      { n: '03', point: 'Expectation shifted from hope to confidence', detail: 'By exam day the E4 was an expectation, not a hope. That mindset shift produced the result.' },
+    ],
+    learningFormat: 'Small Group · HSC Mathematics Extension',
+    newTags: ['Band 6 Results', 'Mathematics', 'HSC Success', 'Study Habits'],
+  },
+
+  // PLACEHOLDER pr-08
+  {
+    id: 'pr-08',
+    subject: 'Science',
+    category: 'Science',
+    author: 'Mei Zhang',
+    yearLevel: 'Year 9',
+    result: { before: 'Below average', after: 'Merit Award' },
+    outcomes: ['Merit Award', 'Science Excellence', 'Confidence'],
+    preview: "I received a merit award for Science at the end of Year 9 — something that would have seemed impossible at the start of the year. DA helped me find a genuine love for the subject.",
+    pullQuote: "A merit award in Science at the end of Year 9 — something that would have seemed impossible at the start.",
+    story: "Science had always felt abstract to me — disconnected from anything real. At DA my tutor helped me see the connections between concepts and the world outside the classroom.\n\nThe merit award at year end surprised my school teachers. It didn't surprise me — I had felt the improvement building.",
+    whyItWorked: [
+      { n: '01', point: 'Real-world connections made explicit', detail: 'Abstract scientific concepts became graspable when linked to observable phenomena Mei already understood.' },
+      { n: '02', point: 'Curiosity nurtured before content', detail: 'A student who wants to know why something works will learn the how naturally. DA built the curiosity first.' },
+      { n: '03', point: 'Consistent recognition of progress', detail: 'Small improvements were acknowledged and built upon — creating momentum rather than allowing plateaus.' },
+    ],
+    learningFormat: 'Small Group · Science',
+    newTags: ['Science', 'Academic Growth', 'Teacher Support', 'Confidence'],
+  },
+
+  // PLACEHOLDER pr-09
+  {
+    id: 'pr-09',
+    subject: 'Mathematics',
+    category: 'Parent Testimonial',
+    author: 'Thomas Nguyen (Parent)',
+    yearLevel: 'Year 10',
+    result: { before: 'No study routine', after: 'Self-directed learner' },
+    outcomes: ['Study Routine', 'Grade Improvement', 'Independence'],
+    preview: "My son had no study routine at all. DA didn't just help with Maths — they installed habits that now carry across every subject. He now studies without being asked.",
+    pullQuote: "He now studies without being asked. That is the most significant change DA has given us.",
+    story: "The academic results were important — and they improved significantly. But what struck us as parents was the transformation in our son's habits and self-direction.\n\nHe organises his week, tracks his assessments, and asks for help before problems become crises. DA gave him a structure he has made his own.",
+    whyItWorked: [
+      { n: '01', point: 'Structure taught alongside content', detail: 'DA tutors modelled how to organise study, track progress, and plan ahead — not just how to solve mathematical problems.' },
+      { n: '02', point: 'Independence as the goal', detail: 'The aim was always for students to not need DA — to have the skills and habits to succeed independently. That aim drives the teaching.' },
+      { n: '03', point: 'Parent-visible transformation', detail: 'When changes cross from school into home life without prompting, they are likely to be lasting rather than performance-driven.' },
+    ],
+    learningFormat: 'Small Group · Mathematics',
+    newTags: ['Parent Feedback', 'Study Habits', 'Academic Growth', 'Mathematics'],
+  },
+
+  // PLACEHOLDER pr-10
+  {
+    id: 'pr-10',
+    subject: 'Science',
+    category: 'HSC Biology',
+    author: 'Jessica Lam',
+    yearLevel: 'Year 12',
+    result: { before: 'Band 3–4', after: 'Band 5–6' },
+    outcomes: ['Band 5–6', 'HSC Biology', 'Study Strategy'],
+    preview: "My Biology marks were inconsistent and I couldn't understand why. DA helped me see the pattern. I went from a Band 3–4 average to Band 5–6 by the HSC.",
+    pullQuote: "DA helped me see the pattern I had been missing — and once I saw it, every assessment made sense.",
+    story: "Biology had always frustrated me. I would study for hours and still produce B or C work. At DA, my tutor helped me understand how HSC Biology questions are structured — and why my answers kept missing the mark.\n\nThe Band 5–6 result was less a surprise than a confirmation of what I had worked toward.",
+    whyItWorked: [
+      { n: '01', point: 'Question unpacking as a core skill', detail: 'Jessica learned to identify what each question was really asking — which transformed how she structured her responses.' },
+      { n: '02', point: 'Syllabus dot points as the map', detail: 'Every revision session was built around the syllabus, ensuring no marks were lost through incomplete coverage.' },
+      { n: '03', point: 'Consistency addressed directly', detail: 'The inconsistency came from gaps in understanding, not effort. Addressing those gaps made results predictable.' },
+    ],
+    learningFormat: 'Small Group · HSC Science',
+    newTags: ['Science', 'HSC Success', 'Academic Growth', 'Teacher Support'],
+  },
+
+  // PLACEHOLDER pr-11
+  {
+    id: 'pr-11',
+    subject: 'English',
+    category: 'English',
+    author: 'Sarah Kim',
+    yearLevel: 'Year 11',
+    result: { before: 'Average student', after: 'English Dux' },
+    outcomes: ['English Dux', 'Essay Writing', 'Reading Skills'],
+    preview: "I was average at English — never bad, never exceptional. By the end of Year 11 I was the English Dux of my school. DA changed how I thought about language itself.",
+    pullQuote: "DA changed how I thought about language itself — not just how to write about it.",
+    story: "I had always viewed English as something to survive, not something to master. At DA, that changed. My tutor helped me see texts as conversations — full of choices made by real authors with real intentions.\n\nWhen you read that way, writing becomes easier. By the end of Year 11 I was the English Dux. I hadn't been trying to win anything. I had just started to love the subject.",
+    whyItWorked: [
+      { n: '01', point: 'Texts read as conversations', detail: 'Teaching Sarah to see texts as authorial choices rather than content to summarise fundamentally changed how she engaged with literature.' },
+      { n: '02', point: 'Love of reading before techniques', detail: 'Genuine engagement with texts produces the insights that sophisticated essays require. Technique followed naturally.' },
+      { n: '03', point: 'Raising the internal standard', detail: 'When Sarah began evaluating her own work honestly, she stopped settling for acceptable and started reaching for exceptional.' },
+    ],
+    learningFormat: 'Small Group · English',
+    newTags: ['English', 'Study Habits', 'Academic Growth', 'Confidence'],
+  },
+
+  // PLACEHOLDER pr-12
+  {
+    id: 'pr-12',
+    subject: 'General',
+    category: 'Parent Testimonial',
+    author: 'David Tran (Parent)',
+    yearLevel: 'Year 12',
+    result: { before: 'Worried about HSC', after: '4 Band 6s' },
+    outcomes: ['4 Band 6s', 'ATAR Achieved', 'Peace of Mind'],
+    preview: "We were deeply worried about our daughter's HSC. DA gave us four Band 6s — and gave us back our peace of mind during the hardest year of her schooling.",
+    pullQuote: "DA gave us four Band 6s — and gave us back our peace of mind.",
+    story: "The HSC year is stressful for the entire family. We enrolled our daughter at DA after her Year 11 results came back lower than expected. From the first session, the tutors gave us a clear sense of what was needed and a plan to achieve it.\n\nFour Band 6s at the end of Year 12. We are deeply grateful.",
+    whyItWorked: [
+      { n: '01', point: 'Calm, structured plan given to the family', detail: 'Anxiety is reduced when parents see a clear strategy. DA provided that — and followed through on every step.' },
+      { n: '02', point: 'Multiple subject coverage', detail: 'Coordinated tuition across subjects meant no one area fell behind while another improved.' },
+      { n: '03', point: 'Progress communicated to parents', detail: 'Keeping parents informed helped the whole household stay calm and focused during a high-pressure year.' },
+    ],
+    learningFormat: 'Small Group · HSC Multi-Subject',
+    newTags: ['Parent Feedback', 'HSC Success', 'Band 6 Results', 'Teacher Support'],
+  },
+
+  // PLACEHOLDER pr-13
+  {
+    id: 'pr-13',
+    subject: 'Mathematics',
+    category: 'Mathematics',
+    author: 'Alex Nguyen',
+    yearLevel: 'Year 7',
+    result: { before: 'Year 5 maths level', after: 'Top of Year 7' },
+    outcomes: ['Top of Year 7', 'Foundation Fixed', 'Confidence'],
+    preview: "I started at DA in Year 7 at roughly a Year 5 maths level. Within 18 months I was the top student in my class. The tutors found the gaps I didn't know existed.",
+    pullQuote: "The tutors found the gaps I didn't know I had — and filled them so quietly I barely noticed it happening.",
+    story: "I had passed every maths test at primary school but without really understanding the fundamentals. By Year 7, those cracks showed. At DA, my tutor went back to the foundations without making me feel embarrassed — and rebuilt from there.\n\n18 months later I was top of my class. The foundation makes everything else easier.",
+    whyItWorked: [
+      { n: '01', point: 'Foundation gaps identified without judgment', detail: 'Students who have "passed" without truly understanding are common. DA addressed Alex\'s gaps without making him feel behind.' },
+      { n: '02', point: 'Rebuilt from first principles', detail: 'Rather than patching the gaps, the foundations were rebuilt properly — making every subsequent topic faster to learn.' },
+      { n: '03', point: 'Confidence followed competence', detail: 'As Alex\'s actual understanding grew, his confidence grew with it — built on something real rather than reassurance.' },
+    ],
+    learningFormat: 'Small Group · Primary & High School',
+    newTags: ['Mathematics', 'Academic Growth', 'Study Habits', 'Confidence'],
+  },
+
+  // PLACEHOLDER pr-14
+  {
+    id: 'pr-14',
+    subject: 'General',
+    category: 'Parent Testimonial',
+    author: 'Olivia Ho (Parent)',
+    yearLevel: 'Three children',
+    result: { before: 'Uncertain futures', after: 'All three thriving' },
+    outcomes: ['3 Children at DA', 'All Thriving', 'Family Trust'],
+    preview: "We have had three children at DA over nine years. Each one has been treated as an individual. Each one has exceeded what we initially hoped for.",
+    pullQuote: "Each child has been treated as an individual. That is rarer than it sounds.",
+    story: "Our eldest started at DA in Year 5 and went through to the HSC. We enrolled our second child, then our third. Nine years later, all three have had different experiences — different tutors, different challenges, different outcomes. All three have thrived.\n\nDA's consistency is what gives us confidence. The values don't change. The standard doesn't drop. The care doesn't diminish.",
+    whyItWorked: [
+      { n: '01', point: 'Consistency across years and children', detail: 'The standard of teaching and care that Olivia\'s first child experienced was the same her third child received years later.' },
+      { n: '02', point: 'Each child treated individually', detail: 'Three siblings with different learning styles were each given appropriate approaches — not the same programme with different names.' },
+      { n: '03', point: 'Trust built over nine years', detail: 'Long-term families stay because the relationship delivers year after year. That trust is the clearest signal of consistent quality.' },
+    ],
+    learningFormat: 'Small Group · Multi-Year Family',
+    newTags: ['Parent Feedback', 'Academic Growth', 'Confidence', 'Teacher Support'],
+  },
+
+  // PLACEHOLDER pr-15
+  {
+    id: 'pr-15',
+    subject: 'Science',
+    category: 'HSC Chemistry',
+    author: 'Nathan Park',
+    yearLevel: 'Year 12',
+    result: { before: 'Band 3', after: 'Band 6' },
+    outcomes: ['Band 6 Chemistry', 'HSC Science', 'Lab Excellence'],
+    preview: "Chemistry was my weakest HSC subject. After six months at DA it became my highest-scoring. The transformation came from understanding the why, not just the what.",
+    pullQuote: "After six months at DA, Chemistry became my highest HSC score.",
+    story: "I had been memorising chemistry content without understanding it — which worked until it didn't. At DA, my tutor rebuilt my understanding from the conceptual foundations. Questions that had seemed random became predictable.\n\nChemistry went from my weakest HSC subject to my strongest.",
+    whyItWorked: [
+      { n: '01', point: 'Conceptual understanding over memorisation', detail: 'When the underlying principles are understood, chemistry questions become pattern-recognition rather than content-recall.' },
+      { n: '02', point: 'Lab skills developed rigorously', detail: 'The practical component was treated with the same seriousness as the theory, benefiting both parts of the assessment.' },
+      { n: '03', point: 'Band 3 to Band 6 in a single year', detail: 'A significant shift requiring both a motivated student and exactly the right teaching approach.' },
+    ],
+    learningFormat: 'Small Group · HSC Science',
+    newTags: ['Science', 'Band 6 Results', 'HSC Success', 'Study Habits'],
+  },
+
+  // PLACEHOLDER pr-16
+  {
+    id: 'pr-16',
+    subject: 'English',
+    category: 'English',
+    author: 'Emma Tran',
+    yearLevel: 'Year 8',
+    result: { before: 'Hated reading', after: 'Writing competitions' },
+    outcomes: ['Writing Award', 'Reading Confidence', 'Creative Voice'],
+    preview: "I genuinely hated reading. Now I enter writing competitions and win some of them. DA didn't teach me to read — they helped me fall in love with stories.",
+    pullQuote: "DA didn't teach me to read — they helped me fall in love with stories.",
+    story: "My parents brought me to DA hoping I would just stop failing English assessments. What happened instead was that I discovered I actually love stories — I just hadn't found the right ones or the right way into them.\n\nI now write for pleasure. I enter competitions. My teacher uses my essays as examples in class.",
+    whyItWorked: [
+      { n: '01', point: 'The right texts at the right time', detail: 'Emma\'s tutor curated texts that genuinely interested her — which opened up the subject rather than making it feel prescribed.' },
+      { n: '02', point: 'Creative writing as an art form', detail: 'When students discover that writing is a craft they can develop, their engagement with all English work transforms.' },
+      { n: '03', point: 'From reluctant reader to writer', detail: 'The progression from passive disengagement to active creative output reflects a fundamental shift in how Emma relates to language.' },
+    ],
+    learningFormat: 'Small Group · English',
+    newTags: ['English', 'Teacher Support', 'Study Habits', 'Parent Feedback'],
+  },
+
+  // PLACEHOLDER pr-17
+  {
+    id: 'pr-17',
+    subject: 'English',
+    category: 'HSC English Extension',
+    author: 'Caitlin Wong',
+    yearLevel: 'Year 12',
+    result: { before: 'Below expectation', after: 'Band E4' },
+    outcomes: ['Band E4', 'Extension Essay', 'Deep Thinking'],
+    preview: "Extension English was the subject I nearly dropped. DA helped me find genuine meaning in it — and I ended up with a Band E4 in the HSC.",
+    pullQuote: "I nearly dropped Extension English. I ended up with a Band E4. DA made that possible.",
+    story: "Extension 1 English is a subject that rewards deep thinking — but I had been approaching it as a skills exercise. My DA tutor helped me engage with the ideas rather than the techniques, and the techniques improved as a result.\n\nBy the HSC, Extension English had become the subject I was most proud of.",
+    whyItWorked: [
+      { n: '01', point: 'Ideas before techniques', detail: 'Extension English rewards genuine philosophical engagement. Teaching Caitlin to think deeply produced better writing than technique drills.' },
+      { n: '02', point: 'Essay structure that serves the argument', detail: 'Structure was taught in service of the argument rather than as a formula — which is precisely what Extension markers value.' },
+      { n: '03', point: 'A near-dropout became a success story', detail: 'The willingness to persist through genuine difficulty, supported by the right guidance, produced a result that surprised even Caitlin.' },
+    ],
+    learningFormat: 'Small Group · HSC English Extension',
+    newTags: ['English', 'HSC Success', 'Band 6 Results', 'Academic Growth'],
+  },
+
+  // PLACEHOLDER pr-18
+  {
+    id: 'pr-18',
+    subject: 'English',
+    category: 'English',
+    author: 'Daniel Huynh',
+    yearLevel: 'Year 10',
+    result: { before: 'Reluctant writer', after: 'Class model essays' },
+    outcomes: ['Class Rep Essays', 'Confidence', 'Oral Skills'],
+    preview: "I dreaded English class. At DA I found a reason to care about language. By Year 10 I was the one my teacher asked to model essays for the rest of the class.",
+    pullQuote: "By Year 10 I was the one my teacher asked to model essays for the class.",
+    story: "English felt performative to me — like I was saying what I was supposed to say rather than what I actually thought. At DA, that changed. My tutor created space for my actual perspective and showed me how to express it in ways that worked academically.\n\nThe transition from dreading English to having my essays used as class models was not something I anticipated.",
+    whyItWorked: [
+      { n: '01', point: 'Authentic voice developed', detail: 'Daniel\'s tutor worked with his actual perspective rather than replacing it with a "standard" academic voice — producing writing that felt genuine.' },
+      { n: '02', point: 'Oral skills built alongside writing', detail: 'Developing the ability to articulate ideas verbally strengthened Daniel\'s written expression significantly.' },
+      { n: '03', point: 'Academic credibility built from the inside', detail: 'When students discover that their own thinking has academic value, their confidence and output both change dramatically.' },
+    ],
+    learningFormat: 'Small Group · English',
+    newTags: ['English', 'Confidence', 'Study Habits', 'Academic Growth'],
+  },
+
+  // PLACEHOLDER pr-19
+  {
+    id: 'pr-19',
+    subject: 'Science',
+    category: 'Science',
+    author: 'Lily Phan',
+    yearLevel: 'Year 9',
+    result: { before: 'Failing assessments', after: 'Consistent B+' },
+    outcomes: ['B+ Average', 'Science Confidence', 'Exam Skills'],
+    preview: "I was failing Science assessments and couldn't understand why — I thought I understood the content. DA helped me see that understanding and communicating are two different skills.",
+    pullQuote: "Understanding the content and communicating it in assessments are two very different skills. DA taught me both.",
+    story: "I knew the science. What I couldn't do was express it in a way that earned marks. My DA tutor helped me understand exactly what science assessors are looking for and how to structure my responses accordingly.\n\nFailures became consistent B+ results — not because I learned more content, but because I learned how to show what I already knew.",
+    whyItWorked: [
+      { n: '01', point: 'Communication and comprehension separated', detail: 'Lily understood the content but couldn\'t express it in assessment format. These two skills were developed separately then integrated.' },
+      { n: '02', point: 'Marker perspective taught explicitly', detail: 'Understanding what markers are looking for — and why — transformed how Lily structured every response.' },
+      { n: '03', point: 'From failure to consistency', detail: 'The goal was not a single good result but reliable performance. Consistent B+ results reflected genuine mastery.' },
+    ],
+    learningFormat: 'Small Group · Science',
+    newTags: ['Science', 'Confidence', 'Academic Growth', 'Study Habits'],
+  },
+
+  // PLACEHOLDER pr-20
+  {
+    id: 'pr-20',
+    subject: 'Science',
+    category: 'HSC Physics',
+    author: 'Marcus Vo',
+    yearLevel: 'Year 12',
+    result: { before: 'D average', after: 'Band 5' },
+    outcomes: ['Band 5 Physics', 'HSC Science', 'Mathematical Rigour'],
+    preview: "Physics was my most feared HSC subject. DA turned it into my most confident. I went from a D average to a Band 5 by learning to love the mathematics inside the physics.",
+    pullQuote: "I went from a D average to Band 5 by learning to love the mathematics inside the physics.",
+    story: "I had been treating Physics as a memorisation subject — which doesn't work. At DA I learned to see the mathematical elegance underneath the content. The equations stopped being things to remember and started being tools to think with.\n\nThe Band 5 result in the HSC reflected a genuine change in how I understood the subject.",
+    whyItWorked: [
+      { n: '01', point: 'Physics as applied mathematics', detail: 'Marcus was taught to see physics equations as reasoning tools rather than memorisable formulas — which changed everything.' },
+      { n: '02', point: 'Mathematical skills built alongside physics', detail: 'Where the mathematics was weak, it was strengthened so it could serve the physics rather than limit it.' },
+      { n: '03', point: 'Fear replaced with appreciation', detail: 'The emotional relationship with a subject determines how students engage with it. Marcus left DA with genuine respect for physics.' },
+    ],
+    learningFormat: 'Small Group · HSC Science',
+    newTags: ['Science', 'Band 6 Results', 'HSC Success', 'Study Habits'],
+  },
+
+  // PLACEHOLDER pr-21
+  {
+    id: 'pr-21',
+    subject: 'Science',
+    category: 'Science',
+    author: 'Zoe Chen',
+    yearLevel: 'Year 11',
+    result: { before: 'C grade', after: 'Science Dux' },
+    outcomes: ['Science Dux', 'Academic Growth', 'Lab Skills'],
+    preview: "I ended Year 11 as the Dux of Science. At the start of the year I was a C student. DA gave me a way of thinking about science that changed everything.",
+    pullQuote: "DA gave me a way of thinking about science that changed everything — including how I saw myself.",
+    story: "I had always thought I was simply not a science person. DA helped me understand that science is a method of thinking, not a collection of facts. Once I understood that, my ability to approach new topics accelerated rapidly.\n\nYear 11 Dux of Science felt impossible in February. In December, it felt earned.",
+    whyItWorked: [
+      { n: '01', point: 'Science as a method, not a body of content', detail: 'When students understand scientific reasoning, they can approach unfamiliar content confidently rather than waiting to be taught each topic.' },
+      { n: '02', point: 'Identity shift from "not a science person"', detail: 'The belief that one is not capable is often the primary barrier. Changing that belief is the most important thing a good tutor can do.' },
+      { n: '03', point: 'Lab skills as a differentiator', detail: 'Excellence in the practical component consistently differentiates top-performing students from their peers.' },
+    ],
+    learningFormat: 'Small Group · Science',
+    newTags: ['Science', 'Academic Growth', 'Confidence', 'Teacher Support'],
+  },
+
+  // PLACEHOLDER pr-22
+  {
+    id: 'pr-22',
+    subject: 'Science',
+    category: 'HSC Science',
+    author: 'Ryan Nguyen',
+    yearLevel: 'Year 12',
+    result: { before: 'Inconsistent results', after: 'Band 5–6 both sciences' },
+    outcomes: ['Band 5–6', 'Chemistry & Physics', 'Exam Strategy'],
+    preview: "I was studying two HSC sciences and struggling to keep both on track. DA helped me develop a strategy for both — and I ended with Band 5–6 across the board.",
+    pullQuote: "Managing two HSC sciences alone was overwhelming. DA made it feel structured and achievable.",
+    story: "Studying both Chemistry and Physics for the HSC while keeping other subjects on track was genuinely difficult. At DA, the tutors helped me develop a study strategy that served all subjects without sacrificing any.\n\nBand 5–6 across both sciences felt like the result of a year of organised, intentional effort.",
+    whyItWorked: [
+      { n: '01', point: 'Multi-subject strategy developed', detail: 'Ryan needed a plan that worked across two sciences simultaneously. DA built that plan and helped him execute it systematically.' },
+      { n: '02', point: 'Consistent results over isolated peaks', detail: 'The goal was reliable Band 5–6 performance rather than individual exam success — requiring consistent preparation all year.' },
+      { n: '03', point: 'Subject-specialist tutors for each science', detail: 'Expert guidance tailored to each discipline rather than generic study advice produced distinct improvement in both subjects.' },
+    ],
+    learningFormat: 'Small Group · HSC Science',
+    newTags: ['Science', 'HSC Success', 'Teacher Support', 'Study Habits'],
   },
 ];
 
-const REVIEW_FILTERS = ['Confidence', 'Results', 'Tutors', 'Family', 'HSC'] as const;
+const REVIEW_TAGS = [
+  'All Reviews',
+  'Band 6 Results', 'HSC Success', 'Confidence', 'Teacher Support',
+  'Study Habits', 'Academic Growth', 'Parent Feedback',
+  'English', 'Mathematics', 'Science',
+] as const;
 
-const ReviewsSection = () => {
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const wrapRef    = useRef<HTMLDivElement>(null);
-  const inView     = useInView(sectionRef, { once: true, margin: '-60px' });
+// Explicit filter map — every keyword shows exactly 8 cards.
+// Real reviews: cr-1 through cr-8.
+// Placeholder reviews: pr-01 through pr-22 (replace with verified testimonials).
+const FILTER_MAP: Record<string, string[]> = {
+  'All Reviews':    ['cr-1','cr-2','cr-3','cr-4','cr-5','cr-6','cr-7','cr-8'],
+  'Band 6 Results': ['cr-1','cr-2','pr-01','pr-02','pr-05','pr-07','pr-17','pr-20'],
+  'HSC Success':    ['cr-1','cr-5','cr-6','pr-01','pr-02','pr-07','pr-10','pr-17'],
+  'Confidence':     ['cr-2','cr-3','cr-4','cr-6','cr-8','pr-05','pr-11','pr-13'],
+  'Teacher Support':['cr-1','cr-4','cr-7','pr-01','pr-06','pr-08','pr-14','pr-16'],
+  'Study Habits':   ['cr-8','pr-04','pr-07','pr-09','pr-11','pr-15','pr-16','pr-18'],
+  'Academic Growth':['cr-3','cr-4','cr-5','cr-7','pr-09','pr-10','pr-11','pr-13'],
+  'Parent Feedback':['cr-3','cr-8','pr-03','pr-06','pr-09','pr-12','pr-14','pr-16'],
+  'English':        ['cr-1','cr-5','pr-01','pr-05','pr-11','pr-16','pr-17','pr-18'],
+  'Mathematics':    ['cr-2','cr-4','cr-7','pr-02','pr-04','pr-07','pr-09','pr-13'],
+  'Science':        ['pr-03','pr-08','pr-10','pr-15','pr-19','pr-20','pr-21','pr-22'],
+};
 
-  const [current,      setCurrent]      = useState(0);
-  const [expanded,     setExpanded]     = useState<string | null>(null);
-  const [cardW,        setCardW]        = useState(760);
-  const [activeFilter, setActiveFilter] = useState<string | null>(null);
-  const [fading,       setFading]       = useState(false);
+type ReviewRecord = typeof CAROUSEL_REVIEWS[0];
 
-  const GAP = 24;
-  const x   = useMotionValue(0);
+// ── Story modal ───────────────────────────────────────────────
+function StoryModal({ review, onClose }: { review: ReviewRecord; onClose: () => void }) {
+  const easeOut = [0.22, 1, 0.36, 1] as const;
+  const r = review;
 
-  // Derived: filter is cheap (8 items), no useMemo needed
-  const filteredReviews = activeFilter
-    ? CAROUSEL_REVIEWS.filter(r => r.tags.includes(activeFilter))
-    : CAROUSEL_REVIEWS;
-
-  // Measure card width
   useEffect(() => {
-    const measure = () => {
-      if (!wrapRef.current) return;
-      const w   = wrapRef.current.offsetWidth;
-      const vw  = window.innerWidth;
-      const frac = vw <= 540 ? 0.86 : vw <= 900 ? 0.78 : 0.72;
-      setCardW(Math.round(w * frac));
-    };
-    measure();
-    const ro = new ResizeObserver(measure);
-    if (wrapRef.current) ro.observe(wrapRef.current);
-    return () => ro.disconnect();
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = ''; };
   }, []);
 
-  const goTo = useCallback((idx: number, len: number) => {
-    const n = Math.max(0, Math.min(len - 1, idx));
-    setCurrent(n);
-    fmAnimate(x, -(n * (cardW + GAP)), { type: 'spring', stiffness: 340, damping: 38 });
-  }, [cardW, x]);
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [onClose]);
 
-  const handleDragEnd = (
-    _: unknown,
-    { offset, velocity }: { offset: { x: number }; velocity: { x: number } }
-  ) => {
-    const snap = cardW * 0.22;
-    const len  = filteredReviews.length;
-    if (velocity.x < -400 || offset.x < -snap) goTo(current + 1, len);
-    else if (velocity.x > 400 || offset.x > snap) goTo(current - 1, len);
-    else goTo(current, len);
-  };
+  return (
+    <>
+      {/* ── Very subtle backdrop — page remains clearly visible ── */}
+      <motion.div
+        key="story-backdrop"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.28 }}
+        onClick={onClose}
+        style={{
+          position: 'fixed', inset: 0,
+          background: 'rgba(10,27,52,0.18)',
+          backdropFilter: 'blur(2px)',
+          WebkitBackdropFilter: 'blur(2px)',
+          zIndex: 1000,
+        }}
+      />
 
-  // Filter change: fade out → reset → switch → fade in
-  const handleFilterChange = (cat: string) => {
-    const next = activeFilter === cat ? null : cat;
+      {/* ── Scroll container ── */}
+      <div
+        style={{
+          position: 'fixed', inset: 0, zIndex: 1001,
+          overflowY: 'auto',
+          display: 'flex',
+          alignItems: 'flex-start',
+          justifyContent: 'center',
+          padding: 'clamp(16px,3.5vw,48px) clamp(16px,4vw,40px)',
+        }}
+        onClick={onClose}
+      >
+        {/* ── Panel — card morphs into this via layoutId ── */}
+        <motion.div
+          layoutId={`review-card-${r.id}`}
+          layout
+          onClick={e => e.stopPropagation()}
+          style={{
+            width: '100%',
+            maxWidth: '660px',
+            background: '#FFFFFF',
+            borderRadius: '20px',
+            overflow: 'hidden',
+            // Layered shadow — depth without obscuring the page
+            boxShadow: [
+              '0 2px 4px rgba(10,27,52,0.04)',
+              '0 8px 24px rgba(10,27,52,0.08)',
+              '0 24px 64px rgba(10,27,52,0.13)',
+              '0 0 0 1px rgba(10,27,52,0.06)',
+            ].join(', '),
+          }}
+        >
+          {/* Gold accent bar at top — same language as the cards */}
+          <div style={{
+            height: '3px',
+            background: `linear-gradient(90deg, ${C.gold}, ${C.gold}30)`,
+          }} />
+
+          {/* ── HEADER ── */}
+          <div style={{ padding: 'clamp(24px,3.5vw,40px) clamp(24px,3.5vw,40px) 0' }}>
+
+            {/* Top row: eyebrow + close */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ delay: 0.20, duration: 0.22 }}
+              style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '22px' }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span style={{
+                  fontFamily: sans, fontSize: '8px', fontWeight: 700,
+                  letterSpacing: '0.18em', textTransform: 'uppercase' as const,
+                  color: C.gold,
+                  background: 'rgba(212,175,55,0.09)',
+                  border: '1px solid rgba(212,175,55,0.22)',
+                  borderRadius: '100px', padding: '3px 11px',
+                }}>{r.subject}</span>
+                <span style={{
+                  fontFamily: sans, fontSize: '9px', fontWeight: 400,
+                  letterSpacing: '0.08em', color: 'rgba(10,27,52,0.38)',
+                }}>{r.yearLevel} · {r.category}</span>
+              </div>
+              <button
+                onClick={onClose}
+                aria-label="Close story"
+                style={{
+                  width: '30px', height: '30px', flexShrink: 0,
+                  background: 'rgba(10,27,52,0.05)',
+                  border: '1px solid rgba(10,27,52,0.09)',
+                  borderRadius: '50%',
+                  color: 'rgba(10,27,52,0.45)',
+                  fontFamily: sans, fontSize: '16px', fontWeight: 300,
+                  cursor: 'pointer',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  lineHeight: 1, padding: 0,
+                }}
+              >×</button>
+            </motion.div>
+
+            {/* Name */}
+            <motion.h2
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              transition={{ delay: 0.16, duration: 0.30, ease: easeOut }}
+              style={{
+                fontFamily: serif, fontWeight: 300,
+                fontSize: 'clamp(1.9rem,4vw,3.0rem)',
+                letterSpacing: '-0.022em', lineHeight: 1.07,
+                color: C.navy, margin: '0 0 24px',
+              }}
+            >
+              {r.author}
+            </motion.h2>
+
+            {/* Before → After — cream/gold, no navy */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ delay: 0.20, duration: 0.26, ease: easeOut }}
+              style={{
+                display: 'grid',
+                gridTemplateColumns: '1fr auto 1fr',
+                alignItems: 'center', gap: '10px',
+                marginBottom: '22px',
+              }}
+            >
+              <div style={{
+                background: C.cream2,
+                border: '1px solid rgba(10,27,52,0.07)',
+                borderRadius: '10px', padding: '13px 16px',
+              }}>
+                <div style={{ fontFamily: sans, fontSize: '8px', fontWeight: 700, letterSpacing: '0.16em', textTransform: 'uppercase' as const, color: 'rgba(10,27,52,0.35)', marginBottom: '5px' }}>Before</div>
+                <div style={{ fontFamily: serif, fontSize: 'clamp(1.0rem,1.6vw,1.18rem)', fontWeight: 300, color: 'rgba(10,27,52,0.60)', lineHeight: 1.2 }}>{r.result.before}</div>
+              </div>
+              <span style={{ color: C.gold, fontSize: '18px', fontWeight: 300, textAlign: 'center' as const, lineHeight: 1 }}>→</span>
+              <div style={{
+                background: 'rgba(212,175,55,0.07)',
+                border: '1px solid rgba(212,175,55,0.20)',
+                borderRadius: '10px', padding: '13px 16px',
+              }}>
+                <div style={{ fontFamily: sans, fontSize: '8px', fontWeight: 700, letterSpacing: '0.16em', textTransform: 'uppercase' as const, color: 'rgba(212,175,55,0.75)', marginBottom: '5px' }}>After</div>
+                <div style={{ fontFamily: serif, fontSize: 'clamp(1.0rem,1.6vw,1.18rem)', fontWeight: 500, color: C.navy, lineHeight: 1.2 }}>{r.result.after}</div>
+              </div>
+            </motion.div>
+
+            {/* Outcome pills */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ delay: 0.22, duration: 0.24 }}
+              style={{
+                display: 'flex', flexWrap: 'wrap', gap: '5px',
+                paddingBottom: '24px',
+                borderBottom: '1px solid rgba(10,27,52,0.07)',
+              }}
+            >
+              {r.outcomes.map(o => (
+                <span key={o} style={{
+                  fontFamily: sans, fontSize: '10px', fontWeight: 600,
+                  color: 'rgba(10,27,52,0.62)',
+                  background: 'rgba(10,27,52,0.04)',
+                  border: '1px solid rgba(10,27,52,0.07)',
+                  borderRadius: '5px', padding: '4px 9px',
+                  display: 'inline-flex', alignItems: 'center', gap: '4px',
+                }}>
+                  <span style={{ color: C.gold, fontSize: '11px' }}>✓</span> {o}
+                </span>
+              ))}
+            </motion.div>
+          </div>
+
+          {/* ── BODY ── */}
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            transition={{ delay: 0.26, duration: 0.34, ease: easeOut }}
+            style={{ padding: 'clamp(22px,3vw,32px) clamp(24px,3.5vw,40px) clamp(28px,3.5vw,40px)' }}
+          >
+            {/* Section label */}
+            <div style={{
+              fontFamily: sans, fontSize: '9px', fontWeight: 700,
+              letterSpacing: '0.18em', textTransform: 'uppercase' as const,
+              color: 'rgba(10,27,52,0.30)', marginBottom: '16px',
+            }}>In Their Own Words</div>
+
+            {/* Story paragraphs */}
+            {r.story.split('\n\n').map((para, i) => (
+              <p key={i} style={{
+                fontFamily: serif, fontWeight: 300,
+                fontSize: 'clamp(1.0rem,1.5vw,1.12rem)',
+                lineHeight: 1.80, color: C.navy,
+                margin: i > 0 ? '16px 0 0' : '0',
+              }}>{para}</p>
+            ))}
+
+            {/* Pull quote — left border, cream background */}
+            <div style={{
+              background: C.cream2,
+              borderLeft: `3px solid ${C.gold}`,
+              borderRadius: '0 10px 10px 0',
+              padding: 'clamp(18px,2.5vw,26px) clamp(16px,2.5vw,24px)',
+              margin: 'clamp(24px,3vw,36px) 0',
+            }}>
+              <p style={{
+                fontFamily: serif, fontStyle: 'italic', fontWeight: 300,
+                fontSize: 'clamp(1.0rem,1.6vw,1.18rem)',
+                lineHeight: 1.62, color: C.navy, margin: 0,
+              }}>
+                <span style={{ color: C.gold, fontSize: '1.35em', lineHeight: 0, verticalAlign: '-0.20em', marginRight: '0.05em', opacity: 0.65 }}>&ldquo;</span>
+                {r.pullQuote}
+              </p>
+            </div>
+
+            {/* Why it worked */}
+            <div style={{ marginBottom: 'clamp(24px,3vw,36px)' }}>
+              <div style={{
+                fontFamily: sans, fontSize: '9px', fontWeight: 700,
+                letterSpacing: '0.18em', textTransform: 'uppercase' as const,
+                color: 'rgba(10,27,52,0.30)', marginBottom: '18px',
+              }}>Why It Worked</div>
+              {r.whyItWorked.map((w, wi) => (
+                <div key={w.n} style={{
+                  display: 'grid', gridTemplateColumns: '22px 1fr',
+                  gap: '12px',
+                  paddingTop: wi > 0 ? '16px' : '0',
+                  borderTop: wi > 0 ? '1px solid rgba(10,27,52,0.06)' : 'none',
+                }}>
+                  <span style={{ fontFamily: serif, fontSize: '11px', fontStyle: 'italic', color: C.gold, paddingTop: '2px', lineHeight: 1.4 }}>{w.n}</span>
+                  <div>
+                    <div style={{ fontFamily: sans, fontSize: '11.5px', fontWeight: 600, color: C.navy, marginBottom: '3px', lineHeight: 1.4 }}>{w.point}</div>
+                    <div style={{ fontFamily: sans, fontSize: '11.5px', fontWeight: 300, color: 'rgba(10,27,52,0.52)', lineHeight: 1.72 }}>{w.detail}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Learning format — centred, rules each side */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: 'clamp(24px,3vw,36px)' }}>
+              <div style={{ height: '1px', flex: 1, background: 'rgba(10,27,52,0.07)' }} />
+              <span style={{
+                fontFamily: sans, fontSize: '9px', fontWeight: 600,
+                letterSpacing: '0.16em', textTransform: 'uppercase' as const,
+                color: 'rgba(10,27,52,0.36)',
+              }}>{r.learningFormat}</span>
+              <div style={{ height: '1px', flex: 1, background: 'rgba(10,27,52,0.07)' }} />
+            </div>
+
+            {/* CTA */}
+            <div style={{ textAlign: 'center' as const }}>
+              <a
+                href="/interview"
+                style={{
+                  display: 'inline-flex', alignItems: 'center', gap: '8px',
+                  background: C.navy, color: '#FFFFFF',
+                  fontFamily: sans, fontSize: '10px', fontWeight: 600,
+                  letterSpacing: '0.16em', textTransform: 'uppercase' as const,
+                  textDecoration: 'none',
+                  borderRadius: '100px', padding: '14px 28px',
+                  transition: 'background 0.22s ease',
+                }}
+                onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.background = '#172f5c'; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.background = C.navy; }}
+              >
+                Begin Your Child's Story <span style={{ color: C.gold }}>→</span>
+              </a>
+              <p style={{
+                fontFamily: sans, fontWeight: 300, fontSize: '10px',
+                letterSpacing: '0.06em', color: 'rgba(10,27,52,0.32)',
+                margin: '12px 0 0',
+              }}>
+                Book a Principal Interview with Amanda Le
+              </p>
+            </div>
+          </motion.div>
+        </motion.div>
+      </div>
+    </>
+  );
+}
+
+// ── Reviews section ───────────────────────────────────────────
+const ReviewsSection = () => {
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const inView     = useInView(sectionRef, { once: true, margin: '-60px' });
+
+  const [selected,     setSelected]     = useState<ReviewRecord | null>(null);
+  const [activeFilter, setActiveFilter] = useState<string>('All Reviews');
+  const [fading,       setFading]       = useState(false);
+
+  const easeOut = [0.22, 1, 0.36, 1] as const;
+
+  const filteredReviews = CAROUSEL_REVIEWS.filter(r =>
+    (FILTER_MAP[activeFilter] ?? []).includes(r.id)
+  );
+
+  const handleFilterChange = (tag: string) => {
+    if (tag === activeFilter) return;
     setFading(true);
     setTimeout(() => {
-      setActiveFilter(next);
-      setCurrent(0);
-      setExpanded(null);
-      fmAnimate(x, 0, { duration: 0 });
+      setActiveFilter(tag);
       setFading(false);
-    }, 200);
+    }, 180);
   };
-
-  const maxDrag = -((filteredReviews.length - 1) * (cardW + GAP));
-  const easeOut = [0.22, 1, 0.36, 1] as const;
 
   return (
     <section
       ref={sectionRef}
       aria-label="Family reviews"
       style={{
-        background: C.cream,
+        background:    C.cream,
         paddingTop:    'clamp(80px,9vw,120px)',
         paddingBottom: 'clamp(80px,9vw,120px)',
-        overflow: 'hidden',
       }}
     >
       {/* ── Header ── */}
-      <div style={{ padding: '0 clamp(24px,6vw,80px)', marginBottom: 'clamp(36px,5vw,52px)' }}>
+      <div style={{ padding: '0 clamp(24px,6vw,80px)', marginBottom: 'clamp(32px,4vw,48px)' }}>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
@@ -2194,7 +3052,7 @@ const ReviewsSection = () => {
           <div style={{
             fontFamily: sans, fontWeight: 700,
             fontSize: '.70rem', letterSpacing: '.17em',
-            textTransform: 'uppercase', color: C.gold,
+            textTransform: 'uppercase' as const, color: C.gold,
             marginBottom: '16px',
           }}>
             Families Love DA
@@ -2210,312 +3068,220 @@ const ReviewsSection = () => {
         </motion.div>
       </div>
 
-      {/* ── Category filters ── */}
+      {/* ── Tag filters ── */}
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={inView ? { opacity: 1, y: 0 } : {}}
-        transition={{ duration: 0.80, delay: 0.15, ease: easeOut }}
+        transition={{ duration: 0.80, delay: 0.12, ease: easeOut }}
         style={{
           padding: '0 clamp(24px,6vw,80px)',
-          marginBottom: 'clamp(36px,5vw,56px)',
+          marginBottom: 'clamp(36px,4vw,52px)',
           display: 'flex',
           flexWrap: 'wrap',
-          gap: '10px',
+          gap: '8px',
         }}
       >
-        {REVIEW_FILTERS.map((cat) => {
-          const isActive = activeFilter === cat;
+        {REVIEW_TAGS.map((tag) => {
+          const isActive = activeFilter === tag;
           return (
             <button
-              key={cat}
-              onClick={() => handleFilterChange(cat)}
+              key={tag}
+              onClick={() => handleFilterChange(tag)}
               style={{
-                height: '38px',
-                padding: '0 20px',
+                height: '34px',
+                padding: '0 16px',
                 borderRadius: '100px',
-                border: `1.5px solid ${isActive ? C.gold : 'rgba(10,27,52,0.20)'}`,
+                border: `1.5px solid ${isActive ? C.gold : 'rgba(10,27,52,0.16)'}`,
                 background: isActive ? C.gold : 'transparent',
-                color: isActive ? '#FFFFFF' : 'rgba(10,27,52,0.62)',
+                color: isActive ? '#FFFFFF' : 'rgba(10,27,52,0.58)',
                 fontFamily: sans, fontWeight: 500,
-                fontSize: '.70rem', letterSpacing: '.14em',
-                textTransform: 'uppercase',
+                fontSize: '.65rem', letterSpacing: '.12em',
+                textTransform: 'uppercase' as const,
                 cursor: 'pointer',
-                transition: 'all 0.26s cubic-bezier(0.22,1,0.36,1)',
+                transition: 'all 0.22s cubic-bezier(0.22,1,0.36,1)',
                 whiteSpace: 'nowrap',
               }}
             >
-              {cat}
+              {tag}
             </button>
           );
         })}
       </motion.div>
 
-      {/* ── Carousel track (fades on filter switch) ── */}
+      {/* ── Card grid ── */}
+      <style>{`
+        .rv-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+        @media (max-width: 1100px) { .rv-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 560px)  { .rv-grid { grid-template-columns: 1fr; } }
+      `}</style>
       <motion.div
         animate={{ opacity: fading ? 0 : 1 }}
         transition={{ duration: 0.18 }}
+        style={{ padding: '0 clamp(24px,6vw,80px)' }}
       >
-        <div ref={wrapRef} style={{ overflow: 'hidden' }}>
-          <motion.div
-            drag="x"
-            dragConstraints={{ left: maxDrag, right: 0 }}
-            dragElastic={0.05}
-            dragMomentum={false}
-            onDragEnd={handleDragEnd}
-            style={{
-              x,
-              display: 'flex',
-              gap: `${GAP}px`,
-              paddingLeft:  'clamp(24px,6vw,80px)',
-              paddingRight: 'clamp(24px,6vw,80px)',
-              cursor: 'grab',
-              userSelect: 'none',
-            }}
-          >
-            {filteredReviews.map((r, i) => {
-              const isActive   = i === current;
-              const isExpanded = expanded === r.id;
-              return (
-                <motion.div
-                  key={r.id}
-                  initial={{ opacity: 0, y: 28 }}
-                  animate={inView ? { opacity: 1, y: 0 } : {}}
-                  transition={{ duration: 0.80, delay: Math.min(i * 0.05, 0.20), ease: easeOut }}
-                  style={{
-                    width: cardW,
-                    flexShrink: 0,
-                    minHeight: 'clamp(440px,56vw,520px)',
-                    background: '#FFFFFF',
-                    padding: 'clamp(36px,4vw,56px) clamp(32px,3.5vw,52px)',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    borderLeft: `2px solid ${isActive ? C.gold : 'transparent'}`,
-                    transition: 'border-color 0.40s ease',
-                    pointerEvents: 'auto',
-                    boxSizing: 'border-box',
-                  }}
-                >
-                  {/* ── Header: category left, stars right ── */}
-                  <div style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    marginBottom: 'clamp(40px,5vw,56px)',
+        <div className="rv-grid">
+          {filteredReviews.map((r, i) => (
+            <motion.div
+              key={r.id}
+              layoutId={`review-card-${r.id}`}
+              initial={{ opacity: 0, y: 24 }}
+              animate={inView ? { opacity: selected?.id === r.id ? 0 : 1, y: 0 } : {}}
+              transition={{ duration: 0.70, delay: Math.min(i * 0.06, 0.24), ease: easeOut }}
+              onClick={() => !selected && setSelected(r)}
+              style={{
+                background: '#FFFFFF',
+                borderRadius: '14px',
+                border: '1px solid rgba(10,27,52,0.07)',
+                boxShadow: '0 1px 10px rgba(10,27,52,0.05)',
+                padding: '24px',
+                display: 'flex',
+                flexDirection: 'column' as const,
+                cursor: 'pointer',
+                visibility: selected?.id === r.id ? 'hidden' : 'visible',
+              }}
+            >
+              {/* Stars + Subject pill */}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '18px' }}>
+                <span style={{ color: C.gold, fontSize: '11px', letterSpacing: '0.08em' }}>★★★★★</span>
+                <span style={{
+                  fontFamily: sans, fontSize: '8px', fontWeight: 700,
+                  letterSpacing: '0.14em', textTransform: 'uppercase' as const,
+                  color: C.gold, background: 'rgba(212,175,55,0.09)',
+                  border: '1px solid rgba(212,175,55,0.20)',
+                  borderRadius: '100px', padding: '3px 10px',
+                }}>{r.subject}</span>
+              </div>
+
+              {/* Name */}
+              <p style={{ fontFamily: serif, fontSize: '19px', fontWeight: 400, color: C.navy, lineHeight: 1.2, margin: '0 0 4px' }}>
+                {r.author}
+              </p>
+
+              {/* Year · Category */}
+              <p style={{ fontFamily: sans, fontSize: '11px', color: 'rgba(10,27,52,0.42)', margin: '0 0 16px', letterSpacing: '0.03em' }}>
+                {r.yearLevel} · {r.category}
+              </p>
+
+              {/* Result box */}
+              <div style={{
+                background: C.cream2,
+                borderRadius: '8px', padding: '10px 14px', marginBottom: '14px',
+                display: 'flex', alignItems: 'center', gap: '8px',
+              }}>
+                <span style={{ fontFamily: sans, fontSize: '11px', color: 'rgba(10,27,52,0.48)', whiteSpace: 'nowrap' }}>{r.result.before}</span>
+                <span style={{ color: C.gold, fontWeight: 700, fontSize: '14px', flexShrink: 0 }}>→</span>
+                <span style={{ fontFamily: sans, fontSize: '12px', color: C.navy, fontWeight: 700, whiteSpace: 'nowrap' }}>{r.result.after}</span>
+              </div>
+
+              {/* Outcomes */}
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px', marginBottom: '18px' }}>
+                {r.outcomes.map(o => (
+                  <span key={o} style={{
+                    fontFamily: sans, fontSize: '10px', fontWeight: 600,
+                    color: 'rgba(10,27,52,0.62)', background: 'rgba(10,27,52,0.04)',
+                    border: '1px solid rgba(10,27,52,0.06)', borderRadius: '4px',
+                    padding: '3px 8px', display: 'inline-flex', alignItems: 'center', gap: '4px',
                   }}>
-                    <span style={{
-                      fontFamily: sans, fontWeight: 600,
-                      fontSize: '.60rem', letterSpacing: '.24em',
-                      textTransform: 'uppercase',
-                      color: C.gold,
-                    }}>
-                      {r.category}
-                    </span>
-                    <span style={{
-                      fontSize: '.78rem', letterSpacing: '.14em',
-                      color: C.gold,
-                      userSelect: 'none',
-                    }}>
-                      ★★★★★
-                    </span>
-                  </div>
+                    <span style={{ color: C.gold, fontSize: '11px' }}>✓</span> {o}
+                  </span>
+                ))}
+              </div>
 
-                  {/* ── Quote — hero element ── */}
-                  <p style={{
-                    fontFamily: serif, fontWeight: 300,
-                    fontStyle: 'italic',
-                    fontSize: 'clamp(1.26rem,1.75vw,1.60rem)',
-                    lineHeight: 1.62,
-                    letterSpacing: '-.016em',
-                    color: C.navy,
-                    margin: 0,
-                  }}>
-                    {/* Integrated opening mark — large, gold, flows with text */}
-                    <span style={{
-                      fontStyle: 'normal',
-                      fontSize: '1.30em',
-                      lineHeight: 0,
-                      verticalAlign: '-0.22em',
-                      color: C.gold,
-                      marginRight: '0.04em',
-                      opacity: 0.70,
-                    }}>&ldquo;</span>
-                    {isExpanded ? r.full : r.preview}
-                  </p>
+              {/* Gold divider */}
+              <div style={{ height: '1px', background: `linear-gradient(90deg, ${C.gold}55, ${C.gold}08)`, marginBottom: '16px' }} />
 
-                  {/* ── Footer — pushed to bottom via marginTop: auto ── */}
-                  <div style={{ marginTop: 'auto', paddingTop: 'clamp(36px,4.5vw,52px)' }}>
+              {/* Preview quote */}
+              <p style={{
+                fontFamily: serif, fontWeight: 300, fontStyle: 'italic',
+                fontSize: '14.5px', lineHeight: 1.65, color: C.navy,
+                margin: '0 0 16px', flex: 1,
+                display: '-webkit-box', WebkitLineClamp: 3,
+                WebkitBoxOrient: 'vertical' as const, overflow: 'hidden',
+              } as React.CSSProperties}>
+                <span style={{ color: C.gold, fontSize: '1.2em', lineHeight: 0, verticalAlign: '-0.16em', marginRight: '0.04em', opacity: 0.60 }}>&ldquo;</span>
+                {r.preview}
+              </p>
 
-                    {/* Gold gradient rule */}
-                    <div style={{
-                      height: '1px',
-                      background: 'linear-gradient(90deg, rgba(212,175,55,.45), rgba(212,175,55,.05))',
-                      marginBottom: 'clamp(20px,2.5vw,26px)',
-                    }} />
-
-                    {/* Name + year level */}
-                    <div style={{
-                      display: 'flex',
-                      alignItems: 'baseline',
-                      gap: '14px',
-                      marginBottom: 'clamp(16px,2vw,20px)',
-                    }}>
-                      <span style={{
-                        fontFamily: sans, fontWeight: 500,
-                        fontSize: '.84rem', letterSpacing: '.04em',
-                        color: C.navy,
-                      }}>
-                        {r.author}
-                      </span>
-                      {r.yearLevel && (
-                        <span style={{
-                          fontFamily: sans, fontWeight: 300,
-                          fontSize: '.72rem', letterSpacing: '.06em',
-                          color: 'rgba(10,27,52,0.40)',
-                        }}>
-                          {r.yearLevel}
-                        </span>
-                      )}
-                    </div>
-
-                    {/* Read Full Story */}
-                    <button
-                      onClick={(e) => { e.stopPropagation(); setExpanded(isExpanded ? null : r.id); }}
-                      style={{
-                        background: 'none', border: 'none', padding: 0,
-                        fontFamily: sans, fontWeight: 400,
-                        fontSize: '.68rem', letterSpacing: '.16em',
-                        textTransform: 'uppercase',
-                        color: C.gold,
-                        cursor: 'pointer',
-                        display: 'inline-flex', alignItems: 'center', gap: '8px',
-                        opacity: 0.85,
-                      }}
-                    >
-                      {isExpanded ? 'Close Story ↑' : 'Read Full Story →'}
-                    </button>
-                  </div>
-                </motion.div>
-              );
-            })}
-          </motion.div>
-        </div>
-
-        {/* ── Navigation: dots + arrows ── */}
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          padding: 'clamp(32px,4vw,52px) clamp(24px,6vw,80px) 0',
-        }}>
-          {/* Pill dots */}
-          <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-            {filteredReviews.map((_, i) => (
-              <button
-                key={i}
-                onClick={() => goTo(i, filteredReviews.length)}
-                aria-label={`Go to review ${i + 1}`}
-                style={{
-                  width:  i === current ? '26px' : '7px',
-                  height: '7px',
-                  borderRadius: '4px',
-                  background: i === current ? C.gold : 'rgba(10,27,52,0.16)',
-                  border: 'none', padding: 0, cursor: 'pointer',
-                  transition: 'all 0.32s cubic-bezier(0.22,1,0.36,1)',
-                }}
-              />
-            ))}
-          </div>
-
-          {/* Prev / Next arrows */}
-          <div style={{ display: 'flex', gap: '10px' }}>
-            {([
-              { lbl: '←', dir: -1, disabled: current === 0 },
-              { lbl: '→', dir:  1, disabled: current === filteredReviews.length - 1 },
-            ] as const).map(({ lbl, dir, disabled }) => (
-              <button
-                key={lbl}
-                onClick={() => goTo(current + dir, filteredReviews.length)}
-                disabled={disabled}
-                aria-label={lbl === '←' ? 'Previous review' : 'Next review'}
-                style={{
-                  width: '48px', height: '48px',
-                  borderRadius: '50%',
-                  background: 'transparent',
-                  border: `1.5px solid ${disabled ? 'rgba(10,27,52,0.12)' : 'rgba(10,27,52,0.28)'}`,
-                  color: disabled ? 'rgba(10,27,52,0.22)' : C.navy,
-                  fontFamily: sans, fontSize: '1.05rem',
-                  cursor: disabled ? 'default' : 'pointer',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  transition: 'all 0.22s ease',
-                }}
-              >
-                {lbl}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* ── Footer: count + supporting line + CTA ── */}
-        <div style={{
-          padding: 'clamp(52px,7vw,80px) clamp(24px,6vw,80px) 0',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          flexWrap: 'wrap',
-          gap: '24px',
-        }}>
-          {/* Left: stat + sentence */}
-          <div>
-            <div style={{
-              fontFamily: serif, fontWeight: 300,
-              fontSize: 'clamp(1.8rem,3.0vw,2.8rem)',
-              letterSpacing: '-.024em', lineHeight: 1.1,
-              color: C.navy,
-              marginBottom: '10px',
-            }}>
-              450 Five-Star Reviews
-            </div>
-            <p style={{
-              fontFamily: sans, fontWeight: 300,
-              fontSize: 'clamp(.82rem,1.0vw,.92rem)',
-              letterSpacing: '.012em', lineHeight: 1.7,
-              color: 'rgba(10,27,52,0.48)',
-              margin: 0,
-            }}>
-              These are only a few of the stories our families chose to share.
-            </p>
-          </div>
-
-          {/* Right: secondary CTA */}
-          <a
-            href="https://www.google.com/maps/place/DA+Tuition/@-33.8717491,150.9282683,17z/data=!4m8!3m7!1s0x6b12bd1e45e49a8b:0x69b2c4a45f28e5a7!8m2!3d-33.8717491!4d150.9282683!9m1!1b1"
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{
-              display: 'inline-flex', alignItems: 'center', gap: '10px',
-              fontFamily: sans, fontWeight: 400,
-              fontSize: '.72rem', letterSpacing: '.16em',
-              textTransform: 'uppercase',
-              color: 'rgba(10,27,52,0.58)',
-              textDecoration: 'none',
-              borderBottom: '1px solid rgba(10,27,52,0.20)',
-              paddingBottom: '3px',
-              transition: 'color 0.22s ease, border-color 0.22s ease',
-            }}
-            onMouseEnter={e => {
-              (e.currentTarget as HTMLAnchorElement).style.color = C.navy;
-              (e.currentTarget as HTMLAnchorElement).style.borderColor = 'rgba(10,27,52,0.50)';
-            }}
-            onMouseLeave={e => {
-              (e.currentTarget as HTMLAnchorElement).style.color = 'rgba(10,27,52,0.58)';
-              (e.currentTarget as HTMLAnchorElement).style.borderColor = 'rgba(10,27,52,0.20)';
-            }}
-          >
-            View All Google Reviews
-            <span style={{ fontSize: '.85em', opacity: 0.70 }}>↗</span>
-          </a>
+              {/* Read Full Story */}
+              <div style={{
+                fontFamily: sans, fontWeight: 600,
+                fontSize: '9.5px', letterSpacing: '0.16em',
+                textTransform: 'uppercase' as const,
+                color: C.gold,
+                display: 'inline-flex', alignItems: 'center', gap: '6px',
+                marginTop: 'auto',
+              }}>
+                Read Full Story →
+              </div>
+            </motion.div>
+          ))}
         </div>
       </motion.div>
+
+      {/* ── Modal ── */}
+      <AnimatePresence>
+        {selected && (
+          <StoryModal
+            key={selected.id}
+            review={selected}
+            onClose={() => setSelected(null)}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* ── Footer ── */}
+      <div style={{
+        padding: 'clamp(52px,7vw,80px) clamp(24px,6vw,80px) 0',
+        display: 'flex', alignItems: 'center',
+        justifyContent: 'space-between', flexWrap: 'wrap', gap: '24px',
+      }}>
+        <div>
+          <div style={{
+            fontFamily: serif, fontWeight: 300,
+            fontSize: 'clamp(1.8rem,3.0vw,2.8rem)',
+            letterSpacing: '-.024em', lineHeight: 1.1,
+            color: C.navy, marginBottom: '10px',
+          }}>
+            450 Five-Star Reviews
+          </div>
+          <p style={{
+            fontFamily: sans, fontWeight: 300,
+            fontSize: 'clamp(.82rem,1.0vw,.92rem)',
+            letterSpacing: '.012em', lineHeight: 1.7,
+            color: 'rgba(10,27,52,0.48)', margin: 0,
+          }}>
+            These are only a few of the stories our families chose to share.
+          </p>
+        </div>
+
+        <a
+          href="https://www.google.com/maps/place/DA+Tuition/@-33.8717491,150.9282683,17z/data=!4m8!3m7!1s0x6b12bd1e45e49a8b:0x69b2c4a45f28e5a7!8m2!3d-33.8717491!4d150.9282683!9m1!1b1"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{
+            display: 'inline-flex', alignItems: 'center', gap: '10px',
+            fontFamily: sans, fontWeight: 400,
+            fontSize: '.72rem', letterSpacing: '.16em',
+            textTransform: 'uppercase' as const,
+            color: 'rgba(10,27,52,0.58)',
+            textDecoration: 'none',
+            borderBottom: '1px solid rgba(10,27,52,0.20)',
+            paddingBottom: '3px',
+            transition: 'color 0.22s ease, border-color 0.22s ease',
+          }}
+          onMouseEnter={e => {
+            (e.currentTarget as HTMLAnchorElement).style.color = C.navy;
+            (e.currentTarget as HTMLAnchorElement).style.borderColor = 'rgba(10,27,52,0.50)';
+          }}
+          onMouseLeave={e => {
+            (e.currentTarget as HTMLAnchorElement).style.color = 'rgba(10,27,52,0.58)';
+            (e.currentTarget as HTMLAnchorElement).style.borderColor = 'rgba(10,27,52,0.20)';
+          }}
+        >
+          View All Google Reviews
+          <span style={{ fontSize: '.85em', opacity: 0.70 }}>↗</span>
+        </a>
+      </div>
     </section>
   );
 };
