@@ -432,7 +432,7 @@ const ArticleView = () => {
           <h3 className="text-2xl font-bold mb-4">Ready to Get Started?</h3>
           <p className="text-blue-100 mb-6 max-w-2xl mx-auto">
             Our experienced tutors can help you apply these strategies and achieve your academic goals.
-            Book a free assessment to create a personalized learning plan.
+            Book an interview to create a personalized learning plan.
           </p>
           <Link to="/contact">
             <Button size="lg" className="bg-white text-blue-600 hover:bg-blue-50">Book Interview</Button>

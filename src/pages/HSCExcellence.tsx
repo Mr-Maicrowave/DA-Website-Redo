@@ -358,14 +358,14 @@ const HSCExcellence = () => {
         <div className="hsc-cta-section">
           <h2>The HSC Does Not Wait.<br />Neither Should You.</h2>
           <p>
-            Every term without the right support is a term of marks that cannot be recovered. Book a free consultation
+            Every term without the right support is a term of marks that cannot be recovered. Book an interview
             and find out exactly what is possible for your child's ATAR.
           </p>
           <div className="hsc-cta-btns">
             <Link className="hsc-btn-gold" to="/book-interview">Secure a Spot - Limited Places Available</Link>
             <Link className="hsc-btn-outline-cta" to="/book-interview">Book an Interview Now</Link>
           </div>
-          <p className="hsc-cta-note">No entrance exam &nbsp;&middot;&nbsp; No lock-in contract &nbsp;&middot;&nbsp; Results guaranteed or full refund</p>
+          <p className="hsc-cta-note">No entrance exam &nbsp;&middot;&nbsp; No lock-in contract &nbsp;&middot;&nbsp; Results guaranteed or additional support at no cost</p>
         </div>
       </main>
 

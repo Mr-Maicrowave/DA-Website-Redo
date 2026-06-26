@@ -79,7 +79,7 @@ const PrimarySchool = () => {
         </p>
         <div style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap' }}>
           <a href="/#contact" style={{ background: c.navy, color: '#fff', border: 'none', padding: '15px 34px', borderRadius: 12, fontSize: '1rem', fontWeight: 800, cursor: 'pointer', textDecoration: 'none', display: 'inline-block' }}>
-            Book a Free Consultation
+            Book an Interview
           </a>
           <a href="#year-groups" style={{ background: c.white, color: c.navy, border: `2px solid ${c.navy}`, padding: '15px 34px', borderRadius: 12, fontSize: '1rem', fontWeight: 700, cursor: 'pointer', textDecoration: 'none', display: 'inline-block' }}>
             See Our Programs ↓
@@ -237,7 +237,7 @@ const PrimarySchool = () => {
           No entrance exam. No pressure. We gently assess your child in the first session and tailor the program from there.
         </p>
         <a href="/#contact" style={{ background: c.goldLight, color: c.navy, border: 'none', padding: '17px 38px', borderRadius: 14, fontSize: '1rem', fontWeight: 900, cursor: 'pointer', textDecoration: 'none', display: 'inline-block' }}>
-          Book Your Free Consultation →
+          Book an Interview →
         </a>
         <div style={{ marginTop: 18, fontSize: '0.82rem', color: 'rgba(255,255,255,0.45)' }}>
           Free 20-minute consultation &nbsp;·&nbsp; No obligation &nbsp;·&nbsp; Limited spots each term

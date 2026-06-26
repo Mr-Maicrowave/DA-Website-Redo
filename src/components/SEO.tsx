@@ -22,7 +22,7 @@ const SEO = ({
     const siteTitle = 'DA Tuition - Beyond Academic Excellence | Premium K-12 Tutoring Australia';
     const fullTitle = title ? `${title} | DA Tuition` : siteTitle;
 
-    const siteDescription = 'DA Tuition provides personalized K-12 tutoring in Australia. Beyond academic excellence, we build confidence and support the whole child. Book your free consultation today.';
+    const siteDescription = 'DA Tuition provides personalized K-12 tutoring in Australia. Beyond academic excellence, we build confidence and support the whole child. Book an interview today.';
     const fullDescription = description || siteDescription;
 
     const siteUrl = 'https://datuition.com.au';

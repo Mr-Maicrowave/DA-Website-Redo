@@ -217,7 +217,7 @@ const TeachersEnhanced = () => {
         </div>
         <p className="text-brand-midnight/80 mb-6">
           Our teachers are carefully matched to each student's learning style and personality.
-          Book a free consultation to find the perfect fit for your child.
+          Book an interview to find the perfect fit for your child.
         </p>
         <Button
           className="btn-primary group"

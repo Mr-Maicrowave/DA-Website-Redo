@@ -307,7 +307,7 @@ const PrincipalReflections = () => {
               href="tel:0401940207"
               className="inline-block px-8 py-3 border-2 border-[#d2b07a] text-[#3d352f] rounded-lg font-sans text-sm tracking-wide hover:bg-[#f4ead9] transition-colors"
             >
-              Book Consultation — 0401 940 207
+              Book an Interview — 0401 940 207
             </a>
           </div>
         </div>

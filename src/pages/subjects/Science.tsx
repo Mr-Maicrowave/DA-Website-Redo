@@ -1461,7 +1461,7 @@ const ScienceStruggleSection = () => {
                   <div className="mt-8 border-t border-[#071629]/8 pt-8">
                     <Link to="/interview">
                       <Button className="rounded-full bg-[#c9a227] px-6 font-black text-[#101521] shadow-lg shadow-[#c9a227]/25 hover:bg-[#e0bd4b]">
-                        Book a Free Consultation
+                        Book an Interview
                         <ArrowRight className="ml-2 h-4 w-4" />
                       </Button>
                     </Link>

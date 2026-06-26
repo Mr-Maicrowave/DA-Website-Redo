@@ -398,7 +398,7 @@ const Subjects = () => {
               Ready to Excel in Every Subject?
             </h2>
             <p className="text-xl mb-8 text-white/90">
-              Get a free assessment and personalized subject recommendations
+              Book an interview and get personalized subject recommendations
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center">

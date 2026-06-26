@@ -29,13 +29,13 @@ const FAQ = () => {
     {
       category: 'enrollment',
       question: 'How do I enroll my child at DA Tuition?',
-      answer: 'Enrollment is simple! Start with a free assessment where we evaluate your child\'s current level and learning needs. You can book online or call 0401 940 207. After the assessment, we\'ll recommend the best program and you can enroll immediately. There are no entrance exams or prerequisites - every student is welcome.',
+      answer: 'Enrollment is simple! Start by booking an interview where we get to know your child, their current level, and their learning needs. You can book online or call 0401 940 207. After the interview, we\'ll recommend the best program and you can enroll immediately. There are no entrance exams or prerequisites — every student is welcome.',
       popular: true
     },
     {
       category: 'enrollment',
-      question: 'Is there a free assessment? What does it involve?',
-      answer: 'Yes! We offer a comprehensive free assessment for all new students. It takes about 60-90 minutes and covers key areas in your child\'s subjects of interest. The assessment helps us understand their current level, learning style, and areas for improvement. Parents receive a detailed report with recommendations.',
+      question: 'What happens at the initial interview?',
+      answer: 'When you book an interview, we spend about 60–90 minutes getting to know your child — their current level, learning style, and areas for improvement. It\'s a relaxed conversation, not a test. Parents receive a summary with our recommendations before leaving.',
       popular: true
     },
     {
@@ -99,7 +99,7 @@ const FAQ = () => {
     {
       category: 'classes',
       question: 'Do you offer online classes?',
-      answer: 'While our focus is on in-person teaching for maximum engagement, we can arrange online sessions for students who cannot attend in person due to illness or travel. Our physical center provides the best learning environment with immediate feedback and peer interaction.'
+      answer: 'Our classes are in-person only. For students who need additional help between sessions, we can arrange online support.'
     },
     {
       category: 'teachers',
@@ -211,6 +211,7 @@ const FAQ = () => {
               <input
                 type="text"
                 placeholder="Search for answers..."
+                aria-label="Search frequently asked questions"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full pl-12 pr-4 py-4 rounded-xl text-brand-midnight text-lg focus:outline-none focus:ring-2 focus:ring-brand-blue shadow-xl bg-white/95 backdrop-blur-sm transition-all"

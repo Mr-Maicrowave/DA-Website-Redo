@@ -156,12 +156,12 @@ const Contact = () => {
             <div className="space-y-4">
               <div>
                 <h4 className="font-semibold text-brand-blue-dark mb-2">Do you offer online tutoring?</h4>
-                <p className="text-brand-midnight/80 text-sm">Yes! We offer both in-person and online sessions to accommodate different learning preferences and schedules.</p>
+                <p className="text-brand-midnight/80 text-sm">Our classes are in-person only. For students who need additional help between sessions, we can arrange online support.</p>
               </div>
 
               <div>
                 <h4 className="font-semibold text-brand-blue-dark mb-2">What if my child doesn't improve?</h4>
-                <p className="text-brand-midnight/80 text-sm">We're confident in our approach, but if you're not seeing progress within the first month, we'll work with you to adjust the plan or provide a refund.</p>
+                <p className="text-brand-midnight/80 text-sm">If your child attends regularly but doesn't make progress, we provide additional support at no cost.</p>
               </div>
 
               <div>
@@ -170,8 +170,8 @@ const Contact = () => {
               </div>
             </div>
 
-            <Button variant="outline" className="w-full mt-6 btn-secondary">
-              View All FAQs
+            <Button variant="outline" className="w-full mt-6 btn-secondary" asChild>
+              <a href="/faq">View All FAQs</a>
             </Button>
           </StaggerItem>
 

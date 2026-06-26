@@ -479,7 +479,7 @@ const SuccessStoriesPage = () => {
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8">
               {[
-                { icon: Target, title: "Assessment", desc: "Free assessment identifies strengths and gaps. We create a personalized learning plan." },
+                { icon: Target, title: "Initial Interview", desc: "An initial interview identifies strengths and gaps. We create a personalized learning plan." },
                 { icon: BookOpen, title: "Structured Learning", desc: "Our exam-focused curriculum builds understanding systematically." },
                 { icon: TrendingUp, title: "Progress Tracking", desc: "Regular assessments and feedback ensure continuous improvement." },
                 { icon: Trophy, title: "Achievement", desc: "Students achieve their goals - from passing grades to state rankings." },

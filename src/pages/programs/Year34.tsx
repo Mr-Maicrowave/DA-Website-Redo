@@ -274,7 +274,7 @@ const Year34 = () => {
           Book a Free Trial Lesson →
         </a>
         <div style={{ marginTop: 18, fontSize: '0.82rem', color: 'rgba(255,255,255,0.45)' }}>
-          No lock-in contract &nbsp;·&nbsp; Limited spots each term &nbsp;·&nbsp; Results guaranteed or full refund
+          No lock-in contract &nbsp;·&nbsp; Limited spots each term &nbsp;·&nbsp; Results guaranteed or additional support at no cost
         </div>
       </div>
 
