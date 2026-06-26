@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Menu, X, ChevronDown, Phone } from 'lucide-react';
+import { Menu, X, ChevronDown } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { HoverCard, HoverCardTrigger, HoverCardContent } from "@/components/ui/hover-card";
 
@@ -89,7 +89,7 @@ const NavigationNew = () => {
     <div className="fixed top-0 left-0 right-0 z-[60] p-4 pointer-events-none transition-all duration-300">
       <nav className="w-full max-w-7xl mx-auto pointer-events-auto bg-white/80 backdrop-blur-md shadow-[0_8px_30px_rgb(0,0,0,0.08)] border border-white/40 rounded-2xl">
         <div className="px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-3">
+          <div className="flex items-center py-3 gap-6">
             {/* Logo */}
             <div className="flex items-center shrink-0">
               <Link to="/" className="flex items-center gap-2 group">
@@ -105,7 +105,7 @@ const NavigationNew = () => {
             </div>
 
             {/* Desktop Navigation */}
-            <div className="hidden lg:flex items-center justify-end flex-1 ml-4 lg:ml-8">
+            <div className="hidden lg:flex items-center">
               <div className="flex gap-1 items-center">
                 <Link to="/" className="px-2 xl:px-3 py-2 text-sm xl:text-base text-brand-midnight/80 hover:text-brand-blue-dark transition-colors whitespace-nowrap">
                   Home
@@ -248,25 +248,10 @@ const NavigationNew = () => {
                 </a>
               </div>
 
-              <div className="flex items-center gap-2 xl:gap-4 ml-2 xl:ml-6 shrink-0">
-                <a
-                  href="tel:0401940207"
-                  className="flex items-center text-brand-blue-dark hover:text-brand-blue-light transition-colors font-semibold"
-                >
-                  <Phone className="w-4 h-4 mr-1 xl:mr-2 shrink-0" />
-                  <span className="hidden xl:inline whitespace-nowrap text-sm">0401 940 207</span>
-                </a>
-                <Link
-                  to="/book-interview"
-                  className="inline-flex items-center rounded-full bg-[#D4AF37] px-4 py-2 text-xs font-black uppercase tracking-[0.08em] text-[#0A1B34] transition-colors hover:bg-[#F0C86A] whitespace-nowrap shadow-md"
-                >
-                  Book Interview
-                </Link>
-              </div>
             </div>
 
             {/* Mobile menu button */}
-            <div className="lg:hidden">
+            <div className="lg:hidden ml-auto">
               <button
                 onClick={() => setIsOpen(!isOpen)}
                 className="text-brand-midnight/80 hover:text-brand-blue-dark transition-colors"

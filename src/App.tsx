@@ -8,7 +8,7 @@ import { HelmetProvider } from 'react-helmet-async';
 import { AnimatePresence } from "framer-motion";
 import PageTransition from "@/components/animations/PageTransition";
 import ScrollProgress from "@/components/animations/ScrollProgress";
-import CustomCursor from "@/components/animations/CustomCursor";
+import StickyBookButton from "@/components/StickyBookButton";
 import Index from "./pages/Index";
 import Interview from "./pages/Interview";
 import BookInterview from "./pages/BookInterview";
@@ -118,8 +118,8 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          <CustomCursor />
           <ScrollProgress />
+          <StickyBookButton />
           <div
             className="min-h-screen overflow-x-hidden gradient-transition"
             style={{
