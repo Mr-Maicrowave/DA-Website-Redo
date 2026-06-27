@@ -90,10 +90,10 @@ const HighSchool = () => {
 
       <style>{`
         .hs-page {
-          --navy:#0c1f4a; --navy-mid:#1a3870;
-          --gold:#b8860b; --gold-light:#d4a017; --gold-pale:#fdf6dc;
-          --blue:#dbeafe; --blue-mid:#93c5fd; --blue-text:#1d4ed8; --blue-deep:#2563eb; --blue-dark:#1e40af;
-          --white:#ffffff; --text:#0c1f4a; --muted:#4a5568; --border:#e2e8f0; --soft:#f8fafc;
+          --navy:#0A1B34; --navy-mid:#1a3870;
+          --gold:#D4AF37; --gold-light:#F0CB6A; --gold-pale:#F7F4EE;
+          --blue:#F7F4EE; --blue-mid:#F0CB6A; --blue-text:#0A1B34; --blue-deep:#D4AF37; --blue-dark:#0A1B34;
+          --white:#ffffff; --text:#0A1B34; --muted:#4a5568; --border:#E8E0CC; --soft:#F7F4EE;
           min-height: 100vh;
           background: var(--white);
           color: var(--text);
@@ -114,11 +114,11 @@ const HighSchool = () => {
         .hs-stab:hover { color: var(--navy); }
         .hs-stab.active { color: var(--blue-dark); border-bottom-color: var(--blue-deep); }
 
-        .hs-urgency-banner { background: linear-gradient(135deg,var(--blue) 0%,#bfdbfe 100%); border-top: 3px solid var(--blue-mid); border-bottom: 3px solid var(--blue-mid); padding: 16px 52px; display: flex; align-items: center; justify-content: center; gap: 32px; flex-wrap: wrap; }
+        .hs-urgency-banner { background: linear-gradient(135deg,var(--gold-pale) 0%,var(--soft) 100%); border-top: 3px solid var(--gold-light); border-bottom: 3px solid var(--gold-light); padding: 16px 52px; display: flex; align-items: center; justify-content: center; gap: 32px; flex-wrap: wrap; }
         .hs-urgency-item { display: flex; align-items: center; gap: 10px; font-size: .88rem; font-weight: 700; color: var(--navy); }
         .hs-urgency-highlight { background: var(--navy); color: #fff; font-size: .75rem; font-weight: 800; padding: 3px 12px; border-radius: 999px; white-space: nowrap; }
 
-        .hs-hero { background: linear-gradient(160deg,#eff6ff 0%,#dbeafe 50%,#e0e7ff 100%); padding: 80px 52px 72px; text-align: center; border-bottom: 1px solid var(--border); }
+        .hs-hero { background: linear-gradient(160deg,#F7F4EE 0%,#FFFFFF 55%,rgba(240,203,106,0.1) 100%); padding: 80px 52px 72px; text-align: center; border-bottom: 1px solid var(--border); }
         .hs-hero-tag { display: inline-block; font-size: .72rem; font-weight: 800; letter-spacing: 3px; text-transform: uppercase; color: var(--blue-dark); background: #fff; border: 1.5px solid var(--blue-mid); padding: 6px 20px; border-radius: 4px; margin-bottom: 24px; }
         .hs-hero h1 { font-size: clamp(2.4rem,5vw,3.6rem); font-weight: 900; line-height: 1.1; letter-spacing: -1.5px; color: var(--navy); margin: 0 0 20px; text-wrap: balance; }
         .hs-hero h1 em { font-style: normal; color: var(--blue-dark); }
@@ -141,8 +141,8 @@ const HighSchool = () => {
 
         .hs-stakes-section { background: var(--soft); }
         .hs-stakes-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(240px,1fr)); gap: 20px; max-width: 1100px; margin: 0 auto; }
-        .hs-stakes-card { background: var(--white); border-radius: 12px; padding: 28px 24px; border: 1.5px solid var(--border); border-top: 4px solid var(--blue-deep); box-shadow: 0 2px 8px rgba(12,31,74,.05); transition: all .22s; }
-        .hs-stakes-card:hover { transform: translateY(-4px); box-shadow: 0 10px 28px rgba(37,99,235,.1); border-color: var(--blue-mid); background: var(--blue); }
+        .hs-stakes-card { background: var(--white); border-radius: 12px; padding: 28px 24px; border: 1.5px solid var(--border); box-shadow: 0 2px 8px rgba(10,27,52,.05); transition: all .22s; }
+        .hs-stakes-card:hover { transform: translateY(-4px); box-shadow: 0 10px 28px rgba(10,27,52,.1); border-color: var(--gold-light); background: var(--gold-pale); }
         .hs-stakes-card h3 { font-size: 1rem; font-weight: 800; color: var(--navy); margin: 0 0 10px; }
         .hs-stakes-card p { font-size: .9rem; color: var(--muted); line-height: 1.7; margin: 0; }
 
@@ -152,22 +152,22 @@ const HighSchool = () => {
         .hs-focus-table thead th { background: var(--navy); color: #fff; padding: 15px 22px; font-size: .85rem; font-weight: 800; text-align: left; letter-spacing: .3px; }
         .hs-focus-table tbody tr { border-bottom: 1px solid var(--border); transition: background .18s; }
         .hs-focus-table tbody tr:last-child { border-bottom: none; }
-        .hs-focus-table tbody tr:hover { background: var(--blue); }
-        .hs-focus-table tbody tr.highlight-row { background: #f0f7ff; }
-        .hs-focus-table tbody tr.highlight-row:hover { background: var(--blue); }
+        .hs-focus-table tbody tr:hover { background: var(--gold-pale); }
+        .hs-focus-table tbody tr.highlight-row { background: var(--soft); }
+        .hs-focus-table tbody tr.highlight-row:hover { background: var(--gold-pale); }
         .hs-focus-table td { padding: 15px 22px; font-size: .9rem; color: var(--text); }
         .hs-focus-table td:first-child { font-weight: 800; color: var(--blue-dark); min-width: 180px; }
 
         .hs-approach-section { background: var(--white); }
         .hs-approach-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(240px,1fr)); gap: 20px; max-width: 1100px; margin: 0 auto; }
-        .hs-approach-card { background: var(--soft); border-radius: 12px; padding: 28px 24px; border: 1.5px solid var(--border); border-left: 4px solid var(--blue-deep); transition: all .22s; }
-        .hs-approach-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(37,99,235,.1); background: var(--blue); }
+        .hs-approach-card { background: var(--soft); border-radius: 12px; padding: 28px 24px; border: 1.5px solid var(--border); transition: all .22s; }
+        .hs-approach-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(10,27,52,.1); background: var(--gold-pale); border-color: var(--gold-light); }
         .hs-approach-num { width: 32px; height: 32px; border-radius: 6px; background: var(--blue); display: flex; align-items: center; justify-content: center; font-size: .85rem; font-weight: 900; color: var(--blue-dark); margin-bottom: 14px; }
         .hs-approach-card h3 { font-size: 1rem; font-weight: 800; color: var(--navy); margin: 0 0 9px; }
         .hs-approach-card p { font-size: .9rem; color: var(--muted); line-height: 1.7; margin: 0; }
 
         .hs-testi-section { background: var(--soft); text-align: center; }
-        .hs-testi-card { max-width: 660px; margin: 0 auto; background: var(--white); border: 1.5px solid var(--border); border-top: 4px solid var(--blue-deep); border-radius: 12px; padding: 44px 40px; box-shadow: 0 6px 28px rgba(12,31,74,.07); }
+        .hs-testi-card { max-width: 660px; margin: 0 auto; background: var(--white); border: 1.5px solid var(--border); border-top: 4px solid var(--gold); border-radius: 12px; padding: 44px 40px; box-shadow: 0 6px 28px rgba(10,27,52,.07); }
         .hs-testi-stars { color: var(--gold-light); font-size: 1.3rem; letter-spacing: 4px; margin-bottom: 20px; }
         .hs-testi-quote-icon { font-size: 3rem; line-height: 1; color: var(--blue-mid); margin-bottom: 8px; }
         .hs-testi-text { font-size: 1.05rem; color: var(--text); line-height: 1.8; font-style: italic; margin: 0 0 28px; text-wrap: pretty; }
@@ -177,7 +177,7 @@ const HighSchool = () => {
         .hs-testi-name { font-size: .9rem; font-weight: 800; color: var(--navy); text-align: left; }
         .hs-testi-role { font-size: .79rem; color: var(--muted); text-align: left; }
 
-        .hs-fit-section { background: var(--blue); border-top: 2px solid var(--blue-mid); border-bottom: 2px solid var(--blue-mid); }
+        .hs-fit-section { background: var(--gold-pale); border-top: 2px solid var(--gold-light); border-bottom: 2px solid var(--gold-light); }
         .hs-fit-inner { max-width: 820px; margin: 0 auto; }
         .hs-fit-list { list-style: none; display: grid; grid-template-columns: repeat(auto-fit,minmax(320px,1fr)); gap: 12px; margin: 0 0 36px; padding: 0; }
         .hs-fit-list li { display: flex; align-items: flex-start; gap: 12px; font-size: .95rem; color: var(--text); line-height: 1.6; }

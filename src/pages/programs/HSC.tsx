@@ -196,19 +196,19 @@ const HSC = () => {
               <h3 className="text-3xl font-extrabold text-brand-navy mb-8">Band 6 Success Strategies</h3>
               <div className="space-y-4">
                 <div className="bg-brand-canvas rounded-2xl p-6 border border-brand-navy/5">
-                  <h4 className="font-bold text-accent-pink mb-2 flex items-center">
+                  <h4 className="font-bold text-brand-gold mb-2 flex items-center">
                     <TrendingUp className="w-5 h-5 mr-2" /> Assessment Task Excellence
                   </h4>
                   <p className="text-brand-navy/70">Master every assessment with detailed feedback, exemplar responses, and strategic planning for maximum marks.</p>
                 </div>
                 <div className="bg-brand-canvas rounded-2xl p-6 border border-brand-navy/5">
-                  <h4 className="font-bold text-accent-purple mb-2 flex items-center">
+                  <h4 className="font-bold text-brand-navy mb-2 flex items-center">
                     <Award className="w-5 h-5 mr-2" /> Exam Technique Mastery
                   </h4>
                   <p className="text-brand-navy/70">Learn time management, question analysis, and response structuring from teachers who've achieved Band 6 themselves.</p>
                 </div>
                 <div className="bg-brand-canvas rounded-2xl p-6 border border-brand-navy/5">
-                  <h4 className="font-bold text-brand-blue mb-2 flex items-center">
+                  <h4 className="font-bold text-brand-gold mb-2 flex items-center">
                     <Trophy className="w-5 h-5 mr-2" /> Scaling Optimization
                   </h4>
                   <p className="text-brand-navy/70">Strategic advice on subject selection and performance targets to maximize your ATAR through smart scaling.</p>
@@ -217,7 +217,7 @@ const HSC = () => {
             </div>
 
             <div className="lg:col-span-5 bg-brand-navy rounded-[2rem] p-8 md:p-12 text-white shadow-xl flex flex-col justify-center relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-64 h-64 bg-accent-pink/20 rounded-full blur-[60px] pointer-events-none -translate-y-1/2 translate-x-1/2"></div>
+              <div className="absolute top-0 right-0 w-64 h-64 bg-brand-gold/20 rounded-full blur-[60px] pointer-events-none -translate-y-1/2 translate-x-1/2"></div>
 
               <Quote className="w-12 h-12 text-brand-gold/40 mb-6" />
               <blockquote className="text-xl text-white font-medium italic leading-relaxed mb-8 relative z-10">
@@ -272,11 +272,11 @@ const HSC = () => {
           <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-6 mb-12">
             {subjects.map((subject, index) => (
               <div key={index} className="bg-white rounded-[1.5rem] p-6 text-center border border-brand-navy/5 shadow-sm hover:shadow-md transition-shadow">
-                <h3 className="font-bold text-brand-blue mb-4 text-xl">{subject.category}</h3>
+                <h3 className="font-bold text-brand-navy mb-4 text-xl">{subject.category}</h3>
                 <ul className="space-y-2 text-left">
                   {subject.courses.map((course, idx) => (
                     <li key={idx} className="flex items-start">
-                      <CheckCircle className="w-5 h-5 text-accent-green mt-0.5 mr-2 flex-shrink-0" />
+                      <CheckCircle className="w-5 h-5 text-brand-gold mt-0.5 mr-2 flex-shrink-0" />
                       <span className="text-brand-navy/80 font-medium text-sm">{course}</span>
                     </li>
                   ))}
@@ -297,7 +297,7 @@ const HSC = () => {
 
         {/* CTA Section */}
         <section>
-          <div className="bg-brand-blue rounded-[2rem] p-12 md:p-16 text-center shadow-2xl relative overflow-hidden">
+          <div className="bg-brand-navy rounded-[2rem] p-12 md:p-16 text-center shadow-2xl relative overflow-hidden">
             {/* Abstract background shapes */}
             <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-white/10 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/3"></div>
             <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-brand-navy/20 rounded-full blur-[80px] translate-y-1/2 -translate-x-1/3"></div>
