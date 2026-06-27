@@ -239,6 +239,23 @@ const Year34 = () => {
         </div>
       </section>
 
+      {/* PHOTO STRIP */}
+      <div style={{ padding: '0 52px 72px', maxWidth: 1140, margin: '0 auto' }}>
+        <div style={{ borderRadius: 24, overflow: 'hidden', position: 'relative', height: 380, border: `2px solid ${c.border}` }}>
+          <img
+            src="/images/programs/year34.jpg"
+            alt="Year 3-4 students engaged in a DA Tuition class"
+            style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 25%' }}
+          />
+          <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to right, rgba(12,31,74,0.78) 0%, rgba(12,31,74,0.35) 55%, transparent 100%)' }} />
+          <div style={{ position: 'absolute', top: '50%', left: 52, transform: 'translateY(-50%)', maxWidth: 400 }}>
+            <div style={{ color: '#d4a017', fontSize: '1rem', letterSpacing: 4, marginBottom: 14 }}>★★★★★</div>
+            <p style={{ fontSize: '1.18rem', color: '#fff', fontWeight: 700, lineHeight: 1.6, fontStyle: 'italic', marginBottom: 16 }}>"Every hand up, every question answered — this is what real engagement looks like."</p>
+            <div style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.6)', fontWeight: 600, letterSpacing: '1px', textTransform: 'uppercase' }}>The DA Tuition Year 3–4 Classroom</div>
+          </div>
+        </div>
+      </div>
+
       {/* FIT */}
       <div style={{ background: c.purple, borderTop: `2px solid ${c.purpleMid}`, borderBottom: `2px solid ${c.purpleMid}` }}>
         <div style={{ padding: '72px 52px', maxWidth: 900, margin: '0 auto' }}>

@@ -98,6 +98,24 @@ const EarlyYears = () => {
         </div>
       </div>
 
+      {/* PHOTO STRIP */}
+      <div style={{ padding: '52px 52px 0', maxWidth: 1140, margin: '0 auto' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 0, borderRadius: 24, overflow: 'hidden', border: `2px solid ${c.border}`, boxShadow: '0 8px 32px rgba(12,31,74,0.07)' }} className="ey-photo-grid">
+          <div style={{ overflow: 'hidden', height: 360 }}>
+            <img
+              src="/images/programs/early-years.jpg"
+              alt="DA Tuition early years student learning one-on-one with teacher"
+              style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top' }}
+            />
+          </div>
+          <div style={{ background: '#0c1f4a', padding: '48px 44px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+            <div style={{ display: 'inline-block', fontSize: '0.7rem', fontWeight: 800, letterSpacing: '2.5px', textTransform: 'uppercase', color: '#d4a017', background: 'rgba(212,160,23,0.12)', border: '1px solid rgba(212,160,23,0.3)', padding: '5px 16px', borderRadius: 999, marginBottom: 20, width: 'fit-content' }}>Inside DA Tuition</div>
+            <h2 style={{ fontSize: '1.85rem', fontWeight: 900, color: '#fff', marginBottom: 16, lineHeight: 1.2, letterSpacing: '-0.5px' }}>Every Child Gets Noticed, Every Session</h2>
+            <p style={{ fontSize: '0.97rem', color: 'rgba(255,255,255,0.75)', lineHeight: 1.75, marginBottom: 0 }}>Our Early Years groups are capped at just 4 students — so your child receives genuine individual attention. Not a seat in a room. Real teaching.</p>
+          </div>
+        </div>
+      </div>
+
       {/* WHY */}
       <section style={{ padding: '72px 52px', maxWidth: 1140, margin: '0 auto' }}>
         <div style={{ textAlign: 'center', marginBottom: 44 }}>

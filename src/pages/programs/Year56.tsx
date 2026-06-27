@@ -121,6 +121,24 @@ const Year56 = () => {
         </div>
       </div>
 
+      {/* PHOTO STRIP */}
+      <div style={{ padding: '52px 52px 0', maxWidth: 1140, margin: '0 auto' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 0, borderRadius: 24, overflow: 'hidden', border: `2px solid ${c.border}`, boxShadow: '0 8px 32px rgba(12,31,74,0.07)' }} className="y56-photo-grid">
+          <div style={{ background: '#0c1f4a', padding: '48px 44px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+            <div style={{ display: 'inline-block', fontSize: '0.7rem', fontWeight: 800, letterSpacing: '2.5px', textTransform: 'uppercase', color: '#d4a017', background: 'rgba(212,160,23,0.12)', border: '1px solid rgba(212,160,23,0.3)', padding: '5px 16px', borderRadius: 999, marginBottom: 20, width: 'fit-content' }}>Inside the Classroom</div>
+            <h2 style={{ fontSize: '1.85rem', fontWeight: 900, color: '#fff', marginBottom: 16, lineHeight: 1.2, letterSpacing: '-0.5px' }}>Real Students, Real Engagement</h2>
+            <p style={{ fontSize: '0.97rem', color: 'rgba(255,255,255,0.75)', lineHeight: 1.75 }}>Small groups, expert teachers, students who are actively learning — not just sitting. This is what a Year 5–6 session at DA Tuition looks like.</p>
+          </div>
+          <div style={{ overflow: 'hidden', height: 360 }}>
+            <img
+              src="/images/programs/year56.jpg"
+              alt="Year 5-6 students working at the whiteboard with their teacher"
+              style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center' }}
+            />
+          </div>
+        </div>
+      </div>
+
       {/* WHY */}
       <section style={{ padding: '72px 52px', maxWidth: 1140, margin: '0 auto' }}>
         <div style={{ textAlign: 'center', marginBottom: 44 }}>

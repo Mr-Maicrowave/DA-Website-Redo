@@ -173,9 +173,19 @@ const HSC = () => {
 
         {/* Visual Proof / Authentic Environment */}
         <section>
-          <div className="rounded-[2rem] overflow-hidden shadow-xl h-[300px] md:h-[450px] relative group border border-brand-navy/5">
-            <img src="/images/v3/teacher_whiteboard.jpg" alt="Rigorous HSC Teaching" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-            <div className="absolute inset-0 bg-brand-navy/5 mix-blend-overlay"></div>
+          <div className="grid md:grid-cols-2 gap-6">
+            <div className="rounded-[2rem] overflow-hidden shadow-xl h-[280px] md:h-[380px] relative group border border-brand-navy/5">
+              <img src="/images/programs/hsc-maths.jpg" alt="HSC Mathematics tutoring at DA Tuition" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-brand-navy/70 to-transparent p-6">
+                <span className="text-white font-bold text-sm tracking-wide uppercase">HSC Mathematics</span>
+              </div>
+            </div>
+            <div className="rounded-[2rem] overflow-hidden shadow-xl h-[280px] md:h-[380px] relative group border border-brand-navy/5">
+              <img src="/images/programs/hsc-physics.jpg" alt="HSC Sciences tutoring at DA Tuition" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-brand-navy/70 to-transparent p-6">
+                <span className="text-white font-bold text-sm tracking-wide uppercase">HSC Sciences</span>
+              </div>
+            </div>
           </div>
         </section>
 

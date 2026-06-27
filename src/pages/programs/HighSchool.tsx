@@ -196,6 +196,19 @@ const HighSchool = () => {
         .hs-footer-logo span { color: var(--gold-light); }
         .hs-footer p { font-size: .8rem; color: rgba(255,255,255,.45); margin: 0; }
 
+        .hs-photo-section { padding: 0 52px; max-width: 1140px; margin: 0 auto; }
+        .hs-photo-split { display: grid; grid-template-columns: 1fr 1fr; border-radius: 20px; overflow: hidden; border: 1.5px solid var(--border); box-shadow: 0 8px 32px rgba(10,27,52,0.08); }
+        .hs-photo-split-img { background-size: cover; background-position: center; min-height: 360px; }
+        .hs-photo-split-copy { background: var(--soft); padding: 52px 44px; display: flex; flex-direction: column; justify-content: center; }
+        .hs-photo-split-copy h2 { font-size: 1.85rem; font-weight: 900; color: var(--navy); margin: 0 0 16px; line-height: 1.2; letter-spacing: -0.5px; }
+        .hs-photo-split-copy p { font-size: 0.97rem; color: var(--muted); line-height: 1.75; margin: 0; }
+        .hs-photo-pair-section { padding: 72px 52px; max-width: 1140px; margin: 0 auto; }
+        .hs-photo-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+        .hs-photo-pair-item { border-radius: 16px; overflow: hidden; position: relative; }
+        .hs-photo-pair-item img { width: 100%; height: 300px; object-fit: cover; display: block; transition: transform .4s; }
+        .hs-photo-pair-item:hover img { transform: scale(1.03); }
+        .hs-photo-pair-label { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(to top, rgba(10,27,52,0.72), transparent); color: #fff; padding: 20px 20px 14px; font-size: .8rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
+
         @media (max-width: 768px) {
           .hs-page { padding-top: 104px; }
           .hs-hero, .hs-section, .hs-cta-section { padding-left: 20px; padding-right: 20px; }
@@ -205,6 +218,10 @@ const HighSchool = () => {
           .hs-testi-card { padding: 28px 20px; }
           .hs-fit-list { grid-template-columns: 1fr; }
           .hs-footer { padding: 20px; flex-direction: column; align-items: flex-start; }
+          .hs-photo-split { grid-template-columns: 1fr; }
+          .hs-photo-section, .hs-photo-pair-section { padding-left: 20px; padding-right: 20px; }
+          .hs-photo-pair { grid-template-columns: 1fr; }
+          .hs-photo-split-img { min-height: 240px; }
         }
       `}</style>
 
@@ -244,6 +261,17 @@ const HighSchool = () => {
             <div>
               <div className="hs-hero-badge-bold">Selective School and HSC Preparation</div>
               <div className="hs-hero-badge-small">Built into every session from Year 7</div>
+            </div>
+          </div>
+        </div>
+
+        <div className="hs-photo-section" style={{ paddingTop: 52 }}>
+          <div className="hs-photo-split">
+            <div className="hs-photo-split-img" style={{ backgroundImage: 'url(/images/programs/highschool-tutoring.jpg)' }} />
+            <div className="hs-photo-split-copy">
+              <div className="hs-section-tag" style={{ marginBottom: 18 }}>Expert Instruction</div>
+              <h2>Your Teacher Beside You, Every Step</h2>
+              <p>At DA Tuition, high school students don't just receive instruction — they get an experienced tutor working beside them, identifying exactly where they're losing marks and showing them how to fix it.</p>
             </div>
           </div>
         </div>
@@ -309,6 +337,19 @@ const HighSchool = () => {
             ))}
           </div>
         </section>
+
+        <div className="hs-photo-pair-section">
+          <div className="hs-photo-pair">
+            <div className="hs-photo-pair-item">
+              <img src="/images/programs/highschool-group.jpg" alt="High school students collaborating at DA Tuition" />
+              <div className="hs-photo-pair-label">Collaborative group sessions</div>
+            </div>
+            <div className="hs-photo-pair-item">
+              <img src="/images/programs/highschool-english.jpg" alt="English tutoring at DA Tuition" />
+              <div className="hs-photo-pair-label">Expert English instruction</div>
+            </div>
+          </div>
+        </div>
 
         <section className="hs-section hs-testi-section">
           <div className="hs-section-tag" style={{ marginBottom: 32 }}>Real Families, Real Results</div>
