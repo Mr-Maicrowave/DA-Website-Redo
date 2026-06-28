@@ -346,6 +346,16 @@ const CURIOSITY_CARDS = [
     ),
     Illustration: IlluNetflix,
   },
+  {
+    topic: '[TOPIC]',
+    hook: '[APPLICATION]',
+    fact: (
+      <>
+        Placeholder fact for the sixth card. Replace this with the real content once the topic is decided.
+      </>
+    ),
+    Illustration: IlluNetflix,
+  },
 ];
 
 const WALKTHROUGH_VERSIONS = [
@@ -598,6 +608,105 @@ const Mathematics = () => {
           </div>
         </section>
 
+        {/* Curiosity grid — Where does this maths actually show up? */}
+        <section className="bg-[#fffdf8] px-5 py-20 lg:px-8">
+          <style>{`
+            @keyframes maths-phoneRock {
+              0%   { transform: rotate(8deg);  }
+              50%  { transform: rotate(-5deg); }
+              100% { transform: rotate(8deg);  }
+            }
+            @keyframes maths-barPulse {
+              0%, 100% { transform: scaleY(0.65); opacity: 0.42; }
+              50%       { transform: scaleY(1);    opacity: 0.85; }
+            }
+            @keyframes maths-ripple {
+              from { transform: scale(1);   opacity: 0.55; }
+              to   { transform: scale(2.8); opacity: 0;    }
+            }
+            @keyframes maths-stepIn {
+              from { opacity: 0; transform: translateY(-10px); }
+              to   { opacity: 1; transform: translateY(0);     }
+            }
+          `}</style>
+
+          <div className="mx-auto max-w-7xl">
+            <div className="mb-10">
+              <h2 className="font-serif text-4xl font-medium leading-tight tracking-[-0.045em] text-[#071629] lg:text-5xl">
+                Where does this maths actually show up?
+              </h2>
+              <p className="mt-3 font-serif text-base italic text-[#9b8a6a]">Tap a card to find out.</p>
+            </div>
+
+            <div className="grid grid-cols-1 gap-5 min-[480px]:grid-cols-2 md:grid-cols-3">
+              {CURIOSITY_CARDS.map((card) => {
+                const isOpen = activeCard === card.topic;
+                return (
+                  <button
+                    key={card.topic}
+                    type="button"
+                    onClick={() => setActiveCard(isOpen ? null : card.topic)}
+                    aria-expanded={isOpen}
+                    className="group relative flex flex-col overflow-hidden rounded-[2rem] border text-left shadow-[0_2px_12px_rgba(7,22,41,0.07)] transition duration-150 hover:scale-[1.02] hover:shadow-[0_8px_28px_rgba(7,22,41,0.12)] active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9a227] focus-visible:ring-offset-2"
+                    style={{
+                      borderColor: isOpen ? 'rgba(201,162,39,0.35)' : 'rgba(7,22,41,0.08)',
+                      background: isOpen ? '#fdf8ec' : 'white',
+                    }}
+                  >
+                    {/* Gold top accent */}
+                    <div
+                      className="absolute inset-x-0 top-0 h-[3px] transition-opacity duration-300"
+                      style={{ background: '#c9a227', opacity: isOpen ? 1 : 0 }}
+                    />
+
+                    {/* Topic badge — top-right corner */}
+                    <span className="absolute right-4 top-4 z-10 rounded-full bg-[#071629]/5 px-2.5 py-0.5 text-[10px] font-black uppercase tracking-[0.1em] text-[#9b8a6a]">
+                      {card.topic}
+                    </span>
+
+                    {/* Illustration — shrinks when open */}
+                    <div
+                      className="mx-5 mt-8 overflow-hidden transition-[height] duration-200 ease-out"
+                      style={{ height: isOpen ? '3.5rem' : '7rem' }}
+                    >
+                      <card.Illustration isOpen={isOpen} />
+                    </div>
+
+                    {/* Text area */}
+                    <div className="px-6 pb-5 pt-3">
+                      {/* Hook title */}
+                      <p
+                        className="font-serif font-medium leading-snug transition-all duration-200"
+                        style={{
+                          fontSize: isOpen ? '0.95rem' : '1.18rem',
+                          color: isOpen ? '#7a5c0a' : '#071629',
+                        }}
+                      >
+                        {card.hook}
+                      </p>
+
+                      {/* Fact — expands via grid-template-rows */}
+                      <div
+                        className="grid transition-[grid-template-rows] duration-300 ease-in-out"
+                        style={{ gridTemplateRows: isOpen ? '1fr' : '0fr' }}
+                      >
+                        <div className="min-h-0 overflow-hidden">
+                          <p
+                            className="mt-3 text-[13.5px] leading-[1.8] text-[#5c4a1e] transition-opacity duration-200"
+                            style={{ opacity: isOpen ? 1 : 0 }}
+                          >
+                            {card.fact}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+
         {/* ── Task A2: Spot the Mistake — Exam Error Detective ── */}
         <section className="bg-[#fff6e7] px-5 py-20 lg:px-8">
           <div className="mx-auto max-w-7xl">
@@ -754,121 +863,6 @@ const Mathematics = () => {
                   </div>
                 )}
               </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Curiosity grid — Where does this maths actually show up? */}
-        <section className="bg-[#fffdf8] px-5 py-20 lg:px-8">
-          <style>{`
-            @keyframes maths-phoneRock {
-              0%   { transform: rotate(8deg);  }
-              50%  { transform: rotate(-5deg); }
-              100% { transform: rotate(8deg);  }
-            }
-            @keyframes maths-barPulse {
-              0%, 100% { transform: scaleY(0.65); opacity: 0.42; }
-              50%       { transform: scaleY(1);    opacity: 0.85; }
-            }
-            @keyframes maths-ripple {
-              from { transform: scale(1);   opacity: 0.55; }
-              to   { transform: scale(2.8); opacity: 0;    }
-            }
-            @keyframes maths-stepIn {
-              from { opacity: 0; transform: translateY(-10px); }
-              to   { opacity: 1; transform: translateY(0);     }
-            }
-          `}</style>
-
-          <div className="mx-auto max-w-7xl">
-            <div className="mb-10">
-              <h2 className="font-serif text-4xl font-medium leading-tight tracking-[-0.045em] text-[#071629] lg:text-5xl">
-                Where does this maths actually show up?
-              </h2>
-              <p className="mt-3 font-serif text-base italic text-[#9b8a6a]">Tap a card to find out.</p>
-            </div>
-
-            <div className="grid grid-cols-1 gap-5 min-[480px]:grid-cols-2 md:grid-cols-3">
-              {CURIOSITY_CARDS.map((card) => {
-                const isOpen = activeCard === card.topic;
-                return (
-                  <button
-                    key={card.topic}
-                    type="button"
-                    onClick={() => setActiveCard(isOpen ? null : card.topic)}
-                    aria-expanded={isOpen}
-                    className="group relative flex flex-col overflow-hidden rounded-[2rem] border text-left shadow-[0_2px_12px_rgba(7,22,41,0.07)] transition duration-150 hover:scale-[1.02] hover:shadow-[0_8px_28px_rgba(7,22,41,0.12)] active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9a227] focus-visible:ring-offset-2"
-                    style={{
-                      borderColor: isOpen ? 'rgba(201,162,39,0.35)' : 'rgba(7,22,41,0.08)',
-                      background: isOpen ? '#fdf8ec' : 'white',
-                    }}
-                  >
-                    {/* Gold top accent */}
-                    <div
-                      className="absolute inset-x-0 top-0 h-[3px] transition-opacity duration-300"
-                      style={{ background: '#c9a227', opacity: isOpen ? 1 : 0 }}
-                    />
-
-                    {/* Topic badge — top-right corner */}
-                    <span className="absolute right-4 top-4 z-10 rounded-full bg-[#071629]/5 px-2.5 py-0.5 text-[10px] font-black uppercase tracking-[0.1em] text-[#9b8a6a]">
-                      {card.topic}
-                    </span>
-
-                    {/* Illustration — shrinks when open */}
-                    <div
-                      className="mx-5 mt-8 overflow-hidden transition-[height] duration-200 ease-out"
-                      style={{ height: isOpen ? '3.5rem' : '7rem' }}
-                    >
-                      <card.Illustration isOpen={isOpen} />
-                    </div>
-
-                    {/* Text area */}
-                    <div className="px-6 pb-5 pt-3">
-                      {/* Hook title */}
-                      <p
-                        className="font-serif font-medium leading-snug transition-all duration-200"
-                        style={{
-                          fontSize: isOpen ? '0.95rem' : '1.18rem',
-                          color: isOpen ? '#7a5c0a' : '#071629',
-                        }}
-                      >
-                        {card.hook}
-                      </p>
-
-                      {/* Fact — expands via grid-template-rows */}
-                      <div
-                        className="grid transition-[grid-template-rows] duration-300 ease-in-out"
-                        style={{ gridTemplateRows: isOpen ? '1fr' : '0fr' }}
-                      >
-                        <div className="min-h-0 overflow-hidden">
-                          <p
-                            className="mt-3 text-[13.5px] leading-[1.8] text-[#5c4a1e] transition-opacity duration-200"
-                            style={{ opacity: isOpen ? 1 : 0 }}
-                          >
-                            {card.fact}
-                          </p>
-                        </div>
-                      </div>
-
-                      {/* Tap prompt — crossfades between closed/open state */}
-                      <div className="relative mt-3 h-[1.1rem]">
-                        <span
-                          className="absolute inset-0 text-[11px] font-medium italic text-[#9b8a6a] transition-opacity duration-150"
-                          style={{ opacity: isOpen ? 0 : 1 }}
-                        >
-                          Tap to find out →
-                        </span>
-                        <span
-                          className="absolute inset-0 text-[11px] font-medium italic text-[#9b8a6a] transition-opacity duration-150"
-                          style={{ opacity: isOpen ? 1 : 0 }}
-                        >
-                          Tap to close ✕
-                        </span>
-                      </div>
-                    </div>
-                  </button>
-                );
-              })}
             </div>
           </div>
         </section>
