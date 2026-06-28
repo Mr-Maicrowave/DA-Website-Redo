@@ -6,27 +6,27 @@ import { Link } from 'react-router-dom';
 import SEO from '@/components/SEO';
 
 const c = {
-  navy: '#0A1B34',
+  navy: '#071629',
   navyMid: '#1a3870',
-  gold: '#D4AF37',
-  goldLight: '#F0CB6A',
-  goldPale: '#F7F4EE',
-  pink: '#FFF8E7',
-  pinkMid: '#F0CB6A',
-  pinkText: '#0A1B34',
-  purple: '#F7F4EE',
-  purpleMid: '#D4AF37',
-  purpleText: '#0A1B34',
-  green: '#F7F4EE',
+  gold: '#c9a227',
+  goldLight: '#e0bd4b',
+  goldPale: '#fff6e7',
+  pink: '#fff6e7',
+  pinkMid: '#e0bd4b',
+  pinkText: '#071629',
+  purple: '#fff6e7',
+  purpleMid: '#c9a227',
+  purpleText: '#071629',
+  green: '#fff6e7',
   greenMid: '#c9a227',
-  greenText: '#0A1B34',
-  blue: '#F7F4EE',
-  blueMid: '#F0CB6A',
-  blueText: '#0A1B34',
-  white: '#ffffff',
-  muted: '#4a5568',
-  border: '#E8E0CC',
-  soft: '#F7F4EE',
+  greenText: '#071629',
+  blue: '#fff6e7',
+  blueMid: '#e0bd4b',
+  blueText: '#071629',
+  white: '#fffdf8',
+  muted: '#61708a',
+  border: 'rgba(201,162,39,0.18)',
+  soft: '#fff6e7',
 };
 
 const testimonials = [
@@ -37,12 +37,12 @@ const testimonials = [
 ];
 
 const fitItems = [
-  { bg: 'rgba(247,244,238,0.8)', border: c.goldLight, text: 'Want to <strong>address gaps</strong> before they compound into bigger problems' },
-  { bg: 'rgba(255,248,231,0.8)', border: c.gold, text: 'Have a child who is <strong>capable but not yet</strong> performing to their potential' },
-  { bg: 'rgba(247,244,238,0.8)', border: c.goldLight, text: 'Want <strong>NAPLAN preparation</strong> woven naturally into regular lessons' },
-  { bg: 'rgba(255,248,231,0.8)', border: c.gold, text: 'Are looking for <strong>extension work</strong> for a child ahead of their class' },
-  { bg: 'rgba(247,244,238,0.8)', border: c.goldLight, text: 'Want their child entering each year with <strong>confidence and momentum</strong>' },
-  { bg: 'rgba(255,248,231,0.8)', border: c.gold, text: 'Value <strong>regular communication</strong> and transparent progress updates' },
+  { bg: 'linear-gradient(180deg, #f7fbff, #e8f2ff)', text: 'Want to <strong>address gaps</strong> before they compound into bigger problems' },
+  { bg: 'linear-gradient(180deg, #fbfff8, #eaf8ef)', text: 'Have a child who is <strong>capable but not yet</strong> performing to their potential' },
+  { bg: 'linear-gradient(180deg, #fffdf7, #fff1cd)', text: 'Want <strong>NAPLAN preparation</strong> woven naturally into regular lessons' },
+  { bg: 'linear-gradient(180deg, #f7fbff, #e8f2ff)', text: 'Are looking for <strong>extension work</strong> for a child ahead of their class' },
+  { bg: 'linear-gradient(180deg, #fbfff8, #eaf8ef)', text: 'Want their child entering each year with <strong>confidence and momentum</strong>' },
+  { bg: 'linear-gradient(180deg, #fffdf7, #fff1cd)', text: 'Value <strong>regular communication</strong> and transparent progress updates' },
 ];
 
 const PrimarySchool = () => {
@@ -70,11 +70,11 @@ const PrimarySchool = () => {
         <div style={{ display: 'inline-block', fontSize: '0.75rem', fontWeight: 800, letterSpacing: '2.5px', textTransform: 'uppercase', color: c.gold, background: c.goldPale, border: `1.5px solid ${c.goldLight}`, padding: '6px 20px', borderRadius: 999, marginBottom: 22 }}>
           Year 1–6 Primary School · NSW Curriculum Aligned
         </div>
-        <h1 style={{ fontSize: 'clamp(2.6rem, 5.5vw, 4.2rem)', fontWeight: 900, lineHeight: 1.1, letterSpacing: '-2px', color: c.navy, marginBottom: 20 }}>
+        <h1 style={{ fontFamily: "'Merriweather', Georgia, serif", fontSize: 'clamp(2.6rem, 5.5vw, 4.2rem)', fontWeight: 900, lineHeight: 1.1, letterSpacing: '-2px', color: c.navy, marginBottom: 20 }}>
           Where Every Child's<br /><em style={{ fontStyle: 'normal', color: c.gold }}>Potential Blooms</em>
         </h1>
         <p style={{ fontSize: '1.12rem', color: c.muted, maxWidth: 600, margin: '0 auto 40px', lineHeight: 1.78 }}>
-          Personalised tutoring that builds <strong style={{ color: c.navy }}>unshakeable confidence</strong>, strengthens foundations, and turns every child into a capable, independent learner — from Kindergarten to Year 6.
+          Personalised tutoring that builds <strong style={{ color: c.navy }}>unshakeable confidence</strong>, strengthens foundations, and turns every child into a capable, independent learner, from Kindergarten to Year 6.
         </p>
         <div style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap' }}>
           <a href="/#contact" style={{ background: c.navy, color: '#fff', border: 'none', padding: '15px 34px', borderRadius: 12, fontSize: '1rem', fontWeight: 800, cursor: 'pointer', textDecoration: 'none', display: 'inline-block' }}>
@@ -83,6 +83,13 @@ const PrimarySchool = () => {
           <a href="#year-groups" style={{ background: c.white, color: c.navy, border: `2px solid ${c.navy}`, padding: '15px 34px', borderRadius: 12, fontSize: '1rem', fontWeight: 700, cursor: 'pointer', textDecoration: 'none', display: 'inline-block' }}>
             See Our Programs ↓
           </a>
+        </div>
+        <div style={{ marginTop: 56, maxWidth: 880, marginLeft: 'auto', marginRight: 'auto', position: 'relative' }}>
+          <img
+            src="/images/v3/primary_school.jpg"
+            alt="Primary school student engaged in a tutoring session at DA Tuition"
+            style={{ width: '100%', height: 360, objectFit: 'cover', borderRadius: 24, boxShadow: '0 20px 50px rgba(10,27,52,0.18)', border: `2px solid ${c.border}` }}
+          />
         </div>
       </section>
 
@@ -125,22 +132,27 @@ const PrimarySchool = () => {
       {/* PILLARS */}
       <div style={{ padding: '76px 52px', maxWidth: 1140, margin: '0 auto' }}>
         <div style={{ fontSize: '0.74rem', fontWeight: 800, letterSpacing: '2.5px', textTransform: 'uppercase', color: c.gold, marginBottom: 10 }}>Our Three Pillars</div>
-        <h2 style={{ fontSize: 'clamp(1.8rem, 3vw, 2.6rem)', fontWeight: 900, letterSpacing: '-1px', color: c.navy, marginBottom: 18, lineHeight: 1.2 }}>Built for Every Stage of Primary School</h2>
+        <h2 style={{ fontFamily: "'Merriweather', Georgia, serif", fontSize: 'clamp(1.8rem, 3vw, 2.6rem)', fontWeight: 900, letterSpacing: '-1px', color: c.navy, marginBottom: 18, lineHeight: 1.2 }}>Built for Every Stage of Primary School</h2>
         <p style={{ fontSize: '1.05rem', color: c.muted, maxWidth: 680, lineHeight: 1.82 }}>
-          Our program is grounded in <strong style={{ color: c.goldLight }}>three core pillars</strong> that work together — giving every child the skills, confidence, and thinking habits they need to thrive at every level.
+          Our program is grounded in <strong style={{ color: c.goldLight }}>three core pillars</strong> that work together, giving every child the skills, confidence, and thinking habits they need to thrive at every level.
         </p>
+        <img
+          src="/images/v3/classroom_active.jpg"
+          alt="Primary school students participating actively in a small group classroom session"
+          style={{ width: '100%', height: 280, objectFit: 'cover', borderRadius: 22, marginTop: 36, boxShadow: '0 10px 32px rgba(10,27,52,0.1)', border: `2px solid ${c.border}` }}
+        />
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 24, marginTop: 44 }}>
           {[
-            { num: 'I', title: 'Strong Foundations', desc: '<strong>Phonics, reading fluency, handwriting,</strong> and number sense built through structured, age-appropriate practice that sticks for life.', points: ['Phonics & decoding skills', 'Reading fluency & comprehension', 'Number sense & place value'], topColor: c.goldLight },
-            { num: 'II', title: 'Academic Excellence', desc: '<strong>English and Maths aligned to the NSW Curriculum,</strong> with extension work for students ready to go further and be genuinely challenged.', points: ['100% NSW Curriculum aligned', 'Extension tasks for advanced learners', 'NAPLAN preparation built in'], topColor: c.gold },
-            { num: 'III', title: 'Critical Thinking', desc: '<strong>Problem-solving tasks, comprehension strategies,</strong> and worded questions that build truly independent thinkers who don\'t give up.', points: ['Multi-step problem solving', 'Inferencing & text analysis', 'Independent study habits'], topColor: c.greenMid },
+            { num: 'I', title: 'Strong Foundations', desc: '<strong>Phonics, reading fluency, handwriting,</strong> and number sense built through structured, age-appropriate practice that sticks for life.', points: ['Phonics & decoding skills', 'Reading fluency & comprehension', 'Number sense & place value'], topColor: c.goldLight, card: 'linear-gradient(180deg, #f7fbff, #e8f2ff)' },
+            { num: 'II', title: 'Academic Excellence', desc: '<strong>English and Maths aligned to the NSW Curriculum,</strong> with extension work for students ready to go further and be genuinely challenged.', points: ['100% NSW Curriculum aligned', 'Extension tasks for advanced learners', 'NAPLAN preparation built in'], topColor: c.gold, card: 'linear-gradient(180deg, #fbfff8, #eaf8ef)' },
+            { num: 'III', title: 'Critical Thinking', desc: '<strong>Problem-solving tasks, comprehension strategies,</strong> and worded questions that build truly independent thinkers who don\'t give up.', points: ['Multi-step problem solving', 'Inferencing & text analysis', 'Independent study habits'], topColor: c.greenMid, card: 'linear-gradient(180deg, #fffdf7, #fff1cd)' },
           ].map((p, i) => (
-            <div key={i} style={{ background: c.white, border: `2px solid ${c.border}`, borderTop: `5px solid ${p.topColor}`, borderRadius: 22, padding: 36, transition: 'all .28s', boxShadow: '0 2px 14px rgba(10,27,52,0.05)', cursor: 'default' }}
+            <div key={i} style={{ background: p.card, border: '2px solid rgba(7,22,41,0.1)', borderTop: `5px solid ${p.topColor}`, borderRadius: 22, padding: 36, transition: 'all .28s', boxShadow: '0 2px 14px rgba(10,27,52,0.05)', cursor: 'default' }}
               onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = 'translateY(-6px)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 18px 44px rgba(10,27,52,0.12)'; }}
               onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = ''; (e.currentTarget as HTMLElement).style.boxShadow = '0 2px 14px rgba(10,27,52,0.05)'; }}
             >
-              <div style={{ width: 56, height: 56, borderRadius: 16, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.3rem', fontWeight: 900, marginBottom: 22, background: c.goldPale, border: `2px solid ${c.goldLight}`, color: c.gold }}>{p.num}</div>
-              <div style={{ fontSize: '1.18rem', fontWeight: 900, marginBottom: 12, color: c.navy }}>{p.title}</div>
+              <div style={{ width: 56, height: 56, borderRadius: 16, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.3rem', fontWeight: 900, marginBottom: 22, background: c.navy, border: `2px solid ${c.goldLight}`, color: '#f1df9a' }}>{p.num}</div>
+              <div style={{ fontFamily: "'Merriweather', Georgia, serif", fontSize: '1.18rem', fontWeight: 900, marginBottom: 12, color: c.navy }}>{p.title}</div>
               <p style={{ fontSize: '0.93rem', color: c.muted, lineHeight: 1.7, marginBottom: 20 }} dangerouslySetInnerHTML={{ __html: p.desc }} />
               <ul style={{ listStyle: 'none', padding: 0 }}>
                 {p.points.map((pt, j) => (
@@ -159,15 +171,15 @@ const PrimarySchool = () => {
       <div style={{ background: c.soft, borderTop: `2px solid ${c.border}`, borderBottom: `2px solid ${c.border}` }}>
         <div style={{ padding: '76px 52px', maxWidth: 1140, margin: '0 auto' }}>
           <div style={{ fontSize: '0.74rem', fontWeight: 800, letterSpacing: '2.5px', textTransform: 'uppercase', color: c.gold, marginBottom: 10 }}>How We Teach</div>
-          <h2 style={{ fontSize: 'clamp(1.8rem, 3vw, 2.6rem)', fontWeight: 900, letterSpacing: '-1px', color: c.navy, marginBottom: 14, lineHeight: 1.2 }}>Our Approach</h2>
+          <h2 style={{ fontFamily: "'Merriweather', Georgia, serif", fontSize: 'clamp(1.8rem, 3vw, 2.6rem)', fontWeight: 900, letterSpacing: '-1px', color: c.navy, marginBottom: 14, lineHeight: 1.2 }}>Our Approach</h2>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 54, alignItems: 'center', marginTop: 48 }} className="approach-grid-responsive">
             <div>
-              <p style={{ color: c.muted, fontSize: '1.02rem', lineHeight: 1.82, marginBottom: 18 }}>At DA Tuition, we believe <strong style={{ color: c.navy }}>every child learns differently.</strong> Our tutors build genuine relationships with each student and adapt to what actually works — not a script.</p>
-              <p style={{ color: c.muted, fontSize: '1.02rem', lineHeight: 1.82, marginBottom: 26 }}>We follow the <strong style={{ color: c.navy }}>NSW Curriculum</strong> so everything reinforces and extends what your child is already doing in school — never in conflict with it.</p>
+              <p style={{ color: c.muted, fontSize: '1.02rem', lineHeight: 1.82, marginBottom: 18 }}>At DA Tuition, we believe <strong style={{ color: c.navy }}>every child learns differently.</strong> Our tutors build genuine relationships with each student and adapt to what actually works, not a script.</p>
+              <p style={{ color: c.muted, fontSize: '1.02rem', lineHeight: 1.82, marginBottom: 26 }}>We follow the <strong style={{ color: c.navy }}>NSW Curriculum</strong> so everything reinforces and extends what your child is already doing in school, never in conflict with it.</p>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                 {[
                   { num: '1', title: 'Small Groups (3–4 Students)', sub: 'Every child is noticed, supported, and genuinely challenged.' },
-                  { num: '2', title: 'Regular Parent Reports', sub: 'Written progress updates every term — you always know where your child stands.' },
+                  { num: '2', title: 'Regular Parent Reports', sub: 'Written progress updates every term, so you always know where your child stands.' },
                   { num: '3', title: 'Positive Reinforcement', sub: 'Confidence and capability built together, every single session.' },
                 ].map((ap, i) => (
                   <div key={i} style={{ display: 'flex', gap: 14, alignItems: 'flex-start', background: c.white, border: `2px solid ${c.border}`, borderRadius: 14, padding: '16px 18px', boxShadow: '0 2px 8px rgba(10,27,52,0.04)' }}>
@@ -180,8 +192,14 @@ const PrimarySchool = () => {
                 ))}
               </div>
             </div>
-            {/* Testimonial card */}
-            <div style={{ background: c.white, border: `2px solid ${c.border}`, borderTop: `4px solid ${c.goldLight}`, borderRadius: 24, padding: '32px 28px', boxShadow: '0 6px 24px rgba(10,27,52,0.08)', position: 'relative', overflow: 'hidden' }}>
+            <div>
+              <img
+                src="/images/v3/warm_interaction.jpg"
+                alt="A DA Tuition teacher having a warm, encouraging interaction with a primary school student"
+                style={{ width: '100%', height: 220, objectFit: 'cover', borderRadius: 20, marginBottom: 24, boxShadow: '0 8px 26px rgba(10,27,52,0.1)', border: `2px solid ${c.border}` }}
+              />
+              {/* Testimonial card */}
+              <div style={{ background: c.white, border: `2px solid ${c.border}`, borderTop: `4px solid ${c.goldLight}`, borderRadius: 24, padding: '32px 28px', boxShadow: '0 6px 24px rgba(10,27,52,0.08)', position: 'relative', overflow: 'hidden' }}>
               <div style={{ fontSize: '0.72rem', fontWeight: 800, letterSpacing: '2px', textTransform: 'uppercase', color: c.gold, marginBottom: 16 }}>What Parents Tell Us</div>
               <div style={{ fontSize: '2.8rem', lineHeight: 1, color: c.gold, marginBottom: 4 }}>"</div>
               <p style={{ fontSize: '0.97rem', color: c.navy, lineHeight: 1.75, fontStyle: 'italic', marginBottom: 20, minHeight: 90 }} dangerouslySetInnerHTML={{ __html: t.text }} />
@@ -205,6 +223,7 @@ const PrimarySchool = () => {
                   ))}
                 </div>
               </div>
+              </div>
             </div>
           </div>
         </div>
@@ -213,14 +232,14 @@ const PrimarySchool = () => {
       {/* FIT */}
       <div style={{ padding: '76px 52px', maxWidth: 1140, margin: '0 auto' }}>
         <div style={{ fontSize: '0.74rem', fontWeight: 800, letterSpacing: '2.5px', textTransform: 'uppercase', color: c.gold, marginBottom: 10 }}>Is This Right for Us?</div>
-        <h2 style={{ fontSize: 'clamp(1.8rem, 3vw, 2.6rem)', fontWeight: 900, letterSpacing: '-1px', color: c.navy, marginBottom: 18, lineHeight: 1.2 }}>This program is for families who…</h2>
+        <h2 style={{ fontFamily: "'Merriweather', Georgia, serif", fontSize: 'clamp(1.8rem, 3vw, 2.6rem)', fontWeight: 900, letterSpacing: '-1px', color: c.navy, marginBottom: 18, lineHeight: 1.2 }}>This program is for families who…</h2>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 18, marginTop: 40 }}>
           {fitItems.map((item, i) => (
-            <div key={i} style={{ background: item.bg, border: `2px solid ${item.border}`, borderRadius: 16, padding: '22px 24px', display: 'flex', gap: 14, alignItems: 'flex-start', transition: 'all .22s' }}
+            <div key={i} style={{ background: item.bg, border: '2px solid rgba(7,22,41,0.1)', borderRadius: 16, padding: '22px 24px', display: 'flex', gap: 14, alignItems: 'flex-start', transition: 'all .22s' }}
               onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = 'translateY(-3px)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 10px 28px rgba(10,27,52,0.1)'; }}
               onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = ''; (e.currentTarget as HTMLElement).style.boxShadow = ''; }}
             >
-              <div style={{ width: 30, height: 30, background: c.goldPale, border: `2px solid ${c.goldLight}`, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', color: c.gold, fontWeight: 900, fontSize: '0.9rem', flexShrink: 0, marginTop: 1 }}>✓</div>
+              <div style={{ width: 30, height: 30, background: c.navy, border: `2px solid ${c.goldLight}`, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#f1df9a', fontWeight: 900, fontSize: '0.9rem', flexShrink: 0, marginTop: 1 }}>✓</div>
               <div style={{ fontSize: '0.92rem', color: c.muted, lineHeight: 1.58 }} dangerouslySetInnerHTML={{ __html: item.text }} />
             </div>
           ))}
@@ -229,7 +248,7 @@ const PrimarySchool = () => {
 
       {/* CTA */}
       <div style={{ textAlign: 'center', padding: '96px 52px', background: c.navy, borderTop: `4px solid ${c.goldLight}` }}>
-        <h2 style={{ fontSize: 'clamp(2rem, 3.5vw, 3rem)', fontWeight: 900, letterSpacing: '-1.2px', marginBottom: 18, color: c.white, lineHeight: 1.15 }}>
+        <h2 style={{ fontFamily: "'Merriweather', Georgia, serif", fontSize: 'clamp(2rem, 3.5vw, 3rem)', fontWeight: 900, letterSpacing: '-1.2px', marginBottom: 18, color: c.white, lineHeight: 1.15 }}>
           Give Your Child the Strongest<br />Possible Start
         </h2>
         <p style={{ fontSize: '1.08rem', color: 'rgba(255,255,255,0.75)', maxWidth: 540, margin: '0 auto 38px', lineHeight: 1.75 }}>

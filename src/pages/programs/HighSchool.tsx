@@ -2,6 +2,8 @@ import { Link } from 'react-router-dom';
 import SEO from '@/components/SEO';
 import NavigationNew from '@/components/NavigationNew';
 
+const cardTones = ['hs-tone-blue', 'hs-tone-green', 'hs-tone-gold'];
+
 const focusRows = [
   {
     area: 'English and Essay Writing',
@@ -90,10 +92,10 @@ const HighSchool = () => {
 
       <style>{`
         .hs-page {
-          --navy:#0A1B34; --navy-mid:#1a3870;
-          --gold:#D4AF37; --gold-light:#F0CB6A; --gold-pale:#F7F4EE;
-          --blue:#F7F4EE; --blue-mid:#F0CB6A; --blue-text:#0A1B34; --blue-deep:#D4AF37; --blue-dark:#0A1B34;
-          --white:#ffffff; --text:#0A1B34; --muted:#4a5568; --border:#E8E0CC; --soft:#F7F4EE;
+          --navy:#071629; --navy-mid:#1a3a6e;
+          --gold:#c9a227; --gold-light:#e0bd4b; --gold-pale:#fff6e7;
+          --blue:#fff6e7; --blue-mid:#e0bd4b; --blue-text:#071629; --blue-deep:#c9a227; --blue-dark:#071629;
+          --white:#fffdf8; --text:#071629; --muted:#61708a; --border:rgba(201,162,39,0.22); --soft:#fff6e7;
           min-height: 100vh;
           background: var(--white);
           color: var(--text);
@@ -103,6 +105,10 @@ const HighSchool = () => {
         }
 
         .hs-page *, .hs-page *::before, .hs-page *::after { box-sizing: border-box; }
+
+        .hs-page h1, .hs-page h2, .hs-page h3 {
+          font-family: 'Merriweather', Georgia, serif;
+        }
 
         .hs-breadcrumb { background: var(--soft); border-bottom: 1px solid var(--border); padding: 14px 52px; font-size: .82rem; color: var(--muted); }
         .hs-breadcrumb a { color: var(--navy); text-decoration: none; font-weight: 600; }
@@ -118,36 +124,43 @@ const HighSchool = () => {
         .hs-urgency-item { display: flex; align-items: center; gap: 10px; font-size: .88rem; font-weight: 700; color: var(--navy); }
         .hs-urgency-highlight { background: var(--navy); color: #fff; font-size: .75rem; font-weight: 800; padding: 3px 12px; border-radius: 999px; white-space: nowrap; }
 
-        .hs-hero { background: linear-gradient(160deg,#F7F4EE 0%,#FFFFFF 55%,rgba(240,203,106,0.1) 100%); padding: 80px 52px 72px; text-align: center; border-bottom: 1px solid var(--border); }
-        .hs-hero-tag { display: inline-block; font-size: .72rem; font-weight: 800; letter-spacing: 3px; text-transform: uppercase; color: var(--blue-dark); background: #fff; border: 1.5px solid var(--blue-mid); padding: 6px 20px; border-radius: 4px; margin-bottom: 24px; }
-        .hs-hero h1 { font-size: clamp(2.4rem,5vw,3.6rem); font-weight: 900; line-height: 1.1; letter-spacing: -1.5px; color: var(--navy); margin: 0 0 20px; text-wrap: balance; }
+        .hs-hero { background: linear-gradient(160deg,#fff6e7 0%,#fffdf8 55%,rgba(201,162,39,0.1) 100%); padding: 80px 52px 72px; text-align: center; border-bottom: 1px solid var(--border); }
+        .hs-hero-tag { display: inline-block; font-size: .72rem; font-weight: 800; letter-spacing: 3px; text-transform: uppercase; color: var(--blue-dark); background: #fff; border: 1.5px solid var(--blue-mid); padding: 6px 20px; border-radius: 999px; margin-bottom: 24px; }
+        .hs-hero h1 { font-family: 'Merriweather', Georgia, serif; font-size: clamp(2.4rem,5vw,3.6rem); font-weight: 900; line-height: 1.1; letter-spacing: -1.5px; color: var(--navy); margin: 0 0 20px; text-wrap: balance; }
         .hs-hero h1 em { font-style: normal; color: var(--blue-dark); }
         .hs-hero-sub { font-size: 1.1rem; color: var(--muted); max-width: 560px; margin: 0 auto 40px; line-height: 1.75; text-wrap: pretty; }
         .hs-hero-btns { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-bottom: 36px; }
-        .hs-btn-navy { background: var(--navy); color: #fff; border: none; padding: 14px 32px; border-radius: 8px; font-size: .97rem; font-weight: 800; cursor: pointer; transition: all .2s; text-decoration: none; display: inline-block; }
-        .hs-btn-navy:hover { background: var(--navy-mid); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(12,31,74,.3); }
-        .hs-btn-outline { background: var(--white); color: var(--navy); border: 2px solid var(--navy); padding: 14px 32px; border-radius: 8px; font-size: .97rem; font-weight: 700; cursor: pointer; transition: all .2s; text-decoration: none; display: inline-block; }
+        .hs-btn-navy { background: var(--gold); color: var(--navy); border: none; padding: 14px 32px; border-radius: 999px; font-size: .97rem; font-weight: 800; cursor: pointer; transition: all .2s; text-decoration: none; display: inline-block; }
+        .hs-btn-navy:hover { background: var(--gold-light); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(201,162,39,.35); }
+        .hs-btn-outline { background: var(--white); color: var(--navy); border: 2px solid var(--navy); padding: 14px 32px; border-radius: 999px; font-size: .97rem; font-weight: 700; cursor: pointer; transition: all .2s; text-decoration: none; display: inline-block; }
         .hs-btn-outline:hover { background: var(--blue); transform: translateY(-2px); }
-        .hs-hero-badge { display: inline-flex; align-items: center; gap: 14px; background: #fff; border: 1.5px solid var(--blue-mid); border-radius: 8px; padding: 12px 22px; box-shadow: 0 2px 10px rgba(37,99,235,.1); }
+        .hs-hero-badge { display: inline-flex; align-items: center; gap: 14px; background: #fffdf8; border: 1.5px solid var(--blue-mid); border-radius: 8px; padding: 12px 22px; box-shadow: 0 2px 10px rgba(201,162,39,.15); }
         .hs-hero-badge-bold { font-size: .92rem; font-weight: 800; color: var(--navy); }
         .hs-hero-badge-small { font-size: .76rem; color: var(--muted); margin-top: 2px; }
 
         .hs-section { padding: 72px 52px; }
-        .hs-section-tag { display: inline-block; font-size: .7rem; font-weight: 800; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); background: var(--gold-pale); border: 1px solid #e8d280; padding: 5px 16px; border-radius: 4px; margin-bottom: 16px; }
-        .hs-section-h2 { font-size: clamp(1.8rem,3.2vw,2.6rem); font-weight: 900; letter-spacing: -1px; color: var(--navy); margin: 0 0 14px; text-wrap: balance; }
+        .hs-section-tag { display: inline-block; font-size: .7rem; font-weight: 800; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); background: var(--gold-pale); border: 1px solid rgba(201,162,39,0.45); padding: 5px 16px; border-radius: 999px; margin-bottom: 16px; }
+        .hs-section-h2 { font-family: 'Merriweather', Georgia, serif; font-size: clamp(1.8rem,3.2vw,2.6rem); font-weight: 900; letter-spacing: -1px; color: var(--navy); margin: 0 0 14px; text-wrap: balance; }
         .hs-section-sub { font-size: 1.03rem; color: var(--muted); max-width: 620px; line-height: 1.7; margin: 0 0 40px; text-wrap: pretty; }
         .hs-center { text-align: center; }
         .hs-section-sub.hs-center { margin: 0 auto 40px; }
 
         .hs-stakes-section { background: var(--soft); }
         .hs-stakes-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(240px,1fr)); gap: 20px; max-width: 1100px; margin: 0 auto; }
-        .hs-stakes-card { background: var(--white); border-radius: 12px; padding: 28px 24px; border: 1.5px solid var(--border); box-shadow: 0 2px 8px rgba(10,27,52,.05); transition: all .22s; }
-        .hs-stakes-card:hover { transform: translateY(-4px); box-shadow: 0 10px 28px rgba(10,27,52,.1); border-color: var(--gold-light); background: var(--gold-pale); }
-        .hs-stakes-card h3 { font-size: 1rem; font-weight: 800; color: var(--navy); margin: 0 0 10px; }
+        .hs-stakes-card { border-radius: 20px; padding: 28px 24px; border: 1px solid rgba(7,22,41,0.1); box-shadow: 0 2px 8px rgba(7,22,41,.05); transition: all .22s; }
+        .hs-stakes-card:hover { transform: translateY(-4px); box-shadow: 0 10px 28px rgba(7,22,41,.1); }
+        .hs-stakes-card h3 { font-family: 'Merriweather', Georgia, serif; font-size: 1rem; font-weight: 800; color: var(--navy); margin: 0 0 10px; }
         .hs-stakes-card p { font-size: .9rem; color: var(--muted); line-height: 1.7; margin: 0; }
 
+        .hs-tone-blue { background: linear-gradient(to bottom, #f7fbff, #e8f2ff); }
+        .hs-tone-blue:hover { border-color: rgba(16,35,63,0.25); }
+        .hs-tone-green { background: linear-gradient(to bottom, #fbfff8, #eaf8ef); }
+        .hs-tone-green:hover { border-color: rgba(16,35,63,0.25); }
+        .hs-tone-gold { background: linear-gradient(to bottom, #fffdf7, #fff1cd); }
+        .hs-tone-gold:hover { border-color: var(--gold-light); }
+
         .hs-focus-section { background: var(--white); }
-        .hs-focus-wrap { max-width: 920px; margin: 0 auto; overflow-x: auto; border-radius: 12px; box-shadow: 0 4px 20px rgba(12,31,74,.07); border: 1.5px solid var(--border); }
+        .hs-focus-wrap { max-width: 920px; margin: 0 auto; overflow-x: auto; border-radius: 20px; box-shadow: 0 4px 20px rgba(7,22,41,.07); border: 1.5px solid var(--border); }
         .hs-focus-table { width: 100%; border-collapse: collapse; }
         .hs-focus-table thead th { background: var(--navy); color: #fff; padding: 15px 22px; font-size: .85rem; font-weight: 800; text-align: left; letter-spacing: .3px; }
         .hs-focus-table tbody tr { border-bottom: 1px solid var(--border); transition: background .18s; }
@@ -160,17 +173,17 @@ const HighSchool = () => {
 
         .hs-approach-section { background: var(--white); }
         .hs-approach-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(240px,1fr)); gap: 20px; max-width: 1100px; margin: 0 auto; }
-        .hs-approach-card { background: var(--soft); border-radius: 12px; padding: 28px 24px; border: 1.5px solid var(--border); transition: all .22s; }
-        .hs-approach-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(10,27,52,.1); background: var(--gold-pale); border-color: var(--gold-light); }
-        .hs-approach-num { width: 32px; height: 32px; border-radius: 6px; background: var(--blue); display: flex; align-items: center; justify-content: center; font-size: .85rem; font-weight: 900; color: var(--blue-dark); margin-bottom: 14px; }
-        .hs-approach-card h3 { font-size: 1rem; font-weight: 800; color: var(--navy); margin: 0 0 9px; }
+        .hs-approach-card { border-radius: 20px; padding: 28px 24px; border: 1px solid rgba(7,22,41,0.1); box-shadow: 0 2px 8px rgba(7,22,41,.05); transition: all .22s; }
+        .hs-approach-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(7,22,41,.1); }
+        .hs-approach-num { width: 32px; height: 32px; border-radius: 8px; background: #10233f; display: flex; align-items: center; justify-content: center; font-size: .85rem; font-weight: 900; color: #f1df9a; margin-bottom: 14px; }
+        .hs-approach-card h3 { font-family: 'Merriweather', Georgia, serif; font-size: 1rem; font-weight: 800; color: var(--navy); margin: 0 0 9px; }
         .hs-approach-card p { font-size: .9rem; color: var(--muted); line-height: 1.7; margin: 0; }
 
         .hs-testi-section { background: var(--soft); text-align: center; }
-        .hs-testi-card { max-width: 660px; margin: 0 auto; background: var(--white); border: 1.5px solid var(--border); border-top: 4px solid var(--gold); border-radius: 12px; padding: 44px 40px; box-shadow: 0 6px 28px rgba(10,27,52,.07); }
+        .hs-testi-card { max-width: 660px; margin: 0 auto; background: var(--white); border: 1.5px solid var(--border); border-top: 4px solid var(--gold); border-radius: 24px; padding: 44px 40px; box-shadow: 0 6px 28px rgba(7,22,41,.07); }
         .hs-testi-stars { color: var(--gold-light); font-size: 1.3rem; letter-spacing: 4px; margin-bottom: 20px; }
         .hs-testi-quote-icon { font-size: 3rem; line-height: 1; color: var(--blue-mid); margin-bottom: 8px; }
-        .hs-testi-text { font-size: 1.05rem; color: var(--text); line-height: 1.8; font-style: italic; margin: 0 0 28px; text-wrap: pretty; }
+        .hs-testi-text { font-family: 'Merriweather', Georgia, serif; font-size: 1.05rem; color: var(--text); line-height: 1.8; font-style: italic; margin: 0 0 28px; text-wrap: pretty; }
         .hs-testi-text strong { font-style: normal; color: var(--navy); }
         .hs-testi-author { display: flex; align-items: center; justify-content: center; gap: 14px; }
         .hs-testi-avatar { width: 46px; height: 46px; border-radius: 50%; background: var(--blue); border: 2px solid var(--blue-mid); display: flex; align-items: center; justify-content: center; font-size: 1rem; font-weight: 900; color: var(--blue-dark); }
@@ -185,10 +198,10 @@ const HighSchool = () => {
         .hs-fit-cta-row { text-align: center; margin-top: 8px; }
 
         .hs-cta-section { background: var(--navy); border-top: 4px solid var(--gold); padding: 80px 52px; text-align: center; }
-        .hs-cta-section h2 { font-size: clamp(1.9rem,3.8vw,2.8rem); font-weight: 900; color: #fff; letter-spacing: -1px; margin: 0 0 16px; text-wrap: balance; }
+        .hs-cta-section h2 { font-family: 'Merriweather', Georgia, serif; font-size: clamp(1.9rem,3.8vw,2.8rem); font-weight: 900; color: #fff; letter-spacing: -1px; margin: 0 0 16px; text-wrap: balance; }
         .hs-cta-section p { font-size: 1.03rem; color: rgba(255,255,255,.72); max-width: 540px; margin: 0 auto 36px; line-height: 1.72; text-wrap: pretty; }
-        .hs-btn-gold { background: var(--gold-light); color: var(--navy); border: none; padding: 15px 36px; border-radius: 8px; font-size: 1rem; font-weight: 900; cursor: pointer; transition: all .2s; text-decoration: none; display: inline-block; }
-        .hs-btn-gold:hover { background: var(--gold); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(184,134,11,.4); }
+        .hs-btn-gold { background: var(--gold); color: var(--navy); border: none; padding: 15px 36px; border-radius: 999px; font-size: 1rem; font-weight: 900; cursor: pointer; transition: all .2s; text-decoration: none; display: inline-block; }
+        .hs-btn-gold:hover { background: var(--gold-light); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(201,162,39,.4); }
         .hs-cta-note { margin-top: 18px !important; margin-bottom: 0 !important; font-size: .82rem !important; color: rgba(255,255,255,.45) !important; }
 
         .hs-footer { background: var(--navy); border-top: 1px solid rgba(255,255,255,.1); padding: 28px 52px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px; }
@@ -197,17 +210,17 @@ const HighSchool = () => {
         .hs-footer p { font-size: .8rem; color: rgba(255,255,255,.45); margin: 0; }
 
         .hs-photo-section { padding: 0 52px; max-width: 1140px; margin: 0 auto; }
-        .hs-photo-split { display: grid; grid-template-columns: 1fr 1fr; border-radius: 20px; overflow: hidden; border: 1.5px solid var(--border); box-shadow: 0 8px 32px rgba(10,27,52,0.08); }
+        .hs-photo-split { display: grid; grid-template-columns: 1fr 1fr; border-radius: 24px; overflow: hidden; border: 1.5px solid var(--border); box-shadow: 0 8px 32px rgba(7,22,41,0.08); }
         .hs-photo-split-img { background-size: cover; background-position: center; min-height: 360px; }
         .hs-photo-split-copy { background: var(--soft); padding: 52px 44px; display: flex; flex-direction: column; justify-content: center; }
-        .hs-photo-split-copy h2 { font-size: 1.85rem; font-weight: 900; color: var(--navy); margin: 0 0 16px; line-height: 1.2; letter-spacing: -0.5px; }
+        .hs-photo-split-copy h2 { font-family: 'Merriweather', Georgia, serif; font-size: 1.85rem; font-weight: 900; color: var(--navy); margin: 0 0 16px; line-height: 1.2; letter-spacing: -0.5px; }
         .hs-photo-split-copy p { font-size: 0.97rem; color: var(--muted); line-height: 1.75; margin: 0; }
         .hs-photo-pair-section { padding: 72px 52px; max-width: 1140px; margin: 0 auto; }
         .hs-photo-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
         .hs-photo-pair-item { border-radius: 16px; overflow: hidden; position: relative; }
         .hs-photo-pair-item img { width: 100%; height: 300px; object-fit: cover; display: block; transition: transform .4s; }
         .hs-photo-pair-item:hover img { transform: scale(1.03); }
-        .hs-photo-pair-label { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(to top, rgba(10,27,52,0.72), transparent); color: #fff; padding: 20px 20px 14px; font-size: .8rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
+        .hs-photo-pair-label { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(to top, rgba(7,22,41,0.72), transparent); color: #fff; padding: 20px 20px 14px; font-size: .8rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
 
         @media (max-width: 768px) {
           .hs-page { padding-top: 104px; }
@@ -271,7 +284,7 @@ const HighSchool = () => {
             <div className="hs-photo-split-copy">
               <div className="hs-section-tag" style={{ marginBottom: 18 }}>Expert Instruction</div>
               <h2>Your Teacher Beside You, Every Step</h2>
-              <p>At DA Tuition, high school students don't just receive instruction — they get an experienced tutor working beside them, identifying exactly where they're losing marks and showing them how to fix it.</p>
+              <p>At DA Tuition, high school students don't just receive instruction. They get an experienced tutor working beside them, identifying exactly where they're losing marks and showing them how to fix it.</p>
             </div>
           </div>
         </div>
@@ -285,8 +298,8 @@ const HighSchool = () => {
             </p>
           </div>
           <div className="hs-stakes-grid">
-            {stakesCards.map((card) => (
-              <article className="hs-stakes-card" key={card.title}>
+            {stakesCards.map((card, index) => (
+              <article className={`hs-stakes-card ${cardTones[index % cardTones.length]}`} key={card.title}>
                 <h3>{card.title}</h3>
                 <p>{card.text}</p>
               </article>
@@ -329,7 +342,7 @@ const HighSchool = () => {
           </div>
           <div className="hs-approach-grid">
             {approachCards.map((card, index) => (
-              <article className="hs-approach-card" key={card.title}>
+              <article className={`hs-approach-card ${cardTones[index % cardTones.length]}`} key={card.title}>
                 <div className="hs-approach-num">{index + 1}</div>
                 <h3>{card.title}</h3>
                 <p>{card.text}</p>
@@ -390,6 +403,19 @@ const HighSchool = () => {
             </div>
           </div>
         </section>
+
+        <div className="hs-photo-pair-section">
+          <div className="hs-photo-pair">
+            <div className="hs-photo-pair-item">
+              <img src="/images/v3/teacher_whiteboard.jpg" alt="DA Tuition teacher explaining a concept on the whiteboard to high school students" />
+              <div className="hs-photo-pair-label">Concepts explained step by step</div>
+            </div>
+            <div className="hs-photo-pair-item">
+              <img src="/images/v3/small_group_tutoring.jpg" alt="Small group of Years 7-10 students receiving individual attention from a DA Tuition tutor" />
+              <div className="hs-photo-pair-label">Individual attention, every session</div>
+            </div>
+          </div>
+        </div>
 
         <div className="hs-cta-section">
           <h2>Do Not Wait for the<br />Report Card</h2>

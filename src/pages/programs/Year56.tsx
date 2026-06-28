@@ -6,13 +6,13 @@ import { Link } from 'react-router-dom';
 import SEO from '@/components/SEO';
 
 const c = {
-  navy: '#0A1B34', navyMid: '#1a3870',
-  gold: '#D4AF37', goldLight: '#F0CB6A', goldPale: '#F7F4EE',
-  pink: '#FFF8E7', pinkMid: '#F0CB6A', pinkText: '#0A1B34',
-  purple: '#F7F4EE', purpleMid: '#D4AF37', purpleText: '#0A1B34',
-  green: '#F7F4EE', greenMid: '#c9a227', greenText: '#0A1B34', greenDeep: '#0A1B34',
-  blue: '#F7F4EE', blueMid: '#F0CB6A', blueText: '#0A1B34',
-  white: '#ffffff', muted: '#4a5568', border: '#E8E0CC', soft: '#F7F4EE',
+  navy: '#071629', navyMid: '#1a3870',
+  gold: '#c9a227', goldLight: '#e0bd4b', goldPale: '#fff6e7',
+  pink: '#fff6e7', pinkMid: '#e0bd4b', pinkText: '#071629',
+  purple: '#fff6e7', purpleMid: '#c9a227', purpleText: '#071629',
+  green: '#fff6e7', greenMid: '#c9a227', greenText: '#071629', greenDeep: '#071629',
+  blue: '#fff6e7', blueMid: '#e0bd4b', blueText: '#071629',
+  white: '#fffdf8', muted: '#61708a', border: 'rgba(201,162,39,0.25)', soft: '#fff6e7',
 };
 
 const curriculumRows = [
@@ -44,7 +44,7 @@ const approachPoints = [
 const fitPoints = [
   'Your child is in <strong>Year 5 or Year 6</strong> and you want to make the most of this critical final window in primary school',
   "You're preparing for a <strong>selective school, OC, or scholarship exam</strong> and need targeted, expert preparation",
-  'You want <strong>Year 5 NAPLAN preparation</strong> that builds genuine skills — not test anxiety',
+  'You want <strong>Year 5 NAPLAN preparation</strong> that builds genuine skills, not test anxiety',
   'Your child is <strong>capable but not yet performing to their potential</strong> and needs a push in the right direction',
   'You want your child entering <strong>high school with strong foundations</strong> and real confidence in both Maths and English',
   'You value a tuition centre that <strong>communicates honestly</strong> and gives specific, useful progress feedback every term',
@@ -56,16 +56,23 @@ const badgeColors: Record<string, { bg: string; text: string }> = {
   Selective: { bg: c.goldPale, text: c.navy },
 };
 
+const cardTones = [
+  { bg: 'linear-gradient(180deg, #f7fbff, #e8f2ff)', border: 'rgba(7,22,41,0.1)' },
+  { bg: 'linear-gradient(180deg, #fbfff8, #eaf8ef)', border: 'rgba(7,22,41,0.1)' },
+  { bg: 'linear-gradient(180deg, #fffdf7, #fff1cd)', border: 'rgba(7,22,41,0.1)' },
+];
+
 const whyCards = [
   { num: 'I', title: 'Year 5 NAPLAN', desc: '<strong>Year 5 NAPLAN results matter</strong> for <strong>selective school applications</strong>, <strong>scholarship eligibility</strong>, and the <strong>academic streaming decisions</strong> that shape your child\'s high school experience.' },
-  { num: 'II', title: 'Selective School Entry', desc: 'Selective school and scholarship exams require a <strong>very specific skill set</strong> — well beyond the regular curriculum. <strong>Preparation needs to start early</strong> and be <strong>strategic</strong> to be effective.' },
-  { num: 'III', title: 'High School Readiness', desc: '<strong>Year 7 demands significantly more</strong> independent thinking and organisation. Children who enter high school with <strong>strong foundations thrive</strong> — those who don\'t <strong>often struggle silently</strong>.' },
-  { num: 'IV', title: 'Advanced Content Mastery', desc: 'Year 5–6 maths and English move into <strong>abstract reasoning, algebra, extended analysis</strong>, and <strong>sophisticated writing</strong> — skills that require <strong>explicit teaching</strong>, not just practice.' },
+  { num: 'II', title: 'Selective School Entry', desc: 'Selective school and scholarship exams require a <strong>very specific skill set</strong>, well beyond the regular curriculum. <strong>Preparation needs to start early</strong> and be <strong>strategic</strong> to be effective.' },
+  { num: 'III', title: 'High School Readiness', desc: '<strong>Year 7 demands significantly more</strong> independent thinking and organisation. Children who enter high school with <strong>strong foundations thrive</strong>, while those who don\'t <strong>often struggle silently</strong>.' },
+  { num: 'IV', title: 'Advanced Content Mastery', desc: 'Year 5–6 maths and English move into <strong>abstract reasoning, algebra, extended analysis</strong>, and <strong>sophisticated writing</strong>, skills that require <strong>explicit teaching</strong>, not just practice.' },
 ];
 
 const Year56 = () => {
   return (
     <div className="min-h-screen overflow-x-hidden pt-[120px]" style={{ background: c.white, color: c.navy, fontFamily: "'Segoe UI', system-ui, sans-serif" }}>
+      <style>{`.y56-serif { font-family: 'Merriweather', Georgia, serif; }`}</style>
       <SEO title="Year 5–6 Tutoring | Selective School & NAPLAN | DA Tuition" description="Selective school, Year 5 NAPLAN, and high school readiness all converge in Year 5–6. DA Tuition prepares your child for every milestone." canonicalUrl="/programs/year-5-6" />
       <NavigationNew />
       <StickyBookButton />
@@ -114,15 +121,15 @@ const Year56 = () => {
         <div style={{ display: 'inline-block', fontSize: '0.75rem', fontWeight: 800, letterSpacing: '2.5px', textTransform: 'uppercase', color: c.gold, background: c.goldPale, border: `1.5px solid ${c.goldLight}`, padding: '6px 20px', borderRadius: 999, marginBottom: 22 }}>
           Year 5–6 · Ages 10–12 · Selective & HS Ready
         </div>
-        <h1 style={{ fontSize: 'clamp(2.4rem, 5vw, 3.8rem)', fontWeight: 900, lineHeight: 1.1, letterSpacing: '-2px', color: c.navy, marginBottom: 18 }}>
+        <h1 className="y56-serif" style={{ fontSize: 'clamp(2.4rem, 5vw, 3.8rem)', fontWeight: 900, lineHeight: 1.1, letterSpacing: '-2px', color: c.navy, marginBottom: 18 }}>
           This Is Where <em style={{ fontStyle: 'normal', color: c.gold }}>Everything</em><br />Gets Decided
         </h1>
         <p style={{ fontSize: '1.1rem', color: c.muted, maxWidth: 580, margin: '0 auto 38px', lineHeight: 1.78 }}>
           Year 5 and 6 are the most consequential years of primary school. <strong style={{ color: c.navy }}>Selective school opportunities, Year 5 NAPLAN, and high school readiness</strong> all converge right here.
         </p>
         <div style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap' }}>
-          <a href="/#contact" style={{ background: c.navy, color: '#fff', border: 'none', padding: '15px 34px', borderRadius: 12, fontSize: '1rem', fontWeight: 800, cursor: 'pointer', textDecoration: 'none', display: 'inline-block' }}>
-            Secure a Spot — Limited Places
+          <a href="/#contact" style={{ background: c.gold, color: c.navy, border: 'none', padding: '15px 34px', borderRadius: 999, fontSize: '1rem', fontWeight: 800, cursor: 'pointer', textDecoration: 'none', display: 'inline-block', boxShadow: '0 10px 30px rgba(201,162,39,0.25)' }}>
+            Secure a Spot, Limited Places
           </a>
         </div>
       </div>
@@ -132,8 +139,8 @@ const Year56 = () => {
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 0, borderRadius: 24, overflow: 'hidden', border: `2px solid ${c.border}`, boxShadow: '0 8px 32px rgba(10,27,52,0.07)' }} className="y56-photo-grid">
           <div style={{ background: c.navy, padding: '48px 44px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
             <div style={{ display: 'inline-block', fontSize: '0.7rem', fontWeight: 800, letterSpacing: '2.5px', textTransform: 'uppercase', color: c.gold, background: 'rgba(212,175,55,0.12)', border: '1px solid rgba(212,175,55,0.3)', padding: '5px 16px', borderRadius: 999, marginBottom: 20, width: 'fit-content' }}>Inside the Classroom</div>
-            <h2 style={{ fontSize: '1.85rem', fontWeight: 900, color: '#fff', marginBottom: 16, lineHeight: 1.2, letterSpacing: '-0.5px' }}>Real Students, Real Engagement</h2>
-            <p style={{ fontSize: '0.97rem', color: 'rgba(255,255,255,0.75)', lineHeight: 1.75 }}>Small groups, expert teachers, students who are actively learning — not just sitting. This is what a Year 5–6 session at DA Tuition looks like.</p>
+            <h2 className="y56-serif" style={{ fontSize: '1.85rem', fontWeight: 900, color: '#fff', marginBottom: 16, lineHeight: 1.2, letterSpacing: '-0.5px' }}>Real Students, Real Engagement</h2>
+            <p style={{ fontSize: '0.97rem', color: 'rgba(255,255,255,0.75)', lineHeight: 1.75 }}>Small groups, expert teachers, students who are actively learning, not just sitting. This is what a Year 5–6 session at DA Tuition looks like.</p>
           </div>
           <div style={{ overflow: 'hidden', height: 360 }}>
             <img
@@ -149,30 +156,50 @@ const Year56 = () => {
       <section style={{ padding: '72px 52px', maxWidth: 1140, margin: '0 auto' }}>
         <div style={{ textAlign: 'center', marginBottom: 44 }}>
           <div style={{ display: 'inline-block', fontSize: '0.72rem', fontWeight: 800, letterSpacing: '2.5px', textTransform: 'uppercase', color: c.gold, background: c.goldPale, border: '1px solid #E8E0CC', padding: '5px 16px', borderRadius: 999, marginBottom: 16 }}>The Stakes</div>
-          <h2 style={{ fontSize: 'clamp(1.9rem, 3.5vw, 2.8rem)', fontWeight: 900, letterSpacing: '-1px', color: c.navy, marginBottom: 14, lineHeight: 1.2 }}>Why Year 5–6 Is the Most Critical Window</h2>
+          <h2 className="y56-serif" style={{ fontSize: 'clamp(1.9rem, 3.5vw, 2.8rem)', fontWeight: 900, letterSpacing: '-1px', color: c.navy, marginBottom: 14, lineHeight: 1.2 }}>Why Year 5–6 Is the Most Critical Window</h2>
           <p style={{ fontSize: '1.05rem', color: c.muted, maxWidth: 640, margin: '0 auto', lineHeight: 1.7 }}>
             <strong style={{ color: c.navy }}>Four major milestones</strong> converge in these two years. The families who <strong style={{ color: c.navy }}>prepare now</strong> are the ones who look back <strong style={{ color: c.navy }}>without regret</strong>.
           </p>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 22 }}>
-          {whyCards.map((card, i) => (
-            <div key={i} style={{ background: c.white, border: `2px solid ${c.border}`, borderRadius: 20, padding: '32px 28px', boxShadow: '0 2px 14px rgba(10,27,52,0.05)', transition: 'all .28s' }}
-              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = 'translateY(-5px)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 14px 36px rgba(10,27,52,0.12)'; }}
-              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = ''; (e.currentTarget as HTMLElement).style.boxShadow = '0 2px 14px rgba(10,27,52,0.05)'; }}
-            >
-              <div style={{ width: 44, height: 44, borderRadius: 12, background: c.goldPale, border: `2px solid ${c.goldLight}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1rem', fontWeight: 900, color: c.gold, marginBottom: 16 }}>{card.num}</div>
-              <h3 style={{ fontSize: '1.05rem', fontWeight: 800, color: c.navy, marginBottom: 10 }}>{card.title}</h3>
-              <p style={{ fontSize: '0.9rem', color: c.muted, lineHeight: 1.7 }} dangerouslySetInnerHTML={{ __html: card.desc }} />
-            </div>
-          ))}
+          {whyCards.map((card, i) => {
+            const tone = cardTones[i % cardTones.length];
+            return (
+              <div key={i} style={{ background: tone.bg, borderRadius: 32, border: `1px solid ${tone.border}`, padding: '32px 28px', boxShadow: '0 4px 18px rgba(7,22,41,0.05)', transition: 'all .28s' }}
+                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = 'translateY(-5px)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 14px 36px rgba(10,27,52,0.12)'; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = ''; (e.currentTarget as HTMLElement).style.boxShadow = '0 4px 18px rgba(7,22,41,0.05)'; }}
+              >
+                <div style={{ width: 44, height: 44, borderRadius: 12, background: c.navy, border: `2px solid ${c.navy}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1rem', fontWeight: 900, color: '#f1df9a', marginBottom: 16 }}>{card.num}</div>
+                <h3 className="y56-serif" style={{ fontSize: '1.05rem', fontWeight: 800, color: c.navy, marginBottom: 10 }}>{card.title}</h3>
+                <p style={{ fontSize: '0.9rem', color: c.muted, lineHeight: 1.7 }} dangerouslySetInnerHTML={{ __html: card.desc }} />
+              </div>
+            );
+          })}
         </div>
       </section>
+
+      {/* PHOTO BANNER */}
+      <div style={{ maxWidth: 1140, margin: '0 auto', padding: '0 52px 72px' }}>
+        <div style={{ position: 'relative', borderRadius: 24, overflow: 'hidden', height: 320, border: `2px solid ${c.border}`, boxShadow: '0 8px 32px rgba(10,27,52,0.07)' }}>
+          <img
+            src="/images/v3/teacher_whiteboard.jpg"
+            alt="DA Tuition teacher guiding Year 5-6 students through a problem on the whiteboard"
+            style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center' }}
+          />
+          <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(7,22,41,0) 40%, rgba(7,22,41,0.65) 100%)' }} />
+          <div style={{ position: 'absolute', left: 0, right: 0, bottom: 0, padding: '24px 32px' }}>
+            <p className="y56-serif" style={{ color: '#fff', fontSize: '1.2rem', fontWeight: 700, margin: 0 }}>
+              Targeted teaching, not just more worksheets.
+            </p>
+          </div>
+        </div>
+      </div>
 
       {/* CURRICULUM + CHECKLIST */}
       <section style={{ background: c.soft, borderTop: `2px solid ${c.border}`, borderBottom: `2px solid ${c.border}`, padding: '72px 52px' }}>
         <div style={{ textAlign: 'center', marginBottom: 40 }}>
           <div style={{ display: 'inline-block', fontSize: '0.72rem', fontWeight: 800, letterSpacing: '2.5px', textTransform: 'uppercase', color: c.gold, background: c.goldPale, border: '1px solid #E8E0CC', padding: '5px 16px', borderRadius: 999, marginBottom: 16 }}>What We Cover</div>
-          <h2 style={{ fontSize: 'clamp(1.9rem, 3.5vw, 2.8rem)', fontWeight: 900, letterSpacing: '-1px', color: c.navy, marginBottom: 14, lineHeight: 1.2 }}>Year 5–6 Curriculum Focus Areas</h2>
+          <h2 className="y56-serif" style={{ fontSize: 'clamp(1.9rem, 3.5vw, 2.8rem)', fontWeight: 900, letterSpacing: '-1px', color: c.navy, marginBottom: 14, lineHeight: 1.2 }}>Year 5–6 Curriculum Focus Areas</h2>
           <p style={{ fontSize: '1.05rem', color: c.muted, maxWidth: 640, margin: '0 auto', lineHeight: 1.7 }}>
             Aligned to the <strong style={{ color: c.navy }}>NSW Curriculum</strong> with NAPLAN preparation and selective school extension for students aiming higher.
           </p>
@@ -240,37 +267,58 @@ const Year56 = () => {
       <section style={{ padding: '72px 52px', maxWidth: 1140, margin: '0 auto' }}>
         <div style={{ textAlign: 'center', marginBottom: 44 }}>
           <div style={{ display: 'inline-block', fontSize: '0.72rem', fontWeight: 800, letterSpacing: '2.5px', textTransform: 'uppercase', color: c.gold, background: c.goldPale, border: '1px solid #E8E0CC', padding: '5px 16px', borderRadius: 999, marginBottom: 16 }}>Our Approach</div>
-          <h2 style={{ fontSize: 'clamp(1.9rem, 3.5vw, 2.8rem)', fontWeight: 900, letterSpacing: '-1px', color: c.navy, marginBottom: 14, lineHeight: 1.2 }}>How We Teach Year 5–6</h2>
+          <h2 className="y56-serif" style={{ fontSize: 'clamp(1.9rem, 3.5vw, 2.8rem)', fontWeight: 900, letterSpacing: '-1px', color: c.navy, marginBottom: 14, lineHeight: 1.2 }}>How We Teach Year 5–6</h2>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 54, alignItems: 'start', maxWidth: 1000, margin: '0 auto' }} className="y56-approach-responsive">
           <div>
-            <p style={{ color: c.muted, fontSize: '1.02rem', lineHeight: 1.82, marginBottom: 18 }}>Year 5–6 students need <strong style={{ color: c.navy }}>more than content delivery</strong> — they need to develop the kind of thinking that allows them to tackle questions they've never seen before. That's what selective school and NAPLAN actually test.</p>
-            <p style={{ color: c.muted, fontSize: '1.02rem', lineHeight: 1.82, marginBottom: 26 }}>Our tutors work closely with each student to identify <strong style={{ color: c.navy }}>exactly where they're losing marks</strong> and build targeted strategies — not just more practice sheets.</p>
+            <p style={{ color: c.muted, fontSize: '1.02rem', lineHeight: 1.82, marginBottom: 18 }}>Year 5–6 students need <strong style={{ color: c.navy }}>more than content delivery</strong>, they need to develop the kind of thinking that allows them to tackle questions they've never seen before. That's what selective school and NAPLAN actually test.</p>
+            <p style={{ color: c.muted, fontSize: '1.02rem', lineHeight: 1.82, marginBottom: 26 }}>Our tutors work closely with each student to identify <strong style={{ color: c.navy }}>exactly where they're losing marks</strong> and build targeted strategies, not just more practice sheets.</p>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-            {approachPoints.map((ap, i) => (
-              <div key={i} style={{ display: 'flex', gap: 14, alignItems: 'flex-start', background: c.white, border: `2px solid ${c.border}`, borderRadius: 14, padding: '16px 18px', boxShadow: '0 2px 8px rgba(10,27,52,0.04)', transition: 'all .2s' }}
-                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = c.goldLight; (e.currentTarget as HTMLElement).style.boxShadow = '0 6px 20px rgba(10,27,52,0.1)'; }}
-                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = c.border; (e.currentTarget as HTMLElement).style.boxShadow = '0 2px 8px rgba(10,27,52,0.04)'; }}
-              >
-                <div style={{ flexShrink: 0, width: 38, height: 38, borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1rem', fontWeight: 900, color: c.gold, background: c.goldPale, border: `1.5px solid ${c.goldLight}` }}>{ap.icon}</div>
-                <div>
-                  <strong style={{ color: c.navy, display: 'block', marginBottom: 2, fontSize: '0.94rem', fontWeight: 800 }}>{ap.title}</strong>
-                  <span style={{ fontSize: '0.88rem', color: c.muted }}>{ap.sub}</span>
+            {approachPoints.map((ap, i) => {
+              const tone = cardTones[i % cardTones.length];
+              return (
+                <div key={i} style={{ display: 'flex', gap: 14, alignItems: 'flex-start', background: tone.bg, border: `1px solid ${tone.border}`, borderRadius: 18, padding: '16px 18px', boxShadow: '0 3px 12px rgba(7,22,41,0.05)', transition: 'all .2s' }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = 'translateY(-2px)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 6px 20px rgba(10,27,52,0.1)'; }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = ''; (e.currentTarget as HTMLElement).style.boxShadow = '0 3px 12px rgba(7,22,41,0.05)'; }}
+                >
+                  <div style={{ flexShrink: 0, width: 38, height: 38, borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1rem', fontWeight: 900, color: '#f1df9a', background: c.navy, border: `1.5px solid ${c.navy}` }}>{ap.icon}</div>
+                  <div>
+                    <strong style={{ color: c.navy, display: 'block', marginBottom: 2, fontSize: '0.94rem', fontWeight: 800 }}>{ap.title}</strong>
+                    <span style={{ fontSize: '0.88rem', color: c.muted }}>{ap.sub}</span>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
+
+      {/* PHOTO PAIR */}
+      <div style={{ maxWidth: 1140, margin: '0 auto', padding: '0 52px 72px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }} className="y56-photo-pair">
+        <div style={{ borderRadius: 20, overflow: 'hidden', height: 240, border: `2px solid ${c.border}`, boxShadow: '0 4px 20px rgba(10,27,52,0.06)' }}>
+          <img
+            src="/images/v3/high_energy_class.jpg"
+            alt="Year 5-6 students engaged in an energetic small group class"
+            style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center' }}
+          />
+        </div>
+        <div style={{ borderRadius: 20, overflow: 'hidden', height: 240, border: `2px solid ${c.border}`, boxShadow: '0 4px 20px rgba(10,27,52,0.06)' }}>
+          <img
+            src="/images/v3/success_medal.jpg"
+            alt="A DA Tuition student celebrating selective school and NAPLAN success"
+            style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center' }}
+          />
+        </div>
+      </div>
 
       {/* Scarcity */}
       <div style={{ maxWidth: 860, margin: '0 auto 0', padding: '0 52px 60px' }}>
         <div style={{ background: c.goldPale, border: `2px solid ${c.goldLight}`, borderRadius: 20, padding: '28px 32px', display: 'flex', alignItems: 'flex-start', gap: 20 }}>
           <div style={{ width: 36, height: 36, borderRadius: 8, background: c.navy, display: 'flex', alignItems: 'center', justifyContent: 'center', color: c.goldLight, fontWeight: 900, fontSize: '1.1rem', flexShrink: 0 }}>!</div>
           <div>
-            <h3 style={{ fontSize: '1.12rem', fontWeight: 900, color: c.navy, marginBottom: 8 }}>Year 5–6 Spots Fill Quickly Each Term</h3>
-            <p style={{ fontSize: '0.92rem', color: c.muted, lineHeight: 1.7 }}>Our senior primary program is our most in-demand offering. We keep groups intentionally small — which means we can only accept a limited number of students each term. <strong style={{ color: c.navy }}>Families who enquire early secure their place. Those who wait often miss out.</strong></p>
+            <h3 className="y56-serif" style={{ fontSize: '1.12rem', fontWeight: 900, color: c.navy, marginBottom: 8 }}>Year 5–6 Spots Fill Quickly Each Term</h3>
+            <p style={{ fontSize: '0.92rem', color: c.muted, lineHeight: 1.7 }}>Our senior primary program is our most in-demand offering. We keep groups intentionally small, which means we can only accept a limited number of students each term. <strong style={{ color: c.navy }}>Families who enquire early secure their place. Those who wait often miss out.</strong></p>
           </div>
         </div>
       </div>
@@ -280,7 +328,7 @@ const Year56 = () => {
         <div style={{ padding: '72px 52px', maxWidth: 900, margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: 32 }}>
             <div style={{ display: 'inline-block', fontSize: '0.72rem', fontWeight: 800, letterSpacing: '2.5px', textTransform: 'uppercase', color: c.gold, background: c.white, border: '1px solid #E8E0CC', padding: '5px 16px', borderRadius: 999, marginBottom: 16 }}>Is This Right For Us?</div>
-            <h2 style={{ fontSize: 'clamp(1.9rem, 3.5vw, 2.8rem)', fontWeight: 900, letterSpacing: '-1px', color: c.navy, marginBottom: 14, lineHeight: 1.2 }}>DA Tuition Year 5–6 Is Perfect If…</h2>
+            <h2 className="y56-serif" style={{ fontSize: 'clamp(1.9rem, 3.5vw, 2.8rem)', fontWeight: 900, letterSpacing: '-1px', color: c.navy, marginBottom: 14, lineHeight: 1.2 }}>DA Tuition Year 5–6 Is Perfect If…</h2>
           </div>
           <ul style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: 14, marginBottom: 36 }}>
             {fitPoints.map((pt, i) => (
@@ -291,8 +339,8 @@ const Year56 = () => {
             ))}
           </ul>
           <div style={{ textAlign: 'center' }}>
-            <a href="/#contact" style={{ background: c.navy, color: '#fff', border: 'none', padding: '16px 36px', borderRadius: 12, fontSize: '1rem', fontWeight: 800, cursor: 'pointer', textDecoration: 'none', display: 'inline-block' }}>
-              Secure a Spot — Limited Places Available
+            <a href="/#contact" style={{ background: c.gold, color: c.navy, border: 'none', padding: '16px 36px', borderRadius: 999, fontSize: '1rem', fontWeight: 800, cursor: 'pointer', textDecoration: 'none', display: 'inline-block', boxShadow: '0 10px 30px rgba(201,162,39,0.25)' }}>
+              Secure a Spot, Limited Places Available
             </a>
           </div>
         </div>
@@ -300,21 +348,21 @@ const Year56 = () => {
 
       {/* CTA */}
       <div style={{ textAlign: 'center', padding: '96px 52px', background: c.navy, borderTop: `4px solid ${c.goldLight}` }}>
-        <h2 style={{ fontSize: 'clamp(2rem, 3.5vw, 3rem)', fontWeight: 900, letterSpacing: '-1.2px', marginBottom: 18, color: c.white, lineHeight: 1.15 }}>
+        <h2 className="y56-serif" style={{ fontSize: 'clamp(2rem, 3.5vw, 3rem)', fontWeight: 900, letterSpacing: '-1.2px', marginBottom: 18, color: c.white, lineHeight: 1.15 }}>
           Year 5–6 Is Too Important<br />to Leave to Chance
         </h2>
         <p style={{ fontSize: '1.08rem', color: 'rgba(255,255,255,0.75)', maxWidth: 540, margin: '0 auto 38px', lineHeight: 1.75 }}>
           Selective schools, Year 5 NAPLAN, and high school readiness all come down to preparation. The families who start early are the ones who look back without regret. Secure your child's spot today.
         </p>
-        <a href="/#contact" style={{ background: c.goldLight, color: c.navy, border: 'none', padding: '17px 38px', borderRadius: 14, fontSize: '1rem', fontWeight: 900, cursor: 'pointer', textDecoration: 'none', display: 'inline-block' }}>
-          Book a Free Trial Lesson →
+        <a href="/#contact" style={{ background: c.gold, color: c.navy, border: 'none', padding: '17px 38px', borderRadius: 999, fontSize: '1rem', fontWeight: 900, cursor: 'pointer', textDecoration: 'none', display: 'inline-block', boxShadow: '0 10px 30px rgba(201,162,39,0.3)' }}>
+          Book a Free Trial Lesson &rarr;
         </a>
         <div style={{ marginTop: 18, fontSize: '0.82rem', color: 'rgba(255,255,255,0.45)' }}>
           Limited spots this term &nbsp;·&nbsp; No lock-in contract &nbsp;·&nbsp; Free 20-minute consultation included
         </div>
       </div>
 
-      <style>{`@media(max-width:768px){.y56-grid-responsive{grid-template-columns:1fr!important;}.y56-approach-responsive{grid-template-columns:1fr!important;}.y56-photo-grid{grid-template-columns:1fr!important;}}`}</style>
+      <style>{`@media(max-width:768px){.y56-grid-responsive{grid-template-columns:1fr!important;}.y56-approach-responsive{grid-template-columns:1fr!important;}.y56-photo-grid{grid-template-columns:1fr!important;}.y56-photo-pair{grid-template-columns:1fr!important;}}`}</style>
       <FooterNew />
     </div>
   );
