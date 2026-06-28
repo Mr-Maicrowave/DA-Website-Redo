@@ -1,100 +1,93 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { ArrowRight, GraduationCap, Star, Award } from 'lucide-react';
-import { teacherData } from '@/data/teachers';
-import { TeacherBadges } from '@/components/teachers/TeacherBadges';
-import { FadeInUp } from './animations/FadeInUp';
-import { StaggerContainer, StaggerItem } from './animations/StaggerChildren';
+import { ArrowRight } from 'lucide-react';
+import { TUTORS, FEATURED_IDS, getPhotoUrl, getPhotoStyle } from '@/data/teacherCatalogue';
+
+const NAVY = '#0A1F3F';
+const GOLD = '#D4AF37';
+const a = (hex: string, alpha: string) => hex + alpha;
+
+const subjectLabel = (subjects: string): string => {
+  const parts: string[] = [];
+  if (/Mathematics\s*\(Yr|Mathematics\s+(Standard|Advanced|Extension)/i.test(subjects)) parts.push('Mathematics');
+  if (/English\s*\(Yr|English\s+(Standard|Advanced|Extension)/i.test(subjects)) parts.push('English');
+  if (/chemistry|biology|science\s*\(yr/i.test(subjects)) parts.push('Science');
+  if (/Business/i.test(subjects)) parts.push('Business');
+  if (/Primary/i.test(subjects)) parts.push('Primary');
+  return parts.slice(0, 2).join(' · ') || 'All subjects';
+};
 
 const TeachersPreview = () => {
-  // Show only first 3 teachers for homepage
-  const featuredTeachers = teacherData.slice(0, 3);
+  const featured = FEATURED_IDS.map(id => TUTORS.find(t => t.id === id)).filter(Boolean) as typeof TUTORS;
 
   return (
     <section id="teachers" className="py-16 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Header */}
-        <FadeInUp className="text-center max-w-3xl mx-auto mb-12 px-4">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4 break-words">
-            Meet Our <span className="gradient-text inline-block">Exceptional Teachers</span>
+
+        <div className="text-center max-w-3xl mx-auto mb-12">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4" style={{ color: NAVY }}>
+            The People Behind the Results
           </h2>
-          <p className="text-xl text-brand-midnight/80">
-            Passionate educators dedicated to your child's success
+          <p className="text-lg" style={{ color: a(NAVY, 'bb') }}>
+            Teachers who care as much about who your child is becoming as they do about grades.
           </p>
-        </FadeInUp>
+        </div>
 
-        {/* Teachers Preview Grid */}
-        <StaggerContainer className="grid md:grid-cols-3 gap-8 mb-12">
-          {featuredTeachers.map((teacher, index) => (
-            <StaggerItem key={teacher.id}>
-              <div
-                className="group relative bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2"
-              >
-                {/* Teacher Image */}
-                <div className="relative h-64 overflow-hidden">
-                  <img
-                    src={teacher.image}
-                    alt={teacher.name}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-
-                  {/* Quick Info Overlay */}
-                  <div className="absolute bottom-4 left-4 right-4 text-white">
-                    <h3 className="text-xl font-bold">{teacher.name}</h3>
-                    <p className="text-blue-200">{teacher.subject}</p>
-                  </div>
-                </div>
-
-                {/* Teacher Details */}
-                <div className="p-6">
-                  {/* Badges */}
-                  {teacher.badges && (
-                    <div className="mb-4">
-                      <TeacherBadges
-                        badges={teacher.badges}
-                        maxDisplay={2}
-                        size="sm"
-                        showTooltip={false}
-                      />
-                    </div>
-                  )}
-
-                  {/* Quick Stats */}
-                  <div className="flex items-center justify-between text-sm text-brand-midnight/80 mb-4">
-                    <div className="flex items-center gap-1">
-                      <GraduationCap className="w-4 h-4" />
-                      <span>{teacher.qualifications?.[0] || 'B.Ed'}</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <Star className="w-4 h-4 text-yellow-500 fill-current" />
-                      <span>5.0 Rating</span>
-                    </div>
-                  </div>
-
-                  {/* Short Bio */}
-                  <p className="text-brand-midnight/80 text-sm line-clamp-3">
-                    {teacher.philosophy ? teacher.philosophy.split('.')[0] + '.' : ''}
-                  </p>
-                </div>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-5 mb-10">
+          {featured.map((teacher) => (
+            <Link
+              key={teacher.id}
+              to="/find-teacher"
+              className="group flex flex-col rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+              style={{ background: NAVY }}
+            >
+              <div className="relative overflow-hidden" style={{ paddingBottom: '120%' }}>
+                <img
+                  src={getPhotoUrl(teacher)}
+                  alt={teacher.name}
+                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  style={getPhotoStyle(teacher)}
+                />
+                <div
+                  className="absolute inset-0"
+                  style={{
+                    background: 'linear-gradient(to top, ' + a(NAVY, 'f0') + ' 0%, ' + a(NAVY, '60') + ' 40%, transparent 70%)',
+                  }}
+                />
               </div>
-            </StaggerItem>
-          ))}
-        </StaggerContainer>
 
-        {/* View All Teachers CTA */}
-        <FadeInUp className="text-center">
-          <Link to="/teachers">
-            <Button size="lg" className="btn-primary group">
-              Meet All Our Teachers
-              <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-            </Button>
+              <div className="p-4 flex flex-col gap-1 flex-1">
+                <p className="text-[10px] font-bold uppercase tracking-widest mb-0.5" style={{ color: GOLD }}>
+                  {teacher.designation}
+                </p>
+                <h3 className="font-bold text-sm leading-snug" style={{ color: '#ffffff' }}>
+                  {teacher.name}
+                </h3>
+                <p className="text-[11px] leading-relaxed mt-1 line-clamp-2" style={{ color: 'rgba(255,255,255,0.65)' }}>
+                  {teacher.tagline}
+                </p>
+                <p className="text-[10px] mt-auto pt-2 font-medium" style={{ color: a(GOLD, 'aa') }}>
+                  {subjectLabel(teacher.subjects)}
+                </p>
+              </div>
+            </Link>
+          ))}
+        </div>
+
+        <div className="text-center">
+          <Link
+            to="/find-teacher"
+            className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full font-semibold text-sm transition-all duration-200 hover:opacity-90 hover:shadow-lg"
+            style={{ background: NAVY, color: GOLD, boxShadow: '0 4px 18px ' + a(NAVY, '40') }}
+          >
+            Meet All Our Teachers
+            <ArrowRight className="w-4 h-4" />
           </Link>
-          <p className="mt-4 text-brand-midnight/80">
-            <span className="font-semibold">{teacherData.length}+ expert teachers</span> across all subjects
+          <p className="mt-3 text-sm" style={{ color: a(NAVY, '80') }}>
+            {TUTORS.length}+ expert educators across all subjects and year levels
           </p>
-        </FadeInUp>
+        </div>
+
       </div>
     </section>
   );
