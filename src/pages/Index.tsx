@@ -7,7 +7,7 @@
 import { useRef, useEffect, useState, useCallback } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { BookOpen, GraduationCap, School, Play, X } from 'lucide-react';
-import { motion, AnimatePresence, useInView, useAnimationControls, useReducedMotion } from 'framer-motion';
+import { motion, AnimatePresence, useInView, useAnimationControls } from 'framer-motion';
 import NavigationNew from '@/components/NavigationNew';
 import FooterNew from '@/components/FooterNew';
 import AwardRecognition from '@/components/AwardRecognition';
@@ -193,98 +193,7 @@ const MarqueeStrip = () => (
 //  HERO
 // ══════════════════════════════════════════════════════════════
 
-// Constellation and sparkle positions are fixed, then animated only with opacity.
-const HERO_CONSTELLATION_POINTS = [
-  { x: 70, y: 146, r: 1.2 },
-  { x: 160, y: 96, r: 1.1 },
-  { x: 256, y: 138, r: 1.0 },
-  { x: 344, y: 82, r: 1.2 },
-  { x: 474, y: 132, r: 1.1 },
-  { x: 586, y: 92, r: 1.0 },
-  { x: 694, y: 150, r: 1.2 },
-  { x: 780, y: 110, r: 1.0 },
-  { x: 894, y: 158, r: 1.1 },
-  { x: 1022, y: 114, r: 1.0 },
-  { x: 1142, y: 168, r: 1.2 },
-  { x: 1204, y: 104, r: 1.0 },
-  { x: 132, y: 336, r: 1.0 },
-  { x: 286, y: 390, r: 1.2 },
-  { x: 430, y: 344, r: 1.0 },
-  { x: 850, y: 368, r: 1.1 },
-  { x: 1010, y: 330, r: 1.0 },
-  { x: 1168, y: 392, r: 1.2 },
-] as const;
-
-const HERO_LINES = [
-  [0, 1], [1, 2], [2, 3], [4, 5], [5, 6], [7, 8], [9, 10], [10, 11],
-  [12, 13], [13, 14], [15, 16], [16, 17], [3, 14], [4, 15],
-] as const;
-
-const HERO_SPARKLES = [
-  { left: '22%', top: '25%', delay: -2.2, size: 5 },
-  { left: '31%', top: '33%', delay: -8.4, size: 4 },
-  { left: '40%', top: '20%', delay: -12.8, size: 5 },
-  { left: '56%', top: '22%', delay: -4.9, size: 4 },
-  { left: '66%', top: '33%', delay: -10.2, size: 6 },
-  { left: '79%', top: '28%', delay: -15.3, size: 4 },
-  { left: '27%', top: '47%', delay: -1.1, size: 4 },
-  { left: '38%', top: '43%', delay: -6.1, size: 5 },
-] as const;
-
-const HERO_DUST_POINTS = [
-  { x: 142, y: 150, r: 2.2, o: 0.36 }, { x: 214, y: 104, r: 1.4, o: 0.28 },
-  { x: 276, y: 242, r: 1.8, o: 0.30 }, { x: 340, y: 176, r: 1.3, o: 0.24 },
-  { x: 414, y: 118, r: 2.0, o: 0.34 }, { x: 498, y: 220, r: 1.4, o: 0.26 },
-  { x: 552, y: 86, r: 1.7, o: 0.28 }, { x: 672, y: 98, r: 2.2, o: 0.36 },
-  { x: 748, y: 190, r: 1.4, o: 0.26 }, { x: 818, y: 116, r: 1.8, o: 0.30 },
-  { x: 904, y: 230, r: 1.5, o: 0.26 }, { x: 982, y: 154, r: 2.0, o: 0.34 },
-  { x: 1068, y: 106, r: 1.4, o: 0.24 }, { x: 1150, y: 244, r: 2.2, o: 0.32 },
-  { x: 188, y: 340, r: 1.6, o: 0.28 }, { x: 286, y: 430, r: 2.0, o: 0.34 },
-  { x: 386, y: 356, r: 1.3, o: 0.24 }, { x: 480, y: 438, r: 1.8, o: 0.30 },
-  { x: 794, y: 424, r: 1.5, o: 0.26 }, { x: 902, y: 342, r: 2.2, o: 0.36 },
-  { x: 1008, y: 436, r: 1.4, o: 0.24 }, { x: 1118, y: 348, r: 1.8, o: 0.30 },
-  { x: 92, y: 258, r: 1.2, o: 0.24 }, { x: 126, y: 444, r: 2.4, o: 0.34 },
-  { x: 176, y: 206, r: 1.1, o: 0.22 }, { x: 238, y: 292, r: 2.6, o: 0.40 },
-  { x: 316, y: 92, r: 1.2, o: 0.22 }, { x: 374, y: 268, r: 2.4, o: 0.38 },
-  { x: 448, y: 176, r: 1.0, o: 0.22 }, { x: 536, y: 342, r: 1.7, o: 0.30 },
-  { x: 604, y: 170, r: 1.3, o: 0.26 }, { x: 636, y: 262, r: 2.8, o: 0.42 },
-  { x: 706, y: 310, r: 1.2, o: 0.24 }, { x: 764, y: 276, r: 2.4, o: 0.38 },
-  { x: 842, y: 216, r: 1.1, o: 0.22 }, { x: 884, y: 94, r: 2.2, o: 0.34 },
-  { x: 946, y: 288, r: 1.3, o: 0.26 }, { x: 1038, y: 226, r: 2.6, o: 0.38 },
-  { x: 1094, y: 286, r: 1.0, o: 0.22 }, { x: 1188, y: 314, r: 2.0, o: 0.32 },
-  { x: 1228, y: 202, r: 1.2, o: 0.24 }, { x: 72, y: 372, r: 1.6, o: 0.28 },
-  { x: 220, y: 380, r: 1.0, o: 0.22 }, { x: 334, y: 458, r: 1.4, o: 0.26 },
-  { x: 426, y: 392, r: 2.2, o: 0.34 }, { x: 572, y: 458, r: 1.1, o: 0.22 },
-  { x: 642, y: 402, r: 1.8, o: 0.30 }, { x: 724, y: 462, r: 1.4, o: 0.26 },
-  { x: 856, y: 462, r: 2.0, o: 0.32 }, { x: 972, y: 382, r: 1.1, o: 0.22 },
-  { x: 1086, y: 462, r: 1.7, o: 0.28 }, { x: 1204, y: 410, r: 2.4, o: 0.36 },
-  { x: 248, y: 146, r: 3.0, o: 0.46 }, { x: 524, y: 116, r: 2.8, o: 0.42 },
-  { x: 742, y: 126, r: 3.2, o: 0.48 }, { x: 1018, y: 122, r: 2.8, o: 0.42 },
-  { x: 324, y: 316, r: 3.4, o: 0.46 }, { x: 496, y: 292, r: 2.2, o: 0.36 },
-  { x: 786, y: 332, r: 2.6, o: 0.40 }, { x: 964, y: 316, r: 3.4, o: 0.46 },
-] as const;
-
-const HERO_STAR_POINTS = [
-  { x: 250, y: 128, s: 8, o: 0.76 },
-  { x: 392, y: 278, s: 10, o: 0.82 },
-  { x: 516, y: 104, s: 7, o: 0.70 },
-  { x: 752, y: 116, s: 8, o: 0.76 },
-  { x: 900, y: 274, s: 10, o: 0.84 },
-  { x: 1092, y: 170, s: 8, o: 0.74 },
-  { x: 284, y: 404, s: 7, o: 0.68 },
-  { x: 1014, y: 404, s: 7, o: 0.68 },
-  { x: 366, y: 174, s: 8, o: 0.74 },
-  { x: 458, y: 214, s: 6, o: 0.66 },
-  { x: 824, y: 212, s: 7, o: 0.72 },
-  { x: 940, y: 178, s: 8, o: 0.74 },
-  { x: 392, y: 356, s: 6, o: 0.64 },
-  { x: 882, y: 356, s: 6, o: 0.66 },
-] as const;
-
-const HeroSection = () => {
-  const prefersReducedMotion = useReducedMotion();
-
-  return (
+const HeroSection = () => (
     <section
       className="hero-luxury"
       style={{
@@ -295,713 +204,38 @@ const HeroSection = () => {
         background: '#f5ead6',
       }}>
       <style>{`
-        .hero-reference-bg,
-        .hero-reference-bg img {
-          position: absolute;
-          inset: 0;
-          width: 100%;
-          height: 100%;
-        }
-        .hero-reference-bg {
-          z-index: 0;
-          pointer-events: none;
-          overflow: hidden;
-          background: #f5ead6;
-        }
-        .hero-reference-bg img {
-          object-fit: cover;
-          object-position: center top;
-          display: block;
-        }
-        .hero-reference-shimmer {
-          position: absolute;
-          inset: 0;
-          z-index: 1;
-          pointer-events: none;
-          opacity: 0.24;
-          background:
-            linear-gradient(104deg, transparent 16%, rgba(255,255,255,0.58) 38%, transparent 62%),
-            radial-gradient(ellipse 42% 30% at 50% 32%, rgba(255,255,255,0.28), transparent 70%);
-          filter: blur(16px);
-          mix-blend-mode: screen;
-          animation: hero-reference-shimmer 18s ease-in-out infinite;
-        }
-        .hero-reference-live-glow {
-          position: absolute;
-          top: 31%;
-          left: 50%;
-          width: min(780px, 84vw);
-          height: min(480px, 56vw);
-          z-index: 1;
-          pointer-events: none;
-          transform: translate(-50%, -50%);
-          border-radius: 999px;
-          opacity: 0.46;
-          background:
-            radial-gradient(ellipse 32% 28% at 50% 48%, rgba(255,255,255,0.74), transparent 56%),
-            radial-gradient(ellipse 64% 46% at 50% 50%, rgba(255,218,105,0.44), rgba(212,160,42,0.16) 52%, transparent 78%);
-          filter: blur(18px);
-          mix-blend-mode: screen;
-          animation: hero-reference-glow-breathe 9s ease-in-out infinite;
-        }
-        .hero-luxury::before,
-        .hero-luxury::after {
-          display: none !important;
-        }
-        .hero-generated-layer,
-        .hero-luminous-mist,
-        .hero-reference-bloom,
-        .hero-crest-sunburst,
-        .hero-logo-dust-cloud,
-        .hero-aurora,
-        .hero-dust-pattern,
-        .hero-rays,
-        .hero-ray-threads,
-        .hero-constellation {
-          display: none !important;
-        }
         .hero-luxury::before {
           content: "";
           position: absolute;
-          inset: -18% -10%;
+          left: 0;
+          right: 0;
+          top: 0;
+          bottom: 0;
           z-index: 0;
           pointer-events: none;
-          opacity: 1;
-          background:
-            radial-gradient(ellipse 50% 34% at 50% 31%, rgba(255,255,250,1), transparent 62%),
-            radial-gradient(ellipse 42% 30% at 24% 28%, rgba(255,255,255,0.50), transparent 66%),
-            radial-gradient(ellipse 44% 34% at 28% 18%, rgba(240,200,106,0.44), transparent 68%),
-            radial-gradient(ellipse 42% 34% at 78% 26%, rgba(212,175,55,0.34), transparent 70%),
-            radial-gradient(ellipse 36% 30% at 18% 76%, rgba(255,238,184,0.42), transparent 72%),
-            radial-gradient(ellipse 42% 34% at 84% 78%, rgba(198,151,40,0.30), transparent 70%);
-          filter: blur(26px);
-          transform: translate3d(0,0,0);
-          animation: hero-ambient-shift 26s ease-in-out infinite alternate;
+          background-image: url('/images/hero/da-hero-glow-bg-1600.webp');
+          background-size: cover;
+          background-position: center;
+          background-repeat: no-repeat;
         }
         .hero-luxury::after {
-          content: "";
-          position: absolute;
-          inset: 0;
-          z-index: 1;
-          pointer-events: none;
-          opacity: 0.55;
-          background:
-            linear-gradient(104deg, transparent 10%, rgba(255,255,255,1) 38%, transparent 66%),
-            linear-gradient(72deg, transparent 16%, rgba(240,200,106,0.92) 47%, transparent 74%),
-            linear-gradient(92deg, transparent 8%, rgba(255,247,210,0.72) 33%, transparent 58%);
-          filter: blur(14px);
-          transform: translate3d(-4%, 0, 0) skewY(-8deg);
-          animation: hero-silk-ribbon 30s ease-in-out infinite alternate;
-        }
-        .hero-cta {
-          transition: border-color 420ms ease, box-shadow 420ms ease, background 420ms ease;
+          content: none;
+          display: none;
         }
         .hero-cta:hover {
           background: rgba(255,248,229,0.34) !important;
           border-color: rgba(212,175,55,0.52) !important;
           box-shadow: 0 0 0 1px rgba(212,175,55,0.10), 0 14px 38px rgba(180,133,28,0.14);
         }
-        .hero-logo-halo {
-          animation: hero-halo-breathe 8s ease-in-out infinite;
-        }
-        .hero-logo-sweep {
-          position: absolute;
-          inset: 0;
-          pointer-events: none;
-          background: linear-gradient(104deg, transparent 28%, rgba(255,255,255,0.0) 39%, rgba(255,255,244,0.72) 49%, rgba(255,223,120,0.20) 53%, rgba(255,255,255,0.0) 61%, transparent 72%);
-          -webkit-mask: url('/images/da-logo.png') center / contain no-repeat;
-          mask: url('/images/da-logo.png') center / contain no-repeat;
-          transform: translateX(-120%);
-          opacity: 0;
-          animation: hero-metal-sweep 15s ease-in-out infinite;
-        }
-        .hero-sparkle::before,
-        .hero-sparkle::after {
-          content: "";
-          position: absolute;
-          left: 50%;
-          top: 50%;
-          transform: translate(-50%, -50%);
-        }
-        .hero-sparkle::before {
-          width: 72%;
-          height: 72%;
-          background: rgba(255,255,245,0.82);
-          clip-path: polygon(50% 0%, 63% 37%, 100% 50%, 63% 63%, 50% 100%, 37% 63%, 0% 50%, 37% 37%);
-          filter: drop-shadow(0 0 4px rgba(255,236,160,0.42));
-        }
-        .hero-sparkle::after {
-          width: 185%;
-          height: 185%;
-          border-radius: 999px;
-          background: radial-gradient(circle, rgba(255,255,255,0.58), rgba(255,230,144,0.22) 38%, transparent 70%);
-        }
-        .hero-sparkle {
-          animation: hero-twinkle 18s ease-in-out infinite;
-          opacity: 0.08;
-          border-radius: 999px;
-          background: radial-gradient(circle, rgba(255,255,255,0.95) 0%, rgba(255,234,156,0.80) 34%, transparent 70%);
-          box-shadow: 0 0 10px rgba(212,175,55,0.34), 0 0 18px rgba(255,255,255,0.26);
-          transform: translate3d(0,0,0) scale(0.72);
-        }
-        .hero-luminous-mist {
-          position: absolute;
-          inset: 10% -2% 28%;
-          z-index: 1;
-          pointer-events: none;
-          opacity: 1;
-          background:
-            radial-gradient(ellipse 36% 20% at 50% 30%, rgba(255,255,252,1), transparent 58%),
-            radial-gradient(ellipse 56% 34% at 50% 36%, rgba(255,226,118,0.84), rgba(239,190,70,0.38) 42%, transparent 72%),
-            radial-gradient(ellipse 82% 52% at 50% 48%, rgba(255,255,255,0.44), transparent 68%);
-          filter: blur(14px);
-          mix-blend-mode: screen;
-          animation: hero-mist-breathe 10s ease-in-out infinite;
-        }
-        .hero-reference-bloom {
-          position: absolute;
-          top: 31%;
-          left: 50%;
-          width: min(920px, 96vw);
-          height: min(560px, 66vw);
-          transform: translate(-50%, -50%);
-          z-index: 1;
-          pointer-events: none;
-          opacity: 0.98;
-          background:
-            radial-gradient(ellipse 26% 24% at 50% 48%, rgba(255,255,255,0.96) 0%, rgba(255,249,214,0.78) 26%, transparent 56%),
-            radial-gradient(ellipse 46% 38% at 50% 50%, rgba(255,225,112,0.78) 0%, rgba(231,178,53,0.42) 42%, transparent 76%),
-            radial-gradient(ellipse 82% 54% at 50% 52%, rgba(255,255,255,0.36) 0%, transparent 70%);
-          filter: blur(12px);
-          mix-blend-mode: screen;
-          animation: hero-reference-bloom-breathe 9s ease-in-out infinite;
-        }
-        .hero-crest-sunburst {
-          position: absolute;
-          top: 32%;
-          left: 50%;
-          width: min(1120px, 116vw);
-          height: min(720px, 82vw);
-          transform: translate(-50%, -50%);
-          z-index: 1;
-          pointer-events: none;
-          opacity: 0.74;
-          background:
-            repeating-conic-gradient(from 252deg at 50% 50%,
-              rgba(255,255,255,0.34) 0deg,
-              rgba(255,245,202,0.22) 0.75deg,
-              transparent 2.4deg,
-              transparent 10.5deg),
-            conic-gradient(from 230deg at 50% 50%,
-              transparent 0deg,
-              rgba(255,255,255,0.26) 18deg,
-              transparent 34deg,
-              transparent 74deg,
-              rgba(244,205,111,0.30) 92deg,
-              transparent 116deg,
-              transparent 184deg,
-              rgba(255,255,255,0.22) 208deg,
-              transparent 238deg,
-              transparent 292deg,
-              rgba(255,232,150,0.26) 316deg,
-              transparent 342deg);
-          filter: blur(5px);
-          mask-image: radial-gradient(ellipse at center, black 0%, black 38%, transparent 76%);
-          -webkit-mask-image: radial-gradient(ellipse at center, black 0%, black 38%, transparent 76%);
-          animation: hero-sunburst-breathe 16s ease-in-out infinite;
-        }
-        .hero-logo-dust-cloud {
-          position: absolute;
-          top: 34%;
-          left: 50%;
-          width: min(960px, 100vw);
-          height: min(500px, 58vw);
-          transform: translate(-50%, -50%);
-          z-index: 1;
-          pointer-events: none;
-          opacity: 1;
-          background-image:
-            radial-gradient(circle at 19px 24px, rgba(255,255,255,1) 0 0.62px, transparent 1.34px),
-            radial-gradient(circle at 54px 36px, rgba(255,236,158,0.94) 0 0.72px, transparent 1.56px),
-            radial-gradient(circle at 82px 78px, rgba(255,255,245,0.82) 0 0.5px, transparent 1.18px),
-            radial-gradient(circle at 116px 58px, rgba(214,166,43,0.58) 0 0.6px, transparent 1.34px),
-            radial-gradient(circle at 144px 24px, rgba(255,248,214,0.82) 0 0.52px, transparent 1.22px),
-            radial-gradient(circle at 34px 104px, rgba(255,255,255,0.78) 0 0.46px, transparent 1.12px);
-          background-size: 68px 60px, 106px 94px, 82px 74px, 132px 116px, 98px 84px, 148px 124px;
-          filter: drop-shadow(0 0 7px rgba(255,234,154,0.52));
-          mask-image: radial-gradient(ellipse at 50% 42%, black 0%, black 56%, transparent 82%);
-          -webkit-mask-image: radial-gradient(ellipse at 50% 42%, black 0%, black 56%, transparent 82%);
-          animation: hero-logo-dust-drift 34s ease-in-out infinite alternate;
-        }
-        .hero-ray-threads {
-          animation: hero-ray-breathe 18s ease-in-out infinite;
-        }
-        .hero-dust-pattern {
-          position: absolute;
-          inset: 4% -6% 18%;
-          z-index: 1;
-          pointer-events: none;
-          opacity: 0.86;
-          background-image:
-            radial-gradient(circle at 14px 18px, rgba(255,255,255,1) 0 0.75px, transparent 1.5px),
-            radial-gradient(circle at 38px 42px, rgba(255,231,145,0.96) 0 0.9px, transparent 1.8px),
-            radial-gradient(circle at 62px 26px, rgba(213,168,48,0.68) 0 0.68px, transparent 1.45px),
-            radial-gradient(circle at 88px 72px, rgba(255,246,202,0.86) 0 0.82px, transparent 1.65px),
-            radial-gradient(circle at 22px 64px, rgba(255,255,255,0.78) 0 0.55px, transparent 1.35px),
-            radial-gradient(circle at 104px 30px, rgba(245,201,82,0.54) 0 0.62px, transparent 1.4px);
-          background-size: 72px 62px, 108px 92px, 54px 50px, 136px 108px, 94px 80px, 150px 122px;
-          filter: blur(0.06px) drop-shadow(0 0 8px rgba(212,175,55,0.42));
-          mask-image: radial-gradient(ellipse at 50% 34%, black 0%, black 58%, transparent 88%);
-          -webkit-mask-image: radial-gradient(ellipse at 50% 34%, black 0%, black 58%, transparent 88%);
-          animation: hero-dust-drift 32s ease-in-out infinite alternate;
-        }
-        @keyframes hero-ambient-shift {
-          0% { transform: translate3d(-1.8%, -1.2%, 0) scale(1); opacity: 0.66; }
-          50% { transform: translate3d(1.2%, 1.4%, 0) scale(1.025); opacity: 0.78; }
-          100% { transform: translate3d(2%, -0.6%, 0) scale(1.01); opacity: 0.70; }
-        }
-        @keyframes hero-silk-ribbon {
-          0% { transform: translate3d(-5%, -1%, 0) skewY(-8deg); opacity: 0.065; }
-          50% { transform: translate3d(2%, 1%, 0) skewY(-5deg); opacity: 0.105; }
-          100% { transform: translate3d(5%, -1.5%, 0) skewY(-7deg); opacity: 0.075; }
-        }
-        @keyframes hero-mist-breathe {
-          0%, 100% { transform: translate3d(0, 0, 0) scale(1); opacity: 0.82; }
-          50% { transform: translate3d(0, -0.8%, 0) scale(1.025); opacity: 1; }
-        }
-        @keyframes hero-reference-bloom-breathe {
-          0%, 100% { opacity: 0.88; transform: translate(-50%, -50%) scale(1); }
-          50% { opacity: 1; transform: translate(-50%, -50%) scale(1.035); }
-        }
-        @keyframes hero-sunburst-breathe {
-          0%, 100% { opacity: 0.62; transform: translate(-50%, -50%) scale(1); }
-          50% { opacity: 0.86; transform: translate(-50%, -50%) scale(1.025); }
-        }
-        @keyframes hero-ray-breathe {
-          0%, 100% { opacity: 0.72; transform: translate3d(0, 0, 0); }
-          50% { opacity: 0.96; transform: translate3d(0.7%, -0.4%, 0); }
-        }
-        @keyframes hero-logo-dust-drift {
-          0% { background-position: 0 0, 0 0, 0 0, 0 0, 0 0, 0 0; transform: translate(-50%, -50%) scale(1); }
-          100% { background-position: 34px 22px, -42px 34px, 28px -18px, -54px 42px, 48px -28px, -68px 36px; transform: translate(-50.5%, -50.8%) scale(1.018); }
-        }
-        @keyframes hero-halo-breathe {
-          0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.90; }
-          50% { transform: translate(-50%, -50%) scale(1.03); opacity: 1; }
-        }
-        @keyframes hero-metal-sweep {
-          0%, 72% { transform: translateX(-120%); opacity: 0; }
-          78% { opacity: 0.28; }
-          86% { transform: translateX(120%); opacity: 0.16; }
-          100% { transform: translateX(120%); opacity: 0; }
-        }
-        @keyframes hero-twinkle {
-          0%, 100% { opacity: 0.06; transform: translate3d(0,0,0) scale(0.72); }
-          12% { opacity: 1; transform: translate3d(0,0,0) scale(1); }
-          18% { opacity: 0.32; transform: translate3d(0,0,0) scale(0.88); }
-          25% { opacity: 0.68; transform: translate3d(0,0,0) scale(0.96); }
-          36%, 82% { opacity: 0.08; transform: translate3d(0,0,0) scale(0.76); }
-        }
-        @keyframes hero-dust-drift {
-          0% { transform: translate3d(-1.5%, -1%, 0); background-position: 0 0, 0 0, 0 0, 0 0; }
-          100% { transform: translate3d(1.5%, 1%, 0); background-position: 42px 28px, -36px 24px, 24px -18px, -58px 38px; }
-        }
-        @keyframes hero-reference-shimmer {
-          0%, 100% { opacity: 0.18; transform: translate3d(-1.5%, -0.5%, 0); }
-          50% { opacity: 0.30; transform: translate3d(1.5%, 0.5%, 0); }
-        }
-        @keyframes hero-reference-glow-breathe {
-          0%, 100% { opacity: 0.38; transform: translate(-50%, -50%) scale(1); }
-          50% { opacity: 0.54; transform: translate(-50%, -50%) scale(1.03); }
-        }
-        @media (max-width: 720px) {
-          .hero-constellation { opacity: 0.54 !important; transform: translate(-50%,-50%) scale(0.72) !important; }
-          .hero-rays { opacity: 0.42 !important; }
-          .hero-aurora { opacity: 0.08 !important; }
-          .hero-reference-bloom { opacity: 0.56 !important; }
-          .hero-ray-threads { opacity: 0.34 !important; }
-          .hero-crest-sunburst { opacity: 0.34 !important; }
-          .hero-logo-dust-cloud { opacity: 0.36 !important; background-size: 116px 104px, 172px 148px, 140px 124px, 210px 184px, 160px 140px, 230px 196px !important; }
-          .hero-dust-pattern { opacity: 0.20 !important; background-size: 128px 112px, 190px 160px, 110px 98px, 230px 184px !important; }
-        }
-        @media (prefers-reduced-motion: reduce) {
-          .hero-luxury::before,
-          .hero-luxury::after,
-          .hero-reference-shimmer,
-          .hero-reference-live-glow,
-          .hero-logo-halo,
-          .hero-logo-sweep,
-          .hero-sparkle,
-          .hero-luminous-mist,
-          .hero-reference-bloom,
-          .hero-crest-sunburst,
-          .hero-logo-dust-cloud,
-          .hero-ray-threads,
-          .hero-dust-pattern {
-            animation: none !important;
-          }
-          .hero-logo-sweep,
-          .hero-sparkle {
-            opacity: 0 !important;
-          }
-        }
       `}</style>
 
-      <picture className="hero-reference-bg" aria-hidden="true">
-        <source
-          type="image/avif"
-          srcSet="/images/hero/da-hero-reference-plate-800.avif 800w, /images/hero/da-hero-reference-plate-1200.avif 1200w, /images/hero/da-hero-reference-plate-1600.avif 1600w"
-          sizes="100vw"
-        />
-        <source
-          type="image/webp"
-          srcSet="/images/hero/da-hero-reference-plate-800.webp 800w, /images/hero/da-hero-reference-plate-1200.webp 1200w, /images/hero/da-hero-reference-plate-1600.webp 1600w"
-          sizes="100vw"
-        />
-        <img
-          src="/images/hero/da-hero-reference-plate.png"
-          alt=""
-          fetchPriority="high"
-          decoding="async"
-        />
-      </picture>
-
-      <div className="hero-reference-live-glow" aria-hidden="true" />
-      <div className="hero-reference-shimmer" aria-hidden="true" />
-
-      {/* ── Layer 2: central cinematic glow ── */}
-      <motion.div
-        className="hero-generated-layer"
-        aria-hidden="true"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 1.2, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
-        style={{
-          position: 'absolute', top: '34%', left: '50%',
-          transform: 'translate(-50%,-50%)',
-          width: 'min(1240px, 124vw)', height: 'min(800px, 92vw)',
-          borderRadius: '50%',
-          background: `radial-gradient(ellipse 55% 46% at 50% 50%,
-            rgba(255,255,255,1) 0%,
-            rgba(255,244,188,1) 13%,
-            rgba(251,207,90,0.78) 31%,
-            rgba(216,169,48,0.38) 58%,
-            transparent 84%)`,
-          filter: 'blur(20px)',
-          opacity: 1,
-          pointerEvents: 'none', zIndex: 1,
-        }}
-      />
-
-      <div className="hero-luminous-mist" aria-hidden="true" />
-      <div className="hero-reference-bloom" aria-hidden="true" />
-      <div className="hero-crest-sunburst" aria-hidden="true" />
-      <div className="hero-logo-dust-cloud" aria-hidden="true" />
-
-      {/* ── Layer 4: illuminated silk aurora ── */}
-      <motion.div
-        className="hero-aurora"
-        aria-hidden="true"
-        animate={prefersReducedMotion ? false : { opacity: [0.34, 0.48, 0.38] }}
-        transition={{ duration: 28, repeat: Infinity, repeatType: 'mirror', ease: 'easeInOut' }}
-        style={{
-          position: 'absolute', top: '35%', left: '50%',
-          transform: 'translate(-50%,-50%)',
-          width: 'min(1280px, 118vw)', height: 'min(470px, 56vw)',
-          background: `linear-gradient(100deg,
-            transparent 6%,
-            rgba(255,255,255,0.62) 23%,
-            rgba(244,211,130,0.44) 38%,
-            transparent 51%,
-            rgba(255,255,255,0.48) 66%,
-            rgba(212,175,55,0.36) 78%,
-            transparent 94%)`,
-          filter: 'blur(20px)',
-          opacity: 0.44,
-          maskImage: 'radial-gradient(ellipse at center, black 0%, black 46%, transparent 76%)',
-          WebkitMaskImage: 'radial-gradient(ellipse at center, black 0%, black 46%, transparent 76%)',
-          pointerEvents: 'none', zIndex: 1,
-        }}
-      />
-
-      <div className="hero-dust-pattern" aria-hidden="true" />
-
-      {/* ── Fine illuminated-silk paths: visible, but not decorative noise ── */}
-      <svg
-        className="hero-generated-layer"
-        aria-hidden="true"
-        viewBox="0 0 1440 520"
-        preserveAspectRatio="none"
-        style={{
-          position: 'absolute',
-          top: '18%',
-          left: 0,
-          width: '100%',
-          height: 'min(420px, 46vw)',
-          pointerEvents: 'none',
-          zIndex: 1,
-          opacity: 1,
-          filter: 'blur(0.15px) drop-shadow(0 0 10px rgba(255,255,255,0.24))',
-        }}
-      >
-        <defs>
-          <linearGradient id="heroSilkLine" x1="0%" x2="100%" y1="0%" y2="0%">
-            <stop offset="0%" stopColor="rgba(255,255,255,0)" />
-            <stop offset="18%" stopColor="rgba(255,255,255,0.88)" />
-            <stop offset="44%" stopColor="rgba(255,218,112,0.72)" />
-            <stop offset="70%" stopColor="rgba(255,255,255,0.68)" />
-            <stop offset="100%" stopColor="rgba(255,255,255,0)" />
-          </linearGradient>
-        </defs>
-        <path d="M-60 314 C 208 108, 380 406, 610 220 S 1018 100, 1500 298" fill="none" stroke="url(#heroSilkLine)" strokeWidth="2.55" opacity="1" />
-        <path d="M-50 364 C 238 190, 430 458, 694 286 S 1080 170, 1492 362" fill="none" stroke="url(#heroSilkLine)" strokeWidth="1.9" opacity="0.94" />
-        <path d="M-40 226 C 250 80, 462 304, 718 190 S 1058 82, 1476 218" fill="none" stroke="url(#heroSilkLine)" strokeWidth="1.7" opacity="0.84" />
-        <path d="M-46 418 C 238 300, 486 512, 734 384 S 1044 286, 1486 432" fill="none" stroke="url(#heroSilkLine)" strokeWidth="1.25" opacity="0.64" />
-        <path d="M-52 172 C 242 24, 470 236, 720 128 S 1060 32, 1488 178" fill="none" stroke="url(#heroSilkLine)" strokeWidth="1.15" opacity="0.62" />
-        <path d="M170 438 C 328 260, 438 228, 566 272 S 758 354, 946 244 S 1192 174, 1350 300" fill="none" stroke="url(#heroSilkLine)" strokeWidth="1.15" opacity="0.58" />
-        <path d="M88 218 C 302 92, 464 176, 608 214 S 812 262, 968 178 S 1198 92, 1396 188" fill="none" stroke="url(#heroSilkLine)" strokeWidth="1" opacity="0.50" />
-      </svg>
-
-      {/* ── Visible gold dust field: one lightweight SVG, no particle system ── */}
-      <svg
-        className="hero-generated-layer"
-        aria-hidden="true"
-        viewBox="0 0 1280 520"
-        preserveAspectRatio="xMidYMid meet"
-        style={{
-          position: 'absolute',
-          top: '35%',
-          left: '50%',
-          transform: 'translate(-50%,-50%)',
-          width: 'min(1280px, 112vw)',
-          height: '520px',
-          pointerEvents: 'none',
-          zIndex: 1,
-          opacity: 1,
-          filter: 'drop-shadow(0 0 12px rgba(212,175,55,0.58))',
-        }}
-      >
-        <defs>
-          <radialGradient id="heroDustGlow" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stopColor="rgba(255,255,255,1)" />
-            <stop offset="34%" stopColor="rgba(255,235,150,0.82)" />
-            <stop offset="100%" stopColor="rgba(255,215,90,0)" />
-          </radialGradient>
-        </defs>
-        {HERO_DUST_POINTS.map((p, i) => (
-          <motion.circle
-            key={i}
-            cx={p.x}
-            cy={p.y}
-            r={p.r}
-            fill={`rgba(255,248,210,${Math.min(p.o + 0.38, 0.92)})`}
-            initial={{ opacity: 0 }}
-            animate={prefersReducedMotion ? { opacity: 0.78 } : { opacity: [0.44, 0.92, 0.58] }}
-            transition={{
-              duration: 9 + (i % 4) * 1.4,
-              delay: i * 0.17,
-              repeat: Infinity,
-              repeatType: 'mirror',
-              ease: 'easeInOut',
-            }}
-          />
-        ))}
-        {HERO_STAR_POINTS.map((star, i) => (
-          <motion.g
-            key={`star-${i}`}
-            transform={`translate(${star.x} ${star.y})`}
-            initial={{ opacity: 0 }}
-            animate={prefersReducedMotion ? { opacity: star.o } : { opacity: [star.o * 0.42, star.o, star.o * 0.52] }}
-            transition={{
-              duration: 7.8 + (i % 3) * 1.1,
-              delay: i * 0.42,
-              repeat: Infinity,
-              repeatType: 'mirror',
-              ease: 'easeInOut',
-            }}
-          >
-            <circle r={star.s * 0.6} fill="url(#heroDustGlow)" opacity="0.92" />
-            <path
-              d={`M0 ${-star.s} L${star.s * 0.18} ${-star.s * 0.18} L${star.s} 0 L${star.s * 0.18} ${star.s * 0.18} L0 ${star.s} L${-star.s * 0.18} ${star.s * 0.18} L${-star.s} 0 L${-star.s * 0.18} ${-star.s * 0.18} Z`}
-              fill="rgba(255,255,246,0.82)"
-            />
-          </motion.g>
-        ))}
-      </svg>
-
-      {/* ── Layer 5: faint volumetric rays ── */}
-      <div
-        className="hero-rays"
-        aria-hidden="true"
-        style={{
-          position: 'absolute', top: '34%', left: '50%',
-          transform: 'translate(-50%,-50%)',
-          width: 'min(1180px, 118vw)', height: 'min(720px, 82vw)',
-          background: `conic-gradient(from 242deg at 50% 50%,
-            transparent 0deg,
-            rgba(255,255,255,0.82) 8deg,
-            transparent 19deg,
-            transparent 42deg,
-            rgba(240,200,106,0.76) 54deg,
-            transparent 70deg,
-            transparent 116deg,
-            rgba(255,255,255,0.70) 128deg,
-            transparent 144deg,
-            transparent 196deg,
-            rgba(212,175,55,0.62) 210deg,
-            transparent 228deg,
-            transparent 292deg,
-            rgba(255,255,255,0.66) 304deg,
-            transparent 322deg,
-            transparent 360deg)`,
-          filter: 'blur(6px)',
-          opacity: 0.62,
-          maskImage: 'radial-gradient(ellipse at center, black 0%, black 42%, transparent 78%)',
-          WebkitMaskImage: 'radial-gradient(ellipse at center, black 0%, black 42%, transparent 78%)',
-          pointerEvents: 'none', zIndex: 1,
-        }}
-      />
-
-      {/* ── Fine ray threads: reference-style luminous webbing ── */}
-      <svg
-        className="hero-ray-threads"
-        aria-hidden="true"
-        viewBox="0 0 1440 560"
-        preserveAspectRatio="none"
-        style={{
-          position: 'absolute',
-          top: '15%',
-          left: 0,
-          width: '100%',
-          height: 'min(500px, 56vw)',
-          pointerEvents: 'none',
-          zIndex: 1,
-          opacity: 0.96,
-          filter: 'blur(0.08px) drop-shadow(0 0 11px rgba(255,255,255,0.30))',
-        }}
-      >
-        <defs>
-          <linearGradient id="heroRayThread" x1="0%" x2="100%" y1="0%" y2="0%">
-            <stop offset="0%" stopColor="rgba(255,255,255,0)" />
-            <stop offset="20%" stopColor="rgba(255,255,255,0.72)" />
-            <stop offset="46%" stopColor="rgba(255,230,146,0.54)" />
-            <stop offset="70%" stopColor="rgba(255,255,255,0.58)" />
-            <stop offset="100%" stopColor="rgba(255,255,255,0)" />
-          </linearGradient>
-          <linearGradient id="heroRayThreadSoft" x1="0%" x2="100%" y1="0%" y2="0%">
-            <stop offset="0%" stopColor="rgba(255,255,255,0)" />
-            <stop offset="48%" stopColor="rgba(255,255,245,0.46)" />
-            <stop offset="100%" stopColor="rgba(255,255,255,0)" />
-          </linearGradient>
-        </defs>
-        <path d="M-80 388 C 238 318, 464 352, 704 260 S 1138 208, 1520 330" fill="none" stroke="url(#heroRayThread)" strokeWidth="1.35" opacity="0.92" />
-        <path d="M-80 430 C 262 372, 452 410, 714 320 S 1126 258, 1520 390" fill="none" stroke="url(#heroRayThread)" strokeWidth="1.1" opacity="0.68" />
-        <path d="M-80 250 C 248 218, 476 238, 708 212 S 1132 158, 1520 260" fill="none" stroke="url(#heroRayThreadSoft)" strokeWidth="1" opacity="0.70" />
-        <path d="M212 108 L704 260 L1214 124" fill="none" stroke="url(#heroRayThreadSoft)" strokeWidth="0.85" opacity="0.46" />
-        <path d="M332 478 L704 260 L1114 448" fill="none" stroke="url(#heroRayThreadSoft)" strokeWidth="0.85" opacity="0.40" />
-        <path d="M86 178 L704 260 L1356 178" fill="none" stroke="url(#heroRayThreadSoft)" strokeWidth="0.8" opacity="0.40" />
-      </svg>
-
-      {/* ── Layer 6: barely-there constellation ── */}
-      <div className="hero-constellation" style={{
-        position: 'absolute', top: '35%', left: '50%',
-        transform: 'translate(-50%,-50%)',
-        width: 'min(1280px, 112vw)', height: '520px',
-        pointerEvents: 'none', zIndex: 1,
-        opacity: 0.86,
-      }}>
-        <svg width="100%" height="100%" viewBox="0 0 1280 520" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
-          {HERO_LINES.map(([a, b], i) => {
-            const pa = HERO_CONSTELLATION_POINTS[a], pb = HERO_CONSTELLATION_POINTS[b];
-            return (
-              <motion.line
-                key={i}
-                x1={pa.x} y1={pa.y} x2={pb.x} y2={pb.y}
-                stroke="rgba(255,239,184,0.46)"
-                strokeWidth="0.72"
-                initial={{ opacity: 0 }}
-                animate={prefersReducedMotion ? { opacity: 0.24 } : { opacity: [0.16, 0.38, 0.20] }}
-                transition={{
-                  duration: 14 + i * 0.35,
-                  delay: 1 + i * 0.12,
-                  repeat: Infinity,
-                  repeatType: 'mirror',
-                  ease: 'easeInOut',
-                }}
-              />
-            );
-          })}
-          {HERO_CONSTELLATION_POINTS.map((p, i) => (
-            <motion.circle
-              key={i}
-              cx={p.x} cy={p.y} r={p.r}
-              fill="rgba(255,242,186,0.54)"
-              initial={{ opacity: 0, scale: 0 }}
-              animate={prefersReducedMotion
-                ? { opacity: 0.34, scale: 1 }
-                : { opacity: [0.22, 0.58, 0.28], scale: [0.9, 1.08, 0.95] }}
-              transition={{
-                duration: 12 + (i % 5) * 1.5,
-                delay: 0.8 + i * 0.09,
-                repeat: Infinity,
-                repeatType: 'mirror',
-                ease: 'easeInOut',
-              }}
-            />
-          ))}
-        </svg>
-      </div>
-
-      {/* ── Reusable sparkle elements: twinkle in place only ── */}
-      {HERO_SPARKLES.map((sparkle, i) => (
-        <div
-          key={i}
-          className="hero-sparkle"
-          style={{
-            position: 'absolute',
-            left: sparkle.left,
-            top: sparkle.top,
-            width: `${sparkle.size}px`,
-            height: `${sparkle.size}px`,
-            pointerEvents: 'none',
-            zIndex: 1,
-            animationDelay: `${sparkle.delay}s`,
-          }}
-        />
-      ))}
-
       {/* ── Layer 3: DA Crest — the centrepiece ── */}
-      <motion.div
-        initial={{ opacity: 0, y: 16 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1.0, delay: 0.25, ease: [0.22, 1, 0.36, 1] }}
+      <div
         style={{
         marginBottom: 'clamp(24px, 3vw, 42px)',
         position: 'relative', zIndex: 2,
       }}>
-        {/* Inner: slow float */}
-        <motion.div
-          animate={prefersReducedMotion
-            ? { y: 0 }
-            : { y: [0, -5, 0] }}
-          transition={{
-            y: { duration: 10, repeat: Infinity, ease: 'easeInOut',
-                 repeatType: 'mirror' as const, delay: 1.5 },
-          }}
-          style={{ position: 'relative' }}
-        >
-          <div className="hero-logo-halo" style={{
-            position: 'absolute', top: '50%', left: '50%',
-            transform: 'translate(-50%,-50%)',
-            width: '174%', height: '174%',
-            borderRadius: '50%',
-            background: `radial-gradient(ellipse 55% 55% at 50% 50%,
-              rgba(255,244,190,0.52) 0%,
-              rgba(240,200,106,0.28) 40%,
-              rgba(212,175,55,0.10) 58%,
-              transparent 74%)`,
-            pointerEvents: 'none',
-          }} />
+        <div style={{ position: 'relative' }}>
           <div style={{ position: 'relative', width: 'clamp(190px, 22vw, 294px)', margin: '0 auto' }}>
             <img
               src="/images/da-logo.png"
@@ -1014,16 +248,12 @@ const HeroSection = () => {
                 filter: 'drop-shadow(0 18px 42px rgba(71,45,6,0.12))',
               }}
             />
-            <div className="hero-logo-sweep" aria-hidden="true" />
           </div>
-        </motion.div>
-      </motion.div>
+        </div>
+      </div>
 
       {/* ── Headline — more breathing room below logo ── */}
-      <motion.h1
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.95, delay: 0.40, ease: [0.22, 1, 0.36, 1] }}
+      <h1
         style={{
           fontFamily: serif, fontWeight: 500,
           fontSize: 'clamp(2.15rem, 3.8vw, 3.95rem)',
@@ -1034,33 +264,26 @@ const HeroSection = () => {
         }}>
         Where Ambition Meets<br />
         <em style={{ fontStyle: 'italic', color: C.gold }}>Academic Excellence</em>
-      </motion.h1>
+      </h1>
 
       {/* ── Tagline ── */}
-      <motion.p
-        initial={{ opacity: 0, y: 18 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.85, delay: 0.55, ease: [0.22, 1, 0.36, 1] }}
+      <p
         style={{
           fontFamily: sans, fontSize: 'clamp(.85rem, 1.4vw, 1rem)',
           color: C.muted, marginBottom: '34px', letterSpacing: '.04em',
           position: 'relative', zIndex: 3,
         }}>
         Trusted by Families. Transforming Futures.
-      </motion.p>
+      </p>
 
       {/* ── CTA ── */}
-      <motion.div
-        initial={{ opacity: 0, y: 18 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.85, delay: 0.70, ease: [0.22, 1, 0.36, 1] }}
+      <div
         style={{
           display: 'flex', gap: '14px', flexWrap: 'wrap', justifyContent: 'center',
           position: 'relative', zIndex: 3,
         }}>
-        <motion.button
+        <button
           className="hero-cta"
-          whileTap={{ opacity: 0.82 }}
           onClick={() => document.getElementById('programs')?.scrollIntoView({ behavior: 'smooth' })}
           style={{
             fontFamily: sans, background: 'transparent', color: C.navy,
@@ -1070,29 +293,21 @@ const HeroSection = () => {
             letterSpacing: '.04em', textTransform: 'uppercase' as const,
           }}>
           View Programs
-        </motion.button>
-      </motion.div>
+        </button>
+      </div>
 
       {/* ── Scroll indicator — gold line only, no text ── */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.7 }}
+      <div
         style={{
           position: 'absolute', bottom: '28px', left: '50%',
           transform: 'translateX(-50%)',
           display: 'flex', flexDirection: 'column' as const,
           alignItems: 'center', zIndex: 3,
         }}>
-        <motion.div
-          animate={{ y: [0, 9, 0] }}
-          transition={{ repeat: Infinity, duration: 1.8, ease: 'easeInOut' }}
-          style={{ width: '1px', height: '44px', background: `linear-gradient(180deg,${C.gold},transparent)` }}
-        />
-      </motion.div>
+        <div style={{ width: '1px', height: '44px', background: `linear-gradient(180deg,${C.gold},transparent)` }} />
+      </div>
     </section>
-  );
-};
+);
 
 // ══════════════════════════════════════════════════════════════
 //  PHILOSOPHY BACKED BY RESULTS
@@ -1100,11 +315,11 @@ const HeroSection = () => {
 // ─────────────────────────────────────────────────────────────────────────────
 //  PHILOSOPHY_STAGES — image replacement guide
 //
-//  Each stage has an `image` path. Current values are temporary placeholders
-//  from the existing site photo library so the layout renders immediately.
+//  Each stage has an `image` path. These are real DA Tuition photography
+//  assets assigned to match each philosophy pillar.
 //
-//  When you have real DA photos, drop them into /public/images/philosophy/
-//  and update ONLY the `image` field for each stage below.
+//  To replace a photo later, drop it into /public/images/philosophy/
+//  and update ONLY the matching `image` field below.
 //
 //  Recommended spec per photo:
 //    Size: 1200 × 800 px  |  Format: JPG  |  Max file size: 250 KB
@@ -1119,10 +334,10 @@ const HeroSection = () => {
 //  Drop photos into /public/images/philosophy/ then update the `image` field.
 //  Recommended: 1600 × 1067 px  |  JPG  |  < 300 KB  |  natural, warm light
 //
-//  Stage 1 — ▶ REPLACE: student working alone, quiet focus, warm window light
-//  Stage 2 — ▶ REPLACE: tutor one-on-one with student, attentive, close frame
-//  Stage 3 — ▶ REPLACE: student actively engaged — hand up or mid-explanation
-//  Stage 4 — ▶ REPLACE: warm tutor–student moment, encouraging, candid
+//  Stage 1 — Known: classroom whiteboard teaching
+//  Stage 2 — Belief: female teacher guiding students around the table
+//  Stage 3 — Understanding: male tutor helping two students
+//  Stage 4 — Growth: student studying independently
 // ─────────────────────────────────────────────────────────────────────────────
 const PHILOSOPHY_STAGES = [
   {
@@ -1130,28 +345,28 @@ const PHILOSOPHY_STAGES = [
     label: 'Known',
     title: 'Students deserve to be known before they are judged.',
     supporting: 'Every student arrives with a different story. We take the time to understand where they are — because the gap between their starting point and their potential is exactly where real growth lives.',
-    image: '/images/v3/warm_interaction.jpg',
+    image: '/images/philosophy/philosophy-known-whiteboard.webp',
   },
   {
     stage: 2,
     label: 'Belief',
     title: 'Confidence often comes before achievement.',
     supporting: 'We have seen it hundreds of times: the moment a student believes they can, the results follow. Building that belief is not a side effect of our teaching — it is the purpose of it.',
-    image: '/images/v3/classroom_active.jpg',
+    image: '/images/philosophy/philosophy-belief-teacher-table.webp',
   },
   {
     stage: 3,
     label: 'Understanding',
     title: 'Understanding matters more than memorisation.',
     supporting: 'Real mastery is knowing why something works, not just that it does. We teach students to think deeply, so knowledge becomes theirs permanently — not just until the exam.',
-    image: '/images/v3/small_group_tutoring.jpg',
+    image: '/images/philosophy/philosophy-understanding-male-tutor.webp',
   },
   {
     stage: 4,
     label: 'Growth',
     title: 'We strengthen the child behind the result.',
     supporting: 'Marks improve when students feel capable, seen, and guided. Our goal is not to chase grades — it is to build the resilience, curiosity, and self-belief that make sustained excellence possible.',
-    image: '/images/v3/collaborative_learning.jpg',
+    image: '/images/philosophy/philosophy-growth-independent-study.webp',
   },
 ];
 
@@ -1269,7 +484,14 @@ const PhilosophyBackedSection = () => {
     startRotation();
     // Move DOM focus to the newly active tab so keyboard users stay oriented
     tabRefs.current[i]?.focus();
-  };;
+  };
+
+  useEffect(() => {
+    PHILOSOPHY_STAGES.forEach(stage => {
+      const img = new Image();
+      img.src = stage.image;
+    });
+  }, []);
 
   useEffect(() => {
     if (!inView) return;
@@ -1290,7 +512,27 @@ const PhilosophyBackedSection = () => {
         @media (max-width: 768px) {
           .phi-journey { grid-template-columns: 1fr !important; }
           .phi-img-col { min-height: 300px; aspect-ratio: 16/8; }
+          .phi-stage-img[data-stage="1"] { object-position: center center !important; }
+          .phi-stage-img[data-stage="2"] { object-position: center 35% !important; }
+          .phi-stage-img[data-stage="3"] { object-position: center 30% !important; }
+          .phi-stage-img[data-stage="4"] { object-position: center 25% !important; }
+          .phi-photo-overlay {
+            background: linear-gradient(
+              90deg,
+              rgba(5, 20, 40, 0.12) 0%,
+              rgba(5, 20, 40, 0.18) 55%,
+              rgba(5, 20, 40, 0.25) 100%
+            ) !important;
+          }
+          .phi-photo-edge {
+            background: linear-gradient(to bottom, transparent 70%, rgba(10,27,52,.25) 100%) !important;
+          }
         }
+
+        .phi-stage-img[data-stage="1"] { object-position: center center; }
+        .phi-stage-img[data-stage="2"] { object-position: center 35%; }
+        .phi-stage-img[data-stage="3"] { object-position: center 30%; }
+        .phi-stage-img[data-stage="4"] { object-position: center 25%; }
 
         /* ── Philosophy pillar blocks ── */
 
@@ -1410,44 +652,37 @@ const PhilosophyBackedSection = () => {
           {PHILOSOPHY_STAGES.map((stage, i) => (
             <img
               key={stage.stage}
+              className="phi-stage-img"
+              data-stage={stage.stage}
               src={stage.image}
               alt=""
               aria-hidden="true"
-              loading={i === 0 ? 'eager' : 'lazy'}
+              loading="eager"
               decoding="async"
               style={{
                 position: 'absolute', inset: 0,
                 width: '100%', height: '100%',
-                objectFit: 'cover', objectPosition: 'center 30%',
-                filter: 'saturate(0.62) brightness(0.92)',
+                objectFit: 'cover',
+                filter: 'brightness(1.08) contrast(1.04) saturate(1.04)',
                 opacity: i === activeIndex ? 1 : 0,
-                // Ken Burns: active image slowly zooms in over 7s; inactive resets quietly
-                transform: i === activeIndex ? 'scale(1.035)' : 'scale(1)',
+                transform: i === activeIndex ? 'scale(1.04)' : 'scale(1)',
                 transition: reducedMotion
                   ? 'none'
-                  : i === activeIndex
-                    ? 'opacity 1600ms ease-in-out, transform 7000ms ease-out'
-                    : 'opacity 900ms ease-in-out, transform 1200ms ease-in-out',
+                  : 'opacity 600ms ease-in-out, transform 600ms ease-in-out',
               }}
             />
           ))}
 
-          {/* Top vignette */}
-          <div style={{
+          {/* Subtle directional overlay keeps photos visible while blending into navy */}
+          <div className="phi-photo-overlay" style={{
             position: 'absolute', inset: 0, pointerEvents: 'none',
-            background: 'linear-gradient(to bottom, rgba(10,27,52,.32) 0%, transparent 28%)',
-          }} />
-
-          {/* Bottom vignette — grounds the image, prevents it floating */}
-          <div style={{
-            position: 'absolute', inset: 0, pointerEvents: 'none',
-            background: 'linear-gradient(to top, rgba(10,27,52,.50) 0%, transparent 38%)',
+            background: 'linear-gradient(90deg, rgba(5, 20, 40, 0.18) 0%, rgba(5, 20, 40, 0.28) 55%, rgba(5, 20, 40, 0.55) 100%)',
           }} />
 
           {/* Right-edge blend — image dissolves into the content panel */}
-          <div style={{
+          <div className="phi-photo-edge" style={{
             position: 'absolute', inset: 0, pointerEvents: 'none',
-            background: 'linear-gradient(to right, transparent 68%, rgba(10,27,52,.60) 84%, rgba(10,27,52,1) 100%)',
+            background: 'linear-gradient(to right, transparent 74%, rgba(10,27,52,.42) 90%, rgba(10,27,52,1) 100%)',
           }} />
         </div>
 
@@ -5204,12 +4439,12 @@ const ReviewsSection = () => {
               {/* Result box */}
               <div style={{
                 background: C.cream2,
-                borderRadius: '8px', padding: '10px 14px', marginBottom: '14px',
+                borderRadius: '8px', padding: '12px 14px', marginBottom: '14px',
                 display: 'flex', alignItems: 'center', gap: '8px',
               }}>
-                <span style={{ fontFamily: sans, fontSize: '11px', color: 'rgba(10,27,52,0.48)', whiteSpace: 'nowrap' }}>{r.result.before}</span>
+                <span style={{ fontFamily: sans, fontSize: '11px', color: 'rgba(10,27,52,0.38)', whiteSpace: 'nowrap' }}>{r.result.before}</span>
                 <span style={{ color: C.gold, fontWeight: 700, fontSize: '14px', flexShrink: 0 }}>→</span>
-                <span style={{ fontFamily: sans, fontSize: '12px', color: C.navy, fontWeight: 700, whiteSpace: 'nowrap' }}>{r.result.after}</span>
+                <span style={{ fontFamily: sans, fontSize: '13px', color: C.navy, fontWeight: 800, whiteSpace: 'nowrap' }}>{r.result.after}</span>
               </div>
 
               {/* Outcomes */}
