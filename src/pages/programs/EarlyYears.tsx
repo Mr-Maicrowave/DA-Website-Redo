@@ -6,17 +6,23 @@ import { Link } from 'react-router-dom';
 import SEO from '@/components/SEO';
 
 const c = {
-  navy: '#0A1B34', navyMid: '#1a3870',
-  gold: '#D4AF37', goldLight: '#F0CB6A', goldPale: '#F7F4EE',
-  pink: '#FFF8E7', pinkMid: '#F0CB6A', pinkText: '#0A1B34',
-  purple: '#F7F4EE', purpleMid: '#D4AF37', purpleText: '#0A1B34',
-  green: '#F7F4EE', greenMid: '#c9a227', greenText: '#0A1B34',
-  blue: '#F7F4EE', blueMid: '#F0CB6A', blueText: '#0A1B34',
-  white: '#ffffff', muted: '#4a5568', border: '#E8E0CC', soft: '#F7F4EE',
+  navy: '#071629', navyMid: '#0e2a4a',
+  gold: '#c9a227', goldLight: '#e0bd4b', goldPale: '#fff6e7',
+  pink: '#fff6e7', pinkMid: '#e0bd4b', pinkText: '#071629',
+  purple: '#fff6e7', purpleMid: '#c9a227', purpleText: '#071629',
+  green: '#fff6e7', greenMid: '#c9a227', greenText: '#071629',
+  blue: '#fff6e7', blueMid: '#e0bd4b', blueText: '#071629',
+  white: '#fffdf8', muted: '#61708a', border: 'rgba(201,162,39,0.22)', soft: '#fff6e7',
 };
 
+const cardTones = [
+  { bg: 'linear-gradient(180deg, #f7fbff, #e8f2ff)' },
+  { bg: 'linear-gradient(180deg, #fbfff8, #eaf8ef)' },
+  { bg: 'linear-gradient(180deg, #fffdf7, #fff1cd)' },
+];
+
 const slides = [
-  { stars: true, quote: "My daughter started Year 1 really struggling with reading — she didn't want to go to school because she felt so behind. After just one term at DA Tuition, the change was <strong>remarkable</strong>. She's not just reading better, she's actually excited to pick up books on her own.", name: 'Jessica M.', role: 'Mum of a Year 2 student', initial: 'J', avatarBg: c.pink, avatarBorder: c.pinkMid, avatarText: c.pinkText },
+  { stars: true, quote: "My daughter started Year 1 really struggling with reading, and she didn't want to go to school because she felt so behind. After just one term at DA Tuition, the change was <strong>remarkable</strong>. She's not just reading better, she's actually excited to pick up books on her own.", name: 'Jessica M.', role: 'Mum of a Year 2 student', initial: 'J', avatarBg: c.pink, avatarBorder: c.pinkMid, avatarText: c.pinkText },
   { stars: true, quote: "My son was completely disengaged from maths in Year 1. Within six weeks at DA Tuition he was asking to do <strong>maths worksheets for fun</strong>. The teachers have a gift for making numbers feel like a game.", name: 'Amanda K.', role: 'Mum of a Year 1 student', initial: 'A', avatarBg: c.purple, avatarBorder: c.purpleMid, avatarText: c.purpleText },
   { stars: true, quote: "DA Tuition identified the exact gaps in the first session and within one term she was reading <strong>above her year level</strong>. Incredible progress.", name: 'Rachel T.', role: 'Mum of a Year 2 student', initial: 'R', avatarBg: c.blue, avatarBorder: c.blueMid, avatarText: c.blueText },
   { stars: true, quote: "The small group format was exactly what our son needed. At DA Tuition he gets genuine individual attention and his <strong>confidence has absolutely soared</strong>.", name: 'Michael & Sarah P.', role: 'Parents of a Year 1 student', initial: 'M', avatarBg: c.green, avatarBorder: c.greenMid, avatarText: c.greenText },
@@ -31,24 +37,24 @@ const curriculumRows = [
 ];
 
 const approachSteps = [
-  { num: '1', title: 'We Start With a Diagnostic', desc: "Before teaching a single thing, we assess exactly where your child is — what they know, what they're almost ready for, and what's causing them to stumble. No guesswork, ever." },
-  { num: '2', title: 'Small Groups, Big Attention', desc: 'Our K–Y2 groups are capped at just 4 students so every child gets genuine individual attention — not just a seat in a class where they go unnoticed.' },
-  { num: '3', title: 'Hands-On, Playful Learning', desc: 'Young children learn through doing. We use games, manipulatives, visual tools, and stories — because engaged kids learn faster and remember far more.' },
-  { num: '4', title: 'Regular Progress Updates', desc: "You'll receive written progress updates every term so you always know exactly how your child is going — and what to reinforce at home between sessions." },
+  { num: '1', title: 'We Start With a Diagnostic', desc: "Before teaching a single thing, we assess exactly where your child is: what they know, what they're almost ready for, and what's causing them to stumble. No guesswork, ever." },
+  { num: '2', title: 'Small Groups, Big Attention', desc: 'Our K–Y2 groups are capped at just 4 students so every child gets genuine individual attention, not just a seat in a class where they go unnoticed.' },
+  { num: '3', title: 'Hands-On, Playful Learning', desc: 'Young children learn through doing. We use games, manipulatives, visual tools, and stories, because engaged kids learn faster and remember far more.' },
+  { num: '4', title: 'Regular Progress Updates', desc: "You'll receive written progress updates every term so you always know exactly how your child is going, and what to reinforce at home between sessions." },
 ];
 
 const fitPoints = [
   'Your child is in <strong>Year 1 or Year 2</strong> and you want to give them the strongest possible start',
   "You've noticed your child is <strong>behind in reading or phonics</strong> and want to close the gap before Year 3",
   'Your child finds <strong>numbers or basic maths</strong> confusing and needs a patient, step-by-step approach',
-  'You want <strong>more than just homework help</strong> — you want genuine skill-building from qualified teachers',
+  'You want <strong>more than just homework help</strong>: you want genuine skill-building from qualified teachers',
   'Your child is already doing well and you want to <strong>extend and enrich</strong> their learning above classroom level',
   'You want a centre that <strong>communicates clearly with you</strong> and gives honest progress feedback every single term',
 ];
 
 const whyCards = [
-  { num: 'I', title: 'Reading Is the Gateway Skill', desc: 'Every subject — <strong>maths, science, history</strong> — demands reading. Children who <strong>read fluently by Year 2</strong> have a <strong>compounding advantage</strong> that grows every single year.' },
-  { num: 'II', title: "Number Sense Can't Be Rushed", desc: 'Understanding <em>why</em> numbers work — not just <strong>memorising facts</strong> — is what separates a child who <strong>struggles with maths</strong> from one who <strong>genuinely loves it</strong>.' },
+  { num: 'I', title: 'Reading Is the Gateway Skill', desc: 'Every subject, including <strong>maths, science, history</strong>, demands reading. Children who <strong>read fluently by Year 2</strong> have a <strong>compounding advantage</strong> that grows every single year.' },
+  { num: 'II', title: "Number Sense Can't Be Rushed", desc: 'Understanding <em>why</em> numbers work, not just <strong>memorising facts</strong>, is what separates a child who <strong>struggles with maths</strong> from one who <strong>genuinely loves it</strong>.' },
   { num: 'III', title: 'Confidence Is Formed Early', desc: 'How a child feels about school in <strong>Year 1–2 shapes their identity as a learner</strong> for years. We build <strong>confidence alongside skills</strong> so they believe they can do hard things.' },
   { num: 'IV', title: 'Early Gaps Widen Fast', desc: 'A <strong>small gap at school entry</strong> becomes a <strong>significant gap by Year 4</strong>. Addressing it early is <strong>faster, less stressful, and far more effective</strong> than catching up later.' },
 ];
@@ -92,11 +98,11 @@ const EarlyYears = () => {
         <div style={{ display: 'inline-block', fontSize: '0.75rem', fontWeight: 800, letterSpacing: '2.5px', textTransform: 'uppercase', color: c.gold, background: c.goldPale, border: `1.5px solid ${c.goldLight}`, padding: '6px 20px', borderRadius: 999, marginBottom: 22 }}>
           Early Years · Year 1 – Year 2 · Ages 6–8
         </div>
-        <h1 style={{ fontSize: 'clamp(2.4rem, 5vw, 3.8rem)', fontWeight: 900, lineHeight: 1.1, letterSpacing: '-2px', color: c.navy, marginBottom: 18 }}>
+        <h1 style={{ fontSize: 'clamp(2.4rem, 5vw, 3.8rem)', fontWeight: 900, lineHeight: 1.1, letterSpacing: '-2px', color: c.navy, marginBottom: 18, fontFamily: "'Merriweather', Georgia, serif" }}>
           Build the <em style={{ fontStyle: 'normal', color: c.gold }}>Foundations</em><br />That Last a Lifetime
         </h1>
         <p style={{ fontSize: '1.1rem', color: c.muted, maxWidth: 580, margin: '0 auto 38px', lineHeight: 1.78 }}>
-          The early years are the single most important window for developing <strong style={{ color: c.navy }}>reading, writing, and number sense</strong>. Get it right now — and everything that follows becomes so much easier.
+          The early years are the single most important window for developing <strong style={{ color: c.navy }}>reading, writing, and number sense</strong>. Get it right now, and everything that follows becomes so much easier.
         </p>
         <div style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap' }}>
           <a href="/#contact" style={{ background: c.navy, color: '#fff', border: 'none', padding: '15px 34px', borderRadius: 12, fontSize: '1rem', fontWeight: 800, cursor: 'pointer', textDecoration: 'none', display: 'inline-block' }}>
@@ -117,8 +123,8 @@ const EarlyYears = () => {
           </div>
           <div style={{ background: c.navy, padding: '48px 44px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
             <div style={{ display: 'inline-block', fontSize: '0.7rem', fontWeight: 800, letterSpacing: '2.5px', textTransform: 'uppercase', color: c.gold, background: 'rgba(212,175,55,0.12)', border: '1px solid rgba(212,175,55,0.3)', padding: '5px 16px', borderRadius: 999, marginBottom: 20, width: 'fit-content' }}>Inside DA Tuition</div>
-            <h2 style={{ fontSize: '1.85rem', fontWeight: 900, color: '#fff', marginBottom: 16, lineHeight: 1.2, letterSpacing: '-0.5px' }}>Every Child Gets Noticed, Every Session</h2>
-            <p style={{ fontSize: '0.97rem', color: 'rgba(255,255,255,0.75)', lineHeight: 1.75, marginBottom: 0 }}>Our Early Years groups are capped at just 4 students — so your child receives genuine individual attention. Not a seat in a room. Real teaching.</p>
+            <h2 style={{ fontSize: '1.85rem', fontWeight: 900, color: '#fff', marginBottom: 16, lineHeight: 1.2, letterSpacing: '-0.5px', fontFamily: "'Merriweather', Georgia, serif" }}>Every Child Gets Noticed, Every Session</h2>
+            <p style={{ fontSize: '0.97rem', color: 'rgba(255,255,255,0.75)', lineHeight: 1.75, marginBottom: 0 }}>Our Early Years groups are capped at just 4 students, so your child receives genuine individual attention. Not a seat in a room. Real teaching.</p>
           </div>
         </div>
       </div>
@@ -127,32 +133,52 @@ const EarlyYears = () => {
       <section style={{ padding: '72px 52px', maxWidth: 1140, margin: '0 auto' }}>
         <div style={{ textAlign: 'center', marginBottom: 44 }}>
           <div style={{ display: 'inline-block', fontSize: '0.72rem', fontWeight: 800, letterSpacing: '2.5px', textTransform: 'uppercase', color: c.gold, background: c.goldPale, border: '1px solid #E8E0CC', padding: '5px 16px', borderRadius: 999, marginBottom: 16 }}>Why It Matters</div>
-          <h2 style={{ fontSize: 'clamp(1.9rem, 3.5vw, 2.8rem)', fontWeight: 900, letterSpacing: '-1px', color: c.navy, marginBottom: 14, lineHeight: 1.2 }}>Why These Years Are So Critical</h2>
+          <h2 style={{ fontSize: 'clamp(1.9rem, 3.5vw, 2.8rem)', fontWeight: 900, letterSpacing: '-1px', color: c.navy, marginBottom: 14, lineHeight: 1.2, fontFamily: "'Merriweather', Georgia, serif" }}>Why These Years Are So Critical</h2>
           <p style={{ fontSize: '1.05rem', color: c.muted, maxWidth: 640, margin: '0 auto', lineHeight: 1.7 }}>
-            Children who build <strong style={{ color: c.navy }}>strong literacy and numeracy</strong> in their first three years of school carry that advantage <strong style={{ color: c.navy }}>all the way through to Year 12</strong> — and beyond.
+            Children who build <strong style={{ color: c.navy }}>strong literacy and numeracy</strong> in their first three years of school carry that advantage <strong style={{ color: c.navy }}>all the way through to Year 12</strong> and beyond.
           </p>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 22 }}>
           {whyCards.map((card, i) => (
-            <div key={i} style={{ background: c.white, border: `2px solid ${c.border}`, borderRadius: 20, padding: '32px 28px', boxShadow: '0 2px 14px rgba(10,27,52,0.05)', transition: 'all .28s' }}
-              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = 'translateY(-5px)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 14px 36px rgba(10,27,52,0.12)'; }}
-              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = ''; (e.currentTarget as HTMLElement).style.boxShadow = '0 2px 14px rgba(10,27,52,0.05)'; }}
+            <div key={i} style={{ background: cardTones[i % cardTones.length].bg, border: `1px solid rgba(7,22,41,0.1)`, borderRadius: 32, padding: '32px 28px', boxShadow: '0 2px 14px rgba(7,22,41,0.05)', transition: 'all .28s' }}
+              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = 'translateY(-5px)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 14px 36px rgba(7,22,41,0.12)'; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = ''; (e.currentTarget as HTMLElement).style.boxShadow = '0 2px 14px rgba(7,22,41,0.05)'; }}
             >
-              <div style={{ width: 44, height: 44, borderRadius: 12, background: c.goldPale, border: `2px solid ${c.goldLight}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1rem', fontWeight: 900, color: c.gold, marginBottom: 16 }}>{card.num}</div>
-              <h3 style={{ fontSize: '1.05rem', fontWeight: 800, color: c.navy, marginBottom: 10 }}>{card.title}</h3>
+              <div style={{ width: 44, height: 44, borderRadius: 12, background: c.navy, border: `2px solid ${c.navy}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1rem', fontWeight: 900, color: '#f1df9a', marginBottom: 16 }}>{card.num}</div>
+              <h3 style={{ fontSize: '1.05rem', fontWeight: 800, color: c.navy, marginBottom: 10, fontFamily: "'Merriweather', Georgia, serif" }}>{card.title}</h3>
               <p style={{ fontSize: '0.9rem', color: c.muted, lineHeight: 1.7 }} dangerouslySetInnerHTML={{ __html: card.desc }} />
             </div>
           ))}
         </div>
       </section>
 
+      {/* PHOTO PAIR */}
+      <div style={{ padding: '0 52px 72px', maxWidth: 1140, margin: '0 auto' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 22 }} className="ey-photo-pair">
+          <div style={{ borderRadius: 20, overflow: 'hidden', height: 280, border: `2px solid ${c.border}`, boxShadow: '0 6px 24px rgba(7,22,41,0.08)' }}>
+            <img
+              src="/images/v3/warm_interaction.jpg"
+              alt="DA Tuition teacher warmly encouraging a young Year 1-2 student during a lesson"
+              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            />
+          </div>
+          <div style={{ borderRadius: 20, overflow: 'hidden', height: 280, border: `2px solid ${c.border}`, boxShadow: '0 6px 24px rgba(7,22,41,0.08)' }}>
+            <img
+              src="/images/v3/smiling_teacher.jpg"
+              alt="Smiling DA Tuition teacher supporting an early years student in a small group session"
+              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            />
+          </div>
+        </div>
+      </div>
+
       {/* CURRICULUM TABLE + TESTIMONIAL */}
       <section style={{ background: c.soft, borderTop: `2px solid ${c.border}`, borderBottom: `2px solid ${c.border}`, padding: '72px 52px' }}>
         <div style={{ textAlign: 'center', marginBottom: 40 }}>
           <div style={{ display: 'inline-block', fontSize: '0.72rem', fontWeight: 800, letterSpacing: '2.5px', textTransform: 'uppercase', color: c.gold, background: c.goldPale, border: '1px solid #E8E0CC', padding: '5px 16px', borderRadius: 999, marginBottom: 16 }}>What We Cover</div>
-          <h2 style={{ fontSize: 'clamp(1.9rem, 3.5vw, 2.8rem)', fontWeight: 900, letterSpacing: '-1px', color: c.navy, marginBottom: 14, lineHeight: 1.2 }}>Year 1–2 Curriculum Focus Areas</h2>
+          <h2 style={{ fontSize: 'clamp(1.9rem, 3.5vw, 2.8rem)', fontWeight: 900, letterSpacing: '-1px', color: c.navy, marginBottom: 14, lineHeight: 1.2, fontFamily: "'Merriweather', Georgia, serif" }}>Year 1–2 Curriculum Focus Areas</h2>
           <p style={{ fontSize: '1.05rem', color: c.muted, maxWidth: 640, margin: '0 auto', lineHeight: 1.7 }}>
-            Every session is aligned to the <strong style={{ color: c.navy }}>NSW Curriculum</strong> for your child's exact year group — reinforcing and extending what they learn at school.
+            Every session is aligned to the <strong style={{ color: c.navy }}>NSW Curriculum</strong> for your child's exact year group, reinforcing and extending what they learn at school.
           </p>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr', gap: 36, maxWidth: 1100, margin: '0 auto', alignItems: 'start' }} className="ey-grid-responsive">
@@ -209,17 +235,17 @@ const EarlyYears = () => {
       <section style={{ padding: '72px 52px', maxWidth: 1140, margin: '0 auto' }}>
         <div style={{ textAlign: 'center', marginBottom: 44 }}>
           <div style={{ display: 'inline-block', fontSize: '0.72rem', fontWeight: 800, letterSpacing: '2.5px', textTransform: 'uppercase', color: c.gold, background: c.goldPale, border: '1px solid #E8E0CC', padding: '5px 16px', borderRadius: 999, marginBottom: 16 }}>Our Approach</div>
-          <h2 style={{ fontSize: 'clamp(1.9rem, 3.5vw, 2.8rem)', fontWeight: 900, letterSpacing: '-1px', color: c.navy, marginBottom: 14, lineHeight: 1.2 }}>How We Teach Early Years</h2>
-          <p style={{ fontSize: '1.05rem', color: c.muted, maxWidth: 600, margin: '0 auto', lineHeight: 1.7 }}>Young learners need a specific environment — warm, structured, and full of small wins. Here's exactly how we create it.</p>
+          <h2 style={{ fontSize: 'clamp(1.9rem, 3.5vw, 2.8rem)', fontWeight: 900, letterSpacing: '-1px', color: c.navy, marginBottom: 14, lineHeight: 1.2, fontFamily: "'Merriweather', Georgia, serif" }}>How We Teach Early Years</h2>
+          <p style={{ fontSize: '1.05rem', color: c.muted, maxWidth: 600, margin: '0 auto', lineHeight: 1.7 }}>Young learners need a specific environment: warm, structured, and full of small wins. Here's exactly how we create it.</p>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 22 }}>
           {approachSteps.map((step, i) => (
-            <div key={i} style={{ background: c.white, border: `2px solid ${c.border}`, borderRadius: 20, padding: '32px 28px', boxShadow: '0 2px 12px rgba(10,27,52,0.05)', transition: 'all .25s' }}
-              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = 'translateY(-4px)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 12px 32px rgba(10,27,52,0.1)'; }}
-              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = ''; (e.currentTarget as HTMLElement).style.boxShadow = '0 2px 12px rgba(10,27,52,0.05)'; }}
+            <div key={i} style={{ background: cardTones[i % cardTones.length].bg, border: `1px solid rgba(7,22,41,0.1)`, borderRadius: 32, padding: '32px 28px', boxShadow: '0 2px 12px rgba(7,22,41,0.05)', transition: 'all .25s' }}
+              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = 'translateY(-4px)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 12px 32px rgba(7,22,41,0.1)'; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = ''; (e.currentTarget as HTMLElement).style.boxShadow = '0 2px 12px rgba(7,22,41,0.05)'; }}
             >
-              <div style={{ width: 42, height: 42, borderRadius: 12, background: c.goldPale, border: `1.5px solid ${c.goldLight}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.1rem', fontWeight: 900, color: c.gold, marginBottom: 18 }}>{step.num}</div>
-              <h3 style={{ fontSize: '1.05rem', fontWeight: 800, color: c.navy, marginBottom: 10 }}>{step.title}</h3>
+              <div style={{ width: 42, height: 42, borderRadius: 12, background: c.navy, border: `1.5px solid ${c.navy}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.1rem', fontWeight: 900, color: '#f1df9a', marginBottom: 18 }}>{step.num}</div>
+              <h3 style={{ fontSize: '1.05rem', fontWeight: 800, color: c.navy, marginBottom: 10, fontFamily: "'Merriweather', Georgia, serif" }}>{step.title}</h3>
               <p style={{ fontSize: '0.9rem', color: c.muted, lineHeight: 1.7 }}>{step.desc}</p>
             </div>
           ))}
@@ -231,7 +257,7 @@ const EarlyYears = () => {
         <div style={{ padding: '72px 52px', maxWidth: 900, margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: 32 }}>
             <div style={{ display: 'inline-block', fontSize: '0.72rem', fontWeight: 800, letterSpacing: '2.5px', textTransform: 'uppercase', color: c.gold, background: c.white, border: '1px solid #E8E0CC', padding: '5px 16px', borderRadius: 999, marginBottom: 16 }}>Is This Right For Us?</div>
-            <h2 style={{ fontSize: 'clamp(1.9rem, 3.5vw, 2.8rem)', fontWeight: 900, letterSpacing: '-1px', color: c.navy, marginBottom: 14, lineHeight: 1.2 }}>DA Tuition Early Years Is Perfect If…</h2>
+            <h2 style={{ fontSize: 'clamp(1.9rem, 3.5vw, 2.8rem)', fontWeight: 900, letterSpacing: '-1px', color: c.navy, marginBottom: 14, lineHeight: 1.2, fontFamily: "'Merriweather', Georgia, serif" }}>DA Tuition Early Years Is Perfect If…</h2>
           </div>
           <ul style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: 14, marginBottom: 36 }}>
             {fitPoints.map((pt, i) => (
@@ -243,7 +269,7 @@ const EarlyYears = () => {
           </ul>
           <div style={{ textAlign: 'center' }}>
             <a href="/#contact" style={{ background: c.navy, color: '#fff', border: 'none', padding: '16px 36px', borderRadius: 12, fontSize: '1rem', fontWeight: 800, cursor: 'pointer', textDecoration: 'none', display: 'inline-block' }}>
-              Book Our Free Trial Lesson — No Commitment
+              Book Our Free Trial Lesson, No Commitment
             </a>
           </div>
         </div>
@@ -251,11 +277,11 @@ const EarlyYears = () => {
 
       {/* CTA */}
       <div style={{ textAlign: 'center', padding: '96px 52px', background: c.navy, borderTop: `4px solid ${c.goldLight}` }}>
-        <h2 style={{ fontSize: 'clamp(2rem, 3.5vw, 3rem)', fontWeight: 900, letterSpacing: '-1.2px', marginBottom: 18, color: c.white, lineHeight: 1.15 }}>
+        <h2 style={{ fontSize: 'clamp(2rem, 3.5vw, 3rem)', fontWeight: 900, letterSpacing: '-1.2px', marginBottom: 18, color: c.white, lineHeight: 1.15, fontFamily: "'Merriweather', Georgia, serif" }}>
           Ready to Give Your Child<br />the Best Start?
         </h2>
         <p style={{ fontSize: '1.08rem', color: 'rgba(255,255,255,0.75)', maxWidth: 540, margin: '0 auto 38px', lineHeight: 1.75 }}>
-          Join hundreds of K–Y2 families across Sydney who've trusted DA Tuition to build the foundations that last a lifetime. Spots are limited — secure yours today.
+          Join hundreds of K–Y2 families across Sydney who've trusted DA Tuition to build the foundations that last a lifetime. Spots are limited, so secure yours today.
         </p>
         <a href="/#contact" style={{ background: c.goldLight, color: c.navy, border: 'none', padding: '17px 38px', borderRadius: 14, fontSize: '1rem', fontWeight: 900, cursor: 'pointer', textDecoration: 'none', display: 'inline-block' }}>
           Book a Free Trial Lesson →
@@ -265,7 +291,7 @@ const EarlyYears = () => {
         </div>
       </div>
 
-      <style>{`@media(max-width:768px){.ey-grid-responsive{grid-template-columns:1fr!important;}.ey-photo-grid{grid-template-columns:1fr!important;}}`}</style>
+      <style>{`@media(max-width:768px){.ey-grid-responsive{grid-template-columns:1fr!important;}.ey-photo-grid{grid-template-columns:1fr!important;}.ey-photo-pair{grid-template-columns:1fr!important;}}`}</style>
       <FooterNew />
     </div>
   );

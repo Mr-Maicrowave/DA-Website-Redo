@@ -2,22 +2,32 @@ import { Link } from 'react-router-dom';
 import SEO from '@/components/SEO';
 import NavigationNew from '@/components/NavigationNew';
 
+const cardTones = [
+  'linear-gradient(180deg, #f7fbff, #e8f2ff)',
+  'linear-gradient(180deg, #fbfff8, #eaf8ef)',
+  'linear-gradient(180deg, #fffdf7, #fff1cd)',
+];
+
 const stakesCards = [
   {
     title: 'The ATAR Is Calculated on Everything',
     text: 'Every internal assessment and every HSC exam contributes to the ATAR. There are no throw-away marks. We help students understand this and act on it from Day 1 of Year 11.',
+    tone: cardTones[0],
   },
   {
     title: 'Subject Selection Is Strategy',
     text: 'Scaling, workload, and personal strengths all determine which subject combination gives your child the best ATAR. Our tutors have guided hundreds of families through this decision.',
+    tone: cardTones[1],
   },
   {
     title: 'The Gap Between Class and Exams',
     text: 'Many strong students underperform in HSC exams because they have not been trained in HSC-specific technique. We close that gap systematically.',
+    tone: cardTones[2],
   },
   {
     title: 'Burnout Is a Real Risk',
     text: 'Year 12 is a marathon. Students who do not manage time, energy, and stress through the year perform well below their potential in the final exams. We build good habits alongside knowledge.',
+    tone: cardTones[0],
   },
 ];
 
@@ -61,18 +71,22 @@ const approachCards = [
   {
     title: 'Subject-Specialist Tutors Only',
     text: 'Every HSC tutor at DA Tuition achieved a Band 6 (or equivalent high distinction) in the subject they teach. We do not compromise on this.',
+    tone: cardTones[0],
   },
   {
     title: 'Internal Assessment Strategy',
     text: 'We do not just prepare students for the final exam. From Term 1 of Year 11 we work on internal task strategy, because 50% of the mark is already on the line.',
+    tone: cardTones[1],
   },
   {
     title: 'HSC Exam Technique as a Discipline',
     text: 'Past papers, model answers, marking criteria. Every student knows exactly what a Band 6 response looks like before they sit the real thing.',
+    tone: cardTones[2],
   },
   {
     title: 'Progress Reports and Parent Check-Ins',
     text: 'Written progress updates every term. Direct tutor access between sessions. You stay in the loop at every step.',
+    tone: cardTones[0],
   },
 ];
 
@@ -97,10 +111,11 @@ const HSCExcellence = () => {
 
       <style>{`
         .hsc-page {
-          --navy:#0c1f4a; --navy-mid:#1a3870;
-          --gold:#b8860b; --gold-light:#d4a017; --gold-pale:#fdf6dc; --gold-mid:#e8c84a; --gold-dark:#92660a;
-          --white:#ffffff; --text:#0c1f4a; --muted:#4a5568; --border:#e2e8f0; --soft:#f8fafc;
-          --amber:#fef3c7; --amber-mid:#fcd34d;
+          --navy:#071629; --navy-mid:#1a3870;
+          --gold:#c9a227; --gold-light:#e0bd4b; --gold-pale:#fff6e7; --gold-mid:#e0bd4b; --gold-dark:#92740d;
+          --white:#fffdf8; --text:#071629; --muted:#61708a; --border:rgba(201,162,39,0.25); --soft:#fff6e7;
+          --amber:#fff6e7; --amber-mid:#e0bd4b;
+          --font-serif: 'Merriweather', Georgia, serif;
           min-height: 100vh;
           background: var(--white);
           color: var(--text);
@@ -125,34 +140,34 @@ const HSCExcellence = () => {
         .hsc-urgency-item { display: flex; align-items: center; gap: 10px; font-size: .88rem; font-weight: 700; color: var(--navy); }
         .hsc-urgency-highlight { background: var(--navy); color: #fff; font-size: .75rem; font-weight: 800; padding: 3px 12px; border-radius: 999px; white-space: nowrap; }
 
-        .hsc-hero { background: linear-gradient(160deg,#fdf6dc 0%,#fef3c7 50%,#fef9c3 100%); padding: 80px 52px 72px; text-align: center; border-bottom: 1px solid #e8d280; }
-        .hsc-hero-tag { display: inline-block; font-size: .72rem; font-weight: 800; letter-spacing: 3px; text-transform: uppercase; color: var(--gold-dark); background: #fff; border: 1.5px solid var(--gold-mid); padding: 6px 20px; border-radius: 4px; margin-bottom: 24px; }
-        .hsc-hero h1 { font-size: clamp(2.4rem,5vw,3.6rem); font-weight: 900; line-height: 1.1; letter-spacing: -1.5px; color: var(--navy); margin: 0 0 20px; text-wrap: balance; }
+        .hsc-hero { background: linear-gradient(160deg,#fff6e7 0%,#fffdf8 50%,#fff6e7 100%); padding: 80px 52px 72px; text-align: center; border-bottom: 1px solid var(--border); }
+        .hsc-hero-tag { display: inline-block; font-size: .72rem; font-weight: 800; letter-spacing: 3px; text-transform: uppercase; color: var(--gold-dark); background: #fff; border: 1.5px solid var(--gold-mid); padding: 6px 20px; border-radius: 999px; margin-bottom: 24px; }
+        .hsc-hero h1 { font-family: var(--font-serif); font-size: clamp(2.4rem,5vw,3.6rem); font-weight: 700; line-height: 1.1; letter-spacing: -1.5px; color: var(--navy); margin: 0 0 20px; text-wrap: balance; }
         .hsc-hero h1 em { font-style: normal; color: var(--gold-dark); }
         .hsc-hero-sub { font-size: 1.1rem; color: var(--muted); max-width: 580px; margin: 0 auto 40px; line-height: 1.75; text-wrap: pretty; }
         .hsc-hero-btns { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-bottom: 36px; }
-        .hsc-btn-navy { background: var(--navy); color: #fff; border: none; padding: 14px 32px; border-radius: 8px; font-size: .97rem; font-weight: 800; cursor: pointer; transition: all .2s; text-decoration: none; display: inline-block; }
-        .hsc-btn-navy:hover { background: var(--navy-mid); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(12,31,74,.3); }
-        .hsc-hero-badge { display: inline-flex; align-items: center; gap: 14px; background: #fff; border: 1.5px solid var(--gold-mid); border-radius: 8px; padding: 12px 22px; box-shadow: 0 2px 10px rgba(184,134,11,.12); }
+        .hsc-btn-navy { background: var(--gold); color: var(--navy); border: none; padding: 14px 32px; border-radius: 999px; font-size: .97rem; font-weight: 800; cursor: pointer; transition: all .2s; text-decoration: none; display: inline-block; box-shadow: 0 10px 28px rgba(201,162,39,.25); }
+        .hsc-btn-navy:hover { background: var(--gold-light); transform: translateY(-2px); box-shadow: 0 12px 32px rgba(201,162,39,.35); }
+        .hsc-hero-badge { display: inline-flex; align-items: center; gap: 14px; background: #fff; border: 1.5px solid var(--gold-mid); border-radius: 999px; padding: 12px 22px; box-shadow: 0 2px 10px rgba(201,162,39,.12); }
         .hsc-hero-badge-bold { font-size: .92rem; font-weight: 800; color: var(--navy); }
         .hsc-hero-badge-small { font-size: .76rem; color: var(--muted); margin-top: 2px; }
 
         .hsc-section { padding: 72px 52px; }
-        .hsc-section-tag { display: inline-block; font-size: .7rem; font-weight: 800; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); background: var(--gold-pale); border: 1px solid #e8d280; padding: 5px 16px; border-radius: 4px; margin-bottom: 16px; }
-        .hsc-section-h2 { font-size: clamp(1.8rem,3.2vw,2.6rem); font-weight: 900; letter-spacing: -1px; color: var(--navy); margin: 0 0 14px; text-wrap: balance; }
+        .hsc-section-tag { display: inline-block; font-size: .7rem; font-weight: 800; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); background: var(--gold-pale); border: 1px solid var(--border); padding: 5px 16px; border-radius: 999px; margin-bottom: 16px; }
+        .hsc-section-h2 { font-family: var(--font-serif); font-size: clamp(1.8rem,3.2vw,2.6rem); font-weight: 700; letter-spacing: -1px; color: var(--navy); margin: 0 0 14px; text-wrap: balance; }
         .hsc-section-sub { font-size: 1.03rem; color: var(--muted); max-width: 620px; line-height: 1.7; margin: 0 0 40px; text-wrap: pretty; }
         .hsc-center { text-align: center; }
         .hsc-section-sub.hsc-center { margin: 0 auto 40px; }
 
         .hsc-stakes-section { background: var(--soft); }
         .hsc-stakes-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(240px,1fr)); gap: 20px; max-width: 1100px; margin: 0 auto; }
-        .hsc-stakes-card { background: var(--white); border-radius: 12px; padding: 28px 24px; border: 1.5px solid var(--border); border-top: 4px solid var(--gold-light); box-shadow: 0 2px 8px rgba(12,31,74,.05); transition: all .22s; }
-        .hsc-stakes-card:hover { transform: translateY(-4px); box-shadow: 0 10px 28px rgba(184,134,11,.1); border-color: var(--gold-mid); background: var(--gold-pale); }
-        .hsc-stakes-card h3 { font-size: 1rem; font-weight: 800; color: var(--navy); margin: 0 0 10px; }
+        .hsc-stakes-card { border-radius: 32px; padding: 28px 24px; border: 1px solid rgba(7,22,41,0.1); box-shadow: 0 4px 18px rgba(7,22,41,.05); transition: all .22s; }
+        .hsc-stakes-card:hover { transform: translateY(-4px); box-shadow: 0 10px 28px rgba(7,22,41,.1); border-color: rgba(7,22,41,0.16); }
+        .hsc-stakes-card h3 { font-family: var(--font-serif); font-size: 1rem; font-weight: 700; color: var(--navy); margin: 0 0 10px; }
         .hsc-stakes-card p { font-size: .9rem; color: var(--muted); line-height: 1.7; margin: 0; }
 
         .hsc-focus-section { background: var(--white); }
-        .hsc-focus-wrap { max-width: 960px; margin: 0 auto; overflow-x: auto; border-radius: 12px; box-shadow: 0 4px 20px rgba(12,31,74,.07); border: 1.5px solid var(--border); }
+        .hsc-focus-wrap { max-width: 960px; margin: 0 auto; overflow-x: auto; border-radius: 20px; box-shadow: 0 4px 20px rgba(7,22,41,.07); border: 1.5px solid var(--border); }
         .hsc-focus-table { width: 100%; border-collapse: collapse; }
         .hsc-focus-table thead th { background: var(--navy); color: #fff; padding: 15px 22px; font-size: .85rem; font-weight: 800; text-align: left; letter-spacing: .3px; }
         .hsc-focus-table tbody tr { border-bottom: 1px solid var(--border); transition: background .18s; }
@@ -165,14 +180,14 @@ const HSCExcellence = () => {
 
         .hsc-approach-section { background: var(--soft); }
         .hsc-approach-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(240px,1fr)); gap: 20px; max-width: 1100px; margin: 0 auto; }
-        .hsc-approach-card { background: var(--white); border-radius: 12px; padding: 28px 24px; border: 1.5px solid var(--border); border-left: 4px solid var(--gold-light); transition: all .22s; }
-        .hsc-approach-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(184,134,11,.1); background: var(--gold-pale); }
-        .hsc-approach-num { width: 32px; height: 32px; border-radius: 6px; background: var(--gold-pale); display: flex; align-items: center; justify-content: center; font-size: .85rem; font-weight: 900; color: var(--gold-dark); margin-bottom: 14px; border: 1px solid var(--gold-mid); }
-        .hsc-approach-card h3 { font-size: 1rem; font-weight: 800; color: var(--navy); margin: 0 0 9px; }
+        .hsc-approach-card { border-radius: 32px; padding: 28px 24px; border: 1px solid rgba(7,22,41,0.1); box-shadow: 0 4px 18px rgba(7,22,41,.05); transition: all .22s; }
+        .hsc-approach-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(7,22,41,.1); border-color: rgba(7,22,41,0.16); }
+        .hsc-approach-num { width: 32px; height: 32px; border-radius: 10px; background: var(--navy); display: flex; align-items: center; justify-content: center; font-size: .85rem; font-weight: 900; color: #f1df9a; margin-bottom: 14px; border: 1px solid var(--navy); }
+        .hsc-approach-card h3 { font-family: var(--font-serif); font-size: 1rem; font-weight: 700; color: var(--navy); margin: 0 0 9px; }
         .hsc-approach-card p { font-size: .9rem; color: var(--muted); line-height: 1.7; margin: 0; }
 
         .hsc-testi-section { background: var(--white); text-align: center; }
-        .hsc-testi-card { max-width: 660px; margin: 0 auto; background: var(--white); border: 1.5px solid var(--border); border-top: 4px solid var(--gold-light); border-radius: 12px; padding: 44px 40px; box-shadow: 0 6px 28px rgba(12,31,74,.07); }
+        .hsc-testi-card { max-width: 660px; margin: 0 auto; background: var(--white); border: 1.5px solid var(--border); border-top: 4px solid var(--gold-light); border-radius: 24px; padding: 44px 40px; box-shadow: 0 6px 28px rgba(7,22,41,.07); }
         .hsc-testi-stars { color: var(--gold-light); font-size: 1.3rem; letter-spacing: 4px; margin-bottom: 20px; }
         .hsc-testi-quote-icon { font-size: 3rem; line-height: 1; color: var(--gold-mid); margin-bottom: 8px; }
         .hsc-testi-text { font-size: 1.05rem; color: var(--text); line-height: 1.8; font-style: italic; margin: 0 0 28px; text-wrap: pretty; }
@@ -186,16 +201,16 @@ const HSCExcellence = () => {
         .hsc-fit-inner { max-width: 820px; margin: 0 auto; }
         .hsc-fit-list { list-style: none; display: grid; grid-template-columns: repeat(auto-fit,minmax(320px,1fr)); gap: 12px; margin: 0 0 36px; padding: 0; }
         .hsc-fit-list li { display: flex; align-items: flex-start; gap: 12px; font-size: .95rem; color: var(--text); line-height: 1.6; }
-        .hsc-fit-check { width: 24px; height: 24px; min-width: 24px; background: #fff; border: 1.5px solid var(--gold-light); border-radius: 5px; display: flex; align-items: center; justify-content: center; font-size: .82rem; color: var(--gold); margin-top: 2px; }
+        .hsc-fit-check { width: 24px; height: 24px; min-width: 24px; background: #fff; border: 1.5px solid var(--gold-light); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: .82rem; color: var(--gold); margin-top: 2px; }
         .hsc-fit-cta-row { text-align: center; margin-top: 8px; }
 
         .hsc-cta-section { background: var(--navy); border-top: 4px solid var(--gold); padding: 80px 52px; text-align: center; }
-        .hsc-cta-section h2 { font-size: clamp(1.9rem,3.8vw,2.8rem); font-weight: 900; color: #fff; letter-spacing: -1px; margin: 0 0 16px; text-wrap: balance; }
+        .hsc-cta-section h2 { font-family: var(--font-serif); font-size: clamp(1.9rem,3.8vw,2.8rem); font-weight: 700; color: #fff; letter-spacing: -1px; margin: 0 0 16px; text-wrap: balance; }
         .hsc-cta-section p { font-size: 1.03rem; color: rgba(255,255,255,.72); max-width: 540px; margin: 0 auto 36px; line-height: 1.72; text-wrap: pretty; }
         .hsc-cta-btns { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-bottom: 20px; }
-        .hsc-btn-gold { background: var(--gold-light); color: var(--navy); border: none; padding: 15px 36px; border-radius: 8px; font-size: 1rem; font-weight: 900; cursor: pointer; transition: all .2s; text-decoration: none; display: inline-block; }
-        .hsc-btn-gold:hover { background: var(--gold); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(184,134,11,.4); }
-        .hsc-btn-outline-cta { background: transparent; color: #fff; border: 2px solid rgba(255,255,255,.35); padding: 15px 36px; border-radius: 8px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: all .2s; text-decoration: none; display: inline-block; }
+        .hsc-btn-gold { background: var(--gold-light); color: var(--navy); border: none; padding: 15px 36px; border-radius: 999px; font-size: 1rem; font-weight: 900; cursor: pointer; transition: all .2s; text-decoration: none; display: inline-block; box-shadow: 0 10px 30px rgba(201,162,39,.3); }
+        .hsc-btn-gold:hover { background: var(--gold); transform: translateY(-2px); box-shadow: 0 12px 32px rgba(201,162,39,.4); }
+        .hsc-btn-outline-cta { background: transparent; color: #fff; border: 2px solid rgba(255,255,255,.35); padding: 15px 36px; border-radius: 999px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: all .2s; text-decoration: none; display: inline-block; }
         .hsc-btn-outline-cta:hover { border-color: #fff; background: rgba(255,255,255,.08); }
         .hsc-cta-note { font-size: .82rem !important; color: rgba(255,255,255,.45) !important; margin: 0 !important; }
 
@@ -203,6 +218,16 @@ const HSCExcellence = () => {
         .hsc-footer-logo { font-size: 1rem; font-weight: 900; color: #fff; }
         .hsc-footer-logo span { color: var(--gold-light); }
         .hsc-footer p { font-size: .8rem; color: rgba(255,255,255,.45); margin: 0; }
+
+        .hsc-photo-banner { max-width: 1140px; margin: 0 auto; padding: 0 52px 72px; }
+        .hsc-photo-banner-inner { position: relative; border-radius: 24px; overflow: hidden; height: 340px; border: 2px solid var(--border); box-shadow: 0 8px 32px rgba(7,22,41,.08); }
+        .hsc-photo-banner-inner img { width: 100%; height: 100%; object-fit: cover; object-position: center; }
+        .hsc-photo-banner-caption { position: absolute; left: 0; right: 0; bottom: 0; padding: 24px 32px; background: linear-gradient(180deg, rgba(7,22,41,0) 40%, rgba(7,22,41,.7) 100%); }
+        .hsc-photo-banner-caption p { font-family: var(--font-serif); color: #fff; font-size: 1.2rem; font-weight: 700; margin: 0; }
+
+        .hsc-photo-pair { max-width: 1140px; margin: 0 auto; padding: 0 52px 72px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .hsc-photo-pair-item { border-radius: 20px; overflow: hidden; height: 260px; border: 2px solid var(--border); box-shadow: 0 4px 20px rgba(7,22,41,.06); }
+        .hsc-photo-pair-item img { width: 100%; height: 100%; object-fit: cover; object-position: center; }
 
         @media (max-width: 768px) {
           .hsc-page { padding-top: 104px; }
@@ -213,6 +238,8 @@ const HSCExcellence = () => {
           .hsc-testi-card { padding: 28px 20px; }
           .hsc-fit-list { grid-template-columns: 1fr; }
           .hsc-footer { padding: 20px; flex-direction: column; align-items: flex-start; }
+          .hsc-photo-banner, .hsc-photo-pair { padding-left: 20px; padding-right: 20px; }
+          .hsc-photo-pair { grid-template-columns: 1fr; }
         }
       `}</style>
 
@@ -255,6 +282,15 @@ const HSCExcellence = () => {
           </div>
         </div>
 
+        <div className="hsc-photo-banner">
+          <div className="hsc-photo-banner-inner">
+            <img src="/images/programs/hsc-maths.jpg" alt="HSC Mathematics tutor working through a calculus problem with a Year 12 student" />
+            <div className="hsc-photo-banner-caption">
+              <p>Subject-specialist tutors who know exactly what Band 6 looks like.</p>
+            </div>
+          </div>
+        </div>
+
         <section className="hsc-section hsc-stakes-section" id="programs">
           <div className="hsc-center">
             <div className="hsc-section-tag">WHY THIS STAGE IS CRITICAL</div>
@@ -263,7 +299,7 @@ const HSCExcellence = () => {
           </div>
           <div className="hsc-stakes-grid">
             {stakesCards.map((card) => (
-              <article className="hsc-stakes-card" key={card.title}>
+              <article className="hsc-stakes-card" key={card.title} style={{ background: card.tone }}>
                 <h3>{card.title}</h3>
                 <p>{card.text}</p>
               </article>
@@ -306,7 +342,7 @@ const HSCExcellence = () => {
           </div>
           <div className="hsc-approach-grid">
             {approachCards.map((card, index) => (
-              <article className="hsc-approach-card" key={card.title}>
+              <article className="hsc-approach-card" key={card.title} style={{ background: card.tone }}>
                 <div className="hsc-approach-num">{index + 1}</div>
                 <h3>{card.title}</h3>
                 <p>{card.text}</p>
@@ -314,6 +350,15 @@ const HSCExcellence = () => {
             ))}
           </div>
         </section>
+
+        <div className="hsc-photo-pair">
+          <div className="hsc-photo-pair-item">
+            <img src="/images/programs/hsc-physics.jpg" alt="HSC Physics tutor explaining a concept on a whiteboard to Year 11-12 students" />
+          </div>
+          <div className="hsc-photo-pair-item">
+            <img src="/images/v3/success_medal.jpg" alt="A DA Tuition HSC student celebrating a Band 6 result" />
+          </div>
+        </div>
 
         <section className="hsc-section hsc-testi-section">
           <div className="hsc-section-tag" style={{ marginBottom: 32 }}>Real Families, Real Results</div>
