@@ -494,6 +494,156 @@ const WALKTHROUGH_VERSIONS = [
   },
 ];
 
+const HERO_CONSTELLATION_NODES = [
+  { x: 64, y: 158, label: '5x - 7 = 18', tone: 'gold' },
+  { x: 178, y: 94, label: '+7 both sides', tone: 'blue' },
+  { x: 298, y: 150, label: '5x = 25', tone: 'gold' },
+  { x: 420, y: 92, label: 'divide by 5', tone: 'blue' },
+  { x: 470, y: 210, label: 'x = 5', tone: 'gold' },
+  { x: 330, y: 288, label: '5(5) - 7 = 18', tone: 'gold' },
+  { x: 152, y: 264, label: 'clear working', tone: 'blue' },
+  { x: 92, y: 54, label: 'method', tone: 'blue' },
+  { x: 240, y: 226, label: 'confidence', tone: 'gold' },
+];
+
+const HERO_CONSTELLATION_EDGES = [
+  [0, 1],
+  [1, 2],
+  [2, 3],
+  [3, 4],
+  [4, 5],
+  [5, 6],
+  [6, 0],
+  [1, 7],
+  [2, 8],
+  [8, 5],
+];
+
+const HERO_SPARKLES = [
+  { x: 38, y: 92, delay: '0s' },
+  { x: 118, y: 212, delay: '.45s' },
+  { x: 254, y: 72, delay: '.9s' },
+  { x: 384, y: 262, delay: '1.35s' },
+  { x: 486, y: 132, delay: '1.8s' },
+];
+
+const HeroConstellation = () => (
+  <motion.aside
+    initial={{ opacity: 0, y: 28 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.7, delay: 0.12, ease: 'easeOut' }}
+    className="relative self-end overflow-hidden rounded-2xl border border-white/[0.14] bg-[#081b33]/72 p-5 shadow-[0_18px_44px_rgba(0,0,0,0.24)] backdrop-blur-xl sm:p-6"
+  >
+    <style>{`
+      @keyframes mathsHeroTwinkle {
+        0%, 100% { opacity: .25; transform: scale(.75) rotate(0deg); }
+        45% { opacity: 1; transform: scale(1.18) rotate(18deg); }
+      }
+      @keyframes mathsHeroDrift {
+        0%, 100% { transform: translate3d(0, 0, 0); }
+        50% { transform: translate3d(10px, -8px, 0); }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .maths-hero-sparkle,
+        .maths-hero-drift {
+          animation: none !important;
+        }
+      }
+    `}</style>
+
+    <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_72%_20%,rgba(241,223,154,0.18),transparent_32%),radial-gradient(circle_at_22%_78%,rgba(155,199,255,0.16),transparent_34%)]" />
+    <div className="relative mb-5 flex items-center justify-between gap-4">
+      <div className="inline-flex items-center gap-2 rounded-full border border-[#f1df9a]/25 bg-[#f1df9a]/10 px-3 py-1.5 text-xs font-black uppercase tracking-[0.14em] text-[#f1df9a]">
+        <Sparkles className="h-3.5 w-3.5" />
+        Worked solution map
+      </div>
+      <span className="hidden rounded-full border border-white/10 bg-white/10 px-3 py-1.5 text-xs font-bold text-white/80 sm:inline-flex">
+        Year 7 algebra
+      </span>
+    </div>
+
+    <svg viewBox="0 0 540 360" className="relative z-10 h-auto w-full overflow-visible" aria-hidden="true">
+      <defs>
+        <filter id="maths-constellation-glow">
+          <feGaussianBlur stdDeviation="4" result="blur" />
+          <feMerge>
+            <feMergeNode in="blur" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
+      </defs>
+
+      {HERO_SPARKLES.map((sparkle) => (
+        <g
+          key={`${sparkle.x}-${sparkle.y}`}
+          className="maths-hero-sparkle"
+          style={{ animation: `mathsHeroTwinkle 2.4s ease-in-out ${sparkle.delay} infinite`, transformOrigin: `${sparkle.x}px ${sparkle.y}px` }}
+        >
+          <path d={`M ${sparkle.x} ${sparkle.y - 10} L ${sparkle.x + 3} ${sparkle.y - 3} L ${sparkle.x + 10} ${sparkle.y} L ${sparkle.x + 3} ${sparkle.y + 3} L ${sparkle.x} ${sparkle.y + 10} L ${sparkle.x - 3} ${sparkle.y + 3} L ${sparkle.x - 10} ${sparkle.y} L ${sparkle.x - 3} ${sparkle.y - 3} Z`} fill="#f1df9a" fillOpacity="0.82" />
+        </g>
+      ))}
+
+      {HERO_CONSTELLATION_EDGES.map(([from, to], index) => {
+        const start = HERO_CONSTELLATION_NODES[from];
+        const end = HERO_CONSTELLATION_NODES[to];
+        return (
+          <motion.line
+            key={`${from}-${to}`}
+            x1={start.x}
+            y1={start.y}
+            x2={end.x}
+            y2={end.y}
+            stroke="#f1df9a"
+            strokeWidth={index < 6 ? 2.6 : 1.5}
+            strokeLinecap="round"
+            strokeOpacity={index < 6 ? 0.72 : 0.34}
+            initial={{ pathLength: 0, opacity: 0 }}
+            animate={{ pathLength: 1, opacity: 1 }}
+            transition={{ duration: 0.8, delay: index * 0.07, ease: 'easeOut' }}
+          />
+        );
+      })}
+
+      {HERO_CONSTELLATION_NODES.map((node, index) => (
+        <g
+          key={node.label}
+          className="maths-hero-drift"
+          style={{ animation: `mathsHeroDrift ${5 + (index % 3)}s ease-in-out ${index * 0.18}s infinite` }}
+        >
+          <circle
+            cx={node.x}
+            cy={node.y}
+            r={index < 6 ? 17 : 12}
+            fill={node.tone === 'gold' ? '#f1df9a' : '#9bc7ff'}
+            fillOpacity="0.16"
+            filter="url(#maths-constellation-glow)"
+          />
+          <circle cx={node.x} cy={node.y} r={index < 6 ? 6 : 4.5} fill={node.tone === 'gold' ? '#f1df9a' : '#9bc7ff'} />
+          <text
+            x={node.x + (node.x > 400 && index !== 3 ? -12 : 14)}
+            y={node.y + (index === 7 ? -16 : -12)}
+            textAnchor={node.x > 400 && index !== 3 ? 'end' : 'start'}
+            fill="#ffffff"
+            fillOpacity="0.9"
+            fontSize={index < 6 ? 18 : 15}
+            fontWeight="900"
+          >
+            {node.label}
+          </text>
+        </g>
+      ))}
+    </svg>
+
+    <div className="relative z-10 grid gap-3 sm:grid-cols-3">
+      {['Question type', 'Method', 'Final check'].map((item) => (
+        <div key={item} className="rounded-xl border border-white/10 bg-white/10 px-3 py-3 text-center text-sm font-black text-white/90">
+          {item}
+        </div>
+      ))}
+    </div>
+  </motion.aside>
+);
+
 const Mathematics = () => {
   const courseLevels = [
     {
@@ -619,17 +769,17 @@ const Mathematics = () => {
             <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[#fff6e7] to-transparent" />
           </div>
 
-          <div className="relative z-10 mx-auto grid w-full max-w-7xl gap-10 px-5 pb-24 lg:grid-cols-[1.05fr_.75fr] lg:px-8 lg:pb-28">
+          <div className="relative z-10 mx-auto grid w-full max-w-7xl gap-10 px-5 pb-24 lg:grid-cols-[1fr_.9fr] lg:px-8 lg:pb-28">
             <motion.div initial={{ opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, ease: 'easeOut' }}>
               <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-xs font-black uppercase tracking-[0.14em] text-[#f1df9a] backdrop-blur-md">
                 <Calculator className="h-4 w-4" />
                 Years K-12 mathematics
               </div>
-              <h1 className="max-w-4xl font-serif text-5xl font-medium leading-[0.96] tracking-[-0.055em] text-white sm:text-6xl lg:text-7xl">
-                Maths support that feels calm, clear, and serious.
+              <h1 className="max-w-4xl text-balance font-serif text-5xl font-medium leading-[0.96] tracking-[-0.04em] text-white sm:text-6xl lg:text-7xl">
+                Every maths problem has a path through it.
               </h1>
               <p className="mt-6 max-w-2xl text-lg leading-8 text-white/75">
-                From times tables to Extension 2, DA Tuition helps students understand the method, practise with structure, and walk into assessments with confidence.
+                From times tables to Extension 2, DA Tuition helps students see the method, connect each step, and walk into assessments with confidence.
               </p>
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
                 <Link to="/book-interview">
@@ -638,36 +788,19 @@ const Mathematics = () => {
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </Link>
-                <Button
-                  size="lg"
-                  variant="outline"
-                  onClick={scrollToPathways}
-                  className="h-12 rounded-full border-white/30 bg-white/10 px-7 font-bold text-white backdrop-blur-md hover:bg-white/15 hover:text-white"
-                >
-                  Find the Right Level
-                </Button>
+                <a href="#math-pathways" onClick={(event) => { event.preventDefault(); scrollToPathways(); }}>
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    className="h-12 rounded-full border-white/30 bg-white/10 px-7 font-bold text-white backdrop-blur-md hover:bg-white/15 hover:text-white"
+                  >
+                    Find the Right Level
+                  </Button>
+                </a>
               </div>
             </motion.div>
 
-            <motion.aside
-              initial={{ opacity: 0, y: 28 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.12, ease: 'easeOut' }}
-              className="self-end rounded-3xl border border-white/14 bg-white/[0.09] p-6 shadow-2xl backdrop-blur-xl"
-            >
-              <p className="text-sm font-black uppercase tracking-[0.14em] text-[#f1df9a]">Parent quick check</p>
-              <div className="mt-5 space-y-4">
-                {['Unsure which maths level fits?', 'Worried about confidence?', 'Preparing for HSC exams?'].map((item) => (
-                  <div key={item} className="flex items-start gap-3 rounded-2xl bg-white/10 p-4 text-white">
-                    <CheckCircle className="mt-0.5 h-5 w-5 shrink-0 text-[#f1df9a]" />
-                    <span className="text-sm font-semibold leading-6">{item}</span>
-                  </div>
-                ))}
-              </div>
-              <p className="mt-5 text-sm leading-6 text-white/90">
-                Not sure where to start? Book an interview and we will work out the right level, class, and starting point together.
-              </p>
-            </motion.aside>
+            <HeroConstellation />
           </div>
         </section>
 

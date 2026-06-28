@@ -1,4 +1,5 @@
 import SEO from '@/components/SEO';
+import NavigationNew from '@/components/NavigationNew';
 
 const PrincipalReflections = () => {
   return (
@@ -8,7 +9,8 @@ const PrincipalReflections = () => {
         description="Read the principal's reflections and intimate interview. Miss Amanda shares the mission, values and teaching philosophy that shapes every lesson at DA Tuition."
         canonicalUrl="/principal-reflections"
       />
-      <div style={{ width: '100vw', height: '100vh', overflow: 'hidden', margin: 0, padding: 0 }}>
+      <NavigationNew />
+      <div style={{ width: '100vw', height: 'calc(100vh - 80px)', overflow: 'hidden', margin: 0, padding: 0 }}>
         <iframe
           src="/principal-voice-book.html"
           style={{

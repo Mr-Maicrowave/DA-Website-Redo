@@ -1,11 +1,12 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { Calendar, Clock, User, Search, ArrowRight, BookOpen } from 'lucide-react';
+import { motion, useInView } from 'framer-motion';
 import NavigationNew from '@/components/NavigationNew';
 import FooterNew from '@/components/FooterNew';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
 import SEO from '@/components/SEO';
 import CTASection from '@/components/CTASection';
 
@@ -23,6 +24,66 @@ interface Article {
   tags: string[];
 }
 
+const C = {
+  navy: '#0A1B34',
+  navy2: '#0F2244',
+  gold: '#D4AF37',
+  goldL: '#F0C86A',
+  cream: '#F7F4EE',
+  cream2: '#EDE5D4',
+  white: '#FAFAF8',
+  muted: 'rgba(10,27,52,0.55)',
+};
+
+const serif = "'Cormorant Garamond', Georgia, serif";
+const sans = "'DM Sans', 'Inter', sans-serif";
+const goldRule = `linear-gradient(90deg,transparent,${C.gold},transparent)`;
+const easeOut = [0.22, 1, 0.36, 1] as const;
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 34 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.75, ease: easeOut } },
+};
+
+const stagger = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.1, delayChildren: 0.05 } },
+};
+
+const RevealGrid = ({ children, style }: { children: ReactNode; style: CSSProperties }) => {
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: '-60px' });
+  return (
+    <motion.div ref={ref} variants={stagger} initial="hidden" animate={inView ? 'visible' : 'hidden'} style={style}>
+      {children}
+    </motion.div>
+  );
+};
+
+const tagStyle = (light = false): CSSProperties => ({
+  display: 'inline-flex',
+  alignItems: 'center',
+  border: `1px solid ${light ? 'rgba(212,175,55,0.32)' : 'rgba(212,175,55,0.38)'}`,
+  borderRadius: 999,
+  color: light ? C.goldL : C.gold,
+  fontFamily: sans,
+  fontSize: '0.68rem',
+  fontWeight: 700,
+  letterSpacing: '0.12em',
+  lineHeight: 1,
+  padding: '0.48rem 0.7rem',
+  textTransform: 'uppercase',
+});
+
+const metaStyle = (light = false): CSSProperties => ({
+  display: 'inline-flex',
+  alignItems: 'center',
+  gap: 6,
+  color: light ? 'rgba(250,250,248,0.62)' : C.muted,
+  fontFamily: sans,
+  fontSize: '0.78rem',
+});
+
 const Articles = () => {
   const [articles, setArticles] = useState<Article[]>([]);
   const [filteredArticles, setFilteredArticles] = useState<Article[]>([]);
@@ -33,7 +94,7 @@ const Articles = () => {
   useEffect(() => {
     const fetchArticles = async () => {
       try {
-        const response = await fetch('/articles/articles-index.json');
+        const response = await fetch('/Articles/articles-index.json');
         const data = await response.json();
         const nonNewsletter = (data as Article[]).filter(a => a.category !== 'Newsletter');
         const cleaned = nonNewsletter.filter(a => a.slug !== 'high-achiever');
@@ -73,195 +134,301 @@ const Articles = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-stone-50 via-white to-stone-50">
+      <div style={{ minHeight: '100vh', background: C.navy, color: C.white, fontFamily: sans }}>
         <NavigationNew />
-        <div className="flex items-center justify-center min-h-[60vh]">
-          <div className="text-center">
-            <div className="w-12 h-12 border-4 border-stone-200 border-t-brand-navy rounded-full animate-spin mx-auto mb-4" />
-            <p className="text-stone-500">Loading articles...</p>
+        <div style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center', paddingTop: 120 }}>
+          <div style={{ textAlign: 'center' }}>
+            <div
+              style={{
+                width: 48,
+                height: 48,
+                borderRadius: '50%',
+                border: `4px solid rgba(250,250,248,0.18)`,
+                borderTopColor: C.gold,
+                margin: '0 auto 18px',
+                animation: 'spin 0.9s linear infinite',
+              }}
+            />
+            <p style={{ color: 'rgba(250,250,248,0.72)', margin: 0 }}>Loading articles...</p>
           </div>
         </div>
+        <style>{'@keyframes spin{to{transform:rotate(360deg)}}'}</style>
         <FooterNew />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-stone-50 via-white to-stone-50">
+    <div style={{ minHeight: '100vh', background: C.cream, color: C.navy, fontFamily: sans }}>
       <SEO
         title="Articles & Insights"
         description="Expert educational guidance, ATAR strategies, and proven methodologies for academic excellence from DA Tuition."
         canonicalUrl="/articles"
       />
       <NavigationNew />
+      <style>{`
+        @media (max-width: 640px) {
+          [data-featured-article] { padding-right: 4.75rem !important; }
+        }
+      `}</style>
 
-      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 mt-[120px]">
-        {/* Hero */}
-        <section className="relative rounded-[2.5rem] overflow-hidden shadow-2xl mx-4 sm:mx-0 mt-6 mb-20">
-          <div className="absolute inset-0">
-            <img src="/images/v3/teacher_screen.jpg" alt="DA Tuition Articles" className="w-full h-full object-cover" />
-            <div className="absolute inset-0 bg-brand-navy/80 mix-blend-multiply" />
-            <div className="absolute inset-0 bg-gradient-to-tr from-brand-navy/90 via-amber-500/20 to-orange-500/30 mix-blend-overlay" />
-            <div className="absolute inset-0 bg-gradient-to-t from-brand-navy/90 via-brand-navy/60 to-transparent" />
-          </div>
-          <div className="relative z-10 max-w-4xl mx-auto text-center py-12 sm:py-16 lg:py-24 px-6">
-            <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 py-2 mb-6">
-              <BookOpen className="w-4 h-4 text-amber-300" />
-              <span className="text-sm text-white/80 font-medium">{articles.length} Articles Published</span>
+      <main style={{ maxWidth: 1400, margin: '0 auto', padding: '132px clamp(1rem,3vw,2rem) 0' }}>
+        <section
+          style={{
+            position: 'relative',
+            overflow: 'hidden',
+            background: C.navy,
+            borderRadius: 18,
+            marginBottom: 'clamp(3.5rem,7vw,6rem)',
+            padding: 'clamp(4.5rem,9vw,7.5rem) clamp(1.25rem,5vw,5rem)',
+          }}
+        >
+          <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(circle at 50% 38%, rgba(212,175,55,0.12), transparent 44%)' }} />
+          <div style={{ position: 'absolute', inset: '0 0 auto', height: 1, background: goldRule }} />
+          <div style={{ position: 'absolute', inset: 'auto 0 0', height: 1, background: goldRule }} />
+          <div style={{ position: 'relative', zIndex: 1, maxWidth: 860, margin: '0 auto', textAlign: 'center' }}>
+            <div style={{ ...tagStyle(true), gap: 8, marginBottom: 24 }}>
+              <BookOpen size={15} />
+              {articles.length} Articles Published
             </div>
-            <h1 className="text-3xl sm:text-4xl lg:text-7xl font-extrabold text-white mb-6 tracking-tight leading-tight drop-shadow-lg">
-              Articles & <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-amber-400">Insights</span>
+            <h1
+              style={{
+                margin: '0 0 22px',
+                color: C.white,
+                fontFamily: serif,
+                fontSize: 'clamp(3.4rem,8vw,6rem)',
+                fontWeight: 500,
+                letterSpacing: '-0.03em',
+                lineHeight: 0.95,
+                textWrap: 'balance',
+              }}
+            >
+              Articles &{' '}
+              <em style={{ color: C.gold, fontStyle: 'italic', fontWeight: 400 }}>Insights</em>
             </h1>
-            <p className="text-xl text-white/95 mb-6 max-w-2xl mx-auto drop-shadow-md font-medium">
+            <p style={{ maxWidth: 660, margin: '0 auto', color: 'rgba(250,250,248,0.76)', fontSize: '1.12rem', lineHeight: 1.75 }}>
               Expert educational guidance, ATAR strategies, and proven methodologies for academic excellence.
             </p>
           </div>
         </section>
 
-        {/* ── Featured Hero Article ── */}
         {heroArticle && (
-          <section className="mb-12 px-4 sm:px-0">
-            <Link to={`/articles/${heroArticle.slug}`} className="block group">
-              <div className="relative bg-brand-navy rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-2xl">
-                <div className="absolute inset-0 opacity-10">
-                  <div className="absolute top-0 right-0 w-96 h-96 bg-amber-500 rounded-full blur-[100px]" />
-                  <div className="absolute bottom-0 left-0 w-64 h-64 bg-brand-blue rounded-full blur-[80px]" />
-                </div>
-                <div className="relative z-10 p-8 sm:p-10 lg:p-14">
-                  <div className="flex items-center gap-3 mb-6">
-                    <Badge className="bg-amber-400/20 text-amber-300 border-amber-400/30 text-xs">Featured</Badge>
-                    <Badge className="bg-white/10 text-white/70 border-white/20 text-xs">{heroArticle.category}</Badge>
-                    <span className="text-xs text-white/50 flex items-center gap-1"><Clock className="w-3 h-3" /> {heroArticle.readTime}</span>
+          <section style={{ marginBottom: 48 }}>
+            <Link to={`/articles/${heroArticle.slug}`} style={{ color: 'inherit', display: 'block', textDecoration: 'none' }}>
+              <motion.article
+                data-featured-article
+                whileHover={{ y: -4 }}
+                transition={{ duration: 0.2 }}
+                style={{
+                  position: 'relative',
+                  overflow: 'hidden',
+                  background: C.navy2,
+                  border: '1px solid rgba(212,175,55,0.18)',
+                  borderRadius: 14,
+                  padding: 'clamp(2rem,5vw,4rem)',
+                }}
+              >
+                <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(circle at 84% 12%, rgba(212,175,55,0.11), transparent 34%)' }} />
+                <div style={{ position: 'relative', zIndex: 1 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap', marginBottom: 26 }}>
+                    <span style={tagStyle(true)}>Featured</span>
+                    <span style={tagStyle(true)}>{heroArticle.category}</span>
+                    <span style={metaStyle(true)}><Clock size={13} /> {heroArticle.readTime}</span>
                   </div>
-                  <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white mb-4 leading-tight max-w-3xl group-hover:text-amber-100 transition-colors">
+                  <h2
+                    style={{
+                      maxWidth: 860,
+                      margin: '0 0 18px',
+                      color: C.white,
+                      fontFamily: serif,
+                      fontSize: 'clamp(2rem,5vw,4rem)',
+                      fontWeight: 500,
+                      letterSpacing: '-0.02em',
+                      lineHeight: 1.04,
+                    }}
+                  >
                     {heroArticle.title}
                   </h2>
-                  <p className="text-white/70 text-base sm:text-lg max-w-2xl mb-6 leading-relaxed">{heroArticle.excerpt}</p>
-                  <div className="flex items-center gap-6">
-                    <span className="text-xs text-white/50 flex items-center gap-1"><User className="w-3 h-3" /> {heroArticle.author}</span>
-                    <span className="text-xs text-white/50 flex items-center gap-1"><Calendar className="w-3 h-3" /> {new Date(heroArticle.publishedDate).toLocaleDateString()}</span>
-                    <span className="inline-flex items-center text-sm font-semibold text-amber-300 group-hover:text-amber-200 transition-colors ml-auto">
-                      Read Article <ArrowRight className="ml-1.5 w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  <p style={{ maxWidth: 760, margin: '0 0 30px', color: 'rgba(250,250,248,0.7)', fontSize: '1.05rem', lineHeight: 1.75 }}>
+                    {heroArticle.excerpt}
+                  </p>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 20, flexWrap: 'wrap' }}>
+                    <span style={metaStyle(true)}><User size={13} /> {heroArticle.author}</span>
+                    <span style={metaStyle(true)}><Calendar size={13} /> {new Date(heroArticle.publishedDate).toLocaleDateString()}</span>
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, color: C.goldL, fontFamily: serif, fontSize: '1.2rem', fontStyle: 'italic', marginLeft: 'auto' }}>
+                      Read Article <ArrowRight size={17} />
                     </span>
                   </div>
                 </div>
-              </div>
+              </motion.article>
             </Link>
           </section>
         )}
 
-        {/* ── Secondary Featured (2-3 col, text-only cards with accent) ── */}
         {secondaryFeatured.length > 0 && (
-          <section className="mb-16 px-4 sm:px-0">
-            <div className="grid md:grid-cols-3 gap-6">
+          <section style={{ marginBottom: 'clamp(3.5rem,6vw,5rem)' }}>
+            <RevealGrid style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(260px,1fr))', gap: 24 }}>
               {secondaryFeatured.map((article) => (
-                <Link key={article.id} to={`/articles/${article.slug}`} className="block group">
-                  <div className="relative h-full bg-white rounded-2xl border border-stone-200 overflow-hidden transition-all duration-300 hover:shadow-xl hover:border-stone-300">
-                    <div className="h-1.5 bg-gradient-to-r from-brand-navy to-brand-blue" />
-                    <div className="p-6">
-                      <div className="flex items-center gap-2 mb-4">
-                        <Badge className="bg-stone-100 text-stone-600 border-stone-200/60 text-[10px] font-medium">{article.category}</Badge>
-                        <span className="text-[10px] text-stone-400 ml-auto">{article.readTime}</span>
+                <motion.div key={article.id} variants={fadeUp}>
+                  <Link to={`/articles/${article.slug}`} style={{ color: 'inherit', display: 'block', height: '100%', textDecoration: 'none' }}>
+                    <motion.article
+                      whileHover={{ y: -4 }}
+                      transition={{ duration: 0.2 }}
+                      style={{ height: '100%', background: C.white, border: `1px solid rgba(212,175,55,0.16)`, borderRadius: 12, overflow: 'hidden' }}
+                    >
+                      <div style={{ height: 1, background: C.gold }} />
+                      <div style={{ padding: 26 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 18 }}>
+                          <span style={tagStyle()}>{article.category}</span>
+                          <span style={{ ...metaStyle(), marginLeft: 'auto', fontSize: '0.72rem' }}>{article.readTime}</span>
+                        </div>
+                        <h3 style={{ margin: '0 0 10px', fontFamily: serif, fontSize: '1.55rem', fontWeight: 600, lineHeight: 1.12, color: C.navy }}>
+                          {article.title}
+                        </h3>
+                        <p style={{ margin: '0 0 20px', color: C.muted, fontSize: '0.95rem', lineHeight: 1.65 }}>
+                          {article.excerpt}
+                        </p>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 14, borderTop: `1px solid ${C.cream2}`, paddingTop: 16 }}>
+                          <span style={metaStyle()}>{article.author}</span>
+                          <span style={{ color: C.gold, fontFamily: serif, fontStyle: 'italic', fontWeight: 600 }}>Read <ArrowRight size={13} style={{ display: 'inline', verticalAlign: -2 }} /></span>
+                        </div>
                       </div>
-                      <h3 className="text-lg font-bold text-stone-900 mb-2 group-hover:text-brand-navy transition-colors leading-snug line-clamp-2">
-                        {article.title}
-                      </h3>
-                      <p className="text-stone-500 text-sm leading-relaxed mb-4 line-clamp-3">{article.excerpt}</p>
-                      <div className="flex items-center justify-between text-xs text-stone-400 pt-3 border-t border-stone-100">
-                        <span>{article.author}</span>
-                        <span className="inline-flex items-center font-semibold text-brand-navy/70 group-hover:text-brand-navy transition-colors">
-                          Read <span className="ml-1 group-hover:translate-x-0.5 transition-transform">&rarr;</span>
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </Link>
+                    </motion.article>
+                  </Link>
+                </motion.div>
               ))}
-            </div>
+            </RevealGrid>
           </section>
         )}
 
-        {/* ── Divider ── */}
-        <div className="my-16 flex items-center gap-4 px-4 sm:px-0">
-          <div className="flex-1 h-px bg-gradient-to-r from-transparent via-stone-200 to-transparent" />
-          <span className="text-xs text-stone-400 font-medium uppercase tracking-widest">Browse All</span>
-          <div className="flex-1 h-px bg-gradient-to-r from-transparent via-stone-200 to-transparent" />
+        <div style={{ margin: 'clamp(3.5rem,6vw,5rem) 0 34px', textAlign: 'center' }}>
+          <div style={{ width: 52, height: 1, background: goldRule, margin: '0 auto 18px' }} />
+          <span style={{ color: C.gold, fontFamily: sans, fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.22em', textTransform: 'uppercase' }}>
+            Browse All
+          </span>
         </div>
 
-        {/* ── Search and Category Filter ── */}
-        <section className="mb-10 px-4 sm:px-0">
-          <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-            <div className="relative w-full sm:w-80">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-stone-400" />
+        <section style={{ marginBottom: 40 }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 18, flexWrap: 'wrap' }}>
+            <div style={{ position: 'relative', width: 'min(100%, 360px)' }}>
+              <Search size={17} style={{ position: 'absolute', left: 15, top: '50%', transform: 'translateY(-50%)', color: C.gold }} />
               <Input
                 type="text"
                 placeholder="Search articles..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 bg-white border-stone-200 rounded-xl focus:border-brand-navy/30"
+                onFocus={(e) => {
+                  e.currentTarget.style.borderColor = C.gold;
+                  e.currentTarget.style.boxShadow = '0 0 0 3px rgba(212,175,55,0.18)';
+                }}
+                onBlur={(e) => {
+                  e.currentTarget.style.borderColor = 'rgba(212,175,55,0.22)';
+                  e.currentTarget.style.boxShadow = 'none';
+                }}
+                style={{
+                  height: 46,
+                  width: '100%',
+                  background: C.cream,
+                  border: '1px solid rgba(212,175,55,0.22)',
+                  borderRadius: 12,
+                  color: C.navy,
+                  fontFamily: sans,
+                  paddingLeft: 42,
+                }}
               />
             </div>
-            <div className="flex items-center gap-2 flex-wrap">
-              {categories.map((category) => (
-                <button
-                  key={category}
-                  onClick={() => setSelectedCategory(category)}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                    selectedCategory === category
-                      ? 'bg-brand-navy text-white shadow-sm'
-                      : 'bg-stone-100 text-stone-600 hover:bg-stone-200'
-                  }`}
-                >
-                  {category}
-                </button>
-              ))}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+              {categories.map((category) => {
+                const isActive = selectedCategory === category;
+                return (
+                  <button
+                    key={category}
+                    onClick={() => setSelectedCategory(category)}
+                    type="button"
+                    style={{
+                      minHeight: 42,
+                      border: `1px solid ${isActive ? C.navy : 'rgba(212,175,55,0.35)'}`,
+                      borderRadius: 999,
+                      background: isActive ? C.navy : C.cream,
+                      color: isActive ? C.white : C.navy,
+                      cursor: 'pointer',
+                      fontFamily: sans,
+                      fontSize: '0.88rem',
+                      fontWeight: 700,
+                      padding: '0.65rem 1rem',
+                    }}
+                  >
+                    {category}
+                  </button>
+                );
+              })}
             </div>
           </div>
         </section>
 
-        {/* ── Articles Grid (clean text-only cards) ── */}
-        <section className="mb-16 px-4 sm:px-0">
+        <section style={{ marginBottom: 'clamp(4rem,7vw,6rem)' }}>
           {filteredArticles.length === 0 ? (
-            <div className="text-center py-16">
-              <p className="text-stone-400 text-lg mb-2">No articles found</p>
-              <p className="text-stone-400 text-sm mb-6">Try adjusting your search terms or filter criteria</p>
-              <Button onClick={() => { setSearchTerm(''); setSelectedCategory('All'); }} variant="outline" className="rounded-xl">
+            <div style={{ textAlign: 'center', padding: '4.5rem 1rem' }}>
+              <p style={{ margin: '0 0 8px', color: C.navy, fontFamily: serif, fontSize: 'clamp(2rem,5vw,3rem)', fontWeight: 500 }}>
+                No articles found
+              </p>
+              <p style={{ margin: '0 0 28px', color: C.muted }}>Try adjusting your search terms or filter criteria.</p>
+              <Button
+                onClick={() => { setSearchTerm(''); setSelectedCategory('All'); }}
+                variant="outline"
+                style={{ borderColor: C.gold, borderRadius: 999, color: C.navy, fontFamily: sans, fontWeight: 700 }}
+              >
                 Clear Filters
               </Button>
             </div>
           ) : (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <RevealGrid style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(280px,1fr))', gap: 24 }}>
               {filteredArticles.map((article) => (
-                <Link key={article.id} to={`/articles/${article.slug}`} className="block group">
-                  <div className="relative h-full bg-white rounded-xl border border-stone-200/80 overflow-hidden transition-all duration-300 hover:shadow-lg hover:border-stone-300">
-                    <div className="h-1 bg-gradient-to-r from-brand-navy to-brand-blue" />
-                    <div className="p-5 md:p-6 flex flex-col h-full">
-                      <div className="flex items-center justify-between mb-3">
-                        <Badge className="bg-stone-100 text-stone-500 border-stone-200/60 text-[10px] font-medium">{article.category}</Badge>
-                        <span className="text-[11px] text-stone-400">{article.readTime}</span>
+                <motion.div key={article.id} variants={fadeUp}>
+                  <Link to={`/articles/${article.slug}`} style={{ color: 'inherit', display: 'block', height: '100%', textDecoration: 'none' }}>
+                    <motion.article
+                      whileHover={{ y: -4 }}
+                      transition={{ duration: 0.2 }}
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        height: '100%',
+                        background: C.white,
+                        border: '1px solid rgba(212,175,55,0.2)',
+                        borderRadius: 12,
+                        overflow: 'hidden',
+                      }}
+                    >
+                      <div style={{ height: 1, background: C.gold }} />
+                      <div style={{ display: 'flex', flexDirection: 'column', flex: 1, padding: 24 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, marginBottom: 16 }}>
+                          <span style={tagStyle()}>{article.category}</span>
+                          <span style={{ ...metaStyle(), fontSize: '0.72rem' }}>{article.readTime}</span>
+                        </div>
+                        <h3 style={{ margin: '0 0 10px', color: C.navy, fontFamily: serif, fontSize: '1.48rem', fontWeight: 600, lineHeight: 1.14 }}>
+                          {article.title}
+                        </h3>
+                        <p style={{ flex: 1, margin: '0 0 18px', color: C.muted, fontSize: '0.95rem', lineHeight: 1.65 }}>
+                          {article.excerpt}
+                        </p>
+                        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 16 }}>
+                          {article.tags.slice(0, 2).map((tag) => (
+                            <span key={tag} style={{ color: C.muted, fontSize: '0.72rem' }}>#{tag}</span>
+                          ))}
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, borderTop: `1px solid ${C.cream2}`, paddingTop: 14 }}>
+                          <span style={metaStyle()}><User size={13} /> {article.author}</span>
+                          <span style={{ ...metaStyle(), fontSize: '0.72rem' }}>{new Date(article.publishedDate).toLocaleDateString()}</span>
+                        </div>
                       </div>
-                      <h3 className="text-lg font-bold text-stone-900 mb-2 line-clamp-2 group-hover:text-brand-navy transition-colors leading-snug">
-                        {article.title}
-                      </h3>
-                      <p className="text-stone-500 text-sm mb-4 line-clamp-2 flex-grow">{article.excerpt}</p>
-                      <div className="flex items-center gap-2 flex-wrap mb-3">
-                        {article.tags.slice(0, 2).map((tag) => (
-                          <span key={tag} className="text-[10px] text-stone-400 bg-stone-50 px-2 py-0.5 rounded-full">#{tag}</span>
-                        ))}
-                      </div>
-                      <div className="flex items-center justify-between text-xs text-stone-400 pt-3 border-t border-stone-100">
-                        <span className="flex items-center gap-1"><User className="w-3 h-3" /> {article.author}</span>
-                        <span>{new Date(article.publishedDate).toLocaleDateString()}</span>
-                      </div>
-                    </div>
-                  </div>
-                </Link>
+                    </motion.article>
+                  </Link>
+                </motion.div>
               ))}
-            </div>
+            </RevealGrid>
           )}
         </section>
-      </div>
+      </main>
 
       <CTASection
         heading="Need Personalized Educational Support?"

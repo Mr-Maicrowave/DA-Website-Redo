@@ -45,7 +45,7 @@ const ArticleView = () => {
 
       try {
 
-        const indexResponse = await fetch('/articles/articles-index.json');
+        const indexResponse = await fetch('/Articles/articles-index.json');
         const articles: Article[] = await indexResponse.json();
         const foundArticle = articles.find(article => article.slug === slug);
 
@@ -57,7 +57,7 @@ const ArticleView = () => {
 
         setArticle(foundArticle);
 
-        const contentResponse = await fetch(`/articles/${foundArticle.slug}.md`);
+        const contentResponse = await fetch(`/Articles/${foundArticle.slug}.md`);
         const markdownContent = await contentResponse.text();
         setContent(markdownContent);
 

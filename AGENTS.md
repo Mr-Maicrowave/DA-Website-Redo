@@ -83,3 +83,5 @@
 
 > Resume context: Read this section + git diff + recent session log to reconstruct state.
 <!-- compaction-checkpoint-end -->
+
+## Imported Claude Cowork project instructions

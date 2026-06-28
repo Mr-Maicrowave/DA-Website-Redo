@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { Button } from '@/components/ui/button';
 import { Menu, X, ChevronDown } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { HoverCard, HoverCardTrigger, HoverCardContent } from "@/components/ui/hover-card";
@@ -86,20 +85,20 @@ const NavigationNew = () => {
   };
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-[60] p-4 pointer-events-none transition-all duration-300">
-      <nav className="w-full max-w-7xl mx-auto pointer-events-auto bg-white/80 backdrop-blur-md shadow-[0_8px_30px_rgb(0,0,0,0.08)] border border-white/40 rounded-2xl">
-        <div className="px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center py-3 gap-6">
+    <div className="fixed top-0 left-0 right-0 z-[60] p-2 pointer-events-none transition-all duration-300">
+      <nav className="w-full lg:w-fit lg:max-w-[calc(100vw-2rem)] mx-auto pointer-events-auto bg-[#fffaf0]/95 backdrop-blur-md shadow-[0_8px_24px_rgba(10,27,52,0.10)] border border-brand-gold/25 rounded-2xl">
+        <div className="px-4 sm:px-6 lg:px-5">
+          <div className="flex items-center justify-between lg:justify-center py-3 gap-5">
             {/* Logo */}
             <div className="flex items-center shrink-0">
               <Link to="/" className="flex items-center gap-2 group">
                 <img
-                  src="/lovable-uploads/7692e107-bde1-4906-b047-2458fe6a81ca.png"
-                  alt="DA Tuition Logo"
-                  className="h-10 w-auto group-hover:scale-105 transition-transform duration-300"
+                  src="/images/da-logo.png"
+                  alt="DA Tuition"
+                  className="h-12 w-12 object-contain drop-shadow-sm group-hover:scale-105 transition-transform duration-300"
                 />
                 <span className="text-xl font-extrabold tracking-tight text-brand-navy whitespace-nowrap">
-                  DA<span className="text-brand-blue">Tuition</span>
+                  DA <span className="text-brand-gold">Tuition</span>
                 </span>
               </Link>
             </div>
@@ -254,6 +253,7 @@ const NavigationNew = () => {
             <div className="lg:hidden ml-auto">
               <button
                 onClick={() => setIsOpen(!isOpen)}
+                aria-label={isOpen ? "Close menu" : "Open menu"}
                 className="text-brand-midnight/80 hover:text-brand-blue-dark transition-colors"
               >
                 {isOpen ? <X size={24} /> : <Menu size={24} />}
@@ -337,7 +337,7 @@ const NavigationNew = () => {
               </div>
             </div>
           )}
-        </div>
+               </div>
       </nav>
     </div>
   );

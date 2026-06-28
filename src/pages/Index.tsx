@@ -17,6 +17,7 @@ import Confetti, { fireConfetti } from '@/components/animations/Confetti';
 import SEO from '@/components/SEO';
 import StatsSection from '@/components/StatsSection';
 import { siteStats } from '@/data/site-stats';
+import DoorEyecatch from '@/components/DoorEyecatch';
 import { organizationSchema, localBusinessSchema } from '@/lib/seo/schema';
 
 // ─── Design tokens ────────────────────────────────────────────
@@ -238,6 +239,7 @@ const HeroSection = () => (
         <div style={{ position: 'relative' }}>
           <div style={{ position: 'relative', width: 'clamp(190px, 22vw, 294px)', margin: '0 auto' }}>
             <img
+              id="hero-logo"
               src="/images/da-logo.png"
               alt="DA Tuition"
               style={{
@@ -4611,6 +4613,7 @@ const ClosingCTASection = () => {
 // ══════════════════════════════════════════════════════════════
 const Index = () => (
   <div style={{ fontFamily: sans, overflowX: 'hidden' }}>
+    <DoorEyecatch />
     <Confetti />
     <SEO canonicalUrl="/" jsonLd={[organizationSchema(), localBusinessSchema(siteStats.reviewCount)]} />
     <NavigationNew />
