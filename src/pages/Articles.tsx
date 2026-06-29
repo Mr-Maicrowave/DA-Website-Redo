@@ -431,8 +431,8 @@ const Articles = () => {
       </main>
 
       <CTASection
-        heading="Need Personalized Educational Support?"
-        subheading="Our experienced tutors provide personalized guidance tailored to your child's specific learning needs."
+        heading="Need guidance for your child?"
+        subheading="Book an interview and we will help you find the right starting point."
         className="bg-brand-navy"
       />
 

@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import SEO from '@/components/SEO';
 import NavigationNew from '@/components/NavigationNew';
+import FooterNew from '@/components/FooterNew';
 
 const cardTones = [
   'linear-gradient(180deg, #f7fbff, #e8f2ff)',
@@ -272,7 +273,7 @@ const HSCExcellence = () => {
             Excellence program is built for students who want to walk out with their best possible result.
           </p>
           <div className="hsc-hero-btns">
-            <Link className="hsc-btn-navy" to="/book-interview">Secure a Spot - Limited Places</Link>
+            <Link className="hsc-btn-navy" to="/book-interview">Book an Interview</Link>
           </div>
           <div className="hsc-hero-badge">
             <div>
@@ -407,18 +408,14 @@ const HSCExcellence = () => {
             and find out exactly what is possible for your child's ATAR.
           </p>
           <div className="hsc-cta-btns">
-            <Link className="hsc-btn-gold" to="/book-interview">Secure a Spot - Limited Places Available</Link>
-            <Link className="hsc-btn-outline-cta" to="/book-interview">Book an Interview Now</Link>
+              <Link className="hsc-btn-gold" to="/book-interview">Book an Interview</Link>
+              <Link className="hsc-btn-outline-cta" to="/success-stories">See Results</Link>
           </div>
-          <p className="hsc-cta-note">No entrance exam &nbsp;&middot;&nbsp; No lock-in contract &nbsp;&middot;&nbsp; Results guaranteed or additional support at no cost</p>
+          <p className="hsc-cta-note">No entrance exam &nbsp;&middot;&nbsp; Honest placement advice &nbsp;&middot;&nbsp; Limited spots each term</p>
         </div>
       </main>
 
-      <footer className="hsc-footer">
-        <div className="hsc-footer-logo">DA <span>Tuition</span></div>
-        <p>&copy; 2025 DA Tuition &middot; Sydney, Australia</p>
-        <p>hello@datuition.com.au</p>
-      </footer>
+      <FooterNew />
     </div>
   );
 };

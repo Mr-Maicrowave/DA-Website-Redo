@@ -1,11 +1,18 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Menu, X, ChevronDown } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { HoverCard, HoverCardTrigger, HoverCardContent } from "@/components/ui/hover-card";
 
 const NavigationNew = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 60);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
   const programsItems = [
     {
@@ -79,40 +86,54 @@ const NavigationNew = () => {
     }
   };
 
+  const linkClass = "px-2 xl:px-3 py-1.5 text-sm xl:text-[0.9rem] text-brand-midnight hover:text-brand-blue-dark transition-colors whitespace-nowrap";
+
   return (
-    <div className="fixed top-0 left-0 right-0 z-[60] p-2 pointer-events-none transition-all duration-300">
-      <nav className="w-full lg:w-fit lg:max-w-[calc(100vw-2rem)] mx-auto pointer-events-auto bg-[#fffaf0]/95 backdrop-blur-md shadow-[0_8px_24px_rgba(10,27,52,0.10)] border border-brand-gold/25 rounded-2xl">
-        <div className="px-4 sm:px-6 lg:px-5">
-          <div className="flex items-center justify-between lg:justify-center py-3 gap-5">
+    <div className="fixed top-0 left-0 right-0 z-[60]">
+      <nav
+        className="w-full backdrop-blur-xl backdrop-saturate-150 border-b border-white/60 transition-shadow duration-300"
+        style={{
+          background: scrolled
+            ? 'linear-gradient(135deg, rgba(247,244,238,0.92), rgba(255,250,240,0.86) 58%, rgba(240,200,106,0.18))'
+            : 'linear-gradient(135deg, rgba(255,255,255,0.78), rgba(247,244,238,0.72) 58%, rgba(240,200,106,0.16))',
+          boxShadow: scrolled
+            ? '0 10px 30px rgba(10,27,52,0.14), inset 0 1px 0 rgba(255,255,255,0.8)'
+            : '0 2px 12px rgba(10,27,52,0.08), inset 0 1px 0 rgba(255,255,255,0.72)',
+        }}
+      >
+        <div className="px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between py-2.5 gap-4">
+
             {/* Logo */}
             <div className="flex items-center shrink-0">
               <Link to="/" className="flex items-center gap-2 group">
                 <img
                   src="/images/da-logo.png"
                   alt="DA Tuition"
-                  className="h-12 w-12 object-contain drop-shadow-sm group-hover:scale-105 transition-transform duration-300"
+                  className="h-9 w-9 object-contain drop-shadow-sm group-hover:scale-105 transition-transform duration-300"
                 />
-                <span className="text-xl font-extrabold tracking-tight text-brand-navy whitespace-nowrap">
-                  DA <span className="text-brand-gold">Tuition</span>
+                <span
+                  className="text-[1.08rem] font-bold text-brand-navy whitespace-nowrap leading-none"
+                  style={{ fontFamily: "'Libre Baskerville', Georgia, serif", letterSpacing: '-0.01em' }}
+                >
+                  DA <span className="text-brand-gold italic font-bold">Tuition</span>
                 </span>
               </Link>
             </div>
 
-            {/* Desktop Navigation */}
-            <div className="hidden lg:flex items-center">
-              <div className="flex gap-1 items-center">
-                <Link to="/" className="px-2 xl:px-3 py-2 text-sm xl:text-base text-brand-midnight/80 hover:text-brand-blue-dark transition-colors whitespace-nowrap">
-                  Home
-                </Link>
+            {/* Desktop Navigation – centred */}
+            <div className="hidden lg:flex items-center flex-1 justify-center">
+              <div className="flex gap-0.5 items-center">
+                <Link to="/" className={linkClass}>Home</Link>
 
-                {/* Programs Dropdown */}
+                {/* Programs */}
                 <HoverCard openDelay={120} closeDelay={180}>
                   <HoverCardTrigger asChild>
-                    <button type="button" className="px-2 xl:px-3 py-2 text-sm xl:text-base text-brand-midnight/80 hover:text-brand-blue-dark transition-colors inline-flex items-center gap-1 whitespace-nowrap">
-                      Programs <ChevronDown className="h-4 w-4" />
+                    <button type="button" className={`${linkClass} inline-flex items-center gap-0.5`}>
+                      Programs <ChevronDown className="h-3.5 w-3.5" />
                     </button>
                   </HoverCardTrigger>
-                  <HoverCardContent align="center" side="bottom" sideOffset={4} className="p-0 w-auto">
+                  <HoverCardContent align="center" side="bottom" sideOffset={6} className="p-0 w-auto">
                     <ul className="grid w-[400px] gap-3 p-4">
                       {programsItems.map((item) => (
                         <li key={item.href}>
@@ -121,9 +142,7 @@ const NavigationNew = () => {
                             className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
                           >
                             <div className="text-sm font-medium leading-none">{item.title}</div>
-                            <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                              {item.description}
-                            </p>
+                            <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">{item.description}</p>
                           </Link>
                         </li>
                       ))}
@@ -131,14 +150,14 @@ const NavigationNew = () => {
                   </HoverCardContent>
                 </HoverCard>
 
-                {/* Subjects Dropdown */}
+                {/* Subjects */}
                 <HoverCard openDelay={120} closeDelay={180}>
                   <HoverCardTrigger asChild>
-                    <button type="button" className="px-2 xl:px-3 py-2 text-sm xl:text-base text-brand-midnight/80 hover:text-brand-blue-dark transition-colors inline-flex items-center gap-1 whitespace-nowrap">
-                      Subjects <ChevronDown className="h-4 w-4" />
+                    <button type="button" className={`${linkClass} inline-flex items-center gap-0.5`}>
+                      Subjects <ChevronDown className="h-3.5 w-3.5" />
                     </button>
                   </HoverCardTrigger>
-                  <HoverCardContent align="center" side="bottom" sideOffset={4} className="p-0 w-auto">
+                  <HoverCardContent align="center" side="bottom" sideOffset={6} className="p-0 w-auto">
                     <ul className="grid w-[350px] gap-3 p-4">
                       {subjectsItems.map((item) => (
                         <li key={item.href}>
@@ -147,9 +166,7 @@ const NavigationNew = () => {
                             className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
                           >
                             <div className="text-sm font-medium leading-none">{item.title}</div>
-                            <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                              {item.description}
-                            </p>
+                            <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">{item.description}</p>
                           </Link>
                         </li>
                       ))}
@@ -157,14 +174,14 @@ const NavigationNew = () => {
                   </HoverCardContent>
                 </HoverCard>
 
-                {/* About Dropdown */}
+                {/* About */}
                 <HoverCard openDelay={120} closeDelay={180}>
                   <HoverCardTrigger asChild>
-                    <button type="button" className="px-2 xl:px-3 py-2 text-sm xl:text-base text-brand-midnight/80 hover:text-brand-blue-dark transition-colors inline-flex items-center gap-1 whitespace-nowrap">
-                      About <ChevronDown className="h-4 w-4" />
+                    <button type="button" className={`${linkClass} inline-flex items-center gap-0.5`}>
+                      About <ChevronDown className="h-3.5 w-3.5" />
                     </button>
                   </HoverCardTrigger>
-                  <HoverCardContent align="center" side="bottom" sideOffset={4} className="p-0 w-auto">
+                  <HoverCardContent align="center" side="bottom" sideOffset={6} className="p-0 w-auto">
                     <ul className="grid w-[400px] gap-3 p-4">
                       {aboutItems.map((item) => (
                         <li key={item.href}>
@@ -173,9 +190,7 @@ const NavigationNew = () => {
                             className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
                           >
                             <div className="text-sm font-medium leading-none">{item.title}</div>
-                            <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                              {item.description}
-                            </p>
+                            <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">{item.description}</p>
                           </Link>
                         </li>
                       ))}
@@ -183,18 +198,16 @@ const NavigationNew = () => {
                   </HoverCardContent>
                 </HoverCard>
 
-                <Link to="/success-stories" className="px-2 xl:px-3 py-2 text-sm xl:text-base text-brand-midnight/80 hover:text-brand-blue-dark transition-colors whitespace-nowrap">
-                  Success Stories
-                </Link>
+                <Link to="/success-stories" className={linkClass}>Success Stories</Link>
 
-                {/* Resources Dropdown */}
+                {/* Resources */}
                 <HoverCard openDelay={120} closeDelay={180}>
                   <HoverCardTrigger asChild>
-                    <button type="button" className="px-2 xl:px-3 py-2 text-sm xl:text-base text-brand-midnight/80 hover:text-brand-blue-dark transition-colors inline-flex items-center gap-1 whitespace-nowrap">
-                      Resources <ChevronDown className="h-4 w-4" />
+                    <button type="button" className={`${linkClass} inline-flex items-center gap-0.5`}>
+                      Resources <ChevronDown className="h-3.5 w-3.5" />
                     </button>
                   </HoverCardTrigger>
-                  <HoverCardContent align="center" side="bottom" sideOffset={4} className="p-0 w-auto">
+                  <HoverCardContent align="center" side="bottom" sideOffset={6} className="p-0 w-auto">
                     <ul className="grid w-[350px] gap-3 p-4">
                       <li>
                         <Link
@@ -202,9 +215,7 @@ const NavigationNew = () => {
                           className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
                         >
                           <div className="text-sm font-medium leading-none">FAQ</div>
-                          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                            Get answers to common questions
-                          </p>
+                          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">Get answers to common questions</p>
                         </Link>
                       </li>
                       <li>
@@ -213,9 +224,7 @@ const NavigationNew = () => {
                           className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
                         >
                           <div className="text-sm font-medium leading-none">Our Location</div>
-                          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                            Visit us in Canley Heights
-                          </p>
+                          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">Visit us in Canley Heights</p>
                         </Link>
                       </li>
                       <li>
@@ -224,9 +233,7 @@ const NavigationNew = () => {
                           className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
                         >
                           <div className="text-sm font-medium leading-none">Articles & Guides</div>
-                          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                            Educational insights and tips
-                          </p>
+                          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">Educational insights and tips</p>
                         </Link>
                       </li>
                     </ul>
@@ -236,77 +243,81 @@ const NavigationNew = () => {
                 <a
                   href="#contact"
                   onClick={() => handleNavClick('#contact')}
-                  className="px-2 xl:px-3 py-2 text-sm xl:text-base text-brand-midnight/80 hover:text-brand-blue-dark transition-colors whitespace-nowrap"
+                  className={linkClass}
                 >
                   Contact
                 </a>
               </div>
-
             </div>
 
-            {/* Mobile menu button */}
-            <div className="lg:hidden ml-auto">
+            {/* Right: CTA (desktop) + Mobile burger */}
+            <div className="flex items-center gap-3 shrink-0">
+              <Link
+                to="/book-interview"
+                className="hidden lg:inline-flex items-center px-4 py-2 text-sm font-semibold text-white rounded-lg whitespace-nowrap transition-all duration-200 hover:opacity-90 active:scale-95"
+                style={{ background: 'linear-gradient(135deg, #0A1B34 0%, #1a3a6b 100%)' }}
+              >
+                Book Consultation
+              </Link>
+
               <button
                 onClick={() => setIsOpen(!isOpen)}
                 aria-label={isOpen ? "Close menu" : "Open menu"}
-                className="text-brand-midnight/80 hover:text-brand-blue-dark transition-colors"
+                className="lg:hidden text-brand-midnight/80 hover:text-brand-blue-dark transition-colors p-1"
               >
-                {isOpen ? <X size={24} /> : <Menu size={24} />}
+                {isOpen ? <X size={22} /> : <Menu size={22} />}
               </button>
             </div>
           </div>
 
           {/* Mobile Navigation */}
           {isOpen && (
-            <div className="lg:hidden absolute top-[calc(100%+0.5rem)] left-0 w-full bg-white/95 backdrop-blur-lg rounded-2xl shadow-xl border border-white/50 max-h-[80vh] overflow-y-auto">
-              <div className="px-4 py-6 space-y-4">
+            <div className="lg:hidden absolute top-full left-0 w-full bg-brand-ivory/95 backdrop-blur-xl backdrop-saturate-150 shadow-lg border-t border-white/60 max-h-[80vh] overflow-y-auto">
+              <div className="px-4 py-5 space-y-3">
                 <Link
                   to="/"
                   onClick={() => setIsOpen(false)}
-                  className="block text-brand-midnight/80 hover:text-brand-blue-dark font-medium py-3"
+                  className="block text-brand-midnight/80 hover:text-brand-blue-dark font-medium py-2.5 border-b border-brand-gold/10"
                 >
                   Home
                 </Link>
 
-                {/* Mobile Programs Section */}
-                <div className="space-y-2">
-                  <div className="font-semibold text-brand-midnight py-3 border-b">Programs</div>
+                <div className="space-y-1">
+                  <div className="font-semibold text-brand-midnight py-2.5 border-b border-brand-gold/10">Programs</div>
                   {programsItems.map((item) => (
                     <Link
                       key={item.href}
                       to={item.href}
                       onClick={() => setIsOpen(false)}
-                      className="block pl-4 text-brand-midnight/80 hover:text-brand-blue-dark py-3"
+                      className="block pl-4 text-brand-midnight/75 hover:text-brand-blue-dark py-2.5"
                     >
                       {item.title}
                     </Link>
                   ))}
                 </div>
 
-                {/* Mobile Subjects Section */}
-                <div className="space-y-2">
-                  <div className="font-semibold text-brand-midnight py-3 border-b">Subjects</div>
+                <div className="space-y-1">
+                  <div className="font-semibold text-brand-midnight py-2.5 border-b border-brand-gold/10">Subjects</div>
                   {subjectsItems.map((item) => (
                     <Link
                       key={item.href}
                       to={item.href}
                       onClick={() => setIsOpen(false)}
-                      className="block pl-4 text-brand-midnight/80 hover:text-brand-blue-dark py-3"
+                      className="block pl-4 text-brand-midnight/75 hover:text-brand-blue-dark py-2.5"
                     >
                       {item.title}
                     </Link>
                   ))}
                 </div>
 
-                {/* Mobile About Section */}
-                <div className="space-y-2">
-                  <div className="font-semibold text-brand-midnight py-3 border-b">About</div>
+                <div className="space-y-1">
+                  <div className="font-semibold text-brand-midnight py-2.5 border-b border-brand-gold/10">About</div>
                   {aboutItems.map((item) => (
                     <Link
                       key={item.href}
                       to={item.href}
                       onClick={() => setIsOpen(false)}
-                      className="block pl-4 text-brand-midnight/80 hover:text-brand-blue-dark py-3"
+                      className="block pl-4 text-brand-midnight/75 hover:text-brand-blue-dark py-2.5"
                     >
                       {item.title}
                     </Link>
@@ -316,23 +327,40 @@ const NavigationNew = () => {
                 <Link
                   to="/success-stories"
                   onClick={() => setIsOpen(false)}
-                  className="block text-brand-midnight/80 hover:text-brand-blue-dark font-medium py-3"
+                  className="block text-brand-midnight/80 hover:text-brand-blue-dark font-medium py-2.5 border-b border-brand-gold/10"
                 >
                   Success Stories
                 </Link>
 
+                <div className="space-y-1">
+                  <div className="font-semibold text-brand-midnight py-2.5 border-b border-brand-gold/10">Resources</div>
+                  <Link to="/faq" onClick={() => setIsOpen(false)} className="block pl-4 text-brand-midnight/75 hover:text-brand-blue-dark py-2.5">FAQ</Link>
+                  <Link to="/tutoring-canley-heights" onClick={() => setIsOpen(false)} className="block pl-4 text-brand-midnight/75 hover:text-brand-blue-dark py-2.5">Our Location</Link>
+                  <Link to="/articles" onClick={() => setIsOpen(false)} className="block pl-4 text-brand-midnight/75 hover:text-brand-blue-dark py-2.5">Articles & Guides</Link>
+                </div>
+
                 <a
                   href="#contact"
                   onClick={() => handleNavClick('#contact')}
-                  className="block text-brand-midnight/80 hover:text-brand-blue-dark font-medium py-3"
+                  className="block text-brand-midnight/80 hover:text-brand-blue-dark font-medium py-2.5 border-b border-brand-gold/10"
                 >
                   Contact
                 </a>
 
+                <div className="pt-2 pb-1">
+                  <Link
+                    to="/book-interview"
+                    onClick={() => setIsOpen(false)}
+                    className="flex items-center justify-center w-full px-4 py-3 text-sm font-bold text-white rounded-xl"
+                    style={{ background: 'linear-gradient(135deg, #0A1B34 0%, #1a3a6b 100%)' }}
+                  >
+                    Book Consultation
+                  </Link>
+                </div>
               </div>
             </div>
           )}
-               </div>
+        </div>
       </nav>
     </div>
   );

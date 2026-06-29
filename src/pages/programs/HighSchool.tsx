@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import SEO from '@/components/SEO';
 import NavigationNew from '@/components/NavigationNew';
+import FooterNew from '@/components/FooterNew';
 
 const cardTones = ['hs-tone-blue', 'hs-tone-green', 'hs-tone-gold'];
 
@@ -267,7 +268,7 @@ const HighSchool = () => {
             habits, and confidence your child needs to perform well in senior school and beyond.
           </p>
           <div className="hs-hero-btns">
-            <Link className="hs-btn-navy" to="/book-interview">Book a Free Trial Lesson</Link>
+            <Link className="hs-btn-navy" to="/book-interview">Book an Interview</Link>
             <a className="hs-btn-outline" href="#programs">See Our Programs</a>
           </div>
           <div className="hs-hero-badge">
@@ -399,7 +400,7 @@ const HighSchool = () => {
               ))}
             </ul>
             <div className="hs-fit-cta-row">
-              <Link className="hs-btn-navy" to="/book-interview">Book a Free Trial Lesson</Link>
+              <Link className="hs-btn-navy" to="/book-interview">Book an Interview</Link>
             </div>
           </div>
         </section>
@@ -420,19 +421,15 @@ const HighSchool = () => {
         <div className="hs-cta-section">
           <h2>Do Not Wait for the<br />Report Card</h2>
           <p>
-            The sooner we identify the gaps, the easier they are to close. Book a free trial lesson: no entrance exam,
-            no lock-in contract. Just a session that shows you what is possible.
+            The sooner we identify the gaps, the easier they are to close. Book an interview and we will help you find
+            the right starting point.
           </p>
-          <Link className="hs-btn-gold" to="/book-interview">Book a Free Trial Lesson</Link>
-          <p className="hs-cta-note">No entrance exam &nbsp;&middot;&nbsp; No lock-in contract &nbsp;&middot;&nbsp; Limited spots each term</p>
+          <Link className="hs-btn-gold" to="/book-interview">Book an Interview</Link>
+          <p className="hs-cta-note">No entrance exam &nbsp;&middot;&nbsp; Honest placement advice &nbsp;&middot;&nbsp; Limited spots each term</p>
         </div>
       </main>
 
-      <footer className="hs-footer">
-        <div className="hs-footer-logo">DA <span>Tuition</span></div>
-        <p>&copy; 2025 DA Tuition &middot; Sydney, Australia</p>
-        <p>hello@datuition.com.au</p>
-      </footer>
+      <FooterNew />
     </div>
   );
 };
