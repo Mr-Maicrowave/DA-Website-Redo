@@ -35,4 +35,5 @@ DA Photos/
 git_commit_push.bat
 git_merge_to_master.bat
 git_resolve_conflicts.bat
+git_push_master.bat
 git_fix*.bat
