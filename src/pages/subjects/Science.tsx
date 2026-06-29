@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import NavigationNew from '@/components/NavigationNew';
 import FooterNew from '@/components/FooterNew';
 import { Button } from '@/components/ui/button';
@@ -15,10 +15,12 @@ import {
   Zap,
   FlaskConical,
   Microscope,
+  Lightbulb,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence, useInView } from 'framer-motion';
 import SEO from '@/components/SEO';
+import DAMethodSection from '@/components/DAMethodSection';
 
 // ── Curiosity Constellation data ─────────────────────────────────────────────
 // SVG viewBox 0 0 460 460. Hexagonal inner network centred at (230, 230), r=92.
@@ -317,6 +319,853 @@ function HscSubjectRow({ s, index }: { s: typeof HSC_SUBJECTS[number]; index: nu
   );
 }
 
+const SCIENCE_FACTS = [
+  {
+    title: '🪐 A day on Venus is longer than a year on Venus.',
+    body: 'Venus spins so slowly that it takes 243 Earth days to rotate once on its axis. However, it only takes 225 Earth days to complete one orbit around the Sun. If you lived on Venus, you would celebrate your birthday before the planet finished a single day.',
+  },
+  {
+    title: "🌞 If the Sun suddenly disappeared, Earth wouldn't know for about 8 minutes.",
+    body: 'Light takes approximately 8 minutes and 20 seconds to travel from the Sun to Earth. If the Sun vanished instantly, we would continue seeing sunlight—and feeling its gravity—for those eight minutes before everything changed.',
+  },
+  {
+    title: '⭐ Every atom in your body was once inside a star.',
+    body: 'The carbon in your muscles, the oxygen you breathe, the calcium in your bones, and the iron in your blood were all created by ancient stars billions of years ago before being scattered across space by exploding supernovae. In a very real sense, we are made of stardust.',
+  },
+  {
+    title: '⚡ Lightning is much hotter than the surface of the Sun.',
+    body: "A lightning bolt can reach temperatures of around 30,000°C—about five times hotter than the Sun's surface. This intense heat causes the surrounding air to expand explosively, producing the sound wave we hear as thunder.",
+  },
+  {
+    title: '🦈 Sharks are older than trees.',
+    body: "The first sharks appeared in Earth's oceans over 400 million years ago. The earliest trees didn't evolve until roughly 350 million years ago, meaning sharks had already been swimming the oceans for around 50 million years before forests existed.",
+  },
+  {
+    title: '🧊 Ice floats because it expands when it freezes.',
+    body: 'Most substances become denser as they cool. Water behaves differently. As it freezes, its molecules arrange into an open crystal structure that takes up more space, making ice less dense than liquid water. Without this unusual property, lakes would freeze from the bottom up and life on Earth would be very different.',
+  },
+  {
+    title: '🧬 Your DNA is incredibly long.',
+    body: 'If you stretched out all the DNA inside just one of your cells, it would measure about two metres long. Since your body contains around 37 trillion cells, the total length of your DNA would be long enough to travel from Earth to the Sun—and back—hundreds of times.',
+  },
+  {
+    title: '🐙 An octopus has three hearts and blue blood.',
+    body: 'Two hearts pump blood to the gills while the third pumps it around the rest of the body. Their blood appears blue because it uses a copper-rich molecule called hemocyanin to transport oxygen instead of the iron-based haemoglobin found in humans.',
+  },
+  {
+    title: "🌍 Earth isn't perfectly round.",
+    body: 'Because Earth rotates, centrifugal force causes the equator to bulge outward slightly. As a result, our planet is about 43 kilometres wider around the equator than it is from the North Pole to the South Pole.',
+  },
+  {
+    title: '🍌 Bananas are naturally radioactive.',
+    body: "Bananas contain potassium, including a tiny amount of the radioactive isotope potassium-40. The amount is completely harmless—you would need to eat millions of bananas at once before the radiation became dangerous—but it's a fascinating example of natural radioactivity found in everyday life.",
+  },
+] as const;
+
+const NEWTON_APPLES = [
+  { id: 'left-canopy-gold', sourceX: 646, sourceY: 159, sourceSize: 78, fallX: 42, fallY: 600 },
+  { id: 'upper-left-red', sourceX: 816, sourceY: 137, sourceSize: 78, fallX: 18, fallY: 620 },
+  { id: 'top-centre-red', sourceX: 895, sourceY: 56, sourceSize: 74, fallX: -8, fallY: 650 },
+  { id: 'upper-centre-hero', sourceX: 1104, sourceY: 122, sourceSize: 92, fallX: -44, fallY: 610 },
+  { id: 'upper-centre-right', sourceX: 1220, sourceY: 155, sourceSize: 78, fallX: -62, fallY: 590 },
+  { id: 'upper-right-cluster', sourceX: 1370, sourceY: 99, sourceSize: 86, fallX: -82, fallY: 610 },
+  { id: 'mid-left-hanging', sourceX: 746, sourceY: 217, sourceSize: 74, fallX: 30, fallY: 560 },
+  { id: 'mid-centre-gloss', sourceX: 1042, sourceY: 219, sourceSize: 82, fallX: -24, fallY: 545 },
+  { id: 'right-mid-red', sourceX: 1284, sourceY: 181, sourceSize: 72, fallX: -76, fallY: 570 },
+  { id: 'mid-right-round', sourceX: 1410, sourceY: 237, sourceSize: 80, fallX: -92, fallY: 540 },
+  { id: 'lower-left-hero', sourceX: 646, sourceY: 294, sourceSize: 74, fallX: 48, fallY: 450 },
+  { id: 'centre-lower-red', sourceX: 826, sourceY: 357, sourceSize: 74, fallX: 0, fallY: 430 },
+  { id: 'lower-centre-hero', sourceX: 927, sourceY: 322, sourceSize: 80, fallX: -6, fallY: 440 },
+  { id: 'right-lower-red', sourceX: 1131, sourceY: 334, sourceSize: 74, fallX: -48, fallY: 420 },
+  { id: 'mid-low-red', sourceX: 969, sourceY: 545, sourceSize: 68, fallX: -18, fallY: 260 },
+  { id: 'low-hanging-single', sourceX: 1068, sourceY: 646, sourceSize: 70, fallX: -26, fallY: 190 },
+] as const;
+
+const NEWTON_ARTWORK_WIDTH = 1536;
+const NEWTON_ARTWORK_HEIGHT = 1024;
+
+type ScienceFact = typeof SCIENCE_FACTS[number];
+
+const randomFact = (current: ScienceFact | null) => {
+  let next = SCIENCE_FACTS[Math.floor(Math.random() * SCIENCE_FACTS.length)];
+  while (next.title === current?.title) {
+    next = SCIENCE_FACTS[Math.floor(Math.random() * SCIENCE_FACTS.length)];
+  }
+  return next;
+};
+
+const NewtonGravityExperience = () => {
+  const [activeFact, setActiveFact] = useState<ScienceFact | null>(null);
+  const [fallingApple, setFallingApple] = useState<string | null>(null);
+  const [reducedMotion, setReducedMotion] = useState(false);
+  const sectionRef = useRef<HTMLElement>(null);
+  const resetTimerRef = useRef<number | null>(null);
+  const factTimerRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    const media = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const update = () => setReducedMotion(media.matches);
+    update();
+    media.addEventListener('change', update);
+    return () => media.removeEventListener('change', update);
+  }, []);
+
+  useEffect(() => () => {
+    if (resetTimerRef.current) window.clearTimeout(resetTimerRef.current);
+    if (factTimerRef.current) window.clearTimeout(factTimerRef.current);
+  }, []);
+
+  const handleAppleClick = (appleId: string) => {
+    if (fallingApple) return;
+
+    if (resetTimerRef.current) window.clearTimeout(resetTimerRef.current);
+    if (factTimerRef.current) window.clearTimeout(factTimerRef.current);
+
+    setFallingApple(appleId);
+    setActiveFact(null);
+
+    if (reducedMotion) {
+      setActiveFact(prev => randomFact(prev));
+      resetTimerRef.current = window.setTimeout(() => setFallingApple(null), 900);
+      return;
+    }
+
+    factTimerRef.current = window.setTimeout(() => {
+      setActiveFact(prev => randomFact(prev));
+    }, 1550);
+
+    resetTimerRef.current = window.setTimeout(() => {
+      setFallingApple(null);
+    }, 4300);
+  };
+
+  return (
+    <section id="science-concerns" ref={sectionRef} className="newton-gravity">
+      <style>{`
+        .newton-gravity {
+          position: relative;
+          overflow: hidden;
+          background:
+            radial-gradient(circle at 72% 28%, rgba(201, 162, 39, .12), transparent 28%),
+            radial-gradient(circle at 10% 12%, rgba(255, 255, 255, .82), transparent 34%),
+            linear-gradient(135deg, #fffaf0 0%, #fff6e7 46%, #f5ecd9 100%);
+          color: #071629;
+        }
+
+        .newton-gravity::before,
+        .newton-gravity::after {
+          content: "";
+          position: absolute;
+          pointer-events: none;
+        }
+
+        .newton-gravity::before {
+          inset: 0;
+          background:
+            radial-gradient(ellipse at 68% 76%, rgba(82, 120, 58, .14), transparent 42%),
+            linear-gradient(90deg, rgba(255, 250, 240, .94) 0%, rgba(255, 250, 240, .5) 35%, transparent 68%);
+          z-index: 0;
+        }
+
+        .newton-gravity::after {
+          left: 0;
+          right: 0;
+          bottom: -1px;
+          height: 124px;
+          z-index: 2;
+          background: linear-gradient(180deg, transparent, #fffdf8 84%);
+        }
+
+        .newton-gravity__inner {
+          position: relative;
+          z-index: 3;
+          min-height: clamp(680px, 78vh, 820px);
+          max-width: 1580px;
+          margin: 0 auto;
+          padding: clamp(42px, 5vw, 74px) clamp(18px, 4vw, 64px) clamp(48px, 5vw, 78px);
+        }
+
+        .newton-gravity__content {
+          position: relative;
+          z-index: 5;
+          max-width: 530px;
+          padding-top: clamp(14px, 3vw, 38px);
+        }
+
+        .newton-gravity__eyebrow {
+          margin: 0 0 18px;
+          font-size: clamp(.72rem, .9vw, .86rem);
+          font-weight: 900;
+          letter-spacing: .22em;
+          text-transform: uppercase;
+          color: #c9a227;
+        }
+
+        .newton-gravity__title {
+          margin: 0;
+          max-width: 530px;
+          font-family: Georgia, 'Times New Roman', serif;
+          font-size: clamp(2.55rem, 3.45vw, 4.15rem);
+          font-weight: 500;
+          line-height: 1;
+          letter-spacing: -.03em;
+          color: #071629;
+          text-wrap: balance;
+        }
+
+        .newton-gravity__title .newton-title-line {
+          display: block;
+          color: inherit;
+        }
+
+        .newton-title-dot {
+          color: #c9a227;
+        }
+
+        .newton-title-rule {
+          width: 82px;
+          height: 3px;
+          margin: 24px 0 24px;
+          border-radius: 999px;
+          background: #c9a227;
+        }
+
+        .newton-gravity__copy {
+          max-width: 520px;
+          margin: 0;
+          font-size: clamp(.98rem, 1.08vw, 1.1rem);
+          font-weight: 650;
+          line-height: 1.74;
+          color: rgba(16, 35, 63, .62);
+        }
+
+        .newton-law-card {
+          position: relative;
+          display: grid;
+          grid-template-columns: auto 1fr;
+          gap: 16px;
+          max-width: 430px;
+          margin-top: 24px;
+          padding: clamp(18px, 1.8vw, 24px);
+          border: 1px solid rgba(201, 162, 39, .18);
+          border-radius: 22px;
+          background: rgba(255, 255, 255, .76);
+          box-shadow: 0 18px 48px rgba(7, 22, 41, .07);
+          backdrop-filter: blur(18px);
+        }
+
+        .newton-fact__icon {
+          display: grid;
+          place-items: center;
+          width: 62px;
+          height: 62px;
+          border-radius: 999px;
+          background: rgba(201, 162, 39, .12);
+          color: #c9a227;
+        }
+
+        .newton-law-card__icon {
+          display: grid;
+          place-items: center;
+          width: 46px;
+          height: 46px;
+          border-radius: 999px;
+          background: rgba(201, 162, 39, .12);
+          color: #c9a227;
+        }
+
+        .newton-law-card h3 {
+          margin: 0 0 10px;
+          font-size: clamp(.82rem, .95vw, .98rem);
+          font-weight: 900;
+          letter-spacing: .085em;
+          line-height: 1.36;
+          text-transform: uppercase;
+          color: #b98512;
+        }
+
+        .newton-law-card p {
+          margin: 0;
+          font-size: clamp(.88rem, .95vw, .98rem);
+          font-weight: 650;
+          line-height: 1.58;
+          color: rgba(16, 35, 63, .76);
+        }
+
+        .newton-click-note {
+          position: absolute;
+          left: 48%;
+          top: 56%;
+          z-index: 6;
+          width: 210px;
+          color: #10233f;
+          font-family: "Bradley Hand", "Segoe Print", "Comic Sans MS", cursive;
+          font-size: clamp(1.22rem, 2vw, 1.65rem);
+          font-weight: 700;
+          line-height: 1.18;
+          letter-spacing: .01em;
+          transform: rotate(-4deg);
+          pointer-events: none;
+          text-shadow: 0 1px 0 rgba(255,255,255,.35);
+        }
+
+        .newton-click-note svg {
+          display: block;
+          width: 94px;
+          height: 58px;
+          margin: 6px 0 0 70px;
+        }
+
+        .newton-scene {
+          --tree-width: clamp(1580px, 122vw, 2200px);
+          position: absolute;
+          inset: 0;
+          z-index: 2;
+          border-radius: 0;
+          isolation: isolate;
+          overflow: hidden;
+          pointer-events: none;
+        }
+
+        .newton-scene__halo {
+          position: absolute;
+          inset: 8% 3% 7% 0;
+          z-index: 0;
+          border-radius: 999px;
+          background:
+            radial-gradient(circle at 42% 28%, rgba(255, 246, 190, .62), transparent 28%),
+            radial-gradient(circle at 68% 52%, rgba(201, 162, 39, .18), transparent 38%);
+          filter: blur(18px);
+          opacity: .9;
+        }
+
+        .newton-tree-wrap {
+          position: absolute;
+          inset: -18% -8% 0 0;
+          z-index: 1;
+          overflow: hidden;
+          border-radius: 0;
+          -webkit-mask-image: linear-gradient(90deg, transparent 0%, transparent 20%, rgba(0,0,0,.18) 27%, rgba(0,0,0,.82) 38%, #000 48%, #000 100%);
+          mask-image: linear-gradient(90deg, transparent 0%, transparent 20%, rgba(0,0,0,.18) 27%, rgba(0,0,0,.82) 38%, #000 48%, #000 100%);
+        }
+
+        .newton-tree-layer {
+          position: absolute;
+          bottom: 0;
+          right: -12%;
+          width: var(--tree-width);
+          aspect-ratio: 3 / 2;
+          filter: saturate(1.04) contrast(1.02) drop-shadow(0 34px 48px rgba(7, 22, 41, .18));
+          transform-origin: 58% 22%;
+          transition: transform 900ms cubic-bezier(.16, 1, .3, 1);
+          will-change: transform;
+        }
+
+        .newton-tree {
+          position: absolute;
+          inset: 0;
+          width: 100%;
+          height: 100%;
+          max-width: none;
+          object-fit: cover;
+          object-position: right bottom;
+        }
+
+        .newton-scene:hover .newton-tree-layer {
+          transform: rotate(.35deg) scale(1.006);
+        }
+
+        .newton-apple {
+          position: absolute;
+          left: var(--apple-x);
+          top: var(--apple-y);
+          z-index: 4;
+          width: var(--apple-size);
+          height: var(--apple-size);
+          border: 0;
+          border-radius: 52% 47% 51% 49%;
+          background: transparent;
+          box-shadow: none;
+          cursor: pointer;
+          pointer-events: auto;
+          transform: translate3d(-50%, -50%, 0);
+          transform-origin: 50% 18%;
+          transition: filter 260ms ease, box-shadow 260ms ease, transform 260ms cubic-bezier(.16, 1, .3, 1);
+          will-change: transform;
+        }
+
+        .newton-apple-cover {
+          position: absolute;
+          left: var(--apple-x);
+          top: var(--apple-y);
+          z-index: 3;
+          width: calc(var(--apple-size) * 1.08);
+          height: calc(var(--apple-size) * .96);
+          border-radius: 999px;
+          background:
+            radial-gradient(circle at 36% 28%, rgba(190, 175, 66, .72), transparent 26%),
+            radial-gradient(circle at 62% 56%, rgba(48, 82, 28, .86), transparent 58%),
+            radial-gradient(circle at 44% 62%, rgba(104, 126, 39, .88), rgba(42, 67, 25, .86) 72%);
+          filter: blur(2.4px) saturate(1.08);
+          opacity: 0;
+          transform: translate3d(-50%, -50%, 0) scale(.78);
+          pointer-events: none;
+          transition: opacity 220ms ease, transform 420ms cubic-bezier(.16, 1, .3, 1);
+        }
+
+        .newton-apple-cover.is-active {
+          opacity: .84;
+          transform: translate3d(-50%, -50%, 0) scale(1);
+        }
+
+        .newton-apple__sprite {
+          position: absolute;
+          inset: 0;
+          border-radius: inherit;
+          background-image: url('/images/apple-tree-background.png');
+          background-size: var(--tree-width) auto;
+          background-position:
+            calc(var(--apple-size) / 2 - var(--sprite-x))
+            calc(var(--apple-size) / 2 - var(--sprite-y));
+          background-repeat: no-repeat;
+          clip-path: ellipse(48% 46% at 50% 52%);
+          pointer-events: none;
+        }
+
+        .newton-apple::before {
+          content: "";
+          position: absolute;
+          inset: -9px;
+          border-radius: 999px;
+          border: 1.5px dotted rgba(255, 255, 255, .86);
+          box-shadow:
+            0 0 18px rgba(255, 255, 255, .34),
+            inset 0 0 12px rgba(255, 255, 255, .14);
+          opacity: 0;
+          transform: scale(.84);
+          transition: opacity 240ms ease, transform 240ms cubic-bezier(.16, 1, .3, 1);
+        }
+
+        .newton-apple:hover,
+        .newton-apple:focus-visible {
+          filter: brightness(1.05) saturate(1.03);
+          outline: none;
+          transform: translate3d(-50%, -50%, 0) scale(1.05);
+        }
+
+        .newton-apple:hover::before,
+        .newton-apple:focus-visible::before {
+          opacity: 1;
+          transform: scale(1);
+        }
+
+        .newton-leaf {
+          position: absolute;
+          left: 48%;
+          top: 10%;
+          width: 8px;
+          height: 5px;
+          border-radius: 80% 0 80% 0;
+          background: rgba(124, 145, 51, .92);
+          opacity: 0;
+        }
+
+        .newton-apple.is-falling {
+          pointer-events: none;
+          animation: appleFall 2.05s cubic-bezier(.16, .72, .18, 1) forwards;
+        }
+
+        .newton-apple.is-falling .newton-leaf {
+          animation: leafFall 1.3s ease-out forwards;
+        }
+
+        .newton-apple.is-falling .newton-leaf:nth-child(3) {
+          animation-delay: 120ms;
+          transform: rotate(24deg);
+        }
+
+        .newton-apple.is-falling .newton-leaf:nth-child(4) {
+          animation-delay: 210ms;
+          transform: rotate(-18deg);
+        }
+
+        .newton-impact {
+          position: absolute;
+          left: calc(var(--apple-x) + var(--fall-x));
+          top: calc(var(--apple-y) + var(--fall-y));
+          z-index: 3;
+          width: 82px;
+          height: 22px;
+          border-radius: 999px;
+          border: 1px solid rgba(255, 255, 255, .5);
+          background: radial-gradient(ellipse, rgba(255, 247, 205, .32), transparent 72%);
+          opacity: 0;
+          transform: translate3d(-50%, -50%, 0) scale(.2);
+          pointer-events: none;
+        }
+
+        .newton-impact.is-active {
+          animation: impactRipple 1.15s ease-out 1.18s forwards;
+        }
+
+        .newton-fact {
+          position: absolute;
+          right: clamp(120px, 8vw, 180px);
+          bottom: clamp(80px, 10vh, 140px);
+          z-index: 7;
+          pointer-events: auto;
+          display: grid;
+          grid-template-columns: 62px 1fr 24px;
+          gap: 18px;
+          align-items: start;
+          width: clamp(460px, 31vw, 520px);
+          max-width: calc(100% - 240px);
+          padding: clamp(22px, 2vw, 28px);
+          border: 1px solid rgba(255, 255, 255, .12);
+          border-radius: 28px;
+          background: linear-gradient(145deg, rgba(7, 22, 41, .96), rgba(3, 16, 32, .92));
+          box-shadow: 0 34px 80px rgba(7, 22, 41, .38);
+          backdrop-filter: blur(20px);
+        }
+
+        .newton-fact__label {
+          margin: 0 0 7px;
+          font-size: .68rem;
+          font-weight: 900;
+          letter-spacing: .14em;
+          text-transform: uppercase;
+          color: #f1df9a;
+        }
+
+        .newton-fact__text {
+          margin: 0;
+          font-size: .94rem;
+          line-height: 1.58;
+          color: rgba(255, 255, 255, .9);
+        }
+
+        .newton-fact__title {
+          margin: 0 0 8px;
+          font-size: 1rem;
+          font-weight: 750;
+          line-height: 1.42;
+          color: rgba(255, 255, 255, .96);
+        }
+
+        .newton-fact__body {
+          margin: 0;
+          color: rgba(255, 255, 255, .72);
+        }
+
+        .newton-fact__close {
+          align-self: start;
+          justify-self: end;
+          border: 0;
+          background: transparent;
+          color: rgba(255, 255, 255, .7);
+          cursor: pointer;
+          font-size: 1.5rem;
+          line-height: 1;
+        }
+
+        .newton-fact__close:hover {
+          color: #fff;
+        }
+
+        @keyframes appleFall {
+          0% {
+            transform: translate3d(-50%, -50%, 0) rotate(0deg) scale(1);
+          }
+          8% {
+            transform: translate3d(-50%, -50%, 0) rotate(0deg) scale(1);
+          }
+          12% {
+            transform: translate3d(calc(-50% + 2px), calc(-50% - 7px), 0) rotate(-4deg) scale(1.01);
+          }
+          78% {
+            transform: translate3d(calc(-50% + var(--fall-x) * .86), calc(-50% + var(--fall-y) * .9), 0) rotate(102deg) scale(1);
+          }
+          88% {
+            transform: translate3d(calc(-50% + var(--fall-x)), calc(-50% + var(--fall-y)), 0) rotate(132deg) scale(1.08, .84);
+          }
+          100% {
+            transform: translate3d(calc(-50% + var(--fall-x)), calc(-50% + var(--fall-y) - 9px), 0) rotate(140deg) scale(.98, 1.02);
+          }
+        }
+
+        @keyframes leafFall {
+          0% { opacity: 0; transform: translate3d(0, 0, 0) rotate(0deg); }
+          18% { opacity: .9; }
+          100% { opacity: 0; transform: translate3d(18px, 76px, 0) rotate(180deg); }
+        }
+
+        @keyframes impactRipple {
+          0% { opacity: 0; transform: translate3d(-50%, -50%, 0) scale(.2); }
+          26% { opacity: .72; }
+          100% { opacity: 0; transform: translate3d(-50%, -50%, 0) scale(1.55); }
+        }
+
+        @media (max-width: 1024px) {
+          .newton-gravity__inner {
+            grid-template-columns: 1fr;
+            min-height: 0;
+          }
+
+          .newton-gravity__content {
+            max-width: 760px;
+          }
+
+          .newton-scene {
+            min-height: clamp(520px, 70vw, 680px);
+            --tree-width: clamp(980px, 136vw, 1380px);
+          }
+
+          .newton-tree-layer {
+            right: -10%;
+            bottom: 0;
+          }
+
+          .newton-fact {
+            right: clamp(88px, 8vw, 120px);
+            bottom: 104px;
+            width: min(500px, calc(100% - 180px));
+            max-width: none;
+          }
+        }
+
+        @media (max-width: 680px) {
+          .newton-gravity__inner {
+            padding-top: 72px;
+            padding-bottom: 72px;
+          }
+
+          .newton-gravity__title {
+            font-size: clamp(2.7rem, 13vw, 4rem);
+          }
+
+          .newton-law-card {
+            grid-template-columns: 1fr;
+          }
+
+          .newton-click-note {
+            left: 18%;
+            top: 45%;
+            font-size: 1.08rem;
+            width: 160px;
+          }
+
+          .newton-scene {
+            --tree-width: 1040px;
+            min-height: 520px;
+            margin-inline: -22px;
+          }
+
+          .newton-tree-wrap {
+            inset: -16% -30% 0 -30%;
+            -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 9%, #000 96%, transparent 100%);
+            mask-image: linear-gradient(90deg, transparent 0%, #000 9%, #000 96%, transparent 100%);
+          }
+
+          .newton-tree-layer {
+            right: -24%;
+            bottom: 0;
+          }
+
+          .newton-fact {
+            position: absolute;
+            left: 16px;
+            right: 16px;
+            bottom: 148px;
+            width: auto;
+            max-width: calc(100vw - 32px);
+            margin: 0;
+            grid-template-columns: 52px 1fr 24px;
+            gap: 14px;
+            padding: 18px;
+            border-radius: 22px;
+          }
+
+          .newton-fact__icon {
+            width: 52px;
+            height: 52px;
+          }
+
+          .newton-fact__text {
+            font-size: .88rem;
+            line-height: 1.55;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .newton-tree,
+          .newton-tree-layer,
+          .newton-apple,
+          .newton-apple.is-falling,
+          .newton-impact.is-active,
+          .newton-leaf {
+            animation: none !important;
+            transition: none !important;
+          }
+        }
+      `}</style>
+
+      <div className="newton-gravity__inner">
+        <motion.div
+          className="newton-gravity__content"
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-100px' }}
+          transition={{ duration: .65, ease: [0.16, 1, 0.3, 1] }}
+        >
+          <p className="newton-gravity__eyebrow">Science in the Real World</p>
+          <h2 className="newton-gravity__title">
+            <span className="newton-title-line">From Curiosity</span>
+            <span className="newton-title-line">to Discovery<span className="newton-title-dot">.</span></span>
+          </h2>
+          <div className="newton-title-rule" aria-hidden="true" />
+          <p className="newton-gravity__copy">
+            Science explains the world around us.<br />
+            Explore Newton&apos;s Law of Universal Gravitation<br />
+            through this interactive apple moment —<br />
+            then click an apple to discover a fun science fact!
+          </p>
+
+          <div className="newton-law-card">
+            <div className="newton-law-card__icon" aria-hidden="true">
+              <Atom className="h-5 w-5" />
+            </div>
+            <div>
+              <h3>Newton&apos;s Law of Universal Gravitation</h3>
+              <p>
+                Every object with mass attracts every other object.<br />
+                The larger the mass, the stronger the attraction.<br />
+                This invisible force is what pulls the apple toward the Earth.
+              </p>
+            </div>
+          </div>
+        </motion.div>
+
+        <motion.div
+          className="newton-scene"
+          initial={{ opacity: 0, scale: .985 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true, margin: '-100px' }}
+          transition={{ duration: .8, delay: .08, ease: [0.16, 1, 0.3, 1] }}
+          aria-label="Interactive apple tree demonstrating gravity"
+        >
+          <div className="newton-scene__halo" aria-hidden="true" />
+          <div className="newton-click-note" aria-hidden="true">
+            Click an<br />
+            apple to learn<br />
+            a fun fact!
+            <svg viewBox="0 0 120 80" fill="none">
+              <path
+                d="M12 10 C 28 54, 72 60, 102 38"
+                stroke="currentColor"
+                strokeWidth="4"
+                strokeLinecap="round"
+              />
+              <path
+                d="M92 25 L106 38 L90 48"
+                stroke="currentColor"
+                strokeWidth="4"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </div>
+          <div className="newton-tree-wrap">
+            <div className="newton-tree-layer">
+              <img className="newton-tree" src="/images/apple-tree-background.png" alt="" loading="eager" decoding="async" />
+
+              {NEWTON_APPLES.map((apple) => (
+                <span
+                  key={`cover-${apple.id}`}
+                  className={`newton-apple-cover ${fallingApple === apple.id ? 'is-active' : ''}`}
+                  aria-hidden="true"
+                  style={{
+                    ['--apple-x' as string]: `${(apple.sourceX / NEWTON_ARTWORK_WIDTH) * 100}%`,
+                    ['--apple-y' as string]: `${(apple.sourceY / NEWTON_ARTWORK_HEIGHT) * 100}%`,
+                    ['--apple-size' as string]: `clamp(36px, calc(${apple.sourceSize / NEWTON_ARTWORK_WIDTH} * var(--tree-width)), 84px)`,
+                  }}
+                />
+              ))}
+
+              {NEWTON_APPLES.map((apple) => {
+                const isFalling = fallingApple === apple.id;
+                return (
+                  <button
+                    key={apple.id}
+                    type="button"
+                    className={`newton-apple ${isFalling ? 'is-falling' : ''}`}
+                    aria-label="Open a science fun fact"
+                    onClick={() => handleAppleClick(apple.id)}
+                    style={{
+                      ['--apple-x' as string]: `${(apple.sourceX / NEWTON_ARTWORK_WIDTH) * 100}%`,
+                      ['--apple-y' as string]: `${(apple.sourceY / NEWTON_ARTWORK_HEIGHT) * 100}%`,
+                      ['--apple-size' as string]: `clamp(36px, calc(${apple.sourceSize / NEWTON_ARTWORK_WIDTH} * var(--tree-width)), 84px)`,
+                      ['--sprite-x' as string]: `calc(${apple.sourceX / NEWTON_ARTWORK_WIDTH} * var(--tree-width))`,
+                      ['--sprite-y' as string]: `calc(${apple.sourceY / NEWTON_ARTWORK_WIDTH} * var(--tree-width))`,
+                      ['--fall-x' as string]: `calc(${apple.fallX / NEWTON_ARTWORK_WIDTH} * var(--tree-width))`,
+                      ['--fall-y' as string]: `calc(${apple.fallY / NEWTON_ARTWORK_WIDTH} * var(--tree-width))`,
+                    }}
+                  >
+                    <span className="newton-apple__sprite" aria-hidden="true" />
+                    <span className="newton-leaf" aria-hidden="true" />
+                    <span className="newton-leaf" aria-hidden="true" />
+                    <span className="newton-leaf" aria-hidden="true" />
+                  </button>
+                );
+              })}
+
+              {NEWTON_APPLES.map((apple) => (
+                <span
+                  key={`impact-${apple.id}`}
+                  className={`newton-impact ${fallingApple === apple.id ? 'is-active' : ''}`}
+                  aria-hidden="true"
+                  style={{
+                    ['--apple-x' as string]: `${(apple.sourceX / NEWTON_ARTWORK_WIDTH) * 100}%`,
+                    ['--apple-y' as string]: `${(apple.sourceY / NEWTON_ARTWORK_HEIGHT) * 100}%`,
+                    ['--fall-x' as string]: `calc(${apple.fallX / NEWTON_ARTWORK_WIDTH} * var(--tree-width))`,
+                    ['--fall-y' as string]: `calc(${apple.fallY / NEWTON_ARTWORK_WIDTH} * var(--tree-width))`,
+                  }}
+                />
+              ))}
+            </div>
+          </div>
+
+          <AnimatePresence>
+            {activeFact && (
+              <motion.div
+                className="newton-fact"
+                role="status"
+                initial={{ opacity: 0, y: 18, scale: .96 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 10, scale: .98 }}
+                transition={{ duration: .32, ease: [0.16, 1, 0.3, 1] }}
+              >
+                <div className="newton-fact__icon" aria-hidden="true">
+                  <Lightbulb className="h-5 w-5" />
+                </div>
+                <div>
+                  <p className="newton-fact__label">Fun Fact</p>
+                  <div className="newton-fact__text">
+                    <p className="newton-fact__title">{activeFact.title}</p>
+                    <p className="newton-fact__body">{activeFact.body}</p>
+                  </div>
+                </div>
+                <button className="newton-fact__close" type="button" onClick={() => setActiveFact(null)} aria-label="Close fun fact">
+                  ×
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.div>
+      </div>
+    </section>
+  );
+};
+
 const Science = () => {
   const [activeId, setActiveId] = useState<string>('lightning');
   const activeItem = WONDER_ITEMS.find(i => i.id === activeId)!;
@@ -492,8 +1341,11 @@ const Science = () => {
           </div>
         </section>
 
-        {/* ── Every scientist starts by wondering ── */}
-        <section id="science-concerns" className="bg-[#fff6e7]">
+        {/* ── Newton's Law interactive experience ── */}
+        <NewtonGravityExperience />
+
+        {/* ── Legacy curiosity network retained off-screen while the Newton experience replaces this section ── */}
+        <section aria-hidden="true" className="hidden">
           <div className="mx-auto max-w-7xl px-5 py-20 lg:px-8">
 
             {/* ── Mobile heading ── */}
@@ -1158,117 +2010,7 @@ const Science = () => {
         </section>
 
         {/* ── How DA Turns Understanding Into Results ── */}
-        <section id="hsc-sciences" className="bg-[#071629] px-5 py-24 text-white lg:px-8">
-          <div className="mx-auto max-w-7xl">
-
-            {/* Header */}
-            <div className="mb-20 text-center">
-              <p className="mb-3 text-[10px] font-black uppercase tracking-[0.24em] text-[#c9a227]">The DA Method</p>
-              <h2 className="font-serif text-4xl font-medium leading-tight tracking-[-0.045em] text-white lg:text-5xl">
-                Why DA Students Improve Faster
-              </h2>
-              <p className="mx-auto mt-5 max-w-2xl text-sm leading-7 text-white/50">
-                Understanding science is only the beginning. We teach students how to think,
-                respond and improve so their knowledge translates into stronger results.
-              </p>
-              <div className="mx-auto mt-6 h-px w-12 bg-gradient-to-r from-transparent via-[#c9a227] to-transparent" />
-            </div>
-
-            {/* Four-step methodology */}
-            <div className="relative">
-
-              {/* Desktop flow line behind the cards */}
-              <div
-                className="absolute left-0 right-0 top-[54px] hidden h-px lg:block"
-                style={{
-                  background:
-                    'linear-gradient(90deg, transparent 4%, rgba(201,162,39,0.15) 20%, rgba(201,162,39,0.15) 80%, transparent 96%)',
-                }}
-              />
-
-              <div className="grid gap-5 lg:grid-cols-4 lg:gap-4">
-                {[
-                  {
-                    n: '01',
-                    title: 'Decode the Question',
-                    Icon: Microscope,
-                    text: 'Before students answer, they learn how to identify exactly what the question is asking and where the marks come from.',
-                  },
-                  {
-                    n: '02',
-                    title: 'Build Real Understanding',
-                    Icon: Atom,
-                    text: 'Students connect ideas, fill gaps and understand the science behind the syllabus rather than memorising isolated facts.',
-                  },
-                  {
-                    n: '03',
-                    title: 'Practise With Purpose',
-                    Icon: FlaskConical,
-                    text: 'Students work through carefully selected questions that reveal weaknesses and strengthen exam technique.',
-                  },
-                  {
-                    n: '04',
-                    title: 'Refine Through Feedback',
-                    Icon: TrendingUp,
-                    text: 'Every mistake becomes a learning opportunity. Teachers provide targeted feedback so students continuously improve.',
-                  },
-                ].map((step, index) => (
-                  <motion.div
-                    key={step.n}
-                    initial={{ opacity: 0, y: 24 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, margin: '-60px' }}
-                    transition={{ duration: 0.55, delay: index * 0.10 }}
-                    className="group relative z-10 rounded-2xl border border-white/[0.07] bg-white/[0.04] p-7 text-center transition duration-300 hover:border-[#c9a227]/25 hover:bg-white/[0.07]"
-                  >
-                    {/* Gold top accent — brightens on hover */}
-                    <div className="absolute inset-x-0 top-0 h-[2px] rounded-t-2xl bg-gradient-to-r from-transparent via-[#c9a227]/35 to-transparent transition duration-500 group-hover:via-[#c9a227]/75" />
-
-                    {/* Step number — small, editorial */}
-                    <p className="mb-5 font-serif text-[11px] tracking-[0.22em] text-[#c9a227]/45 transition duration-300 group-hover:text-[#c9a227]/80">
-                      {step.n}
-                    </p>
-
-                    {/* Icon in a refined circle */}
-                    <div className="mb-5 flex justify-center">
-                      <div className="flex h-12 w-12 items-center justify-center rounded-full border border-[#c9a227]/20 bg-[#c9a227]/[0.06] transition duration-300 group-hover:border-[#c9a227]/45 group-hover:bg-[#c9a227]/[0.13]">
-                        <step.Icon
-                          strokeWidth={1.4}
-                          className="h-5 w-5 text-[#c9a227]/55 transition duration-300 group-hover:text-[#c9a227]"
-                        />
-                      </div>
-                    </div>
-
-                    {/* Step title */}
-                    <p className="mb-1.5 text-[10px] font-black uppercase tracking-[0.26em] text-white/65 transition duration-300 group-hover:text-[#f1df9a]">
-                      {step.title}
-                    </p>
-
-                    {/* Thin gold rule */}
-                    <div className="mx-auto mb-5 h-px w-7 bg-[#c9a227]/20 transition duration-300 group-hover:bg-[#c9a227]/55" />
-
-                    {/* Body */}
-                    <p className="text-[13px] leading-[1.85] text-white/42 transition duration-300 group-hover:text-white/70">
-                      {step.text}
-                    </p>
-                  </motion.div>
-                ))}
-              </div>
-
-              {/* Bottom context note */}
-              <motion.p
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: 0.5 }}
-                className="mt-12 text-center text-[11px] leading-6 text-white/28"
-              >
-                Results improve when students understand both the science and the assessment. DA teaches both.
-              </motion.p>
-            </div>
-
-          </div>
-        </section>
+        <DAMethodSection />
 
         {/* ── Learning format cards ── */}
         <section className="bg-[#fffdf8] px-5 py-20 lg:px-8">
@@ -1339,44 +2081,99 @@ const Science = () => {
   );
 };
 
-/* ── What Students Struggle With ── */
-const STRUGGLES = [
+/* ── What Students Struggle With ──
+   Numbering is generated automatically — do not add a 'num' field.
+   Each entry must represent a genuinely distinct underlying difficulty.
+   ── */
+const STRUGGLES: { id: string; headline: string; why: string; how: string; improvement: string }[] = [
   {
     id: 'exam',
-    num: '01',
-    headline: 'I understand the theory but can\'t answer exam questions.',
-    why: 'HSC exams test application, not recall. Students who study by re-reading notes build passive recognition — they feel like they understand the content but freeze when asked to structure a multi-step response under timed conditions.',
-    how: 'DA\'s approach teaches exam literacy alongside content. Students practise breaking down question stems, identifying what markers are looking for, and structuring responses to match marking criteria. Every session includes at least one exam-style problem.',
-    improvement: 'Most students see a measurable improvement in structured response scores within 4–6 weeks. Band 4 students regularly progress to Band 5/6 once exam strategy becomes second nature.',
+    headline: "I understand the lesson but can't answer exam questions.",
+    why: "HSC exams test application, not recall. Students who study by re-reading notes build passive recognition — they feel like they understand the content but freeze when asked to structure a multi-step response under timed conditions. The gap between 'I get it' and 'I can write it under pressure' is wider than most students realise until they see their first exam result.",
+    how: "DA's approach teaches exam literacy alongside content. Students practise breaking down question stems, identifying the verb (describe, explain, analyse, evaluate), and structuring responses to match marking criteria. Every session includes at least one exam-style problem. Over time, this becomes instinctive rather than effortful.",
+    improvement: "Most students see a measurable improvement in structured response scores within 4–6 weeks. Band 4 students regularly progress to Band 5/6 once exam strategy becomes second nature — not because the content changed, but because the delivery did.",
   },
   {
-    id: 'memory',
-    num: '02',
-    headline: 'I memorise everything but forget it during tests.',
-    why: 'Memorisation without understanding creates fragile knowledge. Under exam stress, isolated facts are the first things the brain loses access to — especially when a question is phrased differently from what was practised.',
-    how: 'DA teachers focus on conceptual anchors — the underlying "why" behind each idea. When students understand how concepts connect, they can reconstruct knowledge under pressure rather than retrieve exact memorised phrases.',
-    improvement: 'Students typically report that content starts to "stick" within 3–4 weeks. By the trial exam period, most can explain complex topics in their own words without notes.',
+    id: 'biology-memory',
+    headline: "I keep forgetting Biology — there's just too much content.",
+    why: "Biology has the highest content volume of any science. Students who try to memorise every term and process in isolation quickly hit a ceiling — the brain can only hold so many disconnected facts before they start to blur together. Biology becomes overwhelming when it's treated as a glossary to learn rather than a system to understand.",
+    how: "DA teachers build Biology knowledge through connected stories rather than isolated definitions. Students learn how photosynthesis, cellular respiration, and the carbon cycle relate to one another before they drill individual terms. When concepts are networked, forgetting one node doesn't erase the whole picture — students can reason their way back.",
+    improvement: "Students typically report that Biology starts to feel manageable within 3–4 weeks. By the time exams arrive, most can explain multi-step processes — the immune response, inheritance patterns, gene expression — without needing to check their notes mid-explanation.",
   },
   {
-    id: 'calc',
-    num: '03',
-    headline: 'I struggle with calculations in Physics and Chemistry.',
-    why: 'Calculation problems fail at three points: setting up the problem incorrectly, choosing the wrong formula, or making unit errors under pressure. Most students skip the setup step and jump straight to numbers.',
-    how: 'DA teaches a systematic three-step method: identify what you\'re being asked, select the correct equation, then execute with careful unit tracking. Students practise this until it becomes automatic — not just correct, but fast.',
-    improvement: 'Students who apply this method consistently typically recover 6–12 marks per paper within a term. Mechanics and Stoichiometry tend to show the fastest improvement.',
+    id: 'physics-formulas',
+    headline: "Physics formulas all look the same to me.",
+    why: "Students who try to memorise formulas without understanding what they describe inevitably confuse them under pressure. F = ma and W = mg look almost identical. v² = u² + 2as and v = u + at share the same variables. When you don't know what each formula is modelling, you're effectively guessing.",
+    how: "DA connects every equation to the physical situation it describes before students are asked to apply it. Rather than 'here is the formula,' teachers ask: 'what is actually happening here, and why does this equation capture it?' Once students can visualise the physics behind the algebra, formula selection becomes a reasoning process — not a memory test.",
+    improvement: "Students who develop physical intuition alongside mathematical fluency typically stop second-guessing formula choice within a term. Multi-step mechanics and energy problems — the ones that cost the most marks — become reliably solvable.",
   },
   {
-    id: 'start',
-    num: '04',
-    headline: 'I don\'t know where to start studying.',
-    why: 'Without a structured plan, students default to re-reading notes or doing random practice questions — creating a feeling of busyness without genuine progress, and leading to last-minute panic as exams approach.',
-    how: 'Every DA student receives a personalised study roadmap aligned to their exam calendar. Sessions are sequenced to build skills progressively, with clear milestones so students always know what they\'re working toward and why.',
-    improvement: 'Students with a structured plan typically feel more confident within the first two weeks. By mid-term, most have shifted from reactive cramming to proactive, deliberate preparation.',
+    id: 'calculations',
+    headline: "I don't understand Chemistry calculations.",
+    why: "Calculation problems fail at three points: setting up the problem incorrectly, choosing the wrong formula, or making unit errors under pressure. For Chemistry specifically, mole calculations feel abstract because students can't visualise what a mole actually represents. Stoichiometry errors almost always trace back to a conceptual gap — not a careless mistake.",
+    how: "DA teaches a systematic three-step method: identify what is known and what is being asked, select the correct relationship (formula or mole ratio), then execute with careful unit tracking. For mole concepts specifically, teachers use concrete analogies — dozen thinking, scaled-up counting — until the abstraction clicks. Students practise this method until it's automatic, not just correct.",
+    improvement: "Students who apply this method consistently typically recover 6–12 marks per paper within a term. Stoichiometry and equilibrium calculations tend to show the fastest improvement because once the setup process is reliable, execution becomes straightforward.",
+  },
+  {
+    id: 'study-plan',
+    headline: "I don't know what to study first.",
+    why: "Without a structured plan, students default to re-reading notes or doing random practice questions — creating a feeling of busyness without genuine progress. This approach guarantees anxiety: the more they 'study,' the less certain they feel, because they can never tell whether they've done enough. The problem isn't work ethic — it's the absence of a map.",
+    how: "Every DA student receives a personalised study roadmap aligned to their exam calendar. Sessions are sequenced to build skills progressively: foundational concepts first, then application, then exam-style practice. Students always know what they're working on, why it's the priority right now, and how it connects to what comes next.",
+    improvement: "Students with a structured plan typically feel more confident within the first two weeks — not because they know more, but because they know where they are. By mid-term, most have shifted from reactive cramming to deliberate, purposeful preparation.",
+  },
+  {
+    id: 'silly-mistakes',
+    headline: "I make silly mistakes and lose easy marks.",
+    why: "So-called 'silly' mistakes are rarely random. They cluster around specific habits: skipping unit conversions, misreading the question, not checking that the answer makes physical or biological sense, writing the working but omitting the unit in the final answer. These are process errors — and because students attribute them to carelessness rather than habit, they never get fixed.",
+    how: "DA trains students to use a brief, consistent checking routine after every calculation or response: does the magnitude make sense? are units correct? have I answered what was actually asked? It sounds simple, but the habit has to be built deliberately. Students practise it in every session until it's reflexive, not something they remember to do only when they have spare time.",
+    improvement: "Most students who adopt a checking routine recover 4–8 marks per paper within a term — marks that were always within reach. For borderline students, this alone can mean the difference between a Band 4 and a Band 5.",
+  },
+  {
+    id: 'exam-anxiety',
+    headline: "I panic during science exams.",
+    why: "Exam anxiety in science usually has one of two root causes: either the student genuinely hasn't practised enough under time pressure, so the exam feels unfamiliar and threatening; or they have practised, but they lack a mental procedure for handling a question they can't immediately answer. The panic isn't irrational — it's a signal that a skill is missing.",
+    how: "DA addresses both causes. Students sit timed practice exams regularly throughout the term, so the exam environment becomes routine rather than exceptional. They also learn an explicit 'stuck protocol' — what to do when you blank on a question: move on, collect the marks you can, and return with fresh eyes. Anxiety reduces dramatically when students have a plan for when things go wrong.",
+    improvement: "After 6–8 weeks of timed practice and protocol training, most students describe their exam experience as feeling more controlled — even when questions are difficult. The panic doesn't disappear entirely, but it no longer derails the whole paper.",
+  },
+  {
+    id: 'study-efficiency',
+    headline: "I spend hours studying but my marks don't improve.",
+    why: "Time spent is not the same as learning. Students who re-read, highlight, and copy out notes are engaging in passive processing — comfortable activities that feel productive but don't build retrievable knowledge. The uncomfortable truth is that effective study requires effort that passive study never demands: retrieval practice, problem-solving, self-testing. Most students avoid it because it feels harder and less reassuring.",
+    how: "DA shifts students from passive to active study from the first session. Instead of reading about a concept, students have to explain it back, solve a problem that uses it, or identify where it appears in an exam question. This is less comfortable than re-reading — and substantially more effective. Students also learn to recognise when they're slipping into passive habits so they can self-correct.",
+    improvement: "Most students see a mark improvement within one exam cycle once they shift to active study. The hours don't necessarily increase — but the return on each hour does, and students start to trust that their preparation is actually working.",
+  },
+  {
+    id: 'long-response',
+    headline: "I don't know how to answer long-response questions.",
+    why: "Extended response questions in Science require a different skill set from short-answer: students must select relevant information, organise it into a coherent argument, and express it in scientific language that matches the marking guidelines. Most students attempt to 'write everything they know,' which produces long, unfocused answers that score poorly despite containing correct information.",
+    how: "DA teaches a structured response framework: identify the command verb, plan the scope of the answer in 30 seconds, use a clear topic sentence, provide evidence from the syllabus, and close with a link to the question. Students practise this on real past-paper questions, with feedback on both scientific content and communication quality — because both are assessed.",
+    improvement: "Students who learn to structure their extended responses typically see the most dramatic per-question mark improvement of any skill we teach. A well-organised 200-word response consistently outscores a rambling 400-word response on the same topic.",
+  },
+  {
+    id: 'scientific-reasoning',
+    headline: "I struggle to explain my scientific reasoning.",
+    why: "Science teachers can often follow a student's thinking when they're talking through a problem, but on paper, the reasoning disappears — students write conclusions without justifications, or state facts without linking them to the question. Marking rubrics for Year 11–12 science explicitly reward the quality of reasoning, not just the accuracy of facts. Knowing the right answer isn't enough.",
+    how: "DA explicitly teaches the 'claim–evidence–reasoning' structure for scientific communication. Students learn to state what they conclude, cite the evidence that supports it, and explain the mechanism that connects the two. This is practised in writing every session — not just in conversation — because the gap between verbal and written reasoning is where most marks are lost.",
+    improvement: "Students who develop written scientific reasoning typically see consistent improvement across all question types, because reasoning is rewarded in everything from short-answer justifications to experiment design. It is the single most transferable skill in HSC Science.",
+  },
+  {
+    id: 'year-change',
+    headline: "Science became much harder this year.",
+    why: "The step from Year 10 to Year 11 Science — and again from Year 11 to Year 12 — involves a qualitative shift in what is expected, not just more content. At Year 10, understanding is enough. At Year 11, students must apply understanding to unfamiliar problems. At Year 12, they must evaluate, argue, and synthesise. Students who thrived on memorisation often hit a wall precisely when the curriculum begins to reward deeper thinking.",
+    how: "DA tutors identify exactly where a student's current skills sit relative to where the syllabus is heading. Rather than racing through content, sessions are calibrated to close specific gaps — usually in application and reasoning — before moving forward. Students who feel behind are rarely as far behind as they believe; they usually need a targeted intervention rather than a full restart.",
+    improvement: "Most students who engage with DA at the start of a new year report that they feel back in control within 4–6 weeks. The jump in difficulty is real, but it is navigable — and students who understand what changed are far better positioned than those who simply try to study harder.",
+  },
+  {
+    id: 'overwhelmed',
+    headline: "There are too many things to memorise — I don't know what actually matters.",
+    why: "Science syllabuses are dense, and students without guidance tend to treat every piece of content as equally important. They spend the same energy on peripheral detail as on core examinable concepts, then run out of time before the topics that attract the most marks have been properly understood. The problem is not the volume of content — it is the absence of triage.",
+    how: "DA teachers know the NSW Science syllabuses in depth and can tell students exactly which outcomes are examined frequently, which carry the most marks, and which supporting details are worth knowing versus simply recognising. Students learn to prioritise their effort where it has the greatest return, which immediately reduces the feeling of overwhelm and focuses study time where it counts.",
+    improvement: "Students who develop a clear sense of syllabus priority typically feel significantly less anxious about exams within a fortnight. Rather than feeling like they need to know everything perfectly, they can articulate exactly what they need to be confident in — and direct their energy accordingly.",
   },
 ];
 
 const ScienceStruggleSection = () => {
-  const [selectedId, setSelectedId] = useState('exam');
+  const [selectedId, setSelectedId] = useState(STRUGGLES[0].id);
   const selected = STRUGGLES.find(s => s.id === selectedId)!;
 
   return (
@@ -1395,8 +2192,9 @@ const ScienceStruggleSection = () => {
 
           {/* ── Left: selectable cards ── */}
           <div className="flex flex-col gap-3">
-            {STRUGGLES.map((s) => {
+            {STRUGGLES.map((s, i) => {
               const active = s.id === selectedId;
+              const num = String(i + 1).padStart(2, '0');
               return (
                 <button
                   key={s.id}
@@ -1410,7 +2208,7 @@ const ScienceStruggleSection = () => {
                 >
                   <div className="flex items-start gap-4">
                     <span className={`mt-0.5 shrink-0 font-serif text-sm font-medium transition ${active ? 'text-[#c9a227]' : 'text-[#071629]/25 group-hover:text-[#071629]/40'}`}>
-                      {s.num}
+                      {num}
                     </span>
                     <p className={`font-serif text-base italic leading-snug transition ${active ? 'text-[#071629]' : 'text-[#071629]/55 group-hover:text-[#071629]/75'}`}>
                       &ldquo;{s.headline}&rdquo;
