@@ -91,11 +91,14 @@ const NavigationNew = () => {
   return (
     <div className="fixed top-0 left-0 right-0 z-[60]">
       <nav
-        className="w-full bg-[#fffaf0] backdrop-blur-md border-b border-brand-gold/20 transition-shadow duration-300"
+        className="w-full backdrop-blur-xl backdrop-saturate-150 border-b border-white/60 transition-shadow duration-300"
         style={{
+          background: scrolled
+            ? 'linear-gradient(135deg, rgba(247,244,238,0.92), rgba(255,250,240,0.86) 58%, rgba(240,200,106,0.18))'
+            : 'linear-gradient(135deg, rgba(255,255,255,0.78), rgba(247,244,238,0.72) 58%, rgba(240,200,106,0.16))',
           boxShadow: scrolled
-            ? '0 4px 20px rgba(10,27,52,0.12)'
-            : '0 2px 8px rgba(10,27,52,0.06)',
+            ? '0 10px 30px rgba(10,27,52,0.14), inset 0 1px 0 rgba(255,255,255,0.8)'
+            : '0 2px 12px rgba(10,27,52,0.08), inset 0 1px 0 rgba(255,255,255,0.72)',
         }}
       >
         <div className="px-4 sm:px-6 lg:px-8">
@@ -266,7 +269,7 @@ const NavigationNew = () => {
 
           {/* Mobile Navigation */}
           {isOpen && (
-            <div className="lg:hidden absolute top-full left-0 w-full bg-[#fffaf0]/98 backdrop-blur-lg shadow-lg border-t border-brand-gold/15 max-h-[80vh] overflow-y-auto">
+            <div className="lg:hidden absolute top-full left-0 w-full bg-brand-ivory/95 backdrop-blur-xl backdrop-saturate-150 shadow-lg border-t border-white/60 max-h-[80vh] overflow-y-auto">
               <div className="px-4 py-5 space-y-3">
                 <Link
                   to="/"

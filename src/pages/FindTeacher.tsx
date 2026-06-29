@@ -184,12 +184,6 @@ const FeaturedCard = ({ teacher, onSelect }: { teacher: CatalogueTutor; onSelect
           className="absolute inset-0"
           style={{ background: 'linear-gradient(to top, ' + a(NAVY, 'fa') + ' 6%, ' + a(NAVY, '70') + ' 38%, transparent 66%)' }}
         />
-        <span
-          className="absolute top-4 left-4 text-[10px] font-bold uppercase tracking-[0.15em] px-2.5 py-1 rounded-full"
-          style={{ background: GOLD, color: NAVY }}
-        >
-          Senior Faculty
-        </span>
         <div className="absolute bottom-0 left-0 right-0 p-5">
           <p className="text-[10px] font-bold uppercase tracking-[0.18em] mb-1.5" style={{ color: GOLD_LIGHT, fontFamily: SANS }}>
             {teacher.designation}
