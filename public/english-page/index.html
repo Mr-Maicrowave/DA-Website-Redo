@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>English Page Redesign Demo - DA Tuition</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#071629;
+    --navy-2:#0b2344;
+    --gold:#c9a227;
+    --gold-soft:#f2df9d;
+    --paper:#f7f0e3;
+    --cream:#fff8df;
+    --ink:#08172b;
+    --muted:#536077;
+    --line:rgba(7,22,41,.12);
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;font-family:Inter,system-ui,sans-serif;background:var(--paper);color:var(--ink);-webkit-font-smoothing:antialiased}
+  img{display:block;max-width:100%}
+  .serif{font-family:"Playfair Display",Georgia,serif}
+  .nav{
+    position:absolute;top:16px;left:0;right:0;z-index:10;
+    width:min(1220px,calc(100% - 32px));margin:0 auto;
+    height:70px;border-radius:8px;background:rgba(255,255,255,.86);
+    border:1px solid rgba(255,255,255,.65);box-shadow:0 16px 44px rgba(7,22,41,.13);
+    backdrop-filter:blur(16px);display:flex;align-items:center;gap:34px;padding:0 30px;
+  }
+  .brand{display:flex;align-items:center;gap:12px;font-weight:900;font-size:22px;color:var(--navy)}
+  .brand img{width:42px;height:42px;object-fit:contain}
+  .brand span span{color:#1267ff}
+  .nav-links{display:flex;gap:28px;color:#334257;font-weight:500;font-size:15px}
+
+  .hero{
+    min-height:760px;padding:170px 32px 84px;
+    background:
+      linear-gradient(90deg,rgba(4,11,23,.86) 0%,rgba(4,11,23,.66) 46%,rgba(4,11,23,.22) 100%),
+      url("images/subjects/english/structured-classroom-cr3.jpeg") center/cover;
+    color:#fff;overflow:hidden;display:flex;align-items:center;
+  }
+  .hero-inner{width:min(1220px,100%);margin:0 auto;display:block}
+  .hero-copy{max-width:760px}
+  .eyebrow{display:inline-flex;align-items:center;gap:10px;font-size:12px;font-weight:900;letter-spacing:.18em;text-transform:uppercase;color:var(--gold-soft);margin-bottom:20px}
+  .eyebrow::before{content:"";width:28px;height:2px;background:var(--gold)}
+  .hero h1{font-size:clamp(3.4rem,7vw,6.6rem);line-height:.94;margin:0 0 28px;letter-spacing:-.01em}
+  .hero h1 em{display:block;color:var(--gold);font-style:normal}
+  .hero p{max-width:54ch;font-size:18px;line-height:1.75;color:rgba(255,255,255,.86);margin:0 0 30px}
+  .hero-actions{display:flex;flex-wrap:wrap;gap:14px}
+  .hero-proof{
+    display:flex;flex-wrap:wrap;gap:14px;margin-top:34px;color:rgba(255,255,255,.82);
+    font-size:13px;font-weight:800;letter-spacing:.06em;text-transform:uppercase
+  }
+  .hero-proof span{border-left:2px solid var(--gold);padding-left:12px}
+  .btn{display:inline-flex;align-items:center;justify-content:center;height:50px;padding:0 24px;border-radius:999px;font-weight:800;text-decoration:none}
+  .btn-gold{background:var(--gold);color:var(--navy);box-shadow:0 16px 38px rgba(201,162,39,.24)}
+  .btn-ghost{color:#fff;border:1px solid rgba(255,255,255,.3)}
+
+  section{padding:76px 32px}
+  .section-inner{width:min(1220px,100%);margin:0 auto}
+  .section-head{display:flex;align-items:end;justify-content:space-between;gap:32px;margin-bottom:34px}
+  .section-head h2{font-size:clamp(2rem,4vw,3.4rem);line-height:1;margin:0}
+  .section-head p{max-width:58ch;margin:0;color:var(--muted);line-height:1.7}
+  .image-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+  .image-card{background:var(--cream);border-radius:8px;overflow:hidden;box-shadow:0 18px 44px rgba(7,22,41,.12)}
+  .image-window{position:relative;height:250px;overflow:hidden}
+  .image-window img{width:100%;height:100%;object-fit:cover}
+  .image-window::after{content:"";position:absolute;inset:auto 0 0;height:70px;background:linear-gradient(to top,var(--cream),rgba(255,248,223,.52),transparent)}
+  .image-card-body{padding:26px 28px 32px}
+  .label{font-size:11px;font-weight:900;letter-spacing:.18em;color:var(--gold);text-transform:uppercase}
+  .gold-line{width:34px;height:2px;background:var(--gold);margin:12px 0 18px}
+  .image-card h3{font-family:"Playfair Display",Georgia,serif;font-size:25px;line-height:1.18;margin:0 0 16px}
+  .image-card p{margin:0;color:#5c4a1e;line-height:1.65}
+
+  .editorial{background:#fff}
+  .editorial-grid{display:grid;grid-template-columns:.95fr 1.05fr;gap:58px;align-items:center}
+  .editorial-copy h2{font-size:clamp(2.2rem,4vw,4rem);line-height:1;margin:0 0 22px}
+  .editorial-copy p{font-size:17px;line-height:1.75;color:#43506a;margin:0 0 26px}
+  .proofs{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  .proof{border-left:2px solid var(--gold);padding:10px 0 10px 14px}
+  .proof strong{display:block;font-size:14px;color:var(--navy);margin-bottom:4px}
+  .proof span{font-size:13px;color:#667086;line-height:1.4}
+  .editorial-image{position:relative}
+  .editorial-image img{width:100%;height:520px;object-fit:cover;border-radius:8px;box-shadow:0 24px 60px rgba(7,22,41,.16)}
+  .pull{
+    position:absolute;right:28px;bottom:28px;width:min(360px,78%);
+    background:var(--navy);color:#fff;border-radius:8px;padding:24px;
+    box-shadow:0 18px 44px rgba(7,22,41,.28)
+  }
+  .pull span{display:block;color:var(--gold);font-weight:900;letter-spacing:.14em;text-transform:uppercase;font-size:10px;margin-bottom:10px}
+  .pull p{font-family:"Playfair Display",Georgia,serif;font-size:24px;line-height:1.25;margin:0}
+
+  .pathway{background:linear-gradient(180deg,#fff 0%,#fbf6ea 100%);overflow:hidden}
+  .roadmap{position:relative;display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:22px;padding:12px 0 10px}
+  .road-step{
+    position:relative;z-index:1;min-height:245px;border-radius:8px;background:#fff;
+    border:1px solid rgba(201,162,39,.2);box-shadow:0 18px 44px rgba(7,22,41,.08);
+    padding:22px 20px 24px;display:flex;flex-direction:column;justify-content:flex-start
+  }
+  .road-step:nth-child(2),.road-step:nth-child(5){transform:translateY(24px)}
+  .road-num{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:var(--navy);color:var(--gold-soft);font-weight:900;margin-bottom:18px}
+  .road-step h3{font-size:19px;margin:0 0 10px;color:var(--navy)}
+  .road-step p{color:#59647a;line-height:1.6;margin:0;font-size:14px}
+
+  .quote-section{background:#faf7ef}
+  .quote-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  .concern-card{min-height:265px;perspective:1100px;cursor:pointer;outline:none}
+  .concern-inner{display:block;position:relative;width:100%;min-height:265px;transition:transform .55s ease;transform-style:preserve-3d}
+  .concern-card.is-flipped .concern-inner,.concern-card:focus-visible .concern-inner{transform:rotateY(180deg)}
+  .concern-face{
+    position:absolute;inset:0;backface-visibility:hidden;background:#fff;border-radius:8px;
+    padding:30px;box-shadow:0 12px 34px rgba(7,22,41,.08);overflow:hidden
+  }
+  .concern-face::before{content:"";position:absolute;top:0;left:0;width:4px;height:100%;background:var(--gold)}
+  .concern-front blockquote{font-family:"Playfair Display",Georgia,serif;font-size:24px;line-height:1.25;margin:0 0 22px;color:var(--navy)}
+  .concern-front span{color:#9a6e00;font-size:12px;font-weight:900;letter-spacing:.14em;text-transform:uppercase}
+  .concern-back{background:var(--navy);color:#fff;transform:rotateY(180deg)}
+  .concern-back::before{background:var(--gold)}
+  .concern-back h3{font-size:20px;margin:0 0 14px;color:#fff}
+  .concern-back p{color:rgba(255,255,255,.76);line-height:1.65;margin:0}
+
+  .year-map{background:#fff}
+  .year-map-grid{display:grid;gap:28px}
+  .year-row{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:24px;align-items:stretch}
+  .year-panel{
+    display:grid;grid-template-columns:330px minmax(0,1fr);gap:0;align-items:stretch;
+    border-radius:8px;background:#fbf7ee;overflow:hidden;box-shadow:0 16px 44px rgba(7,22,41,.09)
+  }
+  .year-row:nth-child(even) .year-panel,.year-row:nth-child(even) .sample-stack{background:#fff}
+  .year-media{position:relative;min-height:310px;background:#071629}
+  .year-media img{width:100%;height:100%;object-fit:cover;opacity:.95}
+  .year-badge{
+    position:absolute;left:22px;top:22px;background:var(--navy);color:var(--gold-soft);
+    border-radius:999px;padding:8px 14px;font-size:11px;font-weight:900;letter-spacing:.16em;text-transform:uppercase
+  }
+  .year-content{padding:34px 38px}
+  .year-copy h3{font-family:"Playfair Display",Georgia,serif;font-size:32px;line-height:1.08;margin:0 0 14px;color:var(--navy)}
+  .year-copy p{margin:0 0 18px;color:#536077;line-height:1.7}
+  .skill-list{display:grid;gap:8px;margin:0;padding-left:20px;color:#536077;line-height:1.45}
+  .skill-list li::marker{color:var(--gold);font-size:1.1em}
+  .sample-stack{
+    display:flex;flex-direction:column;justify-content:center;gap:14px;
+    border-radius:8px;background:#fbf7ee;padding:24px;box-shadow:0 16px 44px rgba(7,22,41,.09)
+  }
+  .sample-stack h4{margin:0;color:var(--navy);font-size:16px}
+  .sample-thumb-row{display:flex;gap:10px;align-items:end;overflow:hidden}
+  .preview-thumb{border:0;background:transparent;padding:0;cursor:pointer;position:relative}
+  .preview-thumb img{height:124px;border-radius:6px;background:#fff;box-shadow:0 10px 24px rgba(7,22,41,.13);transition:transform .2s ease,box-shadow .2s ease}
+  .sample-stack .preview-thumb img{height:300px;width:214px;object-fit:cover;object-position:top}
+  .preview-thumb:hover img,.preview-thumb:focus-visible img{transform:translateY(-3px) scale(1.03);box-shadow:0 16px 34px rgba(7,22,41,.2)}
+  .preview-thumb::after{
+    content:"Click to preview";position:absolute;left:8px;right:8px;bottom:8px;border-radius:999px;
+    background:rgba(7,22,41,.82);color:#fff;font-size:10px;font-weight:800;letter-spacing:.08em;
+    text-transform:uppercase;padding:6px 8px;text-align:center;opacity:0;transition:opacity .2s ease
+  }
+  .preview-thumb:hover::after,.preview-thumb:focus-visible::after{opacity:1}
+  .sample-note{font-size:13px;color:#69748a;line-height:1.5;margin:0}
+
+  .classes{background:linear-gradient(135deg,#071629,#0d2b52);color:#fff}
+  .classes .section-head p{color:rgba(255,255,255,.72)}
+  .class-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:16px}
+  .class-card{border-radius:8px;overflow:hidden;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);box-shadow:0 20px 50px rgba(0,0,0,.22)}
+  .class-photo{height:175px;overflow:hidden;background:#102b4b}
+  .class-photo img{width:100%;height:100%;object-fit:cover;transition:transform .35s ease}
+  .class-card:hover .class-photo img{transform:scale(1.04)}
+  .class-body{padding:20px 18px 22px}
+  .class-body h3{display:flex;align-items:center;gap:10px;margin:0 0 10px;color:#fff;font-size:18px}
+  .class-body h3::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--gold);flex:0 0 auto}
+  .class-body p{margin:0;color:rgba(255,255,255,.7);font-size:14px;line-height:1.58}
+
+  .preview-modal{position:fixed;inset:0;z-index:80;display:none;align-items:center;justify-content:center;padding:28px;background:rgba(3,10,20,.82);backdrop-filter:blur(10px)}
+  .preview-modal.is-open{display:flex}
+  .preview-shell{width:min(980px,100%);max-height:92vh;display:grid;grid-template-rows:auto 1fr auto;gap:14px}
+  .preview-top{display:flex;align-items:center;justify-content:space-between;color:#fff}
+  .preview-top strong{font-family:"Playfair Display",Georgia,serif;font-size:24px}
+  .preview-close,.preview-arrow{
+    border:1px solid rgba(255,255,255,.26);background:rgba(255,255,255,.09);color:#fff;
+    border-radius:999px;min-width:44px;height:44px;font-weight:900;cursor:pointer
+  }
+  .preview-stage{min-height:0;display:grid;place-items:center}
+  .preview-stage img{max-height:76vh;max-width:100%;border-radius:8px;background:#fff;box-shadow:0 28px 80px rgba(0,0,0,.45)}
+  .preview-controls{display:flex;justify-content:center;gap:12px}
+
+  @media (max-width:900px){
+    .nav{position:absolute;top:12px;gap:18px;overflow:hidden}
+    .nav-links{display:none}
+    .hero-inner,.editorial-grid{grid-template-columns:1fr}
+    .image-cards,.quote-grid,.proofs,.year-row,.year-panel,.year-content,.class-grid,.roadmap{grid-template-columns:1fr}
+    .hero{padding-top:130px}
+    .section-head{display:block}
+    .section-head h2{margin-bottom:14px}
+    .editorial-image img{height:420px}
+    .sample-stack{padding:24px}
+    .road-step:nth-child(2),.road-step:nth-child(5){transform:none}
+  }
+</style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="brand">
+      <img src="images/da-logo.png" alt="DA Tuition">
+      <span>DA<span>Tuition</span></span>
+    </div>
+    <div class="nav-links">
+      <span>Home</span><span>Programs</span><span>Subjects</span><span>About</span><span>Success Stories</span><span>Resources</span><span>Contact</span>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="hero-inner">
+      <div class="hero-copy">
+        <div class="eyebrow">Years 7-12 English</div>
+        <h1 class="serif">Writing with clarity. <em>Thinking with depth.</em></h1>
+        <p>English tuition for students who need structure, confidence, and sharper analysis - from early essay foundations through to high-level HSC responses.</p>
+        <div class="hero-actions">
+          <a class="btn btn-gold" href="#">Book an Interview</a>
+          <a class="btn btn-ghost" href="#pathway">View the pathway</a>
+        </div>
+        <div class="hero-proof">
+          <span>Booklet-led lessons</span>
+          <span>Marked feedback</span>
+          <span>Clear writing pathway</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <section>
+    <div class="section-inner">
+      <div class="section-head">
+        <h2 class="serif">What makes the program feel different</h2>
+        <p>Instead of another grid of icons, this version uses real classroom moments, tighter copy, and softer transitions between image and text.</p>
+      </div>
+      <div class="image-cards">
+        <article class="image-card">
+          <div class="image-window"><img src="images/subjects/english/support-24-7.jpeg" alt=""></div>
+          <div class="image-card-body">
+            <div class="label">24/7 Support</div><div class="gold-line"></div>
+            <h3>Help when your child needs it most</h3>
+            <p>Students get direct access to their tutor beyond the classroom - no waiting until next week's lesson.</p>
+          </div>
+        </article>
+        <article class="image-card">
+          <div class="image-window"><img src="images/subjects/english/structured-classroom-cr3.jpeg" alt=""></div>
+          <div class="image-card-body">
+            <div class="label">Structured</div><div class="gold-line"></div>
+            <h3>Structured learning, not random worksheets</h3>
+            <p>Every lesson follows a clear purpose, building on the last so students make meaningful progress each week.</p>
+          </div>
+        </article>
+        <article class="image-card">
+          <div class="image-window"><img src="images/subjects/english/feedback-tutor.jpeg" alt=""></div>
+          <div class="image-card-body">
+            <div class="label">Feedback</div><div class="gold-line"></div>
+            <h3>Feedback that turns mistakes into progress</h3>
+            <p>Detailed corrections help students understand exactly where they went wrong and how to improve.</p>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="year-map">
+    <div class="section-inner">
+      <div class="section-head">
+        <h2 class="serif">One English pathway, not three hidden tabs</h2>
+        <p>This layout makes Years 7-8, Years 9-10, and Years 11-12 visible together, so families can immediately understand how DA builds skills over time.</p>
+      </div>
+      <div class="year-map-grid">
+        <div class="year-row">
+          <article class="year-panel">
+            <div class="year-media">
+              <img src="images/subjects/english/support-24-7.jpeg" alt="">
+              <div class="year-badge">Years 7-8</div>
+            </div>
+            <div class="year-content">
+              <div class="year-copy">
+                <h3>Building High School English Skills</h3>
+                <p>Students begin learning the core skills of high school English: analysing texts, structuring paragraphs, using evidence, and developing stronger written expression.</p>
+                <ul class="skill-list">
+                  <li>TEEL paragraph structure</li>
+                  <li>Text analysis and evidence use</li>
+                  <li>Creative writing foundations</li>
+                  <li>Assessment preparation</li>
+                </ul>
+              </div>
+            </div>
+          </article>
+          <aside class="sample-stack">
+            <h4>Sample booklet preview</h4>
+            <div class="sample-thumb-row">
+              <button class="preview-thumb" type="button" data-preview-group="y78" data-preview-index="0"><img src="samples/flash_y78_page_1.png" alt="Year 7-8 booklet cover"></button>
+            </div>
+            <p class="sample-note">Click the cover to open the full booklet preview.</p>
+          </aside>
+        </div>
+
+        <div class="year-row">
+          <article class="year-panel">
+            <div class="year-media">
+              <img src="images/subjects/english/structured-classroom-cr3.jpeg" alt="">
+              <div class="year-badge">Years 9-10</div>
+            </div>
+            <div class="year-content">
+              <div class="year-copy">
+                <h3>Strengthening Analysis and Assessment Confidence</h3>
+                <p>Students move from basic responses to stronger, more sophisticated analysis: building arguments, integrating evidence, and writing clearly under exam conditions.</p>
+                <ul class="skill-list">
+                  <li>Essay writing and paragraph flow</li>
+                  <li>Deeper analysis of techniques and meaning</li>
+                  <li>Timed writing confidence</li>
+                  <li>Preparation for senior English expectations</li>
+                </ul>
+              </div>
+            </div>
+          </article>
+          <aside class="sample-stack">
+            <h4>Sample booklet preview</h4>
+            <div class="sample-thumb-row">
+              <button class="preview-thumb" type="button" data-preview-group="y910" data-preview-index="0"><img src="samples/lear_page_1.png" alt="Year 9-10 booklet cover"></button>
+            </div>
+            <p class="sample-note">Click the cover to open the full booklet preview.</p>
+          </aside>
+        </div>
+
+        <div class="year-row">
+          <article class="year-panel">
+            <div class="year-media">
+              <img src="images/subjects/english/feedback-tutor.jpeg" alt="">
+              <div class="year-badge">Years 11-12</div>
+            </div>
+            <div class="year-content">
+              <div class="year-copy">
+                <h3>Senior English and HSC Preparation</h3>
+                <p>Students learn how to think critically, write with purpose, read rubrics closely, and develop responses that are clear, insightful, and adaptable.</p>
+                <ul class="skill-list">
+                  <li>HSC essay preparation</li>
+                  <li>Module-based text analysis</li>
+                  <li>Draft feedback and editing</li>
+                  <li>Trial and HSC exam preparation</li>
+                </ul>
+              </div>
+            </div>
+          </article>
+          <aside class="sample-stack">
+            <h4>Sample feedback preview</h4>
+            <div class="sample-thumb-row">
+              <button class="preview-thumb" type="button" data-preview-group="feedback" data-preview-index="0"><img src="samples/essay_page_1.png" alt="Senior feedback sample page one"></button>
+            </div>
+            <p class="sample-note">Click the sample to see the marked feedback pages.</p>
+          </aside>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="classes">
+    <div class="section-inner">
+      <div class="section-head">
+        <h2 class="serif">Choose the class style that fits the student</h2>
+        <p>A dedicated class-types section makes the offer clearer and gives each format room for its own learning-environment photo.</p>
+      </div>
+      <div class="class-grid">
+        <article class="class-card">
+          <div class="class-photo"><img src="images/subjects/english/class-private.png" alt=""></div>
+          <div class="class-body">
+            <h3>Private Classes</h3>
+            <p>One-to-one support for students who need individual attention, targeted feedback, or a personalised pace.</p>
+          </div>
+        </article>
+        <article class="class-card">
+          <div class="class-photo"><img src="images/subjects/english/class-gat.png" alt=""></div>
+          <div class="class-body">
+            <h3>GAT Class</h3>
+            <p>Extension-style learning for high-performing students who need challenge, depth, and sharper analytical thinking.</p>
+          </div>
+        </article>
+        <article class="class-card">
+          <div class="class-photo"><img src="images/subjects/english/class-bullet.png" alt=""></div>
+          <div class="class-body">
+            <h3>Bullet Class</h3>
+            <p>Fast, focused lessons built around exam techniques, key skills, and high-impact revision.</p>
+          </div>
+        </article>
+        <article class="class-card">
+          <div class="class-photo"><img src="images/subjects/english/class-creative.png" alt=""></div>
+          <div class="class-body">
+            <h3>Creative Writing</h3>
+            <p>Dedicated writing workshops for voice, structure, imagery, narrative control, and originality.</p>
+          </div>
+        </article>
+        <article class="class-card">
+          <div class="class-photo"><img src="images/subjects/english/class-focus.png" alt=""></div>
+          <div class="class-body">
+            <h3>Focus Class</h3>
+            <p>Small-group support for students who need clarity, consistency, and confidence with English fundamentals.</p>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="pathway" id="pathway">
+    <div class="section-inner">
+      <div class="section-head">
+        <h2 class="serif">The senior lesson pathway</h2>
+        <p>A premium roadmap replaces the bulky step boxes. It still feels structured, but the staggered path gives the section more movement and polish.</p>
+      </div>
+      <div class="roadmap">
+        <article class="road-step"><div class="road-num">1</div><h3>Rubric Deconstruction</h3><p>Students unpack the module rubric so they understand what the syllabus requires.</p></article>
+        <article class="road-step"><div class="road-num">2</div><h3>Textual Analysis</h3><p>They learn to notice technique, purpose and meaning, then connect evidence to argument.</p></article>
+        <article class="road-step"><div class="road-num">3</div><h3>Guided Response Building</h3><p>Ideas become paragraphs with thesis, topic sentence, evidence and commentary working together.</p></article>
+        <article class="road-step"><div class="road-num">4</div><h3>Draft Development</h3><p>Students refine expression, structure and depth before moving into timed performance.</p></article>
+        <article class="road-step"><div class="road-num">5</div><h3>Personalised Feedback</h3><p>Corrections are specific enough that students know what to fix next.</p></article>
+        <article class="road-step"><div class="road-num">6</div><h3>Refinement and Exam Prep</h3><p>Students practise adapting their strongest ideas under real exam conditions.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="quote-section">
+    <div class="section-inner">
+      <div class="section-head">
+        <h2 class="serif">What parents often ask us</h2>
+        <p>Click each concern to flip it over and see how DA helps. It turns the parent worries into a small guided conversation.</p>
+      </div>
+      <div class="quote-grid">
+        <article class="concern-card" tabindex="0">
+          <div class="concern-inner">
+            <div class="concern-face concern-front"><blockquote>"I do not know if they truly understand what senior English requires of them."</blockquote><span>Click to see how DA helps</span></div>
+            <div class="concern-face concern-back"><h3>We make the invisible skills visible.</h3><p>Students connect syllabus language to actual writing choices through model responses, guided practice, and clear feedback.</p></div>
+          </div>
+        </article>
+        <article class="concern-card" tabindex="0">
+          <div class="concern-inner">
+            <div class="concern-face concern-front"><blockquote>"They know the texts well but their essay marks do not reflect that."</blockquote><span>Click to see how DA helps</span></div>
+            <div class="concern-face concern-back"><h3>Knowledge becomes marks.</h3><p>We focus on argument, structure and analysis so students learn how to turn ideas into a response markers can reward.</p></div>
+          </div>
+        </article>
+        <article class="concern-card" tabindex="0">
+          <div class="concern-inner">
+            <div class="concern-face concern-front"><blockquote>"I am worried about how they will perform under real HSC exam conditions."</blockquote><span>Click to see how DA helps</span></div>
+            <div class="concern-face concern-back"><h3>Practice becomes confidence.</h3><p>Students complete timed responses with feedback that targets the next improvement before exam pressure arrives.</p></div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <div class="preview-modal" aria-hidden="true">
+    <div class="preview-shell" role="dialog" aria-modal="true" aria-label="Booklet preview">
+      <div class="preview-top">
+        <strong class="preview-title">Sample preview</strong>
+        <button class="preview-close" type="button" aria-label="Close preview">X</button>
+      </div>
+      <div class="preview-stage">
+        <img class="preview-image" src="samples/essay_page_1.png" alt="Senior feedback preview">
+      </div>
+      <div class="preview-controls">
+        <button class="preview-arrow" type="button" data-preview-direction="-1" aria-label="Previous page">Prev</button>
+        <button class="preview-arrow" type="button" data-preview-direction="1" aria-label="Next page">Next</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const previewSets = {
+      y78: {
+        title: "Years 7-8 booklet preview",
+        pages: [
+          "samples/flash_y78_page_1.png",
+          "samples/flash_y78_page_2.png",
+          "samples/flash_y78_page_3.png",
+          "samples/flash_y78_page_4.png",
+          "samples/flash_y78_page_5.png",
+          "samples/flash_y78_page_6.png"
+        ]
+      },
+      y910: {
+        title: "Years 9-10 booklet preview",
+        pages: [
+          "samples/lear_page_1.png",
+          "samples/lear_page_2.png",
+          "samples/lear_page_8.png",
+          "samples/lear_page_14.png"
+        ]
+      },
+      feedback: {
+        title: "Senior feedback preview",
+        pages: [
+          "samples/essay_page_1.png",
+          "samples/essay_page_2.png"
+        ]
+      }
+    };
+
+    const modal = document.querySelector(".preview-modal");
+    const previewTitle = document.querySelector(".preview-title");
+    const previewImage = document.querySelector(".preview-image");
+    let activeGroup = "feedback";
+    let activeIndex = 0;
+
+    function renderPreview(){
+      const set = previewSets[activeGroup];
+      previewTitle.textContent = `${set.title} (${activeIndex + 1} of ${set.pages.length})`;
+      previewImage.src = set.pages[activeIndex];
+      previewImage.alt = previewTitle.textContent;
+    }
+
+    function openPreview(group, index){
+      activeGroup = group;
+      activeIndex = Number(index) || 0;
+      renderPreview();
+      modal.classList.add("is-open");
+      modal.setAttribute("aria-hidden","false");
+    }
+
+    document.querySelectorAll("[data-preview-group]").forEach((button) => {
+      button.addEventListener("click", () => openPreview(button.dataset.previewGroup, button.dataset.previewIndex));
+    });
+
+    document.querySelectorAll("[data-preview-direction]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const set = previewSets[activeGroup];
+        activeIndex = (activeIndex + Number(button.dataset.previewDirection) + set.pages.length) % set.pages.length;
+        renderPreview();
+      });
+    });
+
+    document.querySelector(".preview-close").addEventListener("click", () => {
+      modal.classList.remove("is-open");
+      modal.setAttribute("aria-hidden","true");
+    });
+
+    modal.addEventListener("click", (event) => {
+      if(event.target === modal){
+        modal.classList.remove("is-open");
+        modal.setAttribute("aria-hidden","true");
+      }
+    });
+
+    document.querySelectorAll(".concern-card").forEach((card) => {
+      card.addEventListener("click", () => card.classList.toggle("is-flipped"));
+      card.addEventListener("keydown", (event) => {
+        if(event.key === "Enter" || event.key === " "){
+          event.preventDefault();
+          card.classList.toggle("is-flipped");
+        }
+      });
+    });
+  </script>
+</body>
+</html>
