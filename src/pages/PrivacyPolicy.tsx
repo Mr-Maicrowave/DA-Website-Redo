@@ -45,7 +45,7 @@ const PrivacyPolicy = () => {
           <h2>2. How we collect it</h2>
           <p>We collect information directly from you when you:</p>
           <ul>
-            <li>Book an interview through our website at <Link to="/interview">datuition.com.au/interview</Link></li>
+            <li>Book an interview through our website at <Link to="/book-interview">datuition.com.au/book-interview</Link></li>
             <li>Call or message us on {contactInfo.phone}</li>
             <li>Visit our centre at {contactInfo.address}</li>
             <li>Browse our website (analytics cookies — see Section 6)</li>

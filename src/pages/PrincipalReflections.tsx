@@ -5,12 +5,21 @@ const PrincipalReflections = () => {
   return (
     <>
       <SEO
-        title="Principal's Voice — Reflections & Interview"
-        description="Read the principal's reflections and intimate interview. Miss Amanda shares the mission, values and teaching philosophy that shapes every lesson at DA Tuition."
+        title="Principal's Reflection"
+        description="Read the principal's reflection. Miss Amanda shares the mission, values and teaching philosophy that shapes every lesson at DA Tuition."
         canonicalUrl="/principal-reflections"
       />
       <NavigationNew />
-      <div style={{ width: '100vw', height: 'calc(100vh - 80px)', overflow: 'hidden', margin: 0, padding: 0 }}>
+      <div
+        style={{
+          width: '100vw',
+          height: '100svh',
+          overflow: 'hidden',
+          margin: 0,
+          paddingTop: 96,
+          boxSizing: 'border-box',
+        }}
+      >
         <iframe
           src="/principal-voice-book.html"
           style={{
@@ -19,7 +28,7 @@ const PrincipalReflections = () => {
             border: 'none',
             display: 'block',
           }}
-          title="Principal's Voice — Reflections & Interview"
+          title="Principal's Reflection"
         />
       </div>
     </>

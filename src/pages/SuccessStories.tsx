@@ -83,7 +83,7 @@ const exploreLinks = [
   {
     to: '/principal-reflections',
     icon: BookOpen,
-    title: "Principal's Reflections",
+    title: "Principal's Reflection",
     desc: 'Our philosophy, values, and vision for every child.',
     accent: 'from-blue-400 to-indigo-400',
   },

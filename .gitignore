@@ -30,3 +30,9 @@ dist-ssr
 
 # Media
 DA Photos/
+
+# Local git helper scripts - never commit these
+git_commit_push.bat
+git_merge_to_master.bat
+git_resolve_conflicts.bat
+git_fix*.bat

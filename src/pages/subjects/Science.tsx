@@ -260,7 +260,7 @@ function HscSubjectRow({ s, index }: { s: typeof HSC_SUBJECTS[number]; index: nu
         transition={{ duration: 0.32, ease: [0.16, 1, 0.3, 1] }}
       />
 
-      <Link to="/interview" className="relative block px-6 py-8 lg:px-8 lg:py-10">
+      <Link to="/book-interview" className="relative block px-6 py-8 lg:px-8 lg:py-10">
         <div className="flex items-start gap-6 lg:gap-10">
           {/* Editorial number */}
           <span className="hidden shrink-0 pt-1 font-mono text-[10px] font-black tracking-[0.24em] text-[#071629]/20 lg:block w-7">
@@ -428,7 +428,7 @@ const Science = () => {
               </div>
 
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-                <Link to="/interview">
+                <Link to="/book-interview">
                   <Button size="lg" className="h-12 rounded-full bg-[#c9a227] px-7 font-black text-[#101521] shadow-xl shadow-[#c9a227]/25 hover:bg-[#e0bd4b]">
                     Book Interview
                     <ArrowRight className="ml-2 h-4 w-4" />
@@ -1118,7 +1118,7 @@ const Science = () => {
                   </div>
 
                   <Link
-                    to="/interview"
+                    to="/book-interview"
                     className="mt-8 inline-flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.16em] text-[#1d4ed8] transition"
                   >
                     Explore the program
@@ -1318,7 +1318,7 @@ const Science = () => {
               </p>
             </div>
             <div className="flex flex-col gap-3 sm:flex-row lg:flex-col">
-              <Link to="/interview">
+              <Link to="/book-interview">
                 <Button size="lg" className="h-12 w-full rounded-full bg-[#c9a227] px-7 font-black text-[#101521] hover:bg-[#e0bd4b]">
                   Book an Interview
                   <ArrowRight className="ml-2 h-4 w-4" />
@@ -1459,7 +1459,7 @@ const ScienceStruggleSection = () => {
 
                   {/* CTA */}
                   <div className="mt-8 border-t border-[#071629]/8 pt-8">
-                    <Link to="/interview">
+                    <Link to="/book-interview">
                       <Button className="rounded-full bg-[#c9a227] px-6 font-black text-[#101521] shadow-lg shadow-[#c9a227]/25 hover:bg-[#e0bd4b]">
                         Book an Interview
                         <ArrowRight className="ml-2 h-4 w-4" />

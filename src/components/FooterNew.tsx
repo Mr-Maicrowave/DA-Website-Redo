@@ -66,8 +66,8 @@ const FooterNew = () => {
                 </Link>
               </li>
               <li>
-                <Link to="/interview" className="hover:text-white transition-colors">
-                  Principal's Interview
+                <Link to="/principal-reflections" className="hover:text-white transition-colors">
+                  Principal's Reflection
                 </Link>
               </li>
             </ul>
