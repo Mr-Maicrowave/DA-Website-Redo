@@ -4,9 +4,9 @@
  * Inspired by: korowa.vic.edu.au
  */
 
-import { useRef, useEffect, useState, useCallback } from 'react';
+import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { BookOpen, GraduationCap, School, Play, X } from 'lucide-react';
+import { Play, X } from 'lucide-react';
 import { motion, AnimatePresence, useInView, useAnimationControls } from 'framer-motion';
 import NavigationNew from '@/components/NavigationNew';
 import FooterNew from '@/components/FooterNew';
@@ -345,28 +345,32 @@ const PHILOSOPHY_STAGES = [
     label: 'Known',
     title: 'Students deserve to be known before they are judged.',
     supporting: 'Every student arrives with a different story. We take the time to understand where they are — because the gap between their starting point and their potential is exactly where real growth lives.',
-    image: '/images/philosophy/philosophy-known-whiteboard.webp',
+    image: '/images/philosophy/philhome.jpeg',
+    objectPosition: 'center center',
   },
   {
     stage: 2,
     label: 'Belief',
     title: 'Confidence often comes before achievement.',
     supporting: 'We have seen it hundreds of times: the moment a student believes they can, the results follow. Building that belief is not a side effect of our teaching — it is the purpose of it.',
-    image: '/images/philosophy/philosophy-belief-teacher-table.webp',
+    image: '/images/philosophy/laihome.jpeg',
+    objectPosition: 'center 63%',
   },
   {
     stage: 3,
     label: 'Understanding',
     title: 'Understanding matters more than memorisation.',
     supporting: 'Real mastery is knowing why something works, not just that it does. We teach students to think deeply, so knowledge becomes theirs permanently — not just until the exam.',
-    image: '/images/philosophy/philosophy-understanding-male-tutor.webp',
+    image: '/images/philosophy/ademhome.jpeg',
+    objectPosition: 'center 64%',
   },
   {
     stage: 4,
     label: 'Growth',
     title: 'We strengthen the child behind the result.',
     supporting: 'Marks improve when students feel capable, seen, and guided. Our goal is not to chase grades — it is to build the resilience, curiosity, and self-belief that make sustained excellence possible.',
-    image: '/images/philosophy/philosophy-growth-independent-study.webp',
+    image: '/images/philosophy/homekid.jpeg',
+    objectPosition: 'center 83%',
   },
 ];
 
@@ -405,46 +409,17 @@ const GoldSparkle = ({ active }: { active: boolean }) => {
   );
 };
 
-// ── Count-up number — re-triggers every time inView flips true ──
-const CountUpStat = ({ target, decimals = 0, suffix, triggerDelay, inView }: {
+const clamp01 = (value: number) => Math.max(0, Math.min(1, value));
+const easePrestige = (value: number) => 1 - Math.pow(1 - clamp01(value), 4);
+
+// ── Count-up number — driven by the single journey particle progress ──
+const CountUpStat = ({ target, decimals = 0, suffix, progress, milestone }: {
   target: number; decimals?: number; suffix: string;
-  triggerDelay: number; inView: boolean;
+  progress: number; milestone: number;
 }) => {
   const reduced = useRef(typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
-  const [count, setCount] = useState(reduced.current ? target : 0);
-  const rafRef = useRef<number | null>(null);
-
-  useEffect(() => {
-    // Reset to 0 when leaving viewport
-    if (!inView) {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-      if (!reduced.current) setCount(0);
-      return;
-    }
-
-    if (reduced.current) { setCount(target); return; }
-
-    const timer = setTimeout(() => {
-      const duration = 1800;
-      const t0 = performance.now();
-      const tick = (now: number) => {
-        const p = Math.min((now - t0) / duration, 1);
-        const eased = 1 - Math.pow(1 - p, 3);
-        setCount(eased * target);
-        if (p < 1) {
-          rafRef.current = requestAnimationFrame(tick);
-        } else {
-          setCount(target);
-        }
-      };
-      rafRef.current = requestAnimationFrame(tick);
-    }, triggerDelay);
-
-    return () => {
-      clearTimeout(timer);
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-    };
-  }, [inView, target, triggerDelay]);
+  const countProgress = reduced.current ? 1 : easePrestige((progress - milestone) / 0.11);
+  const count = countProgress * target;
 
   const display = decimals > 0
     ? count.toFixed(decimals)
@@ -513,9 +488,9 @@ const PhilosophyBackedSection = () => {
           .phi-journey { grid-template-columns: 1fr !important; }
           .phi-img-col { min-height: 300px; aspect-ratio: 16/8; }
           .phi-stage-img[data-stage="1"] { object-position: center center !important; }
-          .phi-stage-img[data-stage="2"] { object-position: center 35% !important; }
-          .phi-stage-img[data-stage="3"] { object-position: center 30% !important; }
-          .phi-stage-img[data-stage="4"] { object-position: center 25% !important; }
+          .phi-stage-img[data-stage="2"] { object-position: center 58% !important; }
+          .phi-stage-img[data-stage="3"] { object-position: center 58% !important; }
+          .phi-stage-img[data-stage="4"] { object-position: center 76% !important; }
           .phi-photo-overlay {
             background: linear-gradient(
               90deg,
@@ -530,9 +505,9 @@ const PhilosophyBackedSection = () => {
         }
 
         .phi-stage-img[data-stage="1"] { object-position: center center; }
-        .phi-stage-img[data-stage="2"] { object-position: center 35%; }
-        .phi-stage-img[data-stage="3"] { object-position: center 30%; }
-        .phi-stage-img[data-stage="4"] { object-position: center 25%; }
+        .phi-stage-img[data-stage="2"] { object-position: center 63%; }
+        .phi-stage-img[data-stage="3"] { object-position: center 64%; }
+        .phi-stage-img[data-stage="4"] { object-position: center 83%; }
 
         /* ── Philosophy pillar blocks ── */
 
@@ -657,13 +632,15 @@ const PhilosophyBackedSection = () => {
               src={stage.image}
               alt=""
               aria-hidden="true"
-              loading="eager"
+              loading={i === 0 ? 'eager' : 'lazy'}
               decoding="async"
               style={{
                 position: 'absolute', inset: 0,
                 width: '100%', height: '100%',
                 objectFit: 'cover',
-                filter: 'brightness(1.08) contrast(1.04) saturate(1.04)',
+                objectPosition: stage.objectPosition,
+                imageRendering: 'auto',
+                filter: 'brightness(1.04) contrast(1.07) saturate(1.12)',
                 opacity: i === activeIndex ? 1 : 0,
                 transform: i === activeIndex ? 'scale(1.04)' : 'scale(1)',
                 transition: reducedMotion
@@ -673,10 +650,10 @@ const PhilosophyBackedSection = () => {
             />
           ))}
 
-          {/* Subtle directional overlay keeps photos visible while blending into navy */}
+          {/* Directional overlay — reduced for DSLR clarity (25–35% range) */}
           <div className="phi-photo-overlay" style={{
             position: 'absolute', inset: 0, pointerEvents: 'none',
-            background: 'linear-gradient(90deg, rgba(5, 20, 40, 0.18) 0%, rgba(5, 20, 40, 0.28) 55%, rgba(5, 20, 40, 0.55) 100%)',
+            background: 'linear-gradient(90deg, rgba(5, 20, 40, 0.10) 0%, rgba(5, 20, 40, 0.20) 55%, rgba(5, 20, 40, 0.35) 100%)',
           }} />
 
           {/* Right-edge blend — image dissolves into the content panel */}
@@ -1538,264 +1515,690 @@ const ImpactRecognitionSection = () => {
 // ══════════════════════════════════════════════════════════════
 
 const ACH_STATS = [
-  { target: 20,    decimals: 0, suffix: '+', caption: 'TWO DECADES OF GUIDANCE' },
-  { target: 10000, decimals: 0, suffix: '+', caption: 'STUDENTS SUPPORTED'      },
-  { target: 5,     decimals: 1, suffix: '',  caption: 'TRUSTED BY FAMILIES'     },
-  { target: 450,   decimals: 0, suffix: '+', caption: 'FIVE-STAR STORIES'       },
+  { target: 20,    decimals: 0, suffix: '+', label: 'Years',          caption: 'TWO DECADES OF GUIDANCE', x: 5,  y: 32 },
+  { target: 10000, decimals: 0, suffix: '+', label: 'Students',       caption: 'STUDENTS SUPPORTED',      x: 31, y: 47 },
+  { target: 5,     decimals: 1, suffix: '',  label: 'Rating',         caption: 'TRUSTED BY FAMILIES',     x: 48, y: 62 },
+  { target: 450,   decimals: 0, suffix: '+', label: 'Google Reviews', caption: 'FIVE-STAR STORIES',       x: 68, y: 70 },
 ];
 
+const ACH_PATH = 'M 30 172 C 122 232 214 260 318 305 C 444 360 470 404 604 432 C 710 454 706 506 814 512 C 902 518 948 560 1018 590 C 1070 612 1110 636 1150 666';
+
 const AchievementsSection = () => {
-  const ref     = useRef<HTMLDivElement>(null);
-  const inView  = useInView(ref, { once: false, margin: '-100px' });
-  const easeHero = [0.16, 1, 0.3,  1] as const;
-  const easeOut  = [0.22, 1, 0.36, 1] as const;
+  const ref = useRef<HTMLElement>(null);
+  const [isActive, setIsActive] = useState(false);
+  const [counts, setCounts] = useState(ACH_STATS.map(() => 0));
+  const [hoveredStat, setHoveredStat] = useState<number | null>(null);
+  const hasCountedRef = useRef(false);
+  const countRafs = useRef<number[]>([]);
+  const countTimers = useRef<number[]>([]);
+  const reducedMotion = useRef(
+    typeof window !== 'undefined' &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  ).current;
 
-  // Each stat's absolute position within the stage container.
-  // top values create the staircase; left creates the left-to-right drift.
-  const pos = [
-    { left: '2%',  top:   0, delay: 0.00 },
-    { left: '27%', top: 180, delay: 0.18 },
-    { left: '52%', top: 330, delay: 0.36 },
-    { left: '76%', top: 470, delay: 0.54 },
-  ];
+  const formatStatValue = (value: number, stat: typeof ACH_STATS[number], index: number) => {
+    const formatted = stat.decimals > 0
+      ? value.toFixed(stat.decimals)
+      : Math.round(value).toLocaleString();
+    return index === 2 ? formatted : `${formatted}${stat.suffix}`;
+  };
 
-  // Number sizes: first stat larger for visual hierarchy
-  const numSizes = [
-    'clamp(5.8rem, 10.5vw, 13.0rem)',
-    'clamp(4.8rem,  8.8vw, 10.5rem)',
-    'clamp(4.8rem,  8.8vw, 10.5rem)',
-    'clamp(4.8rem,  8.8vw, 10.5rem)',
-  ];
+  useEffect(() => {
+    const section = ref.current;
+    if (!section) return;
 
-  // Journey line: smooth bezier through the approximate center of each number.
-  // ViewBox 0 0 1000 720 — scaled to fill the stage container.
-  // Anchor points (x, y):
-  //   Stat 0 → (130, 90)   left=2% of 1000 + half stat width~110 = 130;  top 0  + ~90
-  //   Stat 1 → (380, 255)  left=270+110=380;  top 180 + ~75
-  //   Stat 2 → (630, 405)  left=520+110=630;  top 330 + ~75
-  //   Stat 3 → (870, 545)  left=760+110=870;  top 470 + ~75
-  // S-curve: each segment uses symmetric control points so the curve arrives
-  // horizontally at each anchor — feels organic, not chart-like.
-  const journeyPath =
-    'M 130 90 C 255 90 255 255 380 255 C 505 255 505 405 630 405 C 755 405 755 545 870 545';
+    const clearCountAnimations = () => {
+      countRafs.current.forEach(id => cancelAnimationFrame(id));
+      countTimers.current.forEach(id => clearTimeout(id));
+      countRafs.current = [];
+      countTimers.current = [];
+    };
+
+    const startCount = () => {
+      if (hasCountedRef.current) return;
+      hasCountedRef.current = true;
+      clearCountAnimations();
+
+      if (reducedMotion) {
+        setCounts(ACH_STATS.map(stat => stat.target));
+        return;
+      }
+
+      ACH_STATS.forEach((stat, index) => {
+        const duration = 1800 + index * 220;
+        const delay = index * 430;
+        const timeout = window.setTimeout(() => {
+          const start = performance.now();
+          const tick = (now: number) => {
+            const raw = clamp01((now - start) / duration);
+            const eased = easePrestige(raw);
+            setCounts(prev => {
+              const next = [...prev];
+              next[index] = stat.target * eased;
+              return next;
+            });
+
+            if (raw < 1) {
+              countRafs.current[index] = requestAnimationFrame(tick);
+            } else {
+              setCounts(prev => {
+                const next = [...prev];
+                next[index] = stat.target;
+                return next;
+              });
+            }
+          };
+          countRafs.current[index] = requestAnimationFrame(tick);
+        }, delay);
+        countTimers.current.push(timeout);
+      });
+    };
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        const ratio = entry.intersectionRatio;
+        setIsActive(ratio >= 0.1);
+
+        if (ratio >= 0.4) {
+          startCount();
+        } else if (ratio < 0.1) {
+          clearCountAnimations();
+          hasCountedRef.current = false;
+          setCounts(ACH_STATS.map(() => 0));
+        }
+      },
+      { threshold: [0, 0.1, 0.4, 1] }
+    );
+
+    observer.observe(section);
+    return () => {
+      observer.disconnect();
+      clearCountAnimations();
+    };
+  }, [reducedMotion]);
+
+  useEffect(() => {
+    const section = ref.current;
+    if (!section || reducedMotion) return;
+
+    let raf = 0;
+    const updateParallax = () => {
+      const rect = section.getBoundingClientRect();
+      const progress = clamp01((window.innerHeight - rect.top) / (window.innerHeight + rect.height));
+      section.style.setProperty('--ach-scroll', `${(progress - 0.5) * 1}`);
+    };
+    const onScroll = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(updateParallax);
+    };
+
+    updateParallax();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+    };
+  }, [reducedMotion]);
 
   return (
     <section
       ref={ref}
       aria-label="DA Tuition achievements"
-      style={{ background: C.navy, overflow: 'hidden' }}
+      className={`ach-luxury ${isActive ? 'is-active' : ''}`}
     >
       <style>{`
-        /* ── Mobile: collapse absolute stage to flow grid ── */
-        @media (max-width: 760px) {
-          .ach-stage {
-            position: static !important;
-            min-height: auto !important;
-            display: grid !important;
-            grid-template-columns: 1fr 1fr !important;
-            gap: 52px 24px !important;
-            padding-bottom: 0 !important;
+        .ach-luxury {
+          --ach-scroll: 0;
+          position: relative;
+          overflow: hidden;
+          isolation: isolate;
+          min-height: clamp(920px, 112vh, 1000px);
+          background:
+            radial-gradient(circle at 5% 4%, rgba(240,200,106,.105), transparent 17%),
+            radial-gradient(circle at 90% 94%, rgba(212,175,55,.095), transparent 21%),
+            radial-gradient(circle at 30% 72%, rgba(16,63,124,.16), transparent 38%),
+            radial-gradient(circle at 78% 18%, rgba(10,44,93,.18), transparent 34%),
+            linear-gradient(135deg, #020B18 0%, #061A33 48%, #092345 100%);
+          color: #F5F0E8;
+        }
+
+        .ach-luxury::before,
+        .ach-luxury::after {
+          content: "";
+          position: absolute;
+          pointer-events: none;
+          z-index: 0;
+        }
+
+        .ach-luxury::before {
+          inset: 0;
+          background:
+            linear-gradient(90deg, rgba(240,200,106,.07), transparent 16%, transparent 84%, rgba(240,200,106,.06)),
+            radial-gradient(ellipse at 50% 50%, transparent 30%, rgba(1,7,17,.62) 100%);
+        }
+
+        .ach-luxury::after {
+          left: -14%;
+          right: -14%;
+          bottom: -22%;
+          height: 44%;
+          background:
+            radial-gradient(ellipse at 18% 62%, rgba(18,68,132,.16), transparent 54%),
+            radial-gradient(ellipse at 72% 80%, rgba(212,175,55,.08), transparent 56%);
+          filter: blur(10px);
+          opacity: .74;
+          transform: translate3d(0, calc(var(--ach-scroll) * -18px), 0);
+          will-change: transform;
+        }
+
+        .ach-cosmos,
+        .ach-haze,
+        .ach-constellation,
+        .ach-stage {
+          position: absolute;
+          inset: 0;
+        }
+
+        .ach-cosmos {
+          z-index: 1;
+          pointer-events: none;
+          opacity: .72;
+          background-image:
+            radial-gradient(circle, rgba(240,200,106,.34) 0 1px, transparent 1.4px),
+            radial-gradient(circle, rgba(245,240,232,.16) 0 1px, transparent 1.3px),
+            radial-gradient(circle, rgba(212,175,55,.25) 0 1.2px, transparent 1.8px);
+          background-size: 108px 108px, 176px 176px, 260px 260px;
+          background-position: 12px 18px, 64px 92px, 180px 40px;
+          animation: achCosmosDrift 52s linear infinite;
+          transform: translate3d(0, calc(var(--ach-scroll) * -24px), 0);
+          will-change: transform;
+        }
+
+        .ach-haze {
+          z-index: 2;
+          pointer-events: none;
+          background:
+            linear-gradient(160deg, transparent 30%, rgba(16,64,125,.07) 49%, transparent 69%),
+            linear-gradient(25deg, transparent 35%, rgba(240,200,106,.045) 54%, transparent 74%);
+          opacity: .76;
+          mix-blend-mode: screen;
+          transform: translate3d(0, calc(var(--ach-scroll) * -14px), 0);
+          will-change: transform;
+        }
+
+        .ach-constellation {
+          z-index: 3;
+          width: 100%;
+          height: 100%;
+          pointer-events: none;
+          opacity: .34;
+          transform: translate3d(0, calc(var(--ach-scroll) * -32px), 0);
+          will-change: transform;
+        }
+
+        .ach-content {
+          position: relative;
+          z-index: 5;
+          min-height: clamp(920px, 112vh, 1000px);
+          max-width: 1440px;
+          margin: 0 auto;
+          padding: 120px clamp(24px, 5vw, 88px) 160px;
+        }
+
+        .ach-heading {
+          position: absolute;
+          top: 18%;
+          right: 8%;
+          max-width: 420px;
+          text-align: left;
+          opacity: 0;
+          transform: translateY(24px);
+          transition: opacity 900ms ease, transform 900ms cubic-bezier(.16, 1, .3, 1);
+        }
+
+        .ach-luxury.is-active .ach-heading {
+          opacity: 1;
+          transform: translateY(0);
+        }
+
+        .ach-heading h2 {
+          font-family: ${serif};
+          font-weight: 300;
+          font-size: clamp(2.35rem, 3.5vw, 4.1rem);
+          line-height: 1.08;
+          letter-spacing: -.03em;
+          color: #F5F0E8;
+          margin: 0;
+        }
+
+        .ach-heading h2::after {
+          content: "";
+          display: block;
+          width: 132px;
+          height: 1px;
+          margin-top: 26px;
+          background: linear-gradient(90deg, rgba(240,200,106,.84), rgba(240,200,106,.14), transparent);
+        }
+
+        .ach-heading p {
+          display: none;
+        }
+
+        .ach-stage {
+          z-index: 4;
+          pointer-events: none;
+          transform: translate3d(0, calc(var(--ach-scroll) * -18px), 0);
+          will-change: transform;
+        }
+
+        .ach-path-svg {
+          position: absolute;
+          inset: 0;
+          width: 100%;
+          height: 100%;
+          overflow: visible;
+        }
+
+        .ach-gold-path {
+          filter: url(#ach-path-glow);
+          stroke-dasharray: 1;
+          stroke-dashoffset: 0;
+          opacity: .95;
+        }
+
+        .ach-shimmer-path {
+          stroke-dasharray: 38 520;
+          animation: achPathShimmer 8.5s ease-in-out infinite;
+          opacity: 0;
+        }
+
+        .ach-traveller {
+          filter: url(#ach-node-glow);
+          opacity: 0;
+          animation: achTraveller 6.4s cubic-bezier(.35, 0, .22, 1) infinite;
+        }
+
+        .ach-trail {
+          opacity: 0;
+          animation: achTrail 6.4s cubic-bezier(.35, 0, .22, 1) infinite;
+        }
+
+        .ach-node-core {
+          transition: r 500ms ease, opacity 500ms ease;
+        }
+
+        .ach-stat {
+          position: absolute;
+          width: min(26vw, 350px);
+          pointer-events: auto;
+          opacity: 0;
+          transform: translate3d(0, 24px, 0);
+          filter: blur(8px);
+          transition:
+            opacity 900ms ease,
+            transform 900ms cubic-bezier(.16, 1, .3, 1),
+            filter 900ms ease;
+          transition-delay: var(--stat-delay);
+        }
+
+        .ach-luxury.is-active .ach-stat {
+          opacity: 1;
+          transform: translate3d(0, 0, 0);
+          filter: blur(0);
+        }
+
+        .ach-stat::before {
+          content: "";
+          position: absolute;
+          left: 46%;
+          top: 42%;
+          width: 300px;
+          height: 300px;
+          border-radius: 999px;
+          background: radial-gradient(circle, rgba(240,200,106,.14), rgba(212,175,55,.045) 34%, transparent 66%);
+          transform: translate(-50%, -50%) scale(.72);
+          opacity: 0;
+          transition: opacity 500ms ease, transform 500ms cubic-bezier(.16, 1, .3, 1);
+          pointer-events: none;
+          z-index: -1;
+        }
+
+        .ach-stat:hover::before {
+          opacity: 1;
+          transform: translate(-50%, -50%) scale(1);
+        }
+
+        .ach-stat-inner {
+          display: inline-block;
+          transform-origin: left center;
+          transition: transform 500ms cubic-bezier(.16, 1, .3, 1);
+        }
+
+        .ach-stat:hover .ach-stat-inner {
+          transform: scale(1.035);
+        }
+
+        .ach-stat-number {
+          display: inline-block;
+          font-family: ${serif};
+          font-weight: 300;
+          font-style: italic;
+          font-size: clamp(3.75rem, 6.45vw, 8.15rem);
+          line-height: .9;
+          letter-spacing: -.04em;
+          color: #EFE4CD;
+          text-shadow: 0 0 28px rgba(240,200,106,.08);
+          white-space: nowrap;
+          transition: color 500ms ease, text-shadow 500ms ease;
+        }
+
+        .ach-stat[data-index="0"] .ach-stat-number {
+          color: #EAC266;
+        }
+
+        .ach-stat:hover .ach-stat-number {
+          color: #F0C86A;
+          text-shadow: 0 0 34px rgba(240,200,106,.18);
+        }
+
+        .ach-star {
+          font-style: normal;
+          font-size: .35em;
+          vertical-align: .82em;
+          margin-left: .08em;
+          color: #D4AF37;
+        }
+
+        .ach-divider {
+          width: min(100%, 270px);
+          height: 1px;
+          margin: clamp(16px, 1.8vw, 24px) 0 clamp(12px, 1.4vw, 18px);
+          background: linear-gradient(90deg, rgba(240,200,106,.72), rgba(240,200,106,.12), transparent);
+          transform-origin: left;
+          transform: scaleX(.78);
+          transition: transform 500ms cubic-bezier(.16, 1, .3, 1), opacity 500ms ease;
+          opacity: .7;
+        }
+
+        .ach-stat:hover .ach-divider {
+          transform: scaleX(1);
+          opacity: 1;
+        }
+
+        .ach-label {
+          margin: 0;
+          font-family: ${sans};
+          font-size: clamp(.72rem, .85vw, .88rem);
+          font-weight: 600;
+          letter-spacing: .24em;
+          line-height: 1.65;
+          text-transform: uppercase;
+          color: rgba(240,200,106,.9);
+        }
+
+        .ach-small-label {
+          margin: 8px 0 0;
+          font-family: ${sans};
+          font-size: .72rem;
+          letter-spacing: .16em;
+          text-transform: uppercase;
+          color: rgba(245,240,232,.42);
+        }
+
+        .ach-brand-ghost {
+          position: absolute;
+          left: clamp(30px, 8vw, 126px);
+          top: 47%;
+          z-index: 1;
+          transform: translateY(-50%);
+          font-family: ${serif};
+          font-size: clamp(7rem, 16vw, 16rem);
+          line-height: .72;
+          color: rgba(245,240,232,.055);
+          letter-spacing: -.08em;
+          pointer-events: none;
+          user-select: none;
+        }
+
+        .ach-brand-ghost span {
+          display: block;
+          font-family: ${sans};
+          font-size: clamp(.82rem, 1.5vw, 1.25rem);
+          letter-spacing: .5em;
+          color: rgba(245,240,232,.05);
+          margin-top: 34px;
+        }
+
+        @keyframes achCosmosDrift {
+          0% { transform: translate3d(0, 0, 0); }
+          100% { transform: translate3d(-54px, -38px, 0); }
+        }
+
+        @keyframes achPathShimmer {
+          0%, 66% { stroke-dashoffset: 500; opacity: 0; }
+          76% { opacity: .68; }
+          100% { stroke-dashoffset: -500; opacity: 0; }
+        }
+
+        @keyframes achTraveller {
+          0%, 14% { opacity: 0; }
+          20%, 84% { opacity: 1; }
+          100% { opacity: 0; }
+        }
+
+        @keyframes achTrail {
+          0%, 20% { opacity: 0; }
+          34%, 78% { opacity: .62; }
+          100% { opacity: 0; }
+        }
+
+        @media (max-width: 900px) {
+          .ach-luxury,
+          .ach-content {
+            min-height: 1060px;
+          }
+          .ach-heading {
+            position: relative;
+            top: auto;
+            right: auto;
+            max-width: 620px;
+            margin-left: auto;
+            margin-bottom: 56px;
           }
           .ach-stat {
-            position: static !important;
-            width: auto !important;
+            width: min(42vw, 320px);
+          }
+          .ach-stat-number {
+            font-size: clamp(3.4rem, 10vw, 7.2rem);
+          }
+          .ach-brand-ghost {
+            opacity: .7;
+          }
+        }
+
+        @media (max-width: 640px) {
+          .ach-luxury,
+          .ach-content {
+            min-height: auto;
+          }
+          .ach-content {
+            padding: 86px 24px 94px;
+          }
+          .ach-stage {
+            position: relative;
+            inset: auto;
+            display: grid;
+            gap: 42px;
+            margin-top: 56px;
+            transform: none;
+            padding-left: 26px;
+          }
+          .ach-stage::before {
+            content: "";
+            position: absolute;
+            left: 7px;
+            top: 12px;
+            bottom: 18px;
+            width: 1px;
+            background: linear-gradient(180deg, rgba(240,200,106,.72), rgba(240,200,106,.18), rgba(240,200,106,.46));
+            box-shadow: 0 0 18px rgba(240,200,106,.20);
+            opacity: .72;
+          }
+          .ach-path-svg {
+            display: none;
+          }
+          .ach-stat {
+            position: relative;
             left: auto !important;
             top: auto !important;
+            width: 100%;
+            transform: translate3d(0, 24px, 0);
           }
-          .ach-journey { display: none !important; }
+          .ach-stat::after {
+            content: "";
+            position: absolute;
+            left: -24px;
+            top: 2.4rem;
+            width: 8px;
+            height: 8px;
+            border-radius: 999px;
+            background: #F0C86A;
+            box-shadow: 0 0 18px rgba(240,200,106,.45);
+          }
+          .ach-luxury.is-active .ach-stat {
+            transform: translate3d(0, 0, 0);
+          }
+          .ach-stat-number {
+            font-size: clamp(4.2rem, 20vw, 6.8rem);
+          }
+          .ach-brand-ghost {
+            display: none;
+          }
         }
-        @media (max-width: 440px) {
-          .ach-stage { grid-template-columns: 1fr !important; }
+
+        @media (prefers-reduced-motion: reduce) {
+          .ach-cosmos,
+          .ach-shimmer-path,
+          .ach-traveller,
+          .ach-trail {
+            animation: none !important;
+          }
+          .ach-content,
+          .ach-stage,
+          .ach-constellation,
+          .ach-haze {
+            transform: none !important;
+          }
         }
       `}</style>
 
-      <div style={{
-        maxWidth: '1200px', margin: '0 auto',
-        padding: 'clamp(80px, 9vw, 120px) clamp(24px, 5vw, 80px)',
-      }}>
+      <div className="ach-cosmos" aria-hidden="true" />
+      <div className="ach-haze" aria-hidden="true" />
+      <svg className="ach-constellation" aria-hidden="true" viewBox="0 0 1200 760" preserveAspectRatio="none">
+        <g fill="none" stroke="rgba(240,200,106,.20)" strokeWidth=".7">
+          <path d="M60 490 C170 560 254 540 360 612" />
+          <path d="M720 150 L804 206 L910 180 L1028 246" />
+          <path d="M820 640 C930 570 1040 565 1150 505" />
+        </g>
+        {[60, 144, 254, 360, 720, 804, 910, 1028, 820, 930, 1040, 1150].map((cx, i) => (
+          <circle
+            key={i}
+            cx={cx}
+            cy={[490, 538, 540, 612, 150, 206, 180, 246, 640, 570, 565, 505][i]}
+            r={i % 3 === 0 ? 2.2 : 1.4}
+            fill="rgba(240,200,106,.36)"
+          />
+        ))}
+      </svg>
 
-        {/* ── Heading ── */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          gap: 'clamp(32px, 6vw, 96px)',
-          alignItems: 'end',
-          marginBottom: 'clamp(56px, 8vw, 96px)',
-        }}>
-          <motion.h2
-            initial={{ opacity: 0, y: 24 }}
-            animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
-            transition={{ duration: 1.20, ease: easeHero }}
-            style={{
-              fontFamily: serif, fontWeight: 300,
-              fontSize: 'clamp(2.6rem, 4.2vw, 5.0rem)',
-              lineHeight: 1.10, letterSpacing: '-.030em',
-              color: '#F5F0E8', margin: 0,
-            }}
-          >
-            When Confidence<br />Grows, Results<br />Follow.
-          </motion.h2>
+      <div className="ach-brand-ghost" aria-hidden="true">
+        DA
+        <span>TUITION</span>
+      </div>
 
-          <motion.p
-            initial={{ opacity: 0, y: 16 }}
-            animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 }}
-            transition={{ duration: 1.10, delay: 0.14, ease: easeOut }}
-            style={{
-              fontFamily: sans, fontWeight: 300,
-              fontSize: 'clamp(.88rem, 1.1vw, 1.0rem)',
-              lineHeight: 1.84,
-              color: 'rgba(245,240,232,.36)',
-              margin: 0,
-            }}
-          >
-            For more than twenty years, DA Tuition has helped students
-            build confidence, strengthen their habits, and achieve
-            meaningful academic growth — one family at a time.
-          </motion.p>
+      <div className="ach-content">
+        <div className="ach-heading">
+          <h2>When Confidence<br />Grows, Results<br />Follow.</h2>
+          <p>
+            For more than twenty years, DA Tuition has helped students build confidence,
+            strengthen their habits, and achieve meaningful academic growth.
+          </p>
         </div>
 
-        {/* ── Stats stage — absolute positioning creates the true staircase ── */}
-        <div
-          className="ach-stage"
-          style={{
-            position: 'relative',
-            minHeight: '720px',
-            paddingBottom: '40px',
-          }}
-        >
-          {/* ── Gold journey line — thin SVG bezier, draws in on scroll ── */}
-          <svg
-            className="ach-journey"
-            aria-hidden="true"
-            viewBox="0 0 1000 720"
-            preserveAspectRatio="none"
-            style={{
-              position: 'absolute', inset: 0,
-              width: '100%', height: '100%',
-              pointerEvents: 'none',
-              zIndex: 0,
-              overflow: 'visible',
-            }}
-          >
-            <motion.path
-              d={journeyPath}
-              fill="none"
-              stroke="rgba(212,175,55,0.20)"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              initial={{ pathLength: 0, opacity: 0 }}
-              animate={inView
-                ? { pathLength: 1, opacity: 1 }
-                : { pathLength: 0, opacity: 0 }}
-              transition={{ duration: 2.4, delay: 0.5, ease: [0.4, 0, 0.2, 1] }}
-            />
-            {/* Small gold dots at each anchor — appear as the line draws through */}
-            {[
-              { cx: 130, cy:  90 },
-              { cx: 380, cy: 255 },
-              { cx: 630, cy: 405 },
-              { cx: 870, cy: 545 },
-            ].map((pt, i) => (
-              <motion.circle
-                key={i}
-                cx={pt.cx}
-                cy={pt.cy}
-                r={3.5}
-                fill="rgba(212,175,55,0.45)"
-                initial={{ opacity: 0 }}
-                animate={inView ? { opacity: 1 } : { opacity: 0 }}
-                transition={{ duration: 0.40, delay: 0.90 + i * 0.22 }}
-              />
+        <div className="ach-stage">
+          <svg className="ach-path-svg" aria-hidden="true" viewBox="0 0 1200 760" preserveAspectRatio="none">
+            <defs>
+              <filter id="ach-path-glow" x="-20%" y="-20%" width="140%" height="140%">
+                <feGaussianBlur stdDeviation="2.8" result="blur" />
+                <feMerge>
+                  <feMergeNode in="blur" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+              <filter id="ach-node-glow" x="-80%" y="-80%" width="260%" height="260%">
+                <feGaussianBlur stdDeviation="6" result="blur" />
+                <feMerge>
+                  <feMergeNode in="blur" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+            </defs>
+            <path d={ACH_PATH} fill="none" stroke="rgba(212,175,55,.18)" strokeWidth=".9" />
+            <path className="ach-gold-path" d={ACH_PATH} fill="none" stroke="rgba(240,200,106,.42)" strokeWidth="1.15" strokeLinecap="round" />
+            <path className="ach-shimmer-path" d={ACH_PATH} fill="none" stroke="rgba(255,241,194,.82)" strokeWidth="1.4" strokeLinecap="round" />
+            <path className="ach-trail" d={ACH_PATH} fill="none" stroke="rgba(240,200,106,.42)" strokeWidth="1.2" strokeLinecap="round" strokeDasharray="3 18" />
+            <circle className="ach-traveller" r="5.2" fill="#F0C86A">
+              <animateMotion dur="6.4s" repeatCount="indefinite" rotate="auto" path={ACH_PATH} />
+            </circle>
+            {ACH_STATS.map((stat, index) => (
+              <g key={stat.label} filter="url(#ach-node-glow)">
+                <circle
+                  cx={stat.x * 12}
+                  cy={stat.y * 7.6}
+                  r={hoveredStat === index ? 10 : 7}
+                  fill="rgba(240,200,106,.20)"
+                />
+                <circle
+                  className="ach-node-core"
+                  cx={stat.x * 12}
+                  cy={stat.y * 7.6}
+                  r={hoveredStat === index ? 5.3 : 3.9}
+                  fill="#F0C86A"
+                  opacity={hoveredStat === index ? 1 : .78}
+                />
+              </g>
             ))}
           </svg>
 
-          {/* ── Stat cells ── */}
-          {ACH_STATS.map((s, i) => (
-            <motion.div
-              key={i}
+          {ACH_STATS.map((stat, index) => (
+            <div
+              key={stat.label}
               className="ach-stat"
-              initial={{ opacity: 0, y: 28 }}
-              animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 28 }}
-              transition={{ duration: 1.15, delay: pos[i].delay, ease: easeOut }}
+              data-index={index}
               style={{
-                position: 'absolute',
-                left: pos[i].left,
-                top: pos[i].top,
-                width: '22%',
-                zIndex: 1,
+                left: `${stat.x}%`,
+                top: `${stat.y}%`,
+                ['--stat-delay' as string]: `${index * 180}ms`,
               }}
+              onMouseEnter={() => setHoveredStat(index)}
+              onMouseLeave={() => setHoveredStat(null)}
+              onFocus={() => setHoveredStat(index)}
+              onBlur={() => setHoveredStat(null)}
+              tabIndex={0}
             >
-              {/* Number — large italic serif */}
-              <div style={{
-                fontFamily: serif, fontWeight: 300,
-                fontStyle: 'italic',
-                fontSize: numSizes[i],
-                lineHeight: 1,
-                letterSpacing: '-.040em',
-                color: i === 0 ? C.goldL : '#F5F0E8',
-                marginBottom: 'clamp(18px, 2.2vw, 30px)',
-                whiteSpace: 'nowrap',
-              }}>
-                <CountUpStat
-                  target={s.target}
-                  decimals={s.decimals}
-                  suffix={i === 2 ? '' : s.suffix}
-                  triggerDelay={Math.round(pos[i].delay * 1000)}
-                  inView={inView}
-                />
-                {i === 2 && (
-                  <span style={{
-                    fontStyle: 'normal',
-                    fontSize: '0.36em',
-                    verticalAlign: '0.80em',
-                    lineHeight: 1,
-                    marginLeft: '0.10em',
-                    color: C.gold,
-                    letterSpacing: 0,
-                  }}>★</span>
-                )}
+              <div className="ach-stat-inner">
+                <span className="ach-stat-number">
+                  {formatStatValue(counts[index], stat, index)}
+                  {index === 2 && <span className="ach-star">★</span>}
+                </span>
+                <div className="ach-divider" />
+                <p className="ach-label">{stat.caption}</p>
+                <p className="ach-small-label">{stat.label}</p>
               </div>
-
-              {/* Divider — gold for first, ivory for rest */}
-              <motion.div
-                initial={{ scaleX: 0 }}
-                animate={inView ? { scaleX: 1 } : { scaleX: 0 }}
-                transition={{
-                  duration: 0.80,
-                  delay: pos[i].delay + 0.22,
-                  ease: [0.25, 1, 0.5, 1],
-                }}
-                style={{
-                  height: '1px',
-                  background: i === 0
-                    ? 'linear-gradient(90deg, rgba(212,175,55,.65), rgba(212,175,55,.08))'
-                    : 'linear-gradient(90deg, rgba(245,240,232,.26), transparent)',
-                  transformOrigin: 'left',
-                  marginBottom: 'clamp(16px, 2.0vw, 22px)',
-                }}
-              />
-
-              {/* Caption — uppercase, letter-spaced, clearly readable */}
-              <motion.p
-                initial={{ opacity: 0 }}
-                animate={inView ? { opacity: 1 } : { opacity: 0 }}
-                transition={{ duration: 0.90, delay: pos[i].delay + 0.38 }}
-                style={{
-                  fontFamily: sans, fontWeight: 500,
-                  fontSize: 'clamp(.80rem, 1.0vw, .94rem)',
-                  letterSpacing: '.22em',
-                  textTransform: 'uppercase',
-                  color: i === 0
-                    ? 'rgba(232,192,64,.88)'
-                    : 'rgba(245,240,232,.66)',
-                  margin: 0, lineHeight: 1.7,
-                }}
-              >
-                {s.caption}
-              </motion.p>
-            </motion.div>
+            </div>
           ))}
-
         </div>
       </div>
     </section>
@@ -1806,277 +2209,272 @@ const AchievementsSection = () => {
 //  PROGRAMS
 // ══════════════════════════════════════════════════════════════
 const PROGRAMS = [
-  { Icon: School,          href: '/programs/primary-school', sub: 'Years 3–6',   name: 'Primary School', desc: 'Building strong foundations in literacy, numeracy, and the curiosity to learn.' },
-  { Icon: BookOpen,        href: '/programs/high-school',    sub: 'Years 7–10',  name: 'High School',    desc: 'Mastering core subjects with depth, examination technique, and real confidence.' },
-  { Icon: GraduationCap,  href: '/hsc-excellence',          sub: 'Years 11–12', name: 'HSC Excellence', desc: 'Elite Band 6 preparation with structured study plans and expert guidance.' },
+  {
+    href: '/programs/primary-school',
+    image: '/primary-boy.png',
+    sub: 'Years 3–6',
+    name: 'Primary School',
+    desc: 'Building strong foundations in literacy, numeracy and confident learning.',
+  },
+  {
+    href: '/programs/high-school',
+    image: '/highschool-girl.png',
+    sub: 'Years 7–10',
+    name: 'High School',
+    desc: 'Develop deeper understanding, stronger study habits and independent thinking.',
+  },
+  {
+    href: '/hsc-excellence',
+    image: '/hsc-student.jpeg',
+    sub: 'Years 11–12',
+    name: 'HSC Excellence',
+    desc: 'Expert guidance, proven systems and Band 6 strategies for outstanding results.',
+  },
 ];
+
+const ProgramImagePanel = ({ program, index }: { program: typeof PROGRAMS[number]; index: number }) => (
+  <Link
+    to={program.href}
+    className="program-stage-panel"
+    aria-label={`Learn more about ${program.name}`}
+  >
+    <img
+      className="program-stage-image"
+      src={program.image}
+      alt=""
+      aria-hidden="true"
+      loading={index === 0 ? 'eager' : 'lazy'}
+      decoding="async"
+      sizes="(max-width: 720px) 100vw, 33vw"
+    />
+    <div className="program-stage-overlay" aria-hidden="true" />
+    <div className="program-stage-content">
+      <p className="program-stage-sub">{program.sub}</p>
+      <h3 className="program-stage-title">{program.name}</h3>
+      <p className="program-stage-desc">{program.desc}</p>
+      <span className="program-stage-link">
+        Learn More <span aria-hidden="true">→</span>
+      </span>
+    </div>
+  </Link>
+);
+
 const ProgramsSection = () => {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-60px' });
   return (
-    <section id="programs" ref={ref} style={{ background: C.cream, padding: '120px 24px' }}>
-      <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
-        <Reveal><SectionHead tag="Academic Programs" title="Tailored for Every Stage" /></Reveal>
-        <motion.div variants={stagger} initial="hidden" animate={inView ? 'visible' : 'hidden'}
-          style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(300px,1fr))', gap: '24px' }}>
-          {PROGRAMS.map((p, i) => (
-            <Link key={i} to={p.href} style={{ textDecoration: 'none', display: 'block' }}>
-              <motion.div variants={fadeUp}
-                whileHover={{ y: -7, boxShadow: '0 24px 64px rgba(10,27,52,.13)' }}
-                style={{ background: '#fff', border: `1px solid rgba(212,175,55,.16)`, borderRadius: '16px', padding: '44px 36px', cursor: 'pointer', boxShadow: '0 4px 20px rgba(10,27,52,.06)', transition: 'box-shadow .35s', height: '100%' }}>
-                <p.Icon style={{ width: 28, height: 28, color: '#D4AF37', marginBottom: '22px' }} />
-                <div style={{ fontFamily: sans, fontSize: '.65rem', letterSpacing: '.14em', textTransform: 'uppercase', color: C.gold, marginBottom: '8px', fontWeight: 700 }}>{p.sub}</div>
-                <h3 style={{ fontFamily: serif, fontSize: '1.65rem', fontWeight: 600, color: C.navy, marginBottom: '12px' }}>{p.name}</h3>
-                <p style={{ fontFamily: sans, fontSize: '.88rem', color: C.muted, lineHeight: 1.72 }}>{p.desc}</p>
-                <div style={{ marginTop: '26px', fontFamily: sans, fontSize: '.8rem', fontWeight: 700, color: C.gold, display: 'flex', alignItems: 'center', gap: '6px' }}>Learn more <span>→</span></div>
-              </motion.div>
-            </Link>
+    <section id="programs" ref={ref} style={{ background: C.cream, padding: 'clamp(96px, 9vw, 132px) clamp(18px, 3vw, 48px)' }}>
+      <style>{`
+        .program-stage-shell {
+          display: grid;
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+          gap: 2px;
+          min-height: clamp(560px, 72vh, 780px);
+          border-radius: 24px;
+          overflow: hidden;
+          background: rgba(10, 27, 52, 0.16);
+        }
+
+        .program-stage-panel {
+          position: relative;
+          display: block;
+          min-height: clamp(560px, 72vh, 780px);
+          overflow: hidden;
+          isolation: isolate;
+          color: #fff;
+          text-decoration: none;
+          background: #0A1B34;
+        }
+
+        .program-stage-image {
+          position: absolute;
+          inset: 0;
+          z-index: 0;
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          transform: scale(1);
+          transition: transform 500ms cubic-bezier(.22, 1, .36, 1);
+          will-change: transform;
+        }
+
+        .program-stage-overlay {
+          position: absolute;
+          inset: 0;
+          z-index: 1;
+          background:
+            linear-gradient(180deg, rgba(0, 0, 0, 0.04) 0%, rgba(0, 0, 0, 0.18) 42%, rgba(0, 0, 0, 0.76) 100%),
+            linear-gradient(90deg, rgba(10, 27, 52, 0.12) 0%, rgba(10, 27, 52, 0.02) 42%, rgba(10, 27, 52, 0.2) 100%);
+          transition: opacity 500ms ease;
+        }
+
+        .program-stage-content {
+          position: absolute;
+          left: clamp(22px, 3vw, 38px);
+          right: clamp(22px, 3vw, 38px);
+          bottom: clamp(28px, 4vw, 48px);
+          z-index: 2;
+          transform: translateY(0);
+          transition: transform 500ms cubic-bezier(.22, 1, .36, 1);
+        }
+
+        .program-stage-sub {
+          margin: 0 0 12px;
+          font-family: ${sans};
+          font-size: .68rem;
+          font-weight: 800;
+          letter-spacing: .18em;
+          line-height: 1;
+          text-transform: uppercase;
+          color: #C8A03B;
+        }
+
+        .program-stage-title {
+          margin: 0 0 14px;
+          font-family: ${serif};
+          font-size: clamp(2rem, 3vw, 3.15rem);
+          font-weight: 700;
+          line-height: 1.02;
+          letter-spacing: -.025em;
+          color: #fff;
+          text-wrap: balance;
+        }
+
+        .program-stage-desc {
+          max-width: 25em;
+          margin: 0 0 24px;
+          font-family: ${sans};
+          font-size: clamp(.92rem, 1vw, 1rem);
+          line-height: 1.65;
+          color: rgba(255, 255, 255, .78);
+          opacity: .88;
+          transform: translateY(6px);
+          transition: opacity 500ms ease, transform 500ms cubic-bezier(.22, 1, .36, 1);
+          text-wrap: pretty;
+        }
+
+        .program-stage-link {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          font-family: ${sans};
+          font-size: .78rem;
+          font-weight: 800;
+          letter-spacing: .13em;
+          line-height: 1;
+          text-transform: uppercase;
+          color: #C8A03B;
+        }
+
+        .program-stage-link span {
+          display: inline-block;
+          transition: transform 500ms cubic-bezier(.22, 1, .36, 1);
+        }
+
+        .program-stage-panel:hover .program-stage-image,
+        .program-stage-panel:focus-visible .program-stage-image {
+          transform: scale(1.05);
+        }
+
+        .program-stage-panel:hover .program-stage-overlay,
+        .program-stage-panel:focus-visible .program-stage-overlay {
+          opacity: .84;
+        }
+
+        .program-stage-panel:hover .program-stage-content,
+        .program-stage-panel:focus-visible .program-stage-content {
+          transform: translateY(-8px);
+        }
+
+        .program-stage-panel:hover .program-stage-desc,
+        .program-stage-panel:focus-visible .program-stage-desc {
+          opacity: 1;
+          transform: translateY(0);
+        }
+
+        .program-stage-panel:hover .program-stage-link span,
+        .program-stage-panel:focus-visible .program-stage-link span {
+          transform: translateX(6px);
+        }
+
+        .program-stage-panel:focus-visible {
+          outline: 3px solid rgba(200, 160, 59, .72);
+          outline-offset: -7px;
+        }
+
+        @media (max-width: 980px) {
+          .program-stage-shell {
+            min-height: clamp(500px, 64vh, 680px);
+          }
+
+          .program-stage-panel {
+            min-height: clamp(500px, 64vh, 680px);
+          }
+
+          .program-stage-content {
+            left: 22px;
+            right: 22px;
+            bottom: 30px;
+          }
+
+          .program-stage-title {
+            font-size: clamp(1.65rem, 3vw, 2.25rem);
+          }
+        }
+
+        @media (max-width: 720px) {
+          .program-stage-shell {
+            grid-template-columns: 1fr;
+            min-height: 0;
+            border-radius: 22px;
+          }
+
+          .program-stage-panel {
+            min-height: 68vh;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .program-stage-image,
+          .program-stage-overlay,
+          .program-stage-content,
+          .program-stage-desc,
+          .program-stage-link span {
+            transition: none;
+          }
+
+          .program-stage-panel:hover .program-stage-image,
+          .program-stage-panel:focus-visible .program-stage-image,
+          .program-stage-panel:hover .program-stage-content,
+          .program-stage-panel:focus-visible .program-stage-content,
+          .program-stage-panel:hover .program-stage-desc,
+          .program-stage-panel:focus-visible .program-stage-desc,
+          .program-stage-panel:hover .program-stage-link span,
+          .program-stage-panel:focus-visible .program-stage-link span {
+            transform: none;
+          }
+        }
+      `}</style>
+      <div style={{ maxWidth: '1480px', margin: '0 auto' }}>
+        <Reveal>
+          <motion.div variants={fadeUp} style={{ textAlign: 'center', marginBottom: 'clamp(44px, 5vw, 64px)' }}>
+            <div style={{ fontFamily: sans, fontSize: '.7rem', fontWeight: 800, letterSpacing: '.17em', textTransform: 'uppercase', color: C.gold, marginBottom: '14px' }}>Academic Programs</div>
+            <h2 style={{ fontFamily: serif, fontWeight: 600, fontSize: 'clamp(2.2rem, 4.5vw, 3.8rem)', letterSpacing: '-.02em', lineHeight: 1.08, color: C.navy, margin: 0 }}>Tailored for Every Stage</h2>
+            <p style={{ fontFamily: sans, color: C.muted, fontSize: 'clamp(1rem, 1.35vw, 1.18rem)', lineHeight: 1.7, margin: '18px auto 0', maxWidth: '34rem' }}>The right support at the right time.</p>
+          </motion.div>
+        </Reveal>
+        <motion.div
+          className="program-stage-shell"
+          variants={stagger}
+          initial="hidden"
+          animate={inView ? 'visible' : 'hidden'}
+        >
+          {PROGRAMS.map((program, index) => (
+            <motion.div key={program.name} variants={fadeUp} style={{ minWidth: 0 }}>
+              <ProgramImagePanel program={program} index={index} />
+            </motion.div>
           ))}
         </motion.div>
-      </div>
-    </section>
-  );
-};
-
-
-// ══════════════════════════════════════════════════════════════
-//  THE DA DIFFERENCE — premium philosophy section
-// ══════════════════════════════════════════════════════════════
-const PHI_CARDS = [
-  {
-    icon: (
-      <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="14" cy="10" r="5" stroke="#D4AF37" strokeWidth="1.4"/>
-        <path d="M4 24c0-5.523 4.477-10 10-10s10 4.477 10 10" stroke="#D4AF37" strokeWidth="1.4" strokeLinecap="round"/>
-      </svg>
-    ),
-    title: 'Personal Connection',
-    body1: "Unlike large tutoring centres where students can become just another enrolment, our small classes allow us to understand each student's strengths, challenges and goals.",
-    body2: 'Students are known by name, supported individually and encouraged to grow at their own pace.',
-    img: '/images/v3/warm_interaction.jpg',
-  },
-  {
-    icon: (
-      <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M14 4 L14 8 M8.5 6.5 L11.5 9.5 M5 13 L9 13 M8.5 19.5 L11.5 16.5 M14 20 L14 24 M17.5 16.5 L20.5 19.5 M19 13 L23 13 M17.5 9.5 L20.5 6.5" stroke="#D4AF37" strokeWidth="1.4" strokeLinecap="round"/>
-        <circle cx="14" cy="13" r="4" stroke="#D4AF37" strokeWidth="1.4"/>
-      </svg>
-    ),
-    title: 'Confidence Before Results',
-    body1: 'Academic success begins with confidence. We create an environment where students feel comfortable asking questions, making mistakes and embracing challenges.',
-    body2: 'By developing resilience and self-belief, students become more engaged learners both inside and outside the classroom.',
-    img: '/images/v3/classroom_active.jpg',
-  },
-  {
-    icon: (
-      <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M6 22 L14 6 L22 22" stroke="#D4AF37" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
-        <path d="M8.5 17 L19.5 17" stroke="#D4AF37" strokeWidth="1.4" strokeLinecap="round"/>
-      </svg>
-    ),
-    title: 'Excellence Through Understanding',
-    body1: 'We focus on deep understanding rather than memorisation. Through personalised guidance, expert teaching and structured progression, students learn how to think critically and solve problems independently.',
-    body2: 'The result is not just better grades — but genuine academic confidence and lifelong capability.',
-    img: '/images/v3/collaborative_learning.jpg',
-  },
-];
-
-const PhiCard = ({ card, index, inView }: { card: typeof PHI_CARDS[0]; index: number; inView: boolean }) => {
-  const [hovered, setHovered] = useState(false);
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 56 }}
-      animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 1.1, delay: 0.1 + index * 0.18, ease: [0.22, 1, 0.36, 1] }}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      style={{
-        position: 'relative',
-        background: '#fff',
-        borderRadius: 16,
-        overflow: 'hidden',
-        border: `1px solid ${hovered ? 'rgba(212,175,55,.3)' : 'rgba(10,27,52,.07)'}`,
-        boxShadow: hovered
-          ? '0 40px 100px rgba(10,27,52,.12), 0 8px 32px rgba(10,27,52,.08)'
-          : '0 2px 20px rgba(10,27,52,.05)',
-        transform: hovered ? 'translateY(-10px)' : 'translateY(0)',
-        transition: 'all .55s cubic-bezier(.22,1,.36,1)',
-        cursor: 'default',
-        display: 'flex',
-        flexDirection: 'column',
-      }}>
-
-      {/* Image — fades up from bottom, softly */}
-      <div style={{
-        position: 'relative',
-        height: hovered ? 240 : 0,
-        overflow: 'hidden',
-        transition: 'height .65s cubic-bezier(.22,1,.36,1)',
-        flexShrink: 0,
-      }}>
-        <img src={card.img} alt={card.title} style={{
-          width: '100%', height: 240, objectFit: 'cover',
-          opacity: hovered ? 1 : 0,
-          transform: hovered ? 'scale(1.04)' : 'scale(1.08)',
-          transition: 'opacity .6s ease, transform .9s ease',
-          display: 'block',
-        }} />
-        {/* Soft fade to white at bottom */}
-        <div style={{
-          position: 'absolute', bottom: 0, left: 0, right: 0, height: 80,
-          background: 'linear-gradient(to bottom, transparent 0%, #fff 100%)',
-          pointerEvents: 'none',
-        }} />
-      </div>
-
-      {/* Card body */}
-      <div style={{ padding: '48px 44px 52px', flex: 1, display: 'flex', flexDirection: 'column' }}>
-
-        {/* Icon */}
-        <div style={{
-          marginBottom: 28,
-          opacity: hovered ? 1 : 0.6,
-          transition: 'opacity .4s',
-          transform: hovered ? 'translateY(-2px)' : 'translateY(0)',
-        }}>
-          {card.icon}
-        </div>
-
-        {/* Gold rule — expands on hover */}
-        <div style={{
-          width: hovered ? 48 : 24, height: 1.5, borderRadius: 2,
-          background: `linear-gradient(90deg, #D4AF37, transparent)`,
-          marginBottom: 28,
-          transition: 'width .5s cubic-bezier(.22,1,.36,1)',
-        }} />
-
-        {/* Heading */}
-        <h3 style={{
-          fontFamily: serif,
-          fontWeight: 600,
-          fontSize: 'clamp(1.5rem,2.4vw,2rem)',
-          color: C.navy,
-          letterSpacing: '-.02em',
-          lineHeight: 1.15,
-          marginBottom: 20,
-          transition: 'color .3s',
-        }}>{card.title}</h3>
-
-        {/* Body paragraph 1 */}
-        <p style={{
-          fontFamily: sans,
-          fontSize: '.9rem',
-          lineHeight: 1.82,
-          color: 'rgba(10,27,52,.55)',
-          marginBottom: 16,
-        }}>{card.body1}</p>
-
-        {/* Body paragraph 2 — slightly more prominent */}
-        <p style={{
-          fontFamily: sans,
-          fontSize: '.9rem',
-          lineHeight: 1.82,
-          color: hovered ? 'rgba(10,27,52,.75)' : 'rgba(10,27,52,.45)',
-          fontStyle: 'italic',
-          marginTop: 'auto',
-          paddingTop: 16,
-          borderTop: `1px solid ${hovered ? 'rgba(212,175,55,.2)' : 'rgba(10,27,52,.06)'}`,
-          transition: 'color .4s, border-color .4s',
-        }}>{card.body2}</p>
-      </div>
-    </motion.div>
-  );
-};
-
-const WhySection = () => {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: '-80px' });
-
-  return (
-    <section ref={ref} style={{
-      background: 'linear-gradient(180deg, #FAFAF8 0%, #F5F0EA 50%, #FAFAF8 100%)',
-      padding: '160px 32px 180px',
-      position: 'relative', overflow: 'hidden',
-    }}>
-      {/* Subtle dot grid */}
-      <div style={{
-        position: 'absolute', inset: 0,
-        backgroundImage: 'radial-gradient(rgba(10,27,52,.028) 1px, transparent 1px)',
-        backgroundSize: '36px 36px',
-        pointerEvents: 'none',
-      }} />
-
-      <div style={{ maxWidth: '1200px', margin: '0 auto', position: 'relative' }}>
-
-        {/* ── Heading ── */}
-        <motion.div
-          initial={{ opacity: 0, y: 52 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1] }}
-          style={{ textAlign: 'center', marginBottom: 40 }}>
-
-          <h2 style={{
-            fontFamily: serif,
-            fontWeight: 400,
-            fontSize: 'clamp(2.6rem,6vw,5.6rem)',
-            color: C.navy,
-            letterSpacing: '-.03em',
-            lineHeight: 1.05,
-          }}>
-            Every student deserves<br />
-            to be{' '}
-            <em style={{
-              fontStyle: 'italic',
-              color: 'transparent',
-              backgroundImage: `linear-gradient(135deg, #8B6914, ${C.gold}, #D4AF37)`,
-              WebkitBackgroundClip: 'text',
-              backgroundClip: 'text',
-            }}>known.</em>
-          </h2>
-        </motion.div>
-
-        {/* Thin gold rule */}
-        <motion.div
-          initial={{ scaleX: 0, opacity: 0 }}
-          animate={inView ? { scaleX: 1, opacity: 1 } : {}}
-          transition={{ duration: 1.2, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
-          style={{
-            width: 56, height: 1,
-            background: `linear-gradient(90deg, transparent, ${C.gold}, transparent)`,
-            margin: '0 auto 44px',
-          }} />
-
-        {/* ── Intro paragraph ── */}
-        <motion.p
-          initial={{ opacity: 0, y: 28 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 1, delay: 0.38, ease: [0.22, 1, 0.36, 1] }}
-          style={{
-            fontFamily: sans,
-            fontWeight: 300,
-            fontSize: 'clamp(1rem,1.6vw,1.18rem)',
-            color: 'rgba(10,27,52,.52)',
-            lineHeight: 1.88,
-            maxWidth: 640,
-            margin: '0 auto 100px',
-            textAlign: 'center',
-            letterSpacing: '.008em',
-          }}>
-          At DA Tuition, we believe students achieve their best when they feel genuinely supported, personally understood, and confidently challenged. Our goal is not simply better grades, but the development of capable, resilient and independent learners.
-        </motion.p>
-
-        {/* ── Three cards ── */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(3, 1fr)',
-          gap: 28,
-          alignItems: 'stretch',
-        }}>
-          {PHI_CARDS.map((c, i) => (
-            <PhiCard key={i} card={c} index={i} inView={inView} />
-          ))}
-        </div>
-
       </div>
     </section>
   );
@@ -2103,6 +2501,593 @@ const QuoteSection = () => {
           Parent of Year 10 Student — Google Review, 5 Stars
         </motion.p>
       </motion.div>
+    </section>
+  );
+};
+
+// ══════════════════════════════════════════════════════════════
+//  WELLBEING — premium editorial layout
+// ══════════════════════════════════════════════════════════════
+
+const WELLBEING_FEATURES = [
+  {
+    title: 'Genuine Relationships',
+    body:  'Our tutors know every student as an individual, building trust that lasts.',
+    icon: (
+      <svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M22 36s-14-8.5-14-18a8 8 0 0 1 14-5.3A8 8 0 0 1 36 18c0 9.5-14 18-14 18z" stroke="#D4AF37" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M15 20c0 0 3 2 7 2s7-2 7-2" stroke="#D4AF37" strokeWidth="1.1" strokeLinecap="round"/>
+      </svg>
+    ),
+  },
+  {
+    title: 'Encouraging Environment',
+    body:  'Students feel comfortable asking questions, sharing ideas and being themselves.',
+    icon: (
+      <svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M10 12a2 2 0 0 1 2-2h20a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H16l-6 4V12z" stroke="#D4AF37" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
+        <circle cx="17" cy="19" r="1.2" fill="#D4AF37"/>
+        <circle cx="22" cy="19" r="1.2" fill="#D4AF37"/>
+        <circle cx="27" cy="19" r="1.2" fill="#D4AF37"/>
+      </svg>
+    ),
+  },
+  {
+    title: 'Confidence to Grow',
+    body:  'We celebrate effort, progress and personal strengths at every step.',
+    icon: (
+      <svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M22 8l3.6 7.3 8.1 1.2-5.9 5.7 1.4 8-7.2-3.8-7.2 3.8 1.4-8-5.9-5.7 8.1-1.2L22 8z" stroke="#D4AF37" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
+      </svg>
+    ),
+  },
+  {
+    title: 'Strong Connections',
+    body:  'Friendships between students create a supportive community that helps everyone thrive.',
+    icon: (
+      <svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="14" cy="16" r="4" stroke="#D4AF37" strokeWidth="1.3"/>
+        <circle cx="30" cy="16" r="4" stroke="#D4AF37" strokeWidth="1.3"/>
+        <circle cx="22" cy="14" r="4" stroke="#D4AF37" strokeWidth="1.3"/>
+        <path d="M6 34c0-4.4 3.6-8 8-8h4" stroke="#D4AF37" strokeWidth="1.3" strokeLinecap="round"/>
+        <path d="M38 34c0-4.4-3.6-8-8-8h-4" stroke="#D4AF37" strokeWidth="1.3" strokeLinecap="round"/>
+        <path d="M14 34c0-4.4 3.6-8 8-8s8 3.6 8 8" stroke="#D4AF37" strokeWidth="1.3" strokeLinecap="round"/>
+      </svg>
+    ),
+  },
+] as const;
+
+const WellbeingSection = () => {
+  const ref    = useRef(null);
+  const inView = useInView(ref, { once: true, margin: '-80px' });
+
+  return (
+    <section ref={ref} className="wb-section" style={{
+      background: 'linear-gradient(158deg, #FAF7F3 0%, #F3EDE2 52%, #F7F3EC 100%)',
+      padding: 'clamp(72px, 8vw, 100px) clamp(24px, 5vw, 64px)',
+      position: 'relative',
+      overflow: 'hidden',
+    }}>
+
+      {/* ── Styles ── */}
+      <style>{`
+        /* Paper grain texture */
+        .wb-section::before {
+          content: '';
+          position: absolute;
+          inset: 0;
+          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+          opacity: 0.020;
+          pointer-events: none;
+          mix-blend-mode: multiply;
+          z-index: 0;
+        }
+        /* Warm gold orb */
+        .wb-section::after {
+          content: '';
+          position: absolute;
+          top: -100px; right: -80px;
+          width: 560px; height: 560px;
+          background: radial-gradient(circle, rgba(212,175,55,0.06) 0%, transparent 68%);
+          pointer-events: none;
+          z-index: 0;
+        }
+        /* Photo hover lift */
+        .wb-photo {
+          transition: transform 0.5s cubic-bezier(0.22,1,0.36,1), box-shadow 0.5s cubic-bezier(0.22,1,0.36,1);
+          will-change: transform;
+          cursor: default;
+        }
+        .wb-photo:hover {
+          transform: translateY(-6px) scale(1.03);
+        }
+        .wb-photo:hover .wb-photo-shadow {
+          box-shadow: 0 24px 64px rgba(10,27,52,0.20) !important;
+        }
+        /* Premium CTA button */
+        .wb-btn {
+          font-family: ${sans};
+          font-size: 0.60rem;
+          font-weight: 700;
+          letter-spacing: 0.20em;
+          text-transform: uppercase;
+          color: ${C.navy};
+          background: transparent;
+          border: 1px solid rgba(10,27,52,0.20);
+          border-radius: 2px;
+          padding: 15px 30px;
+          cursor: pointer;
+          display: inline-flex;
+          align-items: center;
+          gap: 14px;
+          transition: border-color 0.35s ease, color 0.35s ease, transform 0.35s ease, box-shadow 0.35s ease;
+        }
+        .wb-btn:hover {
+          border-color: ${C.gold};
+          color: ${C.gold};
+          transform: translateY(-2px);
+          box-shadow: 0 6px 24px rgba(212,175,55,0.14);
+        }
+        .wb-btn .wb-arrow {
+          display: inline-block;
+          font-size: 1.0rem;
+          transition: transform 0.40s cubic-bezier(0.22,1,0.36,1);
+        }
+        .wb-btn:hover .wb-arrow { transform: translateX(6px); }
+        /* Feature card */
+        .wb-card {
+          padding: 32px 26px 40px;
+          border-radius: 14px;
+          background: transparent;
+          position: relative;
+          overflow: hidden;
+          transition: background 0.38s ease, box-shadow 0.38s ease, transform 0.38s ease;
+        }
+        .wb-card:hover {
+          background: rgba(255,255,255,0.82);
+          box-shadow: 0 10px 48px rgba(10,27,52,0.07);
+          transform: translateY(-5px);
+        }
+        /* Gold underline sweep */
+        .wb-card::after {
+          content: '';
+          position: absolute;
+          bottom: 18px; left: 26px;
+          height: 1.5px;
+          width: 0;
+          background: linear-gradient(90deg, ${C.gold}, ${C.goldL});
+          border-radius: 2px;
+          transition: width 0.45s cubic-bezier(0.22,1,0.36,1);
+        }
+        .wb-card:hover::after { width: calc(100% - 52px); }
+        /* Responsive grid */
+        @media (min-width: 1024px) {
+          .wb-main-grid { grid-template-columns: 44fr 56fr !important; gap: 32px !important; }
+          .wb-feat-grid { grid-template-columns: repeat(4, 1fr) !important; }
+        }
+        @media (max-width: 1023px) {
+          .wb-main-grid { grid-template-columns: 1fr !important; gap: 44px !important; }
+          .wb-feat-grid { grid-template-columns: repeat(2, 1fr) !important; }
+        }
+        @media (max-width: 639px) {
+          .wb-feat-grid { grid-template-columns: 1fr !important; }
+        }
+      `}</style>
+
+      <div style={{ maxWidth: '1280px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
+
+        {/* ── Two-column editorial row ── */}
+        <div
+          className="wb-main-grid"
+          style={{
+            display: 'grid',
+            gridTemplateColumns: '1fr',
+            gap: '32px',
+            alignItems: 'start',
+            marginBottom: '20px',
+          }}
+        >
+
+          {/* ─── LEFT: staggered text ─── */}
+          <div>
+            {/* Label */}
+            <motion.p
+              initial={{ opacity: 0, y: 18 }}
+              animate={inView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.72, delay: 0, ease: [0.22, 1, 0.36, 1] }}
+              style={{
+                fontFamily: sans,
+                fontSize: '0.60rem', fontWeight: 700,
+                letterSpacing: '0.22em', textTransform: 'uppercase' as const,
+                color: C.gold,
+                display: 'flex', alignItems: 'center', gap: '12px',
+                margin: '0 0 16px',
+              }}
+            >
+              <span style={{ display: 'inline-block', width: '28px', height: '1px', background: C.gold, flexShrink: 0 }} />
+              A Supportive Environment
+            </motion.p>
+
+            {/* Heading */}
+            <motion.h2
+              initial={{ opacity: 0, y: 22 }}
+              animate={inView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.78, delay: 0.10, ease: [0.22, 1, 0.36, 1] }}
+              style={{
+                fontFamily: serif,
+                fontWeight: 400,
+                fontSize: 'clamp(1.75rem, 3.0vw, 2.85rem)',
+                lineHeight: 1.14,
+                letterSpacing: '-0.026em',
+                color: C.navy,
+                margin: '0 0 12px',
+              }}
+            >
+              Where students feel<br />
+              <em style={{ fontStyle: 'italic', color: C.gold }}>safe, supported</em><br />
+              and <em style={{ fontStyle: 'italic', color: C.gold }}>inspired.</em>
+            </motion.h2>
+
+            {/* Gold rule */}
+            <motion.div
+              initial={{ opacity: 0, scaleX: 0 }}
+              animate={inView ? { opacity: 1, scaleX: 1 } : {}}
+              transition={{ duration: 0.55, delay: 0.22, ease: [0.22, 1, 0.36, 1] }}
+              style={{
+                width: '40px', height: '1.5px',
+                background: C.gold,
+                margin: '0 0 12px',
+                transformOrigin: 'left',
+              }}
+            />
+
+            {/* Body */}
+            <motion.p
+              initial={{ opacity: 0, y: 18 }}
+              animate={inView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.72, delay: 0.32, ease: [0.22, 1, 0.36, 1] }}
+              style={{
+                fontFamily: sans,
+                fontWeight: 300,
+                fontSize: 'clamp(0.93rem, 1.25vw, 1.04rem)',
+                lineHeight: 1.94,
+                color: 'rgba(10,27,52,0.56)',
+                margin: '0 0 28px',
+                maxWidth: '400px',
+              }}
+            >
+              At DA Tuition, wellbeing is the foundation of academic growth. Our tutors build genuine connections, so students feel comfortable asking questions, sharing ideas and growing in confidence.
+            </motion.p>
+
+            {/* Premium CTA */}
+            <motion.div
+              initial={{ opacity: 0, y: 14 }}
+              animate={inView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.65, delay: 0.42, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <button className="wb-btn">
+                Discover Our Environment
+                <span className="wb-arrow">→</span>
+              </button>
+            </motion.div>
+          </div>
+
+          {/* ─── RIGHT: asymmetric editorial collage ─── */}
+          <div>
+
+            {/* ── Hero: full-width dominant image ── */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={inView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.85, delay: 0.10, ease: [0.22, 1, 0.36, 1] }}
+              className="wb-photo"
+            >
+              <div className="wb-photo-shadow" style={{
+                borderRadius: '18px', overflow: 'hidden',
+                height: 'clamp(260px, 30vw, 380px)',
+                boxShadow: '0 8px 44px rgba(10,27,52,0.12)',
+                position: 'relative',
+                transition: 'box-shadow 0.5s cubic-bezier(0.22,1,0.36,1)',
+              }}>
+                <img
+                  src="/maletutors.jpeg"
+                  alt="DA Tuition tutors in a warm collaborative session"
+                  loading="lazy"
+                  style={{
+                    width: '100%', height: '100%',
+                    objectFit: 'cover', objectPosition: 'center 30%',
+                    filter: 'brightness(1.04) contrast(1.06) saturate(1.14) sepia(0.04)',
+                  }}
+                />
+                <div style={{
+                  position: 'absolute', inset: 0,
+                  background: 'radial-gradient(ellipse at 50% 50%, transparent 52%, rgba(8,18,36,0.20) 100%)',
+                  pointerEvents: 'none',
+                }} />
+              </div>
+            </motion.div>
+
+            {/* ── Support pair: left wider, right narrower, equal height ── */}
+            <div style={{
+              display: 'flex',
+              gap: '12px',
+              marginTop: '12px',
+            }}>
+
+              {/* Left: 57% — students / community */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={inView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.78, delay: 0.26, ease: [0.22, 1, 0.36, 1] }}
+                className="wb-photo"
+                style={{ flex: '0 0 57%' }}
+              >
+                <div className="wb-photo-shadow" style={{
+                  borderRadius: '18px', overflow: 'hidden',
+                  height: 'clamp(140px, 16vw, 200px)',
+                  boxShadow: '0 8px 36px rgba(10,27,52,0.11)',
+                  position: 'relative',
+                  transition: 'box-shadow 0.5s cubic-bezier(0.22,1,0.36,1)',
+                }}>
+                  <img
+                    src="/Lindatwins.JPG"
+                    alt="Students with their DA Tuition teacher"
+                    loading="lazy"
+                    style={{
+                      width: '100%', height: '100%',
+                      objectFit: 'cover', objectPosition: 'center 28%',
+                      filter: 'brightness(1.04) contrast(1.06) saturate(1.14) sepia(0.04)',
+                    }}
+                  />
+                  <div style={{
+                    position: 'absolute', inset: 0,
+                    background: 'radial-gradient(ellipse at 50% 50%, transparent 52%, rgba(8,18,36,0.20) 100%)',
+                    pointerEvents: 'none',
+                  }} />
+                </div>
+              </motion.div>
+
+              {/* Right: remaining width, same height */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={inView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.78, delay: 0.38, ease: [0.22, 1, 0.36, 1] }}
+                className="wb-photo"
+                style={{ flex: 1 }}
+              >
+                <div className="wb-photo-shadow" style={{
+                  borderRadius: '18px', overflow: 'hidden',
+                  height: 'clamp(140px, 16vw, 200px)',
+                  boxShadow: '0 8px 36px rgba(10,27,52,0.11)',
+                  position: 'relative',
+                  transition: 'box-shadow 0.5s cubic-bezier(0.22,1,0.36,1)',
+                }}>
+                  <img
+                    src="/Freeman.png"
+                    alt="DA Tuition student community"
+                    loading="lazy"
+                    style={{
+                      width: '100%', height: '100%',
+                      objectFit: 'cover', objectPosition: 'center 18%',
+                      filter: 'brightness(1.04) contrast(1.06) saturate(1.14) sepia(0.04)',
+                    }}
+                  />
+                  <div style={{
+                    position: 'absolute', inset: 0,
+                    background: 'radial-gradient(ellipse at 50% 50%, transparent 52%, rgba(8,18,36,0.20) 100%)',
+                    pointerEvents: 'none',
+                  }} />
+                </div>
+              </motion.div>
+
+            </div>
+          </div>
+
+        </div>
+
+        {/* ── Premium feature cards ── */}
+        <div
+          className="wb-feat-grid"
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(2, 1fr)',
+            gap: '8px',
+            borderTop: '1px solid rgba(10,27,52,0.07)',
+            paddingTop: 'clamp(16px, 2vw, 24px)',
+          }}
+        >
+          {WELLBEING_FEATURES.map((feat, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 22 }}
+              animate={inView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.68, delay: 0.48 + i * 0.12, ease: [0.22, 1, 0.36, 1] }}
+              className="wb-card"
+            >
+              <div style={{ marginBottom: '22px', lineHeight: 0 }}>
+                {(() => {
+                  const icon = feat.icon as React.ReactElement;
+                  return React.cloneElement(icon, { width: 64, height: 64 } as React.SVGProps<SVGSVGElement>);
+                })()}
+              </div>
+              <h3 style={{
+                fontFamily: serif,
+                fontWeight: 500,
+                fontSize: '1.35rem',
+                letterSpacing: '-0.014em',
+                color: C.navy,
+                margin: '0 0 10px',
+              }}>{feat.title}</h3>
+              <p style={{
+                fontFamily: sans,
+                fontWeight: 300,
+                fontSize: '0.97rem',
+                lineHeight: 1.78,
+                color: 'rgba(10,27,52,0.58)',
+                margin: 0,
+              }}>{feat.body}</p>
+            </motion.div>
+          ))}
+        </div>
+
+      </div>
+    </section>
+  );
+};
+
+
+
+// ══════════════════════════════════════════════════════════════
+//  DA ENVIRONMENT — scroll-driven media section
+// ══════════════════════════════════════════════════════════════
+
+const CinematicQuoteSection = () => {
+  const ref    = useRef<HTMLElement>(null);
+  const inView = useInView(ref, { once: true, margin: '-120px' });
+
+  return (
+    <section
+      ref={ref}
+      style={{
+        background: '#06111F',
+        padding: 'clamp(80px, 11vw, 140px) clamp(24px, 6vw, 80px)',
+        textAlign: 'center' as const,
+        position: 'relative',
+        overflow: 'hidden',
+      }}
+    >
+      <style>{`
+        @keyframes cq-reveal {
+          0%   { opacity: 0; filter: blur(18px); transform: translateY(16px); }
+          30%  { opacity: 0.85; filter: blur(6px); transform: translateY(6px); }
+          65%  { filter: blur(1px); transform: translateY(1px); }
+          100% { opacity: 1; filter: blur(0); transform: translateY(0); }
+        }
+        @keyframes cq-glow {
+          0%   { text-shadow: none; }
+          22%  { text-shadow: 0 0 80px rgba(212,175,55,0.28), 0 0 28px rgba(255,255,255,0.14); }
+          55%  { text-shadow: 0 0 22px rgba(212,175,55,0.08); }
+          100% { text-shadow: none; }
+        }
+        @keyframes cq-shimmer-sweep {
+          0%   { transform: translateX(-130%); }
+          100% { transform: translateX(230%); }
+        }
+        @keyframes cq-line-grow {
+          0%   { transform: scaleX(0); opacity: 0; }
+          100% { transform: scaleX(1); opacity: 1; }
+        }
+        @keyframes cq-caption-in {
+          0%   { opacity: 0; letter-spacing: 0.40em; }
+          100% { opacity: 1; letter-spacing: 0.24em; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .cq-heading { animation: none !important; opacity: 1 !important; filter: none !important; transform: none !important; }
+          .cq-line    { animation: none !important; opacity: 1 !important; transform: none !important; }
+          .cq-caption { animation: none !important; opacity: 1 !important; letter-spacing: 0.24em !important; }
+          .cq-shimmer { display: none !important; }
+        }
+      `}</style>
+
+      {/* Ambient gold orb */}
+      <div aria-hidden="true" style={{
+        position: 'absolute', top: '15%', left: '50%',
+        transform: 'translateX(-50%)',
+        width: '700px', height: '320px',
+        background: 'radial-gradient(ellipse, rgba(212,175,55,0.06) 0%, transparent 68%)',
+        pointerEvents: 'none',
+      }} />
+
+      <div style={{ maxWidth: '880px', margin: '0 auto', position: 'relative' }}>
+
+        {/* Quote */}
+        <div style={{ position: 'relative' }}>
+          <h2
+            className="cq-heading"
+            style={{
+              fontFamily: serif,
+              fontWeight: 400,
+              fontSize: 'clamp(2.0rem, 4.0vw, 3.9rem)',
+              lineHeight: 1.18,
+              letterSpacing: '-0.022em',
+              color: '#F8F6F0',
+              margin: '0 0 44px',
+              ...(inView ? {
+                animation: 'cq-reveal 1.65s cubic-bezier(0.22,1,0.36,1) both, cq-glow 1.9s ease-out both',
+              } : {
+                opacity: 0,
+                filter: 'blur(18px)',
+                transform: 'translateY(16px)',
+              }),
+            }}
+          >
+            More than tutoring.<br />
+            <em style={{ fontStyle: 'italic', color: C.gold }}>
+              A place where students feel known.
+            </em>
+          </h2>
+
+          {/* Shimmer sweep — passes over text once at ~0.85s */}
+          {inView && (
+            <div
+              className="cq-shimmer"
+              aria-hidden="true"
+              style={{
+                position: 'absolute', inset: 0,
+                bottom: '44px',
+                pointerEvents: 'none',
+                overflow: 'hidden',
+              }}
+            >
+              <div style={{
+                position: 'absolute',
+                top: 0, bottom: 0,
+                width: '38%',
+                background: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.09) 35%, rgba(212,175,55,0.13) 52%, rgba(255,255,255,0.07) 68%, transparent 100%)',
+                animation: 'cq-shimmer-sweep 1.0s 0.88s cubic-bezier(0.4,0,0.2,1) forwards',
+              }} />
+            </div>
+          )}
+        </div>
+
+        {/* Gold accent line */}
+        <div
+          className="cq-line"
+          style={{
+            width: '68px', height: '1px',
+            background: `linear-gradient(90deg, transparent, ${C.gold} 40%, ${C.goldL} 60%, transparent)`,
+            margin: '0 auto 28px',
+            transformOrigin: 'center',
+            ...(inView ? {
+              animation: 'cq-line-grow 0.85s 1.05s cubic-bezier(0.22,1,0.36,1) both',
+            } : {
+              opacity: 0,
+              transform: 'scaleX(0)',
+            }),
+          }}
+        />
+
+        {/* Caption */}
+        <p
+          className="cq-caption"
+          style={{
+            fontFamily: sans,
+            fontSize: '0.58rem',
+            fontWeight: 700,
+            color: 'rgba(255,255,255,0.38)',
+            margin: 0,
+            ...(inView ? {
+              animation: 'cq-caption-in 1.1s 1.20s cubic-bezier(0.22,1,0.36,1) both',
+            } : {
+              opacity: 0,
+              letterSpacing: '0.40em',
+            }),
+          }}
+        >
+          SUPPORTIVE ENVIRONMENT&nbsp;&nbsp;•&nbsp;&nbsp;DA TUITION
+        </p>
+
+      </div>
     </section>
   );
 };
@@ -4283,6 +5268,320 @@ function StoryModal({ review, onClose }: { review: ReviewRecord; onClose: () => 
 }
 
 // ── Reviews section ───────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════
+//  WHAT WE TEACH — Editorial subject tiles
+// ══════════════════════════════════════════════════════════════
+
+interface SubjectTileProps {
+  label: string;
+  icon: string;
+  desc: string;
+  img: string;
+  href: string;
+  height: string;
+  delay: number;
+  inView: boolean;
+}
+
+const SubjectTile = ({ label, icon, desc, img, href, height, delay, inView }: SubjectTileProps) => {
+  const [hovered, setHovered] = useState(false);
+  const easeOut = [0.22, 1, 0.36, 1] as const;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 48 }}
+      animate={inView ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.85, delay, ease: easeOut }}
+      style={{ flex: '1 1 0', minWidth: 0 }}
+    >
+      <Link
+        to={href}
+        style={{ display: 'block', textDecoration: 'none' }}
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+      >
+        <div style={{
+          borderRadius: '28px',
+          overflow: 'hidden',
+          height,
+          position: 'relative',
+          cursor: 'pointer',
+          boxShadow: hovered
+            ? '0 36px 80px rgba(10,27,52,0.22), 0 8px 24px rgba(10,27,52,0.12)'
+            : '0 8px 32px rgba(10,27,52,0.10)',
+          transform: hovered ? 'translateY(-10px)' : 'translateY(0)',
+          transition: 'transform 0.5s cubic-bezier(0.22,1,0.36,1), box-shadow 0.5s ease',
+        }}>
+          {/* Photo */}
+          <div style={{ position: 'absolute', inset: 0, overflow: 'hidden' }}>
+            <img
+              src={img}
+              alt={label}
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover',
+                transform: hovered ? 'scale(1.06)' : 'scale(1.0)',
+                transition: 'transform 0.7s cubic-bezier(0.22,1,0.36,1)',
+              }}
+            />
+          </div>
+
+          {/* Overlay */}
+          <div style={{
+            position: 'absolute',
+            inset: 0,
+            background: hovered
+              ? 'linear-gradient(170deg, rgba(10,27,52,0.18) 0%, rgba(10,27,52,0.72) 55%, rgba(10,27,52,0.88) 100%)'
+              : 'linear-gradient(170deg, rgba(10,27,52,0.28) 0%, rgba(10,27,52,0.78) 55%, rgba(10,27,52,0.92) 100%)',
+            transition: 'background 0.5s ease',
+          }} />
+
+          {/* Top badge */}
+          <div style={{
+            position: 'absolute',
+            top: '22px',
+            left: '22px',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '7px',
+            background: 'rgba(10,27,52,0.50)',
+            backdropFilter: 'blur(14px)',
+            WebkitBackdropFilter: 'blur(14px)',
+            border: `1px solid ${C.gold}45`,
+            borderRadius: '100px',
+            padding: '6px 14px 6px 10px',
+          }}>
+            <span style={{ fontSize: '13px', lineHeight: 1 }}>{icon}</span>
+            <span style={{
+              fontFamily: sans,
+              fontSize: '.65rem',
+              fontWeight: 800,
+              letterSpacing: '.14em',
+              textTransform: 'uppercase' as const,
+              color: C.white,
+            }}>{label}</span>
+          </div>
+
+          {/* Bottom content */}
+          <div style={{
+            position: 'absolute',
+            bottom: 0,
+            left: 0,
+            right: 0,
+            padding: '28px 26px',
+          }}>
+            <p style={{
+              fontFamily: sans,
+              fontSize: '.90rem',
+              lineHeight: 1.68,
+              color: 'rgba(255,255,255,0.78)',
+              margin: '0 0 18px',
+            }}>{desc}</p>
+
+            {/* Hover CTA */}
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '7px',
+              opacity: hovered ? 1 : 0,
+              transform: hovered ? 'translateX(0)' : 'translateX(-10px)',
+              transition: 'opacity 0.35s ease, transform 0.35s ease',
+            }}>
+              <span style={{
+                fontFamily: sans,
+                fontSize: '.68rem',
+                fontWeight: 800,
+                letterSpacing: '.14em',
+                textTransform: 'uppercase' as const,
+                color: C.gold,
+              }}>Explore</span>
+              <span style={{ color: C.gold, fontSize: '13px', fontWeight: 700 }}>→</span>
+            </div>
+          </div>
+        </div>
+      </Link>
+    </motion.div>
+  );
+};
+
+// ── Gold particle accent ──────────────────────────────────────
+const GoldParticle = ({ x, y, size, opacity, duration, delay }: {
+  x: string; y: string; size: number; opacity: number; duration: number; delay: number;
+}) => (
+  <motion.div
+    style={{
+      position: 'absolute',
+      left: x, top: y,
+      width: size, height: size,
+      borderRadius: '50%',
+      background: C.gold,
+      opacity,
+      pointerEvents: 'none',
+    }}
+    animate={{ y: [0, -18, 0], opacity: [opacity, opacity * 0.35, opacity] }}
+    transition={{ duration, delay, repeat: Infinity, ease: 'easeInOut' }}
+  />
+);
+
+const TEACH_PARTICLES = [
+  { x: '7%',  y: '18%', size: 3,   opacity: 0.18, duration: 7,   delay: 0    },
+  { x: '14%', y: '65%', size: 2,   opacity: 0.12, duration: 9,   delay: 1.2  },
+  { x: '28%', y: '82%', size: 4,   opacity: 0.10, duration: 11,  delay: 0.5  },
+  { x: '52%', y: '10%', size: 2.5, opacity: 0.16, duration: 8,   delay: 2.1  },
+  { x: '68%', y: '74%', size: 3,   opacity: 0.13, duration: 10,  delay: 0.8  },
+  { x: '81%', y: '30%', size: 2,   opacity: 0.15, duration: 6.5, delay: 1.7  },
+  { x: '92%', y: '55%', size: 3.5, opacity: 0.10, duration: 9.5, delay: 3.0  },
+  { x: '45%', y: '90%', size: 2,   opacity: 0.14, duration: 8.5, delay: 2.5  },
+];
+
+const TILES = [
+  {
+    label: 'Mathematics',
+    icon: '📐',
+    desc: 'Build confidence through understanding, problem solving and logical thinking.',
+    img: '/images/community/subject_maths.jpg',
+    href: '/subjects/mathematics',
+    height: '580px',
+  },
+  {
+    label: 'English',
+    icon: '📖',
+    desc: 'Develop confident readers, writers and communicators who love ideas.',
+    img: '/images/community/subject_english.jpg',
+    href: '/subjects/english',
+    height: '500px',
+  },
+  {
+    label: 'Science',
+    icon: '🧪',
+    desc: 'Discover the world through curiosity, investigation and experimentation.',
+    img: '/images/community/subject_science.jpg',
+    href: '/subjects/science',
+    height: '540px',
+  },
+];
+
+const WhatWeTeachSection = () => {
+  const ref    = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true, margin: '-80px' });
+  const easeOut = [0.22, 1, 0.36, 1] as const;
+
+  return (
+    <section
+      ref={ref}
+      aria-label="What we teach"
+      style={{
+        background: C.cream,
+        paddingTop:    'clamp(80px, 9vw, 120px)',
+        paddingBottom: 0,
+        position: 'relative',
+        overflow: 'hidden',
+      }}
+    >
+      {/* Subtle gold particles */}
+      {TEACH_PARTICLES.map((p, i) => <GoldParticle key={i} {...p} />)}
+
+      {/* ── Heading ── */}
+      <motion.div
+        initial={{ opacity: 0, y: 28 }}
+        animate={inView ? { opacity: 1, y: 0 } : {}}
+        transition={{ duration: 0.95, ease: easeOut }}
+        style={{
+          textAlign: 'center',
+          padding: '0 clamp(24px, 6vw, 80px)',
+          marginBottom: 'clamp(48px, 5.5vw, 72px)',
+        }}
+      >
+        <div style={{
+          fontFamily: sans, fontWeight: 700,
+          fontSize: '.70rem', letterSpacing: '.17em',
+          textTransform: 'uppercase' as const, color: C.gold,
+          marginBottom: '14px',
+        }}>
+          What We Teach
+        </div>
+
+        <h2 style={{
+          fontFamily: serif, fontWeight: 300,
+          fontSize: 'clamp(2.4rem, 4.2vw, 4rem)',
+          letterSpacing: '-.028em', lineHeight: 1.07,
+          color: C.navy, margin: '0 0 20px',
+        }}>
+          Expert tuition in{' '}
+          <em style={{ fontStyle: 'italic', color: C.gold }}>every subject</em>
+        </h2>
+
+        <p style={{
+          fontFamily: sans,
+          fontSize: 'clamp(1rem, 1.4vw, 1.12rem)',
+          color: C.muted,
+          maxWidth: '480px',
+          margin: '0 auto',
+          lineHeight: 1.78,
+        }}>
+          From strong foundations to academic excellence through personalised learning.
+        </p>
+      </motion.div>
+
+      {/* ── Editorial tiles ── */}
+      <div style={{
+        padding: '0 clamp(20px, 5vw, 64px)',
+        maxWidth: '1400px',
+        margin: '0 auto',
+        display: 'flex',
+        alignItems: 'flex-start',
+        gap: 'clamp(14px, 1.5vw, 20px)',
+        flexWrap: 'wrap' as const,
+      }}>
+        {TILES.map((tile, i) => (
+          <SubjectTile
+            key={tile.label}
+            {...tile}
+            delay={i * 0.15}
+            inView={inView}
+          />
+        ))}
+      </div>
+
+      {/* ── Cream → Navy gradient transition ── */}
+      <div style={{
+        marginTop: 'clamp(56px, 6vw, 88px)',
+        height: '160px',
+        background: `linear-gradient(180deg, ${C.cream} 0%, ${C.navy} 100%)`,
+        position: 'relative',
+        overflow: 'hidden',
+      }}>
+        {/* Gold light streaks */}
+        {[0, 1, 2, 3, 4].map(i => (
+          <div key={i} style={{
+            position: 'absolute',
+            width: '1px',
+            height: `${28 + i * 12}px`,
+            background: `linear-gradient(180deg, transparent, ${C.gold}55, transparent)`,
+            left: `${12 + i * 19}%`,
+            top: '15%',
+            opacity: 0.5,
+          }} />
+        ))}
+        {/* Small dots at midpoint */}
+        {[0, 1, 2].map(i => (
+          <div key={i} style={{
+            position: 'absolute',
+            width: '3px', height: '3px',
+            borderRadius: '50%',
+            background: C.gold,
+            opacity: 0.25,
+            left: `${25 + i * 25}%`,
+            top: '42%',
+          }} />
+        ))}
+      </div>
+    </section>
+  );
+};
+
+
 const ReviewsSection = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const inView     = useInView(sectionRef, { once: true, margin: '-60px' });
@@ -4610,7 +5909,7 @@ const ClosingCTASection = () => {
 //  PAGE
 // ══════════════════════════════════════════════════════════════
 const Index = () => (
-  <div style={{ fontFamily: sans, overflowX: 'hidden' }}>
+  <div style={{ fontFamily: sans, overflowX: 'clip' }}>
     <Confetti />
     <SEO canonicalUrl="/" jsonLd={[organizationSchema(), localBusinessSchema(siteStats.reviewCount)]} />
     <NavigationNew />
@@ -4621,8 +5920,10 @@ const Index = () => (
       <ImpactRecognitionSection />
       <AchievementsSection />
       <ProgramsSection />
-      <WhySection />
       <QuoteSection />
+      <WellbeingSection />
+      <CinematicQuoteSection />
+      <WhatWeTeachSection />
       <ReviewsSection />
 
       <TeachersSection />
