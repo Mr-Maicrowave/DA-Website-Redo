@@ -498,7 +498,13 @@ const PhilosophyBackedSection = () => {
   useEffect(() => {
     if (!inView) return;
     startRotation();
-    const onVisibility = () => { document.hidden ? stopRotation() : startRotation(); };
+    const onVisibility = () => {
+      if (document.hidden) {
+        stopRotation();
+      } else {
+        startRotation();
+      }
+    };
     document.addEventListener('visibilitychange', onVisibility);
     return () => { stopRotation(); document.removeEventListener('visibilitychange', onVisibility); };
   }, [inView]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -914,7 +920,7 @@ const ImpactRecognitionSection = () => {
       document.removeEventListener('keydown', onKey);
       document.body.style.overflow = '';
     };
-  }, [modalOpen]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [modalOpen]);
 
   return (
     <>
@@ -4254,7 +4260,7 @@ function StoryModal({ review, onClose }: { review: ReviewRecord; onClose: () => 
             {/* CTA */}
             <div style={{ textAlign: 'center' as const }}>
               <a
-                href="/interview"
+                href="/book-interview"
                 style={{
                   display: 'inline-flex', alignItems: 'center', gap: '8px',
                   background: C.navy, color: '#FFFFFF',

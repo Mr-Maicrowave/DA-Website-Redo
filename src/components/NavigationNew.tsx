@@ -60,7 +60,7 @@ const NavigationNew = () => {
       description: "Search our exceptional educators"
     },
     {
-      title: "Principal's Reflections",
+      title: "Principal's Reflection",
       href: "/principal-reflections",
       description: "Philosophy, values, and vision"
     },
@@ -68,11 +68,6 @@ const NavigationNew = () => {
       title: "Learning Formats",
       href: "/learning-formats",
       description: "Small groups and classes explained"
-    },
-    {
-      title: "Principal's Interview",
-      href: "/interview",
-      description: "Our vision and mission"
     }
   ];
 

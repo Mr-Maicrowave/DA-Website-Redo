@@ -10,7 +10,6 @@ import PageTransition from "@/components/animations/PageTransition";
 import ScrollProgress from "@/components/animations/ScrollProgress";
 import StickyBookButton from "@/components/StickyBookButton";
 import Index from "./pages/Index";
-import Interview from "./pages/Interview";
 import BookInterview from "./pages/BookInterview";
 import Reviews from "./pages/Reviews";
 import NotFound from "./pages/NotFound";
@@ -59,7 +58,7 @@ const AnimatedRoutes = () => {
       <Routes location={location} key={location.pathname}>
         <Route path="/" element={<PageTransition><Index /></PageTransition>} />
 
-        <Route path="/interview" element={<PageTransition><Interview /></PageTransition>} />
+        <Route path="/interview" element={<Navigate to="/principal-reflections" replace />} />
         <Route path="/book-interview" element={<PageTransition><BookInterview /></PageTransition>} />
         <Route path="/reviews" element={<Navigate to="/success-stories" replace />} />
         <Route path="/find-teacher" element={<PageTransition><FindTeacher /></PageTransition>} />
