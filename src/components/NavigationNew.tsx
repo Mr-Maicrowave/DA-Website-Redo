@@ -112,8 +112,11 @@ const NavigationNew = () => {
                   alt="DA Tuition"
                   className="h-9 w-9 object-contain drop-shadow-sm group-hover:scale-105 transition-transform duration-300"
                 />
-                <span className="text-[1.05rem] font-extrabold tracking-tight text-brand-navy whitespace-nowrap">
-                  DA <span className="text-brand-gold">Tuition</span>
+                <span
+                  className="text-[1.08rem] font-bold text-brand-navy whitespace-nowrap leading-none"
+                  style={{ fontFamily: "'Libre Baskerville', Georgia, serif", letterSpacing: '-0.01em' }}
+                >
+                  DA <span className="text-brand-gold italic font-bold">Tuition</span>
                 </span>
               </Link>
             </div>
