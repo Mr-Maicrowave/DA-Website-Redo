@@ -1,25 +1,11 @@
-import React, { useState } from 'react';
 import NavigationNew from '@/components/NavigationNew';
 import FooterNew from '@/components/FooterNew';
 import StickyBookButton from '@/components/StickyBookButton';
+import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import SEO from '@/components/SEO';
-
-const c = {
-  navy: '#071629', navyMid: '#0e2a4a',
-  gold: '#c9a227', goldLight: '#e0bd4b', goldPale: '#fff6e7',
-  pink: '#fff6e7', pinkMid: '#e0bd4b', pinkText: '#071629',
-  purple: '#fff6e7', purpleMid: '#c9a227', purpleText: '#071629', purpleDeep: '#071629',
-  green: '#fff6e7', greenMid: '#c9a227', greenText: '#071629',
-  blue: '#fff6e7', blueMid: '#e0bd4b', blueText: '#071629',
-  white: '#fffdf8', muted: '#61708a', border: 'rgba(201,162,39,0.22)', soft: '#fff6e7',
-};
-
-const cardTones = [
-  { bg: 'linear-gradient(180deg, #f7fbff, #e8f2ff)' },
-  { bg: 'linear-gradient(180deg, #fbfff8, #eaf8ef)' },
-  { bg: 'linear-gradient(180deg, #fffdf7, #fff1cd)' },
-];
+import { motion } from 'framer-motion';
+import { ArrowRight, GraduationCap, CheckCircle, Star } from 'lucide-react';
 
 const curriculumRows = [
   { area: 'Reading Comprehension', badge: 'Core', what: 'Literal and inferential understanding, text types', skills: "Main idea, author's purpose, vocabulary in context" },
@@ -29,7 +15,7 @@ const curriculumRows = [
   { area: 'Critical Thinking & Analysis', badge: '', what: 'Comparing texts, evaluating information, reasoning', skills: 'Opinion writing, inference, multi-step maths reasoning' },
 ];
 
-const napalnChecklist = [
+const naplanChecklist = [
   'Reading accurately under time pressure',
   'Writing clearly with correct punctuation & grammar',
   'Multiplication and division fact fluency',
@@ -39,11 +25,11 @@ const napalnChecklist = [
 ];
 
 const approachPoints = [
-  { icon: '✓', bg: c.goldPale, title: 'NSW Curriculum aligned', sub: 'We reinforce and extend, never conflict with school' },
-  { icon: '✓', bg: c.goldPale, title: 'NAPLAN preparation built in', sub: 'Every lesson develops tested skills naturally' },
-  { icon: '✓', bg: c.goldPale, title: 'Small groups (3–4 students)', sub: 'Every child is seen and heard every session' },
-  { icon: '✓', bg: c.goldPale, title: 'Term-by-term progress reports', sub: 'You always know where your child stands' },
-  { icon: '✓', bg: c.goldPale, title: 'Positive, encouraging environment', sub: 'Confidence and capability built together' },
+  { title: 'NSW Curriculum aligned', sub: 'We reinforce and extend, never conflict with school' },
+  { title: 'NAPLAN preparation built in', sub: 'Every lesson develops tested skills naturally' },
+  { title: 'Small groups (3–4 students)', sub: 'Every child is seen and heard every session' },
+  { title: 'Term-by-term progress reports', sub: 'You always know where your child stands' },
+  { title: 'Positive, encouraging environment', sub: 'Confidence and capability built together' },
 ];
 
 const fitPoints = [
@@ -56,273 +42,361 @@ const fitPoints = [
 ];
 
 const whyCards = [
-  { num: 'I', title: 'The Big Shift Happens Now', desc: 'In <strong>Year 3, school changes dramatically</strong>. Children move from <strong>learning foundational skills</strong> to <strong>applying them across every subject</strong>. This transition catches many families off guard.' },
-  { num: 'II', title: 'NAPLAN Is on the Horizon', desc: '<strong>Year 3 NAPLAN</strong> tests <strong>reading, writing, language conventions, and numeracy</strong>. Strong performance here builds <strong>momentum and genuine confidence</strong>, heading into upper primary.' },
-  { num: 'III', title: 'Gaps Compound Quickly', desc: "A child who doesn't fully grasp <strong>multiplication in Year 3</strong> will struggle with <strong>fractions in Year 4</strong>, <strong>algebra in Year 7</strong>, and beyond. <strong>These years are the time to close gaps</strong>, not later." },
-  { num: 'IV', title: 'Confidence Becomes Identity', desc: 'The children who thrive in Year 3–4 develop an identity as <strong>"someone who\'s good at school."</strong> We help every child <strong>own that story</strong>, regardless of where they\'re starting from.' },
+  { num: 'I', title: 'The Big Shift Happens Now', color: '#2563eb', desc: 'In <strong>Year 3, school changes dramatically</strong>. Children move from <strong>learning foundational skills</strong> to <strong>applying them across every subject</strong>. This transition catches many families off guard.' },
+  { num: 'II', title: 'NAPLAN Is on the Horizon', color: '#c9a227', desc: '<strong>Year 3 NAPLAN</strong> tests <strong>reading, writing, language conventions, and numeracy</strong>. Strong performance here builds <strong>momentum and genuine confidence</strong>, heading into upper primary.' },
+  { num: 'III', title: 'Gaps Compound Quickly', color: '#16a34a', desc: "A child who doesn't fully grasp <strong>multiplication in Year 3</strong> will struggle with <strong>fractions in Year 4</strong>, <strong>algebra in Year 7</strong>, and beyond. <strong>These years are the time to close gaps</strong>, not later." },
+  { num: 'IV', title: 'Confidence Becomes Identity', color: '#2563eb', desc: 'The children who thrive in Year 3–4 develop an identity as <strong>"someone who\'s good at school."</strong> We help every child <strong>own that story</strong>, regardless of where they\'re starting from.' },
+];
+
+const siblingTabs = [
+  { label: 'Early Years (Y1–Y2)', to: '/programs/early-years', active: false },
+  { label: 'Year 3–4', to: '/programs/year-3-4', active: true },
+  { label: 'Year 5–6', to: '/programs/year-5-6', active: false },
 ];
 
 const Year34 = () => {
-  const [, setHover] = useState(-1);
-
   return (
-    <div className="min-h-screen overflow-x-hidden pt-[120px]" style={{ background: c.white, color: c.navy, fontFamily: "'Segoe UI', system-ui, sans-serif" }}>
+    <div className="min-h-screen bg-[#fffdf8] text-[#172033]">
       <SEO title="Year 3–4 Tutoring | NAPLAN Ready | DA Tuition" description="Year 3 and 4 are where children build real confidence or begin to fall behind. DA Tuition builds genuine skills for NAPLAN and beyond." canonicalUrl="/programs/year-3-4" />
       <NavigationNew />
       <StickyBookButton />
 
-      {/* Breadcrumb */}
-      <div style={{ background: c.soft, borderBottom: `1px solid ${c.border}`, padding: '14px 52px', fontSize: '0.82rem', color: c.muted }}>
-        <Link to="/" style={{ color: c.navy, textDecoration: 'none', fontWeight: 600 }}>Home</Link>
-        <span style={{ margin: '0 8px' }}>›</span>
-        <Link to="/programs/primary-school" style={{ color: c.navy, textDecoration: 'none', fontWeight: 600 }}>Primary School</Link>
-        <span style={{ margin: '0 8px' }}>›</span>
-        Year 3–4
-      </div>
-
-      {/* Sibling tabs */}
-      <div style={{ background: c.white, borderBottom: `2px solid ${c.border}`, display: 'flex', justifyContent: 'center', overflowX: 'auto' }}>
-        {[
-          { label: 'Early Years (Y1–Y2)', to: '/programs/early-years', active: false },
-          { label: 'Year 3–4', to: '/programs/year-3-4', active: true },
-          { label: 'Year 5–6', to: '/programs/year-5-6', active: false },
-        ].map((tab, i) => (
-          <Link key={i} to={tab.to} style={{ padding: '14px 32px', fontSize: '0.88rem', fontWeight: 700, textDecoration: 'none', color: tab.active ? c.navy : c.muted, borderBottom: tab.active ? `3px solid ${c.gold}` : '3px solid transparent', marginBottom: -2, whiteSpace: 'nowrap', transition: 'all .2s' }}>
-            {tab.label}
-          </Link>
-        ))}
-      </div>
-
-      {/* NAPLAN banner */}
-      <div style={{ background: `linear-gradient(135deg, ${c.goldPale} 0%, ${c.soft} 100%)`, borderTop: `3px solid ${c.goldLight}`, borderBottom: `3px solid ${c.goldLight}`, padding: '20px 52px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 20, flexWrap: 'wrap' }}>
-        {[
-          { title: 'NAPLAN Years 3 & 5', sub: 'We build real skills, not just test tricks' },
-          { title: 'NSW Curriculum Aligned', sub: "Reinforces exactly what's taught at school" },
-          { title: 'Small Groups (3–4 Students)', sub: 'Real individual attention every session' },
-        ].map((b, i) => (
-          <div key={i} style={{ background: c.white, border: `2px solid ${c.goldLight}`, borderRadius: 14, padding: '10px 22px', display: 'flex', alignItems: 'center', gap: 10 }}>
-            <div>
-              <div style={{ fontSize: '0.88rem', fontWeight: 800, color: c.navy, lineHeight: 1.3 }}>{b.title}</div>
-              <div style={{ fontSize: '0.75rem', color: c.muted }}>{b.sub}</div>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* HERO */}
-      <div style={{ background: 'linear-gradient(135deg, #F7F4EE 0%, #FFFFFF 55%, rgba(240,203,106,0.12) 100%)', padding: '80px 52px 72px', textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
-        <div style={{ position: 'absolute', top: -60, right: -60, width: 320, height: 320, borderRadius: '50%', background: 'radial-gradient(circle, rgba(212,175,55,0.18), transparent 65%)', pointerEvents: 'none' }} />
-        <div style={{ position: 'absolute', bottom: -40, left: -40, width: 260, height: 260, borderRadius: '50%', background: 'radial-gradient(circle, rgba(240,203,106,0.12), transparent 65%)', pointerEvents: 'none' }} />
-        <div style={{ display: 'inline-block', fontSize: '0.75rem', fontWeight: 800, letterSpacing: '2.5px', textTransform: 'uppercase', color: c.gold, background: c.goldPale, border: `1.5px solid ${c.goldLight}`, padding: '6px 20px', borderRadius: 999, marginBottom: 22 }}>
-          Year 3–4 · Ages 8–10 · NAPLAN Ready
+      {/* ── Breadcrumb + sibling tabs ── */}
+      <div className="bg-[#fff6e7] px-5 pt-32 lg:px-8 lg:pt-36">
+        <div className="mx-auto max-w-7xl pb-3 text-sm text-[#61708a]">
+          <Link to="/" className="font-semibold text-[#071629] hover:underline">Home</Link>
+          <span className="mx-2">›</span>
+          <Link to="/programs/primary-school" className="font-semibold text-[#071629] hover:underline">Primary School</Link>
+          <span className="mx-2">›</span>
+          Year 3–4
         </div>
-        <h1 style={{ fontSize: 'clamp(2.4rem, 5vw, 3.8rem)', fontWeight: 900, lineHeight: 1.1, letterSpacing: '-2px', color: c.navy, marginBottom: 18, fontFamily: "'Merriweather', Georgia, serif" }}>
-          The <em style={{ fontStyle: 'normal', color: c.gold }}>Middle Years</em><br />Define the Trajectory
-        </h1>
-        <p style={{ fontSize: '1.1rem', color: c.muted, maxWidth: 580, margin: '0 auto 38px', lineHeight: 1.78 }}>
-          Year 3 and 4 are where children either build real confidence, or begin to fall behind. <strong style={{ color: c.navy }}>This is the window that shapes everything that follows.</strong> We make sure it counts.
-        </p>
-        <div style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap' }}>
-          <a href="/#contact" style={{ background: c.navy, color: '#fff', border: 'none', padding: '15px 34px', borderRadius: 12, fontSize: '1rem', fontWeight: 800, cursor: 'pointer', textDecoration: 'none', display: 'inline-block' }}>
-            Book a Free Trial Lesson
-          </a>
-        </div>
-      </div>
-
-      {/* WHY */}
-      <section style={{ padding: '72px 52px', maxWidth: 1140, margin: '0 auto' }}>
-        <div style={{ textAlign: 'center', marginBottom: 44 }}>
-          <div style={{ display: 'inline-block', fontSize: '0.72rem', fontWeight: 800, letterSpacing: '2.5px', textTransform: 'uppercase', color: c.gold, background: c.goldPale, border: '1px solid #E8E0CC', padding: '5px 16px', borderRadius: 999, marginBottom: 16 }}>The Middle Years Moment</div>
-          <h2 style={{ fontSize: 'clamp(1.9rem, 3.5vw, 2.8rem)', fontWeight: 900, letterSpacing: '-1px', color: c.navy, marginBottom: 14, lineHeight: 1.2, fontFamily: "'Merriweather', Georgia, serif" }}>What Makes Year 3–4 So Important</h2>
-          <p style={{ fontSize: '1.05rem', color: c.muted, maxWidth: 640, margin: '0 auto', lineHeight: 1.7 }}>
-            The shift from <strong style={{ color: c.navy }}>learning to read, to reading to learn,</strong> happens in Year 3. Miss this transition and the gap widens quickly. Nail it, and your child becomes <strong style={{ color: c.navy }}>unstoppable</strong>.
-          </p>
-        </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 22 }}>
-          {whyCards.map((card, i) => (
-            <div key={i} style={{ background: cardTones[i % cardTones.length].bg, border: `1px solid rgba(7,22,41,0.1)`, borderRadius: 32, padding: '32px 28px', boxShadow: '0 2px 14px rgba(7,22,41,0.05)', transition: 'all .28s' }}
-              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = 'translateY(-5px)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 14px 36px rgba(7,22,41,0.12)'; }}
-              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = ''; (e.currentTarget as HTMLElement).style.boxShadow = '0 2px 14px rgba(7,22,41,0.05)'; }}
+        <div className="mx-auto flex max-w-7xl gap-1 overflow-x-auto border-t border-[#c9a227]/20">
+          {siblingTabs.map((tab) => (
+            <Link
+              key={tab.label}
+              to={tab.to}
+              className={`whitespace-nowrap px-5 py-3 text-sm font-bold transition ${tab.active ? 'border-b-2 border-[#c9a227] text-[#071629]' : 'border-b-2 border-transparent text-[#61708a] hover:text-[#071629]'}`}
             >
-              <div style={{ width: 44, height: 44, borderRadius: 12, background: c.navy, border: `2px solid ${c.navy}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1rem', fontWeight: 900, color: '#f1df9a', marginBottom: 16 }}>{card.num}</div>
-              <h3 style={{ fontSize: '1.05rem', fontWeight: 800, color: c.navy, marginBottom: 10, fontFamily: "'Merriweather', Georgia, serif" }}>{card.title}</h3>
-              <p style={{ fontSize: '0.9rem', color: c.muted, lineHeight: 1.7 }} dangerouslySetInnerHTML={{ __html: card.desc }} />
-            </div>
+              {tab.label}
+            </Link>
           ))}
         </div>
-      </section>
+      </div>
 
-      {/* CURRICULUM + CHECKLIST */}
-      <section style={{ background: c.soft, borderTop: `2px solid ${c.border}`, borderBottom: `2px solid ${c.border}`, padding: '72px 52px' }}>
-        <div style={{ textAlign: 'center', marginBottom: 40 }}>
-          <div style={{ display: 'inline-block', fontSize: '0.72rem', fontWeight: 800, letterSpacing: '2.5px', textTransform: 'uppercase', color: c.gold, background: c.goldPale, border: '1px solid #E8E0CC', padding: '5px 16px', borderRadius: 999, marginBottom: 16 }}>What We Cover</div>
-          <h2 style={{ fontSize: 'clamp(1.9rem, 3.5vw, 2.8rem)', fontWeight: 900, letterSpacing: '-1px', color: c.navy, marginBottom: 14, lineHeight: 1.2, fontFamily: "'Merriweather', Georgia, serif" }}>Year 3–4 Curriculum Focus Areas</h2>
-          <p style={{ fontSize: '1.05rem', color: c.muted, maxWidth: 640, margin: '0 auto', lineHeight: 1.7 }}>
-            100% aligned to the <strong style={{ color: c.navy }}>NSW Curriculum</strong>, with NAPLAN preparation naturally woven into every English and Maths session.
-          </p>
-        </div>
-        <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: 36, maxWidth: 1100, margin: '0 auto', alignItems: 'start' }} className="y34-grid-responsive">
-          <div style={{ background: c.white, borderRadius: 20, overflow: 'hidden', boxShadow: '0 4px 20px rgba(10,27,52,0.07)', border: `2px solid ${c.border}` }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.88rem' }}>
-              <thead>
-                <tr style={{ background: c.navy }}>
-                  <th style={{ textAlign: 'left', padding: '14px 18px', color: '#fff', fontWeight: 800 }}>Focus Area</th>
-                  <th style={{ textAlign: 'left', padding: '14px 18px', color: '#fff', fontWeight: 800 }}>What We Build</th>
-                  <th style={{ textAlign: 'left', padding: '14px 18px', color: '#fff', fontWeight: 800 }}>Key Skills</th>
-                </tr>
-              </thead>
-              <tbody>
-                {curriculumRows.map((row, i) => (
-                  <tr key={i} style={{ background: i % 2 === 0 ? c.white : c.soft }}>
-                    <td style={{ padding: '13px 18px', color: c.navy, fontWeight: 700, borderBottom: `1px solid ${c.border}` }}>
-                      {row.area}
-                      {row.badge && <span style={{ marginLeft: 8, fontSize: '0.72rem', background: c.goldPale, color: c.navy, padding: '2px 10px', borderRadius: 999, fontWeight: 800 }}>{row.badge}</span>}
-                    </td>
-                    <td style={{ padding: '13px 18px', color: c.muted, borderBottom: `1px solid ${c.border}` }}>{row.what}</td>
-                    <td style={{ padding: '13px 18px', color: c.muted, borderBottom: `1px solid ${c.border}` }}>{row.skills}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+      <main>
+        {/* ── Hero ── */}
+        <section className="relative overflow-hidden bg-[#071629]">
+          <div className="absolute inset-0">
+            <img
+              src="/images/programs/primary-group-collab-1.jpg"
+              alt="Year 3-4 students collaborating with their tutor on a classroom task at DA Tuition"
+              className="h-full w-full object-cover opacity-50"
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-[#071629] via-[#071629]/88 to-[#071629]/40" />
+            <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[#fffdf8] to-transparent" />
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-            {/* NAPLAN checklist */}
-            <div style={{ background: c.white, border: `2px solid ${c.border}`, borderTop: `4px solid ${c.gold}`, borderRadius: 20, padding: '28px 26px', boxShadow: '0 4px 16px rgba(10,27,52,0.07)' }}>
-              <div style={{ fontSize: '0.72rem', fontWeight: 800, letterSpacing: '2px', textTransform: 'uppercase', color: c.gold, marginBottom: 6 }}>NAPLAN Readiness Checklist</div>
-              <div style={{ fontSize: '0.8rem', color: c.muted, marginBottom: 18 }}>Skills we develop across Year 3–4 sessions</div>
-              {napalnChecklist.map((item, i) => (
-                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 10 }}>
-                  <div style={{ width: 24, height: 24, borderRadius: 6, background: c.goldPale, border: `1.5px solid ${c.goldLight}`, display: 'flex', alignItems: 'center', justifyContent: 'center', color: c.gold, fontWeight: 900, fontSize: '0.8rem', flexShrink: 0 }}>✓</div>
-                  <span style={{ fontSize: '0.88rem', color: c.navy }}>{item}</span>
-                </div>
+          <div className="relative z-10 mx-auto grid w-full max-w-7xl gap-10 px-5 py-20 lg:grid-cols-[1.05fr_.75fr] lg:px-8 lg:py-24">
+            <motion.div initial={{ opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, ease: 'easeOut' }}>
+              <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-xs font-black uppercase tracking-[0.14em] text-[#f1df9a] backdrop-blur-md">
+                <GraduationCap className="h-4 w-4" />
+                Year 3–4 · Ages 8–10 · NAPLAN Ready
+              </div>
+              <h1 className="max-w-2xl font-serif text-5xl font-medium leading-[0.98] tracking-[-0.04em] text-white sm:text-6xl">
+                The <span className="text-[#f1df9a]">Middle Years</span><br />Define the Trajectory
+              </h1>
+              <p className="mt-6 max-w-xl text-lg leading-8 text-white/75">
+                Year 3 and 4 are where children either build real confidence, or begin to fall behind. <strong className="text-white">This is the window that shapes everything that follows.</strong> We make sure it counts.
+              </p>
+              <div className="mt-8">
+                <a href="/#contact">
+                  <Button size="lg" className="h-12 rounded-full bg-[#c9a227] px-7 font-black text-[#101521] shadow-xl shadow-[#c9a227]/25 hover:bg-[#e0bd4b]">
+                    Book a Free Trial Lesson
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+                </a>
+              </div>
+            </motion.div>
+
+            <motion.aside
+              initial={{ opacity: 0, y: 28 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.12, ease: 'easeOut' }}
+              className="self-end rounded-3xl border border-white/14 bg-white/[0.09] p-6 shadow-2xl backdrop-blur-xl"
+            >
+              <p className="text-[8px] font-black uppercase tracking-[0.32em] text-[#f1df9a]/70">At a Glance</p>
+              <div className="mt-5 space-y-4">
+                {[
+                  { title: 'NAPLAN Years 3 & 5', sub: 'We build real skills, not just test tricks' },
+                  { title: 'NSW Curriculum Aligned', sub: "Reinforces exactly what's taught at school" },
+                  { title: 'Small Groups (3–4 Students)', sub: 'Real individual attention every session' },
+                ].map((b) => (
+                  <div key={b.title} className="border-l-2 border-[#c9a227]/40 pl-3">
+                    <p className="text-sm font-bold text-white">{b.title}</p>
+                    <p className="text-xs text-white/55">{b.sub}</p>
+                  </div>
+                ))}
+              </div>
+            </motion.aside>
+          </div>
+        </section>
+
+        {/* ── Anchor nav ── */}
+        <section className="-mt-10 px-5 lg:px-8">
+          <div className="relative z-10 mx-auto grid max-w-7xl gap-3 rounded-3xl border border-[#c9a227]/20 bg-[#fffdf8] p-3 shadow-2xl shadow-[#071629]/10 md:grid-cols-4">
+            {[
+              ['Why it matters', '#why'],
+              ['Curriculum', '#curriculum'],
+              ['Our approach', '#approach'],
+              ['Is this right for us', '#fit'],
+            ].map(([label, href]) => (
+              <a key={href} href={href} className="rounded-2xl px-4 py-3 text-center text-sm font-black text-[#10233f] transition hover:bg-[#f5ecd9]">
+                {label}
+              </a>
+            ))}
+          </div>
+        </section>
+
+        {/* ── Why ── */}
+        <section id="why" className="bg-[#fffdf8] px-5 py-20 lg:px-8">
+          <div className="mx-auto max-w-7xl">
+            <div className="mb-12 text-center">
+              <p className="mb-3 text-xs font-black uppercase tracking-[0.16em] text-[#c9a227]">The Middle Years Moment</p>
+              <h2 className="font-serif text-4xl font-medium leading-tight tracking-[-0.045em] text-[#071629] lg:text-5xl">
+                What Makes Year 3–4 So Important
+              </h2>
+              <p className="mx-auto mt-5 max-w-2xl text-base leading-8 text-[#61708a]">
+                The shift from <strong className="text-[#071629]">learning to read, to reading to learn,</strong> happens in Year 3. Miss this transition and the gap widens quickly. Nail it, and your child becomes <strong className="text-[#071629]">unstoppable</strong>.
+              </p>
+            </div>
+            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+              {whyCards.map((card, i) => (
+                <motion.div
+                  key={card.num}
+                  initial={{ opacity: 0, y: 24 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: '-60px' }}
+                  transition={{ duration: 0.5, delay: i * 0.08 }}
+                  className="rounded-[2rem] border border-[#071629]/10 bg-white p-7 shadow-lg shadow-[#071629]/5"
+                >
+                  <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl font-serif text-base font-bold text-[#f1df9a]" style={{ background: '#071629', border: `2px solid ${card.color}` }}>
+                    {card.num}
+                  </div>
+                  <h3 className="mb-2 font-serif text-lg font-medium text-[#071629]">{card.title}</h3>
+                  <p className="text-sm leading-7 text-[#61708a]" dangerouslySetInnerHTML={{ __html: card.desc }} />
+                </motion.div>
               ))}
             </div>
+          </div>
+        </section>
 
-            {/* Testimonial */}
-            <div style={{ background: c.white, border: `2px solid ${c.border}`, borderTop: `4px solid ${c.gold}`, borderRadius: 20, padding: '28px 26px', boxShadow: '0 4px 16px rgba(10,27,52,0.07)' }}>
-              <div style={{ color: c.goldLight, fontSize: '1.1rem', letterSpacing: 3, marginBottom: 10 }}>★★★★★</div>
-              <div style={{ fontSize: '2.2rem', lineHeight: 1, color: c.gold, marginBottom: 4 }}>"</div>
-              <p style={{ fontSize: '0.92rem', color: c.navy, lineHeight: 1.75, fontStyle: 'italic', marginBottom: 18 }}>
-                "We enrolled our son before Year 3 NAPLAN and honestly didn't know what to expect. He ended up in <strong style={{ fontStyle: 'normal' }}>the top band for both reading and numeracy.</strong> More importantly, he completely stopped saying he was bad at school."
+        {/* ── Curriculum + checklist ── */}
+        <section id="curriculum" className="bg-[#fff6e7] px-5 py-20 lg:px-8">
+          <div className="mx-auto max-w-7xl">
+            <div className="mb-12 text-center">
+              <p className="mb-3 text-xs font-black uppercase tracking-[0.16em] text-[#c9a227]">What We Cover</p>
+              <h2 className="font-serif text-4xl font-medium leading-tight tracking-[-0.045em] text-[#071629] lg:text-5xl">
+                Year 3–4 Curriculum Focus Areas
+              </h2>
+              <p className="mx-auto mt-5 max-w-2xl text-base leading-8 text-[#61708a]">
+                100% aligned to the <strong className="text-[#071629]">NSW Curriculum</strong>, with NAPLAN preparation naturally woven into every English and Maths session.
               </p>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                <div style={{ width: 44, height: 44, borderRadius: '50%', background: c.goldPale, border: `2.5px solid ${c.goldLight}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 900, color: c.navy, fontSize: '1rem' }}>D</div>
-                <div>
-                  <div style={{ fontSize: '0.9rem', fontWeight: 800, color: c.navy }}>David K.</div>
-                  <div style={{ fontSize: '0.78rem', color: c.muted }}>Dad of a Year 3 student · Strathfield</div>
+            </div>
+
+            <div className="grid gap-6 lg:grid-cols-[1.5fr_1fr]">
+              <div className="overflow-hidden rounded-[2rem] border border-[#071629]/10 bg-white shadow-lg shadow-[#071629]/5">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="bg-[#071629]">
+                      <th className="px-5 py-4 text-left text-xs font-black uppercase tracking-wide text-white">Focus Area</th>
+                      <th className="px-5 py-4 text-left text-xs font-black uppercase tracking-wide text-white">What We Build</th>
+                      <th className="px-5 py-4 text-left text-xs font-black uppercase tracking-wide text-white">Key Skills</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {curriculumRows.map((row, i) => (
+                      <tr key={row.area} className={i % 2 === 0 ? 'bg-white' : 'bg-[#fff6e7]/60'}>
+                        <td className="border-b border-[#071629]/8 px-5 py-4 font-bold text-[#071629]">
+                          {row.area}
+                          {row.badge && <span className="ml-2 rounded-full bg-[#c9a227]/15 px-2.5 py-0.5 text-[11px] font-black text-[#7a5e10]">{row.badge}</span>}
+                        </td>
+                        <td className="border-b border-[#071629]/8 px-5 py-4 text-[#61708a]">{row.what}</td>
+                        <td className="border-b border-[#071629]/8 px-5 py-4 text-[#61708a]">{row.skills}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              <div className="flex flex-col gap-5">
+                <div className="overflow-hidden rounded-[2rem] border border-[#071629]/10 bg-white shadow-lg shadow-[#071629]/5">
+                  <div className="h-[3px] bg-gradient-to-r from-[#c9a227] via-[#f1df9a] to-[#c9a227]" />
+                  <div className="p-7">
+                    <p className="mb-1 text-[10px] font-black uppercase tracking-[0.24em] text-[#c9a227]">NAPLAN Readiness Checklist</p>
+                    <p className="mb-5 text-xs text-[#61708a]">Skills we develop across Year 3–4 sessions</p>
+                    <div className="space-y-2.5">
+                      {naplanChecklist.map((item) => (
+                        <div key={item} className="flex items-center gap-3">
+                          <CheckCircle className="h-4 w-4 shrink-0 text-[#c9a227]" />
+                          <span className="text-sm text-[#071629]">{item}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="overflow-hidden rounded-[2rem] border border-[#071629]/10 bg-white shadow-lg shadow-[#071629]/5">
+                  <div className="h-[3px] bg-gradient-to-r from-[#c9a227] via-[#f1df9a] to-[#c9a227]" />
+                  <div className="p-7">
+                    <div className="mb-3 flex gap-0.5 text-[#c9a227]">
+                      {Array.from({ length: 5 }).map((_, i) => <Star key={i} className="h-3.5 w-3.5 fill-current" />)}
+                    </div>
+                    <p className="mb-5 font-serif text-[15px] italic leading-[1.75] text-[#10233f]">
+                      &ldquo;We enrolled our son before Year 3 NAPLAN and honestly didn't know what to expect. He ended up in <strong className="font-medium not-italic">the top band for both reading and numeracy.</strong> More importantly, he completely stopped saying he was bad at school.&rdquo;
+                    </p>
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-11 w-11 items-center justify-center rounded-full border-2 border-[#c9a227]/40 bg-[#fff6e7] text-sm font-black text-[#071629]">D</div>
+                      <div>
+                        <p className="text-sm font-bold text-[#071629]">David K.</p>
+                        <p className="text-xs text-[#61708a]">Dad of a Year 3 student · Strathfield</p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* APPROACH */}
-      <section style={{ padding: '72px 52px', maxWidth: 1140, margin: '0 auto' }}>
-        <div style={{ textAlign: 'center', marginBottom: 44 }}>
-          <div style={{ display: 'inline-block', fontSize: '0.72rem', fontWeight: 800, letterSpacing: '2.5px', textTransform: 'uppercase', color: c.gold, background: c.goldPale, border: '1px solid #E8E0CC', padding: '5px 16px', borderRadius: 999, marginBottom: 16 }}>Our Approach</div>
-          <h2 style={{ fontSize: 'clamp(1.9rem, 3.5vw, 2.8rem)', fontWeight: 900, letterSpacing: '-1px', color: c.navy, marginBottom: 14, lineHeight: 1.2, fontFamily: "'Merriweather', Georgia, serif" }}>How We Teach Year 3–4</h2>
-        </div>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 54, alignItems: 'start', maxWidth: 1000, margin: '0 auto' }} className="y34-approach-responsive">
-          <div>
-            <p style={{ color: c.muted, fontSize: '1.02rem', lineHeight: 1.82, marginBottom: 18 }}>In Year 3–4, children need <strong style={{ color: c.navy }}>more than repetition</strong>. They need to understand why things work so they can apply skills in new situations, including NAPLAN questions they've never seen before.</p>
-            <p style={{ color: c.muted, fontSize: '1.02rem', lineHeight: 1.82, marginBottom: 26 }}>Our tutors identify <strong style={{ color: c.navy }}>the specific misconceptions</strong> holding each child back and address them directly, rather than just re-teaching what the class already covered.</p>
-          </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-            {approachPoints.map((ap, i) => (
-              <div key={i} style={{ display: 'flex', gap: 14, alignItems: 'flex-start', background: cardTones[i % cardTones.length].bg, border: `1px solid rgba(7,22,41,0.1)`, borderRadius: 18, padding: '16px 18px', boxShadow: '0 2px 8px rgba(7,22,41,0.04)', transition: 'all .2s' }}
-                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.boxShadow = '0 6px 20px rgba(7,22,41,0.1)'; }}
-                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.boxShadow = '0 2px 8px rgba(7,22,41,0.04)'; }}
-              >
-                <div style={{ flexShrink: 0, width: 38, height: 38, borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1rem', fontWeight: 900, color: '#f1df9a', background: c.navy, border: `1.5px solid ${c.navy}` }}>{ap.icon}</div>
-                <div>
-                  <strong style={{ color: c.navy, display: 'block', marginBottom: 2, fontSize: '0.94rem', fontWeight: 800 }}>{ap.title}</strong>
-                  <span style={{ fontSize: '0.88rem', color: c.muted }}>{ap.sub}</span>
-                </div>
+        {/* ── Approach ── */}
+        <section id="approach" className="bg-[#071629] px-5 py-24 text-white lg:px-8">
+          <div className="mx-auto max-w-7xl">
+            <div className="mb-14 text-center">
+              <p className="mb-3 text-[10px] font-black uppercase tracking-[0.24em] text-[#c9a227]">Our Approach</p>
+              <h2 className="font-serif text-4xl font-medium leading-tight tracking-[-0.045em] text-white lg:text-5xl">
+                How We Teach Year 3–4
+              </h2>
+              <div className="mx-auto mt-6 h-px w-12 bg-gradient-to-r from-transparent via-[#c9a227] to-transparent" />
+            </div>
+
+            <div className="grid gap-10 lg:grid-cols-[1fr_1.1fr] lg:items-center">
+              <div>
+                <p className="mb-5 text-[15px] leading-[1.85] text-white/65">
+                  In Year 3–4, children need <strong className="text-white">more than repetition</strong>. They need to understand why things work so they can apply skills in new situations, including NAPLAN questions they've never seen before.
+                </p>
+                <p className="text-[15px] leading-[1.85] text-white/65">
+                  Our tutors identify <strong className="text-white">the specific misconceptions</strong> holding each child back and address them directly, rather than just re-teaching what the class already covered.
+                </p>
               </div>
-            ))}
+              <div className="grid gap-4 sm:grid-cols-2">
+                {approachPoints.map((ap, i) => (
+                  <motion.div
+                    key={ap.title}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: '-40px' }}
+                    transition={{ duration: 0.5, delay: i * 0.07 }}
+                    className="group rounded-2xl border border-white/[0.07] bg-white/[0.04] p-5 transition duration-300 hover:border-[#c9a227]/25 hover:bg-white/[0.07]"
+                  >
+                    <CheckCircle className="mb-3 h-5 w-5 text-[#c9a227]/70 transition group-hover:text-[#c9a227]" />
+                    <p className="mb-1 text-[13px] font-black uppercase tracking-wide text-white/85">{ap.title}</p>
+                    <p className="text-[12.5px] leading-[1.6] text-white/45">{ap.sub}</p>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* PHOTO PAIR */}
-      <div style={{ padding: '0 52px 56px', maxWidth: 1140, margin: '0 auto' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 22 }} className="y34-photo-pair">
-          <div style={{ borderRadius: 20, overflow: 'hidden', height: 280, border: `2px solid ${c.border}`, boxShadow: '0 6px 24px rgba(7,22,41,0.08)' }}>
-            <img
-              src="/images/v3/classroom_active.jpg"
-              alt="Year 3-4 students actively participating in a DA Tuition classroom session"
-              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-            />
+        {/* ── Photo pair ── */}
+        <section className="bg-[#fffdf8] px-5 pt-16 lg:px-8">
+          <div className="mx-auto grid max-w-7xl gap-5 sm:grid-cols-2">
+            <img src="/images/programs/year34.jpg" alt="Year 3-4 students actively participating in a DA Tuition classroom session" className="h-64 w-full rounded-[2rem] border border-[#071629]/10 object-cover shadow-lg" />
+            <img src="/images/programs/primary-group-collab-1.jpg" alt="Group of primary school students working together at DA Tuition" className="h-64 w-full rounded-[2rem] border border-[#071629]/10 object-cover shadow-lg" />
           </div>
-          <div style={{ borderRadius: 20, overflow: 'hidden', height: 280, border: `2px solid ${c.border}`, boxShadow: '0 6px 24px rgba(7,22,41,0.08)' }}>
-            <img
-              src="/images/v3/group_shot.jpg"
-              alt="Group of primary school students working together at DA Tuition"
-              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-            />
-          </div>
-        </div>
-      </div>
+        </section>
 
-      {/* PHOTO STRIP */}
-      <div style={{ padding: '0 52px 72px', maxWidth: 1140, margin: '0 auto' }}>
-        <div style={{ borderRadius: 24, overflow: 'hidden', position: 'relative', height: 380, border: `2px solid ${c.border}` }}>
-          <img
-            src="/images/programs/year34.jpg"
-            alt="Year 3-4 students engaged in a DA Tuition class"
-            style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 25%' }}
-          />
-          <div style={{ position: 'absolute', inset: 0, background: `linear-gradient(to right, rgba(10,27,52,0.78) 0%, rgba(10,27,52,0.35) 55%, transparent 100%)` }} />
-          <div style={{ position: 'absolute', top: '50%', left: 52, transform: 'translateY(-50%)', maxWidth: 400 }}>
-            <div style={{ color: c.gold, fontSize: '1rem', letterSpacing: 4, marginBottom: 14 }}>★★★★★</div>
-            <p style={{ fontSize: '1.18rem', color: '#fff', fontWeight: 700, lineHeight: 1.6, fontStyle: 'italic', marginBottom: 16 }}>"Every hand up, every question answered: this is what real engagement looks like."</p>
-            <div style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.6)', fontWeight: 600, letterSpacing: '1px', textTransform: 'uppercase' }}>The DA Tuition Year 3–4 Classroom</div>
+        {/* ── Photo strip w/ quote ── */}
+        <section className="bg-[#fffdf8] px-5 py-16 lg:px-8">
+          <div className="relative mx-auto h-[380px] max-w-7xl overflow-hidden rounded-[2rem] border border-[#071629]/10">
+            <img src="/images/programs/year34.jpg" alt="Year 3-4 students engaged in a DA Tuition class" className="h-full w-full object-cover" style={{ objectPosition: 'center 25%' }} />
+            <div className="absolute inset-0 bg-gradient-to-r from-[#071629]/80 via-[#071629]/35 to-transparent" />
+            <div className="absolute left-8 top-1/2 max-w-md -translate-y-1/2 lg:left-12">
+              <div className="mb-3 flex gap-0.5 text-[#c9a227]">
+                {Array.from({ length: 5 }).map((_, i) => <Star key={i} className="h-4 w-4 fill-current" />)}
+              </div>
+              <p className="mb-3 font-serif text-xl italic leading-[1.5] text-white">&ldquo;Every hand up, every question answered: this is what real engagement looks like.&rdquo;</p>
+              <p className="text-xs font-bold uppercase tracking-[0.12em] text-white/60">The DA Tuition Year 3–4 Classroom</p>
+            </div>
           </div>
-        </div>
-      </div>
+        </section>
 
-      {/* FIT */}
-      <div style={{ background: c.goldPale, borderTop: `2px solid ${c.goldLight}`, borderBottom: `2px solid ${c.goldLight}` }}>
-        <div style={{ padding: '72px 52px', maxWidth: 900, margin: '0 auto' }}>
-          <div style={{ textAlign: 'center', marginBottom: 32 }}>
-            <div style={{ display: 'inline-block', fontSize: '0.72rem', fontWeight: 800, letterSpacing: '2.5px', textTransform: 'uppercase', color: c.gold, background: c.white, border: '1px solid #E8E0CC', padding: '5px 16px', borderRadius: 999, marginBottom: 16 }}>Is This Right For Us?</div>
-            <h2 style={{ fontSize: 'clamp(1.9rem, 3.5vw, 2.8rem)', fontWeight: 900, letterSpacing: '-1px', color: c.navy, marginBottom: 14, lineHeight: 1.2, fontFamily: "'Merriweather', Georgia, serif" }}>DA Tuition Year 3–4 Is Perfect If…</h2>
+        {/* ── Fit ── */}
+        <section id="fit" className="bg-[#fff6e7] px-5 py-20 lg:px-8">
+          <div className="mx-auto max-w-4xl">
+            <div className="mb-10 text-center">
+              <p className="mb-3 text-xs font-black uppercase tracking-[0.16em] text-[#c9a227]">Is This Right for Us?</p>
+              <h2 className="font-serif text-4xl font-medium leading-tight tracking-[-0.045em] text-[#071629] lg:text-5xl">
+                DA Tuition Year 3–4 Is Perfect If…
+              </h2>
+            </div>
+            <div className="space-y-3">
+              {fitPoints.map((pt, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 14 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: '-40px' }}
+                  transition={{ duration: 0.4, delay: i * 0.05 }}
+                  className="flex items-start gap-4 rounded-2xl border border-[#c9a227]/25 bg-white p-5"
+                >
+                  <CheckCircle className="mt-0.5 h-5 w-5 shrink-0 text-[#c9a227]" />
+                  <p className="text-sm leading-7 text-[#61708a]" dangerouslySetInnerHTML={{ __html: pt }} />
+                </motion.div>
+              ))}
+            </div>
+            <div className="mt-10 text-center">
+              <a href="/#contact">
+                <Button size="lg" className="h-12 rounded-full bg-[#071629] px-7 font-black text-white hover:bg-[#0e2a4a]">
+                  Book Our Free Trial Lesson, No Commitment
+                </Button>
+              </a>
+            </div>
           </div>
-          <ul style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: 14, marginBottom: 36 }}>
-            {fitPoints.map((pt, i) => (
-              <li key={i} style={{ display: 'flex', gap: 16, alignItems: 'flex-start', background: c.white, border: `1.5px solid ${c.goldLight}`, borderRadius: 14, padding: '18px 22px' }}>
-                <div style={{ width: 28, height: 28, background: c.goldPale, border: `1.5px solid ${c.goldLight}`, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', color: c.gold, fontWeight: 900, fontSize: '0.85rem', flexShrink: 0, marginTop: 1 }}>✓</div>
-                <span style={{ fontSize: '0.95rem', color: c.muted, lineHeight: 1.6 }} dangerouslySetInnerHTML={{ __html: pt }} />
-              </li>
-            ))}
-          </ul>
-          <div style={{ textAlign: 'center' }}>
-            <a href="/#contact" style={{ background: c.navy, color: '#fff', border: 'none', padding: '16px 36px', borderRadius: 12, fontSize: '1rem', fontWeight: 800, cursor: 'pointer', textDecoration: 'none', display: 'inline-block' }}>
-              Book Our Free Trial Lesson, No Commitment
-            </a>
+        </section>
+
+        {/* ── Final CTA ── */}
+        <section className="bg-[#071629] px-5 py-20 text-white lg:px-8">
+          <div className="mx-auto grid max-w-6xl gap-8 rounded-[2rem] border border-white/12 bg-white/[0.06] p-8 shadow-2xl md:p-12 lg:grid-cols-[1fr_auto] lg:items-center">
+            <div>
+              <p className="mb-3 text-xs font-black uppercase tracking-[0.16em] text-[#f1df9a]">Next step</p>
+              <h2 className="font-serif text-4xl font-medium leading-tight tracking-[-0.045em] text-white">
+                Don't Let the Middle Years Slip By Unaddressed
+              </h2>
+              <p className="mt-4 max-w-2xl text-base leading-8 text-white/66">
+                Year 3 and 4 are too important to leave to chance. Book a free trial lesson and let's show your child what they're truly capable of.
+              </p>
+              <p className="mt-4 text-xs uppercase tracking-[0.12em] text-white/35">
+                No lock-in contract · Limited spots each term · Results guaranteed or additional support at no cost
+              </p>
+            </div>
+            <div className="flex flex-col gap-3 sm:flex-row lg:flex-col">
+              <a href="/#contact">
+                <Button size="lg" className="h-12 w-full rounded-full bg-[#c9a227] px-7 font-black text-[#101521] hover:bg-[#e0bd4b]">
+                  Book a Free Trial Lesson
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </a>
+              <a href="tel:0401940207">
+                <Button size="lg" variant="outline" className="h-12 w-full rounded-full border-white/30 bg-transparent px-7 font-bold text-white hover:bg-white/10 hover:text-white">
+                  Call 0401 940 207
+                </Button>
+              </a>
+            </div>
           </div>
-        </div>
-      </div>
+        </section>
+      </main>
 
-      {/* CTA */}
-      <div style={{ textAlign: 'center', padding: '96px 52px', background: c.navy, borderTop: `4px solid ${c.goldLight}` }}>
-        <h2 style={{ fontSize: 'clamp(2rem, 3.5vw, 3rem)', fontWeight: 900, letterSpacing: '-1.2px', marginBottom: 18, color: c.white, lineHeight: 1.15, fontFamily: "'Merriweather', Georgia, serif" }}>
-          Don't Let the Middle Years<br />Slip By Unaddressed
-        </h2>
-        <p style={{ fontSize: '1.08rem', color: 'rgba(255,255,255,0.75)', maxWidth: 540, margin: '0 auto 38px', lineHeight: 1.75 }}>
-          Year 3 and 4 are too important to leave to chance. Book a free trial lesson and let's show your child what they're truly capable of.
-        </p>
-        <a href="/#contact" style={{ background: c.goldLight, color: c.navy, border: 'none', padding: '17px 38px', borderRadius: 14, fontSize: '1rem', fontWeight: 900, cursor: 'pointer', textDecoration: 'none', display: 'inline-block' }}>
-          Book a Free Trial Lesson →
-        </a>
-        <div style={{ marginTop: 18, fontSize: '0.82rem', color: 'rgba(255,255,255,0.45)' }}>
-          No lock-in contract &nbsp;·&nbsp; Limited spots each term &nbsp;·&nbsp; Results guaranteed or additional support at no cost
-        </div>
-      </div>
-
-      <style>{`@media(max-width:768px){.y34-grid-responsive{grid-template-columns:1fr!important;}.y34-approach-responsive{grid-template-columns:1fr!important;}.y34-photo-pair{grid-template-columns:1fr!important;}}`}</style>
       <FooterNew />
     </div>
   );
