@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Star, Quote, ChevronLeft, ChevronRight, Pause, Play, BadgeCheck } from 'lucide-react';
+import { Star, Quote, ChevronLeft, ChevronRight, Pause, Play, BadgeCheck, X, Maximize2 } from 'lucide-react';
 
 export interface BookReview {
   id: string;
@@ -30,10 +30,14 @@ const clampStyle: React.CSSProperties = {
   overflow: 'hidden',
 };
 
+// Reviews longer than this are likely to get cut off by the 8-line clamp, so we offer a "Read full review" expand option.
+const EXPAND_THRESHOLD = 200;
+
 const ReviewBook: React.FC<ReviewBookProps> = ({ reviews, autoPlayMs = 6000 }) => {
   const [index, setIndex] = useState(0);
   const [flip, setFlip] = useState<{ dir: 'next' | 'prev'; from: number; to: number } | null>(null);
   const [isPlaying, setIsPlaying] = useState(true);
+  const [expandedReview, setExpandedReview] = useState<BookReview | null>(null);
   const touchStartX = useRef<number | null>(null);
   const total = reviews.length;
 
@@ -47,24 +51,28 @@ const ReviewBook: React.FC<ReviewBookProps> = ({ reviews, autoPlayMs = 6000 }) =
     if (manual) setIsPlaying(false);
   }, [index, total]);
 
-  // Auto-play
+  // Auto-play (paused while a review is expanded in the modal)
   useEffect(() => {
-    if (!isPlaying || flip || total < 2) return;
+    if (!isPlaying || flip || total < 2 || expandedReview) return;
     const t = setTimeout(() => goTo('next', false), autoPlayMs);
     return () => clearTimeout(t);
-  }, [isPlaying, flip, index, autoPlayMs, goTo, total]);
+  }, [isPlaying, flip, index, autoPlayMs, goTo, total, expandedReview]);
 
   // Keyboard navigation
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       const tag = (document.activeElement?.tagName || '').toLowerCase();
       if (tag === 'input' || tag === 'textarea') return;
+      if (expandedReview) {
+        if (e.key === 'Escape') setExpandedReview(null);
+        return;
+      }
       if (e.key === 'ArrowRight') goTo('next', true);
       if (e.key === 'ArrowLeft') goTo('prev', true);
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
-  }, [goTo]);
+  }, [goTo, expandedReview]);
 
   const handleTransitionEnd = () => {
     if (!flip) return;
@@ -96,7 +104,7 @@ const ReviewBook: React.FC<ReviewBookProps> = ({ reviews, autoPlayMs = 6000 }) =
       {/* faint decorative quote mark */}
       <Quote className="absolute top-4 right-5 sm:top-6 sm:right-8 w-16 h-16 sm:w-24 sm:h-24 text-amber-900/[0.07] pointer-events-none" />
 
-      <div className="flex items-center justify-between mb-4 sm:mb-6">
+      <div className="flex items-center justify-between mb-4 sm:mb-6 shrink-0">
         <div className="flex items-center gap-1">
           {[...Array(5)].map((_, i) => (
             <Star key={i} size={16} className={i < review.rating ? 'fill-amber-400 text-amber-400' : 'text-stone-300'} />
@@ -111,14 +119,38 @@ const ReviewBook: React.FC<ReviewBookProps> = ({ reviews, autoPlayMs = 6000 }) =
         )}
       </div>
 
-      <blockquote
-        className="relative z-10 flex-1 text-stone-800 italic text-base sm:text-xl lg:text-2xl leading-relaxed"
-        style={{ fontFamily: headingFont, ...clampStyle }}
-      >
-        "{review.text}"
-      </blockquote>
+      <div className="relative flex-1 min-h-0 overflow-hidden">
+        <blockquote
+          className={`absolute inset-x-0 top-0 z-10 text-stone-800 italic text-base sm:text-xl lg:text-2xl leading-relaxed ${
+            review.text.length > EXPAND_THRESHOLD ? 'bottom-7 sm:bottom-8' : 'bottom-0'
+          }`}
+          style={{ fontFamily: headingFont, ...clampStyle }}
+        >
+          "{review.text}"
+        </blockquote>
+        {review.text.length > EXPAND_THRESHOLD && (
+          <>
+            <div
+              className="pointer-events-none absolute inset-x-0 bottom-7 sm:bottom-8 h-5"
+              style={{ background: 'linear-gradient(to top, #fff6e6, transparent)' }}
+            />
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsPlaying(false);
+                setExpandedReview(review);
+              }}
+              className="absolute z-20 bottom-0 left-0 inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-amber-800 underline-offset-2 hover:underline"
+            >
+              <Maximize2 size={13} />
+              Read full review
+            </button>
+          </>
+        )}
+      </div>
 
-      <div className="relative z-10 mt-6 sm:mt-8 pt-5 border-t border-amber-900/10 flex items-center justify-between flex-wrap gap-3">
+      <div className="relative z-10 mt-6 sm:mt-8 pt-5 border-t border-amber-900/10 flex items-center justify-between flex-wrap gap-3 shrink-0">
         <div className="flex items-center gap-3">
           <div
             className="w-9 h-9 sm:w-11 sm:h-11 rounded-full flex items-center justify-center font-bold text-sm sm:text-base shrink-0"
@@ -247,6 +279,74 @@ const ReviewBook: React.FC<ReviewBookProps> = ({ reviews, autoPlayMs = 6000 }) =
           {index + 1} / {total}
         </span>
       </div>
+
+      {/* expanded review modal */}
+      {expandedReview && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-stone-950/60 p-4 backdrop-blur-sm"
+          role="dialog"
+          aria-modal="true"
+          aria-label={`Full review from ${expandedReview.author}`}
+          onClick={() => setExpandedReview(null)}
+        >
+          <div
+            className="relative max-h-[80vh] w-full max-w-2xl overflow-y-auto rounded-[1.3rem] p-6 sm:p-10 shadow-2xl"
+            style={{ background: 'linear-gradient(155deg, #fffdf8 0%, #fff6e6 100%)' }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              type="button"
+              aria-label="Close review"
+              onClick={() => setExpandedReview(null)}
+              className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full bg-white text-stone-600 shadow-md hover:bg-amber-50 hover:text-stone-900 transition-colors"
+            >
+              <X size={16} />
+            </button>
+
+            <div className="flex items-center justify-between gap-3 pr-12">
+              <div className="flex items-center gap-1">
+                {[...Array(5)].map((_, i) => (
+                  <Star
+                    key={i}
+                    size={16}
+                    className={i < expandedReview.rating ? 'fill-amber-400 text-amber-400' : 'text-stone-300'}
+                  />
+                ))}
+              </div>
+              {expandedReview.subject !== 'General' && (
+                <span className="text-[10px] sm:text-xs uppercase tracking-wider font-semibold px-2.5 py-1 rounded-full border border-amber-300/60 text-amber-800 bg-amber-50">
+                  {expandedReview.subject}
+                </span>
+              )}
+            </div>
+
+            <blockquote
+              className="relative z-10 mt-5 text-stone-800 italic text-base sm:text-xl leading-relaxed"
+              style={{ fontFamily: headingFont }}
+            >
+              "{expandedReview.text}"
+            </blockquote>
+
+            <div className="relative z-10 mt-6 pt-5 border-t border-amber-900/10 flex items-center gap-3">
+              <div
+                className="w-9 h-9 sm:w-11 sm:h-11 rounded-full flex items-center justify-center font-bold text-sm sm:text-base shrink-0"
+                style={{ background: '#fff1cd', color: '#9a7517', fontFamily: headingFont }}
+              >
+                {expandedReview.author.charAt(0)}
+              </div>
+              <div>
+                <div className="font-semibold text-stone-900 text-sm sm:text-base" style={{ fontFamily: headingFont }}>
+                  {expandedReview.author}
+                </div>
+                <div className="text-[11px] sm:text-xs text-stone-500 flex items-center gap-1">
+                  <BadgeCheck size={12} className="text-emerald-600" />
+                  Verified Google Review &middot; {formatDate(expandedReview.date)}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       <style>{`
         @keyframes reviewBookFlipShadow {

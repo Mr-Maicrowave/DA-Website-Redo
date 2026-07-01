@@ -112,7 +112,7 @@ const OurApproach = () => {
         {/* Hero Section */}
         <section className="relative rounded-[2.5rem] overflow-hidden shadow-2xl mx-4 sm:mx-0 mt-6 mb-16">
           <div className="absolute inset-0">
-            <img src="/images/v3/hallway_students.jpg" alt="Active Student Life" className="w-full h-full object-cover" />
+            <img src="/images/programs/highschool-group.jpg" alt="Active Student Life" className="w-full h-full object-cover" />
             <div className="absolute inset-0 bg-brand-navy/80 mix-blend-multiply"></div>
             {/* Friendly and warm pastel glow */}
             <div className="absolute inset-0 bg-gradient-to-tr from-brand-navy/90 via-emerald-500/20 to-teal-400/30 mix-blend-overlay"></div>
@@ -279,10 +279,10 @@ const OurApproach = () => {
         <section className="pb-16 px-4">
           <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-8">
             <div className="rounded-[2rem] overflow-hidden shadow-2xl aspect-video md:aspect-[4/3] border border-brand-navy/5">
-              <img src="/images/v3/hallway_students.jpg" alt="Active Student Life" className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" />
+              <img src="/images/programs/highschool-laptop-group-1.jpg" alt="Active Student Life" className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" />
             </div>
             <div className="rounded-[2rem] overflow-hidden shadow-2xl aspect-video md:aspect-[4/3] border border-brand-navy/5">
-              <img src="/images/v3/teacher_screen.jpg" alt="Technology Integrated Learning" className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" />
+              <img src="/images/programs/highschool-laptop-group-2.jpg" alt="Technology Integrated Learning" className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" />
             </div>
           </div>
         </section>

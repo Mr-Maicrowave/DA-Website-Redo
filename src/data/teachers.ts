@@ -217,7 +217,7 @@ export const teacherData: Teacher[] = [
     name: "Miss Cassandra",
     subject: "English Development",
     qualifications: ["English Development", "Study Confidence", "Literacy Engagement"],
-    image: "/images/v3/smiling_teacher.jpg",
+    image: "/images/programs/primary-tutor-1on1-1.jpg",
     philosophy: "Cassandra prioritises authentic rapport and purposeful academic focus to create an engaging atmosphere where kindness and accountability coexist. She encourages students to invest in steady improvement through caring guidance and clear expectations.",
     specialties: ["Study Confidence", "Literacy Engagement", "English Development"],
     testimonial: "Cassie brings a caring tone that makes it easy to ask questions without feeling judged.",

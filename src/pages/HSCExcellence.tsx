@@ -6,6 +6,7 @@ const cardTones = [
   'linear-gradient(180deg, #f7fbff, #e8f2ff)',
   'linear-gradient(180deg, #fbfff8, #eaf8ef)',
   'linear-gradient(180deg, #fffdf7, #fff1cd)',
+  'linear-gradient(180deg, #fbf8ff, #ede5fb)',
 ];
 
 const stakesCards = [
@@ -27,7 +28,7 @@ const stakesCards = [
   {
     title: 'Burnout Is a Real Risk',
     text: 'Year 12 is a marathon. Students who do not manage time, energy, and stress through the year perform well below their potential in the final exams. We build good habits alongside knowledge.',
-    tone: cardTones[0],
+    tone: cardTones[3],
   },
 ];
 
@@ -86,7 +87,7 @@ const approachCards = [
   {
     title: 'Progress Reports and Parent Check-Ins',
     text: 'Written progress updates every term. Direct tutor access between sessions. You stay in the loop at every step.',
-    tone: cardTones[0],
+    tone: cardTones[3],
   },
 ];
 
@@ -140,7 +141,10 @@ const HSCExcellence = () => {
         .hsc-urgency-item { display: flex; align-items: center; gap: 10px; font-size: .88rem; font-weight: 700; color: var(--navy); }
         .hsc-urgency-highlight { background: var(--navy); color: #fff; font-size: .75rem; font-weight: 800; padding: 3px 12px; border-radius: 999px; white-space: nowrap; }
 
-        .hsc-hero { background: linear-gradient(160deg,#fff6e7 0%,#fffdf8 50%,#fff6e7 100%); padding: 80px 52px 72px; text-align: center; border-bottom: 1px solid var(--border); }
+        .hsc-hero { background: linear-gradient(160deg,#fff6e7 0%,#fffdf8 50%,#fff6e7 100%); padding: 80px 52px 72px; text-align: center; border-bottom: 1px solid var(--border); position: relative; overflow: hidden; }
+        .hsc-hero-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.45; z-index: 0; }
+        .hsc-hero-overlay { position: absolute; inset: 0; z-index: 0; background: linear-gradient(160deg, rgba(255,246,231,0.7) 0%, rgba(255,253,248,0.6) 55%, rgba(201,162,39,0.22) 100%); }
+        .hsc-hero-content { position: relative; z-index: 1; }
         .hsc-hero-tag { display: inline-block; font-size: .72rem; font-weight: 800; letter-spacing: 3px; text-transform: uppercase; color: var(--gold-dark); background: #fff; border: 1.5px solid var(--gold-mid); padding: 6px 20px; border-radius: 999px; margin-bottom: 24px; }
         .hsc-hero h1 { font-family: var(--font-serif); font-size: clamp(2.4rem,5vw,3.6rem); font-weight: 700; line-height: 1.1; letter-spacing: -1.5px; color: var(--navy); margin: 0 0 20px; text-wrap: balance; }
         .hsc-hero h1 em { font-style: normal; color: var(--gold-dark); }
@@ -265,19 +269,27 @@ const HSCExcellence = () => {
 
       <main>
         <div className="hsc-hero">
-          <div className="hsc-hero-tag">HSC EXCELLENCE &middot; YEARS 11-12</div>
-          <h1>The HSC Is <em>Two Years of Decisions</em></h1>
-          <p className="hsc-hero-sub">
-            Every subject choice, every assessment mark, every study hour counts toward the ATAR. DA Tuition's HSC
-            Excellence program is built for students who want to walk out with their best possible result.
-          </p>
-          <div className="hsc-hero-btns">
-            <Link className="hsc-btn-navy" to="/book-interview">Secure a Spot - Limited Places</Link>
-          </div>
-          <div className="hsc-hero-badge">
-            <div>
-              <div className="hsc-hero-badge-bold">100+ Band 6 Results</div>
-              <div className="hsc-hero-badge-small">Across English, Maths, Science and Humanities</div>
+          <img
+            className="hsc-hero-bg"
+            src="/images/programs/highschool-classroom-wide-2.jpg"
+            alt="HSC tutor working closely with senior students on exam preparation at DA Tuition"
+          />
+          <div className="hsc-hero-overlay" />
+          <div className="hsc-hero-content">
+            <div className="hsc-hero-tag">HSC EXCELLENCE &middot; YEARS 11-12</div>
+            <h1>The HSC Is <em>Two Years of Decisions</em></h1>
+            <p className="hsc-hero-sub">
+              Every subject choice, every assessment mark, every study hour counts toward the ATAR. DA Tuition's HSC
+              Excellence program is built for students who want to walk out with their best possible result.
+            </p>
+            <div className="hsc-hero-btns">
+              <Link className="hsc-btn-navy" to="/book-interview">Secure a Spot - Limited Places</Link>
+            </div>
+            <div className="hsc-hero-badge">
+              <div>
+                <div className="hsc-hero-badge-bold">100+ Band 6 Results</div>
+                <div className="hsc-hero-badge-small">Across English, Maths, Science and Humanities</div>
+              </div>
             </div>
           </div>
         </div>
@@ -356,7 +368,7 @@ const HSCExcellence = () => {
             <img src="/images/programs/hsc-physics.jpg" alt="HSC Physics tutor explaining a concept on a whiteboard to Year 11-12 students" />
           </div>
           <div className="hsc-photo-pair-item">
-            <img src="/images/v3/success_medal.jpg" alt="A DA Tuition HSC student celebrating a Band 6 result" />
+            <img src="/images/programs/highschool-tutor-laugh.jpg" alt="A DA Tuition HSC student celebrating a Band 6 result" />
           </div>
         </div>
 
@@ -373,7 +385,7 @@ const HSCExcellence = () => {
             <div className="hsc-testi-author">
               <div className="hsc-testi-avatar">D</div>
               <div>
-                <div className="hsc-testi-name">Dad of Year 12 student, Chatswood</div>
+                <div className="hsc-testi-name">Dad of Year 12 student</div>
                 <div className="hsc-testi-role">ATAR 94.35</div>
               </div>
             </div>

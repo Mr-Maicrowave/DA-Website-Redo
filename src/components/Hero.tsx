@@ -83,8 +83,8 @@ const Hero = () => {
           <div className="relative animate-slide-up">
             <div className="relative">
               <img
-                src="/images/v3/hero_storefront.jpg"
-                alt="DA Tuition Storefront"
+                src="/images/programs/primary-classroom-wide-1.jpg"
+                alt="Primary school students working together in a DA Tuition classroom session"
                 className="rounded-2xl shadow-2xl object-cover aspect-[4/3]"
               />
 

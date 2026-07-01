@@ -35,8 +35,8 @@ const ArticleView = () => {
 
   const onImgError = (e: any) => {
     const img = e.currentTarget as HTMLImageElement;
-    if (!img || img.src.includes('/images/v3/collaborative_learning.jpg')) return;
-    img.src = '/images/v3/collaborative_learning.jpg';
+    if (!img || img.src.includes('/images/programs/primary-classroom-wide-1.jpg')) return;
+    img.src = '/images/programs/primary-classroom-wide-1.jpg';
   };
 
   useEffect(() => {

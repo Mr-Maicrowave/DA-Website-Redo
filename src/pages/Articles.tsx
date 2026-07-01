@@ -99,7 +99,7 @@ const Articles = () => {
         {/* Hero */}
         <section className="relative rounded-[2.5rem] overflow-hidden shadow-2xl mx-4 sm:mx-0 mt-6 mb-20">
           <div className="absolute inset-0">
-            <img src="/images/v3/teacher_screen.jpg" alt="DA Tuition Articles" className="w-full h-full object-cover" />
+            <img src="/images/programs/highschool-classroom-wide-1.jpg" alt="DA Tuition Articles" className="w-full h-full object-cover" />
             <div className="absolute inset-0 bg-brand-navy/80 mix-blend-multiply" />
             <div className="absolute inset-0 bg-gradient-to-tr from-brand-navy/90 via-amber-500/20 to-orange-500/30 mix-blend-overlay" />
             <div className="absolute inset-0 bg-gradient-to-t from-brand-navy/90 via-brand-navy/60 to-transparent" />

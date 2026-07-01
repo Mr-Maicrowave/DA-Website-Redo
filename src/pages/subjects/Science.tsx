@@ -394,7 +394,7 @@ const Science = () => {
         <section className="relative overflow-hidden bg-[#071629] pt-36 lg:pt-40">
           <div className="absolute inset-0">
             <img
-              src="/images/v3/collaborative_learning.jpg"
+              src="/images/programs/highschool-laptop-group-1.jpg"
               alt="Science tutoring at DA Tuition"
               className="h-full w-full object-cover opacity-50"
             />

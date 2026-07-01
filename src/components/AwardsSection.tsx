@@ -61,7 +61,7 @@ const AwardsSection = () => {
                     >
                         <div className="aspect-video relative bg-brand-midnight/10">
                             <img
-                                src="/images/v3/success_medal.jpg" // V3 photo replacing event photo placeholder
+                                src="/images/v3/hero_team.jpg" // DA Tuition team photo
                                 alt="Award Ceremony"
                                 className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity duration-500"
                             />

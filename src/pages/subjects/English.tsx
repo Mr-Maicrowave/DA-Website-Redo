@@ -462,7 +462,7 @@ const English = () => {
         <section className="relative overflow-hidden bg-[#071629] pt-36 lg:pt-40">
           <div className="absolute inset-0">
             <img
-              src="/images/v3/teacher_screen.jpg"
+              src="/images/programs/highschool-peer-notes.jpg"
               alt="English tutoring at DA Tuition"
               className="h-full w-full object-cover opacity-50"
             />

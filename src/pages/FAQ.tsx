@@ -189,7 +189,7 @@ const FAQ = () => {
         {/* Hero Section */}
         <section className="relative rounded-[2.5rem] overflow-hidden shadow-2xl mx-4 sm:mx-0 mt-6 mb-16">
           <div className="absolute inset-0">
-            <img src="/images/v3/warm_interaction.jpg" alt="DA Tuition FAQ and Support" className="w-full h-full object-cover" />
+            <img src="/images/programs/primary-tutor-help-1.jpg" alt="DA Tuition FAQ and Support" className="w-full h-full object-cover" />
             <div className="absolute inset-0 bg-brand-navy/80 mix-blend-multiply"></div>
             {/* Friendly vibrant pastel glow */}
             <div className="absolute inset-0 bg-gradient-to-tr from-brand-navy/90 via-sky-500/30 to-blue-400/40 mix-blend-overlay"></div>

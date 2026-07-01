@@ -287,11 +287,84 @@ const IlluNetflix = ({ isOpen }: { isOpen: boolean }) => (
   </svg>
 );
 
+const IlluGPS = ({ isOpen }: { isOpen: boolean }) => (
+  <svg viewBox="0 0 120 76" className="h-full w-full" aria-hidden="true">
+    {/* Grid lines */}
+    {[20, 40, 60, 80, 100].map(x => (
+      <line key={`v${x}`} x1={x} y1="0" x2={x} y2="76" stroke="#071629" strokeWidth="0.5" strokeOpacity="0.07" />
+    ))}
+    {[18, 36, 54, 70].map(y => (
+      <line key={`h${y}`} x1="0" y1={y} x2="120" y2={y} stroke="#071629" strokeWidth="0.5" strokeOpacity="0.07" />
+    ))}
+    {/* Crosshairs */}
+    <line x1="60" y1="2" x2="60" y2="74" stroke="#c9a227" strokeWidth="1" strokeLinecap="round"
+      strokeOpacity={isOpen ? 0.45 : 0.15}
+      style={{ transition: 'stroke-opacity 0.35s' }}
+    />
+    <line x1="2" y1="38" x2="118" y2="38" stroke="#c9a227" strokeWidth="1" strokeLinecap="round"
+      strokeOpacity={isOpen ? 0.45 : 0.15}
+      style={{ transition: 'stroke-opacity 0.35s' }}
+    />
+    {/* Outer ring */}
+    <circle cx="60" cy="38" r="16" fill="none" stroke="#c9a227" strokeWidth="1"
+      strokeOpacity={isOpen ? 0.3 : 0}
+      style={{ transition: 'stroke-opacity 0.4s 0.15s' }}
+    />
+    {/* Centre dot */}
+    <circle cx="60" cy="38" r="6" fill="#c9a227"
+      style={{ opacity: isOpen ? 1 : 0.25, transition: 'opacity 0.3s' }}
+    />
+    <circle cx="60" cy="38" r="2.5" fill="white"
+      style={{ opacity: isOpen ? 1 : 0.25, transition: 'opacity 0.3s' }}
+    />
+  </svg>
+);
+
+const IlluF1 = ({ isOpen }: { isOpen: boolean }) => (
+  <svg viewBox="0 0 120 76" className="h-full w-full" aria-hidden="true">
+    {/* Speedometer background arc */}
+    <path d="M 18,68 A 42,42 0 0 1 102,68"
+      fill="none" stroke="#071629" strokeWidth="3" strokeOpacity="0.1" strokeLinecap="round"
+    />
+    {/* Speedometer fill arc */}
+    <path d="M 18,68 A 42,42 0 0 1 102,68"
+      fill="none" stroke="#c9a227" strokeWidth="3" strokeLinecap="round"
+      strokeDasharray="132"
+      style={{
+        strokeDashoffset: isOpen ? 0 : 132,
+        transition: isOpen ? 'stroke-dashoffset 0.75s cubic-bezier(0.4,0,0.2,1)' : 'none',
+      }}
+    />
+    {/* Speed ticks */}
+    {[0, 1, 2, 3, 4, 5, 6].map(i => {
+      const angle = Math.PI * (1 + i / 6);
+      const r1 = 36, r2 = 42, cx = 60, cy = 68;
+      return (
+        <line key={i}
+          x1={cx + r1 * Math.cos(angle)} y1={cy + r1 * Math.sin(angle)}
+          x2={cx + r2 * Math.cos(angle)} y2={cy + r2 * Math.sin(angle)}
+          stroke="#071629" strokeWidth="1" strokeOpacity="0.18" strokeLinecap="round"
+        />
+      );
+    })}
+    {/* Needle — rotates from left (-90°) to high-speed (70°) */}
+    <g style={{
+      transform: `translate(60px, 68px) rotate(${isOpen ? 70 : -90}deg)`,
+      transition: isOpen ? 'transform 0.75s cubic-bezier(0.4,0,0.2,1)' : 'none',
+    }}>
+      <line x1="0" y1="0" x2="0" y2="-36" stroke="#c9a227" strokeWidth="2.5" strokeLinecap="round" />
+    </g>
+    <circle cx="60" cy="68" r="4" fill="#071629" fillOpacity="0.18" />
+    <circle cx="60" cy="68" r="2" fill="#c9a227" />
+  </svg>
+);
+
 // ── Card data ──────────────────────────────────────────────────────────────
 const CURIOSITY_CARDS = [
   {
     topic: 'Parabolas',
     hook: 'The path of a ball',
+    year: 'Years 9–10',
     fact: (
       <>
         Every time a basketball leaves someone&apos;s hands, it traces a <strong>parabola</strong>. Engineers
@@ -304,6 +377,7 @@ const CURIOSITY_CARDS = [
   {
     topic: 'Trigonometry',
     hook: 'How your phone knows which way is up',
+    year: 'Years 9–10',
     fact: (
       <>
         Your phone knows which way is up because of trig. The <strong>accelerometer</strong> converts
@@ -315,6 +389,7 @@ const CURIOSITY_CARDS = [
   {
     topic: 'Probability',
     hook: "Why Spotify doesn't feel random",
+    year: 'Years 9–10',
     fact: (
       <>
         Spotify&apos;s shuffle isn&apos;t truly random — it uses <strong>probability weighting</strong> so
@@ -324,20 +399,9 @@ const CURIOSITY_CARDS = [
     Illustration: IlluSpotify,
   },
   {
-    topic: 'Logarithms',
-    hook: "Why a magnitude 7 isn't twice a 6",
-    fact: (
-      <>
-        The <strong>Richter scale</strong> is logarithmic. A magnitude 7 earthquake isn&apos;t twice as
-        strong as a 6 — it&apos;s <strong>ten times stronger</strong>. Logs compress huge ranges into
-        human-readable numbers.
-      </>
-    ),
-    Illustration: IlluSeismic,
-  },
-  {
     topic: 'Calculus',
     hook: 'How Netflix picks your next show',
+    year: 'Years 11–12',
     fact: (
       <>
         Netflix uses calculus (<strong>gradient descent</strong>) to decide what to recommend next. Every
@@ -345,6 +409,31 @@ const CURIOSITY_CARDS = [
       </>
     ),
     Illustration: IlluNetflix,
+  },
+  {
+    topic: 'Vectors',
+    hook: 'How GPS knows exactly where you are',
+    year: 'Years 11–12',
+    fact: (
+      <>
+        GPS works by measuring your distance from multiple satellites using <strong>vectors</strong>. Your
+        phone solves a system of equations in real time to pinpoint your position to within{' '}
+        <strong>a few metres</strong>.
+      </>
+    ),
+    Illustration: IlluGPS,
+  },
+  {
+    topic: 'Speed & Distance',
+    hook: 'How F1 teams decide when to pit',
+    year: 'Years 7–8',
+    fact: (
+      <>
+        F1 strategists use <strong>speed, distance, and time</strong> calculations to decide the exact lap
+        to call a driver in. A one-second error in timing can cost a race position.
+      </>
+    ),
+    Illustration: IlluF1,
   },
 ];
 
@@ -522,7 +611,7 @@ const Mathematics = () => {
         <section className="relative overflow-hidden bg-[#071629] pt-36 lg:pt-40">
           <div className="absolute inset-0">
             <img
-              src="/images/v3/teacher_whiteboard.jpg"
+              src="/images/programs/hsc-maths.jpg"
               alt="Mathematics tutoring at DA Tuition"
               className="h-full w-full object-cover opacity-55"
             />
@@ -586,175 +675,15 @@ const Mathematics = () => {
         <section className="-mt-10 px-5 lg:px-8">
           <div className="relative z-10 mx-auto grid max-w-7xl gap-3 rounded-3xl border border-[#c9a227]/20 bg-[#fffdf8] p-3 shadow-2xl shadow-[#071629]/10 md:grid-cols-4">
             {[
-              ['Parent concerns', '#parent-concerns'],
               ['Year levels', '#math-pathways'],
               ['HSC streams', '#hsc-maths'],
               ['How we teach', '#math-method'],
+              ['See it in action', '#maths-interactive'],
             ].map(([label, href]) => (
               <a key={href} href={href} className="rounded-2xl px-4 py-3 text-center text-sm font-black text-[#10233f] transition hover:bg-[#f5ecd9]">
                 {label}
               </a>
             ))}
-          </div>
-        </section>
-
-        {/* ── Task A2: Spot the Mistake — Exam Error Detective ── */}
-        <section className="bg-[#fff6e7] px-5 py-20 lg:px-8">
-          <div className="mx-auto max-w-7xl">
-            {/* Heading */}
-            <div className="mb-10">
-              <h2 className="font-serif text-4xl font-medium leading-tight tracking-[-0.045em] text-[#071629] lg:text-5xl">
-                Can you spot what cost this student marks?
-              </h2>
-              <p className="mt-3 font-serif text-base italic text-[#9b8a6a]">
-                Every example below is a real mistake type. Tap &ldquo;Reveal mistake&rdquo; when you&rsquo;ve found it.
-              </p>
-            </div>
-
-            {/* Tab pills */}
-            <div className="mb-6 flex flex-wrap gap-2" role="tablist" aria-label="Year level">
-              {ERROR_TABS.map((tab) => (
-                <button
-                  key={tab.id}
-                  role="tab"
-                  aria-selected={activeTab === tab.id}
-                  onClick={() => {
-                    setActiveTab(tab.id);
-                    setExampleIdx(0);
-                    setRevealed(false);
-                  }}
-                  className={`rounded-full px-5 py-2.5 text-sm font-black transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9a227] focus-visible:ring-offset-2 ${
-                    activeTab === tab.id
-                      ? 'bg-[#071629] text-[#f1df9a]'
-                      : 'border border-[#071629]/15 bg-white text-[#10233f] hover:bg-[#f5ecd9]'
-                  }`}
-                >
-                  {tab.label}
-                </button>
-              ))}
-            </div>
-
-            {/* Example card */}
-            <div className="overflow-hidden rounded-[2rem] border border-[#071629]/10 bg-white shadow-2xl shadow-[#071629]/6">
-              {/* Card header: counter + prev/next */}
-              <div className="flex items-center justify-between border-b border-[#071629]/8 px-6 py-4">
-                <span className="text-xs font-black uppercase tracking-[0.14em] text-[#c9a227]">
-                  Example {exampleIdx + 1} of {currentTab.examples.length}
-                </span>
-                <div className="flex gap-1">
-                  <button
-                    onClick={() => {
-                      setExampleIdx((i) => Math.max(0, i - 1));
-                      setRevealed(false);
-                    }}
-                    disabled={exampleIdx === 0}
-                    className="rounded-xl px-3 py-1.5 text-xs font-bold text-[#10233f] transition hover:bg-[#f5ecd9] disabled:cursor-not-allowed disabled:opacity-30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9a227]"
-                  >
-                    ← Prev
-                  </button>
-                  <button
-                    onClick={() => {
-                      setExampleIdx((i) => Math.min(currentTab.examples.length - 1, i + 1));
-                      setRevealed(false);
-                    }}
-                    disabled={isLastExample}
-                    className="rounded-xl px-3 py-1.5 text-xs font-bold text-[#10233f] transition hover:bg-[#f5ecd9] disabled:cursor-not-allowed disabled:opacity-30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9a227]"
-                  >
-                    Next →
-                  </button>
-                </div>
-              </div>
-
-              {/* Card body */}
-              <div className="px-6 py-7 md:px-10">
-                {/* Problem statement */}
-                <div className="mb-7">
-                  <p className="mb-2 text-xs font-black uppercase tracking-[0.14em] text-[#9b8a6a]">Problem</p>
-                  <p className="text-base font-semibold leading-7 text-[#071629]">
-                    <MixedMath text={currentExample.problem} />
-                  </p>
-                </div>
-
-                {/* Worked solution table */}
-                <div className="mb-7">
-                  <p className="mb-3 text-xs font-black uppercase tracking-[0.14em] text-[#9b8a6a]">Worked solution</p>
-                  <div className="overflow-x-auto rounded-2xl border border-[#071629]/10">
-                    <table className="w-full text-sm">
-                      <tbody>
-                        {currentExample.steps.map((step) => {
-                          const isHighlighted = step.isMistake === true && revealed;
-                          return (
-                            <tr
-                              key={step.label}
-                              className="border-b border-[#071629]/6 last:border-0 transition-colors duration-200"
-                              style={isHighlighted ? { background: '#fff8ed', borderLeft: '4px solid #c9a227' } : {}}
-                            >
-                              <td
-                                className={`w-[5.5rem] whitespace-nowrap py-3.5 pl-4 pr-4 align-top text-xs ${
-                                  step.label === 'Answer'
-                                    ? 'font-black text-[#071629]'
-                                    : 'font-mono font-bold text-[#9b8a6a]'
-                                }`}
-                              >
-                                {step.label === 'Answer' ? 'Answer:' : step.label}
-                              </td>
-                              <td className="py-3.5 pr-4 text-[#172033]">
-                                <span
-                                  dangerouslySetInnerHTML={{
-                                    __html: katex.renderToString(step.working, { throwOnError: false }),
-                                  }}
-                                />
-                              </td>
-                            </tr>
-                          );
-                        })}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-
-                {/* Aria-live region for screen readers */}
-                <div aria-live="polite" className="sr-only">
-                  {revealed && mistakeStep ? `The mistake is in ${mistakeStep.label}.` : ''}
-                </div>
-
-                {/* Action button */}
-                {!revealed ? (
-                  <button
-                    onClick={() => setRevealed(true)}
-                    className="rounded-full bg-[#071629] px-7 py-3 text-sm font-black text-white transition hover:bg-[#10233f] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9a227] focus-visible:ring-offset-2"
-                  >
-                    Reveal mistake
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => {
-                      if (!isLastExample) {
-                        setExampleIdx((i) => i + 1);
-                      } else {
-                        setExampleIdx(0);
-                      }
-                      setRevealed(false);
-                    }}
-                    className="rounded-full bg-[#c9a227] px-7 py-3 text-sm font-black text-[#071629] transition hover:bg-[#e0bd4b] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9a227] focus-visible:ring-offset-2"
-                  >
-                    {isLastExample ? 'Start over' : 'Next example →'}
-                  </button>
-                )}
-
-                {/* Explanation block — visible after reveal */}
-                {revealed && (
-                  <div className="mt-5 rounded-2xl border-l-4 border-[#c9a227] bg-[#fffbeb] px-5 py-4">
-                    <p className="mb-1.5 text-xs font-black uppercase tracking-[0.14em] text-[#c9a227]">
-                      What went wrong
-                    </p>
-                    <p className="text-sm italic leading-7 text-[#5c4a1e]">
-                      <MixedMath text={currentExample.explanation} />
-                    </p>
-                  </div>
-                )}
-              </div>
-            </div>
           </div>
         </section>
 
@@ -850,121 +779,14 @@ const Mathematics = () => {
                         </div>
                       </div>
 
-                      {/* Tap prompt — crossfades between closed/open state */}
-                      <div className="relative mt-3 h-[1.1rem]">
-                        <span
-                          className="absolute inset-0 text-[11px] font-medium italic text-[#9b8a6a] transition-opacity duration-150"
-                          style={{ opacity: isOpen ? 0 : 1 }}
-                        >
-                          Tap to find out →
-                        </span>
-                        <span
-                          className="absolute inset-0 text-[11px] font-medium italic text-[#9b8a6a] transition-opacity duration-150"
-                          style={{ opacity: isOpen ? 1 : 0 }}
-                        >
-                          Tap to close ✕
-                        </span>
-                      </div>
+                      {/* Year badge */}
+                      <span className="mt-3 inline-block rounded-full bg-[#071629]/6 px-2.5 py-0.5 text-[10px] font-black uppercase tracking-[0.1em] text-[#9b8a6a]">
+                        {card.year}
+                      </span>
                     </div>
                   </button>
                 );
               })}
-            </div>
-          </div>
-        </section>
-
-        {/* Task B: Watch a scary problem become easy */}
-        <section className="bg-[#fffdf8] px-5 py-20 lg:px-8">
-          <div className="mx-auto max-w-7xl">
-            {/* Heading */}
-            <div className="mb-10 grid gap-6 lg:grid-cols-[.85fr_1fr] lg:items-end">
-              <div>
-                <p className="mb-3 text-xs font-black uppercase tracking-[0.16em] text-[#c9a227]">Problem walkthrough</p>
-                <h2 className="font-serif text-4xl font-medium leading-tight tracking-[-0.045em] text-[#071629] lg:text-5xl">
-                  Watch a scary problem become easy.
-                </h2>
-              </div>
-              <p className="text-base leading-8 text-[#61708a]">
-                Tap "Show next step" to reveal the solution one step at a time. A thinking note explains the reasoning at each stage.
-              </p>
-            </div>
-
-            {/* Version toggle */}
-            <div className="mb-8">
-              <div
-                className="inline-flex rounded-full border border-[#071629]/10 bg-white p-1 shadow-sm"
-                role="group"
-                aria-label="Problem version"
-              >
-                {WALKTHROUGH_VERSIONS.map((v) => (
-                  <button
-                    key={v.id}
-                    onClick={() => { setVersion(v.id); setStepCount(0); }}
-                    className={`rounded-full px-5 py-2 text-sm font-black transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9a227] focus-visible:ring-offset-1 ${
-                      version === v.id
-                        ? 'bg-[#071629] text-[#f1df9a]'
-                        : 'text-[#10233f] hover:bg-[#f5ecd9]'
-                    }`}
-                  >
-                    {v.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Problem card */}
-            <div className="overflow-hidden rounded-[2rem] border border-[#071629]/10 bg-white shadow-2xl shadow-[#071629]/6">
-              {/* Problem statement — always visible */}
-              <div className="border-b border-[#071629]/8 bg-[#f4f7ff] px-8 py-7">
-                <p className="mb-2 text-xs font-black uppercase tracking-[0.14em] text-[#9b8a6a]">Problem</p>
-                <p className="text-base font-semibold leading-7 text-[#071629]">{currentVersion.problem}</p>
-              </div>
-
-              {/* Steps + action button */}
-              <div className="px-6 py-7 md:px-10">
-                <div className="divide-y divide-[#071629]/6" aria-live="polite">
-                  {currentVersion.steps.slice(0, stepCount).map((step, idx) => (
-                    <div
-                      key={`${version}-step-${idx}`}
-                      className="grid grid-cols-1 gap-4 py-5 first:pt-0 md:grid-cols-[3fr_2fr]"
-                      style={{ animation: 'maths-stepIn 0.2s ease-out both' }}
-                    >
-                      {/* Step number + content */}
-                      <div className="flex items-start gap-4">
-                        <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#071629] text-xs font-black text-[#f1df9a]">
-                          {idx + 1}
-                        </div>
-                        <p className="text-[15px] leading-7 text-[#172033]">
-                          <MixedMath text={step.content} />
-                        </p>
-                      </div>
-                      {/* Thinking note */}
-                      <div className="rounded-xl border-l-4 border-[#c9a227] bg-[#fffbeb] px-4 py-3">
-                        <p className="text-[12.5px] italic leading-[1.65] text-[#5c4a1e]">{step.note}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Action button */}
-                <div className={stepCount > 0 ? 'mt-6 border-t border-[#071629]/6 pt-6' : 'mt-2'}>
-                  {stepCount < currentVersion.steps.length ? (
-                    <button
-                      onClick={() => setStepCount((c) => c + 1)}
-                      className="rounded-full bg-[#071629] px-7 py-3 text-sm font-black text-white transition hover:bg-[#10233f] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9a227] focus-visible:ring-offset-2"
-                    >
-                      Show next step →
-                    </button>
-                  ) : (
-                    <button
-                      onClick={() => setStepCount(0)}
-                      className="rounded-full bg-[#c9a227] px-7 py-3 text-sm font-black text-[#071629] transition hover:bg-[#e0bd4b] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9a227] focus-visible:ring-offset-2"
-                    >
-                      Start again
-                    </button>
-                  )}
-                </div>
-              </div>
             </div>
           </div>
         </section>
@@ -1164,6 +986,255 @@ const Mathematics = () => {
                 Compare formats
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
+            </div>
+          </div>
+        </section>
+
+        {/* Spot the Mistake — Exam Error Detective */}
+        <section id="maths-interactive" className="bg-[#fff6e7] px-5 py-20 lg:px-8">
+          <div className="mx-auto max-w-7xl">
+            <div className="mb-10">
+              <h2 className="font-serif text-4xl font-medium leading-tight tracking-[-0.045em] text-[#071629] lg:text-5xl">
+                Can you spot what cost this student marks?
+              </h2>
+              <p className="mt-3 font-serif text-base italic text-[#9b8a6a]">
+                Every example below is a real mistake type. Tap &ldquo;Reveal mistake&rdquo; when you&rsquo;ve found it.
+              </p>
+            </div>
+
+            {/* Tab pills */}
+            <div className="mb-6 flex flex-wrap gap-2" role="tablist" aria-label="Year level">
+              {ERROR_TABS.map((tab) => (
+                <button
+                  key={tab.id}
+                  role="tab"
+                  aria-selected={activeTab === tab.id}
+                  onClick={() => {
+                    setActiveTab(tab.id);
+                    setExampleIdx(0);
+                    setRevealed(false);
+                  }}
+                  className={`rounded-full px-5 py-2.5 text-sm font-black transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9a227] focus-visible:ring-offset-2 ${
+                    activeTab === tab.id
+                      ? 'bg-[#071629] text-[#f1df9a]'
+                      : 'border border-[#071629]/15 bg-white text-[#10233f] hover:bg-[#f5ecd9]'
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+
+            {/* Example card */}
+            <div className="overflow-hidden rounded-[2rem] border border-[#071629]/10 bg-white shadow-2xl shadow-[#071629]/6">
+              {/* Card header: counter + prev/next */}
+              <div className="flex items-center justify-between border-b border-[#071629]/8 px-6 py-4">
+                <span className="text-xs font-black uppercase tracking-[0.14em] text-[#c9a227]">
+                  Example {exampleIdx + 1} of {currentTab.examples.length}
+                </span>
+                <div className="flex gap-1">
+                  <button
+                    onClick={() => {
+                      setExampleIdx((i) => Math.max(0, i - 1));
+                      setRevealed(false);
+                    }}
+                    disabled={exampleIdx === 0}
+                    className="rounded-xl px-3 py-1.5 text-xs font-bold text-[#10233f] transition hover:bg-[#f5ecd9] disabled:cursor-not-allowed disabled:opacity-30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9a227]"
+                  >
+                    ← Prev
+                  </button>
+                  <button
+                    onClick={() => {
+                      setExampleIdx((i) => Math.min(currentTab.examples.length - 1, i + 1));
+                      setRevealed(false);
+                    }}
+                    disabled={isLastExample}
+                    className="rounded-xl px-3 py-1.5 text-xs font-bold text-[#10233f] transition hover:bg-[#f5ecd9] disabled:cursor-not-allowed disabled:opacity-30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9a227]"
+                  >
+                    Next →
+                  </button>
+                </div>
+              </div>
+
+              {/* Card body */}
+              <div className="px-6 py-7 md:px-10">
+                {/* Problem statement */}
+                <div className="mb-7">
+                  <p className="mb-2 text-xs font-black uppercase tracking-[0.14em] text-[#9b8a6a]">Problem</p>
+                  <p className="text-base font-semibold leading-7 text-[#071629]">
+                    <MixedMath text={currentExample.problem} />
+                  </p>
+                </div>
+
+                {/* Worked solution table */}
+                <div className="mb-7">
+                  <p className="mb-3 text-xs font-black uppercase tracking-[0.14em] text-[#9b8a6a]">Worked solution</p>
+                  <div className="overflow-x-auto rounded-2xl border border-[#071629]/10">
+                    <table className="w-full text-sm">
+                      <tbody>
+                        {currentExample.steps.map((step) => {
+                          const isHighlighted = step.isMistake === true && revealed;
+                          return (
+                            <tr
+                              key={step.label}
+                              className="border-b border-[#071629]/6 last:border-0 transition-colors duration-200"
+                              style={isHighlighted ? { background: '#fff8ed', borderLeft: '4px solid #c9a227' } : {}}
+                            >
+                              <td
+                                className={`w-[5.5rem] whitespace-nowrap py-3.5 pl-4 pr-4 align-top text-xs ${
+                                  step.label === 'Answer'
+                                    ? 'font-black text-[#071629]'
+                                    : 'font-mono font-bold text-[#9b8a6a]'
+                                }`}
+                              >
+                                {step.label === 'Answer' ? 'Answer:' : step.label}
+                              </td>
+                              <td className="py-3.5 pr-4 text-[#172033]">
+                                <span
+                                  dangerouslySetInnerHTML={{
+                                    __html: katex.renderToString(step.working, { throwOnError: false }),
+                                  }}
+                                />
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                {/* Aria-live region for screen readers */}
+                <div aria-live="polite" className="sr-only">
+                  {revealed && mistakeStep ? `The mistake is in ${mistakeStep.label}.` : ''}
+                </div>
+
+                {/* Action button */}
+                {!revealed ? (
+                  <button
+                    onClick={() => setRevealed(true)}
+                    className="rounded-full bg-[#071629] px-7 py-3 text-sm font-black text-white transition hover:bg-[#10233f] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9a227] focus-visible:ring-offset-2"
+                  >
+                    Reveal mistake
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => {
+                      if (!isLastExample) {
+                        setExampleIdx((i) => i + 1);
+                      } else {
+                        setExampleIdx(0);
+                      }
+                      setRevealed(false);
+                    }}
+                    className="rounded-full bg-[#c9a227] px-7 py-3 text-sm font-black text-[#071629] transition hover:bg-[#e0bd4b] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9a227] focus-visible:ring-offset-2"
+                  >
+                    {isLastExample ? 'Start over' : 'Next example →'}
+                  </button>
+                )}
+
+                {/* Explanation block — visible after reveal */}
+                {revealed && (
+                  <div className="mt-5 rounded-2xl border-l-4 border-[#c9a227] bg-[#fffbeb] px-5 py-4">
+                    <p className="mb-1.5 text-xs font-black uppercase tracking-[0.14em] text-[#c9a227]">
+                      What went wrong
+                    </p>
+                    <p className="text-sm italic leading-7 text-[#5c4a1e]">
+                      <MixedMath text={currentExample.explanation} />
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Problem walkthrough */}
+        <section className="bg-[#fffdf8] px-5 py-20 lg:px-8">
+          <div className="mx-auto max-w-7xl">
+            <div className="mb-10 grid gap-6 lg:grid-cols-[.85fr_1fr] lg:items-end">
+              <div>
+                <p className="mb-3 text-xs font-black uppercase tracking-[0.16em] text-[#c9a227]">Problem walkthrough</p>
+                <h2 className="font-serif text-4xl font-medium leading-tight tracking-[-0.045em] text-[#071629] lg:text-5xl">
+                  Watch a scary problem become easy.
+                </h2>
+              </div>
+              <p className="text-base leading-8 text-[#61708a]">
+                Tap "Show next step" to reveal the solution one step at a time. A thinking note explains the reasoning at each stage.
+              </p>
+            </div>
+
+            {/* Version toggle */}
+            <div className="mb-8">
+              <div
+                className="inline-flex rounded-full border border-[#071629]/10 bg-white p-1 shadow-sm"
+                role="group"
+                aria-label="Problem version"
+              >
+                {WALKTHROUGH_VERSIONS.map((v) => (
+                  <button
+                    key={v.id}
+                    onClick={() => { setVersion(v.id); setStepCount(0); }}
+                    className={`rounded-full px-5 py-2 text-sm font-black transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9a227] focus-visible:ring-offset-1 ${
+                      version === v.id
+                        ? 'bg-[#071629] text-[#f1df9a]'
+                        : 'text-[#10233f] hover:bg-[#f5ecd9]'
+                    }`}
+                  >
+                    {v.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Problem card */}
+            <div className="overflow-hidden rounded-[2rem] border border-[#071629]/10 bg-white shadow-2xl shadow-[#071629]/6">
+              <div className="border-b border-[#071629]/8 bg-[#f4f7ff] px-8 py-7">
+                <p className="mb-2 text-xs font-black uppercase tracking-[0.14em] text-[#9b8a6a]">Problem</p>
+                <p className="text-base font-semibold leading-7 text-[#071629]">{currentVersion.problem}</p>
+              </div>
+
+              <div className="px-6 py-7 md:px-10">
+                <div className="divide-y divide-[#071629]/6" aria-live="polite">
+                  {currentVersion.steps.slice(0, stepCount).map((step, idx) => (
+                    <div
+                      key={`${version}-step-${idx}`}
+                      className="grid grid-cols-1 gap-4 py-5 first:pt-0 md:grid-cols-[3fr_2fr]"
+                      style={{ animation: 'maths-stepIn 0.2s ease-out both' }}
+                    >
+                      <div className="flex items-start gap-4">
+                        <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#071629] text-xs font-black text-[#f1df9a]">
+                          {idx + 1}
+                        </div>
+                        <p className="text-[15px] leading-7 text-[#172033]">
+                          <MixedMath text={step.content} />
+                        </p>
+                      </div>
+                      <div className="rounded-xl border-l-4 border-[#c9a227] bg-[#fffbeb] px-4 py-3">
+                        <p className="text-[12.5px] italic leading-[1.65] text-[#5c4a1e]">{step.note}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className={stepCount > 0 ? 'mt-6 border-t border-[#071629]/6 pt-6' : 'mt-2'}>
+                  {stepCount < currentVersion.steps.length ? (
+                    <button
+                      onClick={() => setStepCount((c) => c + 1)}
+                      className="rounded-full bg-[#071629] px-7 py-3 text-sm font-black text-white transition hover:bg-[#10233f] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9a227] focus-visible:ring-offset-2"
+                    >
+                      Show next step →
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => setStepCount(0)}
+                      className="rounded-full bg-[#c9a227] px-7 py-3 text-sm font-black text-[#071629] transition hover:bg-[#e0bd4b] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9a227] focus-visible:ring-offset-2"
+                    >
+                      Start again
+                    </button>
+                  )}
+                </div>
+              </div>
             </div>
           </div>
         </section>

@@ -1,31 +1,18 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import NavigationNew from '@/components/NavigationNew';
 import FooterNew from '@/components/FooterNew';
 import StickyBookButton from '@/components/StickyBookButton';
+import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import SEO from '@/components/SEO';
-
-const c = {
-  navy: '#071629', navyMid: '#0e2a4a',
-  gold: '#c9a227', goldLight: '#e0bd4b', goldPale: '#fff6e7',
-  pink: '#fff6e7', pinkMid: '#e0bd4b', pinkText: '#071629',
-  purple: '#fff6e7', purpleMid: '#c9a227', purpleText: '#071629',
-  green: '#fff6e7', greenMid: '#c9a227', greenText: '#071629',
-  blue: '#fff6e7', blueMid: '#e0bd4b', blueText: '#071629',
-  white: '#fffdf8', muted: '#61708a', border: 'rgba(201,162,39,0.22)', soft: '#fff6e7',
-};
-
-const cardTones = [
-  { bg: 'linear-gradient(180deg, #f7fbff, #e8f2ff)' },
-  { bg: 'linear-gradient(180deg, #fbfff8, #eaf8ef)' },
-  { bg: 'linear-gradient(180deg, #fffdf7, #fff1cd)' },
-];
+import { motion } from 'framer-motion';
+import { ArrowRight, ChevronLeft, ChevronRight, CheckCircle, Sparkles } from 'lucide-react';
 
 const slides = [
-  { stars: true, quote: "My daughter started Year 1 really struggling with reading, and she didn't want to go to school because she felt so behind. After just one term at DA Tuition, the change was <strong>remarkable</strong>. She's not just reading better, she's actually excited to pick up books on her own.", name: 'Jessica M.', role: 'Mum of a Year 2 student', initial: 'J', avatarBg: c.pink, avatarBorder: c.pinkMid, avatarText: c.pinkText },
-  { stars: true, quote: "My son was completely disengaged from maths in Year 1. Within six weeks at DA Tuition he was asking to do <strong>maths worksheets for fun</strong>. The teachers have a gift for making numbers feel like a game.", name: 'Amanda K.', role: 'Mum of a Year 1 student', initial: 'A', avatarBg: c.purple, avatarBorder: c.purpleMid, avatarText: c.purpleText },
-  { stars: true, quote: "DA Tuition identified the exact gaps in the first session and within one term she was reading <strong>above her year level</strong>. Incredible progress.", name: 'Rachel T.', role: 'Mum of a Year 2 student', initial: 'R', avatarBg: c.blue, avatarBorder: c.blueMid, avatarText: c.blueText },
-  { stars: true, quote: "The small group format was exactly what our son needed. At DA Tuition he gets genuine individual attention and his <strong>confidence has absolutely soared</strong>.", name: 'Michael & Sarah P.', role: 'Parents of a Year 1 student', initial: 'M', avatarBg: c.green, avatarBorder: c.greenMid, avatarText: c.greenText },
+  { quote: "My daughter started Year 1 really struggling with reading, and she didn't want to go to school because she felt so behind. After just one term at DA Tuition, the change was <strong>remarkable</strong>. She's not just reading better, she's actually excited to pick up books on her own.", name: 'Jessica M.', role: 'Mum of a Year 2 student', initial: 'J' },
+  { quote: 'My son was completely disengaged from maths in Year 1. Within six weeks at DA Tuition he was asking to do <strong>maths worksheets for fun</strong>. The teachers have a gift for making numbers feel like a game.', name: 'Amanda K.', role: 'Mum of a Year 1 student', initial: 'A' },
+  { quote: 'DA Tuition identified the exact gaps in the first session and within one term she was reading <strong>above her year level</strong>. Incredible progress.', name: 'Rachel T.', role: 'Mum of a Year 2 student', initial: 'R' },
+  { quote: 'The small group format was exactly what our son needed. At DA Tuition he gets genuine individual attention and his <strong>confidence has absolutely soared</strong>.', name: 'Michael & Sarah P.', role: 'Parents of a Year 1 student', initial: 'M' },
 ];
 
 const curriculumRows = [
@@ -53,10 +40,16 @@ const fitPoints = [
 ];
 
 const whyCards = [
-  { num: 'I', title: 'Reading Is the Gateway Skill', desc: 'Every subject, including <strong>maths, science, history</strong>, demands reading. Children who <strong>read fluently by Year 2</strong> have a <strong>compounding advantage</strong> that grows every single year.' },
-  { num: 'II', title: "Number Sense Can't Be Rushed", desc: 'Understanding <em>why</em> numbers work, not just <strong>memorising facts</strong>, is what separates a child who <strong>struggles with maths</strong> from one who <strong>genuinely loves it</strong>.' },
-  { num: 'III', title: 'Confidence Is Formed Early', desc: 'How a child feels about school in <strong>Year 1–2 shapes their identity as a learner</strong> for years. We build <strong>confidence alongside skills</strong> so they believe they can do hard things.' },
-  { num: 'IV', title: 'Early Gaps Widen Fast', desc: 'A <strong>small gap at school entry</strong> becomes a <strong>significant gap by Year 4</strong>. Addressing it early is <strong>faster, less stressful, and far more effective</strong> than catching up later.' },
+  { num: 'I', title: 'Reading Is the Gateway Skill', color: '#2563eb', desc: 'Every subject, including <strong>maths, science, history</strong>, demands reading. Children who <strong>read fluently by Year 2</strong> have a <strong>compounding advantage</strong> that grows every single year.' },
+  { num: 'II', title: "Number Sense Can't Be Rushed", color: '#c9a227', desc: 'Understanding <em>why</em> numbers work, not just <strong>memorising facts</strong>, is what separates a child who <strong>struggles with maths</strong> from one who <strong>genuinely loves it</strong>.' },
+  { num: 'III', title: 'Confidence Is Formed Early', color: '#16a34a', desc: 'How a child feels about school in <strong>Year 1–2 shapes their identity as a learner</strong> for years. We build <strong>confidence alongside skills</strong> so they believe they can do hard things.' },
+  { num: 'IV', title: 'Early Gaps Widen Fast', color: '#2563eb', desc: 'A <strong>small gap at school entry</strong> becomes a <strong>significant gap by Year 4</strong>. Addressing it early is <strong>faster, less stressful, and far more effective</strong> than catching up later.' },
+];
+
+const siblingTabs = [
+  { label: 'Early Years (Y1–Y2)', to: '/programs/early-years', active: true },
+  { label: 'Year 3–4', to: '/programs/year-3-4', active: false },
+  { label: 'Year 5–6', to: '/programs/year-5-6', active: false },
 ];
 
 const EarlyYears = () => {
@@ -64,234 +57,285 @@ const EarlyYears = () => {
   const s = slides[slide];
 
   return (
-    <div className="min-h-screen overflow-x-hidden pt-[120px]" style={{ background: c.white, color: c.navy, fontFamily: "'Segoe UI', system-ui, sans-serif" }}>
+    <div className="min-h-screen bg-[#fffdf8] text-[#172033]">
       <SEO title="Early Years Tutoring (Year 1–2) | DA Tuition" description="Build the reading, writing, and number sense foundations that last a lifetime. Year 1–2 tutoring in Sydney." canonicalUrl="/programs/early-years" />
       <NavigationNew />
       <StickyBookButton />
 
-      {/* Breadcrumb */}
-      <div style={{ background: c.soft, borderBottom: `1px solid ${c.border}`, padding: '14px 52px', fontSize: '0.82rem', color: c.muted }}>
-        <Link to="/" style={{ color: c.navy, textDecoration: 'none', fontWeight: 600 }}>Home</Link>
-        <span style={{ margin: '0 8px' }}>›</span>
-        <Link to="/programs/primary-school" style={{ color: c.navy, textDecoration: 'none', fontWeight: 600 }}>Primary School</Link>
-        <span style={{ margin: '0 8px' }}>›</span>
-        Early Years (Y1–Y2)
-      </div>
-
-      {/* Sibling tabs */}
-      <div style={{ background: c.white, borderBottom: `2px solid ${c.border}`, display: 'flex', justifyContent: 'center', overflowX: 'auto' }}>
-        {[
-          { label: 'Early Years (Y1–Y2)', to: '/programs/early-years', active: true },
-          { label: 'Year 3–4', to: '/programs/year-3-4', active: false },
-          { label: 'Year 5–6', to: '/programs/year-5-6', active: false },
-        ].map((tab, i) => (
-          <Link key={i} to={tab.to} style={{ padding: '14px 32px', fontSize: '0.88rem', fontWeight: 700, textDecoration: 'none', color: tab.active ? c.navy : c.muted, borderBottom: tab.active ? `3px solid ${c.gold}` : '3px solid transparent', marginBottom: -2, whiteSpace: 'nowrap', transition: 'all .2s' }}>
-            {tab.label}
-          </Link>
-        ))}
-      </div>
-
-      {/* HERO */}
-      <div style={{ background: 'linear-gradient(135deg, #F7F4EE 0%, #FFFFFF 55%, rgba(240,203,106,0.12) 100%)', padding: '80px 52px 72px', textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
-        <div style={{ position: 'absolute', top: -60, right: -60, width: 320, height: 320, borderRadius: '50%', background: 'radial-gradient(circle, rgba(240,203,106,0.22), transparent 65%)', pointerEvents: 'none' }} />
-        <div style={{ position: 'absolute', bottom: -40, left: -40, width: 260, height: 260, borderRadius: '50%', background: 'radial-gradient(circle, rgba(212,175,55,0.1), transparent 65%)', pointerEvents: 'none' }} />
-        <div style={{ display: 'inline-block', fontSize: '0.75rem', fontWeight: 800, letterSpacing: '2.5px', textTransform: 'uppercase', color: c.gold, background: c.goldPale, border: `1.5px solid ${c.goldLight}`, padding: '6px 20px', borderRadius: 999, marginBottom: 22 }}>
-          Early Years · Year 1 – Year 2 · Ages 6–8
+      {/* ── Breadcrumb + sibling tabs ── */}
+      <div className="bg-[#fff6e7] px-5 pt-32 lg:px-8 lg:pt-36">
+        <div className="mx-auto max-w-7xl pb-3 text-sm text-[#61708a]">
+          <Link to="/" className="font-semibold text-[#071629] hover:underline">Home</Link>
+          <span className="mx-2">›</span>
+          <Link to="/programs/primary-school" className="font-semibold text-[#071629] hover:underline">Primary School</Link>
+          <span className="mx-2">›</span>
+          Early Years (Y1–Y2)
         </div>
-        <h1 style={{ fontSize: 'clamp(2.4rem, 5vw, 3.8rem)', fontWeight: 900, lineHeight: 1.1, letterSpacing: '-2px', color: c.navy, marginBottom: 18, fontFamily: "'Merriweather', Georgia, serif" }}>
-          Build the <em style={{ fontStyle: 'normal', color: c.gold }}>Foundations</em><br />That Last a Lifetime
-        </h1>
-        <p style={{ fontSize: '1.1rem', color: c.muted, maxWidth: 580, margin: '0 auto 38px', lineHeight: 1.78 }}>
-          The early years are the single most important window for developing <strong style={{ color: c.navy }}>reading, writing, and number sense</strong>. Get it right now, and everything that follows becomes so much easier.
-        </p>
-        <div style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap' }}>
-          <a href="/#contact" style={{ background: c.navy, color: '#fff', border: 'none', padding: '15px 34px', borderRadius: 12, fontSize: '1rem', fontWeight: 800, cursor: 'pointer', textDecoration: 'none', display: 'inline-block' }}>
-            Book a Free Trial Lesson
-          </a>
-        </div>
-      </div>
-
-      {/* PHOTO STRIP */}
-      <div style={{ padding: '52px 52px 0', maxWidth: 1140, margin: '0 auto' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 0, borderRadius: 24, overflow: 'hidden', border: `2px solid ${c.border}`, boxShadow: '0 8px 32px rgba(10,27,52,0.07)' }} className="ey-photo-grid">
-          <div style={{ overflow: 'hidden', height: 360 }}>
-            <img
-              src="/images/programs/early-years.jpg"
-              alt="DA Tuition early years student learning one-on-one with teacher"
-              style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top' }}
-            />
-          </div>
-          <div style={{ background: c.navy, padding: '48px 44px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-            <div style={{ display: 'inline-block', fontSize: '0.7rem', fontWeight: 800, letterSpacing: '2.5px', textTransform: 'uppercase', color: c.gold, background: 'rgba(212,175,55,0.12)', border: '1px solid rgba(212,175,55,0.3)', padding: '5px 16px', borderRadius: 999, marginBottom: 20, width: 'fit-content' }}>Inside DA Tuition</div>
-            <h2 style={{ fontSize: '1.85rem', fontWeight: 900, color: '#fff', marginBottom: 16, lineHeight: 1.2, letterSpacing: '-0.5px', fontFamily: "'Merriweather', Georgia, serif" }}>Every Child Gets Noticed, Every Session</h2>
-            <p style={{ fontSize: '0.97rem', color: 'rgba(255,255,255,0.75)', lineHeight: 1.75, marginBottom: 0 }}>Our Early Years groups are capped at just 4 students, so your child receives genuine individual attention. Not a seat in a room. Real teaching.</p>
-          </div>
-        </div>
-      </div>
-
-      {/* WHY */}
-      <section style={{ padding: '72px 52px', maxWidth: 1140, margin: '0 auto' }}>
-        <div style={{ textAlign: 'center', marginBottom: 44 }}>
-          <div style={{ display: 'inline-block', fontSize: '0.72rem', fontWeight: 800, letterSpacing: '2.5px', textTransform: 'uppercase', color: c.gold, background: c.goldPale, border: '1px solid #E8E0CC', padding: '5px 16px', borderRadius: 999, marginBottom: 16 }}>Why It Matters</div>
-          <h2 style={{ fontSize: 'clamp(1.9rem, 3.5vw, 2.8rem)', fontWeight: 900, letterSpacing: '-1px', color: c.navy, marginBottom: 14, lineHeight: 1.2, fontFamily: "'Merriweather', Georgia, serif" }}>Why These Years Are So Critical</h2>
-          <p style={{ fontSize: '1.05rem', color: c.muted, maxWidth: 640, margin: '0 auto', lineHeight: 1.7 }}>
-            Children who build <strong style={{ color: c.navy }}>strong literacy and numeracy</strong> in their first three years of school carry that advantage <strong style={{ color: c.navy }}>all the way through to Year 12</strong> and beyond.
-          </p>
-        </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 22 }}>
-          {whyCards.map((card, i) => (
-            <div key={i} style={{ background: cardTones[i % cardTones.length].bg, border: `1px solid rgba(7,22,41,0.1)`, borderRadius: 32, padding: '32px 28px', boxShadow: '0 2px 14px rgba(7,22,41,0.05)', transition: 'all .28s' }}
-              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = 'translateY(-5px)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 14px 36px rgba(7,22,41,0.12)'; }}
-              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = ''; (e.currentTarget as HTMLElement).style.boxShadow = '0 2px 14px rgba(7,22,41,0.05)'; }}
+        <div className="mx-auto flex max-w-7xl gap-1 overflow-x-auto border-t border-[#c9a227]/20">
+          {siblingTabs.map((tab) => (
+            <Link
+              key={tab.label}
+              to={tab.to}
+              className={`whitespace-nowrap px-5 py-3 text-sm font-bold transition ${tab.active ? 'border-b-2 border-[#c9a227] text-[#071629]' : 'border-b-2 border-transparent text-[#61708a] hover:text-[#071629]'}`}
             >
-              <div style={{ width: 44, height: 44, borderRadius: 12, background: c.navy, border: `2px solid ${c.navy}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1rem', fontWeight: 900, color: '#f1df9a', marginBottom: 16 }}>{card.num}</div>
-              <h3 style={{ fontSize: '1.05rem', fontWeight: 800, color: c.navy, marginBottom: 10, fontFamily: "'Merriweather', Georgia, serif" }}>{card.title}</h3>
-              <p style={{ fontSize: '0.9rem', color: c.muted, lineHeight: 1.7 }} dangerouslySetInnerHTML={{ __html: card.desc }} />
-            </div>
+              {tab.label}
+            </Link>
           ))}
         </div>
-      </section>
-
-      {/* PHOTO PAIR */}
-      <div style={{ padding: '0 52px 72px', maxWidth: 1140, margin: '0 auto' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 22 }} className="ey-photo-pair">
-          <div style={{ borderRadius: 20, overflow: 'hidden', height: 280, border: `2px solid ${c.border}`, boxShadow: '0 6px 24px rgba(7,22,41,0.08)' }}>
-            <img
-              src="/images/v3/warm_interaction.jpg"
-              alt="DA Tuition teacher warmly encouraging a young Year 1-2 student during a lesson"
-              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-            />
-          </div>
-          <div style={{ borderRadius: 20, overflow: 'hidden', height: 280, border: `2px solid ${c.border}`, boxShadow: '0 6px 24px rgba(7,22,41,0.08)' }}>
-            <img
-              src="/images/v3/smiling_teacher.jpg"
-              alt="Smiling DA Tuition teacher supporting an early years student in a small group session"
-              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-            />
-          </div>
-        </div>
       </div>
 
-      {/* CURRICULUM TABLE + TESTIMONIAL */}
-      <section style={{ background: c.soft, borderTop: `2px solid ${c.border}`, borderBottom: `2px solid ${c.border}`, padding: '72px 52px' }}>
-        <div style={{ textAlign: 'center', marginBottom: 40 }}>
-          <div style={{ display: 'inline-block', fontSize: '0.72rem', fontWeight: 800, letterSpacing: '2.5px', textTransform: 'uppercase', color: c.gold, background: c.goldPale, border: '1px solid #E8E0CC', padding: '5px 16px', borderRadius: 999, marginBottom: 16 }}>What We Cover</div>
-          <h2 style={{ fontSize: 'clamp(1.9rem, 3.5vw, 2.8rem)', fontWeight: 900, letterSpacing: '-1px', color: c.navy, marginBottom: 14, lineHeight: 1.2, fontFamily: "'Merriweather', Georgia, serif" }}>Year 1–2 Curriculum Focus Areas</h2>
-          <p style={{ fontSize: '1.05rem', color: c.muted, maxWidth: 640, margin: '0 auto', lineHeight: 1.7 }}>
-            Every session is aligned to the <strong style={{ color: c.navy }}>NSW Curriculum</strong> for your child's exact year group, reinforcing and extending what they learn at school.
-          </p>
-        </div>
-        <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr', gap: 36, maxWidth: 1100, margin: '0 auto', alignItems: 'start' }} className="ey-grid-responsive">
-          <div style={{ background: c.white, borderRadius: 20, overflow: 'hidden', boxShadow: '0 4px 20px rgba(10,27,52,0.07)', border: `2px solid ${c.border}` }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.88rem' }}>
-              <thead>
-                <tr style={{ background: c.navy }}>
-                  <th style={{ textAlign: 'left', padding: '14px 18px', color: '#fff', fontWeight: 800 }}>Focus Area</th>
-                  <th style={{ textAlign: 'left', padding: '14px 18px', color: '#fff', fontWeight: 800 }}>What We Build</th>
-                  <th style={{ textAlign: 'left', padding: '14px 18px', color: '#fff', fontWeight: 800 }}>Key Skills</th>
-                </tr>
-              </thead>
-              <tbody>
-                {curriculumRows.map((row, i) => (
-                  <tr key={i} style={{ background: i % 2 === 0 ? c.white : c.soft }}>
-                    <td style={{ padding: '13px 18px', color: c.navy, fontWeight: 700, borderBottom: `1px solid ${c.border}` }}>
-                      {row.area}
-                      {row.badge && <span style={{ marginLeft: 8, fontSize: '0.72rem', background: c.goldPale, color: c.navy, padding: '2px 10px', borderRadius: 999, fontWeight: 800 }}>{row.badge}</span>}
-                    </td>
-                    <td style={{ padding: '13px 18px', color: c.muted, borderBottom: `1px solid ${c.border}` }}>{row.what}</td>
-                    <td style={{ padding: '13px 18px', color: c.muted, borderBottom: `1px solid ${c.border}` }}>{row.skills}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+      <main>
+        {/* ── Hero ── */}
+        <section className="relative overflow-hidden bg-[#071629]">
+          <div className="absolute inset-0">
+            <img
+              src="/images/programs/primary-group-smile.jpg"
+              alt="A young primary school student smiling during a DA Tuition Early Years session"
+              className="h-full w-full object-cover opacity-50"
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-[#071629] via-[#071629]/88 to-[#071629]/40" />
+            <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[#fffdf8] to-transparent" />
           </div>
 
-          {/* Testimonial carousel */}
-          <div style={{ background: c.white, border: `2px solid ${c.border}`, borderTop: `5px solid ${c.gold}`, borderRadius: 24, padding: '36px 30px', boxShadow: '0 8px 32px rgba(10,27,52,0.08)' }}>
-            <div style={{ color: c.goldLight, fontSize: '1.2rem', letterSpacing: 4, marginBottom: 14 }}>★★★★★</div>
-            <div style={{ fontSize: '2.8rem', lineHeight: 1, color: c.gold, marginBottom: 6 }}>"</div>
-            <p style={{ fontSize: '0.97rem', color: c.navy, lineHeight: 1.8, fontStyle: 'italic', marginBottom: 24, minHeight: 100 }} dangerouslySetInnerHTML={{ __html: s.quote }} />
-            <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 22 }}>
-              <div style={{ width: 48, height: 48, borderRadius: '50%', background: c.goldPale, border: `2.5px solid ${c.goldLight}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 900, color: c.navy, fontSize: '1.1rem' }}>{s.initial}</div>
-              <div>
-                <div style={{ fontSize: '0.92rem', fontWeight: 800, color: c.navy }}>{s.name}</div>
-                <div style={{ fontSize: '0.78rem', color: c.muted }}>{s.role}</div>
+          <div className="relative z-10 mx-auto px-5 py-20 text-center lg:px-8 lg:py-24">
+            <motion.div initial={{ opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, ease: 'easeOut' }} className="mx-auto max-w-3xl">
+              <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-xs font-black uppercase tracking-[0.14em] text-[#f1df9a] backdrop-blur-md">
+                <Sparkles className="h-4 w-4" />
+                Early Years · Year 1 – Year 2 · Ages 6–8
+              </div>
+              <h1 className="font-serif text-5xl font-medium leading-[0.98] tracking-[-0.04em] text-white sm:text-6xl">
+                Build the <span className="text-[#f1df9a]">Foundations</span><br />That Last a Lifetime
+              </h1>
+              <p className="mx-auto mt-6 max-w-xl text-lg leading-8 text-white/75">
+                The early years are the single most important window for developing <strong className="text-white">reading, writing, and number sense</strong>. Get it right now, and everything that follows becomes so much easier.
+              </p>
+              <div className="mt-8 flex justify-center">
+                <a href="/#contact">
+                  <Button size="lg" className="h-12 rounded-full bg-[#c9a227] px-7 font-black text-[#101521] shadow-xl shadow-[#c9a227]/25 hover:bg-[#e0bd4b]">
+                    Book a Free Trial Lesson
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+                </a>
+              </div>
+            </motion.div>
+          </div>
+        </section>
+
+        {/* ── Photo strip ── */}
+        <section className="-mt-10 px-5 lg:px-8">
+          <div className="relative z-10 mx-auto grid max-w-7xl overflow-hidden rounded-[2rem] border border-[#c9a227]/20 shadow-2xl shadow-[#071629]/10 sm:grid-cols-2">
+            <div className="h-[300px] sm:h-[360px]">
+              <img src="/images/programs/early-years.jpg" alt="DA Tuition early years student learning one-on-one with teacher" className="h-full w-full object-cover object-[center_top]" />
+            </div>
+            <div className="flex flex-col justify-center bg-[#071629] p-9">
+              <div className="mb-5 inline-block w-fit rounded-full border border-[#c9a227]/30 bg-[#c9a227]/10 px-4 py-1.5 text-[11px] font-black uppercase tracking-[0.22em] text-[#c9a227]">Inside DA Tuition</div>
+              <h2 className="mb-4 font-serif text-2xl font-medium leading-tight tracking-[-0.03em] text-white">Every Child Gets Noticed, Every Session</h2>
+              <p className="text-[15px] leading-[1.75] text-white/70">Our Early Years groups are capped at just 4 students, so your child receives genuine individual attention. Not a seat in a room. Real teaching.</p>
+            </div>
+          </div>
+        </section>
+
+        {/* ── Why ── */}
+        <section className="bg-[#fffdf8] px-5 py-20 lg:px-8">
+          <div className="mx-auto max-w-7xl">
+            <div className="mb-12 text-center">
+              <p className="mb-3 text-xs font-black uppercase tracking-[0.16em] text-[#c9a227]">Why It Matters</p>
+              <h2 className="font-serif text-4xl font-medium leading-tight tracking-[-0.045em] text-[#071629] lg:text-5xl">
+                Why These Years Are So Critical
+              </h2>
+              <p className="mx-auto mt-5 max-w-2xl text-base leading-8 text-[#61708a]">
+                Children who build <strong className="text-[#071629]">strong literacy and numeracy</strong> in their first three years of school carry that advantage <strong className="text-[#071629]">all the way through to Year 12</strong> and beyond.
+              </p>
+            </div>
+            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+              {whyCards.map((card, i) => (
+                <motion.div
+                  key={card.num}
+                  initial={{ opacity: 0, y: 24 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: '-60px' }}
+                  transition={{ duration: 0.5, delay: i * 0.08 }}
+                  className="rounded-[2rem] border border-[#071629]/10 bg-white p-7 shadow-lg shadow-[#071629]/5"
+                >
+                  <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl font-serif text-base font-bold text-[#f1df9a]" style={{ background: '#071629', border: `2px solid ${card.color}` }}>
+                    {card.num}
+                  </div>
+                  <h3 className="mb-2 font-serif text-lg font-medium text-[#071629]">{card.title}</h3>
+                  <p className="text-sm leading-7 text-[#61708a]" dangerouslySetInnerHTML={{ __html: card.desc }} />
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── Photo pair ── */}
+        <section className="bg-[#fffdf8] px-5 pb-20 lg:px-8">
+          <div className="mx-auto grid max-w-7xl gap-5 sm:grid-cols-2">
+            <img src="/images/programs/primary-deskwork-1.jpg" alt="DA Tuition teacher warmly encouraging a young Year 1-2 student during a lesson" className="h-64 w-full rounded-[2rem] border border-[#071629]/10 object-cover shadow-lg" />
+            <img src="/images/programs/primary-tutor-warm-1.jpg" alt="Smiling DA Tuition teacher supporting an early years student in a small group session" className="h-64 w-full rounded-[2rem] border border-[#071629]/10 object-cover shadow-lg" />
+          </div>
+        </section>
+
+        {/* ── Curriculum + testimonial carousel ── */}
+        <section className="bg-[#fff6e7] px-5 py-20 lg:px-8">
+          <div className="mx-auto max-w-7xl">
+            <div className="mb-12 text-center">
+              <p className="mb-3 text-xs font-black uppercase tracking-[0.16em] text-[#c9a227]">What We Cover</p>
+              <h2 className="font-serif text-4xl font-medium leading-tight tracking-[-0.045em] text-[#071629] lg:text-5xl">
+                Year 1–2 Curriculum Focus Areas
+              </h2>
+              <p className="mx-auto mt-5 max-w-2xl text-base leading-8 text-[#61708a]">
+                Every session is aligned to the <strong className="text-[#071629]">NSW Curriculum</strong> for your child's exact year group, reinforcing and extending what they learn at school.
+              </p>
+            </div>
+
+            <div className="grid gap-6 lg:grid-cols-[1.4fr_1fr]">
+              <div className="overflow-hidden rounded-[2rem] border border-[#071629]/10 bg-white shadow-lg shadow-[#071629]/5">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="bg-[#071629]">
+                      <th className="px-5 py-4 text-left text-xs font-black uppercase tracking-wide text-white">Focus Area</th>
+                      <th className="px-5 py-4 text-left text-xs font-black uppercase tracking-wide text-white">What We Build</th>
+                      <th className="px-5 py-4 text-left text-xs font-black uppercase tracking-wide text-white">Key Skills</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {curriculumRows.map((row, i) => (
+                      <tr key={row.area} className={i % 2 === 0 ? 'bg-white' : 'bg-[#fff6e7]/60'}>
+                        <td className="border-b border-[#071629]/8 px-5 py-4 font-bold text-[#071629]">
+                          {row.area}
+                          {row.badge && <span className="ml-2 rounded-full bg-[#c9a227]/15 px-2.5 py-0.5 text-[11px] font-black text-[#7a5e10]">{row.badge}</span>}
+                        </td>
+                        <td className="border-b border-[#071629]/8 px-5 py-4 text-[#61708a]">{row.what}</td>
+                        <td className="border-b border-[#071629]/8 px-5 py-4 text-[#61708a]">{row.skills}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              <div className="overflow-hidden rounded-[2rem] border border-[#071629]/10 bg-white shadow-lg shadow-[#071629]/5">
+                <div className="h-[3px] bg-gradient-to-r from-[#c9a227] via-[#f1df9a] to-[#c9a227]" />
+                <div className="p-7">
+                  <div className="mb-3 flex gap-0.5 text-[#c9a227]">
+                    {Array.from({ length: 5 }).map((_, i) => <Sparkles key={i} className="h-3.5 w-3.5 fill-current" />)}
+                  </div>
+                  <p className="mb-5 min-h-[100px] font-serif text-[15px] italic leading-[1.75] text-[#10233f]" dangerouslySetInnerHTML={{ __html: `&ldquo;${s.quote}&rdquo;` }} />
+                  <div className="mb-5 flex items-center gap-3">
+                    <div className="flex h-11 w-11 items-center justify-center rounded-full border-2 border-[#c9a227]/40 bg-[#fff6e7] text-sm font-black text-[#071629]">{s.initial}</div>
+                    <div>
+                      <p className="text-sm font-bold text-[#071629]">{s.name}</p>
+                      <p className="text-xs text-[#61708a]">{s.role}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <button onClick={() => setSlide((i) => (i - 1 + slides.length) % slides.length)} aria-label="Previous testimonial" className="flex h-8 w-8 items-center justify-center rounded-full border border-[#c9a227]/40 bg-[#fff6e7] text-[#071629] transition hover:bg-[#c9a227]/15">
+                      <ChevronLeft className="h-4 w-4" />
+                    </button>
+                    <div className="flex gap-1.5">
+                      {slides.map((_, i) => (
+                        <button key={i} onClick={() => setSlide(i)} aria-label={`Show testimonial ${i + 1}`} className={`h-2 rounded-full transition-all ${i === slide ? 'w-5 bg-[#c9a227]' : 'w-2 bg-[#071629]/15'}`} />
+                      ))}
+                    </div>
+                    <button onClick={() => setSlide((i) => (i + 1) % slides.length)} aria-label="Next testimonial" className="flex h-8 w-8 items-center justify-center rounded-full border border-[#c9a227]/40 bg-[#fff6e7] text-[#071629] transition hover:bg-[#c9a227]/15">
+                      <ChevronRight className="h-4 w-4" />
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <button onClick={() => setSlide(i => (i - 1 + slides.length) % slides.length)} style={{ background: c.goldPale, border: `1.5px solid ${c.goldLight}`, borderRadius: '50%', width: 34, height: 34, cursor: 'pointer', fontSize: '1rem', color: c.navy, fontWeight: 900 }}>‹</button>
-              <div style={{ display: 'flex', gap: 7 }}>
-                {slides.map((_, i) => (
-                  <button key={i} onClick={() => setSlide(i)} style={{ width: i === slide ? 22 : 9, height: 9, borderRadius: 4, border: 'none', background: i === slide ? c.gold : c.border, cursor: 'pointer', padding: 0, transition: 'all .2s' }} />
-                ))}
+          </div>
+        </section>
+
+        {/* ── Approach ── */}
+        <section className="bg-[#071629] px-5 py-24 text-white lg:px-8">
+          <div className="mx-auto max-w-7xl">
+            <div className="mb-14 text-center">
+              <p className="mb-3 text-[10px] font-black uppercase tracking-[0.24em] text-[#c9a227]">Our Approach</p>
+              <h2 className="font-serif text-4xl font-medium leading-tight tracking-[-0.045em] text-white lg:text-5xl">
+                How We Teach Early Years
+              </h2>
+              <p className="mx-auto mt-5 max-w-xl text-base leading-8 text-white/65">Young learners need a specific environment: warm, structured, and full of small wins. Here's exactly how we create it.</p>
+            </div>
+            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+              {approachSteps.map((step, i) => (
+                <motion.div
+                  key={step.num}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: '-40px' }}
+                  transition={{ duration: 0.5, delay: i * 0.08 }}
+                  className="rounded-2xl border border-white/[0.07] bg-white/[0.04] p-6"
+                >
+                  <div className="mb-4 flex h-9 w-9 items-center justify-center rounded-lg bg-[#10233f] text-sm font-black text-[#f1df9a]">{step.num}</div>
+                  <h3 className="mb-2 font-serif text-base font-medium text-white">{step.title}</h3>
+                  <p className="text-[13px] leading-[1.7] text-white/55">{step.desc}</p>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── Fit ── */}
+        <section className="bg-[#fff6e7] px-5 py-20 lg:px-8">
+          <div className="mx-auto max-w-4xl">
+            <div className="mb-10 text-center">
+              <p className="mb-3 text-xs font-black uppercase tracking-[0.16em] text-[#c9a227]">Is This Right for Us?</p>
+              <h2 className="font-serif text-4xl font-medium leading-tight tracking-[-0.045em] text-[#071629] lg:text-5xl">
+                DA Tuition Early Years Is Perfect If…
+              </h2>
+            </div>
+            <div className="space-y-3">
+              {fitPoints.map((pt, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 14 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: '-40px' }}
+                  transition={{ duration: 0.4, delay: i * 0.05 }}
+                  className="flex items-start gap-4 rounded-2xl border border-[#c9a227]/25 bg-white p-5"
+                >
+                  <CheckCircle className="mt-0.5 h-5 w-5 shrink-0 text-[#c9a227]" />
+                  <p className="text-sm leading-7 text-[#61708a]" dangerouslySetInnerHTML={{ __html: pt }} />
+                </motion.div>
+              ))}
+            </div>
+            <div className="mt-10 text-center">
+              <a href="/#contact">
+                <Button size="lg" className="h-12 rounded-full bg-[#071629] px-7 font-black text-white hover:bg-[#0e2a4a]">
+                  Book Our Free Trial Lesson, No Commitment
+                </Button>
+              </a>
+            </div>
+          </div>
+        </section>
+
+        {/* ── Final CTA ── */}
+        <section className="bg-[#071629] px-5 py-20 text-white lg:px-8">
+          <div className="mx-auto grid max-w-6xl gap-8 rounded-[2rem] border border-white/12 bg-white/[0.06] p-8 text-center shadow-2xl md:p-12">
+            <div>
+              <h2 className="font-serif text-4xl font-medium leading-tight tracking-[-0.045em] text-white md:text-5xl">
+                Ready to Give Your Child<br />the Best Start?
+              </h2>
+              <p className="mx-auto mt-5 max-w-xl text-base leading-8 text-white/75">
+                Join hundreds of K–Y2 families across Sydney who've trusted DA Tuition to build the foundations that last a lifetime. Spots are limited, so secure yours today.
+              </p>
+              <div className="mt-8">
+                <a href="/#contact">
+                  <Button size="lg" className="h-12 rounded-full bg-[#c9a227] px-7 font-black text-[#101521] hover:bg-[#e0bd4b]">
+                    Book a Free Trial Lesson
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+                </a>
               </div>
-              <button onClick={() => setSlide(i => (i + 1) % slides.length)} style={{ background: c.goldPale, border: `1.5px solid ${c.goldLight}`, borderRadius: '50%', width: 34, height: 34, cursor: 'pointer', fontSize: '1rem', color: c.navy, fontWeight: 900 }}>›</button>
+              <p className="mt-5 text-xs uppercase tracking-[0.12em] text-white/45">
+                No entrance exam · No lock-in contract · Just results
+              </p>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      </main>
 
-      {/* APPROACH */}
-      <section style={{ padding: '72px 52px', maxWidth: 1140, margin: '0 auto' }}>
-        <div style={{ textAlign: 'center', marginBottom: 44 }}>
-          <div style={{ display: 'inline-block', fontSize: '0.72rem', fontWeight: 800, letterSpacing: '2.5px', textTransform: 'uppercase', color: c.gold, background: c.goldPale, border: '1px solid #E8E0CC', padding: '5px 16px', borderRadius: 999, marginBottom: 16 }}>Our Approach</div>
-          <h2 style={{ fontSize: 'clamp(1.9rem, 3.5vw, 2.8rem)', fontWeight: 900, letterSpacing: '-1px', color: c.navy, marginBottom: 14, lineHeight: 1.2, fontFamily: "'Merriweather', Georgia, serif" }}>How We Teach Early Years</h2>
-          <p style={{ fontSize: '1.05rem', color: c.muted, maxWidth: 600, margin: '0 auto', lineHeight: 1.7 }}>Young learners need a specific environment: warm, structured, and full of small wins. Here's exactly how we create it.</p>
-        </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 22 }}>
-          {approachSteps.map((step, i) => (
-            <div key={i} style={{ background: cardTones[i % cardTones.length].bg, border: `1px solid rgba(7,22,41,0.1)`, borderRadius: 32, padding: '32px 28px', boxShadow: '0 2px 12px rgba(7,22,41,0.05)', transition: 'all .25s' }}
-              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = 'translateY(-4px)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 12px 32px rgba(7,22,41,0.1)'; }}
-              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = ''; (e.currentTarget as HTMLElement).style.boxShadow = '0 2px 12px rgba(7,22,41,0.05)'; }}
-            >
-              <div style={{ width: 42, height: 42, borderRadius: 12, background: c.navy, border: `1.5px solid ${c.navy}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.1rem', fontWeight: 900, color: '#f1df9a', marginBottom: 18 }}>{step.num}</div>
-              <h3 style={{ fontSize: '1.05rem', fontWeight: 800, color: c.navy, marginBottom: 10, fontFamily: "'Merriweather', Georgia, serif" }}>{step.title}</h3>
-              <p style={{ fontSize: '0.9rem', color: c.muted, lineHeight: 1.7 }}>{step.desc}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* FIT */}
-      <div style={{ background: c.goldPale, borderTop: `2px solid ${c.goldLight}`, borderBottom: `2px solid ${c.goldLight}` }}>
-        <div style={{ padding: '72px 52px', maxWidth: 900, margin: '0 auto' }}>
-          <div style={{ textAlign: 'center', marginBottom: 32 }}>
-            <div style={{ display: 'inline-block', fontSize: '0.72rem', fontWeight: 800, letterSpacing: '2.5px', textTransform: 'uppercase', color: c.gold, background: c.white, border: '1px solid #E8E0CC', padding: '5px 16px', borderRadius: 999, marginBottom: 16 }}>Is This Right For Us?</div>
-            <h2 style={{ fontSize: 'clamp(1.9rem, 3.5vw, 2.8rem)', fontWeight: 900, letterSpacing: '-1px', color: c.navy, marginBottom: 14, lineHeight: 1.2, fontFamily: "'Merriweather', Georgia, serif" }}>DA Tuition Early Years Is Perfect If…</h2>
-          </div>
-          <ul style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: 14, marginBottom: 36 }}>
-            {fitPoints.map((pt, i) => (
-              <li key={i} style={{ display: 'flex', gap: 16, alignItems: 'flex-start', background: c.white, border: `1.5px solid ${c.goldLight}`, borderRadius: 14, padding: '18px 22px' }}>
-                <div style={{ width: 28, height: 28, background: c.goldPale, border: `1.5px solid ${c.goldLight}`, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', color: c.gold, fontWeight: 900, fontSize: '0.85rem', flexShrink: 0, marginTop: 1 }}>✓</div>
-                <span style={{ fontSize: '0.95rem', color: c.muted, lineHeight: 1.6 }} dangerouslySetInnerHTML={{ __html: pt }} />
-              </li>
-            ))}
-          </ul>
-          <div style={{ textAlign: 'center' }}>
-            <a href="/#contact" style={{ background: c.navy, color: '#fff', border: 'none', padding: '16px 36px', borderRadius: 12, fontSize: '1rem', fontWeight: 800, cursor: 'pointer', textDecoration: 'none', display: 'inline-block' }}>
-              Book Our Free Trial Lesson, No Commitment
-            </a>
-          </div>
-        </div>
-      </div>
-
-      {/* CTA */}
-      <div style={{ textAlign: 'center', padding: '96px 52px', background: c.navy, borderTop: `4px solid ${c.goldLight}` }}>
-        <h2 style={{ fontSize: 'clamp(2rem, 3.5vw, 3rem)', fontWeight: 900, letterSpacing: '-1.2px', marginBottom: 18, color: c.white, lineHeight: 1.15, fontFamily: "'Merriweather', Georgia, serif" }}>
-          Ready to Give Your Child<br />the Best Start?
-        </h2>
-        <p style={{ fontSize: '1.08rem', color: 'rgba(255,255,255,0.75)', maxWidth: 540, margin: '0 auto 38px', lineHeight: 1.75 }}>
-          Join hundreds of K–Y2 families across Sydney who've trusted DA Tuition to build the foundations that last a lifetime. Spots are limited, so secure yours today.
-        </p>
-        <a href="/#contact" style={{ background: c.goldLight, color: c.navy, border: 'none', padding: '17px 38px', borderRadius: 14, fontSize: '1rem', fontWeight: 900, cursor: 'pointer', textDecoration: 'none', display: 'inline-block' }}>
-          Book a Free Trial Lesson →
-        </a>
-        <div style={{ marginTop: 18, fontSize: '0.82rem', color: 'rgba(255,255,255,0.45)' }}>
-          No entrance exam &nbsp;·&nbsp; No lock-in contract &nbsp;·&nbsp; Just results
-        </div>
-      </div>
-
-      <style>{`@media(max-width:768px){.ey-grid-responsive{grid-template-columns:1fr!important;}.ey-photo-grid{grid-template-columns:1fr!important;}.ey-photo-pair{grid-template-columns:1fr!important;}}`}</style>
       <FooterNew />
     </div>
   );

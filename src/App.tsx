@@ -32,6 +32,7 @@ import FAQ from "./pages/FAQ";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import WhyChooseDA from "./pages/WhyChooseDA";
 import PrincipalReflections from "./pages/PrincipalReflections";
+import PrincipalVoiceBook from "./pages/PrincipalVoiceBook";
 import Subjects from "./pages/Subjects";
 // Program pages
 import PrimarySchool from "./pages/programs/PrimarySchool";
@@ -61,12 +62,12 @@ const AnimatedRoutes = () => {
 
         <Route path="/interview" element={<PageTransition><Interview /></PageTransition>} />
         <Route path="/book-interview" element={<PageTransition><BookInterview /></PageTransition>} />
-        <Route path="/reviews" element={<Navigate to="/success-stories" replace />} />
+        <Route path="/reviews" element={<PageTransition><Reviews /></PageTransition>} />
         <Route path="/find-teacher" element={<PageTransition><FindTeacher /></PageTransition>} />
         <Route path="/teachers" element={<Navigate to="/find-teacher" replace />} />
         <Route path="/articles" element={<PageTransition><Articles /></PageTransition>} />
         <Route path="/articles/:slug" element={<PageTransition><ArticleView /></PageTransition>} />
-        <Route path="/appreciation-advice" element={<Navigate to="/success-stories" replace />} />
+        <Route path="/appreciation-advice" element={<PageTransition><AppreciationAdvice /></PageTransition>} />
         <Route path="/learning-formats" element={<PageTransition><LearningFormats /></PageTransition>} />
         <Route path="/hsc-excellence" element={<PageTransition><HSCExcellence /></PageTransition>} />
         <Route path="/our-teachers" element={<Navigate to="/find-teacher" replace />} />
@@ -82,6 +83,7 @@ const AnimatedRoutes = () => {
         <Route path="/our-approach" element={<PageTransition><WhyChooseDA /></PageTransition>} />
         <Route path="/why-choose-da" element={<PageTransition><WhyChooseDA /></PageTransition>} />
         <Route path="/principal-reflections" element={<PageTransition><PrincipalReflections /></PageTransition>} />
+        <Route path="/principal-voice-book" element={<PageTransition><PrincipalVoiceBook /></PageTransition>} />
         <Route path="/subjects" element={<PageTransition><Subjects /></PageTransition>} />
 
         {/* Program Routes */}
@@ -100,7 +102,7 @@ const AnimatedRoutes = () => {
         <Route path="/subjects/legal-studies" element={<PageTransition><LegalStudies /></PageTransition>} />
 
         {/* Testimonials */}
-        <Route path="/testimonials" element={<Navigate to="/success-stories" replace />} />
+        <Route path="/testimonials" element={<PageTransition><Testimonials /></PageTransition>} />
         <Route path="/testimonials/:slug" element={<PageTransition><TestimonialDetail /></PageTransition>} />
 
         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

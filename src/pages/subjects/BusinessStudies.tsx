@@ -77,7 +77,7 @@ const BusinessStudies = () => {
         {/* Hero Section */}
         <section className="relative rounded-[2.5rem] overflow-hidden shadow-2xl mx-4 sm:mx-0 mt-6 mb-16">
           <div className="absolute inset-0">
-            <img src="/images/v3/warm_interaction.jpg" alt="Business Studies Tutoring" className="w-full h-full object-cover" />
+            <img src="/images/programs/highschool-tutor-laugh.jpg" alt="Business Studies Tutoring" className="w-full h-full object-cover" />
             <div className="absolute inset-0 bg-brand-navy/80 mix-blend-multiply"></div>
             <div className="absolute inset-0 bg-gradient-to-t from-brand-navy/90 via-brand-navy/50 to-brand-navy/30"></div>
           </div>

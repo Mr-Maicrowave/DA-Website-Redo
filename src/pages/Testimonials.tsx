@@ -1,15 +1,51 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import NavigationNew from '@/components/NavigationNew';
 import FooterNew from '@/components/FooterNew';
 import { Link } from 'react-router-dom';
 import SEO from '@/components/SEO';
 import { testimonials, Testimonial } from '@/data/testimonials';
-import { Quote, Star, ChevronDown } from 'lucide-react';
+import { Quote, Star, ChevronDown, Users, Award } from 'lucide-react';
 import { siteStats } from '@/data/site-stats';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import CTASection from '@/components/CTASection';
+
+/* ── Scroll-reveal wrapper: fades/slides content up the first time it enters view ── */
+function useInView<T extends HTMLElement>(threshold = 0.15) {
+  const ref = useRef<T | null>(null);
+  const [inView, setInView] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        setInView(true);
+        observer.disconnect();
+      }
+    }, { threshold });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [threshold]);
+  return { ref, inView };
+}
+
+function Reveal({ children, delay = 0, className = '' }: { children: React.ReactNode; delay?: number; className?: string }) {
+  const { ref, inView } = useInView<HTMLDivElement>();
+  return (
+    <div
+      ref={ref}
+      className={className}
+      style={{
+        opacity: inView ? 1 : 0,
+        transform: inView ? 'translateY(0)' : 'translateY(28px)',
+        transition: `opacity 0.7s ease ${delay}ms, transform 0.7s ease ${delay}ms`,
+      }}
+    >
+      {children}
+    </div>
+  );
+}
 
 const principalTestimonials = testimonials.filter(t => t.type === 'principal-message');
 const parentTestimonials = testimonials.filter(t => t.type === 'parent-letter');
@@ -55,9 +91,9 @@ function getLabelBadge(t: Testimonial): string | null {
 function SectionDivider({ label }: { label: string }) {
   return (
     <div className="my-16 flex items-center gap-4">
-      <div className="flex-1 h-px bg-gradient-to-r from-transparent via-stone-200 to-transparent" />
-      <span className="text-xs text-stone-400 font-medium uppercase tracking-widest">{label}</span>
-      <div className="flex-1 h-px bg-gradient-to-r from-transparent via-stone-200 to-transparent" />
+      <div className="h-px flex-1 bg-gradient-to-r from-transparent via-[#071629]/12 to-transparent" />
+      <span className="text-xs font-black uppercase tracking-[0.24em] text-[#071629]/35">{label}</span>
+      <div className="h-px flex-1 bg-gradient-to-r from-transparent via-[#071629]/12 to-transparent" />
     </div>
   );
 }
@@ -66,32 +102,32 @@ function SectionDivider({ label }: { label: string }) {
 function PrincipalCard({ testimonial }: { testimonial: Testimonial }) {
   return (
     <Link to={`/testimonials/${testimonial.slug}`} className="block group">
-      <div className="relative bg-gradient-to-br from-amber-50 via-white to-stone-50 rounded-2xl border border-amber-200/60 overflow-hidden transition-all duration-300 hover:shadow-xl hover:border-amber-300/80">
-        <div className="h-1 bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-300" />
+      <div className="relative overflow-hidden rounded-[1.75rem] border border-[#c9a227]/20 bg-gradient-to-br from-[#fff6e7] via-white to-[#fffdf8] transition-all duration-300 hover:shadow-xl hover:shadow-[#071629]/8 hover:border-[#c9a227]/40">
+        <div className="h-1 bg-gradient-to-r from-[#c9a227] via-[#f1df9a] to-[#c9a227]" />
         <div className="p-8 md:p-10">
-          <div className="flex items-start justify-between mb-6">
+          <div className="mb-6 flex items-start justify-between">
             <div>
-              <span className="uppercase tracking-[0.2em] text-[10px] font-semibold text-amber-600/80">
+              <span className="text-[10px] font-black uppercase tracking-[0.24em] text-[#c9a227]">
                 Principal&rsquo;s Message
               </span>
-              <div className="w-8 h-[2px] bg-amber-400 mt-2" />
+              <div className="mt-2 h-[2px] w-8 bg-[#c9a227]" />
             </div>
-            <span className="text-sm font-semibold text-stone-700 tracking-wide">
+            <span className="text-sm font-bold tracking-wide text-[#071629]/70">
               {testimonial.author}
             </span>
           </div>
-          <p className="text-stone-600 text-sm leading-relaxed mb-6 max-w-3xl">
+          <p className="mb-6 max-w-3xl text-sm leading-relaxed text-[#61708a]">
             {testimonial.subtitle}
           </p>
-          <div className="flex gap-4 items-start mb-6">
-            <Quote className="w-8 h-8 text-amber-400/60 shrink-0 mt-1" />
-            <p className="text-xl md:text-2xl font-semibold text-stone-800 leading-snug italic">
+          <div className="mb-6 flex items-start gap-4">
+            <Quote className="mt-1 h-8 w-8 shrink-0 text-[#c9a227]/50" />
+            <p className="font-serif text-xl font-medium italic leading-snug text-[#10233f] md:text-2xl">
               {getCardQuote(testimonial)}
             </p>
           </div>
-          <span className="inline-flex items-center text-sm font-semibold text-amber-700 group-hover:text-amber-900 transition-colors">
+          <span className="inline-flex items-center text-sm font-bold text-[#c9a227] transition-colors group-hover:text-[#7a5e10]">
             Read full message
-            <span className="ml-2 group-hover:translate-x-1 transition-transform">&rarr;</span>
+            <span className="ml-2 transition-transform group-hover:translate-x-1">&rarr;</span>
           </span>
         </div>
       </div>
@@ -103,28 +139,28 @@ function PrincipalCard({ testimonial }: { testimonial: Testimonial }) {
 function ParentLetterCard({ testimonial }: { testimonial: Testimonial }) {
   return (
     <Link to={`/testimonials/${testimonial.slug}`} className="block group">
-      <div className="relative h-full bg-white rounded-2xl border border-stone-200 overflow-hidden transition-all duration-300 hover:shadow-xl hover:border-stone-300">
-        <div className="h-1.5 bg-brand-navy" />
-        <div className="p-6 md:p-8 flex flex-col h-full">
-          <div className="flex items-start justify-between mb-4">
-            <span className="uppercase tracking-[0.2em] text-[10px] font-semibold text-brand-navy/60">
+      <div className="relative h-full overflow-hidden rounded-[1.75rem] border border-[#071629]/10 bg-white transition-all duration-300 hover:shadow-xl hover:shadow-[#071629]/8 hover:border-[#071629]/20">
+        <div className="h-1.5 bg-[#071629]" />
+        <div className="flex h-full flex-col p-6 md:p-8">
+          <div className="mb-4 flex items-start justify-between">
+            <span className="text-[10px] font-black uppercase tracking-[0.24em] text-[#071629]/50">
               Parent Letter
             </span>
-            <span className="text-sm font-semibold text-stone-700">
+            <span className="text-sm font-bold text-[#071629]/70">
               {testimonial.author}
             </span>
           </div>
-          <p className="text-stone-500 text-xs leading-relaxed mb-5 line-clamp-2">
+          <p className="mb-5 line-clamp-2 text-xs leading-relaxed text-[#61708a]">
             {testimonial.subtitle}
           </p>
-          <div className="bg-brand-navy rounded-xl p-5 mb-5 flex-1">
-            <p className="text-white/90 text-base font-medium italic leading-relaxed">
+          <div className="mb-5 flex-1 rounded-xl bg-[#071629] p-5">
+            <p className="font-serif text-base font-medium italic leading-relaxed text-white/90">
               &ldquo;{getCardQuote(testimonial)}&rdquo;
             </p>
           </div>
-          <span className="inline-flex items-center text-sm font-semibold text-brand-navy/80 group-hover:text-brand-navy transition-colors">
+          <span className="inline-flex items-center text-sm font-bold text-[#071629]/70 transition-colors group-hover:text-[#071629]">
             Read their story
-            <span className="ml-2 group-hover:translate-x-1 transition-transform">&rarr;</span>
+            <span className="ml-2 transition-transform group-hover:translate-x-1">&rarr;</span>
           </span>
         </div>
       </div>
@@ -132,44 +168,44 @@ function ParentLetterCard({ testimonial }: { testimonial: Testimonial }) {
   );
 }
 
-/* ── Featured Student Card: larger, gold-teal accent ── */
+/* ── Featured Student Card: larger, gold-blue accent ── */
 function FeaturedTestimonialCard({ testimonial }: { testimonial: Testimonial }) {
   const badgeText = getLabelBadge(testimonial);
   const quote = testimonial.pullQuotes[0]?.text ?? testimonial.bottomQuote ?? '';
 
   return (
     <Link to={`/testimonials/${testimonial.slug}`} className="block group">
-      <div className="relative h-full bg-gradient-to-br from-amber-50/80 via-white to-stone-50 rounded-2xl border border-amber-200/50 overflow-hidden transition-all duration-300 hover:shadow-xl hover:border-amber-300/70">
-        <div className="h-1.5 bg-gradient-to-r from-amber-400 via-yellow-400 to-teal-500" />
+      <div className="relative h-full overflow-hidden rounded-[1.75rem] border border-[#c9a227]/20 bg-gradient-to-br from-[#fff6e7]/70 via-white to-[#fffdf8] transition-all duration-300 hover:shadow-xl hover:shadow-[#071629]/8 hover:border-[#c9a227]/40">
+        <div className="h-1.5 bg-gradient-to-r from-[#c9a227] via-[#f1df9a] to-[#2563eb]" />
         <div className="p-6 md:p-8 lg:p-10">
-          <div className="flex items-start justify-between mb-4">
+          <div className="mb-4 flex items-start justify-between">
             <div className="flex items-center gap-2">
-              <Star className="w-4 h-4 text-amber-500 fill-amber-500" />
-              <span className="uppercase tracking-[0.15em] text-[10px] font-semibold text-amber-600/80">
+              <Star className="h-4 w-4 fill-[#c9a227] text-[#c9a227]" />
+              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#c9a227]">
                 Featured Story
               </span>
             </div>
             <div className="text-right">
-              <span className="text-base font-bold text-stone-800 block">{testimonial.author}</span>
+              <span className="block text-base font-black text-[#071629]">{testimonial.author}</span>
               {badgeText && (
-                <Badge className="mt-1 bg-teal-50 text-teal-700 border-teal-200/60 text-[10px] font-medium">
+                <Badge className="mt-1 border-[#2563eb]/20 bg-[#2563eb]/10 text-[10px] font-semibold text-[#2563eb]">
                   {badgeText}
                 </Badge>
               )}
             </div>
           </div>
-          <p className="text-stone-500 text-sm leading-relaxed mb-5 max-w-3xl">
+          <p className="mb-5 max-w-3xl text-sm leading-relaxed text-[#61708a]">
             {testimonial.subtitle}
           </p>
-          <div className="flex gap-4 items-start mb-5">
-            <Quote className="w-7 h-7 text-amber-400/50 shrink-0 mt-1" />
-            <p className="text-lg md:text-xl font-semibold text-stone-800 leading-snug italic">
+          <div className="mb-5 flex items-start gap-4">
+            <Quote className="mt-1 h-7 w-7 shrink-0 text-[#c9a227]/45" />
+            <p className="font-serif text-lg font-medium italic leading-snug text-[#10233f] md:text-xl">
               {quote}
             </p>
           </div>
-          <span className="inline-flex items-center text-sm font-semibold text-teal-700 group-hover:text-teal-900 transition-colors">
+          <span className="inline-flex items-center text-sm font-bold text-[#2563eb] transition-colors group-hover:text-[#1d4ed8]">
             Read their full journey
-            <span className="ml-2 group-hover:translate-x-1 transition-transform">&rarr;</span>
+            <span className="ml-2 transition-transform group-hover:translate-x-1">&rarr;</span>
           </span>
         </div>
       </div>
@@ -177,41 +213,41 @@ function FeaturedTestimonialCard({ testimonial }: { testimonial: Testimonial }) 
   );
 }
 
-/* ── Student Review Card: teal/navy accent, clean editorial ── */
+/* ── Student Review Card: navy/blue accent, clean editorial ── */
 function StudentCard({ testimonial }: { testimonial: Testimonial }) {
   const badgeText = getLabelBadge(testimonial);
 
   return (
     <Link to={`/testimonials/${testimonial.slug}`} className="block group">
-      <div className="relative h-full bg-white rounded-xl border border-stone-200/80 overflow-hidden transition-all duration-300 hover:shadow-lg hover:border-stone-300">
-        <div className="h-1 bg-gradient-to-r from-brand-navy to-teal-600" />
-        <div className="p-5 md:p-6 flex flex-col h-full">
-          <div className="flex items-start justify-between mb-3">
-            <span className="uppercase tracking-[0.15em] text-[10px] font-semibold text-teal-600/70">
+      <div className="relative h-full overflow-hidden rounded-2xl border border-[#071629]/8 bg-white transition-all duration-300 hover:shadow-lg hover:shadow-[#071629]/6 hover:border-[#071629]/16">
+        <div className="h-1 bg-gradient-to-r from-[#071629] to-[#2563eb]" />
+        <div className="flex h-full flex-col p-5 md:p-6">
+          <div className="mb-3 flex items-start justify-between">
+            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#2563eb]/70">
               Student Reflection
             </span>
             <div className="text-right">
-              <span className="text-sm font-bold text-stone-800 block">
+              <span className="block text-sm font-bold text-[#071629]">
                 {testimonial.author}
               </span>
               {badgeText && (
-                <Badge className="mt-1 bg-stone-100 text-stone-500 border-stone-200/60 text-[9px] font-medium px-2 py-0">
+                <Badge className="mt-1 border-[#071629]/10 bg-[#071629]/5 px-2 py-0 text-[9px] font-medium text-[#61708a]">
                   {badgeText}
                 </Badge>
               )}
             </div>
           </div>
-          <p className="text-stone-400 text-[11px] leading-relaxed mb-4 line-clamp-2">
+          <p className="mb-4 line-clamp-2 text-[11px] leading-relaxed text-[#61708a]/80">
             {getSubtitleSnippet(testimonial)}
           </p>
-          <div className="border-l-[3px] border-amber-400 pl-4 mb-4 flex-1">
-            <p className="text-stone-700 text-[15px] font-medium italic leading-relaxed">
+          <div className="mb-4 flex-1 border-l-[3px] border-[#c9a227] pl-4">
+            <p className="font-serif text-[15px] font-medium italic leading-relaxed text-[#10233f]">
               &ldquo;{getCardQuote(testimonial)}&rdquo;
             </p>
           </div>
-          <span className="inline-flex items-center text-xs font-semibold text-stone-500 group-hover:text-brand-navy transition-colors">
+          <span className="inline-flex items-center text-xs font-bold text-[#61708a] transition-colors group-hover:text-[#071629]">
             Read full story
-            <span className="ml-1.5 group-hover:translate-x-1 transition-transform">&rarr;</span>
+            <span className="ml-1.5 transition-transform group-hover:translate-x-1">&rarr;</span>
           </span>
         </div>
       </div>
@@ -224,13 +260,13 @@ function SectionHeading({ children, count }: { children: React.ReactNode; count?
   return (
     <div className="mb-10 flex items-end gap-4">
       <div>
-        <h2 className="text-2xl md:text-3xl font-bold text-stone-900">
+        <h2 className="font-serif text-2xl font-medium tracking-[-0.03em] text-[#071629] md:text-3xl">
           {children}
         </h2>
-        <div className="w-12 h-1 bg-gradient-to-r from-amber-400 to-amber-300 mt-3 rounded-full" />
+        <div className="mt-3 h-1 w-12 rounded-full bg-gradient-to-r from-[#c9a227] to-[#f1df9a]" />
       </div>
       {count !== undefined && (
-        <span className="text-sm text-stone-400 font-medium mb-1">{count} stories</span>
+        <span className="mb-1 text-sm font-semibold text-[#61708a]">{count} stories</span>
       )}
     </div>
   );
@@ -242,9 +278,11 @@ function StudentGrid({ students, showAll, onToggle }: { students: Testimonial[];
 
   return (
     <>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {visible.map(t => (
-          <StudentCard key={t.slug} testimonial={t} />
+      <div className="columns-1 gap-6 [column-fill:_balance] md:columns-2 lg:columns-3">
+        {visible.map((t, i) => (
+          <Reveal key={t.slug} delay={(i % 6) * 80} className="mb-6 break-inside-avoid">
+            <StudentCard testimonial={t} />
+          </Reveal>
         ))}
       </div>
       {students.length > INITIAL_VISIBLE && (
@@ -253,14 +291,14 @@ function StudentGrid({ students, showAll, onToggle }: { students: Testimonial[];
             variant="outline"
             size="lg"
             onClick={onToggle}
-            className="border-stone-300 text-stone-600 hover:bg-stone-50 hover:text-brand-navy rounded-xl px-8"
+            className="rounded-full border-[#071629]/20 px-8 text-[#071629]/70 hover:bg-[#fff6e7] hover:text-[#071629]"
           >
             {showAll ? (
               <>Show Fewer Stories</>
             ) : (
               <>
                 Show All {students.length} Stories
-                <ChevronDown className="ml-2 w-4 h-4" />
+                <ChevronDown className="ml-2 h-4 w-4" />
               </>
             )}
           </Button>
@@ -276,12 +314,14 @@ function FeaturedBlock() {
   return (
     <section className="mb-12">
       <div className="mb-6 flex items-center gap-2">
-        <Star className="w-5 h-5 text-amber-500 fill-amber-500" />
-        <h3 className="text-lg font-semibold text-stone-800">Featured Stories</h3>
+        <Star className="h-5 w-5 fill-[#c9a227] text-[#c9a227]" />
+        <h3 className="font-serif text-lg font-medium text-[#071629]">Featured Stories</h3>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {featuredTestimonials.map(t => (
-          <FeaturedTestimonialCard key={t.slug} testimonial={t} />
+      <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+        {featuredTestimonials.map((t, i) => (
+          <Reveal key={t.slug} delay={i * 120}>
+            <FeaturedTestimonialCard testimonial={t} />
+          </Reveal>
         ))}
       </div>
     </section>
@@ -296,161 +336,183 @@ const Testimonials = () => {
       <SEO
         title="Testimonials"
         description="Read letters of gratitude, reflections, and stories from the families and students of DA Tuition. Discover how our care and guidance has made a lasting difference."
-        canonicalUrl="/success-stories"
+        canonicalUrl="/testimonials"
       />
       <NavigationNew />
 
-      <div className="min-h-screen bg-gradient-to-b from-stone-50 via-white to-stone-50">
-        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 mt-[120px]">
+      <div className="min-h-screen bg-[#fffdf8] text-[#172033]">
 
-          {/* ── Hero ── */}
-          <section className="relative rounded-[2.5rem] overflow-hidden shadow-2xl mx-4 sm:mx-0 mt-6 mb-20">
-            <div className="absolute inset-0 bg-brand-navy" />
-            <div className="absolute inset-0 bg-gradient-to-tr from-brand-navy via-blue-900/80 to-amber-900/30" />
+        {/* ── Hero ── */}
+        <section className="relative overflow-hidden bg-[#071629] pt-36 lg:pt-40">
+          <div className="absolute inset-0">
+            <img
+              src="/images/programs/highschool-tutor-1on1-1.jpg"
+              alt="DA Tuition Testimonials"
+              className="h-full w-full object-cover opacity-50"
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-[#071629] via-[#071629]/88 to-[#071629]/40" />
+            <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[#fffdf8] to-transparent" />
+          </div>
 
-            <div className="relative z-10 py-16 lg:py-24 px-8 lg:px-16">
-              {/* Google Trust Badge */}
-              <div className="flex items-center gap-2 mb-6">
-                <div className="flex items-center gap-0.5">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                  ))}
-                </div>
-                <span className="text-sm font-semibold text-yellow-300">{siteStats.googleRating}</span>
-                <span className="text-sm text-white/60">from {siteStats.reviewCount}+ Google reviews</span>
+          <div className="relative z-10 mx-auto max-w-7xl px-5 pb-24 lg:px-8 lg:pb-28">
+            {/* Google Trust Badge */}
+            <div className="mb-6 flex items-center gap-2">
+              <div className="flex items-center gap-0.5">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} className="h-4 w-4 fill-[#f1df9a] text-[#f1df9a]" />
+                ))}
               </div>
-
-              <p className="uppercase tracking-[0.25em] text-[11px] font-medium text-amber-300/80 mb-4">
-                DA Tuition
-              </p>
-              <h1 className="text-3xl sm:text-4xl lg:text-6xl font-extrabold text-white mb-4 leading-tight">
-                Testimonials
-                <span className="block text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-amber-400">
-                  &amp; Reflections
-                </span>
-              </h1>
-              <p className="text-lg text-white/80 max-w-2xl mb-10 leading-relaxed">
-                Letters of gratitude, reflections, and stories from our families and students &mdash; in their own words.
-              </p>
-
-              <div className="flex flex-wrap gap-4 sm:gap-6">
-                <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl px-5 sm:px-6 py-3 sm:py-4 text-center">
-                  <div className="text-xl sm:text-2xl font-extrabold text-yellow-300 mb-1">{testimonials.length}</div>
-                  <div className="text-[9px] sm:text-[10px] text-white/70 font-medium uppercase tracking-widest">Stories Shared</div>
-                </div>
-                <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl px-5 sm:px-6 py-3 sm:py-4 text-center">
-                  <div className="text-xl sm:text-2xl font-extrabold text-yellow-300 mb-1">{studentTestimonials.length}</div>
-                  <div className="text-[9px] sm:text-[10px] text-white/70 font-medium uppercase tracking-widest">Student Reflections</div>
-                </div>
-                <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl px-5 sm:px-6 py-3 sm:py-4 text-center">
-                  <div className="text-xl sm:text-2xl font-extrabold text-yellow-300 mb-1">{siteStats.googleRating}</div>
-                  <div className="text-[9px] sm:text-[10px] text-white/70 font-medium uppercase tracking-widest">Google Rating</div>
-                </div>
-                <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl px-5 sm:px-6 py-3 sm:py-4 text-center">
-                  <div className="text-xl sm:text-2xl font-extrabold text-yellow-300 mb-1">{siteStats.reviewCount}+</div>
-                  <div className="text-[9px] sm:text-[10px] text-white/70 font-medium uppercase tracking-widest">Google Reviews</div>
-                </div>
-              </div>
+              <span className="text-sm font-bold text-[#f1df9a]">{siteStats.googleRating}</span>
+              <span className="text-sm text-white/60">from {siteStats.reviewCount}+ Google reviews</span>
             </div>
-          </section>
 
-          {/* ── Tabbed Testimonials ── */}
-          <Tabs defaultValue="all" className="px-4 sm:px-0">
-            <TabsList className="mb-10 bg-stone-100 p-1 rounded-xl w-full sm:w-auto flex flex-wrap">
-              <TabsTrigger value="all" className="rounded-lg px-4 sm:px-5 py-2.5 text-sm font-medium data-[state=active]:bg-white data-[state=active]:text-brand-navy data-[state=active]:shadow-sm">
-                All ({testimonials.length})
-              </TabsTrigger>
-              <TabsTrigger value="principal" className="rounded-lg px-4 sm:px-5 py-2.5 text-sm font-medium data-[state=active]:bg-white data-[state=active]:text-brand-navy data-[state=active]:shadow-sm">
-                Principal
-              </TabsTrigger>
-              <TabsTrigger value="parents" className="rounded-lg px-4 sm:px-5 py-2.5 text-sm font-medium data-[state=active]:bg-white data-[state=active]:text-brand-navy data-[state=active]:shadow-sm">
-                Parents ({parentTestimonials.length})
-              </TabsTrigger>
-              <TabsTrigger value="students" className="rounded-lg px-4 sm:px-5 py-2.5 text-sm font-medium data-[state=active]:bg-white data-[state=active]:text-brand-navy data-[state=active]:shadow-sm">
-                Students ({studentTestimonials.length})
-              </TabsTrigger>
-            </TabsList>
+            <p className="mb-4 text-[11px] font-black uppercase tracking-[0.25em] text-[#f1df9a]/80">
+              DA Tuition
+            </p>
+            <h1 className="font-serif text-4xl font-medium leading-[1.02] tracking-[-0.04em] text-white sm:text-5xl lg:text-6xl">
+              Testimonials
+              <span className="block bg-gradient-to-r from-[#c9a227] to-[#f1df9a] bg-clip-text text-transparent">
+                &amp; Reflections
+              </span>
+            </h1>
+            <p className="mb-10 mt-4 max-w-2xl text-lg leading-8 text-white/75">
+              Letters of gratitude, reflections, and stories from our families and students &mdash; in their own words.
+            </p>
 
-            {/* ── ALL tab ── */}
-            <TabsContent value="all">
-              <section className="mb-16">
-                <SectionHeading>From the Principal</SectionHeading>
-                {principalTestimonials.map(t => (
-                  <PrincipalCard key={t.slug} testimonial={t} />
-                ))}
-              </section>
-
-              <SectionDivider label="Parent Letters" />
-
-              <section className="mb-16">
-                <SectionHeading count={parentTestimonials.length}>Parent Letters</SectionHeading>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  {parentTestimonials.map(t => (
-                    <ParentLetterCard key={t.slug} testimonial={t} />
-                  ))}
+            <div className="grid grid-cols-2 gap-3 sm:flex sm:flex-wrap sm:gap-4">
+              {[
+                { icon: Quote, value: testimonials.length, label: 'Stories Shared' },
+                { icon: Users, value: studentTestimonials.length, label: 'Student Reflections' },
+                { icon: Star, value: siteStats.googleRating, label: 'Google Rating' },
+                { icon: Award, value: `${siteStats.reviewCount}+`, label: 'Google Reviews' },
+              ].map(({ icon: Icon, value, label }) => (
+                <div
+                  key={label}
+                  className="relative rounded-2xl border border-white/15 px-5 py-4 text-center shadow-[0_8px_24px_rgba(0,0,0,0.25)] transition-all duration-300 hover:-translate-y-1 hover:border-[#c9a227]/40 sm:px-6 sm:py-5"
+                  style={{
+                    background: 'linear-gradient(160deg, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0.03) 100%)',
+                  }}
+                >
+                  <div className="absolute left-1/2 top-0 h-[2px] w-8 -translate-x-1/2 bg-gradient-to-r from-[#c9a227] to-[#f1df9a]" />
+                  <Icon className="mx-auto mb-1.5 h-4 w-4 text-[#f1df9a]/80" />
+                  <div className="mb-1 font-serif text-xl font-medium text-[#f1df9a] sm:text-2xl">
+                    {value}
+                  </div>
+                  <div className="text-[9px] font-medium uppercase tracking-widest text-white/70 sm:text-[10px]">{label}</div>
                 </div>
-              </section>
+              ))}
+            </div>
+          </div>
+        </section>
 
-              <SectionDivider label="Student Reflections" />
+        {/* ── Tabbed Testimonials ── */}
+        <section className="bg-[#fffdf8] px-5 py-20 lg:px-8">
+          <div className="mx-auto max-w-7xl">
+            <Tabs defaultValue="all">
+              <TabsList className="mb-10 flex w-full flex-wrap rounded-xl bg-[#fff6e7] p-1 sm:w-auto">
+                <TabsTrigger value="all" className="rounded-lg px-4 py-2.5 text-sm font-semibold data-[state=active]:bg-white data-[state=active]:text-[#071629] data-[state=active]:shadow-sm sm:px-5">
+                  All ({testimonials.length})
+                </TabsTrigger>
+                <TabsTrigger value="principal" className="rounded-lg px-4 py-2.5 text-sm font-semibold data-[state=active]:bg-white data-[state=active]:text-[#071629] data-[state=active]:shadow-sm sm:px-5">
+                  Principal
+                </TabsTrigger>
+                <TabsTrigger value="parents" className="rounded-lg px-4 py-2.5 text-sm font-semibold data-[state=active]:bg-white data-[state=active]:text-[#071629] data-[state=active]:shadow-sm sm:px-5">
+                  Parents ({parentTestimonials.length})
+                </TabsTrigger>
+                <TabsTrigger value="students" className="rounded-lg px-4 py-2.5 text-sm font-semibold data-[state=active]:bg-white data-[state=active]:text-[#071629] data-[state=active]:shadow-sm sm:px-5">
+                  Students ({studentTestimonials.length})
+                </TabsTrigger>
+              </TabsList>
 
-              <FeaturedBlock />
-
-              <section className="mb-24">
-                <SectionHeading count={regularStudentTestimonials.length}>More Student Reflections</SectionHeading>
-                <StudentGrid
-                  students={regularStudentTestimonials}
-                  showAll={showAllStudents}
-                  onToggle={() => setShowAllStudents(!showAllStudents)}
-                />
-              </section>
-            </TabsContent>
-
-            {/* ── PRINCIPAL tab ── */}
-            <TabsContent value="principal">
-              <section className="mb-24">
-                <SectionHeading>From the Principal</SectionHeading>
-                {principalTestimonials.map(t => (
-                  <PrincipalCard key={t.slug} testimonial={t} />
-                ))}
-              </section>
-            </TabsContent>
-
-            {/* ── PARENTS tab ── */}
-            <TabsContent value="parents">
-              <section className="mb-24">
-                <SectionHeading count={parentTestimonials.length}>Parent Letters</SectionHeading>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  {parentTestimonials.map(t => (
-                    <ParentLetterCard key={t.slug} testimonial={t} />
+              {/* ── ALL tab ── */}
+              <TabsContent value="all">
+                <section className="mb-16">
+                  <SectionHeading>From the Principal</SectionHeading>
+                  {principalTestimonials.map(t => (
+                    <Reveal key={t.slug}>
+                      <PrincipalCard testimonial={t} />
+                    </Reveal>
                   ))}
-                </div>
-              </section>
-            </TabsContent>
+                </section>
 
-            {/* ── STUDENTS tab ── */}
-            <TabsContent value="students">
-              <FeaturedBlock />
+                <SectionDivider label="Parent Letters" />
 
-              <SectionDivider label="All Student Reflections" />
+                <section className="mb-16">
+                  <SectionHeading count={parentTestimonials.length}>Parent Letters</SectionHeading>
+                  <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+                    {parentTestimonials.map((t, i) => (
+                      <Reveal key={t.slug} delay={(i % 4) * 100} className={i % 2 === 1 ? 'md:mt-8' : ''}>
+                        <ParentLetterCard testimonial={t} />
+                      </Reveal>
+                    ))}
+                  </div>
+                </section>
 
-              <section className="mb-24">
-                <SectionHeading count={studentTestimonials.length}>Student Reflections</SectionHeading>
-                <StudentGrid
-                  students={regularStudentTestimonials}
-                  showAll={showAllStudents}
-                  onToggle={() => setShowAllStudents(!showAllStudents)}
-                />
-              </section>
-            </TabsContent>
-          </Tabs>
-        </div>
+                <SectionDivider label="Student Reflections" />
+
+                <FeaturedBlock />
+
+                <section className="mb-24">
+                  <SectionHeading count={regularStudentTestimonials.length}>More Student Reflections</SectionHeading>
+                  <StudentGrid
+                    students={regularStudentTestimonials}
+                    showAll={showAllStudents}
+                    onToggle={() => setShowAllStudents(!showAllStudents)}
+                  />
+                </section>
+              </TabsContent>
+
+              {/* ── PRINCIPAL tab ── */}
+              <TabsContent value="principal">
+                <section className="mb-24">
+                  <SectionHeading>From the Principal</SectionHeading>
+                  {principalTestimonials.map(t => (
+                    <Reveal key={t.slug}>
+                      <PrincipalCard testimonial={t} />
+                    </Reveal>
+                  ))}
+                </section>
+              </TabsContent>
+
+              {/* ── PARENTS tab ── */}
+              <TabsContent value="parents">
+                <section className="mb-24">
+                  <SectionHeading count={parentTestimonials.length}>Parent Letters</SectionHeading>
+                  <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+                    {parentTestimonials.map((t, i) => (
+                      <Reveal key={t.slug} delay={(i % 4) * 100} className={i % 2 === 1 ? 'md:mt-8' : ''}>
+                        <ParentLetterCard testimonial={t} />
+                      </Reveal>
+                    ))}
+                  </div>
+                </section>
+              </TabsContent>
+
+              {/* ── STUDENTS tab ── */}
+              <TabsContent value="students">
+                <FeaturedBlock />
+
+                <SectionDivider label="All Student Reflections" />
+
+                <section className="mb-24">
+                  <SectionHeading count={studentTestimonials.length}>Student Reflections</SectionHeading>
+                  <StudentGrid
+                    students={regularStudentTestimonials}
+                    showAll={showAllStudents}
+                    onToggle={() => setShowAllStudents(!showAllStudents)}
+                  />
+                </section>
+              </TabsContent>
+            </Tabs>
+          </div>
+        </section>
+
+        <CTASection
+          heading="Start Your Child's Success Story"
+          subheading="Join the DA family and experience the difference that care and guidance can make."
+          className="bg-[#071629]"
+        />
       </div>
-
-      <CTASection
-        heading="Start Your Child's Success Story"
-        subheading="Join the DA family and experience the difference that care and guidance can make."
-        className="bg-brand-navy"
-      />
 
       <FooterNew />
     </>

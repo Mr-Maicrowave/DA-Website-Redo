@@ -73,10 +73,10 @@ const HowWereDifferent = () => {
         {/* Visual Proof / Authentic Environment */}
         <StaggerContainer className="mt-16 grid md:grid-cols-2 gap-8">
           <StaggerItem className="rounded-[2rem] overflow-hidden shadow-2xl aspect-video md:aspect-[16/9] border border-brand-navy/5">
-            <img src="/images/v3/modern_classroom.jpg" alt="Modern Learning Environment" className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" />
+            <img src="/images/programs/highschool-classroom-wide-3.jpg" alt="Modern Learning Environment" className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" />
           </StaggerItem>
           <StaggerItem className="rounded-[2rem] overflow-hidden shadow-2xl aspect-video md:aspect-[16/9] border border-brand-navy/5">
-            <img src="/images/v3/colorful_hallway.jpg" alt="Vibrant Learning Spaces" className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" />
+            <img src="/images/programs/primary-group-colorful-2.jpg" alt="Vibrant Learning Spaces" className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" />
           </StaggerItem>
         </StaggerContainer>
       </div>

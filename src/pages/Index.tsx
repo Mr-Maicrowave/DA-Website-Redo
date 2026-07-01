@@ -7,7 +7,7 @@
 import { useRef, useEffect, useState, useCallback } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { BookOpen, GraduationCap, School, Play, X } from 'lucide-react';
-import { motion, AnimatePresence, useInView, useScroll, useTransform, useAnimationControls, useMotionValue, animate as fmAnimate } from 'framer-motion';
+import { motion, AnimatePresence, useInView, useAnimationControls } from 'framer-motion';
 import NavigationNew from '@/components/NavigationNew';
 import FooterNew from '@/components/FooterNew';
 import AwardRecognition from '@/components/AwardRecognition';
@@ -193,264 +193,121 @@ const MarqueeStrip = () => (
 //  HERO
 // ══════════════════════════════════════════════════════════════
 
-// Constellation — fixed positions relative to logo centre (px)
-const HERO_PARTICLES = [
-  { x: -148, y: -88,  r: 1.5, o: 0.32 },
-  { x:  138, y: -112, r: 1.2, o: 0.26 },
-  { x: -168, y:   56, r: 1.0, o: 0.20 },
-  { x:  158, y:   78, r: 1.4, o: 0.28 },
-  { x:  -62, y: -148, r: 1.1, o: 0.24 },
-  { x:   72, y: -136, r: 1.3, o: 0.30 },
-  { x: -188, y:  -18, r: 0.9, o: 0.18 },
-  { x:  178, y:  -28, r: 1.0, o: 0.20 },
-  { x:  -88, y:  132, r: 1.2, o: 0.24 },
-  { x:  102, y:  118, r: 1.1, o: 0.22 },
-  { x:    4, y: -162, r: 1.3, o: 0.28 },
-  { x:  -38, y:  158, r: 0.9, o: 0.18 },
-] as const;
-
-const HERO_LINES = [
-  [4, 10], [5, 10], [0, 6], [1, 7], [2, 8], [3, 9], [6, 2],
-] as const;
-
-// Occasional star glints
-const HERO_GLINTS = [
-  { x: -118, y:  -76, delay: 0.0, dur: 3.6 },
-  { x:  125, y:  -98, delay: 1.4, dur: 4.4 },
-  { x: -162, y:   42, delay: 2.9, dur: 3.9 },
-  { x:  148, y:   62, delay: 0.8, dur: 5.0 },
-  { x:   68, y: -128, delay: 3.6, dur: 3.2 },
-  { x:  -52, y:  150, delay: 1.9, dur: 4.8 },
-] as const;
-
-const HeroSection = () => {
-  // Mouse parallax
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-  const logoX  = useTransform(mouseX, [-1, 1], [-7, 7]);
-  const logoY  = useTransform(mouseY, [-1, 1], [-5, 5]);
-  const glowX  = useTransform(mouseX, [-1, 1], [-18, 18]);
-  const glowY  = useTransform(mouseY, [-1, 1], [-12, 12]);
-
-  const onMouseMove = (e: React.MouseEvent<HTMLElement>) => {
-    const r = e.currentTarget.getBoundingClientRect();
-    mouseX.set((e.clientX - r.left - r.width  / 2) / (r.width  / 2));
-    mouseY.set((e.clientY - r.top  - r.height / 2) / (r.height / 2));
-  };
-  const onMouseLeave = () => {
-    fmAnimate(mouseX, 0, { type: 'spring', stiffness: 55, damping: 18 });
-    fmAnimate(mouseY, 0, { type: 'spring', stiffness: 55, damping: 18 });
-  };
-
-  return (
+const HeroSection = () => (
     <section
-      onMouseMove={onMouseMove}
-      onMouseLeave={onMouseLeave}
+      className="hero-luxury"
       style={{
         minHeight: '100vh', display: 'flex', flexDirection: 'column' as const,
         alignItems: 'center', justifyContent: 'center', textAlign: 'center' as const,
-        padding: '120px 24px 80px', position: 'relative', overflow: 'hidden',
-        background: `radial-gradient(ellipse 55% 48% at 50% 36%, rgba(212,175,55,.10) 0%, transparent 68%),
-                     linear-gradient(180deg, ${C.cream} 0%, ${C.cream2} 55%, #E8DCC8 100%)`,
+        padding: 'clamp(104px, 12vh, 136px) 24px 72px', position: 'relative', overflow: 'hidden',
+        isolation: 'isolate',
+        background: '#f5ead6',
       }}>
-
-      {/* ── Layer 0: wide radial glow (most parallax) ── */}
-      <motion.div style={{
-        position: 'absolute', top: '42%', left: '50%',
-        x: glowX, y: glowY,
-        translateX: '-50%', translateY: '-50%',
-        width: '640px', height: '580px',
-        borderRadius: '50%',
-        background: `radial-gradient(ellipse 68% 68% at 50% 48%,
-          rgba(212,175,55,0.12) 0%,
-          rgba(212,175,55,0.05) 42%,
-          transparent 68%)`,
-        pointerEvents: 'none', zIndex: 0,
-      }} />
-
-      {/* ── Layer 1: constellation ── */}
-      <div style={{
-        position: 'absolute', top: '42%', left: '50%',
-        transform: 'translate(-50%,-50%)',
-        width: 0, height: 0,
-        pointerEvents: 'none', zIndex: 1,
-      }}>
-        <svg width="0" height="0" viewBox="0 0 0 0" style={{ overflow: 'visible' }}>
-          {/* lines */}
-          {HERO_LINES.map(([a, b], i) => {
-            const pa = HERO_PARTICLES[a], pb = HERO_PARTICLES[b];
-            return (
-              <motion.line
-                key={i}
-                x1={pa.x} y1={pa.y} x2={pb.x} y2={pb.y}
-                stroke="rgba(212,175,55,0.12)"
-                strokeWidth="0.7"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 1.8, delay: 1.6 + i * 0.15, ease: 'easeOut' }}
-              />
-            );
-          })}
-          {/* dots */}
-          {HERO_PARTICLES.map((p, i) => (
-            <motion.circle
-              key={i}
-              cx={p.x} cy={p.y} r={p.r}
-              fill={`rgba(212,175,55,${p.o})`}
-              initial={{ opacity: 0, scale: 0 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 1.0, delay: 1.3 + i * 0.07, ease: 'easeOut' }}
-            />
-          ))}
-        </svg>
-      </div>
-
-      {/* ── Layer 2: star glints ── */}
-      {HERO_GLINTS.map((g, i) => (
-        <motion.div
-          key={i}
-          style={{
-            position: 'absolute',
-            top: `calc(42% + ${g.y}px)`, left: `calc(50% + ${g.x}px)`,
-            width: '3px', height: '3px',
-            borderRadius: '50%',
-            background: 'rgba(248,214,100,0.95)',
-            boxShadow: '0 0 5px 2px rgba(212,175,55,0.45)',
-            transform: 'translate(-50%,-50%)',
-            pointerEvents: 'none', zIndex: 2,
-          }}
-          animate={{
-            opacity: [0, 0, 1, 0.55, 0, 0, 0, 0, 0, 0],
-            scale:   [0, 0, 1.3, 0.7, 0, 0, 0, 0, 0, 0],
-          }}
-          transition={{
-            duration: g.dur,
-            delay: g.delay,
-            repeat: Infinity,
-            repeatDelay: g.dur * 2.2,
-            ease: 'easeInOut',
-          }}
-        />
-      ))}
+      <style>{`
+        .hero-luxury::before {
+          content: "";
+          position: absolute;
+          left: 0;
+          right: 0;
+          top: 0;
+          bottom: 0;
+          z-index: 0;
+          pointer-events: none;
+          background-image: url('/images/hero/da-hero-glow-bg-1600.webp');
+          background-size: cover;
+          background-position: center;
+          background-repeat: no-repeat;
+        }
+        .hero-luxury::after {
+          content: none;
+          display: none;
+        }
+        .hero-cta:hover {
+          background: rgba(255,248,229,0.34) !important;
+          border-color: rgba(212,175,55,0.52) !important;
+          box-shadow: 0 0 0 1px rgba(212,175,55,0.10), 0 14px 38px rgba(180,133,28,0.14);
+        }
+      `}</style>
 
       {/* ── Layer 3: DA Crest — the centrepiece ── */}
-      {/* Outer: mouse parallax */}
-      <motion.div style={{
-        x: logoX, y: logoY,
-        marginBottom: 'clamp(32px, 3.8vw, 56px)',
-        position: 'relative', zIndex: 3,
+      <div
+        style={{
+        marginBottom: 'clamp(24px, 3vw, 42px)',
+        position: 'relative', zIndex: 2,
       }}>
-        {/* Inner: slow float */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.90 }}
-          animate={{ opacity: 1, scale: 1, y: [0, -6, 0] }}
-          transition={{
-            opacity: { duration: 1.5, ease: [0.22, 1, 0.36, 1] },
-            scale:   { duration: 1.5, ease: [0.22, 1, 0.36, 1] },
-            y: { duration: 8, repeat: Infinity, ease: 'easeInOut',
-                 repeatType: 'mirror' as const, delay: 1.5 },
-          }}
-          style={{ position: 'relative' }}
-        >
-          {/* Inner halo — close-in glow around crest */}
-          <div style={{
-            position: 'absolute', top: '50%', left: '50%',
-            transform: 'translate(-50%,-50%)',
-            width: '148%', height: '148%',
-            borderRadius: '50%',
-            background: `radial-gradient(ellipse 55% 55% at 50% 50%,
-              rgba(212,175,55,0.20) 0%,
-              rgba(212,175,55,0.08) 46%,
-              transparent 68%)`,
-            pointerEvents: 'none',
-          }} />
-          <img
-            src="/images/da-logo.png"
-            alt="DA Tuition"
-            style={{
-              width: 'clamp(192px, 24vw, 312px)',
-              height: 'auto',
-              display: 'block',
-              margin: '0 auto',
-              position: 'relative',
-            }}
-          />
-        </motion.div>
-      </motion.div>
+        <div style={{ position: 'relative' }}>
+          <div style={{ position: 'relative', width: 'clamp(190px, 22vw, 294px)', margin: '0 auto' }}>
+            <img
+              src="/images/da-logo.png"
+              alt="DA Tuition"
+              style={{
+                width: '100%',
+                height: 'auto',
+                display: 'block',
+                position: 'relative',
+                filter: 'drop-shadow(0 18px 42px rgba(71,45,6,0.12))',
+              }}
+            />
+          </div>
+        </div>
+      </div>
 
       {/* ── Headline — more breathing room below logo ── */}
-      <motion.h1
-        initial={{ opacity: 0, y: 28 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1.0, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
+      <h1
         style={{
           fontFamily: serif, fontWeight: 500,
-          fontSize: 'clamp(2rem, 3.4vw, 3.8rem)',
-          lineHeight: 1.1, letterSpacing: '-.018em',
-          color: C.navy, marginBottom: '40px', maxWidth: '640px',
+          fontSize: 'clamp(2.15rem, 3.8vw, 3.95rem)',
+          lineHeight: 1.06, letterSpacing: '-.018em',
+          color: C.navy, marginBottom: '26px', maxWidth: '760px',
           position: 'relative', zIndex: 3,
+          textShadow: '0 1px 0 rgba(255,255,255,0.42)',
         }}>
         Where Ambition Meets<br />
         <em style={{ fontStyle: 'italic', color: C.gold }}>Academic Excellence</em>
-      </motion.h1>
+      </h1>
 
       {/* ── Tagline ── */}
-      <motion.p
-        initial={{ opacity: 0, y: 14 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, delay: 0.68 }}
+      <p
         style={{
           fontFamily: sans, fontSize: 'clamp(.85rem, 1.4vw, 1rem)',
-          color: C.muted, marginBottom: '44px', letterSpacing: '.04em',
+          color: C.muted, marginBottom: '34px', letterSpacing: '.04em',
           position: 'relative', zIndex: 3,
         }}>
         Trusted by Families. Transforming Futures.
-      </motion.p>
+      </p>
 
       {/* ── CTA ── */}
-      <motion.div
-        initial={{ opacity: 0, y: 18 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, delay: 0.76 }}
+      <div
         style={{
           display: 'flex', gap: '14px', flexWrap: 'wrap', justifyContent: 'center',
           position: 'relative', zIndex: 3,
         }}>
-        <motion.button
-          whileHover={{ scale: 1.03, background: 'rgba(10,27,52,.07)' }}
-          whileTap={{ scale: 0.97 }}
+        <button
+          className="hero-cta"
           onClick={() => document.getElementById('programs')?.scrollIntoView({ behavior: 'smooth' })}
           style={{
             fontFamily: sans, background: 'transparent', color: C.navy,
-            border: `1.5px solid rgba(10,27,52,.30)`,
+            border: `1.5px solid rgba(10,27,52,.28)`,
             padding: '14px 40px', borderRadius: '4px',
             fontSize: '.9rem', fontWeight: 700, cursor: 'pointer',
             letterSpacing: '.04em', textTransform: 'uppercase' as const,
           }}>
           View Programs
-        </motion.button>
-      </motion.div>
+        </button>
+      </div>
 
       {/* ── Scroll indicator — gold line only, no text ── */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.7 }}
+      <div
         style={{
           position: 'absolute', bottom: '28px', left: '50%',
           transform: 'translateX(-50%)',
           display: 'flex', flexDirection: 'column' as const,
           alignItems: 'center', zIndex: 3,
         }}>
-        <motion.div
-          animate={{ y: [0, 9, 0] }}
-          transition={{ repeat: Infinity, duration: 1.8, ease: 'easeInOut' }}
-          style={{ width: '1px', height: '44px', background: `linear-gradient(180deg,${C.gold},transparent)` }}
-        />
-      </motion.div>
+        <div style={{ width: '1px', height: '44px', background: `linear-gradient(180deg,${C.gold},transparent)` }} />
+      </div>
     </section>
-  );
-};
+);
 
 // ══════════════════════════════════════════════════════════════
 //  PHILOSOPHY BACKED BY RESULTS
@@ -458,11 +315,11 @@ const HeroSection = () => {
 // ─────────────────────────────────────────────────────────────────────────────
 //  PHILOSOPHY_STAGES — image replacement guide
 //
-//  Each stage has an `image` path. Current values are temporary placeholders
-//  from the existing site photo library so the layout renders immediately.
+//  Each stage has an `image` path. These are real DA Tuition photography
+//  assets assigned to match each philosophy pillar.
 //
-//  When you have real DA photos, drop them into /public/images/philosophy/
-//  and update ONLY the `image` field for each stage below.
+//  To replace a photo later, drop it into /public/images/philosophy/
+//  and update ONLY the matching `image` field below.
 //
 //  Recommended spec per photo:
 //    Size: 1200 × 800 px  |  Format: JPG  |  Max file size: 250 KB
@@ -477,10 +334,10 @@ const HeroSection = () => {
 //  Drop photos into /public/images/philosophy/ then update the `image` field.
 //  Recommended: 1600 × 1067 px  |  JPG  |  < 300 KB  |  natural, warm light
 //
-//  Stage 1 — ▶ REPLACE: student working alone, quiet focus, warm window light
-//  Stage 2 — ▶ REPLACE: tutor one-on-one with student, attentive, close frame
-//  Stage 3 — ▶ REPLACE: student actively engaged — hand up or mid-explanation
-//  Stage 4 — ▶ REPLACE: warm tutor–student moment, encouraging, candid
+//  Stage 1 — Known: classroom whiteboard teaching
+//  Stage 2 — Belief: female teacher guiding students around the table
+//  Stage 3 — Understanding: male tutor helping two students
+//  Stage 4 — Growth: student studying independently
 // ─────────────────────────────────────────────────────────────────────────────
 const PHILOSOPHY_STAGES = [
   {
@@ -488,28 +345,28 @@ const PHILOSOPHY_STAGES = [
     label: 'Known',
     title: 'Students deserve to be known before they are judged.',
     supporting: 'Every student arrives with a different story. We take the time to understand where they are — because the gap between their starting point and their potential is exactly where real growth lives.',
-    image: '/images/v3/warm_interaction.jpg',
+    image: '/images/philosophy/philosophy-known-whiteboard.webp',
   },
   {
     stage: 2,
     label: 'Belief',
     title: 'Confidence often comes before achievement.',
     supporting: 'We have seen it hundreds of times: the moment a student believes they can, the results follow. Building that belief is not a side effect of our teaching — it is the purpose of it.',
-    image: '/images/v3/classroom_active.jpg',
+    image: '/images/philosophy/philosophy-belief-teacher-table.webp',
   },
   {
     stage: 3,
     label: 'Understanding',
     title: 'Understanding matters more than memorisation.',
     supporting: 'Real mastery is knowing why something works, not just that it does. We teach students to think deeply, so knowledge becomes theirs permanently — not just until the exam.',
-    image: '/images/v3/small_group_tutoring.jpg',
+    image: '/images/philosophy/philosophy-understanding-male-tutor.webp',
   },
   {
     stage: 4,
     label: 'Growth',
     title: 'We strengthen the child behind the result.',
     supporting: 'Marks improve when students feel capable, seen, and guided. Our goal is not to chase grades — it is to build the resilience, curiosity, and self-belief that make sustained excellence possible.',
-    image: '/images/v3/collaborative_learning.jpg',
+    image: '/images/philosophy/philosophy-growth-independent-study.webp',
   },
 ];
 
@@ -627,7 +484,14 @@ const PhilosophyBackedSection = () => {
     startRotation();
     // Move DOM focus to the newly active tab so keyboard users stay oriented
     tabRefs.current[i]?.focus();
-  };;
+  };
+
+  useEffect(() => {
+    PHILOSOPHY_STAGES.forEach(stage => {
+      const img = new Image();
+      img.src = stage.image;
+    });
+  }, []);
 
   useEffect(() => {
     if (!inView) return;
@@ -648,7 +512,27 @@ const PhilosophyBackedSection = () => {
         @media (max-width: 768px) {
           .phi-journey { grid-template-columns: 1fr !important; }
           .phi-img-col { min-height: 300px; aspect-ratio: 16/8; }
+          .phi-stage-img[data-stage="1"] { object-position: center center !important; }
+          .phi-stage-img[data-stage="2"] { object-position: center 35% !important; }
+          .phi-stage-img[data-stage="3"] { object-position: center 30% !important; }
+          .phi-stage-img[data-stage="4"] { object-position: center 25% !important; }
+          .phi-photo-overlay {
+            background: linear-gradient(
+              90deg,
+              rgba(5, 20, 40, 0.12) 0%,
+              rgba(5, 20, 40, 0.18) 55%,
+              rgba(5, 20, 40, 0.25) 100%
+            ) !important;
+          }
+          .phi-photo-edge {
+            background: linear-gradient(to bottom, transparent 70%, rgba(10,27,52,.25) 100%) !important;
+          }
         }
+
+        .phi-stage-img[data-stage="1"] { object-position: center center; }
+        .phi-stage-img[data-stage="2"] { object-position: center 35%; }
+        .phi-stage-img[data-stage="3"] { object-position: center 30%; }
+        .phi-stage-img[data-stage="4"] { object-position: center 25%; }
 
         /* ── Philosophy pillar blocks ── */
 
@@ -768,44 +652,37 @@ const PhilosophyBackedSection = () => {
           {PHILOSOPHY_STAGES.map((stage, i) => (
             <img
               key={stage.stage}
+              className="phi-stage-img"
+              data-stage={stage.stage}
               src={stage.image}
               alt=""
               aria-hidden="true"
-              loading={i === 0 ? 'eager' : 'lazy'}
+              loading="eager"
               decoding="async"
               style={{
                 position: 'absolute', inset: 0,
                 width: '100%', height: '100%',
-                objectFit: 'cover', objectPosition: 'center 30%',
-                filter: 'saturate(0.62) brightness(0.92)',
+                objectFit: 'cover',
+                filter: 'brightness(1.08) contrast(1.04) saturate(1.04)',
                 opacity: i === activeIndex ? 1 : 0,
-                // Ken Burns: active image slowly zooms in over 7s; inactive resets quietly
-                transform: i === activeIndex ? 'scale(1.035)' : 'scale(1)',
+                transform: i === activeIndex ? 'scale(1.04)' : 'scale(1)',
                 transition: reducedMotion
                   ? 'none'
-                  : i === activeIndex
-                    ? 'opacity 1600ms ease-in-out, transform 7000ms ease-out'
-                    : 'opacity 900ms ease-in-out, transform 1200ms ease-in-out',
+                  : 'opacity 600ms ease-in-out, transform 600ms ease-in-out',
               }}
             />
           ))}
 
-          {/* Top vignette */}
-          <div style={{
+          {/* Subtle directional overlay keeps photos visible while blending into navy */}
+          <div className="phi-photo-overlay" style={{
             position: 'absolute', inset: 0, pointerEvents: 'none',
-            background: 'linear-gradient(to bottom, rgba(10,27,52,.32) 0%, transparent 28%)',
-          }} />
-
-          {/* Bottom vignette — grounds the image, prevents it floating */}
-          <div style={{
-            position: 'absolute', inset: 0, pointerEvents: 'none',
-            background: 'linear-gradient(to top, rgba(10,27,52,.50) 0%, transparent 38%)',
+            background: 'linear-gradient(90deg, rgba(5, 20, 40, 0.18) 0%, rgba(5, 20, 40, 0.28) 55%, rgba(5, 20, 40, 0.55) 100%)',
           }} />
 
           {/* Right-edge blend — image dissolves into the content panel */}
-          <div style={{
+          <div className="phi-photo-edge" style={{
             position: 'absolute', inset: 0, pointerEvents: 'none',
-            background: 'linear-gradient(to right, transparent 68%, rgba(10,27,52,.60) 84%, rgba(10,27,52,1) 100%)',
+            background: 'linear-gradient(to right, transparent 74%, rgba(10,27,52,.42) 90%, rgba(10,27,52,1) 100%)',
           }} />
         </div>
 
@@ -1976,7 +1853,7 @@ const PHI_CARDS = [
     title: 'Personal Connection',
     body1: "Unlike large tutoring centres where students can become just another enrolment, our small classes allow us to understand each student's strengths, challenges and goals.",
     body2: 'Students are known by name, supported individually and encouraged to grow at their own pace.',
-    img: '/images/v3/warm_interaction.jpg',
+    img: '/images/programs/primary-tutor-group-1.jpg',
   },
   {
     icon: (
@@ -1988,7 +1865,7 @@ const PHI_CARDS = [
     title: 'Confidence Before Results',
     body1: 'Academic success begins with confidence. We create an environment where students feel comfortable asking questions, making mistakes and embracing challenges.',
     body2: 'By developing resilience and self-belief, students become more engaged learners both inside and outside the classroom.',
-    img: '/images/v3/classroom_active.jpg',
+    img: '/images/v3/colorful_hallway.jpg',
   },
   {
     icon: (
@@ -2000,7 +1877,7 @@ const PHI_CARDS = [
     title: 'Excellence Through Understanding',
     body1: 'We focus on deep understanding rather than memorisation. Through personalised guidance, expert teaching and structured progression, students learn how to think critically and solve problems independently.',
     body2: 'The result is not just better grades — but genuine academic confidence and lifelong capability.',
-    img: '/images/v3/collaborative_learning.jpg',
+    img: '/images/programs/primary-tutor-1on1-1.jpg',
   },
 ];
 
@@ -4562,12 +4439,12 @@ const ReviewsSection = () => {
               {/* Result box */}
               <div style={{
                 background: C.cream2,
-                borderRadius: '8px', padding: '10px 14px', marginBottom: '14px',
+                borderRadius: '8px', padding: '12px 14px', marginBottom: '14px',
                 display: 'flex', alignItems: 'center', gap: '8px',
               }}>
-                <span style={{ fontFamily: sans, fontSize: '11px', color: 'rgba(10,27,52,0.48)', whiteSpace: 'nowrap' }}>{r.result.before}</span>
+                <span style={{ fontFamily: sans, fontSize: '11px', color: 'rgba(10,27,52,0.38)', whiteSpace: 'nowrap' }}>{r.result.before}</span>
                 <span style={{ color: C.gold, fontWeight: 700, fontSize: '14px', flexShrink: 0 }}>→</span>
-                <span style={{ fontFamily: sans, fontSize: '12px', color: C.navy, fontWeight: 700, whiteSpace: 'nowrap' }}>{r.result.after}</span>
+                <span style={{ fontFamily: sans, fontSize: '13px', color: C.navy, fontWeight: 800, whiteSpace: 'nowrap' }}>{r.result.after}</span>
               </div>
 
               {/* Outcomes */}

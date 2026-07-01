@@ -10,7 +10,7 @@ const NavigationNew = () => {
 
   const programsItems = [
     {
-      title: "Primary School (K-6)",
+      title: "Primary School (Year 1-6)",
       href: "/programs/primary-school",
       description: "Building strong foundations in literacy and numeracy"
     },
@@ -62,18 +62,36 @@ const NavigationNew = () => {
     },
     {
       title: "Principal's Reflections",
-      href: "/principal-reflections",
+      href: "/interview",
       description: "Philosophy, values, and vision"
     },
     {
       title: "Learning Formats",
       href: "/learning-formats",
       description: "Small groups and classes explained"
+    }
+  ];
+
+  const successStoriesItems = [
+    {
+      title: "All Success Stories",
+      href: "/success-stories",
+      description: "Browse real transformations across every subject"
     },
     {
-      title: "Principal's Interview",
-      href: "/interview",
-      description: "Our vision and mission"
+      title: "Google Reviews",
+      href: "/reviews",
+      description: "Browse all 450+ five-star reviews from DA families"
+    },
+    {
+      title: "Letters & Reflections",
+      href: "/testimonials",
+      description: "Principal messages, parent letters, and student reflections"
+    },
+    {
+      title: "Appreciation & Advice",
+      href: "/appreciation-advice",
+      description: "Heartfelt notes and study advice from our top achievers"
     }
   ];
 
@@ -189,9 +207,31 @@ const NavigationNew = () => {
                   </HoverCardContent>
                 </HoverCard>
 
-                <Link to="/success-stories" className="px-2 xl:px-3 py-2 text-sm xl:text-base text-brand-midnight/80 hover:text-brand-blue-dark transition-colors whitespace-nowrap">
-                  Success Stories
-                </Link>
+                {/* Success Stories Dropdown */}
+                <HoverCard openDelay={120} closeDelay={180}>
+                  <HoverCardTrigger asChild>
+                    <button type="button" className="px-2 xl:px-3 py-2 text-sm xl:text-base text-brand-midnight/80 hover:text-brand-blue-dark transition-colors inline-flex items-center gap-1 whitespace-nowrap">
+                      Success Stories <ChevronDown className="h-4 w-4" />
+                    </button>
+                  </HoverCardTrigger>
+                  <HoverCardContent align="center" side="bottom" sideOffset={4} className="p-0 w-auto">
+                    <ul className="grid w-[400px] gap-3 p-4">
+                      {successStoriesItems.map((item) => (
+                        <li key={item.href}>
+                          <Link
+                            to={item.href}
+                            className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                          >
+                            <div className="text-sm font-medium leading-none">{item.title}</div>
+                            <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                              {item.description}
+                            </p>
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </HoverCardContent>
+                </HoverCard>
 
                 {/* Resources Dropdown */}
                 <HoverCard openDelay={120} closeDelay={180}>
@@ -318,13 +358,20 @@ const NavigationNew = () => {
                   ))}
                 </div>
 
-                <Link
-                  to="/success-stories"
-                  onClick={() => setIsOpen(false)}
-                  className="block text-brand-midnight/80 hover:text-brand-blue-dark font-medium py-3"
-                >
-                  Success Stories
-                </Link>
+                {/* Mobile Success Stories Section */}
+                <div className="space-y-2">
+                  <div className="font-semibold text-brand-midnight py-3 border-b">Success Stories</div>
+                  {successStoriesItems.map((item) => (
+                    <Link
+                      key={item.href}
+                      to={item.href}
+                      onClick={() => setIsOpen(false)}
+                      className="block pl-4 text-brand-midnight/80 hover:text-brand-blue-dark py-3"
+                    >
+                      {item.title}
+                    </Link>
+                  ))}
+                </div>
 
                 <a
                   href="#contact"
