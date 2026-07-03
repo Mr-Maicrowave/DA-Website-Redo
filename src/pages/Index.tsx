@@ -19,6 +19,7 @@ import StatsSection from '@/components/StatsSection';
 import { siteStats } from '@/data/site-stats';
 import DoorEyecatch from '@/components/DoorEyecatch';
 import { organizationSchema, localBusinessSchema } from '@/lib/seo/schema';
+import IntroVideo from '@/components/intro/IntroVideo';
 
 // â”€â”€â”€ Design tokens â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const C = {
@@ -6141,6 +6142,7 @@ const ClosingCTASection = () => {
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 const Index = () => (
   <div style={{ fontFamily: sans, overflowX: 'clip' }}>
+    <IntroVideo />
     <DoorEyecatch />
     <Confetti />
     <SEO canonicalUrl="/" jsonLd={[organizationSchema(), localBusinessSchema(siteStats.reviewCount)]} />

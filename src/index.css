@@ -225,6 +225,10 @@
     z-index: -1;
   }
 
+  body[data-da-intro-active="true"] .site-sticky-book-button {
+    display: none !important;
+  }
+
   /* Transparent section helper to let page gradients show through */
   .transparent-section>* {
     background-color: transparent !important;
