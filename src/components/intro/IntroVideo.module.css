@@ -20,9 +20,9 @@
   background: #000;
 }
 
-.skipButton {
+.skipButton,
+.soundButton {
   position: absolute;
-  right: clamp(18px, 3vw, 34px);
   bottom: clamp(18px, 3vw, 34px);
   z-index: 2;
   min-height: 44px;
@@ -47,7 +47,16 @@
     transform 180ms ease;
 }
 
-.skipButton:hover {
+.skipButton {
+  right: clamp(18px, 3vw, 34px);
+}
+
+.soundButton {
+  left: clamp(18px, 3vw, 34px);
+}
+
+.skipButton:hover,
+.soundButton:hover {
   border-color: rgba(212, 175, 55, 0.92);
   background: rgba(255, 252, 244, 0.96);
   box-shadow:
@@ -57,7 +66,8 @@
   transform: translateY(-1px);
 }
 
-.skipButton:focus-visible {
+.skipButton:focus-visible,
+.soundButton:focus-visible {
   outline: 2px solid #d4af37;
   outline-offset: 4px;
 }
@@ -90,11 +100,19 @@
 }
 
 @media (max-width: 640px) {
-  .skipButton {
-    right: 16px;
+  .skipButton,
+  .soundButton {
     bottom: 16px;
     min-height: 42px;
     font-size: 0.68rem;
+  }
+
+  .skipButton {
+    right: 16px;
+  }
+
+  .soundButton {
+    left: 16px;
   }
 
   .overlay {

@@ -14,6 +14,7 @@ const IntroVideo = () => {
   const [visible, setVisible] = useState(false);
   const [exiting, setExiting] = useState(false);
   const [videoEnded, setVideoEnded] = useState(false);
+  const [soundBlocked, setSoundBlocked] = useState(false);
 
   useEffect(() => {
     setVisible(isReady && shouldPlay);
@@ -38,6 +39,7 @@ const IntroVideo = () => {
     setVisible(false);
     setExiting(false);
     setVideoEnded(false);
+    setSoundBlocked(false);
     exitingRef.current = false;
   }, [markAsSeen]);
 
@@ -57,11 +59,18 @@ const IntroVideo = () => {
 
     const video = videoRef.current;
     setVideoEnded(false);
+    setSoundBlocked(false);
     video.currentTime = 0;
+    video.muted = false;
+    video.volume = 1;
     const playPromise = video.play();
 
     if (playPromise) {
-      playPromise.catch(() => undefined);
+      playPromise.catch(() => {
+        video.muted = true;
+        setSoundBlocked(true);
+        void video.play();
+      });
     }
   }, [visible]);
 
@@ -86,6 +95,17 @@ const IntroVideo = () => {
     finishIntro();
   };
 
+  const enableSound = () => {
+    const video = videoRef.current;
+
+    if (!video) return;
+
+    video.muted = false;
+    video.volume = 1;
+    setSoundBlocked(false);
+    void video.play();
+  };
+
   return (
     <AnimatePresence>
       {visible && (
@@ -101,7 +121,6 @@ const IntroVideo = () => {
             ref={videoRef}
             className={styles.video}
             src="/intro.mp4"
-            muted
             autoPlay
             playsInline
             preload="auto"
@@ -137,6 +156,12 @@ const IntroVideo = () => {
           {!videoEnded && !exiting && (
             <button type="button" className={styles.skipButton} onClick={skipIntro}>
               Skip Intro
+            </button>
+          )}
+
+          {soundBlocked && !videoEnded && !exiting && (
+            <button type="button" className={styles.soundButton} onClick={enableSound}>
+              Enable Sound
             </button>
           )}
         </motion.div>
