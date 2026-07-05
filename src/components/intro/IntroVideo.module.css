@@ -1,8 +1,8 @@
 .overlay {
   --intro-begin-left: 50%;
-  --intro-begin-top: 82.6%;
-  --intro-begin-width: clamp(184px, 17.4vw, 248px);
-  --intro-begin-height: clamp(48px, 4.9vw, 60px);
+  --intro-begin-top: 82.9%;
+  --intro-begin-width: clamp(220px, 23vw, 330px);
+  --intro-begin-height: clamp(58px, 6vw, 86px);
   --intro-safe-bottom: max(16px, env(safe-area-inset-bottom, 0px));
   --intro-safe-left: max(16px, env(safe-area-inset-left, 0px));
   --intro-safe-right: max(16px, env(safe-area-inset-right, 0px));
@@ -44,9 +44,9 @@
   pointer-events: none;
 }
 
-.skipButton {
+.skipButton,
+.soundButton {
   position: absolute;
-  right: max(clamp(18px, 3vw, 34px), var(--intro-safe-right));
   bottom: max(clamp(18px, 3vw, 34px), var(--intro-safe-bottom));
   z-index: 2;
   min-height: 44px;
@@ -72,7 +72,16 @@
     transform 180ms ease;
 }
 
-.skipButton:hover {
+.skipButton {
+  right: max(clamp(18px, 3vw, 34px), var(--intro-safe-right));
+}
+
+.soundButton {
+  left: max(clamp(18px, 3vw, 34px), var(--intro-safe-left));
+}
+
+.skipButton:hover,
+.soundButton:hover {
   border-color: rgba(212, 175, 55, 0.92);
   background: rgba(255, 252, 244, 0.96);
   box-shadow:
@@ -82,7 +91,8 @@
   transform: translateY(-1px);
 }
 
-.skipButton:focus-visible {
+.skipButton:focus-visible,
+.soundButton:focus-visible {
   outline: 2px solid #d4af37;
   outline-offset: 4px;
 }
@@ -117,32 +127,40 @@
 }
 
 @media (max-width: 640px) {
-  .skipButton {
-    right: var(--intro-safe-right);
+  .skipButton,
+  .soundButton {
     bottom: var(--intro-safe-bottom);
     min-height: 44px;
     font-size: 0.68rem;
     padding: 0 0.95rem;
   }
 
+  .skipButton {
+    right: var(--intro-safe-right);
+  }
+
+  .soundButton {
+    left: var(--intro-safe-left);
+  }
+
   .overlay {
-    --intro-begin-top: 82.8%;
-    --intro-begin-width: clamp(172px, 43vw, 206px);
-    --intro-begin-height: 48px;
+    --intro-begin-top: 82.9%;
+    --intro-begin-width: clamp(210px, 62vw, 292px);
+    --intro-begin-height: clamp(56px, 15vw, 72px);
   }
 }
 
 @media (min-width: 641px) and (max-width: 1180px) {
   .overlay {
-    --intro-begin-top: 82.5%;
-    --intro-begin-width: clamp(194px, 23vw, 248px);
-    --intro-begin-height: clamp(50px, 5vw, 60px);
+    --intro-begin-top: 82.7%;
+    --intro-begin-width: clamp(260px, 31vw, 350px);
+    --intro-begin-height: clamp(64px, 7vw, 88px);
   }
 }
 
 @media (orientation: portrait) and (min-width: 700px) {
   .overlay {
-    --intro-begin-top: 82.2%;
+    --intro-begin-top: 82.5%;
   }
 }
 

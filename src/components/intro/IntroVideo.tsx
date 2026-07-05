@@ -22,6 +22,7 @@ const IntroVideo = () => {
   const [visible, setVisible] = useState(false);
   const [exiting, setExiting] = useState(false);
   const [videoEnded, setVideoEnded] = useState(false);
+  const [soundEnabled, setSoundEnabled] = useState(false);
 
   useEffect(() => {
     setVisible(isReady && shouldPlay);
@@ -69,6 +70,7 @@ const IntroVideo = () => {
     setVisible(false);
     setExiting(false);
     setVideoEnded(false);
+    setSoundEnabled(false);
     exitingRef.current = false;
   }, [markAsSeen]);
 
@@ -99,8 +101,10 @@ const IntroVideo = () => {
     const video = videoRef.current;
 
     setVideoEnded(false);
+    setSoundEnabled(false);
     video.muted = true;
     video.defaultMuted = true;
+    video.volume = 1;
     video.currentTime = 0;
 
     if (prefersReducedMotion) {
@@ -132,6 +136,23 @@ const IntroVideo = () => {
   const beginJourney = () => {
     videoRef.current?.pause();
     finishIntro();
+  };
+
+  const enableSound = () => {
+    const video = videoRef.current;
+
+    if (!video) return;
+
+    video.muted = false;
+    video.defaultMuted = false;
+    video.volume = 1;
+    setSoundEnabled(true);
+
+    const playPromise = video.play();
+
+    if (playPromise) {
+      playPromise.catch(() => undefined);
+    }
   };
 
   return (
@@ -188,6 +209,17 @@ const IntroVideo = () => {
           {!videoEnded && !exiting && (
             <button type="button" className={styles.skipButton} onClick={skipIntro}>
               Skip Intro
+            </button>
+          )}
+
+          {!videoEnded && !exiting && !soundEnabled && (
+            <button
+              type="button"
+              aria-label="Enable intro sound"
+              className={styles.soundButton}
+              onClick={enableSound}
+            >
+              Enable Sound
             </button>
           )}
 
