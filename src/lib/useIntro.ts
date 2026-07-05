@@ -4,10 +4,6 @@ export const INTRO_STORAGE_KEY = 'da-intro-seen-v1';
 
 const hasWindow = () => typeof window !== 'undefined';
 
-const readReducedMotion = () =>
-  hasWindow() &&
-  window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
 export const useIntro = () => {
   const [seen, setSeen] = useState<boolean | null>(null);
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
@@ -47,14 +43,8 @@ export const useIntro = () => {
 
   const shouldPlay = useMemo(() => {
     if (seen === null) return false;
-    return !seen && !prefersReducedMotion && !readReducedMotion();
-  }, [prefersReducedMotion, seen]);
-
-  useEffect(() => {
-    if (seen === false && prefersReducedMotion) {
-      markAsSeen();
-    }
-  }, [markAsSeen, prefersReducedMotion, seen]);
+    return !seen;
+  }, [seen]);
 
   return {
     isReady: seen !== null,

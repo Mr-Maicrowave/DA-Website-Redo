@@ -1,14 +1,26 @@
 .overlay {
   --intro-begin-left: 50%;
-  --intro-begin-top: calc(100% - clamp(110px, 15.8vh, 184px));
+  --intro-begin-top: 82.6%;
   --intro-begin-width: clamp(184px, 17.4vw, 248px);
-  --intro-begin-height: clamp(46px, 4.9vw, 60px);
+  --intro-begin-height: clamp(48px, 4.9vw, 60px);
+  --intro-safe-bottom: max(16px, env(safe-area-inset-bottom, 0px));
+  --intro-safe-left: max(16px, env(safe-area-inset-left, 0px));
+  --intro-safe-right: max(16px, env(safe-area-inset-right, 0px));
 
   position: fixed;
   inset: 0;
   z-index: 100000;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  min-height: 100vh;
+  min-height: 100dvh;
   overflow: hidden;
+  overscroll-behavior: none;
   background: #000;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 .video {
@@ -17,15 +29,28 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center center;
   background: #000;
+  transform: translateZ(0);
+  will-change: opacity;
 }
 
-.skipButton,
-.soundButton {
+.video::-webkit-media-controls,
+.video::-webkit-media-controls-panel,
+.video::-webkit-media-controls-play-button,
+.video::-webkit-media-controls-start-playback-button {
+  display: none !important;
+  opacity: 0 !important;
+  pointer-events: none;
+}
+
+.skipButton {
   position: absolute;
-  bottom: clamp(18px, 3vw, 34px);
+  right: max(clamp(18px, 3vw, 34px), var(--intro-safe-right));
+  bottom: max(clamp(18px, 3vw, 34px), var(--intro-safe-bottom));
   z-index: 2;
   min-height: 44px;
+  min-width: 44px;
   border: 1px solid rgba(10, 27, 52, 0.82);
   border-radius: 999px;
   background: rgba(255, 250, 240, 0.86);
@@ -47,16 +72,7 @@
     transform 180ms ease;
 }
 
-.skipButton {
-  right: clamp(18px, 3vw, 34px);
-}
-
-.soundButton {
-  left: clamp(18px, 3vw, 34px);
-}
-
-.skipButton:hover,
-.soundButton:hover {
+.skipButton:hover {
   border-color: rgba(212, 175, 55, 0.92);
   background: rgba(255, 252, 244, 0.96);
   box-shadow:
@@ -66,8 +82,7 @@
   transform: translateY(-1px);
 }
 
-.skipButton:focus-visible,
-.soundButton:focus-visible {
+.skipButton:focus-visible {
   outline: 2px solid #d4af37;
   outline-offset: 4px;
 }
@@ -79,6 +94,8 @@
   z-index: 2;
   width: var(--intro-begin-width);
   height: var(--intro-begin-height);
+  min-width: 48px;
+  min-height: 48px;
   transform: translate(-50%, -50%);
 }
 
@@ -100,24 +117,45 @@
 }
 
 @media (max-width: 640px) {
-  .skipButton,
-  .soundButton {
-    bottom: 16px;
-    min-height: 42px;
-    font-size: 0.68rem;
-  }
-
   .skipButton {
-    right: 16px;
-  }
-
-  .soundButton {
-    left: 16px;
+    right: var(--intro-safe-right);
+    bottom: var(--intro-safe-bottom);
+    min-height: 44px;
+    font-size: 0.68rem;
+    padding: 0 0.95rem;
   }
 
   .overlay {
-    --intro-begin-top: calc(100% - clamp(96px, 14.5vh, 122px));
-    --intro-begin-width: 188px;
+    --intro-begin-top: 82.8%;
+    --intro-begin-width: clamp(172px, 43vw, 206px);
     --intro-begin-height: 48px;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 1180px) {
+  .overlay {
+    --intro-begin-top: 82.5%;
+    --intro-begin-width: clamp(194px, 23vw, 248px);
+    --intro-begin-height: clamp(50px, 5vw, 60px);
+  }
+}
+
+@media (orientation: portrait) and (min-width: 700px) {
+  .overlay {
+    --intro-begin-top: 82.2%;
+  }
+}
+
+@supports (height: 100svh) {
+  .overlay {
+    height: 100svh;
+    min-height: 100svh;
+  }
+}
+
+@supports (height: 100dvh) {
+  .overlay {
+    height: 100dvh;
+    min-height: 100dvh;
   }
 }

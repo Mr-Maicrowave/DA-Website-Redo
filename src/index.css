@@ -229,6 +229,11 @@
     display: none !important;
   }
 
+  html:has(body[data-da-intro-active="true"]),
+  body[data-da-intro-active="true"] {
+    overscroll-behavior: none;
+  }
+
   /* Transparent section helper to let page gradients show through */
   .transparent-section>* {
     background-color: transparent !important;
