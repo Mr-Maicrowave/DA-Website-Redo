@@ -42,7 +42,7 @@ const LocationPageTemplate = ({ content }: LocationPageTemplateProps) => {
     const otherLocations = locations.filter((l) => l.slug !== content.slug);
 
     return (
-        <div className="min-h-screen bg-white">
+        <div className="min-h-screen bg-brand-ivory">
             <SEO
                 title={content.title}
                 description={content.metaDescription}
@@ -64,7 +64,7 @@ const LocationPageTemplate = ({ content }: LocationPageTemplateProps) => {
 
             <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 mt-[120px]">
                 {/* Hero */}
-                <section className="relative rounded-[2.5rem] overflow-hidden shadow-2xl mx-4 sm:mx-0 mt-6 pb-24 mb-16">
+                <section className="relative rounded-[2rem] overflow-hidden shadow-2xl mx-4 sm:mx-0 mt-6 pb-24 mb-16 border border-brand-gold/20">
                     <div className="absolute inset-0">
                         <img
                             src={content.heroImage}
@@ -77,13 +77,13 @@ const LocationPageTemplate = ({ content }: LocationPageTemplateProps) => {
                     </div>
 
                     <div className="relative z-10 max-w-4xl mx-auto text-center py-12 sm:py-16 lg:py-24 px-6">
-                        <Badge className="mb-6 px-4 py-2 bg-white/20 text-white border-white/30 backdrop-blur-md font-semibold">
+                        <Badge className="mb-6 px-4 py-2 bg-white/15 text-brand-lightGold border-brand-gold/30 backdrop-blur-md font-semibold">
                             {content.heroBadge}
                         </Badge>
 
-                        <h1 className="text-3xl sm:text-4xl lg:text-7xl font-extrabold text-white mb-6 tracking-tight leading-tight drop-shadow-lg">
+                        <h1 className="font-serif text-3xl sm:text-4xl lg:text-7xl font-medium text-white mb-6 tracking-tight leading-tight drop-shadow-lg">
                             {content.heroHeadline}
-                            <span className="block text-2xl lg:text-4xl mt-4 text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-cyan-300">
+                            <span className="block text-2xl lg:text-4xl mt-4 text-brand-lightGold">
                                 {content.heroSubheadline}
                             </span>
                         </h1>
@@ -97,7 +97,7 @@ const LocationPageTemplate = ({ content }: LocationPageTemplateProps) => {
 
             {/* Travel info ribbon */}
             <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mb-8">
-                <div className="bg-blue-50 border border-blue-100 rounded-xl px-6 py-4 text-center">
+                <div className="bg-brand-gold/10 border border-brand-gold/25 rounded-xl px-6 py-4 text-center">
                     <p className="text-brand-navy font-semibold">
                         <Navigation className="inline-block w-4 h-4 mr-2 mb-1" />
                         {content.travelInfo}
@@ -107,13 +107,13 @@ const LocationPageTemplate = ({ content }: LocationPageTemplateProps) => {
 
             {/* NAP card with map (always points to Canley Heights — the actual physical centre) */}
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20 mb-16">
-                <Card className="max-w-4xl mx-auto shadow-xl">
+                <Card className="max-w-4xl mx-auto border-brand-gold/20 bg-white shadow-xl">
                     <CardContent className="p-8">
-                        <h2 className="text-2xl font-bold mb-6 text-center">Visit Our Canley Heights Centre</h2>
+                        <h2 className="font-serif text-2xl font-semibold mb-6 text-center text-brand-navy">Visit Our Canley Heights Centre</h2>
                         <div className="grid md:grid-cols-2 gap-8">
                             <div className="text-left space-y-4">
                                 <div className="flex items-start">
-                                    <MapPin className="w-6 h-6 text-blue-600 mr-3 flex-shrink-0 mt-0.5" />
+                                    <MapPin className="w-6 h-6 text-brand-gold mr-3 flex-shrink-0 mt-0.5" />
                                     <div>
                                         <p className="font-semibold">Address</p>
                                         <p className="text-brand-midnight/80">Level 1/229 Canley Vale Rd</p>
@@ -122,7 +122,7 @@ const LocationPageTemplate = ({ content }: LocationPageTemplateProps) => {
                                 </div>
 
                                 <div className="flex items-start">
-                                    <Clock className="w-6 h-6 text-blue-600 mr-3 flex-shrink-0 mt-0.5" />
+                                    <Clock className="w-6 h-6 text-brand-gold mr-3 flex-shrink-0 mt-0.5" />
                                     <div>
                                         <p className="font-semibold">Opening Hours</p>
                                         <p className="text-brand-midnight/80">Tue-Fri: 5:00pm - 9:00pm</p>
@@ -132,7 +132,7 @@ const LocationPageTemplate = ({ content }: LocationPageTemplateProps) => {
                                 </div>
 
                                 <div className="flex items-start">
-                                    <Phone className="w-6 h-6 text-blue-600 mr-3 flex-shrink-0 mt-0.5" />
+                                    <Phone className="w-6 h-6 text-brand-gold mr-3 flex-shrink-0 mt-0.5" />
                                     <div>
                                         <p className="font-semibold">Contact</p>
                                         <p className="text-brand-midnight/80">0401 940 207</p>
@@ -140,7 +140,7 @@ const LocationPageTemplate = ({ content }: LocationPageTemplateProps) => {
                                 </div>
                             </div>
 
-                            <div className="bg-gray-100 rounded-lg p-0 overflow-hidden h-64 shadow-inner border border-gray-200">
+                            <div className="bg-brand-ivory rounded-lg p-0 overflow-hidden h-64 shadow-inner border border-brand-gold/20">
                                 <iframe
                                     title={`DA Tuition Canley Heights Map — serving ${content.suburb}`}
                                     src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3311.393457591605!2d150.93299447668636!3d-33.882098619623864!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6b129665c58965c5%3A0x1c1c1c1c1c1c1c1c!2s229%20Canley%20Vale%20Rd%2C%20Canley%20Heights%20NSW%202166!5e0!3m2!1sen!2sau!4v1711900000000!5m2!1sen!2sau"
@@ -174,9 +174,9 @@ const LocationPageTemplate = ({ content }: LocationPageTemplateProps) => {
             </div>
 
             {/* Intro — unique per suburb */}
-            <section className="py-12 bg-gray-50">
+            <section className="py-12 bg-brand-ivory">
                 <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <h2 className="text-3xl font-bold mb-6 text-center">{content.introHeading}</h2>
+                    <h2 className="font-serif text-3xl font-semibold mb-6 text-center text-brand-navy">{content.introHeading}</h2>
                     <div className="space-y-4 text-lg text-brand-midnight/80 leading-relaxed">
                         {content.introParagraphs.map((p, i) => (
                             <p key={i}>{p}</p>
@@ -189,14 +189,14 @@ const LocationPageTemplate = ({ content }: LocationPageTemplateProps) => {
             <section className="py-16 bg-white">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="text-center mb-12">
-                        <h2 className="text-4xl font-bold mb-4">Why Families From {content.suburb} Choose DA Tuition</h2>
+                        <h2 className="font-serif text-4xl font-semibold mb-4 text-brand-navy">Why Families From {content.suburb} Choose DA Tuition</h2>
                         <p className="text-xl text-brand-midnight/80">Your trusted local education partner</p>
                     </div>
 
                     <div className="grid lg:grid-cols-3 gap-8">
-                        <Card className="hover:shadow-xl transition-shadow">
+                        <Card className="border-brand-gold/20 hover:shadow-xl transition-shadow">
                             <CardHeader>
-                                <Trophy className="w-12 h-12 text-yellow-500 mb-4" />
+                                <Trophy className="w-12 h-12 text-brand-gold mb-4" />
                                 <CardTitle>Proven Local Results</CardTitle>
                             </CardHeader>
                             <CardContent>
@@ -204,13 +204,13 @@ const LocationPageTemplate = ({ content }: LocationPageTemplateProps) => {
                                     Thousands of local students have achieved their academic goals with us,
                                     including {siteStats.atar95Plus} students with 95+ ATARs and {siteStats.band6Results} Band 6 HSC results.
                                 </p>
-                                <Badge className="bg-green-100 text-green-800">2025 Award Winner</Badge>
+                                <Badge className="bg-brand-gold/15 text-brand-navy">2025 Award Winner</Badge>
                             </CardContent>
                         </Card>
 
-                        <Card className="hover:shadow-xl transition-shadow">
+                        <Card className="border-brand-gold/20 hover:shadow-xl transition-shadow">
                             <CardHeader>
-                                <Users className="w-12 h-12 text-blue-500 mb-4" />
+                                <Users className="w-12 h-12 text-brand-gold mb-4" />
                                 <CardTitle>Community Trusted</CardTitle>
                             </CardHeader>
                             <CardContent>
@@ -226,16 +226,16 @@ const LocationPageTemplate = ({ content }: LocationPageTemplateProps) => {
                             </CardContent>
                         </Card>
 
-                        <Card className="hover:shadow-xl transition-shadow">
+                        <Card className="border-brand-gold/20 hover:shadow-xl transition-shadow">
                             <CardHeader>
-                                <MapPin className="w-12 h-12 text-green-500 mb-4" />
+                                <MapPin className="w-12 h-12 text-brand-gold mb-4" />
                                 <CardTitle>Easy to Reach</CardTitle>
                             </CardHeader>
                             <CardContent>
                                 <p className="text-brand-midnight/80 mb-4">
                                     {content.travelInfo} Free parking and a safe drop-off zone right outside our entrance.
                                 </p>
-                                <Badge className="bg-blue-100 text-blue-800">Free Parking</Badge>
+                                <Badge className="bg-brand-gold/15 text-brand-navy">Free Parking</Badge>
                             </CardContent>
                         </Card>
                     </div>
@@ -243,18 +243,18 @@ const LocationPageTemplate = ({ content }: LocationPageTemplateProps) => {
             </section>
 
             {/* Schools we serve */}
-            <section className="py-16 bg-gray-50">
+            <section className="py-16 bg-brand-ivory">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="text-center mb-12">
-                        <h2 className="text-4xl font-bold mb-4">{content.suburb} Schools We Support</h2>
+                        <h2 className="font-serif text-4xl font-semibold mb-4 text-brand-navy">{content.suburb} Schools We Support</h2>
                         <p className="text-xl text-brand-midnight/80">Helping students from every local school succeed</p>
                     </div>
 
                     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {content.nearbySchools.map((school, index) => (
-                            <Card key={index} className="hover:shadow-lg transition-shadow">
+                            <Card key={index} className="border-brand-gold/20 hover:shadow-lg transition-shadow">
                                 <CardContent className="p-6">
-                                    <School className="w-8 h-8 text-blue-600 mb-3" />
+                                    <School className="w-8 h-8 text-brand-gold mb-3" />
                                     <h3 className="font-semibold mb-2">{school.name}</h3>
                                     <div className="flex items-center justify-between text-sm">
                                         {school.distance && (
@@ -273,7 +273,7 @@ const LocationPageTemplate = ({ content }: LocationPageTemplateProps) => {
             <section className="py-16 bg-white">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="text-center mb-12">
-                        <h2 className="text-4xl font-bold mb-4">Getting Here From {content.suburb}</h2>
+                        <h2 className="font-serif text-4xl font-semibold mb-4 text-brand-navy">Getting Here From {content.suburb}</h2>
                         <p className="text-xl text-brand-midnight/80">Easy access by car, train, bus, or on foot</p>
                     </div>
 
@@ -281,9 +281,9 @@ const LocationPageTemplate = ({ content }: LocationPageTemplateProps) => {
                         {content.transportOptions.map((option, index) => {
                             const Icon = transportIconMap[option.icon];
                             return (
-                                <Card key={index} className="hover:shadow-lg transition-shadow">
+                                <Card key={index} className="border-brand-gold/20 hover:shadow-lg transition-shadow">
                                     <CardContent className="p-6 text-center">
-                                        <Icon className="w-12 h-12 text-blue-600 mx-auto mb-4" />
+                                        <Icon className="w-12 h-12 text-brand-gold mx-auto mb-4" />
                                         <h3 className="font-semibold mb-2">{option.type}</h3>
                                         <p className="text-brand-midnight/80 text-sm">{option.details}</p>
                                     </CardContent>
@@ -296,16 +296,16 @@ const LocationPageTemplate = ({ content }: LocationPageTemplateProps) => {
 
             {/* Success stories */}
             {content.successStories.length > 0 && (
-                <section className="py-16 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+                <section className="py-16 bg-brand-navy text-white">
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                         <div className="text-center mb-12">
-                            <h2 className="text-4xl font-bold mb-4">Real Stories From DA Tuition Students</h2>
+                            <h2 className="font-serif text-4xl font-semibold mb-4">Real Stories From DA Tuition Students</h2>
                             <p className="text-xl opacity-90">Verified testimonials from students we have worked with</p>
                         </div>
 
                         <div className="grid lg:grid-cols-3 gap-8">
                             {content.successStories.map((story, index) => (
-                                <Card key={index} className="bg-white/10 backdrop-blur-sm border-white/20">
+                                <Card key={index} className="bg-white/10 backdrop-blur-sm border-brand-gold/25">
                                     <CardHeader>
                                         <div className="flex items-center justify-between">
                                             <Badge className="bg-white/20 text-white">{story.year}</Badge>
@@ -330,12 +330,12 @@ const LocationPageTemplate = ({ content }: LocationPageTemplateProps) => {
             )}
 
             {/* About */}
-            <section className="py-16 bg-gray-50">
+            <section className="py-16 bg-brand-ivory">
                 <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <Card className="overflow-hidden">
+                    <Card className="overflow-hidden border-brand-gold/20">
                         <CardContent className="p-0">
-                            <div className="bg-gradient-to-r from-blue-500 to-purple-500 text-white p-8">
-                                <h3 className="text-2xl font-bold mb-4">{content.aboutHeading}</h3>
+                            <div className="bg-brand-navy text-white p-8">
+                                <h3 className="font-serif text-2xl font-semibold mb-4">{content.aboutHeading}</h3>
                                 {content.aboutParagraphs.map((p, i) => (
                                     <p key={i} className="text-lg mb-4 last:mb-0">
                                         {p}
@@ -354,7 +354,7 @@ const LocationPageTemplate = ({ content }: LocationPageTemplateProps) => {
                                         'Safe, supervised environment with CCTV and secure entry',
                                     ].map((item, i) => (
                                         <div key={i} className="flex items-start">
-                                            <CheckCircle className="w-5 h-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" />
+                                            <CheckCircle className="w-5 h-5 text-brand-gold mr-3 mt-0.5 flex-shrink-0" />
                                             <span>{item}</span>
                                         </div>
                                     ))}
@@ -369,7 +369,7 @@ const LocationPageTemplate = ({ content }: LocationPageTemplateProps) => {
             <section className="py-16 bg-white">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="text-center mb-12">
-                        <h2 className="text-3xl font-bold mb-4">Other Areas We Serve</h2>
+                        <h2 className="font-serif text-3xl font-semibold mb-4 text-brand-navy">Other Areas We Serve</h2>
                         <p className="text-lg text-brand-midnight/80">
                             We also support families from these nearby suburbs
                         </p>
@@ -378,20 +378,20 @@ const LocationPageTemplate = ({ content }: LocationPageTemplateProps) => {
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 max-w-5xl mx-auto">
                         <Link
                             to="/tutoring-canley-heights"
-                            className="group block bg-gray-50 hover:bg-blue-50 border border-gray-200 hover:border-blue-300 rounded-xl p-4 text-center transition-all"
+                            className="group block bg-brand-ivory hover:bg-brand-gold/10 border border-brand-gold/20 hover:border-brand-gold/40 rounded-xl p-4 text-center transition-all"
                         >
-                            <MapPin className="w-5 h-5 text-blue-600 mx-auto mb-2" />
-                            <p className="font-semibold text-sm group-hover:text-blue-700">Canley Heights</p>
+                            <MapPin className="w-5 h-5 text-brand-gold mx-auto mb-2" />
+                            <p className="font-semibold text-sm group-hover:text-brand-navy">Canley Heights</p>
                             <p className="text-xs text-brand-midnight/60">Main centre</p>
                         </Link>
                         {otherLocations.map((loc) => (
                             <Link
                                 key={loc.slug}
                                 to={loc.path}
-                                className="group block bg-gray-50 hover:bg-blue-50 border border-gray-200 hover:border-blue-300 rounded-xl p-4 text-center transition-all"
+                                className="group block bg-brand-ivory hover:bg-brand-gold/10 border border-brand-gold/20 hover:border-brand-gold/40 rounded-xl p-4 text-center transition-all"
                             >
-                                <MapPin className="w-5 h-5 text-blue-600 mx-auto mb-2" />
-                                <p className="font-semibold text-sm group-hover:text-blue-700">{loc.suburb}</p>
+                                <MapPin className="w-5 h-5 text-brand-gold mx-auto mb-2" />
+                                <p className="font-semibold text-sm group-hover:text-brand-navy">{loc.suburb}</p>
                                 <p className="text-xs text-brand-midnight/60">Service area</p>
                             </Link>
                         ))}
@@ -402,8 +402,8 @@ const LocationPageTemplate = ({ content }: LocationPageTemplateProps) => {
             {/* CTA */}
             <section className="py-16 bg-white">
                 <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                    <MapPin className="w-16 h-16 text-blue-600 mx-auto mb-6" />
-                    <h2 className="text-4xl font-bold mb-4">Ready to Get Started?</h2>
+                    <MapPin className="w-16 h-16 text-brand-gold mx-auto mb-6" />
+                    <h2 className="font-serif text-4xl font-semibold mb-4 text-brand-navy">Ready to Get Started?</h2>
                     <p className="text-xl text-brand-midnight/80 mb-8">
                         Book your interview at our Canley Heights centre and discover why {content.suburb} families
                         have trusted DA Tuition for nearly 20 years.

@@ -194,7 +194,7 @@ function MatchingEngine() {
                     ))}
                   </div>
                 </div>
-                <Link to="/interview">
+                <Link to="/book-interview">
                   <button style={{ padding: '10px 20px', background: C.navy, color: C.white, fontFamily: sans, fontSize: 11, fontWeight: 700, letterSpacing: '0.06em', border: 'none', borderRadius: 2, cursor: 'pointer', whiteSpace: 'nowrap' as const }}>
                     Ask if this fits →
                   </button>
@@ -642,7 +642,7 @@ const LearningFormats = () => {
           <p style={{ fontFamily: sans, fontSize: 15, color: 'rgba(255,255,255,0.48)', marginBottom: 36, lineHeight: 1.75 }}>
             The first step is a conversation. We sit down with you, understand your child, and tell you honestly what we think is right.
           </p>
-          <Link to="/interview">
+          <Link to="/book-interview">
             <button style={{ padding: '14px 36px', background: 'transparent', border: `1.5px solid ${C.gold}`, color: C.gold, fontFamily: sans, fontSize: 12, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase' as const, borderRadius: 2, cursor: 'pointer' }}>
               Book an Interview
             </button>
