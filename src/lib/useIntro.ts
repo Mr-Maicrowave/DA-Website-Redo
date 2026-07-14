@@ -16,14 +16,9 @@ export const useIntro = () => {
     if (!hasWindow()) return;
 
     const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const shouldReplay = new URLSearchParams(window.location.search).get('intro') === 'replay';
-    const storedValue = window.localStorage.getItem(INTRO_STORAGE_KEY);
 
-    if (shouldReplay) {
-      window.localStorage.removeItem(INTRO_STORAGE_KEY);
-    }
-
-    setSeen(shouldReplay ? false : storedValue === 'true');
+    // Intro plays on every page load (no persistence)
+    setSeen(false);
     setPrefersReducedMotion(motionQuery.matches);
 
     const handleMotionChange = (event: MediaQueryListEvent) => {
@@ -38,10 +33,6 @@ export const useIntro = () => {
   }, []);
 
   const markAsSeen = useCallback(() => {
-    if (hasWindow()) {
-      window.localStorage.setItem(INTRO_STORAGE_KEY, 'true');
-    }
-
     setSeen(true);
   }, []);
 
