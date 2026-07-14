@@ -1,0 +1,13 @@
+.git
+.github
+.agents
+.codex
+.claude
+.vercel
+node_modules
+dist
+dist-ssr
+coverage
+DA Photos
+*.log
+.DS_Store
