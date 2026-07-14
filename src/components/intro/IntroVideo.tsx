@@ -7,22 +7,14 @@ const fadeEase: [number, number, number, number] = [0.16, 1, 0.3, 1];
 const fadeOutMs = 800;
 
 const IntroVideo = () => {
-  const { isReady, markAsSeen, prefersReducedMotion, shouldPlay } = useIntro();
+  const { isReady, markAsSeen, shouldPlay } = useIntro();
   const videoRef = useRef<HTMLVideoElement>(null);
   const completeTimerRef = useRef<number>();
   const exitingRef = useRef(false);
-  const scrollLockRef = useRef<{
-    htmlOverflow: string;
-    bodyOverflow: string;
-    bodyPosition: string;
-    bodyTop: string;
-    bodyWidth: string;
-    scrollY: number;
-  }>();
   const [visible, setVisible] = useState(false);
   const [exiting, setExiting] = useState(false);
   const [videoEnded, setVideoEnded] = useState(false);
-  const [soundEnabled, setSoundEnabled] = useState(false);
+  const [soundBlocked, setSoundBlocked] = useState(false);
 
   useEffect(() => {
     setVisible(isReady && shouldPlay);
@@ -31,35 +23,12 @@ const IntroVideo = () => {
   useEffect(() => {
     if (!visible) return;
 
-    const scrollY = window.scrollY;
-    scrollLockRef.current = {
-      htmlOverflow: document.documentElement.style.overflow,
-      bodyOverflow: document.body.style.overflow,
-      bodyPosition: document.body.style.position,
-      bodyTop: document.body.style.top,
-      bodyWidth: document.body.style.width,
-      scrollY,
-    };
-
-    document.documentElement.style.overflow = 'hidden';
+    const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
-    document.body.style.position = 'fixed';
-    document.body.style.top = `-${scrollY}px`;
-    document.body.style.width = '100%';
     document.body.dataset.daIntroActive = 'true';
 
     return () => {
-      const previous = scrollLockRef.current;
-
-      if (previous) {
-        document.documentElement.style.overflow = previous.htmlOverflow;
-        document.body.style.overflow = previous.bodyOverflow;
-        document.body.style.position = previous.bodyPosition;
-        document.body.style.top = previous.bodyTop;
-        document.body.style.width = previous.bodyWidth;
-        window.scrollTo(0, previous.scrollY);
-      }
-
+      document.body.style.overflow = previousOverflow;
       delete document.body.dataset.daIntroActive;
       window.clearTimeout(completeTimerRef.current);
     };
@@ -70,7 +39,7 @@ const IntroVideo = () => {
     setVisible(false);
     setExiting(false);
     setVideoEnded(false);
-    setSoundEnabled(false);
+    setSoundBlocked(false);
     exitingRef.current = false;
   }, [markAsSeen]);
 
@@ -85,52 +54,40 @@ const IntroVideo = () => {
     }, fadeOutMs);
   }, [completeIntro]);
 
-  const showFinalFrame = useCallback(() => {
-    const video = videoRef.current;
-
-    if (video && Number.isFinite(video.duration) && video.duration > 0) {
-      video.currentTime = Math.max(video.duration - 0.05, 0);
-      video.pause();
-    }
-
-    setVideoEnded(true);
-  }, []);
-
   useEffect(() => {
     if (!visible || !videoRef.current) return;
+
     const video = videoRef.current;
-
     setVideoEnded(false);
-    setSoundEnabled(false);
-    video.muted = true;
-    video.defaultMuted = true;
-    video.volume = 1;
+    setSoundBlocked(false);
     video.currentTime = 0;
-
-    if (prefersReducedMotion) {
-      showFinalFrame();
-      return;
-    }
-
+    video.muted = false;
+    video.volume = 1;
     const playPromise = video.play();
 
     if (playPromise) {
-      playPromise.catch(() => undefined);
+      playPromise.catch(() => {
+        video.muted = true;
+        setSoundBlocked(true);
+        void video.play();
+      });
     }
-  }, [prefersReducedMotion, showFinalFrame, visible]);
+  }, [visible]);
 
   const handleVideoEnded = () => {
     setVideoEnded(true);
   };
 
-  const handleVideoLoadedMetadata = () => {
-    if (prefersReducedMotion) {
-      showFinalFrame();
-    }
-  };
-
   const skipIntro = () => {
-    showFinalFrame();
+    const video = videoRef.current;
+
+    if (video) {
+      const finalFrameTime = Number.isFinite(video.duration) ? Math.max(video.duration - 0.05, 0) : video.currentTime;
+      video.currentTime = finalFrameTime;
+      video.pause();
+    }
+
+    handleVideoEnded();
   };
 
   const beginJourney = () => {
@@ -144,15 +101,9 @@ const IntroVideo = () => {
     if (!video) return;
 
     video.muted = false;
-    video.defaultMuted = false;
     video.volume = 1;
-    setSoundEnabled(true);
-
-    const playPromise = video.play();
-
-    if (playPromise) {
-      playPromise.catch(() => undefined);
-    }
+    setSoundBlocked(false);
+    void video.play();
   };
 
   return (
@@ -170,16 +121,12 @@ const IntroVideo = () => {
             ref={videoRef}
             className={styles.video}
             src="/intro.mp4"
-            muted
             autoPlay
             playsInline
             preload="auto"
             controls={false}
-            controlsList="nodownload nofullscreen noremoteplayback"
             disablePictureInPicture
-            disableRemotePlayback
             onEnded={handleVideoEnded}
-            onLoadedMetadata={handleVideoLoadedMetadata}
             onPlay={() => setVideoEnded(false)}
             initial={{ opacity: 0 }}
             animate={{ opacity: exiting ? 0 : 1 }}
@@ -212,17 +159,11 @@ const IntroVideo = () => {
             </button>
           )}
 
-          {!videoEnded && !exiting && !soundEnabled && (
-            <button
-              type="button"
-              aria-label="Enable intro sound"
-              className={styles.soundButton}
-              onClick={enableSound}
-            >
+          {soundBlocked && !videoEnded && !exiting && (
+            <button type="button" className={styles.soundButton} onClick={enableSound}>
               Enable Sound
             </button>
           )}
-
         </motion.div>
       )}
     </AnimatePresence>
