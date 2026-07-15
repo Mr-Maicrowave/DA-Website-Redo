@@ -2,6 +2,7 @@
 
 @import './styles/pastel.css';
 @import './styles/da-colors.css';
+@import './styles/paper.css';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

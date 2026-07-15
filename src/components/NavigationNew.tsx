@@ -88,6 +88,14 @@ const NavigationNew = () => {
 
   const linkClass = "px-2 xl:px-3 py-1.5 text-sm xl:text-[0.9rem] text-brand-midnight hover:text-brand-blue-dark transition-colors whitespace-nowrap";
 
+  /** Gold active-route indicator: fine underline under the current page's link */
+  const activeLink = (href: string, exact = true) => {
+    const isActive = exact ? location.pathname === href : location.pathname.startsWith(href);
+    return `${linkClass} relative ${isActive
+      ? "after:content-[''] after:absolute after:left-2 after:right-2 after:-bottom-0.5 after:h-[2px] after:rounded-full after:bg-brand-gold"
+      : ''}`;
+  };
+
   return (
     <div className="fixed top-0 left-0 right-0 z-[60]">
       <nav
@@ -124,7 +132,7 @@ const NavigationNew = () => {
             {/* Desktop Navigation – centred */}
             <div className="hidden lg:flex items-center flex-1 justify-center">
               <div className="flex gap-0.5 items-center">
-                <Link to="/" className={linkClass}>Home</Link>
+                <Link to="/" className={activeLink('/')}>Home</Link>
 
                 {/* Programs */}
                 <HoverCard openDelay={120} closeDelay={180}>
@@ -198,7 +206,7 @@ const NavigationNew = () => {
                   </HoverCardContent>
                 </HoverCard>
 
-                <Link to="/success-stories" className={linkClass}>Success Stories</Link>
+                <Link to="/success-stories" className={activeLink('/success-stories')}>Success Stories</Link>
 
                 {/* Resources */}
                 <HoverCard openDelay={120} closeDelay={180}>
@@ -254,8 +262,12 @@ const NavigationNew = () => {
             <div className="flex items-center gap-3 shrink-0">
               <Link
                 to="/book-interview"
-                className="hidden lg:inline-flex items-center px-4 py-2 text-sm font-semibold text-white rounded-lg whitespace-nowrap transition-all duration-200 hover:opacity-90 active:scale-95"
-                style={{ background: 'linear-gradient(135deg, #0A1B34 0%, #1a3a6b 100%)' }}
+                className="hidden lg:inline-flex items-center px-4 py-2 text-sm font-semibold text-white rounded-lg whitespace-nowrap transition-all duration-200 hover:opacity-90 active:scale-95 da-shimmer"
+                style={{
+                  background: 'linear-gradient(135deg, #0A1B34 0%, #1a3a6b 100%)',
+                  border: '1px solid rgba(212,175,55,0.55)',
+                  boxShadow: 'inset 0 -2px 0 rgba(212,175,55,0.6), 0 2px 10px rgba(10,27,52,0.18)',
+                }}
               >
                 Book Consultation
               </Link>
@@ -283,7 +295,7 @@ const NavigationNew = () => {
                 </Link>
 
                 <div className="space-y-1">
-                  <div className="font-semibold text-brand-midnight py-2.5 border-b border-brand-gold/10">Programs</div>
+                  <div className="font-bold text-brand-gold py-2.5 border-b border-brand-gold/20 uppercase tracking-[0.15em] text-xs">Programs</div>
                   {programsItems.map((item) => (
                     <Link
                       key={item.href}
@@ -297,7 +309,7 @@ const NavigationNew = () => {
                 </div>
 
                 <div className="space-y-1">
-                  <div className="font-semibold text-brand-midnight py-2.5 border-b border-brand-gold/10">Subjects</div>
+                  <div className="font-bold text-brand-gold py-2.5 border-b border-brand-gold/20 uppercase tracking-[0.15em] text-xs">Subjects</div>
                   {subjectsItems.map((item) => (
                     <Link
                       key={item.href}
@@ -311,7 +323,7 @@ const NavigationNew = () => {
                 </div>
 
                 <div className="space-y-1">
-                  <div className="font-semibold text-brand-midnight py-2.5 border-b border-brand-gold/10">About</div>
+                  <div className="font-bold text-brand-gold py-2.5 border-b border-brand-gold/20 uppercase tracking-[0.15em] text-xs">About</div>
                   {aboutItems.map((item) => (
                     <Link
                       key={item.href}
@@ -333,7 +345,7 @@ const NavigationNew = () => {
                 </Link>
 
                 <div className="space-y-1">
-                  <div className="font-semibold text-brand-midnight py-2.5 border-b border-brand-gold/10">Resources</div>
+                  <div className="font-bold text-brand-gold py-2.5 border-b border-brand-gold/20 uppercase tracking-[0.15em] text-xs">Resources</div>
                   <Link to="/faq" onClick={() => setIsOpen(false)} className="block pl-4 text-brand-midnight/75 hover:text-brand-blue-dark py-2.5">FAQ</Link>
                   <Link to="/tutoring-canley-heights" onClick={() => setIsOpen(false)} className="block pl-4 text-brand-midnight/75 hover:text-brand-blue-dark py-2.5">Our Location</Link>
                   <Link to="/articles" onClick={() => setIsOpen(false)} className="block pl-4 text-brand-midnight/75 hover:text-brand-blue-dark py-2.5">Articles & Guides</Link>
@@ -352,7 +364,12 @@ const NavigationNew = () => {
                     to="/book-interview"
                     onClick={() => setIsOpen(false)}
                     className="flex items-center justify-center w-full px-4 py-3 text-sm font-bold text-white rounded-xl"
-                    style={{ background: 'linear-gradient(135deg, #0A1B34 0%, #1a3a6b 100%)' }}
+                    style={{
+                      background: 'linear-gradient(135deg, #0A1B34 0%, #1a3a6b 100%)',
+                      border: '1px solid rgba(212,175,55,0.55)',
+                      boxShadow: 'inset 0 -2px 0 rgba(212,175,55,0.6)',
+                      minHeight: 44,
+                    }}
                   >
                     Book Consultation
                   </Link>

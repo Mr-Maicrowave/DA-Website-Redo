@@ -20,19 +20,21 @@ import { siteStats } from '@/data/site-stats';
 import { organizationSchema, localBusinessSchema } from '@/lib/seo/schema';
 import IntroVideo from '@/components/intro/IntroVideo';
 
-// ─── Design tokens ────────────────────────────────────────────
+// ─── Design tokens (shared) ───────────────────────────────────
+import { colors, fonts } from '@/lib/theme';
+import ChapterLabel from '@/components/chapter/ChapterLabel';
 const C = {
-  navy:  '#0A1B34',
-  navy2: '#0F2244',
-  gold:  '#D4AF37',
-  goldL: '#F0C86A',
-  cream: '#F7F4EE',
-  cream2:'#EDE5D4',
-  white: '#FAFAF8',
-  muted: 'rgba(10,27,52,0.52)',
+  navy:  colors.navy,
+  navy2: colors.navy2,
+  gold:  colors.gold,
+  goldL: colors.goldL,
+  cream: colors.ivory,
+  cream2: colors.ivory2,
+  white: colors.white,
+  muted: colors.muted,
 };
-const serif = "'Cormorant Garamond', Georgia, serif";
-const sans  = "'DM Sans', 'Inter', sans-serif";
+const serif = fonts.serif;
+const sans  = fonts.sans;
 
 // ─── Animation variants ────────────────────────────────────────
 const fadeUp = {
@@ -194,8 +196,15 @@ const MarqueeStrip = () => (
 //  HERO
 // ══════════════════════════════════════════════════════════════
 
-const HeroSection = () => (
+const HeroSection = () => {
+  const heroRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] });
+  // Book frame softens away as the visitor scrolls into the academy world
+  const frameOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
+
+  return (
     <section
+      ref={heroRef}
       className="hero-luxury"
       style={{
         minHeight: '100vh', display: 'flex', flexDirection: 'column' as const,
@@ -230,6 +239,13 @@ const HeroSection = () => (
         }
       `}</style>
 
+      {/* ── Chapter 01 book frame — navy leather edges + gold corners, fades on scroll ── */}
+      <motion.div style={{ opacity: frameOpacity, position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 4 }} aria-hidden="true">
+        <div className="da-leather-edge hidden md:block" style={{ position: 'absolute', top: 0, bottom: 0, left: 0, width: 12 }} />
+        <div className="da-leather-edge hidden md:block" style={{ position: 'absolute', top: 0, bottom: 0, right: 0, width: 12, transform: 'scaleX(-1)' }} />
+        <div className="da-gold-corners hidden md:block" style={{ position: 'absolute', inset: 12 }} />
+      </motion.div>
+
       {/* ── Layer 3: DA Crest — the centrepiece ── */}
       <div
         style={{
@@ -252,6 +268,11 @@ const HeroSection = () => (
             />
           </div>
         </div>
+      </div>
+
+      {/* ── Chapter marker — the story continues from the Prologue ── */}
+      <div style={{ position: 'relative', zIndex: 3, marginBottom: '18px' }}>
+        <ChapterLabel style={{ textAlign: 'center' }}>Chapter 01 · Welcome</ChapterLabel>
       </div>
 
       {/* ── Headline — more breathing room below logo ── */}
@@ -309,7 +330,8 @@ const HeroSection = () => (
         <div style={{ width: '1px', height: '44px', background: `linear-gradient(180deg,${C.gold},transparent)` }} />
       </div>
     </section>
-);
+  );
+};
 
 // ══════════════════════════════════════════════════════════════
 //  PHILOSOPHY BACKED BY RESULTS
