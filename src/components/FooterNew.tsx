@@ -5,8 +5,7 @@ const FooterNew = () => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="text-gray-300" style={{ background: 'linear-gradient(180deg, #0F2244 0%, #0A1B34 18%)' }}>
-      <div className="da-gold-rule" aria-hidden="true" />
+    <footer className="text-gray-300" style={{ background: '#0A1B34' }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid md:grid-cols-2 lg:grid-cols-6 gap-8">
           {/* Company Info */}
@@ -27,7 +26,7 @@ const FooterNew = () => {
 
           {/* Programs */}
           <div>
-            <h3 className="text-brand-gold font-bold mb-6 uppercase tracking-[0.15em] text-xs">Programs</h3>
+            <h3 className="text-white font-bold mb-6">Programs</h3>
             <ul className="space-y-3 text-sm">
               <li>
                 <Link to="/hsc-excellence" className="hover:text-white transition-colors">
@@ -49,7 +48,7 @@ const FooterNew = () => {
 
           {/* About */}
           <div>
-            <h3 className="text-brand-gold font-bold mb-6 uppercase tracking-[0.15em] text-xs">About DA</h3>
+            <h3 className="text-white font-bold mb-6">About DA</h3>
             <ul className="space-y-3 text-sm">
               <li>
                 <Link to="/our-approach" className="hover:text-white transition-colors">
@@ -76,7 +75,7 @@ const FooterNew = () => {
 
           {/* Locations */}
           <div>
-            <h3 className="text-brand-gold font-bold mb-6 uppercase tracking-[0.15em] text-xs">Locations</h3>
+            <h3 className="text-white font-bold mb-6">Locations</h3>
             <ul className="space-y-3 text-sm">
               <li>
                 <Link to="/tutoring-canley-heights" className="hover:text-white transition-colors">
@@ -113,7 +112,7 @@ const FooterNew = () => {
 
           {/* Success & Resources */}
           <div>
-            <h3 className="text-brand-gold font-bold mb-6 uppercase tracking-[0.15em] text-xs">Resources</h3>
+            <h3 className="text-white font-bold mb-6">Resources</h3>
             <ul className="space-y-3 text-sm">
               <li>
                 <Link to="/success-stories" className="hover:text-white transition-colors">
@@ -145,18 +144,18 @@ const FooterNew = () => {
 
           {/* Contact Info */}
           <div>
-            <h3 className="text-brand-gold font-bold mb-6 uppercase tracking-[0.15em] text-xs">Contact</h3>
+            <h3 className="text-white font-bold mb-6">Contact</h3>
             <div className="space-y-4 text-sm">
               <a 
                 href="tel:0401940207"
                 className="flex items-start hover:text-white transition-colors"
               >
-                <Phone size={18} className="mr-3 mt-0.5 text-brand-gold flex-shrink-0" />
+                <Phone size={18} className="mr-3 mt-0.5 text-brand-blue-light flex-shrink-0" />
                 <span>0401 940 207</span>
               </a>
               
               <div className="flex items-start">
-                <MapPin size={18} className="mr-3 mt-0.5 text-brand-gold flex-shrink-0" />
+                <MapPin size={18} className="mr-3 mt-0.5 text-brand-blue-light flex-shrink-0" />
                 <div>
                   <Link to="/tutoring-canley-heights" className="hover:text-white transition-colors">
                     Level 1/229 Canley Vale Rd<br />
@@ -166,7 +165,7 @@ const FooterNew = () => {
               </div>
 
               <div className="flex items-start">
-                <Clock size={18} className="mr-3 mt-0.5 text-brand-gold flex-shrink-0" />
+                <Clock size={18} className="mr-3 mt-0.5 text-brand-blue-light flex-shrink-0" />
                 <div>
                   <p className="font-semibold mb-1">Business Hours</p>
                   <p>Tue-Fri: 5pm - 9pm</p>
@@ -181,18 +180,18 @@ const FooterNew = () => {
 
         {/* Subject Links */}
         <div className="border-t border-gray-800 mt-12 pt-8">
-          <h4 className="text-brand-gold font-bold mb-4 uppercase tracking-[0.15em] text-xs">Subjects We Teach</h4>
+          <h4 className="text-white font-bold mb-4">Subjects We Teach</h4>
           <div className="flex flex-wrap gap-4 text-sm">
             <Link to="/subjects/mathematics" className="hover:text-white transition-colors">Mathematics</Link>
-            <span className="text-brand-gold/40">◆</span>
+            <span className="text-gray-500">•</span>
             <Link to="/subjects/english" className="hover:text-white transition-colors">English</Link>
-            <span className="text-brand-gold/40">◆</span>
+            <span className="text-gray-500">•</span>
             <Link to="/subjects/science" className="hover:text-white transition-colors">Science</Link>
-            <span className="text-brand-gold/40">◆</span>
+            <span className="text-gray-500">•</span>
             <Link to="/subjects/business-studies" className="hover:text-white transition-colors">Business Studies</Link>
-            <span className="text-brand-gold/40">◆</span>
+            <span className="text-gray-500">•</span>
             <Link to="/subjects/legal-studies" className="hover:text-white transition-colors">Legal Studies</Link>
-            <span className="text-brand-gold/40">◆</span>
+            <span className="text-gray-500">•</span>
             <span className="text-gray-400">Physics • Chemistry • Biology</span>
           </div>
         </div>
