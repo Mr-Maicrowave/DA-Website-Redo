@@ -19,6 +19,7 @@ import StatsSection from '@/components/StatsSection';
 import { siteStats } from '@/data/site-stats';
 import { organizationSchema, localBusinessSchema } from '@/lib/seo/schema';
 import IntroVideo from '@/components/intro/IntroVideo';
+import BookHero from '@/components/home/BookHero';
 
 // ─── Design tokens ────────────────────────────────────────────
 const C = {
@@ -193,123 +194,6 @@ const MarqueeStrip = () => (
 // ══════════════════════════════════════════════════════════════
 //  HERO
 // ══════════════════════════════════════════════════════════════
-
-const HeroSection = () => (
-    <section
-      className="hero-luxury"
-      style={{
-        minHeight: '100vh', display: 'flex', flexDirection: 'column' as const,
-        alignItems: 'center', justifyContent: 'center', textAlign: 'center' as const,
-        padding: 'clamp(104px, 12vh, 136px) 24px 72px', position: 'relative', overflow: 'hidden',
-        isolation: 'isolate',
-        background: '#f5ead6',
-      }}>
-      <style>{`
-        .hero-luxury::before {
-          content: "";
-          position: absolute;
-          left: 0;
-          right: 0;
-          top: 0;
-          bottom: 0;
-          z-index: 0;
-          pointer-events: none;
-          background-image: url('/images/hero/da-hero-glow-bg-1600.webp');
-          background-size: cover;
-          background-position: center;
-          background-repeat: no-repeat;
-        }
-        .hero-luxury::after {
-          content: none;
-          display: none;
-        }
-        .hero-cta:hover {
-          background: rgba(255,248,229,0.34) !important;
-          border-color: rgba(212,175,55,0.52) !important;
-          box-shadow: 0 0 0 1px rgba(212,175,55,0.10), 0 14px 38px rgba(180,133,28,0.14);
-        }
-      `}</style>
-
-      {/* ── Layer 3: DA Crest — the centrepiece ── */}
-      <div
-        style={{
-        marginBottom: 'clamp(24px, 3vw, 42px)',
-        position: 'relative', zIndex: 2,
-      }}>
-        <div style={{ position: 'relative' }}>
-          <div style={{ position: 'relative', width: 'clamp(190px, 22vw, 294px)', margin: '0 auto' }}>
-            <img
-              id="hero-logo"
-              src="/images/da-logo.png"
-              alt="DA Tuition"
-              style={{
-                width: '100%',
-                height: 'auto',
-                display: 'block',
-                position: 'relative',
-                filter: 'drop-shadow(0 18px 42px rgba(71,45,6,0.12))',
-              }}
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* ── Headline — more breathing room below logo ── */}
-      <h1
-        style={{
-          fontFamily: serif, fontWeight: 500,
-          fontSize: 'clamp(2.15rem, 3.8vw, 3.95rem)',
-          lineHeight: 1.06, letterSpacing: '-.018em',
-          color: C.navy, marginBottom: '26px', maxWidth: '760px',
-          position: 'relative', zIndex: 3,
-          textShadow: '0 1px 0 rgba(255,255,255,0.42)',
-        }}>
-        Where Ambition Meets<br />
-        <em style={{ fontStyle: 'italic', color: C.gold }}>Academic Excellence</em>
-      </h1>
-
-      {/* ── Tagline ── */}
-      <p
-        style={{
-          fontFamily: sans, fontSize: 'clamp(.85rem, 1.4vw, 1rem)',
-          color: C.muted, marginBottom: '34px', letterSpacing: '.04em',
-          position: 'relative', zIndex: 3,
-        }}>
-        Trusted by Families. Transforming Futures.
-      </p>
-
-      {/* ── CTA ── */}
-      <div
-        style={{
-          display: 'flex', gap: '14px', flexWrap: 'wrap', justifyContent: 'center',
-          position: 'relative', zIndex: 3,
-        }}>
-        <button
-          className="hero-cta"
-          onClick={() => document.getElementById('programs')?.scrollIntoView({ behavior: 'smooth' })}
-          style={{
-            fontFamily: sans, background: 'transparent', color: C.navy,
-            border: `1.5px solid rgba(10,27,52,.28)`,
-            padding: '14px 40px', borderRadius: '4px',
-            fontSize: '.9rem', fontWeight: 700, cursor: 'pointer',
-            letterSpacing: '.04em', textTransform: 'uppercase' as const,
-          }}>
-          View Programs
-        </button>
-      </div>
-
-      {/* ── Scroll indicator — gold line only, no text ── */}
-      <div
-        style={{
-          position: 'absolute', bottom: '28px', left: '50%',
-          transform: 'translateX(-50%)',
-          display: 'flex', flexDirection: 'column' as const,
-          alignItems: 'center', zIndex: 3,
-        }}>
-        <div style={{ width: '1px', height: '44px', background: `linear-gradient(180deg,${C.gold},transparent)` }} />
-      </div>
-    </section>
-);
 
 // ══════════════════════════════════════════════════════════════
 //  PHILOSOPHY BACKED BY RESULTS
@@ -6146,7 +6030,7 @@ const Index = () => (
     <SEO canonicalUrl="/" jsonLd={[organizationSchema(), localBusinessSchema(siteStats.reviewCount)]} />
     <NavigationNew />
     <main>
-      <HeroSection />
+      <BookHero />
       <MarqueeStrip />
       <PhilosophyBackedSection />
       <ImpactRecognitionSection />

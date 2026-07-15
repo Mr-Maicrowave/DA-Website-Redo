@@ -7,6 +7,7 @@ const NavigationNew = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
+  const isHomepage = location.pathname === '/';
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 60);
@@ -91,11 +92,14 @@ const NavigationNew = () => {
   return (
     <div className="fixed top-0 left-0 right-0 z-[60]">
       <nav
-        className="w-full backdrop-blur-xl backdrop-saturate-150 border-b border-white/60 transition-shadow duration-300"
+        className="w-full backdrop-blur-xl backdrop-saturate-150 border-b transition-shadow duration-300"
         style={{
+          borderColor: isHomepage ? 'rgba(185,134,37,0.38)' : 'rgba(255,255,255,0.6)',
           background: scrolled
             ? 'linear-gradient(135deg, rgba(247,244,238,0.92), rgba(255,250,240,0.86) 58%, rgba(240,200,106,0.18))'
-            : 'linear-gradient(135deg, rgba(255,255,255,0.78), rgba(247,244,238,0.72) 58%, rgba(240,200,106,0.16))',
+            : isHomepage
+              ? 'linear-gradient(100deg, rgba(251,244,228,0.94), rgba(255,250,238,0.90) 58%, rgba(238,218,176,0.90))'
+              : 'linear-gradient(135deg, rgba(255,255,255,0.78), rgba(247,244,238,0.72) 58%, rgba(240,200,106,0.16))',
           boxShadow: scrolled
             ? '0 10px 30px rgba(10,27,52,0.14), inset 0 1px 0 rgba(255,255,255,0.8)'
             : '0 2px 12px rgba(10,27,52,0.08), inset 0 1px 0 rgba(255,255,255,0.72)',
@@ -124,7 +128,7 @@ const NavigationNew = () => {
             {/* Desktop Navigation – centred */}
             <div className="hidden lg:flex items-center flex-1 justify-center">
               <div className="flex gap-0.5 items-center">
-                <Link to="/" className={linkClass}>Home</Link>
+                <Link to="/" className={`${linkClass} ${isHomepage ? 'relative after:absolute after:left-2 after:right-2 after:-bottom-1 after:h-px after:bg-brand-gold' : ''}`}>Home</Link>
 
                 {/* Programs */}
                 <HoverCard openDelay={120} closeDelay={180}>
@@ -254,8 +258,8 @@ const NavigationNew = () => {
             <div className="flex items-center gap-3 shrink-0">
               <Link
                 to="/book-interview"
-                className="hidden lg:inline-flex items-center px-4 py-2 text-sm font-semibold text-white rounded-lg whitespace-nowrap transition-all duration-200 hover:opacity-90 active:scale-95"
-                style={{ background: 'linear-gradient(135deg, #0A1B34 0%, #1a3a6b 100%)' }}
+                className="hidden lg:inline-flex items-center px-3.5 py-1.5 text-[0.8rem] font-semibold text-white rounded-md whitespace-nowrap transition-all duration-200 hover:opacity-90 active:scale-95"
+                style={{ background: 'linear-gradient(135deg, #0A1B34 0%, #16345d 100%)', border: '1px solid rgba(212,175,55,.62)', boxShadow: '0 3px 7px rgba(10,27,52,.16)' }}
               >
                 Book Consultation
               </Link>
