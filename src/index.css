@@ -6,6 +6,11 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Stable homepage chapter anchors: clear the fixed navigation on arrival. */
+:where(#welcome, #philosophy, #journey, #programs, #subjects, #environment, #guides, #stories, #contact) {
+  scroll-margin-top: 72px;
+}
+
 @layer base {
   :root {
     /* V3 Canvas Colors */

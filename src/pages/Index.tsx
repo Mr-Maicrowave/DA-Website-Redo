@@ -370,6 +370,7 @@ const PhilosophyBackedSection = () => {
 
   return (
     <section
+      id="philosophy"
       ref={sectionRef}
       aria-label="Our philosophy and results"
       style={{ background: C.navy, overflow: 'hidden' }}
@@ -786,6 +787,7 @@ const ImpactRecognitionSection = () => {
   return (
     <>
       <section
+        id="journey"
         ref={sectionRef}
         aria-label="Impact and recognition"
         style={{ background: '#F5F0E8', position: 'relative', overflow: 'hidden' }}
@@ -2929,7 +2931,7 @@ const DAEnvironmentSection = () => {
   // ── MOBILE: stacked, no scroll animation ─────────────────────
   if (isSimple) {
     return (
-      <div ref={outerRef} style={{ background: '#06111F', padding: '60px 0 0' }}>
+      <div id="environment" ref={outerRef} style={{ background: '#06111F', padding: '60px 0 0' }}>
         <style>{envCSS}</style>
         <div style={{ textAlign: 'center', padding: '0 clamp(24px,6vw,48px) 40px', maxWidth: '560px', margin: '0 auto' }}>
           <p style={{ fontFamily: sans, fontSize: '0.56rem', fontWeight: 700, letterSpacing: '0.22em', textTransform: 'uppercase' as const, color: C.gold, margin: '0 0 16px' }}>
@@ -2955,7 +2957,7 @@ const DAEnvironmentSection = () => {
 
   // ── DESKTOP: scroll-driven ────────────────────────────────────
   return (
-    <div ref={outerRef} style={{ height: '260vh', position: 'relative', background: '#06111F' }}>
+    <div id="environment" ref={outerRef} style={{ height: '260vh', position: 'relative', background: '#06111F' }}>
       <style>{envCSS}</style>
 
       {/* Sticky panel — position:relative so absolute children anchor to it */}
@@ -5584,6 +5586,7 @@ const WhatWeTeachSection = () => {
 
   return (
     <section
+      id="subjects"
       ref={ref}
       aria-label="What we teach"
       style={{
@@ -5722,6 +5725,7 @@ const ReviewsSection = () => {
 
   return (
     <section
+      id="stories"
       ref={sectionRef}
       aria-label="Family reviews"
       style={{
@@ -5967,7 +5971,7 @@ const TeachersSection = () => {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-60px' });
   return (
-    <section ref={ref} style={{ background: C.cream, padding: '100px 24px' }}>
+    <section id="guides" ref={ref} style={{ background: C.cream, padding: '100px 24px' }}>
       <motion.div variants={fadeUp} initial="hidden" animate={inView ? 'visible' : 'hidden'} style={{ textAlign: 'center', marginBottom: '52px' }}>
         <div style={{ fontFamily: sans, fontSize: '.7rem', fontWeight: 700, letterSpacing: '.16em', textTransform: 'uppercase', color: C.gold, marginBottom: '14px' }}>Our Team</div>
         <h2 style={{ fontFamily: serif, fontWeight: 600, fontSize: 'clamp(2rem,4vw,3.4rem)', color: C.navy, letterSpacing: '-.02em' }}>Expert Educators</h2>
@@ -5985,7 +5989,7 @@ const ClosingCTASection = () => {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-60px' });
   return (
-    <section ref={ref} style={{ background: '#0A1B34', padding: '120px 24px', textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
+    <section id="contact" ref={ref} style={{ background: '#0A1B34', padding: '120px 24px', textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
       <div style={{ position: 'absolute', top: 0, left: '24px', right: '24px', height: '1px', background: 'linear-gradient(90deg, transparent, rgba(212,175,55,.25) 20%, rgba(212,175,55,.25) 80%, transparent)' }} />
       <motion.div variants={stagger} initial="hidden" animate={inView ? 'visible' : 'hidden'} style={{ maxWidth: '680px', margin: '0 auto' }}>
         <motion.div variants={fadeUp} style={{ fontFamily: sans, fontSize: '.68rem', fontWeight: 700, letterSpacing: '.18em', textTransform: 'uppercase' as const, color: C.gold, marginBottom: '20px' }}>
