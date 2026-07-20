@@ -1,6 +1,27 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
+const INTRO_SEEN_KEY = 'da-intro-video-seen-v1';
 const hasWindow = () => typeof window !== 'undefined';
+
+const readIntroSeen = () => {
+  if (!hasWindow()) return false;
+
+  try {
+    return window.sessionStorage.getItem(INTRO_SEEN_KEY) === 'true';
+  } catch {
+    return false;
+  }
+};
+
+const rememberIntro = () => {
+  if (!hasWindow()) return;
+
+  try {
+    window.sessionStorage.setItem(INTRO_SEEN_KEY, 'true');
+  } catch {
+    // The current page still remembers the intro through React state.
+  }
+};
 
 const readReducedMotion = () =>
   hasWindow() &&
@@ -14,7 +35,7 @@ export const useIntro = () => {
     if (!hasWindow()) return;
 
     const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-    setSeen(false);
+    setSeen(readIntroSeen());
     setPrefersReducedMotion(motionQuery.matches);
 
     const handleMotionChange = (event: MediaQueryListEvent) => {
@@ -29,6 +50,7 @@ export const useIntro = () => {
   }, []);
 
   const markAsSeen = useCallback(() => {
+    rememberIntro();
     setSeen(true);
   }, []);
 
