@@ -47,6 +47,8 @@ import LegalStudies from "./pages/subjects/LegalStudies";
 import Testimonials from "./pages/Testimonials";
 import TestimonialDetail from "./pages/TestimonialDetail";
 import ScrollToTop from "./components/ScrollToTop";
+import DetailedChapterNavigation from "./components/DetailedChapterNavigation";
+import BookIntroCalibration from "./pages/BookIntroCalibration";
 
 const queryClient = new QueryClient();
 
@@ -57,6 +59,10 @@ const AnimatedRoutes = () => {
     <AnimatePresence mode="wait">
       <Routes location={location} key={location.pathname}>
         <Route path="/" element={<PageTransition><Index /></PageTransition>} />
+        <Route
+          path="/book-intro-calibration"
+          element={import.meta.env.DEV ? <BookIntroCalibration /> : <Navigate to="/" replace />}
+        />
 
         <Route path="/interview" element={<Navigate to="/principal-reflections" replace />} />
         <Route path="/book-interview" element={<PageTransition><BookInterview /></PageTransition>} />
@@ -127,6 +133,7 @@ const App = () => (
             }}
           >
             <AnimatedRoutes />
+            <DetailedChapterNavigation />
             <ScrollToTop />
           </div>
         </BrowserRouter>

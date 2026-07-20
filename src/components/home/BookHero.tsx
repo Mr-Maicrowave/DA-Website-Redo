@@ -1,11 +1,20 @@
-import { useEffect, useRef, useState, type FocusEvent, type RefObject, type SyntheticEvent } from 'react';
-import { Link } from 'react-router-dom';
-import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
-import { HERO_CHAPTERS, type HeroChapter } from '@/data/heroChapters';
+import {
+  useEffect,
+  useRef,
+  useState,
+  type KeyboardEvent,
+  type PointerEvent,
+  type SyntheticEvent,
+} from 'react';
+import { useReducedMotion } from 'framer-motion';
+import { HERO_CHAPTERS } from '@/data/heroChapters';
+import { BOOK_PAGE_DEFINITIONS } from '@/data/bookPages';
+import { BookPageContent } from './BookPageContent';
 import styles from './BookHero.module.css';
 
-const DEFAULT_CHAPTER = HERO_CHAPTERS[0];
-const FALLBACK_CHAPTER_IMAGE = '/images/community/teacher_kids_warmth.jpg';
+const FALLBACK_CHAPTER_IMAGE = '/images/book-hero/welcome.webp';
+
+const getThumbnailImage = (image: string) => image.replace(/\.webp$/, '-thumb.webp');
 
 const useFallbackImage = (event: SyntheticEvent<HTMLImageElement>) => {
   const image = event.currentTarget;
@@ -14,232 +23,326 @@ const useFallbackImage = (event: SyntheticEvent<HTMLImageElement>) => {
   image.src = FALLBACK_CHAPTER_IMAGE;
 };
 
-function ChapterAction({ action, secondary = false }: {
-  action: NonNullable<HeroChapter['primaryCta']>;
-  secondary?: boolean;
-}) {
-  const className = secondary ? styles.secondaryAction : styles.primaryAction;
-  const content = <>{action.label}<span aria-hidden="true">→</span></>;
-
-  if (action.href.startsWith('#')) {
-    return <a className={className} href={action.href}>{content}</a>;
-  }
-
-  return <Link className={className} to={action.href}>{content}</Link>;
-}
-
-function ChapterPreview({ chapter, previewRef, onBlur, isTurning }: {
-  chapter: HeroChapter;
-  previewRef: RefObject<HTMLElement>;
-  onBlur: (event: FocusEvent<HTMLElement>) => void;
-  isTurning: boolean;
-}) {
-  const reduceMotion = useReducedMotion();
-
-  return (
-    <article ref={previewRef} className={styles.preview} onBlurCapture={onBlur}>
-      <AnimatePresence mode="sync" initial={false}>
-        <motion.div
-          key={chapter.id}
-          className={styles.previewPanel}
-          initial={reduceMotion ? { opacity: 0 } : { opacity: 0, x: 14, y: 4 }}
-          animate={{ opacity: 1, x: 0, y: 0 }}
-          exit={reduceMotion ? { opacity: 0 } : { opacity: 0, x: -10, y: -3 }}
-          transition={{ duration: reduceMotion ? 0.12 : 0.3, ease: [0.22, 1, 0.36, 1] }}
-        >
-          <img
-            className={styles.previewImage}
-            src={chapter.image}
-            alt={chapter.imageAlt}
-            decoding="async"
-            onError={useFallbackImage}
-          />
-          <div className={styles.imageVeil} aria-hidden="true" />
-          <div className={styles.sunlight} aria-hidden="true" />
-
-          <div className={styles.previewContent}>
-            <div className={styles.chapterLabel}>
-              <span>{chapter.chapterLabel}</span>
-              <i aria-hidden="true">✦</i>
-            </div>
-            <h1>{chapter.title}</h1>
-            <div className={styles.goldRule} aria-hidden="true"><span>✦</span></div>
-            <p>{chapter.description}</p>
-
-            {(chapter.primaryCta || chapter.secondaryCta) && (
-              <div className={styles.actions}>
-                {chapter.primaryCta && <ChapterAction action={chapter.primaryCta} />}
-                {chapter.secondaryCta && <ChapterAction action={chapter.secondaryCta} secondary />}
-              </div>
-            )}
-          </div>
-        </motion.div>
-      </AnimatePresence>
-      {isTurning && (
-        <div className={styles.pageTurnStage} aria-hidden="true">
-          <div className={styles.pageTurnOverlay}>
-            <div className={styles.pageTurnFront} />
-            <div className={styles.pageTurnBack} />
-            <div className={styles.pageTurnFoldShadow} />
-          </div>
-        </div>
-      )}
-    </article>
-  );
-}
-
-function ChapterThumbnail({ chapter, index, active, disabled, onActivate, onPreview }: {
-  chapter: HeroChapter;
-  index: number;
-  active: boolean;
-  disabled: boolean;
-  onActivate: () => void;
-  onPreview: () => void;
-}) {
-  return (
-    <li>
-      <button
-        type="button"
-        className={`${styles.thumbnail} ${active ? styles.currentThumbnail : ''}`}
-        aria-label={`Preview chapter ${index + 1}: ${chapter.chapterLabel}`}
-        aria-pressed={active}
-        aria-disabled={disabled}
-        onClick={onActivate}
-        onKeyDown={event => {
-          if (event.key !== 'Enter' && event.key !== ' ') return;
-          event.preventDefault();
-          onActivate();
-        }}
-        onMouseEnter={onPreview}
-        onFocus={onPreview}
-      >
-        <span className={styles.thumbnailImageWrap}>
-          <img src={chapter.image} alt="" aria-hidden="true" loading={index < 3 ? 'eager' : 'lazy'} decoding="async" onError={useFallbackImage} />
-        </span>
-        <span className={styles.thumbnailCopy}>
-          <span>{chapter.shortTitle}</span>
-          <small aria-hidden="true">{String(index + 1).padStart(2, '0')}</small>
-        </span>
-      </button>
-    </li>
-  );
-}
-
 export function BookHero() {
-  const [activeChapterId, setActiveChapterId] = useState<string>(DEFAULT_CHAPTER.id);
-  const [previewChapterId, setPreviewChapterId] = useState<string | null>(null);
+  const [pageIndex, setPageIndex] = useState(0);
+  const [displayedPageIndex, setDisplayedPageIndex] = useState(0);
   const [isTurning, setIsTurning] = useState(false);
+  const [isCrossFading, setIsCrossFading] = useState(false);
+  const [turnDirection, setTurnDirection] = useState<'next' | 'previous'>('next');
+  const [previewsOpen, setPreviewsOpen] = useState(false);
+  const pageDefinition = BOOK_PAGE_DEFINITIONS[displayedPageIndex];
+  const chapter = pageDefinition.source;
+  const isArchivalAwardPage = pageDefinition.template === 'trust';
+  const pageTotal = HERO_CHAPTERS.length;
   const reduceMotion = useReducedMotion();
-  const railRef = useRef<HTMLElement>(null);
-  const previewRef = useRef<HTMLElement>(null);
-  const turnTimersRef = useRef<number[]>([]);
+  const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  const previewRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  const previewToggleRef = useRef<HTMLButtonElement>(null);
+  const swipeStart = useRef<{ pointerId: number; x: number; y: number } | null>(null);
+  const turnTimers = useRef<number[]>([]);
   const isTurningRef = useRef(false);
 
-  const visibleChapterId = previewChapterId ?? activeChapterId;
-  const visibleChapter = HERO_CHAPTERS.find(chapter => chapter.id === visibleChapterId) ?? DEFAULT_CHAPTER;
-
-  const restoreActiveUnlessFocusIsWithin = (event: FocusEvent<HTMLElement>) => {
-    const nextTarget = event.relatedTarget;
-    if (nextTarget instanceof Node && railRef.current?.contains(nextTarget)) return;
-    if (nextTarget instanceof Node && previewRef.current?.contains(nextTarget)) return;
-    setPreviewChapterId(null);
-  };
-
-  const handlePreviewBlur = (event: FocusEvent<HTMLElement>) => {
-    const nextTarget = event.relatedTarget;
-    if (nextTarget instanceof Node && railRef.current?.contains(nextTarget)) return;
-    setPreviewChapterId(null);
-  };
-
   useEffect(() => () => {
-    turnTimersRef.current.forEach(timer => window.clearTimeout(timer));
+    turnTimers.current.forEach(timer => window.clearTimeout(timer));
   }, []);
 
   useEffect(() => {
-    if (!window.matchMedia('(max-width: 768px), (max-width: 900px) and (max-height: 500px)').matches) return;
+    const nextChapter = HERO_CHAPTERS[pageIndex + 1];
+    if (!nextChapter) return;
 
-    const rail = railRef.current;
-    const activeButton = rail?.querySelector<HTMLElement>('[aria-pressed="true"]');
-    if (!rail || !activeButton) return;
+    const nextImage = new Image();
+    nextImage.decoding = 'async';
+    nextImage.src = nextChapter.image;
+  }, [pageIndex]);
 
-    const activeItem = activeButton.parentElement;
-    const itemLeft = activeItem?.offsetLeft ?? activeButton.offsetLeft;
-    const targetLeft = itemLeft - (rail.clientWidth - activeButton.offsetWidth) / 2;
-    rail.scrollTo({
-      left: Math.max(0, targetLeft),
-      behavior: reduceMotion ? 'auto' : 'smooth',
-    });
-  }, [activeChapterId, reduceMotion]);
+  const changePage = (nextIndex: number, focusActiveTab = false) => {
+    const boundedIndex = Math.max(0, Math.min(pageTotal - 1, nextIndex));
+    if (boundedIndex === pageIndex || isTurningRef.current) return;
 
-  const scrollToChapter = (chapter: HeroChapter, instant = false) => {
-    const target = document.getElementById(chapter.targetSectionId);
-    if (!target) return;
-
-    const fixedNavigation = document.querySelector<HTMLElement>('nav');
-    const navigationHeight = fixedNavigation?.getBoundingClientRect().height ?? 72;
-    const targetTop = target.getBoundingClientRect().top + window.scrollY - navigationHeight;
-
-    window.scrollTo({
-      top: Math.max(0, targetTop),
-      behavior: instant ? 'auto' : 'smooth',
-    });
-  };
-
-  const activateChapter = (chapter: HeroChapter) => {
-    if (isTurningRef.current) return;
+    const direction = boundedIndex > pageIndex ? 'next' : 'previous';
 
     if (reduceMotion) {
-      setActiveChapterId(chapter.id);
-      setPreviewChapterId(chapter.id);
-      scrollToChapter(chapter, true);
+      isTurningRef.current = true;
+      setIsCrossFading(true);
+
+      const commitTimer = window.setTimeout(() => {
+        setDisplayedPageIndex(boundedIndex);
+        setPageIndex(boundedIndex);
+        if (focusActiveTab) tabRefs.current[boundedIndex]?.focus();
+      }, 110);
+
+      const finishTimer = window.setTimeout(() => {
+        setIsCrossFading(false);
+        isTurningRef.current = false;
+        turnTimers.current = [];
+      }, 230);
+
+      turnTimers.current = [commitTimer, finishTimer];
       return;
     }
 
     isTurningRef.current = true;
+    setTurnDirection(direction);
     setIsTurning(true);
 
-    const commitTimer = window.setTimeout(() => {
-      setActiveChapterId(chapter.id);
-      setPreviewChapterId(chapter.id);
-    }, 380);
+    const contentTimer = window.setTimeout(() => {
+      setDisplayedPageIndex(boundedIndex);
+    }, 390);
 
     const finishTimer = window.setTimeout(() => {
-      scrollToChapter(chapter);
-      isTurningRef.current = false;
+      setPageIndex(boundedIndex);
       setIsTurning(false);
-      turnTimersRef.current = [];
-    }, 820);
+      isTurningRef.current = false;
+      turnTimers.current = [];
+      if (focusActiveTab) tabRefs.current[boundedIndex]?.focus();
+    }, 860);
 
-    turnTimersRef.current = [commitTimer, finishTimer];
+    turnTimers.current = [contentTimer, finishTimer];
+  };
+
+  const previousPage = () => changePage(pageIndex - 1);
+  const nextPage = () => changePage(pageIndex + 1);
+
+  const closePreviews = () => {
+    setPreviewsOpen(false);
+    window.requestAnimationFrame(() => previewToggleRef.current?.focus());
+  };
+
+  const selectPreviewChapter = (index: number) => {
+    changePage(index);
+    closePreviews();
+  };
+
+  const handleBookKeyDown = (event: KeyboardEvent<HTMLElement>) => {
+    if (event.key === 'Escape' && previewsOpen) {
+      event.preventDefault();
+      closePreviews();
+      return;
+    }
+
+    if (isTurningRef.current) return;
+    if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
+    if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+
+    const target = event.target;
+    if (target instanceof HTMLElement) {
+      if (target.closest('a, input, textarea, select, [contenteditable="true"]')) return;
+    }
+
+    const direction = event.key === 'ArrowRight' ? 1 : -1;
+    const nextIndex = Math.max(0, Math.min(pageTotal - 1, pageIndex + direction));
+    if (nextIndex === pageIndex) return;
+
+    event.preventDefault();
+    changePage(nextIndex, true);
+  };
+
+  const handleSwipeStart = (event: PointerEvent<HTMLElement>) => {
+    if (event.pointerType !== 'touch' || isTurningRef.current) return;
+    const browserGestureEdge = 28;
+    if (event.clientX <= browserGestureEdge || event.clientX >= window.innerWidth - browserGestureEdge) return;
+    swipeStart.current = { pointerId: event.pointerId, x: event.clientX, y: event.clientY };
+  };
+
+  const handleSwipeEnd = (event: PointerEvent<HTMLElement>) => {
+    const start = swipeStart.current;
+    swipeStart.current = null;
+    if (!start || start.pointerId !== event.pointerId || event.pointerType !== 'touch') return;
+
+    const deltaX = event.clientX - start.x;
+    const deltaY = event.clientY - start.y;
+    const isClearHorizontalSwipe = Math.abs(deltaX) >= 56 && Math.abs(deltaX) > Math.abs(deltaY) * 1.35;
+    if (!isClearHorizontalSwipe) return;
+
+    changePage(deltaX < 0 ? pageIndex + 1 : pageIndex - 1);
   };
 
   return (
-    <section id="welcome" className={styles.hero} aria-label="Homepage chapter preview">
+    <section
+      id="welcome"
+      className={styles.hero}
+      aria-label="Homepage chapter preview"
+      onKeyDown={handleBookKeyDown}
+    >
       <div className={styles.atmosphere} aria-hidden="true" />
-      <div className={styles.heroShell}>
-        <ChapterPreview chapter={visibleChapter} previewRef={previewRef} onBlur={handlePreviewBlur} isTurning={isTurning} />
 
-        <aside
-          ref={railRef}
-          className={styles.chapterRail}
-          aria-label="Homepage chapter previews"
-          onMouseLeave={() => setPreviewChapterId(null)}
-          onBlurCapture={restoreActiveUnlessFocusIsWithin}
+      <div className={styles.bookStage}>
+        <div className={styles.cover} aria-hidden="true" />
+        <div className={styles.pageLayers} aria-hidden="true" />
+
+        <article
+          className={`${styles.bookSpread} ${isCrossFading ? styles.crossFading : ''}`}
+          onPointerDown={handleSwipeStart}
+          onPointerUp={handleSwipeEnd}
+          onPointerCancel={() => { swipeStart.current = null; }}
         >
-          <ol>
-            {HERO_CHAPTERS.map((chapter, index) => (
-              <ChapterThumbnail
-                key={chapter.id}
-                chapter={chapter}
-                index={index}
-                active={chapter.id === activeChapterId}
-                disabled={isTurning}
-                onActivate={() => activateChapter(chapter)}
-                onPreview={() => setPreviewChapterId(chapter.id)}
+          <div className={`${styles.leftPage} ${isArchivalAwardPage ? styles.awardLeftPage : ''}`}>
+            <div className={styles.paperGrain} aria-hidden="true" />
+            <div className={styles.pageFrame} aria-hidden="true" />
+
+            <BookPageContent
+              chapter={chapter}
+              pageNumber={pageIndex + 1}
+              template={pageDefinition.template}
+            />
+            <span className={styles.pageNumber} aria-hidden="true">
+              {String(pageIndex + 1).padStart(2, '0')}
+            </span>
+          </div>
+
+          <div className={styles.gutter} aria-hidden="true" />
+
+          <div className={`${styles.rightPage} ${chapter.imageFit === 'contain' ? styles.containedImagePage : ''} ${isArchivalAwardPage ? styles.archivalDocumentPage : ''}`}>
+            <div className={styles.paperGrain} aria-hidden="true" />
+            <div className={styles.pageFrame} aria-hidden="true" />
+            {isArchivalAwardPage ? (
+              <div className={styles.archivalMount}>
+                <img
+                  className={`${styles.chapterImage} ${styles.containedImage} ${styles.archivalDocumentImage}`}
+                  src={chapter.image}
+                  alt={chapter.imageAlt}
+                  style={{ objectPosition: chapter.imagePosition ?? '50% 50%' }}
+                  decoding="async"
+                  onError={useFallbackImage}
+                />
+              </div>
+            ) : (
+              <img
+                className={`${styles.chapterImage} ${chapter.imageFit === 'contain' ? styles.containedImage : ''}`}
+                src={chapter.image}
+                alt={chapter.imageAlt}
+                style={{ objectPosition: chapter.imagePosition ?? '50% 50%' }}
+                loading={displayedPageIndex === 0 ? 'eager' : undefined}
+                {...{ fetchpriority: displayedPageIndex === 0 ? 'high' : 'auto' }}
+                decoding="async"
+                onError={useFallbackImage}
               />
-            ))}
+            )}
+            <div className={styles.imageGrade} aria-hidden="true" />
+            <div className={styles.imageEdge} aria-hidden="true" />
+          </div>
+
+          {isTurning && (
+            <div
+              className={`${styles.pageTurnStage} ${turnDirection === 'next' ? styles.turnNext : styles.turnPrevious}`}
+              aria-hidden="true"
+            >
+              <div className={styles.movingGutterShadow} />
+              <div className={styles.turningPage}>
+                <div className={styles.turningPageFront} />
+                <div className={styles.turningPageBack} />
+                <div className={styles.foldShadow} />
+              </div>
+            </div>
+          )}
+        </article>
+
+        <nav className={styles.chapterTabs} aria-label="Homepage chapters">
+          <ol>
+            {HERO_CHAPTERS.map((chapterDefinition, index) => {
+              const isActive = index === pageIndex;
+              const pageNumber = String(index + 1).padStart(2, '0');
+
+              return (
+                <li key={chapterDefinition.id}>
+                  <button
+                    ref={element => { tabRefs.current[index] = element; }}
+                    type="button"
+                    className={isActive ? styles.activeTab : undefined}
+                    aria-label={`Open chapter ${pageNumber}: ${chapterDefinition.shortTitle}`}
+                    aria-current={isActive ? 'page' : undefined}
+                    aria-pressed={isActive}
+                    disabled={isTurning}
+                    onClick={() => changePage(index)}
+                  >
+                    <small aria-hidden="true">{pageNumber}</small>
+                    <span>{chapterDefinition.shortTitle}</span>
+                  </button>
+                </li>
+              );
+            })}
           </ol>
-        </aside>
+        </nav>
+
+        <button
+          ref={previewToggleRef}
+          type="button"
+          className={styles.previewToggle}
+          aria-label={previewsOpen ? 'Close chapter previews' : 'Open chapter previews'}
+          aria-expanded={previewsOpen}
+          aria-controls="book-chapter-previews"
+          onClick={() => {
+            setPreviewsOpen(current => {
+              const next = !current;
+              if (next) {
+                window.requestAnimationFrame(() => previewRefs.current[pageIndex]?.focus());
+              }
+              return next;
+            });
+          }}
+        >
+          <span aria-hidden="true">▤</span>
+          <span className={styles.previewToggleLabel}>Chapters</span>
+        </button>
+
+        {previewsOpen && (
+          <aside
+            id="book-chapter-previews"
+            className={styles.previewDrawer}
+            aria-label="Chapter previews"
+          >
+            <ol>
+              {HERO_CHAPTERS.map((chapterDefinition, index) => {
+                const isActive = index === pageIndex;
+                const pageNumber = String(index + 1).padStart(2, '0');
+
+                return (
+                  <li key={chapterDefinition.id}>
+                    <button
+                      ref={element => { previewRefs.current[index] = element; }}
+                      type="button"
+                      className={isActive ? styles.activePreview : undefined}
+                      aria-label={`Turn to chapter ${pageNumber}: ${chapterDefinition.title}`}
+                      aria-current={isActive ? 'page' : undefined}
+                      aria-pressed={isActive}
+                      disabled={isTurning}
+                      onClick={() => selectPreviewChapter(index)}
+                    >
+                      <span className={`${styles.previewThumbImage} ${chapterDefinition.imageFit === 'contain' ? styles.containedThumbnail : ''}`}>
+                        <img
+                          src={getThumbnailImage(chapterDefinition.image)}
+                          alt=""
+                          aria-hidden="true"
+                          width="320"
+                          height="213"
+                          loading="lazy"
+                          decoding="async"
+                          onError={useFallbackImage}
+                        />
+                      </span>
+                      <span className={styles.previewThumbCopy}>
+                        <small aria-hidden="true">{pageNumber}</small>
+                        <span>{chapterDefinition.title}</span>
+                      </span>
+                    </button>
+                  </li>
+                );
+              })}
+            </ol>
+          </aside>
+        )}
+
+        <nav className={styles.pageControls} aria-label="Book page navigation">
+          <button type="button" onClick={previousPage} disabled={pageIndex === 0 || isTurning}>
+            <span aria-hidden="true">←</span> Previous
+          </button>
+          <output className={styles.pageCounter} aria-live="polite" aria-atomic="true">
+            {String(pageIndex + 1).padStart(2, '0')} <span aria-hidden="true">/</span><span className={styles.visuallyHidden}> of </span> {String(pageTotal).padStart(2, '0')}
+          </output>
+          <button type="button" onClick={nextPage} disabled={pageIndex === pageTotal - 1 || isTurning}>
+            Next <span aria-hidden="true">→</span>
+          </button>
+        </nav>
       </div>
     </section>
   );

@@ -6,6 +6,8 @@ export type HeroChapter = {
   description: string;
   image: string;
   imageAlt: string;
+  imageFit?: 'cover' | 'contain';
+  imagePosition?: string;
   targetSectionId: string;
   primaryCta?: {
     label: string;
@@ -25,8 +27,10 @@ export const HERO_CHAPTERS = [
     title: 'Where Every Story Begins',
     description:
       'Every child arrives with a different story. At DA, we help them build confidence, discover their strengths and write what comes next.',
-    image: '/images/community/0X1A7240.jpeg',
+    image: '/images/book-hero/welcome.webp',
     imageAlt: 'A DA Tuition tutor guiding two students as they work together',
+    imageFit: 'cover',
+    imagePosition: '50% 45%',
     targetSectionId: 'welcome',
     primaryCta: {
       label: 'Begin the Journey',
@@ -44,8 +48,10 @@ export const HERO_CHAPTERS = [
     title: 'Students deserve to be known before they are judged.',
     description:
       'Every student arrives with a different story. We take the time to understand where they are — because the gap between their starting point and their potential is exactly where real growth lives.',
-    image: '/images/philosophy/philhome.jpeg',
+    image: '/images/book-hero/philosophy.webp',
     imageAlt: 'A DA Tuition tutor teaching students at a classroom whiteboard',
+    imageFit: 'cover',
+    imagePosition: '50% 48%',
     targetSectionId: 'philosophy',
   },
   {
@@ -55,8 +61,10 @@ export const HERO_CHAPTERS = [
     title: 'The Community Noticed What Families Already Knew.',
     description:
       'For more than twenty years, DA families have watched their children grow — in confidence first, then in results. This recognition reflects what those families experienced, and what the wider community came to see.',
-    image: '/Photos and Videos/2025_FAIR_WINNER_LBA.jpg',
+    image: '/images/book-hero/journey.webp',
     imageAlt: 'Fairfield City Local Business Awards — Outstanding Education Service, Winner 2025',
+    imageFit: 'contain',
+    imagePosition: '50% 45%',
     targetSectionId: 'journey',
   },
   {
@@ -66,8 +74,10 @@ export const HERO_CHAPTERS = [
     title: 'Tailored for Every Stage',
     description:
       'Building strong foundations in literacy, numeracy and confident learning.',
-    image: '/primary-boy.png',
+    image: '/images/book-hero/programs.webp',
     imageAlt: 'A primary school student learning at DA Tuition',
+    imageFit: 'cover',
+    imagePosition: '42% 48%',
     targetSectionId: 'programs',
   },
   {
@@ -77,8 +87,10 @@ export const HERO_CHAPTERS = [
     title: 'Expert tuition in every subject',
     description:
       'From strong foundations to academic excellence through personalised learning.',
-    image: '/images/community/subject_maths.jpg',
+    image: '/images/book-hero/subjects.webp',
     imageAlt: 'Students learning mathematics at DA Tuition',
+    imageFit: 'cover',
+    imagePosition: '50% 46%',
     targetSectionId: 'subjects',
   },
   {
@@ -88,8 +100,10 @@ export const HERO_CHAPTERS = [
     title: 'More than tutoring. A place where students feel known.',
     description:
       'Our students grow in a space where tutors care, questions are welcomed, and confidence is built one relationship at a time.',
-    image: '/media/highfive.jpg',
+    image: '/images/book-hero/environment.webp',
     imageAlt: 'A DA Tuition student sharing a high five with a tutor',
+    imageFit: 'cover',
+    imagePosition: '52% 46%',
     targetSectionId: 'environment',
   },
   {
@@ -99,8 +113,10 @@ export const HERO_CHAPTERS = [
     title: 'Expert Educators',
     description:
       'Teachers who care as much about who your child is becoming as they do about grades.',
-    image: '/teachers/king.png',
+    image: '/images/book-hero/guides.webp',
     imageAlt: 'Mr King, a DA Tuition educator',
+    imageFit: 'cover',
+    imagePosition: '50% 34%',
     targetSectionId: 'guides',
     primaryCta: {
       label: 'Meet All Our Teachers',
@@ -113,8 +129,10 @@ export const HERO_CHAPTERS = [
     shortTitle: 'Stories',
     title: '450 Five-Star Reviews',
     description: 'Families Love DA',
-    image: '/images/community/class_smiling_camera.jpg',
+    image: '/images/book-hero/stories.webp',
     imageAlt: 'DA Tuition students smiling together in class',
+    imageFit: 'cover',
+    imagePosition: '50% 48%',
     targetSectionId: 'stories',
   },
   {
@@ -124,8 +142,10 @@ export const HERO_CHAPTERS = [
     title: 'Ready to find the right program for your child?',
     description:
       "Book an interview with our principal. In 30 minutes we will understand your child's needs and match them to the right class, teacher, and starting point.",
-    image: '/images/community/tutor_one_on_one.jpg',
+    image: '/images/book-hero/contact.webp',
     imageAlt: 'A DA Tuition tutor supporting a student one-to-one',
+    imageFit: 'cover',
+    imagePosition: '50% 50%',
     targetSectionId: 'contact',
     primaryCta: {
       label: 'Book an Interview',

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState, type KeyboardEvent } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useIntro } from '@/lib/useIntro';
 import styles from './IntroVideo.module.css';
@@ -9,6 +9,8 @@ const fadeOutMs = 800;
 const IntroVideo = () => {
   const { isReady, markAsSeen, shouldPlay } = useIntro();
   const videoRef = useRef<HTMLVideoElement>(null);
+  const skipButtonRef = useRef<HTMLButtonElement>(null);
+  const beginButtonRef = useRef<HTMLButtonElement>(null);
   const completeTimerRef = useRef<number>();
   const exitingRef = useRef(false);
   const [visible, setVisible] = useState(false);
@@ -26,6 +28,7 @@ const IntroVideo = () => {
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     document.body.dataset.daIntroActive = 'true';
+    window.requestAnimationFrame(() => skipButtonRef.current?.focus({ preventScroll: true }));
 
     return () => {
       document.body.style.overflow = previousOverflow;
@@ -76,6 +79,30 @@ const IntroVideo = () => {
 
   const handleVideoEnded = () => {
     setVideoEnded(true);
+    window.requestAnimationFrame(() => beginButtonRef.current?.focus({ preventScroll: true }));
+  };
+
+  const containKeyboardFocus = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (event.key !== 'Tab') return;
+
+    const controls = Array.from(
+      event.currentTarget.querySelectorAll<HTMLButtonElement>('button:not([disabled])'),
+    );
+    if (controls.length === 0) {
+      event.preventDefault();
+      return;
+    }
+
+    const first = controls[0];
+    const last = controls[controls.length - 1];
+
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
   };
 
   const skipIntro = () => {
@@ -110,8 +137,11 @@ const IntroVideo = () => {
     <AnimatePresence>
       {visible && (
         <motion.div
+          role="dialog"
+          aria-modal="true"
           aria-label="DA Tuition cinematic intro"
           className={styles.overlay}
+          onKeyDown={containKeyboardFocus}
           initial={{ opacity: 1 }}
           animate={{ opacity: exiting ? 0 : 1 }}
           exit={{ opacity: 0 }}
@@ -143,6 +173,7 @@ const IntroVideo = () => {
                 transition={{ duration: 0.2, ease: fadeEase }}
               >
                 <button
+                  ref={beginButtonRef}
                   type="button"
                   aria-label="Begin the Journey"
                   className={styles.beginHitArea}
@@ -154,7 +185,7 @@ const IntroVideo = () => {
           </AnimatePresence>
 
           {!videoEnded && !exiting && (
-            <button type="button" className={styles.skipButton} onClick={skipIntro}>
+            <button ref={skipButtonRef} type="button" className={styles.skipButton} onClick={skipIntro}>
               Skip Intro
             </button>
           )}

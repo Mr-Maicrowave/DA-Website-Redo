@@ -87,22 +87,23 @@ const NavigationNew = () => {
     }
   };
 
-  const linkClass = "px-2 xl:px-3 py-1.5 text-sm xl:text-[0.9rem] text-brand-midnight hover:text-brand-blue-dark transition-colors whitespace-nowrap";
+  const linkClass = "relative px-2.5 xl:px-3.5 py-2 text-sm xl:text-[0.9rem] font-medium text-brand-navy hover:text-brand-blue-dark transition-colors whitespace-nowrap";
+  const navLinkClass = (active = false) => `${linkClass} ${active ? 'after:absolute after:left-2.5 after:right-2.5 after:-bottom-0.5 after:h-px after:bg-brand-gold/80' : ''}`;
 
   return (
     <div className="fixed top-0 left-0 right-0 z-[60]">
       <nav
-        className="w-full backdrop-blur-xl backdrop-saturate-150 border-b transition-shadow duration-300"
+        className="w-full backdrop-blur-md backdrop-saturate-125 border-b transition-shadow duration-300"
         style={{
-          borderColor: isHomepage ? 'rgba(185,134,37,0.38)' : 'rgba(255,255,255,0.6)',
+          borderColor: 'rgba(169,120,37,0.42)',
           background: scrolled
-            ? 'linear-gradient(135deg, rgba(247,244,238,0.92), rgba(255,250,240,0.86) 58%, rgba(240,200,106,0.18))'
+            ? 'linear-gradient(110deg, rgba(250,245,234,0.95), rgba(247,239,222,0.92) 58%, rgba(235,215,175,0.88))'
             : isHomepage
-              ? 'linear-gradient(100deg, rgba(251,244,228,0.94), rgba(255,250,238,0.90) 58%, rgba(238,218,176,0.90))'
-              : 'linear-gradient(135deg, rgba(255,255,255,0.78), rgba(247,244,238,0.72) 58%, rgba(240,200,106,0.16))',
+              ? 'linear-gradient(110deg, rgba(250,245,233,0.91), rgba(248,241,225,0.88) 58%, rgba(236,217,180,0.86))'
+              : 'linear-gradient(110deg, rgba(250,245,234,0.92), rgba(247,239,222,0.88) 58%, rgba(235,215,175,0.82))',
           boxShadow: scrolled
-            ? '0 10px 30px rgba(10,27,52,0.14), inset 0 1px 0 rgba(255,255,255,0.8)'
-            : '0 2px 12px rgba(10,27,52,0.08), inset 0 1px 0 rgba(255,255,255,0.72)',
+            ? '0 5px 14px rgba(10,27,52,0.10), inset 0 1px 0 rgba(255,250,239,0.72)'
+            : '0 2px 7px rgba(10,27,52,0.065), inset 0 1px 0 rgba(255,250,239,0.62)',
         }}
       >
         <div className="px-4 sm:px-6 lg:px-8">
@@ -128,16 +129,16 @@ const NavigationNew = () => {
             {/* Desktop Navigation – centred */}
             <div className="hidden lg:flex items-center flex-1 justify-center">
               <div className="flex gap-0.5 items-center">
-                <Link to="/" className={`${linkClass} ${isHomepage ? 'relative after:absolute after:left-2 after:right-2 after:-bottom-1 after:h-px after:bg-brand-gold' : ''}`}>Home</Link>
+                <Link to="/" className={navLinkClass(isHomepage)}>Home</Link>
 
                 {/* Programs */}
                 <HoverCard openDelay={120} closeDelay={180}>
                   <HoverCardTrigger asChild>
-                    <button type="button" className={`${linkClass} inline-flex items-center gap-0.5`}>
+                    <button type="button" className={`${navLinkClass(location.pathname.startsWith('/programs') || location.pathname === '/hsc-excellence')} inline-flex items-center gap-0.5`}>
                       Programs <ChevronDown className="h-3.5 w-3.5" />
                     </button>
                   </HoverCardTrigger>
-                  <HoverCardContent align="center" side="bottom" sideOffset={6} className="p-0 w-auto">
+                  <HoverCardContent align="center" side="bottom" sideOffset={6} className="p-0 w-auto border-brand-gold/25 bg-brand-ivory/95 backdrop-blur-xl shadow-md">
                     <ul className="grid w-[400px] gap-3 p-4">
                       {programsItems.map((item) => (
                         <li key={item.href}>
@@ -157,11 +158,11 @@ const NavigationNew = () => {
                 {/* Subjects */}
                 <HoverCard openDelay={120} closeDelay={180}>
                   <HoverCardTrigger asChild>
-                    <button type="button" className={`${linkClass} inline-flex items-center gap-0.5`}>
+                    <button type="button" className={`${navLinkClass(location.pathname.startsWith('/subjects'))} inline-flex items-center gap-0.5`}>
                       Subjects <ChevronDown className="h-3.5 w-3.5" />
                     </button>
                   </HoverCardTrigger>
-                  <HoverCardContent align="center" side="bottom" sideOffset={6} className="p-0 w-auto">
+                  <HoverCardContent align="center" side="bottom" sideOffset={6} className="p-0 w-auto border-brand-gold/25 bg-brand-ivory/95 backdrop-blur-xl shadow-md">
                     <ul className="grid w-[350px] gap-3 p-4">
                       {subjectsItems.map((item) => (
                         <li key={item.href}>
@@ -181,11 +182,11 @@ const NavigationNew = () => {
                 {/* About */}
                 <HoverCard openDelay={120} closeDelay={180}>
                   <HoverCardTrigger asChild>
-                    <button type="button" className={`${linkClass} inline-flex items-center gap-0.5`}>
+                    <button type="button" className={`${navLinkClass(['/why-choose-da', '/find-teacher', '/principal-reflections', '/learning-formats'].includes(location.pathname))} inline-flex items-center gap-0.5`}>
                       About <ChevronDown className="h-3.5 w-3.5" />
                     </button>
                   </HoverCardTrigger>
-                  <HoverCardContent align="center" side="bottom" sideOffset={6} className="p-0 w-auto">
+                  <HoverCardContent align="center" side="bottom" sideOffset={6} className="p-0 w-auto border-brand-gold/25 bg-brand-ivory/95 backdrop-blur-xl shadow-md">
                     <ul className="grid w-[400px] gap-3 p-4">
                       {aboutItems.map((item) => (
                         <li key={item.href}>
@@ -202,16 +203,16 @@ const NavigationNew = () => {
                   </HoverCardContent>
                 </HoverCard>
 
-                <Link to="/success-stories" className={linkClass}>Success Stories</Link>
+                <Link to="/success-stories" className={navLinkClass(location.pathname === '/success-stories')}>Success Stories</Link>
 
                 {/* Resources */}
                 <HoverCard openDelay={120} closeDelay={180}>
                   <HoverCardTrigger asChild>
-                    <button type="button" className={`${linkClass} inline-flex items-center gap-0.5`}>
+                    <button type="button" className={`${navLinkClass(['/faq', '/tutoring-canley-heights', '/articles'].some((path) => location.pathname.startsWith(path)))} inline-flex items-center gap-0.5`}>
                       Resources <ChevronDown className="h-3.5 w-3.5" />
                     </button>
                   </HoverCardTrigger>
-                  <HoverCardContent align="center" side="bottom" sideOffset={6} className="p-0 w-auto">
+                  <HoverCardContent align="center" side="bottom" sideOffset={6} className="p-0 w-auto border-brand-gold/25 bg-brand-ivory/95 backdrop-blur-xl shadow-md">
                     <ul className="grid w-[350px] gap-3 p-4">
                       <li>
                         <Link
@@ -258,8 +259,8 @@ const NavigationNew = () => {
             <div className="flex items-center gap-3 shrink-0">
               <Link
                 to="/book-interview"
-                className="hidden lg:inline-flex items-center px-3.5 py-1.5 text-[0.8rem] font-semibold text-white rounded-md whitespace-nowrap transition-all duration-200 hover:opacity-90 active:scale-95"
-                style={{ background: 'linear-gradient(135deg, #0A1B34 0%, #16345d 100%)', border: '1px solid rgba(212,175,55,.62)', boxShadow: '0 3px 7px rgba(10,27,52,.16)' }}
+                className="hidden lg:inline-flex items-center px-3.5 py-1.5 text-[0.8rem] font-semibold text-[#fff3d6] rounded-sm whitespace-nowrap transition-all duration-200 hover:opacity-90 active:scale-95"
+                style={{ background: 'linear-gradient(135deg, #0A1B34 0%, #122b4d 100%)', border: '1px solid rgba(200,149,52,.76)', boxShadow: '0 2px 5px rgba(10,27,52,.16)' }}
               >
                 Book Consultation
               </Link>
@@ -276,7 +277,7 @@ const NavigationNew = () => {
 
           {/* Mobile Navigation */}
           {isOpen && (
-            <div className="lg:hidden absolute top-full left-0 w-full bg-brand-ivory/95 backdrop-blur-xl backdrop-saturate-150 shadow-lg border-t border-white/60 max-h-[80vh] overflow-y-auto">
+            <div className="lg:hidden absolute top-full left-0 w-full bg-brand-ivory/95 backdrop-blur-xl backdrop-saturate-125 shadow-md border-t border-brand-gold/25 max-h-[80vh] overflow-y-auto">
               <div className="px-4 py-5 space-y-3">
                 <Link
                   to="/"
@@ -355,8 +356,8 @@ const NavigationNew = () => {
                   <Link
                     to="/book-interview"
                     onClick={() => setIsOpen(false)}
-                    className="flex items-center justify-center w-full px-4 py-3 text-sm font-bold text-white rounded-xl"
-                    style={{ background: 'linear-gradient(135deg, #0A1B34 0%, #1a3a6b 100%)' }}
+                    className="flex items-center justify-center w-full px-4 py-3 text-sm font-bold text-[#fff3d6] rounded-md"
+                    style={{ background: 'linear-gradient(135deg, #0A1B34 0%, #122b4d 100%)', border: '1px solid rgba(200,149,52,.76)' }}
                   >
                     Book Consultation
                   </Link>

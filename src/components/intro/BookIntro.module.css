@@ -1,0 +1,751 @@
+@font-face {
+  font-family: 'DA Prologue Display';
+  src: url('/fonts/da-prologue-marcellus-sc-400.ttf') format('truetype');
+  font-display: swap;
+  font-style: normal;
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: 'DA Prologue Serif';
+  src: url('/fonts/da-prologue-cormorant-400.ttf') format('truetype');
+  font-display: swap;
+  font-style: normal;
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: 'DA Prologue Serif';
+  src: url('/fonts/da-prologue-cormorant-500.ttf') format('truetype');
+  font-display: swap;
+  font-style: normal;
+  font-weight: 500;
+}
+
+@font-face {
+  font-family: 'DA Prologue Serif';
+  src: url('/fonts/da-prologue-cormorant-600.ttf') format('truetype');
+  font-display: swap;
+  font-style: normal;
+  font-weight: 600;
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 99990;
+  overflow: hidden;
+  background: #15100a;
+  isolation: isolate;
+  opacity: 1;
+}
+
+.overlayLeaving {
+  opacity: 0;
+  transition: opacity 880ms cubic-bezier(.16, 1, .3, 1);
+}
+
+.bookButton {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border: 0;
+  background: #15100a;
+  color: inherit;
+  cursor: pointer;
+  padding: 0;
+}
+
+.openTrigger {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+}
+
+.openTrigger:focus-visible {
+  outline: 2px solid rgba(230, 190, 105, .9);
+  outline-offset: -6px;
+}
+
+.openTrigger:disabled {
+  pointer-events: none;
+}
+
+.camera {
+  position: absolute;
+  inset: 0;
+  contain: layout paint;
+  transform: scale(1);
+  transform-origin: 50% 54%;
+  will-change: transform;
+}
+
+.masterEnvironment {
+  position: absolute;
+  inset: -3%;
+  z-index: 0;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  filter: blur(8px) saturate(.9) brightness(.86);
+  transform: scale(1.045);
+}
+
+.stageCanvas {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: max(100vw, 177.778vh);
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  transform: translate3d(-50%, -50%, 0);
+}
+
+.cameraPush {
+  transform: scale(1.04);
+  transition: transform 1.05s cubic-bezier(.16, 1, .3, 1);
+}
+
+.entryZoomRight {
+  transform: translate3d(-19%, 12%, 0) scale(2.08);
+  transform-origin: 69% 38%;
+  transition: transform 1.36s cubic-bezier(.45, 0, .2, 1);
+}
+
+.entryZoomDeep {
+  transform: translate3d(-19%, 12%, 0) scale(4.6);
+  transform-origin: 69% 38%;
+  transition: transform 1.6s cubic-bezier(.45, 0, .2, 1);
+}
+
+.sceneLayer {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+  will-change: opacity, filter, mask-size;
+}
+
+.incomingScene {
+  z-index: 2;
+  animation: sceneReveal 900ms cubic-bezier(.4, 0, .2, 1) both;
+}
+
+.outgoingScene {
+  z-index: 1;
+  opacity: 1;
+  animation: sceneDepart 900ms cubic-bezier(.4, 0, .2, 1) both;
+}
+
+.sceneTransform {
+  position: absolute;
+  inset: 0;
+  transform: var(--scene-transform);
+  transform-origin: 50% 54%;
+  mask-image: radial-gradient(ellipse at 50% 57%, #000 0 32%, rgba(0, 0, 0, .96) 47%, transparent 72%);
+  mask-position: center;
+  mask-repeat: no-repeat;
+  mask-size: 170% 170%;
+  will-change: transform, mask-size;
+}
+
+.incomingScene .sceneTransform {
+  animation: sceneMaskReveal 900ms cubic-bezier(.4, 0, .2, 1) both;
+}
+
+.outgoingScene .sceneTransform {
+  animation: scenePushForward 900ms cubic-bezier(.4, 0, .2, 1) both;
+}
+
+.environment {
+  position: absolute;
+  inset: -3%;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: var(--scene-position);
+  filter: blur(10px) saturate(.86) brightness(.72);
+  opacity: 1;
+  transform: scale(1.05);
+}
+
+.bookImage {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: var(--scene-position);
+  opacity: 1;
+  user-select: none;
+  pointer-events: none;
+  will-change: transform, filter;
+}
+
+.camera .bookImage {
+  filter: saturate(.94) brightness(.98);
+}
+
+.transitionVeil {
+  position: absolute;
+  inset: -12%;
+  z-index: 4;
+  background:
+    radial-gradient(ellipse 42% 55% at 58% 54%, rgba(255, 236, 188, .28), transparent 72%),
+    linear-gradient(112deg, transparent 25%, rgba(255, 219, 146, .22) 48%, transparent 70%);
+  mix-blend-mode: screen;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate3d(-3%, 0, 0) scale(1.03);
+}
+
+.transitionVeilVisible {
+  animation: veilPass 900ms ease-in-out both;
+}
+
+.openCue {
+  position: absolute;
+  z-index: 6;
+  left: 50%;
+  bottom: clamp(24px, 5vh, 54px);
+  border-bottom: 1px solid rgba(183, 132, 45, .66);
+  color: rgba(246, 229, 190, .94);
+  font: 600 clamp(11px, .9vw, 14px) / 1.2 'DM Sans', sans-serif;
+  letter-spacing: .1em;
+  opacity: 0;
+  pointer-events: none;
+  text-transform: uppercase;
+  text-shadow: 0 1px 4px rgba(23, 14, 6, .72);
+  transform: translate3d(-50%, 5px, 0);
+  transition:
+    opacity 320ms ease,
+    transform 520ms cubic-bezier(.16, 1, .3, 1);
+}
+
+.openCueVisible {
+  opacity: .9;
+  transform: translate3d(-50%, 0, 0);
+}
+
+.prologueOverlay {
+  position: absolute;
+  z-index: 2;
+  top: 50%;
+  left: 50%;
+  width: min(100vw, 150vh);
+  aspect-ratio: 3 / 2;
+  color: #17233a;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  transition: opacity 700ms cubic-bezier(.16, 1, .3, 1);
+}
+
+.prologueVisible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.screenReaderPrologue {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.pageCopy {
+  position: absolute;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-height: 52%;
+  overflow: hidden;
+  text-align: center;
+  font-kerning: normal;
+  font-optical-sizing: auto;
+}
+
+.leftPageCopy {
+  top: 20.5%;
+  bottom: 27.5%;
+  left: 22.5%;
+  width: 22%;
+  justify-content: center;
+}
+
+.rightPageCopy {
+  top: 20.5%;
+  right: 22.5%;
+  bottom: 27.5%;
+  width: 22%;
+  justify-content: center;
+  gap: clamp(.75rem, 1vw, 1.1rem);
+}
+
+.prologueLabel {
+  position: relative;
+  margin: 0 0 clamp(.65rem, .85vw, .9rem);
+  color: #a67c2d;
+  font: 400 clamp(.46rem, .48vw, .56rem) / 1.15 'DA Prologue Display', 'Palatino Linotype', serif;
+  letter-spacing: .22em;
+  opacity: 0;
+  padding-bottom: clamp(.35rem, .45vw, .5rem);
+  filter: blur(3px);
+  transform: translate3d(0, 3px, 0);
+  transition:
+    opacity 360ms ease,
+    filter 360ms ease,
+    transform 360ms cubic-bezier(.16, 1, .3, 1);
+}
+
+.prologueLabel::after {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: clamp(4.5rem, 7vw, 7rem);
+  height: 1px;
+  background:
+    linear-gradient(90deg, #a67c2d 0 44%, transparent 44% 50%, #a67c2d 50% 100%);
+  content: '';
+  opacity: .72;
+  transform: translateX(-50%);
+}
+
+.inkVisible {
+  opacity: 1;
+  filter: blur(0);
+  transform: translate3d(0, 0, 0);
+}
+
+.prologueStatement {
+  width: 100%;
+  max-width: 19ch;
+  margin: 0;
+  color: #24334e;
+  font: italic 500 clamp(.72rem, .82vw, .95rem) / 1.35 'DA Prologue Serif', 'Palatino Linotype', serif;
+  letter-spacing: .005em;
+  text-align: center;
+  text-wrap: balance;
+}
+
+.prologueStatement::after {
+  display: block;
+  width: clamp(3.5rem, 5vw, 5rem);
+  height: 1px;
+  margin: clamp(.45rem, .65vw, .7rem) auto 0;
+  background: linear-gradient(90deg, transparent, #a67c2d 22% 78%, transparent);
+  content: '';
+  opacity: .68;
+}
+
+.welcomeLine {
+  max-width: 18ch;
+  margin: clamp(.5rem, .65vw, .7rem) 0 0;
+  color: #9a6f25;
+  font: 600 clamp(.58rem, .62vw, .7rem) / 1.35 'DA Prologue Serif', 'Palatino Linotype', serif;
+  letter-spacing: .025em;
+  text-align: center;
+  text-wrap: balance;
+}
+
+.rightPageCopy > p {
+  width: 100%;
+  max-width: 32ch;
+  margin: 0;
+  color: #3a312c;
+  font: 500 clamp(.56rem, .58vw, .67rem) / 1.62 'DA Prologue Serif', 'Palatino Linotype', serif;
+  letter-spacing: .005em;
+  text-align: center;
+  text-wrap: pretty;
+}
+
+.rightPageCopy > p:nth-of-type(2)::before {
+  display: block;
+  width: clamp(3rem, 4.5vw, 4.5rem);
+  height: 1px;
+  margin: 0 auto clamp(.55rem, .75vw, .8rem);
+  background: linear-gradient(90deg, transparent, #a67c2d 22% 78%, transparent);
+  content: '';
+  opacity: .62;
+}
+
+.rightPageCopy > p:first-child .writingLine:first-child::first-letter {
+  color: #a67c2d;
+  font-family: 'DA Prologue Display', 'Palatino Linotype', serif;
+  font-size: 1.75em;
+}
+
+.writingText {
+  position: relative;
+  white-space: pre-wrap;
+}
+
+.writingLine {
+  animation: inkSettle 260ms ease both;
+}
+
+.writingPoint {
+  display: inline-block;
+  width: 2px;
+  height: .9em;
+  margin-left: 3px;
+  border-radius: 999px;
+  background: #b77f25;
+  box-shadow:
+    0 0 4px rgba(205, 151, 58, .72),
+    -4px 1px 5px rgba(205, 151, 58, .24),
+    -8px 2px 7px rgba(205, 151, 58, .12);
+  vertical-align: -.08em;
+  animation: writingPointBlink 720ms ease-in-out infinite;
+}
+
+.exploreButton {
+  position: relative;
+  min-height: clamp(26px, 3.8vmin, 48px);
+  margin-top: clamp(3px, .8vmin, 12px);
+  overflow: hidden;
+  border: 1px solid #d1a24a;
+  border-radius: 1px;
+  background: #10233f;
+  color: #f5d890;
+  cursor: pointer;
+  font: 700 clamp(8px, 1vmin, 12px) / 1 'DM Sans', sans-serif;
+  letter-spacing: .06em;
+  opacity: 0;
+  padding: 0 clamp(12px, 2vmin, 26px);
+  pointer-events: none;
+  transform: translate3d(0, 4px, 0);
+  box-shadow:
+    0 0 0 2px #10233f,
+    0 0 0 3px rgba(209, 162, 74, .72);
+  transition:
+    background 180ms ease,
+    opacity 260ms ease,
+    transform 520ms cubic-bezier(.16, 1, .3, 1);
+}
+
+.exploreButton::before {
+  position: absolute;
+  inset: 0;
+  border: 1px solid #d1a24a;
+  border-radius: inherit;
+  content: '';
+  clip-path: inset(0 100% 0 0);
+  transition: clip-path 620ms cubic-bezier(.16, 1, .3, 1);
+}
+
+.exploreButton::after {
+  position: absolute;
+  inset: -40% auto -40% -35%;
+  width: 28%;
+  background: linear-gradient(90deg, transparent, rgba(255, 225, 157, .34), transparent);
+  content: '';
+  opacity: 0;
+  pointer-events: none;
+  transform: skewX(-16deg);
+}
+
+.exploreButton > span {
+  position: relative;
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 240ms ease 340ms;
+}
+
+.buttonDrawing,
+.buttonReady {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+.buttonDrawing::before,
+.buttonReady::before {
+  clip-path: inset(0);
+}
+
+.buttonReady {
+  pointer-events: auto;
+}
+
+.buttonReady > span {
+  opacity: 1;
+}
+
+.buttonReady::after {
+  animation: buttonShimmer 620ms ease-out both;
+}
+
+.exploreButton:hover {
+  background: #173052;
+}
+
+.exploreButton:focus-visible {
+  outline: 2px solid #d7a94e;
+  outline-offset: 3px;
+}
+
+.paperLayer {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  background: #f3e7d2 url('/book-theme/paper-texture.png') center / cover no-repeat;
+  opacity: 0;
+  pointer-events: none;
+  filter: brightness(1.06);
+  mask-image: radial-gradient(ellipse at center, #000 0 42%, transparent 72%);
+  mask-position: center;
+  mask-repeat: no-repeat;
+  mask-size: 24% 24%;
+  transform: scale(1.04);
+  will-change: transform, opacity, filter, mask-size;
+}
+
+.paperVisible {
+  animation: paperFill 1.05s cubic-bezier(.4, 0, .2, 1) both;
+}
+
+.sunlight {
+  position: absolute;
+  inset: -12% -8%;
+  z-index: 3;
+  background:
+    linear-gradient(118deg, transparent 23%, rgba(255, 238, 190, .09) 42%, transparent 59%);
+  mix-blend-mode: screen;
+  opacity: .58;
+  pointer-events: none;
+  animation: sunlightDrift 16s ease-in-out infinite alternate;
+}
+
+.dust {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  overflow: hidden;
+  pointer-events: none;
+  mask-image: radial-gradient(ellipse 72% 70% at 50% 48%, #000 14%, transparent 84%);
+}
+
+.dust i {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  border-radius: 50%;
+  background: rgba(255, 226, 164, .55);
+  opacity: 0;
+  animation: dustDrift linear infinite;
+}
+
+@keyframes sunlightDrift {
+  from { transform: translate3d(-1.5%, -1%, 0); }
+  to { transform: translate3d(1.5%, 1%, 0); }
+}
+
+@keyframes dustDrift {
+  0% { opacity: 0; transform: translate3d(0, 12px, 0); }
+  18% { opacity: .26; }
+  72% { opacity: .16; }
+  100% { opacity: 0; transform: translate3d(16px, -28px, 0); }
+}
+
+@keyframes sceneReveal {
+  0% {
+    opacity: 0;
+    filter: blur(8px) brightness(1.1);
+  }
+  45% { opacity: .66; }
+  100% {
+    opacity: 1;
+    filter: blur(0) brightness(1);
+  }
+}
+
+@keyframes sceneMaskReveal {
+  from { mask-size: 22% 22%; }
+  to { mask-size: 170% 170%; }
+}
+
+@keyframes sceneDepart {
+  0% {
+    opacity: 1;
+    filter: blur(0) brightness(1);
+  }
+  52% { opacity: .64; }
+  100% {
+    opacity: 0;
+    filter: blur(10px) brightness(.82);
+  }
+}
+
+@keyframes scenePushForward {
+  from { transform: var(--scene-transform); }
+  to { transform: var(--scene-transform) scale(1.025); }
+}
+
+@keyframes veilPass {
+  0%, 100% { opacity: 0; }
+  42% { opacity: .95; }
+  100% { transform: translate3d(4%, 0, 0) scale(1.07); }
+}
+
+@keyframes paperFill {
+  0% {
+    opacity: 0;
+    filter: brightness(1.13) blur(4px);
+    mask-size: 24% 24%;
+    transform: scale(1.04);
+  }
+  55% { opacity: .94; }
+  100% {
+    opacity: 1;
+    filter: brightness(1);
+    mask-size: 190% 190%;
+    transform: scale(1.1);
+  }
+}
+
+@keyframes inkSettle {
+  from {
+    filter: blur(.55px);
+    color: #9c7029;
+  }
+  to {
+    filter: blur(0);
+    color: inherit;
+  }
+}
+
+@keyframes writingPointBlink {
+  0%, 100% { opacity: .38; transform: scaleY(.82); }
+  50% { opacity: 1; transform: scaleY(1); }
+}
+
+@keyframes buttonShimmer {
+  0% { left: -35%; opacity: 0; }
+  25% { opacity: .8; }
+  100% { left: 118%; opacity: 0; }
+}
+
+@media (max-width: 640px) {
+  .environment { filter: blur(8px) saturate(.84) brightness(.68); }
+  .sunlight { opacity: .42; }
+  .dust i:nth-child(n + 8) { display: none; }
+  .prologueLabel { letter-spacing: .1em; }
+  .rightPageCopy { gap: 5px; }
+}
+
+@media (max-width: 640px) and (orientation: portrait) {
+  .prologueOverlay {
+    width: min(92vw, 430px);
+    min-height: min(72vh, 620px);
+    aspect-ratio: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 18px;
+    border: 1px solid rgba(167, 113, 31, .58);
+    background: rgba(250, 240, 219, .94);
+    box-shadow: 0 5px 8px rgba(48, 29, 12, .22);
+    padding: clamp(24px, 8vw, 38px);
+  }
+
+  .pageCopy,
+  .leftPageCopy,
+  .rightPageCopy {
+    position: static;
+    width: 100%;
+    max-height: none;
+    overflow: visible;
+  }
+
+  .rightPageCopy {
+    display: flex;
+    gap: 10px;
+  }
+
+  .prologueLabel {
+    margin-bottom: 14px;
+    font-size: .72rem;
+  }
+
+  .prologueStatement {
+    font-size: clamp(1rem, 4.7vw, 1.3rem);
+  }
+
+  .welcomeLine {
+    margin-top: 16px;
+    font-size: .88rem;
+  }
+
+  .rightPageCopy > p {
+    max-width: none;
+    font-size: .78rem;
+    line-height: 1.6;
+  }
+
+  .exploreButton {
+    min-height: 44px;
+    margin-top: 4px;
+    font-size: .75rem;
+    padding-inline: 20px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .incomingScene,
+  .outgoingScene,
+  .paperVisible,
+  .transitionVeilVisible {
+    animation-duration: 120ms;
+    animation-timing-function: linear;
+  }
+
+  .outgoingScene .sceneTransform { animation: none; }
+  .incomingScene .sceneTransform { animation-duration: 120ms; }
+  .cameraPush { transition: none; }
+  .entryZoomRight,
+  .entryZoomDeep { transform: none; transition: none; }
+  .overlayLeaving { transition-duration: 180ms; }
+  .sunlight,
+  .dust i,
+  .writingPoint,
+  .writingLine,
+  .buttonReady::after { animation: none; }
+  .dust { display: none; }
+}
+
+:global(body[data-da-book-intro-active="true"]) :global(.site-sticky-book-button) {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+:global(body[data-da-book-intro-active="true"]) :global(nav),
+:global(body[data-da-book-intro-active="true"]) :global(main),
+:global(body[data-da-book-intro-active="true"]) :global(footer) {
+  opacity: 0 !important;
+}
+
+:global(body[data-da-book-intro-active="true"][data-da-book-intro-phase="4"]) :global(nav),
+:global(body[data-da-book-intro-active="true"][data-da-book-intro-phase="4"]) :global(main),
+:global(body[data-da-book-intro-active="true"][data-da-book-intro-phase="4"]) :global(footer) {
+  opacity: 1 !important;
+  transition: opacity 520ms cubic-bezier(.16, 1, .3, 1) 260ms;
+}
+
+:global(body[data-da-book-intro-active="true"][data-da-book-intro-phase="4"]) :global(.site-sticky-book-button) {
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  transition-delay: 520ms;
+}
