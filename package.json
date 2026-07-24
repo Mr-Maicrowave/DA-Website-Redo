@@ -5,8 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "npm run sitemap && tsc --noEmit -p tsconfig.app.json && vite build",
+    "build": "npm run check:encoding && npm run sitemap && tsc --noEmit -p tsconfig.app.json && vite build",
     "build:dev": "npm run sitemap && vite build --mode development",
+    "check:encoding": "node scripts/check-encoding.mjs",
     "typecheck": "tsc --noEmit -p tsconfig.app.json",
     "lint": "eslint .",
     "preview": "vite preview",

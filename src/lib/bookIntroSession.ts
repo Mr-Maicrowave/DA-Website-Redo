@@ -25,3 +25,13 @@ export const markBookIntroComplete = () => {
     // The transition still completes when storage is unavailable.
   }
 };
+
+export const resetBookIntroComplete = () => {
+  if (!hasWindow()) return;
+
+  try {
+    window.sessionStorage.removeItem(BOOK_INTRO_SESSION_KEY);
+  } catch {
+    // The replay state handler can still show the intro for the current page.
+  }
+};
