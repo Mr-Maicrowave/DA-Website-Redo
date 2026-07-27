@@ -1,0 +1,746 @@
+.philosophySection {
+  --chapter-ink: #061d3a;
+  --chapter-body: rgba(7, 34, 66, 0.88);
+  --chapter-warm-ink: rgba(48, 40, 31, 0.9);
+  --chapter-gold: #af791d;
+  --chapter-gold-bright: #c99637;
+  --chapter-paper: rgba(255, 248, 231, 0.86);
+
+  position: relative;
+  z-index: 1;
+  display: grid;
+  width: 100%;
+  min-height: calc(100vh - 72px);
+  place-items: start center;
+  margin: 0;
+  padding: 0;
+  overflow-x: clip;
+  overflow-y: visible;
+  background:
+    radial-gradient(
+      ellipse at 50% 35%,
+      #fffbed 0%,
+      #f8f3e8 58%,
+      #efe9dc 100%
+    );
+  scroll-margin-top: 96px;
+}
+
+.bookStage {
+  display: grid;
+  width: 100%;
+  place-items: start center;
+  overflow-x: clip;
+  overflow-y: visible;
+  perspective: 1800px;
+}
+
+.bookWrapper {
+  position: relative;
+  width: min(96vw, 1900px);
+  aspect-ratio: 1536 / 1024;
+  margin: clamp(-94px, -5.2vw, -28px) auto 0;
+  overflow: visible;
+  isolation: isolate;
+  container-type: inline-size;
+  transform: rotateX(3.2deg) translateY(0);
+  transform-origin: center;
+  transform-style: preserve-3d;
+  animation: chapterPageEnter 780ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.bookWrapper::before {
+  position: absolute;
+  right: 2.5%;
+  bottom: -18px;
+  left: 2.5%;
+  z-index: -2;
+  height: 42px;
+  border-radius: 50%;
+  background: rgba(47, 29, 9, 0.22);
+  filter: blur(20px);
+  content: "";
+}
+
+.bookWrapper::after {
+  position: absolute;
+  right: 5%;
+  bottom: -8px;
+  left: 5%;
+  z-index: -1;
+  height: 18px;
+  border-radius: 50%;
+  background: rgba(68, 41, 13, 0.28);
+  filter: blur(9px);
+  content: "";
+}
+
+.bookImage {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  pointer-events: none;
+  user-select: none;
+}
+
+.bookContent {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+}
+
+.leftPage,
+.rightPage {
+  position: absolute;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.leftPage {
+  top: 8.4%;
+  left: 7.2%;
+  display: block;
+  width: 41.8%;
+  height: 76.8%;
+  padding: 0;
+}
+
+.chapterIntro {
+  position: absolute;
+  top: 5.2%;
+  left: 18.2%;
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  transform: none;
+}
+
+.chapterLabel {
+  margin: 0 0 clamp(8px, 1.05cqw, 16px);
+  color: var(--chapter-gold);
+  font-family: var(--font-heading, Georgia, "Times New Roman", serif);
+  font-size: clamp(12px, 0.92cqw, 17px);
+  font-weight: 700;
+  letter-spacing: 0.17em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.chapterTitle {
+  max-width: 10ch;
+  margin: 0;
+  color: var(--chapter-ink);
+  font-family: var(--font-display, Georgia, "Times New Roman", serif);
+  font-size: clamp(62px, 5.25cqw, 100px);
+  font-weight: 500;
+  letter-spacing: -0.034em;
+  line-height: 0.94;
+  text-wrap: balance;
+}
+
+.photoStage {
+  position: absolute;
+  top: 29.6%;
+  left: 50%;
+  display: grid;
+  min-width: 0;
+  min-height: 0;
+  width: 106%;
+  align-items: center;
+  justify-items: center;
+  padding: 0;
+  pointer-events: none;
+  transform: translateX(-50%);
+}
+
+.activePhoto {
+  position: relative;
+  width: 100%;
+  margin: 0;
+  overflow: visible;
+  color: var(--chapter-warm-ink);
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  transform: none;
+  isolation: isolate;
+}
+
+.activePhoto::before,
+.activePhoto::after {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  content: "";
+}
+
+.activePhoto::before {
+  inset: 4% 5% 12%;
+  z-index: -1;
+  background:
+    radial-gradient(
+      ellipse at center,
+      rgba(245, 221, 165, 0.2) 0%,
+      rgba(245, 221, 165, 0.13) 42%,
+      transparent 72%
+    );
+  filter: blur(96px);
+  opacity: 0.9;
+  mix-blend-mode: multiply;
+}
+
+.activePhoto::after {
+  inset: -12%;
+  background-image:
+    radial-gradient(circle, rgba(215, 164, 67, 0.24) 0 1px, transparent 1.9px),
+    radial-gradient(circle, rgba(255, 236, 174, 0.2) 0 1px, transparent 1.8px);
+  background-position:
+    0 0,
+    70px 42px;
+  background-size:
+    94px 94px,
+    142px 142px;
+  opacity: 0;
+  transform: translateY(10px);
+  animation: memoryDustBloom 860ms cubic-bezier(0.22, 1, 0.36, 1);
+  mix-blend-mode: screen;
+  -webkit-mask-image: radial-gradient(
+    ellipse 94% 72% at 50% 50%,
+    transparent 0 45%,
+    #000 58%,
+    transparent 88%
+  );
+  mask-image: radial-gradient(
+    ellipse 94% 72% at 50% 50%,
+    transparent 0 45%,
+    #000 58%,
+    transparent 88%
+  );
+}
+
+.activePhoto img {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  object-position: center;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  filter: none;
+  opacity: 1;
+}
+
+.rightPage {
+  top: 8.4%;
+  left: 51.5%;
+  display: block;
+  width: 41.4%;
+  height: 76.8%;
+  padding: 0;
+}
+
+.philosophySelectors {
+  position: absolute;
+  top: 6.6%;
+  right: 4.5%;
+  left: 3.8%;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(12px, 2.15cqw, 40px);
+  align-items: start;
+}
+
+.philosophySelector {
+  position: relative;
+  display: grid;
+  min-width: 0;
+  min-height: clamp(66px, 5.9cqw, 102px);
+  align-content: center;
+  justify-items: center;
+  padding: 0.44rem 0.3rem 0.82rem;
+  border: 0;
+  color: rgba(6, 29, 58, 0.58);
+  background: transparent;
+  cursor: pointer;
+  font: inherit;
+  text-align: center;
+  transition:
+    color 240ms ease,
+    filter 240ms ease,
+    text-shadow 240ms ease;
+}
+
+.philosophySelector::before {
+  position: absolute;
+  right: 16%;
+  bottom: 0.38rem;
+  left: 16%;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(175, 121, 29, 0.45),
+    transparent
+  );
+  content: "";
+}
+
+.philosophySelector:hover,
+.philosophySelector:focus-visible,
+.philosophySelector[data-active="true"] {
+  color: var(--chapter-ink);
+}
+
+.philosophySelector:focus-visible {
+  outline: 2px solid rgba(175, 121, 29, 0.58);
+  outline-offset: 5px;
+}
+
+.philosophySelector[data-active="true"] {
+  filter: drop-shadow(0 8px 14px rgba(196, 146, 55, 0.14));
+  text-shadow: 0 0 18px rgba(212, 166, 78, 0.22);
+}
+
+.selectorNumber {
+  color: #80571c;
+  font-family: var(--font-heading, Georgia, "Times New Roman", serif);
+  font-size: clamp(12px, 0.82cqw, 16px);
+  font-style: italic;
+  line-height: 1;
+}
+
+.selectorTitle {
+  margin-top: 0.38rem;
+  white-space: nowrap;
+  font-family: var(--font-display, Georgia, "Times New Roman", serif);
+  font-size: clamp(16px, 1.04cqw, 21px);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1.05;
+}
+
+.selectorProgress {
+  position: absolute;
+  right: 16%;
+  bottom: 0.38rem;
+  left: 16%;
+  height: 2px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(185, 129, 39, 0.12);
+}
+
+.selectorProgress::before {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    rgba(175, 121, 29, 0.28),
+    rgba(213, 166, 71, 0.95)
+  );
+  transform-origin: left center;
+  animation: philosophyProgress 5000ms linear forwards;
+  content: "";
+}
+
+.bookContent[data-paused="true"] .selectorProgress::before {
+  animation-play-state: paused;
+}
+
+.revealArea {
+  position: absolute;
+  top: 27.5%;
+  left: 7.2%;
+  width: 76%;
+  max-width: 760px;
+  min-width: 0;
+  min-height: 0;
+}
+
+.activePhilosophy {
+  position: relative;
+  max-width: 720px;
+  margin-top: 0;
+  color: var(--chapter-body);
+  transform-origin: left center;
+}
+
+.activeNumber {
+  display: block;
+  color: var(--chapter-gold);
+  font-family: var(--font-heading, Georgia, "Times New Roman", serif);
+  font-size: clamp(1rem, 1.02cqw, 1.18rem);
+  font-style: italic;
+  line-height: 1;
+}
+
+.activeTitle {
+  margin: 0.5rem 0 0;
+  color: var(--chapter-ink);
+  font-family: var(--font-display, Georgia, "Times New Roman", serif);
+  font-size: clamp(53px, 4.55cqw, 90px);
+  font-weight: 500;
+  letter-spacing: -0.025em;
+  line-height: 1.04;
+  text-wrap: balance;
+}
+
+.activeLead {
+  max-width: 600px;
+  margin: clamp(0.9rem, 1.2vw, 1.2rem) 0 0;
+  color: rgba(6, 29, 58, 0.92);
+  font-family: var(--font-body, Georgia, "Times New Roman", serif);
+  font-size: clamp(20px, 1.64cqw, 32px);
+  font-weight: 700;
+  line-height: 1.48;
+  text-wrap: pretty;
+}
+
+.activeDivider {
+  width: 82px;
+  height: 1px;
+  margin: clamp(1.1rem, 1.6vw, 1.45rem) 0;
+  background: linear-gradient(
+    90deg,
+    rgba(184, 133, 45, 0.95),
+    rgba(184, 133, 45, 0.15)
+  );
+}
+
+.activeDescription {
+  max-width: 650px;
+  margin: 0;
+  color: var(--chapter-body);
+  font-family: var(--font-body, Georgia, "Times New Roman", serif);
+  font-size: clamp(18px, 1.32cqw, 25px);
+  line-height: 1.68;
+  text-wrap: pretty;
+}
+
+.transitionSweep {
+  position: absolute;
+  inset: 0 auto auto -12%;
+  z-index: -1;
+  width: 54%;
+  height: 100%;
+  pointer-events: none;
+  background: linear-gradient(
+    105deg,
+    transparent 0%,
+    rgba(255, 244, 205, 0.2) 42%,
+    rgba(255, 255, 255, 0.34) 50%,
+    rgba(216, 165, 73, 0.12) 58%,
+    transparent 76%
+  );
+  filter: blur(8px);
+  opacity: 0;
+  transform: translateX(-35%);
+  animation: philosophySweep 820ms cubic-bezier(0.22, 1, 0.36, 1);
+  mix-blend-mode: screen;
+}
+
+.transitionDust {
+  position: absolute;
+  top: 16%;
+  left: 2%;
+  width: 240px;
+  height: 150px;
+  pointer-events: none;
+  background-image:
+    radial-gradient(circle, rgba(210, 160, 61, 0.5) 0 1px, transparent 1.8px),
+    radial-gradient(circle, rgba(255, 242, 184, 0.38) 0 1px, transparent 1.8px);
+  background-position:
+    0 0,
+    38px 26px;
+  background-size:
+    52px 52px,
+    73px 73px;
+  opacity: 0;
+  transform: translateY(8px);
+  animation: philosophyDust 820ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes chapterPageEnter {
+  from {
+    opacity: 0;
+    transform: rotateX(3.2deg) translateY(24px);
+  }
+
+  to {
+    opacity: 1;
+    transform: rotateX(3.2deg) translateY(0);
+  }
+}
+
+@keyframes philosophyProgress {
+  from {
+    transform: scaleX(0);
+  }
+
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes philosophySweep {
+  0% {
+    opacity: 0;
+    transform: translateX(-42%);
+  }
+
+  28% {
+    opacity: 0.58;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateX(165%);
+  }
+}
+
+@keyframes philosophyDust {
+  0% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  35% {
+    opacity: 0.34;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateY(-14px);
+  }
+}
+
+@keyframes memoryDustBloom {
+  0% {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+
+  34% {
+    opacity: 0.3;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateY(-12px) scale(1.02);
+  }
+}
+
+@supports (animation-timeline: view()) {
+  .bookWrapper {
+    animation-timeline: view();
+    animation-range: entry 8% cover 30%;
+  }
+}
+
+@media (max-width: 1180px) {
+  .bookWrapper {
+    width: min(96vw, 1800px, calc(88vh * 1.5));
+    margin: 0 auto;
+  }
+
+  .chapterTitle {
+    font-size: clamp(44px, 4.45cqw, 72px);
+  }
+
+  .activePhoto {
+    width: 100%;
+  }
+
+  .philosophySelectors {
+    gap: clamp(8px, 1.4cqw, 22px);
+  }
+}
+
+@media (max-width: 920px) {
+  .bookWrapper {
+    width: min(96vw, 850px);
+    margin: 0 auto;
+    transform: none;
+  }
+
+  .bookContent {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    align-content: start;
+    overflow-y: auto;
+    padding:
+      clamp(3.45rem, 7vw, 4.8rem)
+      clamp(2.4rem, 7vw, 4.5rem)
+      clamp(7rem, 13vw, 9rem);
+  }
+
+  .leftPage {
+    position: relative;
+    top: auto;
+    left: auto;
+    width: auto;
+    height: auto;
+    overflow: visible;
+    padding: 0;
+  }
+
+  .rightPage {
+    position: relative;
+    top: auto;
+    left: auto;
+    width: auto;
+    height: auto;
+    overflow: visible;
+    padding: 0;
+  }
+
+  .chapterIntro {
+    position: relative;
+    top: auto;
+    left: auto;
+    max-width: 600px;
+    transform: none;
+  }
+
+  .chapterTitle {
+    max-width: 12ch;
+  }
+
+  .photoStage {
+    position: relative;
+    top: auto;
+    left: auto;
+    width: auto;
+    justify-items: start;
+    padding: 1rem 0 0;
+    pointer-events: none;
+    transform: none;
+  }
+
+  .activePhoto {
+    width: min(68vw, 420px);
+  }
+
+  .philosophySelectors {
+    position: relative;
+    top: auto;
+    right: auto;
+    left: auto;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    margin-top: 0.7rem;
+  }
+
+  .revealArea {
+    position: relative;
+    top: auto;
+    left: auto;
+    width: auto;
+    max-width: none;
+  }
+
+  .activePhilosophy {
+    margin-top: clamp(1.6rem, 3vw, 2.4rem);
+  }
+}
+
+@media (max-width: 680px) {
+  .philosophySection {
+    padding-top: 0;
+  }
+
+  .bookWrapper {
+    width: min(96vw, 620px);
+    margin: 0 auto;
+    transform: none;
+  }
+
+  .bookContent {
+    padding:
+      3rem
+      clamp(1.4rem, 7vw, 2.2rem)
+      5.8rem;
+  }
+
+  .chapterTitle {
+    font-size: clamp(2.35rem, 12vw, 3.3rem);
+  }
+
+  .activePhoto {
+    width: min(82vw, 360px);
+  }
+
+  .philosophySelectors {
+    display: flex;
+    gap: 0.6rem;
+    align-items: stretch;
+    margin-inline: -0.35rem;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    padding: 0.2rem 0.35rem 0.45rem;
+    scroll-snap-type: x mandatory;
+  }
+
+  .philosophySelector {
+    min-width: 128px;
+    min-height: 68px;
+    scroll-snap-align: start;
+  }
+
+  .activeTitle {
+    font-size: clamp(2.05rem, 10vw, 2.82rem);
+  }
+
+  .activeLead {
+    font-size: 1rem;
+  }
+
+  .activeDescription {
+    font-size: 0.96rem;
+    line-height: 1.62;
+  }
+}
+
+@media (max-width: 420px) {
+  .bookWrapper {
+    width: 96vw;
+    margin: 0 auto;
+  }
+
+  .bookContent {
+    padding-inline: 1.25rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bookWrapper,
+  .philosophySelector,
+  .selectorProgress::before,
+  .activePhoto::after,
+  .transitionSweep,
+  .transitionDust {
+    animation: none;
+    transition: none;
+  }
+
+  .transitionSweep,
+  .transitionDust {
+    display: none;
+  }
+}

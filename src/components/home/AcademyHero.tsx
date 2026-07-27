@@ -1,4 +1,5 @@
 import type { MouseEvent } from "react";
+import { motion, useMotionValue, useReducedMotion, useSpring } from "framer-motion";
 import { Link } from "react-router-dom";
 import "./AcademyHero.css";
 
@@ -11,6 +12,40 @@ export function AcademyHero({
   onExplore,
   consultationHref = "/book-interview",
 }: AcademyHeroProps) {
+  const prefersReducedMotion = useReducedMotion();
+  const rotateX = useMotionValue(0);
+  const rotateY = useMotionValue(0);
+
+  const springX = useSpring(rotateX, {
+    stiffness: 170,
+    damping: 24,
+  });
+
+  const springY = useSpring(rotateY, {
+    stiffness: 170,
+    damping: 24,
+  });
+
+  const clampTilt = (value: number) => Math.max(-2, Math.min(2, value));
+
+  const handleHeroMouseMove = (event: MouseEvent<HTMLElement>) => {
+    if (prefersReducedMotion) return;
+
+    const rect = event.currentTarget.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+    const px = (x / rect.width - 0.5) * 2;
+    const py = (y / rect.height - 0.5) * 2;
+
+    rotateY.set(clampTilt(px * 2));
+    rotateX.set(clampTilt(-py * 2));
+  };
+
+  const resetHeroTilt = () => {
+    rotateX.set(0);
+    rotateY.set(0);
+  };
+
   const handleExplore = (event: MouseEvent<HTMLAnchorElement>) => {
     if (!onExplore) return;
 
@@ -19,7 +54,12 @@ export function AcademyHero({
   };
 
   return (
-    <section className="academy-hero da-screen-section" aria-labelledby="academy-hero-title">
+    <section
+      className="academy-hero da-screen-section"
+      aria-labelledby="academy-hero-title"
+      onMouseMove={handleHeroMouseMove}
+      onMouseLeave={resetHeroTilt}
+    >
       <div className="academy-hero__background" aria-hidden="true" />
       <div className="academy-hero__light" aria-hidden="true" />
       <div className="academy-hero__particles" aria-hidden="true" />
@@ -61,26 +101,6 @@ export function AcademyHero({
             </Link>
           </div>
 
-          <div className="academy-hero__trust">
-            <div className="academy-hero__trust-item">
-              <strong>20+</strong>
-              <span>Years of Guidance</span>
-            </div>
-
-            <div className="academy-hero__trust-separator" />
-
-            <div className="academy-hero__trust-item">
-              <strong>450+</strong>
-              <span>Five-Star Stories</span>
-            </div>
-
-            <div className="academy-hero__trust-separator" />
-
-            <div className="academy-hero__trust-item">
-              <strong>Year 1–12</strong>
-              <span>Complete Learning Journey</span>
-            </div>
-          </div>
         </div>
 
         <div className="academy-hero__chapter-marker" aria-hidden="true">
@@ -91,13 +111,33 @@ export function AcademyHero({
 
         <div className="heroBookWrapper">
           <div className="heroBookShadow" aria-hidden="true" />
-          <img
-            className="heroBook"
-            src="/images/homepage/hero-book-closed.png"
-            alt="DA Tuition academy book"
-            width="1536"
-            height="1024"
-          />
+          <div className="heroBookFloat">
+            <motion.img
+              className="heroBook"
+              src="/images/homepage/hero-book-closed.png"
+              alt="DA Tuition academy book"
+              width="1536"
+              height="1024"
+              style={
+                prefersReducedMotion
+                  ? undefined
+                  : {
+                      transformPerspective: 780,
+                      rotateX: springX,
+                      rotateY: springY,
+                    }
+              }
+            />
+            <span className="heroBookShimmer" aria-hidden="true" />
+            <div className="heroBookParticles" aria-hidden="true">
+              {Array.from({ length: 12 }).map((_, index) => (
+                <span
+                  key={index}
+                  className={`heroParticle heroParticle${index + 1}`}
+                />
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </section>

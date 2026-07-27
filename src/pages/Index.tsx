@@ -21,7 +21,7 @@ import { resetBookIntroComplete, shouldShowBookIntro } from '@/lib/bookIntroSess
 import IntroVideo from '@/components/intro/IntroVideo';
 import BookIntro from '@/components/intro/BookIntro';
 import { AcademyHero } from '@/components/home/AcademyHero';
-import { PhilosophySection } from '@/components/home/PhilosophySection';
+import ChapterOne from '@/components/ChapterOne/ChapterOne';
 import { ImpactStatistics } from '@/components/home/ImpactStatistics';
 import { ProgramsSection as HomeProgramsSection } from '@/components/home/ProgramsSection';
 import { StudentJourney } from '@/components/home/StudentJourney';
@@ -6218,7 +6218,9 @@ const Index = () => {
       <main>
         <AcademyHero />
         <MarqueeStrip />
-        <PhilosophySection />
+        <div className="homepageBook">
+          <ChapterOne />
+        </div>
         <ImpactRecognitionSection />
         <ImpactStatistics />
         <HomeProgramsSection />

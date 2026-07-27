@@ -82,26 +82,44 @@
 
 .heroBookWrapper {
   position: absolute;
-  top: 65%;
-  left: 70.5%;
+  top: 64%;
+  left: 68.5%;
   z-index: 3;
   display: grid;
-  width: clamp(680px, 52vw, 980px);
+  width: clamp(760px, 58vw, 1120px);
   place-items: center;
+  overflow: hidden;
+  isolation: isolate;
   pointer-events: none;
+  perspective: 780px;
   transform: translate(-50%, -50%);
 }
 
 .heroBookShadow {
   position: absolute;
   z-index: 1;
-  bottom: 2%;
-  width: 62%;
+  bottom: 3%;
+  left: 50%;
+  width: 58%;
   height: 7%;
-  border-radius: 50%;
-  background: rgba(18, 12, 8, 0.3);
+  border-radius: 999px;
+  background: rgba(18, 12, 8, 0.28);
   filter: blur(18px);
-  animation: shadowFloat 6s ease-in-out infinite;
+  transform: translateX(-50%) scale(1);
+  transform-origin: center;
+  animation: shadowFloat 7s ease-in-out infinite;
+  will-change: transform, opacity, filter;
+}
+
+.heroBookFloat {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  width: 100%;
+  place-items: center;
+  animation: bookFloat 7s ease-in-out infinite;
+  transform-style: preserve-3d;
+  will-change: transform;
 }
 
 .heroBook {
@@ -111,32 +129,261 @@
   height: auto;
   display: block;
   object-fit: contain;
-  animation: bookFloat 6.5s ease-in-out infinite;
   filter: drop-shadow(0 28px 24px rgba(24, 16, 8, 0.26));
+  transform-origin: 50% 48%;
+  transform-style: preserve-3d;
   will-change: transform;
+}
+
+.heroBookShimmer {
+  position: absolute;
+  z-index: 2;
+  top: -35%;
+  left: -75%;
+  width: 34%;
+  height: 175%;
+  pointer-events: none;
+  opacity: 0;
+  background:
+    linear-gradient(
+      105deg,
+      transparent 0%,
+      rgba(255, 235, 180, 0.02) 30%,
+      rgba(255, 246, 210, 0.24) 48%,
+      rgba(255, 217, 120, 0.12) 57%,
+      transparent 76%
+    );
+  filter: blur(5px);
+  -webkit-mask-image: url("/images/homepage/hero-book-closed.png");
+  mask-image: url("/images/homepage/hero-book-closed.png");
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  mix-blend-mode: screen;
+  transform: translateX(0) rotate(8deg);
+  animation: bookFoilShimmer 10s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+.heroBookParticles {
+  position: absolute;
+  inset: -8%;
+  z-index: 3;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.heroParticle {
+  position: absolute;
+  width: var(--particle-size, 3px);
+  height: var(--particle-size, 3px);
+  border-radius: 50%;
+  background: rgba(255, 210, 105, 0.9);
+  box-shadow:
+    0 0 5px rgba(255, 221, 140, 0.55),
+    0 0 10px rgba(255, 196, 70, 0.2);
+  opacity: 0;
+  animation-name: heroParticleDrift;
+  animation-duration: var(--particle-duration, 11s);
+  animation-delay: var(--particle-delay, 0s);
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  will-change: transform, opacity;
+}
+
+.heroParticle1 {
+  --particle-size: 2px;
+  --drift-x: -12px;
+  left: 18%;
+  top: 78%;
+  animation-duration: 8.5s;
+  animation-delay: -1s;
+}
+
+.heroParticle2 {
+  --particle-size: 3px;
+  --drift-x: 10px;
+  left: 28%;
+  top: 88%;
+  animation-duration: 10s;
+  animation-delay: -6s;
+}
+
+.heroParticle3 {
+  --particle-size: 2px;
+  --drift-x: -8px;
+  left: 39%;
+  top: 82%;
+  animation-duration: 9.2s;
+  animation-delay: -3.5s;
+}
+
+.heroParticle4 {
+  --particle-size: 4px;
+  --drift-x: 14px;
+  left: 55%;
+  top: 91%;
+  animation-duration: 11s;
+  animation-delay: -7s;
+}
+
+.heroParticle5 {
+  --particle-size: 2px;
+  --drift-x: -10px;
+  left: 67%;
+  top: 84%;
+  animation-duration: 8.8s;
+  animation-delay: -4s;
+}
+
+.heroParticle6 {
+  --particle-size: 3px;
+  --drift-x: 12px;
+  left: 80%;
+  top: 74%;
+  animation-duration: 10.5s;
+  animation-delay: -8s;
+}
+
+.heroParticle7 {
+  --particle-size: 2px;
+  --drift-x: 8px;
+  left: 10%;
+  top: 58%;
+  animation-duration: 9.6s;
+  animation-delay: -5s;
+}
+
+.heroParticle8 {
+  --particle-size: 3px;
+  --drift-x: -12px;
+  left: 88%;
+  top: 52%;
+  animation-duration: 11.5s;
+  animation-delay: -2s;
+}
+
+.heroParticle9 {
+  --particle-size: 2px;
+  --drift-x: 6px;
+  left: 22%;
+  top: 66%;
+  animation-duration: 8.9s;
+  animation-delay: -7.5s;
+}
+
+.heroParticle10 {
+  --particle-size: 3px;
+  --drift-x: -7px;
+  left: 73%;
+  top: 63%;
+  animation-duration: 10.8s;
+  animation-delay: -4.5s;
+}
+
+.heroParticle11 {
+  --particle-size: 2px;
+  --drift-x: 9px;
+  left: 46%;
+  top: 94%;
+  animation-duration: 12s;
+  animation-delay: -9s;
+}
+
+.heroParticle12 {
+  --particle-size: 4px;
+  --drift-x: -6px;
+  left: 91%;
+  top: 81%;
+  animation-duration: 9.7s;
+  animation-delay: -6.5s;
+}
+
+.heroParticle2,
+.heroParticle7,
+.heroParticle10 {
+  width: 2px;
+  height: 2px;
+}
+
+.heroParticle4,
+.heroParticle8 {
+  width: 4px;
+  height: 4px;
 }
 
 @keyframes bookFloat {
   0%,
   100% {
-    transform: translateY(0) rotate(-0.25deg);
+    transform: translateY(0) rotateZ(-0.25deg);
   }
 
   50% {
-    transform: translateY(-9px) rotate(0.25deg);
+    transform: translateY(-9px) rotateZ(0.25deg);
   }
 }
 
 @keyframes shadowFloat {
   0%,
   100% {
-    transform: scaleX(1);
+    transform: translateX(-50%) scale(1);
     opacity: 0.3;
+    filter: blur(18px);
   }
 
   50% {
-    transform: scaleX(0.84);
-    opacity: 0.2;
+    transform: translateX(-50%) scale(0.82);
+    opacity: 0.16;
+    filter: blur(26px);
+  }
+}
+
+@keyframes bookFoilShimmer {
+  0%,
+  72% {
+    opacity: 0;
+    transform: translateX(0) rotate(8deg);
+  }
+
+  76% {
+    opacity: 0.22;
+  }
+
+  88% {
+    opacity: 0.32;
+  }
+
+  94% {
+    opacity: 0;
+    transform: translateX(520%) rotate(8deg);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateX(520%) rotate(8deg);
+  }
+}
+
+@keyframes heroParticleDrift {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 18px, 0) scale(0.7);
+  }
+
+  18% {
+    opacity: 0.55;
+  }
+
+  65% {
+    opacity: 0.28;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate3d(var(--drift-x), -58px, 0) scale(1.05);
   }
 }
 
@@ -273,7 +520,7 @@
 @media (max-width: 1100px) {
   .heroBookWrapper {
     left: 72%;
-    width: clamp(390px, 42vw, 560px);
+    width: clamp(430px, 48vw, 640px);
   }
 }
 
@@ -308,7 +555,7 @@
     position: relative;
     top: auto;
     left: auto;
-    width: min(84vw, 430px);
+    width: min(88vw, 470px);
     margin: 28px auto 0;
     opacity: 1;
     transform: none;
@@ -350,9 +597,19 @@
     transform: none;
   }
 
-  .heroBook,
-  .heroBookShadow {
+  .heroBookFloat,
+  .heroBookShadow,
+  .heroBookShimmer,
+  .heroParticle {
     animation: none;
+  }
+
+  .heroBookShimmer {
+    display: none;
+  }
+
+  .heroBookParticles {
+    display: none;
   }
 }
 
