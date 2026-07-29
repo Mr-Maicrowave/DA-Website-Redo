@@ -9,8 +9,7 @@ import { AnimatePresence } from "framer-motion";
 import PageTransition from "@/components/animations/PageTransition";
 import ScrollProgress from "@/components/animations/ScrollProgress";
 import StickyBookButton from "@/components/StickyBookButton";
-import EnglishSample from "./pages/Index";
-import HomePlaceholder from "./pages/HomePlaceholder";
+import Index from "./pages/Index";
 import BookInterview from "./pages/BookInterview";
 import Reviews from "./pages/Reviews";
 import NotFound from "./pages/NotFound";
@@ -59,8 +58,8 @@ const AnimatedRoutes = () => {
   return (
     <AnimatePresence mode="wait">
       <Routes location={location} key={location.pathname}>
-        <Route path="/" element={<PageTransition><HomePlaceholder /></PageTransition>} />
-        <Route path="/english-sample" element={<PageTransition><EnglishSample /></PageTransition>} />
+        <Route path="/" element={<PageTransition><Index /></PageTransition>} />
+        <Route path="/english-sample" element={<PageTransition><Index /></PageTransition>} />
         <Route
           path="/book-intro-calibration"
           element={import.meta.env.DEV ? <BookIntroCalibration /> : <Navigate to="/" replace />}
