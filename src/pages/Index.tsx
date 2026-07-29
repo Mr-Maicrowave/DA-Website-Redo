@@ -22,7 +22,7 @@ import IntroVideo from '@/components/intro/IntroVideo';
 import BookIntro from '@/components/intro/BookIntro';
 import { AcademyHero } from '@/components/home/AcademyHero';
 import ChapterOne from '@/components/ChapterOne/ChapterOne';
-import { ImpactStatistics } from '@/components/home/ImpactStatistics';
+import { ChapterTwoImpact } from '@/components/home/ChapterTwoImpact';
 import { ProgramsSection as HomeProgramsSection } from '@/components/home/ProgramsSection';
 import { StudentJourney } from '@/components/home/StudentJourney';
 import { DayAtDA } from '@/components/home/DayAtDA';
@@ -1148,11 +1148,11 @@ const ImpactRecognitionSection = () => {
 
         <div style={{
           maxWidth: '1200px', margin: '0 auto', position: 'relative',
-          padding: 'clamp(64px, 8vw, 108px) clamp(24px, 5vw, 72px)',
+          padding: 'clamp(34px, 4.5vw, 64px) clamp(24px, 5vw, 72px) clamp(44px, 5.5vw, 76px)',
         }}>
 
           {/* ── FULL-WIDTH HEADER ───────────────────────────────────────── */}
-          <div style={{ maxWidth: '760px', marginBottom: 'clamp(48px, 6vw, 80px)' }}>
+          <div style={{ maxWidth: '760px', marginBottom: 'clamp(28px, 3.6vw, 46px)' }}>
 
             <motion.p
               initial={reducedMotion ? false : { opacity: 0 }}
@@ -1161,7 +1161,7 @@ const ImpactRecognitionSection = () => {
               style={{
                 fontFamily: sans, fontSize: '.52rem', fontWeight: 600,
                 letterSpacing: '.32em', textTransform: 'uppercase',
-                color: C.gold, margin: '0 0 28px',
+                color: C.gold, margin: '0 0 20px',
               }}
             >
               Trusted by Local Families Since 2005
@@ -1187,7 +1187,7 @@ const ImpactRecognitionSection = () => {
               animate={inView ? { scaleX: 1, opacity: 0.55 } : {}}
               transition={{ duration: 0.80, delay: 0.22, ease: [0.25, 1, 0.5, 1] }}
               style={{
-                width: '40px', height: '1px', marginBottom: '22px',
+                width: '40px', height: '1px', marginBottom: '16px',
                 background: `linear-gradient(90deg, ${C.gold}, transparent)`,
                 transformOrigin: 'left',
               }}
@@ -6213,7 +6213,14 @@ const Index = () => {
       <IntroVideo />
       {showBookIntro && <BookIntro onComplete={() => setShowBookIntro(false)} />}
       <Confetti />
-      <SEO canonicalUrl="/" jsonLd={[organizationSchema(), localBusinessSchema(siteStats.reviewCount)]} />
+      <SEO
+        title="English Sample"
+        description="A temporary interactive English page concept showcasing DA Tuition’s book-inspired design and learning experience."
+        canonicalUrl="/english-sample"
+        noindex
+        robotsContent="noindex, nofollow"
+        jsonLd={[organizationSchema(), localBusinessSchema(siteStats.reviewCount)]}
+      />
       <NavigationNew />
       <main>
         <AcademyHero />
@@ -6222,7 +6229,7 @@ const Index = () => {
           <ChapterOne />
         </div>
         <ImpactRecognitionSection />
-        <ImpactStatistics />
+        <ChapterTwoImpact />
         <HomeProgramsSection />
         <StudentJourney />
         <DayAtDA

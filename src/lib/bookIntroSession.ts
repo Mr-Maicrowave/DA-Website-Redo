@@ -1,4 +1,4 @@
-const BOOK_INTRO_SESSION_KEY = 'da-book-intro-complete-v1';
+const BOOK_INTRO_SESSION_KEY = 'da-english-sample-book-intro-complete-v1';
 
 const hasWindow = () => typeof window !== 'undefined';
 

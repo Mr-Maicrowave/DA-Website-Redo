@@ -93,7 +93,7 @@ export default function DetailedChapterNavigation() {
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [drawerOpen]);
 
-  if (location.pathname === '/') return null;
+  if (location.pathname === '/' || location.pathname === '/english-sample') return null;
 
   const chapterLinks = HERO_CHAPTERS.map((chapter, index) => ({
     ...chapter,

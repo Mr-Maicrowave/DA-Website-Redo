@@ -8,6 +8,7 @@ const NavigationNew = () => {
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
   const isHomepage = location.pathname === '/';
+  const isBookExperience = location.pathname === '/english-sample';
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 60);
@@ -43,6 +44,11 @@ const NavigationNew = () => {
       title: "English",
       href: "/subjects/english",
       description: "Reading, writing, and critical analysis"
+    },
+    {
+      title: "English Sample",
+      href: "/english-sample",
+      description: "Temporary interactive English concept"
     },
     {
       title: "Sciences",
@@ -82,7 +88,7 @@ const NavigationNew = () => {
   const handleNavClick = (href: string) => {
     setIsOpen(false);
 
-    if (href.startsWith('#') && location.pathname !== '/') {
+    if (href.startsWith('#') && !['/', '/english-sample'].includes(location.pathname)) {
       window.location.href = '/' + href;
     }
   };
@@ -98,7 +104,7 @@ const NavigationNew = () => {
           borderColor: 'rgba(169,120,37,0.42)',
           background: scrolled
             ? 'linear-gradient(110deg, rgba(250,245,234,0.95), rgba(247,239,222,0.92) 58%, rgba(235,215,175,0.88))'
-            : isHomepage
+            : isHomepage || isBookExperience
               ? 'linear-gradient(110deg, rgba(250,245,233,0.91), rgba(248,241,225,0.88) 58%, rgba(236,217,180,0.86))'
               : 'linear-gradient(110deg, rgba(250,245,234,0.92), rgba(247,239,222,0.88) 58%, rgba(235,215,175,0.82))',
           boxShadow: scrolled
@@ -158,7 +164,7 @@ const NavigationNew = () => {
                 {/* Subjects */}
                 <HoverCard openDelay={120} closeDelay={180}>
                   <HoverCardTrigger asChild>
-                    <button type="button" className={`${navLinkClass(location.pathname.startsWith('/subjects'))} inline-flex items-center gap-0.5`}>
+                    <button type="button" className={`${navLinkClass(location.pathname.startsWith('/subjects') || location.pathname === '/english-sample')} inline-flex items-center gap-0.5`}>
                       Subjects <ChevronDown className="h-3.5 w-3.5" />
                     </button>
                   </HoverCardTrigger>
