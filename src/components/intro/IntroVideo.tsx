@@ -6,8 +6,12 @@ import styles from './IntroVideo.module.css';
 const fadeEase: [number, number, number, number] = [0.16, 1, 0.3, 1];
 const fadeOutMs = 800;
 
-const IntroVideo = () => {
-  const { isReady, markAsSeen, shouldPlay } = useIntro();
+type IntroVideoProps = {
+  storageKey?: string;
+};
+
+const IntroVideo = ({ storageKey }: IntroVideoProps) => {
+  const { isReady, markAsSeen, shouldPlay } = useIntro(storageKey);
   const videoRef = useRef<HTMLVideoElement>(null);
   const skipButtonRef = useRef<HTMLButtonElement>(null);
   const beginButtonRef = useRef<HTMLButtonElement>(null);

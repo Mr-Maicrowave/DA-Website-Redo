@@ -26,9 +26,10 @@ const dustParticles = [
 
 type BookIntroProps = {
   onComplete: () => void;
+  storageKey?: string;
 };
 
-const BookIntro = ({ onComplete }: BookIntroProps) => {
+const BookIntro = ({ onComplete, storageKey }: BookIntroProps) => {
   const sceneRef = useRef<HTMLElement>(null);
   const openTriggerRef = useRef<HTMLButtonElement>(null);
   const exploreButtonRef = useRef<HTMLButtonElement>(null);
@@ -191,7 +192,7 @@ const BookIntro = ({ onComplete }: BookIntroProps) => {
       animationTimers.current = [
         window.setTimeout(() => {
           completed.current = true;
-          markBookIntroComplete();
+          markBookIntroComplete(storageKey);
           onComplete();
         }, 180),
       ];
@@ -206,7 +207,7 @@ const BookIntro = ({ onComplete }: BookIntroProps) => {
       window.setTimeout(() => setExitPhase(4), 2920),
       window.setTimeout(() => {
         completed.current = true;
-        markBookIntroComplete();
+        markBookIntroComplete(storageKey);
         onComplete();
       }, 3780),
     ];

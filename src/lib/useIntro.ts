@@ -1,23 +1,26 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-const INTRO_SEEN_KEY = 'da-intro-video-seen-v1';
+export const ENGLISH_SAMPLE_INTRO_VIDEO_SESSION_KEY = 'da-english-sample-intro-video-seen-v1';
+export const ENGLISH_SUBJECT_INTRO_VIDEO_SESSION_KEY = 'da-english-subject-intro-video-seen-v1';
+
+const INTRO_SEEN_KEY = ENGLISH_SAMPLE_INTRO_VIDEO_SESSION_KEY;
 const hasWindow = () => typeof window !== 'undefined';
 
-const readIntroSeen = () => {
+const readIntroSeen = (storageKey = INTRO_SEEN_KEY) => {
   if (!hasWindow()) return false;
 
   try {
-    return window.sessionStorage.getItem(INTRO_SEEN_KEY) === 'true';
+    return window.sessionStorage.getItem(storageKey) === 'true';
   } catch {
     return false;
   }
 };
 
-const rememberIntro = () => {
+const rememberIntro = (storageKey = INTRO_SEEN_KEY) => {
   if (!hasWindow()) return;
 
   try {
-    window.sessionStorage.setItem(INTRO_SEEN_KEY, 'true');
+    window.sessionStorage.setItem(storageKey, 'true');
   } catch {
     // The current page still remembers the intro through React state.
   }
@@ -27,7 +30,7 @@ const readReducedMotion = () =>
   hasWindow() &&
   window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-export const useIntro = () => {
+export const useIntro = (storageKey = INTRO_SEEN_KEY) => {
   const [seen, setSeen] = useState<boolean | null>(null);
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
 
@@ -35,7 +38,7 @@ export const useIntro = () => {
     if (!hasWindow()) return;
 
     const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-    setSeen(readIntroSeen());
+    setSeen(readIntroSeen(storageKey));
     setPrefersReducedMotion(motionQuery.matches);
 
     const handleMotionChange = (event: MediaQueryListEvent) => {
@@ -47,12 +50,12 @@ export const useIntro = () => {
     return () => {
       motionQuery.removeEventListener('change', handleMotionChange);
     };
-  }, []);
+  }, [storageKey]);
 
   const markAsSeen = useCallback(() => {
-    rememberIntro();
+    rememberIntro(storageKey);
     setSeen(true);
-  }, []);
+  }, [storageKey]);
 
   const shouldPlay = useMemo(() => {
     if (seen === null) return false;
