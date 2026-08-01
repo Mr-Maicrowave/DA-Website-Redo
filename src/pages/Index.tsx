@@ -4,10 +4,10 @@
  * Inspired by: korowa.vic.edu.au
  */
 
-import React, { useRef, useEffect, useState, useCallback } from 'react';
+import React, { useRef, useEffect, useState, useCallback, useLayoutEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Play, X } from 'lucide-react';
-import { motion, AnimatePresence, useInView, useAnimationControls, useScroll, useTransform, useSpring } from 'framer-motion';
+import { ArrowRight, ChartNoAxesCombined, ChevronDown, Play, ShieldCheck, UsersRound, X } from 'lucide-react';
+import { motion, AnimatePresence, useInView, useAnimationControls, useScroll, useTransform, useSpring, useMotionValueEvent, useReducedMotion, type MotionValue } from 'framer-motion';
 import NavigationNew from '@/components/NavigationNew';
 import FooterNew from '@/components/FooterNew';
 import AwardRecognition from '@/components/AwardRecognition';
@@ -19,6 +19,7 @@ import StatsSection from '@/components/StatsSection';
 import { siteStats } from '@/data/site-stats';
 import { organizationSchema, localBusinessSchema } from '@/lib/seo/schema';
 import IntroVideo from '@/components/intro/IntroVideo';
+import VisualIntro from '@/components/home/VisualIntro';
 
 // ─── Design tokens ────────────────────────────────────────────
 const C = {
@@ -194,121 +195,265 @@ const MarqueeStrip = () => (
 //  HERO
 // ══════════════════════════════════════════════════════════════
 
-const HeroSection = () => (
-    <section
+const HeroSection = ({ embedded = false }: { embedded?: boolean }) => {
+  const sectionRef = useRef<HTMLElement>(null);
+  const reducedMotion = useReducedMotion();
+  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ['start start', 'end start'] });
+  const contentY = useTransform(scrollYProgress, [0, 1], ['0%', reducedMotion ? '0%' : '20%']);
+  const contentOpacity = useTransform(scrollYProgress, [0, 0.72, 1], [1, 0.94, reducedMotion ? 1 : 0]);
+
+  return (
+    <motion.section
+      ref={sectionRef}
       className="hero-luxury"
-      style={{
-        minHeight: '100vh', display: 'flex', flexDirection: 'column' as const,
-        alignItems: 'center', justifyContent: 'center', textAlign: 'center' as const,
-        padding: 'clamp(104px, 12vh, 136px) 24px 72px', position: 'relative', overflow: 'hidden',
-        isolation: 'isolate',
-        background: '#f5ead6',
-      }}>
+    >
       <style>{`
-        .hero-luxury::before {
-          content: "";
+        .hero-luxury {
+          position: relative;
+          isolation: isolate;
+          display: grid;
+          grid-template-columns: minmax(0, 17fr) minmax(0, 66fr) minmax(0, 17fr);
+          width: 100%;
+          height: 100svh;
+          min-height: 100svh;
+          overflow: hidden;
+          background: #fbf7ee;
+          color: ${C.navy};
+        }
+        .hero-side-image {
+          position: relative;
+          z-index: 1;
+          min-width: 0;
+          height: 100%;
+          overflow: hidden;
+          background: ${C.navy};
+        }
+        .hero-side-image:first-child { margin-right: -1px; }
+        .hero-side-image:last-child { margin-left: -1px; }
+        .hero-side-image img {
+          width: 100%;
+          height: 100%;
+          max-width: none;
+          display: block;
+          object-fit: cover;
+        }
+        .hero-side-image--left img { object-position: 31% center; }
+        .hero-side-image--right img { object-position: 53% center; }
+        .hero-side-image::after {
+          content: '';
           position: absolute;
-          left: 0;
-          right: 0;
-          top: 0;
-          bottom: 0;
-          z-index: 0;
+          inset: 0;
           pointer-events: none;
-          background-image: url('/images/hero/da-hero-glow-bg-1600.webp');
-          background-size: cover;
-          background-position: center;
-          background-repeat: no-repeat;
+          background: linear-gradient(180deg, rgba(116,73,16,.05), rgba(87,50,8,.12));
         }
-        .hero-luxury::after {
-          content: none;
-          display: none;
+        .hero-centre {
+          position: relative;
+          z-index: 2;
+          min-width: 0;
+          height: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          text-align: center;
+          overflow: hidden;
+          background:
+            radial-gradient(circle at 50% 40%, rgba(255,255,255,.88) 0%, rgba(251,247,238,.42) 42%, transparent 72%),
+            #fbf7ee;
+          box-shadow: inset 22px 0 42px -44px rgba(86,49,8,.38), inset -22px 0 42px -44px rgba(86,49,8,.38);
         }
-        .hero-cta:hover {
-          background: rgba(255,248,229,0.34) !important;
-          border-color: rgba(212,175,55,0.52) !important;
-          box-shadow: 0 0 0 1px rgba(212,175,55,0.10), 0 14px 38px rgba(180,133,28,0.14);
+        .hero-composition {
+          position: relative;
+          z-index: 2;
+          width: min(94%, 930px);
+          height: calc(100% - clamp(66px, 7.2vh, 80px));
+          margin-top: clamp(66px, 7.2vh, 80px);
+          padding: clamp(14px, 2.1vh, 24px) clamp(18px, 3vw, 52px) clamp(64px, 8vh, 86px);
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          gap: clamp(8px, 1.35vh, 15px);
+        }
+        .hero-crest { width: clamp(92px, 8vw, 126px); height: auto; display: block; }
+        .hero-eyebrow {
+          font-family: ${sans};
+          font-size: clamp(.58rem, .72vw, .74rem);
+          font-weight: 600;
+          letter-spacing: .2em;
+          line-height: 1.4;
+          color: #a8731f;
+          text-transform: uppercase;
+        }
+        .hero-title {
+          margin: clamp(1px, .4vh, 5px) 0 0;
+          font-family: ${serif};
+          font-size: clamp(2.55rem, 4.15vw, 4.55rem);
+          font-weight: 600;
+          line-height: .99;
+          letter-spacing: -.025em;
+          color: ${C.navy};
+          text-wrap: balance;
+        }
+        .hero-title span,
+        .hero-title em { display: block; white-space: nowrap; }
+        .hero-title em { color: #b8842f; font-size: .9em; font-weight: 500; }
+        .hero-support {
+          max-width: 590px;
+          margin: clamp(2px, .65vh, 7px) 0 0;
+          font-family: ${sans};
+          font-size: clamp(.87rem, 1.05vw, 1.08rem);
+          line-height: 1.55;
+          color: rgba(10,27,52,.82);
+          text-wrap: balance;
+        }
+        .hero-actions { display: flex; justify-content: center; gap: 14px; margin-top: clamp(3px, .7vh, 8px); }
+        .hero-cta {
+          min-width: 190px;
+          min-height: 48px;
+          padding: 12px 24px;
+          border-radius: 5px;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 15px;
+          font-family: ${sans};
+          font-size: .9rem;
+          font-weight: 700;
+          line-height: 1;
+          transition: transform 250ms cubic-bezier(.22,1,.36,1), box-shadow 250ms ease, background-color 250ms ease;
+        }
+        .hero-cta:hover { transform: translateY(-2px); }
+        .hero-cta:focus-visible { outline: 3px solid rgba(212,175,55,.55); outline-offset: 3px; }
+        .hero-cta--primary { color: #fffaf0; background: ${C.navy}; border: 1px solid #b8842f; box-shadow: 0 5px 8px rgba(10,27,52,.14); }
+        .hero-cta--primary:hover { box-shadow: 0 7px 8px rgba(10,27,52,.19); }
+        .hero-cta--secondary { color: ${C.navy}; background: rgba(251,247,238,.56); border: 1px solid rgba(184,132,47,.7); }
+        .hero-cta--secondary:hover { background: #fffaf1; box-shadow: 0 5px 8px rgba(116,73,16,.1); }
+        .hero-values {
+          width: min(100%, 730px);
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: clamp(14px, 2.1vw, 30px);
+          margin-top: clamp(9px, 1.7vh, 20px);
+          text-align: left;
+        }
+        .hero-value { min-width: 0; display: grid; grid-template-columns: 40px 1fr; gap: 11px; align-items: start; }
+        .hero-value svg { width: 34px; height: 34px; color: #b8842f; stroke-width: 1.35; }
+        .hero-value strong { display: block; margin: 1px 0 5px; font-family: ${sans}; font-size: clamp(.72rem, .82vw, .84rem); color: ${C.navy}; }
+        .hero-value p { margin: 0; font-family: ${sans}; font-size: clamp(.66rem, .75vw, .77rem); line-height: 1.45; color: rgba(10,27,52,.72); }
+        .hero-trust {
+          margin: clamp(1px, .35vh, 4px) 0 0;
+          font-family: ${sans};
+          font-size: clamp(.68rem, .76vw, .8rem);
+          font-weight: 500;
+          letter-spacing: .07em;
+          line-height: 1.4;
+          color: rgba(10,27,52,.58);
+        }
+        .hero-scroll { margin-top: clamp(2px, .7vh, 8px); color: #b8842f; animation: heroChevron 2.8s cubic-bezier(.22,1,.36,1) infinite; }
+        @keyframes heroChevron { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(4px); } }
+        @media (max-width: 1100px) {
+          .hero-luxury { grid-template-columns: minmax(0, 15fr) minmax(0, 70fr) minmax(0, 15fr); }
+          .hero-composition { width: 96%; padding-inline: 22px; }
+          .hero-title { font-size: clamp(2.35rem, 4.7vw, 3.8rem); }
+          .hero-value { grid-template-columns: 31px 1fr; gap: 8px; }
+          .hero-value svg { width: 28px; height: 28px; }
+        }
+        @media (max-width: 767px) {
+          .hero-luxury {
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: minmax(0, 78fr) minmax(0, 22fr);
+          }
+          .hero-centre { grid-column: 1 / -1; grid-row: 1; }
+          .hero-side-image { grid-row: 2; height: calc(100% + 1px); }
+          .hero-side-image:first-child { grid-column: 1; margin: -1px -1px 0 0; }
+          .hero-side-image:last-child { grid-column: 2; margin: -1px 0 0 -1px; }
+          .hero-side-image--left img { object-position: center 42%; }
+          .hero-side-image--right img { object-position: center 43%; }
+          .hero-composition {
+            width: 100%;
+            height: calc(100% - 55px);
+            margin-top: 55px;
+            padding: 8px 16px 7px;
+            gap: clamp(4px, .7vh, 7px);
+          }
+          .hero-crest { width: clamp(68px, 18vw, 82px); }
+          .hero-eyebrow { font-size: .48rem; letter-spacing: .15em; }
+          .hero-title { font-size: clamp(2rem, 9.4vw, 2.7rem); line-height: 1; }
+          .hero-title span, .hero-title em { white-space: normal; }
+          .hero-support { max-width: 350px; font-size: clamp(.72rem, 3.2vw, .86rem); line-height: 1.4; }
+          .hero-actions { width: 100%; gap: 8px; }
+          .hero-cta { min-width: 0; flex: 1; min-height: 40px; padding: 9px 10px; font-size: .72rem; }
+          .hero-values { grid-template-columns: 1fr 1fr; gap: 7px 13px; margin-top: 4px; max-width: 370px; }
+          .hero-value { grid-template-columns: 24px 1fr; gap: 6px; }
+          .hero-value:last-child { grid-column: 1 / -1; width: 54%; justify-self: center; }
+          .hero-value svg { width: 22px; height: 22px; }
+          .hero-value strong { font-size: .58rem; margin-bottom: 1px; }
+          .hero-value p { font-size: .52rem; line-height: 1.25; }
+          .hero-trust { margin-top: 0; font-size: .58rem; letter-spacing: .045em; }
+          .hero-scroll { margin-top: 0; }
+        }
+        @media (max-height: 760px) and (min-width: 768px) {
+          .hero-composition { gap: 7px; padding-top: 10px; padding-bottom: 9px; }
+          .hero-crest { width: 82px; }
+          .hero-title { font-size: clamp(2.45rem, 3.8vw, 3.55rem); }
+          .hero-values { margin-top: 7px; }
+          .hero-trust { margin-top: 6px; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .hero-scroll { animation: none; }
+          .hero-cta { transition: none; }
         }
       `}</style>
 
-      {/* ── Layer 3: DA Crest ”” the centrepiece ── */}
-      <div
-        style={{
-        marginBottom: 'clamp(24px, 3vw, 42px)',
-        position: 'relative', zIndex: 2,
-      }}>
-        <div style={{ position: 'relative' }}>
-          <div style={{ position: 'relative', width: 'clamp(190px, 22vw, 294px)', margin: '0 auto' }}>
-            <img
-              src="/images/da-logo.png"
-              alt="DA Tuition"
-              style={{
-                width: '100%',
-                height: 'auto',
-                display: 'block',
-                position: 'relative',
-                filter: 'drop-shadow(0 18px 42px rgba(71,45,6,0.12))',
-              }}
-            />
+      <figure className="hero-side-image hero-side-image--left">
+        <img src="/images/homepage/homepage-cream/ngoc and a girl-3.png" alt="DA Tuition tutor guiding a student through her work" />
+      </figure>
+
+      <div className="hero-centre">
+        <motion.div
+          className="hero-composition"
+          style={{ y: embedded ? 0 : contentY, opacity: embedded ? 1 : contentOpacity }}
+        >
+          <img className="hero-crest" src="/images/da-logo.png" alt="DA Tuition" />
+          <div className="hero-eyebrow">Personalised Learning. Exceptional Results.</div>
+          <h1 className="hero-title">
+            <span>Where Ambition Meets</span>
+            <em>Academic Excellence</em>
+          </h1>
+          <p className="hero-trust">Trusted by Families. Transforming Futures.</p>
+          <p className="hero-support">
+            Tailored academic support that builds confidence,<br className="hidden sm:block" /> strengthens understanding and delivers success.
+          </p>
+          <div className="hero-actions">
+            <a className="hero-cta hero-cta--primary" href="#programs">
+              Explore Programs <ArrowRight aria-hidden="true" size={18} strokeWidth={1.6} />
+            </a>
+            <Link className="hero-cta hero-cta--secondary" to="/book-interview">Book Consultation</Link>
           </div>
-        </div>
+          <div className="hero-values" aria-label="Why families choose DA Tuition">
+            <div className="hero-value">
+              <UsersRound aria-hidden="true" />
+              <div><strong>Personalised Approach</strong><p>Every student is unique.<br />Every plan is tailored.</p></div>
+            </div>
+            <div className="hero-value">
+              <ChartNoAxesCombined aria-hidden="true" />
+              <div><strong>Expert Educators</strong><p>Experienced tutors who<br />inspire and empower.</p></div>
+            </div>
+            <div className="hero-value">
+              <ShieldCheck aria-hidden="true" />
+              <div><strong>Proven Results</strong><p>Stronger academic outcomes<br />and real long-term growth.</p></div>
+            </div>
+          </div>
+          <ChevronDown className="hero-scroll" aria-hidden="true" size={25} strokeWidth={1.2} />
+        </motion.div>
       </div>
 
-      {/* ── Headline ”” more breathing room below logo ── */}
-      <h1
-        style={{
-          fontFamily: serif, fontWeight: 500,
-          fontSize: 'clamp(2.15rem, 3.8vw, 3.95rem)',
-          lineHeight: 1.06, letterSpacing: '-.018em',
-          color: C.navy, marginBottom: '26px', maxWidth: '760px',
-          position: 'relative', zIndex: 3,
-          textShadow: '0 1px 0 rgba(255,255,255,0.42)',
-        }}>
-        Where Ambition Meets<br />
-        <em style={{ fontStyle: 'italic', color: C.gold }}>Academic Excellence</em>
-      </h1>
-
-      {/* ── Tagline ── */}
-      <p
-        style={{
-          fontFamily: sans, fontSize: 'clamp(.85rem, 1.4vw, 1rem)',
-          color: C.muted, marginBottom: '34px', letterSpacing: '.04em',
-          position: 'relative', zIndex: 3,
-        }}>
-        Trusted by Families. Transforming Futures.
-      </p>
-
-      {/* ── CTA ── */}
-      <div
-        style={{
-          display: 'flex', gap: '14px', flexWrap: 'wrap', justifyContent: 'center',
-          position: 'relative', zIndex: 3,
-        }}>
-        <button
-          className="hero-cta"
-          onClick={() => document.getElementById('programs')?.scrollIntoView({ behavior: 'smooth' })}
-          style={{
-            fontFamily: sans, background: 'transparent', color: C.navy,
-            border: `1.5px solid rgba(10,27,52,.28)`,
-            padding: '14px 40px', borderRadius: '4px',
-            fontSize: '.9rem', fontWeight: 700, cursor: 'pointer',
-            letterSpacing: '.04em', textTransform: 'uppercase' as const,
-          }}>
-          View Programs
-        </button>
-      </div>
-
-      {/* ── Scroll indicator ”” gold line only, no text ── */}
-      <div
-        style={{
-          position: 'absolute', bottom: '28px', left: '50%',
-          transform: 'translateX(-50%)',
-          display: 'flex', flexDirection: 'column' as const,
-          alignItems: 'center', zIndex: 3,
-        }}>
-        <div style={{ width: '1px', height: '44px', background: `linear-gradient(180deg,${C.gold},transparent)` }} />
-      </div>
-    </section>
-);
+      <figure className="hero-side-image hero-side-image--right">
+        <img src="/images/homepage/homepage-cream/studying girl-4.png" alt="DA Tuition student concentrating on her studies" />
+      </figure>
+    </motion.section>
+  );
+};
 
 // ══════════════════════════════════════════════════════════════
 //  PHILOSOPHY BACKED BY RESULTS
@@ -346,7 +491,7 @@ const PHILOSOPHY_STAGES = [
     label: 'Known',
     title: 'Students deserve to be known before they are judged.',
     supporting: 'Every student arrives with a different story. We take the time to understand where they are ”” because the gap between their starting point and their potential is exactly where real growth lives.',
-    image: '/images/philosophy/philhome.jpeg',
+    image: '/images/homepage/homepage-cream/philosophy-known-1.png',
     objectPosition: 'center center',
   },
   {
@@ -354,24 +499,24 @@ const PHILOSOPHY_STAGES = [
     label: 'Belief',
     title: 'Confidence often comes before achievement.',
     supporting: 'We have seen it hundreds of times: the moment a student believes they can, the results follow. Building that belief is not a side effect of our teaching ”” it is the purpose of it.',
-    image: '/images/philosophy/laihome.jpeg',
-    objectPosition: 'center 63%',
+    image: '/images/homepage/homepage-cream/philosophy-belief-2.png',
+    objectPosition: '50% center',
   },
   {
     stage: 3,
     label: 'Understanding',
     title: 'Understanding matters more than memorisation.',
     supporting: 'Real mastery is knowing why something works, not just that it does. We teach students to think deeply, so knowledge becomes theirs permanently ”” not just until the exam.',
-    image: '/images/philosophy/ademhome.jpeg',
-    objectPosition: 'center 64%',
+    image: '/images/homepage/homepage-cream/philosophy-understanding-3.png',
+    objectPosition: '43% center',
   },
   {
     stage: 4,
     label: 'Growth',
     title: 'We strengthen the child behind the result.',
     supporting: 'Marks improve when students feel capable, seen, and guided. Our goal is not to chase grades ”” it is to build the resilience, curiosity, and self-belief that make sustained excellence possible.',
-    image: '/images/philosophy/homekid.jpeg',
-    objectPosition: 'center 83%',
+    image: '/images/homepage/homepage-cream/philosophy-growth-4.png',
+    objectPosition: '58% center',
   },
 ];
 
@@ -430,34 +575,32 @@ const CountUpStat = ({ target, decimals = 0, suffix, progress, milestone }: {
 };
 
 const PhilosophyBackedSection = () => {
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const inView = useInView(sectionRef, { once: true, margin: '-60px' });
+  const sectionRef = useRef<HTMLElement>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
+  // Hold the internal reveal until most of the real Philosophy viewport is visible.
+  const inView = useInView(stageRef, { once: true, amount: 0.65 });
   const ease = [0.22, 1, 0.36, 1] as const;
 
   const [activeIndex, setActiveIndex] = useState(0);
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
-  // ── Auto-rotation ─────────────────────────────────────────────
-  const reducedMotion = useRef(
-    typeof window !== 'undefined' &&
-    window.matchMedia('(prefers-reduced-motion: reduce)').matches
-  ).current;
+  const reducedMotion = useReducedMotion();
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ['start start', 'end end'],
+  });
 
-  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  useMotionValueEvent(scrollYProgress, 'change', (progress) => {
+    if (reducedMotion || window.matchMedia('(max-width: 768px)').matches) return;
+    const nextIndex = Math.min(
+      PHILOSOPHY_STAGES.length - 1,
+      Math.floor(progress * PHILOSOPHY_STAGES.length)
+    );
+    setActiveIndex(current => current === nextIndex ? current : nextIndex);
+  });
 
-  const stopRotation = () => {
-    if (timerRef.current !== null) { clearInterval(timerRef.current); timerRef.current = null; }
-  };
-  const startRotation = () => {
-    if (reducedMotion) return;
-    stopRotation();
-    timerRef.current = setInterval(() => {
-      setActiveIndex(prev => (prev + 1) % PHILOSOPHY_STAGES.length);
-    }, 5500);
-  };
   const goTo = (i: number) => {
     setActiveIndex(i);
-    startRotation();
     // Move DOM focus to the newly active tab so keyboard users stay oriented
     tabRefs.current[i]?.focus();
   };
@@ -469,24 +612,19 @@ const PhilosophyBackedSection = () => {
     });
   }, []);
 
-  useEffect(() => {
-    if (!inView) return;
-    startRotation();
-    const onVisibility = () => { document.hidden ? stopRotation() : startRotation(); };
-    document.addEventListener('visibilitychange', onVisibility);
-    return () => { stopRotation(); document.removeEventListener('visibilitychange', onVisibility); };
-  }, [inView]); // eslint-disable-line react-hooks/exhaustive-deps
-
   return (
     <section
       ref={sectionRef}
       aria-label="Our philosophy and results"
-      style={{ background: C.navy, overflow: 'hidden' }}
+      className="phi-scroll-scene"
+      style={{ background: C.navy, minHeight: `${PHILOSOPHY_STAGES.length * 100}svh` }}
     >
       <style>{`
         /* Mobile: stack image above content */
         @media (max-width: 768px) {
-          .phi-journey { grid-template-columns: 1fr !important; }
+          .phi-scroll-scene { min-height: auto !important; }
+          .phi-scroll-stage { position: relative !important; top: auto !important; min-height: auto !important; }
+          .phi-journey { grid-template-columns: 1fr !important; min-height: auto !important; }
           .phi-img-col { min-height: 300px; aspect-ratio: 16/8; }
           .phi-stage-img[data-stage="1"] { object-position: center center !important; }
           .phi-stage-img[data-stage="2"] { object-position: center 58% !important; }
@@ -594,6 +732,8 @@ const PhilosophyBackedSection = () => {
 
         /* Reduced motion */
         @media (prefers-reduced-motion: reduce) {
+          .phi-scroll-scene { min-height: auto !important; }
+          .phi-scroll-stage { position: relative !important; top: auto !important; min-height: auto !important; }
           .phi-block,
           .phi-block-num,
           .phi-block-lbl { transition: none !important; }
@@ -607,12 +747,17 @@ const PhilosophyBackedSection = () => {
            giving it the same visual weight as the text.
          ════════════════════════════════════════════════════════════ */}
       <div
+        ref={stageRef}
+        className="phi-scroll-stage"
+        style={{ position: 'sticky', top: '56px', minHeight: 'calc(100svh - 56px)', display: 'grid', alignItems: 'stretch' }}
+      >
+      <div
         className="phi-journey"
         style={{
           display: 'grid',
           gridTemplateColumns: '1.1fr 0.9fr',
           alignItems: 'stretch',
-          minHeight: 'clamp(620px, 82vh, 960px)',
+          minHeight: 'calc(100svh - 56px)',
         }}
       >
 
@@ -643,10 +788,12 @@ const PhilosophyBackedSection = () => {
                 imageRendering: 'auto',
                 filter: 'brightness(1.04) contrast(1.07) saturate(1.12)',
                 opacity: i === activeIndex ? 1 : 0,
-                transform: i === activeIndex ? 'scale(1.04)' : 'scale(1)',
+                transform: i === activeIndex ? 'scale(1.035) translate3d(0,0,0)' : 'scale(1.11) translate3d(0,1.5%,0)',
+                clipPath: i === activeIndex ? 'inset(0% 0% 0% 0%)' : 'inset(7% 0% 7% 0%)',
                 transition: reducedMotion
                   ? 'none'
-                  : 'opacity 600ms ease-in-out, transform 600ms ease-in-out',
+                  : 'opacity 900ms cubic-bezier(.16,1,.3,1), transform 1400ms cubic-bezier(.16,1,.3,1), clip-path 1100ms cubic-bezier(.16,1,.3,1)',
+                willChange: 'opacity, transform, clip-path',
               }}
             />
           ))}
@@ -671,10 +818,6 @@ const PhilosophyBackedSection = () => {
              Pause rotation on hover/focus (WCAG 2.2.2).
           ── */}
         <div
-          onMouseEnter={stopRotation}
-          onMouseLeave={startRotation}
-          onFocusCapture={stopRotation}
-          onBlurCapture={startRotation}
           style={{
             background: C.navy,
             display: 'flex', flexDirection: 'column',
@@ -828,7 +971,220 @@ const PhilosophyBackedSection = () => {
 
         </div>
       </div>
+      </div>
 
+    </section>
+  );
+};
+
+const PHILOSOPHY_ALTS = [
+  'DA Tuition teacher guiding students at the classroom whiteboard',
+  'DA Tuition tutor encouraging students during a small-group lesson',
+  'DA Tuition educator explaining a concept to two students',
+  'DA Tuition student working independently with confidence',
+];
+
+const PHILOSOPHY_KNOWN_REVEAL = [0.18, 0.30] as const;
+const PHILOSOPHY_FLIP_WINDOWS = [[0.32, 0.42], [0.57, 0.67], [0.82, 0.92]] as const;
+
+const PhilosophyVisualFace = ({ index, progress }: { index: number; progress: MotionValue<number> }) => {
+  const visual = {
+    ...PHILOSOPHY_STAGES[index],
+    alt: PHILOSOPHY_ALTS[index],
+  };
+  const incoming = index > 0 ? PHILOSOPHY_FLIP_WINDOWS[index - 1] : null;
+  const outgoing = index < PHILOSOPHY_STAGES.length - 1 ? PHILOSOPHY_FLIP_WINDOWS[index] : null;
+  const input = index === 0
+    ? [0, PHILOSOPHY_KNOWN_REVEAL[0], PHILOSOPHY_KNOWN_REVEAL[1], outgoing![0], outgoing![1], 1]
+    : incoming && outgoing
+      ? [0, incoming[0], incoming[1], outgoing[0], outgoing[1], 1]
+      : [0, incoming![0], incoming![1], 1];
+  const output = index === 0
+    ? [90, 90, 0, 0, -180, -180]
+    : incoming && outgoing
+      ? [180, 180, 0, 0, -180, -180]
+      : [180, 180, 0, 0];
+  const rotateY = useTransform(progress, input, output);
+  const opacity = useTransform(
+    progress,
+    index === 0 ? [0, PHILOSOPHY_KNOWN_REVEAL[0], PHILOSOPHY_KNOWN_REVEAL[1], 1] : [0, 1],
+    index === 0 ? [0, 0, 1, 1] : [1, 1],
+  );
+
+  return (
+    <motion.img
+      className="phi-flip-face"
+      src={visual.image}
+      alt={visual.alt}
+      style={{ rotateY, opacity, objectPosition: visual.objectPosition, zIndex: 10 - index }}
+    />
+  );
+};
+
+const PhilosophyChapter = ({ index }: {
+  index: number;
+}) => {
+  const articleRef = useRef<HTMLElement>(null);
+  const stage = PHILOSOPHY_STAGES[index];
+  const { scrollYProgress } = useScroll({ target: articleRef, offset: ['start end', 'end start'] });
+  const opacity = useTransform(scrollYProgress, [0, 0.28, 0.7, 1], [0.38, 1, 1, 0.55]);
+  const y = useTransform(scrollYProgress, [0, 0.28, 0.7, 1], [30, 0, 0, -18]);
+  const filter = useTransform(scrollYProgress, [0, 0.28, 0.7, 1], ['blur(4px)', 'blur(0px)', 'blur(0px)', 'blur(2px)']);
+
+  return (
+    <article ref={articleRef} className="phi-chapter" data-philosophy-chapter={stage.label.toLowerCase()}>
+      <motion.div className="phi-chapter-copy" style={{ opacity, y, filter }}>
+        <span className="phi-copy-label">{stage.label}</span>
+        <h3>{stage.title}</h3>
+        <div className="phi-copy-rule" />
+      </motion.div>
+      <div className="phi-chapter-anchor" data-philosophy-anchor={stage.label.toLowerCase()} aria-hidden="true" />
+      <motion.div className="phi-chapter-definition" style={{ opacity, y, filter }}>
+        <p>{stage.supporting}</p>
+      </motion.div>
+    </article>
+  );
+};
+
+const PhilosophyEditorialSection = () => {
+  const sectionRef = useRef<HTMLElement>(null);
+  const philosophyCardRef = useRef<HTMLDivElement>(null);
+  const [headerHeight, setHeaderHeight] = useState(78);
+  const [safeCardWidth, setSafeCardWidth] = useState(360);
+  const [cardPhase, setCardPhase] = useState<'hidden' | 'prelude' | 'fixed' | 'released'>('hidden');
+  const reducedMotion = useReducedMotion();
+  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ['start start', 'end end'] });
+  const storyProgress = useSpring(scrollYProgress, { stiffness: 105, damping: 30, mass: 0.5, restDelta: 0.0005 });
+  const cardScale = useTransform(storyProgress, [0, 0.18, 0.30, 0.37, 0.42, 0.62, 0.67, 0.87, 0.92, 1], [0.96, 0.96, 1, 0.98, 1, 0.98, 1, 0.98, 1, 1]);
+  const backdropOpacity = useTransform(storyProgress, [0, 0.12, 0.22, 1], [1, 1, 0.1, 0.09]);
+  const backdropOurY = useTransform(storyProgress, [0, 1], ['0vh', '-6vh']);
+  const backdropPhilosophyX = useTransform(storyProgress, [0, 1], ['0vw', '3vw']);
+
+  useLayoutEffect(() => {
+    if (reducedMotion) return;
+    const measure = () => {
+      const navigationHeight = Math.ceil(document.querySelector('nav')?.getBoundingClientRect().height ?? 78);
+      setHeaderHeight(navigationHeight);
+      setSafeCardWidth(Math.max(220, (window.innerHeight - navigationHeight - 100) * 0.8));
+    };
+    measure();
+    window.addEventListener('resize', measure);
+    window.addEventListener('load', measure);
+    document.fonts?.ready.then(measure);
+    return () => {
+      window.removeEventListener('resize', measure);
+      window.removeEventListener('load', measure);
+    };
+  }, [reducedMotion]);
+
+  useEffect(() => {
+    if (reducedMotion) return;
+    let frame = 0;
+    const updateCardPhase = () => {
+      window.cancelAnimationFrame(frame);
+      frame = window.requestAnimationFrame(() => {
+        const section = sectionRef.current;
+        const card = philosophyCardRef.current;
+        if (!section || !card) return;
+        const sectionRect = section.getBoundingClientRect();
+        const usableCentre = headerHeight + (window.innerHeight - headerHeight) / 2;
+        const releaseBoundary = usableCentre + card.offsetHeight / 2;
+        // Keep the travelling card hidden while the Philosophy section is still
+        // entering over the hero. It may reveal only once the navy intro has
+        // reached the navigation and the giant title owns the viewport.
+        const introActivationLine = headerHeight + Math.min(24, window.innerHeight * 0.025);
+        const nextPhase = sectionRect.bottom <= 0 || sectionRect.top >= window.innerHeight
+          ? 'hidden'
+          : sectionRect.bottom <= releaseBoundary
+            ? 'released'
+            : sectionRect.top > introActivationLine
+              ? 'prelude'
+              : 'fixed';
+        setCardPhase(current => current === nextPhase ? current : nextPhase);
+      });
+    };
+    updateCardPhase();
+    window.addEventListener('scroll', updateCardPhase, { passive: true });
+    window.addEventListener('resize', updateCardPhase);
+    return () => {
+      window.cancelAnimationFrame(frame);
+      window.removeEventListener('scroll', updateCardPhase);
+      window.removeEventListener('resize', updateCardPhase);
+    };
+  }, [headerHeight, reducedMotion]);
+
+  useEffect(() => {
+    PHILOSOPHY_STAGES.forEach(item => {
+      const image = new Image();
+      image.src = item.image;
+    });
+  }, []);
+
+  if (reducedMotion) {
+    return (
+      <section className="phi-reduced" aria-labelledby="philosophy-title-reduced">
+        <style>{`
+          .phi-reduced{padding:110px clamp(20px,6vw,80px);background:${C.navy};color:${C.white}}
+          .phi-reduced-intro{min-height:80svh;text-align:center}.phi-reduced-intro h2{margin:0;font:800 clamp(3rem,10vw,8rem)/.9 ${sans};text-transform:uppercase}
+          .phi-reduced-watermark{position:sticky;top:var(--header-height,78px);z-index:0;height:calc(100svh - var(--header-height,78px));margin-bottom:calc(-100svh + var(--header-height,78px));overflow:hidden;pointer-events:none}.phi-reduced-watermark p{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;margin:0;color:rgba(247,240,224,.09);font:850 clamp(7rem,20vw,22.5rem)/.8 ${sans};letter-spacing:-.04em;text-transform:uppercase;white-space:nowrap;user-select:none}
+          .phi-reduced article{position:relative;z-index:1}
+          .phi-reduced article{display:grid;grid-template-columns:minmax(220px,420px) minmax(0,560px);gap:clamp(28px,6vw,80px);align-items:center;margin:0 auto 80px;max-width:1100px}.phi-reduced article img{width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:16px}.phi-reduced article span{color:${C.gold};font:700 .72rem ${sans};letter-spacing:.14em;text-transform:uppercase}.phi-reduced article h3{font:400 clamp(2rem,4vw,3.5rem)/1.08 ${serif}}.phi-reduced article p{max-width:34em;color:rgba(247,242,232,.75);font:400 1rem/1.7 ${sans}}
+          @media(max-width:768px){.phi-reduced{padding:80px 18px}.phi-reduced-watermark p{font-size:clamp(4.5rem,22vw,8.75rem);line-height:.84}.phi-reduced article{grid-template-columns:1fr;gap:20px}}
+        `}</style>
+        <div className="phi-reduced-intro">
+          <h2 id="philosophy-title-reduced">Our Philosophy</h2>
+        </div>
+        <div className="phi-reduced-watermark" aria-hidden="true">
+          <p><span>Our</span><span>Philosophy</span></p>
+        </div>
+        {PHILOSOPHY_STAGES.map((item, index) => (
+          <article key={item.stage}>
+            <img src={item.image} alt={PHILOSOPHY_ALTS[index]} style={{ objectPosition: item.objectPosition }} />
+            <div><span>{item.label}</span><h3>{item.title}</h3><p>{item.supporting}</p></div>
+          </article>
+        ))}
+      </section>
+    );
+  }
+
+  return (
+    <section ref={sectionRef} className="phi-editorial" aria-labelledby="philosophy-title" style={{ '--header-height': `${headerHeight}px`, '--phi-card-safe-width': `${safeCardWidth}px` } as React.CSSProperties}>
+      <style>{`
+        .phi-editorial{position:relative;background:${C.navy};color:${C.white};isolation:isolate;overflow:clip}
+        .phi-backdrop{position:sticky;top:var(--header-height);z-index:1;height:calc(100svh - var(--header-height));min-height:620px;overflow:hidden;pointer-events:none}
+        .phi-backdrop-title{position:absolute;inset:0;z-index:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;width:100%;margin:0;padding-top:clamp(34px,5vh,60px);font-family:${sans};font-size:clamp(9.375rem,17.5vw,22.5rem);font-weight:850;line-height:.8;letter-spacing:-.04em;text-align:center;text-transform:uppercase;white-space:nowrap;color:#fbf3e3;user-select:none;will-change:opacity}
+        .phi-backdrop-title span{display:block;width:max-content;will-change:transform}.phi-content-veil{position:absolute;inset:0;z-index:2;background:radial-gradient(circle at center,rgba(7,29,56,.3) 0%,rgba(7,29,56,.12) 42%,transparent 72%);pointer-events:none}
+        .phi-story-outro{height:20svh}
+        .phi-chapter{position:relative;z-index:5;min-height:calc(100svh - var(--header-height));padding-block:clamp(48px,7vh,96px);padding-inline:clamp(48px,5vw,88px);display:grid;grid-template-columns:minmax(280px,1fr) clamp(280px,24vw,360px) minmax(280px,1fr);align-items:center;column-gap:clamp(56px,7vw,120px);overflow:visible}
+        .phi-chapter-copy{grid-column:1}.phi-chapter-definition{grid-column:3}.phi-chapter-anchor{grid-column:2;width:100%;height:min(54svh,520px)}
+        .phi-chapter-copy,.phi-chapter-definition{align-self:stretch;min-height:100%;display:flex;flex-direction:column;justify-content:center;margin:0;will-change:transform,opacity,filter}
+        .phi-copy-label{display:block;margin-bottom:18px;font:700 .72rem/1 ${sans};letter-spacing:.16em;text-transform:uppercase;color:${C.gold}}
+        .phi-chapter-copy h3{margin:0;max-width:10.5em;font:400 clamp(2.15rem,3.25vw,3.6rem)/1.08 ${serif};letter-spacing:-.025em;color:rgba(255,250,240,.97);text-wrap:balance}
+        .phi-copy-rule{width:42px;height:1px;margin:25px 0 0;background:${C.gold};opacity:.78}.phi-chapter-definition p{max-width:27em;margin:0;font:400 clamp(.92rem,1.12vw,1.12rem)/1.72 ${sans};color:rgba(247,242,232,.74);text-wrap:pretty}
+        .phi-card-viewport-anchor{z-index:6;left:50%;width:min(clamp(280px,24vw,360px),var(--phi-card-safe-width));pointer-events:none;opacity:0;visibility:hidden;transition:opacity .64s cubic-bezier(.22,1,.36,1),visibility 0s linear .64s}.phi-card-viewport-anchor.is-prelude,.phi-card-viewport-anchor.is-fixed{position:fixed;top:calc(var(--header-height) + (100svh - var(--header-height))/2);bottom:auto;transform:translate(-50%,-50%)}.phi-card-viewport-anchor.is-fixed,.phi-card-viewport-anchor.is-released{opacity:1;visibility:visible;pointer-events:auto;transition:opacity .64s cubic-bezier(.22,1,.36,1),visibility 0s linear 0s}.phi-card-viewport-anchor.is-released{position:absolute;top:auto;bottom:0;transform:translateX(-50%)}.phi-card-viewport-anchor.is-hidden{position:absolute;top:0;bottom:auto;transform:translateX(-50%)}.phi-travel-centre{width:100%;transform:translateY(24px) scale(.96);transform-origin:center center;transition:transform .64s cubic-bezier(.22,1,.36,1);will-change:transform}.phi-card-viewport-anchor.is-fixed .phi-travel-centre,.phi-card-viewport-anchor.is-released .phi-travel-centre{transform:translateY(0) scale(1)}
+        .phi-flip-frame{position:relative;width:100%;aspect-ratio:4/5;overflow:visible;background:transparent;perspective:1500px;transform-origin:center center;transform-style:preserve-3d;will-change:transform}.phi-flip-frame img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:22px;box-shadow:0 20px 38px rgba(0,0,0,.26);backface-visibility:hidden;transform-origin:center center;will-change:transform,opacity;transform-style:preserve-3d}
+        .phi-reduced{padding:110px clamp(20px,6vw,80px);background:${C.navy};color:${C.white}}.phi-reduced-intro{min-height:80svh;text-align:center}.phi-reduced-intro h2{margin:0;font:800 clamp(3rem,10vw,8rem)/.9 ${sans};text-transform:uppercase}.phi-reduced article{display:grid;grid-template-columns:minmax(220px,420px) minmax(0,560px);gap:clamp(28px,6vw,80px);align-items:center;margin:0 auto 80px;max-width:1100px}.phi-reduced article img{width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:16px}.phi-reduced article span{color:${C.gold};font:700 .72rem ${sans};letter-spacing:.14em;text-transform:uppercase}.phi-reduced article h3{font:400 clamp(2rem,4vw,3.5rem)/1.08 ${serif}}.phi-reduced article p{max-width:34em;color:rgba(247,242,232,.75);font:400 1rem/1.7 ${sans}}
+        @media(min-width:769px) and (max-width:1100px){.phi-backdrop-title{font-size:clamp(6.875rem,18vw,13.75rem)}.phi-chapter{grid-template-columns:minmax(0,1fr) minmax(260px,340px);grid-template-rows:auto auto;padding-inline:clamp(28px,4vw,48px);column-gap:clamp(28px,4vw,52px);row-gap:24px}.phi-chapter-copy{grid-column:1;grid-row:1;min-height:0;justify-content:flex-end}.phi-chapter-definition{grid-column:1;grid-row:2;min-height:0;justify-content:flex-start}.phi-chapter-anchor{grid-column:2;grid-row:1/3}.phi-card-viewport-anchor{width:min(clamp(260px,31vw,340px),var(--phi-card-safe-width))}.phi-chapter-copy h3{font-size:clamp(1.8rem,3.6vw,2.8rem)}.phi-chapter-definition p{font-size:.88rem}}
+        @media(max-width:768px){.phi-backdrop{min-height:560px}.phi-backdrop-title{padding-top:30px;font-size:clamp(4.5rem,22vw,8.75rem);line-height:.84}.phi-content-veil{background:radial-gradient(circle at center,rgba(7,29,56,.34) 0%,rgba(7,29,56,.16) 48%,transparent 76%)}.phi-chapter{min-height:auto;padding:96px 18px;grid-template-columns:minmax(0,1fr);grid-template-rows:auto min(97.5vw,400px) auto;gap:28px;align-content:center}.phi-chapter-copy{grid-column:1;grid-row:1;min-height:0;text-align:center}.phi-chapter-definition{grid-column:1;grid-row:3;min-height:0;text-align:center}.phi-chapter-anchor{grid-column:1;grid-row:2;height:100%}.phi-copy-label{text-align:center;font-size:.58rem}.phi-chapter-copy h3{max-width:11em;margin-inline:auto;text-align:center;font-size:clamp(1.6rem,7vw,2.2rem)}.phi-copy-rule{margin-inline:auto}.phi-chapter-definition p{max-width:35em;margin-inline:auto;font-size:clamp(.78rem,3.2vw,.92rem);line-height:1.55}.phi-card-viewport-anchor{width:min(78vw,320px,var(--phi-card-safe-width))}.phi-flip-frame img{border-radius:20px}.phi-reduced{padding:80px 18px}.phi-reduced article{grid-template-columns:1fr;gap:20px}}
+      `}</style>
+      <div className="phi-backdrop">
+        <motion.h2 id="philosophy-title" className="phi-backdrop-title" style={{ opacity: backdropOpacity }}>
+          <motion.span style={{ y: backdropOurY }}>Our</motion.span>
+          <motion.span style={{ x: backdropPhilosophyX }}>Philosophy</motion.span>
+        </motion.h2>
+        <div className="phi-content-veil" aria-hidden="true" />
+      </div>
+      {PHILOSOPHY_STAGES.map((_, index) => (
+        <PhilosophyChapter key={PHILOSOPHY_STAGES[index].stage} index={index} />
+      ))}
+      <div className="phi-story-outro" aria-hidden="true" />
+      <div ref={philosophyCardRef} className={`phi-card-viewport-anchor is-${cardPhase}`} aria-hidden="true">
+        <div className="phi-travel-centre">
+          <motion.div className="phi-flip-frame" style={{ scale: cardScale }}>
+            {[0, 1, 2, 3].map(index => <PhilosophyVisualFace key={index} index={index} progress={storyProgress} />)}
+          </motion.div>
+        </div>
+      </div>
     </section>
   );
 };
@@ -6133,15 +6489,42 @@ const ClosingCTASection = () => {
 //  PAGE
 // ══════════════════════════════════════════════════════════════
 const Index = () => (
-  <div style={{ fontFamily: sans, overflowX: 'clip' }}>
+  <div style={{ fontFamily: sans }}>
     <IntroVideo />
     <Confetti />
     <SEO canonicalUrl="/" jsonLd={[organizationSchema(), localBusinessSchema(siteStats.reviewCount)]} />
     <NavigationNew />
     <main>
-      <HeroSection />
-      <MarqueeStrip />
-      <PhilosophyBackedSection />
+      <VisualIntro>
+        <HeroSection embedded />
+      </VisualIntro>
+      <div className="hero-philosophy-pullup">
+        <style>{`
+          .hero-philosophy-pullup {
+            position: relative;
+            z-index: 3;
+            margin-top: -110svh;
+            width: 100%;
+            overflow-x: clip;
+            background: ${C.navy};
+            box-shadow: 0 -12px 30px rgba(13,35,68,.06);
+          }
+          @media (min-width: 768px) and (max-width: 1024px) {
+            .hero-philosophy-pullup { margin-top: -95svh; }
+          }
+          @media (max-width: 767px) {
+            .hero-philosophy-pullup { margin-top: -80svh; }
+          }
+          @media (prefers-reduced-motion: reduce) {
+            .hero-philosophy-pullup {
+              margin-top: 0;
+              box-shadow: none;
+            }
+          }
+        `}</style>
+        <MarqueeStrip />
+        <PhilosophyEditorialSection />
+      </div>
       <ImpactRecognitionSection />
       <AchievementsSection />
       <ProgramsSection />

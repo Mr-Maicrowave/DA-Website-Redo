@@ -105,11 +105,13 @@ const NavigationNew = () => {
           background: scrolled
             ? 'linear-gradient(110deg, rgba(250,245,234,0.95), rgba(247,239,222,0.92) 58%, rgba(235,215,175,0.88))'
             : isHomepage || isBookExperience
-              ? 'linear-gradient(110deg, rgba(250,245,233,0.91), rgba(248,241,225,0.88) 58%, rgba(236,217,180,0.86))'
+              ? 'linear-gradient(110deg, rgba(250,245,233,0.44), rgba(248,241,225,0.34) 58%, rgba(236,217,180,0.28))'
               : 'linear-gradient(110deg, rgba(250,245,234,0.92), rgba(247,239,222,0.88) 58%, rgba(235,215,175,0.82))',
           boxShadow: scrolled
             ? '0 5px 14px rgba(10,27,52,0.10), inset 0 1px 0 rgba(255,250,239,0.72)'
-            : '0 2px 7px rgba(10,27,52,0.065), inset 0 1px 0 rgba(255,250,239,0.62)',
+            : isHomepage
+              ? '0 1px 0 rgba(255,250,239,0.34), 0 8px 28px rgba(10,27,52,0.08)'
+              : '0 2px 7px rgba(10,27,52,0.065), inset 0 1px 0 rgba(255,250,239,0.62)',
         }}
       >
         <div className="px-4 sm:px-6 lg:px-8">
