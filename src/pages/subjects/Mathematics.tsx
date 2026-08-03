@@ -14,7 +14,6 @@ import {
   Sparkles,
   Target,
   TrendingUp,
-  Users,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -223,48 +222,28 @@ const IlluPhone = ({ isOpen: _ }: { isOpen: boolean }) => (
   </svg>
 );
 
-const IlluSpotify = ({ isOpen: _ }: { isOpen: boolean }) => {
-  const bars = [22, 40, 54, 30, 48, 26, 44];
-  const bW = 8, gap = 4;
-  const sx = (120 - bars.length * (bW + gap) + gap) / 2;
-  const base = 58;
-  return (
-    <svg viewBox="0 0 120 76" className="h-full w-full" aria-hidden="true">
-      {bars.map((h, i) => (
-        <rect
-          key={i}
-          x={sx + i * (bW + gap)} y={base - h} width={bW} height={h} rx="3"
-          fill="#c9a227" fillOpacity="0.72"
-          style={{
-            transformBox: 'fill-box',
-            transformOrigin: 'center bottom',
-            animation: `maths-barPulse ${1.0 + i * 0.14}s ease-in-out ${i * 0.09}s infinite`,
-          }}
-        />
-      ))}
-      <g opacity="0.35" stroke="#071629" strokeWidth="1.5" strokeLinecap="round" fill="none">
-        <line x1="28" y1="72" x2="72" y2="65" />
-        <polygon points="67,62 75,65 67,68" fill="#071629" stroke="none" />
-        <line x1="28" y1="65" x2="72" y2="72" />
-        <polygon points="67,75 75,72 67,69" fill="#071629" stroke="none" />
-      </g>
-    </svg>
-  );
-};
-
-const IlluSeismic = ({ isOpen }: { isOpen: boolean }) => (
+const IlluNormalDist = ({ isOpen }: { isOpen: boolean }) => (
   <svg viewBox="0 0 120 76" className="h-full w-full" aria-hidden="true">
-    <polyline
-      points="0,46 38,46 43,44 48,48 52,44 57,10 63,72 67,46 72,48 76,46 120,46"
-      fill="none" stroke="#071629" strokeWidth="0.5" strokeOpacity="0.1" strokeLinejoin="round"
+    <line x1="6" y1="70" x2="114" y2="70" stroke="#071629" strokeWidth="1" strokeOpacity="0.12" strokeLinecap="round" />
+    <line
+      x1="60" y1="70" x2="60" y2="10" stroke="#071629" strokeWidth="1" strokeDasharray="3 3"
+      strokeOpacity={isOpen ? 0.25 : 0}
+      style={{ transition: 'stroke-opacity 0.3s 0.5s' }}
     />
-    <polyline
-      points="0,46 38,46 43,44 48,48 52,44 57,10 63,72 67,46 72,48 76,46 120,46"
-      fill="none" stroke="#c9a227" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-      strokeDasharray="350"
+    <path
+      d="M 6,70 C 22,70 30,68 40,52 C 48,40 52,10 60,10 C 68,10 72,40 80,52 C 90,68 98,70 114,70"
+      fill="none" stroke="#c9a227" strokeWidth="2.5" strokeLinecap="round"
+      strokeDasharray="220"
       style={{
-        strokeDashoffset: isOpen ? 0 : 350,
-        transition: isOpen ? 'stroke-dashoffset 0.8s cubic-bezier(0.4,0,0.2,1)' : 'none',
+        strokeDashoffset: isOpen ? 0 : 220,
+        transition: isOpen ? 'stroke-dashoffset 0.75s cubic-bezier(0.4,0,0.2,1)' : 'none',
+      }}
+    />
+    <circle
+      cx="60" cy="10" r="4" fill="#c9a227"
+      style={{
+        opacity: isOpen ? 1 : 0,
+        transition: isOpen ? 'opacity 0.3s ease 0.6s' : 'none',
       }}
     />
   </svg>
@@ -387,16 +366,17 @@ const CURIOSITY_CARDS = [
     Illustration: IlluPhone,
   },
   {
-    topic: 'Probability',
-    hook: "Why Spotify doesn't feel random",
+    topic: 'Statistics',
+    hook: 'Why most things cluster near average',
     year: 'Years 9–10',
     fact: (
       <>
-        Spotify&apos;s shuffle isn&apos;t truly random — it uses <strong>probability weighting</strong> so
-        you don&apos;t hear the same artist <strong>twice in a row</strong>. Pure randomness felt too random.
+        Heights, test scores, reaction times — most real-world data forms a <strong>bell curve</strong>.
+        Statisticians use the <strong>normal distribution</strong> to work out how likely any result is,
+        from exam marks to manufacturing tolerances.
       </>
     ),
-    Illustration: IlluSpotify,
+    Illustration: IlluNormalDist,
   },
   {
     topic: 'Calculus',
@@ -437,63 +417,6 @@ const CURIOSITY_CARDS = [
   },
 ];
 
-const WALKTHROUGH_VERSIONS = [
-  {
-    id: 'hsc',
-    label: 'HSC',
-    problem: 'Find the values of k for which the equation 3x² − kx + 3 = 0 has no real solutions.',
-    steps: [
-      {
-        content: 'Recall that a quadratic ax² + bx + c = 0 has **no real solutions** when the discriminant Δ < 0, where Δ = b² − 4ac.',
-        note: '"No real solutions" is the key phrase. That\'s the discriminant test. Lock it in before touching the numbers.',
-      },
-      {
-        content: 'Identify the coefficients: a = 3, b = −k, c = 3.',
-        note: "Don't rush. Write out a, b, c explicitly. Dropping a negative sign here is the most common mistake in the HSC.",
-      },
-      {
-        content: 'Substitute into Δ = b² − 4ac: Δ = (−k)² − 4(3)(3) = k² − 36.',
-        note: '(−k)² = k² — the negative disappears when you square.',
-      },
-      {
-        content: 'Set Δ < 0: k² − 36 < 0, so k² < 36.',
-        note: 'We want no real solutions, so the discriminant must be negative. Flip the condition.',
-      },
-      {
-        content: 'Solve: −6 < k < 6.',
-        note: 'Square-root both sides of k² < 36. Remember: square root of an inequality gives both a positive and negative bound. Final answer: −6 < k < 6.',
-      },
-    ],
-  },
-  {
-    id: 'yr8',
-    label: 'Year 8',
-    problem: 'A rectangle has a length that is 4 cm more than twice its width. Its perimeter is 50 cm. Find the dimensions.',
-    steps: [
-      {
-        content: 'Let the width = w. Then the length = 2w + 4.',
-        note: 'Pick one unknown and build the other from the words. "4 more than twice the width" → 2w + 4.',
-      },
-      {
-        content: 'Perimeter of a rectangle = 2(length + width). So: 2(2w + 4 + w) = 50.',
-        note: "Write the perimeter formula first, then substitute — don't skip straight to numbers.",
-      },
-      {
-        content: 'Simplify inside the bracket: 2(3w + 4) = 50.',
-        note: 'Collect the w terms: 2w + w = 3w.',
-      },
-      {
-        content: 'Expand: 6w + 8 = 50. Then 6w = 42, so w = 7.',
-        note: 'Divide both sides by 6 cleanly.',
-      },
-      {
-        content: 'Width = 7 cm, length = 2(7) + 4 = 18 cm. **Check:** 2(18 + 7) = 2(25) = 50 ✓',
-        note: "Always substitute back. If it doesn't check out, something went wrong earlier.",
-      },
-    ],
-  },
-];
-
 const HERO_CONSTELLATION_NODES = [
   { x: 64, y: 158, label: '5x - 7 = 18', tone: 'gold' },
   { x: 178, y: 94, label: '+7 both sides', tone: 'blue' },
@@ -527,7 +450,21 @@ const HERO_SPARKLES = [
   { x: 486, y: 132, delay: '1.8s' },
 ];
 
-const HeroConstellation = () => (
+// Only the first 6 nodes form the worked-solution chain — the remaining 3
+// (indices 6-8) are decorative concept labels and stay non-interactive.
+const HERO_STEP_EXPLANATIONS = [
+  "We start with the equation as given — nothing has been touched yet.",
+  'Add 7 to both sides. Whatever we do to one side, we do to the other.',
+  'That leaves 5x = 25 — the constant is cleared.',
+  'Divide both sides by 5 to isolate x completely.',
+  'x = 5 is the solution to the equation.',
+  'Substitute x = 5 back into the original equation to check the answer holds.',
+];
+
+const HeroConstellation = () => {
+  const [activeStep, setActiveStep] = useState(0);
+
+  return (
   <motion.aside
     initial={{ opacity: 0, y: 28 }}
     animate={{ opacity: 1, y: 0 }}
@@ -604,35 +541,74 @@ const HeroConstellation = () => (
         );
       })}
 
-      {HERO_CONSTELLATION_NODES.map((node, index) => (
-        <g
-          key={node.label}
-          className="maths-hero-drift"
-          style={{ animation: `mathsHeroDrift ${5 + (index % 3)}s ease-in-out ${index * 0.18}s infinite` }}
-        >
-          <circle
-            cx={node.x}
-            cy={node.y}
-            r={index < 6 ? 17 : 12}
-            fill={node.tone === 'gold' ? '#f1df9a' : '#9bc7ff'}
-            fillOpacity="0.16"
-            filter="url(#maths-constellation-glow)"
-          />
-          <circle cx={node.x} cy={node.y} r={index < 6 ? 6 : 4.5} fill={node.tone === 'gold' ? '#f1df9a' : '#9bc7ff'} />
-          <text
-            x={node.x + (node.x > 400 && index !== 3 ? -12 : 14)}
-            y={node.y + (index === 7 ? -16 : -12)}
-            textAnchor={node.x > 400 && index !== 3 ? 'end' : 'start'}
-            fill="#ffffff"
-            fillOpacity="0.9"
-            fontSize={index < 6 ? 18 : 15}
-            fontWeight="900"
+      {HERO_CONSTELLATION_NODES.map((node, index) => {
+        const isStep = index < HERO_STEP_EXPLANATIONS.length;
+        const isActive = isStep && activeStep === index;
+        return (
+          <g
+            key={node.label}
+            className="maths-hero-drift"
+            style={{
+              animation: `mathsHeroDrift ${5 + (index % 3)}s ease-in-out ${index * 0.18}s infinite`,
+              cursor: isStep ? 'pointer' : 'default',
+            }}
+            onClick={isStep ? () => setActiveStep(index) : undefined}
+            onKeyDown={
+              isStep
+                ? (event) => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                      event.preventDefault();
+                      setActiveStep(index);
+                    }
+                  }
+                : undefined
+            }
+            tabIndex={isStep ? 0 : -1}
+            role={isStep ? 'button' : undefined}
+            aria-label={isStep ? `Step ${index + 1}: ${node.label}` : undefined}
           >
-            {node.label}
-          </text>
-        </g>
-      ))}
+            {isActive && (
+              <circle
+                cx={node.x}
+                cy={node.y}
+                r={24}
+                fill="none"
+                stroke={node.tone === 'gold' ? '#f1df9a' : '#9bc7ff'}
+                strokeWidth="1.5"
+                strokeOpacity="0.9"
+              />
+            )}
+            <circle
+              cx={node.x}
+              cy={node.y}
+              r={index < 6 ? 17 : 12}
+              fill={node.tone === 'gold' ? '#f1df9a' : '#9bc7ff'}
+              fillOpacity="0.16"
+              filter="url(#maths-constellation-glow)"
+            />
+            <circle cx={node.x} cy={node.y} r={index < 6 ? 6 : 4.5} fill={node.tone === 'gold' ? '#f1df9a' : '#9bc7ff'} />
+            <text
+              x={node.x + (node.x > 400 && index !== 3 ? -12 : 14)}
+              y={node.y + (index === 7 ? -16 : -12)}
+              textAnchor={node.x > 400 && index !== 3 ? 'end' : 'start'}
+              fill="#ffffff"
+              fillOpacity="0.9"
+              fontSize={index < 6 ? 18 : 15}
+              fontWeight="900"
+            >
+              {node.label}
+            </text>
+          </g>
+        );
+      })}
     </svg>
+
+    <div className="relative z-10 mb-3 rounded-xl border border-white/10 bg-white/5 px-4 py-3">
+      <span className="block text-[10px] font-black uppercase tracking-[0.14em] text-[#f1df9a]">
+        Step {activeStep + 1} of {HERO_STEP_EXPLANATIONS.length}
+      </span>
+      <p className="mt-1.5 text-sm leading-6 text-white/75">{HERO_STEP_EXPLANATIONS[activeStep]}</p>
+    </div>
 
     <div className="relative z-10 grid gap-3 sm:grid-cols-3">
       {['Question type', 'Method', 'Final check'].map((item) => (
@@ -641,8 +617,12 @@ const HeroConstellation = () => (
         </div>
       ))}
     </div>
+    <p className="relative z-10 mt-3 text-center text-[11px] text-white/40">
+      Click a node — or tab to it and press Enter — to move through the solution.
+    </p>
   </motion.aside>
-);
+  );
+};
 
 const Mathematics = () => {
   const courseLevels = [
@@ -713,20 +693,55 @@ const Mathematics = () => {
     },
   ];
 
+  // The same running problem (2x + 5 = 13) is annotated differently at each
+  // stage of the method, so a viewer can see what actually changes step to step.
   const teachingSteps = [
-    { title: 'Diagnose', text: 'Find the exact gaps, habits, and confidence blocks holding the student back.' },
-    { title: 'Explain', text: 'Break concepts into clear steps with worked examples and guided practice.' },
-    { title: 'Apply', text: 'Move from simple questions into exam-style problems with teacher feedback.' },
-    { title: 'Refine', text: 'Build speed, accuracy, and independent problem-solving over time.' },
-  ];
-
-  const skills = [
-    'Problem-solving strategies',
-    'Mathematical reasoning',
-    'Algebraic manipulation',
-    'Geometric visualization',
-    'Statistical interpretation',
-    'Exam technique',
+    {
+      title: 'Diagnose',
+      text: 'Find the exact gaps, habits, and confidence blocks holding the student back.',
+      chips: ['Problem-solving strategies', 'Mathematical reasoning'],
+      example: {
+        kind: 'diagnose' as const,
+        problem: '2x + 5 = 13',
+        note: 'A 60-second diagnostic shows whether the gap is the algebra itself, or just the inverse-operation habit that undoes the +5.',
+      },
+    },
+    {
+      title: 'Explain',
+      text: 'Break concepts into clear steps with worked examples and guided practice.',
+      chips: ['Algebraic manipulation', 'Geometric visualization'],
+      example: {
+        kind: 'explain' as const,
+        problem: '2x + 5 = 13',
+        steps: [
+          { content: 'Subtract 5 from both sides: 2x = 13 − 5 = 8.', note: 'The most common slip is adding instead of subtracting — always undo the last operation first.' },
+          { content: 'Divide both sides by 2: x = 8 ÷ 2 = 4.', note: 'Undo each operation in reverse order — that is the whole idea of solving an equation.' },
+          { content: 'Check by substitution: 2(4) + 5 = 13 ✓', note: 'A ten-second check catches almost every careless mistake before it costs a mark.' },
+        ],
+      },
+    },
+    {
+      title: 'Apply',
+      text: 'Move from simple questions into exam-style problems with teacher feedback.',
+      chips: ['Statistical interpretation'],
+      example: {
+        kind: 'apply' as const,
+        problem: '3x − 4 = 11',
+        answer: 'x = 5',
+        note: 'Same method, new numbers. A student who can explain why each step works can now apply it under light exam pressure.',
+      },
+    },
+    {
+      title: 'Refine',
+      text: 'Build speed, accuracy, and independent problem-solving over time.',
+      chips: ['Exam technique'],
+      example: {
+        kind: 'refine' as const,
+        before: 'x = 15',
+        after: 'x = 5 — check: 3(5) − 4 = 11 ✓',
+        note: 'The first attempt skipped the final check and mis-divided 15 ÷ 3. Refining means tightening exactly this kind of slip before it reaches the exam.',
+      },
+    },
   ];
 
   const scrollToPathways = () => {
@@ -734,18 +749,18 @@ const Mathematics = () => {
   };
 
   const [activeCard, setActiveCard] = useState<string | null>(null);
+  const [activeStream, setActiveStream] = useState<number>(0);
+  const [teachStep, setTeachStep] = useState<number>(0);
   const [activeTab, setActiveTab] = useState<string>('yr910');
   const [exampleIdx, setExampleIdx] = useState<number>(0);
-  const [revealed, setRevealed] = useState<boolean>(false);
+  const [pickedIndex, setPickedIndex] = useState<number | null>(null);
 
   const currentTab = ERROR_TABS.find((t) => t.id === activeTab)!;
   const currentExample = currentTab.examples[exampleIdx];
   const mistakeStep = currentExample.steps.find((s) => s.isMistake);
+  const mistakeIndex = currentExample.steps.findIndex((s) => s.isMistake);
   const isLastExample = exampleIdx === currentTab.examples.length - 1;
-
-  const [version, setVersion] = useState<string>('hsc');
-  const [stepCount, setStepCount] = useState<number>(0);
-  const currentVersion = WALKTHROUGH_VERSIONS.find((v) => v.id === version)!;
+  const revealed = pickedIndex === mistakeIndex;
 
   return (
     <div className="min-h-screen bg-[#fffdf8] text-[#172033]">
@@ -821,24 +836,16 @@ const Mathematics = () => {
         </section>
 
         {/* Curiosity grid — Where does this maths actually show up? */}
-        <section className="bg-[#fffdf8] px-5 py-20 lg:px-8">
+        <section id="where-used" className="bg-[#fffdf8] px-5 py-20 lg:px-8">
           <style>{`
             @keyframes maths-phoneRock {
               0%   { transform: rotate(8deg);  }
               50%  { transform: rotate(-5deg); }
               100% { transform: rotate(8deg);  }
             }
-            @keyframes maths-barPulse {
-              0%, 100% { transform: scaleY(0.65); opacity: 0.42; }
-              50%       { transform: scaleY(1);    opacity: 0.85; }
-            }
             @keyframes maths-ripple {
               from { transform: scale(1);   opacity: 0.55; }
               to   { transform: scale(2.8); opacity: 0;    }
-            }
-            @keyframes maths-stepIn {
-              from { opacity: 0; transform: translateY(-10px); }
-              to   { opacity: 1; transform: translateY(0);     }
             }
           `}</style>
 
@@ -1016,357 +1023,311 @@ const Mathematics = () => {
               </p>
             </div>
 
-            <div className="mt-10 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+            {/* Segmented stream selector — same swap-a-pane pattern as "How we teach" below */}
+            <div className="mt-10 flex flex-wrap gap-2" role="tablist" aria-label="HSC mathematics stream">
               {hscStreams.map((stream, index) => (
-                <motion.article
-                  key={stream.name}
-                  initial={{ opacity: 0, y: 24 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: '-80px' }}
-                  transition={{ duration: 0.55, delay: index * 0.06 }}
-                  className="rounded-3xl border border-white/12 bg-white/[0.07] p-6 shadow-2xl shadow-black/10 backdrop-blur transition duration-300 hover:-translate-y-1 hover:bg-white/[0.1]"
-                >
-                  <span className="rounded-full bg-[#c9a227]/18 px-3 py-1 text-xs font-black uppercase tracking-[0.1em] text-[#f1df9a]">{stream.badge}</span>
-                  <h3 className="mt-6 text-2xl font-black tracking-[-0.02em]">{stream.name}</h3>
-                  <ul className="mt-5 space-y-3">
-                    {stream.topics.map((topic) => (
-                      <li key={topic} className="flex items-start gap-3 text-sm leading-6 text-white/72">
-                        <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[#f1df9a]" />
-                        {topic}
-                      </li>
-                    ))}
-                  </ul>
-                </motion.article>
-              ))}
-            </div>
-
-            <div className="mt-10 flex flex-col items-start justify-between gap-5 rounded-3xl border border-white/12 bg-white/[0.06] p-6 md:flex-row md:items-center">
-              <p className="max-w-3xl text-sm leading-7 text-white/70">
-                Mathematics teachers include high-achieving subject specialists who help students move from knowing content to showing clear working under exam conditions.
-              </p>
-              <Link to="/hsc-excellence">
-                <Button variant="outline" className="rounded-full border-white/30 bg-transparent font-bold text-white hover:bg-white/10 hover:text-white">
-                  Explore HSC Program
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </section>
-
-        {/* How we teach */}
-        <section id="math-method" className="bg-[#fff6e7] px-5 py-20 lg:px-8">
-          <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[.9fr_1.1fr] lg:items-center">
-            <motion.div initial={{ opacity: 0, x: -24 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }}>
-              <p className="mb-3 text-xs font-black uppercase tracking-[0.16em] text-[#c9a227]">How we teach</p>
-              <h2 className="font-serif text-4xl font-medium leading-tight tracking-[-0.045em] text-[#071629] lg:text-5xl">
-                Less panic. More method.
-              </h2>
-              <p className="mt-5 text-base leading-8 text-[#61708a]">
-                Maths feels more manageable when students know exactly what to do when a question is unfamiliar. We teach method alongside content so students build real confidence alongside their marks.
-              </p>
-              <ul className="mt-8 grid gap-3 sm:grid-cols-2">
-                {skills.map((skill) => (
-                  <li key={skill} className="flex items-center gap-3 rounded-2xl bg-white px-4 py-3 text-sm font-bold text-[#24324a] shadow-sm">
-                    <Calculator className="h-4 w-4 text-[#c9a227]" />
-                    {skill}
-                  </li>
-                ))}
-              </ul>
-            </motion.div>
-
-            <div className="grid gap-4 sm:grid-cols-2">
-              {teachingSteps.map((step, index) => (
-                <motion.article
-                  key={step.title}
-                  initial={{ opacity: 0, y: 24 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: '-80px' }}
-                  transition={{ duration: 0.55, delay: index * 0.08 }}
-                  className="rounded-3xl border border-[#071629]/10 bg-white p-6 shadow-lg shadow-[#071629]/5"
-                >
-                  <div className="mb-8 flex h-10 w-10 items-center justify-center rounded-full bg-[#071629] text-sm font-black text-[#f1df9a]">{index + 1}</div>
-                  <h3 className="text-xl font-black tracking-[-0.02em] text-[#10233f]">{step.title}</h3>
-                  <p className="mt-3 text-sm leading-7 text-[#61708a]">{step.text}</p>
-                </motion.article>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Learning format cards */}
-        <section className="bg-[#fffdf8] px-5 py-20 lg:px-8">
-          <div className="mx-auto grid max-w-7xl gap-5 lg:grid-cols-2">
-            <div className="rounded-[2rem] border border-[#071629]/10 bg-gradient-to-br from-[#f7fbff] to-[#e8f2ff] p-8 shadow-lg shadow-[#071629]/5">
-              <Sparkles className="mb-5 h-10 w-10 text-[#10233f]" />
-              <h2 className="text-2xl font-black tracking-[-0.03em] text-[#10233f]">Problem-Solving Workshops</h2>
-              <p className="mt-4 text-sm leading-7 text-[#61708a]">
-                For students aiming high in their class or tackling enrichment challenges. Focused sessions on harder problem types that go beyond the standard lesson program.
-              </p>
-              <Link to="/hsc-excellence" className="mt-6 inline-flex items-center text-sm font-black text-[#10233f]">
-                Learn more
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </div>
-
-            <div className="rounded-[2rem] border border-[#071629]/10 bg-gradient-to-br from-[#fffdf7] to-[#fff1cd] p-8 shadow-lg shadow-[#071629]/5">
-              <Users className="mb-5 h-10 w-10 text-[#10233f]" />
-              <h2 className="text-2xl font-black tracking-[-0.03em] text-[#10233f]">Small Groups and Classes</h2>
-              <p className="mt-4 text-sm leading-7 text-[#61708a]">
-                Our small group classes (3–5 students) give your child focused attention in a structured setting. Students are matched to a group that suits their current level and pace.
-              </p>
-              <Link to="/learning-formats" className="mt-6 inline-flex items-center text-sm font-black text-[#10233f]">
-                Compare formats
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </div>
-          </div>
-        </section>
-
-        {/* Spot the Mistake — Exam Error Detective */}
-        <section id="maths-interactive" className="bg-[#fff6e7] px-5 py-20 lg:px-8">
-          <div className="mx-auto max-w-7xl">
-            <div className="mb-10">
-              <h2 className="font-serif text-4xl font-medium leading-tight tracking-[-0.045em] text-[#071629] lg:text-5xl">
-                Can you spot what cost this student marks?
-              </h2>
-              <p className="mt-3 font-serif text-base italic text-[#9b8a6a]">
-                Every example below is a real mistake type. Tap &ldquo;Reveal mistake&rdquo; when you&rsquo;ve found it.
-              </p>
-            </div>
-
-            {/* Tab pills */}
-            <div className="mb-6 flex flex-wrap gap-2" role="tablist" aria-label="Year level">
-              {ERROR_TABS.map((tab) => (
                 <button
-                  key={tab.id}
+                  key={stream.name}
                   role="tab"
-                  aria-selected={activeTab === tab.id}
-                  onClick={() => {
-                    setActiveTab(tab.id);
-                    setExampleIdx(0);
-                    setRevealed(false);
-                  }}
-                  className={`rounded-full px-5 py-2.5 text-sm font-black transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9a227] focus-visible:ring-offset-2 ${
-                    activeTab === tab.id
-                      ? 'bg-[#071629] text-[#f1df9a]'
-                      : 'border border-[#071629]/15 bg-white text-[#10233f] hover:bg-[#f5ecd9]'
+                  aria-selected={activeStream === index}
+                  onClick={() => setActiveStream(index)}
+                  className={`rounded-full px-5 py-2.5 text-sm font-black transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9a227] focus-visible:ring-offset-2 focus-visible:ring-offset-[#071629] ${
+                    activeStream === index ? 'bg-[#c9a227] text-[#071629]' : 'border border-white/15 bg-white/[0.06] text-white/70 hover:bg-white/10 hover:text-white'
                   }`}
                 >
-                  {tab.label}
+                  {stream.name}
                 </button>
               ))}
             </div>
 
-            {/* Example card */}
-            <div className="overflow-hidden rounded-[2rem] border border-[#071629]/10 bg-white shadow-2xl shadow-[#071629]/6">
-              {/* Card header: counter + prev/next */}
-              <div className="flex items-center justify-between border-b border-[#071629]/8 px-6 py-4">
-                <span className="text-xs font-black uppercase tracking-[0.14em] text-[#c9a227]">
-                  Example {exampleIdx + 1} of {currentTab.examples.length}
-                </span>
-                <div className="flex gap-1">
-                  <button
-                    onClick={() => {
-                      setExampleIdx((i) => Math.max(0, i - 1));
-                      setRevealed(false);
-                    }}
-                    disabled={exampleIdx === 0}
-                    className="rounded-xl px-3 py-1.5 text-xs font-bold text-[#10233f] transition hover:bg-[#f5ecd9] disabled:cursor-not-allowed disabled:opacity-30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9a227]"
-                  >
-                    ← Prev
-                  </button>
-                  <button
-                    onClick={() => {
-                      setExampleIdx((i) => Math.min(currentTab.examples.length - 1, i + 1));
-                      setRevealed(false);
-                    }}
-                    disabled={isLastExample}
-                    className="rounded-xl px-3 py-1.5 text-xs font-bold text-[#10233f] transition hover:bg-[#f5ecd9] disabled:cursor-not-allowed disabled:opacity-30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9a227]"
-                  >
-                    Next →
-                  </button>
+            <div className="mt-6 rounded-3xl border border-white/12 bg-white/[0.06] p-8 shadow-2xl shadow-black/10 backdrop-blur md:p-10">
+              <div className="grid gap-8 md:grid-cols-[.9fr_1.1fr] md:items-start">
+                <div>
+                  <span className="rounded-full bg-[#c9a227]/18 px-3 py-1 text-xs font-black uppercase tracking-[0.1em] text-[#f1df9a]">
+                    {hscStreams[activeStream].badge}
+                  </span>
+                  <h3 className="mt-5 text-3xl font-black tracking-[-0.02em]">{hscStreams[activeStream].name}</h3>
+                  <Link to="/hsc-excellence" className="mt-6 inline-flex">
+                    <Button variant="outline" className="rounded-full border-white/30 bg-transparent font-bold text-white hover:bg-white/10 hover:text-white">
+                      Explore HSC Program
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </Button>
+                  </Link>
                 </div>
+                <ul className="grid gap-3 sm:grid-cols-2">
+                  {hscStreams[activeStream].topics.map((topic) => (
+                    <li key={topic} className="flex items-start gap-3 rounded-2xl bg-white/[0.05] px-4 py-3 text-sm leading-6 text-white/80">
+                      <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[#f1df9a]" />
+                      {topic}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
+            <p className="mt-6 max-w-3xl text-sm leading-7 text-white/70">
+              Mathematics teachers include high-achieving subject specialists who help students move from knowing content to showing clear working under exam conditions.
+            </p>
+          </div>
+        </section>
+
+        {/* How we teach — sticky rail, since the 4 steps are genuinely sequential */}
+        <section id="math-method" className="bg-[#fff6e7] px-5 py-20 lg:px-8">
+          <div className="mx-auto max-w-7xl">
+            <SectionHeader
+              eyebrow="How we teach"
+              title="Diagnose → Explain → Apply → Refine."
+              text="The same four-step method behind every session — sequential by nature, so it stays visible on the left while the detail scrolls on the right."
+            />
+
+            <div className="grid overflow-hidden rounded-[2rem] border border-[#071629]/10 lg:grid-cols-[260px_1fr]">
+              <div className="flex gap-2 overflow-x-auto bg-[#fdf8ec] p-4 lg:sticky lg:top-24 lg:block lg:h-fit lg:gap-0 lg:overflow-visible lg:p-6">
+                {teachingSteps.map((step, index) => (
+                  <button
+                    key={step.title}
+                    type="button"
+                    onClick={() => setTeachStep(index)}
+                    aria-current={teachStep === index}
+                    className={`flex shrink-0 items-center gap-3 rounded-xl px-4 py-3 text-left text-sm font-black transition ${
+                      teachStep === index ? 'bg-[#071629] text-[#f1df9a]' : 'text-[#61708a] hover:bg-[#f5ecd9] hover:text-[#10233f]'
+                    } lg:mb-1 lg:w-full`}
+                  >
+                    <span
+                      className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full border text-xs font-black ${
+                        teachStep === index ? 'border-[#f1df9a] text-[#f1df9a]' : 'border-[#071629]/15 text-[#9b8a6a]'
+                      }`}
+                    >
+                      {index + 1}
+                    </span>
+                    {step.title}
+                  </button>
+                ))}
               </div>
 
-              {/* Card body */}
-              <div className="px-6 py-7 md:px-10">
-                {/* Problem statement */}
-                <div className="mb-7">
-                  <p className="mb-2 text-xs font-black uppercase tracking-[0.14em] text-[#9b8a6a]">Problem</p>
-                  <p className="text-base font-semibold leading-7 text-[#071629]">
-                    <MixedMath text={currentExample.problem} />
-                  </p>
+              <div className="bg-white p-8 md:p-10">
+                <p className="mb-3 text-xs font-black uppercase tracking-[0.16em] text-[#c9a227]">Step {teachStep + 1}</p>
+                <h3 className="font-serif text-3xl font-medium tracking-[-0.03em] text-[#071629]">{teachingSteps[teachStep].title}</h3>
+                <p className="mt-4 max-w-xl text-base leading-8 text-[#61708a]">{teachingSteps[teachStep].text}</p>
+                <div className="mt-6 flex flex-wrap gap-2">
+                  {teachingSteps[teachStep].chips.map((chip) => (
+                    <span key={chip} className="flex items-center gap-2 rounded-full bg-[#fff6e7] px-4 py-2 text-xs font-bold text-[#24324a]">
+                      <Calculator className="h-3.5 w-3.5 text-[#c9a227]" />
+                      {chip}
+                    </span>
+                  ))}
                 </div>
 
-                {/* Worked solution table */}
-                <div className="mb-7">
-                  <p className="mb-3 text-xs font-black uppercase tracking-[0.14em] text-[#9b8a6a]">Worked solution</p>
-                  <div className="overflow-x-auto rounded-2xl border border-[#071629]/10">
-                    <table className="w-full text-sm">
-                      <tbody>
-                        {currentExample.steps.map((step) => {
-                          const isHighlighted = step.isMistake === true && revealed;
-                          return (
-                            <tr
-                              key={step.label}
-                              className="border-b border-[#071629]/6 last:border-0 transition-colors duration-200"
-                              style={isHighlighted ? { background: '#fff8ed', borderLeft: '4px solid #c9a227' } : {}}
-                            >
-                              <td
-                                className={`w-[5.5rem] whitespace-nowrap py-3.5 pl-4 pr-4 align-top text-xs ${
-                                  step.label === 'Answer'
-                                    ? 'font-black text-[#071629]'
-                                    : 'font-mono font-bold text-[#9b8a6a]'
-                                }`}
-                              >
-                                {step.label === 'Answer' ? 'Answer:' : step.label}
-                              </td>
-                              <td className="py-3.5 pr-4 text-[#172033]">
-                                <span
-                                  dangerouslySetInnerHTML={{
-                                    __html: katex.renderToString(step.working, { throwOnError: false }),
-                                  }}
-                                />
-                              </td>
-                            </tr>
-                          );
-                        })}
-                      </tbody>
-                    </table>
-                  </div>
+                {/* Annotated worked example — same running problem, seen through this stage's lens */}
+                <div className="mt-7 rounded-2xl border border-[#071629]/10 bg-[#fdf8ec] p-5 md:p-6">
+                  <p className="mb-3 text-[10px] font-black uppercase tracking-[0.14em] text-[#9b8a6a]">In practice</p>
+
+                  {teachingSteps[teachStep].example.kind === 'diagnose' && (
+                    <>
+                      <p className="mb-3 font-mono text-base font-bold text-[#071629]">{teachingSteps[teachStep].example.problem}</p>
+                      <div className="rounded-xl border-l-4 border-[#c9a227] bg-white px-4 py-3">
+                        <p className="text-[13px] italic leading-[1.65] text-[#5c4a1e]">{teachingSteps[teachStep].example.note}</p>
+                      </div>
+                    </>
+                  )}
+
+                  {teachingSteps[teachStep].example.kind === 'explain' && (
+                    <>
+                      <p className="mb-4 font-mono text-base font-bold text-[#071629]">{teachingSteps[teachStep].example.problem}</p>
+                      <div className="divide-y divide-[#071629]/6">
+                        {teachingSteps[teachStep].example.steps.map((step, idx) => (
+                          <div key={idx} className="grid grid-cols-1 gap-3 py-4 first:pt-0 md:grid-cols-[3fr_2fr]">
+                            <div className="flex items-start gap-3">
+                              <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#071629] text-xs font-black text-[#f1df9a]">
+                                {idx + 1}
+                              </div>
+                              <p className="text-[14px] leading-6 text-[#172033]">{step.content}</p>
+                            </div>
+                            <div className="rounded-xl border-l-4 border-[#c9a227] bg-white px-4 py-3">
+                              <p className="text-[12.5px] italic leading-[1.6] text-[#5c4a1e]">{step.note}</p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </>
+                  )}
+
+                  {teachingSteps[teachStep].example.kind === 'apply' && (
+                    <>
+                      <div className="mb-3 flex flex-wrap items-center gap-3">
+                        <span className="rounded-lg bg-white px-3 py-2 font-mono text-base font-bold text-[#071629]">
+                          {teachingSteps[teachStep].example.problem}
+                        </span>
+                        <ArrowRight className="h-4 w-4 text-[#c9a227]" />
+                        <span className="rounded-lg bg-[#071629] px-3 py-2 font-mono text-base font-bold text-[#f1df9a]">
+                          {teachingSteps[teachStep].example.answer}
+                        </span>
+                      </div>
+                      <div className="rounded-xl border-l-4 border-[#c9a227] bg-white px-4 py-3">
+                        <p className="text-[13px] italic leading-[1.65] text-[#5c4a1e]">{teachingSteps[teachStep].example.note}</p>
+                      </div>
+                    </>
+                  )}
+
+                  {teachingSteps[teachStep].example.kind === 'refine' && (
+                    <>
+                      <div className="mb-3 flex flex-wrap items-center gap-3">
+                        <span className="rounded-lg bg-white px-3 py-2 font-mono text-base font-bold text-[#a13d36] line-through decoration-2">
+                          {teachingSteps[teachStep].example.before}
+                        </span>
+                        <ArrowRight className="h-4 w-4 text-[#c9a227]" />
+                        <span className="rounded-lg bg-[#eaf6ec] px-3 py-2 font-mono text-base font-bold text-[#2f6e3d]">
+                          {teachingSteps[teachStep].example.after}
+                        </span>
+                      </div>
+                      <div className="rounded-xl border-l-4 border-[#c9a227] bg-white px-4 py-3">
+                        <p className="text-[13px] italic leading-[1.65] text-[#5c4a1e]">{teachingSteps[teachStep].example.note}</p>
+                      </div>
+                    </>
+                  )}
                 </div>
-
-                {/* Aria-live region for screen readers */}
-                <div aria-live="polite" className="sr-only">
-                  {revealed && mistakeStep ? `The mistake is in ${mistakeStep.label}.` : ''}
-                </div>
-
-                {/* Action button */}
-                {!revealed ? (
-                  <button
-                    onClick={() => setRevealed(true)}
-                    className="rounded-full bg-[#071629] px-7 py-3 text-sm font-black text-white transition hover:bg-[#10233f] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9a227] focus-visible:ring-offset-2"
-                  >
-                    Reveal mistake
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => {
-                      if (!isLastExample) {
-                        setExampleIdx((i) => i + 1);
-                      } else {
-                        setExampleIdx(0);
-                      }
-                      setRevealed(false);
-                    }}
-                    className="rounded-full bg-[#c9a227] px-7 py-3 text-sm font-black text-[#071629] transition hover:bg-[#e0bd4b] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9a227] focus-visible:ring-offset-2"
-                  >
-                    {isLastExample ? 'Start over' : 'Next example →'}
-                  </button>
-                )}
-
-                {/* Explanation block — visible after reveal */}
-                {revealed && (
-                  <div className="mt-5 rounded-2xl border-l-4 border-[#c9a227] bg-[#fffbeb] px-5 py-4">
-                    <p className="mb-1.5 text-xs font-black uppercase tracking-[0.14em] text-[#c9a227]">
-                      What went wrong
-                    </p>
-                    <p className="text-sm italic leading-7 text-[#5c4a1e]">
-                      <MixedMath text={currentExample.explanation} />
-                    </p>
-                  </div>
-                )}
               </div>
             </div>
           </div>
         </section>
 
-        {/* Problem walkthrough */}
-        <section className="bg-[#fffdf8] px-5 py-20 lg:px-8">
+        {/* Spot the Mistake — full marking-desk workbench (second hook, upgraded to "mark it yourself") */}
+        <section id="maths-interactive" className="bg-[#fff6e7] px-5 py-20 lg:px-8">
           <div className="mx-auto max-w-7xl">
-            <div className="mb-10 grid gap-6 lg:grid-cols-[.85fr_1fr] lg:items-end">
-              <div>
-                <p className="mb-3 text-xs font-black uppercase tracking-[0.16em] text-[#c9a227]">Problem walkthrough</p>
-                <h2 className="font-serif text-4xl font-medium leading-tight tracking-[-0.045em] text-[#071629] lg:text-5xl">
-                  Watch a scary problem become easy.
-                </h2>
-              </div>
-              <p className="text-base leading-8 text-[#61708a]">
-                Tap "Show next step" to reveal the solution one step at a time. A thinking note explains the reasoning at each stage.
-              </p>
-            </div>
+            <SectionHeader
+              eyebrow="Spot the mistake"
+              title="Find the marks lost before we tell you."
+              text="Real curriculum mistakes, marked the way an exam actually loses points — click the line where you think the working goes wrong."
+            />
 
-            {/* Version toggle */}
-            <div className="mb-8">
-              <div
-                className="inline-flex rounded-full border border-[#071629]/10 bg-white p-1 shadow-sm"
-                role="group"
-                aria-label="Problem version"
-              >
-                {WALKTHROUGH_VERSIONS.map((v) => (
+            <div className="grid overflow-hidden rounded-[2rem] border border-[#071629]/10 lg:grid-cols-[230px_1fr]">
+              <div className="flex gap-2 overflow-x-auto bg-[#071629] p-4 lg:block lg:gap-0 lg:overflow-visible lg:p-6" role="tablist" aria-label="Year level">
+                <p className="mb-3 hidden text-xs font-black uppercase tracking-[0.16em] text-[#f1df9a] lg:block">Year level</p>
+                {ERROR_TABS.map((tab) => (
                   <button
-                    key={v.id}
-                    onClick={() => { setVersion(v.id); setStepCount(0); }}
-                    className={`rounded-full px-5 py-2 text-sm font-black transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9a227] focus-visible:ring-offset-1 ${
-                      version === v.id
-                        ? 'bg-[#071629] text-[#f1df9a]'
-                        : 'text-[#10233f] hover:bg-[#f5ecd9]'
+                    key={tab.id}
+                    role="tab"
+                    aria-selected={activeTab === tab.id}
+                    onClick={() => {
+                      setActiveTab(tab.id);
+                      setExampleIdx(0);
+                      setPickedIndex(null);
+                    }}
+                    className={`shrink-0 rounded-xl px-4 py-3 text-left text-sm font-black transition lg:mb-1 lg:w-full ${
+                      activeTab === tab.id ? 'bg-white/10 text-[#f1df9a]' : 'text-white/60 hover:bg-white/5 hover:text-white'
                     }`}
                   >
-                    {v.label}
+                    {tab.label}
                   </button>
                 ))}
               </div>
-            </div>
 
-            {/* Problem card */}
-            <div className="overflow-hidden rounded-[2rem] border border-[#071629]/10 bg-white shadow-2xl shadow-[#071629]/6">
-              <div className="border-b border-[#071629]/8 bg-[#f4f7ff] px-8 py-7">
+              <div className="bg-white p-6 md:p-10">
+                <div className="mb-6 flex items-center justify-between">
+                  <span className="text-xs font-black uppercase tracking-[0.14em] text-[#c9a227]">
+                    Example {exampleIdx + 1} of {currentTab.examples.length}
+                  </span>
+                  <div className="flex gap-1">
+                    <button
+                      onClick={() => {
+                        setExampleIdx((i) => Math.max(0, i - 1));
+                        setPickedIndex(null);
+                      }}
+                      disabled={exampleIdx === 0}
+                      className="rounded-xl px-3 py-1.5 text-xs font-bold text-[#10233f] transition hover:bg-[#f5ecd9] disabled:cursor-not-allowed disabled:opacity-30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9a227]"
+                    >
+                      ← Prev
+                    </button>
+                    <button
+                      onClick={() => {
+                        setExampleIdx((i) => Math.min(currentTab.examples.length - 1, i + 1));
+                        setPickedIndex(null);
+                      }}
+                      disabled={isLastExample}
+                      className="rounded-xl px-3 py-1.5 text-xs font-bold text-[#10233f] transition hover:bg-[#f5ecd9] disabled:cursor-not-allowed disabled:opacity-30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9a227]"
+                    >
+                      Next →
+                    </button>
+                  </div>
+                </div>
+
                 <p className="mb-2 text-xs font-black uppercase tracking-[0.14em] text-[#9b8a6a]">Problem</p>
-                <p className="text-base font-semibold leading-7 text-[#071629]">{currentVersion.problem}</p>
-              </div>
+                <p className="mb-7 inline-block rounded-xl border border-[#071629]/10 bg-[#fdf8ec] px-5 py-3 text-base font-semibold leading-7 text-[#071629]">
+                  <MixedMath text={currentExample.problem} />
+                </p>
 
-              <div className="px-6 py-7 md:px-10">
-                <div className="divide-y divide-[#071629]/6" aria-live="polite">
-                  {currentVersion.steps.slice(0, stepCount).map((step, idx) => (
-                    <div
-                      key={`${version}-step-${idx}`}
-                      className="grid grid-cols-1 gap-4 py-5 first:pt-0 md:grid-cols-[3fr_2fr]"
-                      style={{ animation: 'maths-stepIn 0.2s ease-out both' }}
-                    >
-                      <div className="flex items-start gap-4">
-                        <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#071629] text-xs font-black text-[#f1df9a]">
-                          {idx + 1}
-                        </div>
-                        <p className="text-[15px] leading-7 text-[#172033]">
-                          <MixedMath text={step.content} />
+                <p className="mb-3 text-xs font-black uppercase tracking-[0.14em] text-[#9b8a6a]">Click the line that&rsquo;s wrong</p>
+                <div className="space-y-2">
+                  {currentExample.steps.map((step, index) => {
+                    const isPicked = pickedIndex === index;
+                    const isCorrectPick = isPicked && step.isMistake === true;
+                    const isWrongPick = isPicked && !step.isMistake;
+                    return (
+                      <button
+                        key={step.label}
+                        type="button"
+                        onClick={() => setPickedIndex(index)}
+                        className="flex w-full items-start gap-3 rounded-2xl border px-4 py-3.5 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9a227] focus-visible:ring-offset-2"
+                        style={{
+                          borderColor: isCorrectPick ? '#5db66a' : isWrongPick ? '#c9a227' : 'rgba(7,22,41,0.1)',
+                          background: isCorrectPick ? '#eaf6ec' : isWrongPick ? '#fffbeb' : 'white',
+                        }}
+                      >
+                        <span
+                          className={`mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[11px] font-black ${
+                            step.label === 'Answer' ? 'bg-[#071629] text-[#f1df9a]' : 'border border-[#071629]/15 text-[#9b8a6a]'
+                          }`}
+                        >
+                          {step.label === 'Answer' ? '=' : step.label.replace('Step ', '')}
+                        </span>
+                        <span
+                          className="text-sm text-[#172033]"
+                          dangerouslySetInnerHTML={{
+                            __html: katex.renderToString(step.working, { throwOnError: false }),
+                          }}
+                        />
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Aria-live region for screen readers */}
+                <div aria-live="polite" className="sr-only">
+                  {revealed && mistakeStep
+                    ? `Correct — the mistake is in ${mistakeStep.label}.`
+                    : pickedIndex !== null
+                      ? 'Not this line — try another.'
+                      : ''}
+                </div>
+
+                {pickedIndex !== null && (
+                  <div className="mt-5 rounded-2xl border-l-4 border-[#c9a227] bg-[#fffbeb] px-5 py-4">
+                    {revealed ? (
+                      <>
+                        <p className="mb-1.5 text-xs font-black uppercase tracking-[0.14em] text-[#c9a227]">What went wrong</p>
+                        <p className="text-sm italic leading-7 text-[#5c4a1e]">
+                          <MixedMath text={currentExample.explanation} />
                         </p>
-                      </div>
-                      <div className="rounded-xl border-l-4 border-[#c9a227] bg-[#fffbeb] px-4 py-3">
-                        <p className="text-[12.5px] italic leading-[1.65] text-[#5c4a1e]">{step.note}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                <div className={stepCount > 0 ? 'mt-6 border-t border-[#071629]/6 pt-6' : 'mt-2'}>
-                  {stepCount < currentVersion.steps.length ? (
-                    <button
-                      onClick={() => setStepCount((c) => c + 1)}
-                      className="rounded-full bg-[#071629] px-7 py-3 text-sm font-black text-white transition hover:bg-[#10233f] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9a227] focus-visible:ring-offset-2"
-                    >
-                      Show next step →
-                    </button>
-                  ) : (
-                    <button
-                      onClick={() => setStepCount(0)}
-                      className="rounded-full bg-[#c9a227] px-7 py-3 text-sm font-black text-[#071629] transition hover:bg-[#e0bd4b] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9a227] focus-visible:ring-offset-2"
-                    >
-                      Start again
-                    </button>
-                  )}
-                </div>
+                        <button
+                          onClick={() => {
+                            if (!isLastExample) {
+                              setExampleIdx((i) => i + 1);
+                            } else {
+                              setExampleIdx(0);
+                            }
+                            setPickedIndex(null);
+                          }}
+                          className="mt-4 rounded-full bg-[#c9a227] px-6 py-2.5 text-sm font-black text-[#071629] transition hover:bg-[#e0bd4b] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9a227] focus-visible:ring-offset-2"
+                        >
+                          {isLastExample ? 'Start over' : 'Next example →'}
+                        </button>
+                      </>
+                    ) : (
+                      <p className="text-sm italic leading-7 text-[#5c4a1e]">
+                        Not this line — it follows correctly from the step before it. Try another line.
+                      </p>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
           </div>
