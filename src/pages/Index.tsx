@@ -1259,8 +1259,15 @@ const ImpactRecognitionSection = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const decorLayerRef = useRef<HTMLDivElement>(null);
   const inView = useInView(sectionRef, { once: true, margin: '-80px' });
+  const { scrollYProgress: awardsEntryProgress } = useScroll({
+    target: sectionRef,
+    offset: ['start end', 'start start'],
+  });
+  const stationaryAwardOpacity = useTransform(awardsEntryProgress, [0.88, 0.98], [1, 0]);
+  const marqueeAwardOpacity = useTransform(awardsEntryProgress, [0.88, 0.98], [0, 1]);
   const [modalOpen, setModalOpen] = useState(false);
   const [awardDiscFlipped, setAwardDiscFlipped] = useState(false);
+  const [awardsFullScreen, setAwardsFullScreen] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   // Apple decelerate curve: starts quickly, settles into position smoothly
   const ease = [0.25, 0.46, 0.45, 0.94] as const;
@@ -1270,6 +1277,13 @@ const ImpactRecognitionSection = () => {
     typeof window !== 'undefined' &&
     window.matchMedia('(prefers-reduced-motion: reduce)').matches
   ).current;
+
+  useMotionValueEvent(awardsEntryProgress, 'change', latest => {
+    setAwardsFullScreen(current => {
+      const next = latest >= 0.88;
+      return current === next ? current : next;
+    });
+  });
 
   const handleAwardPointerMove = useCallback((event: React.PointerEvent<HTMLElement>) => {
     if (reducedMotion || event.pointerType !== 'mouse' || !decorLayerRef.current) return;
@@ -1308,7 +1322,7 @@ const ImpactRecognitionSection = () => {
     <>
       <section
         ref={sectionRef}
-        className="ir-section"
+        className={`ir-section${awardsFullScreen ? ' is-full-screen' : ''}`}
         aria-label="Impact and recognition"
         onPointerMove={handleAwardPointerMove}
         onPointerLeave={resetAwardPointer}
@@ -1624,6 +1638,11 @@ const ImpactRecognitionSection = () => {
           .ir-bg-track { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; width: 100%; transform: translateY(calc(0px - var(--ir-award-word-lift))); }
           .ir-bg-track span { display: block; white-space: nowrap; font: 300 clamp(13rem,28vw,34rem)/.78 ${serif}; letter-spacing: -.04em; color: rgba(168,126,52,.095); }
           .ir-word-space { position: relative; z-index: 1; height: var(--ir-word-area); pointer-events: none; }
+          .ir-bg-marquee { position:absolute;inset:0;z-index:0;display:flex;align-items:center;overflow:hidden;pointer-events:none;user-select:none; }
+          .ir-marquee-track { display:flex;width:max-content;animation:irAwardsMarquee 34s linear infinite;animation-play-state:paused;will-change:transform; }
+          .ir-section.is-full-screen .ir-marquee-track { animation-play-state:running; }
+          .ir-marquee-group { flex:none;white-space:nowrap;padding-right:.28em;font:300 clamp(11rem,21vw,24rem)/.82 ${serif};letter-spacing:-.04em;color:rgba(168,126,52,.07); }
+          @keyframes irAwardsMarquee { from{transform:translate3d(0,0,0)} to{transform:translate3d(-50%,0,0)} }
 
           .ir-decor-layer { --ir-pointer-x: 0; --ir-pointer-y: 0; position: absolute; inset: 0; z-index: 2; pointer-events: none; }
           .ir-decor { position: absolute; transform: translate3d(calc(var(--ir-pointer-x) * var(--parallax-x, 12px)),calc(var(--ir-pointer-y) * var(--parallax-y, 12px)),0); transition: transform .65s cubic-bezier(.22,1,.36,1); filter: drop-shadow(0 16px 16px rgba(63,38,5,.14)); will-change: transform; }
@@ -1669,6 +1688,36 @@ const ImpactRecognitionSection = () => {
           .ir-thumb-caption-title { font-size: 1rem; letter-spacing: .14em; text-transform: uppercase; color: rgba(10,27,52,.78); }
           .ir-thumb-caption-sub { font-size: .82rem; }
 
+          @media (min-width: 1101px) {
+            .ir-word-space { display:none; }
+            .ir-shell { min-height:100svh;display:grid;grid-template-columns:minmax(190px,.72fr) minmax(330px,.92fr) minmax(290px,1fr);align-items:center;gap:clamp(24px,3vw,52px);padding:clamp(72px,8vh,90px) clamp(32px,4vw,72px) clamp(28px,4vh,48px)!important; }
+            .ir-header { grid-column:2;grid-row:1;margin:0!important;max-width:460px!important; }
+            .ir-header-logo { width:36px;height:36px;margin-bottom:8px; }
+            .ir-eyebrow { margin-bottom:16px!important; }
+            .ir-heading { font-size:clamp(2.15rem,3vw,3.45rem)!important;line-height:1.02!important;margin-bottom:14px!important; }
+            .ir-header-divider { margin-bottom:14px!important; }
+            .ir-intro-copy { font-size:clamp(.86rem,1vw,1rem)!important;line-height:1.58!important; }
+            .ir-cols { display:contents!important; }
+            .ir-award-proof { grid-column:1;grid-row:1;align-self:center; }
+            .ir-video-feature { grid-column:3;grid-row:1;align-self:center; }
+            .ir-award-inner { height:320px; }
+            .ir-award-inner .ir-award-medal { width:255px!important;height:255px!important; }
+            .ir-award-caption { margin-top:12px!important; }
+            .ir-thumb-frame { width:clamp(280px,24vw,390px); }
+            .ir-thumb-caption-wrap { margin-top:14px; }
+            .ir-thumb-caption-title { margin-bottom:5px; }
+            .ir-thumb-caption-sub { line-height:1.42; }
+          }
+          @media (min-width:1101px) and (max-height:800px) {
+            .ir-shell { padding-top:68px!important;padding-bottom:20px!important; }
+            .ir-heading { font-size:clamp(2rem,2.65vw,2.85rem)!important; }
+            .ir-intro-copy { font-size:.82rem!important;line-height:1.48!important; }
+            .ir-award-inner { height:276px; }
+            .ir-award-inner .ir-award-medal { width:220px!important;height:220px!important; }
+            .ir-thumb-frame { width:min(300px,23vw); }
+            .ir-thumb-caption-wrap { margin-top:10px; }
+          }
+
           @media (max-width: 900px) {
             .ir-section { --ir-word-area: clamp(210px,32vw,330px); --ir-award-word-lift: clamp(55px,7vw,90px); min-height: auto; }
             .ir-shell { padding-top: clamp(40px,5vw,64px) !important; }
@@ -1692,6 +1741,7 @@ const ImpactRecognitionSection = () => {
             .ir-confetti:nth-of-type(even){display:none}
           }
           @media (prefers-reduced-motion: reduce) {
+            .ir-marquee-track { animation:none!important;transform:translate3d(-8%,0,0);will-change:auto; }
             .ir-decor > img,.ir-confetti img,.ir-award-frame { animation: none !important; }
             .ir-disc-spin-layer { animation: none !important; will-change: auto; }
             .ir-disc-flip-layer,
@@ -1703,9 +1753,15 @@ const ImpactRecognitionSection = () => {
           }
         `}</style>
 
-        <div className="ir-bg-type" aria-hidden="true">
+        <motion.div className="ir-bg-type" style={{ opacity: stationaryAwardOpacity }} aria-hidden="true">
           <div className="ir-bg-track"><span>AWARD</span></div>
-        </div>
+        </motion.div>
+        <motion.div className="ir-bg-marquee" style={{ opacity: marqueeAwardOpacity }} aria-hidden="true">
+          <div className="ir-marquee-track">
+            <span className="ir-marquee-group">OUR AWARD&nbsp;&nbsp; OUR AWARD&nbsp;&nbsp; OUR AWARD&nbsp;&nbsp; OUR AWARD&nbsp;&nbsp;</span>
+            <span className="ir-marquee-group">OUR AWARD&nbsp;&nbsp; OUR AWARD&nbsp;&nbsp; OUR AWARD&nbsp;&nbsp; OUR AWARD&nbsp;&nbsp;</span>
+          </div>
+        </motion.div>
         <div className="ir-word-space" aria-hidden="true" />
         <div ref={decorLayerRef} className="ir-decor-layer" aria-hidden="true">
           <div className="ir-decor ir-decor--gold-ribbon"><img src="/images/awards/gold-ribbon-left.png" alt="" /></div>
