@@ -1619,9 +1619,9 @@ const ImpactRecognitionSection = () => {
           }
 
           /* ── Editorial recognition composition ─────────────────────── */
-          .ir-section { --ir-word-area: clamp(260px,34vw,500px); min-height: 100svh; isolation: isolate; }
+          .ir-section { --ir-word-area: clamp(260px,34vw,500px); --ir-award-word-lift: clamp(100px,8vw,150px); min-height: 100svh; isolation: isolate; }
           .ir-bg-type { position: absolute; top: 0; left: 0; right: 0; height: var(--ir-word-area); z-index: 0; overflow: hidden; pointer-events: none; user-select: none; }
-          .ir-bg-track { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; width: 100%; transform: none; }
+          .ir-bg-track { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; width: 100%; transform: translateY(calc(0px - var(--ir-award-word-lift))); }
           .ir-bg-track span { display: block; white-space: nowrap; font: 300 clamp(13rem,28vw,34rem)/.78 ${serif}; letter-spacing: -.04em; color: rgba(168,126,52,.095); }
           .ir-word-space { position: relative; z-index: 1; height: var(--ir-word-area); pointer-events: none; }
 
@@ -1670,7 +1670,7 @@ const ImpactRecognitionSection = () => {
           .ir-thumb-caption-sub { font-size: .82rem; }
 
           @media (max-width: 900px) {
-            .ir-section { --ir-word-area: clamp(210px,32vw,330px); min-height: auto; }
+            .ir-section { --ir-word-area: clamp(210px,32vw,330px); --ir-award-word-lift: clamp(55px,7vw,90px); min-height: auto; }
             .ir-shell { padding-top: clamp(40px,5vw,64px) !important; }
             .ir-cols { grid-template-columns: minmax(200px,.72fr) minmax(0,1.28fr) !important; max-width: 820px; gap: 34px !important; }
             .ir-award-inner { height:350px; }
@@ -1679,7 +1679,7 @@ const ImpactRecognitionSection = () => {
             .ir-decor--coin,.ir-decor--navy-ribbon { transform:scale(.78); }
           }
           @media (max-width: 600px) {
-            .ir-section { --ir-word-area: clamp(125px,35vw,185px); }
+            .ir-section { --ir-word-area: clamp(125px,35vw,185px); --ir-award-word-lift: clamp(28px,8vw,48px); }
             .ir-shell { padding: clamp(28px,8vw,44px) 20px 70px !important; }
             .ir-bg-track span { font-size: clamp(6rem,31vw,10rem); }
             .ir-header { margin-bottom: 42px !important; }
