@@ -7,7 +7,7 @@
 import React, { useRef, useEffect, useState, useCallback, useLayoutEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { ArrowRight, ChartNoAxesCombined, ChevronDown, Play, ShieldCheck, UsersRound, X } from 'lucide-react';
-import { motion, AnimatePresence, useInView, useAnimationControls, useScroll, useTransform, useSpring, useMotionValueEvent, useReducedMotion, type MotionValue } from 'framer-motion';
+import { motion, AnimatePresence, useInView, useScroll, useTransform, useSpring, useMotionValueEvent, useReducedMotion, type MotionValue } from 'framer-motion';
 import NavigationNew from '@/components/NavigationNew';
 import FooterNew from '@/components/FooterNew';
 import AwardRecognition from '@/components/AwardRecognition';
@@ -984,8 +984,12 @@ const PHILOSOPHY_ALTS = [
   'DA Tuition student working independently with confidence',
 ];
 
-const PHILOSOPHY_KNOWN_REVEAL = [0.18, 0.30] as const;
-const PHILOSOPHY_FLIP_WINDOWS = [[0.32, 0.42], [0.57, 0.67], [0.82, 0.92]] as const;
+// The first photograph belongs to the Known chapter, not the title intro. Its
+// reveal begins only after that chapter reaches its viewport activation line.
+const PHILOSOPHY_KNOWN_REVEAL = [0.045, 0.10] as const;
+// Each flip begins as its chapter enters and completes before that chapter's
+// copy reaches its final reading position.
+const PHILOSOPHY_FLIP_WINDOWS = [[0.19, 0.28], [0.385, 0.475], [0.58, 0.67]] as const;
 
 const PhilosophyVisualFace = ({ index, progress }: { index: number; progress: MotionValue<number> }) => {
   const visual = {
@@ -1000,11 +1004,21 @@ const PhilosophyVisualFace = ({ index, progress }: { index: number; progress: Mo
       ? [0, incoming[0], incoming[1], outgoing[0], outgoing[1], 1]
       : [0, incoming![0], incoming![1], 1];
   const output = index === 0
-    ? [90, 90, 0, 0, -180, -180]
+    ? [0, 0, 0, 0, -180, -180]
     : incoming && outgoing
       ? [180, 180, 0, 0, -180, -180]
       : [180, 180, 0, 0];
   const rotateY = useTransform(progress, input, output);
+  const entryY = useTransform(
+    progress,
+    index === 0 ? [0, PHILOSOPHY_KNOWN_REVEAL[0], PHILOSOPHY_KNOWN_REVEAL[1], 1] : [0, 1],
+    index === 0 ? [50, 50, 0, 0] : [0, 0],
+  );
+  const entryRotate = useTransform(
+    progress,
+    index === 0 ? [0, PHILOSOPHY_KNOWN_REVEAL[0], PHILOSOPHY_KNOWN_REVEAL[1], 1] : [0, 1],
+    index === 0 ? [3, 3, -1, -1] : [0, 0],
+  );
   const opacity = useTransform(
     progress,
     index === 0 ? [0, PHILOSOPHY_KNOWN_REVEAL[0], PHILOSOPHY_KNOWN_REVEAL[1], 1] : [0, 1],
@@ -1016,23 +1030,31 @@ const PhilosophyVisualFace = ({ index, progress }: { index: number; progress: Mo
       className="phi-flip-face"
       src={visual.image}
       alt={visual.alt}
-      style={{ rotateY, opacity, objectPosition: visual.objectPosition, zIndex: 10 - index }}
+      style={{ rotateY, rotateZ: entryRotate, y: entryY, opacity, objectPosition: visual.objectPosition, zIndex: 10 - index }}
     />
   );
 };
 
-const PhilosophyChapter = ({ index }: {
+const PhilosophyChapter = ({ index, exitOpacity, exitY, exitHidden = false }: {
   index: number;
+  exitOpacity?: MotionValue<number>;
+  exitY?: MotionValue<number>;
+  exitHidden?: boolean;
 }) => {
   const articleRef = useRef<HTMLElement>(null);
   const stage = PHILOSOPHY_STAGES[index];
   const { scrollYProgress } = useScroll({ target: articleRef, offset: ['start end', 'end start'] });
-  const opacity = useTransform(scrollYProgress, [0, 0.28, 0.7, 1], [0.38, 1, 1, 0.55]);
-  const y = useTransform(scrollYProgress, [0, 0.28, 0.7, 1], [30, 0, 0, -18]);
-  const filter = useTransform(scrollYProgress, [0, 0.28, 0.7, 1], ['blur(4px)', 'blur(0px)', 'blur(0px)', 'blur(2px)']);
+  const opacity = useTransform(scrollYProgress, [0.08, 0.36, 0.7, 1], [0, 1, 1, 0.55]);
+  const y = useTransform(scrollYProgress, [0.08, 0.36, 0.7, 1], [30, 0, 0, -18]);
+  const filter = useTransform(scrollYProgress, [0.08, 0.36, 0.7, 1], ['blur(4px)', 'blur(0px)', 'blur(0px)', 'blur(2px)']);
 
   return (
-    <article ref={articleRef} className="phi-chapter" data-philosophy-chapter={stage.label.toLowerCase()}>
+    <motion.article
+      ref={articleRef}
+      className={`phi-chapter${index === PHILOSOPHY_STAGES.length - 1 ? ' phi-chapter--growth' : ''}${exitHidden ? ' is-growth-hidden' : ''}`}
+      data-philosophy-chapter={stage.label.toLowerCase()}
+      style={exitOpacity ? { opacity: exitOpacity, y: exitY } : undefined}
+    >
       <motion.div className="phi-chapter-copy" style={{ opacity, y, filter }}>
         <span className="phi-copy-label">{stage.label}</span>
         <h3>{stage.title}</h3>
@@ -1042,11 +1064,11 @@ const PhilosophyChapter = ({ index }: {
       <motion.div className="phi-chapter-definition" style={{ opacity, y, filter }}>
         <p>{stage.supporting}</p>
       </motion.div>
-    </article>
+    </motion.article>
   );
 };
 
-const PhilosophyEditorialSection = () => {
+const PhilosophyEditorialSection = ({ nextSectionRef }: { nextSectionRef: React.RefObject<HTMLDivElement> }) => {
   const sectionRef = useRef<HTMLElement>(null);
   const philosophyCardRef = useRef<HTMLDivElement>(null);
   const [headerHeight, setHeaderHeight] = useState(78);
@@ -1054,11 +1076,36 @@ const PhilosophyEditorialSection = () => {
   const [cardPhase, setCardPhase] = useState<'hidden' | 'prelude' | 'fixed' | 'released'>('hidden');
   const reducedMotion = useReducedMotion();
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ['start start', 'end end'] });
+  const { scrollYProgress: incomingSectionProgress } = useScroll({
+    target: nextSectionRef,
+    offset: ['start end', 'start 35%'],
+  });
   const storyProgress = useSpring(scrollYProgress, { stiffness: 105, damping: 30, mass: 0.5, restDelta: 0.0005 });
-  const cardScale = useTransform(storyProgress, [0, 0.18, 0.30, 0.37, 0.42, 0.62, 0.67, 0.87, 0.92, 1], [0.96, 0.96, 1, 0.98, 1, 0.98, 1, 0.98, 1, 1]);
-  const backdropOpacity = useTransform(storyProgress, [0, 0.12, 0.22, 1], [1, 1, 0.1, 0.09]);
+  const cardScale = useTransform(
+    storyProgress,
+    [0, 0.045, 0.10, 0.19, 0.235, 0.28, 0.385, 0.43, 0.475, 0.58, 0.625, 0.67, 1],
+    [0.96, 0.96, 1, 1, 0.98, 1, 1, 0.98, 1, 1, 0.98, 1, 1],
+  );
+  const backdropOpacity = useTransform(storyProgress, [0, 0.035, 0.115, 1], [1, 1, 0.1, 0.09]);
   const backdropOurY = useTransform(storyProgress, [0, 1], ['0vh', '-6vh']);
   const backdropPhilosophyX = useTransform(storyProgress, [0, 1], ['0vw', '3vw']);
+  // The Awards section is the single source of truth for the final exit. With the
+  // trigger ending at 35% of the viewport, 0.22 progress is roughly 14% coverage.
+  const growthPhotoOpacity = useTransform(incomingSectionProgress, [0, 0.20], [1, 0]);
+  const growthPhotoScale = useTransform(incomingSectionProgress, [0, 0.20], [1, 0.97]);
+  const growthPhotoY = useTransform(incomingSectionProgress, [0, 0.20], [0, -18]);
+  const growthTextOpacity = useTransform(incomingSectionProgress, [0, 0.22], [1, 0]);
+  const growthTextY = useTransform(incomingSectionProgress, [0, 0.22], [0, -12]);
+  const backdropPhilosophyOpacity = useTransform(incomingSectionProgress, [0, 0.18], [1, 0]);
+  const contentVeilOpacity = useTransform(incomingSectionProgress, [0, 0.18], [1, 0]);
+  const [growthForegroundHidden, setGrowthForegroundHidden] = useState(false);
+
+  useMotionValueEvent(incomingSectionProgress, 'change', latest => {
+    setGrowthForegroundHidden(current => {
+      const next = latest >= 0.225;
+      return current === next ? current : next;
+    });
+  });
 
   useLayoutEffect(() => {
     if (reducedMotion) return;
@@ -1087,19 +1134,21 @@ const PhilosophyEditorialSection = () => {
         const card = philosophyCardRef.current;
         if (!section || !card) return;
         const sectionRect = section.getBoundingClientRect();
+        const knownChapter = section.querySelector<HTMLElement>('[data-philosophy-chapter="known"]');
+        const knownRect = knownChapter?.getBoundingClientRect();
         const usableCentre = headerHeight + (window.innerHeight - headerHeight) / 2;
         const releaseBoundary = usableCentre + card.offsetHeight / 2;
-        // Keep the travelling card hidden while the Philosophy section is still
-        // entering over the hero. It may reveal only once the navy intro has
-        // reached the navigation and the giant title owns the viewport.
-        const introActivationLine = headerHeight + Math.min(24, window.innerHeight * 0.025);
+        // Keep the title intro completely clear. The travelling card activates
+        // only when the Known chapter itself enters the reading area.
+        const knownActivationLine = headerHeight + (window.innerHeight - headerHeight) * 0.72;
+        const knownIsActive = Boolean(knownRect && knownRect.top <= knownActivationLine);
         const nextPhase = sectionRect.bottom <= 0 || sectionRect.top >= window.innerHeight
           ? 'hidden'
           : sectionRect.bottom <= releaseBoundary
             ? 'released'
-            : sectionRect.top > introActivationLine
-              ? 'prelude'
-              : 'fixed';
+            : knownIsActive
+              ? 'fixed'
+              : 'prelude';
         setCardPhase(current => current === nextPhase ? current : nextPhase);
       });
     };
@@ -1125,14 +1174,14 @@ const PhilosophyEditorialSection = () => {
       <section className="phi-reduced" aria-labelledby="philosophy-title-reduced">
         <style>{`
           .phi-reduced{padding:110px clamp(20px,6vw,80px);background:${C.navy};color:${C.white}}
-          .phi-reduced-intro{min-height:80svh;text-align:center}.phi-reduced-intro h2{margin:0;font:800 clamp(3rem,10vw,8rem)/.9 ${sans};text-transform:uppercase}
-          .phi-reduced-watermark{position:sticky;top:var(--header-height,78px);z-index:0;height:calc(100svh - var(--header-height,78px));margin-bottom:calc(-100svh + var(--header-height,78px));overflow:hidden;pointer-events:none}.phi-reduced-watermark p{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;margin:0;color:rgba(247,240,224,.09);font:850 clamp(7rem,20vw,22.5rem)/.8 ${sans};letter-spacing:-.04em;text-transform:uppercase;white-space:nowrap;user-select:none}
+          .phi-reduced-intro{min-height:80svh;display:flex;align-items:center;justify-content:center;text-align:center;overflow:hidden}.phi-reduced-intro h2{display:flex;flex-direction:column;align-items:center;margin:0;font-family:'Anton','Arial Narrow',sans-serif;font-weight:400;line-height:.72;letter-spacing:-.035em;text-transform:uppercase;color:#f3eadb}.phi-reduced-intro h2 span:first-child{font-size:clamp(11.25rem,25vw,26.25rem)}.phi-reduced-intro h2 span:last-child{margin-top:-.05em;font-size:clamp(9rem,21.2vw,25rem)}
+          .phi-reduced-watermark{position:sticky;top:var(--header-height,78px);z-index:0;height:calc(100svh - var(--header-height,78px));margin-bottom:calc(-100svh + var(--header-height,78px));overflow:hidden;pointer-events:none}.phi-reduced-watermark p{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;margin:0;color:rgba(247,240,224,.09);font-family:'Anton','Arial Narrow',sans-serif;font-weight:400;line-height:.72;letter-spacing:-.035em;text-transform:uppercase;white-space:nowrap;user-select:none}.phi-reduced-watermark p span:first-child{font-size:clamp(11.25rem,25vw,26.25rem)}.phi-reduced-watermark p span:last-child{margin-top:-.05em;font-size:clamp(9rem,21.2vw,25rem)}
           .phi-reduced article{position:relative;z-index:1}
           .phi-reduced article{display:grid;grid-template-columns:minmax(220px,420px) minmax(0,560px);gap:clamp(28px,6vw,80px);align-items:center;margin:0 auto 80px;max-width:1100px}.phi-reduced article img{width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:16px}.phi-reduced article span{color:${C.gold};font:700 .72rem ${sans};letter-spacing:.14em;text-transform:uppercase}.phi-reduced article h3{font:400 clamp(2rem,4vw,3.5rem)/1.08 ${serif}}.phi-reduced article p{max-width:34em;color:rgba(247,242,232,.75);font:400 1rem/1.7 ${sans}}
-          @media(max-width:768px){.phi-reduced{padding:80px 18px}.phi-reduced-watermark p{font-size:clamp(4.5rem,22vw,8.75rem);line-height:.84}.phi-reduced article{grid-template-columns:1fr;gap:20px}}
+          @media(max-width:768px){.phi-reduced{padding:80px 18px}.phi-reduced-watermark p span:first-child{font-size:clamp(6rem,27vw,12rem)}.phi-reduced-watermark p span:last-child{font-size:clamp(4.5rem,21vw,9rem)}.phi-reduced article{grid-template-columns:1fr;gap:20px}}
         `}</style>
         <div className="phi-reduced-intro">
-          <h2 id="philosophy-title-reduced">Our Philosophy</h2>
+          <h2 id="philosophy-title-reduced"><span>Our</span><span>Philosophy</span></h2>
         </div>
         <div className="phi-reduced-watermark" aria-hidden="true">
           <p><span>Our</span><span>Philosophy</span></p>
@@ -1148,40 +1197,52 @@ const PhilosophyEditorialSection = () => {
   }
 
   return (
-    <section ref={sectionRef} className="phi-editorial" aria-labelledby="philosophy-title" style={{ '--header-height': `${headerHeight}px`, '--phi-card-safe-width': `${safeCardWidth}px` } as React.CSSProperties}>
+    <section ref={sectionRef} className="phi-editorial" aria-labelledby="philosophy-title" style={{ '--header-height': `${headerHeight}px`, '--phi-card-safe-width': `${safeCardWidth}px`, '--phi-visual-centre': `calc(${headerHeight}px + (100svh - ${headerHeight}px) / 2)` } as React.CSSProperties}>
       <style>{`
         .phi-editorial{position:relative;background:${C.navy};color:${C.white};isolation:isolate;overflow:clip}
         .phi-backdrop{position:sticky;top:var(--header-height);z-index:1;height:calc(100svh - var(--header-height));min-height:620px;overflow:hidden;pointer-events:none}
-        .phi-backdrop-title{position:absolute;inset:0;z-index:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;width:100%;margin:0;padding-top:clamp(34px,5vh,60px);font-family:${sans};font-size:clamp(9.375rem,17.5vw,22.5rem);font-weight:850;line-height:.8;letter-spacing:-.04em;text-align:center;text-transform:uppercase;white-space:nowrap;color:#fbf3e3;user-select:none;will-change:opacity}
-        .phi-backdrop-title span{display:block;width:max-content;will-change:transform}.phi-content-veil{position:absolute;inset:0;z-index:2;background:radial-gradient(circle at center,rgba(7,29,56,.3) 0%,rgba(7,29,56,.12) 42%,transparent 72%);pointer-events:none}
-        .phi-story-outro{height:20svh}
+        .phi-backdrop-title{position:absolute;inset:0;z-index:1;display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;margin:0;padding:clamp(18px,2.5vh,32px) 0 clamp(28px,4vh,48px);font-family:'Anton','Arial Narrow',sans-serif;font-weight:400;line-height:.72;letter-spacing:-.035em;text-align:center;text-transform:uppercase;white-space:nowrap;color:#f3eadb;user-select:none;will-change:opacity}
+        .phi-backdrop-title span{display:block;width:max-content;will-change:transform}.phi-backdrop-title__our{font-size:clamp(11.25rem,25vw,26.25rem);line-height:.72}.phi-backdrop-title__main{margin-top:-.05em;font-size:clamp(9rem,21.2vw,25rem);line-height:.72}.phi-content-veil{position:absolute;inset:0;z-index:2;background:radial-gradient(circle at center,rgba(7,29,56,.3) 0%,rgba(7,29,56,.12) 42%,transparent 72%);pointer-events:none}
+        .phi-story-outro{height:115svh}
         .phi-chapter{position:relative;z-index:5;min-height:calc(100svh - var(--header-height));padding-block:clamp(48px,7vh,96px);padding-inline:clamp(48px,5vw,88px);display:grid;grid-template-columns:minmax(280px,1fr) clamp(280px,24vw,360px) minmax(280px,1fr);align-items:center;column-gap:clamp(56px,7vw,120px);overflow:visible}
+        .phi-chapter--growth{position:sticky;top:var(--header-height)}.phi-chapter--growth.is-growth-hidden{visibility:hidden;pointer-events:none}
         .phi-chapter-copy{grid-column:1}.phi-chapter-definition{grid-column:3}.phi-chapter-anchor{grid-column:2;width:100%;height:min(54svh,520px)}
         .phi-chapter-copy,.phi-chapter-definition{align-self:stretch;min-height:100%;display:flex;flex-direction:column;justify-content:center;margin:0;will-change:transform,opacity,filter}
         .phi-copy-label{display:block;margin-bottom:18px;font:700 .72rem/1 ${sans};letter-spacing:.16em;text-transform:uppercase;color:${C.gold}}
         .phi-chapter-copy h3{margin:0;max-width:10.5em;font:400 clamp(2.15rem,3.25vw,3.6rem)/1.08 ${serif};letter-spacing:-.025em;color:rgba(255,250,240,.97);text-wrap:balance}
         .phi-copy-rule{width:42px;height:1px;margin:25px 0 0;background:${C.gold};opacity:.78}.phi-chapter-definition p{max-width:27em;margin:0;font:400 clamp(.92rem,1.12vw,1.12rem)/1.72 ${sans};color:rgba(247,242,232,.74);text-wrap:pretty}
-        .phi-card-viewport-anchor{z-index:6;left:50%;width:min(clamp(280px,24vw,360px),var(--phi-card-safe-width));pointer-events:none;opacity:0;visibility:hidden;transition:opacity .64s cubic-bezier(.22,1,.36,1),visibility 0s linear .64s}.phi-card-viewport-anchor.is-prelude,.phi-card-viewport-anchor.is-fixed{position:fixed;top:calc(var(--header-height) + (100svh - var(--header-height))/2);bottom:auto;transform:translate(-50%,-50%)}.phi-card-viewport-anchor.is-fixed,.phi-card-viewport-anchor.is-released{opacity:1;visibility:visible;pointer-events:auto;transition:opacity .64s cubic-bezier(.22,1,.36,1),visibility 0s linear 0s}.phi-card-viewport-anchor.is-released{position:absolute;top:auto;bottom:0;transform:translateX(-50%)}.phi-card-viewport-anchor.is-hidden{position:absolute;top:0;bottom:auto;transform:translateX(-50%)}.phi-travel-centre{width:100%;transform:translateY(24px) scale(.96);transform-origin:center center;transition:transform .64s cubic-bezier(.22,1,.36,1);will-change:transform}.phi-card-viewport-anchor.is-fixed .phi-travel-centre,.phi-card-viewport-anchor.is-released .phi-travel-centre{transform:translateY(0) scale(1)}
-        .phi-flip-frame{position:relative;width:100%;aspect-ratio:4/5;overflow:visible;background:transparent;perspective:1500px;transform-origin:center center;transform-style:preserve-3d;will-change:transform}.phi-flip-frame img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:22px;box-shadow:0 20px 38px rgba(0,0,0,.26);backface-visibility:hidden;transform-origin:center center;will-change:transform,opacity;transform-style:preserve-3d}
+        .phi-card-viewport-anchor{z-index:6;left:50%;width:min(clamp(280px,24vw,360px),var(--phi-card-safe-width));pointer-events:none;opacity:0;visibility:hidden;transition:opacity .78s cubic-bezier(.22,1,.36,1),visibility 0s linear .78s}.phi-card-viewport-anchor.is-prelude,.phi-card-viewport-anchor.is-fixed{position:fixed;top:var(--phi-visual-centre);bottom:auto;transform:translate(-50%,-50%)}.phi-card-viewport-anchor.is-fixed,.phi-card-viewport-anchor.is-released{opacity:1;visibility:visible;pointer-events:auto;transition:opacity .78s cubic-bezier(.22,1,.36,1),visibility 0s linear 0s}.phi-card-viewport-anchor.is-released{position:absolute;top:auto;bottom:0;transform:translateX(-50%)}.phi-card-viewport-anchor.is-hidden{position:absolute;top:0;bottom:auto;transform:translateX(-50%)}.phi-travel-centre{width:100%;transform:translateY(50px) scale(.98);transform-origin:center center;transition:transform .78s cubic-bezier(.22,1,.36,1);will-change:transform}.phi-card-viewport-anchor.is-fixed .phi-travel-centre,.phi-card-viewport-anchor.is-released .phi-travel-centre{transform:translateY(0) scale(1)}
+        .phi-growth-exit{width:100%;transform-origin:center center;will-change:transform,opacity}.phi-growth-exit.is-exit-hidden{visibility:hidden;pointer-events:none}.phi-flip-frame{position:relative;width:100%;aspect-ratio:4/5;overflow:visible;background:transparent;perspective:1500px;transform-origin:center center;transform-style:preserve-3d;will-change:transform}.phi-flip-frame img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:22px;box-shadow:0 20px 38px rgba(0,0,0,.26);backface-visibility:hidden;transform-origin:center center;will-change:transform,opacity;transform-style:preserve-3d}
         .phi-reduced{padding:110px clamp(20px,6vw,80px);background:${C.navy};color:${C.white}}.phi-reduced-intro{min-height:80svh;text-align:center}.phi-reduced-intro h2{margin:0;font:800 clamp(3rem,10vw,8rem)/.9 ${sans};text-transform:uppercase}.phi-reduced article{display:grid;grid-template-columns:minmax(220px,420px) minmax(0,560px);gap:clamp(28px,6vw,80px);align-items:center;margin:0 auto 80px;max-width:1100px}.phi-reduced article img{width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:16px}.phi-reduced article span{color:${C.gold};font:700 .72rem ${sans};letter-spacing:.14em;text-transform:uppercase}.phi-reduced article h3{font:400 clamp(2rem,4vw,3.5rem)/1.08 ${serif}}.phi-reduced article p{max-width:34em;color:rgba(247,242,232,.75);font:400 1rem/1.7 ${sans}}
-        @media(min-width:769px) and (max-width:1100px){.phi-backdrop-title{font-size:clamp(6.875rem,18vw,13.75rem)}.phi-chapter{grid-template-columns:minmax(0,1fr) minmax(260px,340px);grid-template-rows:auto auto;padding-inline:clamp(28px,4vw,48px);column-gap:clamp(28px,4vw,52px);row-gap:24px}.phi-chapter-copy{grid-column:1;grid-row:1;min-height:0;justify-content:flex-end}.phi-chapter-definition{grid-column:1;grid-row:2;min-height:0;justify-content:flex-start}.phi-chapter-anchor{grid-column:2;grid-row:1/3}.phi-card-viewport-anchor{width:min(clamp(260px,31vw,340px),var(--phi-card-safe-width))}.phi-chapter-copy h3{font-size:clamp(1.8rem,3.6vw,2.8rem)}.phi-chapter-definition p{font-size:.88rem}}
-        @media(max-width:768px){.phi-backdrop{min-height:560px}.phi-backdrop-title{padding-top:30px;font-size:clamp(4.5rem,22vw,8.75rem);line-height:.84}.phi-content-veil{background:radial-gradient(circle at center,rgba(7,29,56,.34) 0%,rgba(7,29,56,.16) 48%,transparent 76%)}.phi-chapter{min-height:auto;padding:96px 18px;grid-template-columns:minmax(0,1fr);grid-template-rows:auto min(97.5vw,400px) auto;gap:28px;align-content:center}.phi-chapter-copy{grid-column:1;grid-row:1;min-height:0;text-align:center}.phi-chapter-definition{grid-column:1;grid-row:3;min-height:0;text-align:center}.phi-chapter-anchor{grid-column:1;grid-row:2;height:100%}.phi-copy-label{text-align:center;font-size:.58rem}.phi-chapter-copy h3{max-width:11em;margin-inline:auto;text-align:center;font-size:clamp(1.6rem,7vw,2.2rem)}.phi-copy-rule{margin-inline:auto}.phi-chapter-definition p{max-width:35em;margin-inline:auto;font-size:clamp(.78rem,3.2vw,.92rem);line-height:1.55}.phi-card-viewport-anchor{width:min(78vw,320px,var(--phi-card-safe-width))}.phi-flip-frame img{border-radius:20px}.phi-reduced{padding:80px 18px}.phi-reduced article{grid-template-columns:1fr;gap:20px}}
+        @media(min-width:769px) and (max-width:1100px){.phi-story-outro{height:95svh}.phi-backdrop-title__our{font-size:clamp(8.5rem,24vw,16rem)}.phi-backdrop-title__main{font-size:clamp(7rem,21vw,14rem)}.phi-chapter{grid-template-columns:minmax(0,1fr) minmax(260px,340px);grid-template-rows:auto auto;padding-inline:clamp(28px,4vw,48px);column-gap:clamp(28px,4vw,52px);row-gap:24px}.phi-chapter-copy{grid-column:1;grid-row:1;min-height:0;justify-content:flex-end}.phi-chapter-definition{grid-column:1;grid-row:2;min-height:0;justify-content:flex-start}.phi-chapter-anchor{grid-column:2;grid-row:1/3}.phi-card-viewport-anchor{width:min(clamp(260px,31vw,340px),var(--phi-card-safe-width))}.phi-chapter-copy h3{font-size:clamp(1.8rem,3.6vw,2.8rem)}.phi-chapter-definition p{font-size:.88rem}}
+        @media(max-width:768px){.phi-story-outro{height:80svh}.phi-backdrop{min-height:560px}.phi-backdrop-title{padding:20px 0 34px}.phi-backdrop-title__our{font-size:clamp(6rem,27vw,12rem)}.phi-backdrop-title__main{font-size:clamp(4.5rem,21vw,9rem)}.phi-content-veil{background:radial-gradient(circle at center,rgba(7,29,56,.34) 0%,rgba(7,29,56,.16) 48%,transparent 76%)}.phi-chapter{min-height:auto;padding:96px 18px;grid-template-columns:minmax(0,1fr);grid-template-rows:auto min(97.5vw,400px) auto;gap:28px;align-content:center}.phi-chapter-copy{grid-column:1;grid-row:1;min-height:0;text-align:center}.phi-chapter-definition{grid-column:1;grid-row:3;min-height:0;text-align:center}.phi-chapter-anchor{grid-column:1;grid-row:2;height:100%}.phi-copy-label{text-align:center;font-size:.58rem}.phi-chapter-copy h3{max-width:11em;margin-inline:auto;text-align:center;font-size:clamp(1.6rem,7vw,2.2rem)}.phi-copy-rule{margin-inline:auto}.phi-chapter-definition p{max-width:35em;margin-inline:auto;font-size:clamp(.78rem,3.2vw,.92rem);line-height:1.55}.phi-card-viewport-anchor{width:min(78vw,320px,var(--phi-card-safe-width))}.phi-flip-frame img{border-radius:20px}.phi-reduced{padding:80px 18px}.phi-reduced article{grid-template-columns:1fr;gap:20px}}
       `}</style>
       <div className="phi-backdrop">
         <motion.h2 id="philosophy-title" className="phi-backdrop-title" style={{ opacity: backdropOpacity }}>
-          <motion.span style={{ y: backdropOurY }}>Our</motion.span>
-          <motion.span style={{ x: backdropPhilosophyX }}>Philosophy</motion.span>
-        </motion.h2>
-        <div className="phi-content-veil" aria-hidden="true" />
+          <motion.span className="phi-backdrop-title__our" style={{ y: backdropOurY }}>Our</motion.span>
+        <motion.span className="phi-backdrop-title__main" style={{ x: backdropPhilosophyX, opacity: backdropPhilosophyOpacity }}>Philosophy</motion.span>
+      </motion.h2>
+        <motion.div className="phi-content-veil" style={{ opacity: contentVeilOpacity }} aria-hidden="true" />
       </div>
       {PHILOSOPHY_STAGES.map((_, index) => (
-        <PhilosophyChapter key={PHILOSOPHY_STAGES[index].stage} index={index} />
+        <PhilosophyChapter
+          key={PHILOSOPHY_STAGES[index].stage}
+          index={index}
+          exitOpacity={index === PHILOSOPHY_STAGES.length - 1 ? growthTextOpacity : undefined}
+          exitY={index === PHILOSOPHY_STAGES.length - 1 ? growthTextY : undefined}
+          exitHidden={index === PHILOSOPHY_STAGES.length - 1 && growthForegroundHidden}
+        />
       ))}
       <div className="phi-story-outro" aria-hidden="true" />
       <div ref={philosophyCardRef} className={`phi-card-viewport-anchor is-${cardPhase}`} aria-hidden="true">
         <div className="phi-travel-centre">
-          <motion.div className="phi-flip-frame" style={{ scale: cardScale }}>
-            {[0, 1, 2, 3].map(index => <PhilosophyVisualFace key={index} index={index} progress={storyProgress} />)}
+          <motion.div
+            className={`phi-growth-exit${growthForegroundHidden ? ' is-exit-hidden' : ''}`}
+            style={{ opacity: growthPhotoOpacity, scale: growthPhotoScale, y: growthPhotoY }}
+          >
+            <motion.div className="phi-flip-frame" style={{ scale: cardScale }}>
+              {[0, 1, 2, 3].map(index => <PhilosophyVisualFace key={index} index={index} progress={storyProgress} />)}
+            </motion.div>
           </motion.div>
         </div>
       </div>
@@ -1196,36 +1257,31 @@ const PhilosophyEditorialSection = () => {
 // ══════════════════════════════════════════════════════════════
 const ImpactRecognitionSection = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
+  const decorLayerRef = useRef<HTMLDivElement>(null);
   const inView = useInView(sectionRef, { once: true, margin: '-80px' });
   const [modalOpen, setModalOpen] = useState(false);
+  const [awardDiscFlipped, setAwardDiscFlipped] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   // Apple decelerate curve: starts quickly, settles into position smoothly
   const ease = [0.25, 0.46, 0.45, 0.94] as const;
   // Slower, more considered entrance for hero elements
   const easeHero = [0.16, 1, 0.3, 1] as const;
-  // Gold glow pulse controls
-  const glowControls = useAnimationControls();
-
   const reducedMotion = useRef(
     typeof window !== 'undefined' &&
     window.matchMedia('(prefers-reduced-motion: reduce)').matches
   ).current;
 
-  // Start gold glow pulse once award has entered (1.6s after inView)
-  useEffect(() => {
-    if (inView && !reducedMotion) {
-      glowControls.start({
-        opacity: [0.55, 1.0, 0.65, 0.95, 0.55],
-        transition: {
-          duration: 7.5,
-          ease: 'easeInOut',
-          repeat: Infinity,
-          repeatType: 'loop',
-          delay: 1.6,
-        },
-      });
-    }
-  }, [inView, reducedMotion, glowControls]);
+  const handleAwardPointerMove = useCallback((event: React.PointerEvent<HTMLElement>) => {
+    if (reducedMotion || event.pointerType !== 'mouse' || !decorLayerRef.current) return;
+    const bounds = event.currentTarget.getBoundingClientRect();
+    decorLayerRef.current.style.setProperty('--ir-pointer-x', String((event.clientX - bounds.left) / bounds.width - 0.5));
+    decorLayerRef.current.style.setProperty('--ir-pointer-y', String((event.clientY - bounds.top) / bounds.height - 0.5));
+  }, [reducedMotion]);
+
+  const resetAwardPointer = useCallback(() => {
+    decorLayerRef.current?.style.setProperty('--ir-pointer-x', '0');
+    decorLayerRef.current?.style.setProperty('--ir-pointer-y', '0');
+  }, []);
 
   const closeModal = () => {
     setModalOpen(false);
@@ -1252,7 +1308,10 @@ const ImpactRecognitionSection = () => {
     <>
       <section
         ref={sectionRef}
+        className="ir-section"
         aria-label="Impact and recognition"
+        onPointerMove={handleAwardPointerMove}
+        onPointerLeave={resetAwardPointer}
         style={{ background: '#F5F0E8', position: 'relative', overflow: 'hidden' }}
       >
         <style>{`
@@ -1363,41 +1422,116 @@ const ImpactRecognitionSection = () => {
           /* ── Video thumbnail ─────────────────────────────────────────── */
           .ir-thumb-wrap {
             cursor: pointer;
-            display: block;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             width: 100%;
           }
           .ir-thumb-frame {
             position: relative;
-            overflow: hidden;
-            border-radius: 14px;
-            aspect-ratio: 4 / 3;
-            border: 1px solid rgba(10,27,52,.08);
-            box-shadow:
-              0 8px 24px rgba(10,27,52,.10),
-              0 32px 72px rgba(10,27,52,.18),
-              0 60px 100px rgba(10,27,52,.08);
-            transition:
-              box-shadow 600ms cubic-bezier(0.25, 0.46, 0.45, 0.94),
-              border-color 600ms ease;
+            width: clamp(340px,27vw,500px);
+            max-width: 100%;
+            aspect-ratio: 1 / 1;
+            flex: 0 0 auto;
+            border-radius: 50%;
+            filter: drop-shadow(0 8px 8px rgba(10,27,52,.16)) drop-shadow(0 0 8px rgba(190,139,43,.15));
+            transition: transform 400ms cubic-bezier(.22,1,.36,1), filter 400ms ease;
+            transform: translateZ(0);
+            perspective: 1400px;
           }
           .ir-thumb-wrap:hover .ir-thumb-frame {
-            border-color: rgba(212,175,55,.20);
-            box-shadow:
-              0 12px 32px rgba(10,27,52,.13),
-              0 40px 80px rgba(10,27,52,.22),
-              0 72px 110px rgba(10,27,52,.09);
+            transform: translateZ(0) scale(1.015);
+            filter: drop-shadow(0 10px 8px rgba(10,27,52,.18)) drop-shadow(0 0 10px rgba(190,139,43,.22));
           }
-          .ir-thumb-frame img {
+          .ir-disc-interaction {
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            cursor: pointer;
+            outline: none;
+          }
+          .ir-disc-interaction:focus-visible {
+            outline: 2px solid ${C.gold};
+            outline-offset: 6px;
+          }
+          .ir-disc-spin-layer {
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            animation: awardThumbnailSpin 18s linear infinite;
+            will-change: transform;
+            transform: translateZ(0);
+          }
+          .ir-disc-flip-layer {
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            transform-style: preserve-3d;
+            transform: rotateY(0deg);
+            transition: transform 720ms cubic-bezier(.22,.72,.22,1);
+            will-change: transform;
+          }
+          .ir-thumb-frame:hover .ir-disc-flip-layer,
+          .ir-thumb-frame.is-flipped .ir-disc-flip-layer {
+            transform: rotateY(180deg);
+          }
+          .ir-disc-face {
+            position: absolute;
+            inset: 0;
+            overflow: hidden;
+            border: 3px solid rgba(190,139,43,.78);
+            border-radius: 50%;
+            backface-visibility: hidden;
+            transform-style: preserve-3d;
+          }
+          .ir-disc-front { transform: rotateY(0deg); }
+          .ir-disc-back {
+            display: grid;
+            place-items: center;
+            transform: rotateY(180deg);
+            background: radial-gradient(circle at 38% 32%, #173356 0%, #0a1b34 48%, #061427 100%);
+          }
+          .ir-disc-ring-text {
+            position: absolute;
+            inset: 5%;
+            width: 90%;
+            height: 90%;
+            color: rgba(224,180,83,.94);
+            overflow: visible;
+          }
+          .ir-disc-ring-text text {
+            fill: currentColor;
+            font-family: ${sans};
+            font-size: 4px;
+            font-weight: 600;
+            letter-spacing: .38px;
+          }
+          .ir-disc-back-centre {
+            position: relative;
+            z-index: 2;
+            width: 58%;
+            aspect-ratio: 1;
+            display: grid;
+            place-items: center;
+            border: 1.5px solid rgba(190,139,43,.72);
+            border-radius: 50%;
+            background: #fff;
+            box-shadow: inset 0 2px 6px rgba(10,27,52,.11);
+          }
+          .ir-disc-back-centre img { width: 66%; height: 66%; object-fit: contain; }
+          .ir-thumb-frame:hover .ir-disc-spin-layer {
+            transition: filter 400ms ease;
+            filter: brightness(1.03);
+          }
+          @keyframes awardThumbnailSpin {
+            from { transform: translateZ(0) rotate(0deg); }
+            to { transform: translateZ(0) rotate(360deg); }
+          }
+          .ir-disc-front > img {
             width: 100%; height: 100%; display: block;
             object-fit: cover;
+            object-position: 50% 44%;
             filter: saturate(0.80) brightness(0.86);
-            transition:
-              transform 900ms cubic-bezier(0.25, 0.46, 0.45, 0.94),
-              filter 600ms ease;
-          }
-          .ir-thumb-wrap:hover .ir-thumb-frame img {
-            transform: scale(1.03);
-            filter: saturate(0.88) brightness(0.78);
           }
           .ir-thumb-overlay {
             position: absolute; inset: 0; pointer-events: none;
@@ -1409,7 +1543,7 @@ const ImpactRecognitionSection = () => {
             );
           }
           .ir-thumb-badge {
-            position: absolute; top: 18px; left: 20px;
+            position: absolute; top: 7%; left: 7%; z-index: 3;
             font-family: 'DM Sans', 'Inter', sans-serif;
             font-size: .50rem; font-weight: 500; letter-spacing: .16em;
             text-transform: uppercase;
@@ -1420,14 +1554,15 @@ const ImpactRecognitionSection = () => {
             backdrop-filter: blur(8px);
           }
           .ir-thumb-play {
-            position: absolute; top: 50%; left: 50%;
+            position: absolute; top: 50%; left: 50%; z-index: 4;
             transform: translate(-50%, -50%);
-            width: 80px; height: 80px; border-radius: 50%;
-            background: rgba(250,250,248,.10);
-            border: 1px solid rgba(212,175,55,.48);
+            width: 48px; height: 48px; padding: 0; border-radius: 50%;
+            background: rgba(3,18,38,.58);
+            border: 1px solid rgba(243,234,219,.62);
             display: flex; align-items: center; justify-content: center;
-            color: rgba(232,192,64,.94);
+            color: rgba(243,234,219,.96);
             backdrop-filter: blur(12px);
+            cursor: pointer;
             transition:
               background 500ms ease,
               border-color 500ms ease,
@@ -1435,13 +1570,23 @@ const ImpactRecognitionSection = () => {
               transform 500ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
           }
           .ir-thumb-wrap:hover .ir-thumb-play {
-            background: rgba(212,175,55,.14);
-            border-color: rgba(212,175,55,.70);
-            transform: translate(-50%, -50%) scale(1.06);
-            box-shadow:
-              0 0 32px rgba(212,175,55,.24),
-              0 0 10px rgba(212,175,55,.14);
+            background: rgba(3,18,38,.72);
+            border-color: rgba(243,234,219,.84);
+            transform: translate(-50%, -50%) scale(1.04);
+            box-shadow: 0 4px 12px rgba(3,18,38,.18);
           }
+          .ir-thumb-frame:hover .ir-thumb-play,
+          .ir-thumb-frame.is-flipped .ir-thumb-play,
+          .ir-thumb-frame:hover .ir-thumb-badge,
+          .ir-thumb-frame.is-flipped .ir-thumb-badge {
+            opacity: 0;
+          }
+          .ir-thumb-play,.ir-thumb-badge { transition: opacity 260ms ease, background 500ms ease, border-color 500ms ease, transform 500ms cubic-bezier(.25,.46,.45,.94); }
+          .ir-thumb-frame:has(.ir-thumb-play:hover) .ir-disc-flip-layer,
+          .ir-thumb-frame:has(.ir-thumb-play:focus-visible) .ir-disc-flip-layer { transform: rotateY(0deg); }
+          .ir-thumb-frame:has(.ir-thumb-play:hover) .ir-thumb-play,
+          .ir-thumb-frame:has(.ir-thumb-play:focus-visible) .ir-thumb-play { opacity: 1; pointer-events: auto; }
+          .ir-thumb-play:focus-visible { outline: 2px solid ${C.gold}; outline-offset: 4px; }
           .ir-thumb-caption-wrap {
             margin-top: 22px;
             padding-left: 2px;
@@ -1472,23 +1617,134 @@ const ImpactRecognitionSection = () => {
             .ir-thumb-wrap:hover .ir-thumb-frame img { transform: none !important; }
             .ir-thumb-play { transition: none !important; }
           }
+
+          /* ── Editorial recognition composition ─────────────────────── */
+          .ir-section { --ir-word-area: clamp(260px,34vw,500px); min-height: 100svh; isolation: isolate; }
+          .ir-bg-type { position: absolute; top: 0; left: 0; right: 0; height: var(--ir-word-area); z-index: 0; overflow: hidden; pointer-events: none; user-select: none; }
+          .ir-bg-track { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; width: 100%; transform: none; }
+          .ir-bg-track span { display: block; white-space: nowrap; font: 300 clamp(13rem,28vw,34rem)/.78 ${serif}; letter-spacing: -.04em; color: rgba(168,126,52,.095); }
+          .ir-word-space { position: relative; z-index: 1; height: var(--ir-word-area); pointer-events: none; }
+
+          .ir-decor-layer { --ir-pointer-x: 0; --ir-pointer-y: 0; position: absolute; inset: 0; z-index: 2; pointer-events: none; }
+          .ir-decor { position: absolute; transform: translate3d(calc(var(--ir-pointer-x) * var(--parallax-x, 12px)),calc(var(--ir-pointer-y) * var(--parallax-y, 12px)),0); transition: transform .65s cubic-bezier(.22,1,.36,1); filter: drop-shadow(0 16px 16px rgba(63,38,5,.14)); will-change: transform; }
+          .ir-decor > img { display:block;width:100%;height:100%;object-fit:contain;animation:irDecorFloat var(--float-duration,8s) ease-in-out infinite alternate;will-change:transform; }
+          .ir-decor--gold-ribbon { left:-7%; top:22%; width:clamp(180px,18vw,300px); height:clamp(120px,14vw,230px); --parallax-x:-18px;--parallax-y:-14px;--float-duration:9s; }
+          .ir-decor--laurel-left { left:-4%; bottom:3%; width:clamp(190px,19vw,310px);height:clamp(150px,17vw,275px);--parallax-x:-12px;--parallax-y:18px;--float-duration:11s; }
+          .ir-decor--coin { right:4%;top:9%;width:clamp(150px,15vw,250px);height:clamp(150px,15vw,250px);--parallax-x:14px;--parallax-y:-12px;transform:rotate(18deg);--float-duration:14s; }
+          .ir-decor--coin img{animation-name:irCoinFloat;}
+          .ir-decor--navy-ribbon { right:-10%;top:30%;width:clamp(250px,26vw,430px);height:clamp(180px,22vw,350px);--parallax-x:20px;--parallax-y:12px;transform:rotate(-12deg);--float-duration:12s; }
+          .ir-decor--trophy { right:calc(-5% - 25px);bottom:calc(-5% - 25px);width:clamp(230px,23vw,380px);height:clamp(230px,23vw,380px);--parallax-x:18px;--parallax-y:16px;--float-duration:10s; }
+          .ir-decor--star { right:13%;bottom:26%;width:clamp(60px,6vw,96px);height:clamp(60px,6vw,96px);--float-duration:7s; }
+          .ir-confetti{position:absolute;width:var(--size,34px);height:var(--size,34px);opacity:var(--opacity,.65);transform:rotate(var(--rotation,0deg));filter:drop-shadow(0 6px 7px rgba(93,55,4,.12));}
+          .ir-confetti img{width:100%;height:100%;object-fit:contain;animation:irConfettiFloat var(--duration,9s) ease-in-out infinite alternate;}
+          .ir-confetti--1{left:3%;top:12%;--size:80px;--rotation:18deg;--duration:7s}.ir-confetti--2{left:14%;top:38%;--size:112px;--rotation:-31deg;--opacity:.48;--duration:11s}.ir-confetti--3{left:8%;bottom:14%;--size:86px;--rotation:62deg;--duration:8s}.ir-confetti--4{left:27%;top:22%;--size:68px;--rotation:105deg;--opacity:.5;--duration:13s}.ir-confetti--5{right:27%;top:13%;--size:82px;--rotation:-52deg;--duration:10s}.ir-confetti--6{right:17%;top:34%;--size:104px;--rotation:36deg;--opacity:.55;--duration:12s}.ir-confetti--7{right:8%;top:47%;--size:72px;--rotation:122deg;--duration:8s}.ir-confetti--8{right:28%;bottom:9%;--size:96px;--rotation:-18deg;--opacity:.5;--duration:14s}.ir-confetti--9{left:39%;bottom:4%;--size:74px;--rotation:78deg;--duration:9s}.ir-confetti--10{right:4%;bottom:38%;--size:64px;--rotation:11deg;--duration:6s}
+          @keyframes irDecorFloat { from { transform: translateY(-3px) rotate(-1deg); } to { transform: translateY(5px) rotate(2deg); } }
+          @keyframes irCoinFloat{from{transform:translateY(-4px) rotate(-2deg)}to{transform:translateY(7px) rotate(4deg)}}
+          @keyframes irConfettiFloat{from{transform:translateY(-3px) rotate(-2deg)}to{transform:translateY(6px) rotate(3deg)}}
+
+          .ir-old-rule { display: none; }
+          .ir-shell { position: relative !important; z-index: 3; max-width: 1280px !important; padding: clamp(48px,6vw,96px) clamp(24px,5vw,76px) clamp(66px,7vw,104px) !important; }
+          .ir-header { max-width: 920px !important; margin: 0 auto clamp(48px,5vw,72px) !important; text-align: center; }
+          .ir-header-logo{display:block;width:42px;height:42px;object-fit:contain;margin:0 auto 12px;}
+          .ir-eyebrow { margin-bottom: 25px !important; }
+          .ir-heading { font-size: clamp(2.7rem,4.35vw,5rem) !important; line-height: 1.04 !important; text-wrap: balance; }
+          .ir-header-divider { margin: 0 auto 22px !important; transform-origin: center !important; }
+          .ir-intro-copy { max-width: 690px; margin-inline: auto !important; }
+          .ir-cols { grid-template-columns: minmax(230px,.62fr) minmax(0,1.48fr) !important; gap: clamp(52px,7vw,104px) !important; align-items: end !important; max-width: 1120px; margin: 0 auto !important; }
+          .ir-award-proof { text-align: center; }
+          .ir-award-frame { padding: 0 !important; background: transparent !important; border: 0 !important; border-radius: 0 !important; box-shadow: none !important; animation: irAwardFloat 8s ease-in-out infinite alternate; }
+          .ir-award-frame:hover { transform: translateY(-2px); box-shadow: none !important; }
+          @keyframes irAwardFloat { from { transform: translateY(-2px); } to { transform: translateY(4px); } }
+          .ir-award-inner { position:relative;width:min(100%,340px);height:390px;margin-inline:auto;aspect-ratio:auto !important;background:transparent !important;border:0 !important;border-radius:0 !important;overflow:visible !important; }
+          .ir-award-inner .ir-award-medal{position:absolute;left:50%;top:50%;z-index:2;width:300px!important;height:300px!important;max-width:none!important;max-height:none!important;object-fit:contain!important;transform:translate(-50%,-50%);filter:drop-shadow(0 22px 20px rgba(50,30,4,.24));}
+          .ir-award-caption { margin-top: 21px !important; padding: 0 !important; }
+          .ir-award-caption-title { font-family:${sans}!important;font-size:1rem!important;font-weight:600!important;letter-spacing:.14em!important;text-transform:uppercase;color:${C.gold}!important; }
+          .ir-video-feature { min-width: 0; display: flex; justify-content: center; }
+          .ir-disc-front > img { filter: saturate(.94) brightness(.96) !important; }
+          .ir-thumb-overlay { background: linear-gradient(to top,rgba(3,6,14,.30),transparent 54%); }
+          .ir-thumb-badge { top: 16px; left: 16px; }
+          .ir-thumb-play { opacity: .9; }
+          .ir-thumb-play:focus-visible { opacity: 1; }
+          .ir-thumb-caption-wrap { text-align: center; margin-top: 21px; }
+          .ir-thumb-caption-title { font-size: 1rem; letter-spacing: .14em; text-transform: uppercase; color: rgba(10,27,52,.78); }
+          .ir-thumb-caption-sub { font-size: .82rem; }
+
+          @media (max-width: 900px) {
+            .ir-section { --ir-word-area: clamp(210px,32vw,330px); min-height: auto; }
+            .ir-shell { padding-top: clamp(40px,5vw,64px) !important; }
+            .ir-cols { grid-template-columns: minmax(200px,.72fr) minmax(0,1.28fr) !important; max-width: 820px; gap: 34px !important; }
+            .ir-award-inner { height:350px; }
+            .ir-award-inner .ir-award-medal{width:265px!important;height:265px!important}
+            .ir-thumb-frame { width: clamp(300px,40vw,420px); }
+            .ir-decor--coin,.ir-decor--navy-ribbon { transform:scale(.78); }
+          }
+          @media (max-width: 600px) {
+            .ir-section { --ir-word-area: clamp(125px,35vw,185px); }
+            .ir-shell { padding: clamp(28px,8vw,44px) 20px 70px !important; }
+            .ir-bg-track span { font-size: clamp(6rem,31vw,10rem); }
+            .ir-header { margin-bottom: 42px !important; }
+            .ir-heading { font-size: clamp(2.25rem,11vw,3.25rem) !important; }
+            .ir-intro-copy { font-size: 1rem !important; line-height: 1.68 !important; }
+            .ir-thumb-frame { width: clamp(230px,72vw,320px); }
+            .ir-cols { grid-template-columns:1fr !important;max-width:520px;gap:48px!important; }
+            .ir-video-feature { grid-row:2; }.ir-award-proof{grid-row:1}
+            .ir-decor--gold-ribbon,.ir-decor--laurel-left,.ir-decor--coin{opacity:.28}.ir-decor--navy-ribbon{right:-28%;opacity:.26}.ir-decor--trophy{right:calc(-18% - 25px);bottom:calc(-5% - 25px);opacity:.34}.ir-decor--star{display:none}
+            .ir-confetti:nth-of-type(even){display:none}
+          }
+          @media (prefers-reduced-motion: reduce) {
+            .ir-decor > img,.ir-confetti img,.ir-award-frame { animation: none !important; }
+            .ir-disc-spin-layer { animation: none !important; will-change: auto; }
+            .ir-disc-flip-layer,
+            .ir-thumb-frame:hover .ir-disc-flip-layer,
+            .ir-thumb-frame.is-flipped .ir-disc-flip-layer { transform: rotateY(0deg) !important; transition: none !important; will-change: auto; }
+            .ir-thumb-frame:hover .ir-thumb-play,.ir-thumb-frame.is-flipped .ir-thumb-play,.ir-thumb-frame:hover .ir-thumb-badge,.ir-thumb-frame.is-flipped .ir-thumb-badge { opacity: 1; }
+            .ir-decor { transform: none !important; transition: none !important; }
+            .ir-thumb-play { opacity: .9; transform: translate(-50%,-50%); }
+          }
         `}</style>
 
+        <div className="ir-bg-type" aria-hidden="true">
+          <div className="ir-bg-track"><span>AWARD</span></div>
+        </div>
+        <div className="ir-word-space" aria-hidden="true" />
+        <div ref={decorLayerRef} className="ir-decor-layer" aria-hidden="true">
+          <div className="ir-decor ir-decor--gold-ribbon"><img src="/images/awards/gold-ribbon-left.png" alt="" /></div>
+          <div className="ir-decor ir-decor--laurel-left"><img src="/images/awards/gold-laurel-left.png" alt="" /></div>
+          <div className="ir-decor ir-decor--coin"><img src="/images/awards/award-medal.png" alt="" /></div>
+          <div className="ir-decor ir-decor--navy-ribbon"><img src="/images/awards/award-ribbon-navy.png" alt="" /></div>
+          <div className="ir-decor ir-decor--trophy"><img src="/images/awards/gold-trophy.png" alt="" /></div>
+          <div className="ir-decor ir-decor--star"><img src="/images/awards/gold-star.png" alt="" /></div>
+          {Array.from({ length: 10 }, (_, index) => (
+            <div key={index} className={`ir-confetti ir-confetti--${index + 1}`}><img src="/images/awards/gold-confetti.png" alt="" /></div>
+          ))}
+        </div>
+
         {/* Top edge: very faint gold rule separating from previous section */}
-        <div style={{
+        <div className="ir-old-rule" style={{
           position: 'absolute', top: 0, left: 0, right: 0, height: '1px',
           background: 'linear-gradient(90deg, transparent, rgba(212,175,55,.30) 25%, rgba(212,175,55,.30) 75%, transparent)',
         }} />
 
-        <div style={{
+        <div className="ir-shell" style={{
           maxWidth: '1200px', margin: '0 auto', position: 'relative',
           padding: 'clamp(64px, 8vw, 108px) clamp(24px, 5vw, 72px)',
         }}>
 
           {/* ── FULL-WIDTH HEADER ───────────────────────────────────────── */}
-          <div style={{ maxWidth: '760px', marginBottom: 'clamp(48px, 6vw, 80px)' }}>
+          <div className="ir-header" style={{ maxWidth: '760px', marginBottom: 'clamp(48px, 6vw, 80px)' }}>
+
+            <motion.img
+              className="ir-header-logo"
+              src="/images/da-logo.png"
+              alt=""
+              aria-hidden="true"
+              initial={reducedMotion ? false : { opacity: 0, y: 8 }}
+              animate={inView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: .8, ease: easeHero }}
+            />
 
             <motion.p
+              className="ir-eyebrow"
               initial={reducedMotion ? false : { opacity: 0 }}
               animate={inView ? { opacity: 1 } : {}}
               transition={{ duration: 1.2, ease: 'easeOut' }}
@@ -1498,10 +1754,11 @@ const ImpactRecognitionSection = () => {
                 color: C.gold, margin: '0 0 28px',
               }}
             >
-              Trusted by Local Families Since 2005
+              Recognised By Our Community
             </motion.p>
 
             <motion.h2
+              className="ir-heading"
               initial={reducedMotion ? false : { opacity: 0, y: 36, filter: 'blur(10px)' }}
               animate={inView ? { opacity: 1, y: 0, filter: 'blur(0px)' } : {}}
               transition={{ duration: 1.30, delay: 0.10, ease: easeHero }}
@@ -1517,6 +1774,7 @@ const ImpactRecognitionSection = () => {
             </motion.h2>
 
             <motion.div
+              className="ir-header-divider"
               initial={reducedMotion ? false : { scaleX: 0, opacity: 0 }}
               animate={inView ? { scaleX: 1, opacity: 0.55 } : {}}
               transition={{ duration: 0.80, delay: 0.22, ease: [0.25, 1, 0.5, 1] }}
@@ -1528,6 +1786,7 @@ const ImpactRecognitionSection = () => {
             />
 
             <motion.p
+              className="ir-intro-copy"
               initial={reducedMotion ? false : { opacity: 0, y: 16, filter: 'blur(4px)' }}
               animate={inView ? { opacity: 1, y: 0, filter: 'blur(0px)' } : {}}
               transition={{ duration: 1.10, delay: 0.32, ease }}
@@ -1539,7 +1798,7 @@ const ImpactRecognitionSection = () => {
                 letterSpacing: '.002em', margin: 0,
               }}
             >
-              For more than twenty years, DA families have watched their children grow ””
+              For more than twenty years, DA families have watched their children grow —
               in confidence first, then in results. This recognition reflects what those
               families experienced, and what the wider community came to see.
             </motion.p>
@@ -1559,8 +1818,9 @@ const ImpactRecognitionSection = () => {
 
             {/* ── Award image ───────────────────────────────────────────── */}
             <motion.div
-              initial={reducedMotion ? false : { opacity: 0, y: 28, filter: 'blur(8px)' }}
-              animate={inView ? { opacity: 1, y: 0, filter: 'blur(0px)' } : {}}
+              className="ir-award-proof"
+              initial={reducedMotion ? false : { opacity: 0, x: -42, filter: 'blur(7px)' }}
+              animate={inView ? { opacity: 1, x: 0, filter: 'blur(0px)' } : {}}
               transition={{ duration: 1.30, delay: 0.40, ease: easeHero }}
             >
               <div
@@ -1583,15 +1843,17 @@ const ImpactRecognitionSection = () => {
                   style={{ border: '1px solid rgba(212,175,55,.22)' }}
                 >
                   <img
+                    className="ir-award-medal"
                     src="/Photos and Videos/2025_FAIR_WINNER_LBA.jpg"
-                    alt="Fairfield City Local Business Awards ”” Outstanding Education Service, Winner 2025"
+                    alt="Fairfield City Local Business Awards — Outstanding Education Service, Winner 2025"
                   />
                 </div>
               </div>
 
               {/* Award caption */}
-              <div style={{ marginTop: '20px', paddingLeft: '2px' }}>
+              <div className="ir-award-caption" style={{ marginTop: '20px', paddingLeft: '2px' }}>
                 <motion.p
+                  className="ir-award-caption-title"
                   initial={reducedMotion ? false : { opacity: 0 }}
                   animate={inView ? { opacity: 1 } : {}}
                   transition={{ duration: 1.0, delay: 0.64, ease: 'easeOut' }}
@@ -1601,7 +1863,7 @@ const ImpactRecognitionSection = () => {
                     color: 'rgba(10,27,52,.72)', margin: '0 0 6px',
                   }}
                 >
-                  Fairfield City Local Business Awards
+                  2025 Winner
                 </motion.p>
                 <motion.p
                   initial={reducedMotion ? false : { opacity: 0 }}
@@ -1614,42 +1876,95 @@ const ImpactRecognitionSection = () => {
                     color: C.gold, margin: 0,
                   }}
                 >
-                  Winner ”” Outstanding Education Service 2025
+                  Education Services
                 </motion.p>
               </div>
             </motion.div>
 
             {/* ── Video thumbnail ───────────────────────────────────────── */}
             <motion.div
-              initial={reducedMotion ? false : { opacity: 0, y: 28, filter: 'blur(6px)' }}
-              animate={inView ? { opacity: 1, y: 0, filter: 'blur(0px)' } : {}}
+              className="ir-video-feature"
+              initial={reducedMotion ? false : { opacity: 0, x: 42, filter: 'blur(6px)' }}
+              animate={inView ? { opacity: 1, x: 0, filter: 'blur(0px)' } : {}}
               transition={{ duration: 1.10, delay: 0.46, ease }}
             >
               <div
                 className="ir-thumb-wrap"
-                role="button"
-                tabIndex={0}
-                aria-label="Watch the DA Tuition award ceremony ”” 45 seconds"
-                onClick={() => setModalOpen(true)}
-                onKeyDown={e => e.key === 'Enter' && setModalOpen(true)}
               >
-                <div className="ir-thumb-frame">
-                  <img
-                    src="/Photos and Videos/EP6_0216.jpg"
-                    alt="Award ceremony footage ”” DA Tuition Outstanding Education Service 2025"
-                    loading="lazy"
-                    decoding="async"
-                  />
-                  <div className="ir-thumb-overlay" aria-hidden="true" />
-                  <span className="ir-thumb-badge" aria-hidden="true">45 seconds</span>
-                  <div className="ir-thumb-play" aria-hidden="true">
-                    <Play size={26} strokeWidth={1.3} style={{ marginLeft: '3px' }} />
+                <div className={`ir-thumb-frame${awardDiscFlipped ? ' is-flipped' : ''}`}>
+                  <div
+                    className="ir-disc-interaction"
+                    role="button"
+                    tabIndex={0}
+                    aria-label="Explore the award interview disc"
+                    onFocus={() => !reducedMotion && setAwardDiscFlipped(true)}
+                    onBlur={() => setAwardDiscFlipped(false)}
+                    onKeyDown={event => {
+                      if (event.key === 'Enter' || event.key === ' ') {
+                        event.preventDefault();
+                        setModalOpen(true);
+                      }
+                      if (event.key === 'Escape') setAwardDiscFlipped(false);
+                    }}
+                    onPointerUp={event => {
+                      if (reducedMotion || event.pointerType !== 'touch') {
+                        setModalOpen(true);
+                        return;
+                      }
+                      if (awardDiscFlipped) {
+                        setAwardDiscFlipped(false);
+                        setModalOpen(true);
+                      } else {
+                        setAwardDiscFlipped(true);
+                      }
+                    }}
+                  >
+                    <div className="ir-disc-spin-layer">
+                      <div className="ir-disc-flip-layer">
+                        <div className="ir-disc-face ir-disc-front">
+                          <img
+                            src="/Photos and Videos/EP6_0216.jpg"
+                            alt="Award ceremony footage — DA Tuition Outstanding Education Service 2025"
+                            loading="lazy"
+                            decoding="async"
+                          />
+                          <div className="ir-thumb-overlay" aria-hidden="true" />
+                        </div>
+                        <div className="ir-disc-face ir-disc-back" aria-hidden="true">
+                          <svg className="ir-disc-ring-text" viewBox="0 0 100 100" aria-hidden="true">
+                            <defs>
+                              <path id="award-disc-ring-path" d="M50,50 m-40,0 a40,40 0 1,1 80,0 a40,40 0 1,1 -80,0" />
+                            </defs>
+                            <text textLength="240" lengthAdjust="spacing">
+                              <textPath href="#award-disc-ring-path" startOffset="0%">
+                                DISCOVER OUR PROGRAM ◆ DISCOVER OUR PROGRAM ◆ DISCOVER OUR PROGRAM ◆
+                              </textPath>
+                            </text>
+                          </svg>
+                          <div className="ir-disc-back-centre">
+                            <img src="/images/da-logo.png" alt="" />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
+                  <span className="ir-thumb-badge" aria-hidden="true">45 seconds</span>
+                  <button
+                    className="ir-thumb-play"
+                    type="button"
+                    aria-label="Play award winner interview"
+                    onClick={event => {
+                      event.stopPropagation();
+                      setModalOpen(true);
+                    }}
+                  >
+                    <Play size={22} strokeWidth={1.3} style={{ marginLeft: '3px' }} />
+                  </button>
                 </div>
                 <div className="ir-thumb-caption-wrap">
-                  <p className="ir-thumb-caption-title">Award Ceremony Highlights</p>
-                  <p className="ir-thumb-caption-sub">Outstanding Education Service</p>
-                  <p className="ir-thumb-caption-sub">Winner Interview &amp; Recognition</p>
+                  <p className="ir-thumb-caption-title">Award Winner Interview</p>
+                  <p className="ir-thumb-caption-sub">Watch Now →</p>
+                  <p className="ir-thumb-caption-sub">Outstanding Education Service · Winner Interview &amp; Recognition</p>
                 </div>
               </div>
             </motion.div>
@@ -6488,7 +6803,10 @@ const ClosingCTASection = () => {
 // ══════════════════════════════════════════════════════════════
 //  PAGE
 // ══════════════════════════════════════════════════════════════
-const Index = () => (
+const Index = () => {
+  const philosophyNextSectionRef = useRef<HTMLDivElement>(null);
+
+  return (
   <div style={{ fontFamily: sans }}>
     <IntroVideo />
     <Confetti />
@@ -6498,34 +6816,53 @@ const Index = () => (
       <VisualIntro>
         <HeroSection embedded />
       </VisualIntro>
-      <div className="hero-philosophy-pullup">
+      <div className="philosophy-next-transition">
         <style>{`
+          .philosophy-next-transition {
+            position: relative;
+            isolation: isolate;
+          }
           .hero-philosophy-pullup {
             position: relative;
-            z-index: 3;
+            z-index: 20;
             margin-top: -110svh;
             width: 100%;
             overflow-x: clip;
             background: ${C.navy};
             box-shadow: 0 -12px 30px rgba(13,35,68,.06);
           }
+          .philosophy-next-pullup {
+            position: relative;
+            z-index: 30;
+            width: 100%;
+            margin-top: -100svh;
+            overflow: clip;
+            background: #F5F0E8;
+          }
           @media (min-width: 768px) and (max-width: 1024px) {
             .hero-philosophy-pullup { margin-top: -95svh; }
+            .philosophy-next-pullup { margin-top: -80svh; }
           }
           @media (max-width: 767px) {
             .hero-philosophy-pullup { margin-top: -80svh; }
+            .philosophy-next-pullup { margin-top: -65svh; }
           }
           @media (prefers-reduced-motion: reduce) {
             .hero-philosophy-pullup {
               margin-top: 0;
               box-shadow: none;
             }
+            .philosophy-next-pullup { margin-top: 0; }
           }
         `}</style>
-        <MarqueeStrip />
-        <PhilosophyEditorialSection />
+        <div className="hero-philosophy-pullup">
+          <MarqueeStrip />
+          <PhilosophyEditorialSection nextSectionRef={philosophyNextSectionRef} />
+        </div>
+        <div ref={philosophyNextSectionRef} className="philosophy-next-pullup">
+          <ImpactRecognitionSection />
+        </div>
       </div>
-      <ImpactRecognitionSection />
       <AchievementsSection />
       <ProgramsSection />
       <QuoteSection />
@@ -6540,6 +6877,7 @@ const Index = () => (
     </main>
     <FooterNew />
   </div>
-);
+  );
+};
 
 export default Index;
