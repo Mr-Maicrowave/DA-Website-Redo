@@ -6,7 +6,7 @@
 
 import React, { useRef, useEffect, useState, useCallback, useLayoutEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { ArrowRight, ChartNoAxesCombined, ChevronDown, Play, ShieldCheck, UsersRound, X } from 'lucide-react';
+import { ArrowRight, ChartNoAxesCombined, ChevronDown, Play, ShieldCheck, UsersRound, Volume2, VolumeX, X } from 'lucide-react';
 import { motion, AnimatePresence, useInView, useScroll, useTransform, useSpring, useMotionValueEvent, useReducedMotion, type MotionValue } from 'framer-motion';
 import NavigationNew from '@/components/NavigationNew';
 import FooterNew from '@/components/FooterNew';
@@ -1258,26 +1258,33 @@ const PhilosophyEditorialSection = ({ nextSectionRef }: { nextSectionRef: React.
 const ImpactRecognitionSection = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const decorLayerRef = useRef<HTMLDivElement>(null);
-  const inView = useInView(sectionRef, { once: true, margin: '-80px' });
+  const reducedMotionPreference = useReducedMotion();
+  const reducedMotion = Boolean(reducedMotionPreference);
   const { scrollYProgress: awardsEntryProgress } = useScroll({
     target: sectionRef,
     offset: ['start end', 'start start'],
   });
-  const stationaryAwardOpacity = useTransform(awardsEntryProgress, [0.88, 0.98], [1, 0]);
-  const marqueeAwardOpacity = useTransform(awardsEntryProgress, [0.88, 0.98], [0, 1]);
+  // One reversible scroll-progress source stages the complete Awards entrance.
+  // Until the section is more than half visible, only the static AWARD remains.
+  const stationaryAwardOpacity = useTransform(awardsEntryProgress, [0, 0.80, 0.95, 1], reducedMotion ? [1, 1, 1, 1] : [1, 1, 0, 0]);
+  const stationaryAwardY = useTransform(awardsEntryProgress, [0, 0.58, 0.90, 1], reducedMotion ? ['0vh', '0vh', '0vh', '0vh'] : ['0vh', '0vh', '20vh', '20vh']);
+  const marqueeAwardOpacity = useTransform(awardsEntryProgress, [0, 0.80, 0.95, 1], reducedMotion ? [0, 0, 0, 0] : [0, 0, 1, 1]);
+  const mastheadOpacity = useTransform(awardsEntryProgress, [0, 0.58, 0.69, 1], reducedMotion ? [1, 1, 1, 1] : [0, 0, 1, 1]);
+  const mastheadY = useTransform(awardsEntryProgress, [0, 0.58, 0.72, 1], reducedMotion ? [0, 0, 0, 0] : [112, 112, 0, 0]);
+  const headingOpacity = useTransform(awardsEntryProgress, [0, 0.62, 0.76, 1], reducedMotion ? [1, 1, 1, 1] : [0, 0, 1, 1]);
+  const headingY = useTransform(awardsEntryProgress, [0, 0.62, 0.78, 1], reducedMotion ? [0, 0, 0, 0] : [126, 126, 0, 0]);
+  const introOpacity = useTransform(awardsEntryProgress, [0, 0.67, 0.81, 1], reducedMotion ? [1, 1, 1, 1] : [0, 0, 1, 1]);
+  const introY = useTransform(awardsEntryProgress, [0, 0.67, 0.83, 1], reducedMotion ? [0, 0, 0, 0] : [116, 116, 0, 0]);
+  const mediaOpacity = useTransform(awardsEntryProgress, [0, 0.71, 0.88, 1], reducedMotion ? [1, 1, 1, 1] : [0, 0, 1, 1]);
+  const mediaY = useTransform(awardsEntryProgress, [0, 0.71, 0.90, 1], reducedMotion ? [0, 0, 0, 0] : [148, 148, 0, 0]);
+  const captionOpacity = useTransform(awardsEntryProgress, [0, 0.79, 0.93, 1], reducedMotion ? [1, 1, 1, 1] : [0, 0, 1, 1]);
+  const captionY = useTransform(awardsEntryProgress, [0, 0.79, 0.94, 1], reducedMotion ? [0, 0, 0, 0] : [72, 72, 0, 0]);
+  const decorOpacity = useTransform(awardsEntryProgress, [0, 0.72, 0.91, 1], reducedMotion ? [1, 1, 1, 1] : [0, 0, 1, 1]);
+  const decorY = useTransform(awardsEntryProgress, [0, 0.72, 0.92, 1], reducedMotion ? [0, 0, 0, 0] : [52, 52, 0, 0]);
   const [modalOpen, setModalOpen] = useState(false);
   const [awardDiscFlipped, setAwardDiscFlipped] = useState(false);
   const [awardsFullScreen, setAwardsFullScreen] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
-  // Apple decelerate curve: starts quickly, settles into position smoothly
-  const ease = [0.25, 0.46, 0.45, 0.94] as const;
-  // Slower, more considered entrance for hero elements
-  const easeHero = [0.16, 1, 0.3, 1] as const;
-  const reducedMotion = useRef(
-    typeof window !== 'undefined' &&
-    window.matchMedia('(prefers-reduced-motion: reduce)').matches
-  ).current;
-
   useMotionValueEvent(awardsEntryProgress, 'change', latest => {
     setAwardsFullScreen(current => {
       const next = latest >= 0.88;
@@ -1472,7 +1479,6 @@ const ImpactRecognitionSection = () => {
             position: absolute;
             inset: 0;
             border-radius: 50%;
-            animation: awardThumbnailSpin 18s linear infinite;
             will-change: transform;
             transform: translateZ(0);
           }
@@ -1512,6 +1518,8 @@ const ImpactRecognitionSection = () => {
             height: 90%;
             color: rgba(224,180,83,.94);
             overflow: visible;
+            animation: awardThumbnailSpin 24s linear infinite;
+            transform-origin: center;
           }
           .ir-disc-ring-text text {
             fill: currentColor;
@@ -1647,37 +1655,38 @@ const ImpactRecognitionSection = () => {
           .ir-decor-layer { --ir-pointer-x: 0; --ir-pointer-y: 0; position: absolute; inset: 0; z-index: 2; pointer-events: none; }
           .ir-decor { position: absolute; transform: translate3d(calc(var(--ir-pointer-x) * var(--parallax-x, 12px)),calc(var(--ir-pointer-y) * var(--parallax-y, 12px)),0); transition: transform .65s cubic-bezier(.22,1,.36,1); filter: drop-shadow(0 16px 16px rgba(63,38,5,.14)); will-change: transform; }
           .ir-decor > img { display:block;width:100%;height:100%;object-fit:contain;animation:irDecorFloat var(--float-duration,8s) ease-in-out infinite alternate;will-change:transform; }
-          .ir-decor--gold-ribbon { left:-7%; top:22%; width:clamp(180px,18vw,300px); height:clamp(120px,14vw,230px); --parallax-x:-18px;--parallax-y:-14px;--float-duration:9s; }
-          .ir-decor--laurel-left { left:-4%; bottom:3%; width:clamp(190px,19vw,310px);height:clamp(150px,17vw,275px);--parallax-x:-12px;--parallax-y:18px;--float-duration:11s; }
-          .ir-decor--coin { right:4%;top:9%;width:clamp(150px,15vw,250px);height:clamp(150px,15vw,250px);--parallax-x:14px;--parallax-y:-12px;transform:rotate(18deg);--float-duration:14s; }
+          .ir-decor--gold-ribbon { left:-9%; top:12%; width:clamp(150px,15vw,240px); height:clamp(110px,12vw,190px); --parallax-x:-18px;--parallax-y:-14px;--float-duration:9s; }
+          .ir-decor--laurel-left { left:-6%; bottom:0; width:clamp(155px,16vw,250px);height:clamp(125px,14vw,220px);--parallax-x:-12px;--parallax-y:18px;--float-duration:11s; }
+          .ir-decor--coin { right:2%;top:7%;width:clamp(120px,12vw,190px);height:clamp(120px,12vw,190px);--parallax-x:14px;--parallax-y:-12px;transform:rotate(18deg);--float-duration:14s; }
           .ir-decor--coin img{animation-name:irCoinFloat;}
-          .ir-decor--navy-ribbon { right:-10%;top:30%;width:clamp(250px,26vw,430px);height:clamp(180px,22vw,350px);--parallax-x:20px;--parallax-y:12px;transform:rotate(-12deg);--float-duration:12s; }
-          .ir-decor--trophy { right:calc(-5% - 25px);bottom:calc(-5% - 25px);width:clamp(230px,23vw,380px);height:clamp(230px,23vw,380px);--parallax-x:18px;--parallax-y:16px;--float-duration:10s; }
-          .ir-decor--star { right:13%;bottom:26%;width:clamp(60px,6vw,96px);height:clamp(60px,6vw,96px);--float-duration:7s; }
+          .ir-decor--navy-ribbon { right:-13%;top:24%;width:clamp(210px,21vw,340px);height:clamp(155px,18vw,285px);--parallax-x:20px;--parallax-y:12px;transform:rotate(-12deg);--float-duration:12s; }
+          .ir-decor--trophy { right:5%;bottom:-16%;width:clamp(200px,20vw,320px);height:clamp(200px,20vw,320px);--parallax-x:18px;--parallax-y:16px;--float-duration:10s; }
+          .ir-decor--star { right:10%;bottom:23%;width:clamp(48px,5vw,76px);height:clamp(48px,5vw,76px);--float-duration:7s; }
           .ir-confetti{position:absolute;width:var(--size,34px);height:var(--size,34px);opacity:var(--opacity,.65);transform:rotate(var(--rotation,0deg));filter:drop-shadow(0 6px 7px rgba(93,55,4,.12));}
           .ir-confetti img{width:100%;height:100%;object-fit:contain;animation:irConfettiFloat var(--duration,9s) ease-in-out infinite alternate;}
-          .ir-confetti--1{left:3%;top:12%;--size:80px;--rotation:18deg;--duration:7s}.ir-confetti--2{left:14%;top:38%;--size:112px;--rotation:-31deg;--opacity:.48;--duration:11s}.ir-confetti--3{left:8%;bottom:14%;--size:86px;--rotation:62deg;--duration:8s}.ir-confetti--4{left:27%;top:22%;--size:68px;--rotation:105deg;--opacity:.5;--duration:13s}.ir-confetti--5{right:27%;top:13%;--size:82px;--rotation:-52deg;--duration:10s}.ir-confetti--6{right:17%;top:34%;--size:104px;--rotation:36deg;--opacity:.55;--duration:12s}.ir-confetti--7{right:8%;top:47%;--size:72px;--rotation:122deg;--duration:8s}.ir-confetti--8{right:28%;bottom:9%;--size:96px;--rotation:-18deg;--opacity:.5;--duration:14s}.ir-confetti--9{left:39%;bottom:4%;--size:74px;--rotation:78deg;--duration:9s}.ir-confetti--10{right:4%;bottom:38%;--size:64px;--rotation:11deg;--duration:6s}
+          .ir-confetti--1{left:3%;top:10%;--size:48px;--rotation:18deg;--duration:7s}.ir-confetti--2{left:12%;top:42%;--size:58px;--rotation:-31deg;--opacity:.38;--duration:11s}.ir-confetti--3{left:5%;bottom:13%;--size:46px;--rotation:62deg;--duration:8s}.ir-confetti--4{left:21%;top:19%;--size:38px;--rotation:105deg;--opacity:.34;--duration:13s}.ir-confetti--5{right:22%;top:12%;--size:44px;--rotation:-52deg;--duration:10s}.ir-confetti--6{right:13%;top:43%;--size:54px;--rotation:36deg;--opacity:.38;--duration:12s}.ir-confetti--7{right:5%;top:53%;--size:42px;--rotation:122deg;--duration:8s}.ir-confetti--8{right:22%;bottom:8%;--size:52px;--rotation:-18deg;--opacity:.34;--duration:14s}.ir-confetti--9{left:34%;bottom:3%;--size:40px;--rotation:78deg;--duration:9s}.ir-confetti--10{right:3%;bottom:35%;--size:36px;--rotation:11deg;--duration:6s}
           @keyframes irDecorFloat { from { transform: translateY(-3px) rotate(-1deg); } to { transform: translateY(5px) rotate(2deg); } }
           @keyframes irCoinFloat{from{transform:translateY(-4px) rotate(-2deg)}to{transform:translateY(7px) rotate(4deg)}}
           @keyframes irConfettiFloat{from{transform:translateY(-3px) rotate(-2deg)}to{transform:translateY(6px) rotate(3deg)}}
 
           .ir-old-rule { display: none; }
-          .ir-shell { position: relative !important; z-index: 3; max-width: 1280px !important; padding: clamp(48px,6vw,96px) clamp(24px,5vw,76px) clamp(66px,7vw,104px) !important; }
-          .ir-header { max-width: 920px !important; margin: 0 auto clamp(48px,5vw,72px) !important; text-align: center; }
-          .ir-header-logo{display:block;width:42px;height:42px;object-fit:contain;margin:0 auto 12px;}
-          .ir-eyebrow { margin-bottom: 25px !important; }
-          .ir-heading { font-size: clamp(2.7rem,4.35vw,5rem) !important; line-height: 1.04 !important; text-wrap: balance; }
+          .ir-shell { position: relative !important; z-index: 3; max-width: 1280px !important; padding: clamp(40px,5vh,72px) clamp(24px,5vw,76px) clamp(36px,5vh,70px) !important; }
+          .ir-header { max-width: 920px !important; margin: 0 auto clamp(42px,5vh,64px) !important; text-align: center; }
+          .ir-header-logo{display:block;width:42px;height:42px;object-fit:contain;margin:0 auto 14px;}
+          .ir-eyebrow { margin-bottom: 20px !important; font-size: clamp(.8rem,.9vw,.9rem) !important; letter-spacing:.22em !important; }
+          .ir-heading { font-size: clamp(2.8rem,4.2vw,4.8rem) !important; line-height: 1.04 !important; max-width:900px; margin-inline:auto!important; text-wrap: balance; }
           .ir-header-divider { margin: 0 auto 22px !important; transform-origin: center !important; }
-          .ir-intro-copy { max-width: 690px; margin-inline: auto !important; }
-          .ir-cols { grid-template-columns: minmax(230px,.62fr) minmax(0,1.48fr) !important; gap: clamp(52px,7vw,104px) !important; align-items: end !important; max-width: 1120px; margin: 0 auto !important; }
+          .ir-intro-copy { max-width: 680px; margin-inline: auto !important; font-size:clamp(1.05rem,1.25vw,1.3rem)!important;line-height:1.62!important;color:rgba(10,27,52,.72)!important; }
+          .ir-cols { grid-template-columns: minmax(220px,300px) minmax(300px,400px) !important; justify-content:center; gap: clamp(70px,9vw,150px) !important; align-items: start !important; max-width: 980px; margin: 0 auto !important; }
           .ir-award-proof { text-align: center; }
           .ir-award-frame { padding: 0 !important; background: transparent !important; border: 0 !important; border-radius: 0 !important; box-shadow: none !important; animation: irAwardFloat 8s ease-in-out infinite alternate; }
           .ir-award-frame:hover { transform: translateY(-2px); box-shadow: none !important; }
           @keyframes irAwardFloat { from { transform: translateY(-2px); } to { transform: translateY(4px); } }
-          .ir-award-inner { position:relative;width:min(100%,340px);height:390px;margin-inline:auto;aspect-ratio:auto !important;background:transparent !important;border:0 !important;border-radius:0 !important;overflow:visible !important; }
-          .ir-award-inner .ir-award-medal{position:absolute;left:50%;top:50%;z-index:2;width:300px!important;height:300px!important;max-width:none!important;max-height:none!important;object-fit:contain!important;transform:translate(-50%,-50%);filter:drop-shadow(0 22px 20px rgba(50,30,4,.24));}
+          .ir-award-inner { position:relative;width:clamp(220px,18vw,300px);height:auto;aspect-ratio:1/1;margin-inline:auto;background:transparent !important;border:0 !important;border-radius:0 !important;overflow:visible !important; }
+          .ir-award-inner .ir-award-medal{position:absolute;left:50%;top:50%;z-index:2;width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;object-fit:contain!important;transform:translate(-50%,-50%);filter:drop-shadow(0 14px 12px rgba(50,30,4,.20));}
           .ir-award-caption { margin-top: 21px !important; padding: 0 !important; }
-          .ir-award-caption-title { font-family:${sans}!important;font-size:1rem!important;font-weight:600!important;letter-spacing:.14em!important;text-transform:uppercase;color:${C.gold}!important; }
+          .ir-award-caption-title { font-family:${sans}!important;font-size:clamp(1.15rem,1.5vw,1.5rem)!important;font-weight:600!important;letter-spacing:.1em!important;text-transform:uppercase;color:${C.gold}!important; }
+          .ir-award-caption p:last-child { font-size:clamp(.9rem,1vw,1.05rem)!important;color:rgba(10,27,52,.72)!important; }
           .ir-video-feature { min-width: 0; display: flex; justify-content: center; }
           .ir-disc-front > img { filter: saturate(.94) brightness(.96) !important; }
           .ir-thumb-overlay { background: linear-gradient(to top,rgba(3,6,14,.30),transparent 54%); }
@@ -1685,46 +1694,48 @@ const ImpactRecognitionSection = () => {
           .ir-thumb-play { opacity: .9; }
           .ir-thumb-play:focus-visible { opacity: 1; }
           .ir-thumb-caption-wrap { text-align: center; margin-top: 21px; }
-          .ir-thumb-caption-title { font-size: 1rem; letter-spacing: .14em; text-transform: uppercase; color: rgba(10,27,52,.78); }
-          .ir-thumb-caption-sub { font-size: .82rem; }
+          .ir-thumb-caption-title { font-size: clamp(1.15rem,1.5vw,1.5rem); line-height:1.35; letter-spacing: .1em; text-transform: uppercase; color: rgba(10,27,52,.88); }
+          .ir-thumb-caption-sub { font-size: clamp(.9rem,1vw,1.05rem); line-height:1.5; color:rgba(10,27,52,.68); }
 
           @media (min-width: 1101px) {
             .ir-word-space { display:none; }
-            .ir-shell { min-height:100svh;display:grid;grid-template-columns:minmax(190px,.72fr) minmax(330px,.92fr) minmax(290px,1fr);align-items:center;gap:clamp(24px,3vw,52px);padding:clamp(72px,8vh,90px) clamp(32px,4vw,72px) clamp(28px,4vh,48px)!important; }
-            .ir-header { grid-column:2;grid-row:1;margin:0!important;max-width:460px!important; }
-            .ir-header-logo { width:36px;height:36px;margin-bottom:8px; }
-            .ir-eyebrow { margin-bottom:16px!important; }
-            .ir-heading { font-size:clamp(2.15rem,3vw,3.45rem)!important;line-height:1.02!important;margin-bottom:14px!important; }
-            .ir-header-divider { margin-bottom:14px!important; }
-            .ir-intro-copy { font-size:clamp(.86rem,1vw,1rem)!important;line-height:1.58!important; }
-            .ir-cols { display:contents!important; }
-            .ir-award-proof { grid-column:1;grid-row:1;align-self:center; }
-            .ir-video-feature { grid-column:3;grid-row:1;align-self:center; }
-            .ir-award-inner { height:320px; }
-            .ir-award-inner .ir-award-medal { width:255px!important;height:255px!important; }
-            .ir-award-caption { margin-top:12px!important; }
-            .ir-thumb-frame { width:clamp(280px,24vw,390px); }
-            .ir-thumb-caption-wrap { margin-top:14px; }
-            .ir-thumb-caption-title { margin-bottom:5px; }
-            .ir-thumb-caption-sub { line-height:1.42; }
+            .ir-section { min-height:calc(100svh - 76px); }
+            .ir-shell { min-height:calc(100svh - 76px);display:flex;flex-direction:column;justify-content:center;padding:clamp(40px,5vh,72px) clamp(32px,4vw,72px) clamp(36px,5vh,70px)!important; }
+            .ir-header { width:100%;margin:0 auto clamp(42px,5vh,64px)!important;max-width:920px!important; }
+            .ir-header-logo { width:40px;height:40px;margin-bottom:14px; }
+            .ir-heading { margin-bottom:18px!important; }
+            .ir-header-divider { margin-bottom:20px!important; }
+            .ir-cols { display:grid!important;width:100%; }
+            .ir-award-caption { margin-top:18px!important; }
+            .ir-thumb-frame { width:clamp(300px,24vw,400px); }
+            .ir-thumb-caption-wrap { margin-top:18px;max-width:420px; }
+            .ir-thumb-caption-title { margin-bottom:7px; }
           }
-          @media (min-width:1101px) and (max-height:800px) {
-            .ir-shell { padding-top:68px!important;padding-bottom:20px!important; }
-            .ir-heading { font-size:clamp(2rem,2.65vw,2.85rem)!important; }
-            .ir-intro-copy { font-size:.82rem!important;line-height:1.48!important; }
-            .ir-award-inner { height:276px; }
-            .ir-award-inner .ir-award-medal { width:220px!important;height:220px!important; }
-            .ir-thumb-frame { width:min(300px,23vw); }
+          @media (min-width:1101px) and (max-height:920px) {
+            .ir-shell { padding-top:32px!important;padding-bottom:24px!important; }
+            .ir-header { margin-bottom:22px!important; }
+            .ir-header-logo { width:32px;height:32px;margin-bottom:8px; }
+            .ir-eyebrow { margin-bottom:10px!important; }
+            .ir-heading { font-size:clamp(2.3rem,3.1vw,3.25rem)!important;margin-bottom:10px!important; }
+            .ir-header-divider { margin-bottom:10px!important; }
+            .ir-intro-copy { font-size:1rem!important;line-height:1.5!important; }
+            .ir-award-inner { width:clamp(190px,16vw,235px); }
+            .ir-thumb-frame { width:min(255px,20vw); }
             .ir-thumb-caption-wrap { margin-top:10px; }
+            .ir-thumb-caption-title { font-size:1rem; }
+            .ir-thumb-caption-sub { font-size:.95rem; }
           }
 
           @media (max-width: 900px) {
-            .ir-section { --ir-word-area: clamp(210px,32vw,330px); --ir-award-word-lift: clamp(55px,7vw,90px); min-height: auto; }
+            .ir-section { --ir-word-area: clamp(130px,18vw,165px); --ir-award-word-lift: clamp(25px,5vw,50px); min-height: auto; }
             .ir-shell { padding-top: clamp(40px,5vw,64px) !important; }
-            .ir-cols { grid-template-columns: minmax(200px,.72fr) minmax(0,1.28fr) !important; max-width: 820px; gap: 34px !important; }
-            .ir-award-inner { height:350px; }
-            .ir-award-inner .ir-award-medal{width:265px!important;height:265px!important}
-            .ir-thumb-frame { width: clamp(300px,40vw,420px); }
+            .ir-header { max-width:760px!important; }
+            .ir-heading { font-size:clamp(2.3rem,5vw,3.6rem)!important; }
+            .ir-intro-copy { font-size:clamp(1rem,2vw,1.15rem)!important; }
+            .ir-cols { grid-template-columns: minmax(210px,1fr) minmax(280px,1.25fr) !important; max-width: 820px; gap: clamp(40px,6vw,70px) !important; }
+            .ir-award-inner { width:clamp(210px,29vw,280px);height:auto; }
+            .ir-award-inner .ir-award-medal{width:100%!important;height:100%!important}
+            .ir-thumb-frame { width: clamp(280px,38vw,360px); }
             .ir-decor--coin,.ir-decor--navy-ribbon { transform:scale(.78); }
           }
           @media (max-width: 600px) {
@@ -1736,14 +1747,19 @@ const ImpactRecognitionSection = () => {
             .ir-intro-copy { font-size: 1rem !important; line-height: 1.68 !important; }
             .ir-thumb-frame { width: clamp(230px,72vw,320px); }
             .ir-cols { grid-template-columns:1fr !important;max-width:520px;gap:48px!important; }
+            .ir-award-inner { width:min(72vw,280px); }
+            .ir-award-caption-title,.ir-thumb-caption-title { font-size:1.15rem!important; }
+            .ir-award-caption p:last-child,.ir-thumb-caption-sub { font-size:.95rem!important; }
+            .ir-thumb-caption-wrap { max-width:200px; }
             .ir-video-feature { grid-row:2; }.ir-award-proof{grid-row:1}
-            .ir-decor--gold-ribbon,.ir-decor--laurel-left,.ir-decor--coin{opacity:.28}.ir-decor--navy-ribbon{right:-28%;opacity:.26}.ir-decor--trophy{right:calc(-18% - 25px);bottom:calc(-5% - 25px);opacity:.34}.ir-decor--star{display:none}
+            .ir-decor--gold-ribbon,.ir-decor--laurel-left,.ir-decor--coin{opacity:.28}.ir-decor--navy-ribbon{right:-28%;opacity:.26}.ir-decor--trophy,.ir-decor--star{display:none}
             .ir-confetti:nth-of-type(even){display:none}
           }
           @media (prefers-reduced-motion: reduce) {
             .ir-marquee-track { animation:none!important;transform:translate3d(-8%,0,0);will-change:auto; }
             .ir-decor > img,.ir-confetti img,.ir-award-frame { animation: none !important; }
             .ir-disc-spin-layer { animation: none !important; will-change: auto; }
+            .ir-disc-ring-text { animation:none!important; }
             .ir-disc-flip-layer,
             .ir-thumb-frame:hover .ir-disc-flip-layer,
             .ir-thumb-frame.is-flipped .ir-disc-flip-layer { transform: rotateY(0deg) !important; transition: none !important; will-change: auto; }
@@ -1753,7 +1769,7 @@ const ImpactRecognitionSection = () => {
           }
         `}</style>
 
-        <motion.div className="ir-bg-type" style={{ opacity: stationaryAwardOpacity }} aria-hidden="true">
+        <motion.div className="ir-bg-type" style={{ opacity: stationaryAwardOpacity, y: stationaryAwardY }} aria-hidden="true">
           <div className="ir-bg-track"><span>AWARD</span></div>
         </motion.div>
         <motion.div className="ir-bg-marquee" style={{ opacity: marqueeAwardOpacity }} aria-hidden="true">
@@ -1763,7 +1779,7 @@ const ImpactRecognitionSection = () => {
           </div>
         </motion.div>
         <div className="ir-word-space" aria-hidden="true" />
-        <div ref={decorLayerRef} className="ir-decor-layer" aria-hidden="true">
+        <motion.div ref={decorLayerRef} className="ir-decor-layer" style={{ opacity: decorOpacity, y: decorY }} aria-hidden="true">
           <div className="ir-decor ir-decor--gold-ribbon"><img src="/images/awards/gold-ribbon-left.png" alt="" /></div>
           <div className="ir-decor ir-decor--laurel-left"><img src="/images/awards/gold-laurel-left.png" alt="" /></div>
           <div className="ir-decor ir-decor--coin"><img src="/images/awards/award-medal.png" alt="" /></div>
@@ -1773,7 +1789,7 @@ const ImpactRecognitionSection = () => {
           {Array.from({ length: 10 }, (_, index) => (
             <div key={index} className={`ir-confetti ir-confetti--${index + 1}`}><img src="/images/awards/gold-confetti.png" alt="" /></div>
           ))}
-        </div>
+        </motion.div>
 
         {/* Top edge: very faint gold rule separating from previous section */}
         <div className="ir-old-rule" style={{
@@ -1789,36 +1805,29 @@ const ImpactRecognitionSection = () => {
           {/* ── FULL-WIDTH HEADER ───────────────────────────────────────── */}
           <div className="ir-header" style={{ maxWidth: '760px', marginBottom: 'clamp(48px, 6vw, 80px)' }}>
 
-            <motion.img
-              className="ir-header-logo"
-              src="/images/da-logo.png"
-              alt=""
-              aria-hidden="true"
-              initial={reducedMotion ? false : { opacity: 0, y: 8 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: .8, ease: easeHero }}
-            />
-
-            <motion.p
-              className="ir-eyebrow"
-              initial={reducedMotion ? false : { opacity: 0 }}
-              animate={inView ? { opacity: 1 } : {}}
-              transition={{ duration: 1.2, ease: 'easeOut' }}
-              style={{
-                fontFamily: sans, fontSize: '.52rem', fontWeight: 600,
-                letterSpacing: '.32em', textTransform: 'uppercase',
-                color: C.gold, margin: '0 0 28px',
-              }}
-            >
-              Recognised By Our Community
-            </motion.p>
+            <motion.div style={{ opacity: mastheadOpacity, y: mastheadY }}>
+              <img
+                className="ir-header-logo"
+                src="/images/da-logo.png"
+                alt=""
+                aria-hidden="true"
+              />
+              <p
+                className="ir-eyebrow"
+                style={{
+                  fontFamily: sans, fontSize: '.52rem', fontWeight: 600,
+                  letterSpacing: '.32em', textTransform: 'uppercase',
+                  color: C.gold, margin: '0 0 28px',
+                }}
+              >
+                Recognised By Our Community
+              </p>
+            </motion.div>
 
             <motion.h2
               className="ir-heading"
-              initial={reducedMotion ? false : { opacity: 0, y: 36, filter: 'blur(10px)' }}
-              animate={inView ? { opacity: 1, y: 0, filter: 'blur(0px)' } : {}}
-              transition={{ duration: 1.30, delay: 0.10, ease: easeHero }}
               style={{
+                opacity: headingOpacity, y: headingY,
                 fontFamily: serif, fontWeight: 300,
                 fontSize: 'clamp(2.4rem, 3.8vw, 4.4rem)',
                 lineHeight: 1.10, letterSpacing: '-.028em',
@@ -1831,10 +1840,8 @@ const ImpactRecognitionSection = () => {
 
             <motion.div
               className="ir-header-divider"
-              initial={reducedMotion ? false : { scaleX: 0, opacity: 0 }}
-              animate={inView ? { scaleX: 1, opacity: 0.55 } : {}}
-              transition={{ duration: 0.80, delay: 0.22, ease: [0.25, 1, 0.5, 1] }}
               style={{
+                opacity: headingOpacity,
                 width: '40px', height: '1px', marginBottom: '22px',
                 background: `linear-gradient(90deg, ${C.gold}, transparent)`,
                 transformOrigin: 'left',
@@ -1843,10 +1850,8 @@ const ImpactRecognitionSection = () => {
 
             <motion.p
               className="ir-intro-copy"
-              initial={reducedMotion ? false : { opacity: 0, y: 16, filter: 'blur(4px)' }}
-              animate={inView ? { opacity: 1, y: 0, filter: 'blur(0px)' } : {}}
-              transition={{ duration: 1.10, delay: 0.32, ease }}
               style={{
+                opacity: introOpacity, y: introY,
                 fontFamily: sans, fontWeight: 300,
                 fontSize: 'clamp(1.10rem, 1.5vw, 1.25rem)',
                 lineHeight: 1.76,
@@ -1861,9 +1866,11 @@ const ImpactRecognitionSection = () => {
           </div>
 
           {/* ── MEDIA GRID: award image | video thumbnail ────────────────── */}
-          <div
+          <motion.div
             className="ir-cols"
             style={{
+              opacity: mediaOpacity,
+              y: mediaY,
               display: 'grid',
               gridTemplateColumns: '1fr 1fr',
               gap: 'clamp(24px, 4vw, 48px)',
@@ -1873,12 +1880,7 @@ const ImpactRecognitionSection = () => {
           >
 
             {/* ── Award image ───────────────────────────────────────────── */}
-            <motion.div
-              className="ir-award-proof"
-              initial={reducedMotion ? false : { opacity: 0, x: -42, filter: 'blur(7px)' }}
-              animate={inView ? { opacity: 1, x: 0, filter: 'blur(0px)' } : {}}
-              transition={{ duration: 1.30, delay: 0.40, ease: easeHero }}
-            >
+            <div className="ir-award-proof">
               <div
                 className="ir-award-frame"
                 style={{
@@ -1907,12 +1909,9 @@ const ImpactRecognitionSection = () => {
               </div>
 
               {/* Award caption */}
-              <div className="ir-award-caption" style={{ marginTop: '20px', paddingLeft: '2px' }}>
-                <motion.p
+              <motion.div className="ir-award-caption" style={{ marginTop: '20px', paddingLeft: '2px', opacity: captionOpacity, y: captionY }}>
+                <p
                   className="ir-award-caption-title"
-                  initial={reducedMotion ? false : { opacity: 0 }}
-                  animate={inView ? { opacity: 1 } : {}}
-                  transition={{ duration: 1.0, delay: 0.64, ease: 'easeOut' }}
                   style={{
                     fontFamily: serif, fontWeight: 400,
                     fontSize: '1.15rem', lineHeight: 1.45,
@@ -1920,11 +1919,8 @@ const ImpactRecognitionSection = () => {
                   }}
                 >
                   2025 Winner
-                </motion.p>
-                <motion.p
-                  initial={reducedMotion ? false : { opacity: 0 }}
-                  animate={inView ? { opacity: 1 } : {}}
-                  transition={{ duration: 1.0, delay: 0.72, ease: 'easeOut' }}
+                </p>
+                <p
                   style={{
                     fontFamily: sans, fontWeight: 500,
                     fontSize: '.78rem', lineHeight: 1.5,
@@ -1933,17 +1929,12 @@ const ImpactRecognitionSection = () => {
                   }}
                 >
                   Education Services
-                </motion.p>
-              </div>
-            </motion.div>
+                </p>
+              </motion.div>
+            </div>
 
             {/* ── Video thumbnail ───────────────────────────────────────── */}
-            <motion.div
-              className="ir-video-feature"
-              initial={reducedMotion ? false : { opacity: 0, x: 42, filter: 'blur(6px)' }}
-              animate={inView ? { opacity: 1, x: 0, filter: 'blur(0px)' } : {}}
-              transition={{ duration: 1.10, delay: 0.46, ease }}
-            >
+            <div className="ir-video-feature">
               <div
                 className="ir-thumb-wrap"
               >
@@ -2017,15 +2008,15 @@ const ImpactRecognitionSection = () => {
                     <Play size={22} strokeWidth={1.3} style={{ marginLeft: '3px' }} />
                   </button>
                 </div>
-                <div className="ir-thumb-caption-wrap">
+                <motion.div className="ir-thumb-caption-wrap" style={{ opacity: captionOpacity, y: captionY }}>
                   <p className="ir-thumb-caption-title">Award Winner Interview</p>
                   <p className="ir-thumb-caption-sub">Watch Now →</p>
                   <p className="ir-thumb-caption-sub">Outstanding Education Service · Winner Interview &amp; Recognition</p>
-                </div>
+                </motion.div>
               </div>
-            </motion.div>
+            </div>
 
-          </div>
+          </motion.div>
 
         </div>
       </section>
@@ -3673,6 +3664,16 @@ const DAEnvironmentSection = () => {
   const outerRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isSimple, setIsSimple] = useState(false);
+  const [isMuted, setIsMuted] = useState(true);
+
+  const toggleVideoAudio = () => {
+    const nextMuted = !isMuted;
+    setIsMuted(nextMuted);
+    if (videoRef.current) {
+      videoRef.current.muted = nextMuted;
+      if (!nextMuted) videoRef.current.play().catch(() => {});
+    }
+  };
 
   useEffect(() => {
     const check = () => setIsSimple(
@@ -3760,6 +3761,14 @@ const DAEnvironmentSection = () => {
       text-transform:uppercase; color:${C.navy}; background:${C.gold}; border:none;
       border-radius:3px; padding:12px 28px; cursor:pointer; transition:opacity 0.2s ease; }
     .da-ebtn:hover { opacity:0.86; }
+    .da-audio-toggle { position:absolute;right:clamp(14px,2vw,28px);bottom:clamp(14px,2vw,28px);z-index:12;
+      display:inline-flex;align-items:center;gap:9px;padding:10px 14px;border:1px solid rgba(255,255,255,.46);
+      border-radius:999px;background:rgba(6,17,31,.72);color:#fff;font-family:${sans};font-size:.74rem;
+      font-weight:600;letter-spacing:.02em;cursor:pointer;backdrop-filter:blur(10px);
+      transition:background 220ms ease,border-color 220ms ease,transform 220ms cubic-bezier(.22,1,.36,1); }
+    .da-audio-toggle:hover { background:rgba(6,17,31,.9);border-color:rgba(212,175,55,.8);transform:translateY(-2px); }
+    .da-audio-toggle:focus-visible { outline:3px solid rgba(240,200,106,.72);outline-offset:3px; }
+    @media(prefers-reduced-motion:reduce){.da-audio-toggle{transition:none}.da-audio-toggle:hover{transform:none}}
   `;
 
   // ── MOBILE: stacked, no scroll animation ─────────────────────
@@ -3781,9 +3790,13 @@ const DAEnvironmentSection = () => {
           <button className="da-ebtn">DISCOVER OUR ENVIRONMENT →</button>
         </div>
         <div style={{ position: 'relative', overflow: 'hidden' }}>
-          <video ref={videoRef} autoPlay muted loop playsInline src="/media/jenseriamy.mp4"
+          <video ref={videoRef} autoPlay muted={isMuted} loop playsInline src="/images/homepage/homepage-cream/0706.mp4"
             style={{ width: '100%', display: 'block', aspectRatio: '16/9', objectFit: 'cover' }} />
           <div style={{ position: 'absolute', inset: 0, background: 'rgba(4,10,24,0.28)' }} />
+          <button className="da-audio-toggle" type="button" onClick={toggleVideoAudio} aria-pressed={!isMuted} aria-label={isMuted ? 'Turn video sound on' : 'Mute video'}>
+            {isMuted ? <VolumeX size={18} aria-hidden="true" /> : <Volume2 size={18} aria-hidden="true" />}
+            <span>{isMuted ? 'Sound on' : 'Mute'}</span>
+          </button>
         </div>
       </div>
     );
@@ -3824,13 +3837,17 @@ const DAEnvironmentSection = () => {
           zIndex: 5,
           boxShadow: '0 24px 72px rgba(0,0,0,0.55)',
         }}>
-          <video ref={videoRef} autoPlay muted loop playsInline src="/media/jenseriamy.mp4"
+          <video ref={videoRef} autoPlay muted={isMuted} loop playsInline src="/images/homepage/homepage-cream/0706.mp4"
             style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
           <motion.div style={{
             position: 'absolute', inset: 0,
             background: 'rgba(4,10,24,0.28)',
             opacity: overlayOp, pointerEvents: 'none',
           }} />
+          <button className="da-audio-toggle" type="button" onClick={toggleVideoAudio} aria-pressed={!isMuted} aria-label={isMuted ? 'Turn video sound on' : 'Mute video'}>
+            {isMuted ? <VolumeX size={18} aria-hidden="true" /> : <Volume2 size={18} aria-hidden="true" />}
+            <span>{isMuted ? 'Sound on' : 'Mute'}</span>
+          </button>
         </motion.div>
 
         {/* ── SUPPORT PHOTO CARDS ────────────────────────────────── */}
@@ -6229,130 +6246,48 @@ interface SubjectTileProps {
   desc: string;
   img: string;
   href: string;
-  height: string;
+  variant: 'math' | 'english' | 'science';
   delay: number;
   inView: boolean;
 }
 
-const SubjectTile = ({ label, icon, desc, img, href, height, delay, inView }: SubjectTileProps) => {
-  const [hovered, setHovered] = useState(false);
+const SubjectTile = ({ label, icon, desc, img, href, variant, delay, inView }: SubjectTileProps) => {
   const easeOut = [0.22, 1, 0.36, 1] as const;
+  const initial = variant === 'math' ? { opacity: 0, x: -42 } : variant === 'science' ? { opacity: 0, x: 42 } : { opacity: 0, y: 38 };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 48 }}
-      animate={inView ? { opacity: 1, y: 0 } : {}}
+    <motion.article
+      className={`teach-card-wrap teach-card-wrap--${variant}`}
+      initial={initial}
+      animate={inView ? { opacity: 1, x: 0, y: 0 } : {}}
       transition={{ duration: 0.85, delay, ease: easeOut }}
-      style={{ flex: '1 1 0', minWidth: 0 }}
     >
-      <Link
-        to={href}
-        style={{ display: 'block', textDecoration: 'none' }}
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
-      >
-        <div style={{
-          borderRadius: '28px',
-          overflow: 'hidden',
-          height,
-          position: 'relative',
-          cursor: 'pointer',
-          boxShadow: hovered
-            ? '0 36px 80px rgba(10,27,52,0.22), 0 8px 24px rgba(10,27,52,0.12)'
-            : '0 8px 32px rgba(10,27,52,0.10)',
-          transform: hovered ? 'translateY(-10px)' : 'translateY(0)',
-          transition: 'transform 0.5s cubic-bezier(0.22,1,0.36,1), box-shadow 0.5s ease',
-        }}>
-          {/* Photo */}
-          <div style={{ position: 'absolute', inset: 0, overflow: 'hidden' }}>
+      <Link to={href} className="teach-card" aria-label={`Explore ${label}`}>
+          <div className="teach-card-photo">
             <img
               src={img}
               alt={label}
-              style={{
-                width: '100%',
-                height: '100%',
-                objectFit: 'cover',
-                transform: hovered ? 'scale(1.06)' : 'scale(1.0)',
-                transition: 'transform 0.7s cubic-bezier(0.22,1,0.36,1)',
-              }}
+              loading="lazy"
+              decoding="async"
             />
           </div>
 
-          {/* Overlay */}
-          <div style={{
-            position: 'absolute',
-            inset: 0,
-            background: hovered
-              ? 'linear-gradient(170deg, rgba(10,27,52,0.18) 0%, rgba(10,27,52,0.72) 55%, rgba(10,27,52,0.88) 100%)'
-              : 'linear-gradient(170deg, rgba(10,27,52,0.28) 0%, rgba(10,27,52,0.78) 55%, rgba(10,27,52,0.92) 100%)',
-            transition: 'background 0.5s ease',
-          }} />
+          <div className="teach-card-overlay" aria-hidden="true" />
 
-          {/* Top badge */}
-          <div style={{
-            position: 'absolute',
-            top: '22px',
-            left: '22px',
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '7px',
-            background: 'rgba(10,27,52,0.50)',
-            backdropFilter: 'blur(14px)',
-            WebkitBackdropFilter: 'blur(14px)',
-            border: `1px solid ${C.gold}45`,
-            borderRadius: '100px',
-            padding: '6px 14px 6px 10px',
-          }}>
+          <div className="teach-card-badge">
             <span style={{ fontSize: '13px', lineHeight: 1 }}>{icon}</span>
-            <span style={{
-              fontFamily: sans,
-              fontSize: '.65rem',
-              fontWeight: 800,
-              letterSpacing: '.14em',
-              textTransform: 'uppercase' as const,
-              color: C.white,
-            }}>{label}</span>
+            <span>{label}</span>
           </div>
 
-          {/* Bottom content */}
-          <div style={{
-            position: 'absolute',
-            bottom: 0,
-            left: 0,
-            right: 0,
-            padding: '28px 26px',
-          }}>
-            <p style={{
-              fontFamily: sans,
-              fontSize: '.90rem',
-              lineHeight: 1.68,
-              color: 'rgba(255,255,255,0.78)',
-              margin: '0 0 18px',
-            }}>{desc}</p>
-
-            {/* Hover CTA */}
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '7px',
-              opacity: hovered ? 1 : 0,
-              transform: hovered ? 'translateX(0)' : 'translateX(-10px)',
-              transition: 'opacity 0.35s ease, transform 0.35s ease',
-            }}>
-              <span style={{
-                fontFamily: sans,
-                fontSize: '.68rem',
-                fontWeight: 800,
-                letterSpacing: '.14em',
-                textTransform: 'uppercase' as const,
-                color: C.gold,
-              }}>Explore</span>
-              <span style={{ color: C.gold, fontSize: '13px', fontWeight: 700 }}>→</span>
+          <div className="teach-card-content">
+            <p>{desc}</p>
+            <div className="teach-card-cta">
+              <span>Explore {label}</span>
+              <span className="teach-card-arrow" aria-hidden="true">→</span>
             </div>
           </div>
-        </div>
       </Link>
-    </motion.div>
+    </motion.article>
   );
 };
 
@@ -6388,20 +6323,20 @@ const TEACH_PARTICLES = [
 
 const TILES = [
   {
-    label: 'Mathematics',
-    icon: '📐',
-    desc: 'Build confidence through understanding, problem solving and logical thinking.',
-    img: '/images/community/subject_maths.jpg',
-    href: '/subjects/mathematics',
-    height: '580px',
-  },
-  {
     label: 'English',
     icon: '📖',
     desc: 'Develop confident readers, writers and communicators who love ideas.',
     img: '/images/community/subject_english.jpg',
     href: '/subjects/english',
-    height: '500px',
+    variant: 'english' as const,
+  },
+  {
+    label: 'Mathematics',
+    icon: '📐',
+    desc: 'Build confidence through understanding, problem solving and logical thinking.',
+    img: '/images/community/subject_maths.jpg',
+    href: '/subjects/mathematics',
+    variant: 'math' as const,
   },
   {
     label: 'Science',
@@ -6409,7 +6344,7 @@ const TILES = [
     desc: 'Discover the world through curiosity, investigation and experimentation.',
     img: '/images/community/subject_science.jpg',
     href: '/subjects/science',
-    height: '540px',
+    variant: 'science' as const,
   },
 ];
 
@@ -6430,6 +6365,34 @@ const WhatWeTeachSection = () => {
         overflow: 'hidden',
       }}
     >
+      <style>{`
+        .teach-watermarks{position:absolute;inset:0;pointer-events:none;user-select:none;color:rgba(183,126,22,.045);font-family:${serif};z-index:0}
+        .teach-watermark{position:absolute;font-size:clamp(3.5rem,7vw,7rem);line-height:1;white-space:nowrap}.teach-watermark--math{left:2%;top:28%;transform:rotate(-8deg)}.teach-watermark--english{left:50%;top:35%;transform:translateX(-50%) rotate(-3deg)}.teach-watermark--science{right:2%;top:25%;transform:rotate(7deg)}
+        .teach-grid-shell{position:relative;z-index:2;max-width:1400px;margin:0 auto;padding:0 clamp(24px,5vw,68px)}
+        .teach-grid{position:relative;display:grid;grid-template-columns:minmax(0,.92fr) minmax(0,1.14fr) minmax(0,.92fr);grid-template-areas:'math english science';gap:clamp(36px,4vw,68px);align-items:start}
+        .teach-card-wrap{min-width:0}.teach-card-wrap--math{grid-area:math;padding-top:46px}.teach-card-wrap--english{grid-area:english}.teach-card-wrap--science{grid-area:science;padding-top:40px}
+        .teach-card{position:relative;display:block;height:clamp(480px,43vw,620px);overflow:hidden;border:1px solid rgba(183,126,22,.42);border-radius:30px;background:rgba(255,255,255,.18);box-shadow:0 16px 34px rgba(10,27,52,.12);text-decoration:none;transform:translateZ(0);transition:transform .55s cubic-bezier(.22,1,.36,1),box-shadow .55s ease,border-color .55s ease}
+        .teach-card-wrap--math .teach-card,.teach-card-wrap--science .teach-card{height:clamp(410px,36vw,520px)}
+        .teach-card:hover,.teach-card:focus-visible{transform:translateY(-7px);border-color:rgba(212,175,55,.9);box-shadow:0 26px 52px rgba(10,27,52,.19),0 0 0 2px rgba(212,175,55,.1)}.teach-card:focus-visible{outline:2px solid ${C.gold};outline-offset:5px}
+        .teach-card-photo{position:absolute;inset:0;overflow:hidden}.teach-card-photo img{width:100%;height:100%;display:block;object-fit:cover;filter:saturate(.98) brightness(1.08);transition:transform .7s cubic-bezier(.22,1,.36,1),filter .55s ease}.teach-card:hover .teach-card-photo img,.teach-card:focus-visible .teach-card-photo img{transform:scale(1.04);filter:saturate(1) brightness(1.11)}
+        .teach-card-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(4,20,42,.97) 0%,rgba(6,24,48,.82) 25%,rgba(6,24,48,.22) 42%,transparent 58%)}
+        .teach-card-badge{position:absolute;top:22px;left:22px;display:inline-flex;align-items:center;gap:8px;padding:8px 15px;border:1px solid rgba(212,175,55,.42);border-radius:999px;background:rgba(6,24,48,.86);color:#fff;font:800 .68rem/1 ${sans};letter-spacing:.14em;text-transform:uppercase;box-shadow:0 5px 12px rgba(3,14,31,.15);transition:transform .45s cubic-bezier(.22,1,.36,1)}.teach-card:hover .teach-card-badge,.teach-card:focus-visible .teach-card-badge{transform:translateY(-3px)}
+        .teach-card-content{position:absolute;left:0;right:0;bottom:0;padding:clamp(24px,2.3vw,34px)}.teach-card-content p{max-width:35ch;margin:0 0 18px;color:rgba(255,255,255,.88);font:400 clamp(.94rem,1.05vw,1.08rem)/1.62 ${sans};text-wrap:pretty}
+        .teach-card-cta{display:flex;align-items:center;gap:10px;color:#F0C760;font:700 .74rem/1.3 ${sans};letter-spacing:.08em;text-transform:uppercase}.teach-card-arrow{font-size:1rem;transition:transform .35s cubic-bezier(.22,1,.36,1)}.teach-card:hover .teach-card-arrow,.teach-card:focus-visible .teach-card-arrow{transform:translateX(7px)}
+        .teach-connector{position:absolute;z-index:0;left:8%;right:8%;bottom:-52px;width:84%;height:110px;overflow:visible;pointer-events:none}.teach-connector path{fill:none;stroke:rgba(183,126,22,.58);stroke-width:1;stroke-dasharray:4 5}.teach-connector text{fill:#C08A22;font-size:15px}
+        .teach-footer{position:relative;z-index:2;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:clamp(28px,5vw,72px);max-width:1120px;margin:clamp(94px,9vw,126px) auto 0;padding:0 24px}.teach-highlight{display:flex;align-items:center;gap:14px;color:${C.navy}}.teach-highlight:last-child{justify-self:end}.teach-highlight-icon{font-size:1.5rem}.teach-highlight strong{display:block;font:600 .98rem/1.3 ${serif}}.teach-highlight span{display:block;margin-top:2px;color:rgba(10,27,52,.6);font:400 .76rem/1.45 ${sans}}
+        .teach-all-link{display:inline-flex;align-items:center;gap:14px;padding:16px 28px;border-radius:10px;background:${C.navy};color:#F0C760;box-shadow:0 8px 16px rgba(10,27,52,.17);font:700 .86rem/1 ${sans};text-decoration:none;transition:transform .4s cubic-bezier(.22,1,.36,1),background .3s ease}.teach-all-link:hover,.teach-all-link:focus-visible{transform:translateY(-3px);background:#102C53}.teach-all-link:focus-visible{outline:2px solid ${C.gold};outline-offset:4px}
+        @media(max-width:1024px){.teach-grid{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-areas:'english english' 'math science';max-width:820px;margin:auto}.teach-card-wrap--english{width:min(100%,620px);justify-self:center}.teach-card-wrap--math,.teach-card-wrap--science{padding-top:0}.teach-card-wrap--english .teach-card{height:clamp(500px,70vw,620px)}.teach-card-wrap--math .teach-card,.teach-card-wrap--science .teach-card{height:clamp(400px,54vw,500px)}.teach-connector{display:none}.teach-footer{grid-template-columns:1fr 1fr}.teach-all-link{grid-column:1/-1;grid-row:1;justify-self:center}.teach-highlight{grid-row:2}.teach-watermark{opacity:.65}}
+        @media(max-width:640px){.teach-grid{grid-template-columns:1fr;grid-template-areas:'english' 'math' 'science';gap:28px}.teach-card-wrap--english{width:100%}.teach-card,.teach-card-wrap--english .teach-card,.teach-card-wrap--math .teach-card,.teach-card-wrap--science .teach-card{height:clamp(430px,128vw,540px);border-radius:24px}.teach-footer{grid-template-columns:1fr;justify-items:center;margin-top:64px;text-align:center}.teach-all-link{grid-column:1;grid-row:1}.teach-highlight,.teach-highlight:last-child{grid-row:auto;justify-self:center}.teach-watermarks{display:none}}
+        @media(prefers-reduced-motion:reduce){.teach-card,.teach-card-photo img,.teach-card-badge,.teach-card-arrow,.teach-all-link{transition:none!important}.teach-card:hover,.teach-card:focus-visible,.teach-all-link:hover,.teach-all-link:focus-visible{transform:none}.teach-card:hover .teach-card-photo img,.teach-card:focus-visible .teach-card-photo img{transform:none}}
+      `}</style>
+
+      <div className="teach-watermarks" aria-hidden="true">
+        <div className="teach-watermark teach-watermark--math">x² + y² · △ ∠</div>
+        <div className="teach-watermark teach-watermark--english">﹏ ✒︎ ︿</div>
+        <div className="teach-watermark teach-watermark--science">⚗︎ · H₂O · ✧</div>
+      </div>
+
       {/* Subtle gold particles */}
       {TEACH_PARTICLES.map((p, i) => <GoldParticle key={i} {...p} />)}
 
@@ -6455,17 +6418,17 @@ const WhatWeTeachSection = () => {
 
         <h2 style={{
           fontFamily: serif, fontWeight: 300,
-          fontSize: 'clamp(2.4rem, 4.2vw, 4rem)',
+          fontSize: 'clamp(2.8rem, 5vw, 5rem)',
           letterSpacing: '-.028em', lineHeight: 1.07,
           color: C.navy, margin: '0 0 20px',
         }}>
-          Expert tuition in{' '}
+          Excellence across{' '}
           <em style={{ fontStyle: 'italic', color: C.gold }}>every subject</em>
         </h2>
 
         <p style={{
           fontFamily: sans,
-          fontSize: 'clamp(1rem, 1.4vw, 1.12rem)',
+          fontSize: 'clamp(1.05rem, 1.45vw, 1.2rem)',
           color: C.muted,
           maxWidth: '480px',
           margin: '0 auto',
@@ -6476,15 +6439,8 @@ const WhatWeTeachSection = () => {
       </motion.div>
 
       {/* ── Editorial tiles ── */}
-      <div style={{
-        padding: '0 clamp(20px, 5vw, 64px)',
-        maxWidth: '1400px',
-        margin: '0 auto',
-        display: 'flex',
-        alignItems: 'flex-start',
-        gap: 'clamp(14px, 1.5vw, 20px)',
-        flexWrap: 'wrap' as const,
-      }}>
+      <div className="teach-grid-shell">
+        <div className="teach-grid">
         {TILES.map((tile, i) => (
           <SubjectTile
             key={tile.label}
@@ -6493,6 +6449,17 @@ const WhatWeTeachSection = () => {
             inView={inView}
           />
         ))}
+          <svg className="teach-connector" viewBox="0 0 1000 110" preserveAspectRatio="none" aria-hidden="true">
+            <path d="M0 8 C250 105 750 105 1000 8" />
+            <text x="240" y="76">✦</text><text x="493" y="101">✦</text><text x="745" y="76">✦</text>
+          </svg>
+        </div>
+      </div>
+
+      <div className="teach-footer">
+        <div className="teach-highlight"><span className="teach-highlight-icon" aria-hidden="true">👨‍🏫</span><div><strong>43 Expert Educators</strong><span>Across all subjects</span></div></div>
+        <Link className="teach-all-link" to="/subjects">View All Subjects <span aria-hidden="true">→</span></Link>
+        <div className="teach-highlight"><span className="teach-highlight-icon" aria-hidden="true">🏆</span><div><strong>Proven Results</strong><span>Academic excellence through personalised learning</span></div></div>
       </div>
 
       {/* ── Cream → Navy gradient transition ── */}
@@ -6803,13 +6770,9 @@ const TeachersSection = () => {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-60px' });
   return (
-    <section ref={ref} style={{ background: C.cream, padding: '100px 24px' }}>
-      <motion.div variants={fadeUp} initial="hidden" animate={inView ? 'visible' : 'hidden'} style={{ textAlign: 'center', marginBottom: '52px' }}>
-        <div style={{ fontFamily: sans, fontSize: '.7rem', fontWeight: 700, letterSpacing: '.16em', textTransform: 'uppercase', color: C.gold, marginBottom: '14px' }}>Our Team</div>
-        <h2 style={{ fontFamily: serif, fontWeight: 600, fontSize: 'clamp(2rem,4vw,3.4rem)', color: C.navy, letterSpacing: '-.02em' }}>Expert Educators</h2>
-      </motion.div>
-      <motion.div variants={fadeIn} initial="hidden" animate={inView ? 'visible' : 'hidden'}><TeachersPreview /></motion.div>
-    </section>
+    <motion.div ref={ref} variants={fadeIn} initial="hidden" animate={inView ? 'visible' : 'hidden'}>
+      <TeachersPreview />
+    </motion.div>
   );
 };
 

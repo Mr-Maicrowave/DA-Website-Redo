@@ -1,279 +1,270 @@
-import React from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import { ArrowRight, BookOpen, ChevronLeft, ChevronRight, GraduationCap, Quote, UsersRound } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { ArrowRight } from 'lucide-react';
-import { TUTORS, FEATURED_IDS as _FI, getPhotoUrl, getPhotoStyle } from '@/data/teacherCatalogue';
+import {
+  TUTORS,
+  getPhotoStyle,
+  getPhotoUrl,
+  type CatalogueTutor,
+} from '@/data/teacherCatalogue';
 
 const NAVY = '#0A1F3F';
 const GOLD = '#D4AF37';
-const a = (hex: string, alpha: string) => hex + alpha;
+const CREAM = '#F7F2E9';
+const SERIF = "'Cormorant Garamond', Georgia, serif";
+const SANS = "'DM Sans', 'Inter', sans-serif";
+const FEATURED_TUTOR_IDS = ['T010', 'T003', 'T011', 'T005', 'T012', 'T015'] as const;
+const FEATURED_TUTORS = FEATURED_TUTOR_IDS
+  .map(id => TUTORS.find(teacher => teacher.id === id))
+  .filter((teacher): teacher is CatalogueTutor => Boolean(teacher));
 
-// King first, then Linda — swap from original order
-const FEATURED_IDS = [_FI[1], _FI[0], _FI[2], _FI[3], _FI[4]];
+const tierLabel = (tier: CatalogueTutor['tier']) =>
+  tier === 'senior' ? 'Senior Educator' : tier === 'mid' ? 'Experienced Educator' : 'Educator';
 
-// Crown heights only — no rotation
-const CARD_CFG = [
-  { height: '132%', delay: '0ms'   },
-  { height: '148%', delay: '80ms'  },
-  { height: '162%', delay: '160ms' },
-  { height: '148%', delay: '240ms' },
-  { height: '132%', delay: '320ms' },
-];
-
-const KEYFRAMES = `
-  @keyframes teacherFadeUp {
-    from { opacity: 0; transform: translateY(18px); }
-    to   { opacity: 1; transform: translateY(0);    }
+const CSS = `
+  .faculty-section{position:relative;isolation:isolate;overflow:hidden;background:${CREAM};padding:clamp(72px,7vw,108px) 0 0;color:${NAVY}}
+  .faculty-shell{position:relative;z-index:2;width:min(1500px,calc(100% - clamp(40px,6vw,96px)));margin:0 auto;display:grid;grid-template-columns:minmax(280px,.9fr) minmax(430px,1.25fr) minmax(320px,.9fr);grid-template-areas:'intro portrait profile';gap:clamp(48px,5vw,90px);align-items:center}
+  .faculty-intro{grid-area:intro;align-self:center}
+  .faculty-kicker{display:flex;align-items:center;gap:10px;margin:0 0 26px;font:600 clamp(.78rem,.9vw,.95rem)/1.4 ${SANS};letter-spacing:.18em;text-transform:uppercase;color:#B77E16}
+  .faculty-title{margin:0;font:400 clamp(3.2rem,4.8vw,5.8rem)/.97 ${SERIF};letter-spacing:-.035em;color:${NAVY};text-wrap:balance}
+  .faculty-title span{display:block;color:#B77E16}
+  .faculty-rule{display:flex;align-items:center;gap:13px;width:174px;margin:26px 0}
+  .faculty-rule:before,.faculty-rule:after{content:'';height:1px;flex:1;background:rgba(183,126,22,.58)}
+  .faculty-rule span{color:#B77E16;font-size:.64rem}
+  .faculty-lede{max-width:340px;margin:0;font:400 clamp(1rem,1.2vw,1.25rem)/1.6 ${SANS};color:rgba(10,31,63,.76);text-wrap:pretty}
+  .faculty-portrait-column{grid-area:portrait;min-width:0}
+  .faculty-carousel{position:relative;outline:none}
+  .faculty-carousel:focus-visible{border-radius:22px;outline:3px solid rgba(183,126,22,.42);outline-offset:8px}
+  .faculty-portrait-stage{position:relative;width:min(100%,540px);margin-inline:auto;touch-action:pan-y}
+  .faculty-portrait-frame{position:relative;width:min(100%,540px);aspect-ratio:4/5;margin-inline:auto;overflow:hidden;border:1.5px solid rgba(183,126,22,.82);border-radius:50% 50% 14px 14px / 23% 23% 14px 14px;background:${NAVY};box-shadow:0 8px 8px rgba(10,31,63,.14)}
+  .faculty-portrait-slide{position:absolute;inset:0}
+  .faculty-portrait{width:100%;height:100%;display:block;object-fit:cover;transform-origin:center top;user-select:none;-webkit-user-drag:none}
+  .faculty-arrow{position:absolute;z-index:4;top:50%;width:50px;height:50px;display:grid;place-items:center;border:1px solid rgba(183,126,22,.28);border-radius:50%;background:rgba(255,252,246,.94);color:#B77E16;box-shadow:0 8px 24px rgba(10,31,63,.13);cursor:pointer;transform:translateY(-50%);transition:transform .25s ease,background .25s ease,color .25s ease}
+  .faculty-arrow--prev{left:-70px}.faculty-arrow--next{right:-70px}
+  .faculty-arrow:hover{background:${NAVY};color:${CREAM};transform:translateY(-50%) scale(1.06)}
+  .faculty-arrow:focus-visible,.faculty-selector-button:focus-visible,.faculty-dot:focus-visible{outline:3px solid rgba(183,126,22,.48);outline-offset:3px}
+  .faculty-selector{display:flex;justify-content:center;gap:clamp(9px,1vw,16px);margin:24px auto 0;padding:3px;overflow-x:auto;scrollbar-width:none}
+  .faculty-selector::-webkit-scrollbar{display:none}
+  .faculty-selector-button{flex:0 0 auto;display:grid;justify-items:center;gap:6px;min-width:58px;padding:0;border:0;background:transparent;color:rgba(10,31,63,.7);font:500 .76rem/1.2 ${SERIF};cursor:pointer}
+  .faculty-selector-thumb{width:54px;height:54px;overflow:hidden;border:1px solid rgba(183,126,22,.25);border-radius:50%;background:${CREAM};box-shadow:0 4px 12px rgba(10,31,63,.08);opacity:.84;transition:border-color .25s ease,box-shadow .25s ease,opacity .25s ease,transform .25s ease}
+  .faculty-selector-thumb img{width:100%;height:100%;display:block;object-fit:cover}
+  .faculty-selector-button:hover .faculty-selector-thumb,.faculty-selector-button[aria-current=true] .faculty-selector-thumb{border:2px solid #C8922B;box-shadow:0 5px 16px rgba(183,126,22,.22);opacity:1;transform:translateY(-2px) scale(1.06)}
+  .faculty-selector-button[aria-current=true]{color:${NAVY}}
+  .faculty-dots{display:flex;justify-content:center;gap:10px;margin-top:16px}
+  .faculty-dot{width:9px;height:9px;padding:0;border:0;border-radius:50%;background:rgba(10,31,63,.2);cursor:pointer;transition:background .25s ease,transform .25s ease}
+  .faculty-dot[aria-current=true]{background:#C8922B;transform:scale(1.18)}
+  .faculty-profile{grid-area:profile;align-self:center;max-width:440px;min-height:390px;display:flex;align-items:center}
+  .faculty-profile-content{width:100%}
+  .faculty-profile-label{margin:0 0 16px;font:700 clamp(.8rem,.9vw,.95rem)/1.4 ${SANS};letter-spacing:.18em;text-transform:uppercase;color:#B77E16}
+  .faculty-profile-rule{display:flex;align-items:center;gap:12px;width:114px;margin-bottom:25px}
+  .faculty-profile-rule:before,.faculty-profile-rule:after{content:'';height:1px;flex:1;background:rgba(183,126,22,.58)}
+  .faculty-profile-rule span{color:#B77E16;font-size:.58rem}
+  .faculty-name{margin:0;font:400 clamp(2.6rem,3.5vw,4.5rem)/1 ${SERIF};letter-spacing:-.035em;color:${NAVY};text-wrap:balance}
+  .faculty-role{margin:16px 0 30px;font:700 clamp(.9rem,1vw,1.1rem)/1.4 ${SANS};letter-spacing:.14em;text-transform:uppercase;color:#B77E16}
+  .faculty-quote{position:relative;max-width:420px;margin:0 0 38px;padding:18px 28px;font:italic 400 clamp(1.15rem,1.45vw,1.55rem)/1.45 ${SERIF};color:${NAVY};text-wrap:pretty}
+  .faculty-quote svg{position:absolute;top:0;left:0;color:#B77E16}
+  .faculty-quote:after{content:'”';position:absolute;right:4px;bottom:-4px;color:#B77E16;font:600 2rem/1 ${SERIF}}
+  .faculty-cta{display:inline-flex;min-width:min(100%,316px);align-items:center;justify-content:space-between;gap:28px;padding:18px 24px;border:1px solid rgba(183,126,22,.78);border-radius:12px;background:transparent;color:${NAVY};font:600 clamp(.96rem,1vw,1.08rem)/1 ${SERIF};text-decoration:none;transition:background .3s ease,color .3s ease,transform .3s cubic-bezier(.22,1,.36,1)}
+  .faculty-cta svg{color:#B77E16;transition:transform .3s cubic-bezier(.22,1,.36,1),color .3s ease}
+  .faculty-cta:hover{background:${NAVY};color:${CREAM};transform:translateY(-2px)}
+  .faculty-cta:hover svg{color:${CREAM};transform:translateX(5px)}
+  .faculty-cta:focus-visible{outline:3px solid rgba(183,126,22,.48);outline-offset:4px}
+  .faculty-trust{position:relative;z-index:2;width:min(1500px,calc(100% - clamp(40px,6vw,96px)));margin:clamp(46px,5vw,72px) auto 0;padding:28px 6%;display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid rgba(183,126,22,.27)}
+  .faculty-trust-item{display:grid;grid-template-columns:64px minmax(0,1fr);align-items:center;gap:18px;padding:0 clamp(20px,3vw,48px)}
+  .faculty-trust-item+.faculty-trust-item{border-left:1px solid rgba(183,126,22,.34)}
+  .faculty-trust-icon{width:62px;height:62px;display:grid;place-items:center;border-radius:50%;background:rgba(212,175,55,.07);color:#B77E16}
+  .faculty-trust-copy strong{display:block;font:500 clamp(1.4rem,1.7vw,1.85rem)/1.1 ${SERIF};color:${NAVY}}
+  .faculty-trust-copy span{display:block;margin-top:6px;font:400 .9rem/1.45 ${SANS};color:rgba(10,31,63,.68)}
+  .faculty-watermark{position:absolute;z-index:0;top:5%;right:-2%;width:clamp(220px,25vw,410px);opacity:.035;pointer-events:none;user-select:none}
+  .faculty-laurel{position:absolute;z-index:0;left:-25px;bottom:42px;width:clamp(180px,20vw,330px);opacity:.055;pointer-events:none;user-select:none}
+  .faculty-spark{position:absolute;z-index:1;width:9px;height:9px;background:#C8922B;transform:rotate(45deg);opacity:.62;pointer-events:none}
+  .faculty-spark--one{top:11%;left:7%}.faculty-spark--two{top:14%;right:25%;width:7px;height:7px}.faculty-spark--three{right:6%;bottom:17%;width:8px;height:8px}
+  @media(max-width:1180px){
+    .faculty-section{padding-top:72px}.faculty-shell{max-width:1000px;grid-template-columns:minmax(300px,.9fr) minmax(390px,1.1fr);grid-template-areas:'intro intro' 'portrait profile';gap:46px 58px}.faculty-intro{text-align:center}.faculty-kicker{justify-content:center;margin-bottom:18px}.faculty-title{font-size:clamp(3.2rem,7vw,5rem);line-height:.96}.faculty-title br{display:none}.faculty-title span{display:inline}.faculty-rule{margin:20px auto}.faculty-lede{max-width:620px;margin-inline:auto}.faculty-portrait-stage,.faculty-portrait-frame{max-width:470px}.faculty-arrow--prev{left:-26px}.faculty-arrow--next{right:-26px}.faculty-profile{max-width:420px}.faculty-trust{padding-inline:0}.faculty-trust-item{padding-inline:24px}.faculty-trust-item{grid-template-columns:54px minmax(0,1fr)}.faculty-trust-icon{width:52px;height:52px}
   }
+  @media(max-width:760px){
+    .faculty-section{padding:62px 0 0}.faculty-shell{width:min(calc(100% - 32px),620px);display:flex;flex-direction:column;align-items:stretch;gap:34px}.faculty-intro{text-align:left}.faculty-kicker{justify-content:flex-start;margin-bottom:18px}.faculty-title{font-size:clamp(2.9rem,14vw,4.4rem)}.faculty-title br{display:block}.faculty-title span{display:block}.faculty-rule{margin:22px 0}.faculty-lede{margin:0;max-width:35rem}.faculty-portrait-column{order:2}.faculty-portrait-stage,.faculty-portrait-frame{width:min(82vw,380px)}.faculty-arrow{width:44px;height:44px}.faculty-arrow--prev{left:-19px}.faculty-arrow--next{right:-19px}.faculty-selector{justify-content:flex-start;width:min(100%,430px);padding-inline:18px}.faculty-selector-button{min-width:57px}.faculty-profile{order:3;max-width:none;min-height:350px;text-align:center}.faculty-profile-rule{margin-inline:auto}.faculty-quote{margin-inline:auto}.faculty-cta{width:min(100%,360px)}.faculty-trust{width:min(calc(100% - 32px),620px);margin-top:46px;padding:24px 0;grid-template-columns:1fr}.faculty-trust-item{padding:18px 8px;grid-template-columns:52px minmax(0,1fr)}.faculty-trust-item+.faculty-trust-item{border-left:0;border-top:1px solid rgba(183,126,22,.24)}.faculty-watermark{width:230px;right:-80px}.faculty-laurel{display:none}.faculty-spark--two,.faculty-spark--three{display:none}
+  }
+  @media(prefers-reduced-motion:reduce){.faculty-cta,.faculty-cta svg,.faculty-arrow,.faculty-selector-thumb,.faculty-dot{transition:none!important}}
 `;
 
-const subjectLabel = (subjects: string): string => {
-  const parts: string[] = [];
-  if (/Mathematics\s*\(Yr|Mathematics\s+(Standard|Advanced|Extension)/i.test(subjects)) parts.push('Mathematics');
-  if (/English\s*\(Yr|English\s+(Standard|Advanced|Extension)/i.test(subjects)) parts.push('English');
-  if (/chemistry|biology|science\s*\(yr/i.test(subjects)) parts.push('Science');
-  if (/Business/i.test(subjects)) parts.push('Business');
-  if (/Primary/i.test(subjects)) parts.push('Primary');
-  return parts.slice(0, 2).join(' · ') || 'All subjects';
-};
-
 const TeachersPreview = () => {
-  const featured = FEATURED_IDS
-    .map(id => TUTORS.find(t => t.id === id))
-    .filter(Boolean) as typeof TUTORS;
+  const reduceMotion = useReducedMotion();
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [direction, setDirection] = useState(1);
+  const [isHovered, setIsHovered] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+  const [hasFocus, setHasFocus] = useState(false);
+  const [pageVisible, setPageVisible] = useState(() => typeof document === 'undefined' || document.visibilityState === 'visible');
+  const dragStartX = useRef<number | null>(null);
+  const featured = FEATURED_TUTORS[activeIndex] ?? FEATURED_TUTORS[0] ?? TUTORS[0];
+  const tutorCount = FEATURED_TUTORS.length;
+  const ease = [0.22, 1, 0.36, 1] as const;
+  const selectTutor = useCallback((nextIndex: number, nextDirection?: number) => {
+    if (!tutorCount) return;
+    const normalized = (nextIndex + tutorCount) % tutorCount;
+    setDirection(nextDirection ?? (normalized >= activeIndex ? 1 : -1));
+    setActiveIndex(normalized);
+  }, [activeIndex, tutorCount]);
+  const showPrevious = useCallback(() => selectTutor(activeIndex - 1, -1), [activeIndex, selectTutor]);
+  const showNext = useCallback(() => selectTutor(activeIndex + 1, 1), [activeIndex, selectTutor]);
+
+  useEffect(() => {
+    FEATURED_TUTORS.forEach(teacher => {
+      const image = new Image();
+      image.src = getPhotoUrl(teacher);
+    });
+  }, []);
+
+  useEffect(() => {
+    const handleVisibility = () => setPageVisible(document.visibilityState === 'visible');
+    document.addEventListener('visibilitychange', handleVisibility);
+    return () => document.removeEventListener('visibilitychange', handleVisibility);
+  }, []);
+
+  useEffect(() => {
+    if (reduceMotion || isHovered || isDragging || hasFocus || !pageVisible || tutorCount < 2) return;
+    const timer = window.setTimeout(showNext, 6000);
+    return () => window.clearTimeout(timer);
+  }, [activeIndex, hasFocus, isDragging, isHovered, pageVisible, reduceMotion, showNext, tutorCount]);
+
+  const shortName = (teacher: CatalogueTutor) => teacher.name.replace(/^(Mr|Mrs|Ms)\s+/, '').split(' ')[0];
+  const transitionDuration = reduceMotion ? 0 : 0.6;
+  const reveal = (delay: number, y = 22) => ({
+    initial: reduceMotion ? false : { opacity: 0, y },
+    whileInView: { opacity: 1, y: 0 },
+    viewport: { once: true, amount: 0.25 },
+    transition: { duration: reduceMotion ? 0 : 0.76, delay: reduceMotion ? 0 : delay, ease },
+  });
 
   return (
-    <>
-      <style>{KEYFRAMES}</style>
+    <section id="teachers" className="faculty-section" aria-labelledby="faculty-title">
+      <style>{CSS}</style>
+      <img className="faculty-watermark" src="/images/da-logo.png" alt="" aria-hidden="true" />
+      <img className="faculty-laurel" src="/images/awards/gold-laurel-left.png" alt="" aria-hidden="true" />
+      <span className="faculty-spark faculty-spark--one" aria-hidden="true" />
+      <span className="faculty-spark faculty-spark--two" aria-hidden="true" />
+      <span className="faculty-spark faculty-spark--three" aria-hidden="true" />
 
-      <section
-        id="teachers"
-        className="relative py-20 overflow-hidden"
-        style={{
-          background:
-            'linear-gradient(180deg, #f7f8ff 0%, rgba(10,31,63,0.05) 50%, #f7f8ff 100%)',
-        }}
-      >
-        {/* ── Atmospheric glow blobs ── */}
-        <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
+      <div className="faculty-shell">
+        <motion.header className="faculty-intro" {...reveal(0)}>
+          <p className="faculty-kicker"><span aria-hidden="true">✦</span>{TUTORS.length} Educators · All Subjects</p>
+          <h2 id="faculty-title" className="faculty-title">The People<br />Behind the<br /><span>Results</span></h2>
+          <div className="faculty-rule" aria-hidden="true"><span>◆</span></div>
+          <p className="faculty-lede">Teachers who care as much about who your child is becoming as they do about grades.</p>
+        </motion.header>
+
+        <motion.div
+          className="faculty-portrait-column"
+          initial={reduceMotion ? false : { opacity: 0, scale: 0.98 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true, amount: 0.25 }}
+          transition={{ duration: reduceMotion ? 0 : 0.82, delay: reduceMotion ? 0 : 0.1, ease }}
+        >
           <div
-            style={{
-              position: 'absolute',
-              left: '6%',
-              top: '15%',
-              width: 340,
-              height: 340,
-              background:
-                'radial-gradient(circle, rgba(212,175,55,0.18) 0%, transparent 70%)',
-              filter: 'blur(55px)',
-              borderRadius: '50%',
+            className="faculty-carousel"
+            role="region"
+            aria-roledescription="carousel"
+            aria-label="Featured educators"
+            tabIndex={0}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+            onFocusCapture={() => setHasFocus(true)}
+            onBlurCapture={event => {
+              if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setHasFocus(false);
             }}
-          />
-          <div
-            style={{
-              position: 'absolute',
-              right: '6%',
-              top: '20%',
-              width: 280,
-              height: 280,
-              background:
-                'radial-gradient(circle, rgba(99,102,241,0.13) 0%, transparent 70%)',
-              filter: 'blur(55px)',
-              borderRadius: '50%',
+            onKeyDown={event => {
+              if (event.key === 'ArrowLeft') { event.preventDefault(); showPrevious(); }
+              if (event.key === 'ArrowRight') { event.preventDefault(); showNext(); }
             }}
-          />
-          <div
-            style={{
-              position: 'absolute',
-              left: '43%',
-              bottom: '8%',
-              width: 220,
-              height: 220,
-              background:
-                'radial-gradient(circle, rgba(212,175,55,0.1) 0%, transparent 70%)',
-              filter: 'blur(40px)',
-              borderRadius: '50%',
-            }}
-          />
-        </div>
-
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-
-          {/* ── Section heading ── */}
-          <div className="text-center max-w-3xl mx-auto mb-14">
-
-            {/* Count chip */}
+          >
             <div
-              className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-bold tracking-widest uppercase mb-6"
-              style={{
-                border: '1px solid ' + a(GOLD, '55'),
-                color: GOLD,
-                background: a(NAVY, '08'),
+              className="faculty-portrait-stage"
+              onPointerDown={event => {
+                dragStartX.current = event.clientX;
+                setIsDragging(true);
+                event.currentTarget.setPointerCapture(event.pointerId);
               }}
+              onPointerUp={event => {
+                const distance = dragStartX.current === null ? 0 : event.clientX - dragStartX.current;
+                if (Math.abs(distance) >= 45) distance > 0 ? showPrevious() : showNext();
+                dragStartX.current = null;
+                setIsDragging(false);
+              }}
+              onPointerCancel={() => { dragStartX.current = null; setIsDragging(false); }}
             >
-              ✦ {TUTORS.length} Educators &middot; All Subjects
-            </div>
-
-            <h2 className="text-3xl md:text-4xl font-bold mb-3" style={{ color: NAVY }}>
-              The People Behind{' '}
-              <span
-                style={{
-                  background:
-                    'linear-gradient(135deg, ' + NAVY + ' 0%, ' + GOLD + ' 100%)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  backgroundClip: 'text',
-                }}
-              >
-                the Results
-              </span>
-            </h2>
-
-            {/* Decorative ruled divider */}
-            <div className="flex items-center justify-center gap-3 my-4">
-              <div
-                style={{
-                  height: 1,
-                  width: 52,
-                  background:
-                    'linear-gradient(to right, transparent, ' + a(GOLD, '80') + ')',
-                }}
-              />
-              <span style={{ color: GOLD, fontSize: 13 }}>✦</span>
-              <div
-                style={{
-                  height: 1,
-                  width: 52,
-                  background:
-                    'linear-gradient(to left, transparent, ' + a(GOLD, '80') + ')',
-                }}
-              />
-            </div>
-
-            <p className="text-lg" style={{ color: a(NAVY, 'bb') }}>
-              Teachers who care as much about who your child is becoming as they do about grades.
-            </p>
-          </div>
-
-          {/* ── Teacher cards — aligned to bottom so crown heights read upward ── */}
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-6 mb-14 items-end">
-            {featured.map((teacher, i) => {
-              const cfg = CARD_CFG[i];
-
-              return (
-                <div
-                  key={teacher.id}
-                  style={{
-                    animation:
-                      'teacherFadeUp 0.6s ease-out ' + cfg.delay + ' both',
-                  }}
-                >
-                  <Link
-                    to="/find-teacher"
-                    className="group flex flex-col rounded-2xl overflow-hidden transition-all duration-300 hover:scale-[1.04] hover:shadow-2xl"
-                    style={{
-                      background: NAVY,
-                      boxShadow:
-                        '0 0 0 1px rgba(212,175,55,0.28), 0 14px 44px rgba(10,31,63,0.38)',
-                      transformOrigin: 'bottom center',
-                    }}
+              <button className="faculty-arrow faculty-arrow--prev" type="button" onClick={showPrevious} aria-label="View previous featured tutor"><ChevronLeft aria-hidden="true" /></button>
+              <div className="faculty-portrait-frame" aria-live="polite">
+                <AnimatePresence initial={false} custom={direction} mode="popLayout">
+                  <motion.div
+                    key={featured.id}
+                    className="faculty-portrait-slide"
+                    custom={direction}
+                    initial={reduceMotion ? false : { opacity: 0, x: direction * 30 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={reduceMotion ? { opacity: 0 } : { opacity: 0, x: direction * -30 }}
+                    transition={{ duration: transitionDuration, ease }}
                   >
-                    {/* Photo area */}
-                    <div
-                      className="relative overflow-hidden"
-                      style={{ paddingBottom: cfg.height }}
-                    >
-                      <img
-                        src={getPhotoUrl(teacher)}
-                        alt={teacher.name}
-                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                        style={getPhotoStyle(teacher)}
-                      />
-                      {/* Dark gradient overlay */}
-                      <div
-                        className="absolute inset-0"
-                        style={{
-                          background:
-                            'linear-gradient(to top, ' +
-                            a(NAVY, 'f0') +
-                            ' 0%, ' +
-                            a(NAVY, '55') +
-                            ' 38%, transparent 68%)',
-                        }}
-                      />
-                      {/* Gold radial glow at bottom centre */}
-                      <div
-                        className="absolute inset-0"
-                        style={{
-                          background:
-                            'radial-gradient(ellipse 80% 40% at 50% 100%, rgba(212,175,55,0.22) 0%, transparent 70%)',
-                        }}
-                      />
-                    </div>
+                    <img className="faculty-portrait" src={getPhotoUrl(featured)} alt={`${featured.name}, ${tierLabel(featured.tier)} at DA Tuition`} style={getPhotoStyle(featured)} draggable={false} decoding="async" />
+                  </motion.div>
+                </AnimatePresence>
+              </div>
+              <button className="faculty-arrow faculty-arrow--next" type="button" onClick={showNext} aria-label="View next featured tutor"><ChevronRight aria-hidden="true" /></button>
+            </div>
 
-                    {/* Text body — name first, designation below */}
-                    <div className="p-4 flex flex-col gap-0.5 flex-1">
-
-                      {/* Name — hero text */}
-                      <h3
-                        className="font-bold text-[16px] leading-snug"
-                        style={{ color: '#ffffff' }}
-                      >
-                        {teacher.name}
-                      </h3>
-
-                      {/* Designation — subtitle in gold */}
-                      <p
-                        className="text-[9px] font-bold uppercase tracking-widest leading-tight mt-0.5"
-                        style={{ color: GOLD }}
-                      >
-                        {teacher.designation}
-                      </p>
-
-                      {/* Tagline with sparkle */}
-                      <p
-                        className="text-[10px] leading-relaxed mt-2 line-clamp-2"
-                        style={{ color: 'rgba(255,255,255,0.52)' }}
-                      >
-                        <span style={{ color: GOLD }}>✦</span>{' '}
-                        {teacher.tagline}
-                      </p>
-
-                      {/* Subject label */}
-                      <p
-                        className="text-[10px] mt-auto pt-2 font-semibold tracking-wide"
-                        style={{ color: a(GOLD, '99') }}
-                      >
-                        {subjectLabel(teacher.subjects)}
-                      </p>
-                    </div>
-                  </Link>
-                </div>
-              );
-            })}
+            <div className="faculty-selector" aria-label="Choose a featured educator">
+              {FEATURED_TUTORS.map((teacher, index) => (
+                <button key={teacher.id} className="faculty-selector-button" type="button" aria-label={`Show ${teacher.name}`} aria-current={index === activeIndex} onClick={() => selectTutor(index)}>
+                  <span className="faculty-selector-thumb"><img src={getPhotoUrl(teacher)} alt="" style={getPhotoStyle(teacher)} draggable={false} /></span>
+                  <span>{shortName(teacher)}</span>
+                </button>
+              ))}
+            </div>
+            <div className="faculty-dots" aria-label="Educator slides">
+              {FEATURED_TUTORS.map((teacher, index) => (
+                <button key={teacher.id} className="faculty-dot" type="button" aria-label={`Go to educator ${index + 1} of ${tutorCount}`} aria-current={index === activeIndex} onClick={() => selectTutor(index)} />
+              ))}
+            </div>
           </div>
+        </motion.div>
 
-          {/* ── CTA ── */}
-          <div className="text-center">
-            <Link
-              to="/find-teacher"
-              className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full font-semibold text-sm transition-all duration-200 hover:opacity-90 hover:-translate-y-0.5 hover:shadow-lg"
-              style={{
-                background: NAVY,
-                color: GOLD,
-                boxShadow: '0 4px 18px ' + a(NAVY, '40'),
-              }}
+        <motion.div className="faculty-profile" {...reveal(0.2)}>
+          <AnimatePresence initial={false} mode="popLayout">
+            <motion.div
+              key={featured.id}
+              className="faculty-profile-content"
+              initial={reduceMotion ? false : { opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: -10 }}
+              transition={{ duration: transitionDuration, ease }}
             >
-              Meet All Our Teachers
-              <ArrowRight className="w-4 h-4" />
-            </Link>
-            <p className="mt-3 text-sm" style={{ color: a(NAVY, '80') }}>
-              {TUTORS.length}+ expert educators across all subjects and year levels
-            </p>
-          </div>
+              <p className="faculty-profile-label">Featured Educator</p>
+              <div className="faculty-profile-rule" aria-hidden="true"><span>◆</span></div>
+              <h3 className="faculty-name">{featured.name}</h3>
+              <p className="faculty-role">{tierLabel(featured.tier)}</p>
+              <blockquote className="faculty-quote"><Quote size={20} aria-hidden="true" />{featured.tagline}</blockquote>
+              <Link className="faculty-cta" to="/find-teacher">Meet Our Educators <ArrowRight size={20} aria-hidden="true" /></Link>
+            </motion.div>
+          </AnimatePresence>
+        </motion.div>
+      </div>
 
+      <motion.div className="faculty-trust" {...reveal(0.32, 14)} aria-label="Educator overview">
+        <div className="faculty-trust-item">
+          <span className="faculty-trust-icon" aria-hidden="true"><UsersRound size={27} strokeWidth={1.5} /></span>
+          <span className="faculty-trust-copy"><strong>{TUTORS.length}</strong><span>Expert Educators<br />Across all subjects</span></span>
         </div>
-      </section>
-    </>
+        <div className="faculty-trust-item">
+          <span className="faculty-trust-icon" aria-hidden="true"><GraduationCap size={28} strokeWidth={1.5} /></span>
+          <span className="faculty-trust-copy"><strong>Years 1–12</strong><span>Comprehensive support<br />for every stage</span></span>
+        </div>
+        <div className="faculty-trust-item">
+          <span className="faculty-trust-icon" aria-hidden="true"><BookOpen size={27} strokeWidth={1.5} /></span>
+          <span className="faculty-trust-copy"><strong>All Subjects</strong><span>Expert tuition in every<br />subject area</span></span>
+        </div>
+      </motion.div>
+    </section>
   );
 };
 
