@@ -6,7 +6,7 @@
 
 import React, { useRef, useEffect, useState, useCallback, useLayoutEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { ArrowRight, ChartNoAxesCombined, ChevronDown, Play, ShieldCheck, UsersRound, Volume2, VolumeX, X } from 'lucide-react';
+import { ArrowRight, ChartNoAxesCombined, ChevronDown, Maximize2, Play, ShieldCheck, UsersRound, Volume2, VolumeX, X } from 'lucide-react';
 import { motion, AnimatePresence, useInView, useScroll, useTransform, useSpring, useMotionValueEvent, useReducedMotion, type MotionValue } from 'framer-motion';
 import NavigationNew from '@/components/NavigationNew';
 import FooterNew from '@/components/FooterNew';
@@ -1251,6 +1251,92 @@ const PhilosophyEditorialSection = ({ nextSectionRef }: { nextSectionRef: React.
 };
 
 // ══════════════════════════════════════════════════════════════
+//  OUR / AWARD — one continuous sticky typographic composition
+// ══════════════════════════════════════════════════════════════
+const OurAwardTransition = ({ sectionRef }: { sectionRef: React.RefObject<HTMLDivElement> }) => {
+  const reducedMotion = Boolean(useReducedMotion());
+  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ['start start', 'end end'] });
+  const creamY = useTransform(scrollYProgress, [0, 0.18, 0.52, 0.82, 1], reducedMotion
+    ? ['48%', '48%', '48%', '48%', '48%']
+    : ['100%', '100%', '45%', '0%', '0%']);
+  const ourY = useTransform(scrollYProgress, [0, 0.2, 0.45, 0.7, 0.9], reducedMotion
+    ? ['0vh', '0vh', '0vh', '0vh', '0vh']
+    : ['0vh', '0vh', '-20vh', '-28vh', '-30vh']);
+  const ourOpacity = useTransform(scrollYProgress, [0, 0.2, 0.58, 0.82], reducedMotion
+    ? [0.25, 0.25, 0.25, 0.25]
+    : [0.25, 0.25, 0.17, 0]);
+  const dividerOpacity = useTransform(scrollYProgress, [0.16, 0.28, 0.82, 1], reducedMotion
+    ? [1, 1, 1, 1]
+    : [0, 1, 1, 0.72]);
+  const awardY = useTransform(scrollYProgress, [0, 0.2, 0.52, 0.86, 1], reducedMotion
+    ? ['0vh', '0vh', '0vh', '0vh', '0vh']
+    : ['16vh', '16vh', '-14vh', '0vh', '2vh']);
+  const awardOpacity = useTransform(scrollYProgress, [0.18, 0.32, 0.52, 1], reducedMotion
+    ? [1, 1, 1, 1]
+    : [0, 0.35, 1, 1]);
+  const awardRotate = useTransform(scrollYProgress, [0.88, 0.95, 1], reducedMotion
+    ? ['0deg', '0deg', '0deg']
+    : ['0deg', '-1deg', '1.5deg']);
+  const supportingOpacity = useTransform(scrollYProgress, [0.55, 0.72, 1], reducedMotion
+    ? [1, 1, 1]
+    : [0, 1, 1]);
+
+  return (
+    <div ref={sectionRef} className={`our-award-sequence${reducedMotion ? ' is-reduced' : ''}`} aria-labelledby="our-award-title">
+      <style>{`
+        .our-award-sequence{position:relative;z-index:30;height:200svh;background:${C.navy};overflow:clip;isolation:isolate}
+        .oa-sticky{position:sticky;top:0;height:100svh;min-height:560px;overflow:hidden;background:${C.navy}}
+        .oa-navy-panel{position:absolute;inset:0;background:${C.navy};overflow:hidden}
+        .oa-title{position:absolute;inset:0;margin:0;pointer-events:none;user-select:none}
+        .oa-our{position:absolute;z-index:1;left:50%;top:36%;display:block;width:max-content;font:300 clamp(9rem,30vw,30rem)/.76 ${serif};letter-spacing:-.035em;text-transform:uppercase;color:#dce2ec;white-space:nowrap;will-change:transform,opacity}
+        .oa-navy-star{position:absolute;z-index:2;width:13px;height:13px;color:${C.gold};opacity:.82}
+        .oa-navy-star:before,.oa-navy-star:after{content:'';position:absolute;inset:50% auto auto 50%;background:currentColor;transform:translate(-50%,-50%)}
+        .oa-navy-star:before{width:2px;height:13px}.oa-navy-star:after{width:13px;height:2px}
+        .oa-navy-star--left{left:8%;top:42%}.oa-navy-star--right{right:9%;top:36%;transform:scale(.78)}
+        .oa-cream-panel{position:absolute;z-index:3;inset:0;background:#F5F0E8;box-shadow:0 -1px 0 rgba(212,175,55,.2);overflow:hidden;will-change:transform}
+        .oa-divider{position:absolute;z-index:5;top:clamp(18px,3.2vh,34px);left:50%;display:flex;align-items:center;justify-content:center;gap:clamp(10px,1.5vw,22px);width:min(calc(100% - 32px),900px);transform:translateX(-50%);color:#b4832e;font:500 clamp(.58rem,.85vw,.82rem)/1.45 ${serif};letter-spacing:clamp(.16em,.34vw,.32em);text-align:center;text-transform:uppercase;will-change:opacity}
+        .oa-divider-mark{flex:0 0 auto;font-size:.7em}
+        .oa-award-wrap{position:absolute;inset:0;z-index:3;display:flex;align-items:center;justify-content:center;padding:clamp(54px,8vh,90px) 0 clamp(84px,12vh,128px);will-change:transform,opacity}
+        .oa-award{display:block;width:max-content;font:300 clamp(7rem,24vw,24rem)/.78 ${serif};letter-spacing:-.04em;text-transform:uppercase;color:#b8872f;white-space:nowrap;transform-origin:50% 58%;will-change:transform}
+        .oa-support{position:absolute;z-index:5;left:50%;bottom:clamp(34px,6vh,72px);width:min(calc(100% - 40px),760px);transform:translateX(-50%);text-align:center;color:${C.navy};will-change:opacity}
+        .oa-support-ornament{display:flex;align-items:center;justify-content:center;gap:10px;width:118px;margin:0 auto 18px;color:#b8872f}.oa-support-ornament:before,.oa-support-ornament:after{content:'';height:1px;flex:1;background:currentColor;opacity:.65}.oa-support-ornament span{font-size:.55rem}
+        .oa-support p{margin:0;font:500 clamp(.62rem,.9vw,.86rem)/1.5 ${serif};letter-spacing:clamp(.15em,.34vw,.31em);text-transform:uppercase;text-wrap:balance}
+        .oa-laurel{position:absolute;z-index:1;bottom:-4%;width:clamp(130px,16vw,250px);opacity:.055;pointer-events:none;user-select:none}.oa-laurel--left{left:-4%}.oa-laurel--right{right:-4%;transform:scaleX(-1)}
+        @media(max-width:900px){.our-award-sequence{height:190svh}.oa-our{top:37%;font-size:clamp(8rem,31vw,18rem)}.oa-award{font-size:clamp(6.5rem,24vw,14rem)}.oa-divider{letter-spacing:.18em}.oa-laurel{width:150px;opacity:.04}}
+        @media(max-width:600px){.our-award-sequence{height:185svh}.oa-sticky{min-height:500px}.oa-our{top:38%;font-size:clamp(7.5rem,35vw,12rem)}.oa-award-wrap{padding-top:72px;padding-bottom:112px}.oa-award{font-size:clamp(5.3rem,25vw,8.8rem);letter-spacing:-.035em}.oa-divider{top:14px;gap:7px;width:calc(100% - 20px);font-size:clamp(.58rem,2.4vw,.66rem);line-height:1.35;letter-spacing:.1em}.oa-support{bottom:28px}.oa-support p{font-size:clamp(.58rem,2.4vw,.68rem);letter-spacing:.12em}.oa-laurel{display:none}.oa-navy-star--right{display:none}}
+        @media(prefers-reduced-motion:reduce){.our-award-sequence{height:100svh}.oa-navy-panel{height:48%}.oa-our{top:10%;font-size:clamp(7rem,26vw,18rem)}.oa-cream-panel{top:48%;height:52%;transform:none!important}.oa-divider{top:14px}.oa-award-wrap{padding:52px 0 78px;transform:none!important;opacity:1!important}.oa-award{font-size:clamp(5rem,20vw,13rem);transform:none!important}.oa-support{bottom:20px;opacity:1!important}}
+      `}</style>
+      <div className="oa-sticky">
+        <div className="oa-navy-panel">
+          <h2 id="our-award-title" className="oa-title">
+            <motion.span className="oa-our" style={{ x: '-50%', y: ourY, opacity: ourOpacity }}>Our</motion.span>
+            <span className="sr-only">Award</span>
+          </h2>
+          <span className="oa-navy-star oa-navy-star--left" aria-hidden="true" />
+          <span className="oa-navy-star oa-navy-star--right" aria-hidden="true" />
+        </div>
+        <motion.div className="oa-cream-panel" style={{ y: creamY }}>
+          <motion.div className="oa-divider" style={{ opacity: dividerOpacity }}>
+            <span className="oa-divider-mark" aria-hidden="true">◆</span>
+            <span>Celebrating the educators behind every achievement</span>
+            <span className="oa-divider-mark" aria-hidden="true">◆</span>
+          </motion.div>
+          <motion.div className="oa-award-wrap" style={{ y: awardY, opacity: awardOpacity }}>
+            <motion.span className="oa-award" style={{ rotate: awardRotate }} aria-hidden="true">Award</motion.span>
+          </motion.div>
+          <motion.div className="oa-support" style={{ opacity: supportingOpacity }}>
+            <div className="oa-support-ornament" aria-hidden="true"><span>◆</span></div>
+            <p>Recognising the people who make a difference</p>
+          </motion.div>
+          <img className="oa-laurel oa-laurel--left" src="/images/awards/gold-laurel-left.png" alt="" aria-hidden="true" />
+          <img className="oa-laurel oa-laurel--right" src="/images/awards/gold-laurel-left.png" alt="" aria-hidden="true" />
+        </motion.div>
+      </div>
+    </div>
+  );
+};
+
+// ══════════════════════════════════════════════════════════════
 //  IMPACT & RECOGNITION
 //  Dark navy, premium school prospectus aesthetic.
 //  Left: award display + modal.  Right: 2×2 stats grid.
@@ -1264,11 +1350,10 @@ const ImpactRecognitionSection = () => {
     target: sectionRef,
     offset: ['start end', 'start start'],
   });
-  // One reversible scroll-progress source stages the complete Awards entrance.
-  // Until the section is more than half visible, only the static AWARD remains.
-  const stationaryAwardOpacity = useTransform(awardsEntryProgress, [0, 0.80, 0.95, 1], reducedMotion ? [1, 1, 1, 1] : [1, 1, 0, 0]);
-  const stationaryAwardY = useTransform(awardsEntryProgress, [0, 0.58, 0.90, 1], reducedMotion ? ['0vh', '0vh', '0vh', '0vh'] : ['0vh', '0vh', '20vh', '20vh']);
-  const marqueeAwardOpacity = useTransform(awardsEntryProgress, [0, 0.80, 0.95, 1], reducedMotion ? [0, 0, 0, 0] : [0, 0, 1, 1]);
+  const { scrollYProgress: recognitionProgress } = useScroll({
+    target: sectionRef,
+    offset: ['start end', 'end start'],
+  });
   const mastheadOpacity = useTransform(awardsEntryProgress, [0, 0.58, 0.69, 1], reducedMotion ? [1, 1, 1, 1] : [0, 0, 1, 1]);
   const mastheadY = useTransform(awardsEntryProgress, [0, 0.58, 0.72, 1], reducedMotion ? [0, 0, 0, 0] : [112, 112, 0, 0]);
   const headingOpacity = useTransform(awardsEntryProgress, [0, 0.62, 0.76, 1], reducedMotion ? [1, 1, 1, 1] : [0, 0, 1, 1]);
@@ -1281,16 +1366,15 @@ const ImpactRecognitionSection = () => {
   const captionY = useTransform(awardsEntryProgress, [0, 0.79, 0.94, 1], reducedMotion ? [0, 0, 0, 0] : [72, 72, 0, 0]);
   const decorOpacity = useTransform(awardsEntryProgress, [0, 0.72, 0.91, 1], reducedMotion ? [1, 1, 1, 1] : [0, 0, 1, 1]);
   const decorY = useTransform(awardsEntryProgress, [0, 0.72, 0.92, 1], reducedMotion ? [0, 0, 0, 0] : [52, 52, 0, 0]);
+  const closingHeaderOpacity = useTransform(recognitionProgress, [0.56, 0.78], reducedMotion ? [1, 1] : [1, 0.82]);
+  const closingHeaderY = useTransform(recognitionProgress, [0.56, 0.78], reducedMotion ? [0, 0] : [0, -16]);
+  const awardClosingScale = useTransform(recognitionProgress, [0.55, 0.80], reducedMotion ? [1, 1] : [1, 0.975]);
+  const awardClosingY = useTransform(recognitionProgress, [0.55, 0.80], reducedMotion ? [0, 0] : [0, -8]);
+  const storyPromptOpacity = useTransform(recognitionProgress, [0.52, 0.69], reducedMotion ? [1, 1] : [0, 1]);
+  const storyPromptY = useTransform(recognitionProgress, [0.52, 0.69], reducedMotion ? [0, 0] : [22, 0]);
   const [modalOpen, setModalOpen] = useState(false);
   const [awardDiscFlipped, setAwardDiscFlipped] = useState(false);
-  const [awardsFullScreen, setAwardsFullScreen] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
-  useMotionValueEvent(awardsEntryProgress, 'change', latest => {
-    setAwardsFullScreen(current => {
-      const next = latest >= 0.88;
-      return current === next ? current : next;
-    });
-  });
 
   const handleAwardPointerMove = useCallback((event: React.PointerEvent<HTMLElement>) => {
     if (reducedMotion || event.pointerType !== 'mouse' || !decorLayerRef.current) return;
@@ -1329,7 +1413,7 @@ const ImpactRecognitionSection = () => {
     <>
       <section
         ref={sectionRef}
-        className={`ir-section${awardsFullScreen ? ' is-full-screen' : ''}`}
+        className="ir-section"
         aria-label="Impact and recognition"
         onPointerMove={handleAwardPointerMove}
         onPointerLeave={resetAwardPointer}
@@ -1641,7 +1725,7 @@ const ImpactRecognitionSection = () => {
           }
 
           /* ── Editorial recognition composition ─────────────────────── */
-          .ir-section { --ir-word-area: clamp(260px,34vw,500px); --ir-award-word-lift: clamp(100px,8vw,150px); min-height: 100svh; isolation: isolate; }
+          .ir-section { --ir-word-area: clamp(260px,34vw,500px); --ir-award-word-lift: clamp(100px,8vw,150px); min-height: clamp(980px,135svh,1380px); isolation: isolate; }
           .ir-bg-type { position: absolute; top: 0; left: 0; right: 0; height: var(--ir-word-area); z-index: 0; overflow: hidden; pointer-events: none; user-select: none; }
           .ir-bg-track { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; width: 100%; transform: translateY(calc(0px - var(--ir-award-word-lift))); }
           .ir-bg-track span { display: block; white-space: nowrap; font: 300 clamp(13rem,28vw,34rem)/.78 ${serif}; letter-spacing: -.04em; color: rgba(168,126,52,.095); }
@@ -1661,7 +1745,7 @@ const ImpactRecognitionSection = () => {
           .ir-decor--coin img{animation-name:irCoinFloat;}
           .ir-decor--navy-ribbon { right:-13%;top:24%;width:clamp(210px,21vw,340px);height:clamp(155px,18vw,285px);--parallax-x:20px;--parallax-y:12px;transform:rotate(-12deg);--float-duration:12s; }
           .ir-decor--trophy { right:5%;bottom:-16%;width:clamp(200px,20vw,320px);height:clamp(200px,20vw,320px);--parallax-x:18px;--parallax-y:16px;--float-duration:10s; }
-          .ir-decor--star { right:10%;bottom:23%;width:clamp(48px,5vw,76px);height:clamp(48px,5vw,76px);--float-duration:7s; }
+          .ir-decor--star { right:10%;top:44%;width:clamp(48px,5vw,76px);height:clamp(48px,5vw,76px);--float-duration:7s; }
           .ir-confetti{position:absolute;width:var(--size,34px);height:var(--size,34px);opacity:var(--opacity,.65);transform:rotate(var(--rotation,0deg));filter:drop-shadow(0 6px 7px rgba(93,55,4,.12));}
           .ir-confetti img{width:100%;height:100%;object-fit:contain;animation:irConfettiFloat var(--duration,9s) ease-in-out infinite alternate;}
           .ir-confetti--1{left:3%;top:10%;--size:48px;--rotation:18deg;--duration:7s}.ir-confetti--2{left:12%;top:42%;--size:58px;--rotation:-31deg;--opacity:.38;--duration:11s}.ir-confetti--3{left:5%;bottom:13%;--size:46px;--rotation:62deg;--duration:8s}.ir-confetti--4{left:21%;top:19%;--size:38px;--rotation:105deg;--opacity:.34;--duration:13s}.ir-confetti--5{right:22%;top:12%;--size:44px;--rotation:-52deg;--duration:10s}.ir-confetti--6{right:13%;top:43%;--size:54px;--rotation:36deg;--opacity:.38;--duration:12s}.ir-confetti--7{right:5%;top:53%;--size:42px;--rotation:122deg;--duration:8s}.ir-confetti--8{right:22%;bottom:8%;--size:52px;--rotation:-18deg;--opacity:.34;--duration:14s}.ir-confetti--9{left:34%;bottom:3%;--size:40px;--rotation:78deg;--duration:9s}.ir-confetti--10{right:3%;bottom:35%;--size:36px;--rotation:11deg;--duration:6s}
@@ -1670,7 +1754,7 @@ const ImpactRecognitionSection = () => {
           @keyframes irConfettiFloat{from{transform:translateY(-3px) rotate(-2deg)}to{transform:translateY(6px) rotate(3deg)}}
 
           .ir-old-rule { display: none; }
-          .ir-shell { position: relative !important; z-index: 3; max-width: 1280px !important; padding: clamp(40px,5vh,72px) clamp(24px,5vw,76px) clamp(36px,5vh,70px) !important; }
+          .ir-shell { position: relative !important; z-index: 3; max-width: 1280px !important; min-height:clamp(980px,135svh,1380px); display:flex; flex-direction:column; padding: clamp(40px,5vh,72px) clamp(24px,5vw,76px) clamp(90px,10vw,130px) !important; }
           .ir-header { max-width: 920px !important; margin: 0 auto clamp(42px,5vh,64px) !important; text-align: center; }
           .ir-header-logo{display:block;width:42px;height:42px;object-fit:contain;margin:0 auto 14px;}
           .ir-eyebrow { margin-bottom: 20px !important; font-size: clamp(.8rem,.9vw,.9rem) !important; letter-spacing:.22em !important; }
@@ -1696,11 +1780,18 @@ const ImpactRecognitionSection = () => {
           .ir-thumb-caption-wrap { text-align: center; margin-top: 21px; }
           .ir-thumb-caption-title { font-size: clamp(1.15rem,1.5vw,1.5rem); line-height:1.35; letter-spacing: .1em; text-transform: uppercase; color: rgba(10,27,52,.88); }
           .ir-thumb-caption-sub { font-size: clamp(.9rem,1vw,1.05rem); line-height:1.5; color:rgba(10,27,52,.68); }
+          .ir-closing-prompt{display:flex;flex-direction:column;align-items:center;justify-content:center;width:min(100%,560px);margin:0 auto;padding-top:clamp(100px,10vw,160px);text-align:center;color:${C.navy};will-change:transform,opacity}
+          .ir-closing-rule{display:flex;align-items:center;justify-content:center;gap:12px;width:clamp(96px,10vw,136px);margin-bottom:24px;color:${C.gold}}
+          .ir-closing-rule:before,.ir-closing-rule:after{content:'';height:1px;flex:1;background:currentColor;opacity:.52}
+          .ir-closing-laurel{width:30px;height:30px;object-fit:contain;margin-bottom:18px;filter:sepia(1) saturate(.82);opacity:.76}
+          .ir-closing-copy{margin:0;font:400 clamp(1.35rem,2vw,1.8rem)/1.3 ${serif};letter-spacing:-.01em;color:${C.navy};text-wrap:balance}
+          .ir-closing-arrow{display:grid;place-items:center;width:44px;height:44px;margin-top:24px;color:#ad7d29;font:300 1.3rem/1 ${sans};animation:irClosingArrow 2.8s ease-in-out infinite;will-change:transform}
+          @keyframes irClosingArrow{0%,100%{transform:translate3d(0,-2px,0)}50%{transform:translate3d(0,4px,0)}}
 
           @media (min-width: 1101px) {
             .ir-word-space { display:none; }
-            .ir-section { min-height:calc(100svh - 76px); }
-            .ir-shell { min-height:calc(100svh - 76px);display:flex;flex-direction:column;justify-content:center;padding:clamp(40px,5vh,72px) clamp(32px,4vw,72px) clamp(36px,5vh,70px)!important; }
+            .ir-section { min-height:clamp(980px,135svh,1380px); }
+            .ir-shell { min-height:clamp(980px,135svh,1380px);display:flex;flex-direction:column;justify-content:flex-start;padding:clamp(40px,5vh,72px) clamp(32px,4vw,72px) clamp(90px,10vw,130px)!important; }
             .ir-header { width:100%;margin:0 auto clamp(42px,5vh,64px)!important;max-width:920px!important; }
             .ir-header-logo { width:40px;height:40px;margin-bottom:14px; }
             .ir-heading { margin-bottom:18px!important; }
@@ -1712,7 +1803,7 @@ const ImpactRecognitionSection = () => {
             .ir-thumb-caption-title { margin-bottom:7px; }
           }
           @media (min-width:1101px) and (max-height:920px) {
-            .ir-shell { padding-top:32px!important;padding-bottom:24px!important; }
+            .ir-shell { padding-top:32px!important;padding-bottom:90px!important; }
             .ir-header { margin-bottom:22px!important; }
             .ir-header-logo { width:32px;height:32px;margin-bottom:8px; }
             .ir-eyebrow { margin-bottom:10px!important; }
@@ -1727,8 +1818,8 @@ const ImpactRecognitionSection = () => {
           }
 
           @media (max-width: 900px) {
-            .ir-section { --ir-word-area: clamp(130px,18vw,165px); --ir-award-word-lift: clamp(25px,5vw,50px); min-height: auto; }
-            .ir-shell { padding-top: clamp(40px,5vw,64px) !important; }
+            .ir-section { --ir-word-area: clamp(130px,18vw,165px); --ir-award-word-lift: clamp(25px,5vw,50px); min-height:clamp(900px,122svh,1120px); }
+            .ir-shell { min-height:clamp(900px,122svh,1120px);padding-top:clamp(40px,5vw,64px)!important;padding-bottom:clamp(70px,9vw,100px)!important; }
             .ir-header { max-width:760px!important; }
             .ir-heading { font-size:clamp(2.3rem,5vw,3.6rem)!important; }
             .ir-intro-copy { font-size:clamp(1rem,2vw,1.15rem)!important; }
@@ -1737,10 +1828,11 @@ const ImpactRecognitionSection = () => {
             .ir-award-inner .ir-award-medal{width:100%!important;height:100%!important}
             .ir-thumb-frame { width: clamp(280px,38vw,360px); }
             .ir-decor--coin,.ir-decor--navy-ribbon { transform:scale(.78); }
+            .ir-closing-prompt{padding-top:clamp(80px,10vw,120px)}
           }
           @media (max-width: 600px) {
-            .ir-section { --ir-word-area: clamp(125px,35vw,185px); --ir-award-word-lift: clamp(28px,8vw,48px); }
-            .ir-shell { padding: clamp(28px,8vw,44px) 20px 70px !important; }
+            .ir-section { --ir-word-area: clamp(125px,35vw,185px); --ir-award-word-lift: clamp(28px,8vw,48px); min-height:auto; }
+            .ir-shell { min-height:auto;padding:clamp(28px,8vw,44px) 20px clamp(50px,12vw,80px)!important; }
             .ir-bg-track span { font-size: clamp(6rem,31vw,10rem); }
             .ir-header { margin-bottom: 42px !important; }
             .ir-heading { font-size: clamp(2.25rem,11vw,3.25rem) !important; }
@@ -1754,6 +1846,8 @@ const ImpactRecognitionSection = () => {
             .ir-video-feature { grid-row:2; }.ir-award-proof{grid-row:1}
             .ir-decor--gold-ribbon,.ir-decor--laurel-left,.ir-decor--coin{opacity:.28}.ir-decor--navy-ribbon{right:-28%;opacity:.26}.ir-decor--trophy,.ir-decor--star{display:none}
             .ir-confetti:nth-of-type(even){display:none}
+            .ir-closing-prompt{margin-top:0;padding-top:clamp(60px,14vw,90px)}
+            .ir-closing-rule{margin-bottom:18px}.ir-closing-laurel{width:26px;height:26px;margin-bottom:14px}.ir-closing-copy{font-size:clamp(1.25rem,6vw,1.55rem)}.ir-closing-arrow{margin-top:18px}
           }
           @media (prefers-reduced-motion: reduce) {
             .ir-marquee-track { animation:none!important;transform:translate3d(-8%,0,0);will-change:auto; }
@@ -1766,19 +1860,10 @@ const ImpactRecognitionSection = () => {
             .ir-thumb-frame:hover .ir-thumb-play,.ir-thumb-frame.is-flipped .ir-thumb-play,.ir-thumb-frame:hover .ir-thumb-badge,.ir-thumb-frame.is-flipped .ir-thumb-badge { opacity: 1; }
             .ir-decor { transform: none !important; transition: none !important; }
             .ir-thumb-play { opacity: .9; transform: translate(-50%,-50%); }
+            .ir-closing-arrow{animation:none!important}
           }
         `}</style>
 
-        <motion.div className="ir-bg-type" style={{ opacity: stationaryAwardOpacity, y: stationaryAwardY }} aria-hidden="true">
-          <div className="ir-bg-track"><span>AWARD</span></div>
-        </motion.div>
-        <motion.div className="ir-bg-marquee" style={{ opacity: marqueeAwardOpacity }} aria-hidden="true">
-          <div className="ir-marquee-track">
-            <span className="ir-marquee-group">OUR AWARD&nbsp;&nbsp; OUR AWARD&nbsp;&nbsp; OUR AWARD&nbsp;&nbsp; OUR AWARD&nbsp;&nbsp;</span>
-            <span className="ir-marquee-group">OUR AWARD&nbsp;&nbsp; OUR AWARD&nbsp;&nbsp; OUR AWARD&nbsp;&nbsp; OUR AWARD&nbsp;&nbsp;</span>
-          </div>
-        </motion.div>
-        <div className="ir-word-space" aria-hidden="true" />
         <motion.div ref={decorLayerRef} className="ir-decor-layer" style={{ opacity: decorOpacity, y: decorY }} aria-hidden="true">
           <div className="ir-decor ir-decor--gold-ribbon"><img src="/images/awards/gold-ribbon-left.png" alt="" /></div>
           <div className="ir-decor ir-decor--laurel-left"><img src="/images/awards/gold-laurel-left.png" alt="" /></div>
@@ -1786,7 +1871,7 @@ const ImpactRecognitionSection = () => {
           <div className="ir-decor ir-decor--navy-ribbon"><img src="/images/awards/award-ribbon-navy.png" alt="" /></div>
           <div className="ir-decor ir-decor--trophy"><img src="/images/awards/gold-trophy.png" alt="" /></div>
           <div className="ir-decor ir-decor--star"><img src="/images/awards/gold-star.png" alt="" /></div>
-          {Array.from({ length: 10 }, (_, index) => (
+          {Array.from({ length: 6 }, (_, index) => (
             <div key={index} className={`ir-confetti ir-confetti--${index + 1}`}><img src="/images/awards/gold-confetti.png" alt="" /></div>
           ))}
         </motion.div>
@@ -1803,7 +1888,7 @@ const ImpactRecognitionSection = () => {
         }}>
 
           {/* ── FULL-WIDTH HEADER ───────────────────────────────────────── */}
-          <div className="ir-header" style={{ maxWidth: '760px', marginBottom: 'clamp(48px, 6vw, 80px)' }}>
+          <motion.div className="ir-header" style={{ maxWidth: '760px', marginBottom: 'clamp(48px, 6vw, 80px)', opacity: closingHeaderOpacity, y: closingHeaderY }}>
 
             <motion.div style={{ opacity: mastheadOpacity, y: mastheadY }}>
               <img
@@ -1863,7 +1948,7 @@ const ImpactRecognitionSection = () => {
               in confidence first, then in results. This recognition reflects what those
               families experienced, and what the wider community came to see.
             </motion.p>
-          </div>
+          </motion.div>
 
           {/* ── MEDIA GRID: award image | video thumbnail ────────────────── */}
           <motion.div
@@ -1880,7 +1965,7 @@ const ImpactRecognitionSection = () => {
           >
 
             {/* ── Award image ───────────────────────────────────────────── */}
-            <div className="ir-award-proof">
+            <motion.div className="ir-award-proof" style={{ scale: awardClosingScale, y: awardClosingY }}>
               <div
                 className="ir-award-frame"
                 style={{
@@ -1931,7 +2016,7 @@ const ImpactRecognitionSection = () => {
                   Education Services
                 </p>
               </motion.div>
-            </div>
+            </motion.div>
 
             {/* ── Video thumbnail ───────────────────────────────────────── */}
             <div className="ir-video-feature">
@@ -2016,6 +2101,13 @@ const ImpactRecognitionSection = () => {
               </div>
             </div>
 
+          </motion.div>
+
+          <motion.div className="ir-closing-prompt" style={{ opacity: storyPromptOpacity, y: storyPromptY }}>
+            <div className="ir-closing-rule" aria-hidden="true"><span>◆</span></div>
+            <img className="ir-closing-laurel" src="/images/awards/gold-laurel-left.png" alt="" aria-hidden="true" />
+            <p className="ir-closing-copy">Hear the story behind the award</p>
+            <span className="ir-closing-arrow" aria-hidden="true">↓</span>
           </motion.div>
 
         </div>
@@ -3204,22 +3296,84 @@ const ProgramsSection = () => {
 //  PULL QUOTE
 // ══════════════════════════════════════════════════════════════
 const QuoteSection = () => {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: '-100px' });
+  const ref = useRef<HTMLElement>(null);
+  const reducedMotion = Boolean(useReducedMotion());
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end end'] });
+  const progressScale = useTransform(scrollYProgress, [0, 1], [0, 1]);
+  const ornamentOpacity = useTransform(scrollYProgress, [0, 0.08, 0.15], [0, 0.45, 1]);
+  const ornamentY = useTransform(scrollYProgress, [0, 0.15], [12, 0]);
+  const line1Opacity = useTransform(scrollYProgress, [0.15, 0.35], [0, 1]);
+  const line1Y = useTransform(scrollYProgress, [0.15, 0.35], [30, 0]);
+  const line1Blur = useTransform(scrollYProgress, [0.15, 0.35], ['blur(6px)', 'blur(0px)']);
+  const line2Opacity = useTransform(scrollYProgress, [0.35, 0.55], [0, 1]);
+  const line2Y = useTransform(scrollYProgress, [0.35, 0.55], [30, 0]);
+  const line2Blur = useTransform(scrollYProgress, [0.35, 0.55], ['blur(6px)', 'blur(0px)']);
+  const toppingColour = useTransform(scrollYProgress, [0.48, 0.55], ['rgba(250,250,248,.95)', C.goldL]);
+  const line3Opacity = useTransform(scrollYProgress, [0.55, 0.75], [0, 1]);
+  const line3Y = useTransform(scrollYProgress, [0.55, 0.75], [30, 0]);
+  const line3Blur = useTransform(scrollYProgress, [0.55, 0.75], ['blur(6px)', 'blur(0px)']);
+  const line4Opacity = useTransform(scrollYProgress, [0.75, 0.9], [0, 1]);
+  const line4Y = useTransform(scrollYProgress, [0.75, 0.9], [30, 0]);
+  const line4Blur = useTransform(scrollYProgress, [0.75, 0.9], ['blur(6px)', 'blur(0px)']);
+  const confidenceColour = useTransform(scrollYProgress, [0.84, 0.9], ['rgba(250,250,248,.95)', '#FFFDF5']);
+  const attributionOpacity = useTransform(scrollYProgress, [0.9, 0.96], [0, 1]);
+  const attributionY = useTransform(scrollYProgress, [0.9, 0.96], [16, 0]);
+
+  if (reducedMotion) {
+    return (
+      <section className="quote-static" style={{ background: C.navy, padding: '120px 24px', textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
+        <style>{`.quote-static .quote-review-line{display:block}.quote-static .quote-emphasis{color:${C.goldL}}`}</style>
+        <div style={{ position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', width: '1px', height: '80px', background: `linear-gradient(180deg,transparent,${C.gold})` }} />
+        <div style={{ position: 'absolute', bottom: 0, left: '50%', transform: 'translateX(-50%)', width: '1px', height: '80px', background: `linear-gradient(180deg,${C.gold},transparent)` }} />
+        <div style={{ maxWidth: '800px', margin: '0 auto' }}>
+          <div style={{ fontFamily: serif, fontSize: '4rem', color: 'rgba(212,175,55,.3)', lineHeight: 1, marginBottom: '16px' }}>❝</div>
+          <p style={{ margin: 0, fontFamily: serif, fontStyle: 'italic', fontWeight: 300, fontSize: 'clamp(1.8rem,4vw,3rem)', lineHeight: 1.44, color: C.white, letterSpacing: '.01em' }}>
+            <span className="quote-review-line">My daughter went from dreading maths to</span>
+            <span className="quote-review-line"><span className="quote-emphasis">topping her class.</span></span>
+            <span className="quote-review-line">DA Tuition didn't just improve her grades —</span>
+            <span className="quote-review-line">they <span style={{ color: '#FFFDF5' }}>gave her back her confidence.</span></span>
+          </p>
+          <div style={{ width: '40px', height: '1px', background: C.gold, margin: '32px auto 18px' }} />
+          <p style={{ margin: 0, fontFamily: sans, fontSize: '.74rem', letterSpacing: '.14em', textTransform: 'uppercase', color: 'rgba(212,175,55,.80)', fontWeight: 600 }}>Parent of Year 10 Student · Google Review · ★★★★★</p>
+        </div>
+      </section>
+    );
+  }
+
   return (
-    <section ref={ref} style={{ background: C.navy, padding: '120px 24px', textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
-      <div style={{ position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', width: '1px', height: '80px', background: `linear-gradient(180deg,transparent,${C.gold})` }} />
-      <div style={{ position: 'absolute', bottom: 0, left: '50%', transform: 'translateX(-50%)', width: '1px', height: '80px', background: `linear-gradient(180deg,${C.gold},transparent)` }} />
-      <motion.div variants={stagger} initial="hidden" animate={inView ? 'visible' : 'hidden'} style={{ maxWidth: '800px', margin: '0 auto' }}>
-        <motion.div variants={fadeUp} style={{ fontFamily: serif, fontSize: '4rem', color: 'rgba(212,175,55,.3)', lineHeight: 1, marginBottom: '16px' }}>❝</motion.div>
-        <motion.p variants={fadeUp} style={{ fontFamily: serif, fontStyle: 'italic', fontWeight: 300, fontSize: 'clamp(1.8rem,4vw,3rem)', lineHeight: 1.44, color: C.white, letterSpacing: '.01em' }}>
-          My daughter went from dreading maths to topping her class. DA Tuition didn't just improve her grades ”” they gave her back her confidence.
-        </motion.p>
-        <motion.div variants={fadeUp} style={{ width: '40px', height: '1px', background: C.gold, margin: '32px auto 18px' }} />
-        <motion.p variants={fadeUp} style={{ fontFamily: sans, fontSize: '.74rem', letterSpacing: '.14em', textTransform: 'uppercase', color: 'rgba(212,175,55,.80)', fontWeight: 600 }}>
-          Parent of Year 10 Student ”” Google Review, 5 Stars
-        </motion.p>
-      </motion.div>
+    <section ref={ref} className="quote-scroll" aria-label="Parent testimonial">
+      <style>{`
+        .quote-scroll{position:relative;height:180svh;background:${C.navy};color:${C.white}}
+        .quote-sticky{position:sticky;top:0;height:100svh;min-height:560px;display:grid;place-items:center;overflow:hidden;padding:clamp(88px,12vh,120px) 24px;text-align:center;background:${C.navy}}
+        .quote-progress{position:absolute;z-index:3;top:0;left:0;width:100%;height:1px;background:${C.gold};opacity:.55;transform-origin:left center;will-change:transform}
+        .quote-line-top,.quote-line-bottom{position:absolute;left:50%;width:1px;height:80px;transform:translateX(-50%);pointer-events:none}.quote-line-top{top:0;background:linear-gradient(180deg,transparent,${C.gold})}.quote-line-bottom{bottom:0;background:linear-gradient(180deg,${C.gold},transparent)}
+        .quote-reading{width:100%;max-width:800px;margin:0 auto}
+        .quote-mark{font:400 4rem/1 ${serif};color:rgba(212,175,55,.3);margin-bottom:16px;will-change:transform,opacity}
+        .quote-review{margin:0;font:italic 300 clamp(1.8rem,4vw,3rem)/1.44 ${serif};letter-spacing:.01em;color:${C.white}}
+        .quote-review-line{display:block;will-change:transform,opacity,filter}
+        .quote-attribution-rule{width:40px;height:1px;margin:32px auto 18px;background:${C.gold}}
+        .quote-attribution{margin:0;font:600 .74rem/1.65 ${sans};letter-spacing:.14em;text-transform:uppercase;color:rgba(212,175,55,.8);will-change:transform,opacity}
+        .quote-attribution span{display:inline-block}.quote-attribution span+span:before{content:' · ';padding-inline:.32em}
+        @media(max-width:760px){.quote-scroll{height:170svh}.quote-sticky{min-height:500px;padding:74px 20px}.quote-mark{font-size:3.25rem;margin-bottom:12px}.quote-review{font-size:clamp(1.55rem,7.2vw,2.2rem);line-height:1.38}.quote-review-line{transform-origin:center}.quote-attribution{font-size:.66rem;line-height:1.7;letter-spacing:.1em}.quote-attribution span{display:block}.quote-attribution span+span:before{content:'';padding:0}}
+      `}</style>
+      <div className="quote-sticky">
+        <motion.div className="quote-progress" style={{ scaleX: progressScale }} aria-hidden="true" />
+        <motion.div className="quote-line-top" style={{ opacity: ornamentOpacity }} aria-hidden="true" />
+        <motion.div className="quote-line-bottom" style={{ opacity: attributionOpacity }} aria-hidden="true" />
+        <div className="quote-reading">
+          <motion.div className="quote-mark" style={{ opacity: ornamentOpacity, y: ornamentY }} aria-hidden="true">❝</motion.div>
+          <p className="quote-review">
+            <motion.span className="quote-review-line" style={{ opacity: line1Opacity, y: line1Y, filter: line1Blur }}>My daughter went from dreading maths to</motion.span>
+            <motion.span className="quote-review-line" style={{ opacity: line2Opacity, y: line2Y, filter: line2Blur }}><motion.span style={{ color: toppingColour }}>topping her class.</motion.span></motion.span>
+            <motion.span className="quote-review-line" style={{ opacity: line3Opacity, y: line3Y, filter: line3Blur }}>DA Tuition didn't just improve her grades —</motion.span>
+            <motion.span className="quote-review-line" style={{ opacity: line4Opacity, y: line4Y, filter: line4Blur }}>they <motion.span style={{ color: confidenceColour }}>gave her back her confidence.</motion.span></motion.span>
+          </p>
+          <motion.div style={{ opacity: attributionOpacity, y: attributionY }}>
+            <div className="quote-attribution-rule" aria-hidden="true" />
+            <p className="quote-attribution"><span>Parent of Year 10 Student</span><span>Google Review</span><span aria-label="5 stars">★★★★★</span></p>
+          </motion.div>
+        </div>
+      </div>
     </section>
   );
 };
@@ -3663,8 +3817,14 @@ const WellbeingSection = () => {
 const DAEnvironmentSection = () => {
   const outerRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const dismissedRef = useRef(false);
+  const resumeAfterVisibilityRef = useRef(false);
+  const resumeAfterDismissRef = useRef(false);
   const [isSimple, setIsSimple] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
+  const [isFloating, setIsFloating] = useState(false);
+  const [floatingDismissed, setFloatingDismissed] = useState(false);
+  const reducedMotion = Boolean(useReducedMotion());
 
   const toggleVideoAudio = () => {
     const nextMuted = !isMuted;
@@ -3688,14 +3848,60 @@ const DAEnvironmentSection = () => {
     const obs = new IntersectionObserver(
       ([e]) => {
         if (!videoRef.current) return;
-        e.isIntersecting ? videoRef.current.play().catch(() => {}) : videoRef.current.pause();
+        const passedSection = !e.isIntersecting && e.boundingClientRect.bottom <= 0;
+        const enableFloating = passedSection && window.innerWidth >= 380 && !dismissedRef.current;
+
+        if (e.isIntersecting) {
+          dismissedRef.current = false;
+          setFloatingDismissed(false);
+          setIsFloating(false);
+          if (resumeAfterDismissRef.current || videoRef.current.paused) {
+            videoRef.current.play().catch(() => {});
+          }
+          resumeAfterDismissRef.current = false;
+        } else if (enableFloating) {
+          setIsFloating(true);
+        } else if (!passedSection) {
+          setIsFloating(false);
+          videoRef.current.pause();
+        }
       },
-      { threshold: 0.05 }
+      { threshold: 0 }
     );
     const el = outerRef.current;
     if (el) obs.observe(el);
     return () => obs.disconnect();
   }, []);
+
+  useEffect(() => {
+    const handleVisibility = () => {
+      const video = videoRef.current;
+      if (!video) return;
+      if (document.hidden) {
+        resumeAfterVisibilityRef.current = !video.paused;
+        video.pause();
+      } else if (resumeAfterVisibilityRef.current) {
+        video.play().catch(() => {});
+        resumeAfterVisibilityRef.current = false;
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibility);
+    return () => document.removeEventListener('visibilitychange', handleVisibility);
+  }, []);
+
+  const closeFloatingVideo = () => {
+    const video = videoRef.current;
+    resumeAfterDismissRef.current = Boolean(video && !video.paused);
+    video?.pause();
+    dismissedRef.current = true;
+    setFloatingDismissed(true);
+    setIsFloating(false);
+  };
+
+  const returnToFullVideo = () => {
+    setIsFloating(false);
+    outerRef.current?.scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth', block: 'start' });
+  };
 
   // ── Scroll tracking ──────────────────────────────────────────
   // 260vh outer = 160vh of sticky travel.
@@ -3768,7 +3974,21 @@ const DAEnvironmentSection = () => {
       transition:background 220ms ease,border-color 220ms ease,transform 220ms cubic-bezier(.22,1,.36,1); }
     .da-audio-toggle:hover { background:rgba(6,17,31,.9);border-color:rgba(212,175,55,.8);transform:translateY(-2px); }
     .da-audio-toggle:focus-visible { outline:3px solid rgba(240,200,106,.72);outline-offset:3px; }
-    @media(prefers-reduced-motion:reduce){.da-audio-toggle{transition:none}.da-audio-toggle:hover{transform:none}}
+    .da-video-wrapper{will-change:transform,border-radius;isolation:isolate}
+    .da-video-wrapper.is-floating{position:fixed!important;inset:auto clamp(28px,2.2vw,32px) clamp(164px,12vw,172px) auto!important;width:clamp(320px,27vw,380px)!important;height:auto!important;aspect-ratio:16/9;z-index:65!important;border-radius:16px!important;border:1px solid rgba(240,200,106,.42);background:#06111f;box-shadow:0 12px 28px rgba(2,12,27,.28)!important;filter:none!important;opacity:1!important;transform-origin:center!important}
+    .da-floating-header{position:absolute;z-index:20;inset:0 0 auto;height:48px;display:flex;align-items:center;justify-content:space-between;padding:8px 9px 13px 14px;background:linear-gradient(180deg,rgba(4,14,29,.88),rgba(4,14,29,.52) 64%,transparent);opacity:0;transition:opacity .25s ease;pointer-events:none}
+    .da-video-wrapper.is-floating:hover .da-floating-header,.da-video-wrapper.is-floating:focus-within .da-floating-header{opacity:1}
+    .da-floating-label{font:700 .58rem/1 ${sans};letter-spacing:.16em;text-transform:uppercase;color:rgba(255,250,240,.86)}
+    .da-floating-actions{display:flex;gap:5px;pointer-events:auto}
+    .da-floating-control{width:31px;height:31px;display:grid;place-items:center;padding:0;border:1px solid rgba(255,250,240,.28);border-radius:50%;background:rgba(6,17,31,.72);color:#fff;cursor:pointer;transition:background .2s ease,border-color .2s ease,transform .2s ease}
+    .da-floating-control:hover{background:rgba(6,17,31,.94);border-color:rgba(240,200,106,.7);transform:translateY(-1px)}
+    .da-floating-control:focus-visible{outline:3px solid rgba(240,200,106,.65);outline-offset:2px}
+    .da-video-wrapper.is-floating .da-audio-toggle{display:none}
+    .da-video-wrapper.is-floating .da-video-overlay{opacity:.08!important}
+    .da-video-wrapper.is-dismissed{visibility:hidden;pointer-events:none}
+    @media(max-width:767px){.da-video-wrapper.is-floating{right:16px!important;bottom:calc(176px + env(safe-area-inset-bottom))!important;width:min(82vw,320px)!important}.da-floating-header{opacity:.92}}
+    @media(max-width:379px){.da-video-wrapper.is-floating{display:none!important}}
+    @media(prefers-reduced-motion:reduce){.da-audio-toggle,.da-floating-header,.da-floating-control{transition:none}.da-audio-toggle:hover,.da-floating-control:hover{transform:none}}
   `;
 
   // ── MOBILE: stacked, no scroll animation ─────────────────────
@@ -3789,14 +4009,29 @@ const DAEnvironmentSection = () => {
           </p>
           <button className="da-ebtn">DISCOVER OUR ENVIRONMENT →</button>
         </div>
-        <div style={{ position: 'relative', overflow: 'hidden' }}>
-          <video ref={videoRef} autoPlay muted={isMuted} loop playsInline src="/images/homepage/homepage-cream/0706.mp4"
-            style={{ width: '100%', display: 'block', aspectRatio: '16/9', objectFit: 'cover' }} />
-          <div style={{ position: 'absolute', inset: 0, background: 'rgba(4,10,24,0.28)' }} />
-          <button className="da-audio-toggle" type="button" onClick={toggleVideoAudio} aria-pressed={!isMuted} aria-label={isMuted ? 'Turn video sound on' : 'Mute video'}>
-            {isMuted ? <VolumeX size={18} aria-hidden="true" /> : <Volume2 size={18} aria-hidden="true" />}
-            <span>{isMuted ? 'Sound on' : 'Mute'}</span>
-          </button>
+        <div style={{ position: 'relative', aspectRatio: '16/9', overflow: 'visible' }}>
+          <motion.div
+            layout
+            className={`da-video-wrapper${isFloating ? ' is-floating' : ''}${floatingDismissed ? ' is-dismissed' : ''}`}
+            transition={{ layout: { duration: reducedMotion ? 0 : 0.55, ease: [0.22, 1, 0.36, 1] } }}
+            style={isFloating ? undefined : { position: 'absolute', inset: 0, overflow: 'hidden' }}
+          >
+            <video ref={videoRef} autoPlay muted={isMuted} loop playsInline src="/images/homepage/homepage-cream/0706.mp4"
+              style={{ width: '100%', height: '100%', display: 'block', objectFit: 'cover' }} />
+            <div className="da-video-overlay" style={{ position: 'absolute', inset: 0, background: 'rgba(4,10,24,0.28)', pointerEvents: 'none' }} />
+            <div className="da-floating-header">
+              <span className="da-floating-label">DA Story</span>
+              <span className="da-floating-actions">
+                <button className="da-floating-control" type="button" onClick={toggleVideoAudio} aria-label={isMuted ? 'Unmute floating video' : 'Mute floating video'}>{isMuted ? <VolumeX size={15} aria-hidden="true" /> : <Volume2 size={15} aria-hidden="true" />}</button>
+                <button className="da-floating-control" type="button" onClick={returnToFullVideo} aria-label="Return to full video"><Maximize2 size={15} aria-hidden="true" /></button>
+                <button className="da-floating-control" type="button" onClick={closeFloatingVideo} aria-label="Close floating video"><X size={15} aria-hidden="true" /></button>
+              </span>
+            </div>
+            <button className="da-audio-toggle" type="button" onClick={toggleVideoAudio} aria-pressed={!isMuted} aria-label={isMuted ? 'Turn video sound on' : 'Mute video'}>
+              {isMuted ? <VolumeX size={18} aria-hidden="true" /> : <Volume2 size={18} aria-hidden="true" />}
+              <span>{isMuted ? 'Sound on' : 'Mute'}</span>
+            </button>
+          </motion.div>
         </div>
       </div>
     );
@@ -3826,24 +4061,36 @@ const DAEnvironmentSection = () => {
         {/* position:absolute; inset:0 → always exactly 100vw × 100vh  */}
         {/* scale grows from 0.40 → 1.0; transformOrigin near bottom   */}
         {/* means it expands upward from lower-centre of screen         */}
-        <motion.div style={{
-          position: 'absolute', inset: 0,
-          scale: cardScale,
-          opacity: cardOp,
-          filter: cardFi,
-          borderRadius: cardRadS,
-          overflow: 'hidden',
-          transformOrigin: 'center 82%',
-          zIndex: 5,
-          boxShadow: '0 24px 72px rgba(0,0,0,0.55)',
-        }}>
+        <motion.div
+          layout
+          className={`da-video-wrapper${isFloating ? ' is-floating' : ''}${floatingDismissed ? ' is-dismissed' : ''}`}
+          transition={{ layout: { duration: reducedMotion ? 0 : 0.55, ease: [0.22, 1, 0.36, 1] } }}
+          style={isFloating ? undefined : {
+            position: 'absolute', inset: 0,
+            scale: cardScale,
+            opacity: cardOp,
+            filter: cardFi,
+            borderRadius: cardRadS,
+            overflow: 'hidden',
+            transformOrigin: 'center 82%',
+            zIndex: 5,
+            boxShadow: '0 24px 72px rgba(0,0,0,0.55)',
+          }}>
           <video ref={videoRef} autoPlay muted={isMuted} loop playsInline src="/images/homepage/homepage-cream/0706.mp4"
             style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-          <motion.div style={{
+          <motion.div className="da-video-overlay" style={{
             position: 'absolute', inset: 0,
             background: 'rgba(4,10,24,0.28)',
             opacity: overlayOp, pointerEvents: 'none',
           }} />
+          <div className="da-floating-header">
+            <span className="da-floating-label">DA Story</span>
+            <span className="da-floating-actions">
+              <button className="da-floating-control" type="button" onClick={toggleVideoAudio} aria-label={isMuted ? 'Unmute floating video' : 'Mute floating video'}>{isMuted ? <VolumeX size={15} aria-hidden="true" /> : <Volume2 size={15} aria-hidden="true" />}</button>
+              <button className="da-floating-control" type="button" onClick={returnToFullVideo} aria-label="Return to full video"><Maximize2 size={15} aria-hidden="true" /></button>
+              <button className="da-floating-control" type="button" onClick={closeFloatingVideo} aria-label="Close floating video"><X size={15} aria-hidden="true" /></button>
+            </span>
+          </div>
           <button className="da-audio-toggle" type="button" onClick={toggleVideoAudio} aria-pressed={!isMuted} aria-label={isMuted ? 'Turn video sound on' : 'Mute video'}>
             {isMuted ? <VolumeX size={18} aria-hidden="true" /> : <Volume2 size={18} aria-hidden="true" />}
             <span>{isMuted ? 'Sound on' : 'Mute'}</span>
@@ -6850,37 +7097,25 @@ const Index = () => {
             background: ${C.navy};
             box-shadow: 0 -12px 30px rgba(13,35,68,.06);
           }
-          .philosophy-next-pullup {
-            position: relative;
-            z-index: 30;
-            width: 100%;
-            margin-top: -100svh;
-            overflow: clip;
-            background: #F5F0E8;
-          }
           @media (min-width: 768px) and (max-width: 1024px) {
             .hero-philosophy-pullup { margin-top: -95svh; }
-            .philosophy-next-pullup { margin-top: -80svh; }
           }
           @media (max-width: 767px) {
             .hero-philosophy-pullup { margin-top: -80svh; }
-            .philosophy-next-pullup { margin-top: -65svh; }
           }
           @media (prefers-reduced-motion: reduce) {
             .hero-philosophy-pullup {
               margin-top: 0;
               box-shadow: none;
             }
-            .philosophy-next-pullup { margin-top: 0; }
           }
         `}</style>
         <div className="hero-philosophy-pullup">
           <MarqueeStrip />
           <PhilosophyEditorialSection nextSectionRef={philosophyNextSectionRef} />
         </div>
-        <div ref={philosophyNextSectionRef} className="philosophy-next-pullup">
-          <ImpactRecognitionSection />
-        </div>
+        <OurAwardTransition sectionRef={philosophyNextSectionRef} />
+        <ImpactRecognitionSection />
       </div>
       <AchievementsSection />
       <ProgramsSection />
