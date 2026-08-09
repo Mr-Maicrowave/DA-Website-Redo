@@ -308,6 +308,36 @@
   }
   .preview-thumb:hover::after,.preview-thumb:focus-visible::after{opacity:1}
   .sample-note{font-size:13px;color:#69748a;line-height:1.5;margin:0}
+  .path-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:26px;align-items:start}
+  .path-card{
+    position:relative;background:#fff;border-radius:26px;padding:30px 26px 28px;
+    box-shadow:0 18px 44px rgba(7,22,41,.1);border:1px solid rgba(7,22,41,.06);overflow:hidden
+  }
+  .path-card-photo{
+    position:absolute;top:-16px;right:-14px;width:132px;height:132px;overflow:hidden;
+    border-radius:38% 62% 58% 42%/48% 42% 58% 52%;box-shadow:0 12px 26px rgba(7,22,41,.16)
+  }
+  .path-card-photo img{width:100%;height:100%;object-fit:cover;filter:grayscale(1) contrast(1.02)}
+  .path-card-icon{
+    display:flex;align-items:center;justify-content:center;width:46px;height:46px;border-radius:50%;
+    background:var(--pc-tint);color:var(--pc-color);margin-bottom:18px
+  }
+  .path-card-icon svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+  .path-card-years{display:block;font-size:11.5px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--pc-color);margin-bottom:10px}
+  .path-card h3{font-family:"Playfair Display",Georgia,serif;font-size:21px;line-height:1.22;color:var(--navy);margin:0 0 16px;max-width:78%}
+  .path-card-list{display:grid;gap:9px;margin:0;padding:0;list-style:none}
+  .path-card-list li{display:flex;align-items:flex-start;gap:9px;color:#4b5568;font-size:13.5px;line-height:1.4}
+  .path-card-list li::before{content:"";flex:0 0 auto;width:8px;height:8px;margin-top:5px;border-radius:50%;background:var(--pc-color)}
+  .path-card--violet{--pc-color:#7C5CBF;--pc-tint:#F1ECFB}
+  .path-card--teal{--pc-color:#0E9E77;--pc-tint:#E7F7F1}
+  .path-card--coral{--pc-color:#E85D3D;--pc-tint:#FDECE7}
+  @media (max-width:900px){
+    .path-cards{grid-template-columns:1fr 1fr;gap:20px}
+  }
+  @media (max-width:640px){
+    .path-cards{grid-template-columns:1fr}
+    .path-card h3{max-width:70%}
+  }
 
   .classes{
     --c-navy:#061A34;--c-navy2:#0B294D;--c-gold:#D3A62C;--c-cream:#FFF9EF;--c-soft:#F8F4EC;
@@ -555,93 +585,45 @@
   <section class="year-map">
     <div class="section-inner">
       <div class="section-head">
-        <h2 class="serif">One English pathway, not three hidden tabs</h2>
-        <p>This layout makes Years 7-8, Years 9-10, and Years 11-12 visible together, so families can immediately understand how DA builds skills over time.</p>
+        <h2 class="serif">A Clear English Journey,<br>From Foundations to HSC</h2>
       </div>
-      <div class="year-map-grid">
-        <div class="year-row">
-          <article class="year-panel">
-            <div class="year-media">
-              <img src="images/subjects/english/support-24-7.jpeg" alt="">
-              <div class="year-badge">Years 7-8</div>
-            </div>
-            <div class="year-content">
-              <div class="year-copy">
-                <h3>Building High School English Skills</h3>
-                <p>Students begin learning the core skills of high school English: analysing texts, structuring paragraphs, using evidence, and developing stronger written expression.</p>
-                <ul class="skill-list">
-                  <li>TEEL paragraph structure</li>
-                  <li>Text analysis and evidence use</li>
-                  <li>Creative writing foundations</li>
-                  <li>Assessment preparation</li>
-                </ul>
-              </div>
-            </div>
-          </article>
-          <aside class="sample-stack">
-            <h4>Sample booklet preview</h4>
-            <div class="sample-thumb-row">
-              <button class="preview-thumb" type="button" data-preview-group="y78" data-preview-index="0"><img src="samples/flash_y78_page_1.png" alt="Year 7-8 booklet cover"></button>
-            </div>
-            <p class="sample-note">Click the cover to open the full booklet preview.</p>
-          </aside>
-        </div>
-
-        <div class="year-row">
-          <article class="year-panel">
-            <div class="year-media">
-              <img src="images/subjects/english/structured-classroom-cr3.jpeg" alt="">
-              <div class="year-badge">Years 9-10</div>
-            </div>
-            <div class="year-content">
-              <div class="year-copy">
-                <h3>Strengthening Analysis and Assessment Confidence</h3>
-                <p>Students move from basic responses to stronger, more sophisticated analysis: building arguments, integrating evidence, and writing clearly under exam conditions.</p>
-                <ul class="skill-list">
-                  <li>Essay writing and paragraph flow</li>
-                  <li>Deeper analysis of techniques and meaning</li>
-                  <li>Timed writing confidence</li>
-                  <li>Preparation for senior English expectations</li>
-                </ul>
-              </div>
-            </div>
-          </article>
-          <aside class="sample-stack">
-            <h4>Sample booklet preview</h4>
-            <div class="sample-thumb-row">
-              <button class="preview-thumb" type="button" data-preview-group="y910" data-preview-index="0"><img src="samples/lear_page_1.png" alt="Year 9-10 booklet cover"></button>
-            </div>
-            <p class="sample-note">Click the cover to open the full booklet preview.</p>
-          </aside>
-        </div>
-
-        <div class="year-row">
-          <article class="year-panel">
-            <div class="year-media">
-              <img src="images/subjects/english/feedback-tutor.jpeg" alt="">
-              <div class="year-badge">Years 11-12</div>
-            </div>
-            <div class="year-content">
-              <div class="year-copy">
-                <h3>Senior English and HSC Preparation</h3>
-                <p>Students learn how to think critically, write with purpose, read rubrics closely, and develop responses that are clear, insightful, and adaptable.</p>
-                <ul class="skill-list">
-                  <li>HSC essay preparation</li>
-                  <li>Module-based text analysis</li>
-                  <li>Draft feedback and editing</li>
-                  <li>Trial and HSC exam preparation</li>
-                </ul>
-              </div>
-            </div>
-          </article>
-          <aside class="sample-stack">
-            <h4>Sample feedback preview</h4>
-            <div class="sample-thumb-row">
-              <button class="preview-thumb" type="button" data-preview-group="feedback" data-preview-index="0"><img src="samples/essay_page_1.png" alt="Senior feedback sample page one"></button>
-            </div>
-            <p class="sample-note">Click the sample to see the marked feedback pages.</p>
-          </aside>
-        </div>
+      <div class="path-cards">
+        <article class="path-card path-card--violet">
+          <div class="path-card-photo"><img src="images/subjects/english/support-24-7.jpeg" alt=""></div>
+          <span class="path-card-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 6.2c-2-1.5-5-2-8-1v13c3-1 6-.5 8 1 2-1.5 5-2 8-1v-13c-3-1-6-.5-8 1Z"></path><path d="M12 6.2v13"></path></svg></span>
+          <span class="path-card-years">Years 7-8</span>
+          <h3>Building High School English Skills</h3>
+          <ul class="path-card-list">
+            <li>TEEL paragraph structure</li>
+            <li>Text analysis and evidence use</li>
+            <li>Creative writing foundations</li>
+            <li>Assessment preparation</li>
+          </ul>
+        </article>
+        <article class="path-card path-card--teal">
+          <div class="path-card-photo"><img src="images/subjects/english/structured-classroom-cr3.jpeg" alt=""></div>
+          <span class="path-card-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"></circle><circle cx="12" cy="12" r="4.4"></circle><circle cx="12" cy="12" r="1"></circle></svg></span>
+          <span class="path-card-years">Years 9-10</span>
+          <h3>Strengthening Analysis and Assessment Confidence</h3>
+          <ul class="path-card-list">
+            <li>Essay writing and paragraph flow</li>
+            <li>Deeper analysis of techniques and meaning</li>
+            <li>Timed writing confidence</li>
+            <li>Preparation for senior English expectations</li>
+          </ul>
+        </article>
+        <article class="path-card path-card--coral">
+          <div class="path-card-photo"><img src="images/subjects/english/feedback-tutor.jpeg" alt=""></div>
+          <span class="path-card-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 4 2 9l10 5 10-5-10-5Z"></path><path d="M6 11.5V16c0 1.7 2.7 3 6 3s6-1.3 6-3v-4.5"></path><path d="M22 9v6"></path></svg></span>
+          <span class="path-card-years">Years 11-12</span>
+          <h3>Senior English and HSC Preparation</h3>
+          <ul class="path-card-list">
+            <li>HSC essay preparation</li>
+            <li>Module-based text analysis</li>
+            <li>Draft feedback and editing</li>
+            <li>Trial and HSC exam preparation</li>
+          </ul>
+        </article>
       </div>
     </div>
   </section>
