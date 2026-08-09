@@ -1,11 +1,11 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import NavigationNew from '@/components/NavigationNew';
 import FooterNew from '@/components/FooterNew';
+import SubjectHero from '@/components/subjects/SubjectHero';
 import { Button } from '@/components/ui/button';
 import {
   ArrowRight,
   Atom,
-  CheckCircle,
   ChevronLeft,
   ChevronRight,
   Clock,
@@ -1225,10 +1225,6 @@ const Science = () => {
     'Study structure',
   ];
 
-  const scrollToSubjects = () => {
-    document.getElementById('science-pathways')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  };
-
   return (
     <div className="min-h-screen bg-[#fffdf8] text-[#172033]">
       <SEO
@@ -1240,93 +1236,19 @@ const Science = () => {
 
       <main>
         {/* ── Hero ── */}
-        <section className="relative overflow-hidden bg-[#071629] pt-36 lg:pt-40">
-          <div className="absolute inset-0">
-            <img
-              src="/images/v3/collaborative_learning.jpg"
-              alt="Science tutoring at DA Tuition"
-              className="h-full w-full object-cover opacity-50"
-            />
-            <div className="absolute inset-0 bg-gradient-to-r from-[#071629] via-[#071629]/88 to-[#071629]/40" />
-            <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[#fffdf8] to-transparent" />
-          </div>
-
-          <div className="relative z-10 mx-auto grid w-full max-w-7xl gap-10 px-5 pb-24 lg:grid-cols-[1.05fr_.75fr] lg:px-8 lg:pb-28">
-            <motion.div initial={{ opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, ease: 'easeOut' }}>
-              <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-xs font-black uppercase tracking-[0.14em] text-[#f1df9a] backdrop-blur-md">
-                <Atom className="h-4 w-4" />
-                Science Tutoring · Years 7–12
-              </div>
-              <h1 className="max-w-4xl font-serif text-5xl font-medium leading-[0.96] tracking-[-0.04em] text-white sm:text-6xl lg:text-7xl">
-                When understanding grows,<br className="hidden sm:block" /> results follow.
-              </h1>
-              <p className="mt-6 max-w-2xl text-lg leading-8 text-white/75">
-                From Years 7–10 Science to HSC Biology, Chemistry and Physics, we help students build genuine understanding — not just memorise content.
-              </p>
-
-              {/* Subject pills */}
-              <div className="mt-7 flex flex-wrap gap-2">
-                {['Years 7–10 Science', 'Biology', 'Chemistry', 'Physics'].map((s) => (
-                  <span
-                    key={s}
-                    className="rounded-full border border-[#c9a227]/40 bg-[#c9a227]/10 px-4 py-1.5 text-xs font-bold tracking-wide text-[#f1df9a]"
-                  >
-                    {s}
-                  </span>
-                ))}
-              </div>
-
-              <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-                <Link to="/book-interview">
-                  <Button size="lg" className="h-12 rounded-full bg-[#c9a227] px-7 font-black text-[#101521] shadow-xl shadow-[#c9a227]/25 hover:bg-[#e0bd4b]">
-                    Book Interview
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Button>
-                </Link>
-                <Button
-                  size="lg"
-                  variant="outline"
-                  onClick={scrollToSubjects}
-                  className="h-12 rounded-full border-white/30 bg-white/10 px-7 font-bold text-white backdrop-blur-md hover:bg-white/15 hover:text-white"
-                >
-                  Explore Programs
-                </Button>
-              </div>
-            </motion.div>
-
-            <motion.aside
-              initial={{ opacity: 0, y: 28 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.12, ease: 'easeOut' }}
-              className="self-end rounded-3xl border border-white/14 bg-white/[0.09] p-6 shadow-2xl backdrop-blur-xl"
-            >
-              <p className="text-[8px] font-black uppercase tracking-[0.32em] text-[#f1df9a]/70">Does this sound familiar?</p>
-              <div className="mt-5 space-y-2.5">
-                {[
-                  'Science makes sense in class, but exam questions feel completely different?',
-                  'Spending hours memorising content but still losing marks?',
-                  'Struggling with calculations in Physics or Chemistry?',
-                  'Not sure how to structure extended responses for maximum marks?',
-                  'Finding HSC Biology, Chemistry or Physics overwhelming?',
-                  'Knowing the answer at home but blanking out in exams?',
-                ].map((item) => (
-                  <div key={item} className="flex items-start gap-3 text-white/90">
-                    <CheckCircle className="mt-0.5 h-4 w-4 shrink-0 text-[#f1df9a]" />
-                    <span className="text-[13px] leading-[1.6]">{item}</span>
-                  </div>
-                ))}
-              </div>
-              <div className="mt-5 border-t border-white/10 pt-4">
-                <p className="text-[12.5px] leading-[1.75] text-white/60">
-                  Book an interview and we'll identify whether the issue is content knowledge, exam technique, response structure, calculations or confidence — then build a plan to address it.
-                </p>
-              </div>
-            </motion.aside>
-          </div>
-        </section>
+        <SubjectHero
+          eyebrow="Science Tutoring · Years 7-12"
+          icon={Atom}
+          headlineWhite="Curious about everything."
+          headlineGold="Certain about why."
+          subtext="From Years 7–10 Science to HSC Biology, Chemistry and Physics, we help students build genuine understanding — not just memorise content."
+          proofPills={['Real-world explanations', 'Marked feedback', 'Clear HSC pathway']}
+          exploreTargetId="science-pathways"
+          placeholderLabel="Science classroom"
+        />
 
         {/* ── Anchor nav ── */}
-        <section className="-mt-10 px-5 lg:px-8">
+        <section className="px-5 pt-10 lg:px-8">
           <div className="relative z-10 mx-auto grid max-w-7xl gap-3 rounded-3xl border border-[#c9a227]/20 bg-[#fffdf8] p-3 shadow-2xl shadow-[#071629]/10 md:grid-cols-4">
             {[
               ['Curious minds',    '#science-concerns'],
