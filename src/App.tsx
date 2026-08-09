@@ -48,6 +48,7 @@ import LegalStudies from "./pages/subjects/LegalStudies";
 import Testimonials from "./pages/Testimonials";
 import TestimonialDetail from "./pages/TestimonialDetail";
 import ScrollToTop from "./components/ScrollToTop";
+import RouteScrollReset from "./components/RouteScrollReset";
 import DetailedChapterNavigation from "./components/DetailedChapterNavigation";
 import BookIntroCalibration from "./pages/BookIntroCalibration";
 
@@ -126,6 +127,7 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
+          <RouteScrollReset />
           <ScrollProgress />
           <StickyBookButton />
           <div
