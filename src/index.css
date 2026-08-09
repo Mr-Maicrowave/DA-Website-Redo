@@ -6,6 +6,11 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Stable homepage chapter anchors: clear the fixed navigation on arrival. */
+:where(#welcome, #philosophy, #journey, #programs, #subjects, #environment, #guides, #stories, #contact) {
+  scroll-margin-top: 72px;
+}
+
 @layer base {
   :root {
     /* V3 Canvas Colors */
@@ -93,7 +98,8 @@
   html,
   body,
   #root {
-    overflow-x: hidden;
+    /* `hidden` creates a scroll container and breaks nested sticky scenes. */
+    overflow-x: clip;
     width: 100%;
     max-width: 100%;
     margin: 0;
@@ -223,6 +229,24 @@
     filter: blur(40px);
     opacity: 0.3;
     z-index: -1;
+  }
+
+  body[data-da-intro-active="true"] .site-sticky-book-button {
+    display: none !important;
+  }
+
+  @media (max-width: 820px) {
+    body:has(#welcome) .site-sticky-book-button {
+      right: 10px;
+      bottom: 10px;
+      transform: scale(.86);
+      transform-origin: right bottom;
+    }
+  }
+
+  html:has(body[data-da-intro-active="true"]),
+  body[data-da-intro-active="true"] {
+    overscroll-behavior: none;
   }
 
   /* Transparent section helper to let page gradients show through */

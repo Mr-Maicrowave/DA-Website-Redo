@@ -220,7 +220,7 @@ const Teachers = () => {
         </p>
         <Button
           className="btn-primary group"
-          onClick={() => navigate('/interview')}
+          onClick={() => navigate('/book-interview')}
         >
           Book Interview
           <ArrowRight size={20} className="ml-2 group-hover:translate-x-1 transition-transform" />

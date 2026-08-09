@@ -1,9 +1,14 @@
+import DAMethodSection from '@/components/DAMethodSection';
 import { ArrowRight, Heart, Trophy, Target, Sparkles, Users, BookOpen, GraduationCap, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import NavigationNew from '@/components/NavigationNew';
 import FooterNew from '@/components/FooterNew';
 import { Link } from 'react-router-dom';
+
+// DAMethodSection is imported from @/components/DAMethodSection
+
+
 
 const OurApproach = () => {
   const coreValues = [
@@ -167,39 +172,8 @@ const OurApproach = () => {
           </div>
         </section>
 
-        {/* Our Methodology */}
-        <section className="py-16 px-4 bg-gray-50">
-          <div className="max-w-6xl mx-auto">
-            <h2 className="text-3xl font-bold text-center mb-4">The DA Tuition Method</h2>
-            <p className="text-xl text-brand-midnight/80 text-center mb-12 max-w-3xl mx-auto">
-              A systematic approach that has helped thousands of students achieve their academic goals
-            </p>
-
-            <div className="grid md:grid-cols-2 gap-8">
-              {methodology.map((phase, index) => (
-                <Card key={index} className="p-8 relative overflow-hidden">
-                  <div className="absolute top-4 right-4 text-6xl font-bold text-gray-100">
-                    {phase.step}
-                  </div>
-                  <div className="relative z-10">
-                    <h3 className="text-2xl font-bold mb-3 text-brand-blue-dark">
-                      {phase.title}
-                    </h3>
-                    <p className="text-brand-midnight/80 mb-4">{phase.description}</p>
-                    <ul className="space-y-2">
-                      {phase.details.map((detail, idx) => (
-                        <li key={idx} className="flex items-start gap-2">
-                          <CheckCircle className="w-5 h-5 text-brand-green mt-0.5 flex-shrink-0" />
-                          <span className="text-brand-midnight/80">{detail}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </Card>
-              ))}
-            </div>
-          </div>
-        </section>
+        {/* DA Method — interactive polygon */}
+        <DAMethodSection />
 
         {/* What Makes Us Different */}
         <section className="py-16 px-4">

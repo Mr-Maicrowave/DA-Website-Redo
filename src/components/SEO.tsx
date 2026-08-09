@@ -7,6 +7,7 @@ interface SEOProps {
     ogType?: 'website' | 'article';
     ogImage?: string;
     noindex?: boolean;
+    robotsContent?: string;
     jsonLd?: object | object[];
 }
 
@@ -17,6 +18,7 @@ const SEO = ({
     ogType = 'website',
     ogImage = '/lovable-uploads/7692e107-bde1-4906-b047-2458fe6a81ca.png',
     noindex = false,
+    robotsContent,
     jsonLd,
 }: SEOProps) => {
     const siteTitle = 'DA Tuition - Beyond Academic Excellence | Premium K-12 Tutoring Australia';
@@ -36,7 +38,9 @@ const SEO = ({
             <title>{fullTitle}</title>
             <meta name="description" content={fullDescription} />
             {canonicalUrl && <link rel="canonical" href={fullCanonicalUrl} />}
-            {noindex && <meta name="robots" content="noindex, follow" />}
+            {(noindex || robotsContent) && (
+                <meta name="robots" content={robotsContent || 'noindex, follow'} />
+            )}
 
             {/* Open Graph / Facebook */}
             <meta property="og:type" content={ogType} />

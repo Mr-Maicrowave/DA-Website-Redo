@@ -3,6 +3,7 @@ export const siteStats = {
   studentsHelped: "10,000+",
   googleRating: "5.0",
   reviewCount: 450,
+  educatorCount: "40+",
   hscSuccessRate: "Consistently Strong",
   band6Results: "Hundreds of",
   atar95Plus: "Many",

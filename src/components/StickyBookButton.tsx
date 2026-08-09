@@ -10,7 +10,7 @@ const StickyBookButton = () => {
       to="/book-interview"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      className="fixed bottom-6 right-6 z-50 flex items-center overflow-hidden rounded-full shadow-2xl transition-all duration-300 ease-in-out"
+      className="site-sticky-book-button fixed bottom-6 right-6 z-50 flex items-center overflow-hidden rounded-full shadow-2xl transition-all duration-300 ease-in-out"
       style={{
         backgroundColor: '#D4AF37',
         width: hovered ? '180px' : '56px',

@@ -10,6 +10,7 @@ import PageTransition from "@/components/animations/PageTransition";
 import ScrollProgress from "@/components/animations/ScrollProgress";
 import StickyBookButton from "@/components/StickyBookButton";
 import Index from "./pages/Index";
+import EnglishSample from "./pages/EnglishSample";
 import BookInterview from "./pages/BookInterview";
 import Reviews from "./pages/Reviews";
 import NotFound from "./pages/NotFound";
@@ -47,6 +48,7 @@ import LegalStudies from "./pages/subjects/LegalStudies";
 import Testimonials from "./pages/Testimonials";
 import TestimonialDetail from "./pages/TestimonialDetail";
 import ScrollToTop from "./components/ScrollToTop";
+import DetailedChapterNavigation from "./components/DetailedChapterNavigation";
 import BookIntroCalibration from "./pages/BookIntroCalibration";
 
 const queryClient = new QueryClient();
@@ -58,7 +60,8 @@ const AnimatedRoutes = () => {
     <AnimatePresence mode="wait">
       <Routes location={location} key={location.pathname}>
         <Route path="/" element={<PageTransition><Index /></PageTransition>} />
-        <Route path="/english-sample" element={<PageTransition><Index /></PageTransition>} />
+        {/* Do NOT change this to <Index />. See src/pages/EnglishSample.tsx header comment. */}
+        <Route path="/english-sample" element={<PageTransition><EnglishSample /></PageTransition>} />
         <Route
           path="/book-intro-calibration"
           element={import.meta.env.DEV ? <BookIntroCalibration /> : <Navigate to="/" replace />}
@@ -134,6 +137,7 @@ const App = () => (
             }}
           >
             <AnimatedRoutes />
+            <DetailedChapterNavigation />
             <ScrollToTop />
           </div>
         </BrowserRouter>
