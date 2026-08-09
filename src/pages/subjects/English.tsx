@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import BookIntro from '@/components/intro/BookIntro';
 import IntroVideo from '@/components/intro/IntroVideo';
+import NavigationNew from '@/components/NavigationNew';
 import SEO from '@/components/SEO';
 import {
   ENGLISH_SUBJECT_BOOK_INTRO_SESSION_KEY,
@@ -27,6 +28,7 @@ const English = () => {
           onComplete={() => setShowBookIntro(false)}
         />
       )}
+      <NavigationNew />
       <iframe
         src="/english-page/index.html"
         title="DA Tuition English"
