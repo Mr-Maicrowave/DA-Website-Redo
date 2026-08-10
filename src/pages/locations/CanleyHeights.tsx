@@ -3,7 +3,8 @@ import { motion, useInView } from 'framer-motion';
 import SEO from '@/components/SEO';
 import NavigationNew from '@/components/NavigationNew';
 import FooterNew from '@/components/FooterNew';
-import { MapPin, Clock, Phone, Car, Train, School, Users, Trophy, Star, CheckCircle, ArrowRight, Navigation } from 'lucide-react';
+import LocationHero from '@/components/location/LocationHero';
+import { Car, Train, School, Users, Trophy, Star, CheckCircle, ArrowRight, Navigation, MapPin } from 'lucide-react';
 import { siteStats } from '@/data/site-stats';
 import { educationalOrganizationSchema, breadcrumbSchema } from '@/lib/seo/schema';
 
@@ -108,91 +109,19 @@ const CanleyHeights = () => {
       <NavigationNew />
 
       {/* HERO */}
-      <section style={{ position: 'relative', overflow: 'hidden', minHeight: '92vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: C.navy }}>
-        <div style={{ position: 'absolute', inset: 0, backgroundImage: "url('/images/v3/hero_entrance.jpg')", backgroundSize: 'cover', backgroundPosition: 'center', opacity: 0.2 }} />
-        <div style={{ position: 'absolute', inset: 0, background: `radial-gradient(ellipse 80% 60% at 50% 40%, rgba(212,175,55,0.14) 0%, transparent 70%), linear-gradient(180deg,${C.navy}cc 0%,${C.navy} 100%)` }} />
-        <div style={{ position: 'absolute', top: 0, left: '10%', right: '10%', height: 1, background: `linear-gradient(90deg,transparent,${C.gold},transparent)` }} />
-
-        <div style={{ position: 'relative', zIndex: 2, textAlign: 'center', padding: 'clamp(120px,14vh,160px) 24px 80px', maxWidth: 860 }}>
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.1 }}>
-            <div style={{ display: 'inline-block', border: `1px solid rgba(212,175,55,.35)`, borderRadius: 2, padding: '6px 20px', marginBottom: 28, ...s, fontSize: '.65rem', fontWeight: 700, letterSpacing: '.22em', textTransform: 'uppercase', color: C.goldL }}>
-              Serving Canley Heights &amp; Surrounds Since 2005
-            </div>
-          </motion.div>
-
-          <motion.h1 initial={{ opacity: 0, y: 32 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: 0.22 }} style={{ fontFamily: serif, fontWeight: 500, fontSize: 'clamp(2.4rem,5.5vw,4.8rem)', lineHeight: 1.06, letterSpacing: '-.018em', color: C.white, marginBottom: 20 }}>
-            Tutoring in<br />
-            <em style={{ fontStyle: 'italic', color: C.goldL }}>Canley Heights</em>
-          </motion.h1>
-
-          <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.38 }} style={{ ...s, fontSize: 'clamp(.95rem,1.5vw,1.15rem)', color: 'rgba(247,244,238,.72)', maxWidth: 620, margin: '0 auto 42px', lineHeight: 1.7 }}>
-            Level 1/229 Canley Vale Rd — your local education excellence centre,
-            helping Fairfield families achieve extraordinary results for nearly two decades.
-          </motion.p>
-
-          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.52 }} style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap' }}>
-            <button onClick={contactHref} style={{ ...s, background: C.gold, color: C.navy, border: 'none', borderRadius: 3, padding: '14px 36px', fontSize: '.88rem', fontWeight: 700, letterSpacing: '.06em', textTransform: 'uppercase', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8 }}>
-              Book Interview <ArrowRight size={16} />
-            </button>
-            <a href="tel:0401940207">
-              <button style={{ ...s, background: 'transparent', color: C.white, border: `1.5px solid rgba(247,244,238,.35)`, borderRadius: 3, padding: '14px 36px', fontSize: '.88rem', fontWeight: 700, letterSpacing: '.06em', textTransform: 'uppercase', cursor: 'pointer' }}>
-                Call 0401 940 207
-              </button>
-            </a>
-          </motion.div>
-        </div>
-        <div style={{ position: 'absolute', bottom: 0, left: '10%', right: '10%', height: 1, background: `linear-gradient(90deg,transparent,${C.gold},transparent)` }} />
-      </section>
-
-      {/* INFO CARD */}
-      <section style={{ background: C.cream, padding: '80px 24px' }}>
-        <div style={{ maxWidth: 900, margin: '0 auto' }}>
-          <Reveal>
-            <motion.div variants={fadeUp} style={{ textAlign: 'center', marginBottom: 48 }}>
-              <Tag t="Find Us" />
-              <h2 style={{ fontFamily: serif, fontWeight: 500, fontSize: 'clamp(2rem,3.5vw,3rem)', color: C.navy, letterSpacing: '-.02em', lineHeight: 1.1 }}>Visit the Centre</h2>
-            </motion.div>
-
-            <motion.div variants={fadeIn} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(260px,1fr))', gap: 0, border: `1px solid rgba(212,175,55,.25)`, borderRadius: 12, overflow: 'hidden', boxShadow: '0 12px 48px rgba(10,27,52,.10)' }}>
-              <div style={{ background: C.white, padding: '48px 40px', display: 'flex', flexDirection: 'column', gap: 24 }}>
-                {[
-                  { Icon: MapPin, label: 'Address', lines: ['Level 1/229 Canley Vale Rd', 'Canley Heights NSW 2166'] },
-                  { Icon: Clock, label: 'Hours', lines: ['Tue – Fri: 5:00 pm – 9:00 pm', 'Saturday: 9:00 am – 6:00 pm', 'Sunday: 10:00 am – 7:00 pm'] },
-                  { Icon: Phone, label: 'Contact', lines: ['0401 940 207', 'canleyheights@datuition.com.au'] },
-                ].map(({ Icon, label, lines }, i) => (
-                  <React.Fragment key={i}>
-                    {i > 0 && <div style={{ height: 1, background: `linear-gradient(90deg,${C.gold}44,transparent)` }} />}
-                    <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start' }}>
-                      <Icon size={20} color={C.gold} style={{ flexShrink: 0, marginTop: 2 }} />
-                      <div>
-                        <div style={{ ...s, fontWeight: 700, fontSize: '.75rem', letterSpacing: '.12em', textTransform: 'uppercase', color: C.gold, marginBottom: 6 }}>{label}</div>
-                        {lines.map((l, j) => <div key={j} style={{ fontFamily: serif, fontSize: '1.05rem', color: C.navy, lineHeight: 1.55 }}>{l}</div>)}
-                      </div>
-                    </div>
-                  </React.Fragment>
-                ))}
-              </div>
-              <div style={{ minHeight: 300, overflow: 'hidden' }}>
-                <iframe
-                  title="DA Tuition Canley Heights Map"
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3311.393457591605!2d150.93299447668636!3d-33.882098619623864!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6b129665c58965c5%3A0x1c1c1c1c1c1c1c1c!2s229%20Canley%20Vale%20Rd%2C%20Canley%20Heights%20NSW%202166!5e0!3m2!1sen!2sau!4v1711900000000!5m2!1sen!2sau"
-                  width="100%" height="100%" style={{ border: 0, display: 'block', minHeight: 300 }}
-                  allowFullScreen loading="lazy" referrerPolicy="no-referrer-when-downgrade"
-                />
-              </div>
-            </motion.div>
-
-            <motion.div variants={fadeUp} style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap', marginTop: 36 }}>
-              <button onClick={contactHref} style={{ ...s, background: C.navy, color: C.white, border: 'none', borderRadius: 3, padding: '13px 32px', fontSize: '.85rem', fontWeight: 700, letterSpacing: '.06em', textTransform: 'uppercase', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8 }}>
-                Book Interview <ArrowRight size={15} />
-              </button>
-              <button onClick={() => window.open('https://maps.google.com/?q=229+Canley+Vale+Rd+Canley+Heights+NSW+2166','_blank')} style={{ ...s, background: 'transparent', color: C.navy, border: `1.5px solid rgba(10,27,52,.28)`, borderRadius: 3, padding: '13px 32px', fontSize: '.85rem', fontWeight: 700, letterSpacing: '.06em', textTransform: 'uppercase', cursor: 'pointer' }}>
-                Get Directions
-              </button>
-            </motion.div>
-          </Reveal>
-        </div>
-      </section>
+      <LocationHero
+        eyebrow="Serving Canley Heights & Surrounds Since 2005"
+        headline="Canley Heights"
+        headlineAccent="Our Home Since 2005"
+        subtext="Level 1/229 Canley Vale Rd — your local education excellence centre, helping Fairfield families achieve extraordinary results for nearly two decades."
+        addressLines={['Level 1/229 Canley Vale Rd', 'Canley Heights NSW 2166']}
+        hoursLines={['Tue – Fri: 5:00 pm – 9:00 pm', 'Saturday: 9:00 am – 6:00 pm', 'Sunday: 10:00 am – 7:00 pm']}
+        phone="0401 940 207"
+        mapEmbedSrc="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3311.393457591605!2d150.93299447668636!3d-33.882098619623864!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6b129665c58965c5%3A0x1c1c1c1c1c1c1c1c!2s229%20Canley%20Vale%20Rd%2C%20Canley%20Heights%20NSW%202166!5e0!3m2!1sen!2sau!4v1711900000000!5m2!1sen!2sau"
+        mapTitle="DA Tuition Canley Heights Map"
+        directionsUrl="https://maps.google.com/?q=229+Canley+Vale+Rd+Canley+Heights+NSW+2166"
+        onBookInterview={contactHref}
+      />
 
       {/* WHY CHOOSE US */}
       <section style={{ background: C.navy, padding: '96px 24px', position: 'relative', overflow: 'hidden' }}>
