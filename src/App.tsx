@@ -41,9 +41,6 @@ import Year34 from "./pages/programs/Year34";
 import Year56 from "./pages/programs/Year56";
 // Subject pages
 import Mathematics from "./pages/subjects/Mathematics";
-import MathematicsDesign1 from "./pages/subjects/MathematicsDesign1";
-import MathematicsDesign2 from "./pages/subjects/MathematicsDesign2";
-import MathematicsDesign3 from "./pages/subjects/MathematicsDesign3";
 import English from "./pages/subjects/English";
 import Science from "./pages/subjects/Science";
 import BusinessStudies from "./pages/subjects/BusinessStudies";
@@ -106,9 +103,6 @@ const AnimatedRoutes = () => {
 
         {/* Subject Routes */}
         <Route path="/subjects/mathematics" element={<PageTransition><Mathematics /></PageTransition>} />
-        <Route path="/subjects/mathematics/design-1" element={<PageTransition><MathematicsDesign1 /></PageTransition>} />
-        <Route path="/subjects/mathematics/design-2" element={<PageTransition><MathematicsDesign2 /></PageTransition>} />
-        <Route path="/subjects/mathematics/design-3" element={<PageTransition><MathematicsDesign3 /></PageTransition>} />
         <Route path="/subjects/english" element={<PageTransition><English /></PageTransition>} />
         <Route path="/subjects/science" element={<PageTransition><Science /></PageTransition>} />
         <Route path="/subjects/business-studies" element={<PageTransition><BusinessStudies /></PageTransition>} />
