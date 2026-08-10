@@ -1,13 +1,12 @@
 import SEO from '@/components/SEO';
 import NavigationNew from '@/components/NavigationNew';
 import FooterNew from '@/components/FooterNew';
+import LocationHero from '@/components/location/LocationHero';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import {
     MapPin,
-    Clock,
-    Phone,
     Car,
     Train,
     Bus,
@@ -62,115 +61,28 @@ const LocationPageTemplate = ({ content }: LocationPageTemplateProps) => {
             />
             <NavigationNew />
 
-            <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 mt-[120px]">
-                {/* Hero */}
-                <section className="relative rounded-[2rem] overflow-hidden shadow-2xl mx-4 sm:mx-0 mt-6 pb-24 mb-16 border border-brand-gold/20">
-                    <div className="absolute inset-0">
-                        <img
-                            src={content.heroImage}
-                            alt={`DA Tuition — serving ${content.suburb}`}
-                            className="w-full h-full object-cover"
-                        />
-                        <div className="absolute inset-0 bg-brand-navy/80 mix-blend-multiply" />
-                        <div className={`absolute inset-0 ${content.heroGradient} mix-blend-overlay`} />
-                        <div className="absolute inset-0 bg-gradient-to-t from-brand-navy/90 via-brand-navy/50 to-transparent" />
-                    </div>
-
-                    <div className="relative z-10 max-w-4xl mx-auto text-center py-12 sm:py-16 lg:py-24 px-6">
-                        <Badge className="mb-6 px-4 py-2 bg-white/15 text-brand-lightGold border-brand-gold/30 backdrop-blur-md font-semibold">
-                            {content.heroBadge}
-                        </Badge>
-
-                        <h1 className="font-serif text-3xl sm:text-4xl lg:text-7xl font-medium text-white mb-6 tracking-tight leading-tight drop-shadow-lg">
-                            {content.heroHeadline}
-                            <span className="block text-2xl lg:text-4xl mt-4 text-brand-lightGold">
-                                {content.heroSubheadline}
-                            </span>
-                        </h1>
-
-                        <p className="text-xl md:text-2xl text-white/95 max-w-3xl mx-auto leading-relaxed font-medium drop-shadow-md">
-                            {content.heroParagraph}
-                        </p>
-                    </div>
-                </section>
-            </div>
+            {/* Hero (always points to Canley Heights — the actual physical centre) */}
+            <LocationHero
+                eyebrow={content.heroBadge}
+                headline={content.heroHeadline}
+                headlineAccent={content.heroSubheadline}
+                subtext={content.heroParagraph}
+                addressLines={['Level 1/229 Canley Vale Rd', 'Canley Heights NSW 2166']}
+                hoursLines={['Tue – Fri: 5:00 pm – 9:00 pm', 'Saturday: 9:00 am – 6:00 pm', 'Sunday: 10:00 am – 7:00 pm']}
+                phone="0401 940 207"
+                mapEmbedSrc="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3311.393457591605!2d150.93299447668636!3d-33.882098619623864!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6b129665c58965c5%3A0x1c1c1c1c1c1c1c1c!2s229%20Canley%20Vale%20Rd%2C%20Canley%20Heights%20NSW%202166!5e0!3m2!1sen!2sau!4v1711900000000!5m2!1sen!2sau"
+                mapTitle={`DA Tuition Canley Heights Map — serving ${content.suburb}`}
+                directionsUrl="https://maps.google.com/?q=229+Canley+Vale+Rd+Canley+Heights+NSW+2166"
+            />
 
             {/* Travel info ribbon */}
-            <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mb-8">
+            <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 my-8">
                 <div className="bg-brand-gold/10 border border-brand-gold/25 rounded-xl px-6 py-4 text-center">
                     <p className="text-brand-navy font-semibold">
                         <Navigation className="inline-block w-4 h-4 mr-2 mb-1" />
                         {content.travelInfo}
                     </p>
                 </div>
-            </div>
-
-            {/* NAP card with map (always points to Canley Heights — the actual physical centre) */}
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20 mb-16">
-                <Card className="max-w-4xl mx-auto border-brand-gold/20 bg-white shadow-xl">
-                    <CardContent className="p-8">
-                        <h2 className="font-serif text-2xl font-semibold mb-6 text-center text-brand-navy">Visit Our Canley Heights Centre</h2>
-                        <div className="grid md:grid-cols-2 gap-8">
-                            <div className="text-left space-y-4">
-                                <div className="flex items-start">
-                                    <MapPin className="w-6 h-6 text-brand-gold mr-3 flex-shrink-0 mt-0.5" />
-                                    <div>
-                                        <p className="font-semibold">Address</p>
-                                        <p className="text-brand-midnight/80">Level 1/229 Canley Vale Rd</p>
-                                        <p className="text-brand-midnight/80">Canley Heights NSW 2166</p>
-                                    </div>
-                                </div>
-
-                                <div className="flex items-start">
-                                    <Clock className="w-6 h-6 text-brand-gold mr-3 flex-shrink-0 mt-0.5" />
-                                    <div>
-                                        <p className="font-semibold">Opening Hours</p>
-                                        <p className="text-brand-midnight/80">Tue-Fri: 5:00pm - 9:00pm</p>
-                                        <p className="text-brand-midnight/80">Sat: 9:00am - 6:00pm</p>
-                                        <p className="text-brand-midnight/80">Sun: 10:00am - 7:00pm</p>
-                                    </div>
-                                </div>
-
-                                <div className="flex items-start">
-                                    <Phone className="w-6 h-6 text-brand-gold mr-3 flex-shrink-0 mt-0.5" />
-                                    <div>
-                                        <p className="font-semibold">Contact</p>
-                                        <p className="text-brand-midnight/80">0401 940 207</p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="bg-brand-ivory rounded-lg p-0 overflow-hidden h-64 shadow-inner border border-brand-gold/20">
-                                <iframe
-                                    title={`DA Tuition Canley Heights Map — serving ${content.suburb}`}
-                                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3311.393457591605!2d150.93299447668636!3d-33.882098619623864!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6b129665c58965c5%3A0x1c1c1c1c1c1c1c1c!2s229%20Canley%20Vale%20Rd%2C%20Canley%20Heights%20NSW%202166!5e0!3m2!1sen!2sau!4v1711900000000!5m2!1sen!2sau"
-                                    width="100%"
-                                    height="100%"
-                                    style={{ border: 0 }}
-                                    allowFullScreen
-                                    loading="lazy"
-                                    referrerPolicy="no-referrer-when-downgrade"
-                                />
-                            </div>
-                        </div>
-
-                        <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
-                            <Button
-                                size="lg"
-                                className="btn-primary group"
-                                onClick={() => (window.location.href = '/#contact')}
-                            >
-                                Book Interview
-                                <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                            </Button>
-                            <a href="tel:0401940207">
-                                <Button size="lg" variant="outline">
-                                    Call Now: 0401 940 207
-                                </Button>
-                            </a>
-                        </div>
-                    </CardContent>
-                </Card>
             </div>
 
             {/* Intro — unique per suburb */}

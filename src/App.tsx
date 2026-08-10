@@ -49,7 +49,6 @@ import Testimonials from "./pages/Testimonials";
 import TestimonialDetail from "./pages/TestimonialDetail";
 import ScrollToTop from "./components/ScrollToTop";
 import RouteScrollReset from "./components/RouteScrollReset";
-import DetailedChapterNavigation from "./components/DetailedChapterNavigation";
 import BookIntroCalibration from "./pages/BookIntroCalibration";
 
 const queryClient = new QueryClient();
@@ -139,7 +138,6 @@ const App = () => (
             }}
           >
             <AnimatedRoutes />
-            <DetailedChapterNavigation />
             <ScrollToTop />
           </div>
         </BrowserRouter>
