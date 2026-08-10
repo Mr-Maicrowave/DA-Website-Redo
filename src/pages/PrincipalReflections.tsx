@@ -1,3 +1,4 @@
+import NavigationNew from '@/components/NavigationNew';
 import SEO from '@/components/SEO';
 
 const PrincipalReflections = () => {
@@ -8,6 +9,7 @@ const PrincipalReflections = () => {
         description="Read the principal's reflection. Miss Amanda shares the mission, values and teaching philosophy that shapes every lesson at DA Tuition."
         canonicalUrl="/principal-reflections"
       />
+      <NavigationNew />
       <iframe
         src="/principal-interview/index.html"
         style={{

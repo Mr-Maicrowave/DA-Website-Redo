@@ -39,7 +39,7 @@
     min-height:760px;padding:170px 32px 84px;
     background:
       linear-gradient(90deg,rgba(4,11,23,.86) 0%,rgba(4,11,23,.66) 46%,rgba(4,11,23,.22) 100%),
-      url("images/subjects/english/structured-classroom-cr3.jpeg") center/cover;
+      url("images/subjects/english/classroom-discussion-concepts.jpg") center/cover;
     color:#fff;overflow:hidden;display:flex;align-items:center;
   }
   .hero-inner{width:min(1220px,100%);margin:0 auto;display:block}
@@ -75,6 +75,69 @@
   .image-card h3{font-family:"Playfair Display",Georgia,serif;font-size:25px;line-height:1.18;margin:0 0 16px}
   .image-card p{margin:0;color:#5c4a1e;line-height:1.65}
 
+  /* ─── WHAT MAKES DA DIFFERENT ─── */
+  .diff-section{position:relative;overflow:hidden;padding:48px 32px 0;background:#FBEDDC}
+  .diff-inner{position:relative;z-index:1;padding-bottom:48px}
+  .diff-head{text-align:center;max-width:860px;margin:0 auto 28px}
+  .diff-eyebrow{display:inline-block;color:var(--gold);font-size:13px;font-weight:900;letter-spacing:.24em;text-transform:uppercase;margin-bottom:14px}
+  .diff-heading{font-size:clamp(1.9rem,3.6vw,3rem);line-height:1.14;color:var(--navy);margin:0}
+  .diff-highlights{display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:center;gap:0;margin:26px auto 34px;max-width:960px}
+  .diff-highlight{display:flex;align-items:flex-start;gap:12px;padding:4px 16px;max-width:220px}
+  .diff-highlight-icon{
+    flex:0 0 auto;width:42px;height:42px;border-radius:50%;border:1.5px solid var(--gold);
+    display:flex;align-items:center;justify-content:center;color:var(--gold)
+  }
+  .diff-highlight-icon svg{width:19px;height:19px;display:block;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+  .diff-highlight p{margin:4px 0 0;color:var(--navy);font-size:13px;line-height:1.42;font-weight:600}
+  .diff-highlight-sep{width:1px;align-self:stretch;min-height:40px;background:linear-gradient(rgba(200,154,43,0),rgba(200,154,43,.4),rgba(200,154,43,0))}
+  .diff-table-wrap{position:relative;display:flex;align-items:center;justify-content:center;width:100%;max-width:720px;margin:0 auto}
+  .diff-side-img{
+    position:absolute;bottom:-14px;
+    width:40%;height:auto;
+    pointer-events:none;z-index:0;
+  }
+  .diff-side-img--left{right:calc(100% + 4px)}
+  .diff-side-img--right{left:calc(100% + 4px)}
+  @media (max-width:1250px){.diff-side-img{display:none}}
+  .diff-table{
+    display:grid;grid-template-columns:1fr 1fr;border-radius:18px;overflow:hidden;
+    box-shadow:0 24px 56px rgba(10,35,66,.16);border:1px solid rgba(200,154,43,.28);
+    position:relative;z-index:1;margin-bottom:22px;background:#FBFAF6;
+    width:100%;max-width:720px;margin-left:auto;margin-right:auto;
+  }
+  .diff-cell--typical{background:#FBFAF6;border-right:1px solid rgba(10,35,66,.08)}
+  .diff-cell--da{background:#F6EFD9}
+  .diff-cell--title{padding:11px 16px;font-size:10.5px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;text-align:center}
+  .diff-cell--title.diff-cell--typical{color:var(--navy);background:#F2F0E9}
+  .diff-cell--title.diff-cell--da{color:var(--gold);background:#F1E2B4}
+  .diff-row{display:flex;align-items:flex-start;gap:10px;padding:11px 16px;border-top:1px solid rgba(10,35,66,.08)}
+  .diff-cell--da.diff-row{border-top-color:rgba(200,154,43,.28)}
+  .diff-row-icon{width:30px;height:30px;border-radius:50%;flex:0 0 auto;display:flex;align-items:center;justify-content:center}
+  .diff-cell--typical .diff-row-icon{background:#ECEAE3;color:var(--navy);border:1px solid rgba(10,35,66,.14)}
+  .diff-cell--da .diff-row-icon{background:var(--gold);color:#fff;box-shadow:0 8px 16px rgba(200,154,43,.35)}
+  .diff-row-icon svg{width:15px;height:15px;display:block;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+  .diff-row-copy strong{display:block;color:var(--navy);font-size:12.5px;margin-bottom:1px}
+  .diff-row-copy p{margin:0;color:#5B6577;font-size:11px;line-height:1.35}
+  .diff-cell--da .diff-row-copy p{color:#6B5B2E}
+
+  /* full-bleed cycling review banner */
+  .diff-quote-banner{
+    position:relative;left:50%;right:50%;margin-left:-50vw;margin-right:-50vw;width:100vw;
+    background:var(--navy);padding:100px 24px;text-align:center;overflow:hidden;margin-top:80px;
+  }
+  .diff-quote-line{position:absolute;left:50%;transform:translateX(-50%);width:1px;height:80px}
+  .diff-quote-line--top{top:0;background:linear-gradient(180deg,transparent,var(--gold))}
+  .diff-quote-line--bottom{bottom:0;background:linear-gradient(180deg,var(--gold),transparent)}
+  .diff-quote-inner{max-width:800px;margin:0 auto;position:relative;z-index:1}
+  .diff-quote-glyph{display:block;font-family:"Playfair Display",Georgia,serif;font-size:4rem;line-height:1;color:rgba(212,175,55,.3);margin-bottom:16px}
+  .diff-quote-text{font-family:"Playfair Display",Georgia,serif;font-style:italic;font-weight:300;font-size:clamp(1.5rem,3.2vw,2.6rem);line-height:1.45;color:#fff;margin:0;letter-spacing:.01em;transition:opacity .5s ease;min-height:3.6em}
+  .diff-quote-rule{display:block;width:40px;height:1px;background:var(--gold);margin:32px auto 18px}
+  .diff-quote-author{font-family:Inter,system-ui,sans-serif;font-size:.74rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(212,175,55,.85);font-weight:700;margin:0;transition:opacity .5s ease}
+  .diff-quote-fade{opacity:0}
+  @media (prefers-reduced-motion:reduce){
+    .diff-quote-text,.diff-quote-author{transition:none}
+  }
+
   .editorial{background:#fff}
   .editorial-grid{display:grid;grid-template-columns:.95fr 1.05fr;gap:58px;align-items:center}
   .editorial-copy h2{font-size:clamp(2.2rem,4vw,4rem);line-height:1;margin:0 0 22px}
@@ -105,22 +168,109 @@
   .road-step h3{font-size:19px;margin:0 0 10px;color:var(--navy)}
   .road-step p{color:#59647a;line-height:1.6;margin:0;font-size:14px}
 
-  .quote-section{background:#faf7ef}
-  .quote-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
-  .concern-card{min-height:265px;perspective:1100px;cursor:pointer;outline:none}
-  .concern-inner{display:block;position:relative;width:100%;min-height:265px;transition:transform .55s ease;transform-style:preserve-3d}
-  .concern-card.is-flipped .concern-inner,.concern-card:focus-visible .concern-inner{transform:rotateY(180deg)}
-  .concern-face{
-    position:absolute;inset:0;backface-visibility:hidden;background:#fff;border-radius:8px;
-    padding:30px;box-shadow:0 12px 34px rgba(7,22,41,.08);overflow:hidden
+  .quote-section{background:#F8F4EC}
+
+  /* ─── FAQ HEADER ─── */
+  .quote-section .section-head{align-items:flex-start}
+  .faq-heading{line-height:1.08}
+  .faq-word{position:relative;display:inline-block}
+  .faq-stroke{position:absolute;left:-2%;bottom:-9px;width:104%;height:12px;pointer-events:none}
+  .faq-stroke path{fill:none;stroke:var(--gold);stroke-width:3;stroke-linecap:round;opacity:.8}
+  .faq-badge{
+    position:relative;width:128px;height:128px;border-radius:50%;flex:0 0 auto;
+    background:#FFFDF8;border:1px solid var(--gold-soft);
+    box-shadow:0 3px 0 -1px var(--gold),0 18px 34px rgba(7,22,41,.14);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;text-align:center
   }
-  .concern-face::before{content:"";position:absolute;top:0;left:0;width:4px;height:100%;background:var(--gold)}
-  .concern-front blockquote{font-family:"Playfair Display",Georgia,serif;font-size:24px;line-height:1.25;margin:0 0 22px;color:var(--navy)}
-  .concern-front span{color:#9a6e00;font-size:12px;font-weight:900;letter-spacing:.14em;text-transform:uppercase}
-  .concern-back{background:var(--navy);color:#fff;transform:rotateY(180deg)}
-  .concern-back::before{background:var(--gold)}
-  .concern-back h3{font-size:20px;margin:0 0 14px;color:#fff}
-  .concern-back p{color:rgba(255,255,255,.76);line-height:1.65;margin:0}
+  .faq-badge-icon{width:24px;height:24px;color:var(--gold)}
+  .faq-badge-icon svg{width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:1.8}
+  .faq-badge-text{font-size:12.5px;font-weight:700;color:var(--navy);line-height:1.35;margin:0}
+
+  /* ─── PARENT-CONCERN NOTEBOOK CARDS ─── */
+  .quote-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:26px 22px}
+  .concern-card{
+    position:relative;min-height:270px;perspective:1400px;cursor:pointer;outline:none;
+    border-radius:14px;transition:transform .3s cubic-bezier(.25,.8,.35,1);
+  }
+  .concern-card::before{
+    content:"";position:absolute;inset:0;transform:translate(9px,9px);
+    background:var(--navy);border-radius:14px;z-index:0;
+    box-shadow:0 18px 40px rgba(7,22,41,.22);
+  }
+  .concern-card:hover{transform:translateY(-6px) scale(1.025)}
+  .concern-inner{
+    position:relative;z-index:1;display:block;width:100%;height:100%;min-height:270px;
+    border-radius:14px;transition:transform .65s cubic-bezier(.45,.05,.15,1),box-shadow .2s ease;
+    transform-style:preserve-3d;transform-origin:50% 50%;
+  }
+  .concern-card.is-flipped .concern-inner{transform:rotateY(180deg)}
+  .concern-card:focus-visible .concern-inner{box-shadow:0 0 0 3px #fffdf8,0 0 0 6px var(--gold)}
+  .concern-face{
+    position:absolute;inset:0;backface-visibility:hidden;border-radius:14px;
+    padding:26px 26px 22px;overflow:hidden;display:flex;flex-direction:column
+  }
+  .concern-front{
+    background-color:#FFFDF8;
+    background-image:repeating-linear-gradient(to bottom,transparent,transparent 29px,#DCE4E8 29px,#DCE4E8 30px);
+    background-position:0 60px;border:1px solid rgba(201,162,39,.3);
+    box-shadow:0 14px 32px rgba(7,22,41,.12);
+    transition:background-color .3s cubic-bezier(.25,.8,.35,1),border-color .3s ease,box-shadow .3s cubic-bezier(.25,.8,.35,1);
+  }
+  .concern-front::before{content:"";position:absolute;top:0;bottom:0;left:44px;width:1px;background:#E9B7B0;z-index:1}
+  .concern-clip{position:absolute;top:12px;left:14px;width:18px;height:32px;color:var(--gold);opacity:.85;transform:rotate(-6deg);transition:opacity .3s ease,filter .3s ease;z-index:2}
+  .concern-clip svg{width:100%;height:100%;display:block;fill:none;stroke:currentColor;stroke-width:1.6}
+  .concern-num{position:absolute;top:14px;left:56px;font-family:"Playfair Display",Georgia,serif;font-style:italic;font-weight:800;font-size:20px;color:var(--gold);opacity:.85;transition:opacity .3s ease,filter .3s ease;z-index:2}
+  .concern-front blockquote{
+    position:relative;z-index:1;flex:1;margin:0;padding:38px 30px 34px 20px;
+    display:flex;align-items:center;
+    font-family:"Playfair Display",Georgia,serif;font-size:19px;line-height:1.34;color:var(--navy)
+  }
+  .concern-card:hover .concern-clip,.concern-card:hover .concern-num{opacity:1;filter:brightness(1.2)}
+  .concern-card:hover .concern-front{
+    background-color:#FFF9E8;border-color:var(--gold);
+    box-shadow:0 22px 44px rgba(201,162,39,.22),0 0 20px rgba(201,162,39,.14);
+  }
+  .concern-fold{
+    position:absolute;right:0;bottom:0;width:30px;height:30px;z-index:2;pointer-events:none;
+    clip-path:polygon(100% 0,100% 100%,0 100%);
+    background:linear-gradient(135deg,rgba(7,22,41,0) 46%,var(--gold) 47%,var(--navy) 52%,var(--navy) 100%);
+    transition:width .3s cubic-bezier(.25,.8,.35,1),height .3s cubic-bezier(.25,.8,.35,1),transform .3s cubic-bezier(.25,.8,.35,1);
+  }
+  .concern-card:hover .concern-fold{width:38px;height:38px;transform:translate(-2px,-2px)}
+  .concern-flip-icon{
+    position:absolute;right:12px;bottom:12px;width:26px;height:26px;border-radius:50%;z-index:3;
+    background:#FFFDF8;border:1px solid var(--gold);display:flex;align-items:center;justify-content:center;
+    color:var(--gold);box-shadow:0 4px 10px rgba(7,22,41,.14);transition:transform .3s ease,filter .3s ease
+  }
+  .concern-flip-icon svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2}
+  .concern-card:hover .concern-flip-icon{transform:rotate(24deg);filter:brightness(1.15)}
+
+  .concern-back{
+    background:#FBF3DF;color:var(--navy);transform:rotateY(180deg);
+    border:1px solid rgba(201,162,39,.4);
+    box-shadow:0 16px 38px rgba(7,22,41,.18);
+    align-items:center;text-align:center;padding:28px 26px 22px;
+    transition:box-shadow .3s ease;
+  }
+  .concern-card.is-flipped:hover .concern-back{box-shadow:0 22px 46px rgba(201,162,39,.28)}
+  .concern-back-label{position:relative;z-index:1;display:block;margin:0 0 8px;font-family:"Playfair Display",Georgia,serif;font-style:italic;font-weight:700;font-size:19px;color:var(--gold)}
+  .concern-back-divider{position:relative;z-index:1;display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin:0 0 14px}
+  .concern-back-divider::before,.concern-back-divider::after{content:"";flex:1;max-width:46px;height:1px;background:var(--gold)}
+  .concern-back-divider span{color:var(--gold);font-size:10px}
+  .concern-back-list{position:relative;z-index:1;list-style:none;margin:0;padding:0;width:100%;text-align:left;display:flex;flex-direction:column}
+  .concern-back-list li{display:flex;align-items:flex-start;gap:10px;padding:9px 0;font-size:13px;line-height:1.5;color:var(--navy)}
+  .concern-back-list li+li{border-top:1px solid rgba(201,162,39,.22)}
+  .concern-back-check{flex:0 0 auto;width:18px;height:18px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;margin-top:1px}
+  .concern-back-check svg{width:10px;height:10px;fill:none;stroke:#fff;stroke-width:2.4}
+
+  @media (prefers-reduced-motion:reduce){
+    .concern-card,.concern-inner,.concern-fold,.concern-flip-icon{transition:none}
+    .concern-inner{transform:none !important}
+    .concern-face{transition:opacity .25s ease}
+    .concern-back{opacity:0;pointer-events:none}
+    .concern-card.is-flipped .concern-front{opacity:0;pointer-events:none}
+    .concern-card.is-flipped .concern-back{opacity:1;pointer-events:auto}
+  }
 
   .year-map{background:#fff}
   .year-map-grid{display:grid;gap:28px}
@@ -158,18 +308,115 @@
   }
   .preview-thumb:hover::after,.preview-thumb:focus-visible::after{opacity:1}
   .sample-note{font-size:13px;color:#69748a;line-height:1.5;margin:0}
+  .path-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:26px;align-items:start}
+  .path-card{
+    position:relative;background:#fff;border-radius:26px;padding:30px 26px 28px;
+    box-shadow:0 18px 44px rgba(7,22,41,.1);border:1px solid rgba(7,22,41,.06);overflow:hidden
+  }
+  .path-card-photo{
+    position:absolute;top:-16px;right:-14px;width:132px;height:132px;overflow:hidden;
+    border-radius:38% 62% 58% 42%/48% 42% 58% 52%;box-shadow:0 12px 26px rgba(7,22,41,.16)
+  }
+  .path-card-photo img{width:100%;height:100%;object-fit:cover;filter:grayscale(1) contrast(1.02)}
+  .path-card-icon{
+    display:flex;align-items:center;justify-content:center;width:46px;height:46px;border-radius:50%;
+    background:var(--pc-tint);color:var(--pc-color);margin-bottom:18px
+  }
+  .path-card-icon svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+  .path-card-years{display:block;font-size:11.5px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--pc-color);margin-bottom:10px}
+  .path-card h3{font-family:"Playfair Display",Georgia,serif;font-size:21px;line-height:1.22;color:var(--navy);margin:0 0 16px;max-width:78%}
+  .path-card-list{display:grid;gap:9px;margin:0;padding:0;list-style:none}
+  .path-card-list li{display:flex;align-items:flex-start;gap:9px;color:#4b5568;font-size:13.5px;line-height:1.4}
+  .path-card-list li::before{content:"";flex:0 0 auto;width:8px;height:8px;margin-top:5px;border-radius:50%;background:var(--pc-color)}
+  .path-card--violet{--pc-color:#7C5CBF;--pc-tint:#F1ECFB}
+  .path-card--teal{--pc-color:#0E9E77;--pc-tint:#E7F7F1}
+  .path-card--coral{--pc-color:#E85D3D;--pc-tint:#FDECE7}
+  @media (max-width:900px){
+    .path-cards{grid-template-columns:1fr 1fr;gap:20px}
+  }
+  @media (max-width:640px){
+    .path-cards{grid-template-columns:1fr}
+    .path-card h3{max-width:70%}
+  }
 
-  .classes{background:linear-gradient(135deg,#071629,#0d2b52);color:#fff}
-  .classes .section-head p{color:rgba(255,255,255,.72)}
-  .class-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:16px}
-  .class-card{border-radius:8px;overflow:hidden;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);box-shadow:0 20px 50px rgba(0,0,0,.22)}
-  .class-photo{height:175px;overflow:hidden;background:#102b4b}
-  .class-photo img{width:100%;height:100%;object-fit:cover;transition:transform .35s ease}
+  .classes{
+    --c-navy:#061A34;--c-navy2:#0B294D;--c-gold:#D3A62C;--c-cream:#FFF9EF;--c-soft:#F8F4EC;
+    position:relative;overflow:hidden;color:var(--c-cream);
+    background:
+      radial-gradient(ellipse 900px 520px at 50% 0%,rgba(211,166,44,.09),transparent 62%),
+      linear-gradient(160deg,var(--c-navy) 0%,var(--c-navy2) 100%);
+  }
+  .classes::before,.classes::after{content:"";position:absolute;border-radius:50%;border:1px solid rgba(211,166,44,.32);pointer-events:none}
+  .classes::before{top:-150px;left:-150px;width:340px;height:340px}
+  .classes::after{bottom:-170px;right:-170px;width:380px;height:380px}
+  .classes-dots{position:absolute;width:120px;height:120px;background-image:radial-gradient(rgba(255,255,255,.14) 1px,transparent 1.5px);background-size:14px 14px;pointer-events:none;opacity:.5}
+  .classes-dots--tl{top:22px;left:26px}
+  .classes-dots--br{bottom:22px;right:26px}
+  .classes-star{position:absolute;color:var(--c-gold);opacity:.8;text-shadow:0 0 8px rgba(211,166,44,.55);pointer-events:none}
+  .classes-star--1{top:52px;left:16%;font-size:13px}
+  .classes-star--2{top:66px;right:13%;font-size:16px}
+  .classes .section-head{display:block;text-align:center;max-width:760px;margin:0 auto 46px;position:relative;z-index:1}
+  .classes-divider{display:flex;align-items:center;justify-content:center;gap:14px;margin:0 auto 20px;max-width:320px}
+  .classes-divider span{flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--c-gold),transparent)}
+  .classes-divider i{font-style:normal;color:var(--c-gold);font-size:13px;text-shadow:0 0 8px rgba(211,166,44,.6)}
+  .classes-divider--bottom{margin:44px auto 0}
+  .classes .section-head h2{font-size:clamp(2.3rem,5.4vw,4.2rem);line-height:1.14;letter-spacing:.005em;color:var(--c-cream);margin:0}
+  .classes .section-inner{width:min(1480px,94%)}
+  .class-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:26px;position:relative;z-index:1}
+  .class-card{
+    position:relative;border-radius:16px;overflow:hidden;background:var(--c-cream);
+    border:1px solid var(--card-accent,rgba(211,166,44,.3));box-shadow:0 20px 46px rgba(0,0,0,.32);
+    display:flex;flex-direction:column;height:100%;
+    transition:transform .35s cubic-bezier(.25,.8,.35,1),box-shadow .35s cubic-bezier(.25,.8,.35,1),border-color .35s ease;
+  }
+  .class-card:hover{
+    transform:translateY(-7px) scale(1.015);
+    box-shadow:0 30px 60px rgba(0,0,0,.42),0 0 0 1px var(--c-gold),0 0 26px var(--card-glow,rgba(211,166,44,.28));
+    border-color:var(--c-gold);
+  }
+  .class-card--lavender{--card-bg:#EDE9FB;--card-accent:#B9A6E8;--card-glow:rgba(185,166,232,.35)}
+  .class-card--mint{--card-bg:#E3F5EE;--card-accent:#8FCDB0;--card-glow:rgba(143,205,176,.35)}
+  .class-card--peach{--card-bg:#FDEDE1;--card-accent:#F0B27E;--card-glow:rgba(240,178,126,.35)}
+  .class-card--blue{--card-bg:#E5F1FB;--card-accent:#8FC1E8;--card-glow:rgba(143,193,232,.35)}
+  .class-card--pink{--card-bg:#FBEAF0;--card-accent:#E8A0BE;--card-glow:rgba(232,160,190,.35)}
+  .class-photo{height:225px;overflow:hidden;background:#102b4b;position:relative}
+  .class-photo img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .35s ease}
   .class-card:hover .class-photo img{transform:scale(1.04)}
-  .class-body{padding:20px 18px 22px}
-  .class-body h3{display:flex;align-items:center;gap:10px;margin:0 0 10px;color:#fff;font-size:18px}
-  .class-body h3::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--gold);flex:0 0 auto}
-  .class-body p{margin:0;color:rgba(255,255,255,.7);font-size:14px;line-height:1.58}
+  .class-photo::after{content:"";position:absolute;left:0;right:0;bottom:0;height:6px;background:var(--card-accent)}
+  .class-body{padding:0 24px 30px;text-align:center;flex:1;display:flex;flex-direction:column;align-items:center}
+  .class-icon{
+    margin:-34px 0 14px;width:72px;height:72px;border-radius:50%;flex:0 0 auto;
+    background:var(--card-bg);border:1.5px solid var(--card-accent);color:var(--card-accent);
+    display:flex;align-items:center;justify-content:center;box-shadow:0 10px 20px rgba(6,26,52,.24);
+    position:relative;z-index:2;transition:transform .35s cubic-bezier(.25,.8,.35,1);
+  }
+  .class-card:hover .class-icon{transform:translateY(-3px)}
+  .class-icon svg{width:30px;height:30px;display:block;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+  .class-body h3{font-family:"Playfair Display",Georgia,serif;margin:0 0 12px;color:var(--c-navy);font-size:23px}
+  .class-divider{display:flex;align-items:center;justify-content:center;gap:6px;margin:0 0 16px}
+  .class-divider span{width:26px;height:1px;background:var(--card-accent)}
+  .class-divider i{width:4px;height:4px;border-radius:50%;background:var(--c-gold);display:block}
+  .class-body p{margin:0;color:#4B5A72;font-size:15px;line-height:1.66}
+
+  .classes-benefits{
+    position:relative;z-index:1;display:flex;align-items:flex-start;justify-content:center;
+    flex-wrap:wrap;gap:0;margin-top:56px;padding-top:34px;border-top:1px solid rgba(211,166,44,.2)
+  }
+  .classes-benefit{display:flex;align-items:flex-start;gap:14px;padding:6px 26px;max-width:250px}
+  .classes-benefit-icon{
+    flex:0 0 auto;width:46px;height:46px;border-radius:50%;border:1.5px solid var(--c-gold);
+    display:flex;align-items:center;justify-content:center;color:var(--c-gold)
+  }
+  .classes-benefit-icon svg{width:22px;height:22px;display:block;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+  .classes-benefit-copy strong{display:block;color:var(--c-cream);font-size:15.5px;font-weight:800;margin-bottom:4px}
+  .classes-benefit-copy span{display:block;color:rgba(248,244,236,.7);font-size:13.5px;line-height:1.55}
+  .classes-benefit-sep{width:1px;align-self:stretch;min-height:52px;background:linear-gradient(rgba(211,166,44,0),rgba(211,166,44,.4),rgba(211,166,44,0))}
+  @media (prefers-reduced-motion:reduce){
+    .class-card,.class-icon,.class-photo img{transition:none}
+    .class-card:hover{transform:none}
+    .class-card:hover .class-icon{transform:none}
+    .class-card:hover .class-photo img{transform:none}
+  }
 
   .preview-modal{position:fixed;inset:0;z-index:80;display:none;align-items:center;justify-content:center;padding:28px;background:rgba(3,10,20,.82);backdrop-filter:blur(10px)}
   .preview-modal.is-open{display:flex}
@@ -188,13 +435,34 @@
     .nav{position:absolute;top:12px;gap:18px;overflow:hidden}
     .nav-links{display:none}
     .hero-inner,.editorial-grid{grid-template-columns:1fr}
-    .image-cards,.quote-grid,.proofs,.year-row,.year-panel,.year-content,.class-grid,.roadmap{grid-template-columns:1fr}
+    .image-cards,.proofs,.year-row,.year-panel,.year-content,.roadmap{grid-template-columns:1fr}
     .hero{padding-top:130px}
     .section-head{display:block}
     .section-head h2{margin-bottom:14px}
     .editorial-image img{height:420px}
     .sample-stack{padding:24px}
     .road-step:nth-child(2),.road-step:nth-child(5){transform:none}
+    .quote-grid{grid-template-columns:repeat(2,1fr);gap:20px}
+    .concern-face{padding:22px 20px 18px}
+    .quote-section .section-head{flex-direction:column}
+    .faq-badge{margin-top:18px;width:104px;height:104px}
+    .class-grid{grid-template-columns:repeat(3,1fr)}
+    .classes-benefit-sep{display:none}
+    .classes-benefit{padding:6px 16px}
+    .diff-highlight-sep{display:none}
+    .diff-highlight{flex:0 0 45%;justify-content:center;text-align:left}
+    .diff-quote-banner{padding:76px 24px}
+  }
+  @media (max-width:640px){
+    .quote-grid{grid-template-columns:1fr}
+    .class-grid{grid-template-columns:1fr;max-width:340px;margin:0 auto}
+    .classes-benefits{justify-content:flex-start}
+    .classes-benefit{max-width:100%;width:100%;justify-content:flex-start}
+    .concern-card:hover{transform:none}
+    .diff-highlight{flex:0 0 100%;max-width:100%}
+    .diff-table{grid-template-columns:1fr}
+    .diff-cell--typical{border-right:none}
+    .diff-quote-banner{padding:64px 20px}
   }
 </style>
 </head>
@@ -202,178 +470,232 @@
   <!-- Nav + hero now render outside this iframe as real React (NavigationNew + SubjectHero)
        in src/pages/subjects/English.tsx, so the rest of this page starts here. -->
 
-  <section>
-    <div class="section-inner">
-      <div class="section-head">
-        <h2 class="serif">What makes the program feel different</h2>
-        <p>Instead of another grid of icons, this version uses real classroom moments, tighter copy, and softer transitions between image and text.</p>
+  <section class="diff-section">
+    <div class="section-inner diff-inner">
+      <div class="diff-head">
+        <span class="diff-eyebrow">What makes DA different</span>
+        <h2 class="serif diff-heading">More than tutoring.<br>We mentor, coach and care.</h2>
       </div>
-      <div class="image-cards">
-        <article class="image-card">
-          <div class="image-window"><img src="images/subjects/english/support-24-7.jpeg" alt=""></div>
-          <div class="image-card-body">
-            <div class="label">24/7 Support</div><div class="gold-line"></div>
-            <h3>Help when your child needs it most</h3>
-            <p>Students get direct access to their tutor beyond the classroom - no waiting until next week's lesson.</p>
-          </div>
-        </article>
-        <article class="image-card">
-          <div class="image-window"><img src="images/subjects/english/structured-classroom-cr3.jpeg" alt=""></div>
-          <div class="image-card-body">
-            <div class="label">Structured</div><div class="gold-line"></div>
-            <h3>Structured learning, not random worksheets</h3>
-            <p>Every lesson follows a clear purpose, building on the last so students make meaningful progress each week.</p>
-          </div>
-        </article>
-        <article class="image-card">
-          <div class="image-window"><img src="images/subjects/english/feedback-tutor.jpeg" alt=""></div>
-          <div class="image-card-body">
-            <div class="label">Feedback</div><div class="gold-line"></div>
-            <h3>Feedback that turns mistakes into progress</h3>
-            <p>Detailed corrections help students understand exactly where they went wrong and how to improve.</p>
-          </div>
-        </article>
+
+      <div class="diff-highlights">
+        <div class="diff-highlight">
+          <span class="diff-highlight-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.4"></circle><path d="M5 20c0-3.9 3.1-7 7-7s7 3.1 7 7"></path><path d="M18 3.2l.6 1.4 1.4.6-1.4.6-.6 1.4-.6-1.4-1.4-.6 1.4-.6Z"></path></svg></span>
+          <p>Personal mentoring,<br>not just subject teaching</p>
+        </div>
+        <span class="diff-highlight-sep" aria-hidden="true"></span>
+        <div class="diff-highlight">
+          <span class="diff-highlight-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 14.5c-2.6-2-4.6-3.8-4.6-6A2.9 2.9 0 0 1 12 6.7a2.9 2.9 0 0 1 4.6 1.8c0 2.2-2 4-4.6 6Z"></path><path d="M5 18c2-1.6 4.5-2.4 7-2.4s5 .8 7 2.4"></path></svg></span>
+          <p>Care that supports<br>confidence and<br>student wellbeing</p>
+        </div>
+        <span class="diff-highlight-sep" aria-hidden="true"></span>
+        <div class="diff-highlight">
+          <span class="diff-highlight-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 19V14"></path><path d="M9 19V10"></path><path d="M14 19v-7"></path><path d="M19 19V6"></path><path d="M17 4l.6 1.4L19 6l-1.4.6L17 8l-.6-1.4L15 6l1.4-.6Z"></path></svg></span>
+          <p>Skills, mindset and<br>guidance that extend<br>beyond school</p>
+        </div>
+        <span class="diff-highlight-sep" aria-hidden="true"></span>
+        <div class="diff-highlight">
+          <span class="diff-highlight-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"></circle><path d="M12 8v4l3 2"></path></svg></span>
+          <p>24-hour support so<br>students never<br>feel alone</p>
+        </div>
       </div>
+
+      <div class="diff-table-wrap">
+      <img class="diff-side-img diff-side-img--left" src="images/diff-left-cluster.png" alt="" aria-hidden="true">
+      <img class="diff-side-img diff-side-img--right" src="images/diff-right-polaroid.png" alt="" aria-hidden="true">
+      <div class="diff-table">
+        <div class="diff-cell diff-cell--title diff-cell--typical">Typical Tuition</div>
+        <div class="diff-cell diff-cell--title diff-cell--da">DA Tuition (English)</div>
+
+        <div class="diff-cell diff-cell--typical diff-row">
+          <span class="diff-row-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 5.5C6 4.6 9 4.4 12 5.6c3-1.2 6-1 8-.1v13c-2-.9-5-1.1-8 .1-3-1.2-6-1-8-.1Z"></path><path d="M12 5.6v13"></path></svg></span>
+          <div class="diff-row-copy"><strong>Content taught.</strong><p>The lesson stays focused on the subject only.</p></div>
+        </div>
+        <div class="diff-cell diff-cell--da diff-row">
+          <span class="diff-row-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"></circle><path d="M3.5 19.5c0-3.6 2.5-6.2 5.5-6.2 1 0 1.9.3 2.7.8"></path><path d="M17.5 12.6c-2.2-1.7-3.9-3.2-3.9-5.1a2.5 2.5 0 0 1 3.9-2 2.5 2.5 0 0 1 3.9 2c0 1.9-1.7 3.4-3.9 5.1Z"></path></svg></span>
+          <div class="diff-row-copy"><strong>The whole student mentored.</strong><p>We guide students academically, personally and emotionally.</p></div>
+        </div>
+
+        <div class="diff-cell diff-cell--typical diff-row">
+          <span class="diff-row-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="8.4" r="3.4"></circle><path d="M5.5 20c0-3.7 2.9-6.6 6.5-6.6s6.5 2.9 6.5 6.6"></path></svg></span>
+          <div class="diff-row-copy"><strong>Support ends after class.</strong><p>Students are often left to manage stress and confusion alone.</p></div>
+        </div>
+        <div class="diff-cell diff-cell--da diff-row">
+          <span class="diff-row-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 13v-1a8 8 0 0 1 16 0v1"></path><rect x="3" y="13" width="4" height="6" rx="1.4"></rect><rect x="17" y="13" width="4" height="6" rx="1.4"></rect><path d="M20 19v.6a2.4 2.4 0 0 1-2.4 2.4H14"></path></svg></span>
+          <div class="diff-row-copy"><strong>24-hour support.</strong><p>Students can reach out for help, clarity and reassurance whenever they need it.</p></div>
+        </div>
+
+        <div class="diff-cell diff-cell--typical diff-row">
+          <span class="diff-row-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="6" y="4.5" width="12" height="16" rx="1.6"></rect><path d="M9.5 3.6h5a.9.9 0 0 1 .9.9v1.2h-6.8V4.5a.9.9 0 0 1 .9-.9Z"></path><path d="M9 11h6"></path><path d="M9 14.5h6"></path><path d="M9 8h3"></path></svg></span>
+          <div class="diff-row-copy"><strong>Focus stays on school tasks.</strong><p>Learning is often limited to the next worksheet, essay or test.</p></div>
+        </div>
+        <div class="diff-cell diff-cell--da diff-row">
+          <span class="diff-row-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 21v-9"></path><path d="M12 12c0-3.5-2.8-6-6.5-6C5.2 9.7 8 12.5 12 12Z"></path><path d="M12 9c0-3 2.4-5 5.5-5C18 7.5 15.5 9.8 12 9Z"></path></svg></span>
+          <div class="diff-row-copy"><strong>Growth beyond school.</strong><p>We teach confidence, communication, habits and thinking skills that last beyond the classroom.</p></div>
+        </div>
+
+        <div class="diff-cell diff-cell--typical diff-row">
+          <span class="diff-row-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 1 3.4 6.5L4 20l1.2-3.4A7.96 7.96 0 0 1 4 12Z"></path><path d="M10 10a2 2 0 1 1 2.6 1.9c-.9.3-1.3 1-1.3 1.8"></path><path d="M11.3 16h.05"></path></svg></span>
+          <div class="diff-row-copy"><strong>Advice feels generic.</strong><p>Strategies may not reflect what students are truly going through.</p></div>
+        </div>
+        <div class="diff-cell diff-cell--da diff-row">
+          <span class="diff-row-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3.2 19 6v6c0 4.6-3 7.9-7 9-4-1.1-7-4.4-7-9V6Z"></path><path d="M12 8.6l.9 1.9 2.1.3-1.5 1.5.35 2.1L12 13.4l-1.85 1 .35-2.1-1.5-1.5 2.1-.3Z"></path></svg></span>
+          <div class="diff-row-copy"><strong>Led by experience.</strong><p>Our team has been in their position before and uses tried, proven methods that genuinely work.</p></div>
+        </div>
+
+        <div class="diff-cell diff-cell--typical diff-row">
+          <span class="diff-row-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"></circle><path d="M12 7v10"></path><path d="M15 9.5c0-1.1-1.3-2-3-2s-3 .9-3 2 1.3 1.6 3 2 3 .9 3 2-1.3 2-3 2-3-.9-3-2"></path></svg></span>
+          <div class="diff-row-copy"><strong>Tutoring feels transactional.</strong><p>Correction is given, but deep care and connection are limited.</p></div>
+        </div>
+        <div class="diff-cell diff-cell--da diff-row">
+          <span class="diff-row-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 19.5c-4.4-3.1-8-6-8-9.9A4.3 4.3 0 0 1 12 7.3a4.3 4.3 0 0 1 8 2.3c0 3.9-3.6 6.8-8 9.9Z"></path></svg></span>
+          <div class="diff-row-copy"><strong>Heart-and-soul teaching.</strong><p>We teach with heart and soul, building trust, resilience and long-term growth.</p></div>
+        </div>
+      </div>
+      </div>
+    </div>
+
+    <div class="diff-quote-banner">
+      <span class="diff-quote-line diff-quote-line--top" aria-hidden="true"></span>
+      <div class="diff-quote-inner">
+        <span class="diff-quote-glyph" aria-hidden="true">&#10078;</span>
+        <p class="diff-quote-text" id="diffQuoteText"></p>
+        <span class="diff-quote-rule" aria-hidden="true"></span>
+        <p class="diff-quote-author" id="diffQuoteAuthor"></p>
+      </div>
+      <span class="diff-quote-line diff-quote-line--bottom" aria-hidden="true"></span>
     </div>
   </section>
 
   <section class="year-map">
     <div class="section-inner">
       <div class="section-head">
-        <h2 class="serif">One English pathway, not three hidden tabs</h2>
-        <p>This layout makes Years 7-8, Years 9-10, and Years 11-12 visible together, so families can immediately understand how DA builds skills over time.</p>
+        <h2 class="serif">A Clear English Journey,<br>From Foundations to HSC</h2>
       </div>
-      <div class="year-map-grid">
-        <div class="year-row">
-          <article class="year-panel">
-            <div class="year-media">
-              <img src="images/subjects/english/support-24-7.jpeg" alt="">
-              <div class="year-badge">Years 7-8</div>
-            </div>
-            <div class="year-content">
-              <div class="year-copy">
-                <h3>Building High School English Skills</h3>
-                <p>Students begin learning the core skills of high school English: analysing texts, structuring paragraphs, using evidence, and developing stronger written expression.</p>
-                <ul class="skill-list">
-                  <li>TEEL paragraph structure</li>
-                  <li>Text analysis and evidence use</li>
-                  <li>Creative writing foundations</li>
-                  <li>Assessment preparation</li>
-                </ul>
-              </div>
-            </div>
-          </article>
-          <aside class="sample-stack">
-            <h4>Sample booklet preview</h4>
-            <div class="sample-thumb-row">
-              <button class="preview-thumb" type="button" data-preview-group="y78" data-preview-index="0"><img src="samples/flash_y78_page_1.png" alt="Year 7-8 booklet cover"></button>
-            </div>
-            <p class="sample-note">Click the cover to open the full booklet preview.</p>
-          </aside>
-        </div>
-
-        <div class="year-row">
-          <article class="year-panel">
-            <div class="year-media">
-              <img src="images/subjects/english/structured-classroom-cr3.jpeg" alt="">
-              <div class="year-badge">Years 9-10</div>
-            </div>
-            <div class="year-content">
-              <div class="year-copy">
-                <h3>Strengthening Analysis and Assessment Confidence</h3>
-                <p>Students move from basic responses to stronger, more sophisticated analysis: building arguments, integrating evidence, and writing clearly under exam conditions.</p>
-                <ul class="skill-list">
-                  <li>Essay writing and paragraph flow</li>
-                  <li>Deeper analysis of techniques and meaning</li>
-                  <li>Timed writing confidence</li>
-                  <li>Preparation for senior English expectations</li>
-                </ul>
-              </div>
-            </div>
-          </article>
-          <aside class="sample-stack">
-            <h4>Sample booklet preview</h4>
-            <div class="sample-thumb-row">
-              <button class="preview-thumb" type="button" data-preview-group="y910" data-preview-index="0"><img src="samples/lear_page_1.png" alt="Year 9-10 booklet cover"></button>
-            </div>
-            <p class="sample-note">Click the cover to open the full booklet preview.</p>
-          </aside>
-        </div>
-
-        <div class="year-row">
-          <article class="year-panel">
-            <div class="year-media">
-              <img src="images/subjects/english/feedback-tutor.jpeg" alt="">
-              <div class="year-badge">Years 11-12</div>
-            </div>
-            <div class="year-content">
-              <div class="year-copy">
-                <h3>Senior English and HSC Preparation</h3>
-                <p>Students learn how to think critically, write with purpose, read rubrics closely, and develop responses that are clear, insightful, and adaptable.</p>
-                <ul class="skill-list">
-                  <li>HSC essay preparation</li>
-                  <li>Module-based text analysis</li>
-                  <li>Draft feedback and editing</li>
-                  <li>Trial and HSC exam preparation</li>
-                </ul>
-              </div>
-            </div>
-          </article>
-          <aside class="sample-stack">
-            <h4>Sample feedback preview</h4>
-            <div class="sample-thumb-row">
-              <button class="preview-thumb" type="button" data-preview-group="feedback" data-preview-index="0"><img src="samples/essay_page_1.png" alt="Senior feedback sample page one"></button>
-            </div>
-            <p class="sample-note">Click the sample to see the marked feedback pages.</p>
-          </aside>
-        </div>
+      <div class="path-cards">
+        <article class="path-card path-card--violet">
+          <div class="path-card-photo"><img src="images/subjects/english/support-24-7.jpeg" alt=""></div>
+          <span class="path-card-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 6.2c-2-1.5-5-2-8-1v13c3-1 6-.5 8 1 2-1.5 5-2 8-1v-13c-3-1-6-.5-8 1Z"></path><path d="M12 6.2v13"></path></svg></span>
+          <span class="path-card-years">Years 7-8</span>
+          <h3>Building High School English Skills</h3>
+          <ul class="path-card-list">
+            <li>TEEL paragraph structure</li>
+            <li>Text analysis and evidence use</li>
+            <li>Creative writing foundations</li>
+            <li>Assessment preparation</li>
+          </ul>
+        </article>
+        <article class="path-card path-card--teal">
+          <div class="path-card-photo"><img src="images/subjects/english/structured-classroom-cr3.jpeg" alt=""></div>
+          <span class="path-card-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"></circle><circle cx="12" cy="12" r="4.4"></circle><circle cx="12" cy="12" r="1"></circle></svg></span>
+          <span class="path-card-years">Years 9-10</span>
+          <h3>Strengthening Analysis and Assessment Confidence</h3>
+          <ul class="path-card-list">
+            <li>Essay writing and paragraph flow</li>
+            <li>Deeper analysis of techniques and meaning</li>
+            <li>Timed writing confidence</li>
+            <li>Preparation for senior English expectations</li>
+          </ul>
+        </article>
+        <article class="path-card path-card--coral">
+          <div class="path-card-photo"><img src="images/subjects/english/feedback-tutor.jpeg" alt=""></div>
+          <span class="path-card-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 4 2 9l10 5 10-5-10-5Z"></path><path d="M6 11.5V16c0 1.7 2.7 3 6 3s6-1.3 6-3v-4.5"></path><path d="M22 9v6"></path></svg></span>
+          <span class="path-card-years">Years 11-12</span>
+          <h3>Senior English and HSC Preparation</h3>
+          <ul class="path-card-list">
+            <li>HSC essay preparation</li>
+            <li>Module-based text analysis</li>
+            <li>Draft feedback and editing</li>
+            <li>Trial and HSC exam preparation</li>
+          </ul>
+        </article>
       </div>
     </div>
   </section>
 
   <section class="classes">
+    <span class="classes-dots classes-dots--tl" aria-hidden="true"></span>
+    <span class="classes-dots classes-dots--br" aria-hidden="true"></span>
+    <span class="classes-star classes-star--1" aria-hidden="true">&#10022;</span>
+    <span class="classes-star classes-star--2" aria-hidden="true">&#10022;</span>
     <div class="section-inner">
       <div class="section-head">
-        <h2 class="serif">Choose the class style that fits the student</h2>
-        <p>A dedicated class-types section makes the offer clearer and gives each format room for its own learning-environment photo.</p>
+        <div class="classes-divider" aria-hidden="true"><span></span><i>&#10022;</i><span></span></div>
+        <h2 class="serif">Choose the class style<br>that fits the student</h2>
       </div>
       <div class="class-grid">
-        <article class="class-card">
-          <div class="class-photo"><img src="images/subjects/english/class-private.png" alt=""></div>
+        <article class="class-card class-card--lavender">
+          <div class="class-photo"><img src="images/subjects/english/class-private.png" alt="Tutor and student working one-to-one on laptops in a private DA Tuition class"></div>
           <div class="class-body">
+            <span class="class-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.4"></circle><path d="M5 20c0-3.9 3.1-7 7-7s7 3.1 7 7"></path><path d="M18 3.2l.6 1.4 1.4.6-1.4.6-.6 1.4-.6-1.4-1.4-.6 1.4-.6Z"></path></svg></span>
             <h3>Private Classes</h3>
+            <span class="class-divider" aria-hidden="true"><span></span><i></i><span></span></span>
             <p>One-to-one support for students who need individual attention, targeted feedback, or a personalised pace.</p>
           </div>
         </article>
-        <article class="class-card">
-          <div class="class-photo"><img src="images/subjects/english/class-gat.png" alt=""></div>
+        <article class="class-card class-card--mint">
+          <div class="class-photo"><img src="images/subjects/english/class-gat.png" alt="Students working through extension-style GAT class material at DA Tuition"></div>
           <div class="class-body">
+            <span class="class-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 19V13"></path><path d="M10 19V9"></path><path d="M16 19v-7"></path><path d="M20 19V5"></path><path d="M4 9l6-4 6 3 4-4"></path></svg></span>
             <h3>GAT Class</h3>
+            <span class="class-divider" aria-hidden="true"><span></span><i></i><span></span></span>
             <p>Extension-style learning for high-performing students who need challenge, depth, and sharper analytical thinking.</p>
           </div>
         </article>
-        <article class="class-card">
-          <div class="class-photo"><img src="images/subjects/english/class-bullet.png" alt=""></div>
+        <article class="class-card class-card--peach">
+          <div class="class-photo"><img src="images/subjects/english/class-bullet.png" alt="Students in a fast-paced Bullet Class exam-technique session at DA Tuition"></div>
           <div class="class-body">
+            <span class="class-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M13 3 6 14h5l-1 7 8-12h-5l1-6Z"></path></svg></span>
             <h3>Bullet Class</h3>
+            <span class="class-divider" aria-hidden="true"><span></span><i></i><span></span></span>
             <p>Fast, focused lessons built around exam techniques, key skills, and high-impact revision.</p>
           </div>
         </article>
-        <article class="class-card">
-          <div class="class-photo"><img src="images/subjects/english/class-creative.png" alt=""></div>
+        <article class="class-card class-card--blue">
+          <div class="class-photo"><img src="images/subjects/english/class-creative.png" alt="Students collaborating in a Creative Writing workshop at DA Tuition"></div>
           <div class="class-body">
+            <span class="class-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M18 4c-3.5 0-7.5 2.4-9 6.6-.8 2-.9 3.8-.9 5 0 .2.1.4.3.5.2.1.4.1.5 0C10.6 14.8 12.6 13.7 14.6 13c4-1.4 4-6.6 4-9Z"></path><path d="M4 20l5.5-5.5"></path></svg></span>
             <h3>Creative Writing</h3>
+            <span class="class-divider" aria-hidden="true"><span></span><i></i><span></span></span>
             <p>Dedicated writing workshops for voice, structure, imagery, narrative control, and originality.</p>
           </div>
         </article>
-        <article class="class-card">
-          <div class="class-photo"><img src="images/subjects/english/class-focus.png" alt=""></div>
+        <article class="class-card class-card--pink">
+          <div class="class-photo"><img src="images/subjects/english/class-focus.png" alt="Small group of students and a tutor in a Focus Class at DA Tuition"></div>
           <div class="class-body">
+            <span class="class-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="9" cy="9" r="2.6"></circle><circle cx="17" cy="10.2" r="2.1"></circle><path d="M4 19c0-3 2.2-5.4 5-5.4s5 2.4 5 5.4"></path><path d="M14.5 19c.2-2.2 1.7-4 3.7-4"></path></svg></span>
             <h3>Focus Class</h3>
+            <span class="class-divider" aria-hidden="true"><span></span><i></i><span></span></span>
             <p>Small-group support for students who need clarity, consistency, and confidence with English fundamentals.</p>
           </div>
         </article>
       </div>
+      <div class="classes-benefits">
+        <div class="classes-benefit">
+          <span class="classes-benefit-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M2 8l10-4 10 4-10 4Z"></path><path d="M6 10.5V16c0 1.3 2.7 3 6 3s6-1.7 6-3v-5.5"></path><path d="M22 8v6"></path></svg></span>
+          <div class="classes-benefit-copy"><strong>Expert Teachers</strong><span>Highly qualified and passionate educators</span></div>
+        </div>
+        <span class="classes-benefit-sep" aria-hidden="true"></span>
+        <div class="classes-benefit">
+          <span class="classes-benefit-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 18l6-6 4 4 8-9"></path><path d="M15 7h6v6"></path></svg></span>
+          <div class="classes-benefit-copy"><strong>Proven Results</strong><span>A track record of stronger confidence and outcomes</span></div>
+        </div>
+        <span class="classes-benefit-sep" aria-hidden="true"></span>
+        <div class="classes-benefit">
+          <span class="classes-benefit-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.6"></circle><path d="M5 20c0-3.9 3.1-7 7-7s7 3.1 7 7"></path></svg></span>
+          <div class="classes-benefit-copy"><strong>Personalised Support</strong><span>Tailored guidance to help every student succeed</span></div>
+        </div>
+        <span class="classes-benefit-sep" aria-hidden="true"></span>
+        <div class="classes-benefit">
+          <span class="classes-benefit-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3l7 3v6c0 4.4-3 7.6-7 9-4-1.4-7-4.6-7-9V6Z"></path><path d="M9 12l2 2 4-4"></path></svg></span>
+          <div class="classes-benefit-copy"><strong>Premium Learning</strong><span>High-quality resources and structured programs</span></div>
+        </div>
+        <span class="classes-benefit-sep" aria-hidden="true"></span>
+        <div class="classes-benefit">
+          <span class="classes-benefit-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-9.6C5 7 7 5 9.5 5c1.4 0 2.6.7 3.3 1.8C13.4 5.7 14.6 5 16 5c2.5 0 4.5 2 4.5 5.4C20.5 15.6 12 20 12 20Z"></path></svg></span>
+          <div class="classes-benefit-copy"><strong>Student-Centred</strong><span>A supportive environment where students thrive</span></div>
+        </div>
+      </div>
+      <div class="classes-divider classes-divider--bottom" aria-hidden="true"><span></span><i>&#10022;</i><span></span></div>
     </div>
   </section>
 
@@ -397,26 +719,137 @@
   <section class="quote-section">
     <div class="section-inner">
       <div class="section-head">
-        <h2 class="serif">What parents often ask us</h2>
-        <p>Click each concern to flip it over and see how DA helps. It turns the parent worries into a small guided conversation.</p>
+        <h2 class="serif faq-heading">What <span class="faq-word">parents<svg class="faq-stroke" viewBox="0 0 140 14" preserveAspectRatio="none" aria-hidden="true"><path d="M2 8c20-6 100-6 136 2"></path></svg></span><br>often <span class="faq-word">ask us<svg class="faq-stroke" viewBox="0 0 110 14" preserveAspectRatio="none" aria-hidden="true"><path d="M2 9c16-7 78-7 106 1"></path></svg></span></h2>
+        <div class="faq-badge">
+          <span class="faq-badge-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15.5-6.2M21 12a9 9 0 0 1-15.5 6.2"></path><path d="M17 3v4h-4"></path><path d="M7 21v-4h4"></path></svg></span>
+          <span class="faq-badge-text">Tap a card<br>to flip</span>
+        </div>
       </div>
       <div class="quote-grid">
-        <article class="concern-card" tabindex="0">
+        <article class="concern-card" tabindex="0" role="button" aria-expanded="false" aria-label="I do not know if they truly understand what senior English requires of them. Flip card to reveal how DA helps.">
           <div class="concern-inner">
-            <div class="concern-face concern-front"><blockquote>"I do not know if they truly understand what senior English requires of them."</blockquote><span>Click to see how DA helps</span></div>
-            <div class="concern-face concern-back"><h3>We make the invisible skills visible.</h3><p>Students connect syllabus language to actual writing choices through model responses, guided practice, and clear feedback.</p></div>
+            <div class="concern-face concern-front">
+              <span class="concern-clip" aria-hidden="true"><svg viewBox="0 0 18 32"><path d="M9 4v18a4 4 0 0 1-8 0V9a2.5 2.5 0 0 1 5 0v13"></path></svg></span>
+              <span class="concern-num" aria-hidden="true">1</span>
+              <blockquote>&ldquo;I do not know if they truly understand what senior English requires of them.&rdquo;</blockquote>
+              <span class="concern-fold" aria-hidden="true"></span>
+              <span class="concern-flip-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15.5-6.2M21 12a9 9 0 0 1-15.5 6.2"></path><path d="M17 3v4h-4"></path><path d="M7 21v-4h4"></path></svg></span>
+            </div>
+            <div class="concern-face concern-back">
+              <span class="concern-back-label">How DA helps</span>
+              <span class="concern-back-divider" aria-hidden="true"><span>&#10022;</span></span>
+              <ul class="concern-back-list">
+                <li><span class="concern-back-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"></path></svg></span>Clarifies senior English expectations in simple terms</li>
+                <li><span class="concern-back-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"></path></svg></span>Introduces the skills students will need before Year 11</li>
+                <li><span class="concern-back-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"></path></svg></span>Builds confidence through guided and gradual preparation</li>
+              </ul>
+              <span class="concern-flip-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15.5-6.2M21 12a9 9 0 0 1-15.5 6.2"></path><path d="M17 3v4h-4"></path><path d="M7 21v-4h4"></path></svg></span>
+            </div>
           </div>
         </article>
-        <article class="concern-card" tabindex="0">
+        <article class="concern-card" tabindex="0" role="button" aria-expanded="false" aria-label="They know the texts well but their essay marks do not reflect that. Flip card to reveal how DA helps.">
           <div class="concern-inner">
-            <div class="concern-face concern-front"><blockquote>"They know the texts well but their essay marks do not reflect that."</blockquote><span>Click to see how DA helps</span></div>
-            <div class="concern-face concern-back"><h3>Knowledge becomes marks.</h3><p>We focus on argument, structure and analysis so students learn how to turn ideas into a response markers can reward.</p></div>
+            <div class="concern-face concern-front">
+              <span class="concern-clip" aria-hidden="true"><svg viewBox="0 0 18 32"><path d="M9 4v18a4 4 0 0 1-8 0V9a2.5 2.5 0 0 1 5 0v13"></path></svg></span>
+              <span class="concern-num" aria-hidden="true">2</span>
+              <blockquote>&ldquo;They know the texts well but their essay marks do not reflect that.&rdquo;</blockquote>
+              <span class="concern-fold" aria-hidden="true"></span>
+              <span class="concern-flip-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15.5-6.2M21 12a9 9 0 0 1-15.5 6.2"></path><path d="M17 3v4h-4"></path><path d="M7 21v-4h4"></path></svg></span>
+            </div>
+            <div class="concern-face concern-back">
+              <span class="concern-back-label">How DA helps</span>
+              <span class="concern-back-divider" aria-hidden="true"><span>&#10022;</span></span>
+              <ul class="concern-back-list">
+                <li><span class="concern-back-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"></path></svg></span>Identifies why marks are being lost</li>
+                <li><span class="concern-back-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"></path></svg></span>Provides annotated examples and strong model responses</li>
+                <li><span class="concern-back-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"></path></svg></span>Gives specific feedback students can apply independently</li>
+              </ul>
+              <span class="concern-flip-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15.5-6.2M21 12a9 9 0 0 1-15.5 6.2"></path><path d="M17 3v4h-4"></path><path d="M7 21v-4h4"></path></svg></span>
+            </div>
           </div>
         </article>
-        <article class="concern-card" tabindex="0">
+        <article class="concern-card" tabindex="0" role="button" aria-expanded="false" aria-label="I am worried about how they will perform under real HSC exam conditions. Flip card to reveal how DA helps.">
           <div class="concern-inner">
-            <div class="concern-face concern-front"><blockquote>"I am worried about how they will perform under real HSC exam conditions."</blockquote><span>Click to see how DA helps</span></div>
-            <div class="concern-face concern-back"><h3>Practice becomes confidence.</h3><p>Students complete timed responses with feedback that targets the next improvement before exam pressure arrives.</p></div>
+            <div class="concern-face concern-front">
+              <span class="concern-clip" aria-hidden="true"><svg viewBox="0 0 18 32"><path d="M9 4v18a4 4 0 0 1-8 0V9a2.5 2.5 0 0 1 5 0v13"></path></svg></span>
+              <span class="concern-num" aria-hidden="true">3</span>
+              <blockquote>&ldquo;I am worried about how they will perform under real HSC exam conditions.&rdquo;</blockquote>
+              <span class="concern-fold" aria-hidden="true"></span>
+              <span class="concern-flip-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15.5-6.2M21 12a9 9 0 0 1-15.5 6.2"></path><path d="M17 3v4h-4"></path><path d="M7 21v-4h4"></path></svg></span>
+            </div>
+            <div class="concern-face concern-back">
+              <span class="concern-back-label">How DA helps</span>
+              <span class="concern-back-divider" aria-hidden="true"><span>&#10022;</span></span>
+              <ul class="concern-back-list">
+                <li><span class="concern-back-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"></path></svg></span>Practises timed responses under realistic conditions</li>
+                <li><span class="concern-back-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"></path></svg></span>Teaches planning and time-management strategies</li>
+                <li><span class="concern-back-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"></path></svg></span>Reviews performance to improve speed, clarity and control</li>
+              </ul>
+              <span class="concern-flip-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15.5-6.2M21 12a9 9 0 0 1-15.5 6.2"></path><path d="M17 3v4h-4"></path><path d="M7 21v-4h4"></path></svg></span>
+            </div>
+          </div>
+        </article>
+        <article class="concern-card" tabindex="0" role="button" aria-expanded="false" aria-label="My child studies hard but still struggles to write with clarity and depth. Flip card to reveal how DA helps.">
+          <div class="concern-inner">
+            <div class="concern-face concern-front">
+              <span class="concern-clip" aria-hidden="true"><svg viewBox="0 0 18 32"><path d="M9 4v18a4 4 0 0 1-8 0V9a2.5 2.5 0 0 1 5 0v13"></path></svg></span>
+              <span class="concern-num" aria-hidden="true">4</span>
+              <blockquote>&ldquo;My child studies hard but still struggles to write with clarity and depth.&rdquo;</blockquote>
+              <span class="concern-fold" aria-hidden="true"></span>
+              <span class="concern-flip-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15.5-6.2M21 12a9 9 0 0 1-15.5 6.2"></path><path d="M17 3v4h-4"></path><path d="M7 21v-4h4"></path></svg></span>
+            </div>
+            <div class="concern-face concern-back">
+              <span class="concern-back-label">How DA helps</span>
+              <span class="concern-back-divider" aria-hidden="true"><span>&#10022;</span></span>
+              <ul class="concern-back-list">
+                <li><span class="concern-back-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"></path></svg></span>Explicitly teaches clarity, expression and analytical depth</li>
+                <li><span class="concern-back-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"></path></svg></span>Breaks complex writing skills into manageable steps</li>
+                <li><span class="concern-back-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"></path></svg></span>Tracks recurring weaknesses across multiple responses</li>
+              </ul>
+              <span class="concern-flip-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15.5-6.2M21 12a9 9 0 0 1-15.5 6.2"></path><path d="M17 3v4h-4"></path><path d="M7 21v-4h4"></path></svg></span>
+            </div>
+          </div>
+        </article>
+        <article class="concern-card" tabindex="0" role="button" aria-expanded="false" aria-label="They have good ideas but do not know how to structure an English response. Flip card to reveal how DA helps.">
+          <div class="concern-inner">
+            <div class="concern-face concern-front">
+              <span class="concern-clip" aria-hidden="true"><svg viewBox="0 0 18 32"><path d="M9 4v18a4 4 0 0 1-8 0V9a2.5 2.5 0 0 1 5 0v13"></path></svg></span>
+              <span class="concern-num" aria-hidden="true">5</span>
+              <blockquote>&ldquo;They have good ideas but do not know how to structure an English response.&rdquo;</blockquote>
+              <span class="concern-fold" aria-hidden="true"></span>
+              <span class="concern-flip-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15.5-6.2M21 12a9 9 0 0 1-15.5 6.2"></path><path d="M17 3v4h-4"></path><path d="M7 21v-4h4"></path></svg></span>
+            </div>
+            <div class="concern-face concern-back">
+              <span class="concern-back-label">How DA helps</span>
+              <span class="concern-back-divider" aria-hidden="true"><span>&#10022;</span></span>
+              <ul class="concern-back-list">
+                <li><span class="concern-back-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"></path></svg></span>Provides clear paragraph and essay planning frameworks</li>
+                <li><span class="concern-back-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"></path></svg></span>Shows students how ideas connect logically</li>
+                <li><span class="concern-back-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"></path></svg></span>Gradually removes scaffolds as independence develops</li>
+              </ul>
+              <span class="concern-flip-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15.5-6.2M21 12a9 9 0 0 1-15.5 6.2"></path><path d="M17 3v4h-4"></path><path d="M7 21v-4h4"></path></svg></span>
+            </div>
+          </div>
+        </article>
+        <article class="concern-card" tabindex="0" role="button" aria-expanded="false" aria-label="How can I help them build confidence in reading, writing and analysis? Flip card to reveal how DA helps.">
+          <div class="concern-inner">
+            <div class="concern-face concern-front">
+              <span class="concern-clip" aria-hidden="true"><svg viewBox="0 0 18 32"><path d="M9 4v18a4 4 0 0 1-8 0V9a2.5 2.5 0 0 1 5 0v13"></path></svg></span>
+              <span class="concern-num" aria-hidden="true">6</span>
+              <blockquote>&ldquo;How can I help them build confidence in reading, writing and analysis?&rdquo;</blockquote>
+              <span class="concern-fold" aria-hidden="true"></span>
+              <span class="concern-flip-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15.5-6.2M21 12a9 9 0 0 1-15.5 6.2"></path><path d="M17 3v4h-4"></path><path d="M7 21v-4h4"></path></svg></span>
+            </div>
+            <div class="concern-face concern-back">
+              <span class="concern-back-label">How DA helps</span>
+              <span class="concern-back-divider" aria-hidden="true"><span>&#10022;</span></span>
+              <ul class="concern-back-list">
+                <li><span class="concern-back-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"></path></svg></span>Creates a supportive environment where questions are welcomed</li>
+                <li><span class="concern-back-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"></path></svg></span>Celebrates progress while maintaining high expectations</li>
+                <li><span class="concern-back-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"></path></svg></span>Helps students recognise and trust their own improvement</li>
+              </ul>
+              <span class="concern-flip-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15.5-6.2M21 12a9 9 0 0 1-15.5 6.2"></path><path d="M17 3v4h-4"></path><path d="M7 21v-4h4"></path></svg></span>
+            </div>
           </div>
         </article>
       </div>
@@ -515,15 +948,86 @@
       }
     });
 
-    document.querySelectorAll(".concern-card").forEach((card) => {
-      card.addEventListener("click", () => card.classList.toggle("is-flipped"));
+    const concernCards = document.querySelectorAll(".concern-card");
+
+    function toggleConcernCard(card){
+      const open = !card.classList.contains("is-flipped");
+      card.classList.toggle("is-flipped", open);
+      card.setAttribute("aria-expanded", open ? "true" : "false");
+    }
+
+    concernCards.forEach((card) => {
+      card.addEventListener("click", () => toggleConcernCard(card));
       card.addEventListener("keydown", (event) => {
         if(event.key === "Enter" || event.key === " "){
           event.preventDefault();
-          card.classList.toggle("is-flipped");
+          toggleConcernCard(card);
         }
       });
     });
+
+    // Real DA Tuition Google reviews about English tutors, trimmed for a rotating pull-quote.
+    const diffQuotes = [
+      {
+        text: "My English tutor, Ms Lai, has tremendously helped me throughout my whole year 12. I was able to achieve a mark of 97 for my HSC and got 2nd in the state, boosting my ATAR to 99.85.",
+        author: "Ruby Nguyen — Year 12 Student, Google Review, 5 Stars"
+      },
+      {
+        text: "My tutor Ms Jenny has been exceptionally patient, kind and knowledgeable. I had a drastic improvement, moving from 15th to 6th in my final HSC assessment.",
+        author: "Katelin Trinh — Year 12 Student, Google Review, 5 Stars"
+      },
+      {
+        text: "Miss Kassandra is the best English tutor I have ever had. After having her for the past year, she has had a real impact on my marks — I achieved 90% on my Extension English task.",
+        author: "Sasha Cio — Year 11 Student, Google Review, 5 Stars"
+      },
+      {
+        text: "Once I met Miss Christina as my tutor, I was so happy to see my first ever A in an English assessment task. I never achieved under an A again — going on to achieve 1st in Year 11 and 3rd in Year 12, being 1 of 5 people to achieve a band 6 in my school.",
+        author: "Jimmy Sieu — Google Review, 5 Stars"
+      },
+      {
+        text: "Miss Kathleen is the best English tutor I have ever had. Before her I was averaging a low B — now I'm achieving a high A, and reached 1st place ranking in Year 11.",
+        author: "Jasmine Nguyen — Year 11 Student, Google Review, 5 Stars"
+      },
+      {
+        text: "Mr Danny has transformed my attitude toward English, a subject I used to dislike. Thanks to his engaging lessons, I've developed a real passion for English and am now scoring in the 90% range.",
+        author: "Yvan Nguyen — Google Review, 5 Stars"
+      },
+      {
+        text: "This place is amazing, this is my first term here at DA. My teacher Miss Amy is incredible and amazing. I find that DA is very dedicated and supportive to their students and their learning. At DA it really shows results even in seven weeks.",
+        author: "Joshua Dong — Google Review, 5 Stars"
+      }
+    ];
+
+    const diffQuoteText = document.getElementById("diffQuoteText");
+    const diffQuoteAuthor = document.getElementById("diffQuoteAuthor");
+
+    if(diffQuoteText && diffQuoteAuthor){
+      const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      let diffQuoteIndex = 0;
+
+      function renderDiffQuote(){
+        const q = diffQuotes[diffQuoteIndex];
+        diffQuoteText.textContent = "“" + q.text + "”";
+        diffQuoteAuthor.textContent = q.author;
+      }
+
+      renderDiffQuote();
+
+      setInterval(() => {
+        diffQuoteIndex = (diffQuoteIndex + 1) % diffQuotes.length;
+        if(prefersReducedMotion){
+          renderDiffQuote();
+          return;
+        }
+        diffQuoteText.classList.add("diff-quote-fade");
+        diffQuoteAuthor.classList.add("diff-quote-fade");
+        setTimeout(() => {
+          renderDiffQuote();
+          diffQuoteText.classList.remove("diff-quote-fade");
+          diffQuoteAuthor.classList.remove("diff-quote-fade");
+        }, 500);
+      }, 6500);
+    }
   </script>
 </body>
 </html>

@@ -51,6 +51,7 @@ import LegalStudies from "./pages/subjects/LegalStudies";
 import Testimonials from "./pages/Testimonials";
 import TestimonialDetail from "./pages/TestimonialDetail";
 import ScrollToTop from "./components/ScrollToTop";
+import RouteScrollReset from "./components/RouteScrollReset";
 import DetailedChapterNavigation from "./components/DetailedChapterNavigation";
 import BookIntroCalibration from "./pages/BookIntroCalibration";
 
@@ -132,11 +133,13 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
+          <RouteScrollReset />
           <ScrollProgress />
           <StickyBookButton />
           <div
-            className="min-h-screen overflow-x-hidden gradient-transition"
+            className="min-h-screen gradient-transition"
             style={{
+              overflowX: 'clip',
               background:
                 'linear-gradient(180deg, rgba(249, 250, 251, 1) 0%, rgba(239, 246, 255, 0.95) 40%, rgba(219, 234, 254, 0.5) 70%, rgba(147, 197, 253, 0.3) 100%)',
             }}
