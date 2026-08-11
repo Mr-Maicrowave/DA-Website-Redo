@@ -42,7 +42,7 @@ const English = () => {
         proofPills={['Booklet-led lessons', 'Marked feedback', 'Clear writing pathway']}
         exploreTargetId="english-page-content"
         placeholderLabel="English classroom"
-        backgroundImageSrc="/english-page/images/subjects/english/structured-classroom-cr4.jpeg"
+        backgroundImageSrc="/english-page/images/subjects/english/hero-classroom-background.png"
         backgroundImageAlt="DA Tuition English classroom"
         mobileBackgroundPosition="72% center"
         mobileContentPosition="bottom"
