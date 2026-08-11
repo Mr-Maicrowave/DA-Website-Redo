@@ -279,12 +279,16 @@
     padding-top:0;padding-bottom:140px;
   }
   .year-map::before{
-    content:"";position:absolute;left:0;right:0;top:0;height:clamp(520px,50vw,724px);z-index:0;pointer-events:none;
+    content:"";position:absolute;left:0;right:0;top:0;height:clamp(620px,58vw,860px);z-index:0;pointer-events:none;
     background-image:url('images/english-journey-frame.png');
     background-repeat:no-repeat;
     background-position:center bottom;
     background-size:100% auto;
     opacity:0;transition:opacity 1.2s ease;
+  }
+  .year-map::after{
+    content:"";position:absolute;left:0;right:0;top:clamp(500px,48vw,710px);height:220px;z-index:1;pointer-events:none;
+    background:linear-gradient(180deg,rgba(255,246,232,0),rgba(255,246,232,.72) 46%,#FFF6E8 100%);
   }
   .year-map.is-revealed::before{opacity:1}
   @media (prefers-reduced-motion:reduce){
@@ -295,7 +299,7 @@
     position:relative;
     min-height:clamp(520px,50vw,724px);
     display:grid;place-items:center;
-    margin:0 0 48px;
+    margin:0 0 -18px;
     padding:72px 28px 154px;
     text-align:center;
   }
@@ -368,7 +372,7 @@
   }
   .preview-thumb:hover::after,.preview-thumb:focus-visible::after{opacity:1}
   .sample-note{font-size:13px;color:#69748a;line-height:1.5;margin:0}
-  .year-map-stages{display:flex;flex-direction:column;gap:96px}
+  .year-map-stages{position:relative;z-index:2;display:flex;flex-direction:column;gap:96px}
   .stage{
     display:grid;column-gap:64px;row-gap:14px;align-items:center;
     grid-template-columns:1fr 1.05fr;
@@ -431,11 +435,12 @@
     }
     .year-map-stages{gap:64px}
     .year-map{padding-bottom:100px}
-    .year-map .section-head{margin-bottom:34px}
+    .year-map .section-head{margin-bottom:-6px}
   }
   @media (max-width:640px){
     .year-map{padding-bottom:72px}
-    .year-map::before{height:390px;background-size:auto 100%;background-position:center bottom}
+    .year-map::before{height:450px;background-size:auto 100%;background-position:center bottom}
+    .year-map::after{top:330px;height:150px}
     .year-map .section-head{min-height:360px;padding:64px 18px 92px}
     .year-map .section-head::before,.year-map .section-head::after{display:none}
     .year-map .section-head h2{font-size:clamp(2.4rem,12vw,3.4rem)}
