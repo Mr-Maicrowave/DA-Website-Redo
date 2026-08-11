@@ -56,9 +56,14 @@ const NavigationNew = () => {
       description: "Physics, Chemistry, Biology"
     },
     {
-      title: "All Subjects",
-      href: "/subjects",
-      description: "View our complete subject offerings"
+      title: "Business Studies",
+      href: "/subjects/business-studies",
+      description: "Business operations, marketing, and finance"
+    },
+    {
+      title: "Legal Studies",
+      href: "/subjects/legal-studies",
+      description: "The Australian legal system and contemporary issues"
     }
   ];
 

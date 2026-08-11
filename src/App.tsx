@@ -32,7 +32,6 @@ import FAQ from "./pages/FAQ";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import WhyChooseDA from "./pages/WhyChooseDA";
 import PrincipalReflections from "./pages/PrincipalReflections";
-import Subjects from "./pages/Subjects";
 // Program pages
 import PrimarySchool from "./pages/programs/PrimarySchool";
 import HighSchool from "./pages/programs/HighSchool";
@@ -91,7 +90,8 @@ const AnimatedRoutes = () => {
         <Route path="/our-approach" element={<PageTransition><WhyChooseDA /></PageTransition>} />
         <Route path="/why-choose-da" element={<PageTransition><WhyChooseDA /></PageTransition>} />
         <Route path="/principal-reflections" element={<PageTransition><PrincipalReflections /></PageTransition>} />
-        <Route path="/subjects" element={<PageTransition><Subjects /></PageTransition>} />
+        {/* "All Subjects" hub page retired — content removed from src/pages/Subjects.tsx (still on disk, unused). Redirects to the flagship subject page. */}
+        <Route path="/subjects" element={<Navigate to="/subjects/english" replace />} />
 
         {/* Program Routes */}
         <Route path="/programs/primary-school" element={<PageTransition><PrimarySchool /></PageTransition>} />

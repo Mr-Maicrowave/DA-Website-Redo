@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>English Page Redesign Demo - DA Tuition</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:wght@600;700&family=Caveat:wght@400;600&display=swap" rel="stylesheet">
 <style>
   :root{
     --navy:#071629;
@@ -272,7 +272,32 @@
     .concern-card.is-flipped .concern-back{opacity:1;pointer-events:auto}
   }
 
-  .year-map{background:#fff}
+
+  .year-map{
+    position:relative;overflow:hidden;isolation:isolate;
+    background-color:#FAF3E7;
+    padding-top:88px;padding-bottom:140px;
+  }
+  .year-map::before{
+    content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
+    background-image:url('images/journey-manuscript-bg.png');
+    background-repeat:no-repeat;
+    background-position:center;
+    background-size:cover;
+    opacity:0;transition:opacity 1.2s ease;
+  }
+  .year-map.is-revealed::before{opacity:1}
+  @media (prefers-reduced-motion:reduce){
+    .year-map::before{transition:none}
+  }
+  .year-map .section-inner{position:relative;z-index:2}
+  .year-map .section-head h2{color:var(--navy)}
+  .year-map .type-cursor{
+    display:inline-block;width:3px;height:.82em;margin-left:4px;vertical-align:-.08em;
+    background:var(--gold);animation:year-map-type-blink 1s step-end infinite;
+  }
+  .year-map .type-cursor.is-done{animation:none;opacity:0;transition:opacity .5s ease}
+  @keyframes year-map-type-blink{0%,100%{opacity:1}50%{opacity:0}}
   .year-map-grid{display:grid;gap:28px}
   .year-row{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:24px;align-items:stretch}
   .year-panel{
@@ -308,35 +333,232 @@
   }
   .preview-thumb:hover::after,.preview-thumb:focus-visible::after{opacity:1}
   .sample-note{font-size:13px;color:#69748a;line-height:1.5;margin:0}
-  .path-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:26px;align-items:start}
-  .path-card{
-    position:relative;background:#fff;border-radius:26px;padding:30px 26px 28px;
-    box-shadow:0 18px 44px rgba(7,22,41,.1);border:1px solid rgba(7,22,41,.06);overflow:hidden
+  .year-map-stages{display:flex;flex-direction:column;gap:96px}
+  .stage{
+    display:grid;column-gap:64px;row-gap:14px;align-items:center;
+    grid-template-columns:1fr 1.05fr;
+    grid-template-areas:"head photo" "list photo";
   }
-  .path-card-photo{
-    position:absolute;top:-16px;right:-14px;width:132px;height:132px;overflow:hidden;
-    border-radius:38% 62% 58% 42%/48% 42% 58% 52%;box-shadow:0 12px 26px rgba(7,22,41,.16)
+  .stage--reverse{grid-template-columns:1.05fr 1fr;grid-template-areas:"photo head" "photo list"}
+  .stage-head{grid-area:head;align-self:end}
+  .stage-list-wrap{grid-area:list}
+  .stage-photo-frame{
+    grid-area:photo;position:relative;align-self:stretch;
+    opacity:0;transform:translateY(42px) scale(.98);
+    transition:opacity .8s cubic-bezier(.22,1,.36,1),transform .8s cubic-bezier(.22,1,.36,1);
   }
-  .path-card-photo img{width:100%;height:100%;object-fit:cover;filter:grayscale(1) contrast(1.02)}
-  .path-card-icon{
-    display:flex;align-items:center;justify-content:center;width:46px;height:46px;border-radius:50%;
-    background:var(--pc-tint);color:var(--pc-color);margin-bottom:18px
+  .stage.is-in .stage-photo-frame{opacity:1;transform:translateY(0) scale(1)}
+  .stage-photo{
+    position:relative;overflow:hidden;aspect-ratio:4/3.2;height:100%;
+    filter:drop-shadow(0 20px 34px rgba(7,22,41,.16));
+    transition:filter .4s ease;
   }
-  .path-card-icon svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
-  .path-card-years{display:block;font-size:11.5px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--pc-color);margin-bottom:10px}
-  .path-card h3{font-family:"Playfair Display",Georgia,serif;font-size:21px;line-height:1.22;color:var(--navy);margin:0 0 16px;max-width:78%}
-  .path-card-list{display:grid;gap:9px;margin:0;padding:0;list-style:none}
-  .path-card-list li{display:flex;align-items:flex-start;gap:9px;color:#4b5568;font-size:13.5px;line-height:1.4}
-  .path-card-list li::before{content:"";flex:0 0 auto;width:8px;height:8px;margin-top:5px;border-radius:50%;background:var(--pc-color)}
-  .path-card--violet{--pc-color:#7C5CBF;--pc-tint:#F1ECFB}
-  .path-card--teal{--pc-color:#0E9E77;--pc-tint:#E7F7F1}
-  .path-card--coral{--pc-color:#E85D3D;--pc-tint:#FDECE7}
+  .stage-photo img{width:100%;height:100%;object-fit:cover;transition:transform .5s cubic-bezier(.22,1,.36,1)}
+  .stage:nth-of-type(1) .stage-photo{clip-path:url(#stage-wave-a)}
+  .stage:nth-of-type(2) .stage-photo{clip-path:url(#stage-wave-b)}
+  .stage:nth-of-type(3) .stage-photo{clip-path:url(#stage-wave-c)}
+  .stage-photo-outline{
+    position:absolute;inset:0;width:100%;height:100%;pointer-events:none;
+    opacity:0;transition:opacity .7s .25s ease;
+  }
+  .stage.is-in .stage-photo-outline{opacity:1}
+  .stage-photo-outline-halo{fill:none;stroke:#FFF9F0;stroke-width:7;vector-effect:non-scaling-stroke;opacity:.6}
+  .stage-photo-outline-gold{fill:none;stroke:var(--gold);stroke-width:1.5;vector-effect:non-scaling-stroke;opacity:.8;transition:opacity .35s ease,stroke-width .35s ease}
+  .stage-photo-frame:hover .stage-photo-outline-gold{opacity:1;stroke-width:2}
+  .stage-photo-frame:hover .stage-photo img{transform:scale(1.018)}
+  .stage-photo-frame:hover .stage-photo{filter:drop-shadow(0 24px 40px rgba(7,22,41,.22))}
+  .stage-head,.stage-list-wrap{
+    opacity:0;transform:translateY(26px);
+    transition:opacity .8s .12s cubic-bezier(.22,1,.36,1),transform .8s .12s cubic-bezier(.22,1,.36,1);
+  }
+  .stage.is-in .stage-head,.stage.is-in .stage-list-wrap{opacity:1;transform:translateY(0)}
+  .stage-meta{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+  .stage-number{font-family:"Playfair Display",Georgia,serif;font-size:15px;font-weight:700;color:var(--gold)}
+  .stage-years{font-size:11.5px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--muted,#536077);border-left:2px solid var(--gold);padding-left:12px}
+  .stage-head h3{font-family:"Playfair Display",Georgia,serif;font-size:clamp(1.5rem,2.5vw,2.05rem);line-height:1.18;color:var(--navy);margin:0}
+  .stage-list{display:grid;gap:11px;margin:0 0 16px;padding:0;list-style:none}
+  .stage-list li{display:flex;align-items:flex-start;gap:9px;color:#4b5568;font-size:14.5px;line-height:1.45}
+  .stage-list li::before{content:"";flex:0 0 auto;width:7px;height:7px;margin-top:6px;border-radius:50%;background:var(--gold)}
+  .stage-icon{
+    display:inline-flex;opacity:0;transform:translateY(8px);
+    transition:opacity .6s .5s ease,transform .6s .5s ease;
+  }
+  .stage.is-in .stage-icon{opacity:1;transform:translateY(0)}
+  .stage-icon img{
+    display:block;width:52px;height:52px;object-fit:contain;
+    filter:drop-shadow(0 6px 12px rgba(7,22,41,.18));
+  }
   @media (max-width:900px){
-    .path-cards{grid-template-columns:1fr 1fr;gap:20px}
+    .stage,.stage--reverse{
+      grid-template-columns:1fr;
+      grid-template-areas:"head" "photo" "list";
+      row-gap:24px;
+    }
+    .year-map-stages{gap:64px}
+    .year-map{padding-top:64px;padding-bottom:100px}
   }
   @media (max-width:640px){
-    .path-cards{grid-template-columns:1fr}
-    .path-card h3{max-width:70%}
+    .year-map{padding-top:48px;padding-bottom:72px}
+  }
+
+  /* ===== Resources: sample booklet + feedback preview ===== */
+  .resources{
+    --r-navy:#071B35;--r-ivory:#F8F1E6;--r-cream:#FFF9EE;
+    --r-gold:#C99A2E;--r-gold-light:#DDB85F;--r-terracotta:#A9472C;--r-muted:#536078;
+    position:relative;overflow:hidden;background:var(--r-ivory);
+    padding:104px 24px 84px;
+  }
+  .resources::before{
+    content:"";position:absolute;inset:0;pointer-events:none;opacity:.05;
+    background-image:radial-gradient(circle at 8% 12%,var(--r-navy) 0,transparent 45%),radial-gradient(circle at 94% 88%,var(--r-navy) 0,transparent 45%);
+  }
+  .resources .section-inner{position:relative;z-index:1}
+  .resources-head{text-align:center;max-width:640px;margin:0 auto 68px}
+  .resources-eyebrow{font-size:11px;font-weight:800;letter-spacing:.19em;text-transform:uppercase;color:var(--r-gold);margin-bottom:16px}
+  .resources-head h2{font-family:"Playfair Display",Georgia,serif;font-weight:700;font-size:clamp(2.3rem,4.6vw,3.6rem);line-height:1.1;color:var(--r-navy);margin:0 0 18px}
+  .resources-rule{display:flex;align-items:center;justify-content:center;gap:12px;margin:0 auto 20px;max-width:200px}
+  .resources-rule span{flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--r-gold),transparent)}
+  .resources-rule i{color:var(--r-gold);font-style:normal;font-size:11px}
+  .resources-head p{margin:0;color:var(--r-muted);font-size:15.5px;line-height:1.6}
+
+  .resources-shelf{display:flex;flex-direction:column;align-items:center;position:relative}
+
+  .resources-row{
+    position:relative;display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:center;
+    gap:56px;row-gap:64px;padding-top:84px;width:100%;
+  }
+
+  .resources-niche{position:absolute;left:50%;bottom:0;width:280px;height:340px;transform:translateX(-50%);z-index:0;pointer-events:none;opacity:.6}
+  .resources-niche path{fill:none;stroke:var(--r-gold);stroke-width:1;opacity:.32}
+  .resources-niche ellipse{fill:var(--r-gold-light);opacity:.1}
+
+  .resource-btn{
+    appearance:none;background:none;border:0;padding:0;margin:0;width:220px;position:relative;
+    font-family:inherit;text-align:center;cursor:pointer;-webkit-tap-highlight-color:transparent;
+    --tilt:0deg;--lift:0px;--scale:1;z-index:1;
+    transform:rotate(var(--tilt)) translateY(var(--lift)) scale(var(--scale));
+    transition:transform .5s cubic-bezier(.22,1,.36,1);
+  }
+  .resource-btn--left{--tilt:-3deg;--lift:16px;--scale:0.99}
+  .resource-btn--center{--tilt:-0.5deg;--lift:-36px;--scale:1.04;z-index:3}
+  .resource-btn--right{--tilt:3deg;--lift:16px;--scale:0.99}
+
+  @media (prefers-reduced-motion:no-preference){
+    .resource-btn--left:hover,.resource-btn--left:focus-visible{--tilt:-1deg;--lift:8px;--scale:1.025}
+    .resource-btn--center:hover,.resource-btn--center:focus-visible{--tilt:0deg;--lift:-48px;--scale:1.065}
+    .resource-btn--right:hover,.resource-btn--right:focus-visible{--tilt:1deg;--lift:8px;--scale:1.025}
+  }
+
+  .resource-btn:focus-visible{outline:none}
+  .resource-btn:focus-visible .resource-cover{outline:2px solid var(--r-gold);outline-offset:6px}
+
+  .resource-featured{display:block;margin:0 0 12px;font-size:10px;font-weight:800;letter-spacing:.22em;text-transform:uppercase;color:var(--r-gold)}
+
+  .resource-cover{
+    position:relative;z-index:2;width:100%;height:270px;border-radius:3px 6px 6px 3px;
+    display:flex;flex-direction:column;align-items:center;
+    padding:30px 20px 26px;
+    box-shadow:0 20px 36px rgba(7,27,53,.2),0 3px 8px rgba(7,27,53,.1);
+    transition:box-shadow .4s ease;
+  }
+  .resource-btn--center .resource-cover{box-shadow:0 26px 46px rgba(7,27,53,.24),0 0 46px rgba(221,184,95,.2)}
+  .resource-btn:hover .resource-cover,.resource-btn:focus-visible .resource-cover{
+    box-shadow:0 32px 54px rgba(7,27,53,.3),0 0 0 1px rgba(201,154,46,.32),0 0 34px rgba(221,184,95,.26);
+  }
+  .resource-cover::before{
+    content:"";position:absolute;left:0;top:0;bottom:0;width:10px;
+    background:linear-gradient(90deg,rgba(0,0,0,.28),rgba(255,255,255,.06) 40%,transparent);
+  }
+  .resource-cover::after{
+    content:"";position:absolute;right:-3px;top:8px;bottom:8px;width:3px;
+    background:repeating-linear-gradient(180deg,rgba(255,255,255,.55) 0,rgba(255,255,255,.55) 1px,rgba(7,27,53,.12) 1px,rgba(7,27,53,.12) 2px);
+    border-radius:0 2px 2px 0;
+  }
+  .resource-cover--terracotta{background:linear-gradient(155deg,#B85231 0%,var(--r-terracotta) 60%,#8F3A20 100%);border:1px solid rgba(221,184,95,.4)}
+  .resource-cover--navy{background:linear-gradient(155deg,#0C2542 0%,var(--r-navy) 60%,#04121F 100%);border:1px solid rgba(201,154,46,.55)}
+  .resource-cover--paper{background:var(--r-cream);border:1px solid rgba(7,27,53,.12)}
+
+  .resource-crest{width:34px;height:34px;margin-bottom:14px;opacity:.92;color:var(--r-gold-light)}
+  .resource-crest svg{width:100%;height:100%;display:block}
+  .resource-tag{font-size:9.5px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;margin-bottom:10px}
+  .resource-cover--terracotta .resource-tag,.resource-cover--navy .resource-tag{color:var(--r-gold-light)}
+  .resource-cover--paper .resource-tag{color:var(--r-gold)}
+  .resource-title-rule{width:26px;height:1px;background:var(--r-gold-light);margin-bottom:12px;opacity:.7}
+  .resource-cover--paper .resource-title-rule{background:var(--r-gold)}
+  .resource-title{font-family:"Playfair Display",Georgia,serif;font-weight:700;font-size:20px;line-height:1.22;margin-bottom:10px}
+  .resource-cover--terracotta .resource-title,.resource-cover--navy .resource-title{color:#fff}
+  .resource-cover--paper .resource-title{color:var(--r-navy)}
+  .resource-subtitle{font-size:11.5px;line-height:1.5}
+  .resource-cover--terracotta .resource-subtitle{color:rgba(255,248,238,.82)}
+  .resource-cover--navy .resource-subtitle{color:rgba(242,223,157,.78)}
+  .resource-cover--paper .resource-subtitle{color:var(--r-muted)}
+
+  .resource-motif{position:absolute;right:10px;bottom:10px;width:64px;height:64px;pointer-events:none;opacity:.16}
+  .resource-motif svg{width:100%;height:100%;display:block}
+  .resource-cover--navy .resource-motif{opacity:.14;color:var(--r-gold-light)}
+  .resource-cover--terracotta .resource-motif{opacity:.18;color:#fff}
+
+  .resource-mark{
+    width:30px;height:30px;border-radius:50%;border:1.3px solid var(--r-gold);
+    display:flex;align-items:center;justify-content:center;margin-bottom:12px;color:var(--r-gold)
+  }
+  .resource-mark svg{width:14px;height:14px}
+  .resource-feedback-note{margin-top:auto;padding-top:14px;text-align:left;width:100%;display:flex;align-items:flex-end;justify-content:space-between;gap:10px}
+  .resource-feedback-script{
+    font-family:"Playfair Display",Georgia,serif;font-style:italic;font-size:12px;line-height:1.4;
+    color:var(--r-terracotta);transform:rotate(-2deg);display:block;max-width:130px
+  }
+  .resource-feedback-grade{
+    flex:0 0 auto;width:30px;height:30px;border-radius:50%;border:1.5px solid var(--r-terracotta);
+    display:flex;align-items:center;justify-content:center;font-family:"Playfair Display",Georgia,serif;
+    font-weight:700;font-size:14px;color:var(--r-terracotta);transform:rotate(-6deg)
+  }
+
+  .resource-caption{display:block;margin-top:22px}
+  .resource-btn--center .resource-caption{margin-top:32px}
+  .resource-caption-rule{display:block;height:1px;width:100%;background:linear-gradient(90deg,var(--r-gold),transparent 85%);margin-bottom:12px}
+  .resource-caption-row{display:flex;align-items:center;justify-content:center;gap:10px}
+  .resource-caption-label{font-size:13.5px;color:var(--r-navy);font-weight:600}
+  .resource-arrow{
+    width:28px;height:28px;border-radius:50%;background:var(--r-gold);color:var(--r-navy);
+    display:flex;align-items:center;justify-content:center;transition:background .25s ease,transform .25s ease
+  }
+  .resource-arrow svg{width:13px;height:13px}
+  .resource-btn:hover .resource-arrow,.resource-btn:focus-visible .resource-arrow{background:var(--r-gold-light);transform:translateX(2px)}
+
+  .resources-connector{position:relative;width:min(640px,84%);height:40px;margin:8px auto 0;opacity:.55;pointer-events:none}
+  .resources-connector svg{width:100%;height:100%;display:block}
+  .resources-connector svg path{fill:none;stroke:var(--r-gold);stroke-width:1}
+  .resources-connector svg circle{fill:var(--r-gold)}
+  .resources-connector-diamond{position:absolute;left:50%;top:8px;transform:translate(-50%,-50%);color:var(--r-gold);font-size:11px}
+
+  .resources-transition{position:absolute;left:0;right:0;bottom:0;height:34px;pointer-events:none;z-index:1}
+  .resources-transition svg{display:block;width:100%;height:100%}
+
+  @media (prefers-reduced-motion:reduce){
+    .resource-btn{transition:none}
+    .resource-btn:hover .resource-arrow,.resource-btn:focus-visible .resource-arrow{transform:none}
+  }
+
+  @media (max-width:900px){
+    .resources{padding:80px 24px 64px}
+    .resources-row{gap:36px;row-gap:52px}
+    .resource-btn--left{--lift:10px}
+    .resource-btn--center{--lift:-24px}
+    .resource-btn--right{--lift:10px}
+  }
+  @media (max-width:760px){
+    .resource-btn--center{order:-1;flex-basis:100%}
+    .resources-row{row-gap:40px}
+    .resource-btn--left{--lift:0px}
+    .resource-btn--right{--lift:0px}
+  }
+  @media (max-width:640px){
+    .resources-row{flex-direction:column;align-items:center;gap:44px}
+    .resource-btn{width:240px}
+    .resource-btn--left,.resource-btn--center,.resource-btn--right{--tilt:0deg;--lift:0px;--scale:1;order:0}
+    .resource-cover{height:250px}
+    .resources-niche{display:none}
   }
 
   .classes{
@@ -430,6 +652,10 @@
   .preview-stage{min-height:0;display:grid;place-items:center}
   .preview-stage img{max-height:76vh;max-width:100%;border-radius:8px;background:#fff;box-shadow:0 28px 80px rgba(0,0,0,.45)}
   .preview-controls{display:flex;justify-content:center;gap:12px}
+  .preview-pdf-frame{width:min(900px,100%);height:76vh;border:0;border-radius:8px;background:#fff;box-shadow:0 28px 80px rgba(0,0,0,.45)}
+  .preview-placeholder{width:min(560px,100%);background:#fff;border-radius:8px;padding:48px 36px;text-align:center;box-shadow:0 28px 80px rgba(0,0,0,.45)}
+  .preview-placeholder-title{font-family:"Playfair Display",Georgia,serif;font-size:22px;color:#071629;margin:0 0 10px}
+  .preview-placeholder-note{font-size:14px;color:#536077;margin:0;line-height:1.6}
 
   @media (max-width:900px){
     .nav{position:absolute;top:12px;gap:18px;overflow:hidden}
@@ -469,6 +695,21 @@
 <body>
   <!-- Nav + hero now render outside this iframe as real React (NavigationNew + SubjectHero)
        in src/pages/subjects/English.tsx, so the rest of this page starts here. -->
+
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <clipPath id="stage-wave-a" clipPathUnits="objectBoundingBox">
+        <path d="M0.5,0.015 C0.63,0.015 0.68,0.075 0.8,0.085 C0.93,0.095 1,0.19 0.965,0.32 C0.94,0.42 0.99,0.48 0.975,0.6 C0.96,0.74 0.9,0.8 0.8,0.885 C0.7,0.97 0.62,0.945 0.49,0.975 C0.36,1 0.24,0.95 0.14,0.87 C0.045,0.795 0.015,0.68 0.03,0.56 C0.045,0.44 0,0.38 0.02,0.26 C0.04,0.14 0.13,0.06 0.26,0.035 C0.34,0.015 0.41,0.015 0.5,0.015 Z" />
+      </clipPath>
+      <clipPath id="stage-wave-b" clipPathUnits="objectBoundingBox">
+        <path d="M0.52,0.02 C0.66,0.03 0.72,0.1 0.84,0.1 C0.96,0.1 1,0.22 0.96,0.35 C0.93,0.46 0.98,0.52 0.96,0.64 C0.94,0.78 0.86,0.83 0.75,0.9 C0.64,0.97 0.56,0.93 0.44,0.97 C0.32,1 0.2,0.93 0.12,0.84 C0.04,0.75 0.02,0.62 0.04,0.5 C0.06,0.4 0.01,0.34 0.03,0.22 C0.05,0.1 0.15,0.04 0.28,0.02 C0.36,0.005 0.43,0.01 0.52,0.02 Z" />
+      </clipPath>
+      <clipPath id="stage-wave-c" clipPathUnits="objectBoundingBox">
+        <path d="M0.46,0.03 C0.6,0 0.7,0.06 0.82,0.05 C0.95,0.04 1,0.16 0.94,0.29 C0.9,0.4 0.97,0.46 0.93,0.58 C0.9,0.72 0.94,0.8 0.82,0.89 C0.7,0.98 0.6,0.9 0.47,0.94 C0.35,0.98 0.22,0.96 0.13,0.86 C0.04,0.76 0.08,0.64 0.05,0.52 C0.02,0.4 0.06,0.32 0.1,0.2 C0.14,0.08 0.26,0.02 0.38,0.02 C0.41,0.02 0.43,0.025 0.46,0.03 Z" />
+      </clipPath>
+    </defs>
+  </svg>
+
 
   <section class="diff-section">
     <div class="section-inner diff-inner">
@@ -569,46 +810,116 @@
   <section class="year-map">
     <div class="section-inner">
       <div class="section-head">
-        <h2 class="serif">A Clear English Journey,<br>From Foundations to HSC</h2>
+        <h2 class="serif" id="year-map-heading" aria-label="A Clear English Journey, From Foundations to HSC">
+          <span class="type-line" id="year-map-type-1"></span><br>
+          <span class="type-line" id="year-map-type-2"></span><span class="type-cursor" id="year-map-cursor"></span>
+        </h2>
       </div>
-      <div class="path-cards">
-        <article class="path-card path-card--violet">
-          <div class="path-card-photo"><img src="images/subjects/english/support-24-7.jpeg" alt=""></div>
-          <span class="path-card-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 6.2c-2-1.5-5-2-8-1v13c3-1 6-.5 8 1 2-1.5 5-2 8-1v-13c-3-1-6-.5-8 1Z"></path><path d="M12 6.2v13"></path></svg></span>
-          <span class="path-card-years">Years 7-8</span>
-          <h3>Building High School English Skills</h3>
-          <ul class="path-card-list">
-            <li>TEEL paragraph structure</li>
-            <li>Text analysis and evidence use</li>
-            <li>Creative writing foundations</li>
-            <li>Assessment preparation</li>
-          </ul>
+      <div class="year-map-stages">
+        <article class="stage stage--reverse">
+          <div class="stage-head">
+            <div class="stage-meta">
+              <span class="stage-number">01</span>
+              <span class="stage-years">Years 7&ndash;8</span>
+            </div>
+            <h3 class="serif">Building high school English skills</h3>
+          </div>
+          <div class="stage-photo-frame">
+            <div class="stage-photo"><img src="images/subjects/english/support-24-7.jpeg" alt="DA Tuition English students working together"></div>
+            <svg class="stage-photo-outline" viewBox="0 0 1 1" preserveAspectRatio="none" aria-hidden="true">
+              <path class="stage-photo-outline-halo" d="M0.5,0.015 C0.63,0.015 0.68,0.075 0.8,0.085 C0.93,0.095 1,0.19 0.965,0.32 C0.94,0.42 0.99,0.48 0.975,0.6 C0.96,0.74 0.9,0.8 0.8,0.885 C0.7,0.97 0.62,0.945 0.49,0.975 C0.36,1 0.24,0.95 0.14,0.87 C0.045,0.795 0.015,0.68 0.03,0.56 C0.045,0.44 0,0.38 0.02,0.26 C0.04,0.14 0.13,0.06 0.26,0.035 C0.34,0.015 0.41,0.015 0.5,0.015 Z"/>
+              <path class="stage-photo-outline-gold" d="M0.5,0.015 C0.63,0.015 0.68,0.075 0.8,0.085 C0.93,0.095 1,0.19 0.965,0.32 C0.94,0.42 0.99,0.48 0.975,0.6 C0.96,0.74 0.9,0.8 0.8,0.885 C0.7,0.97 0.62,0.945 0.49,0.975 C0.36,1 0.24,0.95 0.14,0.87 C0.045,0.795 0.015,0.68 0.03,0.56 C0.045,0.44 0,0.38 0.02,0.26 C0.04,0.14 0.13,0.06 0.26,0.035 C0.34,0.015 0.41,0.015 0.5,0.015 Z"/>
+            </svg>
+          </div>
+          <div class="stage-list-wrap">
+            <ul class="stage-list">
+              <li>Reading comprehension and inference</li>
+              <li>Paragraph structure and clear expression</li>
+              <li>Textual analysis and evidence use</li>
+              <li>Creative and persuasive writing</li>
+              <li>Grammar, vocabulary and assessment habits</li>
+            </ul>
+            <span class="stage-icon" aria-hidden="true">
+              <img src="images/icons/icon-quill.png" alt="">
+            </span>
+          </div>
         </article>
-        <article class="path-card path-card--teal">
-          <div class="path-card-photo"><img src="images/subjects/english/structured-classroom-cr3.jpeg" alt=""></div>
-          <span class="path-card-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"></circle><circle cx="12" cy="12" r="4.4"></circle><circle cx="12" cy="12" r="1"></circle></svg></span>
-          <span class="path-card-years">Years 9-10</span>
-          <h3>Strengthening Analysis and Assessment Confidence</h3>
-          <ul class="path-card-list">
-            <li>Essay writing and paragraph flow</li>
-            <li>Deeper analysis of techniques and meaning</li>
-            <li>Timed writing confidence</li>
-            <li>Preparation for senior English expectations</li>
-          </ul>
+
+        <article class="stage">
+          <div class="stage-head">
+            <div class="stage-meta">
+              <span class="stage-number">02</span>
+              <span class="stage-years">Years 9&ndash;10</span>
+            </div>
+            <h3 class="serif">Strengthening analysis and assessment confidence</h3>
+          </div>
+          <div class="stage-photo-frame">
+            <div class="stage-photo"><img src="images/subjects/english/structured-classroom-cr3.jpeg" alt="DA Tuition English classroom in session"></div>
+            <svg class="stage-photo-outline" viewBox="0 0 1 1" preserveAspectRatio="none" aria-hidden="true">
+              <path class="stage-photo-outline-halo" d="M0.52,0.02 C0.66,0.03 0.72,0.1 0.84,0.1 C0.96,0.1 1,0.22 0.96,0.35 C0.93,0.46 0.98,0.52 0.96,0.64 C0.94,0.78 0.86,0.83 0.75,0.9 C0.64,0.97 0.56,0.93 0.44,0.97 C0.32,1 0.2,0.93 0.12,0.84 C0.04,0.75 0.02,0.62 0.04,0.5 C0.06,0.4 0.01,0.34 0.03,0.22 C0.05,0.1 0.15,0.04 0.28,0.02 C0.36,0.005 0.43,0.01 0.52,0.02 Z"/>
+              <path class="stage-photo-outline-gold" d="M0.52,0.02 C0.66,0.03 0.72,0.1 0.84,0.1 C0.96,0.1 1,0.22 0.96,0.35 C0.93,0.46 0.98,0.52 0.96,0.64 C0.94,0.78 0.86,0.83 0.75,0.9 C0.64,0.97 0.56,0.93 0.44,0.97 C0.32,1 0.2,0.93 0.12,0.84 C0.04,0.75 0.02,0.62 0.04,0.5 C0.06,0.4 0.01,0.34 0.03,0.22 C0.05,0.1 0.15,0.04 0.28,0.02 C0.36,0.005 0.43,0.01 0.52,0.02 Z"/>
+            </svg>
+          </div>
+          <div class="stage-list-wrap">
+            <ul class="stage-list">
+              <li>Sophisticated essay structure</li>
+              <li>Deeper analysis of technique and meaning</li>
+              <li>Fluent quotation integration</li>
+              <li>Writing across analytical and creative forms</li>
+              <li>Drafting, feedback and timed assessment practice</li>
+            </ul>
+            <span class="stage-icon" aria-hidden="true">
+              <img src="images/icons/icon-fountain-pen.png" alt="">
+            </span>
+          </div>
         </article>
-        <article class="path-card path-card--coral">
-          <div class="path-card-photo"><img src="images/subjects/english/feedback-tutor.jpeg" alt=""></div>
-          <span class="path-card-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 4 2 9l10 5 10-5-10-5Z"></path><path d="M6 11.5V16c0 1.7 2.7 3 6 3s6-1.3 6-3v-4.5"></path><path d="M22 9v6"></path></svg></span>
-          <span class="path-card-years">Years 11-12</span>
-          <h3>Senior English and HSC Preparation</h3>
-          <ul class="path-card-list">
-            <li>HSC essay preparation</li>
-            <li>Module-based text analysis</li>
-            <li>Draft feedback and editing</li>
-            <li>Trial and HSC exam preparation</li>
-          </ul>
+
+        <article class="stage stage--reverse">
+          <div class="stage-head">
+            <div class="stage-meta">
+              <span class="stage-number">03</span>
+              <span class="stage-years">Years 11&ndash;12</span>
+            </div>
+            <h3 class="serif">Senior English and HSC preparation</h3>
+          </div>
+          <div class="stage-photo-frame">
+            <div class="stage-photo"><img src="images/subjects/english/feedback-tutor.jpeg" alt="DA Tuition tutor giving feedback to a senior English student"></div>
+            <svg class="stage-photo-outline" viewBox="0 0 1 1" preserveAspectRatio="none" aria-hidden="true">
+              <path class="stage-photo-outline-halo" d="M0.46,0.03 C0.6,0 0.7,0.06 0.82,0.05 C0.95,0.04 1,0.16 0.94,0.29 C0.9,0.4 0.97,0.46 0.93,0.58 C0.9,0.72 0.94,0.8 0.82,0.89 C0.7,0.98 0.6,0.9 0.47,0.94 C0.35,0.98 0.22,0.96 0.13,0.86 C0.04,0.76 0.08,0.64 0.05,0.52 C0.02,0.4 0.06,0.32 0.1,0.2 C0.14,0.08 0.26,0.02 0.38,0.02 C0.41,0.02 0.43,0.025 0.46,0.03 Z"/>
+              <path class="stage-photo-outline-gold" d="M0.46,0.03 C0.6,0 0.7,0.06 0.82,0.05 C0.95,0.04 1,0.16 0.94,0.29 C0.9,0.4 0.97,0.46 0.93,0.58 C0.9,0.72 0.94,0.8 0.82,0.89 C0.7,0.98 0.6,0.9 0.47,0.94 C0.35,0.98 0.22,0.96 0.13,0.86 C0.04,0.76 0.08,0.64 0.05,0.52 C0.02,0.4 0.06,0.32 0.1,0.2 C0.14,0.08 0.26,0.02 0.38,0.02 C0.41,0.02 0.43,0.025 0.46,0.03 Z"/>
+            </svg>
+          </div>
+          <div class="stage-list-wrap">
+            <ul class="stage-list">
+              <li>Rubric and module mastery</li>
+              <li>Conceptual thesis and argument development</li>
+              <li>Close analysis, context and textual synthesis</li>
+              <li>Advanced essays and Craft of Writing responses</li>
+              <li>HSC exam technique, adaptability and timed performance</li>
+            </ul>
+            <span class="stage-icon" aria-hidden="true">
+              <img src="images/icons/icon-graduation-cap.png" alt="">
+            </span>
+          </div>
         </article>
       </div>
+    </div>
+  </section>
+
+  <section class="resources" id="resources">
+    <div class="section-inner">
+      <div class="resources-head">
+        <div class="resources-eyebrow">Inside the classroom</div>
+        <h2 class="serif">Preview Our English Resources</h2>
+        <div class="resources-rule" aria-hidden="true"><span></span><i>&#10022;</i><span></span></div>
+        <p>Explore real examples of the resources and feedback our students receive.</p>
+      </div>
+      <div class="resources-shelf" id="resources-shelf"></div>
+    </div>
+    <div class="resources-transition" aria-hidden="true">
+      <svg viewBox="0 0 1440 34" preserveAspectRatio="none">
+        <path d="M0 16 C 360 2 1080 30 1440 12 L1440 34 L0 34 Z" fill="#061A34"></path>
+      </svg>
     </div>
   </section>
 
@@ -864,6 +1175,11 @@
       </div>
       <div class="preview-stage">
         <img class="preview-image" src="samples/essay_page_1.png" alt="Senior feedback preview">
+        <iframe class="preview-pdf-frame" title="Sample document preview" hidden></iframe>
+        <div class="preview-placeholder" hidden>
+          <p class="preview-placeholder-title"></p>
+          <p class="preview-placeholder-note">Sample PDF coming soon &mdash; ask your consultant to see a printed copy in the meantime.</p>
+        </div>
       </div>
       <div class="preview-controls">
         <button class="preview-arrow" type="button" data-preview-direction="-1" aria-label="Previous page">Prev</button>
@@ -906,6 +1222,10 @@
     const modal = document.querySelector(".preview-modal");
     const previewTitle = document.querySelector(".preview-title");
     const previewImage = document.querySelector(".preview-image");
+    const previewControls = document.querySelector(".preview-controls");
+    const previewPdfFrame = document.querySelector(".preview-pdf-frame");
+    const previewPlaceholder = document.querySelector(".preview-placeholder");
+    const previewPlaceholderTitle = document.querySelector(".preview-placeholder-title");
     let activeGroup = "feedback";
     let activeIndex = 0;
 
@@ -920,6 +1240,11 @@
       activeGroup = group;
       activeIndex = Number(index) || 0;
       renderPreview();
+      previewImage.hidden = false;
+      previewControls.style.display = "";
+      previewPdfFrame.hidden = true;
+      previewPdfFrame.src = "";
+      previewPlaceholder.hidden = true;
       modal.classList.add("is-open");
       modal.setAttribute("aria-hidden","false");
     }
@@ -936,17 +1261,156 @@
       });
     });
 
-    document.querySelector(".preview-close").addEventListener("click", () => {
+    function closePreviewModal(){
       modal.classList.remove("is-open");
       modal.setAttribute("aria-hidden","true");
-    });
+      previewPdfFrame.src = "";
+    }
+
+    document.querySelector(".preview-close").addEventListener("click", closePreviewModal);
 
     modal.addEventListener("click", (event) => {
-      if(event.target === modal){
-        modal.classList.remove("is-open");
-        modal.setAttribute("aria-hidden","true");
-      }
+      if(event.target === modal) closePreviewModal();
     });
+
+    // ---- English resources: sample booklets + feedback (shelf above "Choose the class style") ----
+    // To go live with a real PDF: set `pdfUrl` below to the file's path, e.g.
+    // pdfUrl: "resources/fairy-tales-sample.pdf", with the PDF placed in
+    // /public/english-page/resources/. Nothing else needs to change — the button,
+    // modal and click handler already read from this field.
+    const ENGLISH_RESOURCES = [
+      {
+        id: "fairy-tales",
+        kind: "booklet",
+        position: "left",
+        accent: "terracotta",
+        motif: "leaf",
+        tag: "Year 7 &middot; Term 3, Week 5",
+        title: "Fairy Tales,<br>Reimagined",
+        subtitle: "Narrative &amp; creative<br>writing booklet",
+        buttonLabel: "Open sample booklet",
+        pdfUrl: null,
+        alt: "Sample Year 7 Fairy Tales, Reimagined booklet"
+      },
+      {
+        id: "king-lear",
+        kind: "booklet",
+        position: "center",
+        accent: "navy",
+        motif: "crown",
+        tag: "Year 11&ndash;12 &middot; Term 2, Week 8",
+        title: "King Lear<br>Text Study",
+        subtitle: "HSC advanced English<br>booklet",
+        buttonLabel: "Open sample booklet",
+        pdfUrl: null,
+        alt: "Sample King Lear HSC text study booklet"
+      },
+      {
+        id: "feedback-sample",
+        kind: "feedback",
+        position: "right",
+        accent: "paper",
+        motif: null,
+        tag: "HSC English",
+        title: "Marked Feedback<br>Sample",
+        subtitle: "A real page of<br>teacher annotation",
+        buttonLabel: "View sample feedback",
+        pdfUrl: null,
+        alt: "Sample page of marked HSC English feedback"
+      }
+    ];
+
+    const RESOURCE_ICONS = {
+      crest: '<svg viewBox="0 0 40 46" fill="none" stroke="currentColor" stroke-width="1.1"><path d="M20 2 L37 8 V21 C37 33 30 41 20 44 C10 41 3 33 3 21 V8 Z"/><text x="20" y="23" text-anchor="middle" font-family="Playfair Display, Georgia, serif" font-size="11" stroke="none" fill="currentColor">DA</text><text x="20" y="32" text-anchor="middle" font-family="Inter, sans-serif" font-size="4" letter-spacing="1.5" stroke="none" fill="currentColor">TUITION</text></svg>',
+      pencil: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 20l1-4.6L15.4 5 19 8.6 8.6 19 4 20Z"/><path d="M13.3 6.7 17 10.4"/></svg>',
+      crown: '<svg viewBox="0 0 100 70" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M6 60 12 20 30 42 50 12 70 42 88 20 94 60Z"/><path d="M6 60H94"/></svg>',
+      leaf: '<svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M10 90C30 60 40 30 90 10"/><path d="M30 70C40 60 46 50 50 40"/><path d="M50 50C58 44 64 38 70 28"/></svg>',
+      arrow: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>'
+    };
+
+    function stripTags(html){
+      return html.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+    }
+
+    function renderResources(){
+      const shelf = document.getElementById("resources-shelf");
+      if(!shelf) return;
+
+      const niche = `
+        <svg class="resources-niche" viewBox="0 0 280 340" aria-hidden="true">
+          <path d="M14 340 V118 C14 52 72 12 140 12 C208 12 266 52 266 118 V340"></path>
+          <ellipse cx="140" cy="160" rx="126" ry="160"></ellipse>
+        </svg>`;
+
+      const books = ENGLISH_RESOURCES.map((r) => `
+        <button class="resource-btn resource-btn--${r.position}" type="button" data-resource-id="${r.id}" aria-label="${r.buttonLabel}: ${r.alt}">
+          ${r.position === "center" ? `<span class="resource-featured" aria-hidden="true">Featured HSC resource</span>` : ""}
+          <span class="resource-cover resource-cover--${r.accent}">
+            ${r.kind === "feedback"
+              ? `<span class="resource-mark" aria-hidden="true">${RESOURCE_ICONS.pencil}</span>`
+              : `<span class="resource-crest" aria-hidden="true">${RESOURCE_ICONS.crest}</span>`}
+            <span class="resource-tag">${r.tag}</span>
+            <span class="resource-title-rule" aria-hidden="true"></span>
+            <span class="resource-title serif">${r.title}</span>
+            <span class="resource-subtitle">${r.subtitle}</span>
+            ${r.motif ? `<span class="resource-motif" aria-hidden="true">${RESOURCE_ICONS[r.motif]}</span>` : ""}
+            ${r.kind === "feedback" ? `
+              <span class="resource-feedback-note">
+                <span class="resource-feedback-script">Insightful analysis and clear use of evidence.</span>
+                <span class="resource-feedback-grade">A</span>
+              </span>` : ""}
+          </span>
+          <span class="resource-caption">
+            <span class="resource-caption-rule" aria-hidden="true"></span>
+            <span class="resource-caption-row">
+              <span class="resource-caption-label">${r.buttonLabel}</span>
+              <span class="resource-arrow" aria-hidden="true">${RESOURCE_ICONS.arrow}</span>
+            </span>
+          </span>
+        </button>
+      `).join("");
+
+      const connector = `
+        <div class="resources-connector" aria-hidden="true">
+          <svg viewBox="0 0 640 40" preserveAspectRatio="none">
+            <path d="M16 28 C 200 28 240 8 320 8 C 400 8 440 28 624 28"></path>
+            <circle cx="16" cy="28" r="2"></circle>
+            <circle cx="624" cy="28" r="2"></circle>
+          </svg>
+          <span class="resources-connector-diamond">&#10022;</span>
+        </div>`;
+
+      shelf.innerHTML = `<div class="resources-row">${niche}${books}</div>${connector}`;
+
+      shelf.querySelectorAll(".resource-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const resource = ENGLISH_RESOURCES.find((r) => r.id === btn.dataset.resourceId);
+          if(resource) openResourceModal(resource);
+        });
+      });
+    }
+
+    function openResourceModal(resource){
+      previewTitle.textContent = stripTags(resource.title);
+      previewImage.hidden = true;
+      previewControls.style.display = "none";
+
+      if(resource.pdfUrl){
+        previewPlaceholder.hidden = true;
+        previewPdfFrame.hidden = false;
+        previewPdfFrame.src = resource.pdfUrl;
+      } else {
+        previewPdfFrame.hidden = true;
+        previewPdfFrame.src = "";
+        previewPlaceholderTitle.textContent = stripTags(resource.title);
+        previewPlaceholder.hidden = false;
+      }
+
+      modal.classList.add("is-open");
+      modal.setAttribute("aria-hidden","false");
+    }
+
+    renderResources();
 
     const concernCards = document.querySelectorAll(".concern-card");
 
@@ -1027,6 +1491,88 @@
           diffQuoteAuthor.classList.remove("diff-quote-fade");
         }, 500);
       }, 6500);
+    }
+
+    const yearMapSection = document.querySelector(".year-map");
+    if(yearMapSection){
+      if("IntersectionObserver" in window){
+        const yearMapObserver = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if(entry.isIntersecting){
+              yearMapSection.classList.add("is-revealed");
+              yearMapObserver.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.25 });
+        yearMapObserver.observe(yearMapSection);
+      } else {
+        yearMapSection.classList.add("is-revealed");
+      }
+    }
+
+    const stageEls = document.querySelectorAll(".year-map .stage");
+    if("IntersectionObserver" in window){
+      const stageObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if(entry.isIntersecting){
+            entry.target.classList.add("is-in");
+            stageObserver.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.22 });
+      stageEls.forEach((el) => stageObserver.observe(el));
+    } else {
+      stageEls.forEach((el) => el.classList.add("is-in"));
+    }
+
+    function typeYearMapHeading(){
+      const line1 = "A Clear English Journey,";
+      const line2 = "From Foundations to HSC";
+      const el1 = document.getElementById("year-map-type-1");
+      const el2 = document.getElementById("year-map-type-2");
+      const cursor = document.getElementById("year-map-cursor");
+      if(!el1 || !el2 || !cursor) return;
+      const speed = 34;
+
+      function typeLine(text, el, onDone){
+        let j = 0;
+        (function step(){
+          if(j <= text.length){
+            el.textContent = text.slice(0, j);
+            j++;
+            setTimeout(step, speed);
+          } else if(onDone){
+            onDone();
+          }
+        })();
+      }
+
+      typeLine(line1, el1, () => {
+        typeLine(line2, el2, () => {
+          cursor.classList.add("is-done");
+        });
+      });
+    }
+
+    const yearMapHeading = document.getElementById("year-map-heading");
+    if(yearMapHeading){
+      const prefersReducedMotionHeading = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if(prefersReducedMotionHeading){
+        document.getElementById("year-map-type-1").textContent = "A Clear English Journey,";
+        document.getElementById("year-map-type-2").textContent = "From Foundations to HSC";
+      } else if("IntersectionObserver" in window){
+        const headingObserver = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if(entry.isIntersecting){
+              typeYearMapHeading();
+              headingObserver.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.5 });
+        headingObserver.observe(yearMapHeading);
+      } else {
+        typeYearMapHeading();
+      }
     }
   </script>
 </body>
