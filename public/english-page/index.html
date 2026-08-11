@@ -287,8 +287,8 @@
     opacity:0;transition:opacity 1.2s ease;
   }
   .year-map::after{
-    content:"";position:absolute;left:0;right:0;top:clamp(500px,48vw,710px);height:220px;z-index:1;pointer-events:none;
-    background:linear-gradient(180deg,rgba(255,246,232,0),rgba(255,246,232,.72) 46%,#FFF6E8 100%);
+    content:"";position:absolute;left:0;right:0;top:clamp(620px,56vw,820px);height:180px;z-index:1;pointer-events:none;
+    background:linear-gradient(180deg,rgba(255,246,232,0),rgba(255,246,232,.82) 50%,#FFF6E8 100%);
   }
   .year-map.is-revealed::before{opacity:1}
   @media (prefers-reduced-motion:reduce){
@@ -299,7 +299,7 @@
     position:relative;
     min-height:clamp(520px,50vw,724px);
     display:grid;place-items:center;
-    margin:0 0 -18px;
+    margin:0 0 72px;
     padding:72px 28px 154px;
     text-align:center;
   }
@@ -312,17 +312,6 @@
     font-size:22px;
     line-height:20px;
     opacity:.82;
-  }
-  .year-map .section-head::after{
-    content:"words\A ideas\A understanding\A expression";
-    position:absolute;left:clamp(-64px,-4vw,-38px);top:166px;
-    white-space:pre;
-    font-family:"Playfair Display",Georgia,serif;
-    font-style:italic;
-    font-size:clamp(.95rem,1.35vw,1.25rem);
-    line-height:2.05;
-    color:rgba(146,108,48,.45);
-    text-align:left;
   }
   .year-map .section-head h2{
     color:var(--navy);
@@ -435,14 +424,14 @@
     }
     .year-map-stages{gap:64px}
     .year-map{padding-bottom:100px}
-    .year-map .section-head{margin-bottom:-6px}
+    .year-map .section-head{margin-bottom:54px}
   }
   @media (max-width:640px){
     .year-map{padding-bottom:72px}
     .year-map::before{height:450px;background-size:auto 100%;background-position:center bottom}
-    .year-map::after{top:330px;height:150px}
+    .year-map::after{top:390px;height:120px}
     .year-map .section-head{min-height:360px;padding:64px 18px 92px}
-    .year-map .section-head::before,.year-map .section-head::after{display:none}
+    .year-map .section-head::before{display:none}
     .year-map .section-head h2{font-size:clamp(2.4rem,12vw,3.4rem)}
   }
 
