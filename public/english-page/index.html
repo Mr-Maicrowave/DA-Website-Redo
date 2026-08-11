@@ -275,15 +275,15 @@
 
   .year-map{
     position:relative;overflow:hidden;isolation:isolate;
-    background-color:#FAF3E7;
-    padding-top:88px;padding-bottom:140px;
+    background-color:#FFF6E8;
+    padding-top:0;padding-bottom:140px;
   }
   .year-map::before{
-    content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
-    background-image:url('images/journey-manuscript-bg.png');
+    content:"";position:absolute;left:0;right:0;top:0;height:clamp(520px,50vw,724px);z-index:0;pointer-events:none;
+    background-image:url('images/english-journey-frame.png');
     background-repeat:no-repeat;
-    background-position:center;
-    background-size:cover;
+    background-position:center bottom;
+    background-size:100% auto;
     opacity:0;transition:opacity 1.2s ease;
   }
   .year-map.is-revealed::before{opacity:1}
@@ -291,7 +291,42 @@
     .year-map::before{transition:none}
   }
   .year-map .section-inner{position:relative;z-index:2}
-  .year-map .section-head h2{color:var(--navy)}
+  .year-map .section-head{
+    position:relative;
+    min-height:clamp(520px,50vw,724px);
+    display:grid;place-items:center;
+    margin:0 0 48px;
+    padding:72px 28px 154px;
+    text-align:center;
+  }
+  .year-map .section-head::before{
+    content:"✦";
+    position:absolute;top:84px;left:50%;width:min(440px,38vw);height:22px;
+    transform:translateX(-50%);
+    background:linear-gradient(90deg,transparent 0,rgba(178,132,45,.5) 12%,rgba(178,132,45,.5) 44%,transparent 44%,transparent 56%,rgba(178,132,45,.5) 56%,rgba(178,132,45,.5) 88%,transparent 100%) center/100% 1px no-repeat;
+    color:rgba(178,132,45,.78);
+    font-size:22px;
+    line-height:20px;
+    opacity:.82;
+  }
+  .year-map .section-head::after{
+    content:"words\A ideas\A understanding\A expression";
+    position:absolute;left:clamp(-64px,-4vw,-38px);top:166px;
+    white-space:pre;
+    font-family:"Playfair Display",Georgia,serif;
+    font-style:italic;
+    font-size:clamp(.95rem,1.35vw,1.25rem);
+    line-height:2.05;
+    color:rgba(146,108,48,.45);
+    text-align:left;
+  }
+  .year-map .section-head h2{
+    color:var(--navy);
+    max-width:1260px;
+    font-size:clamp(3rem,5.7vw,5.6rem);
+    line-height:1.05;
+    text-wrap:balance;
+  }
   .year-map .type-cursor{
     display:inline-block;width:3px;height:.82em;margin-left:4px;vertical-align:-.08em;
     background:var(--gold);animation:year-map-type-blink 1s step-end infinite;
@@ -395,10 +430,15 @@
       row-gap:24px;
     }
     .year-map-stages{gap:64px}
-    .year-map{padding-top:64px;padding-bottom:100px}
+    .year-map{padding-bottom:100px}
+    .year-map .section-head{margin-bottom:34px}
   }
   @media (max-width:640px){
-    .year-map{padding-top:48px;padding-bottom:72px}
+    .year-map{padding-bottom:72px}
+    .year-map::before{height:390px;background-size:auto 100%;background-position:center bottom}
+    .year-map .section-head{min-height:360px;padding:64px 18px 92px}
+    .year-map .section-head::before,.year-map .section-head::after{display:none}
+    .year-map .section-head h2{font-size:clamp(2.4rem,12vw,3.4rem)}
   }
 
   /* ===== Resources: sample booklet + feedback preview ===== */
