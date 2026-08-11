@@ -83,6 +83,8 @@ const BusinessStudies = () => {
         proofPills={['Real case studies', 'Marked feedback', 'Clear HSC pathway']}
         exploreTargetId="business-modules"
         placeholderLabel="Business Studies classroom"
+        backgroundImageSrc="/images/subjects/business-studies/hero-background.png"
+        backgroundImageAlt="DA Tuition Business Studies classroom"
       />
 
       {/* Learning Formats Callout */}

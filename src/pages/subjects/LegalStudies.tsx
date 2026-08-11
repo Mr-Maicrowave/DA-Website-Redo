@@ -93,6 +93,10 @@ const LegalStudies = () => {
         proofPills={['Real case law', 'Marked feedback', 'Clear HSC pathway']}
         exploreTargetId="legal-topics"
         placeholderLabel="Legal Studies classroom"
+        backgroundImageSrc="/images/subjects/legal-studies/hero-background.png"
+        backgroundImageAlt="DA Tuition Legal Studies classroom"
+        backgroundPosition="right center"
+        backgroundScale={1.7}
       />
 
       {/* Learning Formats Callout */}
