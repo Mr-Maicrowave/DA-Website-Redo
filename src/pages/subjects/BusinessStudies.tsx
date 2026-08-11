@@ -77,9 +77,9 @@ const BusinessStudies = () => {
       <SubjectHero
         eyebrow="Years 11-12 Business Studies"
         icon={Briefcase}
-        headlineWhite="Case studies with structure."
-        headlineGold="Reports with confidence."
-        subtext="HSC Business Studies through real case studies, report writing, and strategic thinking — built for Band 6 results across Operations, Marketing, Finance, and Human Resources."
+        headlineWhite="From Business Knowledge to"
+        headlineGold="HSC Mastery."
+        subtext="Understand the syllabus. Apply real case studies. Analyse business strategy. Write responses built for the HSC."
         proofPills={['Real case studies', 'Marked feedback', 'Clear HSC pathway']}
         exploreTargetId="business-modules"
         placeholderLabel="Business Studies classroom"
