@@ -1,8 +1,9 @@
-import { BookOpen, Calculator, Beaker, Clock, PenTool, Briefcase, Scale, Trophy, Users, Target, TrendingUp } from 'lucide-react';
+import { BookOpen, Calculator, Beaker, Clock, PenTool, Briefcase, Scale, Trophy, Users, Target, TrendingUp, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import NavigationNew from '@/components/NavigationNew';
 import FooterNew from '@/components/FooterNew';
+import SubjectHero from '@/components/subjects/SubjectHero';
 import { Link } from 'react-router-dom';
 import SEO from '@/components/SEO';
 
@@ -117,18 +118,23 @@ const Subjects = () => {
       />
       <NavigationNew />
 
-      <div className="min-h-screen pt-24">
+      <div className="min-h-screen">
         {/* Hero Section */}
-        <section className="py-20 px-4 bg-gradient-to-b from-blue-50 to-white">
-          <div className="max-w-6xl mx-auto text-center">
-            <h1 className="text-3xl sm:text-4xl lg:text-6xl font-bold mb-6 text-brand-midnight">
-              Comprehensive Subject Coverage
-            </h1>
-            <p className="text-xl text-brand-midnight/80 mb-8 max-w-3xl mx-auto">
-              From Kindergarten to Year 12, we offer expert tutoring across all core subjects and specialized programs
-            </p>
+        <SubjectHero
+          eyebrow="Kindergarten to Year 12"
+          icon={Sparkles}
+          headlineWhite="Every subject."
+          headlineGold="One clear standard."
+          subtext="From Kindergarten to Year 12, DA Tuition covers Mathematics, English, Science, Business Studies and Legal Studies — each taught by subject specialists who know the NSW syllabus inside out."
+          proofPills={['NESA-aligned', 'Band 6 teachers', 'Clear K-12 pathway']}
+          exploreTargetId="subjects-primary"
+          placeholderLabel="DA Tuition classroom"
+        />
 
-            <div className="grid md:grid-cols-4 gap-4 mt-8">
+        {/* Teaching approach */}
+        <section className="py-16 px-4">
+          <div className="max-w-6xl mx-auto">
+            <div className="grid md:grid-cols-4 gap-4">
               {teachingApproach.map((item, index) => (
                 <Card key={index} className="p-4 text-center">
                   <h3 className="font-bold text-brand-blue mb-2">{item.title}</h3>
@@ -140,7 +146,7 @@ const Subjects = () => {
         </section>
 
         {/* Primary School Subjects */}
-        <section className="py-16 px-4">
+        <section id="subjects-primary" className="py-16 px-4">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-12">
               <h2 className="text-3xl font-bold mb-4">Primary School (K-6)</h2>
