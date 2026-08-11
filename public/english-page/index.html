@@ -275,7 +275,7 @@
 
   .year-map{
     position:relative;overflow:hidden;isolation:isolate;
-    background-color:#FFF6E8;
+    background-color:#F8F1E6;
     padding-top:0;padding-bottom:140px;
   }
   .year-map::before{
@@ -288,7 +288,7 @@
   }
   .year-map::after{
     content:"";position:absolute;left:0;right:0;top:clamp(620px,56vw,820px);height:180px;z-index:1;pointer-events:none;
-    background:linear-gradient(180deg,rgba(255,246,232,0),rgba(255,246,232,.82) 50%,#FFF6E8 100%);
+    background:linear-gradient(180deg,rgba(248,241,230,0),rgba(248,241,230,.84) 50%,#F8F1E6 100%);
   }
   .year-map.is-revealed::before{opacity:1}
   @media (prefers-reduced-motion:reduce){
@@ -299,6 +299,7 @@
     position:relative;
     min-height:clamp(520px,50vw,724px);
     display:grid;place-items:center;
+    grid-template-columns:minmax(0,1fr);
     margin:0 0 72px;
     padding:72px 28px 154px;
     text-align:center;
@@ -314,11 +315,16 @@
     opacity:.82;
   }
   .year-map .section-head h2{
+    justify-self:center;
+    width:100%;
+    max-width:none;
+    position:relative;
+    z-index:2;
     color:var(--navy);
-    max-width:1260px;
     font-size:clamp(3rem,5.7vw,5.6rem);
     line-height:1.05;
     text-wrap:balance;
+    transform:translateY(clamp(54px,6vw,96px));
   }
   .year-map .type-cursor{
     display:inline-block;width:3px;height:.82em;margin-left:4px;vertical-align:-.08em;
