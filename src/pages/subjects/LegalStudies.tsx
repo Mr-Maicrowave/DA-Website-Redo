@@ -96,7 +96,7 @@ const LegalStudies = () => {
         backgroundImageSrc="/images/subjects/legal-studies/hero-background.png"
         backgroundImageAlt="DA Tuition Legal Studies classroom"
         backgroundPosition="right center"
-        backgroundScale={1.38}
+        backgroundScale={1.48}
       />
 
       {/* Learning Formats Callout */}
