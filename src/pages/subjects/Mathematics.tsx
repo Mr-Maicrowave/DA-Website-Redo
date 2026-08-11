@@ -778,7 +778,11 @@ const Mathematics = () => {
         </section>
 
         {/* Year level pathways */}
-        <section id="math-pathways" className="bg-[#fffdf8] px-5 py-20 lg:px-8">
+        <section
+          id="math-pathways"
+          className="px-5 py-20 lg:px-8"
+          style={{ background: 'linear-gradient(180deg, #fff6e7 0%, #fffaf1 22%, #fffdf8 52%)' }}
+        >
           <div className="mx-auto max-w-7xl">
             <SectionHeader
               eyebrow="Pathways"
@@ -825,7 +829,27 @@ const Mathematics = () => {
         </section>
 
         {/* HSC streams */}
-        <section id="hsc-maths" className="bg-[#071629] px-5 py-20 text-white lg:px-8">
+        <section
+          id="hsc-maths"
+          className="px-5 pb-20 pt-52 text-white lg:px-8"
+          style={{
+            background: `linear-gradient(
+              180deg,
+              #fffdf8 0px,
+              #f5f2eb 16px,
+              #e7e4dd 32px,
+              #d7d8d4 48px,
+              #c1c7c9 64px,
+              #a7b1b9 80px,
+              #8b99a6 96px,
+              #6e7f90 112px,
+              #506579 128px,
+              #31495f 144px,
+              #172c43 160px,
+              #071629 176px
+            )`,
+          }}
+        >
           <div className="mx-auto max-w-7xl">
             <div className="grid gap-10 lg:grid-cols-[.75fr_1.25fr] lg:items-end">
               <div>
