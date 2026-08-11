@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import NavigationNew from '@/components/NavigationNew';
 import FooterNew from '@/components/FooterNew';
 import SubjectHero from '@/components/subjects/SubjectHero';
@@ -11,11 +11,11 @@ import {
   CheckCircle,
   Clock,
   HelpCircle,
+  Play,
   Quote,
   Sparkles,
   Target,
   TrendingUp,
-  Users,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -224,48 +224,28 @@ const IlluPhone = ({ isOpen: _ }: { isOpen: boolean }) => (
   </svg>
 );
 
-const IlluSpotify = ({ isOpen: _ }: { isOpen: boolean }) => {
-  const bars = [22, 40, 54, 30, 48, 26, 44];
-  const bW = 8, gap = 4;
-  const sx = (120 - bars.length * (bW + gap) + gap) / 2;
-  const base = 58;
-  return (
-    <svg viewBox="0 0 120 76" className="h-full w-full" aria-hidden="true">
-      {bars.map((h, i) => (
-        <rect
-          key={i}
-          x={sx + i * (bW + gap)} y={base - h} width={bW} height={h} rx="3"
-          fill="#c9a227" fillOpacity="0.72"
-          style={{
-            transformBox: 'fill-box',
-            transformOrigin: 'center bottom',
-            animation: `maths-barPulse ${1.0 + i * 0.14}s ease-in-out ${i * 0.09}s infinite`,
-          }}
-        />
-      ))}
-      <g opacity="0.35" stroke="#071629" strokeWidth="1.5" strokeLinecap="round" fill="none">
-        <line x1="28" y1="72" x2="72" y2="65" />
-        <polygon points="67,62 75,65 67,68" fill="#071629" stroke="none" />
-        <line x1="28" y1="65" x2="72" y2="72" />
-        <polygon points="67,75 75,72 67,69" fill="#071629" stroke="none" />
-      </g>
-    </svg>
-  );
-};
-
-const IlluSeismic = ({ isOpen }: { isOpen: boolean }) => (
+const IlluNormalDist = ({ isOpen }: { isOpen: boolean }) => (
   <svg viewBox="0 0 120 76" className="h-full w-full" aria-hidden="true">
-    <polyline
-      points="0,46 38,46 43,44 48,48 52,44 57,10 63,72 67,46 72,48 76,46 120,46"
-      fill="none" stroke="#071629" strokeWidth="0.5" strokeOpacity="0.1" strokeLinejoin="round"
+    <line x1="6" y1="70" x2="114" y2="70" stroke="#071629" strokeWidth="1" strokeOpacity="0.12" strokeLinecap="round" />
+    <line
+      x1="60" y1="70" x2="60" y2="10" stroke="#071629" strokeWidth="1" strokeDasharray="3 3"
+      strokeOpacity={isOpen ? 0.25 : 0}
+      style={{ transition: 'stroke-opacity 0.3s 0.5s' }}
     />
-    <polyline
-      points="0,46 38,46 43,44 48,48 52,44 57,10 63,72 67,46 72,48 76,46 120,46"
-      fill="none" stroke="#c9a227" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-      strokeDasharray="350"
+    <path
+      d="M 6,70 C 22,70 30,68 40,52 C 48,40 52,10 60,10 C 68,10 72,40 80,52 C 90,68 98,70 114,70"
+      fill="none" stroke="#c9a227" strokeWidth="2.5" strokeLinecap="round"
+      strokeDasharray="220"
       style={{
-        strokeDashoffset: isOpen ? 0 : 350,
-        transition: isOpen ? 'stroke-dashoffset 0.8s cubic-bezier(0.4,0,0.2,1)' : 'none',
+        strokeDashoffset: isOpen ? 0 : 220,
+        transition: isOpen ? 'stroke-dashoffset 0.75s cubic-bezier(0.4,0,0.2,1)' : 'none',
+      }}
+    />
+    <circle
+      cx="60" cy="10" r="4" fill="#c9a227"
+      style={{
+        opacity: isOpen ? 1 : 0,
+        transition: isOpen ? 'opacity 0.3s ease 0.6s' : 'none',
       }}
     />
   </svg>
@@ -388,16 +368,17 @@ const CURIOSITY_CARDS = [
     Illustration: IlluPhone,
   },
   {
-    topic: 'Probability',
-    hook: "Why Spotify doesn't feel random",
+    topic: 'Statistics',
+    hook: 'Why most things cluster near average',
     year: 'Years 9–10',
     fact: (
       <>
-        Spotify&apos;s shuffle isn&apos;t truly random — it uses <strong>probability weighting</strong> so
-        you don&apos;t hear the same artist <strong>twice in a row</strong>. Pure randomness felt too random.
+        Heights, test scores, reaction times — most real-world data forms a <strong>bell curve</strong>.
+        Statisticians use the <strong>normal distribution</strong> to work out how likely any result is,
+        from exam marks to manufacturing tolerances.
       </>
     ),
-    Illustration: IlluSpotify,
+    Illustration: IlluNormalDist,
   },
   {
     topic: 'Calculus',
@@ -495,6 +476,459 @@ const WALKTHROUGH_VERSIONS = [
   },
 ];
 
+type BasketballStage = 'release' | 'barrier' | 'peak' | 'landing';
+
+const BASKETBALL_STAGES: Record<BasketballStage, {
+  label: string;
+  prompt: string;
+  equation: string;
+  working: string[];
+  explanation: string;
+  time: number;
+}> = {
+  release: {
+    label: '1. Release',
+    prompt: 'Look for “initially”.',
+    equation: 'h(0) = 1.6\\,\\mathrm{m}',
+    working: [
+      'h(t) = −4.9t² + 9.8t + 1.6',
+      'h(0) = −4.9(0)² + 9.8(0) + 1.6',
+      'h(0) = 1.6 m',
+    ],
+    explanation: '“Initially” means start at t = 0. The constant 1.6 tells us the ball leaves the player’s hands 1.6 metres above the ground.',
+    time: 0,
+  },
+  peak: {
+    label: '3. Highest point',
+    prompt: 'Look for “maximum” or “highest”.',
+    equation: 'h^{\\prime}(t) = -9.8t + 9.8 = 0',
+    working: [
+      'h′(t) = −9.8t + 9.8',
+      '0 = −9.8t + 9.8',
+      't = 1.0 s  →  h(1) = 6.5 m',
+    ],
+    explanation: 'At the highest point the ball is neither rising nor falling, so its gradient is zero. Solving gives t = 1.0 second, and h(1) = 6.5 metres.',
+    time: 1,
+  },
+  barrier: {
+    label: '2. The barrier',
+    prompt: 'Turn distance into time first.',
+    equation: 't = \\frac{d}{v} = \\frac{1.5}{6} = 0.25\\,\\mathrm{s}',
+    working: [
+      't = d ÷ v = 1.5 ÷ 6 = 0.25 s',
+      'h(0.25) = −4.9(0.25)² + 9.8(0.25) + 1.6',
+      'h(0.25) = 3.74 m > 3.0 m',
+    ],
+    explanation: 'The equation uses time, not horizontal distance. At 6 metres per second, the ball reaches a barrier 1.5 metres away after 0.25 seconds. Its height is 3.74 metres, so it clears a 3 metre barrier.',
+    time: 0.25,
+  },
+  landing: {
+    label: '4. Landing',
+    prompt: 'Look for “hits the ground”.',
+    equation: 'h(t) = 0 \\Rightarrow t \\approx 2.15\\,\\mathrm{s}',
+    working: [
+      '0 = −4.9t² + 9.8t + 1.6',
+      '4.9t² − 9.8t − 1.6 = 0',
+      't ≈ 2.15 s  (positive time)',
+    ],
+    explanation: 'The ball hits the ground when its height is zero. Solve h(t) = 0, then keep the positive time because the negative solution happened before the throw.',
+    time: 2.1517,
+  },
+};
+
+const renderLatex = (expression: string, displayMode: boolean) => katex.renderToString(expression, {
+  displayMode,
+  // Catch authoring mistakes during development instead of shipping raw red source text.
+  throwOnError: import.meta.env.DEV,
+});
+
+const LatexBlock = ({ expression }: { expression: string }) => (
+  <div
+    dangerouslySetInnerHTML={{
+      __html: renderLatex(expression, true),
+    }}
+  />
+);
+
+const JourneyMath = ({ expression }: { expression: string }) => (
+  <span className="inline-block align-baseline [&_.katex]:text-inherit" dangerouslySetInnerHTML={{ __html: renderLatex(expression, false) }} />
+);
+
+const BasketballCalculusJourney = () => {
+  const [stage, setStage] = useState<BasketballStage>('release');
+  const [ballTime, setBallTime] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [journeyStep, setJourneyStep] = useState(0);
+  const [journeyComplete, setJourneyComplete] = useState(false);
+  const [showQuadraticRoute, setShowQuadraticRoute] = useState(false);
+  const animationFrame = useRef<number | null>(null);
+
+  const left = 74;
+  const right = 654;
+  const top = 54;
+  const base = 366;
+  const maxTime = 2.3;
+  const maxHeight = 8;
+  const landingTime = 2.1517;
+  const height = (time: number) => -4.9 * time * time + 9.8 * time + 1.6;
+  const x = (time: number) => left + (time / maxTime) * (right - left);
+  const y = (value: number) => base - (value / maxHeight) * (base - top);
+  const curve = Array.from({ length: 90 }, (_, index) => {
+    const time = (landingTime * index) / 89;
+    return `${index === 0 ? 'M' : 'L'}${x(time).toFixed(1)},${y(Math.max(0, height(time))).toFixed(1)}`;
+  }).join(' ');
+  const ballX = x(ballTime);
+  const ballY = y(Math.max(0, height(ballTime)));
+  const mobileX = (time: number) => 48 + (time / maxTime) * 294;
+  const mobileY = (value: number) => 264 - (value / maxHeight) * 204;
+  const mobileCurve = Array.from({ length: 80 }, (_, index) => {
+    const time = (landingTime * index) / 79;
+    return `${index === 0 ? 'M' : 'L'}${mobileX(time).toFixed(1)},${mobileY(Math.max(0, height(time))).toFixed(1)}`;
+  }).join(' ');
+  const mobileBallX = mobileX(ballTime);
+  const mobileBallY = mobileY(Math.max(0, height(ballTime)));
+  const current = BASKETBALL_STAGES[stage];
+  const isJourneyInProgress = journeyStep > 0 && !journeyComplete;
+  const completedStages = (['release', 'barrier', 'peak', 'landing'] as BasketballStage[]).slice(0, journeyStep);
+
+  const cancelAnimation = () => {
+    if (animationFrame.current !== null) {
+      cancelAnimationFrame(animationFrame.current);
+      animationFrame.current = null;
+    }
+    setIsPlaying(false);
+  };
+
+  const animateTo = (targetTime: number, onComplete?: () => void) => {
+    const fromTime = ballTime;
+    const startedAt = performance.now();
+    const duration = Math.max(380, Math.abs(targetTime - fromTime) * 760);
+    const frame = (now: number) => {
+      const progress = Math.min((now - startedAt) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 4);
+      setBallTime(fromTime + (targetTime - fromTime) * eased);
+      if (progress < 1) {
+        animationFrame.current = requestAnimationFrame(frame);
+      } else {
+        animationFrame.current = null;
+        onComplete?.();
+      }
+    };
+    animationFrame.current = requestAnimationFrame(frame);
+  };
+
+  const selectStage = (nextStage: BasketballStage) => {
+    cancelAnimation();
+    setJourneyStep(0);
+    setJourneyComplete(false);
+    setShowQuadraticRoute(false);
+    setStage(nextStage);
+    animateTo(BASKETBALL_STAGES[nextStage].time);
+  };
+
+  const playJourney = () => {
+    cancelAnimation();
+    setIsPlaying(true);
+    setStage('release');
+    setBallTime(0);
+    setJourneyStep(1);
+    setJourneyComplete(false);
+    setShowQuadraticRoute(false);
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setStage('landing');
+      setBallTime(landingTime);
+      setJourneyStep(4);
+      setJourneyComplete(true);
+      return;
+    }
+    const startedAt = performance.now();
+    // Long enough for students to follow the curve and absorb each prompt as it changes.
+    const duration = 4500;
+    const frame = (now: number) => {
+      const progress = Math.min((now - startedAt) / duration, 1);
+      const time = landingTime * (1 - Math.pow(1 - progress, 3));
+      setBallTime(time);
+      if (time >= 1.75) {
+        setStage('landing');
+        setJourneyStep(4);
+      } else if (time >= 0.7) {
+        setStage('peak');
+        setJourneyStep(3);
+      } else if (time >= 0.12) {
+        setStage('barrier');
+        setJourneyStep(2);
+      } else {
+        setStage('release');
+        setJourneyStep(1);
+      }
+      if (progress < 1) {
+        animationFrame.current = requestAnimationFrame(frame);
+      } else {
+        animationFrame.current = null;
+        setStage('landing');
+        setIsPlaying(false);
+        setJourneyStep(4);
+        setJourneyComplete(true);
+      }
+    };
+    animationFrame.current = requestAnimationFrame(frame);
+  };
+
+  useEffect(() => () => {
+    if (animationFrame.current !== null) cancelAnimationFrame(animationFrame.current);
+  }, []);
+
+  const showQuadraticMethod = () => {
+    cancelAnimation();
+    setStage('peak');
+    setJourneyStep(3);
+    setJourneyComplete(true);
+    setShowQuadraticRoute(true);
+    animateTo(BASKETBALL_STAGES.peak.time);
+  };
+
+  return (
+    <section className="overflow-hidden bg-[#fffdf8] px-5 py-20 lg:px-8" aria-labelledby="basketball-calculus-heading">
+      <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-[minmax(260px,.78fr)_minmax(0,1.22fr)] lg:items-start">
+        <div className="max-w-xl">
+          <p className="mb-3 text-xs font-black uppercase tracking-[0.16em] text-[#c9a227]">Maths in motion</p>
+          <h2 id="basketball-calculus-heading" className="font-serif text-4xl font-medium leading-[1.03] tracking-[-0.04em] text-[#071629] sm:text-5xl">
+            Read the question. Then read the curve.
+          </h2>
+          <p className="mt-5 max-w-[42ch] text-base leading-8 text-[#61708a]">
+            An HSC Advanced and Extension preview: each part of the question points to a different mathematical decision.
+          </p>
+
+          <aside className="mt-7 rounded-[1.5rem] border border-[#d9ceb1] bg-[#fffaf0] p-5 shadow-[0_16px_36px_rgba(7,22,41,0.07)]" aria-label="Exam-style basketball question">
+            <p className="text-[11px] font-black uppercase tracking-[0.16em] text-[#8a6812]">Exam-style question</p>
+            <p className="mt-3 font-serif text-xl leading-7 text-[#071629]">A high basketball lob is modelled by <JourneyMath expression={'h(t) = -4.9t^2 + 9.8t + 1.6'} />.</p>
+            <p className="mt-3 text-sm leading-6 text-[#536077]">The ball travels horizontally at a constant 6 m/s, over a 3 m training screen placed 1.5 m from the player.</p>
+            <ol className="mt-4 space-y-2 border-t border-[#d9ceb1] pt-4 text-sm leading-6 text-[#253956]">
+              <li><strong>(a)</strong> Find the ball’s initial height.</li>
+              <li><strong>(b)</strong> Decide whether it clears the barrier.</li>
+              <li><strong>(c)</strong> Find its maximum height.</li>
+              <li className="text-[#61708a]"><strong>Extension:</strong> Find when it lands.</li>
+            </ol>
+          </aside>
+
+          <div className="mt-8 flex flex-wrap gap-2" aria-label="Choose a point in the basketball journey">
+            {(['release', 'barrier', 'peak', 'landing'] as BasketballStage[]).map((key) => (
+              <button
+                key={key}
+                type="button"
+                onClick={() => selectStage(key)}
+                aria-pressed={stage === key}
+                className={`min-h-11 rounded-full px-4 text-sm font-black transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9a227] focus-visible:ring-offset-2 ${
+                  stage === key ? 'bg-[#071629] text-[#f1df9a]' : 'border border-[#071629]/15 bg-transparent text-[#4f5c70] hover:border-[#c9a227]/60 hover:text-[#071629]'
+                }`}
+              >
+                {BASKETBALL_STAGES[key].label}
+              </button>
+            ))}
+            <button
+              type="button"
+              onClick={playJourney}
+              className="inline-flex min-h-11 items-center rounded-full bg-[#c9a227] px-4 text-sm font-black text-[#071629] transition hover:bg-[#e0bd4b] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9a227] focus-visible:ring-offset-2"
+            >
+              <Play className="mr-2 h-4 w-4" fill="currentColor" aria-hidden="true" />
+              {isPlaying ? 'Playing…' : 'Play journey'}
+            </button>
+          </div>
+
+          {journeyStep === 0 ? (
+            <div className="mt-7 border-t border-[#d9ceb1] pt-5" aria-live="polite">
+              <p className="text-xs font-black uppercase tracking-[0.14em] text-[#c9a227]">{current.label}</p>
+              <p className="mt-3 font-serif text-2xl font-medium tracking-[-0.02em] text-[#071629]">{current.prompt}</p>
+              <div className="mt-4 text-xl text-[#8a6812] [&_.katex-display]:my-0 [&_.katex-display]:text-left">
+                <LatexBlock expression={current.equation} />
+              </div>
+              <p className="mt-4 max-w-[47ch] text-sm leading-7 text-[#536077]">{current.explanation}</p>
+            </div>
+          ) : null}
+          {isJourneyInProgress ? (
+            <div className="mt-7 border-t border-[#d9ceb1] pt-5" aria-live="polite">
+              <p className="text-xs font-black uppercase tracking-[0.14em] text-[#c9a227]">Current step: {current.label}</p>
+              <p className="mt-2 text-sm leading-6 text-[#536077]">{current.prompt}</p>
+              <div className="mt-3 text-lg text-[#8a6812] [&_.katex-display]:my-0 [&_.katex-display]:text-left">
+                <LatexBlock expression={current.equation} />
+              </div>
+              <p className="mt-3 text-sm font-semibold text-[#253956]">Completed so far: {completedStages.map((key) => BASKETBALL_STAGES[key].label).join(' · ')}</p>
+            </div>
+          ) : null}
+        </div>
+
+        <div className="min-w-0">
+          <div className="relative hidden md:block">
+            <div className="absolute left-[14%] top-[7%] z-10 text-xl text-[#071629] [&_.katex-display]:my-0">
+              <LatexBlock expression={'h(t) = -4.9t^2 + 9.8t + 1.6'} />
+            </div>
+          <svg viewBox="0 0 720 476" className="block h-auto w-full" role="img" aria-labelledby="basketball-graph-title basketball-graph-description">
+            <title id="basketball-graph-title">Height of a basketball over time</title>
+            <desc id="basketball-graph-description">A three-dimensional teaching diagram of a basketball following the height function h of t equals negative 4 point 9 t squared plus 9 point 8 t plus 1 point 6. It shows release, a three metre barrier, and the highest point.</desc>
+            <defs>
+              <pattern id="basketball-grid" width="48" height="48" patternUnits="userSpaceOnUse">
+                <path d="M 48 0 L 0 0 0 48" fill="none" stroke="#071629" strokeOpacity="0.07" strokeWidth="1" />
+              </pattern>
+              <linearGradient id="basketball-floor" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#d8c27c" stopOpacity="0.24" />
+                <stop offset="100%" stopColor="#071629" stopOpacity="0.12" />
+              </linearGradient>
+              <radialGradient id="basketball-ball" cx="32%" cy="24%" r="72%">
+                <stop offset="0%" stopColor="#f8e681" />
+                <stop offset="60%" stopColor="#d5ad22" />
+                <stop offset="100%" stopColor="#a7790b" />
+              </radialGradient>
+              <filter id="basketball-shadow" x="-40%" y="-40%" width="180%" height="180%">
+                <feDropShadow dx="0" dy="5" stdDeviation="4" floodColor="#071629" floodOpacity="0.26" />
+              </filter>
+            </defs>
+            <rect x="48" y="34" width="636" height="350" fill="url(#basketball-grid)" rx="6" />
+            <path d={`M${left},${base} H${right} L${right + 38},420 H${left - 28} Z`} fill="url(#basketball-floor)" />
+            {[0.15, 0.35, 0.58, 0.82].map((depth) => (
+              <line key={`floor-${depth}`} x1={left - 28 + (right - left + 66) * depth / 2} y1="420" x2={left + (right - left) * depth} y2={base} stroke="#071629" strokeOpacity="0.09" />
+            ))}
+            {[0, 2, 4, 6, 8].map((tick) => (
+              <g key={`height-${tick}`}>
+                <line x1={left} y1={y(tick)} x2={right} y2={y(tick)} stroke="#071629" strokeOpacity="0.08" />
+                <text x="52" y={y(tick) + 5} fill="#61708a" fontSize="12">{tick}</text>
+              </g>
+            ))}
+            {[0, 0.5, 1, 1.5, 2].map((tick) => (
+              <g key={`time-${tick}`}>
+                <line x1={x(tick)} y1={top} x2={x(tick)} y2={base} stroke="#071629" strokeOpacity="0.06" />
+                <text x={x(tick) - 8} y="410" fill="#61708a" fontSize="12">{tick}</text>
+              </g>
+            ))}
+            {[0, 1.5, 3, 6, 9, 12].map((distance) => {
+              const distanceX = x(distance / 6);
+              const isBarrier = distance === 1.5;
+              return (
+                <g key={`distance-${distance}`}>
+                  <line x1={distanceX} y1="423" x2={distanceX} y2="429" stroke={isBarrier ? '#c9a227' : '#61708a'} strokeWidth={isBarrier ? '2' : '1'} />
+                  <text x={distanceX} y="443" textAnchor="middle" fill={isBarrier ? '#8a6812' : '#61708a'} fontSize="11" fontWeight={isBarrier ? '700' : '400'}>{distance}</text>
+                </g>
+              );
+            })}
+            <line x1={left} y1={base} x2={right + 16} y2={base} stroke="#071629" strokeWidth="2" />
+            <line x1={left} y1={base} x2={left} y2={top - 15} stroke="#071629" strokeWidth="2" />
+            <path d={`M${right + 16},${base} l-8,-5 v10 Z`} fill="#071629" />
+            <path d={`M${left},${top - 15} l-5,8 h10 Z`} fill="#071629" />
+            <text x="616" y="410" fill="#61708a" fontSize="12">time t (s)</text>
+            <text x="616" y="462" fill="#61708a" fontSize="12">distance x (m)</text>
+            <text x="76" y="462" fill="#61708a" fontSize="11">x = 6t</text>
+            <text x="22" y="252" fill="#61708a" fontSize="12" transform="rotate(-90 22 252)">height (m)</text>
+            <path d={curve} fill="none" stroke="#071629" strokeWidth="4" strokeLinecap="round" />
+            <g aria-label="Three metre barrier, one point five metres from the shooter">
+              <rect x={x(BASKETBALL_STAGES.barrier.time) - 7} y={y(3)} width="14" height={base - y(3)} rx="3" fill="#253956" filter="url(#basketball-shadow)" />
+              <path d={`M${x(BASKETBALL_STAGES.barrier.time) - 7},${y(3)} h14 l6,-6 h-14 Z`} fill="#d8c27c" />
+              <text x={x(BASKETBALL_STAGES.barrier.time) + 18} y={y(3) + 4} fill="#8a6812" fontSize="12" fontWeight="700">3 m training screen</text>
+              <text x={x(BASKETBALL_STAGES.barrier.time) + 18} y={y(3) + 21} fill="#61708a" fontSize="11">1.5 m away</text>
+            </g>
+            {(Object.keys(BASKETBALL_STAGES) as BasketballStage[]).map((key) => {
+              const marker = BASKETBALL_STAGES[key];
+              const markerX = x(marker.time);
+              const markerY = y(Math.max(0, height(marker.time)));
+              return (
+                <g key={key} opacity={stage === key ? 1 : 0.42}>
+                  <circle cx={markerX} cy={markerY} r={stage === key ? 8 : 5} fill={stage === key ? '#c9a227' : '#61708a'} />
+                </g>
+              );
+            })}
+            <line x1={ballX} y1={base} x2={ballX} y2={ballY} stroke="#c9a227" strokeWidth="1.5" strokeDasharray="5 5" opacity="0.75" />
+            <ellipse cx={ballX + 8} cy={base + 9} rx="18" ry="4" fill="#071629" opacity={Math.max(0.1, 0.32 - (height(ballTime) / maxHeight) * 0.25)} />
+            <g transform={`translate(${ballX} ${ballY})`}>
+              <circle r="17" fill="url(#basketball-ball)" stroke="#fffdf8" strokeWidth="3" filter="url(#basketball-shadow)" />
+              <circle cx="-5" cy="-6" r="3" fill="#fff7cf" opacity="0.74" />
+              <path d="M-15 0H15M0-15C8-8 8 8 0 15M0-15C-8-8-8 8 0 15" fill="none" stroke="#071629" strokeWidth="1.3" />
+            </g>
+            {stage === 'release' && <text x={ballX + 18} y={ballY - 14} fill="#8a6812" fontSize="13" fontWeight="700">(0, 1.6)</text>}
+            {stage === 'barrier' && <text x={ballX + 16} y={ballY - 14} fill="#8a6812" fontSize="13" fontWeight="700">h(0.25) = 3.74 m</text>}
+            {stage === 'peak' && <text x={ballX - 38} y={ballY - 24} fill="#8a6812" fontSize="13" fontWeight="700">max: (1.0, 6.5)</text>}
+            {stage === 'landing' && <text x={ballX - 62} y={ballY - 30} fill="#8a6812" fontSize="13" fontWeight="700">lands: 2.15 s</text>}
+            {showQuadraticRoute && (
+              <g>
+                <path d={`M${ballX + 16},${ballY - 6} L${ballX + 78},${ballY - 38}`} fill="none" stroke="#c9a227" strokeWidth="1.5" />
+                <text x={ballX + 84} y={ballY - 42} fill="#8a6812" fontSize="13" fontWeight="700">axis of symmetry</text>
+                <text x={ballX + 84} y={ballY - 24} fill="#61708a" fontSize="12">t = −b / 2a = 1.0</text>
+              </g>
+            )}
+          </svg>
+          </div>
+          <p className="mt-1 hidden text-center text-xs font-semibold text-[#536077] md:block">Horizontal distance and time are linked: <JourneyMath expression={'x = 6t'} />. The screen at <JourneyMath expression={'x = 1.5'} /> is reached at <JourneyMath expression={'t = 0.25\\,\\mathrm{s}'} />.</p>
+          <div className="md:hidden">
+            <div className="mb-3 text-center text-lg text-[#071629] [&_.katex-display]:my-0">
+              <LatexBlock expression={'h(t) = -4.9t^2 + 9.8t + 1.6'} />
+            </div>
+            <svg viewBox="0 0 390 318" className="block h-auto w-full" role="img" aria-labelledby="basketball-mobile-graph-title basketball-mobile-graph-description">
+              <title id="basketball-mobile-graph-title">Basketball height over time</title>
+              <desc id="basketball-mobile-graph-description">A simplified mobile graph showing a high basketball lob clear a three metre training screen, reach its highest point, and land.</desc>
+              <defs>
+                <radialGradient id="basketball-mobile-ball" cx="32%" cy="24%" r="72%">
+                  <stop offset="0%" stopColor="#f8e681" />
+                  <stop offset="62%" stopColor="#d5ad22" />
+                  <stop offset="100%" stopColor="#a7790b" />
+                </radialGradient>
+              </defs>
+              {[0, 2, 4, 6, 8].map((tick) => <g key={`mobile-y-${tick}`}><line x1="48" y1={mobileY(tick)} x2="342" y2={mobileY(tick)} stroke="#071629" strokeOpacity="0.08" /><text x="35" y={mobileY(tick) + 4} textAnchor="end" fill="#536077" fontSize="13">{tick}</text></g>)}
+              <line x1="48" y1="264" x2="350" y2="264" stroke="#071629" strokeWidth="2" />
+              <line x1="48" y1="264" x2="48" y2="35" stroke="#071629" strokeWidth="2" />
+              <path d={mobileCurve} fill="none" stroke="#071629" strokeWidth="4" strokeLinecap="round" />
+              <line x1={mobileX(0.25)} y1="264" x2={mobileX(0.25)} y2={mobileY(3)} stroke="#c9a227" strokeDasharray="4 4" strokeWidth="1.5" />
+              <rect x={mobileX(0.25) - 7} y={mobileY(3)} width="14" height={264 - mobileY(3)} rx="3" fill="#253956" />
+              <text x={mobileX(0.25) + 13} y={mobileY(3) - 9} fill="#8a6812" fontSize="13" fontWeight="700">3 m screen</text>
+              <circle cx={mobileBallX} cy={mobileBallY} r="15" fill="url(#basketball-mobile-ball)" stroke="#fffdf8" strokeWidth="3" />
+              <path d={`M${mobileBallX - 13} ${mobileBallY}H${mobileBallX + 13} M${mobileBallX} ${mobileBallY - 13}C${mobileBallX + 7} ${mobileBallY - 7} ${mobileBallX + 7} ${mobileBallY + 7} ${mobileBallX} ${mobileBallY + 13} M${mobileBallX} ${mobileBallY - 13}C${mobileBallX - 7} ${mobileBallY - 7} ${mobileBallX - 7} ${mobileBallY + 7} ${mobileBallX} ${mobileBallY + 13}`} fill="none" stroke="#071629" strokeWidth="1.2" />
+              <text x="250" y="292" fill="#536077" fontSize="13">time, t (seconds)</text>
+              <text x="15" y="180" fill="#536077" fontSize="13" transform="rotate(-90 15 180)">height (m)</text>
+              {stage === 'release' && <text x={mobileBallX + 16} y={mobileBallY - 12} fill="#8a6812" fontSize="13" fontWeight="700">1.6 m</text>}
+              {stage === 'barrier' && <text x={mobileBallX + 16} y={mobileBallY - 12} fill="#8a6812" fontSize="13" fontWeight="700">3.74 m</text>}
+              {stage === 'peak' && <text x={mobileBallX - 27} y={mobileBallY - 20} fill="#8a6812" fontSize="13" fontWeight="700">6.5 m</text>}
+              {stage === 'landing' && <text x={mobileBallX - 43} y={mobileBallY - 16} fill="#8a6812" fontSize="13" fontWeight="700">2.15 s</text>}
+            </svg>
+            <p className="mt-3 text-center text-sm leading-6 text-[#536077]">Horizontal distance uses <JourneyMath expression={'x = 6t'} />: the screen at <JourneyMath expression={'x = 1.5\\,\\mathrm{m}'} /> is reached at <JourneyMath expression={'t = 0.25\\,\\mathrm{s}'} />.</p>
+          </div>
+        </div>
+      </div>
+      {journeyComplete && (
+        <div className="mx-auto mt-12 max-w-4xl border-y border-[#d9ceb1] py-8 text-center" aria-live="polite" aria-label={showQuadraticRoute ? 'Quadratic alternative solution' : 'Full worked solution'}>
+          <p className="text-[11px] font-black uppercase tracking-[0.15em] text-[#8a6812]">
+            {showQuadraticRoute ? 'Another valid route' : 'Full worked journey'}
+          </p>
+          <div className="mx-auto mt-6 max-w-full px-2 text-center text-[0.78rem] text-[#253956] sm:text-base lg:text-xl [&_.katex-display]:my-2 [&_.katex-display]:overflow-visible">
+            {showQuadraticRoute ? (
+              <>
+                <LatexBlock expression={'t_{\\mathrm{axis}} = -\\frac{b}{2a} = -\\frac{9.8}{2(-4.9)} = 1.0\\,\\mathrm{s}'} />
+                <LatexBlock expression={'h(1) = -4.9(1)^2 + 9.8(1) + 1.6 = 6.5\\,\\mathrm{m}'} />
+              </>
+            ) : (
+              <>
+                <LatexBlock expression={'h(0) = 1.6\\,\\mathrm{m}'} />
+                <LatexBlock expression={'t_{\\mathrm{barrier}} = \\frac{d}{v} = \\frac{1.5}{6} = 0.25\\,\\mathrm{s}'} />
+                <LatexBlock expression={'\\begin{aligned} h(0.25) &= -4.9(0.25)^2 \\\\ &\\quad + 9.8(0.25) + 1.6 \\\\ &= 3.74\\,\\mathrm{m} > 3.0\\,\\mathrm{m} \\end{aligned}'} />
+                <LatexBlock expression={'h^{\\prime}(t) = -9.8t + 9.8 = 0 \\Rightarrow t = 1.0\\,\\mathrm{s}'} />
+                <LatexBlock expression={'h(1) = 6.5\\,\\mathrm{m}'} />
+                <LatexBlock expression={'h(t) = 0 \\Rightarrow t \\approx 2.15\\,\\mathrm{s}'} />
+              </>
+            )}
+          </div>
+          {journeyComplete && !showQuadraticRoute && (
+            <button
+              type="button"
+              onClick={showQuadraticMethod}
+              className="mt-6 text-sm font-black text-[#071629] underline decoration-[#c9a227] decoration-2 underline-offset-4 transition hover:text-[#8a6812] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9a227]"
+            >
+              See the quadratic route to the same maximum
+            </button>
+          )}
+          {showQuadraticRoute && (
+            <p className="mx-auto mt-5 max-w-md text-sm leading-7 text-[#536077]">The axis of symmetry points to the same highest point shown on the graph.</p>
+          )}
+        </div>
+      )}
+    </section>
+  );
+};
+
 const Mathematics = () => {
   const courseLevels = [
     {
@@ -564,20 +998,55 @@ const Mathematics = () => {
     },
   ];
 
+  // The same running problem (2x + 5 = 13) is annotated differently at each
+  // stage of the method, so a viewer can see what actually changes step to step.
   const teachingSteps = [
-    { title: 'Diagnose', text: 'Find the exact gaps, habits, and confidence blocks holding the student back.' },
-    { title: 'Explain', text: 'Break concepts into clear steps with worked examples and guided practice.' },
-    { title: 'Apply', text: 'Move from simple questions into exam-style problems with teacher feedback.' },
-    { title: 'Refine', text: 'Build speed, accuracy, and independent problem-solving over time.' },
-  ];
-
-  const skills = [
-    'Problem-solving strategies',
-    'Mathematical reasoning',
-    'Algebraic manipulation',
-    'Geometric visualization',
-    'Statistical interpretation',
-    'Exam technique',
+    {
+      title: 'Diagnose',
+      text: 'Find the exact gaps, habits, and confidence blocks holding the student back.',
+      chips: ['Problem-solving strategies', 'Mathematical reasoning'],
+      example: {
+        kind: 'diagnose' as const,
+        problem: '2x + 5 = 13',
+        note: 'A 60-second diagnostic shows whether the gap is the algebra itself, or just the inverse-operation habit that undoes the +5.',
+      },
+    },
+    {
+      title: 'Explain',
+      text: 'Break concepts into clear steps with worked examples and guided practice.',
+      chips: ['Algebraic manipulation', 'Geometric visualization'],
+      example: {
+        kind: 'explain' as const,
+        problem: '2x + 5 = 13',
+        steps: [
+          { content: 'Subtract 5 from both sides: 2x = 13 − 5 = 8.', note: 'The most common slip is adding instead of subtracting — always undo the last operation first.' },
+          { content: 'Divide both sides by 2: x = 8 ÷ 2 = 4.', note: 'Undo each operation in reverse order — that is the whole idea of solving an equation.' },
+          { content: 'Check by substitution: 2(4) + 5 = 13 ✓', note: 'A ten-second check catches almost every careless mistake before it costs a mark.' },
+        ],
+      },
+    },
+    {
+      title: 'Apply',
+      text: 'Move from simple questions into exam-style problems with teacher feedback.',
+      chips: ['Statistical interpretation'],
+      example: {
+        kind: 'apply' as const,
+        problem: '3x − 4 = 11',
+        answer: 'x = 5',
+        note: 'Same method, new numbers. A student who can explain why each step works can now apply it under light exam pressure.',
+      },
+    },
+    {
+      title: 'Refine',
+      text: 'Build speed, accuracy, and independent problem-solving over time.',
+      chips: ['Exam technique'],
+      example: {
+        kind: 'refine' as const,
+        before: 'x = 15',
+        after: 'x = 5 — check: 3(5) − 4 = 11 ✓',
+        note: 'The first attempt skipped the final check and mis-divided 15 ÷ 3. Refining means tightening exactly this kind of slip before it reaches the exam.',
+      },
+    },
   ];
 
   const scrollToPathways = () => {
@@ -585,18 +1054,18 @@ const Mathematics = () => {
   };
 
   const [activeCard, setActiveCard] = useState<string | null>(null);
+  const [activeStream, setActiveStream] = useState<number>(0);
+  const [teachStep, setTeachStep] = useState<number>(0);
   const [activeTab, setActiveTab] = useState<string>('yr910');
   const [exampleIdx, setExampleIdx] = useState<number>(0);
-  const [revealed, setRevealed] = useState<boolean>(false);
+  const [pickedIndex, setPickedIndex] = useState<number | null>(null);
 
   const currentTab = ERROR_TABS.find((t) => t.id === activeTab)!;
   const currentExample = currentTab.examples[exampleIdx];
   const mistakeStep = currentExample.steps.find((s) => s.isMistake);
+  const mistakeIndex = currentExample.steps.findIndex((s) => s.isMistake);
   const isLastExample = exampleIdx === currentTab.examples.length - 1;
-
-  const [version, setVersion] = useState<string>('hsc');
-  const [stepCount, setStepCount] = useState<number>(0);
-  const currentVersion = WALKTHROUGH_VERSIONS.find((v) => v.id === version)!;
+  const revealed = pickedIndex === mistakeIndex;
 
   return (
     <div className="min-h-screen bg-[#fffdf8] text-[#172033]">
@@ -610,15 +1079,22 @@ const Mathematics = () => {
       <main>
         {/* Hero */}
         <SubjectHero
-          eyebrow="Years K-12 Mathematics"
+          eyebrow="Years 7-12 Mathematics"
           icon={Calculator}
-          headlineWhite="Working with method."
-          headlineGold="Answering with confidence."
-          subtext="From times tables to Extension 2, DA Tuition helps students see the method, connect each step, and walk into assessments with confidence."
-          proofPills={['Step-by-step working', 'Marked feedback', 'Clear year-level pathway']}
+          headlineWhite="Understand the method."
+          headlineGold="Solve with confidence."
+          subtext="Mathematics tuition for students who need clear explanations, stronger problem-solving, and the confidence to show their working — from Year 7 foundations through to HSC questions."
+          proofPills={['Step-by-step working', 'Marked feedback', 'Clear problem-solving']}
           exploreTargetId="math-pathways"
           placeholderLabel="Mathematics classroom"
+          showPlaceholderBadge={false}
+          backgroundImageSrc="/math-tutor-whiteboard-ultrawide-v3.png"
+          backgroundImageAlt="DA Tuition mathematics tutor working through problems on a whiteboard"
+          backgroundPosition="100% center"
+          mobileBackgroundPosition="100% center"
         />
+
+        <BasketballCalculusJourney />
 
         {/* Anchor navigation */}
         <section className="px-5 pt-10 lg:px-8">
@@ -637,24 +1113,16 @@ const Mathematics = () => {
         </section>
 
         {/* Curiosity grid — Where does this maths actually show up? */}
-        <section className="bg-[#fffdf8] px-5 py-20 lg:px-8">
+        <section id="where-used" className="bg-[#fffdf8] px-5 py-20 lg:px-8">
           <style>{`
             @keyframes maths-phoneRock {
               0%   { transform: rotate(8deg);  }
               50%  { transform: rotate(-5deg); }
               100% { transform: rotate(8deg);  }
             }
-            @keyframes maths-barPulse {
-              0%, 100% { transform: scaleY(0.65); opacity: 0.42; }
-              50%       { transform: scaleY(1);    opacity: 0.85; }
-            }
             @keyframes maths-ripple {
               from { transform: scale(1);   opacity: 0.55; }
               to   { transform: scale(2.8); opacity: 0;    }
-            }
-            @keyframes maths-stepIn {
-              from { opacity: 0; transform: translateY(-10px); }
-              to   { opacity: 1; transform: translateY(0);     }
             }
           `}</style>
 
@@ -771,7 +1239,11 @@ const Mathematics = () => {
         </section>
 
         {/* Year level pathways */}
-        <section id="math-pathways" className="bg-[#fffdf8] px-5 py-20 lg:px-8">
+        <section
+          id="math-pathways"
+          className="px-5 py-20 lg:px-8"
+          style={{ background: 'linear-gradient(180deg, #fff6e7 0%, #fffaf1 22%, #fffdf8 52%)' }}
+        >
           <div className="mx-auto max-w-7xl">
             <SectionHeader
               eyebrow="Pathways"
@@ -818,7 +1290,27 @@ const Mathematics = () => {
         </section>
 
         {/* HSC streams */}
-        <section id="hsc-maths" className="bg-[#071629] px-5 py-20 text-white lg:px-8">
+        <section
+          id="hsc-maths"
+          className="px-5 pb-20 pt-52 text-white lg:px-8"
+          style={{
+            background: `linear-gradient(
+              180deg,
+              #fffdf8 0px,
+              #f5f2eb 16px,
+              #e7e4dd 32px,
+              #d7d8d4 48px,
+              #c1c7c9 64px,
+              #a7b1b9 80px,
+              #8b99a6 96px,
+              #6e7f90 112px,
+              #506579 128px,
+              #31495f 144px,
+              #172c43 160px,
+              #071629 176px
+            )`,
+          }}
+        >
           <div className="mx-auto max-w-7xl">
             <div className="grid gap-10 lg:grid-cols-[.75fr_1.25fr] lg:items-end">
               <div>
@@ -832,357 +1324,311 @@ const Mathematics = () => {
               </p>
             </div>
 
-            <div className="mt-10 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+            {/* Segmented stream selector — same swap-a-pane pattern as "How we teach" below */}
+            <div className="mt-10 flex flex-wrap gap-2" role="tablist" aria-label="HSC mathematics stream">
               {hscStreams.map((stream, index) => (
-                <motion.article
-                  key={stream.name}
-                  initial={{ opacity: 0, y: 24 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: '-80px' }}
-                  transition={{ duration: 0.55, delay: index * 0.06 }}
-                  className="rounded-3xl border border-white/12 bg-white/[0.07] p-6 shadow-2xl shadow-black/10 backdrop-blur transition duration-300 hover:-translate-y-1 hover:bg-white/[0.1]"
-                >
-                  <span className="rounded-full bg-[#c9a227]/18 px-3 py-1 text-xs font-black uppercase tracking-[0.1em] text-[#f1df9a]">{stream.badge}</span>
-                  <h3 className="mt-6 text-2xl font-black tracking-[-0.02em]">{stream.name}</h3>
-                  <ul className="mt-5 space-y-3">
-                    {stream.topics.map((topic) => (
-                      <li key={topic} className="flex items-start gap-3 text-sm leading-6 text-white/72">
-                        <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[#f1df9a]" />
-                        {topic}
-                      </li>
-                    ))}
-                  </ul>
-                </motion.article>
-              ))}
-            </div>
-
-            <div className="mt-10 flex flex-col items-start justify-between gap-5 rounded-3xl border border-white/12 bg-white/[0.06] p-6 md:flex-row md:items-center">
-              <p className="max-w-3xl text-sm leading-7 text-white/70">
-                Mathematics teachers include high-achieving subject specialists who help students move from knowing content to showing clear working under exam conditions.
-              </p>
-              <Link to="/hsc-excellence">
-                <Button variant="outline" className="rounded-full border-white/30 bg-transparent font-bold text-white hover:bg-white/10 hover:text-white">
-                  Explore HSC Program
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </section>
-
-        {/* How we teach */}
-        <section id="math-method" className="bg-[#fff6e7] px-5 py-20 lg:px-8">
-          <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[.9fr_1.1fr] lg:items-center">
-            <motion.div initial={{ opacity: 0, x: -24 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }}>
-              <p className="mb-3 text-xs font-black uppercase tracking-[0.16em] text-[#c9a227]">How we teach</p>
-              <h2 className="font-serif text-4xl font-medium leading-tight tracking-[-0.045em] text-[#071629] lg:text-5xl">
-                Less panic. More method.
-              </h2>
-              <p className="mt-5 text-base leading-8 text-[#61708a]">
-                Maths feels more manageable when students know exactly what to do when a question is unfamiliar. We teach method alongside content so students build real confidence alongside their marks.
-              </p>
-              <ul className="mt-8 grid gap-3 sm:grid-cols-2">
-                {skills.map((skill) => (
-                  <li key={skill} className="flex items-center gap-3 rounded-2xl bg-white px-4 py-3 text-sm font-bold text-[#24324a] shadow-sm">
-                    <Calculator className="h-4 w-4 text-[#c9a227]" />
-                    {skill}
-                  </li>
-                ))}
-              </ul>
-            </motion.div>
-
-            <div className="grid gap-4 sm:grid-cols-2">
-              {teachingSteps.map((step, index) => (
-                <motion.article
-                  key={step.title}
-                  initial={{ opacity: 0, y: 24 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: '-80px' }}
-                  transition={{ duration: 0.55, delay: index * 0.08 }}
-                  className="rounded-3xl border border-[#071629]/10 bg-white p-6 shadow-lg shadow-[#071629]/5"
-                >
-                  <div className="mb-8 flex h-10 w-10 items-center justify-center rounded-full bg-[#071629] text-sm font-black text-[#f1df9a]">{index + 1}</div>
-                  <h3 className="text-xl font-black tracking-[-0.02em] text-[#10233f]">{step.title}</h3>
-                  <p className="mt-3 text-sm leading-7 text-[#61708a]">{step.text}</p>
-                </motion.article>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Learning format cards */}
-        <section className="bg-[#fffdf8] px-5 py-20 lg:px-8">
-          <div className="mx-auto grid max-w-7xl gap-5 lg:grid-cols-2">
-            <div className="rounded-[2rem] border border-[#071629]/10 bg-gradient-to-br from-[#f7fbff] to-[#e8f2ff] p-8 shadow-lg shadow-[#071629]/5">
-              <Sparkles className="mb-5 h-10 w-10 text-[#10233f]" />
-              <h2 className="text-2xl font-black tracking-[-0.03em] text-[#10233f]">Problem-Solving Workshops</h2>
-              <p className="mt-4 text-sm leading-7 text-[#61708a]">
-                For students aiming high in their class or tackling enrichment challenges. Focused sessions on harder problem types that go beyond the standard lesson program.
-              </p>
-              <Link to="/hsc-excellence" className="mt-6 inline-flex items-center text-sm font-black text-[#10233f]">
-                Learn more
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </div>
-
-            <div className="rounded-[2rem] border border-[#071629]/10 bg-gradient-to-br from-[#fffdf7] to-[#fff1cd] p-8 shadow-lg shadow-[#071629]/5">
-              <Users className="mb-5 h-10 w-10 text-[#10233f]" />
-              <h2 className="text-2xl font-black tracking-[-0.03em] text-[#10233f]">Small Groups and Classes</h2>
-              <p className="mt-4 text-sm leading-7 text-[#61708a]">
-                Our small group classes (3–5 students) give your child focused attention in a structured setting. Students are matched to a group that suits their current level and pace.
-              </p>
-              <Link to="/learning-formats" className="mt-6 inline-flex items-center text-sm font-black text-[#10233f]">
-                Compare formats
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </div>
-          </div>
-        </section>
-
-        {/* Spot the Mistake — Exam Error Detective */}
-        <section id="maths-interactive" className="bg-[#fff6e7] px-5 py-20 lg:px-8">
-          <div className="mx-auto max-w-7xl">
-            <div className="mb-10">
-              <h2 className="font-serif text-4xl font-medium leading-tight tracking-[-0.045em] text-[#071629] lg:text-5xl">
-                Can you spot what cost this student marks?
-              </h2>
-              <p className="mt-3 font-serif text-base italic text-[#9b8a6a]">
-                Every example below is a real mistake type. Tap &ldquo;Reveal mistake&rdquo; when you&rsquo;ve found it.
-              </p>
-            </div>
-
-            {/* Tab pills */}
-            <div className="mb-6 flex flex-wrap gap-2" role="tablist" aria-label="Year level">
-              {ERROR_TABS.map((tab) => (
                 <button
-                  key={tab.id}
+                  key={stream.name}
                   role="tab"
-                  aria-selected={activeTab === tab.id}
-                  onClick={() => {
-                    setActiveTab(tab.id);
-                    setExampleIdx(0);
-                    setRevealed(false);
-                  }}
-                  className={`rounded-full px-5 py-2.5 text-sm font-black transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9a227] focus-visible:ring-offset-2 ${
-                    activeTab === tab.id
-                      ? 'bg-[#071629] text-[#f1df9a]'
-                      : 'border border-[#071629]/15 bg-white text-[#10233f] hover:bg-[#f5ecd9]'
+                  aria-selected={activeStream === index}
+                  onClick={() => setActiveStream(index)}
+                  className={`rounded-full px-5 py-2.5 text-sm font-black transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9a227] focus-visible:ring-offset-2 focus-visible:ring-offset-[#071629] ${
+                    activeStream === index ? 'bg-[#c9a227] text-[#071629]' : 'border border-white/15 bg-white/[0.06] text-white/70 hover:bg-white/10 hover:text-white'
                   }`}
                 >
-                  {tab.label}
+                  {stream.name}
                 </button>
               ))}
             </div>
 
-            {/* Example card */}
-            <div className="overflow-hidden rounded-[2rem] border border-[#071629]/10 bg-white shadow-2xl shadow-[#071629]/6">
-              {/* Card header: counter + prev/next */}
-              <div className="flex items-center justify-between border-b border-[#071629]/8 px-6 py-4">
-                <span className="text-xs font-black uppercase tracking-[0.14em] text-[#c9a227]">
-                  Example {exampleIdx + 1} of {currentTab.examples.length}
-                </span>
-                <div className="flex gap-1">
-                  <button
-                    onClick={() => {
-                      setExampleIdx((i) => Math.max(0, i - 1));
-                      setRevealed(false);
-                    }}
-                    disabled={exampleIdx === 0}
-                    className="rounded-xl px-3 py-1.5 text-xs font-bold text-[#10233f] transition hover:bg-[#f5ecd9] disabled:cursor-not-allowed disabled:opacity-30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9a227]"
-                  >
-                    ← Prev
-                  </button>
-                  <button
-                    onClick={() => {
-                      setExampleIdx((i) => Math.min(currentTab.examples.length - 1, i + 1));
-                      setRevealed(false);
-                    }}
-                    disabled={isLastExample}
-                    className="rounded-xl px-3 py-1.5 text-xs font-bold text-[#10233f] transition hover:bg-[#f5ecd9] disabled:cursor-not-allowed disabled:opacity-30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9a227]"
-                  >
-                    Next →
-                  </button>
+            <div className="mt-6 rounded-3xl border border-white/12 bg-white/[0.06] p-8 shadow-2xl shadow-black/10 backdrop-blur md:p-10">
+              <div className="grid gap-8 md:grid-cols-[.9fr_1.1fr] md:items-start">
+                <div>
+                  <span className="rounded-full bg-[#c9a227]/18 px-3 py-1 text-xs font-black uppercase tracking-[0.1em] text-[#f1df9a]">
+                    {hscStreams[activeStream].badge}
+                  </span>
+                  <h3 className="mt-5 text-3xl font-black tracking-[-0.02em]">{hscStreams[activeStream].name}</h3>
+                  <Link to="/hsc-excellence" className="mt-6 inline-flex">
+                    <Button variant="outline" className="rounded-full border-white/30 bg-transparent font-bold text-white hover:bg-white/10 hover:text-white">
+                      Explore HSC Program
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </Button>
+                  </Link>
                 </div>
+                <ul className="grid gap-3 sm:grid-cols-2">
+                  {hscStreams[activeStream].topics.map((topic) => (
+                    <li key={topic} className="flex items-start gap-3 rounded-2xl bg-white/[0.05] px-4 py-3 text-sm leading-6 text-white/80">
+                      <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[#f1df9a]" />
+                      {topic}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
+            <p className="mt-6 max-w-3xl text-sm leading-7 text-white/70">
+              Mathematics teachers include high-achieving subject specialists who help students move from knowing content to showing clear working under exam conditions.
+            </p>
+          </div>
+        </section>
+
+        {/* How we teach — sticky rail, since the 4 steps are genuinely sequential */}
+        <section id="math-method" className="bg-[#fff6e7] px-5 py-20 lg:px-8">
+          <div className="mx-auto max-w-7xl">
+            <SectionHeader
+              eyebrow="How we teach"
+              title="Diagnose → Explain → Apply → Refine."
+              text="The same four-step method behind every session — sequential by nature, so it stays visible on the left while the detail scrolls on the right."
+            />
+
+            <div className="grid overflow-hidden rounded-[2rem] border border-[#071629]/10 lg:grid-cols-[260px_1fr]">
+              <div className="flex gap-2 overflow-x-auto bg-[#fdf8ec] p-4 lg:sticky lg:top-24 lg:block lg:h-fit lg:gap-0 lg:overflow-visible lg:p-6">
+                {teachingSteps.map((step, index) => (
+                  <button
+                    key={step.title}
+                    type="button"
+                    onClick={() => setTeachStep(index)}
+                    aria-current={teachStep === index}
+                    className={`flex shrink-0 items-center gap-3 rounded-xl px-4 py-3 text-left text-sm font-black transition ${
+                      teachStep === index ? 'bg-[#071629] text-[#f1df9a]' : 'text-[#61708a] hover:bg-[#f5ecd9] hover:text-[#10233f]'
+                    } lg:mb-1 lg:w-full`}
+                  >
+                    <span
+                      className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full border text-xs font-black ${
+                        teachStep === index ? 'border-[#f1df9a] text-[#f1df9a]' : 'border-[#071629]/15 text-[#9b8a6a]'
+                      }`}
+                    >
+                      {index + 1}
+                    </span>
+                    {step.title}
+                  </button>
+                ))}
               </div>
 
-              {/* Card body */}
-              <div className="px-6 py-7 md:px-10">
-                {/* Problem statement */}
-                <div className="mb-7">
-                  <p className="mb-2 text-xs font-black uppercase tracking-[0.14em] text-[#9b8a6a]">Problem</p>
-                  <p className="text-base font-semibold leading-7 text-[#071629]">
-                    <MixedMath text={currentExample.problem} />
-                  </p>
+              <div className="bg-white p-8 md:p-10">
+                <p className="mb-3 text-xs font-black uppercase tracking-[0.16em] text-[#c9a227]">Step {teachStep + 1}</p>
+                <h3 className="font-serif text-3xl font-medium tracking-[-0.03em] text-[#071629]">{teachingSteps[teachStep].title}</h3>
+                <p className="mt-4 max-w-xl text-base leading-8 text-[#61708a]">{teachingSteps[teachStep].text}</p>
+                <div className="mt-6 flex flex-wrap gap-2">
+                  {teachingSteps[teachStep].chips.map((chip) => (
+                    <span key={chip} className="flex items-center gap-2 rounded-full bg-[#fff6e7] px-4 py-2 text-xs font-bold text-[#24324a]">
+                      <Calculator className="h-3.5 w-3.5 text-[#c9a227]" />
+                      {chip}
+                    </span>
+                  ))}
                 </div>
 
-                {/* Worked solution table */}
-                <div className="mb-7">
-                  <p className="mb-3 text-xs font-black uppercase tracking-[0.14em] text-[#9b8a6a]">Worked solution</p>
-                  <div className="overflow-x-auto rounded-2xl border border-[#071629]/10">
-                    <table className="w-full text-sm">
-                      <tbody>
-                        {currentExample.steps.map((step) => {
-                          const isHighlighted = step.isMistake === true && revealed;
-                          return (
-                            <tr
-                              key={step.label}
-                              className="border-b border-[#071629]/6 last:border-0 transition-colors duration-200"
-                              style={isHighlighted ? { background: '#fff8ed', borderLeft: '4px solid #c9a227' } : {}}
-                            >
-                              <td
-                                className={`w-[5.5rem] whitespace-nowrap py-3.5 pl-4 pr-4 align-top text-xs ${
-                                  step.label === 'Answer'
-                                    ? 'font-black text-[#071629]'
-                                    : 'font-mono font-bold text-[#9b8a6a]'
-                                }`}
-                              >
-                                {step.label === 'Answer' ? 'Answer:' : step.label}
-                              </td>
-                              <td className="py-3.5 pr-4 text-[#172033]">
-                                <span
-                                  dangerouslySetInnerHTML={{
-                                    __html: katex.renderToString(step.working, { throwOnError: false }),
-                                  }}
-                                />
-                              </td>
-                            </tr>
-                          );
-                        })}
-                      </tbody>
-                    </table>
-                  </div>
+                {/* Annotated worked example — same running problem, seen through this stage's lens */}
+                <div className="mt-7 rounded-2xl border border-[#071629]/10 bg-[#fdf8ec] p-5 md:p-6">
+                  <p className="mb-3 text-[10px] font-black uppercase tracking-[0.14em] text-[#9b8a6a]">In practice</p>
+
+                  {teachingSteps[teachStep].example.kind === 'diagnose' && (
+                    <>
+                      <p className="mb-3 font-mono text-base font-bold text-[#071629]">{teachingSteps[teachStep].example.problem}</p>
+                      <div className="rounded-xl border-l-4 border-[#c9a227] bg-white px-4 py-3">
+                        <p className="text-[13px] italic leading-[1.65] text-[#5c4a1e]">{teachingSteps[teachStep].example.note}</p>
+                      </div>
+                    </>
+                  )}
+
+                  {teachingSteps[teachStep].example.kind === 'explain' && (
+                    <>
+                      <p className="mb-4 font-mono text-base font-bold text-[#071629]">{teachingSteps[teachStep].example.problem}</p>
+                      <div className="divide-y divide-[#071629]/6">
+                        {teachingSteps[teachStep].example.steps.map((step, idx) => (
+                          <div key={idx} className="grid grid-cols-1 gap-3 py-4 first:pt-0 md:grid-cols-[3fr_2fr]">
+                            <div className="flex items-start gap-3">
+                              <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#071629] text-xs font-black text-[#f1df9a]">
+                                {idx + 1}
+                              </div>
+                              <p className="text-[14px] leading-6 text-[#172033]">{step.content}</p>
+                            </div>
+                            <div className="rounded-xl border-l-4 border-[#c9a227] bg-white px-4 py-3">
+                              <p className="text-[12.5px] italic leading-[1.6] text-[#5c4a1e]">{step.note}</p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </>
+                  )}
+
+                  {teachingSteps[teachStep].example.kind === 'apply' && (
+                    <>
+                      <div className="mb-3 flex flex-wrap items-center gap-3">
+                        <span className="rounded-lg bg-white px-3 py-2 font-mono text-base font-bold text-[#071629]">
+                          {teachingSteps[teachStep].example.problem}
+                        </span>
+                        <ArrowRight className="h-4 w-4 text-[#c9a227]" />
+                        <span className="rounded-lg bg-[#071629] px-3 py-2 font-mono text-base font-bold text-[#f1df9a]">
+                          {teachingSteps[teachStep].example.answer}
+                        </span>
+                      </div>
+                      <div className="rounded-xl border-l-4 border-[#c9a227] bg-white px-4 py-3">
+                        <p className="text-[13px] italic leading-[1.65] text-[#5c4a1e]">{teachingSteps[teachStep].example.note}</p>
+                      </div>
+                    </>
+                  )}
+
+                  {teachingSteps[teachStep].example.kind === 'refine' && (
+                    <>
+                      <div className="mb-3 flex flex-wrap items-center gap-3">
+                        <span className="rounded-lg bg-white px-3 py-2 font-mono text-base font-bold text-[#a13d36] line-through decoration-2">
+                          {teachingSteps[teachStep].example.before}
+                        </span>
+                        <ArrowRight className="h-4 w-4 text-[#c9a227]" />
+                        <span className="rounded-lg bg-[#eaf6ec] px-3 py-2 font-mono text-base font-bold text-[#2f6e3d]">
+                          {teachingSteps[teachStep].example.after}
+                        </span>
+                      </div>
+                      <div className="rounded-xl border-l-4 border-[#c9a227] bg-white px-4 py-3">
+                        <p className="text-[13px] italic leading-[1.65] text-[#5c4a1e]">{teachingSteps[teachStep].example.note}</p>
+                      </div>
+                    </>
+                  )}
                 </div>
-
-                {/* Aria-live region for screen readers */}
-                <div aria-live="polite" className="sr-only">
-                  {revealed && mistakeStep ? `The mistake is in ${mistakeStep.label}.` : ''}
-                </div>
-
-                {/* Action button */}
-                {!revealed ? (
-                  <button
-                    onClick={() => setRevealed(true)}
-                    className="rounded-full bg-[#071629] px-7 py-3 text-sm font-black text-white transition hover:bg-[#10233f] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9a227] focus-visible:ring-offset-2"
-                  >
-                    Reveal mistake
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => {
-                      if (!isLastExample) {
-                        setExampleIdx((i) => i + 1);
-                      } else {
-                        setExampleIdx(0);
-                      }
-                      setRevealed(false);
-                    }}
-                    className="rounded-full bg-[#c9a227] px-7 py-3 text-sm font-black text-[#071629] transition hover:bg-[#e0bd4b] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9a227] focus-visible:ring-offset-2"
-                  >
-                    {isLastExample ? 'Start over' : 'Next example →'}
-                  </button>
-                )}
-
-                {/* Explanation block — visible after reveal */}
-                {revealed && (
-                  <div className="mt-5 rounded-2xl border-l-4 border-[#c9a227] bg-[#fffbeb] px-5 py-4">
-                    <p className="mb-1.5 text-xs font-black uppercase tracking-[0.14em] text-[#c9a227]">
-                      What went wrong
-                    </p>
-                    <p className="text-sm italic leading-7 text-[#5c4a1e]">
-                      <MixedMath text={currentExample.explanation} />
-                    </p>
-                  </div>
-                )}
               </div>
             </div>
           </div>
         </section>
 
-        {/* Problem walkthrough */}
-        <section className="bg-[#fffdf8] px-5 py-20 lg:px-8">
+        {/* Spot the Mistake — full marking-desk workbench (second hook, upgraded to "mark it yourself") */}
+        <section id="maths-interactive" className="bg-[#fff6e7] px-5 py-20 lg:px-8">
           <div className="mx-auto max-w-7xl">
-            <div className="mb-10 grid gap-6 lg:grid-cols-[.85fr_1fr] lg:items-end">
-              <div>
-                <p className="mb-3 text-xs font-black uppercase tracking-[0.16em] text-[#c9a227]">Problem walkthrough</p>
-                <h2 className="font-serif text-4xl font-medium leading-tight tracking-[-0.045em] text-[#071629] lg:text-5xl">
-                  Watch a scary problem become easy.
-                </h2>
-              </div>
-              <p className="text-base leading-8 text-[#61708a]">
-                Tap "Show next step" to reveal the solution one step at a time. A thinking note explains the reasoning at each stage.
-              </p>
-            </div>
+            <SectionHeader
+              eyebrow="Spot the mistake"
+              title="Find the marks lost before we tell you."
+              text="Real curriculum mistakes, marked the way an exam actually loses points — click the line where you think the working goes wrong."
+            />
 
-            {/* Version toggle */}
-            <div className="mb-8">
-              <div
-                className="inline-flex rounded-full border border-[#071629]/10 bg-white p-1 shadow-sm"
-                role="group"
-                aria-label="Problem version"
-              >
-                {WALKTHROUGH_VERSIONS.map((v) => (
+            <div className="grid overflow-hidden rounded-[2rem] border border-[#071629]/10 lg:grid-cols-[230px_1fr]">
+              <div className="flex gap-2 overflow-x-auto bg-[#071629] p-4 lg:block lg:gap-0 lg:overflow-visible lg:p-6" role="tablist" aria-label="Year level">
+                <p className="mb-3 hidden text-xs font-black uppercase tracking-[0.16em] text-[#f1df9a] lg:block">Year level</p>
+                {ERROR_TABS.map((tab) => (
                   <button
-                    key={v.id}
-                    onClick={() => { setVersion(v.id); setStepCount(0); }}
-                    className={`rounded-full px-5 py-2 text-sm font-black transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9a227] focus-visible:ring-offset-1 ${
-                      version === v.id
-                        ? 'bg-[#071629] text-[#f1df9a]'
-                        : 'text-[#10233f] hover:bg-[#f5ecd9]'
+                    key={tab.id}
+                    role="tab"
+                    aria-selected={activeTab === tab.id}
+                    onClick={() => {
+                      setActiveTab(tab.id);
+                      setExampleIdx(0);
+                      setPickedIndex(null);
+                    }}
+                    className={`shrink-0 rounded-xl px-4 py-3 text-left text-sm font-black transition lg:mb-1 lg:w-full ${
+                      activeTab === tab.id ? 'bg-white/10 text-[#f1df9a]' : 'text-white/60 hover:bg-white/5 hover:text-white'
                     }`}
                   >
-                    {v.label}
+                    {tab.label}
                   </button>
                 ))}
               </div>
-            </div>
 
-            {/* Problem card */}
-            <div className="overflow-hidden rounded-[2rem] border border-[#071629]/10 bg-white shadow-2xl shadow-[#071629]/6">
-              <div className="border-b border-[#071629]/8 bg-[#f4f7ff] px-8 py-7">
+              <div className="bg-white p-6 md:p-10">
+                <div className="mb-6 flex items-center justify-between">
+                  <span className="text-xs font-black uppercase tracking-[0.14em] text-[#c9a227]">
+                    Example {exampleIdx + 1} of {currentTab.examples.length}
+                  </span>
+                  <div className="flex gap-1">
+                    <button
+                      onClick={() => {
+                        setExampleIdx((i) => Math.max(0, i - 1));
+                        setPickedIndex(null);
+                      }}
+                      disabled={exampleIdx === 0}
+                      className="rounded-xl px-3 py-1.5 text-xs font-bold text-[#10233f] transition hover:bg-[#f5ecd9] disabled:cursor-not-allowed disabled:opacity-30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9a227]"
+                    >
+                      ← Prev
+                    </button>
+                    <button
+                      onClick={() => {
+                        setExampleIdx((i) => Math.min(currentTab.examples.length - 1, i + 1));
+                        setPickedIndex(null);
+                      }}
+                      disabled={isLastExample}
+                      className="rounded-xl px-3 py-1.5 text-xs font-bold text-[#10233f] transition hover:bg-[#f5ecd9] disabled:cursor-not-allowed disabled:opacity-30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9a227]"
+                    >
+                      Next →
+                    </button>
+                  </div>
+                </div>
+
                 <p className="mb-2 text-xs font-black uppercase tracking-[0.14em] text-[#9b8a6a]">Problem</p>
-                <p className="text-base font-semibold leading-7 text-[#071629]">{currentVersion.problem}</p>
-              </div>
+                <p className="mb-7 inline-block rounded-xl border border-[#071629]/10 bg-[#fdf8ec] px-5 py-3 text-base font-semibold leading-7 text-[#071629]">
+                  <MixedMath text={currentExample.problem} />
+                </p>
 
-              <div className="px-6 py-7 md:px-10">
-                <div className="divide-y divide-[#071629]/6" aria-live="polite">
-                  {currentVersion.steps.slice(0, stepCount).map((step, idx) => (
-                    <div
-                      key={`${version}-step-${idx}`}
-                      className="grid grid-cols-1 gap-4 py-5 first:pt-0 md:grid-cols-[3fr_2fr]"
-                      style={{ animation: 'maths-stepIn 0.2s ease-out both' }}
-                    >
-                      <div className="flex items-start gap-4">
-                        <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#071629] text-xs font-black text-[#f1df9a]">
-                          {idx + 1}
-                        </div>
-                        <p className="text-[15px] leading-7 text-[#172033]">
-                          <MixedMath text={step.content} />
+                <p className="mb-3 text-xs font-black uppercase tracking-[0.14em] text-[#9b8a6a]">Click the line that&rsquo;s wrong</p>
+                <div className="space-y-2">
+                  {currentExample.steps.map((step, index) => {
+                    const isPicked = pickedIndex === index;
+                    const isCorrectPick = isPicked && step.isMistake === true;
+                    const isWrongPick = isPicked && !step.isMistake;
+                    return (
+                      <button
+                        key={step.label}
+                        type="button"
+                        onClick={() => setPickedIndex(index)}
+                        className="flex w-full items-start gap-3 rounded-2xl border px-4 py-3.5 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9a227] focus-visible:ring-offset-2"
+                        style={{
+                          borderColor: isCorrectPick ? '#5db66a' : isWrongPick ? '#c9a227' : 'rgba(7,22,41,0.1)',
+                          background: isCorrectPick ? '#eaf6ec' : isWrongPick ? '#fffbeb' : 'white',
+                        }}
+                      >
+                        <span
+                          className={`mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[11px] font-black ${
+                            step.label === 'Answer' ? 'bg-[#071629] text-[#f1df9a]' : 'border border-[#071629]/15 text-[#9b8a6a]'
+                          }`}
+                        >
+                          {step.label === 'Answer' ? '=' : step.label.replace('Step ', '')}
+                        </span>
+                        <span
+                          className="text-sm text-[#172033]"
+                          dangerouslySetInnerHTML={{
+                            __html: katex.renderToString(step.working, { throwOnError: false }),
+                          }}
+                        />
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Aria-live region for screen readers */}
+                <div aria-live="polite" className="sr-only">
+                  {revealed && mistakeStep
+                    ? `Correct — the mistake is in ${mistakeStep.label}.`
+                    : pickedIndex !== null
+                      ? 'Not this line — try another.'
+                      : ''}
+                </div>
+
+                {pickedIndex !== null && (
+                  <div className="mt-5 rounded-2xl border-l-4 border-[#c9a227] bg-[#fffbeb] px-5 py-4">
+                    {revealed ? (
+                      <>
+                        <p className="mb-1.5 text-xs font-black uppercase tracking-[0.14em] text-[#c9a227]">What went wrong</p>
+                        <p className="text-sm italic leading-7 text-[#5c4a1e]">
+                          <MixedMath text={currentExample.explanation} />
                         </p>
-                      </div>
-                      <div className="rounded-xl border-l-4 border-[#c9a227] bg-[#fffbeb] px-4 py-3">
-                        <p className="text-[12.5px] italic leading-[1.65] text-[#5c4a1e]">{step.note}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                <div className={stepCount > 0 ? 'mt-6 border-t border-[#071629]/6 pt-6' : 'mt-2'}>
-                  {stepCount < currentVersion.steps.length ? (
-                    <button
-                      onClick={() => setStepCount((c) => c + 1)}
-                      className="rounded-full bg-[#071629] px-7 py-3 text-sm font-black text-white transition hover:bg-[#10233f] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9a227] focus-visible:ring-offset-2"
-                    >
-                      Show next step →
-                    </button>
-                  ) : (
-                    <button
-                      onClick={() => setStepCount(0)}
-                      className="rounded-full bg-[#c9a227] px-7 py-3 text-sm font-black text-[#071629] transition hover:bg-[#e0bd4b] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9a227] focus-visible:ring-offset-2"
-                    >
-                      Start again
-                    </button>
-                  )}
-                </div>
+                        <button
+                          onClick={() => {
+                            if (!isLastExample) {
+                              setExampleIdx((i) => i + 1);
+                            } else {
+                              setExampleIdx(0);
+                            }
+                            setPickedIndex(null);
+                          }}
+                          className="mt-4 rounded-full bg-[#c9a227] px-6 py-2.5 text-sm font-black text-[#071629] transition hover:bg-[#e0bd4b] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9a227] focus-visible:ring-offset-2"
+                        >
+                          {isLastExample ? 'Start over' : 'Next example →'}
+                        </button>
+                      </>
+                    ) : (
+                      <p className="text-sm italic leading-7 text-[#5c4a1e]">
+                        Not this line — it follows correctly from the step before it. Try another line.
+                      </p>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
           </div>

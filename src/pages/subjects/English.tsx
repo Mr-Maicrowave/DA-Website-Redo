@@ -1,20 +1,10 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { BookOpen } from 'lucide-react';
-import BookIntro from '@/components/intro/BookIntro';
-import IntroVideo from '@/components/intro/IntroVideo';
 import NavigationNew from '@/components/NavigationNew';
 import SubjectHero from '@/components/subjects/SubjectHero';
 import SEO from '@/components/SEO';
-import {
-  ENGLISH_SUBJECT_BOOK_INTRO_SESSION_KEY,
-  shouldShowBookIntro,
-} from '@/lib/bookIntroSession';
-import { ENGLISH_SUBJECT_INTRO_VIDEO_SESSION_KEY } from '@/lib/useIntro';
 
 const English = () => {
-  const [showBookIntro, setShowBookIntro] = useState(() =>
-    shouldShowBookIntro(ENGLISH_SUBJECT_BOOK_INTRO_SESSION_KEY),
-  );
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [iframeHeight, setIframeHeight] = useState('100svh');
 
@@ -25,6 +15,16 @@ const English = () => {
     }
   };
 
+  useEffect(() => {
+    const updateHeight = () => {
+      const doc = iframeRef.current?.contentDocument;
+      if (doc?.documentElement) setIframeHeight(`${doc.documentElement.scrollHeight}px`);
+    };
+
+    window.addEventListener('resize', updateHeight);
+    return () => window.removeEventListener('resize', updateHeight);
+  }, []);
+
   return (
     <>
       <SEO
@@ -32,13 +32,6 @@ const English = () => {
         description="English tuition for Years 7-12 students who need structure, confidence, sharper analysis, and detailed writing feedback."
         canonicalUrl="/subjects/english"
       />
-      <IntroVideo storageKey={ENGLISH_SUBJECT_INTRO_VIDEO_SESSION_KEY} />
-      {showBookIntro && (
-        <BookIntro
-          storageKey={ENGLISH_SUBJECT_BOOK_INTRO_SESSION_KEY}
-          onComplete={() => setShowBookIntro(false)}
-        />
-      )}
       <NavigationNew />
       <SubjectHero
         eyebrow="Years 7-12 English"
@@ -51,6 +44,8 @@ const English = () => {
         placeholderLabel="English classroom"
         backgroundImageSrc="/english-page/images/subjects/english/structured-classroom-cr4.jpeg"
         backgroundImageAlt="DA Tuition English classroom"
+        mobileBackgroundPosition="72% center"
+        mobileContentPosition="bottom"
       />
       <div id="english-page-content">
         <iframe
@@ -58,6 +53,7 @@ const English = () => {
           src="/english-page/index.html"
           title="DA Tuition English"
           onLoad={handleIframeLoad}
+          scrolling="no"
           style={{
             width: '100%',
             height: iframeHeight,

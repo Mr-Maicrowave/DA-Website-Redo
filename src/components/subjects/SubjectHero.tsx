@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react';
 import { ArrowRight, Image as ImageIcon, type LucideIcon } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -18,9 +19,17 @@ interface SubjectHeroProps {
   exploreTargetId: string;
   /** Short label describing what photo should eventually replace the placeholder, e.g. "Mathematics classroom" */
   placeholderLabel: string;
+  /** Keep an internal placeholder without exposing unfinished-production copy to visitors. */
+  showPlaceholderBadge?: boolean;
   /** Real photo to use as the hero background. Omit to show the placeholder instead. */
   backgroundImageSrc?: string;
   backgroundImageAlt?: string;
+  /** Mobile-only focal point for a desktop-oriented source image. */
+  mobileBackgroundPosition?: string;
+  /** Desktop focal point for a source image. */
+  backgroundPosition?: string;
+  /** English trial: place the copy low in the mobile hero to preserve the photo's focal subject. */
+  mobileContentPosition?: 'center' | 'bottom';
 }
 
 /**
@@ -38,21 +47,29 @@ const SubjectHero = ({
   proofPills,
   exploreTargetId,
   placeholderLabel,
+  showPlaceholderBadge = true,
   backgroundImageSrc,
   backgroundImageAlt,
+  mobileBackgroundPosition,
+  backgroundPosition,
+  mobileContentPosition = 'center',
 }: SubjectHeroProps) => {
   const scrollToExplore = () => {
     document.getElementById(exploreTargetId)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
   return (
-    <section className="relative flex min-h-screen flex-col justify-center overflow-hidden bg-[#071629] px-5 py-28 lg:px-8">
+    <section className={`subject-hero relative flex min-h-screen flex-col justify-center overflow-hidden bg-[#071629] px-5 py-28 lg:px-8 ${mobileContentPosition === 'bottom' ? 'subject-hero--mobile-bottom-copy' : ''}`}>
       <div className="absolute inset-0">
         {backgroundImageSrc ? (
           <img
             src={backgroundImageSrc}
             alt={backgroundImageAlt ?? ''}
-            className="h-full w-full object-cover"
+            className="subject-hero-image h-full w-full object-cover"
+            style={{
+              ...(backgroundPosition ? { objectPosition: backgroundPosition } : {}),
+              ...(mobileBackgroundPosition ? { '--subject-hero-mobile-position': mobileBackgroundPosition } : {}),
+            } as CSSProperties}
           />
         ) : (
           <>
@@ -66,14 +83,16 @@ const SubjectHero = ({
             <div className="absolute inset-0 flex items-center justify-end pr-6 opacity-[0.06] lg:pr-16">
               <Icon className="h-[62%] w-auto text-white" strokeWidth={0.5} />
             </div>
-            <div className="absolute bottom-5 right-5 z-10 flex items-center gap-2 rounded-full border border-dashed border-white/30 bg-black/30 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-white/70 backdrop-blur-sm">
-              <ImageIcon className="h-3 w-3" />
-              Photo placeholder — {placeholderLabel}
-            </div>
+            {showPlaceholderBadge ? (
+              <div className="absolute bottom-5 right-5 z-10 flex items-center gap-2 rounded-full border border-dashed border-white/30 bg-black/30 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-white/70 backdrop-blur-sm">
+                <ImageIcon className="h-3 w-3" />
+                Photo placeholder — {placeholderLabel}
+              </div>
+            ) : null}
           </>
         )}
         <div
-          className="absolute inset-0"
+          className="subject-hero-overlay absolute inset-0"
           style={{
             background: 'linear-gradient(90deg, rgba(4,11,23,.86) 0%, rgba(4,11,23,.66) 46%, rgba(4,11,23,.22) 100%)',
           }}
@@ -85,7 +104,7 @@ const SubjectHero = ({
           initial={{ opacity: 0, y: 28 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, ease: 'easeOut' }}
-          className="max-w-3xl"
+          className="subject-hero-copy max-w-3xl"
         >
           <div className="mb-5 inline-flex items-center gap-2.5 text-xs font-black uppercase tracking-[0.18em] text-[#f1df9a]">
             <span className="h-[2px] w-7 bg-[#c9a227]" />
@@ -93,7 +112,7 @@ const SubjectHero = ({
           </div>
 
           <h1
-            className="text-white"
+            className="subject-hero-heading text-white"
             style={{
               fontFamily: '"Playfair Display", Georgia, serif',
               fontSize: 'clamp(3rem, 6.5vw, 6.6rem)',
@@ -128,6 +147,33 @@ const SubjectHero = ({
           </div>
         </motion.div>
       </div>
+      {(mobileBackgroundPosition || mobileContentPosition === 'bottom') && (
+        <style>{`
+          @media (max-width: 767px) {
+            .subject-hero-image { object-position: var(--subject-hero-mobile-position); }
+            .subject-hero--mobile-bottom-copy {
+              min-height: 44rem;
+              justify-content: flex-end;
+              padding-top: 6rem;
+              padding-bottom: 2.5rem;
+            }
+            .subject-hero--mobile-bottom-copy .subject-hero-overlay {
+              background: linear-gradient(180deg, rgba(4,11,23,.24) 0%, rgba(4,11,23,.18) 33%, rgba(4,11,23,.5) 58%, rgba(4,11,23,.94) 100%), linear-gradient(90deg, rgba(4,11,23,.68) 0%, rgba(4,11,23,.32) 100%) !important;
+            }
+            .subject-hero--mobile-bottom-copy .subject-hero-heading {
+              font-size: clamp(3rem, 12.5vw, 3.7rem) !important;
+            }
+            .subject-hero--mobile-bottom-copy .subject-hero-copy > p {
+              margin-top: 1.35rem;
+              font-size: 1rem;
+              line-height: 1.55;
+            }
+            .subject-hero--mobile-bottom-copy .subject-hero-copy > div:last-child {
+              margin-top: 1.5rem;
+            }
+          }
+        `}</style>
+      )}
     </section>
   );
 };

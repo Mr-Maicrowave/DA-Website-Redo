@@ -72,7 +72,7 @@ const LocationHero = ({
   const bookInterview = onBookInterview ?? (() => { window.location.href = '/#contact'; });
 
   return (
-    <section className="relative overflow-hidden bg-brand-navy lg:grid lg:grid-cols-2 lg:min-h-[640px]">
+    <section className="relative overflow-hidden bg-brand-navy pt-14 lg:grid lg:grid-cols-2 lg:min-h-[640px]">
       {/* Copy panel */}
       <motion.div
         ref={ref}
