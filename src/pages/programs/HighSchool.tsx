@@ -3,8 +3,9 @@ import { Link } from 'react-router-dom';
 import SEO from '@/components/SEO';
 import NavigationNew from '@/components/NavigationNew';
 import { Button } from '@/components/ui/button';
+import SubjectHero from '@/components/subjects/SubjectHero';
 import { AnimatePresence, motion, useReducedMotion, useScroll, useTransform } from 'framer-motion';
-import { ArrowRight, ArrowUpRight, Check, ChevronLeft, ChevronRight, Star } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, Check, ChevronLeft, ChevronRight, GraduationCap, Star } from 'lucide-react';
 
 /* ============================================================================
    CONTENT — every field below is preserved verbatim from the previous build
@@ -1006,27 +1007,40 @@ const HighSchool = () => {
       />
       <NavigationNew />
 
-      <TopBar />
+      <SubjectHero
+        eyebrow="High School Tuition · Years 7-10"
+        icon={GraduationCap}
+        headlineWhite="Find your voice."
+        headlineGold="Find your direction."
+        subtext="Years 7-10 are where academic trajectories lock in. Our small-group tutoring builds the skills, habits, and confidence your child needs to perform well in senior school and beyond."
+        proofPills={['Small groups, capped at 5', 'Selective school prep', 'Written progress updates']}
+        exploreTargetId="highschool-page-content"
+        placeholderLabel="High school classroom"
+        backgroundImageSrc="/highschool-girl.png"
+        backgroundImageAlt="A DA Tuition high school student focused on her written work"
+      />
 
-      <main>
-        <Hero />
-        <YearJourney />
-        <WhyItMatters />
-        <TeacherBeside />
-        <Curriculum />
-        <FindYourVoice />
-        <HowWeTeach />
-        <RealResults />
-        <PhotoDuo />
-        <PerfectIf />
-        <HSCTransition />
-      </main>
+      <div id="highschool-page-content">
+        <main>
+          <Hero />
+          <YearJourney />
+          <WhyItMatters />
+          <TeacherBeside />
+          <Curriculum />
+          <FindYourVoice />
+          <HowWeTeach />
+          <RealResults />
+          <PhotoDuo />
+          <PerfectIf />
+          <HSCTransition />
+        </main>
 
-      <footer className="flex flex-wrap items-center justify-between gap-3.5 border-t border-white/10 bg-[#0A1B34] px-5 py-7 lg:px-8">
-        <div className="text-base font-black text-white">DA <span className="text-[#E0BD4B]">Tuition</span></div>
-        <p className="text-xs text-white/45">© 2025 DA Tuition · Sydney, Australia</p>
-        <p className="text-xs text-white/45">hello@datuition.com.au</p>
-      </footer>
+        <footer className="flex flex-wrap items-center justify-between gap-3.5 border-t border-white/10 bg-[#0A1B34] px-5 py-7 lg:px-8">
+          <div className="text-base font-black text-white">DA <span className="text-[#E0BD4B]">Tuition</span></div>
+          <p className="text-xs text-white/45">© 2025 DA Tuition · Sydney, Australia</p>
+          <p className="text-xs text-white/45">hello@datuition.com.au</p>
+        </footer>
+      </div>
 
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Caveat:wght@500;600;700&family=Merriweather:ital,wght@0,400;1,400&display=swap');

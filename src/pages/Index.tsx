@@ -9,7 +9,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { ArrowRight, ChartNoAxesCombined, ChevronDown, Maximize2, Play, ShieldCheck, UsersRound, Volume2, VolumeX, X } from 'lucide-react';
 import { motion, AnimatePresence, useInView, useScroll, useTransform, useSpring, useMotionValueEvent, useReducedMotion, type MotionValue } from 'framer-motion';
 import NavigationNew from '@/components/NavigationNew';
-import FooterNew from '@/components/FooterNew';
+import HomeFooterTrial from '@/components/HomeFooterTrial';
 import AwardRecognition from '@/components/AwardRecognition';
 import GoogleReviewsCarousel from '@/components/GoogleReviewsCarousel';
 import TeachersPreview from '@/components/TeachersPreview';
@@ -18,7 +18,6 @@ import SEO from '@/components/SEO';
 import StatsSection from '@/components/StatsSection';
 import { siteStats } from '@/data/site-stats';
 import { organizationSchema, localBusinessSchema } from '@/lib/seo/schema';
-import IntroVideo from '@/components/intro/IntroVideo';
 import VisualIntro from '@/components/home/VisualIntro';
 
 // ─── Design tokens ────────────────────────────────────────────
@@ -7074,7 +7073,6 @@ const Index = () => {
 
   return (
   <div style={{ fontFamily: sans }}>
-    <IntroVideo />
     <Confetti />
     <SEO canonicalUrl="/" jsonLd={[organizationSchema(), localBusinessSchema(siteStats.reviewCount)]} />
     <NavigationNew />
@@ -7129,7 +7127,7 @@ const Index = () => {
       <TeachersSection />
       <ClosingCTASection />
     </main>
-    <FooterNew />
+    <HomeFooterTrial />
   </div>
   );
 };
