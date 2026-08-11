@@ -39,6 +39,7 @@ const NavigationNew = () => {
   const [scrolled, setScrolled] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [reducedMotion, setReducedMotion] = useState(false);
+  const [mobileHeaderHidden, setMobileHeaderHidden] = useState(false);
   const location = useLocation();
   const isHomepage = location.pathname === '/';
   const isBookExperience = location.pathname === '/english-sample';
@@ -49,6 +50,7 @@ const NavigationNew = () => {
   // while in the wash state — see heroTextLight below.
   const transparentHeroPaths = ['/subjects/english', '/programs/high-school'];
   const isTransparentHero = transparentHeroPaths.includes(location.pathname);
+  const isEnglishMobileTrial = location.pathname === '/subjects/english';
 
   const { navState, pin, expand } = useAdaptiveNav();
   const isCollapsed = navState === 'collapsed';
@@ -57,6 +59,7 @@ const NavigationNew = () => {
   const hamburgerRef = useRef<HTMLButtonElement>(null);
   const collapsedLayerRef = useRef<HTMLDivElement>(null);
   const expandedLayerRef = useRef<HTMLDivElement>(null);
+  const mobileLastScrollYRef = useRef(0);
 
   // Whichever content layer is faded out must also drop out of the tab
   // order and the accessibility tree — both layers stay mounted for the
@@ -72,6 +75,27 @@ const NavigationNew = () => {
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
+
+  useEffect(() => {
+    if (!isEnglishMobileTrial) {
+      setMobileHeaderHidden(false);
+      return;
+    }
+
+    mobileLastScrollYRef.current = window.scrollY;
+    const onMobileScroll = () => {
+      const currentY = window.scrollY;
+      const difference = currentY - mobileLastScrollYRef.current;
+
+      if (currentY <= 72 || difference < -8) setMobileHeaderHidden(false);
+      else if (difference > 8) setMobileHeaderHidden(true);
+
+      mobileLastScrollYRef.current = currentY;
+    };
+
+    window.addEventListener('scroll', onMobileScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onMobileScroll);
+  }, [isEnglishMobileTrial]);
 
   useEffect(() => {
     const media = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -222,7 +246,7 @@ const NavigationNew = () => {
   return (
     <>
       {/* ── Mobile / touch header — persistent, deliberately not scroll-reactive ── */}
-      <div className="fixed top-0 left-0 right-0 z-[60] lg:hidden">
+      <div className={`fixed top-0 left-0 right-0 z-[60] transition-transform duration-300 ease-out lg:hidden ${isEnglishMobileTrial && mobileHeaderHidden && !sheetOpen ? '-translate-y-full' : 'translate-y-0'}`}>
         <nav
           className="w-full h-14 backdrop-blur-md backdrop-saturate-125 border-b"
           style={{ borderColor: 'rgba(169,120,37,0.42)', background: barBackground, boxShadow: barShadow }}
@@ -245,7 +269,10 @@ const NavigationNew = () => {
             <button
               ref={hamburgerRef}
               type="button"
-              onClick={() => setSheetOpen(true)}
+              onClick={() => {
+                setMobileHeaderHidden(false);
+                setSheetOpen(true);
+              }}
               aria-label="Open menu"
               aria-expanded={sheetOpen}
               aria-controls="mobile-nav-sheet"
@@ -256,6 +283,22 @@ const NavigationNew = () => {
           </div>
         </nav>
       </div>
+
+      {isEnglishMobileTrial && mobileHeaderHidden && !sheetOpen && (
+        <button
+          type="button"
+          onClick={() => {
+            setMobileHeaderHidden(false);
+            setSheetOpen(true);
+          }}
+          aria-label="Open menu"
+          aria-expanded={sheetOpen}
+          aria-controls="mobile-nav-sheet"
+          className="fixed right-4 top-3 z-[61] flex h-11 w-11 items-center justify-center rounded-full border border-[#c9a227]/50 bg-[#071629] text-white shadow-lg shadow-[#071629]/30 transition-transform duration-300 ease-out lg:hidden"
+        >
+          <Menu size={22} aria-hidden="true" />
+        </button>
+      )}
 
       <MobileNavSheet
         isOpen={sheetOpen}

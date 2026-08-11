@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import NavigationNew from '@/components/NavigationNew';
 import FooterNew from '@/components/FooterNew';
 import SubjectHero from '@/components/subjects/SubjectHero';
@@ -11,6 +11,7 @@ import {
   CheckCircle,
   Clock,
   HelpCircle,
+  Play,
   Quote,
   Sparkles,
   Target,
@@ -475,6 +476,459 @@ const WALKTHROUGH_VERSIONS = [
   },
 ];
 
+type BasketballStage = 'release' | 'barrier' | 'peak' | 'landing';
+
+const BASKETBALL_STAGES: Record<BasketballStage, {
+  label: string;
+  prompt: string;
+  equation: string;
+  working: string[];
+  explanation: string;
+  time: number;
+}> = {
+  release: {
+    label: '1. Release',
+    prompt: 'Look for “initially”.',
+    equation: 'h(0) = 1.6\\,\\mathrm{m}',
+    working: [
+      'h(t) = −4.9t² + 9.8t + 1.6',
+      'h(0) = −4.9(0)² + 9.8(0) + 1.6',
+      'h(0) = 1.6 m',
+    ],
+    explanation: '“Initially” means start at t = 0. The constant 1.6 tells us the ball leaves the player’s hands 1.6 metres above the ground.',
+    time: 0,
+  },
+  peak: {
+    label: '3. Highest point',
+    prompt: 'Look for “maximum” or “highest”.',
+    equation: 'h^{\\prime}(t) = -9.8t + 9.8 = 0',
+    working: [
+      'h′(t) = −9.8t + 9.8',
+      '0 = −9.8t + 9.8',
+      't = 1.0 s  →  h(1) = 6.5 m',
+    ],
+    explanation: 'At the highest point the ball is neither rising nor falling, so its gradient is zero. Solving gives t = 1.0 second, and h(1) = 6.5 metres.',
+    time: 1,
+  },
+  barrier: {
+    label: '2. The barrier',
+    prompt: 'Turn distance into time first.',
+    equation: 't = \\frac{d}{v} = \\frac{1.5}{6} = 0.25\\,\\mathrm{s}',
+    working: [
+      't = d ÷ v = 1.5 ÷ 6 = 0.25 s',
+      'h(0.25) = −4.9(0.25)² + 9.8(0.25) + 1.6',
+      'h(0.25) = 3.74 m > 3.0 m',
+    ],
+    explanation: 'The equation uses time, not horizontal distance. At 6 metres per second, the ball reaches a barrier 1.5 metres away after 0.25 seconds. Its height is 3.74 metres, so it clears a 3 metre barrier.',
+    time: 0.25,
+  },
+  landing: {
+    label: '4. Landing',
+    prompt: 'Look for “hits the ground”.',
+    equation: 'h(t) = 0 \\Rightarrow t \\approx 2.15\\,\\mathrm{s}',
+    working: [
+      '0 = −4.9t² + 9.8t + 1.6',
+      '4.9t² − 9.8t − 1.6 = 0',
+      't ≈ 2.15 s  (positive time)',
+    ],
+    explanation: 'The ball hits the ground when its height is zero. Solve h(t) = 0, then keep the positive time because the negative solution happened before the throw.',
+    time: 2.1517,
+  },
+};
+
+const renderLatex = (expression: string, displayMode: boolean) => katex.renderToString(expression, {
+  displayMode,
+  // Catch authoring mistakes during development instead of shipping raw red source text.
+  throwOnError: import.meta.env.DEV,
+});
+
+const LatexBlock = ({ expression }: { expression: string }) => (
+  <div
+    dangerouslySetInnerHTML={{
+      __html: renderLatex(expression, true),
+    }}
+  />
+);
+
+const JourneyMath = ({ expression }: { expression: string }) => (
+  <span className="inline-block align-baseline [&_.katex]:text-inherit" dangerouslySetInnerHTML={{ __html: renderLatex(expression, false) }} />
+);
+
+const BasketballCalculusJourney = () => {
+  const [stage, setStage] = useState<BasketballStage>('release');
+  const [ballTime, setBallTime] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [journeyStep, setJourneyStep] = useState(0);
+  const [journeyComplete, setJourneyComplete] = useState(false);
+  const [showQuadraticRoute, setShowQuadraticRoute] = useState(false);
+  const animationFrame = useRef<number | null>(null);
+
+  const left = 74;
+  const right = 654;
+  const top = 54;
+  const base = 366;
+  const maxTime = 2.3;
+  const maxHeight = 8;
+  const landingTime = 2.1517;
+  const height = (time: number) => -4.9 * time * time + 9.8 * time + 1.6;
+  const x = (time: number) => left + (time / maxTime) * (right - left);
+  const y = (value: number) => base - (value / maxHeight) * (base - top);
+  const curve = Array.from({ length: 90 }, (_, index) => {
+    const time = (landingTime * index) / 89;
+    return `${index === 0 ? 'M' : 'L'}${x(time).toFixed(1)},${y(Math.max(0, height(time))).toFixed(1)}`;
+  }).join(' ');
+  const ballX = x(ballTime);
+  const ballY = y(Math.max(0, height(ballTime)));
+  const mobileX = (time: number) => 48 + (time / maxTime) * 294;
+  const mobileY = (value: number) => 264 - (value / maxHeight) * 204;
+  const mobileCurve = Array.from({ length: 80 }, (_, index) => {
+    const time = (landingTime * index) / 79;
+    return `${index === 0 ? 'M' : 'L'}${mobileX(time).toFixed(1)},${mobileY(Math.max(0, height(time))).toFixed(1)}`;
+  }).join(' ');
+  const mobileBallX = mobileX(ballTime);
+  const mobileBallY = mobileY(Math.max(0, height(ballTime)));
+  const current = BASKETBALL_STAGES[stage];
+  const isJourneyInProgress = journeyStep > 0 && !journeyComplete;
+  const completedStages = (['release', 'barrier', 'peak', 'landing'] as BasketballStage[]).slice(0, journeyStep);
+
+  const cancelAnimation = () => {
+    if (animationFrame.current !== null) {
+      cancelAnimationFrame(animationFrame.current);
+      animationFrame.current = null;
+    }
+    setIsPlaying(false);
+  };
+
+  const animateTo = (targetTime: number, onComplete?: () => void) => {
+    const fromTime = ballTime;
+    const startedAt = performance.now();
+    const duration = Math.max(380, Math.abs(targetTime - fromTime) * 760);
+    const frame = (now: number) => {
+      const progress = Math.min((now - startedAt) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 4);
+      setBallTime(fromTime + (targetTime - fromTime) * eased);
+      if (progress < 1) {
+        animationFrame.current = requestAnimationFrame(frame);
+      } else {
+        animationFrame.current = null;
+        onComplete?.();
+      }
+    };
+    animationFrame.current = requestAnimationFrame(frame);
+  };
+
+  const selectStage = (nextStage: BasketballStage) => {
+    cancelAnimation();
+    setJourneyStep(0);
+    setJourneyComplete(false);
+    setShowQuadraticRoute(false);
+    setStage(nextStage);
+    animateTo(BASKETBALL_STAGES[nextStage].time);
+  };
+
+  const playJourney = () => {
+    cancelAnimation();
+    setIsPlaying(true);
+    setStage('release');
+    setBallTime(0);
+    setJourneyStep(1);
+    setJourneyComplete(false);
+    setShowQuadraticRoute(false);
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setStage('landing');
+      setBallTime(landingTime);
+      setJourneyStep(4);
+      setJourneyComplete(true);
+      return;
+    }
+    const startedAt = performance.now();
+    // Long enough for students to follow the curve and absorb each prompt as it changes.
+    const duration = 4500;
+    const frame = (now: number) => {
+      const progress = Math.min((now - startedAt) / duration, 1);
+      const time = landingTime * (1 - Math.pow(1 - progress, 3));
+      setBallTime(time);
+      if (time >= 1.75) {
+        setStage('landing');
+        setJourneyStep(4);
+      } else if (time >= 0.7) {
+        setStage('peak');
+        setJourneyStep(3);
+      } else if (time >= 0.12) {
+        setStage('barrier');
+        setJourneyStep(2);
+      } else {
+        setStage('release');
+        setJourneyStep(1);
+      }
+      if (progress < 1) {
+        animationFrame.current = requestAnimationFrame(frame);
+      } else {
+        animationFrame.current = null;
+        setStage('landing');
+        setIsPlaying(false);
+        setJourneyStep(4);
+        setJourneyComplete(true);
+      }
+    };
+    animationFrame.current = requestAnimationFrame(frame);
+  };
+
+  useEffect(() => () => {
+    if (animationFrame.current !== null) cancelAnimationFrame(animationFrame.current);
+  }, []);
+
+  const showQuadraticMethod = () => {
+    cancelAnimation();
+    setStage('peak');
+    setJourneyStep(3);
+    setJourneyComplete(true);
+    setShowQuadraticRoute(true);
+    animateTo(BASKETBALL_STAGES.peak.time);
+  };
+
+  return (
+    <section className="overflow-hidden bg-[#fffdf8] px-5 py-20 lg:px-8" aria-labelledby="basketball-calculus-heading">
+      <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-[minmax(260px,.78fr)_minmax(0,1.22fr)] lg:items-start">
+        <div className="max-w-xl">
+          <p className="mb-3 text-xs font-black uppercase tracking-[0.16em] text-[#c9a227]">Maths in motion</p>
+          <h2 id="basketball-calculus-heading" className="font-serif text-4xl font-medium leading-[1.03] tracking-[-0.04em] text-[#071629] sm:text-5xl">
+            Read the question. Then read the curve.
+          </h2>
+          <p className="mt-5 max-w-[42ch] text-base leading-8 text-[#61708a]">
+            An HSC Advanced and Extension preview: each part of the question points to a different mathematical decision.
+          </p>
+
+          <aside className="mt-7 rounded-[1.5rem] border border-[#d9ceb1] bg-[#fffaf0] p-5 shadow-[0_16px_36px_rgba(7,22,41,0.07)]" aria-label="Exam-style basketball question">
+            <p className="text-[11px] font-black uppercase tracking-[0.16em] text-[#8a6812]">Exam-style question</p>
+            <p className="mt-3 font-serif text-xl leading-7 text-[#071629]">A high basketball lob is modelled by <JourneyMath expression={'h(t) = -4.9t^2 + 9.8t + 1.6'} />.</p>
+            <p className="mt-3 text-sm leading-6 text-[#536077]">The ball travels horizontally at a constant 6 m/s, over a 3 m training screen placed 1.5 m from the player.</p>
+            <ol className="mt-4 space-y-2 border-t border-[#d9ceb1] pt-4 text-sm leading-6 text-[#253956]">
+              <li><strong>(a)</strong> Find the ball’s initial height.</li>
+              <li><strong>(b)</strong> Decide whether it clears the barrier.</li>
+              <li><strong>(c)</strong> Find its maximum height.</li>
+              <li className="text-[#61708a]"><strong>Extension:</strong> Find when it lands.</li>
+            </ol>
+          </aside>
+
+          <div className="mt-8 flex flex-wrap gap-2" aria-label="Choose a point in the basketball journey">
+            {(['release', 'barrier', 'peak', 'landing'] as BasketballStage[]).map((key) => (
+              <button
+                key={key}
+                type="button"
+                onClick={() => selectStage(key)}
+                aria-pressed={stage === key}
+                className={`min-h-11 rounded-full px-4 text-sm font-black transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9a227] focus-visible:ring-offset-2 ${
+                  stage === key ? 'bg-[#071629] text-[#f1df9a]' : 'border border-[#071629]/15 bg-transparent text-[#4f5c70] hover:border-[#c9a227]/60 hover:text-[#071629]'
+                }`}
+              >
+                {BASKETBALL_STAGES[key].label}
+              </button>
+            ))}
+            <button
+              type="button"
+              onClick={playJourney}
+              className="inline-flex min-h-11 items-center rounded-full bg-[#c9a227] px-4 text-sm font-black text-[#071629] transition hover:bg-[#e0bd4b] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9a227] focus-visible:ring-offset-2"
+            >
+              <Play className="mr-2 h-4 w-4" fill="currentColor" aria-hidden="true" />
+              {isPlaying ? 'Playing…' : 'Play journey'}
+            </button>
+          </div>
+
+          {journeyStep === 0 ? (
+            <div className="mt-7 border-t border-[#d9ceb1] pt-5" aria-live="polite">
+              <p className="text-xs font-black uppercase tracking-[0.14em] text-[#c9a227]">{current.label}</p>
+              <p className="mt-3 font-serif text-2xl font-medium tracking-[-0.02em] text-[#071629]">{current.prompt}</p>
+              <div className="mt-4 text-xl text-[#8a6812] [&_.katex-display]:my-0 [&_.katex-display]:text-left">
+                <LatexBlock expression={current.equation} />
+              </div>
+              <p className="mt-4 max-w-[47ch] text-sm leading-7 text-[#536077]">{current.explanation}</p>
+            </div>
+          ) : null}
+          {isJourneyInProgress ? (
+            <div className="mt-7 border-t border-[#d9ceb1] pt-5" aria-live="polite">
+              <p className="text-xs font-black uppercase tracking-[0.14em] text-[#c9a227]">Current step: {current.label}</p>
+              <p className="mt-2 text-sm leading-6 text-[#536077]">{current.prompt}</p>
+              <div className="mt-3 text-lg text-[#8a6812] [&_.katex-display]:my-0 [&_.katex-display]:text-left">
+                <LatexBlock expression={current.equation} />
+              </div>
+              <p className="mt-3 text-sm font-semibold text-[#253956]">Completed so far: {completedStages.map((key) => BASKETBALL_STAGES[key].label).join(' · ')}</p>
+            </div>
+          ) : null}
+        </div>
+
+        <div className="min-w-0">
+          <div className="relative hidden md:block">
+            <div className="absolute left-[14%] top-[7%] z-10 text-xl text-[#071629] [&_.katex-display]:my-0">
+              <LatexBlock expression={'h(t) = -4.9t^2 + 9.8t + 1.6'} />
+            </div>
+          <svg viewBox="0 0 720 476" className="block h-auto w-full" role="img" aria-labelledby="basketball-graph-title basketball-graph-description">
+            <title id="basketball-graph-title">Height of a basketball over time</title>
+            <desc id="basketball-graph-description">A three-dimensional teaching diagram of a basketball following the height function h of t equals negative 4 point 9 t squared plus 9 point 8 t plus 1 point 6. It shows release, a three metre barrier, and the highest point.</desc>
+            <defs>
+              <pattern id="basketball-grid" width="48" height="48" patternUnits="userSpaceOnUse">
+                <path d="M 48 0 L 0 0 0 48" fill="none" stroke="#071629" strokeOpacity="0.07" strokeWidth="1" />
+              </pattern>
+              <linearGradient id="basketball-floor" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#d8c27c" stopOpacity="0.24" />
+                <stop offset="100%" stopColor="#071629" stopOpacity="0.12" />
+              </linearGradient>
+              <radialGradient id="basketball-ball" cx="32%" cy="24%" r="72%">
+                <stop offset="0%" stopColor="#f8e681" />
+                <stop offset="60%" stopColor="#d5ad22" />
+                <stop offset="100%" stopColor="#a7790b" />
+              </radialGradient>
+              <filter id="basketball-shadow" x="-40%" y="-40%" width="180%" height="180%">
+                <feDropShadow dx="0" dy="5" stdDeviation="4" floodColor="#071629" floodOpacity="0.26" />
+              </filter>
+            </defs>
+            <rect x="48" y="34" width="636" height="350" fill="url(#basketball-grid)" rx="6" />
+            <path d={`M${left},${base} H${right} L${right + 38},420 H${left - 28} Z`} fill="url(#basketball-floor)" />
+            {[0.15, 0.35, 0.58, 0.82].map((depth) => (
+              <line key={`floor-${depth}`} x1={left - 28 + (right - left + 66) * depth / 2} y1="420" x2={left + (right - left) * depth} y2={base} stroke="#071629" strokeOpacity="0.09" />
+            ))}
+            {[0, 2, 4, 6, 8].map((tick) => (
+              <g key={`height-${tick}`}>
+                <line x1={left} y1={y(tick)} x2={right} y2={y(tick)} stroke="#071629" strokeOpacity="0.08" />
+                <text x="52" y={y(tick) + 5} fill="#61708a" fontSize="12">{tick}</text>
+              </g>
+            ))}
+            {[0, 0.5, 1, 1.5, 2].map((tick) => (
+              <g key={`time-${tick}`}>
+                <line x1={x(tick)} y1={top} x2={x(tick)} y2={base} stroke="#071629" strokeOpacity="0.06" />
+                <text x={x(tick) - 8} y="410" fill="#61708a" fontSize="12">{tick}</text>
+              </g>
+            ))}
+            {[0, 1.5, 3, 6, 9, 12].map((distance) => {
+              const distanceX = x(distance / 6);
+              const isBarrier = distance === 1.5;
+              return (
+                <g key={`distance-${distance}`}>
+                  <line x1={distanceX} y1="423" x2={distanceX} y2="429" stroke={isBarrier ? '#c9a227' : '#61708a'} strokeWidth={isBarrier ? '2' : '1'} />
+                  <text x={distanceX} y="443" textAnchor="middle" fill={isBarrier ? '#8a6812' : '#61708a'} fontSize="11" fontWeight={isBarrier ? '700' : '400'}>{distance}</text>
+                </g>
+              );
+            })}
+            <line x1={left} y1={base} x2={right + 16} y2={base} stroke="#071629" strokeWidth="2" />
+            <line x1={left} y1={base} x2={left} y2={top - 15} stroke="#071629" strokeWidth="2" />
+            <path d={`M${right + 16},${base} l-8,-5 v10 Z`} fill="#071629" />
+            <path d={`M${left},${top - 15} l-5,8 h10 Z`} fill="#071629" />
+            <text x="616" y="410" fill="#61708a" fontSize="12">time t (s)</text>
+            <text x="616" y="462" fill="#61708a" fontSize="12">distance x (m)</text>
+            <text x="76" y="462" fill="#61708a" fontSize="11">x = 6t</text>
+            <text x="22" y="252" fill="#61708a" fontSize="12" transform="rotate(-90 22 252)">height (m)</text>
+            <path d={curve} fill="none" stroke="#071629" strokeWidth="4" strokeLinecap="round" />
+            <g aria-label="Three metre barrier, one point five metres from the shooter">
+              <rect x={x(BASKETBALL_STAGES.barrier.time) - 7} y={y(3)} width="14" height={base - y(3)} rx="3" fill="#253956" filter="url(#basketball-shadow)" />
+              <path d={`M${x(BASKETBALL_STAGES.barrier.time) - 7},${y(3)} h14 l6,-6 h-14 Z`} fill="#d8c27c" />
+              <text x={x(BASKETBALL_STAGES.barrier.time) + 18} y={y(3) + 4} fill="#8a6812" fontSize="12" fontWeight="700">3 m training screen</text>
+              <text x={x(BASKETBALL_STAGES.barrier.time) + 18} y={y(3) + 21} fill="#61708a" fontSize="11">1.5 m away</text>
+            </g>
+            {(Object.keys(BASKETBALL_STAGES) as BasketballStage[]).map((key) => {
+              const marker = BASKETBALL_STAGES[key];
+              const markerX = x(marker.time);
+              const markerY = y(Math.max(0, height(marker.time)));
+              return (
+                <g key={key} opacity={stage === key ? 1 : 0.42}>
+                  <circle cx={markerX} cy={markerY} r={stage === key ? 8 : 5} fill={stage === key ? '#c9a227' : '#61708a'} />
+                </g>
+              );
+            })}
+            <line x1={ballX} y1={base} x2={ballX} y2={ballY} stroke="#c9a227" strokeWidth="1.5" strokeDasharray="5 5" opacity="0.75" />
+            <ellipse cx={ballX + 8} cy={base + 9} rx="18" ry="4" fill="#071629" opacity={Math.max(0.1, 0.32 - (height(ballTime) / maxHeight) * 0.25)} />
+            <g transform={`translate(${ballX} ${ballY})`}>
+              <circle r="17" fill="url(#basketball-ball)" stroke="#fffdf8" strokeWidth="3" filter="url(#basketball-shadow)" />
+              <circle cx="-5" cy="-6" r="3" fill="#fff7cf" opacity="0.74" />
+              <path d="M-15 0H15M0-15C8-8 8 8 0 15M0-15C-8-8-8 8 0 15" fill="none" stroke="#071629" strokeWidth="1.3" />
+            </g>
+            {stage === 'release' && <text x={ballX + 18} y={ballY - 14} fill="#8a6812" fontSize="13" fontWeight="700">(0, 1.6)</text>}
+            {stage === 'barrier' && <text x={ballX + 16} y={ballY - 14} fill="#8a6812" fontSize="13" fontWeight="700">h(0.25) = 3.74 m</text>}
+            {stage === 'peak' && <text x={ballX - 38} y={ballY - 24} fill="#8a6812" fontSize="13" fontWeight="700">max: (1.0, 6.5)</text>}
+            {stage === 'landing' && <text x={ballX - 62} y={ballY - 30} fill="#8a6812" fontSize="13" fontWeight="700">lands: 2.15 s</text>}
+            {showQuadraticRoute && (
+              <g>
+                <path d={`M${ballX + 16},${ballY - 6} L${ballX + 78},${ballY - 38}`} fill="none" stroke="#c9a227" strokeWidth="1.5" />
+                <text x={ballX + 84} y={ballY - 42} fill="#8a6812" fontSize="13" fontWeight="700">axis of symmetry</text>
+                <text x={ballX + 84} y={ballY - 24} fill="#61708a" fontSize="12">t = −b / 2a = 1.0</text>
+              </g>
+            )}
+          </svg>
+          </div>
+          <p className="mt-1 hidden text-center text-xs font-semibold text-[#536077] md:block">Horizontal distance and time are linked: <JourneyMath expression={'x = 6t'} />. The screen at <JourneyMath expression={'x = 1.5'} /> is reached at <JourneyMath expression={'t = 0.25\\,\\mathrm{s}'} />.</p>
+          <div className="md:hidden">
+            <div className="mb-3 text-center text-lg text-[#071629] [&_.katex-display]:my-0">
+              <LatexBlock expression={'h(t) = -4.9t^2 + 9.8t + 1.6'} />
+            </div>
+            <svg viewBox="0 0 390 318" className="block h-auto w-full" role="img" aria-labelledby="basketball-mobile-graph-title basketball-mobile-graph-description">
+              <title id="basketball-mobile-graph-title">Basketball height over time</title>
+              <desc id="basketball-mobile-graph-description">A simplified mobile graph showing a high basketball lob clear a three metre training screen, reach its highest point, and land.</desc>
+              <defs>
+                <radialGradient id="basketball-mobile-ball" cx="32%" cy="24%" r="72%">
+                  <stop offset="0%" stopColor="#f8e681" />
+                  <stop offset="62%" stopColor="#d5ad22" />
+                  <stop offset="100%" stopColor="#a7790b" />
+                </radialGradient>
+              </defs>
+              {[0, 2, 4, 6, 8].map((tick) => <g key={`mobile-y-${tick}`}><line x1="48" y1={mobileY(tick)} x2="342" y2={mobileY(tick)} stroke="#071629" strokeOpacity="0.08" /><text x="35" y={mobileY(tick) + 4} textAnchor="end" fill="#536077" fontSize="13">{tick}</text></g>)}
+              <line x1="48" y1="264" x2="350" y2="264" stroke="#071629" strokeWidth="2" />
+              <line x1="48" y1="264" x2="48" y2="35" stroke="#071629" strokeWidth="2" />
+              <path d={mobileCurve} fill="none" stroke="#071629" strokeWidth="4" strokeLinecap="round" />
+              <line x1={mobileX(0.25)} y1="264" x2={mobileX(0.25)} y2={mobileY(3)} stroke="#c9a227" strokeDasharray="4 4" strokeWidth="1.5" />
+              <rect x={mobileX(0.25) - 7} y={mobileY(3)} width="14" height={264 - mobileY(3)} rx="3" fill="#253956" />
+              <text x={mobileX(0.25) + 13} y={mobileY(3) - 9} fill="#8a6812" fontSize="13" fontWeight="700">3 m screen</text>
+              <circle cx={mobileBallX} cy={mobileBallY} r="15" fill="url(#basketball-mobile-ball)" stroke="#fffdf8" strokeWidth="3" />
+              <path d={`M${mobileBallX - 13} ${mobileBallY}H${mobileBallX + 13} M${mobileBallX} ${mobileBallY - 13}C${mobileBallX + 7} ${mobileBallY - 7} ${mobileBallX + 7} ${mobileBallY + 7} ${mobileBallX} ${mobileBallY + 13} M${mobileBallX} ${mobileBallY - 13}C${mobileBallX - 7} ${mobileBallY - 7} ${mobileBallX - 7} ${mobileBallY + 7} ${mobileBallX} ${mobileBallY + 13}`} fill="none" stroke="#071629" strokeWidth="1.2" />
+              <text x="250" y="292" fill="#536077" fontSize="13">time, t (seconds)</text>
+              <text x="15" y="180" fill="#536077" fontSize="13" transform="rotate(-90 15 180)">height (m)</text>
+              {stage === 'release' && <text x={mobileBallX + 16} y={mobileBallY - 12} fill="#8a6812" fontSize="13" fontWeight="700">1.6 m</text>}
+              {stage === 'barrier' && <text x={mobileBallX + 16} y={mobileBallY - 12} fill="#8a6812" fontSize="13" fontWeight="700">3.74 m</text>}
+              {stage === 'peak' && <text x={mobileBallX - 27} y={mobileBallY - 20} fill="#8a6812" fontSize="13" fontWeight="700">6.5 m</text>}
+              {stage === 'landing' && <text x={mobileBallX - 43} y={mobileBallY - 16} fill="#8a6812" fontSize="13" fontWeight="700">2.15 s</text>}
+            </svg>
+            <p className="mt-3 text-center text-sm leading-6 text-[#536077]">Horizontal distance uses <JourneyMath expression={'x = 6t'} />: the screen at <JourneyMath expression={'x = 1.5\\,\\mathrm{m}'} /> is reached at <JourneyMath expression={'t = 0.25\\,\\mathrm{s}'} />.</p>
+          </div>
+        </div>
+      </div>
+      {journeyComplete && (
+        <div className="mx-auto mt-12 max-w-4xl border-y border-[#d9ceb1] py-8 text-center" aria-live="polite" aria-label={showQuadraticRoute ? 'Quadratic alternative solution' : 'Full worked solution'}>
+          <p className="text-[11px] font-black uppercase tracking-[0.15em] text-[#8a6812]">
+            {showQuadraticRoute ? 'Another valid route' : 'Full worked journey'}
+          </p>
+          <div className="mx-auto mt-6 max-w-full px-2 text-center text-[0.78rem] text-[#253956] sm:text-base lg:text-xl [&_.katex-display]:my-2 [&_.katex-display]:overflow-visible">
+            {showQuadraticRoute ? (
+              <>
+                <LatexBlock expression={'t_{\\mathrm{axis}} = -\\frac{b}{2a} = -\\frac{9.8}{2(-4.9)} = 1.0\\,\\mathrm{s}'} />
+                <LatexBlock expression={'h(1) = -4.9(1)^2 + 9.8(1) + 1.6 = 6.5\\,\\mathrm{m}'} />
+              </>
+            ) : (
+              <>
+                <LatexBlock expression={'h(0) = 1.6\\,\\mathrm{m}'} />
+                <LatexBlock expression={'t_{\\mathrm{barrier}} = \\frac{d}{v} = \\frac{1.5}{6} = 0.25\\,\\mathrm{s}'} />
+                <LatexBlock expression={'\\begin{aligned} h(0.25) &= -4.9(0.25)^2 \\\\ &\\quad + 9.8(0.25) + 1.6 \\\\ &= 3.74\\,\\mathrm{m} > 3.0\\,\\mathrm{m} \\end{aligned}'} />
+                <LatexBlock expression={'h^{\\prime}(t) = -9.8t + 9.8 = 0 \\Rightarrow t = 1.0\\,\\mathrm{s}'} />
+                <LatexBlock expression={'h(1) = 6.5\\,\\mathrm{m}'} />
+                <LatexBlock expression={'h(t) = 0 \\Rightarrow t \\approx 2.15\\,\\mathrm{s}'} />
+              </>
+            )}
+          </div>
+          {journeyComplete && !showQuadraticRoute && (
+            <button
+              type="button"
+              onClick={showQuadraticMethod}
+              className="mt-6 text-sm font-black text-[#071629] underline decoration-[#c9a227] decoration-2 underline-offset-4 transition hover:text-[#8a6812] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9a227]"
+            >
+              See the quadratic route to the same maximum
+            </button>
+          )}
+          {showQuadraticRoute && (
+            <p className="mx-auto mt-5 max-w-md text-sm leading-7 text-[#536077]">The axis of symmetry points to the same highest point shown on the graph.</p>
+          )}
+        </div>
+      )}
+    </section>
+  );
+};
+
 const Mathematics = () => {
   const courseLevels = [
     {
@@ -625,15 +1079,22 @@ const Mathematics = () => {
       <main>
         {/* Hero */}
         <SubjectHero
-          eyebrow="Years K-12 Mathematics"
+          eyebrow="Years 7-12 Mathematics"
           icon={Calculator}
-          headlineWhite="Working with method."
-          headlineGold="Answering with confidence."
-          subtext="From times tables to Extension 2, DA Tuition helps students see the method, connect each step, and walk into assessments with confidence."
-          proofPills={['Step-by-step working', 'Marked feedback', 'Clear year-level pathway']}
+          headlineWhite="Understand the method."
+          headlineGold="Solve with confidence."
+          subtext="Mathematics tuition for students who need clear explanations, stronger problem-solving, and the confidence to show their working — from Year 7 foundations through to HSC questions."
+          proofPills={['Step-by-step working', 'Marked feedback', 'Clear problem-solving']}
           exploreTargetId="math-pathways"
           placeholderLabel="Mathematics classroom"
+          showPlaceholderBadge={false}
+          backgroundImageSrc="/math-tutor-whiteboard-ultrawide-v3.png"
+          backgroundImageAlt="DA Tuition mathematics tutor working through problems on a whiteboard"
+          backgroundPosition="100% center"
+          mobileBackgroundPosition="100% center"
         />
+
+        <BasketballCalculusJourney />
 
         {/* Anchor navigation */}
         <section className="px-5 pt-10 lg:px-8">

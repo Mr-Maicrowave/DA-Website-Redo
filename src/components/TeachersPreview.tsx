@@ -129,7 +129,11 @@ const TeachersPreview = () => {
     return () => window.clearTimeout(timer);
   }, [activeIndex, hasFocus, isDragging, isHovered, pageVisible, reduceMotion, showNext, tutorCount]);
 
-  const shortName = (teacher: CatalogueTutor) => teacher.name.replace(/^(Mr|Mrs|Ms)\s+/, '').split(' ')[0];
+  const shortName = (teacher: CatalogueTutor) => {
+    const parts = teacher.name.replace(/^(Mr|Mrs|Ms)\s+/, '').split(' ');
+    // Skip a bare initial (e.g. "A.") so the label shows the actual name (e.g. "King").
+    return /^[A-Z]\.$/.test(parts[0]) ? parts[1] : parts[0];
+  };
   const transitionDuration = reduceMotion ? 0 : 0.6;
   const reveal = (delay: number, y = 22) => ({
     initial: reduceMotion ? false : { opacity: 0, y },
@@ -182,6 +186,10 @@ const TeachersPreview = () => {
             <div
               className="faculty-portrait-stage"
               onPointerDown={event => {
+                // Let the prev/next buttons handle their own clicks — capturing the
+                // pointer here would swallow the tap before it reaches the button
+                // (most noticeable on touch devices).
+                if ((event.target as HTMLElement).closest('.faculty-arrow')) return;
                 dragStartX.current = event.clientX;
                 setIsDragging(true);
                 event.currentTarget.setPointerCapture(event.pointerId);

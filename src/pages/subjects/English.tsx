@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { BookOpen } from 'lucide-react';
 import NavigationNew from '@/components/NavigationNew';
 import SubjectHero from '@/components/subjects/SubjectHero';
@@ -14,6 +14,16 @@ const English = () => {
       setIframeHeight(`${doc.documentElement.scrollHeight}px`);
     }
   };
+
+  useEffect(() => {
+    const updateHeight = () => {
+      const doc = iframeRef.current?.contentDocument;
+      if (doc?.documentElement) setIframeHeight(`${doc.documentElement.scrollHeight}px`);
+    };
+
+    window.addEventListener('resize', updateHeight);
+    return () => window.removeEventListener('resize', updateHeight);
+  }, []);
 
   return (
     <>
@@ -34,6 +44,8 @@ const English = () => {
         placeholderLabel="English classroom"
         backgroundImageSrc="/english-page/images/subjects/english/structured-classroom-cr3.jpeg"
         backgroundImageAlt="DA Tuition English classroom"
+        mobileBackgroundPosition="72% center"
+        mobileContentPosition="bottom"
       />
       <div id="english-page-content">
         <iframe
@@ -41,6 +53,7 @@ const English = () => {
           src="/english-page/index.html"
           title="DA Tuition English"
           onLoad={handleIframeLoad}
+          scrolling="no"
           style={{
             width: '100%',
             height: iframeHeight,
