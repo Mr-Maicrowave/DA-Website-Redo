@@ -99,13 +99,12 @@ const BusinessStudies = () => {
         backgroundImageAlt="DA Tuition Business Studies classroom"
       />
 
-      <TrustedSchoolsStrip schools={businessTrustedSchools} />
+      <TrustedSchoolsStrip schools={businessTrustedSchools} className="subject-school-strip-compact" />
       <SubjectTypedBanner
         imageSrc="/images/subjects/business-studies/master-business-studies-banner.png"
         imageAlt="Business Studies banner with business books, a globe, stationery, and a growth chart"
         headline="Master Business Studies."
         emphasis="Think strategically. Lead with insight."
-        support="Real-world knowledge. Smart decisions. Strong results."
       />
 
       {/* Learning Formats Callout */}

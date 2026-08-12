@@ -27,12 +27,21 @@ const revealMasks: Record<
   business: [
     { key: 'headline', text: 'Master Business Studies.', top: 29, left: 30, width: 66, height: 20 },
     { key: 'emphasis', text: 'Think strategically. Lead with insight.', top: 43, left: 35, width: 61, height: 11 },
-    { key: 'support', text: 'Real-world knowledge. Smart decisions. Strong results.', top: 56, left: 42, width: 46, height: 8 },
   ],
   legal: [
     { key: 'headline', text: 'Master Legal Studies.', top: 31, left: 34, width: 62, height: 16 },
     { key: 'emphasis', text: 'Understand the law. Think critically.', top: 44, left: 36, width: 60, height: 11 },
   ],
+};
+
+const permanentMasks: Record<
+  NonNullable<SubjectTypedBannerProps['variant']>,
+  Array<{ top: number; left: number; width: number; height: number }>
+> = {
+  business: [
+    { top: 55, left: 39, width: 52, height: 10 },
+  ],
+  legal: [],
 };
 
 const SubjectTypedBanner = ({
@@ -112,6 +121,7 @@ const SubjectTypedBanner = ({
 
   const activeMasks = revealMasks[variant];
   const activeMask = activeMasks.find((mask) => revealProgress[mask.key] > 0 && revealProgress[mask.key] < 1);
+  const imagePosition = variant === 'legal' ? 'center 55%' : 'center 58%';
 
   return (
     <section
@@ -119,12 +129,26 @@ const SubjectTypedBanner = ({
       className="relative isolate overflow-hidden bg-[#fbf3e7]"
       aria-label={`${headline} ${emphasis} ${support}`.trim()}
     >
-      <div className="relative">
+      <div className="relative h-[calc(100vh-8.5rem)] min-h-[430px] max-h-[760px]">
         <img
           src={imageSrc}
           alt={imageAlt}
-          className="block h-auto min-h-[340px] w-full object-cover object-center sm:min-h-0"
+          className="h-full w-full object-cover"
+          style={{ objectPosition: imagePosition }}
         />
+        {permanentMasks[variant].map((mask) => (
+          <div
+            key={`${mask.top}-${mask.left}`}
+            className="absolute bg-[#fff8ec]"
+            style={{
+              top: `${mask.top}%`,
+              left: `${mask.left}%`,
+              width: `${mask.width}%`,
+              height: `${mask.height}%`,
+            }}
+            aria-hidden="true"
+          />
+        ))}
         {activeMasks.map((mask) => {
           const progress = revealProgress[mask.key];
           const coverLeft = mask.left + mask.width * progress;

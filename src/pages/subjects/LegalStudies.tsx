@@ -109,7 +109,7 @@ const LegalStudies = () => {
         backgroundScale={1.23}
       />
 
-      <TrustedSchoolsStrip schools={legalTrustedSchools} />
+      <TrustedSchoolsStrip schools={legalTrustedSchools} className="subject-school-strip-compact" />
       <SubjectTypedBanner
         imageSrc="/images/subjects/legal-studies/master-legal-studies-banner.png"
         imageAlt="Legal Studies banner with scales of justice, law books, and a gavel"
