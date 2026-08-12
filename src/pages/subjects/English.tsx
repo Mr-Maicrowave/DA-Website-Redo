@@ -39,7 +39,6 @@ const English = () => {
         headlineWhite="Writing with clarity."
         headlineGold="Thinking with depth."
         subtext="English tuition for students who need structure, confidence, and sharper analysis - from early essay foundations through to high-level HSC responses."
-        proofPills={['Booklet-led lessons', 'Marked feedback', 'Clear writing pathway']}
         exploreTargetId="english-page-content"
         placeholderLabel="English classroom"
         backgroundImageSrc="/images/subjects/english/hero-background.png"
