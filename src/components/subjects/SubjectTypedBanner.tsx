@@ -39,7 +39,7 @@ const permanentMasks: Record<
   Array<{ top: number; left: number; width: number; height: number }>
 > = {
   business: [
-    { top: 55, left: 39, width: 52, height: 10 },
+    { top: 52.8, left: 41, width: 44, height: 5.4 },
   ],
   legal: [],
 };
@@ -121,7 +121,7 @@ const SubjectTypedBanner = ({
 
   const activeMasks = revealMasks[variant];
   const activeMask = activeMasks.find((mask) => revealProgress[mask.key] > 0 && revealProgress[mask.key] < 1);
-  const imagePosition = variant === 'legal' ? 'center 55%' : 'center 58%';
+  const imagePosition = variant === 'legal' ? 'center 55%' : 'center 72%';
 
   return (
     <section
