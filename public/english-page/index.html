@@ -123,16 +123,24 @@
   /* full-bleed cycling review banner */
   .diff-quote-banner{
     position:relative;left:50%;right:50%;margin-left:-50vw;margin-right:-50vw;width:100vw;
-    background:var(--navy);padding:100px 24px;text-align:center;overflow:hidden;margin-top:80px;
+    background:var(--navy);padding:86px 24px;text-align:center;overflow:hidden;margin-top:80px;
+    min-height:560px;display:grid;place-items:center;
   }
   .diff-quote-line{position:absolute;left:50%;transform:translateX(-50%);width:1px;height:80px}
   .diff-quote-line--top{top:0;background:linear-gradient(180deg,transparent,var(--gold))}
   .diff-quote-line--bottom{bottom:0;background:linear-gradient(180deg,var(--gold),transparent)}
-  .diff-quote-inner{max-width:800px;margin:0 auto;position:relative;z-index:1}
+  .diff-quote-inner{max-width:800px;margin:0 auto;position:relative;z-index:1;width:100%}
   .diff-quote-glyph{display:block;font-family:"Playfair Display",Georgia,serif;font-size:4rem;line-height:1;color:rgba(212,175,55,.3);margin-bottom:16px}
-  .diff-quote-text{font-family:"Playfair Display",Georgia,serif;font-style:italic;font-weight:300;font-size:clamp(1.5rem,3.2vw,2.6rem);line-height:1.45;color:#fff;margin:0;letter-spacing:.01em;transition:opacity .5s ease;min-height:3.6em}
+  .diff-quote-text{
+    font-family:"Playfair Display",Georgia,serif;font-style:italic;font-weight:300;
+    font-size:var(--quote-size,clamp(1.5rem,3.2vw,2.6rem));line-height:1.45;color:#fff;margin:0;
+    letter-spacing:.01em;transition:opacity .5s ease;height:340px;
+    display:flex;align-items:center;justify-content:center;
+  }
   .diff-quote-rule{display:block;width:40px;height:1px;background:var(--gold);margin:32px auto 18px}
   .diff-quote-author{font-family:Inter,system-ui,sans-serif;font-size:.74rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(212,175,55,.85);font-weight:700;margin:0;transition:opacity .5s ease}
+  .diff-quote-text--medium{--quote-size:clamp(1.35rem,2.65vw,2.18rem)}
+  .diff-quote-text--long{--quote-size:clamp(1.08rem,2.05vw,1.62rem)}
   .diff-quote-fade{opacity:0}
   @media (prefers-reduced-motion:reduce){
     .diff-quote-text,.diff-quote-author{transition:none}
@@ -626,8 +634,20 @@
     width:100%;
     display:block;
   }
+  .resources-shelf::before{
+    content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
+    background:url("images/english-resources-preview.png") center top/cover no-repeat;
+    filter:blur(18px) saturate(.9);
+    transform:scale(1.04);
+    opacity:.6;
+  }
+  .resources-shelf::after{
+    content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
+    background:linear-gradient(90deg,rgba(243,236,223,.72),rgba(243,236,223,.18) 18%,rgba(243,236,223,.18) 82%,rgba(243,236,223,.72));
+  }
   .resources-preview{
     position:relative;
+    z-index:1;
     width:min(100%,1246px);
     margin:0 auto;
     overflow:hidden;
@@ -781,7 +801,7 @@
     .classes-benefit{padding:6px 16px}
     .diff-highlight-sep{display:none}
     .diff-highlight{flex:0 0 45%;justify-content:center;text-align:left}
-    .diff-quote-banner{padding:76px 24px}
+    .diff-quote-banner{padding:76px 24px;min-height:540px}
   }
   @media (max-width:640px){
     .quote-grid{grid-template-columns:1fr}
@@ -803,7 +823,8 @@
     .diff-row-copy{min-width:0}
     .diff-row-copy strong{font-size:11.5px;line-height:1.22}
     .diff-row-copy p{font-size:10px;line-height:1.3}
-    .diff-quote-banner{padding:64px 20px}
+    .diff-quote-banner{padding:64px 20px;min-height:520px}
+    .diff-quote-text{height:360px}
   }
 </style>
 </head>
@@ -1598,6 +1619,8 @@
 
       function renderDiffQuote(){
         const q = diffQuotes[diffQuoteIndex];
+        diffQuoteText.classList.toggle("diff-quote-text--medium", q.text.length > 210 && q.text.length <= 300);
+        diffQuoteText.classList.toggle("diff-quote-text--long", q.text.length > 300);
         diffQuoteText.textContent = "“" + q.text + "”";
         diffQuoteAuthor.textContent = q.author;
       }
