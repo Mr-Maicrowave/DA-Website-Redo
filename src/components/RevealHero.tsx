@@ -142,7 +142,9 @@ const RevealHero = ({
   const heroX = useTransform(scrollYProgress, [0, 1], ['0%', '-100%']);
   const nextX = useTransform(scrollYProgress, [0, 1], ['100%', '0%']);
 
-  const scrollThroughReveal = () => {};
+  const scrollThroughReveal = () => {
+    window.scrollBy({ top: window.innerHeight * (pinRangeVh / 100), behavior: 'smooth' });
+  };
 
   if (reduceMotion) {
     return (
