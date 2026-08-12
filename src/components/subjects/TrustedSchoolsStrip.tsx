@@ -53,13 +53,17 @@ const TrustedSchoolsStrip = ({
   eyebrow = 'Trusted by students from',
   className = '',
 }: TrustedSchoolsStripProps) => {
+  const repeatedSchools = [...schools, ...schools];
+
   const renderSchool = (school: TrustedSchool, index: number) => {
     const tone = crestTones[index % crestTones.length];
+    const isDuplicate = index >= schools.length;
 
     return (
       <div
-        key={school.name}
+        key={`${school.name}-${index}`}
         className="flex min-w-[282px] shrink-0 items-center gap-4 sm:min-w-[330px]"
+        aria-hidden={isDuplicate ? 'true' : undefined}
       >
         {school.logoSrc ? (
           <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-white p-1.5 shadow-sm">
@@ -100,10 +104,8 @@ const TrustedSchoolsStrip = ({
         </div>
 
         <div className="-mx-5 overflow-hidden sm:-mx-6 lg:-mx-8 trusted-schools-marquee">
-          <div className="flex w-max will-change-transform trusted-schools-track">
-            <div className="flex shrink-0 gap-10 px-5 sm:gap-14 sm:px-6 lg:px-8 trusted-schools-sequence">
-              {schools.map(renderSchool)}
-            </div>
+          <div className="flex w-max gap-10 px-5 will-change-transform trusted-schools-track sm:gap-14 sm:px-6 lg:px-8">
+            {repeatedSchools.map(renderSchool)}
           </div>
         </div>
       </div>
