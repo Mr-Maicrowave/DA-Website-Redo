@@ -101,13 +101,7 @@ const TrustedSchoolsStrip = ({
 
         <div className="-mx-5 overflow-hidden sm:-mx-6 lg:-mx-8 trusted-schools-marquee">
           <div className="flex w-max will-change-transform trusted-schools-track">
-            <div className="flex shrink-0 gap-10 px-5 sm:gap-14 sm:px-6 lg:px-8">
-              {schools.map(renderSchool)}
-            </div>
-            <div
-              className="flex shrink-0 gap-10 px-5 sm:gap-14 sm:px-6 lg:px-8"
-              aria-hidden="true"
-            >
+            <div className="flex shrink-0 gap-10 px-5 sm:gap-14 sm:px-6 lg:px-8 trusted-schools-sequence">
               {schools.map(renderSchool)}
             </div>
           </div>

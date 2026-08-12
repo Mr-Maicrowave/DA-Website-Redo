@@ -508,12 +508,16 @@
 }
 
 @keyframes trusted-schools-scroll {
-  from {
+  0% {
     transform: translateX(0);
   }
 
-  to {
-    transform: translateX(-50%);
+  92% {
+    transform: translateX(calc(-100% + 100vw));
+  }
+
+  100% {
+    transform: translateX(0);
   }
 }
 
