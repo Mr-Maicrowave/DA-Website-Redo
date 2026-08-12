@@ -2,6 +2,7 @@ import React from 'react';
 import NavigationNew from '@/components/NavigationNew';
 import FooterNew from '@/components/FooterNew';
 import SubjectHero from '@/components/subjects/SubjectHero';
+import SubjectTypedBanner from '@/components/subjects/SubjectTypedBanner';
 import TrustedSchoolsStrip from '@/components/subjects/TrustedSchoolsStrip';
 import { Button } from '@/components/ui/button';
 import { Scale, Gavel, BookOpen, CheckCircle, ArrowRight, Quote, Shield, Info } from 'lucide-react';
@@ -105,10 +106,16 @@ const LegalStudies = () => {
         backgroundImageSrc="/images/subjects/legal-studies/hero-background.png"
         backgroundImageAlt="DA Tuition Legal Studies classroom"
         backgroundPosition="right center"
-        backgroundScale={1.48}
+        backgroundScale={1.23}
       />
 
       <TrustedSchoolsStrip schools={legalTrustedSchools} />
+      <SubjectTypedBanner
+        imageSrc="/images/subjects/legal-studies/master-legal-studies-banner.png"
+        imageAlt="Legal Studies banner with scales of justice, law books, and a gavel"
+        headline="Master Legal Studies."
+        emphasis="Understand the law. Think critically."
+      />
 
       {/* Learning Formats Callout */}
       <section className="py-12">
