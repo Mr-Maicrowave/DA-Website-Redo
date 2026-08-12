@@ -127,27 +127,37 @@ const RevealHero = ({
   placeholderLabel,
   backgroundImageSrc,
   backgroundImageAlt,
+  pinRangeVh = 35,
   children,
 }: RevealHeroProps) => {
   return (
     <>
-      <section className="relative flex min-h-screen flex-col justify-center overflow-hidden bg-[#071629] py-28">
-        <RevealHeroPhoto
-          icon={icon}
-          placeholderLabel={placeholderLabel}
-          backgroundImageSrc={backgroundImageSrc}
-          backgroundImageAlt={backgroundImageAlt}
-        />
-        <RevealHeroCopy
-          eyebrow={eyebrow}
-          headlineWhite={headlineWhite}
-          headlineGold={headlineGold}
-          subtext={subtext}
-          proofPills={proofPills}
-          onExplore={() => {}}
-        />
-      </section>
+      <div className="reveal-hero-wrapper" style={{ height: `calc(100svh + ${pinRangeVh}svh)` }}>
+        <div className="reveal-hero-stage">
+          <div className="reveal-hero-slide">
+            <RevealHeroPhoto
+              icon={icon}
+              placeholderLabel={placeholderLabel}
+              backgroundImageSrc={backgroundImageSrc}
+              backgroundImageAlt={backgroundImageAlt}
+            />
+            <RevealHeroCopy
+              eyebrow={eyebrow}
+              headlineWhite={headlineWhite}
+              headlineGold={headlineGold}
+              subtext={subtext}
+              proofPills={proofPills}
+              onExplore={() => {}}
+            />
+          </div>
+        </div>
+      </div>
       {children}
+      <style>{`
+        .reveal-hero-wrapper { position: relative; width: 100%; }
+        .reveal-hero-stage { position: sticky; top: 0; height: 100svh; overflow: hidden; z-index: 5; background: #071629; }
+        .reveal-hero-slide { position: relative; height: 100%; width: 100%; }
+      `}</style>
     </>
   );
 };
