@@ -496,7 +496,7 @@
 }
 
 .trusted-schools-track {
-  animation: trusted-schools-scroll 38s linear infinite;
+  animation: trusted-schools-scroll 25.3s linear infinite;
 }
 
 .trusted-schools-strip:hover .trusted-schools-track {
