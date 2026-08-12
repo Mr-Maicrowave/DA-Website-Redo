@@ -1329,7 +1329,7 @@
         <div class="preview-cta" hidden>
           <h3>End of Preview</h3>
           <p>You have seen a small sample of the resource. Click below to find out more about joining DA Tuition.</p>
-          <a href="/book-interview" target="_parent">Click here to find out more</a>
+          <a href="/book-interview" target="_parent">End of Preview - Click here to find out more</a>
         </div>
         <div class="preview-placeholder" hidden>
           <p class="preview-placeholder-title"></p>
@@ -1389,10 +1389,10 @@
         pages: [
           "previews/romanticism-01.png",
           "previews/romanticism-02.png",
-          "previews/romanticism-03.png",
           "previews/romanticism-04.png",
           "previews/romanticism-05.png",
-          "previews/romanticism-activity-frankenstein.png",
+          "previews/romanticism-12.png",
+          "previews/romanticism-16.png",
           { kind: "cta" }
         ]
       },
@@ -1562,7 +1562,8 @@
     document.addEventListener("keydown", handlePreviewKeydown);
 
     modal.addEventListener("click", (event) => {
-      if(event.target === modal) closePreviewModal();
+      const previewContent = event.target.closest(".preview-image,.preview-cta,.preview-controls,.preview-close");
+      if(!previewContent) closePreviewModal();
     });
 
     window.addEventListener("resize", updatePreviewViewportIfOpen);
