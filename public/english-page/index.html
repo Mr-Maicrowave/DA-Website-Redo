@@ -766,22 +766,29 @@
     .class-card:hover .class-photo img{transform:none}
   }
 
-  .preview-modal{position:fixed;inset:0;z-index:80;display:none;align-items:center;justify-content:center;padding:28px;background:rgba(3,10,20,.82);backdrop-filter:blur(10px)}
+  html.preview-open,body.preview-open{overflow:hidden}
+  .preview-modal{position:fixed;inset:0;z-index:80;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(3,10,20,.88);backdrop-filter:blur(10px);overscroll-behavior:contain}
   .preview-modal.is-open{display:flex}
-  .preview-shell{width:min(980px,100%);max-height:92vh;display:grid;grid-template-rows:auto 1fr auto;gap:14px}
+  .preview-shell{width:min(1180px,100%);height:min(94vh,980px);display:grid;grid-template-rows:auto 1fr auto;gap:12px}
   .preview-top{display:flex;align-items:center;justify-content:space-between;color:#fff}
   .preview-top strong{font-family:"Playfair Display",Georgia,serif;font-size:24px}
   .preview-close,.preview-arrow{
     border:1px solid rgba(255,255,255,.26);background:rgba(255,255,255,.09);color:#fff;
     border-radius:999px;min-width:44px;height:44px;font-weight:900;cursor:pointer
   }
-  .preview-stage{min-height:0;display:grid;place-items:center}
-  .preview-stage img{max-height:76vh;max-width:100%;border-radius:8px;background:#fff;box-shadow:0 28px 80px rgba(0,0,0,.45)}
+  .preview-arrow{font-size:24px;line-height:1}
+  .preview-arrow:disabled{opacity:.32;cursor:default}
+  .preview-stage{min-height:0;display:grid;place-items:center;overflow:hidden}
+  .preview-stage img{display:block;max-height:100%;max-width:100%;border-radius:8px;background:#fff;box-shadow:0 28px 80px rgba(0,0,0,.45);object-fit:contain}
+  .preview-stage img.preview-image--feedback{width:min(1120px,100%);height:auto}
   .preview-controls{display:flex;justify-content:center;gap:12px}
-  .preview-pdf-frame{width:min(900px,100%);height:76vh;border:0;border-radius:8px;background:#fff;box-shadow:0 28px 80px rgba(0,0,0,.45)}
   .preview-placeholder{width:min(560px,100%);background:#fff;border-radius:8px;padding:48px 36px;text-align:center;box-shadow:0 28px 80px rgba(0,0,0,.45)}
   .preview-placeholder-title{font-family:"Playfair Display",Georgia,serif;font-size:22px;color:#071629;margin:0 0 10px}
   .preview-placeholder-note{font-size:14px;color:#536077;margin:0;line-height:1.6}
+  .preview-cta{width:min(620px,100%);border-radius:10px;background:#fff;padding:56px 42px;text-align:center;box-shadow:0 28px 80px rgba(0,0,0,.45)}
+  .preview-cta h3{font-family:"Playfair Display",Georgia,serif;font-size:clamp(2rem,4vw,3.1rem);line-height:1.05;color:#071629;margin:0 0 18px}
+  .preview-cta p{margin:0 auto 28px;max-width:36ch;color:#536077;line-height:1.65}
+  .preview-cta a{display:inline-flex;align-items:center;justify-content:center;min-height:48px;border-radius:999px;background:#c9a227;color:#071629;text-decoration:none;font-weight:900;padding:0 24px}
 
   @media (max-width:900px){
     .nav{position:absolute;top:12px;gap:18px;overflow:hidden}
@@ -1319,15 +1326,19 @@
       </div>
       <div class="preview-stage">
         <img class="preview-image" src="samples/essay_page_1.png" alt="Senior feedback preview">
-        <iframe class="preview-pdf-frame" title="Sample document preview" hidden></iframe>
+        <div class="preview-cta" hidden>
+          <h3>End of Preview</h3>
+          <p>You have seen a small sample of the resource. Click below to find out more about joining DA Tuition.</p>
+          <a href="/book-interview" target="_parent">Click here to find out more</a>
+        </div>
         <div class="preview-placeholder" hidden>
           <p class="preview-placeholder-title"></p>
           <p class="preview-placeholder-note">Sample PDF coming soon &mdash; ask your consultant to see a printed copy in the meantime.</p>
         </div>
       </div>
       <div class="preview-controls">
-        <button class="preview-arrow" type="button" data-preview-direction="-1" aria-label="Previous page">Prev</button>
-        <button class="preview-arrow" type="button" data-preview-direction="1" aria-label="Next page">Next</button>
+        <button class="preview-arrow" type="button" data-preview-direction="-1" aria-label="Previous page">&larr;</button>
+        <button class="preview-arrow" type="button" data-preview-direction="1" aria-label="Next page">&rarr;</button>
       </div>
     </div>
   </div>
@@ -1356,9 +1367,41 @@
       },
       feedback: {
         title: "Senior feedback preview",
+        type: "feedback",
         pages: [
           "samples/essay_page_1.png",
           "samples/essay_page_2.png"
+        ]
+      },
+      "fairy-tales": {
+        title: "Fairy Tales booklet preview",
+        pages: [
+          "previews/fairy-01.png",
+          "previews/fairy-02.png",
+          "previews/fairy-03.png",
+          "previews/fairy-04.png",
+          "previews/fairy-05.png",
+          { kind: "cta" }
+        ]
+      },
+      romanticism: {
+        title: "Romanticism booklet preview",
+        pages: [
+          "previews/romanticism-01.png",
+          "previews/romanticism-02.png",
+          "previews/romanticism-03.png",
+          "previews/romanticism-04.png",
+          "previews/romanticism-05.png",
+          { kind: "cta" }
+        ]
+      },
+      "feedback-sample": {
+        title: "Marked feedback sample preview",
+        type: "feedback",
+        pages: [
+          "previews/feedback-1.png",
+          "previews/feedback-2.png",
+          { kind: "cta" }
         ]
       }
     };
@@ -1367,28 +1410,62 @@
     const previewTitle = document.querySelector(".preview-title");
     const previewImage = document.querySelector(".preview-image");
     const previewControls = document.querySelector(".preview-controls");
-    const previewPdfFrame = document.querySelector(".preview-pdf-frame");
+    const previewCta = document.querySelector(".preview-cta");
     const previewPlaceholder = document.querySelector(".preview-placeholder");
     const previewPlaceholderTitle = document.querySelector(".preview-placeholder-title");
     let activeGroup = "feedback";
     let activeIndex = 0;
+    let parentOverflow = null;
+
+    function setPreviewScrollLock(locked){
+      document.documentElement.classList.toggle("preview-open", locked);
+      document.body.classList.toggle("preview-open", locked);
+      try{
+        if(window.parent && window.parent !== window){
+          const parentDoc = window.parent.document;
+          if(locked){
+            if(!parentOverflow){
+              parentOverflow = {
+                html: parentDoc.documentElement.style.overflow,
+                body: parentDoc.body.style.overflow
+              };
+            }
+            parentDoc.documentElement.style.overflow = "hidden";
+            parentDoc.body.style.overflow = "hidden";
+          } else if(parentOverflow){
+            parentDoc.documentElement.style.overflow = parentOverflow.html;
+            parentDoc.body.style.overflow = parentOverflow.body;
+            parentOverflow = null;
+          }
+        }
+      } catch(error){}
+    }
 
     function renderPreview(){
       const set = previewSets[activeGroup];
       previewTitle.textContent = `${set.title} (${activeIndex + 1} of ${set.pages.length})`;
-      previewImage.src = set.pages[activeIndex];
-      previewImage.alt = previewTitle.textContent;
+      const page = set.pages[activeIndex];
+      const isCta = page && page.kind === "cta";
+      previewImage.hidden = isCta;
+      previewCta.hidden = !isCta;
+      previewPlaceholder.hidden = true;
+      previewImage.classList.toggle("preview-image--feedback", set.type === "feedback");
+      if(!isCta){
+        previewImage.src = page.src || page;
+        previewImage.alt = page.alt || previewTitle.textContent;
+      }
+      document.querySelectorAll("[data-preview-direction]").forEach((button) => {
+        const nextIndex = activeIndex + Number(button.dataset.previewDirection);
+        button.disabled = nextIndex < 0 || nextIndex >= set.pages.length;
+      });
     }
 
     function openPreview(group, index){
       activeGroup = group;
       activeIndex = Number(index) || 0;
       renderPreview();
-      previewImage.hidden = false;
       previewControls.style.display = "";
-      previewPdfFrame.hidden = true;
-      previewPdfFrame.src = "";
-      previewPlaceholder.hidden = true;
+      setPreviewScrollLock(true);
       modal.classList.add("is-open");
       modal.setAttribute("aria-hidden","false");
     }
@@ -1400,7 +1477,7 @@
     document.querySelectorAll("[data-preview-direction]").forEach((button) => {
       button.addEventListener("click", () => {
         const set = previewSets[activeGroup];
-        activeIndex = (activeIndex + Number(button.dataset.previewDirection) + set.pages.length) % set.pages.length;
+        activeIndex = Math.max(0, Math.min(set.pages.length - 1, activeIndex + Number(button.dataset.previewDirection)));
         renderPreview();
       });
     });
@@ -1408,20 +1485,23 @@
     function closePreviewModal(){
       modal.classList.remove("is-open");
       modal.setAttribute("aria-hidden","true");
-      previewPdfFrame.src = "";
+      setPreviewScrollLock(false);
+      previewImage.removeAttribute("src");
     }
 
     document.querySelector(".preview-close").addEventListener("click", closePreviewModal);
+
+    document.addEventListener("keydown", (event) => {
+      if(event.key === "Escape" && modal.classList.contains("is-open")){
+        closePreviewModal();
+      }
+    });
 
     modal.addEventListener("click", (event) => {
       if(event.target === modal) closePreviewModal();
     });
 
     // ---- English resources: sample booklets + feedback (shelf above "Choose the class style") ----
-    // To go live with a real PDF: set `pdfUrl` below to the file's path, e.g.
-    // pdfUrl: "resources/fairy-tales-sample.pdf", with the PDF placed in
-    // /public/english-page/resources/. Nothing else needs to change — the button,
-    // modal and click handler already read from this field.
     const ENGLISH_RESOURCES = [
       {
         id: "fairy-tales",
@@ -1433,7 +1513,7 @@
         title: "Fairy Tales,<br>Reimagined",
         subtitle: "Narrative &amp; creative<br>writing booklet",
         buttonLabel: "Open sample booklet",
-        pdfUrl: "resources/year-7-fairy-tales.pdf",
+        previewGroup: "fairy-tales",
         alt: "Sample Year 7 Fairy Tales, Reimagined booklet"
       },
       {
@@ -1446,7 +1526,7 @@
         title: "Literary Movements<br>Romanticism",
         subtitle: "HSC advanced English<br>booklet",
         buttonLabel: "Open sample booklet",
-        pdfUrl: "resources/romanticism-student-booklet.pdf",
+        previewGroup: "romanticism",
         alt: "Sample Romanticism HSC booklet"
       },
       {
@@ -1459,7 +1539,7 @@
         title: "Marked Feedback<br>Sample",
         subtitle: "A real page of<br>teacher annotation",
         buttonLabel: "View sample feedback",
-        pdfUrl: "resources/hsc-english-feedback-sample.pdf",
+        previewGroup: "feedback-sample",
         alt: "Sample page of marked HSC English feedback"
       }
     ];
@@ -1526,36 +1606,37 @@
 
       shelf.innerHTML = `<div class="resources-row">${niche}${books}</div>${connector}`;
 
-      shelf.querySelectorAll(".resource-btn").forEach((btn) => {
-        btn.addEventListener("click", () => {
-          const resource = ENGLISH_RESOURCES.find((r) => r.id === btn.dataset.resourceId);
-          if(resource) openResourceModal(resource);
-        });
-      });
     }
 
     function openResourceModal(resource){
-      previewTitle.textContent = stripTags(resource.title);
-      previewImage.hidden = true;
-      previewControls.style.display = "none";
-
-      if(resource.pdfUrl){
-        previewPlaceholder.hidden = true;
-        previewPdfFrame.hidden = false;
-        previewPdfFrame.src = resource.pdfUrl;
+      if(resource.previewGroup){
+        openPreview(resource.previewGroup, 0);
       } else {
-        previewPdfFrame.hidden = true;
-        previewPdfFrame.src = "";
+        previewTitle.textContent = stripTags(resource.title);
+        previewImage.hidden = true;
+        previewControls.style.display = "none";
+        previewCta.hidden = true;
         previewPlaceholderTitle.textContent = stripTags(resource.title);
         previewPlaceholder.hidden = false;
+        setPreviewScrollLock(true);
+        modal.classList.add("is-open");
+        modal.setAttribute("aria-hidden","false");
       }
-
-      modal.classList.add("is-open");
-      modal.setAttribute("aria-hidden","false");
     }
 
+    document.addEventListener("click", (event) => {
+      const btn = event.target.closest("[data-resource-id]");
+      if(btn){
+        event.preventDefault();
+        const resource = ENGLISH_RESOURCES.find((r) => r.id === btn.dataset.resourceId);
+        if(resource) openResourceModal(resource);
+      }
+    });
+
     document.querySelectorAll("[data-resource-id]").forEach((btn) => {
-      btn.addEventListener("click", () => {
+      btn.addEventListener("click", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
         const resource = ENGLISH_RESOURCES.find((r) => r.id === btn.dataset.resourceId);
         if(resource) openResourceModal(resource);
       });
