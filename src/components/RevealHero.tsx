@@ -1,5 +1,6 @@
-import type { ReactNode } from 'react';
+import { useRef, type ReactNode } from 'react';
 import { ArrowRight, Image as ImageIcon, type LucideIcon } from 'lucide-react';
+import { motion, useScroll, useTransform } from 'framer-motion';
 
 export interface RevealHeroProps {
   /** Small uppercase badge above the headline, e.g. "Primary School · Years 1-6" */
@@ -130,11 +131,23 @@ const RevealHero = ({
   pinRangeVh = 35,
   children,
 }: RevealHeroProps) => {
+  const wrapperRef = useRef<HTMLDivElement>(null);
+
+  const { scrollYProgress } = useScroll({
+    target: wrapperRef,
+    offset: ['start start', 'end end'],
+  });
+
+  const heroX = useTransform(scrollYProgress, [0, 1], ['0%', '-100%']);
+  const nextX = useTransform(scrollYProgress, [0, 1], ['100%', '0%']);
+
+  const scrollThroughReveal = () => {};
+
   return (
     <>
-      <div className="reveal-hero-wrapper" style={{ height: `calc(100svh + ${pinRangeVh}svh)` }}>
+      <div ref={wrapperRef} className="reveal-hero-wrapper" style={{ height: `calc(100svh + ${pinRangeVh}svh)` }}>
         <div className="reveal-hero-stage">
-          <div className="reveal-hero-slide">
+          <motion.div className="reveal-hero-slide" style={{ x: heroX }}>
             <RevealHeroPhoto
               icon={icon}
               placeholderLabel={placeholderLabel}
@@ -147,16 +160,25 @@ const RevealHero = ({
               headlineGold={headlineGold}
               subtext={subtext}
               proofPills={proofPills}
-              onExplore={() => {}}
+              onExplore={scrollThroughReveal}
             />
-          </div>
+          </motion.div>
         </div>
       </div>
-      {children}
+      <motion.div className="reveal-hero-next" style={{ x: nextX }}>
+        {children}
+      </motion.div>
       <style>{`
         .reveal-hero-wrapper { position: relative; width: 100%; }
-        .reveal-hero-stage { position: sticky; top: 0; height: 100svh; overflow: hidden; z-index: 5; background: #071629; }
-        .reveal-hero-slide { position: relative; height: 100%; width: 100%; display: flex; flex-direction: column; justify-content: center; }
+        .reveal-hero-stage { position: sticky; top: 0; height: 100svh; overflow: hidden; z-index: 5; }
+        .reveal-hero-slide { position: relative; height: 100%; width: 100%; display: flex; flex-direction: column; justify-content: center; background: #071629; }
+        .reveal-hero-next { position: relative; margin-top: -100svh; overflow-x: clip; isolation: isolate; }
+        @media (min-width: 768px) and (max-width: 1024px) {
+          .reveal-hero-next { margin-top: -95svh; }
+        }
+        @media (max-width: 767px) {
+          .reveal-hero-next { margin-top: -80svh; }
+        }
       `}</style>
     </>
   );
