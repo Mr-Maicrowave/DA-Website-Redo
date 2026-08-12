@@ -767,11 +767,11 @@
   }
 
   html.preview-open,body.preview-open{overflow:hidden}
-  .preview-modal{position:fixed;inset:0;z-index:80;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(3,10,20,.88);backdrop-filter:blur(10px);overscroll-behavior:contain}
+  .preview-modal{position:absolute;left:0;right:0;top:var(--preview-top,0px);height:var(--preview-height,100vh);z-index:80;display:none;align-items:center;justify-content:center;padding:12px;background:rgba(3,10,20,.88);backdrop-filter:blur(10px);overscroll-behavior:contain}
   .preview-modal.is-open{display:flex}
-  .preview-shell{width:min(1180px,100%);height:min(94vh,980px);display:grid;grid-template-rows:auto 1fr auto;gap:12px}
+  .preview-shell{width:min(1080px,calc(100vw - 24px));height:calc(var(--preview-height,100vh) - 24px);display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:10px}
   .preview-top{display:flex;align-items:center;justify-content:space-between;color:#fff}
-  .preview-top strong{font-family:"Playfair Display",Georgia,serif;font-size:24px}
+  .preview-top strong{font-family:"Playfair Display",Georgia,serif;font-size:clamp(18px,2vw,24px)}
   .preview-close,.preview-arrow{
     border:1px solid rgba(255,255,255,.26);background:rgba(255,255,255,.09);color:#fff;
     border-radius:999px;min-width:44px;height:44px;font-weight:900;cursor:pointer
@@ -779,8 +779,8 @@
   .preview-arrow{font-size:24px;line-height:1}
   .preview-arrow:disabled{opacity:.32;cursor:default}
   .preview-stage{min-height:0;display:grid;place-items:center;overflow:hidden}
-  .preview-stage img{display:block;max-height:100%;max-width:100%;border-radius:8px;background:#fff;box-shadow:0 28px 80px rgba(0,0,0,.45);object-fit:contain}
-  .preview-stage img.preview-image--feedback{width:min(1120px,100%);height:auto}
+  .preview-stage img{display:block;width:auto;height:auto;max-height:calc(var(--preview-height,100vh) - 126px);max-width:100%;border-radius:8px;background:#fff;box-shadow:0 28px 80px rgba(0,0,0,.45);object-fit:contain}
+  .preview-stage img.preview-image--feedback{width:auto;height:auto;max-width:100%;max-height:100%}
   .preview-controls{display:flex;justify-content:center;gap:12px}
   .preview-placeholder{width:min(560px,100%);background:#fff;border-radius:8px;padding:48px 36px;text-align:center;box-shadow:0 28px 80px rgba(0,0,0,.45)}
   .preview-placeholder-title{font-family:"Playfair Display",Georgia,serif;font-size:22px;color:#071629;margin:0 0 10px}
@@ -1416,8 +1416,50 @@
     let activeGroup = "feedback";
     let activeIndex = 0;
     let parentOverflow = null;
+    let previewViewportSyncTimer = null;
+
+    function setPreviewViewport(){
+      let top = window.scrollY || document.documentElement.scrollTop || 0;
+      let height = window.innerHeight || document.documentElement.clientHeight || 800;
+      try{
+        if(window.parent && window.parent !== window && window.frameElement){
+          const parentWindow = window.parent;
+          const parentDoc = parentWindow.document;
+          let frameTop = 0;
+          let frameNode = window.frameElement;
+          while(frameNode){
+            frameTop += frameNode.offsetTop || 0;
+            frameNode = frameNode.offsetParent;
+          }
+          height = parentWindow.innerHeight || parentDoc.documentElement.clientHeight || height;
+          top = Math.max(0, (parentWindow.scrollY || parentDoc.documentElement.scrollTop || 0) - frameTop);
+        }
+      } catch(error){}
+      modal.style.setProperty("--preview-top", `${top}px`);
+      modal.style.setProperty("--preview-height", `${height}px`);
+    }
+
+    function updatePreviewViewportIfOpen(){
+      if(modal.classList.contains("is-open")){
+        setPreviewViewport();
+      }
+    }
+
+    function startPreviewViewportSync(){
+      clearInterval(previewViewportSyncTimer);
+      let ticks = 0;
+      previewViewportSyncTimer = setInterval(() => {
+        updatePreviewViewportIfOpen();
+        ticks += 1;
+        if(ticks >= 20 || !modal.classList.contains("is-open")){
+          clearInterval(previewViewportSyncTimer);
+          previewViewportSyncTimer = null;
+        }
+      }, 50);
+    }
 
     function setPreviewScrollLock(locked){
+      if(locked) setPreviewViewport();
       document.documentElement.classList.toggle("preview-open", locked);
       document.body.classList.toggle("preview-open", locked);
       try{
@@ -1467,6 +1509,11 @@
       previewControls.style.display = "";
       setPreviewScrollLock(true);
       modal.classList.add("is-open");
+      setPreviewViewport();
+      requestAnimationFrame(setPreviewViewport);
+      setTimeout(setPreviewViewport, 50);
+      setTimeout(setPreviewViewport, 150);
+      startPreviewViewportSync();
       modal.setAttribute("aria-hidden","false");
     }
 
@@ -1485,6 +1532,8 @@
     function closePreviewModal(){
       modal.classList.remove("is-open");
       modal.setAttribute("aria-hidden","true");
+      clearInterval(previewViewportSyncTimer);
+      previewViewportSyncTimer = null;
       setPreviewScrollLock(false);
       previewImage.removeAttribute("src");
     }
@@ -1500,6 +1549,14 @@
     modal.addEventListener("click", (event) => {
       if(event.target === modal) closePreviewModal();
     });
+
+    window.addEventListener("resize", updatePreviewViewportIfOpen);
+    try{
+      if(window.parent && window.parent !== window){
+        window.parent.addEventListener("resize", updatePreviewViewportIfOpen);
+        window.parent.addEventListener("scroll", updatePreviewViewportIfOpen, { passive: true });
+      }
+    } catch(error){}
 
     // ---- English resources: sample booklets + feedback (shelf above "Choose the class style") ----
     const ENGLISH_RESOURCES = [
