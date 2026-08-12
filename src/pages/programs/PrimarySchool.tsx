@@ -1,18 +1,10 @@
 import { useLayoutEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
 import { motion, useReducedMotion, useScroll, useTransform, type MotionValue } from 'framer-motion';
-import { ArrowRight, BookOpen, Brain, Calculator, Check, ClipboardCheck, GraduationCap, Heart, Play, Star, Target, Trophy, UserRound, UsersRound } from 'lucide-react';
+import { ArrowRight, BookOpen, Brain, Calculator, Check, ClipboardCheck, GraduationCap, Heart, Star, Target, Trophy, UserRound, UsersRound } from 'lucide-react';
 import NavigationNew from '@/components/NavigationNew';
 import StickyBookButton from '@/components/StickyBookButton';
 import SEO from '@/components/SEO';
-
-const heroJourneyNav = [
-  { number: '01', label: 'Foundation' },
-  { number: '02', label: 'Growth' },
-  { number: '03', label: 'Mastery' },
-  { number: '04', label: 'Why DA' },
-  { number: '05', label: 'Book Consultation' },
-];
+import RevealHero from '@/components/RevealHero';
 
 const premiumEase = [0.22, 1, 0.36, 1] as const;
 
@@ -42,68 +34,6 @@ const CrayonArtwork = ({ progress, reduceMotion }: { progress: MotionValue<numbe
         />
       ))}
     </div>
-  );
-};
-
-const PrimaryHero = ({ pinned = false }: { pinned?: boolean }) => {
-  const reduceMotion = useReducedMotion();
-  const heroRef = useRef<HTMLElement>(null);
-  const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] });
-  const heroContentY = useTransform(scrollYProgress, [0.68, 1], [0, reduceMotion ? 0 : -30]);
-  const heroContentOpacity = useTransform(scrollYProgress, [0.72, 1], [1, reduceMotion ? 1 : 0.84]);
-  const heroImageY = useTransform(scrollYProgress, [0.62, 1], [0, reduceMotion ? 0 : -15]);
-  const heroImageScale = useTransform(scrollYProgress, [0.62, 1], [1, reduceMotion ? 1 : 1.025]);
-  const sparkY = useTransform(scrollYProgress, [0.72, 1], [-8, reduceMotion ? -8 : 76]);
-  const sparkX = useTransform(scrollYProgress, [0.72, 1], [0, reduceMotion ? 0 : 18]);
-  const sparkOpacity = useTransform(scrollYProgress, [0.68, 0.76, 0.96, 1], [0, 0.78, 0.78, 0]);
-
-  const entrance = (delay: number, y = 24) => ({
-    initial: reduceMotion ? false : { opacity: 0, y },
-    animate: { opacity: 1, y: 0 },
-    transition: { duration: reduceMotion ? 0 : 0.85, delay, ease: premiumEase },
-  });
-
-  return (
-    <section ref={heroRef} className="ps-hero" aria-labelledby="primary-title">
-      <motion.div className="ps-hero__image-wrap" style={pinned ? undefined : { y: heroImageY, scale: heroImageScale }}>
-        <motion.div
-          className="ps-hero__image"
-          initial={reduceMotion ? false : { scale: 1.03 }}
-          animate={{ scale: 1 }}
-          transition={{ duration: reduceMotion ? 0 : 1.2, ease: premiumEase }}
-        />
-      </motion.div>
-      <motion.div
-        className="ps-hero__veil"
-        aria-hidden="true"
-        initial={reduceMotion ? false : { opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: reduceMotion ? 0 : 1.15, ease: premiumEase }}
-      />
-      <motion.div className="ps-hero__content" style={pinned ? undefined : { y: heroContentY, opacity: heroContentOpacity }}>
-        <motion.p {...entrance(0.08)} className="ps-kicker">Primary School · Years 1–6</motion.p>
-        <div className="ps-mobile-progress" aria-label={`Current stage: ${heroJourneyNav[0].label}`}>
-          <span><b>{heroJourneyNav[0].number}</b>{heroJourneyNav[0].label}</span>
-          <i><b style={{ transform: `scaleX(${1 / heroJourneyNav.length})` }} /></i>
-        </div>
-        <h1 id="primary-title">
-          <motion.span {...entrance(0.18, 28)}>Every Stage.</motion.span>
-          <motion.span {...entrance(0.31, 28)} className="ps-hero__gold-line">Every Child.</motion.span>
-        </h1>
-        <motion.p {...entrance(0.43)} className="ps-hero__intro">
-          From strong foundations to lifelong confidence, we guide your child through every critical stage of primary school.
-        </motion.p>
-        <motion.div {...entrance(0.55)} className="ps-hero__actions">
-          <Link className="ps-button ps-button--gold" to="/book-interview">Book a Free Trial Lesson <ArrowRight /></Link>
-          <a className="ps-how-link" href="#pathway"><span><Play /></span>How We Teach</a>
-        </motion.div>
-      </motion.div>
-      <motion.span
-        className="ps-hero__handoff"
-        aria-hidden="true"
-        style={pinned ? { opacity: 0 } : { x: sparkX, y: sparkY, opacity: reduceMotion ? 0 : sparkOpacity }}
-      />
-    </section>
   );
 };
 
@@ -428,42 +358,51 @@ const PrimarySchool = () => (
   <div className="primary-story">
     <SEO title="Primary School Tutoring (Years 1–6) | DA Tuition" description="One continuous primary learning journey from strong foundations to NAPLAN confidence, selective school preparation and high school readiness." canonicalUrl="/programs/primary-school" />
     <NavigationNew />
-    <StickyBookButton />
-    <main>
-      <div className="ps-opening">
-        <div className="ps-opening__hero">
-          <PrimaryHero pinned />
-        </div>
-      </div>
-      <section id="pathway" className="ps-landscape-breath" aria-label="Primary school journey landscape">
-        <img
-          className="ps-landscape-breath__image"
-          src="/images/programs/primary-school-staircase-landscape-v3.png"
-          alt="Two primary school students looking across a bright landscape beside a flower-lined stone staircase"
-        />
-        <div className="ps-landscape-breath__copy">
-          <p>Primary School Pathway</p>
-          <h2>A Clear Path<br />Through Every Stage.</h2>
-          <div className="ps-landscape-breath__rule" aria-hidden="true" />
-          <span>From strong foundations to growing independence, every stage is designed to help your child move forward with confidence.</span>
-          <a href="#foundation">Explore the Journey <ArrowRight /></a>
-        </div>
-        <div className="ps-landscape-breath__stages" aria-hidden="true">
-          <div className="ps-landscape-stage ps-landscape-stage--foundation"><small>Years 1–2</small><strong>Foundation</strong></div>
-          <div className="ps-landscape-stage ps-landscape-stage--growth"><small>Years 3–4</small><strong>Growth</strong></div>
-          <div className="ps-landscape-stage ps-landscape-stage--mastery"><small>Years 5–6</small><strong>Mastery</strong></div>
-        </div>
-        <nav className="ps-landscape-breath__year-nav" aria-label="Primary school year groups">
-          <a className="is-active" href="#foundation" aria-label="Go to Years 1–2">1–2</a>
-          <a href="#growth" aria-label="Go to Years 3–4">3–4</a>
-          <a href="#mastery" aria-label="Go to Years 5–6">5–6</a>
-        </nav>
-        <div className="ps-landscape-transition" aria-hidden="true" />
-      </section>
-      <FoundationIntro />
-      <GrowthSection />
-      <MasterySection />
-    </main>
+    <RevealHero
+      eyebrow="Primary School · Years 1–6"
+      icon={GraduationCap}
+      headlineWhite="Every Stage."
+      headlineGold="Every Child."
+      subtext="From strong foundations to lifelong confidence, we guide your child through every critical stage of primary school."
+      proofPills={['Years 1–6 journey', 'Small-group attention', 'NAPLAN ready']}
+      placeholderLabel="Primary school classroom"
+      backgroundImageSrc="/images/programs/primary-hero-tutor-two-students.png"
+      backgroundImageAlt="A DA Tuition tutor working warmly with two primary school students on their schoolwork"
+    >
+    <div id="primary-page-content">
+      <StickyBookButton />
+      <main>
+        <section id="pathway" className="ps-landscape-breath" aria-label="Primary school journey landscape">
+          <img
+            className="ps-landscape-breath__image"
+            src="/images/programs/primary-school-staircase-landscape-v3.png"
+            alt="Two primary school students looking across a bright landscape beside a flower-lined stone staircase"
+          />
+          <div className="ps-landscape-breath__copy">
+            <p>Primary School Pathway</p>
+            <h2>A Clear Path<br />Through Every Stage.</h2>
+            <div className="ps-landscape-breath__rule" aria-hidden="true" />
+            <span>From strong foundations to growing independence, every stage is designed to help your child move forward with confidence.</span>
+            <a href="#foundation">Explore the Journey <ArrowRight /></a>
+          </div>
+          <div className="ps-landscape-breath__stages" aria-hidden="true">
+            <div className="ps-landscape-stage ps-landscape-stage--foundation"><small>Years 1–2</small><strong>Foundation</strong></div>
+            <div className="ps-landscape-stage ps-landscape-stage--growth"><small>Years 3–4</small><strong>Growth</strong></div>
+            <div className="ps-landscape-stage ps-landscape-stage--mastery"><small>Years 5–6</small><strong>Mastery</strong></div>
+          </div>
+          <nav className="ps-landscape-breath__year-nav" aria-label="Primary school year groups">
+            <a className="is-active" href="#foundation" aria-label="Go to Years 1–2">1–2</a>
+            <a href="#growth" aria-label="Go to Years 3–4">3–4</a>
+            <a href="#mastery" aria-label="Go to Years 5–6">5–6</a>
+          </nav>
+          <div className="ps-landscape-transition" aria-hidden="true" />
+        </section>
+        <FoundationIntro />
+        <GrowthSection />
+        <MasterySection />
+      </main>
+    </div>
+    </RevealHero>
     <style>{`
       @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&display=swap');
       .primary-story{--navy:#06172c;--gold:#c8932f;--gold-light:#e1b453;--cream:#f6efe4;background:var(--cream);color:var(--navy);overflow:clip;font-family:"DM Sans",Arial,sans-serif}.primary-story *{box-sizing:border-box}.primary-story h1{font-family:"Cormorant Garamond",Georgia,serif}.ps-kicker{margin:0;color:var(--gold-light);font-size:.72rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase}.ps-button{display:inline-flex;min-height:3.35rem;align-items:center;justify-content:center;gap:.75rem;padding:0 1.45rem;border-radius:.7rem;font-size:.78rem;font-weight:700;text-decoration:none;transition:transform .3s cubic-bezier(.22,1,.36,1),background .3s ease,box-shadow .3s ease}.ps-button svg{width:1rem;transition:transform .3s ease}.ps-button:hover{transform:translateY(-2px)}.ps-button:hover svg{transform:translateX(4px)}.ps-button:focus-visible,.ps-how-link:focus-visible{outline:2px solid var(--gold-light);outline-offset:4px}.ps-button--gold{background:#d8a642;box-shadow:0 6px 8px rgba(6,23,44,.2);color:var(--navy)}.ps-button--gold:hover{background:#e3b95b}
