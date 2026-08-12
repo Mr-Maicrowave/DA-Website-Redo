@@ -200,12 +200,6 @@ const RevealHero = ({
         .reveal-hero-stage { position: sticky; top: 0; height: 100svh; overflow: hidden; z-index: 5; }
         .reveal-hero-slide { position: relative; height: 100%; width: 100%; display: flex; flex-direction: column; justify-content: center; background: #071629; }
         .reveal-hero-next { position: relative; margin-top: -100svh; overflow-x: clip; isolation: isolate; }
-        @media (min-width: 768px) and (max-width: 1024px) {
-          .reveal-hero-next { margin-top: -95svh; }
-        }
-        @media (max-width: 767px) {
-          .reveal-hero-next { margin-top: -80svh; }
-        }
       `}</style>
     </>
   );

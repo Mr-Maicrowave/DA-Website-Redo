@@ -377,6 +377,7 @@ const PrimarySchool = () => (
   <div className="primary-story">
     <SEO title="Primary School Tutoring (Years 1–6) | DA Tuition" description="One continuous primary learning journey from strong foundations to NAPLAN confidence, selective school preparation and high school readiness." canonicalUrl="/programs/primary-school" />
     <NavigationNew />
+    <StickyBookButton />
     <RevealHero
       eyebrow="Primary School · Years 1–6"
       icon={GraduationCap}
@@ -389,7 +390,6 @@ const PrimarySchool = () => (
       backgroundImageAlt="A DA Tuition tutor working warmly with two primary school students on their schoolwork"
     >
     <div id="primary-page-content">
-      <StickyBookButton />
       <main>
       <section id="pathway" className="ps-landscape-breath" aria-label="Primary school journey landscape">
         <img
