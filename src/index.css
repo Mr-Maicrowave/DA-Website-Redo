@@ -496,7 +496,7 @@
 }
 
 .trusted-schools-track {
-  animation: trusted-schools-scroll 25.3s linear infinite;
+  animation: trusted-schools-scroll 14.1s linear infinite;
 }
 
 .trusted-schools-strip:hover .trusted-schools-track {
@@ -513,19 +513,7 @@
   }
 
   to {
-    transform: translateX(calc(-50% - 1.25rem));
-  }
-}
-
-@media (min-width: 640px) {
-  @keyframes trusted-schools-scroll {
-    from {
-      transform: translateX(0);
-    }
-
-    to {
-      transform: translateX(calc(-50% - 1.75rem));
-    }
+    transform: translateX(-50%);
   }
 }
 

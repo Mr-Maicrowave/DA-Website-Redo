@@ -9,13 +9,13 @@ import { Link } from 'react-router-dom';
 import SEO from '@/components/SEO';
 
 const businessTrustedSchools = [
-  'Freeman Catholic College',
-  'Mary MacKillop Catholic College',
-  'Canley Vale High School',
-  'Fairvale High School',
-  'Patrician Brothers Catholic College Fairfield',
-  'St John Park High School',
-  'Al-Faisal College',
+  { name: 'Freeman Catholic College', logoSrc: '/images/schools/freeman-catholic-college.png' },
+  { name: 'Mary MacKillop Catholic College', logoSrc: '/images/schools/mary-mackillop-catholic-college.png' },
+  { name: 'Canley Vale High School', logoSrc: '/images/schools/canley-vale-high-school.png' },
+  { name: 'Fairvale High School', logoSrc: '/images/schools/fairvale-high-school.png' },
+  { name: 'Patrician Brothers Catholic College Fairfield', logoSrc: '/images/schools/patrician-brothers-fairfield.png' },
+  { name: "St John's Park High School", logoSrc: '/images/schools/st-johns-park-high-school.png' },
+  { name: 'Al-Faisal College', logoSrc: '/images/schools/al-faisal-college.png' },
 ];
 
 const BusinessStudies = () => {

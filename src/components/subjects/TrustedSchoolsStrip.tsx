@@ -1,9 +1,14 @@
 import React from 'react';
 
 interface TrustedSchoolsStripProps {
-  schools: string[];
+  schools: TrustedSchool[];
   eyebrow?: string;
   className?: string;
+}
+
+export interface TrustedSchool {
+  name: string;
+  logoSrc?: string;
 }
 
 const crestTones = [
@@ -48,7 +53,38 @@ const TrustedSchoolsStrip = ({
   eyebrow = 'Trusted by students from',
   className = '',
 }: TrustedSchoolsStripProps) => {
-  const repeatedSchools = [...schools, ...schools];
+  const renderSchool = (school: TrustedSchool, index: number) => {
+    const tone = crestTones[index % crestTones.length];
+
+    return (
+      <div
+        key={school.name}
+        className="flex min-w-[282px] shrink-0 items-center gap-4 sm:min-w-[330px]"
+      >
+        {school.logoSrc ? (
+          <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-white p-1.5 shadow-sm">
+            <img
+              src={school.logoSrc}
+              alt={`${school.name} logo`}
+              className="h-full w-full object-contain"
+            />
+          </span>
+        ) : (
+          <span
+            className={`relative flex h-12 w-12 shrink-0 items-center justify-center border shadow-sm ${tone} trusted-schools-crest`}
+          >
+            <span className="absolute inset-x-3 top-2 h-px bg-current/25" />
+            <span className="text-[13px] font-black tracking-[0.08em]">
+              {getInitials(school.name)}
+            </span>
+          </span>
+        )}
+        <span className="text-base font-semibold leading-tight text-brand-midnight sm:text-lg">
+          {school.name}
+        </span>
+      </div>
+    );
+  };
 
   return (
     <section
@@ -64,31 +100,16 @@ const TrustedSchoolsStrip = ({
         </div>
 
         <div className="-mx-5 overflow-hidden sm:-mx-6 lg:-mx-8 trusted-schools-marquee">
-          <div className="flex w-max gap-10 px-5 will-change-transform trusted-schools-track sm:gap-14 sm:px-6 lg:px-8">
-            {repeatedSchools.map((school, index) => {
-              const isDuplicate = index >= schools.length;
-              const tone = crestTones[index % crestTones.length];
-
-              return (
-                <div
-                  key={`${school}-${index}`}
-                  className="flex min-w-[260px] shrink-0 items-center gap-4 sm:min-w-[310px]"
-                  aria-hidden={isDuplicate ? 'true' : undefined}
-                >
-                  <span
-                    className={`relative flex h-12 w-12 shrink-0 items-center justify-center border shadow-sm ${tone} trusted-schools-crest`}
-                  >
-                    <span className="absolute inset-x-3 top-2 h-px bg-current/25" />
-                    <span className="text-[13px] font-black tracking-[0.08em]">
-                      {getInitials(school)}
-                    </span>
-                  </span>
-                  <span className="text-base font-semibold leading-tight text-brand-midnight sm:text-lg">
-                    {school}
-                  </span>
-                </div>
-              );
-            })}
+          <div className="flex w-max will-change-transform trusted-schools-track">
+            <div className="flex shrink-0 gap-10 px-5 sm:gap-14 sm:px-6 lg:px-8">
+              {schools.map(renderSchool)}
+            </div>
+            <div
+              className="flex shrink-0 gap-10 px-5 sm:gap-14 sm:px-6 lg:px-8"
+              aria-hidden="true"
+            >
+              {schools.map(renderSchool)}
+            </div>
           </div>
         </div>
       </div>

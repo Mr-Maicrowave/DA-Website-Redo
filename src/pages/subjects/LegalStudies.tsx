@@ -9,11 +9,11 @@ import { Link } from 'react-router-dom';
 import SEO from '@/components/SEO';
 
 const legalTrustedSchools = [
-  'Freeman Catholic College',
-  'Canley Vale High School',
-  'Bonnyrigg High School',
-  'Mary MacKillop Catholic College',
-  'Al-Faisal College',
+  { name: 'Freeman Catholic College', logoSrc: '/images/schools/freeman-catholic-college.png' },
+  { name: 'Canley Vale High School', logoSrc: '/images/schools/canley-vale-high-school.png' },
+  { name: 'Bonnyrigg High School', logoSrc: '/images/schools/bonnyrigg-high-school.png' },
+  { name: 'Mary MacKillop Catholic College', logoSrc: '/images/schools/mary-mackillop-catholic-college.png' },
+  { name: 'Al-Faisal College', logoSrc: '/images/schools/al-faisal-college.png' },
 ];
 
 const LegalStudies = () => {
