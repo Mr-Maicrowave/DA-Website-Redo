@@ -132,9 +132,10 @@ const RevealHero = ({
   children,
 }: RevealHeroProps) => {
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const reduceMotion = useReducedMotion();
 
   const { scrollYProgress } = useScroll({
-    target: wrapperRef,
+    target: reduceMotion ? undefined : wrapperRef,
     offset: ['start start', 'end end'],
   });
 
@@ -142,8 +143,6 @@ const RevealHero = ({
   const nextX = useTransform(scrollYProgress, [0, 1], ['100%', '0%']);
 
   const scrollThroughReveal = () => {};
-
-  const reduceMotion = useReducedMotion();
 
   if (reduceMotion) {
     return (
