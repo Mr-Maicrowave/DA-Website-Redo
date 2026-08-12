@@ -38,9 +38,7 @@ const permanentMasks: Record<
   NonNullable<SubjectTypedBannerProps['variant']>,
   Array<{ top: number; left: number; width: number; height: number }>
 > = {
-  business: [
-    { top: 52.8, left: 41, width: 44, height: 5.4 },
-  ],
+  business: [],
   legal: [],
 };
 
