@@ -2,10 +2,19 @@ import React from 'react';
 import NavigationNew from '@/components/NavigationNew';
 import FooterNew from '@/components/FooterNew';
 import SubjectHero from '@/components/subjects/SubjectHero';
+import TrustedSchoolsStrip from '@/components/subjects/TrustedSchoolsStrip';
 import { Button } from '@/components/ui/button';
 import { Scale, Gavel, BookOpen, CheckCircle, ArrowRight, Quote, Shield, Info } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import SEO from '@/components/SEO';
+
+const legalTrustedSchools = [
+  'Freeman Catholic College',
+  'Canley Vale High School',
+  'Bonnyrigg High School',
+  'Mary MacKillop Catholic College',
+  'Al-Faisal College',
+];
 
 const LegalStudies = () => {
   const topics = [
@@ -98,6 +107,8 @@ const LegalStudies = () => {
         backgroundPosition="right center"
         backgroundScale={1.48}
       />
+
+      <TrustedSchoolsStrip schools={legalTrustedSchools} />
 
       {/* Learning Formats Callout */}
       <section className="py-12">
