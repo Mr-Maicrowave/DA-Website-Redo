@@ -609,13 +609,13 @@
 
   .resources{
     padding:0;
-    margin-top:-96px;
+    margin-top:-72px;
     background:#F3ECDF;
   }
   .resources::before{
-    content:"";position:absolute;left:0;right:0;top:0;height:clamp(92px,10vw,160px);
+    content:"";position:absolute;left:0;right:0;top:0;height:clamp(42px,5.5vw,82px);
     display:block;z-index:3;pointer-events:none;opacity:1;
-    background:linear-gradient(180deg,#F3ECDF 0%,rgba(243,236,223,.9) 30%,rgba(243,236,223,0) 100%);
+    background:linear-gradient(180deg,#F3ECDF 0%,rgba(243,236,223,.34) 44%,rgba(243,236,223,0) 100%);
   }
   .resources .section-inner{
     width:100%;
@@ -628,16 +628,17 @@
   }
   .resources-preview{
     position:relative;
-    width:100%;
+    width:min(100%,1246px);
+    margin:0 auto;
     overflow:hidden;
     background:#F3ECDF;
-    padding-top:96px;
+    padding-top:72px;
   }
   .resources-preview img{
     display:block;
     width:100%;
     height:auto;
-    margin-top:-96px;
+    margin-top:-72px;
   }
   .resources-hotspot{
     position:absolute;
@@ -652,9 +653,9 @@
     outline-offset:4px;
     background:rgba(255,255,255,.08);
   }
-  .resources-hotspot--fairy{left:12.4%;top:31.5%;width:25%;height:58.5%}
-  .resources-hotspot--romanticism{left:38.6%;top:31.5%;width:25%;height:58.5%}
-  .resources-hotspot--feedback{left:65.6%;top:31.5%;width:25%;height:58.5%}
+  .resources-hotspot--fairy{left:12.4%;top:29.8%;width:25%;height:63%}
+  .resources-hotspot--romanticism{left:38.6%;top:29.8%;width:25%;height:63%}
+  .resources-hotspot--feedback{left:65.6%;top:29.8%;width:25%;height:63%}
   @media (hover:hover){
     .resources-hotspot:hover{background:rgba(255,255,255,.06)}
   }
