@@ -1088,10 +1088,11 @@ const Mathematics = () => {
           exploreTargetId="math-pathways"
           placeholderLabel="Mathematics classroom"
           showPlaceholderBadge={false}
-          backgroundImageSrc="/math-tutor-whiteboard-ultrawide-v3.png"
+          backgroundImageSrc="/math-tutor-ogive-hero.jpg"
           backgroundImageAlt="DA Tuition mathematics tutor working through problems on a whiteboard"
           backgroundPosition="100% center"
           mobileBackgroundPosition="100% center"
+          copyOffsetClassName="lg:-translate-y-10"
         />
 
         <BasketballCalculusJourney />

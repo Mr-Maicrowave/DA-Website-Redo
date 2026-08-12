@@ -30,6 +30,8 @@ interface SubjectHeroProps {
   backgroundPosition?: string;
   /** English trial: place the copy low in the mobile hero to preserve the photo's focal subject. */
   mobileContentPosition?: 'center' | 'bottom';
+  /** Optional page-specific nudge for the copy block, without changing the shared hero layout. */
+  copyOffsetClassName?: string;
 }
 
 /**
@@ -53,6 +55,7 @@ const SubjectHero = ({
   mobileBackgroundPosition,
   backgroundPosition,
   mobileContentPosition = 'center',
+  copyOffsetClassName,
 }: SubjectHeroProps) => {
   const scrollToExplore = () => {
     document.getElementById(exploreTargetId)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -104,7 +107,7 @@ const SubjectHero = ({
           initial={{ opacity: 0, y: 28 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, ease: 'easeOut' }}
-          className="subject-hero-copy max-w-3xl"
+          className={`subject-hero-copy max-w-3xl ${copyOffsetClassName ?? ''}`}
         >
           <div className="mb-5 inline-flex items-center gap-2.5 text-xs font-black uppercase tracking-[0.18em] text-[#f1df9a]">
             <span className="h-[2px] w-7 bg-[#c9a227]" />
