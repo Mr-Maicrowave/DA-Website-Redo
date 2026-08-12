@@ -156,7 +156,7 @@ const RevealHero = ({
       <style>{`
         .reveal-hero-wrapper { position: relative; width: 100%; }
         .reveal-hero-stage { position: sticky; top: 0; height: 100svh; overflow: hidden; z-index: 5; background: #071629; }
-        .reveal-hero-slide { position: relative; height: 100%; width: 100%; }
+        .reveal-hero-slide { position: relative; height: 100%; width: 100%; display: flex; flex-direction: column; justify-content: center; }
       `}</style>
     </>
   );
