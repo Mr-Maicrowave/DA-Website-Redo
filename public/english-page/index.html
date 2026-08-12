@@ -123,16 +123,24 @@
   /* full-bleed cycling review banner */
   .diff-quote-banner{
     position:relative;left:50%;right:50%;margin-left:-50vw;margin-right:-50vw;width:100vw;
-    background:var(--navy);padding:100px 24px;text-align:center;overflow:hidden;margin-top:80px;
+    background:var(--navy);padding:86px 24px;text-align:center;overflow:hidden;margin-top:80px;
+    min-height:560px;display:grid;place-items:center;
   }
   .diff-quote-line{position:absolute;left:50%;transform:translateX(-50%);width:1px;height:80px}
   .diff-quote-line--top{top:0;background:linear-gradient(180deg,transparent,var(--gold))}
   .diff-quote-line--bottom{bottom:0;background:linear-gradient(180deg,var(--gold),transparent)}
-  .diff-quote-inner{max-width:800px;margin:0 auto;position:relative;z-index:1}
+  .diff-quote-inner{max-width:800px;margin:0 auto;position:relative;z-index:1;width:100%}
   .diff-quote-glyph{display:block;font-family:"Playfair Display",Georgia,serif;font-size:4rem;line-height:1;color:rgba(212,175,55,.3);margin-bottom:16px}
-  .diff-quote-text{font-family:"Playfair Display",Georgia,serif;font-style:italic;font-weight:300;font-size:clamp(1.5rem,3.2vw,2.6rem);line-height:1.45;color:#fff;margin:0;letter-spacing:.01em;transition:opacity .5s ease;min-height:3.6em}
+  .diff-quote-text{
+    font-family:"Playfair Display",Georgia,serif;font-style:italic;font-weight:300;
+    font-size:var(--quote-size,clamp(1.5rem,3.2vw,2.6rem));line-height:1.45;color:#fff;margin:0;
+    letter-spacing:.01em;transition:opacity .5s ease;height:340px;
+    display:flex;align-items:center;justify-content:center;
+  }
   .diff-quote-rule{display:block;width:40px;height:1px;background:var(--gold);margin:32px auto 18px}
   .diff-quote-author{font-family:Inter,system-ui,sans-serif;font-size:.74rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(212,175,55,.85);font-weight:700;margin:0;transition:opacity .5s ease}
+  .diff-quote-text--medium{--quote-size:clamp(1.35rem,2.65vw,2.18rem)}
+  .diff-quote-text--long{--quote-size:clamp(1.08rem,2.05vw,1.62rem)}
   .diff-quote-fade{opacity:0}
   @media (prefers-reduced-motion:reduce){
     .diff-quote-text,.diff-quote-author{transition:none}
@@ -275,23 +283,63 @@
 
   .year-map{
     position:relative;overflow:hidden;isolation:isolate;
-    background-color:#FAF3E7;
-    padding-top:88px;padding-bottom:140px;
+    background:
+      linear-gradient(180deg,#F8F1E6 0%,#F8F1E6 68%,#F3ECDF 100%);
+    padding-top:0;padding-bottom:170px;
   }
   .year-map::before{
-    content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
-    background-image:url('images/journey-manuscript-bg.png');
+    content:"";position:absolute;left:0;right:0;top:0;height:clamp(620px,58vw,860px);z-index:0;pointer-events:none;
+    background-image:url('images/english-journey-frame.png');
     background-repeat:no-repeat;
-    background-position:center;
-    background-size:cover;
+    background-position:center bottom;
+    background-size:100% auto;
     opacity:0;transition:opacity 1.2s ease;
+  }
+  .year-map::after{
+    content:"";position:absolute;left:0;right:0;top:clamp(620px,56vw,820px);height:180px;z-index:1;pointer-events:none;
+    background:linear-gradient(180deg,rgba(248,241,230,0),rgba(248,241,230,.84) 50%,#F8F1E6 100%);
+  }
+  .year-map .section-inner::after{
+    content:"";position:absolute;left:50%;bottom:-170px;width:100vw;height:220px;
+    transform:translateX(-50%);z-index:0;pointer-events:none;
+    background:linear-gradient(180deg,rgba(248,241,230,0),#F3ECDF 76%);
   }
   .year-map.is-revealed::before{opacity:1}
   @media (prefers-reduced-motion:reduce){
     .year-map::before{transition:none}
   }
   .year-map .section-inner{position:relative;z-index:2}
-  .year-map .section-head h2{color:var(--navy)}
+  .year-map .section-head{
+    position:relative;
+    min-height:clamp(520px,50vw,724px);
+    display:grid;place-items:center;
+    grid-template-columns:minmax(0,1fr);
+    margin:0 0 72px;
+    padding:72px 28px 154px;
+    text-align:center;
+  }
+  .year-map .section-head::before{
+    content:"✦";
+    position:absolute;top:84px;left:50%;width:min(440px,38vw);height:22px;
+    transform:translateX(-50%);
+    background:linear-gradient(90deg,transparent 0,rgba(178,132,45,.5) 12%,rgba(178,132,45,.5) 44%,transparent 44%,transparent 56%,rgba(178,132,45,.5) 56%,rgba(178,132,45,.5) 88%,transparent 100%) center/100% 1px no-repeat;
+    color:rgba(178,132,45,.78);
+    font-size:22px;
+    line-height:20px;
+    opacity:.82;
+  }
+  .year-map .section-head h2{
+    justify-self:center;
+    width:100%;
+    max-width:none;
+    position:relative;
+    z-index:2;
+    color:var(--navy);
+    font-size:clamp(3rem,5.7vw,5.6rem);
+    line-height:1.05;
+    text-wrap:balance;
+    transform:translateY(clamp(54px,6vw,96px));
+  }
   .year-map .type-cursor{
     display:inline-block;width:3px;height:.82em;margin-left:4px;vertical-align:-.08em;
     background:var(--gold);animation:year-map-type-blink 1s step-end infinite;
@@ -333,7 +381,7 @@
   }
   .preview-thumb:hover::after,.preview-thumb:focus-visible::after{opacity:1}
   .sample-note{font-size:13px;color:#69748a;line-height:1.5;margin:0}
-  .year-map-stages{display:flex;flex-direction:column;gap:96px}
+  .year-map-stages{position:relative;z-index:2;display:flex;flex-direction:column;gap:96px}
   .stage{
     display:grid;column-gap:64px;row-gap:14px;align-items:center;
     grid-template-columns:1fr 1.05fr;
@@ -376,11 +424,11 @@
   .stage-number{font-family:"Playfair Display",Georgia,serif;font-size:15px;font-weight:700;color:var(--gold)}
   .stage-years{font-size:11.5px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--muted,#536077);border-left:2px solid var(--gold);padding-left:12px}
   .stage-head h3{font-family:"Playfair Display",Georgia,serif;font-size:clamp(1.5rem,2.5vw,2.05rem);line-height:1.18;color:var(--navy);margin:0}
-  .stage-list{display:grid;gap:11px;margin:0 0 16px;padding:0;list-style:none}
-  .stage-list li{display:flex;align-items:flex-start;gap:9px;color:#4b5568;font-size:14.5px;line-height:1.45}
-  .stage-list li::before{content:"";flex:0 0 auto;width:7px;height:7px;margin-top:6px;border-radius:50%;background:var(--gold)}
+  .stage-list{display:grid;gap:13px;margin:0 0 16px;padding:0;list-style:none}
+  .stage-list li{display:flex;align-items:flex-start;gap:11px;color:#4b5568;font-size:18.85px;line-height:1.45}
+  .stage-list li::before{content:"";flex:0 0 auto;width:8px;height:8px;margin-top:9px;border-radius:50%;background:var(--gold)}
   .stage-icon{
-    display:inline-flex;opacity:0;transform:translateY(8px);
+    display:none;opacity:0;transform:translateY(8px);
     transition:opacity .6s .5s ease,transform .6s .5s ease;
   }
   .stage.is-in .stage-icon{opacity:1;transform:translateY(0)}
@@ -395,10 +443,16 @@
       row-gap:24px;
     }
     .year-map-stages{gap:64px}
-    .year-map{padding-top:64px;padding-bottom:100px}
+    .year-map{padding-bottom:130px}
+    .year-map .section-head{margin-bottom:54px}
   }
   @media (max-width:640px){
-    .year-map{padding-top:48px;padding-bottom:72px}
+    .year-map{padding-bottom:96px}
+    .year-map::before{height:450px;background-size:auto 100%;background-position:center bottom}
+    .year-map::after{top:390px;height:120px}
+    .year-map .section-head{min-height:360px;padding:64px 18px 92px}
+    .year-map .section-head::before{display:none}
+    .year-map .section-head h2{font-size:clamp(2.4rem,12vw,3.4rem)}
   }
 
   /* ===== Resources: sample booklet + feedback preview ===== */
@@ -561,6 +615,77 @@
     .resources-niche{display:none}
   }
 
+  .resources{
+    padding:0;
+    margin-top:-72px;
+    background:#F3ECDF;
+  }
+  .resources::before{
+    content:"";position:absolute;left:0;right:0;top:0;height:clamp(42px,5.5vw,82px);
+    display:block;z-index:3;pointer-events:none;opacity:1;
+    background:linear-gradient(180deg,#F3ECDF 0%,rgba(243,236,223,.34) 44%,rgba(243,236,223,0) 100%);
+  }
+  .resources .section-inner{
+    width:100%;
+    max-width:none;
+  }
+  .resources-head{display:none}
+  .resources-shelf{
+    width:100%;
+    display:block;
+  }
+  .resources-shelf::before{
+    content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
+    background:url("images/english-resources-preview.png") center top/cover no-repeat;
+    filter:blur(18px) saturate(.9);
+    transform:scale(1.04);
+    opacity:.6;
+  }
+  .resources-shelf::after{
+    content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
+    background:linear-gradient(90deg,rgba(243,236,223,.72),rgba(243,236,223,.18) 18%,rgba(243,236,223,.18) 82%,rgba(243,236,223,.72));
+  }
+  .resources-preview{
+    position:relative;
+    left:50%;
+    z-index:1;
+    width:100vw;
+    margin-left:-50vw;
+    overflow:hidden;
+    background:#F3ECDF;
+    padding-top:72px;
+  }
+  .resources-preview img{
+    display:block;
+    width:100%;
+    height:auto;
+    margin-top:-72px;
+  }
+  .resources-hotspot{
+    position:absolute;
+    appearance:none;
+    border:0;
+    background:transparent;
+    cursor:pointer;
+    border-radius:8px;
+  }
+  .resources-hotspot:focus-visible{
+    outline:3px solid var(--r-gold);
+    outline-offset:4px;
+    background:rgba(255,255,255,.08);
+  }
+  .resources-hotspot--fairy{left:12.4%;top:29.8%;width:25%;height:63%}
+  .resources-hotspot--romanticism{left:38.6%;top:29.8%;width:25%;height:63%}
+  .resources-hotspot--feedback{left:65.6%;top:29.8%;width:25%;height:63%}
+  @media (hover:hover){
+    .resources-hotspot:hover{background:rgba(255,255,255,.06)}
+  }
+  @media (max-width:720px){
+    .resources-shelf{overflow-x:auto}
+    .resources-preview{width:920px}
+    .resources-preview img{width:100%;max-width:none}
+  }
+
   .classes{
     --c-navy:#061A34;--c-navy2:#0B294D;--c-gold:#D3A62C;--c-cream:#FFF9EF;--c-soft:#F8F4EC;
     position:relative;overflow:hidden;color:var(--c-cream);
@@ -677,7 +802,7 @@
     .classes-benefit{padding:6px 16px}
     .diff-highlight-sep{display:none}
     .diff-highlight{flex:0 0 45%;justify-content:center;text-align:left}
-    .diff-quote-banner{padding:76px 24px}
+    .diff-quote-banner{padding:76px 24px;min-height:540px}
   }
   @media (max-width:640px){
     .quote-grid{grid-template-columns:1fr}
@@ -699,7 +824,8 @@
     .diff-row-copy{min-width:0}
     .diff-row-copy strong{font-size:11.5px;line-height:1.22}
     .diff-row-copy p{font-size:10px;line-height:1.3}
-    .diff-quote-banner{padding:64px 20px}
+    .diff-quote-banner{padding:64px 20px;min-height:520px}
+    .diff-quote-text{height:360px}
   }
 </style>
 </head>
@@ -756,7 +882,7 @@
       <img class="diff-side-img diff-side-img--right" src="images/diff-right-polaroid.png" alt="" aria-hidden="true">
       <div class="diff-table">
         <div class="diff-cell diff-cell--title diff-cell--typical">Typical Tuition</div>
-        <div class="diff-cell diff-cell--title diff-cell--da">DA Tuition (English)</div>
+        <div class="diff-cell diff-cell--title diff-cell--da">DA Tuition</div>
 
         <div class="diff-cell diff-cell--typical diff-row">
           <span class="diff-row-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 5.5C6 4.6 9 4.4 12 5.6c3-1.2 6-1 8-.1v13c-2-.9-5-1.1-8 .1-3-1.2-6-1-8-.1Z"></path><path d="M12 5.6v13"></path></svg></span>
@@ -925,7 +1051,14 @@
         <div class="resources-rule" aria-hidden="true"><span></span><i>&#10022;</i><span></span></div>
         <p>Explore real examples of the resources and feedback our students receive.</p>
       </div>
-      <div class="resources-shelf" id="resources-shelf"></div>
+      <div class="resources-shelf" id="resources-shelf">
+        <div class="resources-preview">
+          <img src="images/english-resources-preview.png" alt="Preview Our English Resources: Fairy Tales, Romanticism, and Marked Feedback Sample booklets">
+          <button class="resources-hotspot resources-hotspot--fairy" type="button" data-resource-id="fairy-tales" aria-label="Open Year 7 Fairy Tales sample booklet"></button>
+          <button class="resources-hotspot resources-hotspot--romanticism" type="button" data-resource-id="romanticism" aria-label="Open Romanticism sample booklet"></button>
+          <button class="resources-hotspot resources-hotspot--feedback" type="button" data-resource-id="feedback-sample" aria-label="Open marked feedback sample"></button>
+        </div>
+      </div>
     </div>
     <div class="resources-transition" aria-hidden="true">
       <svg viewBox="0 0 1440 34" preserveAspectRatio="none">
@@ -1300,21 +1433,21 @@
         title: "Fairy Tales,<br>Reimagined",
         subtitle: "Narrative &amp; creative<br>writing booklet",
         buttonLabel: "Open sample booklet",
-        pdfUrl: null,
+        pdfUrl: "resources/year-7-fairy-tales.pdf",
         alt: "Sample Year 7 Fairy Tales, Reimagined booklet"
       },
       {
-        id: "king-lear",
+        id: "romanticism",
         kind: "booklet",
         position: "center",
         accent: "navy",
         motif: "crown",
         tag: "Year 11&ndash;12 &middot; Term 2, Week 8",
-        title: "King Lear<br>Text Study",
+        title: "Literary Movements<br>Romanticism",
         subtitle: "HSC advanced English<br>booklet",
         buttonLabel: "Open sample booklet",
-        pdfUrl: null,
-        alt: "Sample King Lear HSC text study booklet"
+        pdfUrl: "resources/romanticism-student-booklet.pdf",
+        alt: "Sample Romanticism HSC booklet"
       },
       {
         id: "feedback-sample",
@@ -1326,7 +1459,7 @@
         title: "Marked Feedback<br>Sample",
         subtitle: "A real page of<br>teacher annotation",
         buttonLabel: "View sample feedback",
-        pdfUrl: null,
+        pdfUrl: "resources/hsc-english-feedback-sample.pdf",
         alt: "Sample page of marked HSC English feedback"
       }
     ];
@@ -1421,7 +1554,12 @@
       modal.setAttribute("aria-hidden","false");
     }
 
-    renderResources();
+    document.querySelectorAll("[data-resource-id]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const resource = ENGLISH_RESOURCES.find((r) => r.id === btn.dataset.resourceId);
+        if(resource) openResourceModal(resource);
+      });
+    });
 
     const concernCards = document.querySelectorAll(".concern-card");
 
@@ -1482,6 +1620,8 @@
 
       function renderDiffQuote(){
         const q = diffQuotes[diffQuoteIndex];
+        diffQuoteText.classList.toggle("diff-quote-text--medium", q.text.length > 210 && q.text.length <= 300);
+        diffQuoteText.classList.toggle("diff-quote-text--long", q.text.length > 300);
         diffQuoteText.textContent = "“" + q.text + "”";
         diffQuoteAuthor.textContent = q.author;
       }

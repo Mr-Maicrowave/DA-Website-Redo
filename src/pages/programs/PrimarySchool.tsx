@@ -1,10 +1,11 @@
-import { useLayoutEffect, useRef } from 'react';
+import { useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { motion, useReducedMotion, useScroll, useTransform, type MotionValue } from 'framer-motion';
+import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion';
 import { ArrowRight, BookOpen, Brain, Calculator, Check, ClipboardCheck, GraduationCap, Heart, Play, Star, Target, Trophy, UserRound, UsersRound } from 'lucide-react';
 import NavigationNew from '@/components/NavigationNew';
 import StickyBookButton from '@/components/StickyBookButton';
 import SEO from '@/components/SEO';
+import RevealHero from '@/components/RevealHero';
 
 const heroJourneyNav = [
   { number: '01', label: 'Foundation' },
@@ -15,35 +16,6 @@ const heroJourneyNav = [
 ];
 
 const premiumEase = [0.22, 1, 0.36, 1] as const;
-
-const CrayonArtwork = ({ progress, reduceMotion }: { progress: MotionValue<number>; reduceMotion: boolean }) => {
-  const upperOpacity = useTransform(progress, [0.12, 0.34], [0.08, 0.72]);
-  const middleOpacity = useTransform(progress, [0.32, 0.66], [0.05, 0.68]);
-  const lowerOpacity = useTransform(progress, [0.58, 0.94], [0.04, 0.7]);
-  const upperY = useTransform(progress, [0.12, 0.34], [10, 0]);
-  const middleY = useTransform(progress, [0.32, 0.66], [12, 0]);
-  const lowerY = useTransform(progress, [0.58, 0.94], [14, 0]);
-  const upperScale = useTransform(progress, [0.12, 0.34], [0.985, 1]);
-  const middleScale = useTransform(progress, [0.32, 0.66], [0.98, 1]);
-  const lowerScale = useTransform(progress, [0.58, 0.94], [0.985, 1]);
-  const bands = [
-    { className: 'ps-crayon-artwork__band--upper', opacity: upperOpacity, y: upperY, scale: upperScale },
-    { className: 'ps-crayon-artwork__band--middle', opacity: middleOpacity, y: middleY, scale: middleScale },
-    { className: 'ps-crayon-artwork__band--lower', opacity: lowerOpacity, y: lowerY, scale: lowerScale },
-  ];
-
-  return (
-    <div className="ps-crayon-artwork" aria-hidden="true">
-      {bands.map((band) => (
-        <motion.div
-          key={band.className}
-          className={`ps-crayon-artwork__band ${band.className}`}
-          style={reduceMotion ? undefined : { opacity: band.opacity, y: band.y, scale: band.scale }}
-        />
-      ))}
-    </div>
-  );
-};
 
 const PrimaryHero = ({ pinned = false }: { pinned?: boolean }) => {
   const reduceMotion = useReducedMotion();
@@ -108,27 +80,8 @@ const PrimaryHero = ({ pinned = false }: { pinned?: boolean }) => {
 };
 
 const FoundationIntro = () => {
-  const sectionRef = useRef<HTMLElement>(null);
   const openingRef = useRef<HTMLDivElement>(null);
   const reduceMotion = useReducedMotion();
-
-  useLayoutEffect(() => {
-    const section = sectionRef.current;
-    const opening = openingRef.current;
-    const artwork = section?.querySelector<HTMLElement>('.ps-crayon-artwork');
-    if (!section || !opening || !artwork) return;
-
-    const updateDoodleBoundary = () => {
-      const boundary = opening.offsetTop + opening.offsetHeight - artwork.offsetTop;
-      section.style.setProperty('--ps-foundation-doodle-end', `${Math.max(0, boundary)}px`);
-    };
-
-    updateDoodleBoundary();
-    const observer = new ResizeObserver(updateDoodleBoundary);
-    observer.observe(section);
-    observer.observe(opening);
-    return () => observer.disconnect();
-  }, []);
 
   const { scrollYProgress } = useScroll({ target: openingRef, offset: ['start 85%', 'end 30%'] });
   const muted = 'rgba(6,23,43,0.3)';
@@ -165,7 +118,7 @@ const FoundationIntro = () => {
   const Outcome = ({ item, delay }: { item: typeof outcomes[number]; delay: number }) => {
     const Icon = item.icon;
     return (
-      <motion.article className="ps-foundation-outcome" {...reveal(delay)}>
+      <motion.article className={`ps-foundation-outcome ps-foundation-outcome--${item.number}`} {...reveal(delay)}>
         <div className="ps-foundation-outcome__meta"><span>{item.number}</span><i><Icon /></i></div>
         <h3>{item.title}</h3>
         <p>{item.body}</p>
@@ -174,8 +127,19 @@ const FoundationIntro = () => {
   };
 
   return (
-    <section ref={sectionRef} id="foundation" className="ps-foundation-intro" aria-labelledby="foundation-title">
-      <CrayonArtwork progress={scrollYProgress} reduceMotion={reduceMotion} />
+    <section id="foundation" className="ps-foundation-intro" aria-labelledby="foundation-title">
+      <div className="ps-foundation-intro__side-doodles" aria-hidden="true">
+        <img
+          className="ps-foundation-intro__side-doodle ps-foundation-intro__side-doodle--left"
+          src="/images/programs/primary-years-1-2-doodles-left.png"
+          alt=""
+        />
+        <img
+          className="ps-foundation-intro__side-doodle ps-foundation-intro__side-doodle--right"
+          src="/images/programs/primary-years-1-2-doodles-right.png"
+          alt=""
+        />
+      </div>
       <div ref={openingRef} className="ps-foundation-intro__content">
         <motion.div className="ps-foundation-intro__chapter-mark" style={reduceMotion ? undefined : { opacity: markerOpacity, y: markerY }}>
           <p className="ps-foundation-intro__number">01</p>
@@ -203,32 +167,13 @@ const FoundationIntro = () => {
             <Outcome item={outcomes[1]} delay={0.2} />
           </div>
           <div className="ps-foundation-collage">
-            <motion.figure className="ps-foundation-collage__photo ps-foundation-collage__photo--top" {...reveal(0.12)}>
-              <img src="/images/community/student_attentive.jpg" alt="A DA Tuition student concentrating on her classwork" />
-            </motion.figure>
-            <motion.figure className="ps-foundation-collage__photo ps-foundation-collage__photo--right" {...reveal(0.2)}>
-              <img src="/images/community/class_smiling_camera.jpg" alt="DA Tuition students learning together in class" />
-            </motion.figure>
-            <motion.figure className="ps-foundation-collage__photo ps-foundation-collage__photo--bottom" {...reveal(0.28)}>
-              <img src="/images/community/teacher_kids_warmth.jpg" alt="A DA Tuition teacher with primary students" />
-            </motion.figure>
             <motion.figure className="ps-foundation-collage__photo ps-foundation-collage__photo--circle" {...reveal(0.36)}>
               <img src="/images/community/tutor_young_girls.jpg" alt="Young DA Tuition students enjoying their lesson" />
             </motion.figure>
-            <motion.img
-              className="ps-foundation-collage__doodles"
-              src="/images/programs/primary-years-1-2-features-01-02-doodles.png"
-              alt=""
-              aria-hidden="true"
-              draggable="false"
-              initial={reduceMotion ? false : { opacity: 0, scale: 0.985 }}
-              whileInView={reduceMotion ? undefined : { opacity: 1, scale: 1 }}
-              viewport={{ once: true, amount: 0.16 }}
-              transition={{ duration: 1.15, delay: 0.06, ease: [0.22, 1, 0.36, 1] }}
-            />
           </div>
         </div>
         <div className="ps-foundation-story__row ps-foundation-story__row--photo-last">
+          <img className="ps-foundation-story__flower-doodle" src="/images/programs/primary-years-1-2-doodles-flower.png" alt="" aria-hidden="true" />
           <div className="ps-foundation-outcomes">
             <Outcome item={outcomes[2]} delay={0.08} />
             <Outcome item={outcomes[3]} delay={0.2} />
@@ -236,58 +181,62 @@ const FoundationIntro = () => {
           <motion.figure className="ps-foundation-photo ps-foundation-photo--class" {...reveal(0.1)}>
             <img src="/images/community/primary_colorful_class.jpg" alt="Primary students actively learning together in a DA Tuition classroom" />
           </motion.figure>
-          <motion.img
-            className="ps-foundation-story__doodle-overlay"
-            src="/images/programs/primary-years-1-2-features-03-04-doodles.png"
-            alt=""
-            aria-hidden="true"
-            draggable="false"
-            initial={reduceMotion ? false : { opacity: 0, scale: 0.98 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ amount: 0.16 }}
-            transition={{ duration: reduceMotion ? 0 : 0.9, delay: 0.08, ease: premiumEase }}
-          />
         </div>
         <div className="ps-foundation-curriculum">
-          <motion.img
-            className="ps-foundation-curriculum__doodles"
-            src="/images/programs/primary-years-1-2-curriculum-doodles.png"
-            alt=""
-            aria-hidden="true"
-            draggable="false"
-            initial={reduceMotion ? false : { opacity: 0, scale: 0.985 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ amount: 0.16 }}
-            transition={{ duration: reduceMotion ? 0 : 0.9, ease: premiumEase }}
-          />
-          <span className="ps-foundation-curriculum__watermark" aria-hidden="true">Y1–2</span>
           <motion.div className="ps-foundation-curriculum__intro" {...reveal()}>
             <h3>Explore what<br /><em>they’ll learn.</em></h3>
+            <img className="ps-foundation-curriculum__intro-doodles" src="/images/programs/primary-years-1-2-doodles-house.png" alt="" aria-hidden="true" />
           </motion.div>
-          <motion.div className="ps-foundation-curriculum__heading" {...reveal(0.1)}>
-            <span>Years 1–2</span>
-            <h3>Curriculum</h3>
-            <p>Our teaching is aligned to the NSW Curriculum and adapted to the student’s current level.</p>
-          </motion.div>
-          <motion.figure className="ps-foundation-curriculum__photo" {...reveal(0.2)}>
-            <img src="/images/community/tutor_one_on_one.jpg" alt="A young primary student working through an activity with her tutor" />
-          </motion.figure>
           <div className="ps-foundation-curriculum__journey">
-            <motion.article className="ps-foundation-curriculum__stage ps-foundation-curriculum__stage--read" {...reveal(0.18)}>
-              <span>01</span><div><h4>Read</h4><p>Phonics, decoding<br />and reading fluency</p></div>
-            </motion.article>
-            <motion.article className="ps-foundation-curriculum__stage ps-foundation-curriculum__stage--write" {...reveal(0.3)}>
-              <span>02</span><div><h4>Write</h4><p>Sentence construction,<br />handwriting and vocabulary</p></div>
-            </motion.article>
-            <motion.article className="ps-foundation-curriculum__stage ps-foundation-curriculum__stage--think" {...reveal(0.42)}>
-              <span>03</span><div><h4>Think</h4><p>Number sense,<br />place value and<br />mathematical reasoning</p></div>
-            </motion.article>
+            <motion.header className="ps-foundation-curriculum__header" {...reveal(0.08)}>
+              <h3><span>Years 1–2</span><b>Curriculum</b></h3>
+              <i className="ps-foundation-curriculum__header-line" aria-hidden="true" />
+            </motion.header>
+            <div className="ps-foundation-curriculum__items">
+              <img className="ps-curriculum-continuous-doodle" src="/images/programs/primary-years-1-2-curriculum-rail.png" alt="" aria-hidden="true" />
+              <motion.article className="ps-foundation-curriculum__item ps-foundation-curriculum__item--blue" {...reveal(0.18)}>
+                <span className="ps-foundation-curriculum__icon" aria-hidden="true" />
+                <div><h4><span>Phonics &amp; Reading</span></h4><p>Phonics, decoding and reading fluency</p></div>
+              </motion.article>
+              <motion.article className="ps-foundation-curriculum__item ps-foundation-curriculum__item--pink" {...reveal(0.55)}>
+                <span className="ps-foundation-curriculum__icon" aria-hidden="true" />
+                <div><h4><span>Writing &amp; Language</span></h4><p>Sentence construction, handwriting and vocabulary</p></div>
+              </motion.article>
+              <motion.article className="ps-foundation-curriculum__item ps-foundation-curriculum__item--green" {...reveal(0.92)}>
+                <span className="ps-foundation-curriculum__icon" aria-hidden="true" />
+                <div><h4><span>Number Sense</span></h4><p>Number sense, place value and mathematical reasoning</p></div>
+              </motion.article>
+            </div>
           </div>
         </div>
       </div>
     </section>
   );
 };
+
+const OpenCurriculum = ({
+  years,
+  items,
+}: {
+  years: string;
+  items: Array<{ text: string; accent: 'blue' | 'pink' | 'green' }>;
+}) => (
+  <div className="ps-open-curriculum">
+    <header className="ps-open-curriculum__header">
+      <h3><span>{years}</span><b>Curriculum</b></h3>
+      <i aria-hidden="true" />
+    </header>
+    <div className="ps-open-curriculum__items">
+      <img className="ps-curriculum-continuous-doodle" src="/images/programs/primary-years-1-2-curriculum-rail.png" alt="" aria-hidden="true" />
+      {items.map(({ text: itemText, accent }) => (
+        <div className={`ps-open-curriculum__item ps-open-curriculum__item--${accent}`} key={itemText}>
+          <span className="ps-open-curriculum__icon" aria-hidden="true" />
+          <p>{itemText}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+);
 
 const GrowthSection = () => {
   const reduceMotion = useReducedMotion();
@@ -306,7 +255,12 @@ const GrowthSection = () => {
 
   return (
     <section id="growth" className="ps-growth" aria-labelledby="growth-title">
-      <div className="ps-growth__doodles" aria-hidden="true" />
+      <div className="ps-growth__intro-doodles" aria-hidden="true">
+        <img className="ps-growth__doodle ps-growth__doodle--bulb" src="/images/programs/primary-years-3-4-doodle-bulb.png" alt="" />
+        <img className="ps-growth__doodle ps-growth__doodle--book" src="/images/programs/primary-years-3-4-doodle-book.png" alt="" />
+        <img className="ps-growth__doodle ps-growth__doodle--pencil" src="/images/programs/primary-years-3-4-doodle-pencil.png" alt="" />
+        <img className="ps-growth__doodle ps-growth__doodle--intro-right" src="/images/programs/primary-years-3-4-doodle-intro-right.png" alt="" />
+      </div>
       <div className="ps-growth__inner">
         <header className="ps-growth__intro">
           <motion.p className="ps-growth__number" {...reveal(0, 20)}>02</motion.p>
@@ -334,21 +288,17 @@ const GrowthSection = () => {
           })}
         </div>
 
-        <div className="ps-growth__divider" aria-hidden="true"><span><Star /></span></div>
-
         <div className="ps-growth-curriculum">
           <motion.div className="ps-growth-curriculum__intro" {...reveal(0, 30)}>
             <h3>Explore what<br /><em>they’ll master next.</em></h3>
-            <span aria-hidden="true">↝</span>
+            <img className="ps-growth-curriculum__doodle ps-growth-curriculum__doodle--left" src="/images/programs/primary-years-3-4-doodle-curriculum-left.png" alt="" aria-hidden="true" />
           </motion.div>
-          <motion.div className="ps-growth-curriculum__panel" {...reveal(0.14, 36)}>
-            <h3>Years 3–4 curriculum</h3>
-            <p>Our teaching is aligned to the NSW Curriculum and adapted to the student’s current level.</p>
-            <ul>
-              <li><Check />Reading to learn through comprehension and inference</li>
-              <li><Check />Narrative and informative writing with language conventions</li>
-              <li><Check />NAPLAN-aligned numeracy, data and multi-step problem solving</li>
-            </ul>
+          <motion.div {...reveal(0.14, 36)}>
+            <OpenCurriculum years="Years 3–4" items={[
+              { text: 'Reading to learn through comprehension and inference', accent: 'blue' },
+              { text: 'Narrative and informative writing with language conventions', accent: 'pink' },
+              { text: 'NAPLAN-aligned numeracy, data and multi-step problem solving', accent: 'green' },
+            ]} />
           </motion.div>
         </div>
       </div>
@@ -373,7 +323,10 @@ const MasterySection = () => {
 
   return (
     <section id="mastery" className="ps-mastery" aria-labelledby="mastery-title">
-      <div className="ps-mastery__doodles" aria-hidden="true" />
+      <div className="ps-mastery__hero-doodles" aria-hidden="true">
+        <img className="ps-mastery__hero-doodle ps-mastery__hero-doodle--left" src="/images/programs/primary-years-5-6-doodles-hero-left.png" alt="" />
+        <img className="ps-mastery__hero-doodle ps-mastery__hero-doodle--right" src="/images/programs/primary-years-5-6-doodles-hero-right.png" alt="" />
+      </div>
       <div className="ps-mastery__inner">
         <header className="ps-mastery__intro">
           <motion.p className="ps-mastery__number" {...reveal(0, 20)}>03</motion.p>
@@ -402,21 +355,17 @@ const MasterySection = () => {
           })}
         </div>
 
-        <div className="ps-mastery__divider" aria-hidden="true"><span><Star /></span></div>
-
         <div className="ps-mastery-curriculum">
           <motion.div className="ps-mastery-curriculum__intro" {...reveal(0, 30)}>
             <h3>Preparing them<br /><em>for the next chapter.</em></h3>
-            <span aria-hidden="true">↝</span>
+            <img className="ps-mastery-curriculum__doodle ps-mastery-curriculum__doodle--left" src="/images/programs/primary-years-5-6-doodles-curriculum-left.png" alt="" aria-hidden="true" />
           </motion.div>
-          <motion.div className="ps-mastery-curriculum__panel" {...reveal(0.14, 36)}>
-            <h3>Years 5–6 curriculum</h3>
-            <p>Our teaching is aligned to the NSW Curriculum and adapted to the student’s current level.</p>
-            <ul>
-              <li><Check />Persuasive and narrative writing at a high level</li>
-              <li><Check />Selective-school reasoning, speed and accuracy</li>
-              <li><Check />Independent study habits, organisation and Year 7 preparation</li>
-            </ul>
+          <motion.div {...reveal(0.14, 36)}>
+            <OpenCurriculum years="Years 5–6" items={[
+              { text: 'Persuasive and narrative writing at a high level', accent: 'blue' },
+              { text: 'Selective-school reasoning, speed and accuracy', accent: 'pink' },
+              { text: 'Independent study habits, organisation and Year 7 preparation', accent: 'green' },
+            ]} />
           </motion.div>
         </div>
       </div>
@@ -429,12 +378,19 @@ const PrimarySchool = () => (
     <SEO title="Primary School Tutoring (Years 1–6) | DA Tuition" description="One continuous primary learning journey from strong foundations to NAPLAN confidence, selective school preparation and high school readiness." canonicalUrl="/programs/primary-school" />
     <NavigationNew />
     <StickyBookButton />
-    <main>
-      <div className="ps-opening">
-        <div className="ps-opening__hero">
-          <PrimaryHero pinned />
-        </div>
-      </div>
+    <RevealHero
+      eyebrow="Primary School · Years 1–6"
+      icon={GraduationCap}
+      headlineWhite="Every Stage."
+      headlineGold="Every Child."
+      subtext="From strong foundations to lifelong confidence, we guide your child through every critical stage of primary school."
+      proofPills={['Years 1–6 journey', 'Small-group attention', 'NAPLAN ready']}
+      placeholderLabel="Primary school classroom"
+      backgroundImageSrc="/images/programs/primary-hero-tutor-two-students.png"
+      backgroundImageAlt="A DA Tuition tutor working warmly with two primary school students on their schoolwork"
+    >
+    <div id="primary-page-content">
+      <main>
       <section id="pathway" className="ps-landscape-breath" aria-label="Primary school journey landscape">
         <img
           className="ps-landscape-breath__image"
@@ -463,7 +419,9 @@ const PrimarySchool = () => (
       <FoundationIntro />
       <GrowthSection />
       <MasterySection />
-    </main>
+      </main>
+    </div>
+    </RevealHero>
     <style>{`
       @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&display=swap');
       .primary-story{--navy:#06172c;--gold:#c8932f;--gold-light:#e1b453;--cream:#f6efe4;background:var(--cream);color:var(--navy);overflow:clip;font-family:"DM Sans",Arial,sans-serif}.primary-story *{box-sizing:border-box}.primary-story h1{font-family:"Cormorant Garamond",Georgia,serif}.ps-kicker{margin:0;color:var(--gold-light);font-size:.72rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase}.ps-button{display:inline-flex;min-height:3.35rem;align-items:center;justify-content:center;gap:.75rem;padding:0 1.45rem;border-radius:.7rem;font-size:.78rem;font-weight:700;text-decoration:none;transition:transform .3s cubic-bezier(.22,1,.36,1),background .3s ease,box-shadow .3s ease}.ps-button svg{width:1rem;transition:transform .3s ease}.ps-button:hover{transform:translateY(-2px)}.ps-button:hover svg{transform:translateX(4px)}.ps-button:focus-visible,.ps-how-link:focus-visible{outline:2px solid var(--gold-light);outline-offset:4px}.ps-button--gold{background:#d8a642;box-shadow:0 6px 8px rgba(6,23,44,.2);color:var(--navy)}.ps-button--gold:hover{background:#e3b95b}
@@ -471,16 +429,18 @@ const PrimarySchool = () => (
       .ps-landscape-breath{display:block;width:100vw;max-width:none;min-height:0;height:auto;margin:0;padding:0;overflow:visible;isolation:auto;background:none}.ps-landscape-breath__image{position:relative;inset:auto;display:block;width:100%;height:auto!important;max-width:none;object-fit:contain}
       .ps-landscape-transition{position:absolute;z-index:5;top:calc(100% - 1px);right:0;left:0;height:clamp(250px,28vw,400px);transform:scaleY(-1);transform-origin:center;background:url('/images/programs/primary-school-staircase-landscape-v3.png') center bottom/100vw auto no-repeat;pointer-events:none;-webkit-mask-image:radial-gradient(ellipse 140% 130% at 50% 125%,#000 0%,#000 42%,rgba(0,0,0,.92) 50%,rgba(0,0,0,.66) 62%,rgba(0,0,0,.34) 75%,rgba(0,0,0,.12) 86%,transparent 94%);mask-image:radial-gradient(ellipse 140% 130% at 50% 125%,#000 0%,#000 42%,rgba(0,0,0,.92) 50%,rgba(0,0,0,.66) 62%,rgba(0,0,0,.34) 75%,rgba(0,0,0,.12) 86%,transparent 94%)}
       .ps-foundation-intro{position:relative;display:block;width:100%;min-height:100vh;margin:0;padding:calc(clamp(250px,28vw,400px) + clamp(40px,4vw,60px)) 1.5rem clamp(8rem,18vh,13rem);overflow:hidden;background:#f7f0e3;color:#06172b}.ps-foundation-intro__content{position:relative;z-index:6;width:min(100%,46rem);margin:0 auto;text-align:center}.ps-foundation-intro__number,.ps-foundation-intro__years,.ps-foundation-intro__support{margin:0}.ps-foundation-intro__number{color:#d8aa4e;font-family:"Cormorant Garamond",Georgia,serif;font-size:clamp(1.55rem,2.2vw,2rem);line-height:1}.ps-foundation-intro__years{margin-top:.65rem;color:rgba(6,23,43,.82);font-size:.7rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase}.ps-foundation-intro__divider{display:block;width:4.75rem;height:1px;margin:1rem auto 1.75rem;background:rgba(200,147,47,.76)}.ps-foundation-intro h2{margin:0;color:#06172b;font-family:"Cormorant Garamond",Georgia,serif;font-size:clamp(3.25rem,5.4vw,5.75rem);font-weight:500;letter-spacing:-.035em;line-height:.89;text-wrap:balance}.ps-foundation-intro h2 em{color:#d8aa4e;font-weight:500}.ps-foundation-intro__detail{display:block;width:3.25rem;height:1px;margin:2rem auto 1.75rem;background:rgba(200,147,47,.76)}.ps-foundation-intro__support{max-width:31rem;margin:0 auto;color:rgba(6,23,43,.7);font-size:clamp(.88rem,1.1vw,1rem);line-height:1.7;text-wrap:pretty}
+      .ps-foundation-intro__side-doodles{position:absolute;z-index:5;top:calc(clamp(250px,28vw,400px) + clamp(3rem,4vw,4rem));right:clamp(1.875rem,2.5vw,3.125rem);left:clamp(1.875rem,2.5vw,3.125rem);aspect-ratio:3/2;pointer-events:none;user-select:none}.ps-foundation-intro__side-doodle{position:absolute;inset:0;display:block;width:100%;height:100%;max-width:none;object-fit:contain;object-position:center top;pointer-events:none;user-select:none}.ps-foundation-intro__side-doodle--left{clip-path:inset(0 50% 0 0);transform:scale(.7);transform-origin:left top}.ps-foundation-intro__side-doodle--right{clip-path:inset(0 0 0 50%);transform:scale(.7);transform-origin:right top}
       .ps-foundation-story{position:relative;z-index:6;width:min(100%,76rem);margin:clamp(5rem,7vw,7.5rem) auto 0}.ps-foundation-story__row{position:relative;display:grid;grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr);align-items:center;gap:clamp(3.5rem,7vw,7.5rem);isolation:isolate}.ps-foundation-story__row:before{position:absolute;z-index:-1;inset:-2.5rem -1.5rem;background:#f7f0e3;content:"";pointer-events:none}.ps-foundation-story__row+.ps-foundation-story__row{margin-top:clamp(8rem,14vw,12rem)}.ps-foundation-story__row--photo-last{grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr)}.ps-foundation-photo{position:relative;min-height:clamp(24rem,39vw,34rem);margin:0;overflow:hidden;background:#eadfca;clip-path:polygon(4% 1%,92% 0,100% 9%,98% 91%,90% 100%,7% 98%,0 90%,1% 8%)}.ps-foundation-photo--class{min-height:clamp(25rem,42vw,36rem);clip-path:polygon(8% 0,96% 3%,100% 12%,98% 94%,89% 100%,3% 96%,0 85%,2% 7%)}.ps-foundation-photo img{display:block;width:100%;height:100%;min-height:inherit;object-fit:cover}.ps-foundation-photo--tutor img{object-position:48% center}.ps-foundation-photo--class img{object-position:56% center}.ps-foundation-outcomes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0}.ps-foundation-outcome{min-width:0;padding:1.25rem clamp(1rem,2vw,2rem) 1.75rem 0}.ps-foundation-outcome+.ps-foundation-outcome{border-left:1px solid rgba(200,147,47,.24);padding-right:0;padding-left:clamp(1.5rem,2.5vw,2.5rem)}.ps-foundation-outcome__meta{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-bottom:1.5rem}.ps-foundation-outcome__meta>span{color:#bd8725;font-size:.66rem;font-weight:800;letter-spacing:.16em}.ps-foundation-outcome__meta i{display:grid;width:3.4rem;height:3.4rem;place-items:center;border-radius:50%;background:rgba(216,170,78,.1);color:#bd8725}.ps-foundation-outcome__meta svg{width:1.45rem;height:1.45rem;stroke-width:1.45}.ps-foundation-outcome h3{margin:0;color:#06172b;font-family:"Cormorant Garamond",Georgia,serif;font-size:clamp(1.75rem,2.25vw,2.3rem);font-weight:600;letter-spacing:-.025em;line-height:1.04;text-wrap:balance}.ps-foundation-outcome p{margin:1.15rem 0 0;color:rgba(6,23,43,.68);font-size:clamp(.84rem,1vw,.96rem);line-height:1.72;text-wrap:pretty}.ps-foundation-curriculum{display:grid;grid-template-columns:minmax(15rem,.62fr) minmax(0,1.38fr);align-items:center;gap:clamp(3rem,7vw,7rem);margin-top:clamp(9rem,16vw,14rem)}.ps-foundation-curriculum__intro h3,.ps-foundation-curriculum__panel h3{margin:0;color:#06172b;font-family:"Cormorant Garamond",Georgia,serif}.ps-foundation-curriculum__intro h3{font-size:clamp(2.8rem,4.6vw,4.8rem);font-weight:500;letter-spacing:-.035em;line-height:.92}.ps-foundation-curriculum__intro h3 em{display:inline-block;color:#c8932f;font-weight:500}.ps-foundation-curriculum__intro>span{display:block;margin:1.4rem 0 0 5.5rem;color:#65a6c5;font-family:"Cormorant Garamond",Georgia,serif;font-size:3.25rem;line-height:1;transform:rotate(14deg)}.ps-foundation-curriculum__panel{border:1px solid rgba(200,147,47,.34);border-radius:1rem;padding:clamp(2rem,4vw,3.75rem);background:rgba(255,252,246,.38)}.ps-foundation-curriculum__panel h3{font-size:clamp(2rem,3vw,3rem);font-weight:600;letter-spacing:-.025em}.ps-foundation-curriculum__panel>p{max-width:44rem;margin:.8rem 0 1.65rem;color:rgba(6,23,43,.68);font-size:.94rem;line-height:1.65}.ps-foundation-curriculum__panel ul{display:grid;gap:.95rem;margin:0;border-top:1px solid rgba(200,147,47,.24);padding:1.45rem 0 0;list-style:none}.ps-foundation-curriculum__panel li{display:flex;align-items:flex-start;gap:.85rem;color:rgba(6,23,43,.76);font-size:.9rem;line-height:1.55}.ps-foundation-curriculum__panel li svg{flex:0 0 auto;width:1.05rem;margin-top:.15rem;color:#c8932f;stroke-width:1.8}
       .ps-crayon-artwork{position:absolute;z-index:2;top:calc(clamp(250px,28vw,400px) + 1rem);right:0;bottom:0;left:0;overflow:hidden;pointer-events:none}.ps-crayon-artwork__band{position:absolute;right:0;left:0;height:38%;background-image:url('/images/programs/primary-years-1-2-crayon-doodles.png');background-size:min(100vw,1536px) auto;background-repeat:no-repeat;transform-origin:center;will-change:transform,opacity;-webkit-mask-image:linear-gradient(90deg,#000 0%,#000 18%,transparent 25%,transparent 75%,#000 82%,#000 100%);mask-image:linear-gradient(90deg,#000 0%,#000 18%,transparent 25%,transparent 75%,#000 82%,#000 100%)}.ps-crayon-artwork__band--upper{top:1%;background-position:center top}.ps-crayon-artwork__band--middle{top:32%;background-position:center center}.ps-crayon-artwork__band--lower{top:63%;background-position:center bottom}
       .ps-growth{position:relative;width:100%;margin:0;padding:clamp(7rem,12vw,11rem) 1.5rem clamp(9rem,15vw,14rem);overflow:hidden;background:#f7f0e3;color:#06172b}.ps-growth__inner{position:relative;z-index:3;width:min(100%,82rem);margin:0 auto}.ps-growth__intro{width:min(100%,54rem);margin:0 auto;text-align:center}.ps-growth__number,.ps-growth__years,.ps-growth__lead{margin:0}.ps-growth__number{color:#718b55;font-family:"Cormorant Garamond",Georgia,serif;font-size:clamp(2.3rem,3.5vw,3.5rem);font-weight:600;line-height:1}.ps-growth__years{margin-top:.85rem;color:#718b55;font-size:.78rem;font-weight:800;letter-spacing:.2em;text-transform:uppercase}.ps-growth__rule{display:block;width:5.5rem;height:1px;margin:1.25rem auto 1.9rem;background:rgba(113,139,85,.68)}.ps-growth__intro h2{margin:0;color:#06172b;font-family:"Cormorant Garamond",Georgia,serif;font-size:clamp(3.5rem,6vw,6rem);font-weight:500;letter-spacing:-.038em;line-height:.92;text-wrap:balance}.ps-growth__intro h2 em{color:#718b55;font-weight:500}.ps-growth__lead{max-width:43rem;margin:2.25rem auto 0;color:rgba(6,23,43,.72);font-size:clamp(1rem,1.35vw,1.16rem);line-height:1.75;text-wrap:pretty}.ps-growth__main{display:grid;grid-template-columns:minmax(13rem,.8fr) minmax(22rem,1.45fr) minmax(13rem,.8fr);grid-template-rows:repeat(2,minmax(0,1fr));align-items:center;column-gap:clamp(2rem,4vw,4.5rem);row-gap:clamp(3rem,5vw,5rem);margin-top:clamp(6.5rem,10vw,9rem)}.ps-growth__photo{grid-column:2;grid-row:1/3;align-self:stretch;min-height:clamp(40rem,57vw,52rem);margin:0;overflow:hidden;background:#e6eadf;clip-path:polygon(7% 1%,91% 0,98% 6%,100% 91%,94% 99%,8% 100%,1% 94%,0 8%)}.ps-growth__photo img{display:block;width:100%;height:100%;object-fit:cover;object-position:46% center}.ps-growth-outcome{max-width:18rem;margin:auto;text-align:center}.ps-growth-outcome--one{grid-column:1;grid-row:1}.ps-growth-outcome--two{grid-column:3;grid-row:1}.ps-growth-outcome--three{grid-column:1;grid-row:2}.ps-growth-outcome--four{grid-column:3;grid-row:2}.ps-growth-outcome__icon{display:grid;width:5.25rem;height:5.25rem;margin:0 auto 1rem;place-items:center;border-radius:50%;background:rgba(113,139,85,.1);color:#718b55}.ps-growth-outcome__icon svg{width:2.4rem;height:2.4rem;stroke-width:1.35}.ps-growth-outcome>span{display:block;color:#718b55;font-family:"Cormorant Garamond",Georgia,serif;font-size:1.25rem;font-weight:700}.ps-growth-outcome h3{margin:.55rem 0 0;color:#06172b;font-family:"Cormorant Garamond",Georgia,serif;font-size:clamp(1.55rem,2vw,2rem);font-weight:600;letter-spacing:-.02em;line-height:1.05;text-wrap:balance}.ps-growth-outcome>i{display:block;width:2rem;height:1px;margin:1.25rem auto;background:rgba(113,139,85,.72)}.ps-growth-outcome p{margin:0;color:rgba(6,23,43,.7);font-size:.88rem;line-height:1.68;text-wrap:pretty}.ps-growth__divider{display:flex;align-items:center;gap:2rem;margin:clamp(7rem,11vw,10rem) 0 0;color:#718b55}.ps-growth__divider:before,.ps-growth__divider:after{height:1px;flex:1;background:rgba(113,139,85,.45);content:""}.ps-growth__divider span{display:grid;width:2rem;height:2rem;place-items:center}.ps-growth__divider svg{width:1.5rem;fill:currentColor;stroke-width:1}.ps-growth-curriculum{display:grid;grid-template-columns:minmax(17rem,.68fr) minmax(0,1.32fr);align-items:center;gap:clamp(3.5rem,8vw,8rem);margin-top:clamp(4rem,7vw,6rem)}.ps-growth-curriculum__intro h3,.ps-growth-curriculum__panel h3{margin:0;font-family:"Cormorant Garamond",Georgia,serif}.ps-growth-curriculum__intro h3{color:#06172b;font-size:clamp(3rem,4.8vw,5rem);font-weight:500;letter-spacing:-.038em;line-height:.91}.ps-growth-curriculum__intro h3 em{display:inline-block;color:#718b55;font-weight:500}.ps-growth-curriculum__intro>span{display:block;margin:1.5rem 0 0 6rem;color:#65a6c5;font-family:"Cormorant Garamond",Georgia,serif;font-size:3.4rem;line-height:1;transform:rotate(13deg)}.ps-growth-curriculum__panel{border:1px solid rgba(113,139,85,.38);border-radius:1rem;padding:clamp(2.25rem,4vw,4rem);background:rgba(225,233,216,.18)}.ps-growth-curriculum__panel h3{color:#06172b;font-size:clamp(2.1rem,3vw,3rem);font-weight:600;letter-spacing:-.025em}.ps-growth-curriculum__panel>p{max-width:44rem;margin:.85rem 0 1.75rem;color:rgba(6,23,43,.68);font-size:.94rem;line-height:1.65}.ps-growth-curriculum__panel ul{display:grid;gap:1rem;margin:0;border-top:1px solid rgba(113,139,85,.3);padding:1.55rem 0 0;list-style:none}.ps-growth-curriculum__panel li{display:flex;align-items:flex-start;gap:.9rem;color:rgba(6,23,43,.76);font-size:.9rem;line-height:1.55}.ps-growth-curriculum__panel li svg{flex:0 0 auto;width:1.05rem;margin-top:.15rem;color:#718b55;stroke-width:2}.ps-growth__doodles{position:absolute;z-index:1;inset:2rem 0 auto;height:min(72rem,58%);background:url('/images/programs/primary-years-1-2-crayon-doodles.png') center top/min(100vw,1536px) auto no-repeat;filter:hue-rotate(22deg) saturate(.72);opacity:.24;pointer-events:none;-webkit-mask-image:linear-gradient(90deg,#000 0%,#000 14%,transparent 24%,transparent 76%,#000 86%,#000 100%);mask-image:linear-gradient(90deg,#000 0%,#000 14%,transparent 24%,transparent 76%,#000 86%,#000 100%)}
       .ps-mastery{position:relative;width:100%;margin:0;padding:clamp(7rem,12vw,11rem) 1.5rem clamp(10rem,16vw,15rem);overflow:hidden;background:#f7f0e3;color:#06172b}.ps-mastery__inner{position:relative;z-index:3;width:min(100%,82rem);margin:0 auto}.ps-mastery__intro{width:min(100%,56rem);margin:0 auto;text-align:center}.ps-mastery__number,.ps-mastery__years,.ps-mastery__lead{margin:0}.ps-mastery__number{color:#1f6096;font-family:"Cormorant Garamond",Georgia,serif;font-size:clamp(2.3rem,3.5vw,3.5rem);font-weight:600;line-height:1}.ps-mastery__years{margin-top:.85rem;color:#1f6096;font-size:.78rem;font-weight:800;letter-spacing:.2em;text-transform:uppercase}.ps-mastery__rule{display:block;width:5.5rem;height:1px;margin:1.25rem auto 1.9rem;background:rgba(31,96,150,.62)}.ps-mastery__intro h2{margin:0;color:#06172b;font-family:"Cormorant Garamond",Georgia,serif;font-size:clamp(3.7rem,6.3vw,6rem);font-weight:500;letter-spacing:-.038em;line-height:.91;text-wrap:balance}.ps-mastery__intro h2 em{color:#1f6096;font-weight:500}.ps-mastery__lead{max-width:47rem;margin:2.25rem auto 0;color:rgba(6,23,43,.72);font-size:clamp(1rem,1.35vw,1.16rem);line-height:1.75;text-wrap:pretty}.ps-mastery__photo{width:100%;min-height:clamp(30rem,48vw,43rem);margin:clamp(5.5rem,9vw,8rem) 0 0;overflow:hidden;background:#e3e9ed;clip-path:polygon(4% 3%,12% 0,46% 1%,55% 0,91% 2%,98% 8%,100% 88%,96% 97%,84% 100%,52% 98%,37% 100%,8% 97%,1% 91%,0 13%)}.ps-mastery__photo img{display:block;width:100%;height:100%;min-height:inherit;object-fit:cover;object-position:center 48%}.ps-mastery__outcomes{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));margin-top:clamp(3.5rem,6vw,5.5rem)}.ps-mastery-outcome{position:relative;min-width:0;padding:0 clamp(1.25rem,2.4vw,2.4rem);text-align:center}.ps-mastery-outcome:first-child{padding-left:0}.ps-mastery-outcome:last-child{padding-right:0}.ps-mastery-outcome+.ps-mastery-outcome{border-left:1px solid rgba(31,96,150,.22)}.ps-mastery-outcome>span{display:block;color:#1f6096;font-family:"Cormorant Garamond",Georgia,serif;font-size:1.2rem;font-weight:700}.ps-mastery-outcome__icon{display:grid;width:4.8rem;height:4.8rem;margin:.75rem auto 1.2rem;place-items:center;border-radius:50%;background:rgba(74,139,187,.09);color:#1f6096}.ps-mastery-outcome__icon svg{width:2.25rem;height:2.25rem;stroke-width:1.4}.ps-mastery-outcome h3{margin:0;color:#06172b;font-family:"Cormorant Garamond",Georgia,serif;font-size:clamp(1.5rem,1.9vw,1.95rem);font-weight:600;letter-spacing:-.02em;line-height:1.06;text-wrap:balance}.ps-mastery-outcome>i{display:block;width:2rem;height:1px;margin:1.2rem auto;background:rgba(31,96,150,.55)}.ps-mastery-outcome p{margin:0;color:rgba(6,23,43,.7);font-size:.86rem;line-height:1.68;text-wrap:pretty}.ps-mastery__divider{display:flex;align-items:center;gap:2rem;margin:clamp(6.5rem,10vw,9rem) 0 0;color:#1f6096}.ps-mastery__divider:before,.ps-mastery__divider:after{height:1px;flex:1;background:rgba(31,96,150,.4);content:""}.ps-mastery__divider span{display:grid;width:2rem;height:2rem;place-items:center}.ps-mastery__divider svg{width:1.5rem;fill:currentColor;stroke-width:1}.ps-mastery-curriculum{display:grid;grid-template-columns:minmax(18rem,.7fr) minmax(0,1.3fr);align-items:center;gap:clamp(3.5rem,8vw,8rem);margin-top:clamp(4rem,7vw,6rem)}.ps-mastery-curriculum__intro h3,.ps-mastery-curriculum__panel h3{margin:0;font-family:"Cormorant Garamond",Georgia,serif}.ps-mastery-curriculum__intro h3{color:#06172b;font-size:clamp(3rem,4.8vw,5rem);font-weight:500;letter-spacing:-.038em;line-height:.91}.ps-mastery-curriculum__intro h3 em{display:inline-block;color:#1f6096;font-weight:500}.ps-mastery-curriculum__intro>span{display:block;margin:1.5rem 0 0 6rem;color:#1f6096;font-family:"Cormorant Garamond",Georgia,serif;font-size:3.4rem;line-height:1;transform:rotate(13deg)}.ps-mastery-curriculum__panel{border:1px solid rgba(31,96,150,.38);border-radius:1rem;padding:clamp(2.25rem,4vw,4rem);background:rgba(213,230,242,.18)}.ps-mastery-curriculum__panel h3{color:#06172b;font-size:clamp(2.1rem,3vw,3rem);font-weight:600;letter-spacing:-.025em}.ps-mastery-curriculum__panel>p{max-width:44rem;margin:.85rem 0 1.75rem;color:rgba(6,23,43,.68);font-size:.94rem;line-height:1.65}.ps-mastery-curriculum__panel ul{display:grid;gap:1rem;margin:0;border-top:1px solid rgba(31,96,150,.28);padding:1.55rem 0 0;list-style:none}.ps-mastery-curriculum__panel li{display:flex;align-items:flex-start;gap:.9rem;color:rgba(6,23,43,.76);font-size:.9rem;line-height:1.55}.ps-mastery-curriculum__panel li svg{flex:0 0 auto;width:1.05rem;margin-top:.15rem;color:#1f6096;stroke-width:2}.ps-mastery__doodles{position:absolute;z-index:1;inset:2rem 0 auto;height:min(68rem,52%);background:url('/images/programs/primary-years-1-2-crayon-doodles.png') center 58%/min(100vw,1536px) auto no-repeat;filter:hue-rotate(145deg) saturate(.56) contrast(.9);opacity:.2;pointer-events:none;-webkit-mask-image:linear-gradient(90deg,#000 0%,#000 13%,transparent 23%,transparent 77%,#000 87%,#000 100%);mask-image:linear-gradient(90deg,#000 0%,#000 13%,transparent 23%,transparent 77%,#000 87%,#000 100%)}
       @supports(height:100dvh){.ps-opening__hero{height:calc(100dvh - var(--ps-nav-height))}}
-      @media(max-width:1000px){.ps-growth__main{grid-template-columns:minmax(11rem,.78fr) minmax(20rem,1.3fr) minmax(11rem,.78fr);column-gap:1.5rem}.ps-growth__photo{min-height:42rem}.ps-growth-outcome__icon{width:4.5rem;height:4.5rem}.ps-growth-outcome__icon svg{width:2rem;height:2rem}.ps-growth-curriculum{grid-template-columns:minmax(14rem,.55fr) minmax(0,1.45fr);gap:3rem}}
+      .ps-growth__intro-doodles{position:absolute;z-index:2;top:clamp(2.5rem,4.5vw,4.75rem);right:clamp(1.5rem,3vw,3.5rem);left:clamp(1.5rem,3vw,3.5rem);height:clamp(28rem,40vw,38rem);pointer-events:none}.ps-growth__doodle{position:absolute;display:block;height:auto;object-fit:contain;opacity:.62;filter:saturate(.78);pointer-events:none;user-select:none}.ps-growth__doodle--bulb{top:0;left:0;width:clamp(11rem,16vw,15rem)}.ps-growth__doodle--book{top:clamp(11rem,16vw,15rem);left:clamp(.25rem,2.5vw,2.5rem);width:clamp(8.5rem,12vw,11.5rem)}.ps-growth__doodle--pencil{top:clamp(19rem,26vw,24rem);left:clamp(3rem,7vw,7rem);width:clamp(7.5rem,10vw,9.5rem)}.ps-growth__doodle--intro-right{top:0;right:0;width:clamp(11rem,16vw,15.5rem)}.ps-growth__intro{position:relative;z-index:3}.ps-growth-curriculum{position:relative;isolation:isolate}.ps-growth-curriculum__intro,.ps-growth-curriculum__panel{position:relative;z-index:2}.ps-growth-curriculum__doodle{position:absolute;z-index:1;display:block;height:auto;object-fit:contain;opacity:.55;filter:saturate(.74);pointer-events:none;user-select:none}.ps-growth-curriculum__doodle--left{bottom:-4rem;left:-2rem;width:clamp(11rem,16vw,15rem)}.ps-growth-curriculum__doodle--right{right:-2rem;bottom:-3.5rem;width:clamp(10rem,14vw,13rem)}
+      @media(max-width:1000px){.ps-growth__main{grid-template-columns:minmax(11rem,.78fr) minmax(20rem,1.3fr) minmax(11rem,.78fr);column-gap:1.5rem}.ps-growth__photo{min-height:42rem}.ps-growth-outcome__icon{width:4.5rem;height:4.5rem}.ps-growth-outcome__icon svg{width:2rem;height:2rem}.ps-growth-curriculum{grid-template-columns:minmax(14rem,.55fr) minmax(0,1.45fr);gap:3rem}.ps-growth__doodle--bulb{width:10rem}.ps-growth__doodle--book{width:8rem}.ps-growth__doodle--pencil{width:7rem}.ps-growth__doodle--intro-right{width:10.5rem}.ps-growth-curriculum__doodle--left{left:-1rem;width:10rem}.ps-growth-curriculum__doodle--right{right:-1rem;width:9rem}}
       @media(max-width:1000px){.ps-mastery__outcomes{grid-template-columns:repeat(2,minmax(0,1fr));row-gap:4rem}.ps-mastery-outcome:nth-child(3){border-left:0}.ps-mastery-curriculum{grid-template-columns:minmax(15rem,.58fr) minmax(0,1.42fr);gap:3rem}}
       @media(max-width:900px){.ps-foundation-story__row{gap:2.5rem}.ps-foundation-outcomes{grid-template-columns:1fr}.ps-foundation-outcome{padding:1.25rem 0 1.75rem}.ps-foundation-outcome+.ps-foundation-outcome{border-top:1px solid rgba(200,147,47,.24);border-left:0;padding:1.75rem 0}.ps-foundation-photo{min-height:28rem}.ps-foundation-curriculum{grid-template-columns:minmax(12rem,.5fr) minmax(0,1.5fr);gap:2.5rem}.ps-crayon-artwork__band{height:36%;background-size:clamp(760px,132vw,1100px) auto;-webkit-mask-image:linear-gradient(90deg,#000 0%,#000 14%,transparent 22%,transparent 78%,#000 86%,#000 100%);mask-image:linear-gradient(90deg,#000 0%,#000 14%,transparent 22%,transparent 78%,#000 86%,#000 100%)}.ps-crayon-artwork__band--middle{opacity:.52}.ps-crayon-artwork__band--lower{top:65%}}
       @media(max-width:720px){.ps-foundation-story{margin-top:7rem}.ps-foundation-story__row,.ps-foundation-story__row--photo-last{grid-template-columns:1fr;gap:3.5rem}.ps-foundation-story__row+.ps-foundation-story__row{margin-top:7rem}.ps-foundation-story__row--photo-last .ps-foundation-photo{order:-1}.ps-foundation-photo,.ps-foundation-photo--class{min-height:0;aspect-ratio:4/3}.ps-foundation-outcomes{grid-template-columns:1fr}.ps-foundation-curriculum{grid-template-columns:1fr;gap:3rem;margin-top:8rem}.ps-foundation-curriculum__intro{max-width:25rem}.ps-foundation-curriculum__panel{padding:1.75rem}.ps-foundation-curriculum__intro>span{margin-left:3.5rem}}
-      @media(max-width:720px){.ps-growth{padding-right:1.25rem;padding-left:1.25rem}.ps-growth__intro h2{font-size:clamp(3rem,13vw,4.25rem)}.ps-growth__main{display:flex;flex-direction:column;gap:4rem;margin-top:5.5rem}.ps-growth__photo{order:0;width:100%;min-height:0;aspect-ratio:4/5}.ps-growth-outcome{width:min(100%,24rem);max-width:none}.ps-growth-outcome--one{order:1}.ps-growth-outcome--two{order:2}.ps-growth-outcome--three{order:3}.ps-growth-outcome--four{order:4}.ps-growth__divider{margin-top:7rem}.ps-growth-curriculum{grid-template-columns:1fr;gap:3rem;margin-top:4rem}.ps-growth-curriculum__intro{max-width:26rem}.ps-growth-curriculum__intro>span{margin-left:3.5rem}.ps-growth-curriculum__panel{padding:1.75rem}.ps-growth__doodles{opacity:.14;background-size:720px auto;-webkit-mask-image:linear-gradient(90deg,#000 0%,#000 8%,transparent 17%,transparent 83%,#000 92%,#000 100%);mask-image:linear-gradient(90deg,#000 0%,#000 8%,transparent 17%,transparent 83%,#000 92%,#000 100%)}}
+      @media(max-width:720px){.ps-growth{padding-right:1.25rem;padding-left:1.25rem}.ps-growth__intro h2{font-size:clamp(3rem,13vw,4.25rem)}.ps-growth__main{display:flex;flex-direction:column;gap:4rem;margin-top:5.5rem}.ps-growth__photo{order:0;width:100%;min-height:0;aspect-ratio:4/5}.ps-growth-outcome{width:min(100%,24rem);max-width:none}.ps-growth-outcome--one{order:1}.ps-growth-outcome--two{order:2}.ps-growth-outcome--three{order:3}.ps-growth-outcome--four{order:4}.ps-growth__divider{margin-top:7rem}.ps-growth-curriculum{grid-template-columns:1fr;gap:3rem;margin-top:4rem}.ps-growth-curriculum__intro{max-width:26rem}.ps-growth-curriculum__intro>span{margin-left:3.5rem}.ps-growth-curriculum__panel{padding:1.75rem}.ps-growth__intro-doodles{top:1.75rem;right:.75rem;left:.75rem;height:18rem}.ps-growth__doodle--bulb{width:6.5rem}.ps-growth__doodle--intro-right{width:7rem}.ps-growth__doodle--book,.ps-growth__doodle--pencil,.ps-growth-curriculum__doodle{display:none}.ps-growth__doodles{opacity:.14;background-size:720px auto;-webkit-mask-image:linear-gradient(90deg,#000 0%,#000 8%,transparent 17%,transparent 83%,#000 92%,#000 100%);mask-image:linear-gradient(90deg,#000 0%,#000 8%,transparent 17%,transparent 83%,#000 92%,#000 100%)}}
       @media(max-width:720px){.ps-mastery{padding-right:1.25rem;padding-left:1.25rem}.ps-mastery__intro h2{font-size:clamp(3rem,13vw,4.35rem)}.ps-mastery__photo{min-height:0;aspect-ratio:4/3;margin-top:5rem}.ps-mastery__outcomes{grid-template-columns:1fr;gap:4rem;margin-top:4rem}.ps-mastery-outcome,.ps-mastery-outcome:first-child,.ps-mastery-outcome:last-child{width:min(100%,25rem);margin:0 auto;border-left:0;padding:0}.ps-mastery-curriculum{grid-template-columns:1fr;gap:3rem;margin-top:4rem}.ps-mastery-curriculum__intro{max-width:27rem}.ps-mastery-curriculum__intro>span{margin-left:3.5rem}.ps-mastery-curriculum__panel{padding:1.75rem}.ps-mastery__doodles{opacity:.11;background-size:720px auto;-webkit-mask-image:linear-gradient(90deg,#000 0%,#000 7%,transparent 16%,transparent 84%,#000 93%,#000 100%);mask-image:linear-gradient(90deg,#000 0%,#000 7%,transparent 16%,transparent 84%,#000 93%,#000 100%)}}
       @media(max-width:820px){.ps-mobile-progress{display:block;width:min(17rem,78vw);margin:.4rem 0 1.25rem;color:#657084;font-size:.64rem;letter-spacing:.1em;text-transform:uppercase}.ps-mobile-progress span{display:flex;gap:.55rem}.ps-mobile-progress span b{color:var(--gold)}.ps-mobile-progress i{display:block;height:1px;margin-top:.5rem;background:rgba(6,23,44,.16)}.ps-mobile-progress i b{display:block;width:100%;height:100%;transform-origin:left;background:var(--gold);transition:transform .5s ease}.ps-opening{--ps-nav-height:3.625rem}.ps-opening__hero .ps-hero__content{width:calc(100% - 40px);margin:0 auto;padding-top:clamp(5.5rem,11svh,7rem);padding-bottom:clamp(2.25rem,5svh,3.5rem)}.ps-hero h1{max-width:38rem;font-size:clamp(3.35rem,10vw,4.8rem)}.ps-hero__intro{max-width:32rem;font-size:1rem}.ps-hero .ps-kicker{margin-bottom:1.15rem}.ps-hero__handoff{left:58%}.ps-hero__veil{background:linear-gradient(90deg,rgba(4,22,40,.92) 0%,rgba(4,22,40,.8) 38%,rgba(4,22,40,.5) 68%,rgba(4,22,40,.22) 100%)}.ps-opening__hero .ps-hero:after{height:clamp(8rem,24%,13rem)}.ps-landscape-breath__copy{top:11%;left:clamp(1.5rem,5vw,2.5rem);width:min(65vw,33rem)}.ps-landscape-breath__copy h2{font-size:clamp(2.8rem,7vw,3.8rem)}.ps-landscape-breath__copy>span{max-width:27rem;font-size:.88rem}.ps-landscape-breath__year-nav{top:16%;right:.8rem}.ps-landscape-stage--foundation{top:70%}.ps-landscape-stage--growth{top:60.5%}.ps-landscape-stage--mastery{top:51%}}
       @media(max-width:540px){.ps-opening__hero .ps-hero__content{width:calc(100% - 32px);padding-top:5.25rem;padding-bottom:2.5rem}.ps-hero h1{font-size:clamp(3rem,15vw,4.15rem);line-height:.94}.ps-hero__intro{max-width:27rem;margin-bottom:1.5rem;font-size:.94rem;line-height:1.65}.ps-hero__actions{align-items:stretch;flex-direction:column;gap:.7rem;width:min(100%,19rem)}.ps-hero .ps-button,.ps-hero .ps-how-link{width:100%;height:3rem;min-height:3rem}.ps-hero .ps-kicker{font-size:.68rem;letter-spacing:.15em}.ps-hero__handoff{left:52%}.ps-opening__hero .ps-hero:after{height:clamp(7rem,22%,10rem)}.ps-landscape-breath__copy{top:4.5%;left:1.1rem;width:calc(100% - 6rem)}.ps-landscape-breath__copy>p{margin-bottom:.7rem;font-size:.58rem;letter-spacing:.16em}.ps-landscape-breath__copy h2{font-size:clamp(2.15rem,9.5vw,2.75rem);line-height:.94}.ps-landscape-breath__rule{margin:.75rem 0}.ps-landscape-breath__copy>span{font-size:.76rem;line-height:1.45}.ps-landscape-breath__copy>a{margin-top:.75rem;font-size:.68rem}.ps-landscape-breath__year-nav{top:5%;right:.55rem;gap:.5rem}.ps-landscape-breath__year-nav a{width:2.2rem;height:2.2rem;font-size:.54rem}.ps-landscape-stage{width:6.5rem}.ps-landscape-stage small{font-size:.46rem}.ps-landscape-stage strong{font-size:1rem}.ps-landscape-stage--foundation{top:60%}.ps-landscape-stage--growth{top:55%}.ps-landscape-stage--mastery{top:50.5%}.ps-foundation-intro{padding:calc(clamp(250px,28vw,400px) + 72px) 1.25rem 7rem}.ps-foundation-intro h2{font-size:clamp(2.85rem,14vw,4rem);line-height:.92}.ps-foundation-intro__support{max-width:22rem;font-size:.85rem}.ps-crayon-artwork__band{height:35%;background-size:700px auto;opacity:.48;-webkit-mask-image:linear-gradient(90deg,#000 0%,#000 9%,transparent 18%,transparent 82%,#000 91%,#000 100%);mask-image:linear-gradient(90deg,#000 0%,#000 9%,transparent 18%,transparent 82%,#000 91%,#000 100%)}.ps-crayon-artwork__band--middle{display:none}.ps-crayon-artwork__band--lower{top:67%}}
@@ -516,98 +476,179 @@ const PrimarySchool = () => (
       .ps-foundation-collage__photo--right{top:24%;right:-3.5%;width:clamp(11rem,15vw,15rem)}
       .ps-foundation-collage__photo--bottom{bottom:3%;left:35%;width:clamp(16rem,23vw,22rem)}
       .ps-foundation-collage__photo--circle{right:13%;bottom:4%;width:clamp(8rem,11vw,10.5rem)}
-      .ps-foundation-collage__doodles{position:absolute;z-index:1;inset:0;display:block;width:100%;height:100%;object-fit:fill;background:none;filter:none;-webkit-mask-image:none;mask-image:none;pointer-events:none;user-select:none}
+      .ps-foundation-collage__doodles{position:absolute;z-index:1;inset:0;display:block;width:100%;height:100%;object-fit:fill;object-position:center;background:none;filter:none;-webkit-mask-image:none;mask-image:none;pointer-events:none;user-select:none}
+      .ps-foundation-story__row--photo-first .ps-foundation-outcome__meta i{display:none}
       @media(max-width:1250px){.ps-foundation-story__row--photo-first{min-height:clamp(44rem,72vw,54rem)}.ps-foundation-collage{width:100vw;height:72vw;max-height:54rem}.ps-foundation-collage__photo--top{left:57%;width:8rem}.ps-foundation-collage__photo--right{right:-4rem;width:10rem}.ps-foundation-collage__photo--bottom{left:34%;width:17rem}.ps-foundation-collage__photo--circle{right:6%;width:8rem}.ps-foundation-collage__doodles{opacity:.82}}
       @media(max-width:900px){.ps-foundation-story__row--photo-first{min-height:0;padding:6rem 0 3rem}.ps-foundation-collage__photo--right{display:none}.ps-foundation-collage__photo--top{top:1%;left:72%}.ps-foundation-collage__photo--bottom{left:28%}.ps-foundation-collage__photo--circle{right:2%}.ps-foundation-collage__doodles{opacity:.56}}
       @media(max-width:720px){.ps-foundation-story__row--photo-first{display:grid;min-height:0;padding:4rem 0 0;margin-bottom:0}.ps-foundation-story__row--photo-first>.ps-foundation-photo,.ps-foundation-story__row--photo-first>.ps-foundation-outcomes{transform:none}.ps-foundation-collage{position:relative;top:auto;left:auto;display:grid;width:100%;height:auto;max-height:none;grid-template-columns:minmax(0,1fr) minmax(0,.72fr);gap:1rem;margin-top:1rem;padding:2rem 0;transform:none}.ps-foundation-collage__photo{position:relative;inset:auto;width:100%}.ps-foundation-collage__photo--top{aspect-ratio:4/3}.ps-foundation-collage__photo--bottom{grid-column:1/-1;aspect-ratio:16/9}.ps-foundation-collage__photo--circle{align-self:center;width:min(100%,9rem);justify-self:center}.ps-foundation-collage__photo--right{display:none}.ps-foundation-collage__doodles{inset:-2rem -50vw;width:200vw;height:calc(100% + 4rem);object-fit:fill;opacity:.3}}
       @media(min-width:901px){
-        .ps-foundation-story__row--photo-first{display:block;width:100%;height:calc(100svh - 3.625rem);min-height:0;max-height:calc(100svh - 3.625rem);margin-bottom:clamp(2rem,4vh,3rem);overflow:hidden}
-        .ps-foundation-story__row--photo-first>.ps-foundation-photo{position:absolute;z-index:4;top:10%;left:0;width:clamp(26.25rem,39vw,38.75rem);height:clamp(26.875rem,56vh,37.5rem);min-height:0;margin:0;transform:none}
+        .ps-foundation-story__row--photo-first{position:relative;left:auto;display:grid;width:100vw;max-width:none;height:calc(100svh - 3.625rem);min-height:0;max-height:calc(100svh - 3.625rem);grid-template-columns:4vw minmax(0,34vw) 4vw minmax(0,34vw) minmax(0,1fr);align-items:center;gap:0;box-sizing:border-box;margin-right:0;margin-bottom:clamp(2rem,4vh,3rem);margin-left:calc(50% - 50vw);padding:0;overflow-x:clip;overflow-y:hidden;transform:none}
+        .ps-foundation-story__row--photo-first>.ps-foundation-photo{position:relative;z-index:2;grid-column:2;width:88%;height:clamp(21rem,43vh,28rem);min-height:0;margin:0;justify-self:center;translate:1cm -2cm;transform:none}
         .ps-foundation-story__row--photo-first>.ps-foundation-photo img{width:100%;height:100%;min-height:0;object-fit:cover}
-        .ps-foundation-story__row--photo-first>.ps-foundation-outcomes{position:absolute;z-index:5;top:32%;right:0;width:48%;transform:none;background:#f7f0e3}
+        .ps-foundation-story__row--photo-first>.ps-foundation-outcomes{position:relative;z-index:5;grid-column:4;width:100%;max-width:42rem;transform:none;background:transparent}
         .ps-foundation-story__row--photo-first .ps-foundation-outcome{padding-top:clamp(.5rem,1.2vh,.8rem);padding-bottom:clamp(.75rem,1.8vh,1.25rem)}
         .ps-foundation-story__row--photo-first .ps-foundation-outcome+.ps-foundation-outcome{padding-left:clamp(1.25rem,2vw,2rem)}
-        .ps-foundation-story__row--photo-first .ps-foundation-outcome__meta{margin-bottom:clamp(.65rem,1.6vh,1rem)}
-        .ps-foundation-story__row--photo-first .ps-foundation-outcome__meta i{width:clamp(2.75rem,6vh,3.25rem);height:clamp(2.75rem,6vh,3.25rem)}
-        .ps-foundation-story__row--photo-first .ps-foundation-outcome h3{font-size:clamp(1.875rem,2.2vw,2.625rem);line-height:1.02}
-        .ps-foundation-story__row--photo-first .ps-foundation-outcome p{margin-top:clamp(.65rem,1.6vh,1rem);font-size:clamp(.875rem,1vw,1.05rem);line-height:1.58}
-        .ps-foundation-collage{top:0;left:50%;width:min(100vw,96rem);height:100%;max-height:none;transform:translateX(-50%)}
-        .ps-foundation-collage__doodles{inset:7% 0 3%;width:100%;height:90%;object-fit:fill;opacity:1}
-        .ps-foundation-collage__photo--top{top:5%;left:58%;width:clamp(7rem,12vw,12.5rem)}
-        .ps-foundation-collage__photo--right{display:block;top:24%;right:-7%;width:min(18vw,17.5rem)}
-        .ps-foundation-collage__photo--bottom{bottom:2.5%;left:36%;width:min(25vw,24.375rem)}
-        .ps-foundation-collage__photo--circle{right:12%;bottom:4%;width:min(13vw,11.875rem)}
+        .ps-foundation-story__row--photo-first .ps-foundation-outcome__meta{margin-bottom:clamp(1.35rem,2.8vh,1.75rem)}
+        .ps-foundation-story__row--photo-first .ps-foundation-outcome__meta i{width:clamp(2.6rem,5.5vh,3rem);height:clamp(2.6rem,5.5vh,3rem)}
+        .ps-foundation-story__row--photo-first .ps-foundation-outcome h3{font-size:clamp(1.7rem,1.9vw,2.15rem);line-height:1.04}
+        .ps-foundation-story__row--photo-first .ps-foundation-outcome p{margin-top:clamp(1.1rem,2.3vh,1.5rem);font-size:clamp(.875rem,1vw,1.05rem);line-height:1.6}
+        .ps-foundation-collage{top:0;left:0;width:100%;height:100%;max-height:none;transform:none}
+        .ps-foundation-collage__doodles{z-index:4;inset:0;width:100%;height:100%;object-fit:fill;object-position:center;opacity:1;transform:none;-webkit-mask-image:none;mask-image:none}
+        .ps-foundation-collage__photo--top{top:3%;left:58.5%;width:min(12.8vw,12.5rem)}
+        .ps-foundation-collage__photo--right{display:block;top:25%;right:.5vw;width:min(18.5vw,18rem)}
+        .ps-foundation-collage__photo--bottom{bottom:0;left:33%;width:min(26vw,25rem)}
+        .ps-foundation-collage__photo--circle{right:10%;bottom:12%;width:min(12.4vw,11.75rem);translate:0 -6cm}
       }
       @media(min-width:901px) and (max-height:760px){
-        .ps-foundation-story__row--photo-first>.ps-foundation-photo{top:9%;height:56vh;width:min(36vw,32rem)}
-        .ps-foundation-story__row--photo-first>.ps-foundation-outcomes{top:29%;width:47%}
+        .ps-foundation-story__row--photo-first>.ps-foundation-photo{top:auto;left:auto;width:88%;height:42vh}
+        .ps-foundation-story__row--photo-first>.ps-foundation-outcomes{top:auto;left:auto;width:auto}
         .ps-foundation-story__row--photo-first .ps-foundation-outcome h3{font-size:clamp(1.75rem,2vw,2.25rem)}
         .ps-foundation-story__row--photo-first .ps-foundation-outcome p{font-size:.875rem}
-        .ps-foundation-collage__photo--top{top:7%;width:min(11vw,8.5rem)}
-        .ps-foundation-collage__photo--right{top:23%;width:min(16vw,12rem)}
-        .ps-foundation-collage__photo--bottom{width:min(22vw,18rem)}
-        .ps-foundation-collage__photo--circle{width:min(11vw,8.5rem)}
+        .ps-foundation-collage__photo--top{top:3%;width:min(11.5vw,8.5rem)}
+        .ps-foundation-collage__photo--right{top:20%;right:.5vw;width:min(15.5vw,11.5rem)}
+        .ps-foundation-collage__photo--bottom{width:min(23vw,18rem)}
+        .ps-foundation-collage__photo--circle{bottom:10%;width:min(11.5vw,8.5rem)}
       }
-      .ps-foundation-story__row--photo-last>.ps-foundation-outcomes,.ps-foundation-story__row--photo-last>.ps-foundation-photo{position:relative;z-index:2}
-      .ps-foundation-story__doodle-overlay{position:absolute;z-index:1;top:50%;left:50%;display:block;width:100vw;max-width:1536px;height:calc(100% + clamp(4rem,8vw,8rem));object-fit:fill;transform-origin:center;translate:-50% -50%;pointer-events:none;user-select:none}
-      @media(max-width:1000px){.ps-foundation-story__doodle-overlay{width:115vw;height:calc(100% + 5rem);filter:opacity(.82)}}
-      @media(max-width:720px){.ps-foundation-story__row--photo-last{overflow:hidden}.ps-foundation-story__doodle-overlay{top:50%;width:175%;height:100%;object-fit:fill;filter:opacity(.5)}}
-      .ps-foundation-curriculum{position:relative;left:50%;display:block;width:min(100vw,1536px);min-height:clamp(760px,66.667vw,1024px);margin-left:0;overflow:hidden;transform:translateX(-50%);isolation:isolate}
-      .ps-foundation-curriculum__doodles{position:absolute;z-index:1;inset:0;display:block;width:100%;height:100%;object-fit:fill;pointer-events:none;user-select:none}
-      .ps-foundation-curriculum__watermark{position:absolute;z-index:0;bottom:10%;left:-1%;color:rgba(200,147,47,.055);font-family:"Cormorant Garamond",Georgia,serif;font-size:clamp(13rem,24vw,23rem);font-weight:500;letter-spacing:-.09em;line-height:.7;white-space:nowrap;pointer-events:none}
-      .ps-foundation-curriculum__intro,.ps-foundation-curriculum__heading,.ps-foundation-curriculum__photo,.ps-foundation-curriculum__stage{position:absolute;z-index:2}
-      .ps-foundation-curriculum__intro{top:33%;left:5%;width:30%}
-      .ps-foundation-curriculum__intro h3{font-size:clamp(3.4rem,5vw,5.25rem);line-height:.91}
-      .ps-foundation-curriculum__heading{top:11%;left:35%;width:32%}
-      .ps-foundation-curriculum__heading>span{display:block;margin-bottom:1rem;color:#c8932f;font-size:.76rem;font-weight:800;letter-spacing:.22em;text-transform:uppercase}
-      .ps-foundation-curriculum__heading h3{margin:0;color:#06172b;font-family:"Cormorant Garamond",Georgia,serif;font-size:clamp(3.8rem,5.4vw,5.8rem);font-weight:550;letter-spacing:-.04em;line-height:.86}
-      .ps-foundation-curriculum__heading p{max-width:31rem;margin:1.7rem 0 0;color:rgba(35,62,86,.74);font-size:clamp(.9rem,1.1vw,1.05rem);line-height:1.72;text-wrap:pretty}
-      .ps-foundation-curriculum__photo{top:45%;left:40%;width:clamp(11rem,17vw,16.5rem);aspect-ratio:1;margin:0;overflow:hidden;border-radius:50%;background:#eadfca}
-      .ps-foundation-curriculum__photo img{display:block;width:100%;height:100%;object-fit:cover;object-position:52% 83%;transform:scale(1.45)}
-      .ps-foundation-curriculum__journey{position:absolute;z-index:2;inset:0}
-      .ps-foundation-curriculum__stage{display:flex;align-items:flex-start;gap:1.25rem;width:25rem}
-      .ps-foundation-curriculum__stage>span{display:grid;width:4.25rem;height:4.25rem;flex:0 0 auto;place-items:center;border-radius:50%;background:rgba(216,170,78,.11);color:#c8932f;font-family:"Cormorant Garamond",Georgia,serif;font-size:1.65rem;font-weight:600}
-      .ps-foundation-curriculum__stage h4{margin:.45rem 0 0;color:#06172b;font-family:"Cormorant Garamond",Georgia,serif;font-size:clamp(1.65rem,2.1vw,2.15rem);font-weight:650;letter-spacing:.015em;line-height:1;text-transform:uppercase}
-      .ps-foundation-curriculum__stage p{margin:.9rem 0 0;color:rgba(35,62,86,.72);font-size:clamp(.86rem,1vw,.98rem);line-height:1.7}
-      .ps-foundation-curriculum__stage--read{top:15%;left:67%}
-      .ps-foundation-curriculum__stage--write{top:42%;left:64%}
-      .ps-foundation-curriculum__stage--think{top:70%;left:57%}
-      @media(max-width:1100px){.ps-foundation-curriculum__intro{left:4%;width:31%}.ps-foundation-curriculum__heading{left:34%;width:34%}.ps-foundation-curriculum__stage{width:21rem}.ps-foundation-curriculum__stage--read{left:68%}.ps-foundation-curriculum__stage--write{left:65%}.ps-foundation-curriculum__stage--think{left:58%}.ps-foundation-curriculum__photo{left:39%;width:14rem}}
-      @media(max-width:800px){.ps-foundation-curriculum{left:50%;display:flex;width:100vw;min-height:0;flex-direction:column;gap:3.25rem;padding:5rem 1.5rem 6rem;transform:translateX(-50%)}.ps-foundation-curriculum__doodles{width:170%;height:100%;margin-left:-35%;object-fit:fill;filter:opacity(.34)}.ps-foundation-curriculum__watermark{bottom:3%;font-size:13rem}.ps-foundation-curriculum__intro,.ps-foundation-curriculum__heading,.ps-foundation-curriculum__photo,.ps-foundation-curriculum__stage{position:relative;inset:auto;width:min(100%,32rem);margin-right:auto;margin-left:auto}.ps-foundation-curriculum__intro{order:1}.ps-foundation-curriculum__heading{order:2}.ps-foundation-curriculum__journey{display:contents}.ps-foundation-curriculum__stage--read{order:3}.ps-foundation-curriculum__stage--write{order:4}.ps-foundation-curriculum__photo{order:5;width:min(68vw,15rem)}.ps-foundation-curriculum__stage--think{order:6}.ps-foundation-curriculum__intro h3{font-size:clamp(3.1rem,13vw,4.5rem)}.ps-foundation-curriculum__heading h3{font-size:clamp(3.6rem,15vw,5rem)}.ps-foundation-curriculum__stage{gap:1rem}.ps-foundation-curriculum__stage>span{width:3.75rem;height:3.75rem}.ps-foundation-curriculum__stage h4{font-size:1.75rem}.ps-foundation-curriculum__stage p{font-size:.92rem}.ps-foundation-curriculum__stage br{display:none}}
+      .ps-foundation-story__row--photo-first .ps-foundation-collage__doodles{opacity:.76;filter:saturate(.75) blur(.65px)}
+      .ps-foundation-story__row--photo-first .ps-foundation-outcome__meta>span{position:relative}
+      .ps-foundation-story__row--photo-first .ps-foundation-outcome--01 .ps-foundation-outcome__meta>span:after,.ps-foundation-story__row--photo-first .ps-foundation-outcome--02 .ps-foundation-outcome__meta>span:after{position:absolute;top:50%;left:calc(100% + .75rem);display:block;width:3.5rem;height:3.5rem;background-image:url('/images/programs/primary-years-1-2-outcome-doodles.png');background-repeat:no-repeat;background-size:9rem 6rem;content:"";transform:translateY(-50%);pointer-events:none}
+      .ps-foundation-story__row--photo-first .ps-foundation-outcome--01 .ps-foundation-outcome__meta>span:after{background-position:.05rem -1.35rem}
+      .ps-foundation-story__row--photo-first .ps-foundation-outcome--02 .ps-foundation-outcome__meta>span:after{background-position:-5.85rem -1.35rem}
+      @media(min-width:901px){
+        .ps-foundation-story{margin-top:clamp(.75rem,1.5vw,1.5rem)}
+        .ps-foundation-story__row--photo-first:after{position:absolute;z-index:6;top:15%;left:clamp(2rem,5.5vw,6rem);width:clamp(5.5rem,7.5vw,8rem);aspect-ratio:2/3;background:url('/images/programs/primary-years-1-2-photo-edge-doodles.png') center/contain no-repeat;content:"";pointer-events:none}
+      }
+      .ps-foundation-story__row--photo-last>.ps-foundation-photo{position:relative;z-index:2}
+      .ps-foundation-story__row--photo-last>.ps-foundation-outcomes{position:relative;z-index:4}
+      .ps-foundation-curriculum{position:relative;left:50%;display:grid;width:min(92vw,90rem);grid-template-columns:minmax(16rem,30%) minmax(0,1fr);align-items:center;column-gap:clamp(5rem,9vw,10rem);margin-left:0;padding:clamp(3rem,5vw,5rem) 0;transform:translateX(-50%)}
+      .ps-foundation-curriculum__intro{position:relative;z-index:2;display:grid;min-height:24rem;align-content:center}
+      .ps-foundation-curriculum__intro h3{margin:0;color:#06172b;font-family:"Cormorant Garamond",Georgia,serif;font-size:clamp(2.7rem,3.8vw,4.15rem);font-weight:500;letter-spacing:-.035em;line-height:.88;text-wrap:balance}
+      .ps-foundation-curriculum__intro h3 em{color:#c8932f;font-weight:500}
+      .ps-foundation-curriculum__intro-doodles{display:block;width:min(100%,15rem);height:7rem;margin-top:1.5rem;background:url('/images/programs/primary-years-1-2-curriculum-doodles.png') left bottom/36rem auto no-repeat;filter:saturate(.62) blur(.25px);opacity:.42;pointer-events:none}
+      .ps-foundation-curriculum__journey{position:relative;z-index:2;min-width:0;padding-left:clamp(2rem,4vw,4rem)}
+      .ps-foundation-curriculum__header{max-width:40rem;margin:0 0 clamp(3rem,5vw,4.75rem)}
+      .ps-foundation-curriculum__header h3{margin:0;color:#06172b;font-family:"Cormorant Garamond",Georgia,serif;font-size:clamp(2.25rem,3vw,3.25rem);font-weight:600;letter-spacing:-.025em;line-height:1;text-transform:uppercase}
+      .ps-foundation-curriculum__header p{max-width:40rem;margin:1rem 0 0;color:rgba(35,62,86,.75);font-size:clamp(.9rem,1.05vw,1rem);line-height:1.7;text-wrap:pretty}
+      .ps-foundation-curriculum__items{position:relative;z-index:2;display:grid;gap:clamp(3.5rem,5vw,5.25rem);padding-left:clamp(5.5rem,8vw,8rem)}
+      .ps-foundation-curriculum__item{display:grid;grid-template-columns:clamp(4.5rem,5.5vw,5.5rem) minmax(0,1fr);align-items:start;gap:clamp(1.25rem,2vw,2rem);max-width:39rem}
+      .ps-foundation-curriculum__icon{display:block;width:clamp(4.5rem,5.5vw,5.5rem);height:clamp(4.5rem,5.5vw,5.5rem);background-image:url('/images/programs/primary-years-1-2-curriculum-doodles.png');background-repeat:no-repeat;filter:saturate(.66) opacity(.7);transform:rotate(-2deg)}
+      .ps-foundation-curriculum__item h4{position:relative;isolation:isolate;display:inline-block;margin:.1rem 0 .65rem;color:#06172b;font-family:"Cormorant Garamond",Georgia,serif;font-size:clamp(1.35rem,1.8vw,1.8rem);font-weight:700;letter-spacing:.025em;line-height:1;text-transform:uppercase}
+      .ps-foundation-curriculum__item h4 span{position:relative;z-index:1}
+      .ps-foundation-curriculum__item h4:before{position:absolute;z-index:0;right:-2.25rem;bottom:-.15rem;left:-.55rem;height:.78em;border-radius:42% 58% 44% 56%/64% 42% 58% 36%;content:"";opacity:.52;transform:rotate(-1deg) skewX(-5deg);transform-origin:left center}
+      .ps-foundation-curriculum__item p{margin:0;color:rgba(35,62,86,.76);font-size:clamp(.9rem,1.05vw,1rem);line-height:1.55;text-wrap:pretty}
+      .ps-foundation-curriculum__item--blue .ps-foundation-curriculum__icon{background-size:32rem 21.333rem;background-position:-25.7rem -3rem}.ps-foundation-curriculum__item--blue h4:before{background:#a9d5eb}
+      .ps-foundation-curriculum__item--pink .ps-foundation-curriculum__icon{background-size:32rem 21.333rem;background-position:-25.6rem -9.2rem}.ps-foundation-curriculum__item--pink h4:before{background:#efb5c2;transform:rotate(1deg) skewX(4deg)}
+      .ps-foundation-curriculum__item--green .ps-foundation-curriculum__icon{background-size:32rem 21.333rem;background-position:-24rem -14.7rem}.ps-foundation-curriculum__item--green h4:before{background:#bbd6a7;transform:rotate(-.6deg) skewX(-3deg)}
+      .ps-foundation-curriculum__path{position:absolute;z-index:1;top:10.5rem;left:clamp(3rem,5vw,5.25rem);width:clamp(3.75rem,5.5vw,5.5rem);height:calc(100% - 11rem);overflow:visible;pointer-events:none}
+      .ps-foundation-curriculum__path path{fill:none;stroke:rgba(91,155,194,.48);stroke-width:3;stroke-linecap:round;stroke-dasharray:1 10;vector-effect:non-scaling-stroke}
+      @media(max-width:800px){.ps-foundation-curriculum{width:min(calc(100vw - 2.5rem),42rem);grid-template-columns:1fr;gap:3.5rem;padding:3.5rem 0 4rem}.ps-foundation-curriculum__intro{min-height:0}.ps-foundation-curriculum__intro h3{font-size:clamp(3rem,12vw,4.2rem)}.ps-foundation-curriculum__intro-doodles{width:11rem;height:5.5rem;background-size:29rem auto}.ps-foundation-curriculum__journey{padding-left:0}.ps-foundation-curriculum__header{margin-bottom:3.25rem}.ps-foundation-curriculum__header h3{font-size:clamp(2rem,8vw,2.7rem)}.ps-foundation-curriculum__items{gap:3.5rem;padding-left:4.75rem}.ps-foundation-curriculum__path{top:9.5rem;left:.75rem;width:3.5rem;height:calc(100% - 10rem)}}
       /* Compact the chapter rhythm without moving or transforming individual content. */
       .ps-foundation-intro .ps-crayon-artwork{clip-path:inset(0 0 max(0px,calc(100% - var(--ps-foundation-doodle-end,100%))) 0)}
       .ps-foundation-intro{padding-bottom:clamp(5rem,7vw,7rem)}
       .ps-foundation-story__row+.ps-foundation-story__row{margin-top:clamp(5rem,7vw,7rem)}
-      .ps-foundation-curriculum{margin-top:clamp(5.5rem,8vw,7.5rem)}
-      @media(min-width:801px){
-        .ps-foundation-curriculum{height:calc(100svh - 3.625rem);min-height:40rem;max-height:57.5rem}
-        .ps-foundation-curriculum__doodles{top:6%;height:91%;object-fit:fill}
-        .ps-foundation-curriculum__watermark{bottom:8%;font-size:clamp(10rem,24vh,18rem)}
-        .ps-foundation-curriculum__intro{top:31%;left:10%;width:27%}
-        .ps-foundation-curriculum__intro h3{font-size:clamp(3rem,7vh,4.5rem);line-height:.9}
-        .ps-foundation-curriculum__heading{top:9%;left:36.5%;width:31%}
-        .ps-foundation-curriculum__heading>span{margin-bottom:clamp(.55rem,1.3vh,.85rem)}
-        .ps-foundation-curriculum__heading h3{font-size:clamp(3.4rem,7.8vh,5rem);line-height:.86}
-        .ps-foundation-curriculum__heading p{margin-top:clamp(.85rem,2vh,1.25rem);font-size:clamp(.86rem,1.65vh,1rem);line-height:1.58}
-        .ps-foundation-curriculum__photo{top:49%;left:42%;width:clamp(9.5rem,21vh,13.5rem)}
-        .ps-foundation-curriculum__stage{gap:clamp(.8rem,1.5vw,1.15rem);width:clamp(19rem,26vw,24rem)}
-        .ps-foundation-curriculum__stage>span{width:clamp(3.25rem,7vh,4rem);height:clamp(3.25rem,7vh,4rem);font-size:clamp(1.35rem,2.8vh,1.6rem)}
-        .ps-foundation-curriculum__stage h4{margin-top:.3rem;font-size:clamp(1.45rem,3.2vh,1.95rem)}
-        .ps-foundation-curriculum__stage p{margin-top:clamp(.45rem,1.2vh,.75rem);font-size:clamp(.8rem,1.55vh,.94rem);line-height:1.55}
-        .ps-foundation-curriculum__stage--read{top:12%;left:64.5%}
-        .ps-foundation-curriculum__stage--write{top:44%;left:63%}
-        .ps-foundation-curriculum__stage--think{top:71%;left:56.5%}
-      }
+      .ps-foundation-curriculum{margin-top:clamp(4rem,6vw,6rem)}
       .ps-growth{padding-top:clamp(4.5rem,6vw,6rem);padding-bottom:clamp(5rem,7vw,7rem)}
       .ps-growth__main{margin-top:clamp(4.5rem,6vw,6rem)}
       .ps-growth__divider{margin-top:clamp(4.5rem,6vw,6rem)}
-      .ps-growth-curriculum{margin-top:clamp(2.5rem,4vw,4rem)}
+      .ps-growth-curriculum{margin-top:1cm}
       .ps-mastery{padding-top:clamp(4.5rem,6vw,6rem);padding-bottom:clamp(7rem,10vw,10rem)}
       .ps-mastery__photo{margin-top:clamp(4rem,5.5vw,5.5rem)}
       .ps-mastery__outcomes{margin-top:clamp(3rem,4.5vw,4rem)}
       .ps-mastery__divider{margin-top:clamp(4.5rem,6vw,6rem)}
-      .ps-mastery-curriculum{margin-top:clamp(2.5rem,4vw,4rem)}
-      @media(max-width:720px){.ps-foundation-story__row+.ps-foundation-story__row{margin-top:5rem}.ps-foundation-curriculum{margin-top:5.5rem}.ps-growth__main{margin-top:4rem}.ps-growth__divider{margin-top:4.5rem}.ps-growth-curriculum{margin-top:2.75rem}.ps-mastery__photo{margin-top:4rem}.ps-mastery__outcomes{margin-top:3rem}.ps-mastery__divider{margin-top:4.5rem}.ps-mastery-curriculum{margin-top:2.75rem}}
+      .ps-mastery-curriculum{margin-top:1cm}
+      @media(min-width:901px){.ps-foundation-story__row--photo-first{height:auto;min-height:clamp(29rem,52vh,36rem);max-height:none;margin-bottom:0}.ps-foundation-story__row+.ps-foundation-story__row{margin-top:1cm}.ps-foundation-story__row--photo-last{margin-top:clamp(-10rem,-8vw,-6rem)}.ps-foundation-story__row--photo-last>.ps-foundation-photo{width:82%;min-height:clamp(20rem,32vw,28rem);justify-self:end}.ps-foundation-story__row--photo-last:after{content:none}.ps-foundation-curriculum{margin-top:1cm;padding-top:0}}
+      @media(max-width:720px){.ps-foundation-story__row+.ps-foundation-story__row{margin-top:5rem}.ps-foundation-curriculum{margin-top:5.5rem}.ps-growth__main{margin-top:4rem}.ps-growth-curriculum{margin-top:1cm}.ps-mastery__photo{margin-top:4rem}.ps-mastery__outcomes{margin-top:3rem}.ps-mastery-curriculum{margin-top:1cm}}
+      /* Supplied Years 1–2 crayon artwork, composed around a protected content column. */
+      .ps-foundation-intro__side-doodles{top:calc(clamp(250px,28vw,400px) + clamp(2rem,3vw,3.5rem));right:0;left:0;aspect-ratio:auto;height:clamp(24rem,42vw,38rem);overflow:hidden}
+      .ps-foundation-intro__side-doodle{inset:auto;width:clamp(18rem,28vw,28rem);height:auto;opacity:.72;filter:saturate(.82);object-fit:contain}
+      .ps-foundation-intro__side-doodle--left{top:0;left:clamp(1rem,2.5vw,3rem);clip-path:none;transform:rotate(-1.5deg);transform-origin:center}
+      .ps-foundation-intro__side-doodle--right{top:clamp(1rem,3vw,3rem);right:clamp(1rem,2.5vw,3rem);clip-path:none;transform:rotate(1.25deg);transform-origin:center}
+      .ps-foundation-story__flower-doodle{position:absolute;z-index:5;top:clamp(-5rem,-5vw,-3rem);right:clamp(-8rem,-7vw,-4rem);display:block;width:clamp(14rem,20vw,20rem);height:auto;opacity:.64;filter:saturate(.8);pointer-events:none;user-select:none}
+      .ps-foundation-curriculum__intro-doodles{display:block;width:clamp(13rem,19vw,18rem);height:auto;margin:1.5rem 0 0 clamp(-3.5rem,-3vw,-1.5rem);background:none;filter:saturate(.78);opacity:.66;pointer-events:none;user-select:none}
+      .ps-foundation-curriculum__journey{position:relative;min-height:clamp(38rem,48vw,44rem);padding-left:0}
+      .ps-foundation-curriculum__rail-art{position:absolute;z-index:1;top:clamp(7.25rem,9vw,8.75rem);left:clamp(-5rem,-4vw,-2rem);display:block;width:clamp(18rem,22vw,22rem);height:auto;aspect-ratio:2/3;object-fit:contain;opacity:.72;filter:saturate(.78);pointer-events:none;user-select:none}
+      .ps-foundation-curriculum__header{position:relative;z-index:2;max-width:43rem;margin:0 0 clamp(3rem,4vw,4rem);padding-left:clamp(11.5rem,14vw,14rem)}
+      .ps-foundation-curriculum__header h3{color:#bd8725;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:clamp(1rem,1.35vw,1.25rem);font-weight:750;letter-spacing:.16em;line-height:1.2;text-transform:uppercase}
+      .ps-foundation-curriculum__header p{margin-top:1rem;color:rgba(35,62,86,.78);font-size:clamp(.95rem,1.15vw,1.08rem);line-height:1.65}
+      .ps-foundation-curriculum__items{gap:clamp(3.25rem,4.5vw,4.5rem);padding-left:clamp(11.5rem,14vw,14rem)}
+      .ps-foundation-curriculum__item{display:block;min-height:clamp(7rem,9vw,8.5rem);max-width:40rem}
+      .ps-foundation-curriculum__icon{display:none}
+      .ps-foundation-curriculum__item h4{display:block;width:max-content;max-width:100%;margin:0 0 1.15rem;font-size:clamp(1.25rem,1.7vw,1.65rem);letter-spacing:.045em;line-height:1.08}
+      .ps-foundation-curriculum__item h4:before{right:-3.25rem;bottom:-.3rem;left:-1rem;height:1.12em;opacity:.58}
+      .ps-foundation-curriculum__item p{font-size:clamp(.95rem,1.1vw,1.05rem);line-height:1.62}
+      @media(max-width:1000px){.ps-foundation-intro__side-doodle{width:clamp(15rem,32vw,20rem);opacity:.58}.ps-foundation-intro__side-doodle--left{left:.5rem}.ps-foundation-intro__side-doodle--right{right:.5rem}.ps-foundation-story__flower-doodle{right:-6rem;width:15rem;opacity:.5}}
+      @media(max-width:800px){.ps-foundation-curriculum__journey{min-height:39rem}.ps-foundation-curriculum__header{padding-left:0}.ps-foundation-curriculum__rail-art{top:8.5rem;left:-4.5rem;width:15rem;height:auto;opacity:.6}.ps-foundation-curriculum__items{gap:3.25rem;padding-left:7.5rem}.ps-foundation-curriculum__item{min-height:7rem}.ps-foundation-curriculum__item h4{font-size:clamp(1.08rem,4.5vw,1.4rem)}.ps-foundation-curriculum__item p{font-size:.92rem}}
+      @media(max-width:720px){.ps-foundation-intro__side-doodles{right:0;left:0;height:27rem}.ps-foundation-intro__side-doodle{width:11rem;opacity:.34}.ps-foundation-intro__side-doodle--left{top:2rem;left:.25rem}.ps-foundation-intro__side-doodle--right{top:5rem;right:.25rem}.ps-foundation-story__flower-doodle{top:auto;right:-5rem;bottom:-3rem;width:12rem;opacity:.38}.ps-foundation-curriculum__intro-doodles{width:12rem;margin-left:-2rem;opacity:.55}}
+      @media(max-width:480px){.ps-foundation-curriculum__journey{min-height:37rem}.ps-foundation-curriculum__rail-art{top:9.25rem;left:-3.75rem;width:12rem;height:auto}.ps-foundation-curriculum__items{gap:2.8rem;padding-left:6rem}.ps-foundation-curriculum__item h4{white-space:normal}.ps-foundation-curriculum__item p{font-size:.86rem;line-height:1.55}}
+      /* Years 1–2 curriculum: balanced editorial composition and one shared row system. */
+      .ps-foundation-curriculum{width:min(90vw,86rem);grid-template-columns:minmax(0,42fr) minmax(0,58fr);align-items:center;column-gap:clamp(3.5rem,6vw,6.5rem);padding:clamp(4rem,6vw,6rem) 0}
+      .ps-foundation-curriculum__intro{min-height:clamp(34rem,42vw,40rem);align-content:center;padding-left:clamp(.5rem,2vw,2rem)}
+      .ps-foundation-curriculum__intro h3{font-size:clamp(3.6rem,5.4vw,5.5rem);line-height:.84}
+      .ps-foundation-curriculum__intro-doodles{width:min(100%,26rem);height:auto;margin:clamp(2rem,3vw,3rem) 0 0 clamp(-2rem,-1.5vw,-.5rem);opacity:.72;filter:saturate(.82)}
+      .ps-foundation-curriculum__journey{min-height:0;padding-left:0}
+      .ps-foundation-curriculum__rail-art{display:none}
+      .ps-foundation-curriculum__header{max-width:none;margin:0 0 clamp(2.25rem,3vw,3rem);padding-left:0}
+      .ps-foundation-curriculum__header h3{display:flex;align-items:baseline;gap:clamp(1rem,2vw,2rem);color:#06172b;font-family:"Cormorant Garamond",Georgia,serif;line-height:1;text-transform:none}
+      .ps-foundation-curriculum__header h3 span{font-size:clamp(2.7rem,4vw,4.1rem);font-weight:600;letter-spacing:-.025em;white-space:nowrap}
+      .ps-foundation-curriculum__header h3 b{color:#bd8725;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:clamp(.8rem,1.05vw,1rem);font-weight:750;letter-spacing:.24em;text-transform:uppercase}
+      .ps-foundation-curriculum__header-line{position:relative;display:block;width:100%;height:1px;margin:1rem 0 1.4rem;background:linear-gradient(90deg,rgba(189,135,37,.72),rgba(189,135,37,.2))}
+      .ps-foundation-curriculum__header-line:after{position:absolute;top:50%;right:0;color:#bd8725;font-size:1.15rem;line-height:1;content:"✦";transform:translateY(-52%)}
+      .ps-foundation-curriculum__header p{max-width:38rem;margin:0;color:rgba(35,62,86,.68);font-size:clamp(.92rem,1.05vw,1rem);line-height:1.65}
+      .ps-foundation-curriculum__items{gap:0;padding-left:0}
+      .ps-foundation-curriculum__items,.ps-open-curriculum__items{--curriculum-doodle-lane:clamp(11.5rem,14vw,14rem);position:relative}
+      .ps-curriculum-continuous-doodle{position:absolute;z-index:1;top:50%;left:0;display:block;width:var(--curriculum-doodle-lane);height:auto;aspect-ratio:2/3;object-fit:contain;opacity:.72;filter:saturate(.78);transform:translateY(-50%);pointer-events:none;user-select:none}
+      .ps-foundation-curriculum__item{display:grid;min-height:0;max-width:none;grid-template-columns:var(--curriculum-doodle-lane) minmax(0,1fr);align-items:center;gap:clamp(1.5rem,2.5vw,2.5rem);padding:clamp(1.7rem,2.4vw,2.35rem) 0;border-top:0}
+      .ps-foundation-curriculum__icon{display:block;width:var(--curriculum-doodle-lane);height:1px;visibility:hidden}
+      .ps-foundation-curriculum__item>div{grid-column:2;min-width:0}
+      .ps-foundation-curriculum__item--blue .ps-foundation-curriculum__icon{background-size:38rem 25.333rem;background-position:-30.52rem -3.56rem}
+      .ps-foundation-curriculum__item--pink .ps-foundation-curriculum__icon{background-size:38rem 25.333rem;background-position:-30.4rem -10.93rem}
+      .ps-foundation-curriculum__item--green .ps-foundation-curriculum__icon{background-size:38rem 25.333rem;background-position:-28.5rem -17.46rem}
+      .ps-foundation-curriculum__item h4{display:inline-block;width:auto;max-width:100%;margin:0 0 .7rem;font-size:clamp(1.35rem,1.8vw,1.75rem);letter-spacing:.025em;line-height:1.05}
+      .ps-foundation-curriculum__item h4:before{right:-1.5rem;bottom:-.12rem;left:-.3rem;height:.38em;opacity:.72}
+      .ps-foundation-curriculum__item p{max-width:34rem;margin:0;color:rgba(35,62,86,.72);font-size:clamp(.92rem,1.05vw,1rem);line-height:1.58}
+      @media(max-width:1000px){.ps-foundation-curriculum{width:min(calc(100vw - 3rem),76rem);grid-template-columns:minmax(0,40fr) minmax(0,60fr);column-gap:3rem}.ps-foundation-curriculum__intro h3{font-size:clamp(3.25rem,5.5vw,4.5rem)}.ps-foundation-curriculum__item{grid-template-columns:5.75rem minmax(0,1fr);gap:1.5rem}.ps-foundation-curriculum__icon{width:5.75rem;height:5.75rem}}
+      @media(max-width:800px){.ps-foundation-curriculum{width:min(calc(100vw - 2.5rem),42rem);grid-template-columns:1fr;gap:4rem;padding:4rem 0}.ps-foundation-curriculum__intro{min-height:0;padding-left:0}.ps-foundation-curriculum__intro-doodles{width:min(100%,23rem);margin-left:-1rem}.ps-foundation-curriculum__journey{min-height:0}.ps-foundation-curriculum__header h3{flex-wrap:wrap;gap:.55rem 1.25rem}.ps-foundation-curriculum__header h3 span{font-size:clamp(2.7rem,10vw,3.8rem)}.ps-foundation-curriculum__items{padding-left:0}.ps-foundation-curriculum__item{grid-template-columns:5.75rem minmax(0,1fr);gap:1.4rem;padding:1.75rem 0}.ps-foundation-curriculum__item h4{font-size:clamp(1.25rem,4.5vw,1.55rem)}.ps-foundation-curriculum__item p{font-size:.92rem}}
+      @media(max-width:430px){.ps-foundation-curriculum__item{grid-template-columns:1fr;gap:.9rem;text-align:center}.ps-foundation-curriculum__icon{margin:0 auto}.ps-foundation-curriculum__item h4{margin-right:auto;margin-left:auto}.ps-foundation-curriculum__item p{margin-right:auto;margin-left:auto}.ps-foundation-curriculum__header{text-align:left}}
+      /* Shared open-canvas curriculum system for Years 3–4 and Years 5–6. */
+      .ps-growth-curriculum,.ps-mastery-curriculum{left:50%;width:min(90vw,86rem);grid-template-columns:minmax(0,42fr) minmax(0,58fr);align-items:center;column-gap:clamp(3.5rem,6vw,6.5rem);transform:translateX(-50%)}
+      .ps-growth-curriculum>div:last-child,.ps-mastery-curriculum>div:last-child{min-width:0}
+      .ps-open-curriculum{width:100%;color:#06172b}
+      .ps-open-curriculum__header{max-width:none;margin:0 0 clamp(2.25rem,3vw,3rem)}
+      .ps-open-curriculum__header h3{display:flex;align-items:baseline;gap:clamp(1rem,2vw,2rem);margin:0;color:#06172b;font-family:"Cormorant Garamond",Georgia,serif;line-height:1}
+      .ps-open-curriculum__header h3 span{font-size:clamp(2.7rem,4vw,4.1rem);font-weight:600;letter-spacing:-.025em;white-space:nowrap}
+      .ps-open-curriculum__header h3 b{color:#bd8725;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:clamp(.8rem,1.05vw,1rem);font-weight:750;letter-spacing:.24em;text-transform:uppercase}
+      .ps-open-curriculum__header>i{position:relative;display:block;width:100%;height:1px;margin:1rem 0 1.4rem;background:linear-gradient(90deg,rgba(189,135,37,.72),rgba(189,135,37,.2))}
+      .ps-open-curriculum__header>i:after{position:absolute;top:50%;right:0;color:#bd8725;font-size:1.15rem;line-height:1;content:"✦";transform:translateY(-52%)}
+      .ps-open-curriculum__header p{max-width:38rem;margin:0;color:rgba(35,62,86,.68);font-size:clamp(.92rem,1.05vw,1rem);line-height:1.65;text-wrap:pretty}
+      .ps-open-curriculum__items{display:grid;gap:0}
+      .ps-open-curriculum__item{position:relative;z-index:2;display:grid;grid-template-columns:var(--curriculum-doodle-lane) minmax(0,1fr);align-items:center;gap:clamp(1.5rem,2.5vw,2.5rem);padding:clamp(1.7rem,2.4vw,2.35rem) 0;border-top:0}
+      .ps-open-curriculum__icon{display:block;width:var(--curriculum-doodle-lane);height:1px;visibility:hidden}
+      .ps-open-curriculum__item>p{grid-column:2;min-width:0}
+      .ps-open-curriculum__item--blue .ps-open-curriculum__icon{background-size:38rem 25.333rem;background-position:-30.52rem -3.56rem}
+      .ps-open-curriculum__item--pink .ps-open-curriculum__icon{background-size:38rem 25.333rem;background-position:-30.4rem -10.93rem}
+      .ps-open-curriculum__item--green .ps-open-curriculum__icon{background-size:38rem 25.333rem;background-position:-28.5rem -17.46rem}
+      .ps-open-curriculum__item p{position:relative;width:fit-content;max-width:34rem;margin:0;color:#06172b;font-family:"Cormorant Garamond",Georgia,serif;font-size:clamp(1.3rem,1.65vw,1.65rem);font-weight:650;line-height:1.2;text-wrap:pretty}
+      .ps-open-curriculum__item p:after{display:block;width:min(7rem,45%);height:.28rem;margin-top:.65rem;border-radius:999px;content:"";opacity:.68}
+      .ps-open-curriculum__item--blue p:after{background:#a9d5eb}.ps-open-curriculum__item--pink p:after{background:#efb5c2}.ps-open-curriculum__item--green p:after{background:#bbd6a7}
+      .ps-growth-curriculum__intro,.ps-mastery-curriculum__intro{align-self:stretch;display:grid;min-height:clamp(34rem,42vw,40rem);align-content:center;padding:0 0 0 clamp(.5rem,2vw,2rem)}
+      .ps-growth-curriculum__intro h3,.ps-mastery-curriculum__intro h3{font-size:clamp(3.6rem,5.4vw,5.5rem);letter-spacing:-.035em;line-height:.84;text-wrap:balance}
+      .ps-growth-curriculum__intro .ps-growth-curriculum__doodle--left,.ps-mastery-curriculum__intro .ps-mastery-curriculum__doodle--left{position:relative;inset:auto;display:block;width:min(100%,26rem);height:auto;aspect-ratio:1;margin:clamp(2rem,3vw,3rem) 0 0 clamp(-2rem,-1.5vw,-.5rem);opacity:.72;filter:saturate(.82);transform:none}
+      @media(max-width:1000px){.ps-growth-curriculum,.ps-mastery-curriculum{width:min(calc(100vw - 3rem),76rem);grid-template-columns:minmax(0,40fr) minmax(0,60fr);column-gap:3rem}.ps-growth-curriculum__intro h3,.ps-mastery-curriculum__intro h3{font-size:clamp(3.25rem,5.5vw,4.5rem)}.ps-foundation-curriculum__items,.ps-open-curriculum__items{--curriculum-doodle-lane:10rem}.ps-foundation-curriculum__item,.ps-open-curriculum__item{grid-template-columns:var(--curriculum-doodle-lane) minmax(0,1fr);gap:1.5rem}}
+      @media(max-width:720px){.ps-growth-curriculum,.ps-mastery-curriculum{width:min(calc(100vw - 2.5rem),42rem);grid-template-columns:1fr;gap:4rem}.ps-growth-curriculum__intro,.ps-mastery-curriculum__intro{min-height:0;padding-left:0}.ps-growth-curriculum__intro .ps-growth-curriculum__doodle--left,.ps-mastery-curriculum__intro .ps-mastery-curriculum__doodle--left{width:min(100%,23rem);margin-left:-1rem}.ps-open-curriculum__header h3{flex-wrap:wrap;gap:.55rem 1.25rem}.ps-open-curriculum__header h3 span{font-size:clamp(2.7rem,10vw,3.8rem)}.ps-foundation-curriculum__items,.ps-open-curriculum__items{--curriculum-doodle-lane:8.5rem}.ps-foundation-curriculum__item,.ps-open-curriculum__item{grid-template-columns:var(--curriculum-doodle-lane) minmax(0,1fr);gap:1.25rem;padding:1.75rem 0}.ps-open-curriculum__item p{font-size:clamp(1.2rem,5vw,1.5rem)}}
+      @media(max-width:430px){.ps-foundation-curriculum__items,.ps-open-curriculum__items{--curriculum-doodle-lane:7rem}.ps-foundation-curriculum__item,.ps-open-curriculum__item{grid-template-columns:var(--curriculum-doodle-lane) minmax(0,1fr);gap:1rem;text-align:left}.ps-open-curriculum__item p{margin:0}.ps-open-curriculum__item p:after{margin-left:0}}
+      /* Supplied Years 5–6 sheets frame the intro and curriculum without entering the text plane. */
+      .ps-mastery__hero-doodles{position:absolute;z-index:2;top:clamp(2.5rem,4vw,4.5rem);left:50%;width:min(100vw,96rem);height:clamp(25rem,38vw,35rem);transform:translateX(-50%);overflow:hidden;pointer-events:none;user-select:none}
+      .ps-mastery__hero-doodle{position:absolute;display:block;width:clamp(17rem,23vw,23rem);height:auto;aspect-ratio:1;opacity:.64;filter:saturate(.78);object-fit:contain}
+      .ps-mastery__hero-doodle--left{top:clamp(1rem,3vw,3rem);left:clamp(1rem,2.5vw,3rem);transform:rotate(-1deg)}
+      .ps-mastery__hero-doodle--right{top:0;right:clamp(1rem,2.5vw,3rem);transform:rotate(1deg)}
+      .ps-mastery-curriculum{position:relative;isolation:isolate}
+      .ps-mastery-curriculum__intro,.ps-mastery-curriculum__panel{position:relative;z-index:2}
+      .ps-mastery-curriculum__intro{align-self:stretch;display:grid;min-height:clamp(34rem,42vw,40rem);align-content:center;padding-top:0}
+      .ps-mastery-curriculum__doodle{position:absolute;z-index:1;display:block;height:auto;opacity:.62;filter:saturate(.8);object-fit:contain;pointer-events:none;user-select:none}
+      .ps-mastery-curriculum__intro .ps-mastery-curriculum__doodle--left{position:relative;inset:auto;width:min(100%,26rem);height:auto;aspect-ratio:1;margin:clamp(2rem,3vw,3rem) 0 0 clamp(-2rem,-1.5vw,-.5rem);opacity:.72;filter:saturate(.82);transform:none}
+      .ps-mastery-curriculum__doodle--right{right:clamp(.25rem,1vw,1rem);bottom:clamp(-1rem,-1vw,0rem);width:clamp(11rem,15vw,14rem);aspect-ratio:1;transform:rotate(1deg)}
+      @media(max-width:1000px){.ps-mastery__hero-doodle{width:clamp(14rem,30vw,18rem);opacity:.48}.ps-mastery__hero-doodle--left{left:.5rem}.ps-mastery__hero-doodle--right{right:.5rem}.ps-mastery-curriculum__doodle--right{right:.25rem;width:11rem}}
+      @media(max-width:720px){.ps-mastery__hero-doodles{top:3rem;height:24rem}.ps-mastery__hero-doodle{width:10rem;opacity:.28}.ps-mastery__hero-doodle--left{top:3rem;left:.25rem}.ps-mastery__hero-doodle--right{top:5rem;right:.25rem}.ps-mastery-curriculum{padding-bottom:3rem}.ps-mastery-curriculum__intro{min-height:0;padding-top:0}.ps-mastery-curriculum__intro .ps-mastery-curriculum__doodle--left{width:min(100%,23rem);margin-left:-1rem}.ps-mastery-curriculum__doodle--right{right:.5rem;bottom:1rem;width:9rem;opacity:.28}}
       @media(max-width:540px){.ps-foundation-intro{padding-bottom:5rem}}
       @media(prefers-reduced-motion:reduce){.ps-button,.ps-mobile-progress i b,.ps-landscape-stage,.ps-landscape-stage small,.ps-landscape-stage strong{transition:none}.ps-hero__handoff{display:none}}
     `}</style>
