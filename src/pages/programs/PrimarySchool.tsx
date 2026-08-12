@@ -5,6 +5,7 @@ import { ArrowRight, BookOpen, Brain, Calculator, Check, ClipboardCheck, Graduat
 import NavigationNew from '@/components/NavigationNew';
 import StickyBookButton from '@/components/StickyBookButton';
 import SEO from '@/components/SEO';
+import RevealHero from '@/components/RevealHero';
 
 const heroJourneyNav = [
   { number: '01', label: 'Foundation' },
@@ -376,13 +377,20 @@ const PrimarySchool = () => (
   <div className="primary-story">
     <SEO title="Primary School Tutoring (Years 1–6) | DA Tuition" description="One continuous primary learning journey from strong foundations to NAPLAN confidence, selective school preparation and high school readiness." canonicalUrl="/programs/primary-school" />
     <NavigationNew />
-    <StickyBookButton />
-    <main>
-      <div className="ps-opening">
-        <div className="ps-opening__hero">
-          <PrimaryHero pinned />
-        </div>
-      </div>
+    <RevealHero
+      eyebrow="Primary School · Years 1–6"
+      icon={GraduationCap}
+      headlineWhite="Every Stage."
+      headlineGold="Every Child."
+      subtext="From strong foundations to lifelong confidence, we guide your child through every critical stage of primary school."
+      proofPills={['Years 1–6 journey', 'Small-group attention', 'NAPLAN ready']}
+      placeholderLabel="Primary school classroom"
+      backgroundImageSrc="/images/programs/primary-hero-tutor-two-students.png"
+      backgroundImageAlt="A DA Tuition tutor working warmly with two primary school students on their schoolwork"
+    >
+    <div id="primary-page-content">
+      <StickyBookButton />
+      <main>
       <section id="pathway" className="ps-landscape-breath" aria-label="Primary school journey landscape">
         <img
           className="ps-landscape-breath__image"
@@ -411,7 +419,9 @@ const PrimarySchool = () => (
       <FoundationIntro />
       <GrowthSection />
       <MasterySection />
-    </main>
+      </main>
+    </div>
+    </RevealHero>
     <style>{`
       @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&display=swap');
       .primary-story{--navy:#06172c;--gold:#c8932f;--gold-light:#e1b453;--cream:#f6efe4;background:var(--cream);color:var(--navy);overflow:clip;font-family:"DM Sans",Arial,sans-serif}.primary-story *{box-sizing:border-box}.primary-story h1{font-family:"Cormorant Garamond",Georgia,serif}.ps-kicker{margin:0;color:var(--gold-light);font-size:.72rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase}.ps-button{display:inline-flex;min-height:3.35rem;align-items:center;justify-content:center;gap:.75rem;padding:0 1.45rem;border-radius:.7rem;font-size:.78rem;font-weight:700;text-decoration:none;transition:transform .3s cubic-bezier(.22,1,.36,1),background .3s ease,box-shadow .3s ease}.ps-button svg{width:1rem;transition:transform .3s ease}.ps-button:hover{transform:translateY(-2px)}.ps-button:hover svg{transform:translateX(4px)}.ps-button:focus-visible,.ps-how-link:focus-visible{outline:2px solid var(--gold-light);outline-offset:4px}.ps-button--gold{background:#d8a642;box-shadow:0 6px 8px rgba(6,23,44,.2);color:var(--navy)}.ps-button--gold:hover{background:#e3b95b}
