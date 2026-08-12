@@ -6,16 +6,34 @@ interface SubjectTypedBannerProps {
   headline: string;
   emphasis: string;
   support?: string;
+  variant?: 'business' | 'legal';
 }
 
 type TypedLines = {
-  headline: string;
-  emphasis: string;
-  support: string;
+  headline: number;
+  emphasis: number;
+  support: number;
 };
 
 const TYPE_DELAY_MS = 24;
 const LINE_PAUSE_MS = 180;
+
+type RevealLine = keyof TypedLines;
+
+const revealMasks: Record<
+  NonNullable<SubjectTypedBannerProps['variant']>,
+  Array<{ key: RevealLine; text: string; top: number; left: number; width: number; height: number }>
+> = {
+  business: [
+    { key: 'headline', text: 'Master Business Studies.', top: 29, left: 30, width: 66, height: 20 },
+    { key: 'emphasis', text: 'Think strategically. Lead with insight.', top: 43, left: 35, width: 61, height: 11 },
+    { key: 'support', text: 'Real-world knowledge. Smart decisions. Strong results.', top: 56, left: 42, width: 46, height: 8 },
+  ],
+  legal: [
+    { key: 'headline', text: 'Master Legal Studies.', top: 31, left: 34, width: 62, height: 16 },
+    { key: 'emphasis', text: 'Understand the law. Think critically.', top: 44, left: 36, width: 60, height: 11 },
+  ],
+};
 
 const SubjectTypedBanner = ({
   imageSrc,
@@ -23,13 +41,14 @@ const SubjectTypedBanner = ({
   headline,
   emphasis,
   support = '',
+  variant = 'business',
 }: SubjectTypedBannerProps) => {
   const rootRef = useRef<HTMLElement>(null);
   const [hasStarted, setHasStarted] = useState(false);
-  const [typedLines, setTypedLines] = useState<TypedLines>({
-    headline: '',
-    emphasis: '',
-    support: '',
+  const [revealProgress, setRevealProgress] = useState<TypedLines>({
+    headline: 0,
+    emphasis: 0,
+    support: 0,
   });
 
   useEffect(() => {
@@ -38,7 +57,7 @@ const SubjectTypedBanner = ({
 
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
     if (reducedMotion.matches) {
-      setTypedLines({ headline, emphasis, support });
+      setRevealProgress({ headline: 1, emphasis: 1, support: 1 });
       setHasStarted(true);
       return;
     }
@@ -63,26 +82,24 @@ const SubjectTypedBanner = ({
 
     let cancelled = false;
     const sleep = (duration: number) => new Promise((resolve) => setTimeout(resolve, duration));
+    const activeMasks = revealMasks[variant];
 
-    const typeLine = async (key: keyof TypedLines, text: string) => {
+    const revealLine = async (key: RevealLine, text: string) => {
       for (let index = 1; index <= text.length; index += 1) {
         if (cancelled) return;
-        setTypedLines((current) => ({
+        setRevealProgress((current) => ({
           ...current,
-          [key]: text.slice(0, index),
+          [key]: index / text.length,
         }));
         await sleep(TYPE_DELAY_MS);
       }
     };
 
     const runTyping = async () => {
-      setTypedLines({ headline: '', emphasis: '', support: '' });
-      await typeLine('headline', headline);
-      await sleep(LINE_PAUSE_MS);
-      await typeLine('emphasis', emphasis);
-      if (support) {
+      setRevealProgress({ headline: 0, emphasis: 0, support: 0 });
+      for (const mask of activeMasks) {
+        await revealLine(mask.key, mask.text);
         await sleep(LINE_PAUSE_MS);
-        await typeLine('support', support);
       }
     };
 
@@ -91,7 +108,10 @@ const SubjectTypedBanner = ({
     return () => {
       cancelled = true;
     };
-  }, [emphasis, hasStarted, headline, support]);
+  }, [hasStarted, variant]);
+
+  const activeMasks = revealMasks[variant];
+  const activeMask = activeMasks.find((mask) => revealProgress[mask.key] > 0 && revealProgress[mask.key] < 1);
 
   return (
     <section
@@ -99,45 +119,44 @@ const SubjectTypedBanner = ({
       className="relative isolate overflow-hidden bg-[#fbf3e7]"
       aria-label={`${headline} ${emphasis} ${support}`.trim()}
     >
-      <div className="relative min-h-[340px] sm:min-h-[420px] lg:min-h-[520px]">
+      <div className="relative">
         <img
           src={imageSrc}
           alt={imageAlt}
-          className="absolute inset-0 h-full w-full object-cover object-center"
+          className="block h-auto min-h-[340px] w-full object-cover object-center sm:min-h-0"
         />
-        <div
-          className="absolute inset-y-[6%] left-[24%] right-[0%] rounded-[999px] bg-[#fff8ec]/100 blur-3xl"
-          aria-hidden="true"
-        />
-        <div
-          className="absolute inset-y-[14%] left-[30%] right-[3%] rounded-[999px] bg-[#fff8ec]/100 blur-xl"
-          aria-hidden="true"
-        />
+        {activeMasks.map((mask) => {
+          const progress = revealProgress[mask.key];
+          const coverLeft = mask.left + mask.width * progress;
+          const coverWidth = mask.width * (1 - progress);
 
-        <div className="relative z-10 flex min-h-[340px] items-center px-5 py-12 sm:min-h-[420px] sm:px-8 lg:min-h-[520px]">
-          <div className="ml-auto w-full max-w-[58rem] text-center">
-            <h2 className="font-['Playfair_Display',Georgia,serif] text-[clamp(2.15rem,5.8vw,5.25rem)] font-semibold leading-[0.98] text-[#071b35]">
-              {typedLines.headline}
-              {hasStarted && !typedLines.emphasis && (
-                <span className="ml-1 inline-block h-[0.82em] w-[2px] translate-y-[0.08em] animate-pulse bg-[#c99a2e]" />
-              )}
-            </h2>
-            <p className="mt-4 font-['Playfair_Display',Georgia,serif] text-[clamp(1.45rem,3.3vw,3.15rem)] italic leading-tight text-[#9f7218]">
-              {typedLines.emphasis}
-              {typedLines.emphasis && typedLines.emphasis !== emphasis && (
-                <span className="ml-1 inline-block h-[0.82em] w-[2px] translate-y-[0.08em] animate-pulse bg-[#c99a2e]" />
-              )}
-            </p>
-            {support && (
-              <p className="mx-auto mt-8 max-w-[48rem] text-[clamp(1rem,1.6vw,1.35rem)] font-semibold leading-relaxed text-[#0b2444]">
-                {typedLines.support}
-                {typedLines.emphasis === emphasis && typedLines.support !== support && (
-                  <span className="ml-1 inline-block h-[0.9em] w-[2px] translate-y-[0.12em] animate-pulse bg-[#c99a2e]" />
-                )}
-              </p>
-            )}
-          </div>
-        </div>
+          if (coverWidth <= 0) return null;
+
+          return (
+            <div
+              key={mask.key}
+              className="absolute bg-[#fff8ec]"
+              style={{
+                top: `${mask.top}%`,
+                left: `${coverLeft}%`,
+                width: `${coverWidth}%`,
+                height: `${mask.height}%`,
+              }}
+              aria-hidden="true"
+            />
+          );
+        })}
+        {activeMask && (
+          <div
+            className="absolute w-[2px] animate-pulse bg-[#c99a2e]"
+            style={{
+              top: `${activeMask.top + 1}%`,
+              left: `${activeMask.left + activeMask.width * revealProgress[activeMask.key]}%`,
+              height: `${activeMask.height - 2}%`,
+            }}
+            aria-hidden="true"
+          />
+        )}
       </div>
     </section>
   );

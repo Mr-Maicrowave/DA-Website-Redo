@@ -115,6 +115,7 @@ const LegalStudies = () => {
         imageAlt="Legal Studies banner with scales of justice, law books, and a gavel"
         headline="Master Legal Studies."
         emphasis="Understand the law. Think critically."
+        variant="legal"
       />
 
       {/* Learning Formats Callout */}
