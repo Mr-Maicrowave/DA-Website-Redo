@@ -1,6 +1,6 @@
 import { useRef, type ReactNode } from 'react';
 import { ArrowRight, Image as ImageIcon, type LucideIcon } from 'lucide-react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion';
 
 export interface RevealHeroProps {
   /** Small uppercase badge above the headline, e.g. "Primary School · Years 1-6" */
@@ -142,6 +142,32 @@ const RevealHero = ({
   const nextX = useTransform(scrollYProgress, [0, 1], ['100%', '0%']);
 
   const scrollThroughReveal = () => {};
+
+  const reduceMotion = useReducedMotion();
+
+  if (reduceMotion) {
+    return (
+      <>
+        <section className="relative flex min-h-screen flex-col justify-center overflow-hidden bg-[#071629] py-28">
+          <RevealHeroPhoto
+            icon={icon}
+            placeholderLabel={placeholderLabel}
+            backgroundImageSrc={backgroundImageSrc}
+            backgroundImageAlt={backgroundImageAlt}
+          />
+          <RevealHeroCopy
+            eyebrow={eyebrow}
+            headlineWhite={headlineWhite}
+            headlineGold={headlineGold}
+            subtext={subtext}
+            proofPills={proofPills}
+            onExplore={scrollThroughReveal}
+          />
+        </section>
+        {children}
+      </>
+    );
+  }
 
   return (
     <>
