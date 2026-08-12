@@ -28,6 +28,8 @@ interface SubjectHeroProps {
   mobileBackgroundPosition?: string;
   /** Desktop focal point for a source image. */
   backgroundPosition?: string;
+  /** Optional zoom for photos that need tighter art direction behind the fixed copy. */
+  backgroundScale?: number;
   /** English trial: place the copy low in the mobile hero to preserve the photo's focal subject. */
   mobileContentPosition?: 'center' | 'bottom';
 }
@@ -52,6 +54,7 @@ const SubjectHero = ({
   backgroundImageAlt,
   mobileBackgroundPosition,
   backgroundPosition,
+  backgroundScale,
   mobileContentPosition = 'center',
 }: SubjectHeroProps) => {
   const scrollToExplore = () => {
@@ -69,6 +72,7 @@ const SubjectHero = ({
             style={{
               ...(backgroundPosition ? { objectPosition: backgroundPosition } : {}),
               ...(mobileBackgroundPosition ? { '--subject-hero-mobile-position': mobileBackgroundPosition } : {}),
+              ...(backgroundScale ? { transform: `scale(${backgroundScale})`, transformOrigin: backgroundPosition ?? 'center center' } : {}),
             } as CSSProperties}
           />
         ) : (

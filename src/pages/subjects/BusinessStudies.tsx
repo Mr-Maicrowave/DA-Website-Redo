@@ -2,10 +2,21 @@ import React from 'react';
 import NavigationNew from '@/components/NavigationNew';
 import FooterNew from '@/components/FooterNew';
 import SubjectHero from '@/components/subjects/SubjectHero';
+import TrustedSchoolsStrip from '@/components/subjects/TrustedSchoolsStrip';
 import { Button } from '@/components/ui/button';
 import { TrendingUp, Briefcase, LineChart, CheckCircle, ArrowRight, Quote, Target, Info } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import SEO from '@/components/SEO';
+
+const businessTrustedSchools = [
+  'Freeman Catholic College',
+  'Mary MacKillop Catholic College',
+  'Canley Vale High School',
+  'Fairvale High School',
+  'Patrician Brothers Catholic College Fairfield',
+  'St John Park High School',
+  'Al-Faisal College',
+];
 
 const BusinessStudies = () => {
   const topics = [
@@ -83,7 +94,11 @@ const BusinessStudies = () => {
         proofPills={['Real case studies', 'Marked feedback', 'Clear HSC pathway']}
         exploreTargetId="business-modules"
         placeholderLabel="Business Studies classroom"
+        backgroundImageSrc="/images/subjects/business-studies/hero-background.png"
+        backgroundImageAlt="DA Tuition Business Studies classroom"
       />
+
+      <TrustedSchoolsStrip schools={businessTrustedSchools} />
 
       {/* Learning Formats Callout */}
       <section className="py-12">
