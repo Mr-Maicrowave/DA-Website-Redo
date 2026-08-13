@@ -38,7 +38,7 @@ const featuredStories: Story[] = [
     slug: 'principal-interview',
     title: 'Interview with the Principal',
     category: 'Inside DA',
-    excerpt: 'A DA Family HQ conversation about care, confidence, and why tutoring should feel personal.',
+    excerpt: 'Beyond the classroom: our Principal shares the thinking, values and purpose behind the DA Tuition experience.',
     image: '/Articles/images/newsletter/principal-interview-mic.png',
     pageCount: 5,
     layout: 'large',
@@ -164,10 +164,6 @@ const ArticleCard = ({
         <span className="newsletter-card__category">{story.category}</span>
         <h3>{story.title}</h3>
         <p>{story.excerpt}</p>
-        <div className="newsletter-card__meta">
-          <span className="newsletter-card__mark">DA</span>
-          <span>DA Tuition Team</span>
-        </div>
       </div>
     </button>
   );
@@ -227,10 +223,6 @@ const ArticlePreview = ({ story, onClose }: { story: Story; onClose: () => void 
   return (
     <div className="article-preview" role="dialog" aria-modal="true" aria-label={`${story.title} preview`} onClick={onClose}>
       <div className="article-preview__chrome" onClick={(event) => event.stopPropagation()}>
-        <div>
-          <span>{story.category}</span>
-          <h2>{story.title}</h2>
-        </div>
         <button type="button" aria-label="Close preview" onClick={onClose}>
           <X size={24} />
         </button>
@@ -296,7 +288,6 @@ const Articles = () => {
         <section id="featured" className="newsletter-section">
           <div className="section-heading">
             <h2><Sparkles size={21} /> Featured Stories</h2>
-            <a href="#latest">View all features <ArrowRight size={16} /></a>
           </div>
           <div className="featured-grid">
             {featuredStories.map((story, index) => (
@@ -308,7 +299,6 @@ const Articles = () => {
         <section id="latest" className="newsletter-section">
           <div className="section-heading">
             <h2>Latest News</h2>
-            <a href="#guides">View all news <ArrowRight size={16} /></a>
           </div>
           <div className="latest-layout">
             <ArticleCard story={latestStories[0]} variant="feature" onOpen={setPreviewStory} />
@@ -323,7 +313,6 @@ const Articles = () => {
         <section id="guides" className="newsletter-section">
           <div className="section-heading">
             <h2>Practical Guides</h2>
-            <a href="#community">View all guides <ArrowRight size={16} /></a>
           </div>
           <div className="guides-grid">
             {guides.map((story, index) => (
@@ -442,7 +431,7 @@ const Articles = () => {
 
         .section-heading {
           display: grid;
-          grid-template-columns: auto 1fr auto;
+          grid-template-columns: auto 1fr;
           align-items: center;
           gap: 18px;
           margin-bottom: 22px;
@@ -466,16 +455,6 @@ const Articles = () => {
           font-size: clamp(1.9rem, 4vw, 2.9rem);
           line-height: 0.95;
           text-transform: uppercase;
-        }
-
-        .section-heading a {
-          display: inline-flex;
-          align-items: center;
-          gap: 8px;
-          color: #a66316;
-          font-family: ${serif};
-          font-size: 1rem;
-          text-decoration: none;
         }
 
         .featured-grid,
@@ -549,6 +528,10 @@ const Articles = () => {
           min-height: 330px;
         }
 
+        .featured-grid .newsletter-card__imageWrap {
+          height: 330px;
+        }
+
         .newsletter-card--compact .newsletter-card__imageWrap {
           min-height: 100%;
         }
@@ -597,30 +580,6 @@ const Articles = () => {
           line-height: 1.58;
         }
 
-        .newsletter-card__meta {
-          display: flex;
-          align-items: center;
-          gap: 10px;
-          flex-wrap: wrap;
-          margin-top: auto;
-          color: ${C.ink};
-          font-family: ${serif};
-          font-size: 0.92rem;
-        }
-
-        .newsletter-card__mark {
-          display: inline-grid;
-          place-items: center;
-          width: 28px;
-          height: 28px;
-          border-radius: 50%;
-          background: ${C.navy};
-          color: ${C.goldSoft};
-          font-family: ${serif};
-          font-size: 0.76rem;
-          font-weight: 800;
-        }
-
         .guides-grid {
           grid-template-columns: repeat(4, minmax(0, 1fr));
         }
@@ -636,8 +595,8 @@ const Articles = () => {
           align-items: center;
           gap: clamp(1.5rem, 4vw, 3rem);
           overflow: hidden;
-          margin: clamp(46px, 7vw, 78px) 0 20px;
-          padding: clamp(2rem, 4vw, 3.25rem);
+          margin: clamp(34px, 5vw, 54px) 0 20px;
+          padding: clamp(1.25rem, 2.8vw, 2rem) clamp(2rem, 4vw, 3.25rem);
           border-radius: 10px;
           background:
             radial-gradient(circle at 16% 26%, rgba(227, 187, 102, 0.2), transparent 28%),
@@ -659,7 +618,7 @@ const Articles = () => {
           z-index: 1;
           display: grid;
           place-items: center;
-          min-height: 220px;
+          min-height: 190px;
         }
 
         .community-book img {
@@ -741,8 +700,6 @@ const Articles = () => {
           position: fixed;
           inset: 0;
           z-index: 2000;
-          display: grid;
-          grid-template-rows: auto 1fr;
           background:
             radial-gradient(circle at 18% 16%, rgba(122, 78, 132, 0.2), transparent 32%),
             rgba(3, 10, 20, 0.9);
@@ -751,29 +708,10 @@ const Articles = () => {
         }
 
         .article-preview__chrome {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          gap: 20px;
-          width: min(1120px, calc(100% - 36px));
-          margin: 0 auto;
-          padding: 18px 0 10px;
-        }
-
-        .article-preview__chrome span {
-          display: block;
-          color: ${C.goldSoft};
-          font-size: 0.72rem;
-          font-weight: 900;
-          letter-spacing: 0.18em;
-          text-transform: uppercase;
-        }
-
-        .article-preview__chrome h2 {
-          margin: 3px 0 0;
-          font-family: ${serif};
-          font-size: clamp(1.35rem, 3vw, 2.4rem);
-          line-height: 1;
+          position: fixed;
+          top: 16px;
+          right: clamp(16px, 4vw, 54px);
+          z-index: 3;
         }
 
         .article-preview__chrome button {
@@ -789,6 +727,7 @@ const Articles = () => {
         }
 
         .article-preview__scroll {
+          height: 100vh;
           overflow-y: auto;
           overscroll-behavior: contain;
           scroll-snap-type: y mandatory;
@@ -796,12 +735,12 @@ const Articles = () => {
         }
 
         .article-preview__page {
-          min-height: calc(100vh - 86px);
+          min-height: 100vh;
           display: grid;
           align-content: center;
           justify-items: center;
-          gap: 10px;
-          padding: 18px 0 34px;
+          gap: 8px;
+          padding: 8px 0 22px;
           scroll-snap-align: start;
         }
 
@@ -814,7 +753,7 @@ const Articles = () => {
         .article-preview__page img {
           width: auto;
           max-width: min(94vw, 980px);
-          max-height: calc(100vh - 158px);
+          max-height: calc(100vh - 76px);
           object-fit: contain;
           background: white;
           box-shadow: 0 26px 80px rgba(0, 0, 0, 0.38);
@@ -831,12 +770,12 @@ const Articles = () => {
         .article-preview__end > div {
           display: grid;
           justify-items: center;
-          gap: clamp(1rem, 2.2vw, 1.7rem);
-          width: min(1040px, 92vw);
-          min-height: min(640px, calc(100vh - 156px));
-          padding: clamp(2.4rem, 5.5vw, 5.6rem);
+          gap: clamp(0.55rem, 1.2vw, 0.95rem);
+          width: min(620px, 84vw);
+          min-height: min(360px, calc(100vh - 136px));
+          padding: clamp(1.5rem, 3vw, 2.7rem);
           border: 1.5px solid rgba(227, 187, 102, 0.82);
-          border-radius: 24px;
+          border-radius: 18px;
           background:
             radial-gradient(circle at 72% 4%, rgba(98, 142, 202, 0.45), transparent 24%),
             radial-gradient(circle at 50% 18%, rgba(227, 187, 102, 0.14), transparent 24%),
@@ -850,7 +789,7 @@ const Articles = () => {
 
         .article-preview__end i {
           position: relative;
-          width: min(310px, 46vw);
+          width: min(210px, 42vw);
           height: 1px;
           margin-bottom: 0.25rem;
           background: linear-gradient(90deg, transparent, rgba(227, 187, 102, 0.58), transparent);
@@ -879,7 +818,7 @@ const Articles = () => {
         .article-preview__end h3 {
           margin: 0;
           font-family: ${serif};
-          font-size: clamp(3rem, 8vw, 7.2rem);
+          font-size: clamp(2rem, 4.5vw, 3.6rem);
           line-height: 0.95;
           font-weight: 500;
           letter-spacing: 0;
@@ -889,7 +828,7 @@ const Articles = () => {
           width: min(660px, 86vw);
           margin: 0;
           color: rgba(255, 250, 240, 0.78);
-          font-size: clamp(1rem, 2vw, 1.45rem);
+          font-size: clamp(0.82rem, 1.35vw, 1rem);
           line-height: 1.5;
           letter-spacing: 0;
           text-transform: none;
@@ -899,15 +838,15 @@ const Articles = () => {
           display: inline-flex;
           align-items: center;
           justify-content: center;
-          gap: 24px;
-          min-width: min(440px, 84vw);
-          min-height: 72px;
-          padding: 0 42px;
+          gap: 14px;
+          min-width: min(310px, 76vw);
+          min-height: 52px;
+          padding: 0 28px;
           border-radius: 999px;
           background: linear-gradient(135deg, #f7d982, #d2a232 58%, #b9841c);
           color: ${C.ink};
           font-weight: 900;
-          font-size: clamp(1rem, 1.8vw, 1.35rem);
+          font-size: clamp(0.92rem, 1.35vw, 1.05rem);
           text-decoration: none;
           box-shadow:
             inset 0 1px 0 rgba(255, 255, 255, 0.42),
