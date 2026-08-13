@@ -774,6 +774,7 @@ const Articles = () => {
           width: min(620px, 84vw);
           min-height: min(360px, calc(100vh - 136px));
           padding: clamp(1.5rem, 3vw, 2.7rem);
+          box-sizing: border-box;
           border: 1.5px solid rgba(227, 187, 102, 0.82);
           border-radius: 18px;
           background:
@@ -817,6 +818,7 @@ const Articles = () => {
 
         .article-preview__end h3 {
           margin: 0;
+          max-width: 100%;
           font-family: ${serif};
           font-size: clamp(2rem, 4.5vw, 3.6rem);
           line-height: 0.95;
@@ -825,13 +827,15 @@ const Articles = () => {
         }
 
         .article-preview__end p {
-          width: min(660px, 86vw);
+          width: min(100%, 520px);
           margin: 0;
           color: rgba(255, 250, 240, 0.78);
-          font-size: clamp(0.82rem, 1.35vw, 1rem);
+          font-size: clamp(0.8rem, 1.18vw, 0.95rem);
           line-height: 1.5;
           letter-spacing: 0;
+          overflow-wrap: break-word;
           text-transform: none;
+          text-wrap: balance;
         }
 
         .article-preview__end a {
