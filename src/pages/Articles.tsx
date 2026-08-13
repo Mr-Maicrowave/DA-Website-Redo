@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { ArrowRight, CalendarDays, Search, Sparkles } from 'lucide-react';
+import { ArrowRight, Sparkles } from 'lucide-react';
 import NavigationNew from '@/components/NavigationNew';
 import FooterNew from '@/components/FooterNew';
 import SEO from '@/components/SEO';
@@ -10,7 +10,6 @@ type Story = {
   excerpt: string;
   image: string;
   href: string;
-  date: string;
   layout?: 'large' | 'wide' | 'small' | 'text';
 };
 
@@ -33,26 +32,23 @@ const featuredStories: Story[] = [
     title: 'The HSC Formula',
     category: 'Exam Prep',
     excerpt: 'A reflective guide to balancing hard work, vulnerability, and purpose through the HSC year.',
-    image: '/Articles/images/newsletter/generated/hsc-formula.png',
-    href: '/articles/hsc-formula',
-    date: 'May 26, 2025',
+    image: '/images/community/student_typing_laptop.jpg',
+    href: '/Articles/newsletter-pdfs/hsc-formula.pdf',
     layout: 'large',
   },
   {
     title: 'The Journey',
     category: 'Student Success',
     excerpt: 'A 99.25 ATAR story about perseverance, support, and believing achievement is possible.',
-    image: '/Articles/images/newsletter/generated/the-journey.png',
-    href: '/articles/the-journey',
-    date: 'May 26, 2025',
+    image: '/images/community/student_laptop_smile.jpg',
+    href: '/Articles/newsletter-pdfs/the-journey.pdf',
   },
   {
     title: 'High Achiever: Want to Be the Best?',
     category: 'Learning Strategies',
     excerpt: 'What top-performing students do differently, and how consistency becomes a craft.',
-    image: '/Articles/images/newsletter/generated/high-achiever.png',
-    href: '/articles/high-achiever',
-    date: 'May 25, 2025',
+    image: '/images/community/teen_girls_session.jpg',
+    href: '/Articles/newsletter-pdfs/high-achiever.pdf',
   },
 ];
 
@@ -61,36 +57,32 @@ const latestStories: Story[] = [
     title: 'How Changing Perspectives Unlocks Your Potential',
     category: 'Mindset',
     excerpt: 'A practical reminder that failure is not the end of ability; it can be the start of a stronger method.',
-    image: '/Articles/images/newsletter/generated/changing-perspectives.png',
-    href: '/articles/changing-perspectives',
-    date: 'May 24, 2025',
+    image: '/images/community/teacher_kids_warmth.jpg',
+    href: '/Articles/newsletter-pdfs/changing-perspectives.pdf',
     layout: 'wide',
   },
   {
     title: 'Resilience... Resilience...',
     category: 'Student Life',
     excerpt: 'What bamboo, pressure, and recovery teach students about bending without breaking.',
-    image: '/Articles/images/newsletter/generated/resilience.png',
-    href: '/articles/timeless-story',
-    date: 'May 23, 2025',
+    image: '/images/community/tutor_mentor_girls.jpg',
+    href: '/Articles/newsletter-pdfs/resilience.pdf',
     layout: 'text',
   },
   {
     title: 'To Pick Up, or Not Pick Up the Phone?',
     category: 'Learning Strategies',
     excerpt: 'A student-facing look at dopamine, distraction, and the cost of constant stimulation.',
-    image: '/Articles/images/newsletter/generated/phone-button.png',
-    href: '/articles/phone-button',
-    date: 'May 23, 2025',
+    image: '/images/community/student_attentive.jpg',
+    href: '/Articles/newsletter-pdfs/phone-button.pdf',
     layout: 'text',
   },
   {
     title: "Teacher's Tea Time: Writing with Gru-titude",
     category: 'Inside DA',
     excerpt: "How Mr Danny turns reluctant writers into students who believe their voice matters.",
-    image: '/Articles/images/newsletter/generated/teachers-tea-time.png',
-    href: '/articles/teachers-tea-time',
-    date: 'May 22, 2025',
+    image: '/images/community/tutor_one_on_one.jpg',
+    href: '/Articles/newsletter-pdfs/teachers-tea-time.pdf',
     layout: 'text',
   },
 ];
@@ -100,78 +92,43 @@ const guides: Story[] = [
     title: "Unlocking Your Child's Inner Writer: Tips for Success",
     category: 'Parent Guide',
     excerpt: 'Research-backed ways to turn blank-page frustration into confidence, choice, and creative momentum.',
-    image: '/Articles/images/newsletter/generated/inner-writer.png',
-    href: '/articles/inner-writer',
-    date: 'May 22, 2025',
+    image: '/images/community/IMG_3068.JPG',
+    href: '/Articles/newsletter-pdfs/inner-writer.pdf',
     layout: 'wide',
   },
   {
     title: 'Find Out More About Your Learning Style',
     category: 'Guide',
     excerpt: 'Visual, auditory, and kinaesthetic strategies that help students study in a way that actually sticks.',
-    image: '/Articles/images/newsletter/generated/learning-styles.png',
-    href: '/articles/learning-styles',
-    date: 'May 21, 2025',
+    image: '/images/community/class_smiling_camera.jpg',
+    href: '/Articles/newsletter-pdfs/learning-styles.pdf',
     layout: 'wide',
   },
   {
     title: 'All the Best Art Comes from Colouring Outside the Lines',
     category: 'Mindset',
     excerpt: 'A gentle challenge to escape the all-or-nothing trap and see mistakes as growth signals.',
-    image: '/Articles/images/newsletter/generated/all-or-nothing.png',
-    href: '/articles/all-or-nothing',
-    date: 'May 20, 2025',
+    image: '/images/community/class_hands_raised.jpg',
+    href: '/Articles/newsletter-pdfs/outside-the-lines.pdf',
   },
   {
     title: 'Interview with the Principal',
     category: 'Inside DA',
     excerpt: 'A DA Family HQ conversation about care, confidence, and why tutoring should feel personal.',
-    image: '/Articles/images/newsletter/generated/principal-interview.png',
-    href: '/about',
-    date: 'May 19, 2025',
-  },
-  {
-    title: 'Study Tips for Academic Success: A Guide for Students',
-    category: 'Practical Guide',
-    excerpt: 'Focused study habits that help students manage time, reduce stress, and build steady progress.',
-    image: '/Articles/images/newsletter/generated/study-tips.png',
-    href: '/articles/study-tips-for-success',
-    date: 'May 18, 2025',
-  },
-  {
-    title: 'NAPLAN Preparation: A Complete Guide for Students and Parents',
-    category: 'Exam Prep',
-    excerpt: 'A calm, structured guide to preparing with confidence instead of last-minute pressure.',
-    image: '/Articles/images/newsletter/generated/naplan.png',
-    href: '/articles/preparing-for-naplan',
-    date: 'May 17, 2025',
-  },
-  {
-    title: "Choosing the Right Tutor: A Parent's Complete Guide",
-    category: 'Parent Guide',
-    excerpt: 'How to identify teaching support that is caring, skilled, and genuinely useful for your child.',
-    image: '/Articles/images/newsletter/generated/choosing-tutor.png',
-    href: '/articles/choosing-right-tutor',
-    date: 'May 16, 2025',
-  },
-  {
-    title: 'Mastering Reading Comprehension: Strategies for Every Student',
-    category: 'Guide',
-    excerpt: 'Practical reading strategies that improve focus, inference, vocabulary, and analytical thinking.',
-    image: '/Articles/images/newsletter/generated/reading-comprehension.png',
-    href: '/articles/reading-comprehension-strategies',
-    date: 'May 15, 2025',
-    layout: 'text',
+    image: '/principal-interview/0X1A7489.JPG',
+    href: '/Articles/newsletter-pdfs/principal-interview.pdf',
   },
 ];
 
 const ArticleCard = ({ story, variant = 'standard' }: { story: Story; variant?: 'standard' | 'feature' | 'compact' | 'text' }) => {
   const isText = variant === 'text';
   return (
-    <Link
-      to={story.href}
+    <a
+      href={story.href}
+      target="_blank"
+      rel="noreferrer"
       className={`newsletter-card newsletter-card--${variant}`}
-      aria-label={`Read ${story.title}`}
+      aria-label={`Open ${story.title} PDF`}
     >
       {!isText && (
         <div className="newsletter-card__imageWrap">
@@ -185,11 +142,9 @@ const ArticleCard = ({ story, variant = 'standard' }: { story: Story; variant?: 
         <div className="newsletter-card__meta">
           <span className="newsletter-card__mark">DA</span>
           <span>DA Tuition Team</span>
-          <span aria-hidden="true">•</span>
-          <span>{story.date}</span>
         </div>
       </div>
-    </Link>
+    </a>
   );
 };
 
@@ -205,13 +160,11 @@ const Articles = () => {
 
       <main className="newsletter-shell">
         <header className="newsletter-masthead">
-          <div className="newsletter-topbar">
-            <span><CalendarDays size={16} /> Monday, May 26, 2025</span>
+          <div className="newsletter-topbar newsletter-topbar--single">
             <Link to="/" className="newsletter-brand" aria-label="DA Tuition home">
               <img src="/images/da-logo.png" alt="" />
               <strong>DA TUITION</strong>
             </Link>
-            <span><Search size={16} /> Search</span>
           </div>
           <h1>DA NEWSLETTER</h1>
           <div className="newsletter-subtitle">
@@ -232,7 +185,7 @@ const Articles = () => {
         <section id="featured" className="newsletter-section">
           <div className="section-heading">
             <h2><Sparkles size={21} /> Featured Stories</h2>
-            <Link to="/articles/hsc-formula">View all features <ArrowRight size={16} /></Link>
+            <a href="#latest">View all features <ArrowRight size={16} /></a>
           </div>
           <div className="featured-grid">
             {featuredStories.map((story, index) => (
@@ -244,7 +197,7 @@ const Articles = () => {
         <section id="latest" className="newsletter-section">
           <div className="section-heading">
             <h2>Latest News</h2>
-            <Link to="/articles/high-achiever">View all news <ArrowRight size={16} /></Link>
+            <a href="#guides">View all news <ArrowRight size={16} /></a>
           </div>
           <div className="latest-layout">
             <ArticleCard story={latestStories[0]} variant="feature" />
@@ -259,7 +212,7 @@ const Articles = () => {
         <section id="guides" className="newsletter-section">
           <div className="section-heading">
             <h2>Practical Guides</h2>
-            <Link to="/articles/inner-writer">View all guides <ArrowRight size={16} /></Link>
+            <a href="#community">View all guides <ArrowRight size={16} /></a>
           </div>
           <div className="guides-grid">
             {guides.map((story, index) => (
@@ -274,7 +227,7 @@ const Articles = () => {
 
         <section id="community" className="community-banner" aria-labelledby="community-title">
           <div className="community-book" aria-hidden="true">
-            <img src="/Articles/images/newsletter/da-community-book.png" alt="" />
+            <img src="/Articles/images/newsletter/da-community-book-cutout.png" alt="" />
           </div>
           <div className="community-copy">
             <span>Stay inspired. Stay ahead.</span>
@@ -285,11 +238,6 @@ const Articles = () => {
               <input id="newsletter-email" type="email" placeholder="Enter your email address" />
               <button type="submit">Subscribe</button>
             </form>
-          </div>
-          <div className="community-badges" aria-hidden="true">
-            <span>Expert Insights</span>
-            <span>Practical Strategies</span>
-            <span>Student Success Stories</span>
           </div>
         </section>
       </main>
@@ -320,23 +268,12 @@ const Articles = () => {
 
         .newsletter-topbar {
           display: grid;
-          grid-template-columns: 1fr auto 1fr;
-          align-items: center;
-          gap: 18px;
+          grid-template-columns: 1fr;
+          place-items: center;
           border-bottom: 1px solid ${C.line};
           padding-bottom: 16px;
           font-size: 0.9rem;
           color: ${C.ink};
-        }
-
-        .newsletter-topbar > span {
-          display: inline-flex;
-          align-items: center;
-          gap: 8px;
-        }
-
-        .newsletter-topbar > span:last-child {
-          justify-self: end;
         }
 
         .newsletter-brand {
@@ -494,15 +431,6 @@ const Articles = () => {
           flex-direction: column;
         }
 
-        .newsletter-card--feature:first-child {
-          grid-column: span 1;
-        }
-
-        .newsletter-card--compact {
-          grid-column: span 1;
-          min-height: 320px;
-        }
-
         .newsletter-card--compact,
         .newsletter-card--text {
           display: grid;
@@ -518,7 +446,7 @@ const Articles = () => {
         .newsletter-card--text:hover {
           transform: none;
           box-shadow: none;
-          background: rgba(255,255,255,0.24);
+          background: rgba(255, 255, 255, 0.24);
         }
 
         .newsletter-card__imageWrap {
@@ -540,6 +468,7 @@ const Articles = () => {
           min-height: inherit;
           display: block;
           object-fit: cover;
+          filter: saturate(1.04) contrast(1.02);
         }
 
         .newsletter-card__body {
@@ -612,7 +541,7 @@ const Articles = () => {
         .community-banner {
           position: relative;
           display: grid;
-          grid-template-columns: minmax(180px, 0.8fr) minmax(320px, 1.4fr) auto;
+          grid-template-columns: minmax(210px, 0.72fr) minmax(320px, 1.45fr);
           align-items: center;
           gap: clamp(1.5rem, 4vw, 3rem);
           overflow: hidden;
@@ -637,22 +566,20 @@ const Articles = () => {
         .community-book {
           position: relative;
           z-index: 1;
-          align-self: stretch;
-          min-height: 210px;
-          border-radius: 8px;
-          overflow: hidden;
+          display: grid;
+          place-items: center;
+          min-height: 220px;
         }
 
         .community-book img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-          object-position: 54% 48%;
-          filter: saturate(1.06) contrast(1.03);
+          width: min(100%, 300px);
+          height: auto;
+          max-height: 270px;
+          object-fit: contain;
+          filter: drop-shadow(0 24px 32px rgba(0, 0, 0, 0.36)) saturate(1.08) contrast(1.04);
         }
 
-        .community-copy,
-        .community-badges {
+        .community-copy {
           position: relative;
           z-index: 1;
         }
@@ -716,18 +643,6 @@ const Articles = () => {
           padding: 0 26px;
         }
 
-        .community-badges {
-          display: grid;
-          gap: 13px;
-          color: rgba(255,250,240,0.8);
-          font-size: 0.88rem;
-        }
-
-        .community-badges span {
-          border-left: 1px solid ${C.goldSoft};
-          padding-left: 14px;
-        }
-
         @media (max-width: 1060px) {
           .featured-grid,
           .guides-grid,
@@ -741,11 +656,6 @@ const Articles = () => {
           .community-copy {
             grid-column: span 2;
           }
-
-          .community-badges {
-            grid-column: span 2;
-            grid-template-columns: repeat(3, 1fr);
-          }
         }
 
         @media (max-width: 760px) {
@@ -754,18 +664,12 @@ const Articles = () => {
             padding-top: 98px;
           }
 
-          .newsletter-topbar,
           .newsletter-tabs,
           .featured-grid,
           .guides-grid,
           .latest-layout,
           .community-banner {
             grid-template-columns: 1fr;
-          }
-
-          .newsletter-topbar > span,
-          .newsletter-topbar > span:last-child {
-            justify-self: center;
           }
 
           .newsletter-tabs {
@@ -784,14 +688,12 @@ const Articles = () => {
           .newsletter-card--text,
           .guides-grid .newsletter-card--compact,
           .latest-stack,
-          .community-copy,
-          .community-badges {
+          .community-copy {
             grid-column: auto;
             grid-template-columns: 1fr;
           }
 
-          .community-form,
-          .community-badges {
+          .community-form {
             grid-template-columns: 1fr;
           }
         }
