@@ -251,9 +251,11 @@ const ArticlePreview = ({ story, onClose }: { story: Story; onClose: () => void 
 
         <section className="article-preview__page article-preview__end" aria-label="End of preview">
           <div onClick={(event) => event.stopPropagation()}>
+            <i aria-hidden="true" />
             <span>End of Preview</span>
-            <h3>Click here to find out more</h3>
-            <a href="/book-interview">Enrolment Enquiry <ArrowRight size={18} /></a>
+            <h3>Discover More<br />With DA Tuition</h3>
+            <p>Explore the full DA Tuition experience and discover how we can help you achieve your academic goals.</p>
+            <a href="/book-interview">Book a Consultation <ArrowRight size={24} /></a>
           </div>
         </section>
       </div>
@@ -827,43 +829,88 @@ const Articles = () => {
         .article-preview__end > div {
           display: grid;
           justify-items: center;
-          gap: 18px;
-          width: min(620px, 92vw);
-          padding: clamp(2rem, 5vw, 4rem);
-          border: 1px solid rgba(227, 187, 102, 0.36);
-          border-radius: 10px;
+          gap: clamp(1rem, 2.2vw, 1.7rem);
+          width: min(1040px, 92vw);
+          min-height: min(640px, calc(100vh - 156px));
+          padding: clamp(2.4rem, 5.5vw, 5.6rem);
+          border: 1.5px solid rgba(227, 187, 102, 0.82);
+          border-radius: 24px;
           background:
-            radial-gradient(circle at 50% 0%, rgba(227,187,102,0.18), transparent 44%),
-            linear-gradient(135deg, rgba(7, 27, 52, 0.96), rgba(16, 42, 74, 0.92));
+            radial-gradient(circle at 72% 4%, rgba(98, 142, 202, 0.45), transparent 24%),
+            radial-gradient(circle at 50% 18%, rgba(227, 187, 102, 0.14), transparent 24%),
+            linear-gradient(135deg, rgba(2, 15, 31, 0.98), rgba(10, 33, 62, 0.98) 58%, rgba(3, 20, 40, 0.98));
           text-align: center;
-          box-shadow: 0 26px 80px rgba(0, 0, 0, 0.32);
+          color: #fffaf0;
+          box-shadow:
+            inset 0 0 80px rgba(255, 255, 255, 0.03),
+            0 30px 90px rgba(0, 0, 0, 0.38);
+        }
+
+        .article-preview__end i {
+          position: relative;
+          width: min(310px, 46vw);
+          height: 1px;
+          margin-bottom: 0.25rem;
+          background: linear-gradient(90deg, transparent, rgba(227, 187, 102, 0.58), transparent);
+        }
+
+        .article-preview__end i::after {
+          content: "";
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          background: #f5d27a;
+          box-shadow: 0 0 22px rgba(245, 210, 122, 0.92);
+          transform: translate(-50%, -50%) rotate(45deg);
         }
 
         .article-preview__end span {
           color: ${C.goldSoft};
           font-weight: 900;
-          letter-spacing: 0.16em;
+          letter-spacing: 0.22em;
           text-transform: uppercase;
         }
 
         .article-preview__end h3 {
           margin: 0;
           font-family: ${serif};
-          font-size: clamp(2rem, 5vw, 4rem);
+          font-size: clamp(3rem, 8vw, 7.2rem);
           line-height: 0.95;
+          font-weight: 500;
+          letter-spacing: 0;
+        }
+
+        .article-preview__end p {
+          width: min(660px, 86vw);
+          margin: 0;
+          color: rgba(255, 250, 240, 0.78);
+          font-size: clamp(1rem, 2vw, 1.45rem);
+          line-height: 1.5;
+          letter-spacing: 0;
+          text-transform: none;
         }
 
         .article-preview__end a {
           display: inline-flex;
           align-items: center;
-          gap: 10px;
-          min-height: 48px;
-          padding: 0 24px;
+          justify-content: center;
+          gap: 24px;
+          min-width: min(440px, 84vw);
+          min-height: 72px;
+          padding: 0 42px;
           border-radius: 999px;
-          background: linear-gradient(135deg, #f0c66b, #c7942d);
+          background: linear-gradient(135deg, #f7d982, #d2a232 58%, #b9841c);
           color: ${C.ink};
           font-weight: 900;
+          font-size: clamp(1rem, 1.8vw, 1.35rem);
           text-decoration: none;
+          box-shadow:
+            inset 0 1px 0 rgba(255, 255, 255, 0.42),
+            0 0 26px rgba(227, 187, 102, 0.42),
+            0 18px 42px rgba(0, 0, 0, 0.22);
         }
 
         @media (max-width: 1060px) {
