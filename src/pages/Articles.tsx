@@ -663,12 +663,14 @@ const Articles = () => {
         }
 
         .community-book img {
-          width: min(100%, 330px);
+          width: min(40vw, 540px);
           height: auto;
-          max-height: 280px;
+          max-width: none;
+          max-height: 460px;
           object-fit: contain;
           filter: drop-shadow(0 24px 32px rgba(0, 0, 0, 0.36)) saturate(1.08) contrast(1.04);
           mix-blend-mode: lighten;
+          transform: translateX(-25%);
         }
 
         .community-copy {
