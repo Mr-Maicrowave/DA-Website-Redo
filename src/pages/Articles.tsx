@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ArrowRight, Sparkles, X } from 'lucide-react';
 import NavigationNew from '@/components/NavigationNew';
 import FooterNew from '@/components/FooterNew';
@@ -174,13 +174,45 @@ const ArticleCard = ({
 };
 
 const ArticlePreview = ({ story, onClose }: { story: Story; onClose: () => void }) => {
+  const scrollRef = useRef<HTMLDivElement | null>(null);
+
   useEffect(() => {
     const originalOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
 
+    const movePreviewPage = (direction: 1 | -1) => {
+      const scroller = scrollRef.current;
+      if (!scroller) return;
+
+      const pages = Array.from(scroller.querySelectorAll<HTMLElement>('.article-preview__page'));
+      if (!pages.length) return;
+
+      const currentIndex = pages.reduce(
+        (closest, page, index) => {
+          const distance = Math.abs(page.offsetTop - scroller.scrollTop);
+          return distance < closest.distance ? { index, distance } : closest;
+        },
+        { index: 0, distance: Number.POSITIVE_INFINITY },
+      ).index;
+
+      const nextIndex = Math.min(Math.max(currentIndex + direction, 0), pages.length - 1);
+      pages[nextIndex]?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    };
+
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         onClose();
+        return;
+      }
+
+      if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
+        event.preventDefault();
+        movePreviewPage(1);
+      }
+
+      if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
+        event.preventDefault();
+        movePreviewPage(-1);
       }
     };
 
@@ -204,19 +236,21 @@ const ArticlePreview = ({ story, onClose }: { story: Story; onClose: () => void 
         </button>
       </div>
 
-      <div className="article-preview__scroll" onClick={(event) => event.stopPropagation()}>
+      <div className="article-preview__scroll" ref={scrollRef}>
         {Array.from({ length: story.pageCount }, (_, index) => {
           const page = index + 1;
           return (
             <section className="article-preview__page" key={`${story.slug}-${page}`} aria-label={`${story.title} page ${page}`}>
-              <img src={pageImage(story.slug, page, story.pageCount)} alt={`${story.title} page ${page}`} />
-              <p>{page} of {story.pageCount}</p>
+              <div className="article-preview__sheet" onClick={(event) => event.stopPropagation()}>
+                <img src={pageImage(story.slug, page, story.pageCount)} alt={`${story.title} page ${page}`} />
+                <p>{page} of {story.pageCount}</p>
+              </div>
             </section>
           );
         })}
 
         <section className="article-preview__page article-preview__end" aria-label="End of preview">
-          <div>
+          <div onClick={(event) => event.stopPropagation()}>
             <span>End of Preview</span>
             <h3>Click here to find out more</h3>
             <a href="/book-interview">Enrolment Enquiry <ArrowRight size={18} /></a>
@@ -765,6 +799,12 @@ const Articles = () => {
           gap: 10px;
           padding: 18px 0 34px;
           scroll-snap-align: start;
+        }
+
+        .article-preview__sheet {
+          display: grid;
+          justify-items: center;
+          gap: 10px;
         }
 
         .article-preview__page img {
