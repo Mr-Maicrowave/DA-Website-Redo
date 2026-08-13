@@ -1,15 +1,16 @@
-import { Link } from 'react-router-dom';
-import { ArrowRight, Sparkles } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { ArrowRight, Sparkles, X } from 'lucide-react';
 import NavigationNew from '@/components/NavigationNew';
 import FooterNew from '@/components/FooterNew';
 import SEO from '@/components/SEO';
 
 type Story = {
+  slug: string;
   title: string;
   category: string;
   excerpt: string;
   image: string;
-  href: string;
+  pageCount: number;
   layout?: 'large' | 'wide' | 'small' | 'text';
 };
 
@@ -27,108 +28,132 @@ const C = {
 const serif = "'Cormorant Garamond', Georgia, serif";
 const sans = "'DM Sans', 'Inter', sans-serif";
 
+const pageImage = (slug: string, page: number, total: number) => {
+  const filePage = total >= 10 ? String(page).padStart(2, '0') : String(page);
+  return `/Articles/newsletter-pages/${slug}/page-${filePage}.png`;
+};
+
 const featuredStories: Story[] = [
   {
-    title: 'The HSC Formula',
-    category: 'Exam Prep',
-    excerpt: 'A reflective guide to balancing hard work, vulnerability, and purpose through the HSC year.',
-    image: '/images/community/student_typing_laptop.jpg',
-    href: '/Articles/newsletter-pdfs/hsc-formula.pdf',
+    slug: 'principal-interview',
+    title: 'Interview with the Principal',
+    category: 'Inside DA',
+    excerpt: 'A DA Family HQ conversation about care, confidence, and why tutoring should feel personal.',
+    image: '/principal-interview/0X1A7489.JPG',
+    pageCount: 5,
     layout: 'large',
   },
   {
+    slug: 'teachers-tea-time',
+    title: "Teacher's Tea Time: Writing with Gru-titude",
+    category: 'Inside DA',
+    excerpt: "How Mr Danny turns reluctant writers into students who believe their voice matters.",
+    image: '/images/community/tutor_one_on_one.jpg',
+    pageCount: 3,
+  },
+  {
+    slug: 'the-journey',
     title: 'The Journey',
     category: 'Student Success',
     excerpt: 'A 99.25 ATAR story about perseverance, support, and believing achievement is possible.',
     image: '/images/community/student_laptop_smile.jpg',
-    href: '/Articles/newsletter-pdfs/the-journey.pdf',
-  },
-  {
-    title: 'High Achiever: Want to Be the Best?',
-    category: 'Learning Strategies',
-    excerpt: 'What top-performing students do differently, and how consistency becomes a craft.',
-    image: '/images/community/teen_girls_session.jpg',
-    href: '/Articles/newsletter-pdfs/high-achiever.pdf',
+    pageCount: 1,
   },
 ];
 
 const latestStories: Story[] = [
   {
-    title: 'How Changing Perspectives Unlocks Your Potential',
+    slug: 'outside-the-lines',
+    title: 'All the Best Art Comes from Colouring Outside the Lines',
     category: 'Mindset',
-    excerpt: 'A practical reminder that failure is not the end of ability; it can be the start of a stronger method.',
-    image: '/images/community/teacher_kids_warmth.jpg',
-    href: '/Articles/newsletter-pdfs/changing-perspectives.pdf',
+    excerpt: 'A gentle challenge to escape the all-or-nothing trap and see mistakes as growth signals.',
+    image: '/images/community/class_hands_raised.jpg',
+    pageCount: 2,
     layout: 'wide',
   },
   {
-    title: 'Resilience... Resilience...',
-    category: 'Student Life',
-    excerpt: 'What bamboo, pressure, and recovery teach students about bending without breaking.',
-    image: '/images/community/tutor_mentor_girls.jpg',
-    href: '/Articles/newsletter-pdfs/resilience.pdf',
-    layout: 'text',
-  },
-  {
+    slug: 'phone-button',
     title: 'To Pick Up, or Not Pick Up the Phone?',
     category: 'Learning Strategies',
     excerpt: 'A student-facing look at dopamine, distraction, and the cost of constant stimulation.',
     image: '/images/community/student_attentive.jpg',
-    href: '/Articles/newsletter-pdfs/phone-button.pdf',
+    pageCount: 2,
     layout: 'text',
   },
   {
-    title: "Teacher's Tea Time: Writing with Gru-titude",
-    category: 'Inside DA',
-    excerpt: "How Mr Danny turns reluctant writers into students who believe their voice matters.",
-    image: '/images/community/tutor_one_on_one.jpg',
-    href: '/Articles/newsletter-pdfs/teachers-tea-time.pdf',
+    slug: 'hsc-formula',
+    title: 'The HSC Formula',
+    category: 'Exam Prep',
+    excerpt: 'A reflective guide to balancing hard work, vulnerability, and purpose through the HSC year.',
+    image: '/images/community/student_typing_laptop.jpg',
+    pageCount: 1,
+    layout: 'text',
+  },
+  {
+    slug: 'resilience',
+    title: 'Resilience... Resilience...',
+    category: 'Student Life',
+    excerpt: 'What bamboo, pressure, and recovery teach students about bending without breaking.',
+    image: '/images/community/tutor_mentor_girls.jpg',
+    pageCount: 1,
     layout: 'text',
   },
 ];
 
 const guides: Story[] = [
   {
+    slug: 'changing-perspectives',
+    title: 'How Changing Perspectives Unlocks Your Potential',
+    category: 'Mindset',
+    excerpt: 'A practical reminder that failure is not the end of ability; it can be the start of a stronger method.',
+    image: '/images/community/teacher_kids_warmth.jpg',
+    pageCount: 2,
+    layout: 'wide',
+  },
+  {
+    slug: 'inner-writer',
     title: "Unlocking Your Child's Inner Writer: Tips for Success",
     category: 'Parent Guide',
     excerpt: 'Research-backed ways to turn blank-page frustration into confidence, choice, and creative momentum.',
     image: '/images/community/IMG_3068.JPG',
-    href: '/Articles/newsletter-pdfs/inner-writer.pdf',
+    pageCount: 3,
     layout: 'wide',
   },
   {
+    slug: 'learning-styles',
     title: 'Find Out More About Your Learning Style',
     category: 'Guide',
     excerpt: 'Visual, auditory, and kinaesthetic strategies that help students study in a way that actually sticks.',
     image: '/images/community/class_smiling_camera.jpg',
-    href: '/Articles/newsletter-pdfs/learning-styles.pdf',
-    layout: 'wide',
+    pageCount: 1,
   },
   {
-    title: 'All the Best Art Comes from Colouring Outside the Lines',
-    category: 'Mindset',
-    excerpt: 'A gentle challenge to escape the all-or-nothing trap and see mistakes as growth signals.',
-    image: '/images/community/class_hands_raised.jpg',
-    href: '/Articles/newsletter-pdfs/outside-the-lines.pdf',
-  },
-  {
-    title: 'Interview with the Principal',
-    category: 'Inside DA',
-    excerpt: 'A DA Family HQ conversation about care, confidence, and why tutoring should feel personal.',
-    image: '/principal-interview/0X1A7489.JPG',
-    href: '/Articles/newsletter-pdfs/principal-interview.pdf',
+    slug: 'high-achiever',
+    title: 'High Achiever: Want to Be the Best?',
+    category: 'Learning Strategies',
+    excerpt: 'What top-performing students do differently, and how consistency becomes a craft.',
+    image: '/images/community/teen_girls_session.jpg',
+    pageCount: 11,
   },
 ];
 
-const ArticleCard = ({ story, variant = 'standard' }: { story: Story; variant?: 'standard' | 'feature' | 'compact' | 'text' }) => {
+const ArticleCard = ({
+  story,
+  variant = 'standard',
+  onOpen,
+}: {
+  story: Story;
+  variant?: 'standard' | 'feature' | 'compact' | 'text';
+  onOpen: (story: Story) => void;
+}) => {
   const isText = variant === 'text';
+
   return (
-    <a
-      href={story.href}
-      target="_blank"
-      rel="noreferrer"
+    <button
+      type="button"
       className={`newsletter-card newsletter-card--${variant}`}
-      aria-label={`Open ${story.title} PDF`}
+      aria-label={`Preview ${story.title}`}
+      onClick={() => onOpen(story)}
     >
       {!isText && (
         <div className="newsletter-card__imageWrap">
@@ -144,11 +169,67 @@ const ArticleCard = ({ story, variant = 'standard' }: { story: Story; variant?: 
           <span>DA Tuition Team</span>
         </div>
       </div>
-    </a>
+    </button>
+  );
+};
+
+const ArticlePreview = ({ story, onClose }: { story: Story; onClose: () => void }) => {
+  useEffect(() => {
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        onClose();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.body.style.overflow = originalOverflow;
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [onClose]);
+
+  return (
+    <div className="article-preview" role="dialog" aria-modal="true" aria-label={`${story.title} preview`} onClick={onClose}>
+      <div className="article-preview__chrome" onClick={(event) => event.stopPropagation()}>
+        <div>
+          <span>{story.category}</span>
+          <h2>{story.title}</h2>
+        </div>
+        <button type="button" aria-label="Close preview" onClick={onClose}>
+          <X size={24} />
+        </button>
+      </div>
+
+      <div className="article-preview__scroll" onClick={(event) => event.stopPropagation()}>
+        {Array.from({ length: story.pageCount }, (_, index) => {
+          const page = index + 1;
+          return (
+            <section className="article-preview__page" key={`${story.slug}-${page}`} aria-label={`${story.title} page ${page}`}>
+              <img src={pageImage(story.slug, page, story.pageCount)} alt={`${story.title} page ${page}`} />
+              <p>{page} of {story.pageCount}</p>
+            </section>
+          );
+        })}
+
+        <section className="article-preview__page article-preview__end" aria-label="End of preview">
+          <div>
+            <span>End of Preview</span>
+            <h3>Click here to find out more</h3>
+            <a href="/book-interview">Enrolment Enquiry <ArrowRight size={18} /></a>
+          </div>
+        </section>
+      </div>
+    </div>
   );
 };
 
 const Articles = () => {
+  const [previewStory, setPreviewStory] = useState<Story | null>(null);
+
   return (
     <div className="newsletter-page">
       <SEO
@@ -160,12 +241,6 @@ const Articles = () => {
 
       <main className="newsletter-shell">
         <header className="newsletter-masthead">
-          <div className="newsletter-topbar newsletter-topbar--single">
-            <Link to="/" className="newsletter-brand" aria-label="DA Tuition home">
-              <img src="/images/da-logo.png" alt="" />
-              <strong>DA TUITION</strong>
-            </Link>
-          </div>
           <h1>DA NEWSLETTER</h1>
           <div className="newsletter-subtitle">
             <span />
@@ -189,7 +264,7 @@ const Articles = () => {
           </div>
           <div className="featured-grid">
             {featuredStories.map((story, index) => (
-              <ArticleCard key={story.title} story={story} variant={index === 0 ? 'feature' : 'standard'} />
+              <ArticleCard key={story.title} story={story} variant={index === 0 ? 'feature' : 'standard'} onOpen={setPreviewStory} />
             ))}
           </div>
         </section>
@@ -200,10 +275,10 @@ const Articles = () => {
             <a href="#guides">View all news <ArrowRight size={16} /></a>
           </div>
           <div className="latest-layout">
-            <ArticleCard story={latestStories[0]} variant="feature" />
+            <ArticleCard story={latestStories[0]} variant="feature" onOpen={setPreviewStory} />
             <div className="latest-stack">
               {latestStories.slice(1).map((story) => (
-                <ArticleCard key={story.title} story={story} variant="text" />
+                <ArticleCard key={story.title} story={story} variant="text" onOpen={setPreviewStory} />
               ))}
             </div>
           </div>
@@ -220,6 +295,7 @@ const Articles = () => {
                 key={story.title}
                 story={story}
                 variant={story.layout === 'wide' && index < 2 ? 'compact' : story.layout === 'text' ? 'text' : 'standard'}
+                onOpen={setPreviewStory}
               />
             ))}
           </div>
@@ -227,12 +303,12 @@ const Articles = () => {
 
         <section id="community" className="community-banner" aria-labelledby="community-title">
           <div className="community-book" aria-hidden="true">
-            <img src="/Articles/images/newsletter/da-community-book-cutout.png" alt="" />
+            <img src="/Articles/images/newsletter/hero-book-closed.png" alt="" />
           </div>
           <div className="community-copy">
             <span>Stay inspired. Stay ahead.</span>
             <h2 id="community-title">Join the DA Tuition Community</h2>
-            <p>Subscribe for expert insights, practical guides, and updates to support your child's learning journey.</p>
+            <p>Subscribe for DA newsletter updates to support your child's learning journey.</p>
             <form className="community-form">
               <label htmlFor="newsletter-email">Email address</label>
               <input id="newsletter-email" type="email" placeholder="Enter your email address" />
@@ -241,6 +317,8 @@ const Articles = () => {
           </div>
         </section>
       </main>
+
+      {previewStory && <ArticlePreview story={previewStory} onClose={() => setPreviewStory(null)} />}
 
       <FooterNew />
 
@@ -257,7 +335,7 @@ const Articles = () => {
         .newsletter-shell {
           width: min(1240px, calc(100% - 40px));
           margin: 0 auto;
-          padding: 118px 0 42px;
+          padding: 96px 0 42px;
         }
 
         .newsletter-masthead {
@@ -266,34 +344,8 @@ const Articles = () => {
           padding-bottom: 18px;
         }
 
-        .newsletter-topbar {
-          display: grid;
-          grid-template-columns: 1fr;
-          place-items: center;
-          border-bottom: 1px solid ${C.line};
-          padding-bottom: 16px;
-          font-size: 0.9rem;
-          color: ${C.ink};
-        }
-
-        .newsletter-brand {
-          display: inline-flex;
-          align-items: center;
-          gap: 10px;
-          text-decoration: none;
-          color: ${C.ink};
-          font-weight: 900;
-          letter-spacing: 0.08em;
-        }
-
-        .newsletter-brand img {
-          width: 46px;
-          height: 46px;
-          object-fit: contain;
-        }
-
         .newsletter-masthead h1 {
-          margin: 34px 0 12px;
+          margin: 18px 0 12px;
           text-align: center;
           font-family: ${serif};
           font-size: clamp(4.2rem, 11.5vw, 10rem);
@@ -416,7 +468,10 @@ const Articles = () => {
           border: 1px solid ${C.line};
           background: rgba(255, 252, 245, 0.72);
           color: ${C.ink};
-          text-decoration: none;
+          text-align: left;
+          cursor: pointer;
+          font: inherit;
+          padding: 0;
           transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
         }
 
@@ -572,11 +627,12 @@ const Articles = () => {
         }
 
         .community-book img {
-          width: min(100%, 300px);
+          width: min(100%, 330px);
           height: auto;
-          max-height: 270px;
+          max-height: 280px;
           object-fit: contain;
           filter: drop-shadow(0 24px 32px rgba(0, 0, 0, 0.36)) saturate(1.08) contrast(1.04);
+          mix-blend-mode: lighten;
         }
 
         .community-copy {
@@ -643,6 +699,133 @@ const Articles = () => {
           padding: 0 26px;
         }
 
+        .article-preview {
+          position: fixed;
+          inset: 0;
+          z-index: 2000;
+          display: grid;
+          grid-template-rows: auto 1fr;
+          background:
+            radial-gradient(circle at 18% 16%, rgba(122, 78, 132, 0.2), transparent 32%),
+            rgba(3, 10, 20, 0.9);
+          color: #fffaf0;
+          backdrop-filter: blur(18px);
+        }
+
+        .article-preview__chrome {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 20px;
+          width: min(1120px, calc(100% - 36px));
+          margin: 0 auto;
+          padding: 18px 0 10px;
+        }
+
+        .article-preview__chrome span {
+          display: block;
+          color: ${C.goldSoft};
+          font-size: 0.72rem;
+          font-weight: 900;
+          letter-spacing: 0.18em;
+          text-transform: uppercase;
+        }
+
+        .article-preview__chrome h2 {
+          margin: 3px 0 0;
+          font-family: ${serif};
+          font-size: clamp(1.35rem, 3vw, 2.4rem);
+          line-height: 1;
+        }
+
+        .article-preview__chrome button {
+          display: grid;
+          place-items: center;
+          width: 46px;
+          height: 46px;
+          border: 1px solid rgba(255, 255, 255, 0.24);
+          border-radius: 50%;
+          background: rgba(255, 255, 255, 0.08);
+          color: #fffaf0;
+          cursor: pointer;
+        }
+
+        .article-preview__scroll {
+          overflow-y: auto;
+          overscroll-behavior: contain;
+          scroll-snap-type: y mandatory;
+          padding: 0 18px;
+        }
+
+        .article-preview__page {
+          min-height: calc(100vh - 86px);
+          display: grid;
+          align-content: center;
+          justify-items: center;
+          gap: 10px;
+          padding: 18px 0 34px;
+          scroll-snap-align: start;
+        }
+
+        .article-preview__page img {
+          width: auto;
+          max-width: min(94vw, 980px);
+          max-height: calc(100vh - 158px);
+          object-fit: contain;
+          background: white;
+          box-shadow: 0 26px 80px rgba(0, 0, 0, 0.38);
+        }
+
+        .article-preview__page p {
+          margin: 0;
+          color: rgba(255, 250, 240, 0.72);
+          font: 800 0.76rem ${sans};
+          letter-spacing: 0.12em;
+          text-transform: uppercase;
+        }
+
+        .article-preview__end > div {
+          display: grid;
+          justify-items: center;
+          gap: 18px;
+          width: min(620px, 92vw);
+          padding: clamp(2rem, 5vw, 4rem);
+          border: 1px solid rgba(227, 187, 102, 0.36);
+          border-radius: 10px;
+          background:
+            radial-gradient(circle at 50% 0%, rgba(227,187,102,0.18), transparent 44%),
+            linear-gradient(135deg, rgba(7, 27, 52, 0.96), rgba(16, 42, 74, 0.92));
+          text-align: center;
+          box-shadow: 0 26px 80px rgba(0, 0, 0, 0.32);
+        }
+
+        .article-preview__end span {
+          color: ${C.goldSoft};
+          font-weight: 900;
+          letter-spacing: 0.16em;
+          text-transform: uppercase;
+        }
+
+        .article-preview__end h3 {
+          margin: 0;
+          font-family: ${serif};
+          font-size: clamp(2rem, 5vw, 4rem);
+          line-height: 0.95;
+        }
+
+        .article-preview__end a {
+          display: inline-flex;
+          align-items: center;
+          gap: 10px;
+          min-height: 48px;
+          padding: 0 24px;
+          border-radius: 999px;
+          background: linear-gradient(135deg, #f0c66b, #c7942d);
+          color: ${C.ink};
+          font-weight: 900;
+          text-decoration: none;
+        }
+
         @media (max-width: 1060px) {
           .featured-grid,
           .guides-grid,
@@ -661,7 +844,7 @@ const Articles = () => {
         @media (max-width: 760px) {
           .newsletter-shell {
             width: min(100% - 24px, 1240px);
-            padding-top: 98px;
+            padding-top: 88px;
           }
 
           .newsletter-tabs,
