@@ -43,7 +43,10 @@ const ROUTE_SEGMENTS: Record<HscStreamId, string> = {
 function StreamDetails({ stream, compact = false }: { stream: HscStream; compact?: boolean }) {
   return (
     <div className={compact ? 'px-4 pb-5 pt-2' : 'lg:pl-10'}>
-      <p className="text-xs font-black uppercase tracking-[0.12em]" style={{ color: stream.color }}>
+      <p
+        className="inline-block border-b-2 pb-1 text-xs font-black uppercase tracking-[0.12em] text-[#071629]"
+        style={{ borderColor: stream.color }}
+      >
         {stream.badge}
       </p>
       <h3
@@ -204,7 +207,14 @@ export function HscMathsPathway(): JSX.Element {
                       <span className="block font-serif text-2xl font-medium text-[#071629]">{stream.name}</span>
                       <span className="mt-1 block text-sm text-[#40516b]">{stream.shortDescriptor}</span>
                     </span>
-                    {isSelected ? <span className="ml-auto text-xs font-black uppercase tracking-[0.08em]" style={{ color: stream.color }}>Selected</span> : null}
+                    {isSelected ? (
+                      <span
+                        className="ml-auto border px-2 py-1 text-xs font-black uppercase tracking-[0.08em] text-[#071629]"
+                        style={{ borderColor: stream.color }}
+                      >
+                        Selected
+                      </span>
+                    ) : null}
                     <ChevronRight className="h-4 w-4 shrink-0 text-[#40516b]" aria-hidden="true" />
                   </span>
                 </button>

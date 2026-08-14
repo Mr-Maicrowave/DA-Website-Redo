@@ -51,3 +51,9 @@ test('pathway presents the approved decision content and actions', () => {
   assert.match(source, /to="\/hsc-excellence"/);
   assert.match(source, /See topics covered/);
 });
+
+test('small course labels keep navy text while course colour remains an accent', () => {
+  const source = readFileSync(componentUrl, 'utf8');
+  assert.doesNotMatch(source, /style=\{\{ color: stream\.color \}\}/);
+  assert.match(source, /borderColor: stream\.color/);
+});
