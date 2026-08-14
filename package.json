@@ -9,6 +9,8 @@
     "build:dev": "npm run sitemap && vite build --mode development",
     "check:encoding": "node scripts/check-encoding.mjs",
     "typecheck": "tsc --noEmit -p tsconfig.app.json",
+    "test:graph-lab": "node --test --experimental-strip-types src/features/graph-lab/*.test.ts",
+    "test:maths-motion": "node --test --experimental-strip-types src/features/maths-ambient-motion/*.test.ts",
     "lint": "eslint .",
     "preview": "vite preview",
     "video:preview": "remotion preview remotion/Root.tsx",

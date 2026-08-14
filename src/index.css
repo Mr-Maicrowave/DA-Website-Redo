@@ -235,6 +235,11 @@
     display: none !important;
   }
 
+  /* The floating conversion CTA obscures graph controls on small screens. */
+  body[data-da-graph-lab-active="true"] .site-sticky-book-button {
+    display: none !important;
+  }
+
   @media (max-width: 820px) {
     body:has(#welcome) .site-sticky-book-button {
       right: 10px;

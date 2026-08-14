@@ -1,0 +1,353 @@
+.maths-ambient-anchor {
+  --maths-ambient-ink: #071629;
+  --maths-ambient-soft-ink: #40516b;
+  --maths-ambient-idle-ink: #687488;
+  --maths-ambient-idle-soft-ink: #8a93a1;
+  --maths-ambient-gold: #f0c86a;
+  --maths-ambient-pale-gold: #fff4b8;
+  position: relative;
+  z-index: 24;
+  display: none;
+  height: 0;
+  color: #071629;
+}
+
+.maths-ambient-anchor:has(.maths-ambient-moment.is-expanded) { z-index: 121; }
+
+body:has(.maths-ambient-moment.is-expanded) .site-scroll-to-top,
+body:has(.maths-ambient-moment.is-expanded) .site-sticky-book-button {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.maths-ambient-moment {
+  --maths-ambient-scene-ink: var(--maths-ambient-idle-ink);
+  --maths-ambient-scene-soft-ink: var(--maths-ambient-idle-soft-ink);
+  position: absolute;
+  top: 1.25rem;
+  width: 12.5rem;
+  transform-origin: center;
+  opacity: 0.84;
+  filter: saturate(0.68) drop-shadow(0 2px 4px rgba(7, 22, 41, 0.12));
+  transition: opacity 260ms ease, filter 260ms ease, transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.maths-ambient-anchor--left .maths-ambient-moment { left: 1rem; }
+.maths-ambient-anchor--right .maths-ambient-moment { right: 1rem; }
+
+.maths-ambient-moment__caption {
+  display: none;
+}
+
+.maths-ambient-moment.is-hover-ready {
+  z-index: 27;
+  transform: scale(1.07);
+  opacity: 1;
+  filter: saturate(1.1) drop-shadow(0 5px 10px rgba(166, 118, 14, 0.18));
+}
+
+.maths-ambient-moment.is-passive {
+  pointer-events: none;
+  user-select: none;
+}
+
+.maths-ambient-moment.is-expanded {
+  --maths-ambient-scene-ink: var(--maths-ambient-ink);
+  --maths-ambient-scene-soft-ink: var(--maths-ambient-soft-ink);
+  position: fixed;
+  inset: 0;
+  z-index: 122;
+  display: flex;
+  width: auto;
+  margin: 0;
+  padding: clamp(1rem, 2.5vw, 2rem);
+  align-items: center;
+  justify-content: center;
+  opacity: 1;
+  background: rgba(255, 250, 240, 0.94);
+  backdrop-filter: blur(8px) saturate(0.45);
+  filter: none;
+  transform: none;
+}
+
+.maths-ambient-moment__card { width: 100%; }
+
+.maths-ambient-moment.is-expanded .maths-ambient-moment__card {
+  display: grid;
+  grid-template-columns: minmax(23rem, 0.95fr) minmax(28rem, 1.05fr);
+  align-items: center;
+  gap: clamp(2rem, 4vw, 4rem);
+  width: min(72rem, calc(100vw - 3rem));
+  padding: clamp(2.25rem, 4vw, 3.5rem);
+  background: linear-gradient(135deg, #fffdf8, #fff6e7);
+  box-shadow: 0 8px 8px rgba(7, 22, 41, 0.16);
+}
+
+.maths-ambient-moment__trigger {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  color: inherit;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+}
+
+.maths-ambient-moment__trigger:focus-visible,
+.maths-ambient-moment__explanation:focus-visible {
+  outline: 3px solid var(--maths-ambient-gold);
+  outline-offset: 5px;
+}
+
+.maths-ambient-moment__hint {
+  display: block;
+  margin-bottom: 0.25rem;
+  color: #9b7110;
+  font-size: 0.67rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  opacity: 0;
+  transition: opacity 220ms ease;
+}
+
+.maths-ambient-moment.is-hover-ready .maths-ambient-moment__hint,
+.maths-ambient-moment.is-expanded .maths-ambient-moment__hint { opacity: 1; }
+
+.maths-ambient-moment__scene {
+  display: block;
+  width: 100%;
+}
+
+.maths-ambient-moment__scene svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.maths-ambient-moment.is-expanded .maths-ambient-moment__scene svg { max-height: 22rem; }
+
+.maths-ambient-moment__explanation { position: relative; min-width: 0; outline: none; }
+.maths-ambient-moment__explanation h2 {
+  max-width: 16ch;
+  margin: 0 0 1rem;
+  color: #071629;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(2.25rem, 3.4vw, 3.75rem);
+  font-weight: 500;
+  line-height: 1.04;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+}
+
+.maths-ambient-equation {
+  color: #a6760e;
+  font-size: 1.12rem;
+  white-space: nowrap;
+}
+
+.maths-ambient-moment.is-expanded .maths-ambient-moment__explanation > .maths-ambient-equation {
+  display: block;
+  max-width: 100%;
+  font-size: clamp(0.94rem, 1.35vw, 1.22rem);
+}
+
+.maths-ambient-derivation {
+  max-width: 48ch;
+  margin-top: 1.25rem;
+  color: var(--maths-ambient-soft-ink);
+  font-size: 0.91rem;
+  line-height: 1.65;
+}
+
+.maths-ambient-derivation ol {
+  display: grid;
+  gap: 0.8rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: ambient-step;
+}
+
+.maths-ambient-derivation__step {
+  position: relative;
+  padding-left: 1.7rem;
+  counter-increment: ambient-step;
+}
+
+.maths-ambient-derivation__step::before {
+  position: absolute;
+  left: 0;
+  top: 0.08rem;
+  color: #a6760e;
+  content: counter(ambient-step, decimal-leading-zero);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+.maths-ambient-derivation__step .maths-ambient-equation {
+  display: inline-block;
+  margin: 0 0.24rem;
+  color: var(--maths-ambient-ink);
+  font-size: 0.95rem;
+}
+
+.maths-ambient-axis {
+  fill: none;
+  stroke: var(--maths-ambient-scene-soft-ink);
+  stroke-width: 1.2;
+}
+
+.maths-network-ambient__base line {
+  stroke: var(--maths-ambient-scene-soft-ink);
+  stroke-width: 1.45;
+}
+
+.maths-network-ambient__frontier line {
+  stroke: var(--maths-ambient-scene-ink);
+  stroke-width: 2;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  opacity: 0;
+}
+
+.maths-network-ambient__frontier.is-active line {
+  animation: maths-ambient-frontier 5.8s ease-in-out infinite;
+  animation-delay: calc(var(--edge-index) * 70ms);
+}
+
+.maths-network-ambient__final-path {
+  fill: none;
+  stroke: url(#network-ambient-gold);
+  stroke-width: 3.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  filter: url(#network-ambient-glow);
+}
+
+.maths-network-ambient__final-path.is-active { animation: maths-ambient-final-path 5.8s ease-in-out infinite; }
+.maths-network-ambient__nodes circle { fill: var(--maths-ambient-pale-gold); stroke: #a6760e; stroke-width: 1.4; filter: drop-shadow(0 0 2px rgba(240, 200, 106, 0.82)); }
+.maths-network-ambient__nodes text {
+  fill: var(--maths-ambient-scene-ink);
+  font-size: 7px;
+  font-weight: 800;
+  text-anchor: middle;
+}
+.maths-network-ambient__weights text {
+  paint-order: stroke;
+  fill: #825e10;
+  stroke: #fffaf0;
+  stroke-width: 2.6px;
+  font-size: 6px;
+  font-weight: 800;
+  text-anchor: middle;
+}
+
+.maths-derivative-ambient__function {
+  fill: none;
+  stroke: var(--maths-ambient-scene-ink);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.maths-derivative-ambient__derivative {
+  fill: none;
+  stroke: url(#derivative-ambient-gold);
+  stroke-width: 2.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: url(#derivative-ambient-glow);
+}
+
+.maths-derivative-ambient__tangent line { stroke: var(--maths-ambient-gold); stroke-width: 2.6; stroke-linecap: round; filter: url(#derivative-ambient-glow); }
+.maths-derivative-ambient__tangent circle { fill: #fff8c9; stroke: var(--maths-ambient-gold); stroke-width: 2.2; filter: url(#derivative-ambient-glow); }
+
+.maths-vector-ambient__a { stroke: var(--maths-ambient-scene-ink); stroke-width: 3.3; filter: drop-shadow(0 1px 2px rgba(7, 22, 41, 0.16)); }
+.maths-vector-ambient__b { stroke: var(--maths-ambient-scene-soft-ink); stroke-width: 3.3; }
+.maths-vector-ambient__arrow-ink { fill: var(--maths-ambient-scene-ink); }
+.maths-vector-ambient__arrow-soft-ink { fill: var(--maths-ambient-scene-soft-ink); }
+.maths-vector-ambient__perpendicular { stroke: rgba(7, 22, 41, 0.45); stroke-width: 1.2; stroke-dasharray: 4 4; stroke-dashoffset: 1; }
+.maths-vector-ambient__projection { stroke: url(#vector-ambient-gold); stroke-width: 5; stroke-dasharray: 1; stroke-dashoffset: 1; filter: url(#vector-ambient-glow); }
+.maths-vector-ambient__perpendicular.is-active { animation: maths-ambient-draw 5s ease-in-out infinite; }
+.maths-vector-ambient__projection.is-active { animation: maths-ambient-projection 5s ease-in-out infinite; }
+.maths-vector-ambient__right-angle, .maths-vector-ambient__angle { fill: none; stroke: var(--maths-ambient-scene-soft-ink); stroke-width: 1.1; }
+.maths-vector-ambient text { fill: var(--maths-ambient-scene-soft-ink); font-size: 10px; font-weight: 700; }
+.maths-vector-ambient .maths-vector-ambient__label--a,
+.maths-vector-ambient .maths-vector-ambient__label--b { fill: var(--maths-ambient-scene-ink); font-size: 12px; font-style: italic; }
+
+@keyframes maths-ambient-frontier {
+  0%, 8% { opacity: 0; stroke-dashoffset: 1; }
+  24%, 66% { opacity: 0.72; stroke-dashoffset: 0; }
+  86%, 100% { opacity: 0; stroke-dashoffset: 0; }
+}
+
+@keyframes maths-ambient-final-path {
+  0%, 62% { opacity: 0; stroke-dashoffset: 1; }
+  79%, 94% { opacity: 1; stroke-dashoffset: 0; }
+  100% { opacity: 0; stroke-dashoffset: 0; }
+}
+
+@keyframes maths-ambient-draw {
+  0%, 15% { stroke-dashoffset: 1; opacity: 0; }
+  38%, 78% { stroke-dashoffset: 0; opacity: 1; }
+  100% { stroke-dashoffset: 0; opacity: 0; }
+}
+
+@keyframes maths-ambient-projection {
+  0%, 34% { stroke-dashoffset: 1; opacity: 0; }
+  58%, 82% { stroke-dashoffset: 0; opacity: 1; }
+  100% { stroke-dashoffset: 0; opacity: 0; }
+}
+
+/* This page's widest sections (the confidence-journey and HSC-map cards) run at
+   max-w-[1480px]; below roughly 1540px their centred container fills the padded
+   width completely, so there is no real empty gutter for a floating side element to
+   sit in without drawing over real content. Rather than float into content, this band
+   renders the same passive scene as a small centred card inside normal document flow
+   — it takes its own vertical space and cannot overlap anything by construction. */
+@media (min-width: 768px) and (max-width: 1439.98px) {
+  .maths-ambient-anchor {
+    display: flex;
+    justify-content: center;
+    height: auto;
+    margin: 2.25rem auto;
+  }
+  .maths-ambient-moment {
+    position: static;
+    width: min(19rem, calc(100% - 2.5rem));
+    padding: 1.1rem 1.25rem 1.25rem;
+    border: 1px solid rgba(7, 22, 41, 0.1);
+    border-radius: 1.25rem;
+    background: rgba(255, 253, 248, 0.72);
+    box-shadow: 0 10px 24px rgba(7, 22, 41, 0.06);
+  }
+  .maths-ambient-moment__caption {
+    display: block;
+    margin-top: 0.6rem;
+    color: #536077;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    text-align: center;
+  }
+}
+
+/* Only from here does a genuine empty margin exist outside this page's widest
+   (max-w-[1480px]) centred content column, so the floating gutter treatment is safe. */
+@media (min-width: 1440px) {
+  .maths-ambient-anchor { display: block; }
+  .maths-ambient-moment { width: clamp(10rem, 11vw, 12.5rem); }
+  .maths-ambient-anchor--left .maths-ambient-moment { left: 1rem; }
+  .maths-ambient-anchor--right .maths-ambient-moment { right: 1rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .maths-ambient-moment, .maths-ambient-moment * { animation: none !important; transition-duration: 0.01ms !important; }
+  .maths-network-ambient__frontier line, .maths-network-ambient__final-path, .maths-vector-ambient__perpendicular, .maths-vector-ambient__projection { opacity: 1; stroke-dashoffset: 0; }
+}

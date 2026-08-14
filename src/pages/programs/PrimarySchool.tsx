@@ -5,7 +5,7 @@ import { ArrowRight, BookOpen, Brain, Calculator, Check, ClipboardCheck, Graduat
 import NavigationNew from '@/components/NavigationNew';
 import StickyBookButton from '@/components/StickyBookButton';
 import SEO from '@/components/SEO';
-import RevealHero from '@/components/RevealHero';
+import SubjectHero from '@/components/subjects/SubjectHero';
 
 const heroJourneyNav = [
   { number: '01', label: 'Foundation' },
@@ -375,59 +375,69 @@ const MasterySection = () => {
 
 const PrimarySchool = () => (
   <div className="primary-story">
-    <SEO title="Primary School Tutoring (Years 1–6) | DA Tuition" description="One continuous primary learning journey from strong foundations to NAPLAN confidence, selective school preparation and high school readiness." canonicalUrl="/programs/primary-school" />
+    <SEO title="Primary School Tutoring (Years 1–6)" description="One continuous primary learning journey from strong foundations to NAPLAN confidence, selective school preparation and high school readiness." canonicalUrl="/programs/primary-school" />
     <NavigationNew />
     <StickyBookButton />
-    <RevealHero
-      eyebrow="Primary School · Years 1–6"
-      icon={GraduationCap}
-      headlineWhite="Every Stage."
-      headlineGold="Every Child."
-      subtext="From strong foundations to lifelong confidence, we guide your child through every critical stage of primary school."
-      proofPills={['Years 1–6 journey', 'Small-group attention', 'NAPLAN ready']}
-      placeholderLabel="Primary school classroom"
-      backgroundImageSrc="/images/programs/primary-hero-tutor-two-students.png"
-      backgroundImageAlt="A DA Tuition tutor working warmly with two primary school students on their schoolwork"
-    >
+    <div className="ps-opening">
+      <div className="ps-opening__hero">
+        <SubjectHero
+          eyebrow="Primary School · Years 1–6"
+          icon={GraduationCap}
+          headlineWhite="Every Stage."
+          headlineGold="Every Child."
+          subtext="From strong foundations to lifelong confidence, we guide your child through every critical stage of primary school."
+          proofPills={['Years 1–6 pathway', 'Personalised support', 'Confident learners']}
+          exploreTargetId="pathway"
+          placeholderLabel="Primary school classroom"
+          backgroundImageSrc="/images/programs/primary-hero-tutor-two-students.png"
+          backgroundImageAlt="A DA Tuition tutor working with two primary school students"
+          mobileBackgroundPosition="64% center"
+          mobileContentPosition="bottom"
+        />
+      </div>
+    </div>
     <div id="primary-page-content">
       <main>
       <section id="pathway" className="ps-landscape-breath" aria-label="Primary school journey landscape">
-        <img
-          className="ps-landscape-breath__image"
-          src="/images/programs/primary-school-staircase-landscape-v3.png"
-          alt="Two primary school students looking across a bright landscape beside a flower-lined stone staircase"
-        />
         <div className="ps-landscape-breath__copy">
-          <p>Primary School Pathway</p>
+          <p><i aria-hidden="true" /><span>Primary School Pathway</span><i aria-hidden="true" /></p>
           <h2>A Clear Path<br />Through Every Stage.</h2>
           <div className="ps-landscape-breath__rule" aria-hidden="true" />
-          <span>From strong foundations to growing independence, every stage is designed to help your child move forward with confidence.</span>
-          <a href="#foundation">Explore the Journey <ArrowRight /></a>
+          <span>
+            From strong foundations to growing independence,<br className="ps-pathway-copy-break" />{' '}
+            every stage is designed to help your child<br className="ps-pathway-copy-break" />{' '}
+            move forward with confidence.
+          </span>
         </div>
-        <div className="ps-landscape-breath__stages" aria-hidden="true">
-          <div className="ps-landscape-stage ps-landscape-stage--foundation"><small>Years 1–2</small><strong>Foundation</strong></div>
-          <div className="ps-landscape-stage ps-landscape-stage--growth"><small>Years 3–4</small><strong>Growth</strong></div>
-          <div className="ps-landscape-stage ps-landscape-stage--mastery"><small>Years 5–6</small><strong>Mastery</strong></div>
+        <div className="ps-landscape-breath__visual">
+          <img
+            className="ps-landscape-breath__image"
+            src="/images/programs/primary-school-staircase-landscape-v3.png"
+            alt="Two primary school students looking across a bright landscape beside a flower-lined stone staircase"
+          />
+          <div className="ps-landscape-breath__stages" aria-hidden="true">
+            <div className="ps-landscape-stage ps-landscape-stage--foundation"><small>Years 1–2</small><strong>Foundation</strong></div>
+            <div className="ps-landscape-stage ps-landscape-stage--growth"><small>Years 3–4</small><strong>Growth</strong></div>
+            <div className="ps-landscape-stage ps-landscape-stage--mastery"><small>Years 5–6</small><strong>Mastery</strong></div>
+          </div>
+          <nav className="ps-landscape-breath__year-nav" aria-label="Primary school year groups">
+            <a className="is-active" href="#foundation" aria-label="Go to Years 1–2">1–2</a>
+            <a href="#growth" aria-label="Go to Years 3–4">3–4</a>
+            <a href="#mastery" aria-label="Go to Years 5–6">5–6</a>
+          </nav>
         </div>
-        <nav className="ps-landscape-breath__year-nav" aria-label="Primary school year groups">
-          <a className="is-active" href="#foundation" aria-label="Go to Years 1–2">1–2</a>
-          <a href="#growth" aria-label="Go to Years 3–4">3–4</a>
-          <a href="#mastery" aria-label="Go to Years 5–6">5–6</a>
-        </nav>
-        <div className="ps-landscape-transition" aria-hidden="true" />
+        <div className="ps-landscape-reflection" aria-hidden="true" />
       </section>
       <FoundationIntro />
       <GrowthSection />
       <MasterySection />
       </main>
     </div>
-    </RevealHero>
     <style>{`
       @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&display=swap');
       .primary-story{--navy:#06172c;--gold:#c8932f;--gold-light:#e1b453;--cream:#f6efe4;background:var(--cream);color:var(--navy);overflow:clip;font-family:"DM Sans",Arial,sans-serif}.primary-story *{box-sizing:border-box}.primary-story h1{font-family:"Cormorant Garamond",Georgia,serif}.ps-kicker{margin:0;color:var(--gold-light);font-size:.72rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase}.ps-button{display:inline-flex;min-height:3.35rem;align-items:center;justify-content:center;gap:.75rem;padding:0 1.45rem;border-radius:.7rem;font-size:.78rem;font-weight:700;text-decoration:none;transition:transform .3s cubic-bezier(.22,1,.36,1),background .3s ease,box-shadow .3s ease}.ps-button svg{width:1rem;transition:transform .3s ease}.ps-button:hover{transform:translateY(-2px)}.ps-button:hover svg{transform:translateX(4px)}.ps-button:focus-visible,.ps-how-link:focus-visible{outline:2px solid var(--gold-light);outline-offset:4px}.ps-button--gold{background:#d8a642;box-shadow:0 6px 8px rgba(6,23,44,.2);color:var(--navy)}.ps-button--gold:hover{background:#e3b95b}
       .ps-opening{--ps-nav-height:3.625rem;position:relative;width:100vw;max-width:none;margin:0;padding-top:var(--ps-nav-height);background:#edf6f8}.ps-opening__hero{position:relative;width:100%;max-width:none;height:calc(100svh - var(--ps-nav-height));margin:0;overflow:hidden}.ps-opening__hero .ps-hero{width:100%;max-width:none;height:100%;min-height:0;margin:0}.ps-hero{position:relative;z-index:0;display:flex;min-height:max(680px,calc(100svh - 5rem));align-items:center;overflow:hidden;background:#071629;color:#fff}.ps-hero__image-wrap,.ps-hero__veil{position:absolute;inset:-16px 0}.ps-hero__image-wrap{inset:-26px;max-width:none;will-change:transform}.ps-hero__image{position:absolute;inset:0;background:url('/images/programs/primary-hero-tutor-two-students.png') center/cover no-repeat;filter:brightness(.98) contrast(1.03) saturate(1.03);will-change:transform}.ps-hero__veil{background:linear-gradient(90deg,rgba(4,22,40,.88) 0%,rgba(4,22,40,.72) 30%,rgba(4,22,40,.38) 55%,rgba(4,22,40,.1) 78%,rgba(4,22,40,.02) 100%);pointer-events:none}.ps-hero__content{position:relative;z-index:2;width:min(1220px,calc(100% - 64px));margin:0 auto;padding:0;will-change:transform,opacity}.ps-hero .ps-kicker{display:inline-flex;align-items:center;gap:.625rem;margin:0 0 1.25rem;color:#f2df9d;font-size:.75rem;font-weight:800;letter-spacing:.18em}.ps-hero .ps-kicker:before{width:1.75rem;height:2px;background:#c9a227;content:""}.ps-hero h1{max-width:47.5rem;margin:0 0 1.75rem;color:#fff8eb;font-family:"Playfair Display",Georgia,serif;font-size:clamp(3.4rem,7vw,6.6rem);font-weight:600;letter-spacing:-.01em;line-height:.94}.ps-hero h1 span{display:block}.ps-hero h1 span+span{margin-top:0}.ps-hero__gold-line{color:#c9a227;font-style:normal}.ps-hero__intro{max-width:54ch;margin:0 0 1.875rem;color:rgba(255,255,255,.86);font-size:1.125rem;line-height:1.75;text-wrap:pretty}.ps-hero__actions{display:flex;flex-wrap:wrap;align-items:center;gap:.875rem;margin-top:0}.ps-hero .ps-button,.ps-hero .ps-how-link{display:inline-flex;height:3.125rem;min-height:3.125rem;align-items:center;justify-content:center;padding:0 1.5rem;border-radius:999px;font-size:.8rem;font-weight:800;text-decoration:none}.ps-hero .ps-button--gold{background:#c9a227;box-shadow:0 8px 18px rgba(201,162,39,.2);color:#071629}.ps-hero .ps-button--gold:hover{background:#d8b543}.ps-hero .ps-how-link{gap:.55rem;border:1px solid rgba(255,255,255,.3);color:#fff}.ps-hero .ps-how-link span{display:grid;width:1.35rem;height:1.35rem;place-items:center;border:0;color:#f2df9d}.ps-hero .ps-how-link svg{width:.72rem;fill:currentColor}.ps-hero .ps-how-link:hover{border-color:rgba(242,223,157,.72);background:rgba(255,255,255,.06);transform:translateY(-2px)}.ps-hero__handoff{position:absolute;z-index:4;bottom:24px;left:72%;width:7px;height:7px;border-radius:50%;background:#f2c96f;box-shadow:0 0 7px rgba(241,190,77,.9),0 0 16px rgba(241,190,77,.45);pointer-events:none;will-change:transform,opacity}.ps-hero__handoff:after{position:absolute;top:-20px;left:3px;width:1px;height:24px;background:linear-gradient(transparent,rgba(241,190,77,.65));content:""}.ps-mobile-progress{display:none}.ps-opening__hero .ps-hero:after{position:absolute;z-index:1;right:0;bottom:-1px;left:0;height:clamp(10rem,28%,18rem);background:linear-gradient(180deg,rgba(6,23,42,0) 0%,rgba(6,23,42,.035) 18%,rgba(6,23,42,.12) 38%,rgba(6,23,42,.3) 58%,rgba(6,23,42,.62) 79%,#06172a 100%);content:"";pointer-events:none}.ps-landscape-breath{position:relative;display:grid;width:100%;min-height:100vh;height:100svh;place-items:center;overflow:hidden;background:#8bcaf0;isolation:isolate}.ps-landscape-breath__ambient{position:absolute;z-index:0;inset:-4%;background:url('/images/programs/primary-school-staircase-landscape.png') center/cover no-repeat;filter:blur(26px) saturate(.92);opacity:.46;transform:scale(1.05)}.ps-landscape-breath__image{position:absolute;z-index:1;inset:0;display:block;width:100%;height:100%!important;object-fit:contain;object-position:center}.ps-landscape-breath__copy{position:absolute;z-index:3;top:17%;left:clamp(2.5rem,7vw,7rem);width:min(45vw,43rem);color:#0b2743;text-shadow:0 1px 0 rgba(255,255,255,.25)}.ps-landscape-breath__copy>p{margin:0 0 clamp(1rem,2vh,1.35rem);color:#9b6818;font-size:clamp(.68rem,.82vw,.82rem);font-weight:750;letter-spacing:.2em;text-transform:uppercase}.ps-landscape-breath__copy h2{margin:0;font-family:"Cormorant Garamond",Georgia,serif;font-size:clamp(3.4rem,5.2vw,5.3rem);font-weight:500;letter-spacing:-.035em;line-height:.92;text-wrap:balance}.ps-landscape-breath__rule{width:clamp(3.5rem,5vw,5rem);height:1px;margin:clamp(1.35rem,2.7vh,1.8rem) 0;background:rgba(155,104,24,.72)}.ps-landscape-breath__copy>span{display:block;max-width:31rem;color:#24415a;font-size:clamp(.9rem,1.1vw,1.08rem);line-height:1.65;text-wrap:pretty}.ps-landscape-breath__copy>a{display:inline-flex;align-items:center;gap:.65rem;margin-top:clamp(1.35rem,2.7vh,1.8rem);border-bottom:1px solid rgba(11,39,67,.55);padding-bottom:.3rem;color:#0b2743;font-size:.78rem;font-weight:750;text-decoration:none}.ps-landscape-breath__copy>a svg{width:.95rem;transition:transform .3s cubic-bezier(.22,1,.36,1)}.ps-landscape-breath__copy>a:hover svg{transform:translateX(4px)}.ps-landscape-breath__stages{position:absolute;z-index:3;inset:0;pointer-events:none}.ps-landscape-stage{position:absolute;width:clamp(7.5rem,12vw,12rem);translate:-50% -50%;color:#172b40;text-align:center;text-shadow:0 1px 0 rgba(255,255,255,.42)}.ps-landscape-stage small,.ps-landscape-stage strong{display:block;text-transform:uppercase}.ps-landscape-stage small{font-size:clamp(.5rem,.65vw,.68rem);font-weight:750;letter-spacing:.16em}.ps-landscape-stage strong{margin-top:.16rem;font:600 clamp(1.05rem,1.7vw,1.8rem)/.95 "Cormorant Garamond",Georgia,serif;letter-spacing:.01em}.ps-landscape-stage--foundation{top:81.5%;left:61%}.ps-landscape-stage--growth{top:66%;left:70.5%}.ps-landscape-stage--mastery{top:51.5%;left:79.5%}.ps-landscape-breath__year-nav{position:absolute;z-index:4;top:22%;right:clamp(1.25rem,3vw,3.5rem);display:grid;gap:clamp(.7rem,1.5vh,1rem)}.ps-landscape-breath__year-nav a{display:grid;width:clamp(2.5rem,3vw,2.9rem);height:clamp(2.5rem,3vw,2.9rem);place-items:center;border-radius:50%;background:rgba(255,250,239,.92);box-shadow:0 4px 8px rgba(7,31,52,.15);color:#17304a;font-size:.62rem;font-weight:750;text-decoration:none;transition:transform .25s ease,background .25s ease}.ps-landscape-breath__year-nav a:hover{transform:translateY(-2px)}.ps-landscape-breath__year-nav a.is-active{background:#d8aa4e;color:#09213a}
       .ps-landscape-breath{display:block;width:100vw;max-width:none;min-height:0;height:auto;margin:0;padding:0;overflow:visible;isolation:auto;background:none}.ps-landscape-breath__image{position:relative;inset:auto;display:block;width:100%;height:auto!important;max-width:none;object-fit:contain}
-      .ps-landscape-transition{position:absolute;z-index:5;top:calc(100% - 1px);right:0;left:0;height:clamp(250px,28vw,400px);transform:scaleY(-1);transform-origin:center;background:url('/images/programs/primary-school-staircase-landscape-v3.png') center bottom/100vw auto no-repeat;pointer-events:none;-webkit-mask-image:radial-gradient(ellipse 140% 130% at 50% 125%,#000 0%,#000 42%,rgba(0,0,0,.92) 50%,rgba(0,0,0,.66) 62%,rgba(0,0,0,.34) 75%,rgba(0,0,0,.12) 86%,transparent 94%);mask-image:radial-gradient(ellipse 140% 130% at 50% 125%,#000 0%,#000 42%,rgba(0,0,0,.92) 50%,rgba(0,0,0,.66) 62%,rgba(0,0,0,.34) 75%,rgba(0,0,0,.12) 86%,transparent 94%)}
       .ps-foundation-intro{position:relative;display:block;width:100%;min-height:100vh;margin:0;padding:calc(clamp(250px,28vw,400px) + clamp(40px,4vw,60px)) 1.5rem clamp(8rem,18vh,13rem);overflow:hidden;background:#f7f0e3;color:#06172b}.ps-foundation-intro__content{position:relative;z-index:6;width:min(100%,46rem);margin:0 auto;text-align:center}.ps-foundation-intro__number,.ps-foundation-intro__years,.ps-foundation-intro__support{margin:0}.ps-foundation-intro__number{color:#d8aa4e;font-family:"Cormorant Garamond",Georgia,serif;font-size:clamp(1.55rem,2.2vw,2rem);line-height:1}.ps-foundation-intro__years{margin-top:.65rem;color:rgba(6,23,43,.82);font-size:.7rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase}.ps-foundation-intro__divider{display:block;width:4.75rem;height:1px;margin:1rem auto 1.75rem;background:rgba(200,147,47,.76)}.ps-foundation-intro h2{margin:0;color:#06172b;font-family:"Cormorant Garamond",Georgia,serif;font-size:clamp(3.25rem,5.4vw,5.75rem);font-weight:500;letter-spacing:-.035em;line-height:.89;text-wrap:balance}.ps-foundation-intro h2 em{color:#d8aa4e;font-weight:500}.ps-foundation-intro__detail{display:block;width:3.25rem;height:1px;margin:2rem auto 1.75rem;background:rgba(200,147,47,.76)}.ps-foundation-intro__support{max-width:31rem;margin:0 auto;color:rgba(6,23,43,.7);font-size:clamp(.88rem,1.1vw,1rem);line-height:1.7;text-wrap:pretty}
       .ps-foundation-intro__side-doodles{position:absolute;z-index:5;top:calc(clamp(250px,28vw,400px) + clamp(3rem,4vw,4rem));right:clamp(1.875rem,2.5vw,3.125rem);left:clamp(1.875rem,2.5vw,3.125rem);aspect-ratio:3/2;pointer-events:none;user-select:none}.ps-foundation-intro__side-doodle{position:absolute;inset:0;display:block;width:100%;height:100%;max-width:none;object-fit:contain;object-position:center top;pointer-events:none;user-select:none}.ps-foundation-intro__side-doodle--left{clip-path:inset(0 50% 0 0);transform:scale(.7);transform-origin:left top}.ps-foundation-intro__side-doodle--right{clip-path:inset(0 0 0 50%);transform:scale(.7);transform-origin:right top}
       .ps-foundation-story{position:relative;z-index:6;width:min(100%,76rem);margin:clamp(5rem,7vw,7.5rem) auto 0}.ps-foundation-story__row{position:relative;display:grid;grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr);align-items:center;gap:clamp(3.5rem,7vw,7.5rem);isolation:isolate}.ps-foundation-story__row:before{position:absolute;z-index:-1;inset:-2.5rem -1.5rem;background:#f7f0e3;content:"";pointer-events:none}.ps-foundation-story__row+.ps-foundation-story__row{margin-top:clamp(8rem,14vw,12rem)}.ps-foundation-story__row--photo-last{grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr)}.ps-foundation-photo{position:relative;min-height:clamp(24rem,39vw,34rem);margin:0;overflow:hidden;background:#eadfca;clip-path:polygon(4% 1%,92% 0,100% 9%,98% 91%,90% 100%,7% 98%,0 90%,1% 8%)}.ps-foundation-photo--class{min-height:clamp(25rem,42vw,36rem);clip-path:polygon(8% 0,96% 3%,100% 12%,98% 94%,89% 100%,3% 96%,0 85%,2% 7%)}.ps-foundation-photo img{display:block;width:100%;height:100%;min-height:inherit;object-fit:cover}.ps-foundation-photo--tutor img{object-position:48% center}.ps-foundation-photo--class img{object-position:56% center}.ps-foundation-outcomes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0}.ps-foundation-outcome{min-width:0;padding:1.25rem clamp(1rem,2vw,2rem) 1.75rem 0}.ps-foundation-outcome+.ps-foundation-outcome{border-left:1px solid rgba(200,147,47,.24);padding-right:0;padding-left:clamp(1.5rem,2.5vw,2.5rem)}.ps-foundation-outcome__meta{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-bottom:1.5rem}.ps-foundation-outcome__meta>span{color:#bd8725;font-size:.66rem;font-weight:800;letter-spacing:.16em}.ps-foundation-outcome__meta i{display:grid;width:3.4rem;height:3.4rem;place-items:center;border-radius:50%;background:rgba(216,170,78,.1);color:#bd8725}.ps-foundation-outcome__meta svg{width:1.45rem;height:1.45rem;stroke-width:1.45}.ps-foundation-outcome h3{margin:0;color:#06172b;font-family:"Cormorant Garamond",Georgia,serif;font-size:clamp(1.75rem,2.25vw,2.3rem);font-weight:600;letter-spacing:-.025em;line-height:1.04;text-wrap:balance}.ps-foundation-outcome p{margin:1.15rem 0 0;color:rgba(6,23,43,.68);font-size:clamp(.84rem,1vw,.96rem);line-height:1.72;text-wrap:pretty}.ps-foundation-curriculum{display:grid;grid-template-columns:minmax(15rem,.62fr) minmax(0,1.38fr);align-items:center;gap:clamp(3rem,7vw,7rem);margin-top:clamp(9rem,16vw,14rem)}.ps-foundation-curriculum__intro h3,.ps-foundation-curriculum__panel h3{margin:0;color:#06172b;font-family:"Cormorant Garamond",Georgia,serif}.ps-foundation-curriculum__intro h3{font-size:clamp(2.8rem,4.6vw,4.8rem);font-weight:500;letter-spacing:-.035em;line-height:.92}.ps-foundation-curriculum__intro h3 em{display:inline-block;color:#c8932f;font-weight:500}.ps-foundation-curriculum__intro>span{display:block;margin:1.4rem 0 0 5.5rem;color:#65a6c5;font-family:"Cormorant Garamond",Georgia,serif;font-size:3.25rem;line-height:1;transform:rotate(14deg)}.ps-foundation-curriculum__panel{border:1px solid rgba(200,147,47,.34);border-radius:1rem;padding:clamp(2rem,4vw,3.75rem);background:rgba(255,252,246,.38)}.ps-foundation-curriculum__panel h3{font-size:clamp(2rem,3vw,3rem);font-weight:600;letter-spacing:-.025em}.ps-foundation-curriculum__panel>p{max-width:44rem;margin:.8rem 0 1.65rem;color:rgba(6,23,43,.68);font-size:.94rem;line-height:1.65}.ps-foundation-curriculum__panel ul{display:grid;gap:.95rem;margin:0;border-top:1px solid rgba(200,147,47,.24);padding:1.45rem 0 0;list-style:none}.ps-foundation-curriculum__panel li{display:flex;align-items:flex-start;gap:.85rem;color:rgba(6,23,43,.76);font-size:.9rem;line-height:1.55}.ps-foundation-curriculum__panel li svg{flex:0 0 auto;width:1.05rem;margin-top:.15rem;color:#c8932f;stroke-width:1.8}
@@ -581,10 +591,10 @@ const PrimarySchool = () => (
       @media(max-width:720px){.ps-foundation-intro__side-doodles{right:0;left:0;height:27rem}.ps-foundation-intro__side-doodle{width:11rem;opacity:.34}.ps-foundation-intro__side-doodle--left{top:2rem;left:.25rem}.ps-foundation-intro__side-doodle--right{top:5rem;right:.25rem}.ps-foundation-story__flower-doodle{top:auto;right:-5rem;bottom:-3rem;width:12rem;opacity:.38}.ps-foundation-curriculum__intro-doodles{width:12rem;margin-left:-2rem;opacity:.55}}
       @media(max-width:480px){.ps-foundation-curriculum__journey{min-height:37rem}.ps-foundation-curriculum__rail-art{top:9.25rem;left:-3.75rem;width:12rem;height:auto}.ps-foundation-curriculum__items{gap:2.8rem;padding-left:6rem}.ps-foundation-curriculum__item h4{white-space:normal}.ps-foundation-curriculum__item p{font-size:.86rem;line-height:1.55}}
       /* Years 1–2 curriculum: balanced editorial composition and one shared row system. */
-      .ps-foundation-curriculum{width:min(90vw,86rem);grid-template-columns:minmax(0,42fr) minmax(0,58fr);align-items:center;column-gap:clamp(3.5rem,6vw,6.5rem);padding:clamp(4rem,6vw,6rem) 0}
-      .ps-foundation-curriculum__intro{min-height:clamp(34rem,42vw,40rem);align-content:center;padding-left:clamp(.5rem,2vw,2rem)}
+      .ps-foundation-curriculum{width:min(90vw,86rem);grid-template-columns:minmax(0,42fr) minmax(0,58fr);align-items:start;column-gap:clamp(3.5rem,6vw,6.5rem);padding:clamp(2rem,2.5vw,2.75rem) 0}
+      .ps-foundation-curriculum__intro{min-height:0;align-content:start;padding-left:clamp(.5rem,2vw,2rem)}
       .ps-foundation-curriculum__intro h3{font-size:clamp(3.6rem,5.4vw,5.5rem);line-height:.84}
-      .ps-foundation-curriculum__intro-doodles{width:min(100%,26rem);height:auto;margin:clamp(2rem,3vw,3rem) 0 0 clamp(-2rem,-1.5vw,-.5rem);opacity:.72;filter:saturate(.82)}
+      .ps-foundation-curriculum__intro-doodles{width:min(100%,18rem);height:auto;margin:clamp(1.25rem,2vw,1.75rem) 0 0 clamp(-2rem,-1.5vw,-.5rem);opacity:.72;filter:saturate(.82)}
       .ps-foundation-curriculum__journey{min-height:0;padding-left:0}
       .ps-foundation-curriculum__rail-art{display:none}
       .ps-foundation-curriculum__header{max-width:none;margin:0 0 clamp(2.25rem,3vw,3rem);padding-left:0}
@@ -630,7 +640,7 @@ const PrimarySchool = () => (
       .ps-open-curriculum__item p{position:relative;width:fit-content;max-width:34rem;margin:0;color:#06172b;font-family:"Cormorant Garamond",Georgia,serif;font-size:clamp(1.3rem,1.65vw,1.65rem);font-weight:650;line-height:1.2;text-wrap:pretty}
       .ps-open-curriculum__item p:after{display:block;width:min(7rem,45%);height:.28rem;margin-top:.65rem;border-radius:999px;content:"";opacity:.68}
       .ps-open-curriculum__item--blue p:after{background:#a9d5eb}.ps-open-curriculum__item--pink p:after{background:#efb5c2}.ps-open-curriculum__item--green p:after{background:#bbd6a7}
-      .ps-growth-curriculum__intro,.ps-mastery-curriculum__intro{align-self:stretch;display:grid;min-height:clamp(34rem,42vw,40rem);align-content:center;padding:0 0 0 clamp(.5rem,2vw,2rem)}
+      .ps-growth-curriculum__intro,.ps-mastery-curriculum__intro{align-self:stretch;display:grid;min-height:clamp(23rem,29vw,27rem);align-content:center;padding:0 0 0 clamp(.5rem,2vw,2rem)}
       .ps-growth-curriculum__intro h3,.ps-mastery-curriculum__intro h3{font-size:clamp(3.6rem,5.4vw,5.5rem);letter-spacing:-.035em;line-height:.84;text-wrap:balance}
       .ps-growth-curriculum__intro .ps-growth-curriculum__doodle--left,.ps-mastery-curriculum__intro .ps-mastery-curriculum__doodle--left{position:relative;inset:auto;display:block;width:min(100%,26rem);height:auto;aspect-ratio:1;margin:clamp(2rem,3vw,3rem) 0 0 clamp(-2rem,-1.5vw,-.5rem);opacity:.72;filter:saturate(.82);transform:none}
       @media(max-width:1000px){.ps-growth-curriculum,.ps-mastery-curriculum{width:min(calc(100vw - 3rem),76rem);grid-template-columns:minmax(0,40fr) minmax(0,60fr);column-gap:3rem}.ps-growth-curriculum__intro h3,.ps-mastery-curriculum__intro h3{font-size:clamp(3.25rem,5.5vw,4.5rem)}.ps-foundation-curriculum__items,.ps-open-curriculum__items{--curriculum-doodle-lane:10rem}.ps-foundation-curriculum__item,.ps-open-curriculum__item{grid-template-columns:var(--curriculum-doodle-lane) minmax(0,1fr);gap:1.5rem}}
@@ -649,7 +659,42 @@ const PrimarySchool = () => (
       .ps-mastery-curriculum__doodle--right{right:clamp(.25rem,1vw,1rem);bottom:clamp(-1rem,-1vw,0rem);width:clamp(11rem,15vw,14rem);aspect-ratio:1;transform:rotate(1deg)}
       @media(max-width:1000px){.ps-mastery__hero-doodle{width:clamp(14rem,30vw,18rem);opacity:.48}.ps-mastery__hero-doodle--left{left:.5rem}.ps-mastery__hero-doodle--right{right:.5rem}.ps-mastery-curriculum__doodle--right{right:.25rem;width:11rem}}
       @media(max-width:720px){.ps-mastery__hero-doodles{top:3rem;height:24rem}.ps-mastery__hero-doodle{width:10rem;opacity:.28}.ps-mastery__hero-doodle--left{top:3rem;left:.25rem}.ps-mastery__hero-doodle--right{top:5rem;right:.25rem}.ps-mastery-curriculum{padding-bottom:3rem}.ps-mastery-curriculum__intro{min-height:0;padding-top:0}.ps-mastery-curriculum__intro .ps-mastery-curriculum__doodle--left{width:min(100%,23rem);margin-left:-1rem}.ps-mastery-curriculum__doodle--right{right:.5rem;bottom:1rem;width:9rem;opacity:.28}}
-      @media(max-width:540px){.ps-foundation-intro{padding-bottom:5rem}}
+      /* Primary opening: one vertical story from photography into the illustrated pathway. */
+      .ps-opening{padding-top:0;background:#f7f0e3}
+      .ps-opening__hero{height:auto;min-height:100svh}
+      .ps-opening__hero .subject-hero{min-height:100svh}
+      .ps-opening__hero .ps-hero:after{z-index:1;height:clamp(8rem,21%,13rem);background:linear-gradient(180deg,rgba(247,240,227,0) 0%,rgba(247,240,227,.04) 34%,rgba(247,240,227,.13) 58%,rgba(247,240,227,.34) 82%,rgba(247,240,227,.52) 100%)}
+      .ps-opening__hero{-webkit-mask-image:radial-gradient(ellipse 44% 18% at 50% 82%,#000 0%,#000 42%,rgba(0,0,0,.76) 60%,rgba(0,0,0,.32) 78%,transparent 100%),linear-gradient(180deg,#000 0%,#000 81%,rgba(0,0,0,.76) 85%,rgba(0,0,0,.32) 90%,transparent 95%);mask-image:radial-gradient(ellipse 44% 18% at 50% 82%,#000 0%,#000 42%,rgba(0,0,0,.76) 60%,rgba(0,0,0,.32) 78%,transparent 100%),linear-gradient(180deg,#000 0%,#000 81%,rgba(0,0,0,.76) 85%,rgba(0,0,0,.32) 90%,transparent 95%)}
+      #primary-page-content{position:relative;z-index:auto;margin-top:0;background:#f7f0e3}
+      .ps-landscape-breath{position:relative;display:block;width:100%;height:auto;min-height:0;margin:0;padding:.5rem 0 0;overflow:hidden;background:#f7f0e3;isolation:auto}
+      .ps-landscape-breath__copy{position:relative;z-index:4;top:auto;left:auto;width:min(calc(100% - 3rem),47rem);margin:0 auto;color:#0b2743;text-align:center;text-shadow:none}
+      .ps-landscape-breath__copy>p{display:flex;align-items:center;justify-content:center;gap:.85rem;margin:0 0 .85rem;color:#a9781e;font-size:clamp(.62rem,.72vw,.72rem);font-weight:750;letter-spacing:.19em;text-transform:uppercase}
+      .ps-landscape-breath__copy>p i{position:relative;display:block;width:clamp(2.4rem,3.5vw,3.5rem);height:1px;background:rgba(185,136,40,.58)}
+      .ps-landscape-breath__copy>p i:after{position:absolute;top:50%;width:4px;height:4px;background:#c99b36;content:"";transform:translateY(-50%) rotate(45deg)}
+      .ps-landscape-breath__copy>p i:first-child:after{right:0}.ps-landscape-breath__copy>p i:last-child:after{left:0}
+      .ps-landscape-breath__copy h2{font-size:clamp(3.2rem,4.7vw,4.65rem);line-height:.94}
+      .ps-landscape-breath__rule{position:relative;width:4.5rem;margin:1.15rem auto 1.05rem}
+      .ps-landscape-breath__rule:after{position:absolute;top:50%;left:50%;width:5px;height:5px;background:#c99b36;content:"";transform:translate(-50%,-50%) rotate(45deg)}
+      .ps-landscape-breath__copy>span{max-width:26rem;margin:0 auto;color:rgba(36,65,90,.72);font-size:clamp(.86rem,.98vw,.96rem);line-height:1.55}
+      .ps-landscape-breath__visual{position:relative;width:100%;height:auto;min-height:0;margin-top:clamp(-9rem,-10vw,-7rem);overflow:visible;background:#f7f0e3;isolation:isolate}
+      .ps-landscape-breath__visual:before,.ps-landscape-breath__visual:after{position:absolute;z-index:3;background:#f7f0e3;content:"";pointer-events:none}
+      .ps-landscape-breath__visual:before{top:-1.5rem;right:-3%;left:-3%;height:clamp(4.25rem,6vw,5.75rem);box-shadow:0 1.1rem 2.2rem rgba(247,240,227,.72);filter:blur(clamp(.7rem,1.3vw,1.15rem))}
+      .ps-landscape-breath__visual:after{top:clamp(-7rem,-7vw,-4.5rem);left:50%;width:82%;height:clamp(14rem,21vw,19rem);border-radius:50%;box-shadow:0 1.2rem 2.4rem rgba(247,240,227,.66);filter:blur(clamp(.75rem,1.45vw,1.3rem));transform:translateX(-50%)}
+      .ps-landscape-breath__image{position:relative;z-index:1;inset:auto;display:block;width:100%;height:auto!important;max-width:none;margin:0;object-fit:contain;object-position:center}
+      .ps-landscape-breath__stages{z-index:3}
+      .ps-landscape-breath__year-nav{z-index:4;top:24%}
+      .ps-landscape-reflection{position:relative;z-index:1;width:100%;height:clamp(17rem,27vw,25rem);margin-top:0;background:url('/images/programs/primary-school-staircase-landscape-v3.png') center bottom/100vw auto no-repeat;opacity:.78;transform:scaleY(-1);transform-origin:center;-webkit-mask-image:radial-gradient(ellipse 145% 132% at 50% 126%,#000 0%,#000 40%,rgba(0,0,0,.9) 52%,rgba(0,0,0,.62) 67%,rgba(0,0,0,.3) 80%,rgba(0,0,0,.1) 89%,transparent 96%);mask-image:radial-gradient(ellipse 145% 132% at 50% 126%,#000 0%,#000 40%,rgba(0,0,0,.9) 52%,rgba(0,0,0,.62) 67%,rgba(0,0,0,.3) 80%,rgba(0,0,0,.1) 89%,transparent 96%);pointer-events:none}
+      .ps-mobile-progress{display:none}
+      .ps-foundation-intro{padding-top:clamp(4.5rem,8vw,7rem)}
+      .ps-foundation-intro__side-doodles{top:clamp(2rem,4vw,4rem)}
+      /* Keep the hand-off between year groups deliberate, without leaving a visual hole. */
+      .primary-story{--ps-stage-edge:clamp(3.25rem,4vw,4.5rem);--ps-curriculum-gap:clamp(5rem,5.5vw,6rem)}
+      .ps-foundation-intro{padding-bottom:clamp(1.5rem,2vw,2rem)}
+      .ps-growth{padding-top:clamp(2rem,2.5vw,2.75rem);padding-bottom:var(--ps-stage-edge)}
+      .ps-mastery{padding-top:var(--ps-stage-edge)}
+      .ps-growth-curriculum,.ps-mastery-curriculum{margin-top:var(--ps-curriculum-gap)}
+      @media(max-width:820px){.ps-opening__hero{-webkit-mask-image:radial-gradient(ellipse 48% 17% at 50% 82%,#000 0%,#000 40%,rgba(0,0,0,.74) 59%,rgba(0,0,0,.3) 78%,transparent 100%),linear-gradient(180deg,#000 0%,#000 80%,rgba(0,0,0,.74) 84%,rgba(0,0,0,.3) 89%,transparent 94%);mask-image:radial-gradient(ellipse 48% 17% at 50% 82%,#000 0%,#000 40%,rgba(0,0,0,.74) 59%,rgba(0,0,0,.3) 78%,transparent 100%),linear-gradient(180deg,#000 0%,#000 80%,rgba(0,0,0,.74) 84%,rgba(0,0,0,.3) 89%,transparent 94%)}.ps-landscape-breath{padding-top:.35rem}.ps-landscape-breath__copy{left:auto;width:min(calc(100% - 2.5rem),40rem)}.ps-landscape-breath__copy h2{font-size:clamp(2.9rem,8vw,3.8rem)}.ps-landscape-breath__visual{height:auto;min-height:0;margin-top:-5rem}.ps-landscape-breath__visual:before{height:clamp(3.75rem,10vw,5rem)}.ps-landscape-breath__visual:after{top:clamp(-5.5rem,-10vw,-3.5rem);width:86%;height:clamp(11rem,27vw,15rem)}.ps-landscape-breath__image{object-position:center}.ps-landscape-breath__year-nav{top:18%;right:.8rem}.ps-landscape-stage--foundation{top:80.2%}.ps-landscape-stage--growth{top:74.45%}.ps-landscape-stage--mastery{top:68.95%}.ps-landscape-reflection{height:clamp(14rem,43vw,20rem);margin-top:0;background-size:auto 175%;background-position:center bottom}.ps-foundation-intro{padding-top:4.5rem}.ps-foundation-intro__side-doodles{top:1.5rem}}
+      @media(max-width:540px){.ps-foundation-intro{padding-top:4rem;padding-bottom:var(--ps-stage-edge)}.ps-landscape-breath{padding-top:.25rem}.ps-landscape-breath__copy{top:auto;left:auto;width:calc(100% - 2rem)}.ps-landscape-breath__copy>p{gap:.55rem;margin-bottom:.7rem;font-size:.56rem;letter-spacing:.15em}.ps-landscape-breath__copy>p i{width:1.8rem}.ps-landscape-breath__copy h2{font-size:clamp(2.55rem,11vw,3.15rem);line-height:.94}.ps-landscape-breath__rule{margin:.9rem auto}.ps-landscape-breath__copy>span{max-width:21rem;font-size:.78rem;line-height:1.52}.ps-pathway-copy-break{display:none}.ps-landscape-breath__visual{height:auto;margin-top:-4.5rem}.ps-landscape-breath__visual:before{top:-1rem;right:-5%;left:-5%;height:3.5rem;box-shadow:0 .75rem 1.4rem rgba(247,240,227,.72);filter:blur(.6rem)}.ps-landscape-breath__visual:after{top:-4.25rem;width:90%;height:11.5rem;box-shadow:0 .8rem 1.5rem rgba(247,240,227,.66);filter:blur(.7rem)}.ps-landscape-breath__image{object-position:center}.ps-landscape-breath__year-nav{top:20%;right:.55rem}.ps-landscape-stage{display:none}.ps-landscape-reflection{height:13rem;margin-top:0;background-size:auto 190%}}
       @media(prefers-reduced-motion:reduce){.ps-button,.ps-mobile-progress i b,.ps-landscape-stage,.ps-landscape-stage small,.ps-landscape-stage strong{transition:none}.ps-hero__handoff{display:none}}
     `}</style>
   </div>

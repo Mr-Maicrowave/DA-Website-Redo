@@ -40,6 +40,7 @@ import Year34 from "./pages/programs/Year34";
 import Year56 from "./pages/programs/Year56";
 // Subject pages
 import Mathematics from "./pages/subjects/Mathematics";
+import MathsGraphLab from "./pages/MathsGraphLab";
 import English from "./pages/subjects/English";
 import Science from "./pages/subjects/Science";
 import BusinessStudies from "./pages/subjects/BusinessStudies";
@@ -102,6 +103,7 @@ const AnimatedRoutes = () => {
 
         {/* Subject Routes */}
         <Route path="/subjects/mathematics" element={<PageTransition><Mathematics /></PageTransition>} />
+        <Route path="/maths-graph-lab" element={<PageTransition><MathsGraphLab /></PageTransition>} />
         <Route path="/subjects/english" element={<PageTransition><English /></PageTransition>} />
         <Route path="/subjects/science" element={<PageTransition><Science /></PageTransition>} />
         <Route path="/subjects/business-studies" element={<PageTransition><BusinessStudies /></PageTransition>} />
