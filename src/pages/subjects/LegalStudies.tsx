@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Scale, Gavel, BookOpen, CheckCircle, ArrowRight, Quote, Shield, Info } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import SEO from '@/components/SEO';
+import { LegalStudiesIntroVideoGate } from '@/features/legal-intro-video/LegalStudiesIntroVideoGate';
 
 const legalTrustedSchools = [
   'Freeman Catholic College',
@@ -86,6 +87,7 @@ const LegalStudies = () => {
 
   return (
     <div className="min-h-screen bg-white">
+      <LegalStudiesIntroVideoGate />
       <SEO
         title="HSC Legal Studies Tutoring"
         description="Master the Australian legal system through case analysis and critical evaluation at DA Tuition."
