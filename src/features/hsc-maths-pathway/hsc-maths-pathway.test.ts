@@ -8,6 +8,16 @@ import {
 } from './hsc-maths-pathway-model.ts';
 
 const componentUrl = new URL('./HscMathsPathway.tsx', import.meta.url);
+const mathematicsUrl = new URL('../../pages/subjects/Mathematics.tsx', import.meta.url);
+
+test('Mathematics page mounts the feature and removes the incomplete tab selector', () => {
+  const source = readFileSync(mathematicsUrl, 'utf8');
+  assert.match(source, /import \{ HscMathsPathway \}/);
+  assert.match(source, /<HscMathsPathway \/>/);
+  assert.doesNotMatch(source, /role="tab"/);
+  assert.doesNotMatch(source, /hscRoutePaths/);
+  assert.doesNotMatch(source, /hscStreamButtonRefs/);
+});
 
 test('Standard remains separate from the Advanced extension pathway', () => {
   assert.deepEqual(getActivePath('standard'), ['standard']);
