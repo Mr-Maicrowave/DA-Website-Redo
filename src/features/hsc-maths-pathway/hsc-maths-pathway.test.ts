@@ -58,6 +58,14 @@ test('pathway exposes selection, accordion, focus, and reduced-motion semantics'
   assert.doesNotMatch(source, /role="tab"/);
 });
 
+test('tablet widths use the accordion instead of the spatial desktop pathway', () => {
+  const source = readFileSync(componentUrl, 'utf8');
+  assert.match(source, /xl:grid xl:grid-cols-\[0\.72fr_1\.15fr_0\.9fr\]/);
+  assert.match(source, /xl:hidden/);
+  assert.doesNotMatch(source, /lg:grid lg:grid-cols-\[0\.72fr_1\.15fr_0\.9fr\]/);
+  assert.doesNotMatch(source, /lg:hidden/);
+});
+
 test('pathway presents the approved decision content and actions', () => {
   const source = readFileSync(componentUrl, 'utf8');
   assert.match(source, /Best fit when/);

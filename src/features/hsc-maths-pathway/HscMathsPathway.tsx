@@ -112,7 +112,7 @@ export function HscMathsPathway(): JSX.Element {
           </p>
         </div>
 
-        <div className="mt-12 hidden overflow-hidden rounded-2xl border border-[#071629]/20 bg-[#fffdf8] lg:grid lg:grid-cols-[0.72fr_1.15fr_0.9fr]">
+        <div className="mt-12 hidden overflow-hidden rounded-2xl border border-[#071629]/20 bg-[#fffdf8] xl:grid xl:grid-cols-[0.72fr_1.15fr_0.9fr]">
           <aside className="m-8 border-r border-[#c9921b]/55 py-8 pr-8 xl:m-10 xl:pr-10" aria-label="HSC course selection guidance">
             <p className="font-serif text-4xl font-medium tracking-[-0.04em] text-[#071629]">HSC Maths</p>
             <p className="mt-4 text-sm leading-7 text-[#40516b]">
@@ -246,7 +246,7 @@ export function HscMathsPathway(): JSX.Element {
           </motion.div>
         </div>
 
-        <div className="mt-10 overflow-hidden border-y border-[#071629]/20 bg-[#fffdf8] lg:hidden">
+        <div className="mt-10 overflow-hidden border-y border-[#071629]/20 bg-[#fffdf8] xl:hidden">
           <div className="border-b border-[#071629]/15 px-4 py-5">
             <p className="font-serif text-3xl font-medium tracking-[-0.03em] text-[#071629]">HSC Maths</p>
             <p className="mt-2 text-sm leading-6 text-[#40516b]">Choose a course to see where it leads and how DA can help.</p>
