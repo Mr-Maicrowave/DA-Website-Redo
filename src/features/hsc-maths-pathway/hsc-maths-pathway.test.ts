@@ -52,8 +52,17 @@ test('pathway presents the approved decision content and actions', () => {
   assert.match(source, /See topics covered/);
 });
 
-test('small course labels keep navy text while course colour remains an accent', () => {
+test('every small pathway label uses approved navy while course colour remains an accent', () => {
   const source = readFileSync(componentUrl, 'utf8');
   assert.doesNotMatch(source, /style=\{\{ color: stream\.color \}\}/);
   assert.match(source, /borderColor: stream\.color/);
+  assert.match(source, /className="[^"]*text-\[#071629\][^"]*">HSC pathway map<\/p>/);
+  assert.equal(
+    source.match(/className="[^"]*text-\[#071629\][^"]*">\{stream\.shortDescriptor\}<\/span>/g)?.length,
+    2,
+  );
+  assert.match(source, /className="[^"]*text-\[#071629\][^"]*" aria-hidden="true">\s*Year 10/);
+  assert.match(source, /className="[^"]*text-\[#071629\][^"]*">Extension 2 becomes available<\/p>/);
+  assert.match(source, /className="[^"]*text-\[#071629\][^"]*">Year 12 only<\/p>/);
+  assert.match(source, /className="[^"]*text-\[#071629\][^"]*">Requires Advanced \+ Extension 1<\/p>/);
 });

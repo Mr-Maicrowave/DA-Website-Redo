@@ -102,7 +102,7 @@ export function HscMathsPathway(): JSX.Element {
       <div className="mx-auto max-w-[1480px]">
         <div className="grid gap-8 lg:grid-cols-[.85fr_1.15fr] lg:items-end">
           <div>
-            <p className="mb-3 text-xs font-black uppercase tracking-[0.16em] text-[#7b5610]">HSC pathway map</p>
+            <p className="mb-3 text-xs font-black uppercase tracking-[0.16em] text-[#071629]">HSC pathway map</p>
             <h2 className="max-w-3xl font-serif text-4xl font-medium leading-[1.08] tracking-[-0.04em] text-[#071629] [text-wrap:balance] lg:text-5xl">
               Find the maths stream that fits where your child is headed.
             </h2>
@@ -184,7 +184,7 @@ export function HscMathsPathway(): JSX.Element {
               })}
             </svg>
 
-            <span className="pointer-events-none absolute left-[4%] top-[29%] text-[11px] font-black uppercase tracking-[0.12em] text-[#40516b]" aria-hidden="true">
+            <span className="pointer-events-none absolute left-[4%] top-[29%] text-[11px] font-black uppercase tracking-[0.12em] text-[#071629]" aria-hidden="true">
               Year 10
             </span>
 
@@ -205,7 +205,7 @@ export function HscMathsPathway(): JSX.Element {
                     <span className="h-4 w-4 shrink-0 rounded-full border-[3px] bg-[#fffdf8]" style={{ borderColor: stream.color }} aria-hidden="true" />
                     <span className="min-w-0 flex-1">
                       <span className="block font-serif text-2xl font-medium text-[#071629]">{stream.name}</span>
-                      <span className="mt-1 block text-sm text-[#40516b]">{stream.shortDescriptor}</span>
+                      <span className="mt-1 block text-sm text-[#071629]">{stream.shortDescriptor}</span>
                     </span>
                     {isSelected ? (
                       <span
@@ -226,10 +226,10 @@ export function HscMathsPathway(): JSX.Element {
               <span className="text-xs font-black uppercase tracking-[0.1em] text-[#071629]">Year 12</span>
               <span className="h-px flex-1 bg-[#40516b]/45" aria-hidden="true" />
             </div>
-            <p className="absolute inset-x-0 top-[72%] text-center text-xs font-bold text-[#40516b]">Extension 2 becomes available</p>
-            <div className="absolute left-[42%] top-[91%] text-xs leading-5 text-[#40516b]">
-              <p className="font-black uppercase tracking-[0.08em] text-[#624091]">Year 12 only</p>
-              <p>Requires Advanced + Extension 1</p>
+            <p className="absolute inset-x-0 top-[72%] text-center text-xs font-bold text-[#071629]">Extension 2 becomes available</p>
+            <div className="absolute left-[42%] top-[91%] text-xs leading-5 text-[#071629]">
+              <p className="font-black uppercase tracking-[0.08em] text-[#071629]">Year 12 only</p>
+              <p className="text-[#071629]">Requires Advanced + Extension 1</p>
             </div>
           </div>
 
@@ -267,7 +267,7 @@ export function HscMathsPathway(): JSX.Element {
                     <span className="h-3 w-3 shrink-0 rounded-full" style={{ backgroundColor: stream.color }} aria-hidden="true" />
                     <span className="min-w-0 flex-1 text-left">
                       <span className="block font-serif text-xl font-medium text-[#071629]">{stream.name}</span>
-                      <span className="block text-sm text-[#40516b]">{stream.shortDescriptor}</span>
+                      <span className="block text-sm text-[#071629]">{stream.shortDescriptor}</span>
                     </span>
                     <ChevronDown className={`h-4 w-4 shrink-0 text-[#40516b] transition-transform motion-reduce:transition-none ${isSelected ? 'rotate-180' : ''}`} aria-hidden="true" />
                   </span>
