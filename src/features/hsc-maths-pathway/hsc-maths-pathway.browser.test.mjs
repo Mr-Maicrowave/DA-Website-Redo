@@ -119,6 +119,12 @@ test('desktop selection keeps full routes aligned and the primary CTA above the 
         const activeRoutePaths = [...document.querySelectorAll('[data-route-active="true"] path')];
         const availabilityRect = availabilityCaption.getBoundingClientRect();
         const thresholdRect = year12Threshold.getBoundingClientRect();
+        const thresholdLabel = [...year12Threshold.querySelectorAll('span')]
+          .find((span) => span.textContent?.trim() === 'Year 12');
+        const thresholdLines = [...year12Threshold.querySelectorAll('span[aria-hidden="true"]')];
+        if (!(thresholdLabel instanceof HTMLSpanElement)) throw new Error('Year 12 threshold label missing');
+        const thresholdLabelRect = thresholdLabel.getBoundingClientRect();
+        const thresholdLineRects = thresholdLines.map((line) => line.getBoundingClientRect());
         const extensionTwoLength = extensionTwoRoute.getTotalLength();
         let routeAtCaption = extensionTwoRoute.getPointAtLength(0).matrixTransform(extensionTwoRoute.getScreenCTM());
         let routeAtThreshold = routeAtCaption;
@@ -153,8 +159,23 @@ test('desktop selection keeps full routes aligned and the primary CTA above the 
           routeAtCaptionX: routeAtCaption.x,
           routeAtThresholdX: routeAtThreshold.x,
           thresholdLeft: thresholdRect.left,
+          thresholdCenter: thresholdRect.left + thresholdRect.width / 2,
+          availabilityCenter: availabilityRect.left + availabilityRect.width / 2,
+          thresholdLineCount: thresholdLineRects.length,
+          thresholdLinesFlankLabel: thresholdLineRects.length === 2
+            && thresholdLineRects[0].right <= thresholdLabelRect.left
+            && thresholdLineRects[1].left >= thresholdLabelRect.right,
+          thresholdLineWidthDifference: thresholdLineRects.length === 2
+            ? Math.abs(thresholdLineRects[0].width - thresholdLineRects[1].width)
+            : Number.POSITIVE_INFINITY,
           courseRowsAreTransparent: buttons.every((button) => {
             const background = getComputedStyle(button).backgroundColor;
+            return background === 'rgba(0, 0, 0, 0)' || background === 'transparent';
+          }),
+          courseDotsAreTransparent: buttons.every((button) => {
+            const dot = button.querySelector('.hsc-pathway-course-dot');
+            if (!(dot instanceof HTMLSpanElement)) return false;
+            const background = getComputedStyle(dot).backgroundColor;
             return background === 'rgba(0, 0, 0, 0)' || background === 'transparent';
           }),
           kickerTop: kickerRect.top,
@@ -177,13 +198,20 @@ test('desktop selection keeps full routes aligned and the primary CTA above the 
         `Availability caption starts at ${result.availabilityLeft}px and intersects route at ${result.routeAtCaptionX}px`,
       );
       assert.equal(result.courseRowsAreTransparent, true);
+      assert.equal(result.courseDotsAreTransparent, true);
       assert.ok(
         result.thresholdLeft >= result.routeAtThresholdX + 16,
         `Year 12 milestone starts at ${result.thresholdLeft}px and intersects route at ${result.routeAtThresholdX}px`,
       );
+      assert.equal(result.thresholdLineCount, 2);
+      assert.equal(result.thresholdLinesFlankLabel, true);
       assert.ok(
-        Math.abs(result.availabilityLeft - result.thresholdLeft) <= 2,
-        `Availability caption ${result.availabilityLeft}px is not aligned with milestone ${result.thresholdLeft}px`,
+        result.thresholdLineWidthDifference <= 2,
+        `Year 12 rule widths differ by ${result.thresholdLineWidthDifference}px`,
+      );
+      assert.ok(
+        Math.abs(result.availabilityCenter - result.thresholdCenter) <= 2,
+        `Availability caption centre ${result.availabilityCenter}px is not aligned with milestone centre ${result.thresholdCenter}px`,
       );
       assert.equal(result.glowFilterUnits, 'userSpaceOnUse');
       assert.ok(
