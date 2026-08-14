@@ -58,6 +58,32 @@ test('pathway exposes selection, accordion, focus, and reduced-motion semantics'
   assert.doesNotMatch(source, /role="tab"/);
 });
 
+test('every pathway control names the approved navy focus-visible ring', () => {
+  const source = readFileSync(componentUrl, 'utf8');
+  assert.match(source, /<summary className="[^"]*focus-visible:ring-\[#071629\][^"]*"/);
+  assert.match(source, /to="\/book-interview" className="[^"]*focus-visible:ring-\[#071629\][^"]*"/);
+  assert.match(source, /to="\/hsc-excellence" className="[^"]*focus-visible:ring-\[#071629\][^"]*"/);
+  assert.equal(
+    source.match(/<button[\s\S]*?className=(?:"[^"]*focus-visible:ring-\[#071629\][^"]*"|\{`[^`]*focus-visible:ring-\[#071629\][^`]*`\})/g)?.length,
+    2,
+  );
+});
+
+test('accordion keeps every controlled panel mounted while hiding inactive details', () => {
+  const source = readFileSync(componentUrl, 'utf8');
+  assert.match(source, /id=\{panelId\} hidden=\{!isSelected\} role="region" aria-labelledby=\{headingId\}/);
+  assert.doesNotMatch(source, /\{isSelected \? \(\s*<div id=\{panelId\}/);
+});
+
+test('route segments stay mounted, draw once in view, and include the Advanced companion label', () => {
+  const source = readFileSync(componentUrl, 'utf8');
+  assert.match(source, /key=\{pathId\}/);
+  assert.doesNotMatch(source, /key=\{`\$\{activeStreamId\}-\$\{pathId\}`\}/);
+  assert.match(source, /onViewportEnter=\{\(\) => setPathwayInView\(true\)\}/);
+  assert.match(source, /viewport=\{\{ once: true/);
+  assert.match(source, />\s*Studied with Advanced\s*</);
+});
+
 test('tablet widths use the accordion instead of the spatial desktop pathway', () => {
   const source = readFileSync(componentUrl, 'utf8');
   assert.match(source, /xl:grid xl:grid-cols-\[0\.72fr_1\.15fr_0\.9fr\]/);
@@ -100,7 +126,7 @@ test('desktop and mobile details use caller-scoped heading ids', () => {
   assert.match(source, /aria-labelledby=\{desktopHeadingId\}/);
   assert.match(source, /<StreamDetails stream=\{activeStream\} headingId=\{desktopHeadingId\} \/>/);
   assert.match(source, /const headingId = `\$\{panelId\}-heading`/);
-  assert.match(source, /id=\{panelId\} role="region" aria-labelledby=\{headingId\}/);
+  assert.match(source, /id=\{panelId\} hidden=\{!isSelected\} role="region" aria-labelledby=\{headingId\}/);
   assert.match(source, /<StreamDetails stream=\{stream\} headingId=\{headingId\} compact \/>/);
 });
 

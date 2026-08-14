@@ -18,6 +18,7 @@ import {
   type HscStream,
   type HscStreamId,
 } from './hsc-maths-pathway-model';
+import './hsc-maths-pathway.css';
 
 const DETAIL_ITEMS = [
   { label: 'Best fit when', field: 'bestFit', icon: Target },
@@ -67,17 +68,17 @@ function StreamDetails({ stream, headingId, compact = false }: { stream: HscStre
         ))}
       </dl>
       <details className="group mt-6 border-y border-[#071629]/15 py-4">
-        <summary className="min-h-12 cursor-pointer text-sm font-black text-[#071629] focus-visible:outline-none focus-visible:ring-2">
+        <summary className="hsc-pathway-focus hsc-pathway-focus--compact min-h-12 cursor-pointer text-sm font-black text-[#071629] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#071629] focus-visible:ring-2 focus-visible:ring-[#071629] focus-visible:ring-offset-2 focus-visible:ring-offset-[#fffdf8]">
           See topics covered
         </summary>
         <ul className="mt-3 grid gap-2 text-sm leading-6 text-[#40516b]">
           {stream.topics.map((topic) => <li key={topic}>{topic}</li>)}
         </ul>
       </details>
-      <Link to="/book-interview" className="mt-6 inline-flex min-h-12 w-full items-center justify-center gap-2 bg-[#071629] px-5 text-center text-sm font-black text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-4">
+      <Link to="/book-interview" className="hsc-pathway-focus mt-6 inline-flex min-h-12 w-full items-center justify-center gap-2 bg-[#071629] px-5 text-center text-sm font-black text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#071629] focus-visible:ring-2 focus-visible:ring-[#071629] focus-visible:ring-offset-4 focus-visible:ring-offset-[#fffdf8]">
         Talk through your child's course choice <ArrowRight className="h-4 w-4" aria-hidden="true" />
       </Link>
-      <Link to="/hsc-excellence" className="mt-3 inline-flex min-h-12 w-full items-center justify-center gap-2 text-sm font-black text-[#071629] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-4">
+      <Link to="/hsc-excellence" className="hsc-pathway-focus mt-3 inline-flex min-h-12 w-full items-center justify-center gap-2 text-sm font-black text-[#071629] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#071629] focus-visible:ring-2 focus-visible:ring-[#071629] focus-visible:ring-offset-4 focus-visible:ring-offset-[#fffdf8]">
         Explore HSC program <ArrowRight className="h-4 w-4" aria-hidden="true" />
       </Link>
     </div>
@@ -87,15 +88,17 @@ function StreamDetails({ stream, headingId, compact = false }: { stream: HscStre
 export function HscMathsPathway(): JSX.Element {
   const [activeStreamId, setActiveStreamId] = useState<HscStreamId>('standard');
   const [hasSelected, setHasSelected] = useState(false);
+  const [pathwayInView, setPathwayInView] = useState(false);
   const prefersReducedMotion = useReducedMotion();
   const activeStream = getHscStream(activeStreamId);
   const activePath = getActivePath(activeStreamId);
+  const routesShouldBeDrawn = Boolean(prefersReducedMotion) || pathwayInView;
   const desktopHeadingId = `hsc-stream-desktop-heading-${activeStream.id}`;
 
   return (
     <section
       id="hsc-maths"
-      className="px-5 pb-20 pt-52 text-[#071629] lg:px-8"
+      className="px-5 pb-20 pt-52 text-[#071629] lg:px-8 xl:pt-12"
       style={{
         background: 'linear-gradient(180deg, #fffdf8 0px, #f5f2eb 16px, #f6ecd9 32px, #fff6e7 56px)',
       }}
@@ -113,7 +116,7 @@ export function HscMathsPathway(): JSX.Element {
           </p>
         </div>
 
-        <div className="mt-12 hidden overflow-hidden rounded-2xl border border-[#071629]/20 bg-[#fffdf8] xl:grid xl:grid-cols-[0.72fr_1.15fr_0.9fr]">
+        <div className="mt-12 hidden overflow-hidden rounded-2xl border border-[#071629]/20 bg-[#fffdf8] xl:mt-7 xl:grid xl:grid-cols-[0.72fr_1.15fr_0.9fr]">
           <aside className="m-8 border-r border-[#c9921b]/55 py-8 pr-8 xl:m-10 xl:pr-10" aria-label="HSC course selection guidance">
             <p className="font-serif text-4xl font-medium tracking-[-0.04em] text-[#071629]">HSC Maths</p>
             <p className="mt-4 text-sm leading-7 text-[#40516b]">
@@ -128,11 +131,13 @@ export function HscMathsPathway(): JSX.Element {
           </aside>
 
           <div className="relative min-h-[38rem] border-r border-[#c9921b]/45 px-5 py-8 xl:px-8" aria-label="Choose an HSC mathematics stream">
-            <svg
+            <motion.svg
               className="pointer-events-none absolute inset-0 h-full w-full"
               viewBox="0 0 520 560"
               preserveAspectRatio="none"
               aria-hidden="true"
+              onViewportEnter={() => setPathwayInView(true)}
+              viewport={{ once: true, amount: 0.25 }}
             >
               <defs>
                 <filter id="hsc-pathway-glow" x="-40%" y="-40%" width="180%" height="180%">
@@ -152,10 +157,11 @@ export function HscMathsPathway(): JSX.Element {
                 />
               ))}
 
-              {activePath.map((pathId) => {
-                const pathStream = getHscStream(pathId);
+              {HSC_STREAMS.map((pathStream) => {
+                const pathId = pathStream.id;
+                const isActive = activePath.includes(pathId);
                 return (
-                  <g key={`${activeStreamId}-${pathId}`}>
+                  <g key={pathId} data-route-segment={pathId} data-route-active={isActive}>
                     <motion.path
                       d={ROUTE_SEGMENTS[pathId]}
                       fill="none"
@@ -165,9 +171,12 @@ export function HscMathsPathway(): JSX.Element {
                       strokeLinecap="round"
                       vectorEffect="non-scaling-stroke"
                       filter="url(#hsc-pathway-glow)"
-                      initial={prefersReducedMotion ? false : { pathLength: 0, opacity: 0 }}
-                      animate={{ pathLength: 1, opacity: 1 }}
-                      transition={{ duration: hasSelected ? 0.48 : 0.58, ease: [0.16, 1, 0.3, 1] }}
+                      initial={false}
+                      animate={{ pathLength: routesShouldBeDrawn ? 1 : 0, opacity: isActive ? 1 : 0 }}
+                      transition={{
+                        pathLength: { duration: prefersReducedMotion ? 0 : 0.58, ease: [0.16, 1, 0.3, 1] },
+                        opacity: { duration: prefersReducedMotion ? 0 : 0.32, ease: [0.16, 1, 0.3, 1] },
+                      }}
                     />
                     <motion.path
                       d={ROUTE_SEGMENTS[pathId]}
@@ -176,18 +185,25 @@ export function HscMathsPathway(): JSX.Element {
                       strokeWidth="3"
                       strokeLinecap="round"
                       vectorEffect="non-scaling-stroke"
-                      initial={prefersReducedMotion ? false : { pathLength: 0 }}
-                      animate={{ pathLength: 1 }}
-                      transition={{ duration: hasSelected ? 0.48 : 0.58, ease: [0.16, 1, 0.3, 1] }}
+                      initial={false}
+                      animate={{ pathLength: routesShouldBeDrawn ? 1 : 0, opacity: isActive ? 1 : 0 }}
+                      transition={{
+                        pathLength: { duration: prefersReducedMotion ? 0 : 0.58, ease: [0.16, 1, 0.3, 1] },
+                        opacity: { duration: prefersReducedMotion ? 0 : 0.32, ease: [0.16, 1, 0.3, 1] },
+                      }}
                     />
                   </g>
                 );
               })}
-            </svg>
+            </motion.svg>
 
             <span className="pointer-events-none absolute left-[4%] top-[29%] text-[11px] font-black uppercase tracking-[0.12em] text-[#071629]" aria-hidden="true">
               Year 10
             </span>
+
+            <p className="pointer-events-none absolute left-[7%] top-[43%] w-[30%] text-right text-[10px] font-black uppercase leading-4 tracking-[0.1em] text-[#071629]">
+              Studied with Advanced
+            </p>
 
             {HSC_STREAMS.map((stream) => {
               const isSelected = stream.id === activeStreamId;
@@ -200,7 +216,7 @@ export function HscMathsPathway(): JSX.Element {
                     setActiveStreamId(stream.id);
                     setHasSelected(true);
                   }}
-                  className={`group absolute left-[40%] z-10 min-h-14 w-[57%] -translate-y-1/2 bg-[#fffdf8]/90 px-2 py-2 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-4 ${DESKTOP_POSITIONS[stream.id]}`}
+                  className={`hsc-pathway-focus group absolute left-[40%] z-10 min-h-14 w-[57%] -translate-y-1/2 bg-[#fffdf8]/90 px-2 py-2 text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#071629] focus-visible:ring-2 focus-visible:ring-[#071629] focus-visible:ring-offset-4 focus-visible:ring-offset-[#fffdf8] ${DESKTOP_POSITIONS[stream.id]}`}
                 >
                   <span className="flex items-center gap-3">
                     <span className="h-4 w-4 shrink-0 rounded-full border-[3px] bg-[#fffdf8]" style={{ borderColor: stream.color }} aria-hidden="true" />
@@ -263,7 +279,7 @@ export function HscMathsPathway(): JSX.Element {
                   aria-expanded={isSelected}
                   aria-controls={panelId}
                   onClick={() => setActiveStreamId(stream.id)}
-                  className="min-h-14 w-full px-4 py-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset"
+                  className="hsc-pathway-focus hsc-pathway-focus--inset min-h-14 w-full px-4 py-3 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[#071629] focus-visible:ring-2 focus-visible:ring-[#071629] focus-visible:ring-inset"
                 >
                   <span className="flex items-center gap-3">
                     <span className="h-3 w-3 shrink-0 rounded-full" style={{ backgroundColor: stream.color }} aria-hidden="true" />
@@ -274,11 +290,9 @@ export function HscMathsPathway(): JSX.Element {
                     <ChevronDown className={`h-4 w-4 shrink-0 text-[#40516b] transition-transform motion-reduce:transition-none ${isSelected ? 'rotate-180' : ''}`} aria-hidden="true" />
                   </span>
                 </button>
-                {isSelected ? (
-                  <div id={panelId} role="region" aria-labelledby={headingId}>
-                    <StreamDetails stream={stream} headingId={headingId} compact />
-                  </div>
-                ) : null}
+                <div id={panelId} hidden={!isSelected} role="region" aria-labelledby={headingId}>
+                  <StreamDetails stream={stream} headingId={headingId} compact />
+                </div>
               </div>
             );
           })}

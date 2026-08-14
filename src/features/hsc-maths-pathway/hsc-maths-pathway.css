@@ -1,0 +1,15 @@
+.hsc-pathway-focus:focus-visible {
+  outline: 2px solid #071629 !important;
+  outline-offset: 4px;
+  box-shadow: 0 0 0 4px #fffdf8, 0 0 0 6px #071629 !important;
+}
+
+.hsc-pathway-focus--compact:focus-visible {
+  outline-offset: 2px;
+  box-shadow: 0 0 0 2px #fffdf8, 0 0 0 4px #071629 !important;
+}
+
+.hsc-pathway-focus--inset:focus-visible {
+  outline-offset: -2px;
+  box-shadow: inset 0 0 0 2px #071629 !important;
+}
