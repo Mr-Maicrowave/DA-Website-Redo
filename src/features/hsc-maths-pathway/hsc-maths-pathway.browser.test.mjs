@@ -118,8 +118,10 @@ test('desktop selection keeps full routes aligned and the primary CTA above the 
         const year10Rect = year10.getBoundingClientRect();
         const activeRoutePaths = [...document.querySelectorAll('[data-route-active="true"] path')];
         const availabilityRect = availabilityCaption.getBoundingClientRect();
+        const thresholdRect = year12Threshold.getBoundingClientRect();
         const extensionTwoLength = extensionTwoRoute.getTotalLength();
         let routeAtCaption = extensionTwoRoute.getPointAtLength(0).matrixTransform(extensionTwoRoute.getScreenCTM());
+        let routeAtThreshold = routeAtCaption;
         for (let index = 1; index <= 200; index += 1) {
           const point = extensionTwoRoute
             .getPointAtLength((extensionTwoLength * index) / 200)
@@ -127,6 +129,10 @@ test('desktop selection keeps full routes aligned and the primary CTA above the 
           if (Math.abs(point.y - (availabilityRect.top + availabilityRect.height / 2))
             < Math.abs(routeAtCaption.y - (availabilityRect.top + availabilityRect.height / 2))) {
             routeAtCaption = point;
+          }
+          if (Math.abs(point.y - (thresholdRect.top + thresholdRect.height / 2))
+            < Math.abs(routeAtThreshold.y - (thresholdRect.top + thresholdRect.height / 2))) {
+            routeAtThreshold = point;
           }
         }
         return {
@@ -143,11 +149,14 @@ test('desktop selection keeps full routes aligned and the primary CTA above the 
           routeStartX: routeStart.x,
           routeStartY: routeStart.y,
           glowFilterUnits: routeGlow.getAttribute('filterUnits'),
-          routeZIndex: Number(getComputedStyle(routeSvg).zIndex) || 0,
-          thresholdZIndex: Number(getComputedStyle(year12Threshold).zIndex) || 0,
-          availabilityZIndex: Number(getComputedStyle(availabilityCaption).zIndex) || 0,
           availabilityLeft: availabilityRect.left,
           routeAtCaptionX: routeAtCaption.x,
+          routeAtThresholdX: routeAtThreshold.x,
+          thresholdLeft: thresholdRect.left,
+          courseRowsAreTransparent: buttons.every((button) => {
+            const background = getComputedStyle(button).backgroundColor;
+            return background === 'rgba(0, 0, 0, 0)' || background === 'transparent';
+          }),
           kickerTop: kickerRect.top,
           navBottom: navRect.bottom,
           ctaTop: ctaRect.top,
@@ -163,11 +172,18 @@ test('desktop selection keeps full routes aligned and the primary CTA above the 
       assert.equal(result.routeCount, 4);
       assert.equal(result.routePersisted, true);
       assert.equal(result.activeRoute, 'true');
-      assert.ok(result.routeZIndex > result.thresholdZIndex, 'Active route should paint above the Year 12 divider');
-      assert.ok(result.availabilityZIndex > result.routeZIndex, 'Availability caption should remain above the route');
       assert.ok(
         result.availabilityLeft >= result.routeAtCaptionX + 12,
         `Availability caption starts at ${result.availabilityLeft}px and intersects route at ${result.routeAtCaptionX}px`,
+      );
+      assert.equal(result.courseRowsAreTransparent, true);
+      assert.ok(
+        result.thresholdLeft >= result.routeAtThresholdX + 16,
+        `Year 12 milestone starts at ${result.thresholdLeft}px and intersects route at ${result.routeAtThresholdX}px`,
+      );
+      assert.ok(
+        Math.abs(result.availabilityLeft - result.thresholdLeft) <= 2,
+        `Availability caption ${result.availabilityLeft}px is not aligned with milestone ${result.thresholdLeft}px`,
       );
       assert.equal(result.glowFilterUnits, 'userSpaceOnUse');
       assert.ok(
@@ -242,6 +258,27 @@ test('keyboard focus reaches every control and reduced motion preserves instant 
         return element?.matches(':focus-visible') ?? false;
       });
       assert.equal(focusVisible, true, `${selector} was focused without :focus-visible`);
+      if (selector === '#hsc-maths button[aria-pressed]') {
+        const courseFocus = await desktop.evaluate(() => {
+          const button = document.activeElement;
+          if (!(button instanceof HTMLButtonElement)) throw new Error('Desktop course button is not focused');
+          const dot = button.querySelector('.hsc-pathway-course-dot');
+          const title = button.querySelector('.hsc-pathway-course-title');
+          if (!(dot instanceof HTMLElement) || !(title instanceof HTMLElement)) {
+            throw new Error('Desktop local focus targets are missing');
+          }
+          return {
+            buttonOutline: getComputedStyle(button).outlineStyle,
+            buttonShadow: getComputedStyle(button).boxShadow,
+            dotShadow: getComputedStyle(dot).boxShadow,
+            titleDecoration: getComputedStyle(title).textDecorationLine,
+          };
+        });
+        assert.equal(courseFocus.buttonOutline, 'none');
+        assert.equal(courseFocus.buttonShadow, 'none');
+        assert.notEqual(courseFocus.dotShadow, 'none');
+        assert.match(courseFocus.titleDecoration, /underline/);
+      }
     }
 
     assert.equal(await desktop.evaluate(() => matchMedia('(prefers-reduced-motion: reduce)').matches), true);

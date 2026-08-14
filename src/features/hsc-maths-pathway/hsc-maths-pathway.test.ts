@@ -58,15 +58,17 @@ test('pathway exposes selection, accordion, focus, and reduced-motion semantics'
   assert.doesNotMatch(source, /role="tab"/);
 });
 
-test('every pathway control names the approved navy focus-visible ring', () => {
+test('every pathway control names the approved navy focus treatment', () => {
   const source = readFileSync(componentUrl, 'utf8');
   assert.match(source, /<summary className="[^"]*focus-visible:ring-\[#071629\][^"]*"/);
   assert.match(source, /to="\/book-interview" className="[^"]*focus-visible:ring-\[#071629\][^"]*"/);
   assert.match(source, /to="\/hsc-excellence" className="[^"]*focus-visible:ring-\[#071629\][^"]*"/);
   assert.equal(
     source.match(/<button[\s\S]*?className=(?:"[^"]*focus-visible:ring-\[#071629\][^"]*"|\{`[^`]*focus-visible:ring-\[#071629\][^`]*`\})/g)?.length,
-    2,
+    1,
   );
+  assert.match(source, /className=\{`hsc-pathway-course group absolute/);
+  assert.doesNotMatch(source, /hsc-pathway-course[^`]*bg-\[#fffdf8\]\/90/);
 });
 
 test('accordion keeps every controlled panel mounted while hiding inactive details', () => {

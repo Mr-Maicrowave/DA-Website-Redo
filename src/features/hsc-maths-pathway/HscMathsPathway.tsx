@@ -214,12 +214,12 @@ export function HscMathsPathway(): JSX.Element {
                     setActiveStreamId(stream.id);
                     setHasSelected(true);
                   }}
-                  className={`hsc-pathway-focus group absolute left-[40%] z-20 min-h-14 w-[57%] -translate-y-1/2 bg-[#fffdf8]/90 px-2 py-2 text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#071629] focus-visible:ring-2 focus-visible:ring-[#071629] focus-visible:ring-offset-4 focus-visible:ring-offset-[#fffdf8] ${DESKTOP_POSITIONS[stream.id]}`}
+                  className={`hsc-pathway-course group absolute left-[40%] z-20 min-h-14 w-[57%] -translate-y-1/2 bg-transparent px-2 py-2 text-left focus-visible:outline-none ${DESKTOP_POSITIONS[stream.id]}`}
                 >
                   <span className="flex items-center gap-3">
-                    <span className="h-4 w-4 shrink-0 rounded-full border-[3px] bg-[#fffdf8]" style={{ borderColor: stream.color }} aria-hidden="true" />
+                    <span className="hsc-pathway-course-dot h-4 w-4 shrink-0 rounded-full border-[3px] bg-[#fffdf8]" style={{ borderColor: stream.color }} aria-hidden="true" />
                     <span className="min-w-0 flex-1">
-                      <span className="block font-serif text-2xl font-medium text-[#071629]">{stream.name}</span>
+                      <span className="hsc-pathway-course-title block font-serif text-2xl font-medium text-[#071629]">{stream.name}</span>
                       <span className="mt-1 block text-sm text-[#071629]">{stream.shortDescriptor}</span>
                     </span>
                     {isSelected ? (
@@ -236,12 +236,11 @@ export function HscMathsPathway(): JSX.Element {
               );
             })}
 
-            <div className="absolute inset-x-[10%] top-[68%] z-0 flex items-center gap-3" aria-label="Year 12 threshold">
-              <span className="h-px flex-1 bg-[#40516b]/45" aria-hidden="true" />
+            <div className="absolute left-[49%] right-[10%] top-[68%] z-20 flex items-center gap-3" aria-label="Year 12 threshold">
               <span className="text-xs font-black uppercase tracking-[0.1em] text-[#071629]">Year 12</span>
               <span className="h-px flex-1 bg-[#40516b]/45" aria-hidden="true" />
             </div>
-            <p className="absolute left-[47%] top-[72%] z-20 bg-[#fffdf8] px-2 text-left text-xs font-bold text-[#071629]">Extension 2 becomes available</p>
+            <p className="absolute left-[49%] top-[72%] z-20 text-left text-xs font-bold text-[#071629]">Extension 2 becomes available</p>
             <div className="absolute left-[42%] top-[91%] text-xs leading-5 text-[#071629]">
               <p className="font-black uppercase tracking-[0.08em] text-[#071629]">Year 12 only</p>
               <p className="text-[#071629]">Requires Advanced + Extension 1</p>

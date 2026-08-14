@@ -13,3 +13,18 @@
   outline-offset: -2px;
   box-shadow: inset 0 0 0 2px #071629 !important;
 }
+
+.hsc-pathway-course:focus-visible {
+  outline: 0 !important;
+  box-shadow: none !important;
+}
+
+.hsc-pathway-course:focus-visible .hsc-pathway-course-dot {
+  box-shadow: 0 0 0 3px #fffdf8, 0 0 0 5px #071629;
+}
+
+.hsc-pathway-course:focus-visible .hsc-pathway-course-title {
+  text-decoration-line: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+}
