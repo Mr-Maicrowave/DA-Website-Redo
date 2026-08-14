@@ -75,7 +75,7 @@ test('accordion keeps every controlled panel mounted while hiding inactive detai
   assert.doesNotMatch(source, /\{isSelected \? \(\s*<div id=\{panelId\}/);
 });
 
-test('route segments stay mounted, draw once in view, and include the Advanced companion label', () => {
+test('route segments stay mounted, reveal once in view, and include the Advanced companion label', () => {
   const source = readFileSync(componentUrl, 'utf8');
   assert.match(source, /key=\{pathId\}/);
   assert.doesNotMatch(source, /key=\{`\$\{activeStreamId\}-\$\{pathId\}`\}/);

@@ -92,7 +92,7 @@ export function HscMathsPathway(): JSX.Element {
   const prefersReducedMotion = useReducedMotion();
   const activeStream = getHscStream(activeStreamId);
   const activePath = getActivePath(activeStreamId);
-  const routesShouldBeDrawn = Boolean(prefersReducedMotion) || pathwayInView;
+  const routesShouldBeVisible = Boolean(prefersReducedMotion) || pathwayInView;
   const desktopHeadingId = `hsc-stream-desktop-heading-${activeStream.id}`;
 
   return (
@@ -172,9 +172,8 @@ export function HscMathsPathway(): JSX.Element {
                       vectorEffect="non-scaling-stroke"
                       filter="url(#hsc-pathway-glow)"
                       initial={false}
-                      animate={{ pathLength: routesShouldBeDrawn ? 1 : 0, opacity: isActive ? 1 : 0 }}
+                      animate={{ opacity: routesShouldBeVisible && isActive ? 1 : 0 }}
                       transition={{
-                        pathLength: { duration: prefersReducedMotion ? 0 : 0.58, ease: [0.16, 1, 0.3, 1] },
                         opacity: { duration: prefersReducedMotion ? 0 : 0.32, ease: [0.16, 1, 0.3, 1] },
                       }}
                     />
@@ -186,9 +185,8 @@ export function HscMathsPathway(): JSX.Element {
                       strokeLinecap="round"
                       vectorEffect="non-scaling-stroke"
                       initial={false}
-                      animate={{ pathLength: routesShouldBeDrawn ? 1 : 0, opacity: isActive ? 1 : 0 }}
+                      animate={{ opacity: routesShouldBeVisible && isActive ? 1 : 0 }}
                       transition={{
-                        pathLength: { duration: prefersReducedMotion ? 0 : 0.58, ease: [0.16, 1, 0.3, 1] },
                         opacity: { duration: prefersReducedMotion ? 0 : 0.32, ease: [0.16, 1, 0.3, 1] },
                       }}
                     />
@@ -197,7 +195,7 @@ export function HscMathsPathway(): JSX.Element {
               })}
             </motion.svg>
 
-            <span className="pointer-events-none absolute left-[4%] top-[29%] text-[11px] font-black uppercase tracking-[0.12em] text-[#071629]" aria-hidden="true">
+            <span className="pointer-events-none absolute left-[6.54%] top-[29%] -translate-x-1/2 text-[11px] font-black uppercase tracking-[0.12em] text-[#071629]" aria-hidden="true">
               Year 10
             </span>
 

@@ -71,7 +71,7 @@ async function tabToSelector(page, selector, maxTabs = 200) {
   assert.fail(`Tab did not reach ${selector} within ${maxTabs} presses`);
 }
 
-test('desktop selection persists route nodes and keeps the primary CTA above the fold', { timeout: 30_000 }, async () => {
+test('desktop selection keeps full routes aligned and the primary CTA above the fold', { timeout: 30_000 }, async () => {
   for (const viewport of [{ width: 1900, height: 1080 }, { width: 1440, height: 1000 }]) {
     const page = await openPathway(viewport);
     try {
@@ -98,6 +98,14 @@ test('desktop selection persists route nodes and keeps the primary CTA above the
         const ctaRect = cta.getBoundingClientRect();
         const kickerRect = kicker.getBoundingClientRect();
         const navRect = fixedNav.getBoundingClientRect();
+        const year10 = [...document.querySelectorAll('#hsc-maths span')]
+          .find((label) => label.textContent?.trim() === 'Year 10' && label.getBoundingClientRect().width > 0);
+        const advancedRoute = document.querySelector('[data-route-segment="advanced"] path');
+        if (!(year10 instanceof HTMLSpanElement)) throw new Error('Visible Year 10 label missing');
+        if (!(advancedRoute instanceof SVGPathElement)) throw new Error('Advanced route missing');
+        const routeStart = advancedRoute.getPointAtLength(0).matrixTransform(advancedRoute.getScreenCTM());
+        const year10Rect = year10.getBoundingClientRect();
+        const activeRoutePaths = [...document.querySelectorAll('[data-route-active="true"] path')];
         return {
           buttonCount: buttons.length,
           pressedCount: pressed.length,
@@ -106,6 +114,9 @@ test('desktop selection persists route nodes and keeps the primary CTA above the
           routeCount: document.querySelectorAll('[data-route-segment]').length,
           routePersisted: routeBefore === document.querySelector('[data-route-segment="advanced"]'),
           activeRoute: document.querySelector('[data-route-segment="advanced"]')?.getAttribute('data-route-active'),
+          activeRoutesAreSolid: activeRoutePaths.every((path) => getComputedStyle(path).strokeDasharray === 'none'),
+          year10Center: year10Rect.left + year10Rect.width / 2,
+          routeStartX: routeStart.x,
           kickerTop: kickerRect.top,
           navBottom: navRect.bottom,
           ctaTop: ctaRect.top,
@@ -121,6 +132,11 @@ test('desktop selection persists route nodes and keeps the primary CTA above the
       assert.equal(result.routeCount, 4);
       assert.equal(result.routePersisted, true);
       assert.equal(result.activeRoute, 'true');
+      assert.ok(
+        Math.abs(result.year10Center - result.routeStartX) <= 2,
+        `Year 10 centre ${result.year10Center}px misses route start ${result.routeStartX}px at ${viewport.width}x${viewport.height}`,
+      );
+      assert.equal(result.activeRoutesAreSolid, true);
       assert.ok(
         result.kickerTop >= result.navBottom,
         `Pathway kicker top ${result.kickerTop}px overlaps navigation bottom ${result.navBottom}px at ${viewport.width}x${viewport.height}`,
