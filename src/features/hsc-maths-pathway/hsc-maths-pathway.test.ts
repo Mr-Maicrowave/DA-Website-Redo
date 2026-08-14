@@ -10,13 +10,21 @@ import {
 const componentUrl = new URL('./HscMathsPathway.tsx', import.meta.url);
 const mathematicsUrl = new URL('../../pages/subjects/Mathematics.tsx', import.meta.url);
 
-test('Mathematics page mounts the feature and removes the incomplete tab selector', () => {
+test('Mathematics page mounts the feature and removes the legacy HSC selector', () => {
   const source = readFileSync(mathematicsUrl, 'utf8');
   assert.match(source, /import \{ HscMathsPathway \}/);
   assert.match(source, /<HscMathsPathway \/>/);
-  assert.doesNotMatch(source, /role="tab"/);
+  assert.doesNotMatch(source, /aria-label="Choose an HSC mathematics stream"/);
   assert.doesNotMatch(source, /hscRoutePaths/);
   assert.doesNotMatch(source, /hscStreamButtonRefs/);
+});
+
+test('Mathematics keeps the pre-existing non-HSC selectors unchanged', () => {
+  const source = readFileSync(mathematicsUrl, 'utf8');
+  assert.match(source, /role="tablist" aria-label="Fourier drawing presets"/);
+  assert.match(source, /role="tab"\s+aria-selected=\{preset === option\.id\}/);
+  assert.match(source, /role="tablist" aria-label="Year level"/);
+  assert.match(source, /role="tab"\s+aria-selected=\{activeTab === tab\.id\}/);
 });
 
 test('Standard remains separate from the Advanced extension pathway', () => {

@@ -1133,12 +1133,13 @@ const FourierDrawing = () => {
         <div className="grid overflow-hidden rounded-[1.75rem] border border-[#071629]/10 bg-[#071629] lg:grid-cols-[minmax(220px,.7fr)_minmax(0,1.3fr)]">
           <div className="p-6 text-white sm:p-8">
             <p className="text-xs font-black uppercase tracking-[0.15em] text-[#f1df9a]">Choose a path</p>
-            <div className="mt-5 grid gap-2" role="group" aria-label="Fourier drawing presets">
+            <div className="mt-5 grid gap-2" role="tablist" aria-label="Fourier drawing presets">
               {DRAWING_PRESETS.map((option) => (
                 <button
                   key={option.id}
                   type="button"
-                  aria-pressed={preset === option.id}
+                  role="tab"
+                  aria-selected={preset === option.id}
                   onClick={() => setPreset(option.id)}
                   className={`rounded-xl px-4 py-3 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f1df9a] ${preset === option.id ? 'bg-white/12 text-[#f1df9a]' : 'text-white/65 hover:bg-white/6 hover:text-white'}`}
                 >
@@ -1593,13 +1594,13 @@ const Mathematics = () => {
             />
 
             <div className="grid overflow-hidden rounded-[2rem] border border-[#071629]/10 lg:grid-cols-[230px_1fr]">
-              <div className="flex gap-2 overflow-x-auto bg-[#071629] p-4 lg:block lg:gap-0 lg:overflow-visible lg:p-6" role="group" aria-label="Year level">
+              <div className="flex gap-2 overflow-x-auto bg-[#071629] p-4 lg:block lg:gap-0 lg:overflow-visible lg:p-6" role="tablist" aria-label="Year level">
                 <p className="mb-3 hidden text-xs font-black uppercase tracking-[0.16em] text-[#f1df9a] lg:block">Year level</p>
                 {ERROR_TABS.map((tab) => (
                   <button
                     key={tab.id}
-                    type="button"
-                    aria-pressed={activeTab === tab.id}
+                    role="tab"
+                    aria-selected={activeTab === tab.id}
                     onClick={() => {
                       setActiveTab(tab.id);
                       setExampleIdx(0);
