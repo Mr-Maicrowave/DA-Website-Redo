@@ -40,7 +40,7 @@ const ROUTE_SEGMENTS: Record<HscStreamId, string> = {
   'extension-2': 'M 224 308 C 224 365 176 408 224 476',
 };
 
-function StreamDetails({ stream, compact = false }: { stream: HscStream; compact?: boolean }) {
+function StreamDetails({ stream, headingId, compact = false }: { stream: HscStream; headingId: string; compact?: boolean }) {
   return (
     <div className={compact ? 'px-4 pb-5 pt-2' : 'lg:pl-10'}>
       <p
@@ -50,7 +50,7 @@ function StreamDetails({ stream, compact = false }: { stream: HscStream; compact
         {stream.badge}
       </p>
       <h3
-        id={`hsc-stream-heading-${stream.id}`}
+        id={headingId}
         className="mt-2 font-serif text-3xl font-medium tracking-[-0.03em] text-[#071629]"
       >
         {stream.name} at a glance
@@ -67,7 +67,7 @@ function StreamDetails({ stream, compact = false }: { stream: HscStream; compact
         ))}
       </dl>
       <details className="group mt-6 border-y border-[#071629]/15 py-4">
-        <summary className="cursor-pointer text-sm font-black text-[#071629] focus-visible:outline-none focus-visible:ring-2">
+        <summary className="min-h-12 cursor-pointer text-sm font-black text-[#071629] focus-visible:outline-none focus-visible:ring-2">
           See topics covered
         </summary>
         <ul className="mt-3 grid gap-2 text-sm leading-6 text-[#40516b]">
@@ -77,7 +77,7 @@ function StreamDetails({ stream, compact = false }: { stream: HscStream; compact
       <Link to="/book-interview" className="mt-6 inline-flex min-h-12 w-full items-center justify-center gap-2 bg-[#071629] px-5 text-center text-sm font-black text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-4">
         Talk through your child's course choice <ArrowRight className="h-4 w-4" aria-hidden="true" />
       </Link>
-      <Link to="/hsc-excellence" className="mt-3 inline-flex min-h-11 w-full items-center justify-center gap-2 text-sm font-black text-[#071629] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-4">
+      <Link to="/hsc-excellence" className="mt-3 inline-flex min-h-12 w-full items-center justify-center gap-2 text-sm font-black text-[#071629] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-4">
         Explore HSC program <ArrowRight className="h-4 w-4" aria-hidden="true" />
       </Link>
     </div>
@@ -90,6 +90,7 @@ export function HscMathsPathway(): JSX.Element {
   const prefersReducedMotion = useReducedMotion();
   const activeStream = getHscStream(activeStreamId);
   const activePath = getActivePath(activeStreamId);
+  const desktopHeadingId = `hsc-stream-desktop-heading-${activeStream.id}`;
 
   return (
     <section
@@ -237,12 +238,12 @@ export function HscMathsPathway(): JSX.Element {
             key={activeStream.id}
             className="m-8 self-center xl:m-10"
             role="region"
-            aria-labelledby={`hsc-stream-heading-${activeStream.id}`}
+            aria-labelledby={desktopHeadingId}
             initial={prefersReducedMotion ? false : { opacity: 0, y: hasSelected ? 8 : 0 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
           >
-            <StreamDetails stream={activeStream} />
+            <StreamDetails stream={activeStream} headingId={desktopHeadingId} />
           </motion.div>
         </div>
 
@@ -254,6 +255,7 @@ export function HscMathsPathway(): JSX.Element {
           {HSC_STREAMS.map((stream) => {
             const isSelected = stream.id === activeStreamId;
             const panelId = `hsc-stream-panel-${stream.id}`;
+            const headingId = `${panelId}-heading`;
             return (
               <div key={stream.id} className="border-b border-[#071629]/15 last:border-b-0">
                 <button
@@ -273,8 +275,8 @@ export function HscMathsPathway(): JSX.Element {
                   </span>
                 </button>
                 {isSelected ? (
-                  <div id={panelId} role="region" aria-label={`${stream.name} course details`}>
-                    <StreamDetails stream={stream} compact />
+                  <div id={panelId} role="region" aria-labelledby={headingId}>
+                    <StreamDetails stream={stream} headingId={headingId} compact />
                   </div>
                 ) : null}
               </div>

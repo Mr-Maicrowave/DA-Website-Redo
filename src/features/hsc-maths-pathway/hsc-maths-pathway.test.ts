@@ -78,6 +78,32 @@ test('pathway presents the approved decision content and actions', () => {
   assert.match(source, /See topics covered/);
 });
 
+test('secondary actions and topic disclosure keep a 48px minimum target', () => {
+  const source = readFileSync(componentUrl, 'utf8');
+  assert.match(
+    source,
+    /<summary className="[^"]*min-h-12[^"]*">\s*See topics covered/,
+  );
+  assert.match(
+    source,
+    /to="\/hsc-excellence" className="[^"]*min-h-12[^"]*"/,
+  );
+  assert.doesNotMatch(source, /to="\/hsc-excellence" className="[^"]*min-h-11/);
+});
+
+test('desktop and mobile details use caller-scoped heading ids', () => {
+  const source = readFileSync(componentUrl, 'utf8');
+  assert.match(source, /function StreamDetails\(\{ stream, headingId, compact = false \}/);
+  assert.match(source, /id=\{headingId\}/);
+  assert.doesNotMatch(source, /id=\{`hsc-stream-heading-\$\{stream\.id\}`\}/);
+  assert.match(source, /const desktopHeadingId = `hsc-stream-desktop-heading-\$\{activeStream\.id\}`/);
+  assert.match(source, /aria-labelledby=\{desktopHeadingId\}/);
+  assert.match(source, /<StreamDetails stream=\{activeStream\} headingId=\{desktopHeadingId\} \/>/);
+  assert.match(source, /const headingId = `\$\{panelId\}-heading`/);
+  assert.match(source, /id=\{panelId\} role="region" aria-labelledby=\{headingId\}/);
+  assert.match(source, /<StreamDetails stream=\{stream\} headingId=\{headingId\} compact \/>/);
+});
+
 test('every small pathway label uses approved navy while course colour remains an accent', () => {
   const source = readFileSync(componentUrl, 'utf8');
   assert.doesNotMatch(source, /style=\{\{ color: stream\.color \}\}/);
