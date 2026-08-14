@@ -778,9 +778,9 @@
   }
   .preview-arrow{font-size:24px;line-height:1}
   .preview-arrow:disabled{opacity:.32;cursor:default}
-.preview-stage{min-height:0;height:100%;display:grid;place-items:center;overflow:hidden}
-.preview-stage img{display:block;width:auto;height:auto;max-height:100%;max-width:100%;border-radius:8px;background:#fff;box-shadow:0 28px 80px rgba(0,0,0,.45);object-fit:contain}
-.preview-stage img.preview-image--feedback{width:auto;height:auto;max-width:100%;max-height:100%}
+  .preview-stage{min-height:0;display:grid;place-items:center;overflow:hidden}
+  .preview-stage img{display:block;width:auto;height:auto;max-height:calc(var(--preview-height,100vh) - 126px);max-width:100%;border-radius:8px;background:#fff;box-shadow:0 28px 80px rgba(0,0,0,.45);object-fit:contain}
+  .preview-stage img.preview-image--feedback{width:auto;height:auto;max-width:100%;max-height:calc(var(--preview-height,100vh) - 170px)}
   .preview-controls{display:flex;justify-content:center;gap:12px}
   .preview-placeholder{width:min(560px,100%);background:#fff;border-radius:8px;padding:48px 36px;text-align:center;box-shadow:0 28px 80px rgba(0,0,0,.45)}
   .preview-placeholder-title{font-family:"Playfair Display",Georgia,serif;font-size:22px;color:#071629;margin:0 0 10px}
