@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
 import NavigationNew from '@/components/NavigationNew';
 import FooterNew from '@/components/FooterNew';
 import SubjectHero from '@/components/subjects/SubjectHero';
@@ -1222,30 +1222,34 @@ const Mathematics = () => {
     },
   ];
 
+  // Topic lists follow the current NESA Mathematics syllabuses (Standard, Advanced,
+  // Extension 1 and Extension 2, 2024) — curriculum.nsw.edu.au. Guidance is written to
+  // answer the actual decision a parent is facing (does this course suit my child), not
+  // as generic praise: each one names the real differentiator between streams.
   const hscStreams = [
     {
       name: 'Standard',
-      badge: 'Confidence and marks',
-      guidance: 'Best for students completing a practical HSC maths pathway who need a clear, reliable way to turn familiar methods into marks. We focus on choosing the right method, interpreting questions accurately, and showing enough working under timed conditions.',
-      topics: ['Algebra & equations', 'Measurement & geometry', 'Statistics & probability', 'Financial mathematics', 'Networks & paths'],
+      badge: 'No calculus required',
+      guidance: 'The only HSC maths course with no calculus. It suits students heading toward a university course that does not require higher maths, and rewards clear method, accurate technique and real-world problem-solving over abstract proof. Most students take Standard 2, which keeps university (ATAR) eligibility open.',
+      topics: ['Financial mathematics — loans, investments & annuities', 'Measurement & right-angled trigonometry', 'Statistical analysis & the normal distribution', 'Networks & critical path analysis', 'Algebraic relationships'],
     },
     {
       name: 'Advanced',
-      badge: 'Most common HSC path',
-      guidance: 'For students balancing a demanding course with the step up in algebra and calculus. Lessons connect ideas across topics, strengthen problem setup, and build the working habits that stop one missed step from unravelling an entire question.',
-      topics: ['Functions & relations', 'Trigonometry', 'Calculus', 'Statistical analysis', 'Financial modelling'],
+      badge: 'Assumed knowledge for STEM & commerce',
+      guidance: 'The course most university degrees assume, especially science, commerce, health and anything with quantitative content. Advanced introduces calculus for the first time — this is the step where a student who has coasted on memorised methods usually needs the most support to keep up.',
+      topics: ['Differential & integral calculus', 'Trigonometric & exponential functions', 'Sequences & series', 'Statistical analysis & random variables', 'Financial mathematics'],
     },
     {
       name: 'Extension 1',
-      badge: 'High scaling',
-      guidance: 'For confident Advanced students ready to move beyond familiar routines. We coach students to unpack unfamiliar questions, justify each move with precision, and develop the resilience needed when a problem does not reveal its method immediately.',
-      topics: ['Further calculus', 'Polynomials', 'Combinatorics', 'Proof by induction', 'Vectors'],
+      badge: 'Adds proof, vectors & harder calculus',
+      guidance: 'Studied alongside the full Advanced course, not instead of it — every Extension 1 student sits both exams. It suits students who find Advanced calculus comfortable and want the deeper problem-solving some university courses (engineering, actuarial studies, advanced science) expect or reward through ATAR scaling.',
+      topics: ['Proof by mathematical induction', 'Vectors', 'Further calculus & inverse trigonometric functions', 'Permutations, combinations & the binomial theorem', 'Polynomials'],
     },
     {
       name: 'Extension 2',
-      badge: 'Elite level',
-      guidance: 'For strong Extension students working with the most demanding HSC material. Teaching centres on elegant, disciplined solutions: linking several ideas in one problem, writing convincing proofs, and managing time without losing mathematical rigour.',
-      topics: ['Complex numbers', 'Further integration', 'Mechanics', 'Statistical inference', 'Advanced proof'],
+      badge: 'The most rigorous HSC maths course',
+      guidance: 'Taken on top of Extension 1, not in place of it. This suits students who are not just capable but genuinely enjoy mathematics for its own sake — the course is built around rigorous proof, complex numbers and mechanics, and rewards elegant, disciplined working over speed.',
+      topics: ['Complex numbers', 'Further work with vectors', 'The nature of mathematical proof', 'Further integration', 'Mechanics — applications of calculus'],
     },
   ];
 
@@ -1323,11 +1327,75 @@ const Mathematics = () => {
   };
 
   const [activeStream, setActiveStream] = useState<number>(0);
+  const [hasPickedStream, setHasPickedStream] = useState(false);
   const [teachStep, setTeachStep] = useState<number>(0);
   const [activeTab, setActiveTab] = useState<string>('yr910');
   const [exampleIdx, setExampleIdx] = useState<number>(0);
   const [pickedIndex, setPickedIndex] = useState<number | null>(null);
   const hscRouteColors = ['#c9921b', '#37976f', '#297dbf', '#8051bf'];
+  // A brighter, more saturated companion to hscRouteColors, used only for the flowchart
+  // line itself (and its endpoint dot) so the route pops without recolouring the
+  // surrounding text and labels away from the page's usual restrained palette.
+  const hscRouteVividColors = ['#f2a90d', '#0aa876', '#1c8ff2', '#9c4bea'];
+  // The branch endpoints used to be four hand-guessed SVG y-coordinates, tuned once to
+  // roughly match where "Standard/Advanced/Extension 1/Extension 2" happened to sit in the
+  // DOM. Any later change to the surrounding copy (a longer guidance paragraph, an added
+  // note) shifts the real layout without anyone remembering to re-guess the SVG numbers —
+  // which is exactly how they drifted out of alignment. Instead, measure the actual stream
+  // buttons' positions and use those, so the line can never point at the wrong label again.
+  const hscPanelRef = useRef<HTMLDivElement>(null);
+  const hscStreamButtonRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const [hscBranchTargetYs, setHscBranchTargetYs] = useState<number[]>([152, 224, 296, 368]);
+
+  useLayoutEffect(() => {
+    const measure = () => {
+      const panel = hscPanelRef.current;
+      if (!panel) return;
+      const panelRect = panel.getBoundingClientRect();
+      if (panelRect.height === 0) return;
+      const measured = hscStreamButtonRefs.current.map((button) => {
+        if (!button) return null;
+        const buttonRect = button.getBoundingClientRect();
+        const centerY = buttonRect.top + buttonRect.height / 2 - panelRect.top;
+        return (centerY / panelRect.height) * 520;
+      });
+      if (measured.every((y): y is number => y !== null)) {
+        setHscBranchTargetYs(measured);
+      }
+    };
+    measure();
+    window.addEventListener('resize', measure);
+    return () => window.removeEventListener('resize', measure);
+  }, [activeStream]);
+
+  // The trunk's vertical position is derived from the measured branch spread, not another
+  // fixed guess — its divergence point sits at the midpoint between the first and last
+  // stream option, and its start sits below that by the same relative offset the original
+  // hand-drawn curve used. So when the four options space out to fill the full column
+  // height, the trunk (and the "Year 10" origin label) re-centre on that range automatically
+  // instead of staying pinned near the bottom of a now-taller panel.
+  const hscBranchMidY = (hscBranchTargetYs[0] + hscBranchTargetYs[hscBranchTargetYs.length - 1]) / 2;
+  const hscDivergenceY = hscBranchMidY;
+  const hscTrunkStartY = hscBranchMidY + 144;
+  const hscTrunkControl1Y = hscTrunkStartY;
+  const hscTrunkControl2Y = hscTrunkStartY - 66;
+  const hscBranchControl1Y = hscDivergenceY - 31;
+
+  // Trunk and branch are baked into ONE path string per stream (not two touching paths).
+  // Two separate semi-transparent, individually-blurred strokes still show a visible seam
+  // where they overlap at the join, no matter how well their widths and caps are matched —
+  // that is a compositing artefact, not a geometry one, and the only real fix is for the
+  // glow and the crisp line each to be a single continuous shape with a single blur pass.
+  // Each branch's first control point continues the trunk's own exit angle before curving
+  // to its measured target, so the join also reads as one flowing curve, not an elbow.
+  const hscRoutePaths = hscBranchTargetYs.map(
+    (targetY) => `M 90 ${hscTrunkStartY.toFixed(1)} C 245 ${hscTrunkControl1Y.toFixed(1)}, 330 ${hscTrunkControl2Y.toFixed(1)}, 458 ${hscDivergenceY.toFixed(1)} C 509 ${hscBranchControl1Y.toFixed(1)}, 586 ${targetY.toFixed(1)}, 646 ${targetY.toFixed(1)}`,
+  );
+  // Roughly how much of each merged path's length is the shared trunk (versus the branch),
+  // estimated from the control points above. Once the visitor has picked a stream at least
+  // once, later selections start already-revealed up to this fraction — the trunk snaps in
+  // rather than re-sweeping — so only the branch portion visibly redraws.
+  const HSC_TRUNK_PATH_FRACTION = 0.65;
 
   const currentTab = ERROR_TABS.find((t) => t.id === activeTab)!;
   const currentExample = currentTab.examples[exampleIdx];
@@ -1515,10 +1583,7 @@ const Mathematics = () => {
             </div>
 
             {/* Segmented stream selector — same swap-a-pane pattern as "How we teach" below */}
-            <div className="relative mt-12 overflow-hidden rounded-2xl border border-[#071629]/15 bg-[#fffdf8] px-5 py-8 sm:px-8 sm:py-10 lg:px-12">
-              <span className="pointer-events-none absolute left-[9%] top-0 h-full w-px bg-[#071629]/10" aria-hidden="true" />
-              <span className="pointer-events-none absolute bottom-[15%] left-0 h-px w-full bg-[#071629]/10" aria-hidden="true" />
-
+            <div ref={hscPanelRef} className="relative mt-12 overflow-hidden rounded-2xl border border-[#071629]/15 bg-[#fffdf8] px-5 py-8 sm:px-8 sm:py-10 lg:px-12">
               <motion.svg
                 className="pointer-events-none absolute inset-y-0 left-0 hidden h-full w-[68%] lg:block"
                 viewBox="0 0 1000 520"
@@ -1526,107 +1591,84 @@ const Mathematics = () => {
                 aria-hidden="true"
               >
                 <defs>
-                  {hscRouteColors.map((color, index) => (
-                    <linearGradient key={color} id={`hsc-route-${index}`} x1="0" y1="0" x2="1" y2="0">
-                      <stop offset="0" stopColor={color} />
-                      <stop offset="0.43" stopColor="#fff8dc" />
-                      <stop offset="0.56" stopColor={color} />
-                      <stop offset="1" stopColor={color} />
-                    </linearGradient>
-                  ))}
-                  <filter id="hsc-route-glow" x="-20%" y="-30%" width="140%" height="160%">
-                    <feGaussianBlur stdDeviation="5" result="routeBlur" />
+                  <filter id="hsc-route-glow" x="-30%" y="-40%" width="160%" height="180%">
+                    <feGaussianBlur stdDeviation="6" result="routeBlur" />
                     <feMerge><feMergeNode in="routeBlur" /><feMergeNode in="SourceGraphic" /></feMerge>
                   </filter>
                 </defs>
+                {/* One continuous path per stream — trunk and branch baked into a single `d`
+                    string, so the glow and the crisp line each get exactly one blur/opacity
+                    pass with no overlap to show as a seam. Before the visitor has picked a
+                    stream, it draws in fully from nothing. After that, each remount (via the
+                    `key`) starts already-revealed up to the trunk fraction, so only the branch
+                    portion visibly redraws — the trunk never appears to re-sweep. */}
                 <motion.path
-                  d="M 90 410 C 245 410, 330 344, 458 266"
+                  key={`route-glow-${activeStream}`}
+                  d={hscRoutePaths[activeStream]}
                   fill="none"
-                  stroke={hscRouteColors[activeStream]}
-                  strokeOpacity="0.18"
-                  strokeWidth="13"
+                  stroke={hscRouteVividColors[activeStream]}
+                  strokeOpacity="0.3"
+                  strokeWidth="16"
                   strokeLinecap="round"
                   filter="url(#hsc-route-glow)"
-                  initial={prefersReducedMotion ? false : { pathLength: 0, opacity: 0 }}
+                  initial={prefersReducedMotion ? false : (hasPickedStream ? { pathLength: HSC_TRUNK_PATH_FRACTION, opacity: 1 } : { pathLength: 0, opacity: 0 })}
                   whileInView={{ pathLength: 1, opacity: 1 }}
                   viewport={{ once: true, amount: 0.35 }}
-                  transition={{ duration: 0.85, ease: [0.16, 1, 0.3, 1] }}
+                  transition={{ duration: hasPickedStream ? 0.55 : 0.85, ease: [0.16, 1, 0.3, 1] }}
                 />
                 <motion.path
-                  d="M 90 410 C 245 410, 330 344, 458 266"
+                  key={`route-${activeStream}`}
+                  d={hscRoutePaths[activeStream]}
                   fill="none"
-                  stroke={`url(#hsc-route-${activeStream})`}
-                  strokeWidth="5"
+                  stroke={hscRouteVividColors[activeStream]}
+                  strokeWidth="7"
                   strokeLinecap="round"
-                  initial={prefersReducedMotion ? false : { pathLength: 0, opacity: 0 }}
+                  initial={prefersReducedMotion ? false : (hasPickedStream ? { pathLength: HSC_TRUNK_PATH_FRACTION, opacity: 1 } : { pathLength: 0, opacity: 0 })}
                   whileInView={{ pathLength: 1, opacity: 1 }}
                   viewport={{ once: true, amount: 0.35 }}
-                  transition={{ duration: 0.85, ease: [0.16, 1, 0.3, 1] }}
+                  transition={{ duration: hasPickedStream ? 0.55 : 0.85, ease: [0.16, 1, 0.3, 1] }}
                 />
-                {[
-                  { d: 'M 458 266 C 540 266, 580 152, 646 152', color: hscRouteColors[0] },
-                  { d: 'M 458 266 C 545 266, 584 224, 646 224', color: hscRouteColors[1] },
-                  { d: 'M 458 266 C 548 266, 586 296, 646 296', color: hscRouteColors[2] },
-                  { d: 'M 458 266 C 548 266, 586 368, 646 368', color: hscRouteColors[3] },
-                ].map((branch, index) => (
-                  <g key={branch.color}>
-                    <motion.path
-                      d={branch.d}
-                      fill="none"
-                      stroke={branch.color}
-                      strokeOpacity={activeStream === index ? 0.22 : 0.08}
-                      strokeWidth={activeStream === index ? 15 : 7}
-                      strokeLinecap="round"
-                      filter="url(#hsc-route-glow)"
-                      initial={prefersReducedMotion ? false : { pathLength: 0, opacity: 0 }}
-                      whileInView={{ pathLength: 1, opacity: 1 }}
-                      viewport={{ once: true, amount: 0.35 }}
-                      transition={{ duration: 0.72, delay: index * 0.1 + 0.18, ease: [0.16, 1, 0.3, 1] }}
-                    />
-                    <motion.path
-                      d={branch.d}
-                      fill="none"
-                      stroke={`url(#hsc-route-${index})`}
-                      strokeWidth={activeStream === index ? 6 : 2.5}
-                      strokeLinecap="round"
-                      initial={prefersReducedMotion ? false : { pathLength: 0, opacity: 0 }}
-                      whileInView={{ pathLength: 1, opacity: activeStream === index ? 1 : 0.32 }}
-                      viewport={{ once: true, amount: 0.35 }}
-                      transition={{ duration: 0.72, delay: index * 0.1 + 0.18, ease: [0.16, 1, 0.3, 1] }}
-                    />
-                  </g>
-                ))}
               </motion.svg>
+              {/* A plain HTML label, not SVG text — the svg above is non-uniformly scaled
+                  (preserveAspectRatio="none"), which would distort real text. Gives the
+                  line's otherwise-unexplained start point a reason to be there: this is
+                  literally where the decision begins. */}
+              <span
+                className="pointer-events-none absolute left-[7%] hidden text-[11px] font-black uppercase tracking-[0.14em] text-[#9aa3b0] lg:block"
+                style={{ top: `${(hscTrunkStartY / 520) * 100}%` }}
+                aria-hidden="true"
+              >
+                Year 10
+              </span>
 
               <div className="relative grid gap-10 lg:grid-cols-[minmax(0,1.7fr)_minmax(19rem,.7fr)] lg:gap-12">
-                <div className="grid gap-10 md:grid-cols-[minmax(19rem,1.2fr)_minmax(0,.8fr)] md:items-center md:gap-10">
+                <div className="grid gap-10 md:grid-cols-[minmax(19rem,1.2fr)_minmax(0,.8fr)] md:items-start md:gap-10">
                   <div className="border-l-2 pl-5 md:border-0 md:pl-0" style={{ borderColor: hscRouteColors[activeStream] }}>
                     <p className="text-xs font-black uppercase tracking-[0.16em]" style={{ color: hscRouteColors[activeStream] }}>Years 11-12</p>
                     <p className="mt-2 font-serif text-4xl font-medium leading-none tracking-[-0.04em] text-[#071629]">HSC Maths</p>
                     <p className="mt-4 max-w-[18rem] text-sm leading-7 text-[#40516b]">
                       Already enrolled in a stream? Start there. Still deciding? We will help your child find the right level.
                     </p>
+                    <p className="mt-6 max-w-[19rem] border-t border-[#071629]/12 pt-5 text-xs leading-6 text-[#7d8798]">
+                      Streams are usually locked in near the end of Year 10 — talk to us before then if your child is still deciding.
+                    </p>
                   </div>
 
-                  <div className="grid gap-2" role="tablist" aria-label="Choose an HSC mathematics stream">
+                  <div className="flex h-full min-h-[16rem] flex-col justify-between self-stretch" role="tablist" aria-label="Choose an HSC mathematics stream">
                     {hscStreams.map((stream, index) => {
                       const isSelected = activeStream === index;
                       return (
                         <button
                           key={stream.name}
+                          ref={(el) => { hscStreamButtonRefs.current[index] = el; }}
                           type="button"
                           role="tab"
                           aria-selected={isSelected}
-                          onClick={() => setActiveStream(index)}
-                          className={`group flex min-h-14 items-center gap-4 border-b px-2 py-4 text-left transition-[color,opacity,filter,border-color] duration-200 focus-visible:outline-none focus-visible:underline focus-visible:decoration-2 focus-visible:underline-offset-4 ${
-                            isSelected ? 'border-[#071629]/35 text-[#071629] opacity-100 saturate-150' : 'border-[#071629]/12 text-[#40516b] opacity-45 saturate-[.55] hover:border-[#071629]/30 hover:text-[#071629] hover:opacity-75'
+                          onClick={() => { setActiveStream(index); setHasPickedStream(true); }}
+                          className={`group flex min-h-14 items-center px-2 py-4 text-left transition-[color,opacity,filter] duration-200 focus-visible:outline-none focus-visible:underline focus-visible:decoration-2 focus-visible:underline-offset-4 ${
+                            isSelected ? 'text-[#071629] opacity-100 saturate-150' : 'text-[#40516b] opacity-45 saturate-[.55] hover:text-[#071629] hover:opacity-75'
                           }`}
                         >
-                          <span
-                            className="h-3 w-3 shrink-0 rounded-full transition-transform duration-200 group-hover:scale-125"
-                            style={{ backgroundColor: hscRouteColors[index] }}
-                            aria-hidden="true"
-                          />
                           <span className="font-serif text-2xl font-medium tracking-[-0.025em] sm:text-3xl" style={{ color: hscRouteColors[index] }}>{stream.name}</span>
                         </button>
                       );
