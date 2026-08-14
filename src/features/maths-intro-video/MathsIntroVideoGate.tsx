@@ -3,9 +3,15 @@ import { createPortal } from 'react-dom';
 
 export const MathsIntroVideoGate = () => {
   const [isOpen, setIsOpen] = useState(true);
+  const [isClosing, setIsClosing] = useState(false);
   const skipButtonRef = useRef<HTMLButtonElement>(null);
 
-  const dismiss = () => setIsOpen(false);
+  const dismiss = () => {
+    if (isClosing) return;
+
+    setIsClosing(true);
+    setTimeout(() => setIsOpen(false), 500);
+  };
 
   useEffect(() => {
     if (!isOpen) return;
@@ -27,7 +33,7 @@ export const MathsIntroVideoGate = () => {
 
   return createPortal(
     <div
-      className="fixed inset-0 z-[10000] flex items-center justify-center bg-[#071629] p-3 sm:p-6"
+      className={`fixed inset-0 z-[10000] flex items-center justify-center bg-[#071629] transition-opacity duration-500 ${isClosing ? 'opacity-0' : 'opacity-100'}`}
       role="dialog"
       aria-modal="true"
       aria-labelledby="maths-intro-video-title"
@@ -37,7 +43,7 @@ export const MathsIntroVideoGate = () => {
     >
       <h2 id="maths-intro-video-title" className="sr-only">Mathematics introduction</h2>
       <video
-        className="h-full w-full max-w-[1600px] rounded-2xl object-contain shadow-2xl shadow-black/50"
+        className="h-full w-full object-cover"
         src="/math_intro_video.mp4"
         autoPlay
         muted

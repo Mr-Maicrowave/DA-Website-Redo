@@ -20,6 +20,15 @@ test('locks the document until an immediate skip, completion, or playback failur
   assert.match(source, />\s*Skip intro\s*</);
 });
 
+test('fills the viewport and fades away instead of disappearing abruptly', () => {
+  const source = readFileSync(componentUrl, 'utf8');
+
+  assert.match(source, /object-cover/);
+  assert.match(source, /const \[isClosing, setIsClosing\] = useState\(false\)/);
+  assert.match(source, /transition-opacity duration-500/);
+  assert.match(source, /setTimeout\(\(\) => setIsOpen\(false\), 500\)/);
+});
+
 test('mounts the intro gate only from the Mathematics page', () => {
   const mathematicsSource = readFileSync(mathematicsUrl, 'utf8');
 
