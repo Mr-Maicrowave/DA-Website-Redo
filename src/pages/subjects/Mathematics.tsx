@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
 import NavigationNew from '@/components/NavigationNew';
 import FooterNew from '@/components/FooterNew';
 import SubjectHero from '@/components/subjects/SubjectHero';
@@ -32,6 +32,7 @@ import {
 } from '@/features/maths-ambient-motion/MathsAmbientMotion';
 import { ConfidenceJourney } from '@/features/maths-confidence-journey/ConfidenceJourney';
 import { MathsGraphLabInvitation, MathsTeachingProof } from '@/features/maths-teaching-proof/MathsTeachingProof';
+import { MathsIntroVideoGate } from '@/features/maths-intro-video/MathsIntroVideoGate';
 
 interface StepRow {
   label: string;
@@ -1337,6 +1338,7 @@ const Mathematics = () => {
 
   return (
     <div className="min-h-screen bg-[#fffdf8] text-[#172033]">
+      <MathsIntroVideoGate />
       <SEO
         title="Mathematics Tutoring (K-12 & HSC)"
         description="From foundational numeracy to advanced HSC mathematics, we build confidence through expert guidance and proven teaching methods at DA Tuition."
@@ -1513,13 +1515,7 @@ const Mathematics = () => {
             </div>
 
             {/* Segmented stream selector — same swap-a-pane pattern as "How we teach" below */}
-            <div
-              className="relative mt-12 overflow-hidden rounded-2xl border border-[#071629]/15 bg-[#fffdf8] px-5 py-8 sm:px-8 sm:py-10 lg:px-12"
-              style={{
-                backgroundImage: 'linear-gradient(rgba(7,22,41,.09) 1px, transparent 1px), linear-gradient(90deg, rgba(7,22,41,.09) 1px, transparent 1px)',
-                backgroundSize: '42px 42px',
-              }}
-            >
+            <div className="relative mt-12 overflow-hidden rounded-2xl border border-[#071629]/15 bg-[#fffdf8] px-5 py-8 sm:px-8 sm:py-10 lg:px-12">
               <span className="pointer-events-none absolute left-[9%] top-0 h-full w-px bg-[#071629]/10" aria-hidden="true" />
               <span className="pointer-events-none absolute bottom-[15%] left-0 h-px w-full bg-[#071629]/10" aria-hidden="true" />
 
@@ -1604,8 +1600,8 @@ const Mathematics = () => {
 
               <div className="relative grid gap-10 lg:grid-cols-[minmax(0,1.7fr)_minmax(19rem,.7fr)] lg:gap-12">
                 <div className="grid gap-10 md:grid-cols-[minmax(19rem,1.2fr)_minmax(0,.8fr)] md:items-center md:gap-10">
-                  <div className="border-l-2 border-[#c9921b] pl-5 md:border-0 md:pl-0">
-                    <p className="text-xs font-black uppercase tracking-[0.16em] text-[#a87718]">Years 11-12</p>
+                  <div className="border-l-2 pl-5 md:border-0 md:pl-0" style={{ borderColor: hscRouteColors[activeStream] }}>
+                    <p className="text-xs font-black uppercase tracking-[0.16em]" style={{ color: hscRouteColors[activeStream] }}>Years 11-12</p>
                     <p className="mt-2 font-serif text-4xl font-medium leading-none tracking-[-0.04em] text-[#071629]">HSC Maths</p>
                     <p className="mt-4 max-w-[18rem] text-sm leading-7 text-[#40516b]">
                       Already enrolled in a stream? Start there. Still deciding? We will help your child find the right level.
@@ -1646,18 +1642,22 @@ const Mathematics = () => {
                 transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
                 >
                   <div>
-                    <span className="text-xs font-black uppercase tracking-[0.14em] text-[#a87718]">{hscStreams[activeStream].badge}</span>
+                    <span className="text-xs font-black uppercase tracking-[0.14em]" style={{ color: hscRouteColors[activeStream] }}>{hscStreams[activeStream].badge}</span>
                     <p className="mt-3 max-w-md text-base leading-8 text-[#40516b]">
                       {hscStreams[activeStream].guidance}
                     </p>
-                    <Link to="/hsc-excellence" className="mt-5 inline-flex items-center gap-2 text-sm font-black text-[#a87718] transition-colors duration-150 hover:text-[#071629] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#a87718] focus-visible:ring-offset-4 focus-visible:ring-offset-[#fffdf8]">
+                    <Link
+                      to="/hsc-excellence"
+                      className="mt-5 inline-flex items-center gap-2 text-sm font-black transition-colors duration-150 hover:text-[#071629] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-4 focus-visible:ring-offset-[#fffdf8]"
+                      style={{ color: hscRouteColors[activeStream], '--tw-ring-color': hscRouteColors[activeStream] } as CSSProperties}
+                    >
                       Explore HSC program <ArrowRight className="h-4 w-4" />
                     </Link>
                   </div>
                   <ul className="mt-7 grid gap-3">
                     {hscStreams[activeStream].topics.map((topic) => (
                       <li key={topic} className="flex items-start gap-3 text-sm leading-6 text-[#24324a]">
-                        <span className="mt-2 h-1.5 w-1.5 shrink-0 rotate-45 bg-[#c9921b]" aria-hidden="true" />
+                        <span className="mt-2 h-1.5 w-1.5 shrink-0 rotate-45" style={{ backgroundColor: hscRouteColors[activeStream] }} aria-hidden="true" />
                         {topic}
                       </li>
                     ))}
