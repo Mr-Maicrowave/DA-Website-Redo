@@ -71,6 +71,45 @@ async function tabToSelector(page, selector, maxTabs = 200) {
   assert.fail(`Tab did not reach ${selector} within ${maxTabs} presses`);
 }
 
+test('desktop route endpoints stay centred on every course node across pathway widths', { timeout: 30_000 }, async () => {
+  for (const viewport of [{ width: 1900, height: 1080 }, { width: 1440, height: 1000 }]) {
+    const page = await openPathway(viewport);
+    try {
+      const alignmentErrors = await page.evaluate(() => {
+        const routeGroups = [...document.querySelectorAll('#hsc-maths [data-route-segment]')];
+        const dots = [...document.querySelectorAll('#hsc-maths .hsc-pathway-course-dot')];
+        if (routeGroups.length !== 4 || dots.length !== 4) {
+          throw new Error(`Expected four routes and four nodes, received ${routeGroups.length} and ${dots.length}`);
+        }
+
+        return routeGroups.map((group, index) => {
+          const path = group.querySelector('path');
+          const dot = dots[index];
+          if (!(path instanceof SVGPathElement) || !(dot instanceof HTMLSpanElement)) {
+            throw new Error(`Route or node ${index + 1} is missing`);
+          }
+          const endpoint = path.getPointAtLength(path.getTotalLength()).matrixTransform(path.getScreenCTM());
+          const dotRect = dot.getBoundingClientRect();
+          return {
+            id: group.getAttribute('data-route-segment'),
+            x: Math.abs((dotRect.left + dotRect.width / 2) - endpoint.x),
+            y: Math.abs((dotRect.top + dotRect.height / 2) - endpoint.y),
+          };
+        });
+      });
+
+      for (const error of alignmentErrors) {
+        assert.ok(
+          error.x <= 0.25 && error.y <= 0.25,
+          `${error.id} node misses its route endpoint by ${error.x}px horizontally and ${error.y}px vertically at ${viewport.width}x${viewport.height}`,
+        );
+      }
+    } finally {
+      await page.close();
+    }
+  }
+});
+
 test('desktop selection keeps full routes aligned and the primary CTA above the fold', { timeout: 30_000 }, async () => {
   for (const viewport of [{ width: 1900, height: 1080 }, { width: 1440, height: 1000 }]) {
     const page = await openPathway(viewport);

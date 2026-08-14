@@ -28,8 +28,8 @@ const DETAIL_ITEMS = [
 ] as const;
 
 const DESKTOP_POSITIONS: Record<HscStreamId, string> = {
-  standard: 'top-[12%]',
-  advanced: 'top-[31%]',
+  standard: 'top-[11.964286%]',
+  advanced: 'top-[31.071429%]',
   'extension-1': 'top-[55%]',
   'extension-2': 'top-[85%]',
 };
@@ -214,7 +214,7 @@ export function HscMathsPathway(): JSX.Element {
                     setActiveStreamId(stream.id);
                     setHasSelected(true);
                   }}
-                  className={`hsc-pathway-course group absolute left-[40%] z-20 min-h-14 w-[57%] -translate-y-1/2 bg-transparent px-2 py-2 text-left focus-visible:outline-none ${DESKTOP_POSITIONS[stream.id]}`}
+                  className={`hsc-pathway-course group absolute left-[calc(43.076923%_-_1rem)] z-20 min-h-14 w-[57%] -translate-y-1/2 bg-transparent px-2 py-2 text-left focus-visible:outline-none ${DESKTOP_POSITIONS[stream.id]}`}
                 >
                   <span className="flex items-center gap-3">
                     <span className="hsc-pathway-course-dot h-4 w-4 shrink-0 rounded-full border-[3px] bg-transparent" style={{ borderColor: stream.color }} aria-hidden="true" />
