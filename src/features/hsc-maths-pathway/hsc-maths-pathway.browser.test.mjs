@@ -86,7 +86,18 @@ test('desktop selection persists route nodes and keeps the primary CTA above the
         const pressed = buttons.filter((button) => button.getAttribute('aria-pressed') === 'true');
         const cta = document.querySelector('#hsc-maths a[href="/book-interview"]');
         if (!(cta instanceof HTMLAnchorElement)) throw new Error('Primary CTA missing');
+        const kicker = [...document.querySelectorAll('#hsc-maths p')]
+          .find((paragraph) => paragraph.textContent?.trim() === 'HSC pathway map');
+        if (!(kicker instanceof HTMLParagraphElement)) throw new Error('Pathway kicker missing');
+        const fixedNav = [...document.querySelectorAll('nav')]
+          .find((nav) => {
+            const rect = nav.getBoundingClientRect();
+            return rect.height > 0 && rect.top <= 0.5 && rect.bottom > 0;
+          });
+        if (!(fixedNav instanceof HTMLElement)) throw new Error('Visible fixed navigation missing');
         const ctaRect = cta.getBoundingClientRect();
+        const kickerRect = kicker.getBoundingClientRect();
+        const navRect = fixedNav.getBoundingClientRect();
         return {
           buttonCount: buttons.length,
           pressedCount: pressed.length,
@@ -95,6 +106,8 @@ test('desktop selection persists route nodes and keeps the primary CTA above the
           routeCount: document.querySelectorAll('[data-route-segment]').length,
           routePersisted: routeBefore === document.querySelector('[data-route-segment="advanced"]'),
           activeRoute: document.querySelector('[data-route-segment="advanced"]')?.getAttribute('data-route-active'),
+          kickerTop: kickerRect.top,
+          navBottom: navRect.bottom,
           ctaTop: ctaRect.top,
           ctaBottom: ctaRect.bottom,
           viewportHeight: window.innerHeight,
@@ -108,6 +121,10 @@ test('desktop selection persists route nodes and keeps the primary CTA above the
       assert.equal(result.routeCount, 4);
       assert.equal(result.routePersisted, true);
       assert.equal(result.activeRoute, 'true');
+      assert.ok(
+        result.kickerTop >= result.navBottom,
+        `Pathway kicker top ${result.kickerTop}px overlaps navigation bottom ${result.navBottom}px at ${viewport.width}x${viewport.height}`,
+      );
       assert.ok(result.ctaTop >= 0, `CTA starts above viewport at ${viewport.width}x${viewport.height}`);
       assert.ok(
         result.ctaBottom <= result.viewportHeight,

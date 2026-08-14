@@ -98,7 +98,7 @@ export function HscMathsPathway(): JSX.Element {
   return (
     <section
       id="hsc-maths"
-      className="px-5 pb-20 pt-52 text-[#071629] lg:px-8 xl:pt-12"
+      className="px-5 pb-20 pt-52 text-[#071629] lg:px-8 xl:pt-20"
       style={{
         background: 'linear-gradient(180deg, #fffdf8 0px, #f5f2eb 16px, #f6ecd9 32px, #fff6e7 56px)',
       }}
