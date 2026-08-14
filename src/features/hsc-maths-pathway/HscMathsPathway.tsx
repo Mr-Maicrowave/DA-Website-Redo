@@ -132,7 +132,7 @@ export function HscMathsPathway(): JSX.Element {
 
           <div className="relative min-h-[38rem] border-r border-[#c9921b]/45 px-5 py-8 xl:px-8" aria-label="Choose an HSC mathematics stream">
             <motion.svg
-              className="pointer-events-none absolute inset-0 h-full w-full"
+              className="pointer-events-none absolute inset-0 z-10 h-full w-full"
               viewBox="0 0 520 560"
               preserveAspectRatio="none"
               aria-hidden="true"
@@ -140,7 +140,7 @@ export function HscMathsPathway(): JSX.Element {
               viewport={{ once: true, amount: 0.25 }}
             >
               <defs>
-                <filter id="hsc-pathway-glow" x="-40%" y="-40%" width="180%" height="180%">
+                <filter id="hsc-pathway-glow" filterUnits="userSpaceOnUse" x="0" y="0" width="520" height="560">
                   <feGaussianBlur stdDeviation="7" />
                 </filter>
               </defs>
@@ -195,7 +195,7 @@ export function HscMathsPathway(): JSX.Element {
               })}
             </motion.svg>
 
-            <span className="pointer-events-none absolute left-[6.54%] top-[29%] -translate-x-1/2 text-[11px] font-black uppercase tracking-[0.12em] text-[#071629]" aria-hidden="true">
+            <span className="pointer-events-none absolute left-[6.54%] top-[31.07%] -translate-x-full -translate-y-1/2 whitespace-nowrap pr-3 text-[11px] font-black uppercase tracking-[0.12em] text-[#071629]" aria-hidden="true">
               Year 10
             </span>
 
@@ -214,7 +214,7 @@ export function HscMathsPathway(): JSX.Element {
                     setActiveStreamId(stream.id);
                     setHasSelected(true);
                   }}
-                  className={`hsc-pathway-focus group absolute left-[40%] z-10 min-h-14 w-[57%] -translate-y-1/2 bg-[#fffdf8]/90 px-2 py-2 text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#071629] focus-visible:ring-2 focus-visible:ring-[#071629] focus-visible:ring-offset-4 focus-visible:ring-offset-[#fffdf8] ${DESKTOP_POSITIONS[stream.id]}`}
+                  className={`hsc-pathway-focus group absolute left-[40%] z-20 min-h-14 w-[57%] -translate-y-1/2 bg-[#fffdf8]/90 px-2 py-2 text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#071629] focus-visible:ring-2 focus-visible:ring-[#071629] focus-visible:ring-offset-4 focus-visible:ring-offset-[#fffdf8] ${DESKTOP_POSITIONS[stream.id]}`}
                 >
                   <span className="flex items-center gap-3">
                     <span className="h-4 w-4 shrink-0 rounded-full border-[3px] bg-[#fffdf8]" style={{ borderColor: stream.color }} aria-hidden="true" />
@@ -236,12 +236,12 @@ export function HscMathsPathway(): JSX.Element {
               );
             })}
 
-            <div className="absolute inset-x-[10%] top-[68%] flex items-center gap-3" aria-label="Year 12 threshold">
+            <div className="absolute inset-x-[10%] top-[68%] z-0 flex items-center gap-3" aria-label="Year 12 threshold">
               <span className="h-px flex-1 bg-[#40516b]/45" aria-hidden="true" />
               <span className="text-xs font-black uppercase tracking-[0.1em] text-[#071629]">Year 12</span>
               <span className="h-px flex-1 bg-[#40516b]/45" aria-hidden="true" />
             </div>
-            <p className="absolute inset-x-0 top-[72%] text-center text-xs font-bold text-[#071629]">Extension 2 becomes available</p>
+            <p className="absolute left-[47%] top-[72%] z-20 bg-[#fffdf8] px-2 text-left text-xs font-bold text-[#071629]">Extension 2 becomes available</p>
             <div className="absolute left-[42%] top-[91%] text-xs leading-5 text-[#071629]">
               <p className="font-black uppercase tracking-[0.08em] text-[#071629]">Year 12 only</p>
               <p className="text-[#071629]">Requires Advanced + Extension 1</p>

@@ -101,11 +101,34 @@ test('desktop selection keeps full routes aligned and the primary CTA above the 
         const year10 = [...document.querySelectorAll('#hsc-maths span')]
           .find((label) => label.textContent?.trim() === 'Year 10' && label.getBoundingClientRect().width > 0);
         const advancedRoute = document.querySelector('[data-route-segment="advanced"] path');
+        const extensionTwoRoute = document.querySelector('[data-route-segment="extension-2"] path');
+        const routeSvg = document.querySelector('#hsc-maths svg[viewBox="0 0 520 560"]');
+        const routeGlow = document.querySelector('#hsc-pathway-glow');
+        const year12Threshold = document.querySelector('[aria-label="Year 12 threshold"]');
+        const availabilityCaption = [...document.querySelectorAll('#hsc-maths p')]
+          .find((paragraph) => paragraph.textContent?.trim() === 'Extension 2 becomes available');
         if (!(year10 instanceof HTMLSpanElement)) throw new Error('Visible Year 10 label missing');
         if (!(advancedRoute instanceof SVGPathElement)) throw new Error('Advanced route missing');
+        if (!(extensionTwoRoute instanceof SVGPathElement)) throw new Error('Extension 2 route missing');
+        if (!(routeSvg instanceof SVGSVGElement)) throw new Error('Route SVG missing');
+        if (!(routeGlow instanceof SVGFilterElement)) throw new Error('Route glow filter missing');
+        if (!(year12Threshold instanceof HTMLDivElement)) throw new Error('Year 12 threshold missing');
+        if (!(availabilityCaption instanceof HTMLParagraphElement)) throw new Error('Availability caption missing');
         const routeStart = advancedRoute.getPointAtLength(0).matrixTransform(advancedRoute.getScreenCTM());
         const year10Rect = year10.getBoundingClientRect();
         const activeRoutePaths = [...document.querySelectorAll('[data-route-active="true"] path')];
+        const availabilityRect = availabilityCaption.getBoundingClientRect();
+        const extensionTwoLength = extensionTwoRoute.getTotalLength();
+        let routeAtCaption = extensionTwoRoute.getPointAtLength(0).matrixTransform(extensionTwoRoute.getScreenCTM());
+        for (let index = 1; index <= 200; index += 1) {
+          const point = extensionTwoRoute
+            .getPointAtLength((extensionTwoLength * index) / 200)
+            .matrixTransform(extensionTwoRoute.getScreenCTM());
+          if (Math.abs(point.y - (availabilityRect.top + availabilityRect.height / 2))
+            < Math.abs(routeAtCaption.y - (availabilityRect.top + availabilityRect.height / 2))) {
+            routeAtCaption = point;
+          }
+        }
         return {
           buttonCount: buttons.length,
           pressedCount: pressed.length,
@@ -115,8 +138,16 @@ test('desktop selection keeps full routes aligned and the primary CTA above the 
           routePersisted: routeBefore === document.querySelector('[data-route-segment="advanced"]'),
           activeRoute: document.querySelector('[data-route-segment="advanced"]')?.getAttribute('data-route-active'),
           activeRoutesAreSolid: activeRoutePaths.every((path) => getComputedStyle(path).strokeDasharray === 'none'),
-          year10Center: year10Rect.left + year10Rect.width / 2,
+          year10Right: year10Rect.right,
+          year10CenterY: year10Rect.top + year10Rect.height / 2,
           routeStartX: routeStart.x,
+          routeStartY: routeStart.y,
+          glowFilterUnits: routeGlow.getAttribute('filterUnits'),
+          routeZIndex: Number(getComputedStyle(routeSvg).zIndex) || 0,
+          thresholdZIndex: Number(getComputedStyle(year12Threshold).zIndex) || 0,
+          availabilityZIndex: Number(getComputedStyle(availabilityCaption).zIndex) || 0,
+          availabilityLeft: availabilityRect.left,
+          routeAtCaptionX: routeAtCaption.x,
           kickerTop: kickerRect.top,
           navBottom: navRect.bottom,
           ctaTop: ctaRect.top,
@@ -132,9 +163,20 @@ test('desktop selection keeps full routes aligned and the primary CTA above the 
       assert.equal(result.routeCount, 4);
       assert.equal(result.routePersisted, true);
       assert.equal(result.activeRoute, 'true');
+      assert.ok(result.routeZIndex > result.thresholdZIndex, 'Active route should paint above the Year 12 divider');
+      assert.ok(result.availabilityZIndex > result.routeZIndex, 'Availability caption should remain above the route');
       assert.ok(
-        Math.abs(result.year10Center - result.routeStartX) <= 2,
-        `Year 10 centre ${result.year10Center}px misses route start ${result.routeStartX}px at ${viewport.width}x${viewport.height}`,
+        result.availabilityLeft >= result.routeAtCaptionX + 12,
+        `Availability caption starts at ${result.availabilityLeft}px and intersects route at ${result.routeAtCaptionX}px`,
+      );
+      assert.equal(result.glowFilterUnits, 'userSpaceOnUse');
+      assert.ok(
+        Math.abs(result.year10Right - result.routeStartX) <= 2,
+        `Year 10 edge ${result.year10Right}px misses route start ${result.routeStartX}px at ${viewport.width}x${viewport.height}`,
+      );
+      assert.ok(
+        Math.abs(result.year10CenterY - result.routeStartY) <= 2,
+        `Year 10 centre ${result.year10CenterY}px is not aligned with route y ${result.routeStartY}px at ${viewport.width}x${viewport.height}`,
       );
       assert.equal(result.activeRoutesAreSolid, true);
       assert.ok(
