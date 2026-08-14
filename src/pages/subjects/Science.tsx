@@ -21,6 +21,7 @@ import { Link } from 'react-router-dom';
 import { motion, AnimatePresence, useInView } from 'framer-motion';
 import SEO from '@/components/SEO';
 import DAMethodSection from '@/components/DAMethodSection';
+import { ScienceIntroVideoGate } from '@/features/science-intro-video/ScienceIntroVideoGate';
 
 // ── Curiosity Constellation data ─────────────────────────────────────────────
 // SVG viewBox 0 0 460 460. Hexagonal inner network centred at (230, 230), r=92.
@@ -1227,6 +1228,7 @@ const Science = () => {
 
   return (
     <div className="min-h-screen bg-[#fffdf8] text-[#172033]">
+      <ScienceIntroVideoGate />
       <SEO
         title="Science Tutoring – Biology, Chemistry & Physics (Years 7–12)"
         description="From Year 7 Science to HSC Biology, Chemistry and Physics, DA Tuition builds genuine understanding and exam confidence."
