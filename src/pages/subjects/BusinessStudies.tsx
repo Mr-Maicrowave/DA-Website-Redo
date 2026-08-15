@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { TrendingUp, Briefcase, LineChart, CheckCircle, ArrowRight, Quote, Target, Info } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import SEO from '@/components/SEO';
+import { BusinessStudiesIntroVideoGate } from '@/features/business-intro-video/BusinessStudiesIntroVideoGate';
 
 const businessTrustedSchools = [
   'Freeman Catholic College',
@@ -78,6 +79,7 @@ const BusinessStudies = () => {
 
   return (
     <div className="min-h-screen bg-white">
+      <BusinessStudiesIntroVideoGate />
       <SEO
         title="HSC Business Studies Tutoring"
         description="Master business concepts through case studies and real-world applications at DA Tuition."
