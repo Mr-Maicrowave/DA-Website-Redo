@@ -110,6 +110,64 @@ test('desktop route endpoints stay centred on every course node across pathway w
   }
 });
 
+test('short desktop keeps the entire pathway card within one viewport without internal scrolling', { timeout: 45_000 }, async () => {
+  for (const viewport of [{ width: 1536, height: 824 }, { width: 1440, height: 900 }]) {
+    const page = await openPathway(viewport);
+    try {
+      const streamNames = ['Standard 1 & 2', 'Advanced', 'Extension 1', 'Extension 2'];
+      const measurements = [];
+      for (const streamName of streamNames) {
+        await clickButtonByText(page, '#hsc-maths button[aria-pressed]', streamName);
+        await page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+        measurements.push(await page.evaluate(() => {
+          const map = document.querySelector('[aria-label="Choose an HSC mathematics stream"]');
+          const card = map?.parentElement;
+          const details = card?.querySelector('[role="region"][aria-labelledby^="hsc-stream-desktop-heading"]');
+          const primaryCta = card?.querySelector('a[href="/book-interview"]');
+          const secondaryCta = card?.querySelector('a[href="/hsc-excellence"]');
+          if (!(card instanceof HTMLElement)
+            || !(details instanceof HTMLElement)
+            || !(primaryCta instanceof HTMLAnchorElement)
+            || !(secondaryCta instanceof HTMLAnchorElement)) {
+            throw new Error('Desktop pathway card content is missing');
+          }
+          const cardRect = card.getBoundingClientRect();
+          const detailsRect = details.getBoundingClientRect();
+          const primaryRect = primaryCta.getBoundingClientRect();
+          const secondaryRect = secondaryCta.getBoundingClientRect();
+          return {
+            cardHeight: cardRect.height,
+            cardBottom: cardRect.bottom,
+            detailsBottom: detailsRect.bottom,
+            primaryHeight: primaryRect.height,
+            secondaryHeight: secondaryRect.height,
+            secondaryBottom: secondaryRect.bottom,
+            cardFitsContent: card.scrollHeight <= card.clientHeight + 1,
+            detailsHasInternalScroll: details.scrollHeight > details.clientHeight + 1
+              || ['auto', 'scroll'].includes(getComputedStyle(details).overflowY),
+            viewportHeight: window.innerHeight,
+          };
+        }));
+      }
+
+      for (const measurement of measurements) {
+        assert.ok(
+          measurement.cardHeight <= measurement.viewportHeight - 48,
+          `Pathway card is ${measurement.cardHeight}px tall in a ${measurement.viewportHeight}px viewport`,
+        );
+        assert.equal(measurement.cardFitsContent, true);
+        assert.equal(measurement.detailsHasInternalScroll, false);
+        assert.ok(measurement.detailsBottom <= measurement.cardBottom);
+        assert.ok(measurement.secondaryBottom <= measurement.cardBottom);
+        assert.ok(measurement.primaryHeight >= 48);
+        assert.ok(measurement.secondaryHeight >= 48);
+      }
+    } finally {
+      await page.close();
+    }
+  }
+});
+
 test('desktop selection keeps full routes aligned and the primary CTA above the fold', { timeout: 30_000 }, async () => {
   for (const viewport of [{ width: 1900, height: 1080 }, { width: 1440, height: 1000 }]) {
     const page = await openPathway(viewport);

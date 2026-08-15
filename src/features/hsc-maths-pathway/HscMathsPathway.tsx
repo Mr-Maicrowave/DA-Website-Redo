@@ -43,7 +43,7 @@ const ROUTE_SEGMENTS: Record<HscStreamId, string> = {
 
 function StreamDetails({ stream, headingId, compact = false }: { stream: HscStream; headingId: string; compact?: boolean }) {
   return (
-    <div className={compact ? 'px-4 pb-5 pt-2' : 'lg:pl-10'}>
+    <div className={compact ? 'px-4 pb-5 pt-2' : 'hsc-pathway-detail-content lg:pl-10'}>
       <p
         className="inline-block border-b-2 pb-1 text-xs font-black uppercase tracking-[0.12em] text-[#071629]"
         style={{ borderColor: stream.color }}
@@ -56,7 +56,7 @@ function StreamDetails({ stream, headingId, compact = false }: { stream: HscStre
       >
         {stream.name} at a glance
       </h3>
-      <dl className="mt-6 grid gap-5">
+      <dl className="hsc-pathway-detail-list mt-6 grid gap-5">
         {DETAIL_ITEMS.map(({ label, field, icon: Icon }) => (
           <div key={field} className="grid grid-cols-[1.5rem_1fr] gap-3">
             <Icon className="mt-0.5 h-5 w-5 text-[#40516b]" aria-hidden="true" />
@@ -67,7 +67,7 @@ function StreamDetails({ stream, headingId, compact = false }: { stream: HscStre
           </div>
         ))}
       </dl>
-      <details className="group mt-6 border-y border-[#071629]/15 py-4">
+      <details className="hsc-pathway-topics group mt-6 border-y border-[#071629]/15 py-4">
         <summary className="hsc-pathway-focus hsc-pathway-focus--compact min-h-12 cursor-pointer text-sm font-black text-[#071629] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#071629] focus-visible:ring-2 focus-visible:ring-[#071629] focus-visible:ring-offset-2 focus-visible:ring-offset-[#fffdf8]">
           See topics covered
         </summary>
@@ -75,10 +75,10 @@ function StreamDetails({ stream, headingId, compact = false }: { stream: HscStre
           {stream.topics.map((topic) => <li key={topic}>{topic}</li>)}
         </ul>
       </details>
-      <Link to="/book-interview" className="hsc-pathway-focus mt-6 inline-flex min-h-12 w-full items-center justify-center gap-2 bg-[#071629] px-5 text-center text-sm font-black text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#071629] focus-visible:ring-2 focus-visible:ring-[#071629] focus-visible:ring-offset-4 focus-visible:ring-offset-[#fffdf8]">
+      <Link to="/book-interview" className="hsc-pathway-primary-cta hsc-pathway-focus mt-6 inline-flex min-h-12 w-full items-center justify-center gap-2 bg-[#071629] px-5 text-center text-sm font-black text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#071629] focus-visible:ring-2 focus-visible:ring-[#071629] focus-visible:ring-offset-4 focus-visible:ring-offset-[#fffdf8]">
         Talk through your child's course choice <ArrowRight className="h-4 w-4" aria-hidden="true" />
       </Link>
-      <Link to="/hsc-excellence" className="hsc-pathway-focus mt-3 inline-flex min-h-12 w-full items-center justify-center gap-2 text-sm font-black text-[#071629] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#071629] focus-visible:ring-2 focus-visible:ring-[#071629] focus-visible:ring-offset-4 focus-visible:ring-offset-[#fffdf8]">
+      <Link to="/hsc-excellence" className="hsc-pathway-secondary-cta hsc-pathway-focus mt-3 inline-flex min-h-12 w-full items-center justify-center gap-2 text-sm font-black text-[#071629] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#071629] focus-visible:ring-2 focus-visible:ring-[#071629] focus-visible:ring-offset-4 focus-visible:ring-offset-[#fffdf8]">
         Explore HSC program <ArrowRight className="h-4 w-4" aria-hidden="true" />
       </Link>
     </div>
@@ -116,13 +116,13 @@ export function HscMathsPathway(): JSX.Element {
           </p>
         </div>
 
-        <div className="mt-12 hidden overflow-hidden rounded-2xl border border-[#071629]/20 bg-[#fffdf8] xl:mt-7 xl:grid xl:grid-cols-[0.72fr_1.15fr_0.9fr]">
-          <aside className="m-8 border-r border-[#c9921b]/55 py-8 pr-8 xl:m-10 xl:pr-10" aria-label="HSC course selection guidance">
+        <div className="hsc-pathway-desktop-card mt-12 hidden overflow-hidden rounded-2xl border border-[#071629]/20 bg-[#fffdf8] xl:mt-7 xl:grid xl:grid-cols-[0.72fr_1.15fr_0.9fr]">
+          <aside className="hsc-pathway-guidance m-8 border-r border-[#c9921b]/55 py-8 pr-8 xl:m-10 xl:pr-10" aria-label="HSC course selection guidance">
             <p className="font-serif text-4xl font-medium tracking-[-0.04em] text-[#071629]">HSC Maths</p>
             <p className="mt-4 text-sm leading-7 text-[#40516b]">
               Already enrolled? Select your course. Still deciding? We can help.
             </p>
-            <div className="mt-8 border-t border-[#c9921b]/60 pt-8">
+            <div className="hsc-pathway-guidance-note mt-8 border-t border-[#c9921b]/60 pt-8">
               <GraduationCap className="h-7 w-7 text-[#40516b]" aria-hidden="true" />
               <p className="mt-4 text-sm leading-7 text-[#40516b]">
                 Course selection at the end of Year 10 shapes senior study and future options. We are here to make the choice clear and confident.
@@ -130,7 +130,7 @@ export function HscMathsPathway(): JSX.Element {
             </div>
           </aside>
 
-          <div className="relative min-h-[38rem] border-r border-[#c9921b]/45 px-5 py-8 xl:px-8" aria-label="Choose an HSC mathematics stream">
+          <div className="hsc-pathway-map relative min-h-[38rem] border-r border-[#c9921b]/45 px-5 py-8 xl:px-8" aria-label="Choose an HSC mathematics stream">
             <motion.svg
               className="pointer-events-none absolute inset-0 z-10 h-full w-full"
               viewBox="0 0 520 560"
@@ -250,7 +250,7 @@ export function HscMathsPathway(): JSX.Element {
 
           <motion.div
             key={activeStream.id}
-            className="m-8 self-center xl:m-10"
+            className="hsc-pathway-details m-8 self-center xl:m-10"
             role="region"
             aria-labelledby={desktopHeadingId}
             initial={prefersReducedMotion ? false : { opacity: 0, y: hasSelected ? 8 : 0 }}
