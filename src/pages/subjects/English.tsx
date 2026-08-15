@@ -3,6 +3,7 @@ import { BookOpen } from 'lucide-react';
 import NavigationNew from '@/components/NavigationNew';
 import SubjectHero from '@/components/subjects/SubjectHero';
 import SEO from '@/components/SEO';
+import { EnglishIntroVideoGate } from '@/features/english-intro-video/EnglishIntroVideoGate';
 
 const English = () => {
   const iframeRef = useRef<HTMLIFrameElement>(null);
@@ -27,6 +28,7 @@ const English = () => {
 
   return (
     <>
+      <EnglishIntroVideoGate />
       <SEO
         title="English Tutoring"
         description="English tuition for Years 7-12 students who need structure, confidence, sharper analysis, and detailed writing feedback."
