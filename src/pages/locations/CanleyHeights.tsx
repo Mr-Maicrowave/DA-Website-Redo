@@ -79,7 +79,7 @@ const schools = [
 ];
 
 const transport = [
-  { type: "Train", details: "Canley Vale Station — 5 min walk", Icon: Train, colour: '#5b8fc7', wash: 'rgba(147,197,253,.18)' },
+  { type: "Train", details: "Take the train to Canley Vale, then a 5-minute bus trip to the centre", Icon: Train, colour: '#5b8fc7', wash: 'rgba(147,197,253,.18)' },
   { type: "Bus", details: "Routes 802, 803, 804 stop nearby", Icon: Navigation, colour: C.gold, wash: 'rgba(212,175,55,.12)' },
   { type: "Parking", details: "Free 2-hour street parking available", Icon: Car, colour: '#4f9570', wash: 'rgba(134,239,172,.16)' },
   { type: "Drop-off", details: "Convenient drop-off zone at entrance", Icon: MapPin, colour: '#8a6bb2', wash: 'rgba(196,181,253,.18)' },
@@ -173,33 +173,48 @@ const CanleyHeights = () => {
       </section>
 
       {/* WHY CHOOSE US */}
-      <section style={{ background: C.navy, padding: '96px 24px', position: 'relative', overflow: 'hidden' }}>
-        <div style={{ position: 'absolute', top: '-20%', left: '50%', transform: 'translateX(-50%)', width: '70%', height: '60%', background: `radial-gradient(ellipse,rgba(212,175,55,.08) 0%,transparent 70%)`, pointerEvents: 'none' }} />
-        <div style={{ maxWidth: 1100, margin: '0 auto', position: 'relative', zIndex: 1 }}>
+      <section style={{ background: `linear-gradient(180deg, ${C.cream} 0%, ${C.cream} 42%, ${C.cream2} 100%)`, padding: 'clamp(56px,6vw,78px) 24px clamp(48px,6vw,72px)' }}>
+        <div style={{ maxWidth: 1160, margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(320px,1fr))', alignItems: 'center', gap: 'clamp(34px,6vw,80px)' }}>
           <Reveal>
-            <motion.div variants={fadeUp} style={{ textAlign: 'center', marginBottom: 56 }}>
-              <Tag t="Why Choose Us" light />
-              <GoldRule />
-              <h2 style={{ fontFamily: serif, fontWeight: 500, fontSize: 'clamp(2rem,3.8vw,3.4rem)', color: C.white, letterSpacing: '-.02em', lineHeight: 1.1 }}>
-                Why Canley Heights Families<br />
-                <em style={{ fontStyle: 'italic', color: C.goldL }}>Choose DA Tuition</em>
+            <motion.div variants={fadeUp}>
+              <Tag t="Why families choose DA" />
+              <h2 style={{ fontFamily: serif, fontWeight: 500, fontSize: 'clamp(2.35rem,4.25vw,3.8rem)', color: C.navy, letterSpacing: '-.035em', lineHeight: 1.02, maxWidth: 500 }}>
+                More than tutoring.<br />
+                <em style={{ color: C.gold, fontStyle: 'italic' }}>A place to belong.</em>
               </h2>
-            </motion.div>
+              <p style={{ ...s, color: C.muted, fontSize: '1rem', lineHeight: 1.7, maxWidth: 460, marginTop: 18, marginBottom: 24 }}>
+                A welcoming local centre where students can focus, build confidence, and feel supported in every next step.
+              </p>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(280px,1fr))', gap: 2 }}>
-              {[
-                { Icon: Trophy, ic: C.goldL, title: 'Outstanding Results', body: `Thousands of local students have achieved their academic dreams with us — including ${siteStats.atar95Plus} students with 95+ ATARs and ${siteStats.band6Results} Band 6 HSC results.`, badge: '2025 Award Winner' },
-                { Icon: Users, ic: '#93c5fd', title: 'Community Trusted', body: `Recommended by local schools and trusted by over ${siteStats.reviewCount} Fairfield area families. Our reputation is built on two decades of exceptional outcomes.`, badge: '5.0 ★ Rating' },
-                { Icon: MapPin, ic: '#86efac', title: 'Perfect Location', body: 'Central Canley Heights with easy access from all surrounding suburbs. Walking distance from Canley Vale station and major bus routes. Free parking available.', badge: 'Free Parking' },
-              ].map(({ Icon, ic, title, body, badge }, i) => (
-                <motion.div key={i} variants={fadeUp} style={{ background: 'rgba(255,255,255,.04)', border: `1px solid rgba(212,175,55,.12)`, padding: '48px 36px' }}>
-                  <Icon size={40} color={ic} style={{ marginBottom: 20 }} />
-                  <h3 style={{ fontFamily: serif, fontWeight: 500, fontSize: '1.55rem', color: C.white, letterSpacing: '-.01em', marginBottom: 12 }}>{title}</h3>
-                  <p style={{ ...s, fontSize: '.92rem', color: 'rgba(247,244,238,.65)', lineHeight: 1.75, marginBottom: 20 }}>{body}</p>
-                  <span style={{ ...s, display: 'inline-block', border: `1px solid rgba(212,175,55,.4)`, borderRadius: 2, padding: '4px 12px', fontSize: '.65rem', fontWeight: 700, letterSpacing: '.14em', textTransform: 'uppercase', color: C.goldL }}>{badge}</span>
-                </motion.div>
-              ))}
-            </div>
+              <div style={{ borderTop: `1px solid rgba(10,27,52,.15)` }}>
+                {[
+                  { Icon: Trophy, title: 'Progress with purpose', body: `Experienced teachers and high expectations help students build toward goals that matter to them.`, accent: C.gold },
+                  { Icon: Users, title: 'Known by name', body: `Families value the relationships that grow when a team understands their child’s learning journey.`, accent: '#7a9cc6' },
+                  { Icon: MapPin, title: 'Made for local families', body: 'Take the train to Canley Vale, then a 5-minute bus trip to the centre. Parking is available too.', accent: '#819e7d' },
+                ].map(({ Icon, title, body, accent }) => (
+                  <motion.div key={title} variants={fadeUp} whileHover={{ x: 7, transition: { duration: .24, ease: [0.22, 1, 0.36, 1] } }} style={{ display: 'grid', gridTemplateColumns: '42px minmax(0,1fr)', gap: 16, padding: '18px 0', borderBottom: `1px solid rgba(10,27,52,.15)` }}>
+                    <div style={{ width: 38, height: 38, borderRadius: '50%', display: 'grid', placeItems: 'center', background: `${accent}1c`, border: `1px solid ${accent}66` }}>
+                      <Icon size={18} color={accent} />
+                    </div>
+                    <div>
+                      <h3 style={{ fontFamily: serif, color: C.navy, fontWeight: 600, fontSize: '1.4rem', lineHeight: 1.05, marginBottom: 6 }}>{title}</h3>
+                      <p style={{ ...s, color: C.muted, fontSize: '.88rem', lineHeight: 1.6, maxWidth: 420 }}>{body}</p>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+          </Reveal>
+
+          <Reveal>
+            <motion.figure variants={fadeUp} style={{ position: 'relative', margin: 0 }}>
+              <div aria-hidden="true" style={{ position: 'absolute', height: 3, width: 94, background: C.gold, top: -12, right: 28, borderRadius: 99 }} />
+              <div style={{ position: 'relative', minHeight: 'clamp(400px,43vw,530px)', overflow: 'hidden', borderRadius: '150px 30px 30px 30px', backgroundImage: "url('/images/programs/highschool-classroom-wide-1-joyful-clean.png')", backgroundPosition: 'center 80%', backgroundSize: 'auto 125%', boxShadow: '0 24px 50px rgba(10,27,52,.14)' }} />
+              <figcaption style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, marginTop: 17, padding: '0 4px', color: C.navy }}>
+                <span style={{ ...s, color: C.gold, fontSize: '.64rem', letterSpacing: '.17em', fontWeight: 700, textTransform: 'uppercase' }}>Canley Heights, NSW</span>
+                <span style={{ ...s, color: C.muted, fontSize: '.78rem', textAlign: 'right' }}>A calm place to focus and grow.</span>
+              </figcaption>
+            </motion.figure>
           </Reveal>
         </div>
       </section>

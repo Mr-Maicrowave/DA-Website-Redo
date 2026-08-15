@@ -53,9 +53,9 @@ const modeCopy: Record<Mode, { Icon: LucideIcon; label: string; lines: string[] 
     Icon: Train,
     label: 'Train',
     lines: [
-      'Canley Vale Station is a 5 minute walk from the centre.',
-      'Exit toward Canley Vale Rd and head north — the centre is on your left.',
-      'Well lit and populated in the evening for students walking after class.',
+      'Take the train to Canley Vale Station, then catch a local bus for a 5-minute trip to the centre.',
+      'Local bus services stop near Canley Vale Rd, close to the centre entrance.',
+      'Allow a little extra time for the connection, especially after school.',
     ],
   },
   bus: {
@@ -70,7 +70,7 @@ const modeCopy: Record<Mode, { Icon: LucideIcon; label: string; lines: string[] 
 };
 
 const arrivalSteps: { Icon: LucideIcon; title: string; body: string }[] = [
-  { Icon: Car, title: 'Arrive', body: 'Park on the street or step off at Canley Vale Station — either way, you\'re a couple of minutes from the door.' },
+  { Icon: Car, title: 'Arrive', body: 'Park on the street or arrive by local bus from Canley Vale Station.' },
   { Icon: DoorOpen, title: 'Enter', body: 'Take the lift to Level 1. The entrance is well signed from the street.' },
   { Icon: ClipboardCheck, title: 'Sign in', body: 'Reception will greet you and confirm which class or interview you\'re here for.' },
   { Icon: Sofa, title: 'Settle in', body: 'A quiet waiting area is available for parents while students head into class.' },
