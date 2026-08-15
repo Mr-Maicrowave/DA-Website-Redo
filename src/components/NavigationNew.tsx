@@ -279,13 +279,12 @@ const NavigationNew = () => {
                   </HoverCardContent>
                 </HoverCard>
 
-                <a
-                  href="#contact"
-                  onClick={() => handleNavClick('#contact')}
+                <Link
+                  to="/contact"
                   className="px-2 xl:px-3 py-2 text-sm xl:text-base text-brand-midnight/80 hover:text-brand-blue-dark transition-colors whitespace-nowrap"
                 >
-                  Contact
-                </a>
+                  Contact Us
+                </Link>
               </div>
 
             </div>
@@ -373,13 +372,13 @@ const NavigationNew = () => {
                   ))}
                 </div>
 
-                <a
-                  href="#contact"
-                  onClick={() => handleNavClick('#contact')}
+                <Link
+                  to="/contact"
+                  onClick={() => setIsOpen(false)}
                   className="block text-brand-midnight/80 hover:text-brand-blue-dark font-medium py-3"
                 >
-                  Contact
-                </a>
+                  Contact Us
+                </Link>
 
               </div>
             </div>

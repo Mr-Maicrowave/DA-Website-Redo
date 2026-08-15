@@ -32,6 +32,7 @@ import FAQ from "./pages/FAQ";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import WhyChooseDA from "./pages/WhyChooseDA";
 import PrincipalReflections from "./pages/PrincipalReflections";
+import ContactUs from "./pages/ContactUs";
 import PrincipalVoiceBook from "./pages/PrincipalVoiceBook";
 import Subjects from "./pages/Subjects";
 // Program pages
@@ -79,6 +80,7 @@ const AnimatedRoutes = () => {
         <Route path="/tutoring-lansvale" element={<PageTransition><Lansvale /></PageTransition>} />
         <Route path="/success-stories" element={<PageTransition><SuccessStories /></PageTransition>} />
         <Route path="/faq" element={<PageTransition><FAQ /></PageTransition>} />
+        <Route path="/contact" element={<PageTransition><ContactUs /></PageTransition>} />
         <Route path="/privacy-policy" element={<PageTransition><PrivacyPolicy /></PageTransition>} />
         <Route path="/our-approach" element={<PageTransition><WhyChooseDA /></PageTransition>} />
         <Route path="/why-choose-da" element={<PageTransition><WhyChooseDA /></PageTransition>} />
