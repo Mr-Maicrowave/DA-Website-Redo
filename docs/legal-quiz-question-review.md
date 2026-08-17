@@ -1,0 +1,911 @@
+# Legal Syllabus Quiz Question Review
+
+Use this checklist to decide which questions to keep or remove. Each item shows the ID, type, syllabus area, prompt, answer, accepted answers where relevant, and explanation.
+
+## Human Rights (90 questions)
+
+- [ ] `hr-mcq-01` [multiple-choice] (Nature and development of human rights)
+  - Prompt: Which description best captures the idea of human rights in the HSC syllabus?
+  - Options: Rights held only by citizens | Universal entitlements held by all people | Privileges created by police powers | Duties owed only to governments
+  - Answer: Universal entitlements held by all people
+  - Explanation: Human rights are understood as universal rights and freedoms that belong to all people.
+- [ ] `hr-mcq-02` [multiple-choice] (Nature and development of human rights)
+  - Prompt: Which document is commonly treated as the key modern statement of universal human rights?
+  - Options: Universal Declaration of Human Rights | Magna Carta | Treaty of Versailles | Australian Constitution
+  - Answer: Universal Declaration of Human Rights
+  - Explanation: The UDHR is the core international statement of human rights after World War II.
+- [ ] `hr-mcq-03` [multiple-choice] (Promoting and enforcing human rights)
+  - Prompt: Which concept can limit international enforcement of human rights?
+  - Options: State sovereignty | Presumption of innocence | The burden of proof | Strict liability
+  - Answer: State sovereignty
+  - Explanation: State sovereignty can restrict how far international bodies may intervene in domestic affairs.
+- [ ] `hr-mcq-04` [multiple-choice] (Promoting and enforcing human rights)
+  - Prompt: Which institution is most directly connected with international human rights promotion?
+  - Options: United Nations | Local Court of NSW | NSW Police Force | Australian Electoral Commission
+  - Answer: United Nations
+  - Explanation: The United Nations is central to international human rights promotion, treaties and monitoring.
+- [ ] `hr-mcq-05` [multiple-choice] (Formal statements of human rights)
+  - Prompt: Which pair are major international human rights covenants?
+  - Options: ICCPR and ICESCR | ADJR and FOI | LEPRA and Bail Act | UDHR and Magna Carta only
+  - Answer: ICCPR and ICESCR
+  - Explanation: The ICCPR and ICESCR are major treaties developing the UDHR into binding obligations.
+- [ ] `hr-mcq-06` [multiple-choice] (Developing recognition of human rights)
+  - Prompt: Which issue is linked to the historical development of human rights recognition?
+  - Options: Abolition of slavery | Charge negotiation | Mens rea | Summary offences
+  - Answer: Abolition of slavery
+  - Explanation: The abolition of slavery is a major development in the recognition of human rights.
+- [ ] `hr-mcq-07` [multiple-choice] (Developing recognition of human rights)
+  - Prompt: Which human rights development concerns the right of people to choose their political status?
+  - Options: Self-determination | Committal proceedings | Bail | Vicarious liability
+  - Answer: Self-determination
+  - Explanation: Self-determination is a collective right concerning political status and development.
+- [ ] `hr-mcq-08` [multiple-choice] (Developing recognition of human rights)
+  - Prompt: Universal suffrage is most closely connected with which right?
+  - Options: The right to vote | The right to silence | The right to bail | The right to appeal
+  - Answer: The right to vote
+  - Explanation: Universal suffrage concerns broad and equal participation in elections.
+- [ ] `hr-mcq-09` [multiple-choice] (Developing recognition of human rights)
+  - Prompt: Which development is associated with workers organising to protect employment rights?
+  - Options: Trade unionism | Extradition | Jury deliberation | Sentencing discount
+  - Answer: Trade unionism
+  - Explanation: Trade unionism and labour rights are part of the development of human rights recognition.
+- [ ] `hr-mcq-10` [multiple-choice] (Developing recognition of human rights)
+  - Prompt: Which right is most connected with compulsory schooling and access to learning?
+  - Options: Universal education | Double jeopardy | Arrest | Charge negotiation
+  - Answer: Universal education
+  - Explanation: Universal education is a recognised human rights development.
+- [ ] `hr-mcq-11` [multiple-choice] (Human rights in Australia)
+  - Prompt: Which mechanism protects some rights in Australia through enforceable legislation?
+  - Options: Statute law | Media campaigns only | Custom only | Police discretion only
+  - Answer: Statute law
+  - Explanation: Australian human rights protections often operate through Commonwealth and state legislation.
+- [ ] `hr-mcq-12` [multiple-choice] (Human rights in Australia)
+  - Prompt: Which body handles many federal discrimination and human rights complaints in Australia?
+  - Options: Australian Human Rights Commission | International Criminal Court | NSW Local Court | Security Council
+  - Answer: Australian Human Rights Commission
+  - Explanation: The AHRC investigates and conciliates many federal human rights and discrimination complaints.
+- [ ] `hr-mcq-13` [multiple-choice] (Promoting and enforcing human rights)
+  - Prompt: Which group often pressures governments by publicising human rights abuses?
+  - Options: Non-government organisations | Juries | Police prosecutors | Bail authorities
+  - Answer: Non-government organisations
+  - Explanation: NGOs promote human rights through advocacy, reporting, education and lobbying.
+- [ ] `hr-mcq-14` [multiple-choice] (Promoting and enforcing human rights)
+  - Prompt: What is a key role of the media in human rights protection?
+  - Options: Raising public awareness | Passing treaties | Issuing arrest warrants | Sentencing offenders
+  - Answer: Raising public awareness
+  - Explanation: Media can expose abuses and influence public and political pressure.
+- [ ] `hr-mcq-15` [multiple-choice] (Formal statements of human rights)
+  - Prompt: A treaty becomes legally binding on Australia internationally when Australia does what?
+  - Options: Ratifies it | Reports it in a newspaper | Debates it in class | Repeals it
+  - Answer: Ratifies it
+  - Explanation: Ratification indicates a state accepts international treaty obligations.
+- [ ] `hr-mcq-16` [multiple-choice] (Human rights in Australia)
+  - Prompt: For many treaty rights to be directly enforceable in Australian courts, they generally need to be:
+  - Options: Incorporated into domestic law | Posted by the UN online | Discussed by an NGO | Approved by a jury
+  - Answer: Incorporated into domestic law
+  - Explanation: Australia usually requires domestic legislation before treaty obligations create enforceable individual rights.
+- [ ] `hr-mcq-17` [multiple-choice] (Promoting and enforcing human rights)
+  - Prompt: Which is an intergovernmental organisation?
+  - Options: United Nations | Amnesty International | A private law firm | A newspaper editor
+  - Answer: United Nations
+  - Explanation: The UN is made up of states, so it is an intergovernmental organisation.
+- [ ] `hr-mcq-18` [multiple-choice] (Promoting and enforcing human rights)
+  - Prompt: What is one limitation of international human rights law?
+  - Options: Enforcement often depends on state cooperation | It always overrides domestic law automatically | It has no treaties | It applies only to corporations
+  - Answer: Enforcement often depends on state cooperation
+  - Explanation: International human rights law can be difficult to enforce without state cooperation.
+- [ ] `hr-mcq-19` [multiple-choice] (Contemporary human rights issues)
+  - Prompt: A contemporary human rights issue is usually evaluated by considering:
+  - Options: The effectiveness of legal and non-legal responses | Only the maximum penalty | Only jury directions | Only police discretion
+  - Answer: The effectiveness of legal and non-legal responses
+  - Explanation: HSC Legal Studies requires evaluation of the effectiveness of responses to human rights issues.
+- [ ] `hr-mcq-20` [multiple-choice] (Contemporary human rights issues)
+  - Prompt: Which example best fits a contemporary human rights issue?
+  - Options: Rights of refugees and asylum seekers | Elements of murder only | Strict liability traffic offences | Plea bargaining only
+  - Answer: Rights of refugees and asylum seekers
+  - Explanation: Refugee and asylum seeker rights are commonly studied as contemporary human rights issues.
+- [ ] `hr-mcq-21` [multiple-choice] (Formal statements of human rights)
+  - Prompt: Which statement best describes the UDHR?
+  - Options: A declaration that is influential but not a treaty itself | A NSW Act creating police powers | A criminal sentencing guideline | A court hierarchy
+  - Answer: A declaration that is influential but not a treaty itself
+  - Explanation: The UDHR is a declaration; its principles influenced later treaties and domestic laws.
+- [ ] `hr-mcq-22` [multiple-choice] (Promoting and enforcing human rights)
+  - Prompt: Which best describes legal measures for human rights protection?
+  - Options: Laws, courts, treaties and formal complaint mechanisms | Petitions and media reports only | Personal opinions only | School rules only
+  - Answer: Laws, courts, treaties and formal complaint mechanisms
+  - Explanation: Legal measures include enforceable or formal mechanisms such as statutes, courts and treaties.
+- [ ] `hr-mcq-23` [multiple-choice] (Promoting and enforcing human rights)
+  - Prompt: Which best describes non-legal measures?
+  - Options: Media, NGOs, education and community pressure | Courts and tribunals only | Statutes only | Treaties only
+  - Answer: Media, NGOs, education and community pressure
+  - Explanation: Non-legal measures influence behaviour and reform without being directly enforceable law.
+- [ ] `hr-mcq-24` [multiple-choice] (Human rights in Australia)
+  - Prompt: Which right is expressly protected in the Australian Constitution?
+  - Options: Freedom of religion | A full national bill of rights | The right to free university education | The right to silence in every case
+  - Answer: Freedom of religion
+  - Explanation: The Constitution contains limited express rights, including religious freedom in section 116.
+- [ ] `hr-mcq-25` [multiple-choice] (Human rights in Australia)
+  - Prompt: What is the main reason Australia is often described as having limited constitutional rights protection?
+  - Options: It lacks a comprehensive national bill of rights | It has no courts | It is not a UN member | It cannot pass human rights statutes
+  - Answer: It lacks a comprehensive national bill of rights
+  - Explanation: Australia protects many rights through statutes and common law rather than a comprehensive federal bill of rights.
+- [ ] `hr-mcq-26` [multiple-choice] (Promoting and enforcing human rights)
+  - Prompt: What is the role of courts and tribunals in human rights protection?
+  - Options: Interpreting and applying rights-based laws | Writing media articles | Replacing parliament | Conducting every election
+  - Answer: Interpreting and applying rights-based laws
+  - Explanation: Courts and tribunals can apply human rights legislation and resolve disputes.
+- [ ] `hr-mcq-27` [multiple-choice] (Developing recognition of human rights)
+  - Prompt: Which right is linked to the right of a group to preserve culture and identity?
+  - Options: Collective rights | Mens rea | Bail | Summary jurisdiction
+  - Answer: Collective rights
+  - Explanation: Collective rights can protect groups, peoples and communities as a whole.
+- [ ] `hr-mcq-28` [multiple-choice] (Formal statements of human rights)
+  - Prompt: Which treaty area is most associated with economic, social and cultural rights?
+  - Options: Work, health, education and adequate living standards | Search warrants only | Strict liability offences | Jury empanelment
+  - Answer: Work, health, education and adequate living standards
+  - Explanation: Economic, social and cultural rights include work, health, education and living standards.
+- [ ] `hr-mcq-29` [multiple-choice] (Formal statements of human rights)
+  - Prompt: Which treaty area is most associated with civil and political rights?
+  - Options: Voting, fair trial and freedom of expression | Only workplace awards | Only environmental planning | Only sentencing penalties
+  - Answer: Voting, fair trial and freedom of expression
+  - Explanation: Civil and political rights include voting, fair trial rights and freedoms of expression and belief.
+- [ ] `hr-mcq-30` [multiple-choice] (Contemporary human rights issues)
+  - Prompt: In an HSC response, what should students do when judging human rights effectiveness?
+  - Options: Use criteria such as enforceability, accessibility and responsiveness | List only dates | Avoid examples | Discuss only criminal punishment
+  - Answer: Use criteria such as enforceability, accessibility and responsiveness
+  - Explanation: Effectiveness is judged through criteria and evidence, not just description.
+- [ ] `hr-fill-01` [fill-blank] (Nature and development of human rights)
+  - Prompt: Fill in the blank: Human rights are commonly described as universal, inherent and ________.
+  - Answer: inalienable
+  - Accepted: inalienable
+  - Explanation: Inalienable means rights should not be taken away arbitrarily.
+- [ ] `hr-fill-02` [fill-blank] (Formal statements of human rights)
+  - Prompt: Fill in the blank: The Universal Declaration of Human Rights is often abbreviated as ________.
+  - Answer: UDHR
+  - Accepted: UDHR | the UDHR | Universal Declaration of Human Rights
+  - Explanation: UDHR stands for Universal Declaration of Human Rights.
+- [ ] `hr-fill-03` [fill-blank] (Formal statements of human rights)
+  - Prompt: Fill in the blank: The ICCPR mainly protects civil and ________ rights.
+  - Answer: political
+  - Accepted: political
+  - Explanation: The ICCPR is the International Covenant on Civil and Political Rights.
+- [ ] `hr-fill-04` [fill-blank] (Formal statements of human rights)
+  - Prompt: Fill in the blank: The ICESCR mainly protects economic, social and ________ rights.
+  - Answer: cultural
+  - Accepted: cultural
+  - Explanation: The ICESCR concerns economic, social and cultural rights.
+- [ ] `hr-fill-05` [fill-blank] (Promoting and enforcing human rights)
+  - Prompt: Fill in the blank: ________ sovereignty can limit international enforcement of human rights.
+  - Answer: state
+  - Accepted: state | state sovereignty
+  - Explanation: State sovereignty is a key limitation on international intervention.
+- [ ] `hr-fill-06` [fill-blank] (Developing recognition of human rights)
+  - Prompt: Fill in the blank: Universal ________ refers to broad and equal voting rights.
+  - Answer: suffrage
+  - Accepted: suffrage | universal suffrage
+  - Explanation: Universal suffrage concerns the right to vote.
+- [ ] `hr-fill-07` [fill-blank] (Developing recognition of human rights)
+  - Prompt: Fill in the blank: The abolition of ________ is a key historical human rights development.
+  - Answer: slavery
+  - Accepted: slavery
+  - Explanation: Abolition of slavery is part of the development of human rights recognition.
+- [ ] `hr-fill-08` [fill-blank] (Developing recognition of human rights)
+  - Prompt: Fill in the blank: The right of peoples to determine their political status is called self-________.
+  - Answer: determination
+  - Accepted: determination | self-determination | self determination
+  - Explanation: Self-determination is a collective human right.
+- [ ] `hr-fill-09` [fill-blank] (Developing recognition of human rights)
+  - Prompt: Fill in the blank: Trade ________ developed to protect workers and labour rights.
+  - Answer: unionism
+  - Accepted: unionism | unions
+  - Explanation: Trade unionism is linked to labour rights.
+- [ ] `hr-fill-10` [fill-blank] (Developing recognition of human rights)
+  - Prompt: Fill in the blank: Universal ________ recognises access to schooling and learning as a human rights issue.
+  - Answer: education
+  - Accepted: education
+  - Explanation: Universal education is a key human rights development.
+- [ ] `hr-fill-11` [fill-blank] (Promoting and enforcing human rights)
+  - Prompt: Fill in the blank: The ________ Nations is the major intergovernmental organisation for human rights.
+  - Answer: United
+  - Accepted: United | United Nations | UN
+  - Explanation: The United Nations is central to international human rights law.
+- [ ] `hr-fill-12` [fill-blank] (Human rights in Australia)
+  - Prompt: Fill in the blank: The Australian Human Rights ________ handles many federal discrimination complaints.
+  - Answer: Commission
+  - Accepted: Commission | Australian Human Rights Commission | AHRC
+  - Explanation: The AHRC investigates and conciliates many complaints.
+- [ ] `hr-fill-13` [fill-blank] (Human rights in Australia)
+  - Prompt: Fill in the blank: International treaties usually need domestic ________ before individuals can enforce them directly in Australian courts.
+  - Answer: legislation
+  - Accepted: legislation | law | statute | statutory incorporation
+  - Explanation: Treaty obligations generally need incorporation into Australian law.
+- [ ] `hr-fill-14` [fill-blank] (Promoting and enforcing human rights)
+  - Prompt: Fill in the blank: Non-government organisations are often abbreviated as ________.
+  - Answer: NGOs
+  - Accepted: NGO | NGOs | non-government organisations | non-governmental organisations
+  - Explanation: NGOs advocate, report and campaign on human rights.
+- [ ] `hr-fill-15` [fill-blank] (Promoting and enforcing human rights)
+  - Prompt: Fill in the blank: The ________ can promote human rights by publicising abuses and shaping public opinion.
+  - Answer: media
+  - Accepted: media | the media
+  - Explanation: Media coverage can influence awareness and reform.
+- [ ] `hr-fill-16` [fill-blank] (Promoting and enforcing human rights)
+  - Prompt: Fill in the blank: Courts and ________ can interpret and apply rights-based laws.
+  - Answer: tribunals
+  - Accepted: tribunals
+  - Explanation: Courts and tribunals are legal mechanisms for human rights protection.
+- [ ] `hr-fill-17` [fill-blank] (Formal statements of human rights)
+  - Prompt: Fill in the blank: When Australia accepts a treaty internationally, it ________ the treaty.
+  - Answer: ratifies
+  - Accepted: ratifies | ratified | ratification
+  - Explanation: Ratification indicates international acceptance of treaty obligations.
+- [ ] `hr-fill-18` [fill-blank] (Contemporary human rights issues)
+  - Prompt: Fill in the blank: HSC responses should evaluate the effectiveness of legal and ________ responses.
+  - Answer: non-legal
+  - Accepted: non-legal | non legal
+  - Explanation: Both legal and non-legal responses are relevant to effectiveness.
+- [ ] `hr-fill-19` [fill-blank] (Human rights in Australia)
+  - Prompt: Fill in the blank: Australia does not have a comprehensive federal Bill of ________.
+  - Answer: Rights
+  - Accepted: Rights | rights | bill of rights
+  - Explanation: Australia lacks a comprehensive national bill of rights.
+- [ ] `hr-fill-20` [fill-blank] (Human rights in Australia)
+  - Prompt: Fill in the blank: One limited express constitutional right in Australia is freedom of ________.
+  - Answer: religion
+  - Accepted: religion
+  - Explanation: Section 116 protects religious freedom in limited terms.
+- [ ] `hr-fill-21` [fill-blank] (Formal statements of human rights)
+  - Prompt: Fill in the blank: Civil and political rights include fair trial rights and freedom of ________.
+  - Answer: expression
+  - Accepted: expression | speech
+  - Explanation: Freedom of expression is a civil and political right.
+- [ ] `hr-fill-22` [fill-blank] (Formal statements of human rights)
+  - Prompt: Fill in the blank: Economic, social and cultural rights include work, health and ________.
+  - Answer: education
+  - Accepted: education
+  - Explanation: Education is a central economic, social and cultural right.
+- [ ] `hr-fill-23` [fill-blank] (Contemporary human rights issues)
+  - Prompt: Fill in the blank: Rights of refugees and asylum ________ are a common contemporary human rights issue.
+  - Answer: seekers
+  - Accepted: seekers | asylum seekers
+  - Explanation: Refugee and asylum seeker rights are commonly used for contemporary issue analysis.
+- [ ] `hr-fill-24` [fill-blank] (Promoting and enforcing human rights)
+  - Prompt: Fill in the blank: Human rights enforcement is stronger when remedies are accessible and ________.
+  - Answer: enforceable
+  - Accepted: enforceable | effective
+  - Explanation: Accessibility and enforceability are common effectiveness criteria.
+- [ ] `hr-fill-25` [fill-blank] (Developing recognition of human rights)
+  - Prompt: Fill in the blank: Collective rights can protect the identity and culture of groups or ________.
+  - Answer: peoples
+  - Accepted: peoples | people | communities
+  - Explanation: Collective rights belong to groups or peoples.
+- [ ] `hr-fill-26` [fill-blank] (Promoting and enforcing human rights)
+  - Prompt: Fill in the blank: A key weakness of international law is reliance on state ________.
+  - Answer: cooperation
+  - Accepted: cooperation | compliance
+  - Explanation: International enforcement often depends on cooperation and compliance.
+- [ ] `hr-fill-27` [fill-blank] (Human rights in Australia)
+  - Prompt: Fill in the blank: Anti-discrimination law is an example of human rights protection through ________ law.
+  - Answer: statute
+  - Accepted: statute | statutory | legislation
+  - Explanation: Anti-discrimination protections are usually statutory.
+- [ ] `hr-fill-28` [fill-blank] (Promoting and enforcing human rights)
+  - Prompt: Fill in the blank: Human rights education is a ________ measure because it influences attitudes rather than directly enforcing law.
+  - Answer: non-legal
+  - Accepted: non-legal | non legal
+  - Explanation: Education is a non-legal measure.
+- [ ] `hr-fill-29` [fill-blank] (Formal statements of human rights)
+  - Prompt: Fill in the blank: The UDHR was adopted after World War ________.
+  - Answer: II
+  - Accepted: II | 2 | Two | World War II | World War 2
+  - Explanation: The UDHR was adopted in the aftermath of World War II.
+- [ ] `hr-fill-30` [fill-blank] (Contemporary human rights issues)
+  - Prompt: Fill in the blank: To evaluate effectiveness, students should use evidence and ________.
+  - Answer: criteria
+  - Accepted: criteria | judgement | judgment
+  - Explanation: Evaluation requires criteria and supported judgement.
+- [ ] `hr-recall-mcq-01` [multiple-choice] (Developing recognition of human rights)
+  - Prompt: Which syllabus development links workers joining together to protect employment conditions?
+  - Options: Trade unionism and labour rights | Universal suffrage | Environmental rights | Peace rights
+  - Answer: Trade unionism and labour rights
+  - Explanation: Trade unionism and labour rights are part of the historical development of human rights recognition.
+- [ ] `hr-recall-mcq-02` [multiple-choice] (Developing recognition of human rights)
+  - Prompt: Universal suffrage is mainly concerned with which right?
+  - Options: The right to vote | The right to free education | The right to own property | The right to bail
+  - Answer: The right to vote
+  - Explanation: Universal suffrage concerns broad and equal voting rights.
+- [ ] `hr-recall-mcq-03` [multiple-choice] (Developing recognition of human rights)
+  - Prompt: Which syllabus item concerns a people determining their own political status?
+  - Options: Self-determination | State sovereignty | Common law | Separation of powers
+  - Answer: Self-determination
+  - Explanation: Self-determination is the collective right of peoples to determine their political status.
+- [ ] `hr-recall-mcq-04` [multiple-choice] (Developing recognition of human rights)
+  - Prompt: Which pair both appear as later developing areas of human rights recognition?
+  - Options: Environmental rights and peace rights | Bail and remand | Mens rea and actus reus | Charge negotiation and pleas
+  - Answer: Environmental rights and peace rights
+  - Explanation: Environmental rights and peace rights are listed in the human rights syllabus development sequence.
+- [ ] `hr-recall-mcq-05` [multiple-choice] (Formal statements of human rights)
+  - Prompt: Which abbreviation refers to the Universal Declaration of Human Rights?
+  - Options: UDHR | ICCPR | ICESCR | NGO
+  - Answer: UDHR
+  - Explanation: UDHR stands for Universal Declaration of Human Rights.
+- [ ] `hr-recall-mcq-06` [multiple-choice] (Formal statements of human rights)
+  - Prompt: The ICCPR focuses most directly on which category of rights?
+  - Options: Civil and political rights | Economic offences | Police powers | Sentencing rights only
+  - Answer: Civil and political rights
+  - Explanation: ICCPR means International Covenant on Civil and Political Rights.
+- [ ] `hr-recall-mcq-07` [multiple-choice] (Formal statements of human rights)
+  - Prompt: The ICESCR focuses most directly on which category of rights?
+  - Options: Economic, social and cultural rights | Criminal investigation rights | Summary and indictable rights | Jury trial rights only
+  - Answer: Economic, social and cultural rights
+  - Explanation: ICESCR means International Covenant on Economic, Social and Cultural Rights.
+- [ ] `hr-recall-mcq-08` [multiple-choice] (Promoting and enforcing human rights)
+  - Prompt: Which concept is listed as a key issue in the international promotion and enforcement of human rights?
+  - Options: State sovereignty | Strict liability | Burden of proof | Charge negotiation
+  - Answer: State sovereignty
+  - Explanation: State sovereignty can affect how international human rights are promoted and enforced.
+- [ ] `hr-recall-mcq-09` [multiple-choice] (Promoting and enforcing human rights)
+  - Prompt: Which institution is specifically listed in the syllabus as having an international human rights role?
+  - Options: United Nations | NSW Local Court | Public Defender | Police prosecutor
+  - Answer: United Nations
+  - Explanation: The United Nations is specifically listed under international human rights roles.
+- [ ] `hr-recall-mcq-10` [multiple-choice] (Promoting and enforcing human rights)
+  - Prompt: Which group is usually abbreviated as NGOs in the human rights syllabus?
+  - Options: Non-government organisations | New government orders | National guardian offices | Negotiated governance organisations
+  - Answer: Non-government organisations
+  - Explanation: NGOs are non-government organisations.
+- [ ] `hr-recall-mcq-11` [multiple-choice] (Human rights in Australia)
+  - Prompt: Which constitutional idea divides power between Commonwealth and State governments?
+  - Options: Division of powers | Burden of proof | State sovereignty only | Universal education
+  - Answer: Division of powers
+  - Explanation: The division of powers is a constitutional feature relevant to human rights protection in Australia.
+- [ ] `hr-recall-mcq-12` [multiple-choice] (Human rights in Australia)
+  - Prompt: Which constitutional idea separates legislative, executive and judicial power?
+  - Options: Separation of powers | Universal suffrage | Restorative justice | Strict liability
+  - Answer: Separation of powers
+  - Explanation: The separation of powers is listed as part of the Constitution role in human rights.
+- [ ] `hr-recall-mcq-13` [multiple-choice] (Human rights in Australia)
+  - Prompt: Which source of law is made by parliament and protects many human rights in Australia?
+  - Options: Statute law | Common law only | Media law | Police discretion
+  - Answer: Statute law
+  - Explanation: Statute law is a major way human rights are protected domestically.
+- [ ] `hr-recall-mcq-14` [multiple-choice] (Human rights in Australia)
+  - Prompt: Which source of law develops through court decisions?
+  - Options: Common law | Treaty drafting only | State sovereignty | Universal suffrage
+  - Answer: Common law
+  - Explanation: Common law develops through judicial decisions.
+- [ ] `hr-recall-mcq-15` [multiple-choice] (Human rights in Australia)
+  - Prompt: Which debated reform is listed with arguments for and against?
+  - Options: A Charter of Rights | A jury verdict | A search warrant | A sentencing appeal
+  - Answer: A Charter of Rights
+  - Explanation: The syllabus requires arguments for and against a Charter of Rights.
+- [ ] `hr-recall-sa-01` [short-answer] (Developing recognition of human rights)
+  - Prompt: Name the historical human rights development that ended ownership of people as property.
+  - Answer: abolition of slavery
+  - Accepted: abolition of slavery | the abolition of slavery | slavery abolition
+  - Explanation: The abolition of slavery is a key development in the recognition of human rights.
+- [ ] `hr-recall-sa-02` [short-answer] (Developing recognition of human rights)
+  - Prompt: Name the syllabus development connected to workers organising for fair conditions.
+  - Answer: trade unionism and labour rights
+  - Accepted: trade unionism and labour rights | trade unionism | labour rights | labor rights | trade unions and labour rights | trade unions and labor rights
+  - Explanation: Trade unionism and labour rights are listed as a development in human rights recognition.
+- [ ] `hr-recall-sa-03` [short-answer] (Developing recognition of human rights)
+  - Prompt: Name the human rights development concerned with broad voting rights.
+  - Answer: universal suffrage
+  - Accepted: universal suffrage | suffrage
+  - Explanation: Universal suffrage concerns equal access to voting rights.
+- [ ] `hr-recall-sa-04` [short-answer] (Developing recognition of human rights)
+  - Prompt: Name the human rights development concerned with access to schooling.
+  - Answer: universal education
+  - Accepted: universal education | education
+  - Explanation: Universal education is part of the development of human rights recognition.
+- [ ] `hr-recall-sa-05` [short-answer] (Developing recognition of human rights)
+  - Prompt: Name the collective right of peoples to determine their political status.
+  - Answer: self-determination
+  - Accepted: self-determination | self determination
+  - Explanation: Self-determination is a collective human right.
+- [ ] `hr-recall-sa-06` [short-answer] (Developing recognition of human rights)
+  - Prompt: Name one newer developing rights area concerned with the natural world.
+  - Answer: environmental rights
+  - Accepted: environmental rights | environment rights
+  - Explanation: Environmental rights are listed as a developing area of human rights recognition.
+- [ ] `hr-recall-sa-07` [short-answer] (Developing recognition of human rights)
+  - Prompt: Name one newer developing rights area concerned with freedom from war and conflict.
+  - Answer: peace rights
+  - Accepted: peace rights | right to peace
+  - Explanation: Peace rights are listed as a developing human rights area.
+- [ ] `hr-recall-sa-08` [short-answer] (Formal statements of human rights)
+  - Prompt: Write the full name of the UDHR.
+  - Answer: Universal Declaration of Human Rights
+  - Accepted: Universal Declaration of Human Rights | the Universal Declaration of Human Rights
+  - Explanation: UDHR stands for Universal Declaration of Human Rights.
+- [ ] `hr-recall-sa-09` [short-answer] (Formal statements of human rights)
+  - Prompt: Write the full name of the ICCPR.
+  - Answer: International Covenant on Civil and Political Rights
+  - Accepted: International Covenant on Civil and Political Rights | the International Covenant on Civil and Political Rights
+  - Explanation: ICCPR stands for International Covenant on Civil and Political Rights.
+- [ ] `hr-recall-sa-10` [short-answer] (Formal statements of human rights)
+  - Prompt: Write the full name of the ICESCR.
+  - Answer: International Covenant on Economic, Social and Cultural Rights
+  - Accepted: International Covenant on Economic Social and Cultural Rights | International Covenant on Economic, Social and Cultural Rights | the International Covenant on Economic Social and Cultural Rights
+  - Explanation: ICESCR stands for International Covenant on Economic, Social and Cultural Rights.
+- [ ] `hr-recall-sa-11` [short-answer] (Promoting and enforcing human rights)
+  - Prompt: Name the international law concept that protects a state from outside interference.
+  - Answer: state sovereignty
+  - Accepted: state sovereignty | sovereignty
+  - Explanation: State sovereignty affects the enforcement of international human rights.
+- [ ] `hr-recall-sa-12` [short-answer] (Promoting and enforcing human rights)
+  - Prompt: Name the major international organisation listed in the syllabus for human rights promotion.
+  - Answer: United Nations
+  - Accepted: United Nations | UN | the United Nations
+  - Explanation: The United Nations is central to international human rights promotion.
+- [ ] `hr-recall-sa-13` [short-answer] (Promoting and enforcing human rights)
+  - Prompt: Name the type of organisation abbreviated NGO.
+  - Answer: non-government organisation
+  - Accepted: non-government organisation | non-government organisations | non government organisation | non government organisations | NGO | NGOs
+  - Explanation: NGO means non-government organisation.
+- [ ] `hr-recall-sa-14` [short-answer] (Human rights in Australia)
+  - Prompt: Name the proposed rights document that students must consider arguments for and against.
+  - Answer: Charter of Rights
+  - Accepted: Charter of Rights | a Charter of Rights | bill of rights | Bill of Rights
+  - Explanation: The syllabus includes debate about a Charter of Rights.
+- [ ] `hr-recall-sa-15` [short-answer] (Human rights in Australia)
+  - Prompt: Name the process of bringing international human rights into Australian domestic law.
+  - Answer: incorporation
+  - Accepted: incorporation | incorporation of human rights into domestic law | domestic incorporation
+  - Explanation: Incorporation makes international human rights enforceable within domestic law.
+
+## Crime (90 questions)
+
+- [ ] `crime-mcq-01` [multiple-choice] (Nature of crime)
+  - Prompt: Which pair are the two main elements of a crime?
+  - Options: Actus reus and mens rea | Bail and remand | Trial and appeal | Police and courts
+  - Answer: Actus reus and mens rea
+  - Explanation: Most crimes require a guilty act and a guilty mind.
+- [ ] `crime-mcq-02` [multiple-choice] (Nature of crime)
+  - Prompt: Actus reus refers to the:
+  - Options: Physical act or omission | Guilty mind | Final sentence | Appeal process
+  - Answer: Physical act or omission
+  - Explanation: Actus reus is the physical element of a crime.
+- [ ] `crime-mcq-03` [multiple-choice] (Nature of crime)
+  - Prompt: Mens rea refers to the:
+  - Options: Guilty mind | Police power | Victim impact statement | Court hierarchy
+  - Answer: Guilty mind
+  - Explanation: Mens rea is the mental element of a crime.
+- [ ] `crime-mcq-04` [multiple-choice] (Nature of crime)
+  - Prompt: Which category includes murder and manslaughter?
+  - Options: Offences against the person | Economic offences | Public order offences | Drug offences
+  - Answer: Offences against the person
+  - Explanation: Homicide offences are offences against the person.
+- [ ] `crime-mcq-05` [multiple-choice] (Nature of crime)
+  - Prompt: Which is an offence against the sovereign?
+  - Options: Treason | Larceny | Assault | Perjury
+  - Answer: Treason
+  - Explanation: Treason is a classic offence against the sovereign.
+- [ ] `crime-mcq-06` [multiple-choice] (Nature of crime)
+  - Prompt: Which best describes strict liability offences?
+  - Options: Mens rea does not need to be proven | They require a jury | They are always indictable | They cannot be punished
+  - Answer: Mens rea does not need to be proven
+  - Explanation: Strict liability removes the need to prove mens rea for the offence.
+- [ ] `crime-mcq-07` [multiple-choice] (Nature of crime)
+  - Prompt: A person who helps another commit a crime may be considered:
+  - Options: A party to a crime | A judge | A juror | A victim only
+  - Answer: A party to a crime
+  - Explanation: Parties to a crime include people who assist, encourage or participate.
+- [ ] `crime-mcq-08` [multiple-choice] (Nature of crime)
+  - Prompt: Which factor is often discussed as affecting criminal behaviour?
+  - Options: Social and economic disadvantage | Court architecture | The colour of court uniforms | The name of the statute only
+  - Answer: Social and economic disadvantage
+  - Explanation: Social and economic factors are relevant to explanations of crime.
+- [ ] `crime-mcq-09` [multiple-choice] (Criminal investigation process)
+  - Prompt: Which law is commonly linked to police powers in NSW?
+  - Options: LEPRA | UDHR | ICESCR | Family Law Act
+  - Answer: LEPRA
+  - Explanation: LEPRA regulates many NSW police powers.
+- [ ] `crime-mcq-10` [multiple-choice] (Criminal investigation process)
+  - Prompt: What is the purpose of bail?
+  - Options: Release an accused person before trial subject to conditions | Determine guilt | Impose a final sentence | Replace police investigation
+  - Answer: Release an accused person before trial subject to conditions
+  - Explanation: Bail concerns release while awaiting proceedings.
+- [ ] `crime-mcq-11` [multiple-choice] (Criminal investigation process)
+  - Prompt: Which is an example of a police power?
+  - Options: Search and seizure | Jury verdict | Sentencing discount | Parliamentary debate
+  - Answer: Search and seizure
+  - Explanation: Police powers include search, arrest, detention and questioning.
+- [ ] `crime-mcq-12` [multiple-choice] (Criminal investigation process)
+  - Prompt: What does a warrant generally do?
+  - Options: Authorises a specific police action | Declares a person guilty | Sets a maximum penalty | Creates a jury
+  - Answer: Authorises a specific police action
+  - Explanation: Warrants authorise actions such as searches or arrests.
+- [ ] `crime-mcq-13` [multiple-choice] (Criminal trial process)
+  - Prompt: In a criminal trial, the prosecution must prove guilt:
+  - Options: Beyond reasonable doubt | On the balance of probabilities | By suspicion only | By media reporting
+  - Answer: Beyond reasonable doubt
+  - Explanation: Beyond reasonable doubt is the criminal standard of proof.
+- [ ] `crime-mcq-14` [multiple-choice] (Criminal trial process)
+  - Prompt: Who carries the burden of proof in a criminal trial?
+  - Options: The prosecution | The accused | The jury | The media
+  - Answer: The prosecution
+  - Explanation: The prosecution generally bears the burden of proof.
+- [ ] `crime-mcq-15` [multiple-choice] (Criminal trial process)
+  - Prompt: Which plea means the accused admits the offence?
+  - Options: Guilty | Not guilty | Bail | Appeal
+  - Answer: Guilty
+  - Explanation: A guilty plea admits the offence and usually moves the matter to sentencing.
+- [ ] `crime-mcq-16` [multiple-choice] (Criminal trial process)
+  - Prompt: What is charge negotiation?
+  - Options: Agreement to plead guilty to a lesser or fewer charge | A jury vote | Police search without authority | A prison program
+  - Answer: Agreement to plead guilty to a lesser or fewer charge
+  - Explanation: Charge negotiation can resolve matters without a full trial.
+- [ ] `crime-mcq-17` [multiple-choice] (Criminal trial process)
+  - Prompt: What is the role of a jury in many serious criminal trials?
+  - Options: Determine facts and deliver a verdict | Draft legislation | Arrest suspects | Set parole conditions
+  - Answer: Determine facts and deliver a verdict
+  - Explanation: Juries decide whether guilt is proven based on evidence and judicial directions.
+- [ ] `crime-mcq-18` [multiple-choice] (Criminal trial process)
+  - Prompt: Which is a complete defence that may excuse criminal responsibility?
+  - Options: Self-defence | A media interview | A sentencing purpose | A committal mention
+  - Answer: Self-defence
+  - Explanation: Self-defence can operate as a complete defence if established.
+- [ ] `crime-mcq-19` [multiple-choice] (Criminal trial process)
+  - Prompt: Which court deals with the most serious indictable offences in NSW?
+  - Options: Supreme Court | Local Court small claims | Children’s Court only | NCAT only
+  - Answer: Supreme Court
+  - Explanation: The Supreme Court handles the most serious criminal matters, including murder.
+- [ ] `crime-mcq-20` [multiple-choice] (Sentencing and punishment)
+  - Prompt: Which is a purpose of punishment?
+  - Options: Deterrence | Ratification | Universal suffrage | Sovereignty only
+  - Answer: Deterrence
+  - Explanation: Punishment purposes include deterrence, retribution, rehabilitation and protection.
+- [ ] `crime-mcq-21` [multiple-choice] (Sentencing and punishment)
+  - Prompt: Rehabilitation aims to:
+  - Options: Reduce reoffending by addressing causes of crime | Increase media coverage | Avoid all legal consequences | Replace the trial process
+  - Answer: Reduce reoffending by addressing causes of crime
+  - Explanation: Rehabilitation focuses on reforming offenders and reducing reoffending.
+- [ ] `crime-mcq-22` [multiple-choice] (Sentencing and punishment)
+  - Prompt: A victim impact statement is relevant mainly to:
+  - Options: Sentencing | The definition of actus reus | The right to vote | International treaties
+  - Answer: Sentencing
+  - Explanation: Victim impact statements may inform sentencing by showing harm to victims.
+- [ ] `crime-mcq-23` [multiple-choice] (Sentencing and punishment)
+  - Prompt: Which option is a non-custodial sentencing outcome?
+  - Options: Community correction order | Full-time imprisonment only | Extradition treaty | Jury empanelment
+  - Answer: Community correction order
+  - Explanation: Community-based orders are alternatives to full-time imprisonment.
+- [ ] `crime-mcq-24` [multiple-choice] (Young offenders)
+  - Prompt: Which principle is central to young offender responses?
+  - Options: Diversion where appropriate | Mandatory adult imprisonment for all matters | No police discretion ever | No rehabilitation
+  - Answer: Diversion where appropriate
+  - Explanation: Young offender systems often emphasise diversion and rehabilitation.
+- [ ] `crime-mcq-25` [multiple-choice] (Young offenders)
+  - Prompt: Which court commonly deals with young offenders in NSW?
+  - Options: Children’s Court | High Court only | International Criminal Court | Coroner’s Court only
+  - Answer: Children’s Court
+  - Explanation: The Children’s Court hears many matters involving young offenders.
+- [ ] `crime-mcq-26` [multiple-choice] (International crime)
+  - Prompt: Which is an example of an international crime?
+  - Options: Genocide | Parking offence | Bail variation | Local noise complaint
+  - Answer: Genocide
+  - Explanation: Genocide is a recognised international crime.
+- [ ] `crime-mcq-27` [multiple-choice] (International crime)
+  - Prompt: Which court is associated with prosecuting serious international crimes?
+  - Options: International Criminal Court | NSW Local Court | Fair Work Commission | Land and Environment Court only
+  - Answer: International Criminal Court
+  - Explanation: The ICC prosecutes certain serious international crimes.
+- [ ] `crime-mcq-28` [multiple-choice] (International crime)
+  - Prompt: Extradition involves:
+  - Options: Surrendering a person to another jurisdiction for prosecution or punishment | Choosing a jury | Granting bail automatically | Writing a treaty only
+  - Answer: Surrendering a person to another jurisdiction for prosecution or punishment
+  - Explanation: Extradition enables a person to be sent to another jurisdiction to face proceedings.
+- [ ] `crime-mcq-29` [multiple-choice] (Sentencing and punishment)
+  - Prompt: Which factor may mitigate a sentence?
+  - Options: Early guilty plea | Greater harm to the victim | Prior similar convictions | Planning the offence
+  - Answer: Early guilty plea
+  - Explanation: An early guilty plea may reduce sentence because it shows utilitarian value and remorse.
+- [ ] `crime-mcq-30` [multiple-choice] (Criminal trial process)
+  - Prompt: The adversarial system is best described as:
+  - Options: Two opposing sides presenting evidence to an impartial decision-maker | A judge investigating alone | Police deciding final guilt | Parliament imposing individual sentences
+  - Answer: Two opposing sides presenting evidence to an impartial decision-maker
+  - Explanation: The adversarial system features contest between prosecution and defence before a neutral court.
+- [ ] `crime-fill-01` [fill-blank] (Nature of crime)
+  - Prompt: Fill in the blank: The physical element of a crime is called actus ________.
+  - Answer: reus
+  - Accepted: reus | actus reus
+  - Explanation: Actus reus is the physical act or omission.
+- [ ] `crime-fill-02` [fill-blank] (Nature of crime)
+  - Prompt: Fill in the blank: The mental element of a crime is called mens ________.
+  - Answer: rea
+  - Accepted: rea | mens rea
+  - Explanation: Mens rea means guilty mind.
+- [ ] `crime-fill-03` [fill-blank] (Nature of crime)
+  - Prompt: Fill in the blank: Murder and manslaughter are examples of ________ offences.
+  - Answer: homicide
+  - Accepted: homicide | offences against the person
+  - Explanation: Homicide offences involve unlawful killing.
+- [ ] `crime-fill-04` [fill-blank] (Nature of crime)
+  - Prompt: Fill in the blank: Treason is an offence against the ________.
+  - Answer: sovereign
+  - Accepted: sovereign | state
+  - Explanation: Treason is traditionally an offence against the sovereign.
+- [ ] `crime-fill-05` [fill-blank] (Nature of crime)
+  - Prompt: Fill in the blank: Strict liability removes the need to prove mens ________.
+  - Answer: rea
+  - Accepted: rea | mens rea
+  - Explanation: Strict liability offences do not require proof of mens rea.
+- [ ] `crime-fill-06` [fill-blank] (Nature of crime)
+  - Prompt: Fill in the blank: A person who assists or encourages an offence may be a ________ to the crime.
+  - Answer: party
+  - Accepted: party | participant | accessory
+  - Explanation: Parties to a crime can include accessories or accomplices.
+- [ ] `crime-fill-07` [fill-blank] (Criminal investigation process)
+  - Prompt: Fill in the blank: In NSW, many police powers are regulated by ________.
+  - Answer: LEPRA
+  - Accepted: LEPRA | Law Enforcement (Powers and Responsibilities) Act
+  - Explanation: LEPRA governs many NSW police powers.
+- [ ] `crime-fill-08` [fill-blank] (Criminal investigation process)
+  - Prompt: Fill in the blank: ________ allows an accused person to be released while awaiting trial.
+  - Answer: bail
+  - Accepted: bail
+  - Explanation: Bail is pre-trial release, often with conditions.
+- [ ] `crime-fill-09` [fill-blank] (Criminal investigation process)
+  - Prompt: Fill in the blank: A search ________ authorises police to search specified premises or property.
+  - Answer: warrant
+  - Accepted: warrant
+  - Explanation: Warrants authorise particular police actions.
+- [ ] `crime-fill-10` [fill-blank] (Criminal investigation process)
+  - Prompt: Fill in the blank: Police powers must balance community safety with individual ________.
+  - Answer: rights
+  - Accepted: rights | civil liberties | liberties
+  - Explanation: The investigation process balances crime control and rights protection.
+- [ ] `crime-fill-11` [fill-blank] (Criminal trial process)
+  - Prompt: Fill in the blank: The prosecution must prove guilt beyond reasonable ________.
+  - Answer: doubt
+  - Accepted: doubt
+  - Explanation: Beyond reasonable doubt is the criminal standard of proof.
+- [ ] `crime-fill-12` [fill-blank] (Criminal trial process)
+  - Prompt: Fill in the blank: The ________ carries the burden of proof in a criminal trial.
+  - Answer: prosecution
+  - Accepted: prosecution | crown | the prosecution
+  - Explanation: The prosecution must prove the accused is guilty.
+- [ ] `crime-fill-13` [fill-blank] (Criminal trial process)
+  - Prompt: Fill in the blank: A plea of ________ admits the offence.
+  - Answer: guilty
+  - Accepted: guilty
+  - Explanation: A guilty plea admits the charge.
+- [ ] `crime-fill-14` [fill-blank] (Criminal trial process)
+  - Prompt: Fill in the blank: Charge ________ can involve pleading guilty to fewer or lesser charges.
+  - Answer: negotiation
+  - Accepted: negotiation | bargaining | charge negotiation
+  - Explanation: Charge negotiation can resolve matters and reduce trial time.
+- [ ] `crime-fill-15` [fill-blank] (Criminal trial process)
+  - Prompt: Fill in the blank: In many serious trials, a ________ determines whether guilt is proven.
+  - Answer: jury
+  - Accepted: jury
+  - Explanation: Juries decide verdicts in many indictable trials.
+- [ ] `crime-fill-16` [fill-blank] (Criminal trial process)
+  - Prompt: Fill in the blank: Self-defence is an example of a legal ________.
+  - Answer: defence
+  - Accepted: defence | defense
+  - Explanation: Self-defence can excuse criminal liability.
+- [ ] `crime-fill-17` [fill-blank] (Criminal trial process)
+  - Prompt: Fill in the blank: The adversarial system involves prosecution and defence presenting cases to an impartial ________.
+  - Answer: decision-maker
+  - Accepted: decision-maker | decision maker | judge | court
+  - Explanation: The court or jury acts as an impartial decision-maker.
+- [ ] `crime-fill-18` [fill-blank] (Criminal trial process)
+  - Prompt: Fill in the blank: The most serious indictable offences in NSW may be heard in the Supreme ________.
+  - Answer: Court
+  - Accepted: Court | Supreme Court
+  - Explanation: The Supreme Court hears the most serious criminal matters.
+- [ ] `crime-fill-19` [fill-blank] (Sentencing and punishment)
+  - Prompt: Fill in the blank: Deterrence, retribution, rehabilitation and protection are purposes of ________.
+  - Answer: punishment
+  - Accepted: punishment | sentencing
+  - Explanation: These are common purposes of punishment.
+- [ ] `crime-fill-20` [fill-blank] (Sentencing and punishment)
+  - Prompt: Fill in the blank: ________ aims to reform offenders and reduce reoffending.
+  - Answer: rehabilitation
+  - Accepted: rehabilitation
+  - Explanation: Rehabilitation focuses on offender reform.
+- [ ] `crime-fill-21` [fill-blank] (Sentencing and punishment)
+  - Prompt: Fill in the blank: A victim impact ________ may be considered during sentencing.
+  - Answer: statement
+  - Accepted: statement | victim impact statement
+  - Explanation: Victim impact statements communicate harm caused by the offence.
+- [ ] `crime-fill-22` [fill-blank] (Sentencing and punishment)
+  - Prompt: Fill in the blank: A community correction order is a non-________ sentencing option.
+  - Answer: custodial
+  - Accepted: custodial | non-custodial | non custodial
+  - Explanation: Non-custodial sentences are alternatives to full-time imprisonment.
+- [ ] `crime-fill-23` [fill-blank] (Sentencing and punishment)
+  - Prompt: Fill in the blank: An early guilty plea may be a ________ factor.
+  - Answer: mitigating
+  - Accepted: mitigating | mitigation
+  - Explanation: Mitigating factors can reduce sentence severity.
+- [ ] `crime-fill-24` [fill-blank] (Young offenders)
+  - Prompt: Fill in the blank: The young offender system often emphasises diversion and ________.
+  - Answer: rehabilitation
+  - Accepted: rehabilitation
+  - Explanation: Young offender responses commonly prioritise rehabilitation.
+- [ ] `crime-fill-25` [fill-blank] (Young offenders)
+  - Prompt: Fill in the blank: The Children’s ________ hears many matters involving young offenders.
+  - Answer: Court
+  - Accepted: Court | Children’s Court | Children's Court
+  - Explanation: The Children’s Court is central to young offender matters.
+- [ ] `crime-fill-26` [fill-blank] (International crime)
+  - Prompt: Fill in the blank: ________ is a recognised international crime involving intent to destroy a protected group.
+  - Answer: genocide
+  - Accepted: genocide
+  - Explanation: Genocide is a serious international crime.
+- [ ] `crime-fill-27` [fill-blank] (International crime)
+  - Prompt: Fill in the blank: The International Criminal ________ prosecutes certain serious international crimes.
+  - Answer: Court
+  - Accepted: Court | ICC | International Criminal Court
+  - Explanation: The ICC prosecutes crimes such as genocide and crimes against humanity.
+- [ ] `crime-fill-28` [fill-blank] (International crime)
+  - Prompt: Fill in the blank: ________ is the surrender of a person to another jurisdiction for prosecution or punishment.
+  - Answer: extradition
+  - Accepted: extradition
+  - Explanation: Extradition allows transfer between jurisdictions.
+- [ ] `crime-fill-29` [fill-blank] (Nature of crime)
+  - Prompt: Fill in the blank: Public order offences are concerned with behaviour affecting public ________.
+  - Answer: order
+  - Accepted: order | peace
+  - Explanation: Public order offences protect public order or peace.
+- [ ] `crime-fill-30` [fill-blank] (Sentencing and punishment)
+  - Prompt: Fill in the blank: Post-sentencing considerations include parole and ________.
+  - Answer: appeals
+  - Accepted: appeals | appeal
+  - Explanation: Post-sentencing issues can include parole, appeals and continued detention questions.
+- [ ] `crime-recall-mcq-01` [multiple-choice] (Nature of crime)
+  - Prompt: Which pair completes the two elements of a crime?
+  - Options: Actus reus and mens rea | Bail and remand | Judge and jury | Appeal and parole
+  - Answer: Actus reus and mens rea
+  - Explanation: The two elements of crime are actus reus and mens rea.
+- [ ] `crime-recall-mcq-02` [multiple-choice] (Nature of crime)
+  - Prompt: Which syllabus term describes offences where mens rea does not need to be proven?
+  - Options: Strict liability offences | Preliminary crimes | Public order offences | Indictable offences
+  - Answer: Strict liability offences
+  - Explanation: Strict liability offences do not require proof of mens rea.
+- [ ] `crime-recall-mcq-03` [multiple-choice] (Nature of crime)
+  - Prompt: Which concept links the accused act to the prohibited result?
+  - Options: Causation | Bail | Remand | Parole
+  - Answer: Causation
+  - Explanation: Causation connects the criminal act to the result.
+- [ ] `crime-recall-mcq-04` [multiple-choice] (Nature of crime)
+  - Prompt: Which category includes property, white collar and computer offences?
+  - Options: Economic offences | Public order offences | Driving offences | Offences against the sovereign
+  - Answer: Economic offences
+  - Explanation: Economic offences include property, white collar and computer offences.
+- [ ] `crime-recall-mcq-05` [multiple-choice] (Nature of crime)
+  - Prompt: Which pair are preliminary crimes in the syllabus?
+  - Options: Attempts and conspiracy | Bail and remand | Trial and appeal | Caution and fine
+  - Answer: Attempts and conspiracy
+  - Explanation: Preliminary crimes include attempts and conspiracy.
+- [ ] `crime-recall-mcq-06` [multiple-choice] (Nature of crime)
+  - Prompt: Which pair classifies offences by seriousness and procedure?
+  - Options: Summary and indictable offences | Specific and general deterrence | Statute and common law | Civil and political rights
+  - Answer: Summary and indictable offences
+  - Explanation: Summary and indictable offences are offence classifications.
+- [ ] `crime-recall-mcq-07` [multiple-choice] (Nature of crime)
+  - Prompt: Which pair are the two broad crime prevention approaches in the syllabus?
+  - Options: Situational and social | Specific and general | Statutory and judicial | Complete and partial
+  - Answer: Situational and social
+  - Explanation: Crime prevention is commonly divided into situational and social approaches.
+- [ ] `crime-recall-mcq-08` [multiple-choice] (Criminal investigation process)
+  - Prompt: Which item is listed under investigating crime?
+  - Options: Gathering evidence | Universal suffrage | Circle sentencing | Charge negotiation only
+  - Answer: Gathering evidence
+  - Explanation: Investigating crime includes gathering evidence.
+- [ ] `crime-recall-mcq-09` [multiple-choice] (Criminal investigation process)
+  - Prompt: Which pair completes the pre-trial custody choice?
+  - Options: Bail or remand | Appeal or parole | Caution or fine | Jury or judge
+  - Answer: Bail or remand
+  - Explanation: The syllabus includes bail or remand in the investigation process.
+- [ ] `crime-recall-mcq-10` [multiple-choice] (Criminal trial process)
+  - Prompt: Which system describes prosecution and defence presenting opposing cases?
+  - Options: Adversarial system | Inquisitorial system | Restorative system | Federal system
+  - Answer: Adversarial system
+  - Explanation: The criminal trial process includes the adversarial system.
+- [ ] `crime-recall-mcq-11` [multiple-choice] (Criminal trial process)
+  - Prompt: Which legal personnel role is abbreviated DPP?
+  - Options: Director of Public Prosecutions | Deputy Police Prosecutor | Domestic Public Protector | Defence Plea Panel
+  - Answer: Director of Public Prosecutions
+  - Explanation: DPP stands for Director of Public Prosecutions.
+- [ ] `crime-recall-mcq-12` [multiple-choice] (Criminal trial process)
+  - Prompt: Which pair is used to describe proof in criminal trials?
+  - Options: Burden and standard of proof | Bail and remand of proof | Charge and plea of proof | Appeal and parole of proof
+  - Answer: Burden and standard of proof
+  - Explanation: The syllabus lists burden and standard of proof.
+- [ ] `crime-recall-mcq-13` [multiple-choice] (Criminal trial process)
+  - Prompt: Which defence category applies specifically to murder in the syllabus?
+  - Options: Partial defences to murder | Public order defences | International defences | Police power defences
+  - Answer: Partial defences to murder
+  - Explanation: The syllabus includes partial defences to murder.
+- [ ] `crime-recall-mcq-14` [multiple-choice] (Sentencing and punishment)
+  - Prompt: Which pair are both purposes of punishment?
+  - Options: Retribution and rehabilitation | Suffrage and education | Search and seizure | Summons and warrants
+  - Answer: Retribution and rehabilitation
+  - Explanation: Purposes include deterrence, retribution, rehabilitation and incapacitation.
+- [ ] `crime-recall-mcq-15` [multiple-choice] (International crime)
+  - Prompt: Which pair are the broad categories of international crime in the syllabus?
+  - Options: Crimes against the international community and transnational crimes | Summary crimes and social crimes | Bail crimes and remand crimes | Common law crimes and media crimes
+  - Answer: Crimes against the international community and transnational crimes
+  - Explanation: The international crime syllabus covers crimes against the international community and transnational crimes.
+- [ ] `crime-recall-sa-01` [short-answer] (Nature of crime)
+  - Prompt: Name the physical element of a crime.
+  - Answer: actus reus
+  - Accepted: actus reus
+  - Explanation: Actus reus is the physical element of a crime.
+- [ ] `crime-recall-sa-02` [short-answer] (Nature of crime)
+  - Prompt: Name the mental element of a crime.
+  - Answer: mens rea
+  - Accepted: mens rea
+  - Explanation: Mens rea is the mental element of a crime.
+- [ ] `crime-recall-sa-03` [short-answer] (Nature of crime)
+  - Prompt: Name the offence type where mens rea does not need to be proven.
+  - Answer: strict liability offences
+  - Accepted: strict liability offences | strict liability
+  - Explanation: Strict liability offences remove the need to prove mens rea.
+- [ ] `crime-recall-sa-04` [short-answer] (Nature of crime)
+  - Prompt: Name the link between the act and the criminal result.
+  - Answer: causation
+  - Accepted: causation
+  - Explanation: Causation links conduct to the prohibited result.
+- [ ] `crime-recall-sa-05` [short-answer] (Nature of crime)
+  - Prompt: Name the category that includes property, white collar and computer offences.
+  - Answer: economic offences
+  - Accepted: economic offences | economic crime | economic crimes
+  - Explanation: Economic offences include property, white collar and computer offences.
+- [ ] `crime-recall-sa-06` [short-answer] (Nature of crime)
+  - Prompt: Name one preliminary crime from the syllabus.
+  - Answer: attempts
+  - Accepted: attempts | attempt | conspiracy
+  - Explanation: Preliminary crimes include attempts and conspiracy.
+- [ ] `crime-recall-sa-07` [short-answer] (Nature of crime)
+  - Prompt: Name one party to a crime who helps after the offence.
+  - Answer: accessory after the fact
+  - Accepted: accessory after the fact
+  - Explanation: An accessory after the fact assists after the crime has occurred.
+- [ ] `crime-recall-sa-08` [short-answer] (Nature of crime)
+  - Prompt: Name one crime prevention approach in the syllabus.
+  - Answer: situational
+  - Accepted: situational | situational crime prevention | social | social crime prevention
+  - Explanation: Crime prevention includes situational and social approaches.
+- [ ] `crime-recall-sa-09` [short-answer] (Criminal investigation process)
+  - Prompt: Name the authority document police may use to conduct a search or arrest.
+  - Answer: warrant
+  - Accepted: warrant | warrants
+  - Explanation: Warrants authorise specific police actions.
+- [ ] `crime-recall-sa-10` [short-answer] (Criminal investigation process)
+  - Prompt: Name the pre-trial release option for an accused person.
+  - Answer: bail
+  - Accepted: bail
+  - Explanation: Bail is release before trial, often subject to conditions.
+- [ ] `crime-recall-sa-11` [short-answer] (Criminal investigation process)
+  - Prompt: Name the custody option when bail is refused.
+  - Answer: remand
+  - Accepted: remand | remanded in custody
+  - Explanation: Remand keeps the accused in custody while awaiting proceedings.
+- [ ] `crime-recall-sa-12` [short-answer] (Criminal trial process)
+  - Prompt: Name the criminal trial system used in Australia.
+  - Answer: adversarial system
+  - Accepted: adversarial system | adversary system
+  - Explanation: Australia uses an adversarial criminal trial system.
+- [ ] `crime-recall-sa-13` [short-answer] (Criminal trial process)
+  - Prompt: Name the legal personnel role abbreviated DPP.
+  - Answer: Director of Public Prosecutions
+  - Accepted: Director of Public Prosecutions | DPP
+  - Explanation: DPP stands for Director of Public Prosecutions.
+- [ ] `crime-recall-sa-14` [short-answer] (Sentencing and punishment)
+  - Prompt: Name the sentencing factor category that can make a sentence more severe.
+  - Answer: aggravating circumstances
+  - Accepted: aggravating circumstances | aggravating factors | aggravation
+  - Explanation: Aggravating circumstances can increase sentence severity.
+- [ ] `crime-recall-sa-15` [short-answer] (International crime)
+  - Prompt: Name the international crime category involving cross-border offences.
+  - Answer: transnational crimes
+  - Accepted: transnational crimes | transnational crime
+  - Explanation: Transnational crimes involve criminal activity crossing national borders.
+
+Total questions: 180

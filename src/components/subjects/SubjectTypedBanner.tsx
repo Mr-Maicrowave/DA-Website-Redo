@@ -117,21 +117,22 @@ const SubjectTypedBanner = ({
     };
   }, [hasStarted, variant]);
 
-  const activeMasks = revealMasks[variant];
+  const isLegal = variant === 'legal';
+  const activeMasks = isLegal ? [] : revealMasks[variant];
   const activeMask = activeMasks.find((mask) => revealProgress[mask.key] > 0 && revealProgress[mask.key] < 1);
-  const imagePosition = variant === 'legal' ? 'center 55%' : 'center 72%';
+  const imagePosition = isLegal ? 'center bottom' : 'center 72%';
 
   return (
     <section
       ref={rootRef}
-      className="relative isolate overflow-hidden bg-[#fbf3e7]"
+      className={`subject-typed-banner subject-typed-banner--${variant} relative isolate overflow-hidden bg-[#fbf3e7]`}
       aria-label={`${headline} ${emphasis} ${support}`.trim()}
     >
-      <div className="relative h-[calc(100vh-8.5rem)] min-h-[430px] max-h-[760px]">
+      <div className={isLegal ? "subject-typed-banner__stage relative grid h-[calc(100vh-8.5rem)] min-h-[430px] max-h-[760px] place-items-center bg-[#fff7ed]" : "subject-typed-banner__stage relative h-[calc(100vh-8.5rem)] min-h-[430px] max-h-[760px]"}>
         <img
           src={imageSrc}
           alt={imageAlt}
-          className="h-full w-full object-cover"
+          className={isLegal ? "h-full w-full object-contain" : "h-full w-full object-cover"}
           style={{ objectPosition: imagePosition }}
         />
         {permanentMasks[variant].map((mask) => (
