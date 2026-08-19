@@ -9,6 +9,7 @@ type PlotExpression = GraphExpression & SampledGraph;
 
 type GraphCanvasProps = {
   expressions: PlotExpression[];
+  referenceExpressions?: PlotExpression[];
   viewport: Viewport;
   asymptotes: GraphAsymptote[];
   onViewportChange: (viewport: Viewport) => void;
@@ -30,7 +31,7 @@ const pathFromPoints = (points: GraphPoint[], viewport: Viewport) => points.map(
 
 const DARK_PLOT_COLORS = ['#f7c84b', '#b58cff', '#62d8bd', '#ff879c', '#7eb8ff', '#f0a868', '#d691dc', '#a9d66f'];
 
-export const GraphCanvas = ({ expressions, viewport, asymptotes, onViewportChange, theme }: GraphCanvasProps) => {
+export const GraphCanvas = ({ expressions, referenceExpressions = [], viewport, asymptotes, onViewportChange, theme }: GraphCanvasProps) => {
   const dragRef = useRef<{ pointerId: number; x: number; y: number; viewport: Viewport } | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const xTicks = createTicks(viewport.xMin, viewport.xMax, PLOT_WIDTH);
@@ -118,6 +119,20 @@ export const GraphCanvas = ({ expressions, viewport, asymptotes, onViewportChang
           <text x={(yAxisX ?? MARGIN.left) + 10} y={MARGIN.top + 13} fill="var(--gl-ink)" fontSize="14" fontStyle="italic">y</text>
 
           <g clipPath="url(#graph-lab-clip)">
+            {referenceExpressions.flatMap((expression) => expression.segments.map((segment, segmentIndex) => (
+              <path
+                key={`reference-${expression.id}-${segmentIndex}`}
+                d={pathFromPoints(segment, viewport)}
+                fill="none"
+                stroke={theme === 'dark' ? '#aebbd0' : '#66758d'}
+                strokeWidth="2"
+                strokeDasharray="7 6"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                opacity="0.7"
+                vectorEffect="non-scaling-stroke"
+              />
+            )))}
             {asymptotes.map((asymptote, index) => asymptote.orientation === 'vertical' ? (
               <g key={`vertical-asymptote-${asymptote.value}-${index}`}>
                 <line x1={xToSvg(asymptote.value)} y1={MARGIN.top} x2={xToSvg(asymptote.value)} y2={MARGIN.top + PLOT_HEIGHT} stroke={asymptoteBackdrop} strokeWidth="5" vectorEffect="non-scaling-stroke" />
@@ -150,6 +165,7 @@ export const GraphCanvas = ({ expressions, viewport, asymptotes, onViewportChang
       </div>
 
       <ul className="mt-3 flex flex-wrap gap-x-5 gap-y-2 text-xs font-semibold text-[#40516b]" aria-label="Visible expressions">
+        {referenceExpressions.length > 0 ? <li className="flex min-w-0 items-center gap-2"><svg width="28" height="8" aria-hidden="true"><line x1="1" x2="27" y1="4" y2="4" stroke={theme === 'dark' ? '#aebbd0' : '#66758d'} strokeWidth="2" strokeDasharray="7 6" /></svg><span>Starting graph</span></li> : null}
         {logicalExpressions.map((expression, index) => (
           <li key={expression.id} className="flex min-w-0 items-center gap-2">
             <svg width="28" height="8" aria-hidden="true"><line x1="1" x2="27" y1="4" y2="4" stroke={plotColor(expression, index)} strokeWidth="3" strokeDasharray={LINE_STYLES[(expression.lineStyle ?? index) % LINE_STYLES.length]} /></svg>

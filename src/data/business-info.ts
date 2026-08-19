@@ -1,6 +1,6 @@
 export const businessStats = {
   yearsExperience: "20+",
-  studentsHelped: "10,000+",
+  studentsHelped: "1,500+",
   hscSuccessRate: "95%",
   googleReviews: "450+",
   googleRating: "5.0",
@@ -21,7 +21,7 @@ export const contactInfo = {
 
 export const ctaDefaults = {
   primaryText: "Book Interview",
-  primaryLink: "/interview",
+  primaryLink: "/book-interview",
   secondaryText: "Call Us",
   secondaryPhone: "tel:0401940207",
 };

@@ -24,16 +24,9 @@ type ConfidenceJourneyProps = {
 
 const easing = [0.16, 1, 0.3, 1] as const;
 
-// Each stage uses a different diagram *grammar*, not just a different accent colour —
-// a discrete array (counting/times tables), a continuous graph (first coordinate
-// geometry), and a sequential reasoning chain (multi-step justified working) — so the
-// three cards can't be mistaken for the same "curve with a dot" shape at a glance.
+// Each Years 7-12 stage uses a different diagram grammar: a continuous graph for
+// connected high-school methods and an exact-value unit-circle argument for HSC reasoning.
 const STAGE_VISUALS = [
-  {
-    kind: 'times-table-array', accent: '#3278b5', soft: '#ddecfa', label: 'Foundations become fluent',
-    caption: 'Number facts become automatic, not counted out one by one.',
-    realExample: 'A market stall owner pricing 4 apples at $3 each knows the total is $12 instantly — the same times table drilled until it is recalled, not worked out.',
-  },
   {
     kind: 'coordinate-plane', accent: '#238c68', soft: '#daf2e6', label: 'Connections become methods',
     caption: 'Algebra, geometry and graphs start to speak the same language.',
@@ -75,7 +68,6 @@ const RealExampleToggle = ({ accent, example }: { accent: string; example: strin
 };
 
 const STAGE_PLOT_LINE_LENGTH: Record<(typeof STAGE_VISUALS)[number]['kind'], number> = {
-  'times-table-array': 300,
   'coordinate-plane': 160,
   'unit-circle': 200,
 };
@@ -101,7 +93,7 @@ const StagePlot = ({ index }: { index: number }) => {
   );
 
   return (
-    <svg viewBox="0 0 160 94" className="h-auto w-full" aria-hidden="true">
+    <svg viewBox="0 0 160 102" className="h-auto w-full" aria-hidden="true">
       <defs>
         <linearGradient id={gradientId} x1="0" y1="0" x2="1" y2="0">
           <stop offset="0" stopColor={visual.accent} />
@@ -114,41 +106,13 @@ const StagePlot = ({ index }: { index: number }) => {
           <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
         </filter>
       </defs>
-      {visual.kind === 'times-table-array' && (
-        <>
-          <motion.rect
-            x="30" y="16" width="88" height="48" rx="6"
-            fill="none" stroke={`url(#${gradientId})`} strokeWidth="2" filter={`url(#${shineId})`}
-            initial={lineInitial}
-            whileInView={{ pathLength: 1, opacity: 1 }}
-            viewport={{ once: true, amount: 0.6 }}
-            transition={lineTransition}
-          />
-          {[28, 40, 52].flatMap((y, row) => [44, 64, 84, 104].map((x, col) => (
-            <motion.circle
-              key={`${x}-${y}`} cx={x} cy={y} r="3.2" fill={visual.accent} stroke="#fffdf8" strokeWidth="1.4"
-              initial={markInitial}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true, amount: 0.6 }}
-              transition={markTransition(col * 0.035 + row * 0.04)}
-            />
-          )))}
-          <motion.text
-            x="74" y="80" textAnchor="middle" fill={visual.accent} fontSize="9" fontWeight="700"
-            initial={prefersReducedMotion ? false : { opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true, amount: 0.6 }}
-            transition={{ duration: 0.3, delay: 1.15, ease: easing }}
-          >4 × 3 = 12</motion.text>
-        </>
-      )}
       {visual.kind === 'coordinate-plane' && (
         <>
           {grid}
           <line x1="18" y1="78" x2="148" y2="78" stroke="#071629" strokeOpacity="0.45" />
           <line x1="30" y1="86" x2="30" y2="12" stroke="#071629" strokeOpacity="0.45" />
           <motion.path
-            d="M 30 72 L 58 61 L 84 49 L 112 34 L 142 18"
+            d="M 30 72 L 142 18"
             fill="none" stroke={`url(#${gradientId})`} strokeWidth="4" strokeLinecap="round" filter={`url(#${shineId})`}
             initial={lineInitial}
             whileInView={{ pathLength: 1, opacity: 1 }}
@@ -163,7 +127,8 @@ const StagePlot = ({ index }: { index: number }) => {
             viewport={{ once: true, amount: 0.6 }}
             transition={markTransition(0)}
           />
-          <text x="116" y="28" fill={visual.accent} fontSize="8" fontWeight="700">y = 2x + 1</text>
+          <rect x="104" y="5" width="51" height="13" rx="2" fill="#fffdf8" fillOpacity="0.92" />
+          <text x="108" y="14" fill={visual.accent} fontSize="8" fontWeight="700">y = 2x + 1</text>
         </>
       )}
       {visual.kind === 'unit-circle' && (
@@ -200,7 +165,7 @@ const StagePlot = ({ index }: { index: number }) => {
             viewport={{ once: true, amount: 0.6 }}
             transition={{ duration: 0.24, delay: 0.9, ease: easing }}
           />
-          <text x="65" y="43" fill={visual.accent} fontSize="7" fontWeight="700">60°</text>
+          <text x="96" y="43" fill={visual.accent} fontSize="7" fontWeight="700">60°</text>
           <motion.circle
             cx="73" cy="21" r="4.2" fill={visual.accent} stroke="#fffdf8" strokeWidth="1.6"
             initial={markInitial}
@@ -208,13 +173,17 @@ const StagePlot = ({ index }: { index: number }) => {
             viewport={{ once: true, amount: 0.6 }}
             transition={markTransition(0.4)}
           />
-          <motion.text
-            x="80" y="90" textAnchor="middle" fill={visual.accent} fontSize="9" fontWeight="700"
+          <motion.g
             initial={prefersReducedMotion ? false : { opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true, amount: 0.6 }}
             transition={{ duration: 0.3, delay: 1.25, ease: easing }}
-          >sin 60° = √3/2</motion.text>
+          >
+            <text x="23" y="94" fill={visual.accent} fontSize="9" fontWeight="700">sin 60° =</text>
+            <path d="M 76 88 L 80 93 L 85 81 L 100 81" fill="none" stroke={visual.accent} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+            <text x="91" y="93" fill={visual.accent} fontSize="9" fontWeight="700">3</text>
+            <text x="104" y="93" fill={visual.accent} fontSize="9" fontWeight="700">/2</text>
+          </motion.g>
         </>
       )}
     </svg>
@@ -226,15 +195,13 @@ export const ConfidenceJourney = ({ concerns, levels }: ConfidenceJourneyProps) 
 
   return (
     <>
-      <section id="parent-concerns" className="relative isolate overflow-hidden bg-[#fff6e7] px-5 py-20 lg:px-8 lg:py-24">
+      <section id="parent-concerns" className="relative isolate overflow-hidden bg-[#fff6e7] px-5 pb-20 pt-14 lg:px-8 lg:pb-24 lg:pt-16">
         <div className="pointer-events-none absolute inset-x-0 bottom-0 h-36 bg-[radial-gradient(ellipse_at_center_bottom,rgba(201,162,39,.13),transparent_68%)]" aria-hidden="true" />
         <div className="relative mx-auto max-w-7xl">
-          <div className="grid gap-6 lg:grid-cols-[.85fr_1fr] lg:items-end">
-            <div>
-              <p className="mb-3 text-xs font-black uppercase tracking-[0.16em] text-[#c9a227]">For parents</p>
-              <h2 className="font-serif text-4xl font-medium leading-tight tracking-[-0.04em] text-[#071629] lg:text-5xl">Maths problems usually show up as confidence problems first.</h2>
-            </div>
-            <p className="max-w-2xl text-base leading-8 text-[#52627b]">Whether your child freezes in tests, avoids homework, or needs to push further ahead, these are the situations we work with every day.</p>
+          <p className="text-xs font-black uppercase tracking-[0.16em] text-[#8a6110]">For parents</p>
+          <div className="mt-4 grid gap-6 lg:grid-cols-[1.1fr_.9fr] lg:items-start lg:gap-16">
+            <h2 className="text-balance font-serif text-4xl font-medium leading-tight tracking-[-0.04em] text-[#071629] lg:text-5xl">Maths problems usually show up as confidence problems first.</h2>
+            <p className="max-w-[54ch] text-pretty text-base leading-8 text-[#52627b] lg:pt-2">Whether your child freezes in tests, avoids homework, or needs to push further ahead, these are the situations we work with every day.</p>
           </div>
 
           <div className="relative mt-12">
@@ -282,7 +249,7 @@ export const ConfidenceJourney = ({ concerns, levels }: ConfidenceJourneyProps) 
         <div className="mx-auto max-w-7xl">
           <div className="grid gap-6 lg:grid-cols-[.85fr_1fr] lg:items-end">
             <div>
-              <p className="mb-3 text-xs font-black uppercase tracking-[0.16em] text-[#c9a227]">Your child&apos;s journey</p>
+              <p className="mb-3 text-xs font-black uppercase tracking-[0.16em] text-[#8a6110]">Your child&apos;s journey</p>
               <h2 className="font-serif text-4xl font-medium leading-tight tracking-[-0.04em] text-[#071629] lg:text-5xl">Choose by school stage, not by guesswork.</h2>
             </div>
             <p className="max-w-2xl text-base leading-8 text-[#52627b]">Not sure which level fits your child? The interview will help. These stages give you a clear starting point before you call.</p>
@@ -328,7 +295,7 @@ export const ConfidenceJourney = ({ concerns, levels }: ConfidenceJourneyProps) 
                     </button>
                   </div>
 
-                  <div className={`relative overflow-hidden rounded-2xl bg-gradient-to-br ${level.tone} p-7 sm:p-10 ${reverse ? 'lg:order-1' : ''}`}>
+                  <div className={`relative w-full max-w-[32rem] overflow-hidden rounded-2xl bg-gradient-to-br ${level.tone} p-7 sm:p-10 ${reverse ? 'lg:order-1 lg:justify-self-start' : 'lg:justify-self-end'}`}>
                     <span className="absolute right-6 top-5 font-serif text-6xl leading-none text-[#071629]/8" aria-hidden="true">{index + 1}</span>
                     <p className="relative text-xs font-black uppercase tracking-[0.15em]" style={{ color: visual.accent }}>{visual.label}</p>
                     <div className="relative mt-8 max-w-xs"><StagePlot index={index} /></div>

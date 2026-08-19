@@ -7,7 +7,7 @@
 @tailwind utilities;
 
 /* Stable homepage chapter anchors: clear the fixed navigation on arrival. */
-:where(#welcome, #philosophy, #journey, #programs, #subjects, #environment, #guides, #stories, #contact) {
+:where(#welcome, #philosophy, #journey, #programs, #programs-catalogue, #subjects, #environment, #guides, #stories, #contact) {
   scroll-margin-top: 72px;
 }
 
@@ -156,9 +156,9 @@
     mix-blend-mode: overlay;
   }
 
-  /* Youthful display font for special articles */
+  /* Keep special-article text within the shared reading system. */
   .font-fun {
-    font-family: 'Baloo 2', system-ui, -apple-system, Segoe UI, Roboto, Inter, 'Helvetica Neue', Arial, 'Noto Sans', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', sans-serif;
+    font-family: 'Cabin', system-ui, -apple-system, Segoe UI, Arial, 'Noto Sans', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', sans-serif;
   }
 
   html {

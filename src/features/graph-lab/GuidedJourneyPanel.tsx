@@ -1,11 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { ArrowRight, Check, Lightbulb, RotateCcw } from 'lucide-react';
-import { Link } from 'react-router-dom';
 import {
   TRANSFORMATION_JOURNEY,
   GUIDED_SELECT_PLACEHOLDER,
   evaluateExplanation,
   evaluatePrediction,
+  completeGuidedStep,
   hasReachedExperimentTarget,
   summariseMastery,
   type GuidedPhase,
@@ -20,8 +20,10 @@ type GuidedJourneyPanelProps = {
   progress: GuidedProgress;
   onProgressChange: (progress: GuidedProgress) => void;
   onRestart: () => void;
+  onRevisit: (stepIndex: number) => void;
   onControlsUnlockedChange: (unlocked: boolean) => void;
   parameterValues: Record<ParameterKey, number>;
+  controls?: ReactNode;
 };
 
 const STATUS_STYLES = {
@@ -30,7 +32,7 @@ const STATUS_STYLES = {
   revisit: 'bg-[#fff0f2] text-[#963147]',
 };
 
-export const GuidedJourneyPanel = ({ progress, onProgressChange, onRestart, onControlsUnlockedChange, parameterValues }: GuidedJourneyPanelProps) => {
+export const GuidedJourneyPanel = ({ progress, onProgressChange, onRestart, onRevisit, onControlsUnlockedChange, parameterValues, controls }: GuidedJourneyPanelProps) => {
   const step = TRANSFORMATION_JOURNEY[Math.min(progress.stepIndex, TRANSFORMATION_JOURNEY.length - 1)];
   const [phase, setPhase] = useState<GuidedPhase>('predict');
   const [attempts, setAttempts] = useState(0);
@@ -59,15 +61,18 @@ export const GuidedJourneyPanel = ({ progress, onProgressChange, onRestart, onCo
       <aside className="graph-lab-panel rounded-2xl border border-[#071629]/12 bg-white p-5" aria-labelledby="mastery-heading">
         <p className="text-sm font-black text-[#7a5709]">Journey complete</p>
         <h2 id="mastery-heading" className="mt-1 font-serif text-3xl font-medium tracking-[-0.03em] text-[#071629]">Your transformation mastery</h2>
-        <p className="mt-3 text-sm leading-6 text-[#40516b]">This is a learning summary, not a grade. Use it to choose what to practise next.</p>
+        <p className="mt-3 text-sm leading-6 text-[#40516b]">This is practice evidence, not a mark. Your first prediction helps you choose what to practise next.</p>
         <div className="mt-5 space-y-3">
-          {mastery.map((item) => (
+          {mastery.map((item, index) => (
             <div key={item.id} className="border-t border-[#071629]/10 pt-3 first:border-0 first:pt-0">
               <div className="flex items-center justify-between gap-3">
                 <p className="text-sm font-black text-[#071629]">{item.label}</p>
                 <span className={`rounded-full px-2.5 py-1 text-[11px] font-black capitalize ${STATUS_STYLES[item.status]}`}>{item.status}</span>
               </div>
               <p className="mt-1 text-xs leading-5 text-[#536077]">{item.note}</p>
+              <button type="button" onClick={() => onRevisit(index)} className="mt-3 inline-flex min-h-9 items-center rounded-lg border border-[#071629]/20 px-3 text-xs font-black text-[#071629] outline-none hover:bg-[#f3f7fb] focus-visible:ring-2 focus-visible:ring-[#5d568e] focus-visible:ring-offset-2">
+                Review this challenge
+              </button>
             </div>
           ))}
         </div>
@@ -75,10 +80,6 @@ export const GuidedJourneyPanel = ({ progress, onProgressChange, onRestart, onCo
           <button type="button" onClick={onRestart} className="inline-flex min-h-11 items-center justify-center rounded-lg border border-[#071629]/20 px-4 text-sm font-black text-[#071629] outline-none hover:bg-[#f3f7fb] focus-visible:ring-2 focus-visible:ring-[#5d568e]">
             <RotateCcw className="mr-2 h-4 w-4" /> Try the journey again
           </button>
-          <Link to="/subjects/mathematics#fourier-drawing" className="inline-flex min-h-11 items-center justify-center rounded-lg bg-[#071629] px-4 text-center text-sm font-black text-white outline-none hover:bg-[#153458] focus-visible:ring-2 focus-visible:ring-[#5d568e] focus-visible:ring-offset-2">
-            Explore optional Fourier enrichment <ArrowRight className="ml-2 h-4 w-4" />
-          </Link>
-          <p className="text-center text-[11px] leading-5 text-[#68758b]">Beyond the NSW syllabus. It uses sine waves to show where these assessable ideas can lead.</p>
         </div>
       </aside>
     );
@@ -106,13 +107,7 @@ export const GuidedJourneyPanel = ({ progress, onProgressChange, onRestart, onCo
 
   const continueJourney = () => {
     const result: StepResult = { attempts, predictionCorrect, explanationCorrect };
-    const nextIndex = progress.stepIndex + 1;
-    onProgressChange({
-      ...progress,
-      stepIndex: Math.min(nextIndex, TRANSFORMATION_JOURNEY.length - 1),
-      completed: nextIndex >= TRANSFORMATION_JOURNEY.length,
-      results: { ...progress.results, [step.id]: result },
-    });
+    onProgressChange(completeGuidedStep(progress, result));
   };
 
   return (
@@ -145,6 +140,8 @@ export const GuidedJourneyPanel = ({ progress, onProgressChange, onRestart, onCo
             </div>
           ) : null}
           <p className="rounded-lg bg-[#f3f0f8] p-3 text-sm leading-6 text-[#392e59]"><Lightbulb className="mr-2 inline h-4 w-4" /><InlineLatexText>{step.experimentInstruction}</InlineLatexText></p>
+          <p className="mt-3 rounded-lg border border-[#5d568e]/15 bg-[#f7f3fa] px-3 py-2 text-xs font-semibold leading-5 text-[#392e59]"><span className="font-black">Look for: </span><InlineLatexText>{step.observation}</InlineLatexText></p>
+          {controls ? <div className="mt-4 border-t border-[#071629]/10 pt-4">{controls}</div> : null}
           {!experimentTargetReached ? <p className="mt-3 text-xs font-bold leading-5 text-[#6f4d05]">Match the requested values with the sliders to continue.</p> : null}
           <button type="button" disabled={!experimentTargetReached} onClick={finishExperiment} className="mt-4 inline-flex min-h-11 w-full items-center justify-center rounded-lg bg-[#071629] px-4 text-sm font-black text-white outline-none hover:bg-[#153458] focus-visible:ring-2 focus-visible:ring-[#5d568e] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-40">
             I’ve tested the change <ArrowRight className="ml-2 h-4 w-4" />
@@ -174,7 +171,7 @@ export const GuidedJourneyPanel = ({ progress, onProgressChange, onRestart, onCo
       ) : null}
 
       <p className={`mt-4 min-h-12 rounded-lg px-3 py-2 text-xs leading-5 ${feedback ? 'bg-[#fff7df] text-[#6f4d05]' : 'bg-[#f3f7fb] text-[#68758b]'}`} aria-live="polite">
-        <InlineLatexText>{feedback || 'Your prediction is not graded. It helps you notice what changes before the graph reveals it.'}</InlineLatexText>
+        <InlineLatexText>{feedback || 'Your prediction is not a mark. It helps you notice what changes before the graph reveals it.'}</InlineLatexText>
       </p>
     </aside>
   );

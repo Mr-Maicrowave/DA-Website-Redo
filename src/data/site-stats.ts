@@ -1,6 +1,6 @@
 export const siteStats = {
   yearsExperience: "20+",
-  studentsHelped: "10,000+",
+  studentsHelped: "1,500+",
   googleRating: "5.0",
   reviewCount: 450,
   educatorCount: "40+",

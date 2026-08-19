@@ -30,6 +30,7 @@ import {
 import { ParameterInspector } from '@/features/graph-lab/ParameterInspector';
 import {
   TRANSFORMATION_JOURNEY,
+  resumeGuidedStep,
   createInitialGuidedProgress,
   readGuidedState,
   writeGuidedState,
@@ -116,6 +117,28 @@ const MathsGraphLab = () => {
       };
     }
   }), [deferredExpressions, viewport]);
+
+  const guidedReferenceExpressions = useMemo(() => {
+    if (mode !== 'guided' || !guidedControlsUnlocked) return [];
+    const step = TRANSFORMATION_JOURNEY[Math.min(guidedProgress.stepIndex, TRANSFORMATION_JOURNEY.length - 1)];
+    if (step.unlockedParameters.length === 0) return [];
+    const family = getFamily(step.familyId);
+    const form = family.forms.find((candidate) => candidate.id === step.formId) ?? family.forms[0];
+    return form.buildExpressions(initialParameters(form)).flatMap((source, index) => {
+      try {
+        return [{
+          id: `guided-reference-${index}`,
+          source,
+          color: '#66758d',
+          visible: true,
+          ...sampleExpression(parseExpression(source), viewport, 678, 406),
+          error: '',
+        }];
+      } catch {
+        return [];
+      }
+    });
+  }, [guidedControlsUnlocked, guidedProgress.stepIndex, mode, viewport]);
 
   const errorsById = useMemo(
     () => new Map(plotExpressions.map((expression) => [expression.id, expression.error])),
@@ -254,6 +277,10 @@ const MathsGraphLab = () => {
     configureGuidedStep(0);
   };
 
+  const revisitGuidedStep = (stepIndex: number) => {
+    updateGuidedProgress(resumeGuidedStep(guidedProgress, stepIndex));
+  };
+
   useEffect(() => {
     if (hasConfiguredInitialModeRef.current || !guidedProgress.hasChosenMode) return;
     hasConfiguredInitialModeRef.current = true;
@@ -298,6 +325,22 @@ const MathsGraphLab = () => {
     setParameterValues(nextValues);
     setExpressionsFromForm(selectedFamilyId, selectedFormId, nextValues);
   };
+
+  const guidedParameterKeys = mode === 'guided'
+    ? (guidedControlsUnlocked ? TRANSFORMATION_JOURNEY[Math.min(guidedProgress.stepIndex, TRANSFORMATION_JOURNEY.length - 1)].unlockedParameters : [])
+    : undefined;
+
+  const parameterInspector = <ParameterInspector
+    family={selectedFamily}
+    formId={selectedFormId}
+    values={parameterValues}
+    onFormChange={chooseForm}
+    onParameterChange={changeParameter}
+    compact
+    parameterKeys={guidedParameterKeys}
+    guidedTitle={mode === 'guided' ? 'Change only what this challenge needs' : undefined}
+    emptyParameterMessage={mode === 'guided' ? (guidedControlsUnlocked ? 'This opening step uses the parent graph without changing a coefficient.' : 'Make a prediction to unlock this challenge’s controls.') : undefined}
+  />;
 
   const updateExpression = (id: string, update: Partial<GraphExpression>) => {
     if (update.source !== undefined) setIsPresetDriven(false);
@@ -390,9 +433,9 @@ const MathsGraphLab = () => {
         ) : (
 
         <section className="graph-lab-workspace bg-[#f3f7fb] px-4 py-6 sm:px-5 lg:px-8 lg:py-8" aria-label="Graphing workspace">
-          <div className="mx-auto grid max-w-[1600px] gap-4 min-[1180px]:grid-cols-[260px_minmax(520px,1fr)_340px] min-[1500px]:grid-cols-[280px_minmax(620px,1fr)_360px]">
-            <div className={mode === 'guided' ? 'block' : 'hidden'}>
-              <GuidedJourneyPanel progress={guidedProgress} onProgressChange={updateGuidedProgress} onRestart={restartGuidedJourney} onControlsUnlockedChange={setGuidedControlsUnlocked} parameterValues={parameterValues} />
+          <div className={`mx-auto grid max-w-[1600px] gap-4 ${mode === 'guided' ? 'min-[960px]:grid-cols-[minmax(300px,360px)_minmax(0,1fr)]' : 'min-[1180px]:grid-cols-[260px_minmax(520px,1fr)_340px] min-[1500px]:grid-cols-[280px_minmax(620px,1fr)_360px]'}`}>
+            <div className={mode === 'guided' ? 'min-w-0' : 'hidden'}>
+              <GuidedJourneyPanel progress={guidedProgress} onProgressChange={updateGuidedProgress} onRestart={restartGuidedJourney} onRevisit={revisitGuidedStep} onControlsUnlockedChange={setGuidedControlsUnlocked} parameterValues={parameterValues} controls={parameterInspector} />
             </div>
             <aside className={`${mode === 'free' ? 'block' : 'hidden'} graph-lab-panel rounded-2xl border border-[#071629]/12 bg-white p-4 sm:p-5`} aria-labelledby="expressions-heading">
               <div className="flex items-center justify-between gap-4">
@@ -488,7 +531,7 @@ const MathsGraphLab = () => {
             </aside>
 
             <div className="graph-lab-panel graph-lab-graph-panel min-w-0 rounded-2xl bg-white p-3 shadow-[0_5px_8px_rgba(7,22,41,0.08)] sm:p-5">
-              <GraphCanvas expressions={plotExpressions} viewport={viewport} asymptotes={asymptotes} onViewportChange={applyViewport} theme={theme} />
+              <GraphCanvas expressions={plotExpressions} referenceExpressions={guidedReferenceExpressions} viewport={viewport} asymptotes={asymptotes} onViewportChange={applyViewport} theme={theme} />
 
               <div className="mt-5 border-t border-[#071629]/10 pt-5">
                 <div className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
@@ -545,19 +588,9 @@ const MathsGraphLab = () => {
 
               </div>
             </div>
-            <aside className="graph-lab-panel min-w-0 rounded-2xl border border-[#071629]/12 bg-white p-4 sm:p-5 min-[1180px]:sticky min-[1180px]:top-24 min-[1180px]:self-start" aria-label="Equation controls">
-              <ParameterInspector
-                family={selectedFamily}
-                formId={selectedFormId}
-                values={parameterValues}
-                onFormChange={chooseForm}
-                onParameterChange={changeParameter}
-                compact
-                parameterKeys={mode === 'guided' ? (guidedControlsUnlocked ? TRANSFORMATION_JOURNEY[Math.min(guidedProgress.stepIndex, TRANSFORMATION_JOURNEY.length - 1)].unlockedParameters : []) : undefined}
-                guidedTitle={mode === 'guided' ? 'Change only what this challenge needs' : undefined}
-                emptyParameterMessage={mode === 'guided' ? (guidedControlsUnlocked ? 'This opening step uses the parent graph without changing a coefficient.' : 'Make a prediction to unlock this challenge’s controls.') : undefined}
-              />
-            </aside>
+            {mode === 'free' ? <aside className="graph-lab-panel min-w-0 rounded-2xl border border-[#071629]/12 bg-white p-4 sm:p-5 min-[1180px]:sticky min-[1180px]:top-24 min-[1180px]:self-start" aria-label="Equation controls">
+              {parameterInspector}
+            </aside> : null}
           </div>
         </section>
 

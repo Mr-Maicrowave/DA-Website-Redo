@@ -1408,7 +1408,7 @@ const Mathematics = () => {
               <span className="inline-flex items-center gap-3 text-xs font-black uppercase tracking-[0.16em] text-[#f1df9a] before:h-px before:w-16 before:bg-gradient-to-r before:from-transparent before:to-[#c9a227]/80 after:h-px after:w-16 after:bg-gradient-to-l after:from-transparent after:to-[#c9a227]/80">
                 Maths class options
               </span>
-              <h2 className="mt-6 font-serif text-5xl font-medium leading-[1.08] tracking-[-0.035em] text-[#fff9ef] md:text-6xl xl:text-[4.25rem]">
+              <h2 className="mt-6 font-serif text-5xl font-medium leading-[1.25] tracking-[-0.035em] text-[#fff9ef] md:text-6xl xl:text-[4.25rem]">
                 Choose the maths pathway that fits your child.
               </h2>
               <p className="mx-auto mt-6 max-w-2xl text-base leading-8 text-[#c7d4e5]">
@@ -1440,21 +1440,23 @@ const Mathematics = () => {
                       <span className="absolute inset-x-0 bottom-0 h-1.5" style={{ backgroundColor: option.accent }} aria-hidden="true" />
                     </div>
                     <div className="relative flex flex-1 flex-col px-6 pb-7 pt-11 text-center">
-                      <motion.span
-                        className="absolute -top-9 left-1/2 grid h-[4.5rem] w-[4.5rem] -translate-x-1/2 place-items-center rounded-full border bg-[#fff9ef]"
-                        style={{
-                          borderColor: option.accent,
-                          color: option.accent,
-                          backgroundColor: option.tint,
-                        }}
-                        initial={prefersReducedMotion ? false : { opacity: 0, scale: 0.78 }}
-                        whileInView={{ opacity: 1, scale: 1 }}
-                        viewport={{ once: true, amount: 0.2 }}
-                        transition={{ duration: 0.44, delay: index * 0.1 + 0.16, ease: [0.16, 1, 0.3, 1] }}
-                        aria-hidden="true"
-                      >
-                        <Icon className="block h-7 w-7" strokeWidth={1.6} />
-                      </motion.span>
+                      <div className="pointer-events-none absolute inset-x-0 -top-9 flex justify-center">
+                        <motion.span
+                          className="grid h-[4.5rem] w-[4.5rem] place-items-center rounded-full border bg-[#fff9ef]"
+                          style={{
+                            borderColor: option.accent,
+                            color: option.accent,
+                            backgroundColor: option.tint,
+                          }}
+                          initial={prefersReducedMotion ? false : { opacity: 0, scale: 0.78 }}
+                          whileInView={{ opacity: 1, scale: 1 }}
+                          viewport={{ once: true, amount: 0.2 }}
+                          transition={{ duration: 0.44, delay: index * 0.1 + 0.16, ease: [0.16, 1, 0.3, 1] }}
+                          aria-hidden="true"
+                        >
+                          <Icon className="block h-7 w-7" strokeWidth={1.6} />
+                        </motion.span>
+                      </div>
                       <h3 className="flex min-h-[4.75rem] items-center justify-center text-balance font-serif text-3xl font-semibold leading-tight tracking-[-0.03em] text-[#071629]">
                         {option.title}
                       </h3>

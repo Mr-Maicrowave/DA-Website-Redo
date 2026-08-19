@@ -19,10 +19,10 @@ test('Mathematics page mounts the feature and removes the legacy HSC selector', 
   assert.doesNotMatch(source, /hscStreamButtonRefs/);
 });
 
-test('Mathematics keeps the pre-existing non-HSC selectors unchanged', () => {
+test('Mathematics keeps the year-level selector without the removed Fourier enrichment selector', () => {
   const source = readFileSync(mathematicsUrl, 'utf8');
-  assert.match(source, /role="tablist" aria-label="Fourier drawing presets"/);
-  assert.match(source, /role="tab"\s+aria-selected=\{preset === option\.id\}/);
+  const mathematicsComponent = source.slice(source.indexOf('const Mathematics = () => {'));
+  assert.doesNotMatch(mathematicsComponent, /<FourierDrawing\s*\/>/);
   assert.match(source, /role="tablist" aria-label="Year level"/);
   assert.match(source, /role="tab"\s+aria-selected=\{activeTab === tab\.id\}/);
 });
@@ -86,12 +86,15 @@ test('route segments stay mounted, reveal once in view, and include the Advanced
   assert.match(source, />\s*Studied with Advanced\s*</);
 });
 
-test('tablet widths use the accordion instead of the spatial desktop pathway', () => {
+test('laptop widths retain a compact spatial pathway while smaller screens use the accordion', () => {
   const source = readFileSync(componentUrl, 'utf8');
-  assert.match(source, /xl:grid xl:grid-cols-\[0\.72fr_1\.15fr_0\.9fr\]/);
-  assert.match(source, /xl:hidden/);
-  assert.doesNotMatch(source, /lg:grid lg:grid-cols-\[0\.72fr_1\.15fr_0\.9fr\]/);
-  assert.doesNotMatch(source, /lg:hidden/);
+  assert.match(source, /lg:grid lg:grid-cols-\[1\.15fr_0\.85fr\]/);
+  assert.match(source, /xl:grid-cols-\[0\.72fr_1\.15fr_0\.9fr\]/);
+  assert.match(source, /hsc-pathway-guidance hidden[^"]*xl:block/);
+  assert.match(source, /hsc-pathway-map[^"]*lg:ml-12[^"]*xl:ml-0/);
+  assert.match(source, /className="hidden[^"]*xl:inline"/);
+  assert.match(source, /lg:hidden/);
+  assert.doesNotMatch(source, /pt-52/);
 });
 
 test('pathway presents the approved decision content and actions', () => {

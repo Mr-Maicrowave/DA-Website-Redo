@@ -126,7 +126,6 @@ const App = () => (
   <HelmetProvider>
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <ScrollToTop />
         <Toaster />
         <Sonner />
         <BrowserRouter>

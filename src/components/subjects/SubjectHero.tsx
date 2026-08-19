@@ -73,7 +73,7 @@ const SubjectHero = ({
             alt={backgroundImageAlt ?? ''}
             className="subject-hero-image h-full w-full object-cover"
             style={{
-              ...(backgroundPosition ? { objectPosition: backgroundPosition } : {}),
+              ...(backgroundPosition ? { '--subject-hero-desktop-position': backgroundPosition } : {}),
               ...(mobileBackgroundPosition ? { '--subject-hero-mobile-position': mobileBackgroundPosition } : {}),
               ...(backgroundScale ? { transform: `scale(${backgroundScale})`, transformOrigin: backgroundPosition ?? 'center center' } : {}),
             } as CSSProperties}
@@ -154,10 +154,14 @@ const SubjectHero = ({
           </div>
         </motion.div>
       </div>
-      {(mobileBackgroundPosition || mobileContentPosition === 'bottom') && (
-        <style>{`
+      <style>{`
+          .subject-hero-image {
+            object-position: var(--subject-hero-desktop-position, center center);
+          }
           @media (max-width: 767px) {
-            .subject-hero-image { object-position: var(--subject-hero-mobile-position); }
+            .subject-hero-image {
+              object-position: var(--subject-hero-mobile-position, var(--subject-hero-desktop-position, center center));
+            }
             .subject-hero--mobile-bottom-copy {
               min-height: 44rem;
               justify-content: flex-end;
@@ -180,7 +184,6 @@ const SubjectHero = ({
             }
           }
         `}</style>
-      )}
     </section>
   );
 };

@@ -199,7 +199,7 @@ const StatCard = ({ target, suffix, label, delay }: {
 };
 
 // ─── Marquee ───────────────────────────────────────────────────
-const MARQUEE = ['Mathematics','English','Science','Legal Studies','Business Studies','HSC Excellence','20+ Years','650+ Students','5.0 ★ Rating','Award-Winning','Small Groups','Personalised Learning'];
+const MARQUEE = ['Mathematics','English','Science','Legal Studies','Business Studies','HSC Excellence','20+ Years','1,500+ Students','5.0 ★ Rating','Award-Winning','Small Groups','Personalised Learning'];
 const MarqueeStrip = () => (
   <div style={{ background: C.navy, borderTop: `1px solid rgba(212,175,55,.2)`, borderBottom: `1px solid rgba(212,175,55,.2)`, padding: '14px 0', overflow: 'hidden' }}>
     <div style={{ display: 'flex', animation: 'marq 30s linear infinite', whiteSpace: 'nowrap', width: 'max-content' }}>

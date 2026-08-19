@@ -99,30 +99,37 @@ export const MathsTeachingProof = () => (
         <div className="rounded-2xl border border-[#071629]/14 bg-white p-6 sm:p-8">
           <p className="text-xs font-black text-[#8d6815]">A common algebra misconception</p>
           <div className="mt-5 text-2xl text-[#071629] sm:text-3xl">
-            <InlineMath expression="2x+5=13" label="two x plus five equals thirteen" />
+            <InlineMath expression="3(x-2)+5=20" label="three times open bracket x minus two close bracket plus five equals twenty" />
           </div>
           <p className="mt-7 text-xs font-black text-[#8a3f39]">Student attempt</p>
-          <p className="mt-2 text-lg text-[#8a3f39] line-through decoration-2 decoration-[#b34d45]">
-            <InlineMath expression="2x=13+5=18" label="two x equals thirteen plus five equals eighteen" />
-          </p>
+          <div className="mt-3 space-y-2 text-lg text-[#8a3f39]">
+            <p className="line-through decoration-2 decoration-[#b34d45]">
+              <InlineMath expression="3x-2+5=20" label="three x minus two plus five equals twenty" />
+            </p>
+            <p><InlineMath expression="3x+3=20" label="three x plus three equals twenty" /></p>
+            <p><InlineMath expression="3x=23" label="three x equals twenty three" /></p>
+            <p><InlineMath expression="x=\frac{23}{3}" label="x equals twenty three over three" /></p>
+          </div>
           <p className="mt-6 text-sm leading-7 text-[#536077]">
-            The arithmetic is not the real gap. The student has not yet connected solving an equation with undoing an operation while preserving equality.
+            The first line has lost the multiplication on the −2. Every later line follows from that one decision, which is why the tutor looks for the first misconception rather than only correcting the final answer.
           </p>
         </div>
 
         <div className="pt-1">
           <p className="text-xs font-black text-[#8d6815]">The tutor does not simply replace the answer</p>
           <blockquote className="mt-4 max-w-[34ch] font-serif text-2xl leading-snug tracking-[-0.025em] text-[#071629] sm:text-3xl">
-            “What operation is being applied to <InlineMath expression="2x" label="two x" />, and what inverse operation undoes it?”
+            “What does the 3 need to multiply inside the bracket before we can undo anything?”
           </blockquote>
 
           <div className="mt-8 grid gap-4">
             {[
-              { expression: '2x=13-5=8', label: 'two x equals thirteen minus five equals eight', text: 'Undo the addition by subtracting 5 from both sides.' },
-              { expression: 'x=8\\div2=4', label: 'x equals eight divided by two equals four', text: 'Then undo multiplication by dividing both sides by 2.' },
-              { expression: '2(4)+5=13', label: 'two times four plus five equals thirteen', text: 'Check the result in the original equation.' },
+              { expression: '3(x-2)=3x-6', label: 'three times open bracket x minus two close bracket equals three x minus six', text: 'Distribute the 3 to both terms inside the bracket, not just to x.' },
+              { expression: '3x-6+5=20\\Rightarrow3x-1=20', label: 'three x minus six plus five equals twenty, therefore three x minus one equals twenty', text: 'Simplify the constants before isolating x.' },
+              { expression: '3x=21', label: 'three x equals twenty one', text: 'Add 1 to both sides to undo the minus 1 while preserving equality.' },
+              { expression: 'x=21\\div3=7', label: 'x equals twenty one divided by three equals seven', text: 'Then divide both sides by 3.' },
+              { expression: '3(7-2)+5=20', label: 'three times open bracket seven minus two close bracket plus five equals twenty', text: 'Check the result in the original equation.' },
             ].map((step) => (
-              <div key={step.expression} className="grid gap-2 border-t border-[#071629]/12 pt-4 sm:grid-cols-[11rem_1fr] sm:items-baseline">
+              <div key={step.expression} className="grid gap-2 border-t border-[#071629]/12 pt-4 sm:grid-cols-[14rem_1fr] sm:items-baseline">
                 <span className="flex items-center gap-2 font-bold text-[#245f42]">
                   <CheckCircle2 className="h-4 w-4 shrink-0" aria-hidden="true" />
                   <InlineMath expression={step.expression} label={step.label} />

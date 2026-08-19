@@ -222,7 +222,7 @@ const NavigationNew = () => {
               />
               <span
                 className={`text-[1.02rem] font-bold whitespace-nowrap leading-none ${logoTextClass}`}
-                style={{ fontFamily: "'Libre Baskerville', Georgia, serif", letterSpacing: '-0.01em' }}
+                style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", letterSpacing: '-0.01em' }}
               >
                 DA <span className="text-brand-gold italic font-bold">Tuition</span>
               </span>
@@ -335,7 +335,7 @@ const NavigationNew = () => {
                     />
                     <span
                       className={`text-[1.08rem] font-bold whitespace-nowrap leading-none ${logoTextClass}`}
-                      style={{ fontFamily: "'Libre Baskerville', Georgia, serif", letterSpacing: '-0.01em' }}
+                      style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", letterSpacing: '-0.01em' }}
                     >
                       DA <span className="text-brand-gold italic font-bold">Tuition</span>
                     </span>
