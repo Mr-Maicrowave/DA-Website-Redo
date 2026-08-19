@@ -39,7 +39,7 @@
   margin-top: 0;
   padding: clamp(3rem, 5.5vw, 5rem) 0 clamp(2.5rem, 5vw, 5rem);
   background:
-    linear-gradient(180deg, #fffaf3 0%, #fff8ef 42%, #fff5ea 80%, #f7f8fa 100%);
+    linear-gradient(180deg, #fffaf3 0%, #fff8ef 42%, #fff5ea 80%, #ffffff 100%);
 }
 
 .legal-access-section::before {
@@ -1199,13 +1199,11 @@ body[data-legal-sample-open="true"] .site-sticky-book-button {
   position: relative;
   display: grid;
   align-items: center;
-  min-height: 100vh;
-  min-height: 100svh;
   overflow: hidden;
   background:
     radial-gradient(circle at 50% 0%, rgba(213, 162, 58, 0.08), transparent 30%),
     linear-gradient(180deg, #ffffff 0%, #fffdf9 46%, #ffffff 100%);
-  padding: clamp(4rem, 7vw, 6.5rem) 1rem;
+  padding: clamp(1.75rem, 3vw, 2.75rem) 1rem clamp(4rem, 7vw, 6.5rem);
 }
 
 .legal-evaluation-inner {
@@ -1823,7 +1821,7 @@ body[data-legal-sample-open="true"] .site-sticky-book-button {
 
 @media (min-width: 901px) {
   .legal-evaluation-section {
-    padding: clamp(1.5rem, 4svh, 3.5rem) 1rem;
+    padding: clamp(0.5rem, 1.4svh, 1.25rem) 1rem clamp(1.5rem, 3svh, 2.5rem);
   }
 
   .legal-evaluation-inner {
@@ -2149,7 +2147,7 @@ body[data-legal-sample-open="true"] .site-sticky-book-button {
 
   .legal-evaluation-section {
     min-height: 0;
-    padding: 4.25rem 1rem;
+    padding: 2rem 1rem 4.25rem;
   }
 
   .legal-evaluation-grid {

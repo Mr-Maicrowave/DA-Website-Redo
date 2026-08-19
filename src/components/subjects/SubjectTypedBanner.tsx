@@ -128,7 +128,7 @@ const SubjectTypedBanner = ({
       className={`subject-typed-banner subject-typed-banner--${variant} relative isolate overflow-hidden bg-[#fbf3e7]`}
       aria-label={`${headline} ${emphasis} ${support}`.trim()}
     >
-      <div className={isLegal ? "subject-typed-banner__stage relative grid h-[calc(100vh-8.5rem)] min-h-[430px] max-h-[760px] place-items-center bg-[#fff7ed]" : "subject-typed-banner__stage relative h-[calc(100vh-8.5rem)] min-h-[430px] max-h-[760px]"}>
+      <div className={isLegal ? "subject-typed-banner__stage relative grid h-[calc(100vh-8.5rem)] min-h-[320px] max-h-[620px] place-items-center bg-[#fff7ed]" : "subject-typed-banner__stage relative h-[calc(100vh-8.5rem)] min-h-[430px] max-h-[760px]"}>
         <img
           src={imageSrc}
           alt={imageAlt}

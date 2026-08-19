@@ -5,6 +5,7 @@ import SubjectHero from '@/components/subjects/SubjectHero';
 import SubjectTypedBanner from '@/components/subjects/SubjectTypedBanner';
 import TrustedSchoolsStrip from '@/components/subjects/TrustedSchoolsStrip';
 import LegalSyllabusQuiz from '@/components/subjects/LegalSyllabusQuiz';
+import LegalTransformationSteps from '@/components/subjects/LegalTransformationSteps';
 import { Button } from '@/components/ui/button';
 import {
   Scale,
@@ -411,6 +412,7 @@ const LegalStudies = () => {
         backgroundImageAlt="DA Tuition Legal Studies classroom"
         backgroundPosition="center center"
         backgroundFit="contain"
+        backgroundScale={1.15}
       />
 
       <TrustedSchoolsStrip schools={legalTrustedSchools} className="subject-school-strip-compact" />
@@ -423,22 +425,8 @@ const LegalStudies = () => {
       />
 
       {/* Evaluation Criteria */}
-      <section ref={evaluationSectionRef} className="legal-evaluation-section" aria-labelledby="legal-evaluation-title">
+      <section ref={evaluationSectionRef} className="legal-evaluation-section" aria-label="Evaluation Criteria">
         <div className="legal-evaluation-inner">
-          <div className="legal-evaluation-heading">
-            <div className="legal-evaluation-topline" aria-hidden="true">
-              <span />
-              <Scale />
-              <span />
-            </div>
-            <h2 id="legal-evaluation-title">Evaluation Criteria</h2>
-            <div className="legal-evaluation-rule" aria-hidden="true">
-              <span />
-              <i />
-              <span />
-            </div>
-          </div>
-
           <div className="legal-evaluation-grid">
             <div className="legal-method-panel">
               <div className="legal-panel-heading">
@@ -598,6 +586,8 @@ const LegalStudies = () => {
       </section>
 
       <LegalSyllabusQuiz />
+
+      <LegalTransformationSteps />
 
       {/* Legal Studies Journey */}
       <section ref={journeySectionRef} className="legal-journey-section" aria-labelledby="legal-journey-title">

@@ -4,7 +4,7 @@ import {
   LEGAL_QUIZ_LENGTH,
   legalQuizBanks,
   LegalQuizQuestion,
-  LegalQuizTopic,
+  LegalQuizYear,
 } from '@/data/legalSyllabusQuiz';
 
 type QuizAnswer = {
@@ -13,22 +13,22 @@ type QuizAnswer = {
   isCorrect: boolean;
 };
 
-const topicMeta: Record<
-  LegalQuizTopic,
+const yearMeta: Record<
+  LegalQuizYear,
   {
     title: string;
     description: string;
     Icon: typeof BookOpen;
   }
 > = {
-  humanRights: {
-    title: 'Human Rights',
-    description: 'Nature and development, promotion, enforcement, and contemporary human rights issues.',
+  year11: {
+    title: 'Year 11',
+    description: 'The Legal System, The Individual and the Law, and The Law in Practice.',
     Icon: BookOpen,
   },
-  crime: {
-    title: 'Crime',
-    description: 'Nature of crime, investigation, trial process, sentencing, young offenders, and international crime.',
+  year12: {
+    title: 'Year 12',
+    description: 'Human Rights and Crime, the two HSC core topics, in one combined practice run.',
     Icon: Gavel,
   },
 };
@@ -41,11 +41,49 @@ const normaliseAnswer = (value: string) =>
     .replace(/\s+/g, ' ')
     .trim();
 
+// Standard edit-distance calculation, used to forgive small typos (missing/extra
+// letter, a dropped plural "s", a swapped character) in typed answers.
+const levenshteinDistance = (a: string, b: string) => {
+  const rows = a.length + 1;
+  const cols = b.length + 1;
+  const distances: number[][] = Array.from({ length: rows }, () => new Array(cols).fill(0));
+
+  for (let i = 0; i < rows; i += 1) distances[i][0] = i;
+  for (let j = 0; j < cols; j += 1) distances[0][j] = j;
+
+  for (let i = 1; i < rows; i += 1) {
+    for (let j = 1; j < cols; j += 1) {
+      if (a[i - 1] === b[j - 1]) {
+        distances[i][j] = distances[i - 1][j - 1];
+      } else {
+        distances[i][j] = 1 + Math.min(
+          distances[i - 1][j], // deletion
+          distances[i][j - 1], // insertion
+          distances[i - 1][j - 1], // substitution
+        );
+      }
+    }
+  }
+
+  return distances[a.length][b.length];
+};
+
+// Accepts near-miss spelling: allows roughly one typo per 6 characters
+// (minimum of 1), so close spellings mark correct without accepting
+// genuinely different answers.
+const isCloseEnough = (candidate: string, target: string) => {
+  if (candidate === target) return true;
+  if (!candidate || !target) return false;
+
+  const tolerance = Math.max(1, Math.floor(Math.max(candidate.length, target.length) * 0.18));
+  return levenshteinDistance(candidate, target) <= tolerance;
+};
+
 const isAnswerCorrect = (question: LegalQuizQuestion, value: string) => {
   const answers = question.acceptedAnswers?.length ? question.acceptedAnswers : [question.answer];
   const normalisedValue = normaliseAnswer(value);
 
-  return answers.some((answer) => normaliseAnswer(answer) === normalisedValue);
+  return answers.some((answer) => isCloseEnough(normaliseAnswer(answer), normalisedValue));
 };
 
 const getHintValue = (answer: string) => answer.trim().match(/[a-z0-9]/i)?.[0] ?? '';
@@ -61,8 +99,8 @@ const shuffle = <T,>(items: T[]) => {
   return output;
 };
 
-const buildQuestionSet = (topic: LegalQuizTopic) => {
-  const bank = legalQuizBanks[topic];
+const buildQuestionSet = (year: LegalQuizYear) => {
+  const bank = legalQuizBanks[year];
   const multipleChoice = shuffle(bank.filter((question) => question.type === 'multiple-choice')).slice(0, 10);
   const fillBlank = shuffle(bank.filter((question) => question.type === 'fill-blank')).slice(0, 5);
   const shortAnswer = shuffle(bank.filter((question) => question.type === 'short-answer')).slice(0, 5);
@@ -82,7 +120,7 @@ const buildQuestionSet = (topic: LegalQuizTopic) => {
 };
 
 const LegalSyllabusQuiz = () => {
-  const [selectedTopic, setSelectedTopic] = useState<LegalQuizTopic | null>(null);
+  const [selectedYear, setSelectedYear] = useState<LegalQuizYear | null>(null);
   const [questions, setQuestions] = useState<LegalQuizQuestion[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<QuizAnswer[]>([]);
@@ -102,9 +140,9 @@ const LegalSyllabusQuiz = () => {
       ? Math.round(((currentIndex + (isSubmitted ? 1 : 0)) / questions.length) * 100)
       : 0;
   const isTypedQuestion = currentQuestion?.type === 'fill-blank' || currentQuestion?.type === 'short-answer';
-  const topicLabel = selectedTopic ? topicMeta[selectedTopic].title : 'Practice quiz';
+  const yearLabel = selectedYear ? yearMeta[selectedYear].title : 'Practice quiz';
   const resultIsStrong = correctCount >= 15;
-  const resultHeading = resultIsStrong ? 'Syllabus strength recognised' : `${topicLabel} review`;
+  const resultHeading = resultIsStrong ? 'Syllabus strength recognised' : `${yearLabel} review`;
   const resultMessage = resultIsStrong
     ? 'Excellent work. You are recalling the syllabus with confidence, which is exactly what strong Legal Studies responses are built on.'
     : 'Keep going. A few focused attempts will sharpen your recall and make the syllabus feel much easier to use in exam responses.';
@@ -114,17 +152,17 @@ const LegalSyllabusQuiz = () => {
     return shuffle(currentQuestion.options);
   }, [currentQuestion]);
 
-  const startQuiz = (topic: LegalQuizTopic) => {
-    setSelectedTopic(topic);
-    setQuestions(buildQuestionSet(topic));
+  const startQuiz = (year: LegalQuizYear) => {
+    setSelectedYear(year);
+    setQuestions(buildQuestionSet(year));
     setCurrentIndex(0);
     setAnswers([]);
     setCurrentAnswer('');
     setIsSubmitted(false);
   };
 
-  const resetToTopics = () => {
-    setSelectedTopic(null);
+  const resetToYears = () => {
+    setSelectedYear(null);
     setQuestions([]);
     setCurrentIndex(0);
     setAnswers([]);
@@ -158,8 +196,8 @@ const LegalSyllabusQuiz = () => {
   };
 
   const retryQuiz = () => {
-    if (!selectedTopic) return;
-    startQuiz(selectedTopic);
+    if (!selectedYear) return;
+    startQuiz(selectedYear);
   };
 
   return (
@@ -171,7 +209,7 @@ const LegalSyllabusQuiz = () => {
           <span />
         </div>
 
-        {!selectedTopic && (
+        {!selectedYear && (
           <>
             <div className="legal-quiz-heading">
               <h2 id="legal-quiz-title">How well do you know the syllabus?</h2>
@@ -179,15 +217,15 @@ const LegalSyllabusQuiz = () => {
             </div>
 
             <div className="legal-quiz-topic-grid">
-              {(Object.keys(topicMeta) as LegalQuizTopic[]).map((topic) => {
-                const { Icon, title, description } = topicMeta[topic];
+              {(Object.keys(yearMeta) as LegalQuizYear[]).map((year) => {
+                const { Icon, title, description } = yearMeta[year];
 
                 return (
                   <button
-                    key={topic}
+                    key={year}
                     type="button"
                     className="legal-quiz-topic-card"
-                    onClick={() => startQuiz(topic)}
+                    onClick={() => startQuiz(year)}
                     aria-label={`Start ${title} syllabus quiz`}
                   >
                     <Icon aria-hidden="true" />
@@ -211,11 +249,11 @@ const LegalSyllabusQuiz = () => {
           </>
         )}
 
-        {selectedTopic && !isComplete && currentQuestion && (
+        {selectedYear && !isComplete && currentQuestion && (
           <div className="legal-quiz-live" aria-live="polite">
             <div className="legal-quiz-live-header">
-              <button type="button" className="legal-quiz-back" onClick={resetToTopics}>
-                Change topic
+              <button type="button" className="legal-quiz-back" onClick={resetToYears}>
+                Change year
               </button>
               <div className="legal-quiz-scorebox" aria-label="Quiz score">
                 <span className="legal-quiz-count">{currentIndex + 1} / {LEGAL_QUIZ_LENGTH}</span>
@@ -237,7 +275,7 @@ const LegalSyllabusQuiz = () => {
 
             <div className="legal-quiz-card">
               <div className="legal-quiz-card-meta">
-                <span>{topicLabel}</span>
+                <span>{yearLabel}</span>
                 <span>{currentQuestion.syllabusArea}</span>
               </div>
 
@@ -337,7 +375,7 @@ const LegalSyllabusQuiz = () => {
           </div>
         )}
 
-        {selectedTopic && isComplete && (
+        {selectedYear && isComplete && (
           <div className="legal-quiz-results">
             <div className="legal-quiz-score-final">
               <span>Final score</span>
@@ -352,8 +390,8 @@ const LegalSyllabusQuiz = () => {
                   <RotateCcw aria-hidden="true" />
                   Try again
                 </button>
-                <button type="button" onClick={resetToTopics}>
-                  Choose another Syllabus
+                <button type="button" onClick={resetToYears}>
+                  Choose another year
                 </button>
               </div>
             </div>
