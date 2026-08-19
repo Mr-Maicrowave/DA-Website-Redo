@@ -1,14 +1,33 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import NavigationNew from '@/components/NavigationNew';
 import FooterNew from '@/components/FooterNew';
 import SubjectHero from '@/components/subjects/SubjectHero';
 import SubjectTypedBanner from '@/components/subjects/SubjectTypedBanner';
 import TrustedSchoolsStrip from '@/components/subjects/TrustedSchoolsStrip';
+import LegalSyllabusQuiz from '@/components/subjects/LegalSyllabusQuiz';
+import LegalTransformationSteps from '@/components/subjects/LegalTransformationSteps';
 import { Button } from '@/components/ui/button';
-import { Scale, Gavel, BookOpen, CheckCircle, ArrowRight, Quote, Shield, Info } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import {
+  Scale,
+  Gavel,
+  ClipboardCheck,
+  MessageCircleQuestion,
+  PenLine,
+  RotateCcw,
+  X,
+  ChevronLeft,
+  ChevronRight,
+  Landmark,
+  Newspaper,
+  Globe2,
+  FileBarChart,
+} from 'lucide-react';
 import SEO from '@/components/SEO';
-import { LegalStudiesIntroVideoGate } from '@/features/legal-intro-video/LegalStudiesIntroVideoGate';
+import './LegalStudies.css';
+
+const LEGAL_SAMPLE_PAGE_COUNT = 16;
+const getLegalSamplePageSrc = (page: number) =>
+  `/images/subjects/legal-studies/sample-pages/page-${String(page).padStart(2, '0')}.png`;
 
 const legalTrustedSchools = [
   { name: 'Freeman Catholic College', logoSrc: '/images/schools/freeman-catholic-college.png' },
@@ -18,77 +37,361 @@ const legalTrustedSchools = [
   { name: 'Al-Faisal College', logoSrc: '/images/schools/al-faisal-college.png' },
 ];
 
+const lcmidMethod = [
+  {
+    letter: 'L',
+    title: 'Legislation',
+    description: 'Cite relevant statutes and explain their application.',
+    Icon: Scale,
+  },
+  {
+    letter: 'C',
+    title: 'Cases',
+    description: 'Use landmark cases to illustrate legal principles.',
+    Icon: Gavel,
+  },
+  {
+    letter: 'M',
+    title: 'Media',
+    description: 'Incorporate current examples and contemporary issues.',
+    Icon: Newspaper,
+  },
+  {
+    letter: 'I',
+    title: 'International Law',
+    description: 'Apply international treaties, conventions and decisions.',
+    Icon: Globe2,
+  },
+  {
+    letter: 'D',
+    title: 'Documents, declarations or data/statistics',
+    description: 'Use official documents, reports and data to support claims and show impact.',
+    Icon: FileBarChart,
+  },
+];
+
+const evaluationCriteria = [
+  {
+    letter: 'P',
+    title: 'Protection of individual rights',
+    question: "Does the law safeguard people's basic rights and protect against abuse?",
+  },
+  {
+    letter: 'E',
+    title: 'Enforceability',
+    question: 'Can the law be monitored, investigated and upheld effectively?',
+  },
+  {
+    letter: 'A',
+    title: 'Accessibility',
+    question: 'Can ordinary people access the legal system without prohibitive cost, delay or stress?',
+  },
+  {
+    letter: 'R',
+    title: 'Resource efficiency',
+    question: 'Does the system use time and money wisely, or are there better alternatives?',
+  },
+  {
+    letter: 'R',
+    title: 'Responsiveness',
+    question: 'Does the law adapt to changing social values and community needs?',
+  },
+  {
+    letter: 'J',
+    title: 'Justice has been achieved',
+    question: 'Does the legal framework deliver fair and equitable outcomes?',
+  },
+  {
+    letter: 'A',
+    title: 'Application of the rule of law',
+    question: 'Are all people treated equally under the law?',
+  },
+  {
+    letter: 'M',
+    title: "Meeting society's needs",
+    question: "Does the law protect broader community interests and expectations?",
+  },
+];
+
+const examStructureCards = [
+  {
+    title: '20 Marks -\nMultiple Choice',
+    topic: 'Human Rights and Crime',
+    Icon: ClipboardCheck,
+    tone: 'purple',
+    tips: [
+      'Know your syllabus.',
+      "Don't let legal jargon confuse you.",
+      'Practise HSC multiple-choice questions under timed conditions.',
+      "Don't just check the answer; explain why the other three options are wrong.",
+      'Revise similar concepts, e.g. Division vs Separation of powers.',
+    ],
+  },
+  {
+    title: '15 Marks -\nShort Answer',
+    topic: 'Human Rights',
+    Icon: MessageCircleQuestion,
+    tone: 'green',
+    tips: [
+      'Know the syllabus terminology precisely: recognition, protection, enforcement and effectiveness.',
+      'Ensure you use examples (LCMID).',
+      'Practise glossary verbs: identify, describe, explain, analyse and assess.',
+      'For higher-mark questions, make a clear judgement rather than simply describing the law.',
+      'Revise by syllabus dot point so you know what the question is testing.',
+    ],
+  },
+  {
+    title: '15 Marks Essay',
+    topic: 'Crime',
+    Icon: PenLine,
+    tone: 'orange',
+    tips: [
+      'Prepare paragraph scaffolds: legislation + cases + media/reports + statistics.',
+      'Do not memorise an essay.',
+      'Organise revision around Crime syllabus themes and challenges.',
+      'Know which evidence can be used for several different questions.',
+      'Integrate criteria like enforceability, accessibility, resource efficiency and individual rights.',
+    ],
+  },
+  {
+    title: '50 Marks - TWO\n25 Mark Option Essays',
+    topic: 'Option Essays',
+    Icon: Scale,
+    tone: 'blue',
+    tips: [
+      'Know your two options equally well; together they are worth half of the exam.',
+      'Use contemporary issues as paragraphs.',
+      'Create an evidence bank containing LCMID.',
+      'Prioritise recent evidence that lets you evaluate the law in practice.',
+      'Ensure every paragraph answers the question; avoid paragraphs that explain your notes.',
+    ],
+  },
+];
+
+const legalJourneySteps = [
+  {
+    number: '01',
+    title: 'Learn',
+    description: 'Break down a syllabus concept and clarify difficult terminology.',
+  },
+  {
+    number: '02',
+    title: 'Connect',
+    description: 'Link legislation, cases, media, international law and contemporary examples.',
+  },
+  {
+    number: '03',
+    title: 'Apply',
+    description: 'Work through HSC-style multiple choice, short answers or essays.',
+  },
+  {
+    number: '04',
+    title: 'Write',
+    description: 'Construct and refine responses together.',
+  },
+  {
+    number: '05',
+    title: 'Feedback',
+    description: 'Receive precise feedback on what moves the response higher.',
+  },
+];
+
 const LegalStudies = () => {
-  const topics = [
-    {
-      module: "Crime",
-      content: [
-        "Nature of crime",
-        "Criminal investigation process",
-        "Criminal trial process",
-        "Sentencing and punishment"
-      ]
-    },
-    {
-      module: "Human Rights",
-      content: [
-        "Nature and development of human rights",
-        "Promoting and enforcing human rights",
-        "Contemporary human rights issues",
-        "International instruments"
-      ]
-    },
-    {
-      module: "Family",
-      content: [
-        "Nature of family law",
-        "Legal rights and obligations",
-        "Alternative family arrangements",
-        "Contemporary family issues"
-      ]
-    },
-    {
-      module: "Workplace",
-      content: [
-        "Employment contracts",
-        "Rights and obligations",
-        "Workplace disputes",
-        "Work health and safety"
-      ]
-    }
-  ];
+  const [isSampleOpen, setIsSampleOpen] = useState(false);
+  const [samplePage, setSamplePage] = useState(1);
+  const accessSectionRef = useRef<HTMLElement>(null);
+  const evaluationSectionRef = useRef<HTMLElement>(null);
+  const examStructureRef = useRef<HTMLElement>(null);
+  const journeySectionRef = useRef<HTMLElement>(null);
+  const scrollLockRef = useRef({ top: 0, overflow: '', position: '', width: '' });
+  const lastWheelPageTurnRef = useRef(0);
 
-  const legalSkills = [
-    "Legal reasoning and analysis",
-    "Case law interpretation",
-    "Statutory interpretation",
-    "Legal essay writing",
-    "Evaluation of effectiveness",
-    "Critical thinking"
-  ];
+  const openSample = () => {
+    setSamplePage(1);
+    setIsSampleOpen(true);
+  };
 
-  const assessmentFocus = [
-    {
-      type: "Legal Essays",
-      tips: "LCMR structure, integrated case studies, evaluation of effectiveness"
-    },
-    {
-      type: "Case Studies",
-      tips: "Apply legislation, analyze precedents, consider multiple perspectives"
-    },
-    {
-      type: "Research Tasks",
-      tips: "Current legal issues, media articles, law reform recommendations"
-    },
-    {
-      type: "Oral Presentations",
-      tips: "Legal arguments, mock trials, parliamentary debates"
-    }
-  ];
+  const showPreviousSamplePage = () => {
+    setSamplePage((current) => Math.max(1, current - 1));
+  };
+
+  const showNextSamplePage = () => {
+    setSamplePage((current) => Math.min(LEGAL_SAMPLE_PAGE_COUNT, current + 1));
+  };
+
+  useEffect(() => {
+    const node = accessSectionRef.current;
+    if (!node) return;
+
+    const setPreviewVisible = (isVisible: boolean) => {
+      if (isVisible) {
+        document.body.setAttribute('data-legal-access-visible', 'true');
+      } else {
+        document.body.removeAttribute('data-legal-access-visible');
+      }
+    };
+
+    const updatePreviewVisibility = () => {
+      const rect = node.getBoundingClientRect();
+      setPreviewVisible(rect.top < window.innerHeight && rect.bottom > 0);
+    };
+
+    updatePreviewVisibility();
+    window.addEventListener('scroll', updatePreviewVisibility, { passive: true });
+    window.addEventListener('resize', updatePreviewVisibility);
+
+    return () => {
+      window.removeEventListener('scroll', updatePreviewVisibility);
+      window.removeEventListener('resize', updatePreviewVisibility);
+      document.body.removeAttribute('data-legal-access-visible');
+    };
+  }, []);
+
+  useEffect(() => {
+    const node = evaluationSectionRef.current;
+    if (!node) return;
+
+    const setEvaluationVisible = (isVisible: boolean) => {
+      if (isVisible) {
+        document.body.setAttribute('data-legal-evaluation-visible', 'true');
+      } else {
+        document.body.removeAttribute('data-legal-evaluation-visible');
+      }
+    };
+
+    const updateEvaluationVisibility = () => {
+      const rect = node.getBoundingClientRect();
+      setEvaluationVisible(rect.top < window.innerHeight && rect.bottom > 0);
+    };
+
+    updateEvaluationVisibility();
+    window.addEventListener('scroll', updateEvaluationVisibility, { passive: true });
+    window.addEventListener('resize', updateEvaluationVisibility);
+
+    return () => {
+      window.removeEventListener('scroll', updateEvaluationVisibility);
+      window.removeEventListener('resize', updateEvaluationVisibility);
+      document.body.removeAttribute('data-legal-evaluation-visible');
+    };
+  }, []);
+
+  useEffect(() => {
+    const node = examStructureRef.current;
+    if (!node) return;
+
+    const setExamStructureVisible = (isVisible: boolean) => {
+      if (isVisible) {
+        document.body.setAttribute('data-legal-exam-structure-visible', 'true');
+      } else {
+        document.body.removeAttribute('data-legal-exam-structure-visible');
+      }
+    };
+
+    const updateExamStructureVisibility = () => {
+      const rect = node.getBoundingClientRect();
+      setExamStructureVisible(rect.top < window.innerHeight && rect.bottom > 0);
+    };
+
+    updateExamStructureVisibility();
+    window.addEventListener('scroll', updateExamStructureVisibility, { passive: true });
+    window.addEventListener('resize', updateExamStructureVisibility);
+
+    return () => {
+      window.removeEventListener('scroll', updateExamStructureVisibility);
+      window.removeEventListener('resize', updateExamStructureVisibility);
+      document.body.removeAttribute('data-legal-exam-structure-visible');
+    };
+  }, []);
+
+  useEffect(() => {
+    const node = journeySectionRef.current;
+    if (!node) return;
+
+    const setJourneyVisible = (isVisible: boolean) => {
+      if (isVisible) {
+        document.body.setAttribute('data-legal-journey-visible', 'true');
+      } else {
+        document.body.removeAttribute('data-legal-journey-visible');
+      }
+    };
+
+    const updateJourneyVisibility = () => {
+      const rect = node.getBoundingClientRect();
+      setJourneyVisible(rect.top < window.innerHeight && rect.bottom > 0);
+    };
+
+    updateJourneyVisibility();
+    window.addEventListener('scroll', updateJourneyVisibility, { passive: true });
+    window.addEventListener('resize', updateJourneyVisibility);
+
+    return () => {
+      window.removeEventListener('scroll', updateJourneyVisibility);
+      window.removeEventListener('resize', updateJourneyVisibility);
+      document.body.removeAttribute('data-legal-journey-visible');
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!isSampleOpen) return;
+
+    const scrollTop = window.scrollY;
+    scrollLockRef.current = {
+      top: scrollTop,
+      overflow: document.body.style.overflow,
+      position: document.body.style.position,
+      width: document.body.style.width,
+    };
+    document.body.style.overflow = 'hidden';
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${scrollTop}px`;
+    document.body.style.width = '100%';
+    document.body.setAttribute('data-legal-sample-open', 'true');
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsSampleOpen(false);
+      } else if (event.key === 'ArrowLeft') {
+        showPreviousSamplePage();
+      } else if (event.key === 'ArrowRight') {
+        showNextSamplePage();
+      }
+    };
+
+    const handleWheel = (event: WheelEvent) => {
+      event.preventDefault();
+
+      if (Math.abs(event.deltaY) < 18) return;
+
+      const now = window.performance.now();
+      if (now - lastWheelPageTurnRef.current < 520) return;
+
+      if (event.deltaY > 0) {
+        showNextSamplePage();
+      } else {
+        showPreviousSamplePage();
+      }
+
+      lastWheelPageTurnRef.current = now;
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('wheel', handleWheel, { passive: false });
+
+    return () => {
+      const lockedTop = scrollLockRef.current.top;
+      document.body.style.overflow = scrollLockRef.current.overflow;
+      document.body.style.position = scrollLockRef.current.position;
+      document.body.style.top = '';
+      document.body.style.width = scrollLockRef.current.width;
+      document.body.removeAttribute('data-legal-sample-open');
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('wheel', handleWheel);
+      window.scrollTo(0, lockedTop);
+    };
+  }, [isSampleOpen]);
 
   return (
     <div className="min-h-screen bg-white">
-      <LegalStudiesIntroVideoGate />
       <SEO
         title="HSC Legal Studies Tutoring"
         description="Master the Australian legal system through case analysis and critical evaluation at DA Tuition."
@@ -99,16 +402,17 @@ const LegalStudies = () => {
       <SubjectHero
         eyebrow="Years 11-12 Legal Studies"
         icon={Scale}
-        headlineWhite="Case law with clarity."
-        headlineGold="Essays with precision."
-        subtext="HSC Legal Studies through case analysis, statutory interpretation, and the LCMR essay method — built for confident, well-evidenced responses across Crime, Human Rights, Family, and Workplace."
-        proofPills={['Real case law', 'Marked feedback', 'Clear HSC pathway']}
+        headlineWhite="Legal Studies doesn't have"
+        headlineGold="to feel complicated."
+        subtext="With the right guidance, cases begin to connect, legislation starts to make sense and essay questions become far less intimidating. At DA, we work through it with you, building your understanding, strengthening your writing and helping you become a more confident Legal Studies student, one response at a time."
         exploreTargetId="legal-topics"
+        showExploreButton={false}
         placeholderLabel="Legal Studies classroom"
-        backgroundImageSrc="/images/subjects/legal-studies/hero-background.png"
+        backgroundImageSrc="/images/subjects/legal-studies/hero-background-full.png"
         backgroundImageAlt="DA Tuition Legal Studies classroom"
-        backgroundPosition="right center"
-        backgroundScale={1.23}
+        backgroundPosition="center center"
+        backgroundFit="contain"
+        backgroundScale={1.15}
       />
 
       <TrustedSchoolsStrip schools={legalTrustedSchools} className="subject-school-strip-compact" />
@@ -120,206 +424,245 @@ const LegalStudies = () => {
         variant="legal"
       />
 
-      {/* Learning Formats Callout */}
-      <section className="py-12">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-gradient-to-r from-purple-50 to-indigo-50 rounded-2xl p-8 border border-purple-200">
-            <div className="flex items-start">
-              <Info className="w-6 h-6 text-purple-600 mt-1 mr-3 flex-shrink-0" />
+      {/* Evaluation Criteria */}
+      <section ref={evaluationSectionRef} className="legal-evaluation-section" aria-label="Evaluation Criteria">
+        <div className="legal-evaluation-inner">
+          <div className="legal-evaluation-grid">
+            <div className="legal-method-panel">
+              <div className="legal-panel-heading">
+                <span className="legal-heading-medallion">
+                  <Landmark aria-hidden="true" />
+                </span>
+                <div>
+                  <h3>Master the LCMID Method</h3>
+                  <i aria-hidden="true" />
+                </div>
+              </div>
+              <p className="legal-method-intro">
+                The key to Band 6 Legal Studies essays is the LCMID structure. We teach students to integrate
+                these elements into sophisticated legal analysis.
+              </p>
+
+              <div className="legal-method-list">
+                {lcmidMethod.map(({ letter, title, description, Icon }) => (
+                  <div className="legal-method-item" key={letter}>
+                    <span className="legal-letter-medallion">{letter}</span>
+                    <Icon className="legal-method-icon" aria-hidden="true" />
+                    <div>
+                      <h4>{title}</h4>
+                      <p>{description}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="legal-criteria-panel">
+              <div className="legal-panel-heading">
+                <span className="legal-heading-medallion">
+                  <Landmark aria-hidden="true" />
+                </span>
+                <div>
+                  <h3>Evaluation Criteria</h3>
+                  <i aria-hidden="true" />
+                </div>
+              </div>
+
+              <div className="legal-criteria-list">
+                {evaluationCriteria.map(({ letter, title, question }, index) => (
+                  <div className="legal-criteria-item" key={`${letter}-${title}`}>
+                    <span className="legal-letter-medallion">{letter}</span>
+                    <h4>{title}</h4>
+                    <p>{question}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Exam Structure */}
+      <section ref={examStructureRef} className="legal-exam-structure-section" aria-labelledby="legal-exam-structure-title">
+        <div className="legal-exam-structure-inner">
+          <div className="legal-exam-structure-heading">
+            <h2 id="legal-exam-structure-title">Get to Know the Structure of Your Exam</h2>
+            <div className="legal-exam-flip-prompt">
+              <span aria-hidden="true" />
               <div>
-                <h3 className="text-xl font-bold text-brand-midnight mb-2">Available in Small Groups & Classes</h3>
-                <p className="text-brand-midnight/80 mb-4">
-                  Legal Studies at DA Tuition is offered in both small group tutoring (3-5 students) and classes.
-                  Small groups excel for mock trials and case debates, while classes provide moot court competitions
-                  and timed legal essay practice under exam conditions.
-                </p>
-                <Link to="/learning-formats">
-                  <Button variant="outline" className="group">
-                    Learn About Our Learning Formats
-                    <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-                  </Button>
-                </Link>
+                <RotateCcw aria-hidden="true" />
+                <strong>Flip a card for study tips</strong>
               </div>
+              <span aria-hidden="true" />
             </div>
+          </div>
+
+          <div className="legal-exam-card-grid">
+            {examStructureCards.map(({ title, topic, Icon, tone, tips }) => (
+                <button
+                  type="button"
+                  key={title}
+                  className={`legal-exam-card legal-exam-card--${tone}`}
+                  aria-label={`Hover or focus to show study tips for ${title}`}
+                >
+                  <span className="legal-exam-card-shell">
+                    <span className="legal-exam-card-face legal-exam-card-face--front">
+                      <span className="legal-exam-card-icon">
+                        <Icon aria-hidden="true" />
+                      </span>
+                      <span className="legal-exam-card-copy">
+                        <span className="legal-exam-card-title">{title}</span>
+                        <span className="legal-exam-card-rule" aria-hidden="true">
+                          <i />
+                        </span>
+                        <span className="legal-exam-card-topic">{topic}</span>
+                      </span>
+                    </span>
+
+                    <span className="legal-exam-card-face legal-exam-card-face--back">
+                      <span className="legal-exam-card-icon">
+                        <Icon aria-hidden="true" />
+                      </span>
+                      <span className="legal-exam-card-back-heading">
+                        <span className="legal-exam-card-title">{title}</span>
+                        <span className="legal-exam-card-topic">{topic}</span>
+                      </span>
+                      <ul>
+                        {tips.map((tip) => (
+                          <li key={tip}>{tip}</li>
+                        ))}
+                      </ul>
+                    </span>
+                  </span>
+                </button>
+              ))}
+          </div>
+
+          <div className="legal-exam-time">
+            <span aria-hidden="true" />
+            <strong>3 hours + 5 minutes reading time exam</strong>
+            <span aria-hidden="true" />
           </div>
         </div>
       </section>
 
-      {/* HSC Legal Studies Topics */}
-      <section id="legal-topics" className="py-16 bg-gray-50">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-center text-brand-midnight mb-4">
-            HSC Legal Studies Core & Options
-          </h2>
-          <p className="text-center text-brand-midnight/80 mb-12 max-w-2xl mx-auto">
-            Comprehensive coverage of core crime module and popular option topics
-          </p>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {topics.map((topic, index) => (
-              <div key={index} className="bg-white rounded-xl shadow-lg p-6">
-                <h3 className="text-xl font-bold text-purple-600 mb-4">{topic.module}</h3>
-                <ul className="space-y-2">
-                  {topic.content.map((item, idx) => (
-                    <li key={idx} className="flex items-start">
-                      <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 mr-2 flex-shrink-0" />
-                      <span className="text-sm text-brand-midnight/80">{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
+      {/* Legal Studies Resource Preview */}
+      <section ref={accessSectionRef} className="legal-access-section" aria-labelledby="legal-access-title">
+        <div className="legal-access-shell">
+          <div className="legal-access-visual">
+            <img
+              src="/images/subjects/legal-studies/exclusive-access-preview-compact.png"
+              alt="Exclusive access to Legal Studies state rank notes and sample essays"
+              className="legal-access-image"
+            />
+            <img
+              src="/images/subjects/legal-studies/exclusive-access-preview-compact.png"
+              alt=""
+              className="legal-book-pulse-image"
+              aria-hidden="true"
+            />
+            <button
+              type="button"
+              className="legal-preview-button legal-preview-button--book"
+              onClick={openSample}
+              aria-label="Open the Legal Studies sample by clicking the book"
+            />
+            <button
+              type="button"
+              className="legal-preview-button legal-preview-button--badge"
+              onClick={openSample}
+              aria-label="Click to view the Legal Studies sample"
+            >
+              <span className="legal-preview-badge-label">Click<br />To View</span>
+            </button>
           </div>
-        </div>
-      </section>
-
-      {/* Legal Skills & LCMR Method */}
-      <section className="py-16">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-center text-brand-midnight mb-12">
-            Legal Thinking & Essay Excellence
-          </h2>
-
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-            <div>
-              <h3 className="text-2xl font-bold text-brand-midnight mb-6">Master the LCMR Method</h3>
-              <p className="text-brand-midnight/80 mb-6">
-                The key to Band 6 Legal Studies essays is the LCMR structure - Legislation, Cases, Media, and
-                Reform. We teach students to seamlessly integrate these elements for sophisticated legal analysis.
-              </p>
-              <div className="space-y-4">
-                <div className="flex items-start">
-                  <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
-                    <span className="text-purple-600 font-bold">L</span>
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-brand-midnight">Legislation</h4>
-                    <p className="text-brand-midnight/80 text-sm">Cite relevant statutes and explain their application</p>
-                  </div>
-                </div>
-                <div className="flex items-start">
-                  <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
-                    <span className="text-purple-600 font-bold">C</span>
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-brand-midnight">Cases</h4>
-                    <p className="text-brand-midnight/80 text-sm">Use landmark cases to illustrate legal principles</p>
-                  </div>
-                </div>
-                <div className="flex items-start">
-                  <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
-                    <span className="text-purple-600 font-bold">M</span>
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-brand-midnight">Media</h4>
-                    <p className="text-brand-midnight/80 text-sm">Incorporate current examples and contemporary issues</p>
-                  </div>
-                </div>
-                <div className="flex items-start">
-                  <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
-                    <span className="text-purple-600 font-bold">R</span>
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-brand-midnight">Reform</h4>
-                    <p className="text-brand-midnight/80 text-sm">Evaluate effectiveness and suggest improvements</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="space-y-6">
-              <div className="bg-white rounded-xl shadow-lg p-6">
-                <h4 className="text-xl font-bold text-brand-midnight mb-4">Essential Legal Skills</h4>
-                <ul className="space-y-2">
-                  {legalSkills.map((skill, index) => (
-                    <li key={index} className="flex items-start">
-                      <Scale className="w-5 h-5 text-purple-600 mt-0.5 mr-2 flex-shrink-0" />
-                      <span className="text-brand-midnight/80">{skill}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Assessment Types */}
-      <section className="py-16 bg-gradient-to-br from-purple-50 to-indigo-50">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-center text-brand-midnight mb-12">
-            HSC Assessment Preparation
-          </h2>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {assessmentFocus.map((assessment, index) => (
-              <div key={index} className="bg-white rounded-xl p-6 shadow-lg">
-                <Gavel className="w-8 h-8 text-purple-600 mb-3" />
-                <h3 className="text-lg font-bold text-brand-midnight mb-2">{assessment.type}</h3>
-                <p className="text-sm text-brand-midnight/80">{assessment.tips}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Case Law Focus */}
-      <section className="py-16">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-center text-brand-midnight mb-12">
-            Landmark Cases & Legal Principles
-          </h2>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="bg-white rounded-xl p-6 shadow-lg">
-              <Shield className="w-12 h-12 text-purple-600 mb-4" />
-              <h3 className="text-xl font-bold text-brand-midnight mb-3">Criminal Law</h3>
-              <p className="text-brand-midnight/80">
-                Master key cases like R v Blaue, Dietrich v The Queen, and understand principles of criminal
-                responsibility, defences, and sentencing.
-              </p>
-            </div>
-
-            <div className="bg-white rounded-xl p-6 shadow-lg">
-              <BookOpen className="w-12 h-12 text-indigo-600 mb-4" />
-              <h3 className="text-xl font-bold text-brand-midnight mb-3">Human Rights</h3>
-              <p className="text-brand-midnight/80">
-                Explore international instruments, Australian cases, and contemporary issues in asylum seekers,
-                Indigenous rights, and civil liberties.
-              </p>
-            </div>
-
-            <div className="bg-white rounded-xl p-6 shadow-lg">
-              <Scale className="w-12 h-12 text-blue-600 mb-4" />
-              <h3 className="text-xl font-bold text-brand-midnight mb-3">Law Reform</h3>
-              <p className="text-brand-midnight/80">
-                Evaluate the effectiveness of law reform agencies, understand the process of legal change,
-                and analyze contemporary reform issues.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Success Story */}
-      <section className="py-16 bg-gray-50">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12">
-            <div className="text-center mb-6">
-              <div className="w-20 h-20 bg-gradient-to-br from-purple-600 to-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Quote className="w-10 h-10 text-white" />
-              </div>
-              <h3 className="text-2xl font-bold text-brand-midnight mb-2">From Confusion to Clarity</h3>
-            </div>
-            <blockquote className="text-lg text-brand-midnight/80 italic text-center mb-6">
-              "Legal Studies seemed overwhelming until I joined DA Tuition. The LCMR method transformed my
-              essay writing, and the mock trials made law come alive. I went from struggling with 60s to
-              achieving Band 6. The systematic approach to case analysis was a game-changer."
-            </blockquote>
-            <p className="text-center text-brand-midnight/80">
-              <strong>Sarah Mitchell</strong> - Band 6 in Legal Studies, now studying Law at USYD
+          <div className="legal-access-copy sr-only">
+            <h2 id="legal-access-title">Exclusive Access: State Rank Notes and Sample Essays</h2>
+            <p id="legal-access-description">
+              Click the Legal Studies book or the Click to View badge to open the sample module preview.
             </p>
           </div>
+        </div>
+      </section>
+
+      <LegalSyllabusQuiz />
+
+      <LegalTransformationSteps />
+
+      {/* Legal Studies Journey */}
+      <section ref={journeySectionRef} className="legal-journey-section" aria-labelledby="legal-journey-title">
+        <div className="legal-journey-inner">
+          <h2 id="legal-journey-title">What Legal Studies feels like at DA</h2>
+
+          <div className="legal-journey-map" aria-label="Five step Legal Studies learning path">
+            <svg
+              className="legal-journey-path"
+              viewBox="0 0 1000 122"
+              preserveAspectRatio="none"
+              aria-hidden="true"
+            >
+              <defs>
+                <filter id="legalJourneyGlow" x="-12%" y="-70%" width="124%" height="240%">
+                  <feGaussianBlur stdDeviation="4.8" result="blur" />
+                  <feColorMatrix
+                    in="blur"
+                    type="matrix"
+                    values="1 0 0 0 1 0 1 0 0 0.74 0 0 1 0 0.18 0 0 0 0.95 0"
+                    result="goldGlow"
+                  />
+                  <feMerge>
+                    <feMergeNode in="goldGlow" />
+                    <feMergeNode in="SourceGraphic" />
+                  </feMerge>
+                </filter>
+              </defs>
+              <path
+                className="legal-journey-path-base"
+                d="M91 23 a38 38 0 1 1 0 76 a38 38 0 1 1 0 -76 M129 61 L258 61 M296 23 a38 38 0 1 1 0 76 a38 38 0 1 1 0 -76 M334 61 L462 61 M500 23 a38 38 0 1 1 0 76 a38 38 0 1 1 0 -76 M538 61 L666 61 M704 23 a38 38 0 1 1 0 76 a38 38 0 1 1 0 -76 M742 61 L871 61 M909 23 a38 38 0 1 1 0 76 a38 38 0 1 1 0 -76"
+                pathLength="1000"
+              />
+              <path
+                className="legal-journey-path-streak"
+                d="M91 23 a38 38 0 1 1 0 76 a38 38 0 1 1 0 -76 M129 61 L258 61 M296 23 a38 38 0 1 1 0 76 a38 38 0 1 1 0 -76 M334 61 L462 61 M500 23 a38 38 0 1 1 0 76 a38 38 0 1 1 0 -76 M538 61 L666 61 M704 23 a38 38 0 1 1 0 76 a38 38 0 1 1 0 -76 M742 61 L871 61 M909 23 a38 38 0 1 1 0 76 a38 38 0 1 1 0 -76"
+                pathLength="1000"
+                filter="url(#legalJourneyGlow)"
+              />
+              {[194, 398, 602, 806].map((x) => (
+                <rect
+                  key={x}
+                  className="legal-journey-diamond"
+                  x={x - 4}
+                  y="57"
+                  width="8"
+                  height="8"
+                  transform={`rotate(45 ${x} 61)`}
+                />
+              ))}
+            </svg>
+
+            <div className="legal-journey-steps">
+              {legalJourneySteps.map((step) => (
+                <article className="legal-journey-step" key={step.number}>
+                  <div className="legal-journey-number">{step.number}</div>
+                  <h3>{step.title}</h3>
+                  <div className="legal-journey-rule" aria-hidden="true">
+                    <span />
+                    <i />
+                    <span />
+                  </div>
+                  <p>{step.description}</p>
+                </article>
+              ))}
+            </div>
+          </div>
+
+          <p className="legal-journey-reassurance">You don't have to know everything before you walk through the door.</p>
+          <p className="legal-journey-copy">
+            Every student's journey with Legal Studies looks a little different. Some may need more support
+            understanding the content, while others are ready to strengthen their writing, exam technique or use of
+            evidence. We take the time to understand what each student needs, build on what they already do well and
+            guide them forward at a pace that helps them feel supported, capable and confident.
+          </p>
         </div>
       </section>
 
@@ -346,6 +689,62 @@ const LegalStudies = () => {
           </div>
         </div>
       </section>
+
+      {isSampleOpen && (
+        <div
+          className="legal-sample-overlay"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Legal Studies sample preview"
+          onClick={() => setIsSampleOpen(false)}
+        >
+          <div className="legal-sample-frame" onClick={(event) => event.stopPropagation()}>
+            <img
+              src={getLegalSamplePageSrc(samplePage)}
+              alt={`DA Legal Studies sample page ${samplePage} of ${LEGAL_SAMPLE_PAGE_COUNT}`}
+              className="legal-sample-page"
+            />
+          </div>
+          <button
+            type="button"
+            className="legal-sample-nav legal-sample-nav--prev"
+            onClick={(event) => {
+              event.stopPropagation();
+              showPreviousSamplePage();
+            }}
+            disabled={samplePage === 1}
+            aria-label="Previous sample page"
+          >
+            <ChevronLeft aria-hidden="true" />
+          </button>
+          <button
+            type="button"
+            className="legal-sample-nav legal-sample-nav--next"
+            onClick={(event) => {
+              event.stopPropagation();
+              showNextSamplePage();
+            }}
+            disabled={samplePage === LEGAL_SAMPLE_PAGE_COUNT}
+            aria-label="Next sample page"
+          >
+            <ChevronRight aria-hidden="true" />
+          </button>
+          <div className="legal-sample-count" aria-live="polite">
+            {samplePage} / {LEGAL_SAMPLE_PAGE_COUNT}
+          </div>
+            <button
+              type="button"
+              className="legal-sample-close"
+              onClick={(event) => {
+                event.stopPropagation();
+                setIsSampleOpen(false);
+              }}
+              aria-label="Close Legal Studies sample preview"
+            >
+              <X aria-hidden="true" />
+            </button>
+        </div>
+      )}
 
       <FooterNew />
     </div>
