@@ -1210,7 +1210,7 @@ const BookInterview = () => {
           {/* Trust strip — understated */}
           {step < 3 && (
             <div className="mt-6 flex flex-wrap items-center justify-center gap-x-8 gap-y-2">
-              {['20+ years experience', '650+ students helped', 'Small groups of 3–5'].map((t, i, arr) => (
+              {['20+ years experience', '1,500+ students helped', 'Small groups of 3–5'].map((t, i, arr) => (
                 <div key={t} className="flex items-center gap-6">
                   <span className="text-[11px]" style={{ color: `${C.text}42`, letterSpacing: '0.04em' }}>
                     {t}

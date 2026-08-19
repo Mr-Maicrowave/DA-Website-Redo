@@ -7,6 +7,7 @@ const featureCss = readFileSync(new URL('./maths-ambient-motion.css', import.met
 const heroSource = readFileSync(new URL('../../components/subjects/SubjectHero.tsx', import.meta.url), 'utf8');
 const mathsSource = readFileSync(new URL('../../pages/subjects/Mathematics.tsx', import.meta.url), 'utf8');
 const mathematicsComponent = mathsSource.slice(mathsSource.indexOf('const Mathematics = () => {'));
+const guidedJourneyPanelSource = readFileSync(new URL('../graph-lab/GuidedJourneyPanel.tsx', import.meta.url), 'utf8');
 
 test('exports only the three approved ambient concepts', () => {
   for (const component of ['NetworkAmbientMoment', 'DerivativeAmbientMoment', 'VectorAmbientMoment']) {
@@ -97,27 +98,34 @@ test('each mathematical scene exposes its derivation rather than decorative moti
   assert.match(featureSource, /maths-vector-ambient__projection/);
 });
 
-test('normal Mathematics route mounts exactly three passive ambient moments', () => {
+test('normal Mathematics route distributes three passive ambient moments beside later content', () => {
   assert.doesNotMatch(heroSource, /visualOverlay/);
   assert.doesNotMatch(mathematicsComponent, /isMathsAmbientPreview|motionPreview/);
   assert.equal((mathematicsComponent.match(/<NetworkAmbientMoment\s+passive\s*\/>/g) ?? []).length, 1);
   assert.equal((mathematicsComponent.match(/<DerivativeAmbientMoment\s+passive\s*\/>/g) ?? []).length, 1);
   assert.equal((mathematicsComponent.match(/<VectorAmbientMoment\s+passive\s*\/>/g) ?? []).length, 1);
+  assert.ok(mathematicsComponent.indexOf('<NetworkAmbientMoment passive />') > mathematicsComponent.indexOf('aria-label="Mathematics page sections"'));
+  assert.ok(mathematicsComponent.indexOf('<NetworkAmbientMoment passive />') < mathematicsComponent.indexOf('<ConfidenceJourney'));
+  assert.ok(mathematicsComponent.indexOf('<VectorAmbientMoment passive />') < mathematicsComponent.indexOf('<HscMathsPathway />'));
+  assert.ok(mathematicsComponent.indexOf('<DerivativeAmbientMoment passive />') > mathematicsComponent.indexOf('<MathsGraphLabInvitation />'));
+  assert.ok(mathematicsComponent.indexOf('<DerivativeAmbientMoment passive />') < mathematicsComponent.indexOf('Student feedback placeholder'));
   assert.doesNotMatch(mathematicsComponent, /<(Sine|Integral)MotionStage\s*\/>/);
   assert.match(featureSource, /side="right"[\s\S]*side="left"[\s\S]*side="right"/);
 });
 
-test('live page keeps one Fourier signature and replaces legacy activities with static teaching proof', () => {
+test('live page omits the optional Fourier enrichment and keeps the teaching proof', () => {
   assert.match(mathsSource, /const SHOW_LEGACY_MATHS_INTERACTIONS = false/);
-  assert.equal((mathematicsComponent.match(/<FourierDrawing\s*\/>/g) ?? []).length, 1);
+  assert.equal((mathematicsComponent.match(/<FourierDrawing\s*\/>/g) ?? []).length, 0);
+  assert.doesNotMatch(mathematicsComponent, /How can simple rotations draw a picture\?|id="fourier-drawing"/);
+  assert.doesNotMatch(guidedJourneyPanelSource, /\/subjects\/mathematics#fourier-drawing|optional Fourier enrichment/i);
   assert.doesNotMatch(mathsSource, /Now take the picture apart|href="#fourier-waves"/);
   assert.match(mathematicsComponent, /SHOW_LEGACY_MATHS_INTERACTIONS \? <BasketballCalculusJourney \/> : null/);
   assert.match(mathematicsComponent, /SHOW_LEGACY_MATHS_INTERACTIONS \? <FourierDecomposition \/> : null/);
   assert.match(mathematicsComponent, /\{SHOW_LEGACY_MATHS_INTERACTIONS \? \([\s\S]*id="math-method"[\s\S]*id="maths-interactive"[\s\S]*\) : null\}/);
   assert.match(mathematicsComponent, /<MathsTeachingProof\s*\/>/);
   assert.match(mathematicsComponent, /<MathsGraphLabInvitation\s*\/>/);
-  assert.match(mathematicsComponent, /\['How learning changes', '#math-teaching-proof'\]/);
-  assert.match(mathematicsComponent, /\['Graphing lab', '\/maths-graph-lab'\]/);
+  assert.match(mathematicsComponent, /\{ label: 'How learning changes', href: '#math-teaching-proof' \}/);
+  assert.match(mathematicsComponent, /\{ label: 'Graphing lab', href: '\/maths-graph-lab', opensPage: true \}/);
 });
 
 test('below the safe floating threshold, moments render in document flow instead of floating over content', () => {

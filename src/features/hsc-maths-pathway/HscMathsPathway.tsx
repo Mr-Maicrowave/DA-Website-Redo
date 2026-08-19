@@ -43,7 +43,7 @@ const ROUTE_SEGMENTS: Record<HscStreamId, string> = {
 
 function StreamDetails({ stream, headingId, compact = false }: { stream: HscStream; headingId: string; compact?: boolean }) {
   return (
-    <div className={compact ? 'px-4 pb-5 pt-2' : 'hsc-pathway-detail-content lg:pl-10'}>
+    <div className={compact ? 'px-4 pb-5 pt-2' : 'hsc-pathway-detail-content lg:pl-6 xl:pl-10'}>
       <p
         className="inline-block border-b-2 pb-1 text-xs font-black uppercase tracking-[0.12em] text-[#071629]"
         style={{ borderColor: stream.color }}
@@ -98,7 +98,7 @@ export function HscMathsPathway(): JSX.Element {
   return (
     <section
       id="hsc-maths"
-      className="px-5 pb-20 pt-52 text-[#071629] lg:px-8 xl:pt-20"
+      className="scroll-mt-16 px-5 pb-20 pt-20 text-[#071629] lg:px-8"
       style={{
         background: 'linear-gradient(180deg, #fffdf8 0px, #f5f2eb 16px, #f6ecd9 32px, #fff6e7 56px)',
       }}
@@ -116,8 +116,8 @@ export function HscMathsPathway(): JSX.Element {
           </p>
         </div>
 
-        <div className="hsc-pathway-desktop-card mt-12 hidden overflow-hidden rounded-2xl border border-[#071629]/20 bg-[#fffdf8] xl:mt-7 xl:grid xl:grid-cols-[0.72fr_1.15fr_0.9fr]">
-          <aside className="hsc-pathway-guidance m-8 border-r border-[#c9921b]/55 py-8 pr-8 xl:m-10 xl:pr-10" aria-label="HSC course selection guidance">
+        <div className="hsc-pathway-desktop-card mt-10 hidden overflow-hidden rounded-2xl border border-[#071629]/20 bg-[#fffdf8] lg:grid lg:grid-cols-[1.15fr_0.85fr] xl:mt-7 xl:grid-cols-[0.72fr_1.15fr_0.9fr]">
+          <aside className="hsc-pathway-guidance hidden border-r border-[#c9921b]/55 py-8 xl:m-10 xl:block xl:pr-10" aria-label="HSC course selection guidance">
             <p className="font-serif text-4xl font-medium tracking-[-0.04em] text-[#071629]">HSC Maths</p>
             <p className="mt-4 text-sm leading-7 text-[#40516b]">
               Already enrolled? Select your course. Still deciding? We can help.
@@ -130,7 +130,7 @@ export function HscMathsPathway(): JSX.Element {
             </div>
           </aside>
 
-          <div className="hsc-pathway-map relative min-h-[38rem] border-r border-[#c9921b]/45 px-5 py-8 xl:px-8" aria-label="Choose an HSC mathematics stream">
+          <div className="hsc-pathway-map relative min-h-[38rem] border-r border-[#c9921b]/45 px-5 py-8 lg:ml-12 xl:ml-0 xl:px-8" aria-label="Choose an HSC mathematics stream">
             <motion.svg
               className="pointer-events-none absolute inset-0 z-10 h-full w-full"
               viewBox="0 0 520 560"
@@ -224,7 +224,7 @@ export function HscMathsPathway(): JSX.Element {
                     </span>
                     {isSelected ? (
                       <span
-                        className="ml-auto border px-2 py-1 text-xs font-black uppercase tracking-[0.08em] text-[#071629]"
+                        className="hidden border px-2 py-1 text-xs font-black uppercase tracking-[0.08em] text-[#071629] xl:ml-auto xl:inline"
                         style={{ borderColor: stream.color }}
                       >
                         Selected
@@ -250,7 +250,7 @@ export function HscMathsPathway(): JSX.Element {
 
           <motion.div
             key={activeStream.id}
-            className="hsc-pathway-details m-8 self-center xl:m-10"
+            className="hsc-pathway-details m-6 self-center xl:m-10"
             role="region"
             aria-labelledby={desktopHeadingId}
             initial={prefersReducedMotion ? false : { opacity: 0, y: hasSelected ? 8 : 0 }}
@@ -261,7 +261,7 @@ export function HscMathsPathway(): JSX.Element {
           </motion.div>
         </div>
 
-        <div className="mt-10 overflow-hidden border-y border-[#071629]/20 bg-[#fffdf8] xl:hidden">
+        <div className="mt-10 overflow-hidden border-y border-[#071629]/20 bg-[#fffdf8] lg:hidden">
           <div className="border-b border-[#071629]/15 px-4 py-5">
             <p className="font-serif text-3xl font-medium tracking-[-0.03em] text-[#071629]">HSC Maths</p>
             <p className="mt-2 text-sm leading-6 text-[#40516b]">Choose a course to see where it leads and how DA can help.</p>

@@ -1,8 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+import {
+  markMathsIntroPlayedThisAppLoad,
+  shouldShowMathsIntroOnThisAppLoad,
+} from './maths-intro-visit-state';
 
 export const MathsIntroVideoGate = () => {
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(shouldShowMathsIntroOnThisAppLoad);
   const [isClosing, setIsClosing] = useState(false);
   const skipButtonRef = useRef<HTMLButtonElement>(null);
 
@@ -15,6 +19,8 @@ export const MathsIntroVideoGate = () => {
 
   useEffect(() => {
     if (!isOpen) return;
+
+    markMathsIntroPlayedThisAppLoad();
 
     const previousBodyOverflow = document.body.style.overflow;
     const previousHtmlOverflow = document.documentElement.style.overflow;
@@ -39,6 +45,7 @@ export const MathsIntroVideoGate = () => {
       aria-labelledby="maths-intro-video-title"
       onKeyDown={(event) => {
         if (event.key === 'Tab') event.preventDefault();
+        if (event.key === 'Escape') dismiss();
       }}
     >
       <h2 id="maths-intro-video-title" className="sr-only">Mathematics introduction</h2>

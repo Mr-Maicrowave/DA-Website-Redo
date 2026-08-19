@@ -27,6 +27,7 @@ export type GuidedStep = {
   correctPredictionId: string;
   hint: string;
   experimentInstruction: string;
+  observation: string;
   workedExplanation: string;
   unlockedParameters: ParameterKey[];
   targetValues: Partial<Record<ParameterKey, number>>;
@@ -46,6 +47,7 @@ export type GuidedProgress = {
   lastMode: GraphLabMode;
   stepIndex: number;
   completed: boolean;
+  reviewingStepIndex?: number;
   results: Partial<Record<string, StepResult>>;
 };
 
@@ -77,11 +79,12 @@ export const TRANSFORMATION_JOURNEY: GuidedStep[] = [
     familyId: 'parabola',
     formId: 'vertex',
     conceptId: 'parent-functions',
-    question: 'Which equation produces the basic parabola with its turning point at the origin?',
-    predictionOptions: [prediction('x-squared', '\\(y=x^2\\)'), prediction('x-cubed', '\\(y=x^3\\)'), prediction('absolute-x', '\\(y=|x|\\)')],
-    correctPredictionId: 'x-squared',
+    question: 'Use the plotted curve to identify the parent function. Which description matches it?',
+    predictionOptions: [prediction('smooth-u', 'A smooth U-shape with its turning point at the origin'), prediction('cubic-s', 'An S-shape passing through the origin'), prediction('absolute-v', 'A sharp V-shape with its point at the origin')],
+    correctPredictionId: 'smooth-u',
     hint: 'Look for the U-shaped parent graph with a smooth turning point.',
     experimentInstruction: 'Study the parent graph before any transformations are applied.',
+    observation: 'Notice the smooth turning point at (0, 0) and the symmetry on either side of the y-axis.',
     workedExplanation: 'The parent quadratic is \\(y=x^2\\). It has a turning point at \\((0,0)\\) and is symmetric about the \\(y\\)-axis.',
     unlockedParameters: [],
     targetValues: { a: 1, b: 1, c: 0, d: 0 },
@@ -98,6 +101,7 @@ export const TRANSFORMATION_JOURNEY: GuidedStep[] = [
     correctPredictionId: 'up-three',
     hint: '\\(d\\) is added after the function has produced its output. Think vertically.',
     experimentInstruction: 'Move \\(d\\) from \\(0\\) to \\(3\\) and watch the turning point.',
+    observation: 'Watch the turning point move from (0, 0) toward (0, 3).',
     workedExplanation: 'Adding \\(3\\) to every output translates the entire graph 3 units upward. Its turning point moves from \\((0,0)\\) to \\((0,3)\\).',
     unlockedParameters: ['d'],
     targetValues: { a: 1, b: 1, c: 0, d: 3 },
@@ -119,6 +123,7 @@ export const TRANSFORMATION_JOURNEY: GuidedStep[] = [
     correctPredictionId: 'reflect-narrower',
     hint: 'The sign controls orientation and \\(|a|\\) controls the vertical dilation.',
     experimentInstruction: 'Move \\(a\\) through \\(0.5\\), \\(2\\) and \\(-2\\). Compare width and opening direction.',
+    observation: 'Compare the opening direction first, then the distance from the turning point to the curve.',
     workedExplanation: 'The negative sign reflects the graph in the \\(x\\)-axis. Since \\(|a|=2\\), every output doubles, producing a vertical dilation and a visually narrower parabola.',
     unlockedParameters: ['a'],
     targetValues: { a: -2, b: 1, c: 0, d: 0 },
@@ -140,6 +145,7 @@ export const TRANSFORMATION_JOURNEY: GuidedStep[] = [
     correctPredictionId: 'right-four',
     hint: 'Inside transformations appear to work in the opposite direction to the sign you see.',
     experimentInstruction: 'Move \\(c\\) from \\(0\\) to \\(4\\) and follow the \\(x\\)-coordinate of the turning point.',
+    observation: 'Follow the turning point horizontally from x = 0 toward x = 4.',
     workedExplanation: 'The graph moves 4 units right. The squared input becomes zero when \\(x=4\\), so the turning point is \\((4,0)\\).',
     unlockedParameters: ['c'],
     targetValues: { a: 1, b: 1, c: 4, d: 0 },
@@ -161,6 +167,7 @@ export const TRANSFORMATION_JOURNEY: GuidedStep[] = [
     correctPredictionId: 'three-one-down',
     hint: 'Read the translation from the bracket and final constant, then use the sign of a.',
     experimentInstruction: 'Use \\(a\\), \\(c\\) and \\(d\\) together to reproduce \\(y=-2(x-3)^2+1\\).',
+    observation: 'Track the turning point first, then check whether the graph opens up or down.',
     workedExplanation: '\\(c=3\\) and \\(d=1\\) place the turning point at \\((3,1)\\). The negative \\(a\\) reflects the graph, so it opens downward; \\(|a|=2\\) makes it narrower.',
     unlockedParameters: ['a', 'c', 'd'],
     targetValues: { a: -2, b: 1, c: 3, d: 1 },
@@ -182,6 +189,7 @@ export const TRANSFORMATION_JOURNEY: GuidedStep[] = [
     correctPredictionId: 'same-rules',
     hint: 'The transformation structure \\(a f(x-c)+d\\) works for many parent functions.',
     experimentInstruction: 'Create the transformed V-shape and locate its sharp turning point.',
+    observation: 'Find the sharp turning point, then compare its position and orientation with the starting V-shape.',
     workedExplanation: 'The same structure applies. The turning point is \\((2,3)\\), the negative sign reflects the V in the \\(x\\)-axis, and the parent shape remains recognisably absolute value.',
     unlockedParameters: ['a', 'c', 'd'],
     targetValues: { a: -1, b: 1, c: 2, d: 3 },
@@ -203,6 +211,7 @@ export const TRANSFORMATION_JOURNEY: GuidedStep[] = [
     correctPredictionId: 'amplitude',
     hint: 'It measures the vertical distance from the midline to a maximum or minimum.',
     experimentInstruction: 'Use \\(a\\), \\(b\\), \\(c\\) and \\(d\\) to connect dilation, horizontal scaling and translations to sine terminology.',
+    observation: 'Watch the midline, peak height and spacing between matching points as you change one value at a time.',
     workedExplanation: 'For sine graphs, \\(|a|\\) is the amplitude, \\(b\\) controls the period, \\(c\\) is the phase shift and \\(d\\) moves the midline. These are the same transformation ideas with specialised names.',
     unlockedParameters: ['a', 'b', 'c', 'd'],
     targetValues: { a: 2, b: 2, c: 1, d: 1 },
@@ -227,6 +236,26 @@ export const evaluateExplanation = (step: GuidedStep, answers: Record<string, st
   Boolean(step.explanationFields?.length)
   && step.explanationFields!.every((field) => answers[field.id] === field.correctId)
 );
+
+export const resumeGuidedStep = (progress: GuidedProgress, stepIndex: number): GuidedProgress => {
+  const safeStepIndex = Math.max(0, Math.min(stepIndex, TRANSFORMATION_JOURNEY.length - 1));
+  return { ...progress, completed: false, stepIndex: safeStepIndex, reviewingStepIndex: safeStepIndex };
+};
+
+export const completeGuidedStep = (progress: GuidedProgress, result: StepResult): GuidedProgress => {
+  const step = TRANSFORMATION_JOURNEY[Math.min(progress.stepIndex, TRANSFORMATION_JOURNEY.length - 1)];
+  const results = { ...progress.results, [step.id]: result };
+  if (progress.reviewingStepIndex !== undefined) {
+    return { ...progress, completed: true, reviewingStepIndex: undefined, results };
+  }
+  const nextIndex = progress.stepIndex + 1;
+  return {
+    ...progress,
+    stepIndex: Math.min(nextIndex, TRANSFORMATION_JOURNEY.length - 1),
+    completed: nextIndex >= TRANSFORMATION_JOURNEY.length,
+    results,
+  };
+};
 
 export const hasReachedExperimentTarget = (
   step: GuidedStep,

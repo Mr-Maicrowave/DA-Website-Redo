@@ -7,7 +7,9 @@ import {
   evaluateExplanation,
   evaluatePrediction,
   hasReachedExperimentTarget,
+  completeGuidedStep,
   readGuidedState,
+  resumeGuidedStep,
   summariseMastery,
   writeGuidedState,
   type GuidedProgress,
@@ -27,6 +29,11 @@ test('every slider activity shows a target equation to reproduce', () => {
   assert.equal(sliderSteps.length, 6);
   assert.equal(sliderSteps.every((step) => Boolean(step.targetLatex)), true);
   assert.equal(TRANSFORMATION_JOURNEY.at(-1)?.targetLatex, 'y=2\\sin(2(x-1))+1');
+});
+
+test('each challenge directs attention to a visible graph feature', () => {
+  assert.equal(TRANSFORMATION_JOURNEY.every((step) => Boolean(step.observation?.trim())), true);
+  assert.equal(TRANSFORMATION_JOURNEY[1].observation, 'Watch the turning point move from (0, 0) toward (0, 3).');
 });
 
 test('combined and transfer challenges include an explanation stage', () => {
@@ -87,6 +94,28 @@ test('summarises concepts as secure, developing or revisit without a percentage'
   assert.equal(summary.find((item) => item.id === 'dilation-reflection')?.status, 'developing');
   assert.equal(summary.find((item) => item.id === 'horizontal-translation')?.status, 'revisit');
   assert.equal('percentage' in summary[0], false);
+});
+
+test('reopens one selected challenge and returns to the mastery summary after it is reviewed', () => {
+  const progress: GuidedProgress = {
+    version: 1,
+    hasChosenMode: true,
+    lastMode: 'guided',
+    stepIndex: 6,
+    completed: true,
+    results: { 'vertical-shift': { attempts: 2, predictionCorrect: false, explanationCorrect: false } },
+  };
+
+  const reopened = resumeGuidedStep(progress, 1);
+  assert.equal(reopened.completed, false);
+  assert.equal(reopened.stepIndex, 1);
+  assert.equal(reopened.reviewingStepIndex, 1);
+
+  const reviewed = completeGuidedStep(reopened, { attempts: 1, predictionCorrect: true, explanationCorrect: true });
+  assert.equal(reviewed.completed, true);
+  assert.equal(reviewed.stepIndex, 1);
+  assert.equal(reviewed.reviewingStepIndex, undefined);
+  assert.deepEqual(reviewed.results['vertical-shift'], { attempts: 1, predictionCorrect: true, explanationCorrect: true });
 });
 
 test('persists a versioned state and falls back safely when storage is malformed', () => {

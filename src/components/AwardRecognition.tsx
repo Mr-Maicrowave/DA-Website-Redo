@@ -136,7 +136,7 @@ const AwardRecognition = () => {
                 <div className="inline-flex items-center justify-center w-10 h-10 bg-blue-600 rounded-full mb-2">
                   <Users className="h-5 w-5 text-white" />
                 </div>
-                <div className="text-2xl font-bold text-blue-600 mb-1">10,000+</div>
+                <div className="text-2xl font-bold text-blue-600 mb-1">1,500+</div>
                 <div className="text-brand-midnight/80 font-medium text-sm">Students Helped</div>
                 <div className="text-xs text-brand-midnight/70">Since 2005</div>
               </div>
