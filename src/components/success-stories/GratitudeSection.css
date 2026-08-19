@@ -1,0 +1,172 @@
+.ss-gratitude {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  min-height: 90vh;
+  min-height: 90svh;
+  place-items: center;
+  overflow: hidden;
+  margin-bottom: clamp(-4rem, -4.5vw, -2.25rem);
+  padding: clamp(4.5rem, 7vh, 6.5rem) clamp(1.25rem, 5vw, 5rem) clamp(7rem, 10vw, 10rem);
+  border-radius: 0 0 50% 50% / 0 0 clamp(2.75rem, 5vw, 5.5rem) clamp(2.75rem, 5vw, 5.5rem);
+  background: radial-gradient(circle at 50% 32%, rgba(207, 158, 63, 0.1), transparent 38%), #fbf6ec;
+  box-shadow: 0 3px 0 rgba(198, 144, 37, 0.55);
+  isolation: isolate;
+}
+
+.ss-gratitude__content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  width: min(100%, 70rem);
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.ss-gratitude__label-wrap { display: flex; align-items: center; gap: 0.8rem; }
+.ss-gratitude__label-wrap > span { width: clamp(2rem, 4vw, 4rem); height: 1px; background: linear-gradient(90deg, transparent, rgba(174, 122, 32, 0.68)); }
+.ss-gratitude__label-wrap > span:last-child { transform: scaleX(-1); }
+
+.ss-gratitude__label {
+  margin: 0;
+  color: #a36f18;
+  font-family: var(--ss-font-structure);
+  font-size: clamp(0.75rem, 0.82vw, 0.9rem);
+  font-weight: 750;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+}
+
+.ss-gratitude__label::before { display: block; margin-bottom: 0.32rem; content: '✦'; font-size: 0.75rem; line-height: 1; }
+
+.ss-gratitude__heading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: clamp(1rem, 1.6vh, 1.35rem) 0 0;
+  font-family: var(--ss-font-display);
+  font-weight: 500;
+  letter-spacing: -0.035em;
+  line-height: 0.82;
+  text-wrap: balance;
+}
+
+.ss-gratitude__heading-mask { display: block; overflow: hidden; padding: 0.08em 0.08em 0.13em; }
+.ss-gratitude__heading-primary, .ss-gratitude__heading-secondary { display: block; }
+.ss-gratitude__heading-primary { color: var(--ss-navy); font-size: clamp(4rem, 7vw, 7.5rem); font-style: normal; }
+.ss-gratitude__heading-secondary { color: #a96f15; font-size: clamp(3.35rem, 6vw, 6.5rem); font-style: italic; font-weight: 400; }
+
+.ss-gratitude__headline-stroke {
+  width: min(44vw, 32rem);
+  height: auto;
+  margin-top: -0.25rem;
+  color: #bd8523;
+  overflow: visible;
+}
+
+.ss-gratitude__headline-stroke path { stroke-linecap: round; stroke-width: 2; vector-effect: non-scaling-stroke; }
+
+.ss-gratitude__items {
+  display: grid;
+  width: min(100%, 54rem);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin-top: clamp(1.35rem, 2.8vh, 2.3rem);
+}
+
+.ss-gratitude__item {
+  position: relative;
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  flex-direction: column;
+  padding: 0 clamp(0.8rem, 2vw, 1.8rem);
+}
+
+.ss-gratitude__item + .ss-gratitude__item::before {
+  position: absolute;
+  top: 0.1rem;
+  bottom: 0.1rem;
+  left: 0;
+  width: 1px;
+  background: rgba(174, 122, 32, 0.42);
+  content: '';
+}
+
+.ss-gratitude__item svg { width: clamp(1.7rem, 2.3vw, 2.35rem); height: auto; color: #b77e1d; stroke-width: 1.35; }
+.ss-gratitude__item p { display: flex; flex-direction: column; margin: 0.55rem 0 0; color: var(--ss-navy); font-family: var(--ss-font-structure); font-size: clamp(0.82rem, 1vw, 1rem); line-height: 1.45; }
+.ss-gratitude__item em, .ss-gratitude__message em { color: #a96f15; font-style: normal; }
+
+.ss-gratitude__message {
+  width: min(100%, 42rem);
+  margin: clamp(1.5rem, 3vh, 2.25rem) 0 0;
+  padding: 0.8rem clamp(1rem, 3vw, 2rem);
+  border-block: 1px solid rgba(174, 122, 32, 0.2);
+  background: rgba(255, 251, 242, 0.48);
+  color: var(--ss-navy);
+  font-family: var(--ss-font-structure);
+  font-size: clamp(0.95rem, 1.25vw, 1.16rem);
+  line-height: 1.5;
+}
+
+.ss-gratitude__closing { width: min(100%, 44rem); margin-top: clamp(1rem, 2.2vh, 1.7rem); }
+.ss-gratitude__closing img { display: block; width: 100%; height: auto; object-fit: contain; }
+
+.ss-gratitude__script {
+  position: absolute;
+  z-index: -1;
+  color: rgba(177, 128, 38, 0.055);
+  font-family: 'Caveat', cursive;
+  font-size: clamp(9rem, 20vw, 19rem);
+  line-height: 0.8;
+  pointer-events: none;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.ss-gratitude__script--left { top: 19%; left: -3%; transform: rotate(-8deg); }
+.ss-gratitude__script--right { right: -2%; bottom: 24%; transform: rotate(-11deg); }
+
+.ss-gratitude__spark {
+  position: absolute;
+  z-index: 1;
+  color: rgba(188, 133, 31, 0.38);
+  font-size: clamp(0.65rem, 1vw, 0.95rem);
+  pointer-events: none;
+  animation: ss-gratitude-spark-drift 8s ease-in-out infinite alternate;
+}
+
+.ss-gratitude__spark--one { top: 9%; left: 15%; }
+.ss-gratitude__spark--two { top: 18%; right: 13%; animation-delay: -2.5s; }
+.ss-gratitude__spark--three { right: 25%; bottom: 14%; animation-delay: -5s; }
+
+@keyframes ss-gratitude-spark-drift {
+  from { opacity: 0.22; transform: translate3d(0, 0, 0) scale(0.94); }
+  to { opacity: 0.5; transform: translate3d(4px, -8px, 0) scale(1.05); }
+}
+
+@media (max-width: 860px) {
+  .ss-gratitude { min-height: auto; padding-block: 5rem 8rem; }
+  .ss-gratitude__items { width: min(100%, 35rem); grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.5rem 0; }
+  .ss-gratitude__item:nth-child(3)::before { content: none; }
+}
+
+@media (max-width: 520px) {
+  .ss-gratitude { margin-bottom: -2.4rem; padding: 4rem 1.1rem 6.5rem; border-radius: 0 0 50% 50% / 0 0 2.8rem 2.8rem; }
+  .ss-gratitude__heading-primary { font-size: clamp(3.75rem, 19vw, 5rem); }
+  .ss-gratitude__heading-secondary { font-size: clamp(3rem, 15vw, 4.2rem); }
+  .ss-gratitude__headline-stroke { width: min(78vw, 25rem); }
+  .ss-gratitude__items { gap: 1.3rem 0; margin-top: 1.25rem; }
+  .ss-gratitude__item { padding-inline: 0.6rem; }
+  .ss-gratitude__item p { font-size: 0.79rem; }
+  .ss-gratitude__message { font-size: 0.9rem; }
+  .ss-gratitude__script { font-size: clamp(7rem, 38vw, 10rem); opacity: 0.65; }
+  .ss-gratitude__script--left { top: 20%; left: -12%; }
+  .ss-gratitude__script--right { right: -10%; bottom: 18%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ss-gratitude *, .ss-gratitude *::before, .ss-gratitude *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; }
+  .ss-gratitude__spark { display: none; }
+  .ss-gratitude path { stroke-dashoffset: 0 !important; }
+}

@@ -1579,22 +1579,39 @@
 .ss-parent-growth__layout {
   position: relative;
   z-index: 2;
-  display: grid;
-  grid-template-columns: minmax(15rem, 0.32fr) minmax(0, 0.68fr);
-  gap: clamp(3rem, 6vw, 7rem);
+  display: flex;
+  flex-direction: column;
   align-items: center;
+  gap: clamp(3rem, 5.5vw, 4.5rem);
+  width: min(calc(100% - 2rem), 100rem);
 }
 
-.ss-parent-growth__intro { max-width: 24rem; }
+.ss-parent-growth__intro {
+  max-width: 34rem;
+  text-align: center;
+}
 
 .ss-parent-growth__label {
-  margin: 0 0 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin: 0 0 0.85rem;
   color: #a87419;
   font-family: var(--ss-font-structure);
   font-size: clamp(0.67rem, 0.76vw, 0.78rem);
   font-weight: 750;
   letter-spacing: 0.15em;
   text-transform: uppercase;
+}
+
+.ss-parent-growth__label::before,
+.ss-parent-growth__label::after {
+  width: 2rem;
+  height: 1px;
+  background: currentColor;
+  content: '';
+  opacity: 0.62;
 }
 
 .ss-parent-growth__intro h2 {
@@ -1605,12 +1622,12 @@
   font-size: clamp(2.6rem, 4.1vw, 4.65rem);
   font-weight: 500;
   letter-spacing: -0.035em;
-  line-height: 0.98;
+  line-height: 0.9;
   text-wrap: balance;
 }
 
 .ss-parent-growth__intro h2 em {
-  margin-top: 0.2rem;
+  margin-top: 0;
   color: #bf8a20;
   font-family: var(--ss-font-display);
   font-weight: 400;
@@ -1620,13 +1637,14 @@
   display: block;
   width: 3.2rem;
   height: 2px;
-  margin: 1.65rem 0 1.75rem;
+  margin: 1.65rem auto 1.75rem;
   background: #c18d26;
   transform: rotate(-1.5deg);
 }
 
 .ss-parent-growth__support {
-  margin: 0;
+  margin: 0 auto;
+  max-width: 28rem;
   color: rgba(7, 27, 51, 0.8);
   font-family: var(--ss-font-structure);
   font-size: clamp(0.88rem, 1vw, 1rem);
@@ -1639,97 +1657,49 @@
   font-weight: 700;
 }
 
+/* The three flip cards, as one centred, evenly spaced row. Sizing and
+   the flip/tilt mechanics live in NoticeFlipCard.css — this only
+   arranges the row and its responsive behaviour. */
 .ss-parent-growth__notes {
-  display: flex;
-  align-items: center;
-  gap: clamp(1.1rem, 2vw, 2rem);
-  min-width: 0;
-}
-
-.ss-parent-note {
   position: relative;
   display: flex;
-  width: calc((100% - clamp(2.2rem, 4vw, 4rem)) / 3);
-  min-height: clamp(21rem, 26vw, 25rem);
-  flex: 1 1 0;
-  flex-direction: column;
-  padding: clamp(2.1rem, 2.6vw, 2.75rem) clamp(1.45rem, 2vw, 2.1rem) clamp(1.65rem, 2.2vw, 2.25rem);
-  background:
-    radial-gradient(circle at 78% 11%, rgba(189, 137, 32, 0.055) 0 0.7px, transparent 0.9px),
-    linear-gradient(145deg, rgba(255, 253, 246, 0.98), rgba(247, 238, 222, 0.97));
-  background-size: 18px 18px, auto;
-  box-shadow: 0 8px 7px rgba(75, 48, 16, 0.1), 0 22px 30px rgba(75, 48, 16, 0.07);
-  color: var(--ss-navy);
-  transform-origin: 50% 8%;
+  align-items: flex-start;
+  justify-content: center;
+  gap: clamp(1rem, 1.4vw, 1.5rem);
+  width: 100%;
 }
 
-.ss-parent-note--1 { align-self: flex-end; margin-top: 1.5rem; }
-.ss-parent-note--2 { align-self: flex-start; margin-bottom: 1.25rem; }
-.ss-parent-note--3 { align-self: center; margin-top: 2.5rem; }
-
-.ss-parent-note__tape {
+.ss-parent-growth__instruction {
   position: absolute;
-  top: -0.72rem;
+  bottom: calc(100% + clamp(1.25rem, 2vw, 1.8rem));
   left: 50%;
-  width: clamp(3.6rem, 5vw, 5.3rem);
-  height: 1.35rem;
-  background: rgba(222, 188, 121, 0.49);
-  box-shadow: inset 0 0 0 1px rgba(163, 118, 39, 0.08);
-  transform: translateX(-50%) rotate(-2deg);
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  width: max-content;
+  margin: 0;
+  color: rgba(7, 27, 51, 0.72);
+  font-family: var(--ss-font-structure, Inter, system-ui, sans-serif);
+  font-size: clamp(0.72rem, 0.85vw, 0.9rem);
+  font-weight: 450;
+  letter-spacing: 0.01em;
+  line-height: 1.35;
+  transform: translateX(-50%);
 }
 
-.ss-parent-note--2 .ss-parent-note__tape { transform: translateX(-50%) rotate(1.8deg); }
-.ss-parent-note--3 .ss-parent-note__tape { left: 56%; transform: translateX(-50%) rotate(-1deg); }
-
-.ss-parent-note__icon {
-  width: 2.1rem;
-  height: 2.1rem;
-  margin-bottom: 1.2rem;
-  color: #bc8720;
-  stroke-width: 1.35;
-}
-
-.ss-parent-note h3 {
-  margin: 0 0 1.2rem;
-  color: var(--ss-navy);
-  font-family: 'Caveat', cursive;
-  font-size: clamp(1.75rem, 2.1vw, 2.35rem);
-  font-weight: 600;
-  letter-spacing: -0.02em;
+.ss-parent-growth__instruction-icon {
+  color: #b77a13;
+  font-size: 1rem;
   line-height: 1;
 }
 
-.ss-parent-note blockquote {
-  margin: 0;
-  color: rgba(7, 27, 51, 0.82);
-  font-family: 'Caveat', cursive;
-  font-size: clamp(1.12rem, 1.35vw, 1.42rem);
-  font-style: normal;
-  font-weight: 500;
-  line-height: 1.38;
-  text-wrap: pretty;
+.ss-parent-growth__instruction-divider {
+  width: 1px;
+  height: 1.35rem;
+  background: rgba(7, 27, 51, 0.24);
 }
 
-.ss-parent-note footer {
-  display: grid;
-  gap: 0.2rem;
-  margin-top: auto;
-  padding-top: 1.6rem;
-  font-family: var(--ss-font-structure);
-}
-
-.ss-parent-note footer strong {
-  color: var(--ss-navy);
-  font-size: 0.72rem;
-  font-weight: 750;
-}
-
-.ss-parent-note footer span {
-  color: rgba(126, 87, 18, 0.76);
-  font-size: 0.62rem;
-  font-weight: 650;
-  letter-spacing: 0.04em;
-}
+.ss-parent-growth__instruction-mobile { display: none; }
 
 .ss-parent-growth__line-art {
   position: absolute;
@@ -1739,42 +1709,48 @@
 }
 
 .ss-parent-growth__line-art svg { width: 100%; height: 100%; stroke-width: 1; }
-.ss-parent-growth__line-art--heart { top: 13%; left: 31%; width: 3.4rem; height: 3.4rem; transform: rotate(-12deg); }
-.ss-parent-growth__line-art--sprout { right: 1.5%; bottom: 10%; width: 6rem; height: 6rem; transform: rotate(15deg); }
+.ss-parent-growth__line-art--heart { top: 6%; left: 5%; width: 3.4rem; height: 3.4rem; transform: rotate(-12deg); }
+.ss-parent-growth__line-art--sprout { right: 4%; bottom: 6%; width: 6rem; height: 6rem; transform: rotate(15deg); }
 
 @media (max-width: 1080px) {
-  .ss-parent-growth__layout { grid-template-columns: 1fr; }
-  .ss-parent-growth__intro { max-width: 34rem; }
   .ss-parent-growth__notes { max-width: 58rem; }
-  .ss-parent-note { min-height: 22rem; }
-  .ss-parent-growth__line-art--heart { top: 22%; left: auto; right: 8%; }
 }
 
-@media (max-width: 760px) {
+@media (max-width: 60rem) {
+  /* Three cards no longer stay comfortably readable at this width —
+     move to a swipeable, one-card-forward horizontal scroller. */
   .ss-parent-growth { padding-block: 4rem; }
-  .ss-parent-growth__layout { gap: 3.6rem; }
   .ss-parent-growth__intro h2 { font-size: clamp(2.65rem, 12vw, 4rem); }
+
   .ss-parent-growth__notes {
-    display: grid;
-    width: 100%;
-    max-width: 32rem;
-    gap: 2.4rem;
+    justify-content: flex-start;
+    gap: 1.25rem;
+    width: 100vw;
+    margin-inline: calc(50% - 50vw);
+    padding-inline: max(var(--ss-gutter), calc(50% - 12rem));
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: max(var(--ss-gutter), calc(50% - 12rem));
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
   }
-  .ss-parent-note {
-    width: min(94%, 27rem);
-    min-height: 19rem;
-    justify-self: center;
+
+  .ss-parent-growth__notes::-webkit-scrollbar { display: none; }
+
+  .ss-parent-growth__notes .notice-card {
+    flex: 0 0 auto;
+    width: min(88vw, 24rem);
+    scroll-snap-align: center;
   }
-  .ss-parent-note--1,
-  .ss-parent-note--2,
-  .ss-parent-note--3 { margin: 0; }
-  .ss-parent-note--1 { justify-self: start; }
-  .ss-parent-note--3 { justify-self: end; }
-  .ss-parent-growth__line-art--heart { top: 19%; right: 4%; }
+
+  .ss-parent-growth__instruction-desktop { display: none; }
+  .ss-parent-growth__instruction-mobile { display: inline; }
+
+  .ss-parent-growth__line-art--heart { top: 4%; right: 4%; left: auto; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .ss-parent-note { transform: none !important; }
+  .ss-parent-growth__notes { scroll-behavior: auto; }
 }
 
 /* A quiet response to the review carousel: retained notes and classroom

@@ -1,5 +1,7 @@
 import FooterNew from '@/components/FooterNew';
 import ReviewCard from '@/components/success-stories/ReviewCard';
+import NoticeFlipCard from '@/components/success-stories/NoticeFlipCard';
+import GratitudeSection from '@/components/success-stories/GratitudeSection';
 import NavigationNew from '@/components/NavigationNew';
 import SEO from '@/components/SEO';
 import { successStories, type SuccessStory } from '@/data/successStories';
@@ -7,7 +9,7 @@ import { testimonials } from '@/data/testimonials';
 import { googleReviews, type GoogleReview } from '@/data/googleReviews';
 import { successStoryReviewCards } from '@/data/successStoryReviewCards';
 import { AnimatePresence, motion, useReducedMotion, useScroll, useTransform, type MotionStyle, type MotionValue } from 'framer-motion';
-import { BookOpen, ChartNoAxesCombined, GraduationCap, Heart, Paperclip, Rocket, Sparkles, Sprout, Target, Trophy, type LucideIcon } from 'lucide-react';
+import { BookOpen, ChartNoAxesCombined, GraduationCap, Heart, Sparkles, Sprout, Target, Trophy } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState, type CSSProperties, type KeyboardEvent, type PointerEvent } from 'react';
 import { createPortal } from 'react-dom';
 import './SuccessStories.css';
@@ -658,13 +660,21 @@ type ParentReviewSource = {
 
 type ParentNote = ParentReviewSource & {
   theme: string;
+  frontHeading: string;
+  frontTitle: readonly [string, string];
+  frontSubtitle: string;
   quote: string;
-  icon: LucideIcon;
+  quoteLead: string;
+  quoteAccent: string;
+  frontSrc: string;
+  frontAlt: string;
+  backSrc: string;
+  backAlt: string;
 };
 
 const explicitParentGoogleReview: ParentReviewSource = {
   id: 'review-177',
-  reviewer: "Jenny's Cakery",
+  reviewer: 'Jenny’s Cakery',
   descriptor: 'Parent Google review',
   text: 'My son enjoys learning with Mrs Christina. She is very nice and makes learning fun.',
 };
@@ -692,20 +702,47 @@ const parentNoteRecipes = [
   {
     sourceId: 'review-177',
     theme: 'Enjoys learning',
+    frontHeading: 'WHAT PARENTS NOTICE · 01',
+    frontTitle: ['Enjoys', 'learning'],
+    frontSubtitle: 'JOY IN DISCOVERY',
     quote: explicitParentGoogleReview.text,
-    icon: Heart,
+    quoteLead: 'My son enjoys learning with Mrs Christina. She is very nice and makes',
+    quoteAccent: 'learning fun.',
+    descriptor: 'PARENT GOOGLE REVIEW',
+    frontSrc: '/images/success-stories/notice-enjoys-learning-front-corrected.png',
+    frontAlt: 'Illustration of an open storybook with a golden ribbon of light swirling up from its pages',
+    backSrc: '/images/success-stories/notice-enjoys-learning-back.png?v=20260819-text-overlay',
+    backAlt: 'Reverse of the card: a glowing lightbulb, star and sparkles rising from an open golden book',
   },
   {
     sourceId: 'a-parent-google-review-nicholas-and-kristina',
     theme: 'Better motivation',
+    frontHeading: 'WHAT PARENTS NOTICE · 02',
+    frontTitle: ['Better', 'motivation'],
+    frontSubtitle: 'DRIVEN TO IMPROVE',
     quote: 'This has helped to generate the motivation, willingness, enthusiasm, discipline and commitment required to achieve consistent excellent academic results.',
-    icon: Rocket,
+    quoteLead: 'This has helped to generate the motivation, willingness, enthusiasm, discipline and commitment required to achieve',
+    quoteAccent: 'consistent excellent academic results.',
+    descriptor: 'PARENT OF NICHOLAS AND KRISTINA',
+    frontSrc: '/images/success-stories/notice-better-motivation-front-corrected.png',
+    frontAlt: 'Illustration of a glowing orange staircase spiralling up to a glowing orb',
+    backSrc: '/images/success-stories/notice-better-motivation-back.png?v=20260819-text-overlay',
+    backAlt: 'Reverse of the card: a glowing target with an arrow at its centre, circled by an orbiting ring',
   },
   {
     sourceId: 'a-parents-letter-of-gratitude',
     theme: 'Growing responsibility',
+    frontHeading: 'WHAT PARENTS NOTICE · 03',
+    frontTitle: ['Growing', 'responsibility'],
+    frontSubtitle: 'CONFIDENCE IN ACTION',
     quote: 'Over time, the defeated child who once felt ashamed to ask questions became a young man with confidence, responsibility, and genuine pride in himself.',
-    icon: Sprout,
+    quoteLead: 'Over time, the defeated child who once felt ashamed to ask questions became a young man with',
+    quoteAccent: 'confidence, responsibility, and genuine pride in himself.',
+    descriptor: 'DA PARENT',
+    frontSrc: '/images/success-stories/notice-growing-responsibility-front-corrected.png',
+    frontAlt: 'Illustration of a stack of glass books topped with a graduation cap and tassel',
+    backSrc: '/images/success-stories/notice-growing-responsibility-back.png?v=20260819-text-overlay',
+    backAlt: 'Reverse of the card: a desk lamp, potted plant and notebook glowing softly in green and gold tones',
   },
 ] as const;
 
@@ -727,8 +764,8 @@ const ParentGrowthNotes = ({ reduceMotion }: { reduceMotion: boolean | null }) =
     <div className="ss-container ss-parent-growth__layout">
       <motion.header
         className="ss-parent-growth__intro"
-        initial={reduceMotion ? false : { opacity: 0, x: -20 }}
-        whileInView={{ opacity: 1, x: 0 }}
+        initial={reduceMotion ? false : { opacity: 0, y: 18 }}
+        whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0.45 }}
         transition={reduceMotion ? { duration: 0 } : { duration: 0.62, ease: easeOut }}
       >
@@ -740,34 +777,36 @@ const ParentGrowthNotes = ({ reduceMotion }: { reduceMotion: boolean | null }) =
         <span className="ss-parent-growth__rule" aria-hidden="true" />
         <p className="ss-parent-growth__support">
           <strong>It’s not just about results.</strong>
-          It’s about confidence, motivation,<br />
-          independence and joy in learning.
+          It’s about confidence, motivation, independence and joy in learning.
         </p>
       </motion.header>
 
-      <div className="ss-parent-growth__notes" aria-label="Three reflections from DA parents">
-        {parentNotes.map((note, index) => {
-          const Icon = note.icon;
-          return (
-            <motion.article
-              key={note.id}
-              className={`ss-parent-note ss-parent-note--${index + 1}`}
-              initial={reduceMotion ? false : { opacity: 0, y: 26, rotate: index === 0 ? -4 : index === 2 ? 4 : 0 }}
-              whileInView={{ opacity: 1, y: 0, rotate: index === 0 ? -2 : index === 2 ? 2 : 0.6 }}
-              viewport={{ once: true, amount: 0.35 }}
-              transition={reduceMotion ? { duration: 0 } : { duration: 0.58, delay: 0.12 + index * 0.11, ease: easeOut }}
-            >
-              <span className="ss-parent-note__tape" aria-hidden="true" />
-              <Icon className="ss-parent-note__icon" aria-hidden="true" />
-              <h3>{note.theme}</h3>
-              <blockquote>“{note.quote}”</blockquote>
-              <footer>
-                <strong>— {note.reviewer}</strong>
-                <span>{note.descriptor}</span>
-              </footer>
-            </motion.article>
-          );
-        })}
+      <div className="ss-parent-growth__notes" aria-label="Three reflections from DA parents, shown as flip cards — click or tap each card to read the parent's comment">
+        <p className="ss-parent-growth__instruction">
+          <span className="ss-parent-growth__instruction-icon" aria-hidden="true">✦</span>
+          <span className="ss-parent-growth__instruction-divider" aria-hidden="true" />
+          <span className="ss-parent-growth__instruction-desktop">Hover over the cards to see what parents feel about us</span>
+          <span className="ss-parent-growth__instruction-mobile">Tap the cards to see what parents feel about us</span>
+        </p>
+        {parentNotes.map((note, index) => (
+          <NoticeFlipCard
+            key={note.id}
+            theme={note.theme}
+            frontHeading={note.frontHeading}
+            frontTitle={note.frontTitle}
+            frontSubtitle={note.frontSubtitle}
+            quoteLead={note.quoteLead}
+            quoteAccent={note.quoteAccent}
+            reviewer={note.reviewer}
+            descriptor={note.descriptor}
+            frontSrc={note.frontSrc}
+            frontAlt={note.frontAlt}
+            backSrc={note.backSrc}
+            backAlt={note.backAlt}
+            index={index}
+            reduceMotion={reduceMotion}
+          />
+        ))}
       </div>
     </div>
   </section>
@@ -1003,119 +1042,6 @@ const ReviewField = () => {
   );
 };
 
-const appreciationNotes = [
-  {
-    id: 'review-089',
-    quote: 'I am always so grateful for all the tutors that have seen me grow and put up with me for the past nine years.',
-    author: 'Connor Mangala',
-    detail: 'DA student of nine years',
-  },
-  {
-    id: 'review-278',
-    quote: 'Mr Bunsea was really patient and nice throughout our lessons, and he was always encouraging me.',
-    author: 'My Chi Ho',
-    detail: 'DA student',
-  },
-  {
-    id: 'review-240',
-    quote: 'I will forever be grateful for Miss Marissa. I can’t thank her enough for the learning experience she has given me.',
-    author: 'Lana Khorn',
-    detail: 'DA student',
-  },
-  {
-    id: 'review-230',
-    quote: 'He always listens whenever I talk to him, whether that be about the weather, something at school or even something at home.',
-    author: 'Khushleen Kaur',
-    detail: 'DA graduate',
-  },
-] as const;
-
-const AppreciationSection = ({ reduceMotion }: { reduceMotion: boolean | null }) => (
-  <section className="ss-appreciation" aria-labelledby="appreciation-heading">
-    <span className="ss-appreciation__spark ss-appreciation__spark--one" aria-hidden="true">✦</span>
-    <span className="ss-appreciation__spark ss-appreciation__spark--two" aria-hidden="true">✧</span>
-    <Heart className="ss-appreciation__heart" aria-hidden="true" />
-
-    <div className="ss-container ss-appreciation__layout">
-      <motion.header
-        className="ss-appreciation__copy"
-        initial={reduceMotion ? false : { opacity: 0, y: 16 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.45 }}
-        transition={reduceMotion ? { duration: 0 } : { duration: 0.64, ease: easeOut }}
-      >
-        <p className="ss-appreciation__label">To our students &amp; families</p>
-        <h2 id="appreciation-heading">
-          <span>These words mean more</span>
-          <em>than five stars.</em>
-        </h2>
-        <p className="ss-appreciation__body">
-          Every review represents a student who trusted us,<br />
-          a parent who believed in us,<br />
-          and a journey we were privileged to be part of.
-        </p>
-        <img
-          className="ss-appreciation__thanks-doodle"
-          src="/images/success-stories/thank-you-story-doodle.png"
-          alt="Thank you for letting DA be part of your story."
-          width={2171}
-          height={724}
-          loading="lazy"
-          decoding="async"
-        />
-      </motion.header>
-
-      <div className="ss-appreciation__collage" aria-label="Messages of appreciation from DA students">
-        {appreciationNotes.map((note, index) => (
-          <motion.blockquote
-            key={note.id}
-            className={`ss-memory-note ss-memory-note--${index + 1}`}
-            initial={reduceMotion ? false : { opacity: 0, y: 19, rotate: [-4, 3, -3, 4][index] }}
-            whileInView={{ opacity: 1, y: 0, rotate: [-2, 1, -1, 2][index] }}
-            viewport={{ once: true, amount: 0.25 }}
-            transition={reduceMotion ? { duration: 0 } : { duration: 0.55, delay: 0.1 + index * 0.09, ease: easeOut }}
-          >
-            {index === 0 && <span className="ss-memory-note__tape" aria-hidden="true" />}
-            {index === 1 && <Paperclip className="ss-memory-note__clip" aria-hidden="true" />}
-            {index === 2 && <span className="ss-memory-note__pin" aria-hidden="true" />}
-            {index === 3 && <span className="ss-memory-note__fold" aria-hidden="true" />}
-            <p>“{note.quote}”</p>
-            <footer>
-              <strong>— {note.author}</strong>
-              <span>{note.detail}</span>
-            </footer>
-          </motion.blockquote>
-        ))}
-
-        <motion.figure
-          className="ss-memory-photo ss-memory-photo--one"
-          initial={reduceMotion ? false : { opacity: 0, y: 16, rotate: 4 }}
-          whileInView={{ opacity: 1, y: 0, rotate: 2 }}
-          viewport={{ once: true, amount: 0.3 }}
-          transition={reduceMotion ? { duration: 0 } : { duration: 0.58, delay: 0.3, ease: easeOut }}
-        >
-          <span aria-hidden="true" />
-          <img src="/images/community/tutor_one_on_one.jpg" alt="A DA tutor supporting a student during a lesson" width={6000} height={3368} loading="lazy" decoding="async" />
-        </motion.figure>
-
-        <motion.figure
-          className="ss-memory-photo ss-memory-photo--two"
-          initial={reduceMotion ? false : { opacity: 0, y: 16, rotate: -3 }}
-          whileInView={{ opacity: 1, y: 0, rotate: -1.5 }}
-          viewport={{ once: true, amount: 0.3 }}
-          transition={reduceMotion ? { duration: 0 } : { duration: 0.58, delay: 0.4, ease: easeOut }}
-        >
-          <span aria-hidden="true" />
-          <img src="/images/community/class_hands_raised.jpg" alt="DA students participating together in class" width={6000} height={3368} loading="lazy" decoding="async" />
-        </motion.figure>
-
-        <span className="ss-appreciation__annotation ss-appreciation__annotation--one" aria-hidden="true">We remember this.</span>
-        <span className="ss-appreciation__annotation ss-appreciation__annotation--two" aria-hidden="true">Always grateful.</span>
-      </div>
-    </div>
-  </section>
-);
-
 const SuccessStoriesPage = () => {
   const reduceMotion = useReducedMotion();
   const [selectedStoryIndex, setSelectedStoryIndex] = useState<number | null>(null);
@@ -1253,7 +1179,7 @@ const SuccessStoriesPage = () => {
     <ReviewRibbon reduceMotion={reduceMotion} />
     <ParentGrowthNotes reduceMotion={reduceMotion} />
     <ReviewField />
-    <AppreciationSection reduceMotion={reduceMotion} />
+    <GratitudeSection reduceMotion={reduceMotion} />
     <FooterNew />
     <StudentStoryModal
       selectedIndex={selectedStoryIndex}

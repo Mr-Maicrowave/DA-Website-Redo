@@ -1,0 +1,353 @@
+/* Premium interactive flip cards for the "What Parents Notice" section.
+   The artwork (front + back PNGs) already contains its own card shape,
+   drop shadow and icon, so this stylesheet never draws a background,
+   border or box behind it — only the 3D flip mechanics, a very soft
+   contact shadow, and the HTML testimonial overlay on the back face. */
+
+.notice-card {
+  position: relative;
+  width: min(100%, 28rem);
+  container-type: inline-size;
+}
+
+/* The generated PNGs share a 1024 x 1536 canvas, but their transparent
+   margins differ. These face-specific corrections normalize the visible
+   card frames to the second card's measured bounds without touching the
+   source artwork or the shared interactive geometry. */
+.notice-card--1 {
+  --notice-front-accent: #b97812;
+  --notice-front-scale-x: 1.142;
+  --notice-front-scale-y: 1.082;
+  --notice-back-scale-x: 0.946229;
+  --notice-back-scale-y: 0.923141;
+}
+
+.notice-card--2 {
+  --notice-front-accent: #dc6038;
+  --notice-front-scale-x: 1;
+  --notice-front-scale-y: 1;
+  --notice-back-scale-x: 0.879425;
+  --notice-back-scale-y: 0.919192;
+}
+
+.notice-card--3 {
+  --notice-front-accent: #62765a;
+  --notice-front-scale-x: 0.956;
+  --notice-front-scale-y: 0.93;
+  --notice-back-scale-x: 0.847966;
+  --notice-back-scale-y: 0.926843;
+}
+
+.notice-card__scene {
+  --notice-tilt-x: 0deg;
+  --notice-tilt-y: 0deg;
+  position: relative;
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  perspective: 1600px;
+}
+
+/* Soft ambient contact shadow beneath the whole card. Sits outside the
+   3D transform tree so it never rotates with the tilt/flip. */
+.notice-card__scene::after {
+  position: absolute;
+  right: 8%;
+  bottom: -6%;
+  left: 8%;
+  height: 14%;
+  background: radial-gradient(closest-side, rgba(61, 41, 12, 0.22), transparent 72%);
+  content: '';
+  pointer-events: none;
+}
+
+/* Tilt (hover/parallax) and flip (click) are kept on separate elements
+   so each can have its own feel: the tilt is quick and featherlight,
+   the flip is slow and weighty, like a real card turning over. */
+.notice-card__tilt {
+  width: 100%;
+  height: 100%;
+  transform: rotateX(var(--notice-tilt-x)) rotateY(var(--notice-tilt-y));
+  transform-style: preserve-3d;
+  transition: transform 480ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+
+.notice-card__flip {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  appearance: none;
+  font: inherit;
+  transform: rotateY(0deg);
+  transform-style: preserve-3d;
+  transition: transform 820ms cubic-bezier(0.645, 0.045, 0.355, 1);
+}
+
+.notice-card__flip--is-flipped {
+  transform: rotateY(180deg);
+}
+
+.notice-card__flip:focus-visible {
+  outline: 3px solid #c89a2b;
+  outline-offset: 8px;
+  border-radius: 20px;
+}
+
+.notice-card__face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform-style: preserve-3d;
+}
+
+.notice-card__face--front {
+  transform: rotateY(0deg);
+  visibility: visible;
+  transition: visibility 0s 410ms;
+}
+
+.notice-card__face--back {
+  transform: rotateY(180deg);
+  visibility: hidden;
+  transition: visibility 0s 410ms;
+}
+
+.notice-card__flip--is-flipped .notice-card__face--front {
+  visibility: hidden;
+}
+
+.notice-card__flip--is-flipped .notice-card__face--back {
+  visibility: visible;
+}
+
+.notice-card__face img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  pointer-events: none;
+  user-select: none;
+  z-index: 0;
+}
+
+.notice-card__face--front img {
+  transform: scaleX(var(--notice-front-scale-x)) scaleY(var(--notice-front-scale-y));
+}
+
+.notice-card__face--back img {
+  transform: scaleX(var(--notice-back-scale-x)) scaleY(var(--notice-back-scale-y));
+}
+
+/* Editable front-face typography. The overlay follows the image canvas and
+   deliberately leaves the artwork-dense centre of each PNG untouched. */
+.notice-card__front-copy {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  color: var(--notice-front-accent);
+  pointer-events: none;
+  text-align: center;
+  transform: translateZ(2px);
+}
+
+.notice-card__front-heading {
+  position: absolute;
+  top: 8.5%;
+  right: 12%;
+  left: 12%;
+  font-family: var(--ss-font-structure, Inter, system-ui, sans-serif);
+  font-size: clamp(0.48rem, 0.68vw, 0.64rem);
+  font-weight: 750;
+  letter-spacing: 0.17em;
+  line-height: 1.25;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.notice-card__front-lower {
+  position: absolute;
+  right: 12%;
+  bottom: 8.5%;
+  left: 12%;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+.notice-card__front-title {
+  display: flex;
+  color: #fffaf0;
+  flex-direction: column;
+  font-family: var(--ss-font-story, Georgia, serif);
+  font-size: clamp(1.35rem, 1.85vw, 1.75rem);
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 0.86;
+  text-shadow: 0 1px 8px rgba(73, 45, 12, 0.16);
+}
+
+.notice-card__front-divider {
+  width: 1.65rem;
+  height: 1px;
+  margin-block: clamp(0.35rem, 0.5vw, 0.5rem);
+  background: currentColor;
+  opacity: 0.72;
+}
+
+.notice-card__front-subtitle {
+  font-family: var(--ss-font-structure, Inter, system-ui, sans-serif);
+  font-size: clamp(0.45rem, 0.62vw, 0.58rem);
+  font-weight: 750;
+  letter-spacing: 0.18em;
+  line-height: 1.3;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* Editable back-face editorial treatment. It occupies only the clear upper
+   portion of each PNG so the embedded lower artwork remains the focal point. */
+.notice-card__back-copy {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+  color: var(--notice-front-accent);
+  pointer-events: none;
+  text-align: left;
+  transform: translateZ(2px);
+}
+
+.notice-card__back-heading {
+  position: absolute;
+  top: 7.2%;
+  right: 13%;
+  left: 14%;
+  display: flex;
+  align-items: center;
+  gap: clamp(0.45rem, 2.3cqw, 0.7rem);
+  font-family: var(--ss-font-structure, Inter, system-ui, sans-serif);
+  font-size: clamp(0.6875rem, 0.85vw, 0.9375rem);
+  font-weight: 650;
+  letter-spacing: 0.14em;
+  line-height: 1.25;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.notice-card__back-number {
+  font-family: var(--ss-font-story, Georgia, serif);
+  font-size: 1.55em;
+  font-weight: 500;
+  letter-spacing: 0;
+  line-height: 1;
+}
+
+.notice-card__back-heading-divider {
+  width: 1px;
+  height: 1.7em;
+  background: currentColor;
+  opacity: 0.55;
+}
+
+.notice-card__back-quote-mark {
+  position: absolute;
+  top: 16.5%;
+  left: 14%;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(2rem, 10.5cqw, 2.55rem);
+  font-weight: 700;
+  line-height: 1;
+}
+
+.notice-card__back-body {
+  position: absolute;
+  top: 21.5%;
+  right: 28%;
+  left: 14%;
+  display: flex;
+  flex-direction: column;
+}
+
+.notice-card__back-quote {
+  margin: 0;
+  color: #2e2119;
+  font-family: var(--ss-font-story, Georgia, 'Times New Roman', serif);
+  font-size: clamp(1rem, 1.25vw, 1.4375rem);
+  font-weight: 500;
+  letter-spacing: -0.025em;
+  line-height: 1.28;
+  text-wrap: pretty;
+}
+
+.notice-card__back-accent {
+  color: var(--notice-front-accent);
+  font-style: italic;
+  font-weight: 600;
+}
+
+.notice-card__back-attribution {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.5rem, 0.7vw, 0.7rem);
+  margin-top: clamp(1.25rem, 3.2cqw, 1.75rem);
+  font-family: var(--ss-font-structure, Inter, system-ui, sans-serif);
+}
+
+.notice-card__back-attribution strong {
+  color: #2e2119;
+  font-size: clamp(0.58rem, 3.25cqw, 0.75rem);
+  font-weight: 750;
+}
+
+.notice-card__back-attribution span {
+  color: var(--notice-front-accent);
+  font-size: clamp(0.46rem, 2.6cqw, 0.6rem);
+  font-weight: 750;
+  letter-spacing: 0.12em;
+  line-height: 1.25;
+  text-transform: uppercase;
+}
+
+.notice-card--2 .notice-card__back-attribution span {
+  max-width: 18ch;
+}
+
+.notice-card--3 .notice-card__back-body {
+  right: 36%;
+}
+
+/* The third illustration rises higher into its canvas, so its text column is
+   slightly narrower and its quote type only marginally smaller. */
+.notice-card--3 .notice-card__back-quote {
+  font-size: clamp(0.95rem, 1.15vw, 1.3125rem);
+}
+
+@media (hover: none), (pointer: coarse) {
+  /* No hover on touch, so the tilt custom properties are never set —
+     this just guarantees the surface stays flat regardless. */
+  .notice-card__tilt {
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .notice-card__flip,
+  .notice-card__tilt {
+    transition-duration: 1ms;
+  }
+
+  .notice-card__scene {
+    --notice-tilt-x: 0deg;
+    --notice-tilt-y: 0deg;
+  }
+}
