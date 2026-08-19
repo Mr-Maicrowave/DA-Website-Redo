@@ -501,11 +501,20 @@
 }
 
 .trusted-schools-track {
-  animation: trusted-schools-scroll 25.3s linear infinite;
+  animation: trusted-schools-scroll 11.2s linear infinite;
 }
 
 .trusted-schools-strip:hover .trusted-schools-track {
   animation-play-state: paused;
+}
+
+.subject-school-strip-compact > div {
+  padding-top: 0.85rem;
+  padding-bottom: 1.05rem;
+}
+
+.subject-school-strip-compact > div > div:first-child {
+  margin-bottom: 0.65rem;
 }
 
 .trusted-schools-crest {

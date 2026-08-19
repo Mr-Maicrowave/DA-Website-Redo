@@ -13,8 +13,8 @@ interface SubjectHeroProps {
   headlineGold: string;
   /** Supporting paragraph under the motto */
   subtext: string;
-  /** Three short proof points shown as a pill row, e.g. ["Booklet-led lessons", "Marked feedback", "Clear writing pathway"] */
-  proofPills: [string, string, string];
+  /** Short proof points shown as a pill row, e.g. ["Booklet-led lessons", "Marked feedback", "Clear writing pathway"] */
+  proofPills?: [string, string, string];
   /** Id (no #) of the section the Explore button should scroll to */
   exploreTargetId: string;
   /** Short label describing what photo should eventually replace the placeholder, e.g. "Mathematics classroom" */
@@ -145,13 +145,15 @@ const SubjectHero = ({
             </button>
           </div>
 
-          <div className="mt-9 flex flex-wrap gap-x-5 gap-y-2 text-[13px] font-black uppercase tracking-[0.06em] text-white">
-            {proofPills.map((pill) => (
-              <span key={pill} className="border-l-2 border-[#c9a227] pl-3">
-                {pill}
-              </span>
-            ))}
-          </div>
+          {proofPills ? (
+            <div className="mt-9 flex flex-wrap gap-x-5 gap-y-2 text-[13px] font-black uppercase tracking-[0.06em] text-white">
+              {proofPills.map((pill) => (
+                <span key={pill} className="border-l-2 border-[#c9a227] pl-3">
+                  {pill}
+                </span>
+              ))}
+            </div>
+          ) : null}
         </motion.div>
       </div>
       <style>{`

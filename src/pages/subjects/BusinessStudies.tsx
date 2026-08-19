@@ -2,6 +2,7 @@ import React from 'react';
 import NavigationNew from '@/components/NavigationNew';
 import FooterNew from '@/components/FooterNew';
 import SubjectHero from '@/components/subjects/SubjectHero';
+import SubjectTypedBanner from '@/components/subjects/SubjectTypedBanner';
 import TrustedSchoolsStrip from '@/components/subjects/TrustedSchoolsStrip';
 import { Button } from '@/components/ui/button';
 import { TrendingUp, Briefcase, LineChart, CheckCircle, ArrowRight, Quote, Target, Info } from 'lucide-react';
@@ -10,13 +11,13 @@ import SEO from '@/components/SEO';
 import { BusinessStudiesIntroVideoGate } from '@/features/business-intro-video/BusinessStudiesIntroVideoGate';
 
 const businessTrustedSchools = [
-  'Freeman Catholic College',
-  'Mary MacKillop Catholic College',
-  'Canley Vale High School',
-  'Fairvale High School',
-  'Patrician Brothers Catholic College Fairfield',
-  'St John Park High School',
-  'Al-Faisal College',
+  { name: 'Freeman Catholic College', logoSrc: '/images/schools/freeman-catholic-college.png' },
+  { name: 'Mary MacKillop Catholic College', logoSrc: '/images/schools/mary-mackillop-catholic-college.png' },
+  { name: 'Canley Vale High School', logoSrc: '/images/schools/canley-vale-high-school.png' },
+  { name: 'Fairvale High School', logoSrc: '/images/schools/fairvale-high-school.png' },
+  { name: 'Patrician Brothers Catholic College Fairfield', logoSrc: '/images/schools/patrician-brothers-fairfield.png' },
+  { name: "St John's Park High School", logoSrc: '/images/schools/st-johns-park-high-school.png' },
+  { name: 'Al-Faisal College', logoSrc: '/images/schools/al-faisal-college.png' },
 ];
 
 const BusinessStudies = () => {
@@ -100,7 +101,13 @@ const BusinessStudies = () => {
         backgroundImageAlt="DA Tuition Business Studies classroom"
       />
 
-      <TrustedSchoolsStrip schools={businessTrustedSchools} />
+      <TrustedSchoolsStrip schools={businessTrustedSchools} className="subject-school-strip-compact" />
+      <SubjectTypedBanner
+        imageSrc="/images/subjects/business-studies/master-business-studies-banner.png"
+        imageAlt="Business Studies banner with business books, a globe, stationery, and a growth chart"
+        headline="Master Business Studies."
+        emphasis="Think strategically. Lead with insight."
+      />
 
       {/* Learning Formats Callout */}
       <section className="py-12">
