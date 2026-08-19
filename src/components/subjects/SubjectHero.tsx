@@ -17,6 +17,8 @@ interface SubjectHeroProps {
   proofPills?: [string, string, string];
   /** Id (no #) of the section the Explore button should scroll to */
   exploreTargetId: string;
+  /** Hide the Explore button for hero variants that should lead with copy only. */
+  showExploreButton?: boolean;
   /** Short label describing what photo should eventually replace the placeholder, e.g. "Mathematics classroom" */
   placeholderLabel: string;
   /** Keep an internal placeholder without exposing unfinished-production copy to visitors. */
@@ -28,6 +30,8 @@ interface SubjectHeroProps {
   mobileBackgroundPosition?: string;
   /** Desktop focal point for a source image. */
   backgroundPosition?: string;
+  /** Use contain when the entire source image must remain visible. */
+  backgroundFit?: 'cover' | 'contain';
   /** Optional zoom for photos that need tighter art direction behind the fixed copy. */
   backgroundScale?: number;
   /** English trial: place the copy low in the mobile hero to preserve the photo's focal subject. */
@@ -50,12 +54,14 @@ const SubjectHero = ({
   subtext,
   proofPills,
   exploreTargetId,
+  showExploreButton = true,
   placeholderLabel,
   showPlaceholderBadge = true,
   backgroundImageSrc,
   backgroundImageAlt,
   mobileBackgroundPosition,
   backgroundPosition,
+  backgroundFit = 'cover',
   backgroundScale,
   mobileContentPosition = 'center',
   copyOffsetClassName,
@@ -73,6 +79,7 @@ const SubjectHero = ({
             alt={backgroundImageAlt ?? ''}
             className="subject-hero-image h-full w-full object-cover"
             style={{
+              objectFit: backgroundFit,
               ...(backgroundPosition ? { objectPosition: backgroundPosition } : {}),
               ...(mobileBackgroundPosition ? { '--subject-hero-mobile-position': mobileBackgroundPosition } : {}),
               ...(backgroundScale ? { transform: `scale(${backgroundScale})`, transformOrigin: backgroundPosition ?? 'center center' } : {}),
@@ -134,16 +141,18 @@ const SubjectHero = ({
 
           <p className="mt-7 max-w-[54ch] text-lg leading-[1.75] text-white/85">{subtext}</p>
 
-          <div className="mt-8">
-            <button
-              type="button"
-              onClick={scrollToExplore}
-              className="inline-flex h-12 items-center rounded-full bg-[#c9a227] px-7 font-black text-[#101521] shadow-xl shadow-[#c9a227]/25 transition hover:bg-[#e0bd4b]"
-            >
-              Explore
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </button>
-          </div>
+          {showExploreButton ? (
+            <div className="mt-8">
+              <button
+                type="button"
+                onClick={scrollToExplore}
+                className="inline-flex h-12 items-center rounded-full bg-[#c9a227] px-7 font-black text-[#101521] shadow-xl shadow-[#c9a227]/25 transition hover:bg-[#e0bd4b]"
+              >
+                Explore
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </button>
+            </div>
+          ) : null}
 
           {proofPills ? (
             <div className="mt-9 flex flex-wrap gap-x-5 gap-y-2 text-[13px] font-black uppercase tracking-[0.06em] text-white">
