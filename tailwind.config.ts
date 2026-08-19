@@ -22,7 +22,7 @@ export default {
 			fontFamily: {
 				sans: ['Inter', 'system-ui', 'sans-serif'],
 				heading: ['Outfit', 'Inter', 'system-ui', 'sans-serif'],
-				serif: ['Merriweather', 'serif'],
+				serif: ['Cormorant Garamond', 'Georgia', 'serif'],
 			},
 			colors: {
 				border: 'hsl(var(--border))',

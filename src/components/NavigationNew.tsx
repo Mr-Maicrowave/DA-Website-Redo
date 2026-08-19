@@ -193,12 +193,6 @@ const NavigationNew = () => {
     }
   ];
 
-  const handleNavClick = (href: string) => {
-    if (href.startsWith('#') && !['/', '/english-sample'].includes(location.pathname)) {
-      window.location.href = '/' + href;
-    }
-  };
-
   const linkClass = 'relative px-2.5 xl:px-3.5 py-2 text-sm xl:text-[0.9rem] font-medium transition-colors whitespace-nowrap text-brand-navy hover:text-brand-blue-dark';
   const navLinkClass = (active = false) => `${linkClass} ${active ? 'after:absolute after:left-2.5 after:right-2.5 after:-bottom-0.5 after:h-px after:bg-brand-gold/80' : ''}`;
   const logoTextClass = 'text-brand-navy';
@@ -462,13 +456,9 @@ const NavigationNew = () => {
                       </HoverCardContent>
                     </HoverCard>
 
-                    <a
-                      href="#contact"
-                      onClick={() => handleNavClick('#contact')}
-                      className={linkClass}
-                    >
+                    <Link to="/contact" className={linkClass}>
                       Contact
-                    </a>
+                    </Link>
                   </div>
                 </div>
 

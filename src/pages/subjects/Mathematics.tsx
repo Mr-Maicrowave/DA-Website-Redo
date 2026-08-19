@@ -5,7 +5,7 @@ import SubjectHero from '@/components/subjects/SubjectHero';
 import { Button } from '@/components/ui/button';
 import {
   ArrowRight,
-  BookOpen,
+  ArrowUpRight,
   Brain,
   Calculator,
   CheckCircle,
@@ -1198,20 +1198,17 @@ const Mathematics = () => {
   const prefersReducedMotion = useReducedMotion();
   const courseLevels = [
     {
-      label: 'Primary School',
-      years: 'Years K-6',
-      tone: 'from-[#f7fbff] to-[#e8f2ff]',
-      icon: BookOpen,
-      description: 'We make the building blocks automatic: place value, number facts, written methods and worded problems. Students learn to explain their thinking, recover calmly when a question changes, and arrive at high school with more than a list of tricks to memorise.',
-      subjects: ['K-6 Mathematics', 'Problem Solving', 'Mental Maths', 'Times Tables Mastery'],
-    },
-    {
       label: 'High School',
       years: 'Years 7-10',
       tone: 'from-[#fbfff8] to-[#eaf8ef]',
       icon: Brain,
       description: 'As maths becomes more connected, students learn to move between algebra, diagrams, graphs and written reasoning without losing the method. We close earlier gaps, then rehearse how to choose an approach, set out working clearly and check it under assessment conditions.',
-      subjects: ['Core Mathematics', 'Advanced Mathematics', 'Mathematical Methods', 'Problem Solving & Enrichment'],
+      // "Core" and "Path" are the NSW Mathematics K-10 Syllabus's own content bands within
+      // the single K-10 Mathematics course — there is no separately-named "Advanced
+      // Mathematics" or "Mathematical Methods" course at this stage (Mathematical Methods
+      // is a Victorian VCE subject, not an NSW one). Naming these DA-branded course names
+      // would misrepresent them as official school subjects.
+      subjects: ['Core Mathematics', 'Path Mathematics (extension content)', 'Problem Solving & Enrichment'],
     },
     {
       label: 'HSC Mathematics',
@@ -1312,8 +1309,8 @@ const Mathematics = () => {
     <div className="min-h-screen bg-[#fffdf8] text-[#172033]">
       <MathsIntroVideoGate />
       <SEO
-        title="Mathematics Tutoring (K-12 & HSC)"
-        description="From foundational numeracy to advanced HSC mathematics, we build confidence through expert guidance and proven teaching methods at DA Tuition."
+        title="Mathematics Tutoring (Years 7-12 & HSC)"
+        description="From Year 7 foundations to advanced HSC mathematics, we build confidence through expert guidance and proven teaching methods at DA Tuition."
         canonicalUrl="/subjects/mathematics"
       />
       <NavigationNew />
@@ -1333,40 +1330,58 @@ const Mathematics = () => {
           backgroundImageSrc="/math-tutor-ogive-hero.jpg"
           backgroundImageAlt="DA Tuition mathematics tutor working through problems on a whiteboard"
           backgroundPosition="100% center"
-          mobileBackgroundPosition="100% center"
+          mobileBackgroundPosition="70% center"
           copyOffsetClassName="lg:-translate-y-10"
         />
 
-        <NetworkAmbientMoment passive />
-
         {SHOW_LEGACY_MATHS_INTERACTIONS ? <BasketballCalculusJourney /> : null}
-
-        <FourierDrawing />
 
         {SHOW_LEGACY_MATHS_INTERACTIONS ? <FourierDecomposition /> : null}
 
-        <MathsGraphLabInvitation />
-
-        <DerivativeAmbientMoment passive />
-
         {/* Anchor navigation */}
-        <section className="px-5 pt-10 lg:px-8">
-          <div className="relative z-10 mx-auto grid max-w-7xl gap-3 rounded-3xl border border-[#c9a227]/20 bg-[#fffdf8] p-3 shadow-2xl shadow-[#071629]/10 md:grid-cols-5">
+        <nav aria-label="Mathematics page sections" className="border-y border-[#071629]/12 bg-[#fffdf8] px-5 lg:px-8">
+          <div className="mx-auto flex max-w-7xl gap-6 overflow-x-auto snap-x md:grid md:grid-cols-5 md:gap-8">
             {[
-              ['Year levels', '#math-pathways'],
-              ['Class options', '#maths-class-options'],
-              ['HSC streams', '#hsc-maths'],
-              ['How learning changes', '#math-teaching-proof'],
-              ['Graphing lab', '/maths-graph-lab'],
-            ].map(([label, href]) => (
-              <a key={href} href={href} className="rounded-2xl px-4 py-3 text-center text-sm font-black text-[#10233f] transition hover:bg-[#f5ecd9]">
+              { label: 'Year levels', href: '#math-pathways' },
+              { label: 'Class options', href: '#maths-class-options' },
+              { label: 'HSC streams', href: '#hsc-maths' },
+              { label: 'How learning changes', href: '#math-teaching-proof' },
+              { label: 'Graphing lab', href: '/maths-graph-lab', opensPage: true },
+            ].map(({ label, href, opensPage }) => (
+              <a
+                key={href}
+                href={href}
+                aria-label={opensPage ? `${label}, opens a separate page` : undefined}
+                className="relative flex min-h-14 min-w-[9.75rem] shrink-0 snap-start items-center justify-center gap-1.5 px-1 py-4 text-center text-sm font-black text-[#10233f] outline-none after:absolute after:inset-x-1 after:bottom-0 after:h-0.5 after:origin-left after:scale-x-0 after:bg-[#a6760e] after:transition-transform after:duration-200 hover:after:scale-x-100 focus-visible:after:scale-x-100 md:min-w-0"
+              >
                 {label}
+                {opensPage ? <ArrowUpRight className="h-3.5 w-3.5 shrink-0" aria-hidden="true" /> : null}
               </a>
             ))}
           </div>
-        </section>
+        </nav>
+
+        <NetworkAmbientMoment passive />
 
         <ConfidenceJourney concerns={parentConcerns} levels={courseLevels} />
+
+        {/* Mid-page CTA — the only other booking action on the page is at the very
+            bottom, after class options, HSC streams and teaching proof. A parent
+            already convinced by the concerns above shouldn't have to scroll the
+            rest of the page to find a way to act on it. */}
+        <section className="border-y border-[#071629]/10 bg-[#fffdf8] px-5 py-14 lg:px-8">
+          <div className="mx-auto flex max-w-6xl flex-col items-center gap-5 text-center sm:flex-row sm:justify-between sm:text-left">
+            <p className="max-w-xl text-lg font-medium leading-7 text-[#10233f]">
+              Recognise your child in one of these? Book an interview and we'll help you work out the right starting point.
+            </p>
+            <Link to="/book-interview" className="shrink-0">
+              <Button size="lg" className="h-12 w-full rounded-full bg-[#c9a227] px-7 font-black text-[#101521] hover:bg-[#e0bd4b] sm:w-auto">
+                Book an Interview
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </Link>
+          </div>
+        </section>
 
         {/* Maths class options */}
         <section id="maths-class-options" className="relative isolate overflow-hidden bg-[linear-gradient(160deg,#071629_0%,#0b294d_100%)] px-5 py-24 lg:px-8 lg:py-28">
@@ -1426,7 +1441,7 @@ const Mathematics = () => {
                     </div>
                     <div className="relative flex flex-1 flex-col px-6 pb-7 pt-11 text-center">
                       <motion.span
-                        className="absolute -top-9 left-1/2 flex h-[4.5rem] w-[4.5rem] -translate-x-1/2 items-center justify-center rounded-full border bg-[#fff9ef]"
+                        className="absolute -top-9 left-1/2 grid h-[4.5rem] w-[4.5rem] -translate-x-1/2 place-items-center rounded-full border bg-[#fff9ef]"
                         style={{
                           borderColor: option.accent,
                           color: option.accent,
@@ -1438,17 +1453,17 @@ const Mathematics = () => {
                         transition={{ duration: 0.44, delay: index * 0.1 + 0.16, ease: [0.16, 1, 0.3, 1] }}
                         aria-hidden="true"
                       >
-                        <Icon className="h-7 w-7" strokeWidth={1.6} />
+                        <Icon className="block h-7 w-7" strokeWidth={1.6} />
                       </motion.span>
-                      <h3 className="font-serif text-3xl font-semibold leading-tight tracking-[-0.03em] text-[#071629]">
+                      <h3 className="flex min-h-[4.75rem] items-center justify-center text-balance font-serif text-3xl font-semibold leading-tight tracking-[-0.03em] text-[#071629]">
                         {option.title}
                       </h3>
-                      <span className="mx-auto my-4 flex items-center gap-2" aria-hidden="true">
-                        <i className="h-px w-7" style={{ backgroundColor: option.accent }} />
-                        <i className="h-1.5 w-1.5 rotate-45" style={{ backgroundColor: '#c9a227' }} />
-                        <i className="h-px w-7" style={{ backgroundColor: option.accent }} />
+                      <span className="mx-auto flex h-8 items-center gap-2" aria-hidden="true">
+                        <i className="h-px w-7 shrink-0" style={{ backgroundColor: option.accent }} />
+                        <i className="h-1.5 w-1.5 shrink-0 rotate-45" style={{ backgroundColor: '#c9a227' }} />
+                        <i className="h-px w-7 shrink-0" style={{ backgroundColor: option.accent }} />
                       </span>
-                      <p className="text-[15px] leading-7 text-[#40516b]">{option.description}</p>
+                      <p className="mt-2 text-[15px] leading-7 text-[#40516b]">{option.description}</p>
                     </div>
                   </motion.article>
                 );
@@ -1462,6 +1477,8 @@ const Mathematics = () => {
         <HscMathsPathway />
 
         <MathsTeachingProof />
+
+        <MathsGraphLabInvitation />
 
         {SHOW_LEGACY_MATHS_INTERACTIONS ? (
           <>
@@ -1729,16 +1746,29 @@ const Mathematics = () => {
           </>
         ) : null}
 
-        {/* Testimonial */}
-        <section className="bg-[#fffdf8] px-5 pb-20 lg:px-8">
-          <div className="mx-auto max-w-5xl rounded-[2rem] border border-[#071629]/10 bg-white p-8 shadow-2xl shadow-[#071629]/8 md:p-12">
-            <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-3xl bg-[#10233f] text-[#f1df9a]">
-              <Quote className="h-8 w-8" />
+        <DerivativeAmbientMoment passive />
+
+        {/* Real Google review — review-078 in src/data/reviews.json (subject: Mathematics).
+            Quoted verbatim from the "she broke it down into steps..." sentence; only the
+            surrounding scene-setting was trimmed for length, no wording changed. */}
+        <section className="border-y border-[#071629]/10 bg-[#fffdf8] px-5 py-20 lg:px-8 lg:py-24">
+          <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[0.62fr_1fr] lg:items-start lg:gap-20">
+            <div>
+              <p className="text-sm font-black text-[#8a6110]">In their own words</p>
+              <h2 className="mt-4 text-balance font-serif text-4xl font-medium leading-[1.08] tracking-[-0.035em] text-[#071629] sm:text-5xl">
+                What changes when the method clicks.
+              </h2>
+              <p className="mt-5 max-w-md text-base leading-8 text-[#40516b]">
+                A verified DA Tuition Google review from a maths student.
+              </p>
             </div>
-            <blockquote className="mx-auto max-w-3xl text-center font-serif text-2xl leading-snug tracking-[-0.03em] text-[#10233f] md:text-3xl">
-              "The biggest change was not just marks. My child stopped saying, 'I'm bad at maths,' and started showing us how they solved the question."
-            </blockquote>
-            <p className="mt-6 text-center text-sm font-black uppercase tracking-[0.12em] text-[#c9a227]">Parent feedback</p>
+            <div className="border-t-2 border-[#c9a227] pt-8 lg:pt-10">
+              <Quote className="h-9 w-9 text-[#8a6110]" aria-hidden="true" />
+              <blockquote className="mt-6 max-w-[30ch] text-balance font-serif text-3xl leading-[1.25] tracking-[-0.03em] text-[#10233f] sm:text-4xl">
+                “Even when I was certain I couldn't solve a question, she broke it down into steps in the easiest method which made it seem so simple — I understood it immediately and could apply it to other challenging questions.”
+              </blockquote>
+              <p className="mt-7 text-sm font-bold text-[#40516b]">— Christina Lee, Year 10</p>
+            </div>
           </div>
         </section>
 
