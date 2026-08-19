@@ -1426,7 +1426,7 @@ const Mathematics = () => {
                     </div>
                     <div className="relative flex flex-1 flex-col px-6 pb-7 pt-11 text-center">
                       <motion.span
-                        className="absolute -top-9 left-1/2 flex h-[4.5rem] w-[4.5rem] -translate-x-1/2 items-center justify-center rounded-full border bg-[#fff9ef]"
+                        className="absolute -top-9 left-1/2 grid h-[4.5rem] w-[4.5rem] -translate-x-1/2 place-items-center rounded-full border bg-[#fff9ef]"
                         style={{
                           borderColor: option.accent,
                           color: option.accent,
@@ -1438,17 +1438,17 @@ const Mathematics = () => {
                         transition={{ duration: 0.44, delay: index * 0.1 + 0.16, ease: [0.16, 1, 0.3, 1] }}
                         aria-hidden="true"
                       >
-                        <Icon className="h-7 w-7" strokeWidth={1.6} />
+                        <Icon className="block h-7 w-7" strokeWidth={1.6} />
                       </motion.span>
-                      <h3 className="font-serif text-3xl font-semibold leading-tight tracking-[-0.03em] text-[#071629]">
+                      <h3 className="flex min-h-[4.75rem] items-center justify-center text-balance font-serif text-3xl font-semibold leading-tight tracking-[-0.03em] text-[#071629]">
                         {option.title}
                       </h3>
-                      <span className="mx-auto my-4 flex items-center gap-2" aria-hidden="true">
-                        <i className="h-px w-7" style={{ backgroundColor: option.accent }} />
-                        <i className="h-1.5 w-1.5 rotate-45" style={{ backgroundColor: '#c9a227' }} />
-                        <i className="h-px w-7" style={{ backgroundColor: option.accent }} />
+                      <span className="mx-auto flex h-8 items-center gap-2" aria-hidden="true">
+                        <i className="h-px w-7 shrink-0" style={{ backgroundColor: option.accent }} />
+                        <i className="h-1.5 w-1.5 shrink-0 rotate-45" style={{ backgroundColor: '#c9a227' }} />
+                        <i className="h-px w-7 shrink-0" style={{ backgroundColor: option.accent }} />
                       </span>
-                      <p className="text-[15px] leading-7 text-[#40516b]">{option.description}</p>
+                      <p className="mt-2 text-[15px] leading-7 text-[#40516b]">{option.description}</p>
                     </div>
                   </motion.article>
                 );
