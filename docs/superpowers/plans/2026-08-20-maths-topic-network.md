@@ -1457,8 +1457,8 @@ This follows the exact pattern already used in `src/components/home/VisualIntro.
 - [ ] **Step 2: Wrap the panel in the scroll track and derive growth values**
 
 ```tsx
-// Add to the imports:
-import { useRef as useReactRef } from 'react'; // already imported as useRef above — remove this duplicate line, keep the single `useRef` import
+// Add to the imports (useRef is already imported once at the top of the file
+// from Task 4 — do not import it again under a different name):
 import { motion, useReducedMotion, useScroll, useTransform, useMotionValueEvent } from 'framer-motion';
 
 // Inside MathsTopicNetworkDiagram(), add near the top:
@@ -1485,8 +1485,6 @@ useMotionValueEvent(scrollYProgress, 'change', (raw) => {
   setLockPromptVisible(raw >= GROWTH_END && raw < 0.97);
 });
 ```
-
-> The stray `useRef as useReactRef` line above is a mistake to catch and delete during this step — `useRef` is already imported once at the top of the file from Task 4; do not import it twice under two names. Only add `motion, useReducedMotion, useScroll, useTransform, useMotionValueEvent` from `framer-motion`.
 
 - [ ] **Step 3: Gate node-click and the toggle button behind `grownEnough`, and reduced motion behind an early return**
 
