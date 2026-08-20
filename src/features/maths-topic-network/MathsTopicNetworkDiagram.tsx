@@ -82,6 +82,7 @@ export default function MathsTopicNetworkDiagram() {
         if (el) {
           el.setAttribute('x', String(node.labelX));
           el.setAttribute('y', String(node.labelY));
+          el.setAttribute('text-anchor', anchorFor(node.labelX));
         }
         const box = el?.getBBox() ?? { x: node.labelX, y: node.labelY, width: 0, height: 0 };
         return { id, x: box.x, y: box.y, width: box.width, height: box.height };
@@ -94,13 +95,14 @@ export default function MathsTopicNetworkDiagram() {
     setOrganicLabels(decluttered(organicLayout, organicDeltas));
     setTidyLabels(decluttered(tidyLayout, tidyDeltas));
 
-    // Restore the visible (organic) label positions before paint.
+    // Restore the visible (organic) label positions and anchors before paint.
     for (const id of allNodeIds) {
       const el = textRefs.current[id];
       const pos = decluttered(organicLayout, organicDeltas)[id];
       if (el && pos) {
         el.setAttribute('x', String(pos.x));
         el.setAttribute('y', String(pos.y));
+        el.setAttribute('text-anchor', anchorFor(organicLayout.nodes[id].labelX));
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
