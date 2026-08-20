@@ -12,8 +12,42 @@ import {
   type TopicLayout,
   type LayoutNode,
 } from './topic-network-layout';
-import { CORE_TOPICS, DOMAIN_TOPICS, SUBTOPICS } from './topic-network-data';
+import { CORE_TOPICS, DOMAIN_TOPICS, SUBTOPICS, CROSS_LINKS } from './topic-network-data';
 import './maths-topic-network.css';
+
+interface TopicLookup {
+  label: string;
+  blurb: string;
+}
+
+function buildLookup(): Record<string, TopicLookup> {
+  const map: Record<string, TopicLookup> = {};
+  for (const c of CORE_TOPICS) map[c.id] = { label: c.label, blurb: c.blurb };
+  for (const d of DOMAIN_TOPICS) map[d.id] = { label: d.label, blurb: d.blurb };
+  for (const s of SUBTOPICS) map[s.id] = { label: s.label, blurb: s.blurb };
+  return map;
+}
+
+/** Direct neighbors of a node, per the same edges the diagram actually draws. */
+function neighborsOf(id: string): Set<string> {
+  const core = CORE_TOPICS.find((c) => c.id === id);
+  if (core) {
+    const domains = DOMAIN_TOPICS.filter((d) => d.corePrerequisite === id).map((d) => d.id);
+    return new Set([id, ...domains]);
+  }
+  const domain = DOMAIN_TOPICS.find((d) => d.id === id);
+  if (domain) {
+    const kids = SUBTOPICS.filter((s) => s.parent === id).map((s) => s.id);
+    return new Set([id, domain.corePrerequisite, ...kids]);
+  }
+  const sub = SUBTOPICS.find((s) => s.id === id);
+  if (sub) {
+    const parentDomain = DOMAIN_TOPICS.find((d) => d.id === sub.parent)!;
+    const cross = CROSS_LINKS.filter((c) => c.from === id).map((c) => c.to);
+    return new Set([id, sub.parent, parentDomain.corePrerequisite, ...cross]);
+  }
+  return new Set([id]);
+}
 
 const NODE_RADII: Record<LayoutNode['tier'], { bubble: number; halo: number; dot: number }> = {
   core: { bubble: 20, halo: 12, dot: 7 },
@@ -71,6 +105,10 @@ export default function MathsTopicNetworkDiagram() {
   const allNodeIds = useMemo(() => Object.keys(organicLayout.nodes), [organicLayout]);
   const colorById = useMemo(buildColorLookup, []);
 
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const lookup = useMemo(buildLookup, []);
+  const activeNeighbors = selectedId ? neighborsOf(selectedId) : null;
+
   // Declutter both layouts once, using real measured label boxes. Runs before the
   // browser paints (useLayoutEffect), so temporarily moving labels to measure the
   // tidy layout never causes a visible flash.
@@ -118,8 +156,18 @@ export default function MathsTopicNetworkDiagram() {
     const radii = NODE_RADII[node.tier];
     const colors = colorById[node.id];
     const label = organicLabels[node.id] ?? { x: node.labelX, y: node.labelY };
+    const dimmed = activeNeighbors !== null && !activeNeighbors.has(node.id);
     return (
-      <g key={node.id} data-id={node.id} data-tier={node.tier}>
+      <g
+        key={node.id}
+        data-id={node.id}
+        data-tier={node.tier}
+        style={{ opacity: dimmed ? 0.14 : 1, cursor: 'pointer' }}
+        onClick={(event) => {
+          event.stopPropagation();
+          setSelectedId((current) => (current === node.id ? null : node.id));
+        }}
+      >
         <circle className="maths-topic-network__bubble" cx={node.x} cy={node.y} r={radii.bubble} fill={colors.fill} />
         <circle className="maths-topic-network__halo" cx={node.x} cy={node.y} r={radii.halo} fill={colors.fill} />
         <circle className="maths-topic-network__dot" cx={node.x} cy={node.y} r={radii.dot} fill={colors.dot} />
@@ -143,7 +191,11 @@ export default function MathsTopicNetworkDiagram() {
   }
 
   return (
-    <div className="maths-topic-network__panel" style={{ height: '92vh', maxHeight: 820 }}>
+    <div
+      className="maths-topic-network__panel"
+      style={{ height: '92vh', maxHeight: 820 }}
+      onClick={() => setSelectedId(null)}
+    >
       <svg
         className="maths-topic-network__svg"
         viewBox={`0 0 ${VIEWBOX_WIDTH} ${VIEWBOX_HEIGHT}`}
@@ -151,18 +203,31 @@ export default function MathsTopicNetworkDiagram() {
         aria-label="A network diagram of Years 7 to 12 maths topics, showing how fundamentals, domains, and specific subtopics connect."
       >
         <g>
-          {organicLayout.edges.map((edge) => (
-            <path
-              key={`${edge.from}-${edge.to}`}
-              className={edge.kind === 'cross' ? 'maths-topic-network__link maths-topic-network__link--cross' : 'maths-topic-network__link'}
-              d={`M${organicLayout.nodes[edge.from].x},${organicLayout.nodes[edge.from].y} Q${edge.controlX},${edge.controlY} ${organicLayout.nodes[edge.to].x},${organicLayout.nodes[edge.to].y}`}
-            />
-          ))}
+          {organicLayout.edges.map((edge) => {
+            const dimmed = activeNeighbors !== null && !(activeNeighbors.has(edge.from) && activeNeighbors.has(edge.to));
+            return (
+              <path
+                key={`${edge.from}-${edge.to}`}
+                className={edge.kind === 'cross' ? 'maths-topic-network__link maths-topic-network__link--cross' : 'maths-topic-network__link'}
+                style={{ opacity: dimmed ? 0.05 : 1 }}
+                d={`M${organicLayout.nodes[edge.from].x},${organicLayout.nodes[edge.from].y} Q${edge.controlX},${edge.controlY} ${organicLayout.nodes[edge.to].x},${organicLayout.nodes[edge.to].y}`}
+              />
+            );
+          })}
         </g>
         <g>{nodesByTier.core.map(renderNode)}</g>
         <g>{nodesByTier.domain.map(renderNode)}</g>
         <g>{nodesByTier.sub.map(renderNode)}</g>
       </svg>
+      {selectedId && (
+        <div className="maths-topic-network__card maths-topic-network__card--show">
+          <h4>{lookup[selectedId].label}</h4>
+          <p>{lookup[selectedId].blurb}</p>
+          <p className="maths-topic-network__card-connections">
+            Connects to: {[...neighborsOf(selectedId)].filter((id) => id !== selectedId).map((id) => lookup[id].label).slice(0, 5).join(', ')}
+          </p>
+        </div>
+      )}
     </div>
   );
 }
