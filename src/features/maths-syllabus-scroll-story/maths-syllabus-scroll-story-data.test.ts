@@ -13,3 +13,10 @@ test('story prevents a false Standard-to-Extension prerequisite claim', () => {
   assert.match(STORY_SOURCE_NOTE.pathwayClarification, /not a prerequisite/i);
   assert.match(STORY_SOURCE_NOTE.pathwayClarification, /separate pathway/i);
 });
+
+test('unknown beat ids fail with a useful error', () => {
+  assert.throws(
+    () => getStoryBeat('unknown' as never),
+    /Unknown Maths syllabus story beat: unknown/,
+  );
+});
