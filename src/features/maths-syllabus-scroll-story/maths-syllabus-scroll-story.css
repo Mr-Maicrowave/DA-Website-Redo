@@ -48,6 +48,8 @@
   fill: none;
   stroke: var(--maths-story-gold);
   stroke-width: 7;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
@@ -62,6 +64,14 @@
   stroke: rgba(16, 33, 63, 0.78);
   stroke-width: 3;
   stroke-linecap: round;
+}
+
+.maths-syllabus-story__vector {
+  fill: none;
+  stroke: rgba(16, 33, 63, 0.72);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .maths-syllabus-story__integral {
@@ -154,12 +164,26 @@
 }
 
 @media (min-width: 768px) and (prefers-reduced-motion: no-preference) {
-  .maths-syllabus-story__sticky-scene {
-    position: sticky;
-    top: 0;
+  .maths-syllabus-story__sticky {
+    position: relative;
     height: 100vh;
     min-height: 42rem;
     aspect-ratio: auto;
+  }
+
+  .maths-syllabus-story__content {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    grid-template-columns: minmax(18rem, 0.85fr) minmax(22rem, 0.6fr);
+    align-items: end;
+    gap: clamp(2rem, 6vw, 7rem);
+    max-width: none;
+    padding: clamp(3rem, 6vw, 6rem);
+  }
+
+  .maths-syllabus-story__heading-copy {
+    max-width: 40rem;
   }
 
   .maths-syllabus-story__plate:not(:first-child),
@@ -170,15 +194,28 @@
 
   .maths-syllabus-story__beats {
     min-height: 16rem;
+    margin-top: 0;
   }
 
   .maths-syllabus-story__beat {
     grid-area: 1 / 1;
   }
+
+  .maths-syllabus-story__line,
+  .maths-syllabus-story__line--glow {
+    stroke-dashoffset: 1;
+  }
+
+  .maths-syllabus-story__tangent,
+  .maths-syllabus-story__integral,
+  .maths-syllabus-story__vector {
+    opacity: 0;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .maths-syllabus-story__sticky-scene {
+  .maths-syllabus-story__sticky {
+    position: static;
     min-height: 0;
     aspect-ratio: auto;
   }
@@ -200,19 +237,31 @@
     display: none;
   }
 
+  .maths-syllabus-story__plate,
   .maths-syllabus-story__beat {
     opacity: 1;
+    transform: none;
     pointer-events: auto;
+  }
+
+  .maths-syllabus-story__line {
+    stroke-dashoffset: 0;
+  }
+
+  .maths-syllabus-story__line--glow {
+    filter: none;
   }
 }
 
 @media (max-width: 767px) {
-  .maths-syllabus-story__sticky-scene {
+  .maths-syllabus-story__sticky {
+    position: static;
     min-height: 0;
   }
 
   .maths-syllabus-story__plates {
     position: relative;
+    min-height: 20rem;
     display: grid;
     gap: 0.75rem;
     padding: 0.75rem;
@@ -226,5 +275,11 @@
 
   .maths-syllabus-story__overlay {
     display: none;
+  }
+
+  .maths-syllabus-story__beat {
+    position: relative;
+    opacity: 1;
+    transform: none;
   }
 }
