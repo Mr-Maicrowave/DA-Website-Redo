@@ -117,3 +117,24 @@
   font-size: 10.5px;
   color: #8fa2bd;
 }
+
+.maths-topic-network__toggle {
+  position: absolute;
+  right: 18px;
+  bottom: 18px;
+  z-index: 3;
+  background: rgba(7, 22, 41, 0.75);
+  border: 1px solid rgba(241, 223, 154, 0.3);
+  color: #f1df9a;
+  font-size: 11.5px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  padding: 10px 16px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.maths-topic-network__toggle:hover {
+  background: rgba(201, 162, 39, 0.35);
+}

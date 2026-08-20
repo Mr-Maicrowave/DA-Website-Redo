@@ -13,6 +13,7 @@ import {
   type LayoutNode,
 } from './topic-network-layout';
 import { CORE_TOPICS, DOMAIN_TOPICS, SUBTOPICS, CROSS_LINKS } from './topic-network-data';
+import { animateValue } from './topic-network-tween';
 import './maths-topic-network.css';
 
 interface TopicLookup {
@@ -109,6 +110,17 @@ export default function MathsTopicNetworkDiagram() {
   const lookup = useMemo(buildLookup, []);
   const activeNeighbors = selectedId ? neighborsOf(selectedId) : null;
 
+  const [viewT, setViewT] = useState(0); // 0 = organic, 1 = tidy
+  const [tidyActive, setTidyActive] = useState(false);
+  const cancelTweenRef = useRef<(() => void) | null>(null);
+
+  function toggleView() {
+    cancelTweenRef.current?.();
+    const next = !tidyActive;
+    setTidyActive(next);
+    cancelTweenRef.current = animateValue(viewT, next ? 1 : 0, 750, setViewT);
+  }
+
   // Declutter both layouts once, using real measured label boxes. Runs before the
   // browser paints (useLayoutEffect), so temporarily moving labels to measure the
   // tidy layout never causes a visible flash.
@@ -152,11 +164,23 @@ export default function MathsTopicNetworkDiagram() {
     sub: Object.values(organicLayout.nodes).filter((n) => n.tier === 'sub'),
   };
 
+  function lerp(a: number, b: number, t: number): number {
+    return a + (b - a) * t;
+  }
+
   function renderNode(node: LayoutNode) {
     const radii = NODE_RADII[node.tier];
     const colors = colorById[node.id];
-    const label = organicLabels[node.id] ?? { x: node.labelX, y: node.labelY };
+    const organicLabel = organicLabels[node.id] ?? { x: node.labelX, y: node.labelY };
+    const tidyNode = tidyLayout.nodes[node.id];
+    const tidyLabel = tidyLabels[node.id] ?? { x: tidyNode.labelX, y: tidyNode.labelY };
+
+    const x = lerp(node.x, tidyNode.x, viewT);
+    const y = lerp(node.y, tidyNode.y, viewT);
+    const labelX = lerp(organicLabel.x, tidyLabel.x, viewT);
+    const labelY = lerp(organicLabel.y, tidyLabel.y, viewT);
     const dimmed = activeNeighbors !== null && !activeNeighbors.has(node.id);
+
     return (
       <g
         key={node.id}
@@ -168,24 +192,18 @@ export default function MathsTopicNetworkDiagram() {
           setSelectedId((current) => (current === node.id ? null : node.id));
         }}
       >
-        <circle className="maths-topic-network__bubble" cx={node.x} cy={node.y} r={radii.bubble} fill={colors.fill} />
-        <circle className="maths-topic-network__halo" cx={node.x} cy={node.y} r={radii.halo} fill={colors.fill} />
-        <circle className="maths-topic-network__dot" cx={node.x} cy={node.y} r={radii.dot} fill={colors.dot} />
-        <line className="maths-topic-network__link maths-topic-network__leader" x1={node.x} y1={node.y} x2={label.x} y2={label.y} />
-        <text
-          ref={(el) => { textRefs.current[node.id] = el; }}
-          className={LABEL_CLASS[node.tier]}
-          x={label.x}
-          y={label.y}
-          textAnchor={anchorFor(label.x)}
-        >
+        <circle className="maths-topic-network__bubble" cx={x} cy={y} r={radii.bubble} fill={colors.fill} />
+        <circle className="maths-topic-network__halo" cx={x} cy={y} r={radii.halo} fill={colors.fill} />
+        <circle className="maths-topic-network__dot" cx={x} cy={y} r={radii.dot} fill={colors.dot} />
+        <line className="maths-topic-network__link maths-topic-network__leader" x1={x} y1={y} x2={labelX} y2={labelY} />
+        <text className={LABEL_CLASS[node.tier]} x={labelX} y={labelY} textAnchor={anchorFor(labelX)}>
           {node.tier === 'core'
             ? CORE_TOPICS.find((c) => c.id === node.id)?.label
             : node.tier === 'domain'
               ? DOMAIN_TOPICS.find((d) => d.id === node.id)?.label
               : SUBTOPICS.find((s) => s.id === node.id)?.label}
         </text>
-        <circle className="maths-topic-network__hit" cx={node.x} cy={node.y} r={radii.bubble + 8} />
+        <circle className="maths-topic-network__hit" cx={x} cy={y} r={radii.bubble + 8} />
       </g>
     );
   }
@@ -205,12 +223,23 @@ export default function MathsTopicNetworkDiagram() {
         <g>
           {organicLayout.edges.map((edge) => {
             const dimmed = activeNeighbors !== null && !(activeNeighbors.has(edge.from) && activeNeighbors.has(edge.to));
+            const fromOrganic = organicLayout.nodes[edge.from];
+            const toOrganic = organicLayout.nodes[edge.to];
+            const fromTidy = tidyLayout.nodes[edge.from];
+            const toTidy = tidyLayout.nodes[edge.to];
+            const ax = lerp(fromOrganic.x, fromTidy.x, viewT);
+            const ay = lerp(fromOrganic.y, fromTidy.y, viewT);
+            const bx = lerp(toOrganic.x, toTidy.x, viewT);
+            const by = lerp(toOrganic.y, toTidy.y, viewT);
+            const tidyEdge = tidyLayout.edges.find((e) => e.from === edge.from && e.to === edge.to)!;
+            const cx = lerp(edge.controlX, tidyEdge.controlX, viewT);
+            const cy = lerp(edge.controlY, tidyEdge.controlY, viewT);
             return (
               <path
                 key={`${edge.from}-${edge.to}`}
                 className={edge.kind === 'cross' ? 'maths-topic-network__link maths-topic-network__link--cross' : 'maths-topic-network__link'}
                 style={{ opacity: dimmed ? 0.05 : 1 }}
-                d={`M${organicLayout.nodes[edge.from].x},${organicLayout.nodes[edge.from].y} Q${edge.controlX},${edge.controlY} ${organicLayout.nodes[edge.to].x},${organicLayout.nodes[edge.to].y}`}
+                d={`M${ax},${ay} Q${cx},${cy} ${bx},${by}`}
               />
             );
           })}
@@ -228,6 +257,9 @@ export default function MathsTopicNetworkDiagram() {
           </p>
         </div>
       )}
+      <button type="button" className="maths-topic-network__toggle" onClick={toggleView}>
+        {tidyActive ? 'Back to organic view' : 'Snap to tidy view'}
+      </button>
     </div>
   );
 }
