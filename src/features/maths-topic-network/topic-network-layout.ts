@@ -306,7 +306,7 @@ export function declutterLabels(boxes: readonly LabelBox[]): LabelDelta[] {
         moved = true;
         let ddx = (bx + b.width / 2) - (ax + a.width / 2);
         let ddy = (by + b.height / 2) - (ay + a.height / 2);
-        let dist = Math.hypot(ddx, ddy);
+        const dist = Math.hypot(ddx, ddy);
         if (dist < 1e-9) {
           // Perfectly overlapping: use a default direction (horizontal)
           ddx = 1;
