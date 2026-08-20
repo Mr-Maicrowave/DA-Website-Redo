@@ -142,3 +142,18 @@ All plates are decorative: there is no baked text or logo, and the consuming UI 
   Constraints: Premium scientific-editorial website art; predominantly warm ivory/cream paper; restrained deep ink navy drafting lines; muted antique gold accents; layered translucent planes; calm natural daylight; no text, numerals, logos, people, UI panels, borders, watermark, blackboard, particles, rainbow colour or sci-fi HUD.
   Avoid: labels, equations, axes numerals, graphs with legible symbols, visual clutter, neon.
   ```
+
+## Integration evidence
+
+Verified against the checked-in files on 2026-08-21. Each exact final prompt is recorded verbatim in the corresponding plate section above.
+
+| Filename | Beat id | Exact final prompt | Dimensions | Bytes | Decorative / baked text |
+| --- | --- | --- | ---: | ---: | --- |
+| `01-model.webp` | `locate` | Verbatim prompt above | 1920 x 1080 | 99,640 | Decorative; no baked text or logo |
+| `02-function.webp` | `relate` | Verbatim prompt above | 1920 x 1080 | 88,044 | Decorative; no baked text or logo |
+| `03-tangent.webp` | `change` | Verbatim prompt above | 1920 x 1080 | 59,328 | Decorative; no baked text or logo |
+| `04-integral.webp` | `accumulate` | Verbatim prompt above | 1920 x 1080 | 67,774 | Decorative; no baked text or logo |
+| `05-vectors.webp` | `extend` | Verbatim prompt above | 1920 x 1080 | 54,470 | Decorative; no baked text or logo |
+| `06-structure.webp` | `explore` | Verbatim prompt above | 1920 x 1080 | 101,576 | Decorative; no baked text or logo |
+
+The mounted story uses these raster WebP plates as its full-bleed visual layer. Its SVG is limited to the restrained live point, curve, tangent, integral and vector overlays; it does not replace the raster artwork.

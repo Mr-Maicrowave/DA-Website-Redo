@@ -257,6 +257,7 @@
   .maths-syllabus-story__sticky {
     position: static;
     min-height: 0;
+    aspect-ratio: auto;
   }
 
   .maths-syllabus-story__plates {

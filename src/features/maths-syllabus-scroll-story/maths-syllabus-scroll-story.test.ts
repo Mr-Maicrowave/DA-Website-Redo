@@ -6,6 +6,14 @@ import { MATHS_SYLLABUS_STORY_BEATS } from './maths-syllabus-scroll-story-data.t
 
 const componentUrl = new URL('./MathsSyllabusScrollStory.tsx', import.meta.url);
 const stylesUrl = new URL('./maths-syllabus-scroll-story.css', import.meta.url);
+const mathematicsUrl = new URL('../../pages/subjects/Mathematics.tsx', import.meta.url);
+
+test('cinematic story precedes the practical HSC pathway map', () => {
+  const source = readFileSync(mathematicsUrl, 'utf8');
+
+  assert.match(source, /import \{ MathsSyllabusScrollStory \} from '@\/features\/maths-syllabus-scroll-story\/MathsSyllabusScrollStory'/);
+  assert.ok(source.indexOf('<MathsSyllabusScrollStory />') < source.indexOf('<HscMathsPathway />'));
+});
 
 test('every beat has an optimised public art plate', () => {
   for (const beat of MATHS_SYLLABUS_STORY_BEATS) {
@@ -80,7 +88,7 @@ test('mobile and reduced motion keep the story static and fully visible', () => 
   assert.match(reducedMotionStyles, /\.maths-syllabus-story__plate,[\s\S]*?\.maths-syllabus-story__beat[\s\S]*?opacity: 1;[\s\S]*?transform: none;/);
   assert.match(reducedMotionStyles, /\.maths-syllabus-story__line[\s\S]*?stroke-dashoffset: 0;/);
   assert.match(reducedMotionStyles, /\.maths-syllabus-story__line--glow[\s\S]*?filter: none;/);
-  assert.match(mobileStyles, /\.maths-syllabus-story__sticky[\s\S]*?position: static;[\s\S]*?min-height: 0;/);
+  assert.match(mobileStyles, /\.maths-syllabus-story__sticky[\s\S]*?position: static;[\s\S]*?min-height: 0;[\s\S]*?aspect-ratio: auto;/);
   assert.match(mobileStyles, /\.maths-syllabus-story__plates[\s\S]*?position: relative;[\s\S]*?min-height: 20rem;/);
   assert.match(mobileStyles, /\.maths-syllabus-story__beat[\s\S]*?position: relative;[\s\S]*?opacity: 1;[\s\S]*?transform: none;/);
 });
