@@ -3,6 +3,7 @@ import { BookOpen } from 'lucide-react';
 import NavigationNew from '@/components/NavigationNew';
 import SubjectHero from '@/components/subjects/SubjectHero';
 import SEO from '@/components/SEO';
+import { EnglishIntroVideoGate } from '@/features/english-intro-video/EnglishIntroVideoGate';
 
 const English = () => {
   const iframeRef = useRef<HTMLIFrameElement>(null);
@@ -27,6 +28,7 @@ const English = () => {
 
   return (
     <>
+      <EnglishIntroVideoGate />
       <SEO
         title="English Tutoring"
         description="English tuition for Years 7-12 students who need structure, confidence, sharper analysis, and detailed writing feedback."
@@ -39,7 +41,6 @@ const English = () => {
         headlineWhite="Writing with clarity."
         headlineGold="Thinking with depth."
         subtext="English tuition for students who need structure, confidence, and sharper analysis - from early essay foundations through to high-level HSC responses."
-        proofPills={['Booklet-led lessons', 'Marked feedback', 'Clear writing pathway']}
         exploreTargetId="english-page-content"
         placeholderLabel="English classroom"
         backgroundImageSrc="/images/subjects/english/hero-background.png"

@@ -1,0 +1,168 @@
+<style>
+  #da-motion-choice {
+    --da-navy: #071629;
+    --da-ink: #0a1b34;
+    --da-gold: #d4af37;
+    --da-light: #fffdf8;
+    --da-blue: #477dd6;
+  }
+  #da-motion-choice .choice-intro { margin-bottom: 1.25rem; }
+  #da-motion-choice .cards { align-items: stretch; }
+  #da-motion-choice .card { cursor: pointer; }
+  #da-motion-choice .card-image { padding: 0; overflow: hidden; background: var(--da-light); }
+  #da-motion-choice .page-slice {
+    position: relative;
+    min-height: 31rem;
+    overflow: hidden;
+    color: var(--da-ink);
+    background:
+      linear-gradient(180deg, rgba(212,175,55,.09), transparent 34%),
+      var(--da-light);
+    font-family: 'Avenir Next', 'Segoe UI', sans-serif;
+  }
+  #da-motion-choice .mini-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: .65rem .85rem;
+    border-bottom: 1px solid rgba(7,22,41,.12);
+    font-size: .62rem;
+    font-weight: 700;
+  }
+  #da-motion-choice .mini-nav strong { color: #9a7618; font-family: Georgia, serif; font-size: .8rem; }
+  #da-motion-choice .lesson-copy { width: 66%; padding: 2.4rem 1.25rem 1rem; }
+  #da-motion-choice .lesson-copy small { color: #947118; font-weight: 700; }
+  #da-motion-choice .lesson-copy h4 { margin: .55rem 0; max-width: 10ch; font-family: Georgia, serif; font-size: 1.65rem; line-height: 1.02; }
+  #da-motion-choice .lesson-copy p { max-width: 30ch; color: #536077; font-size: .72rem; line-height: 1.7; }
+  #da-motion-choice .lesson-rule { width: 76%; height: 1px; margin: 1.4rem 0; background: rgba(7,22,41,.12); }
+  #da-motion-choice .ambient-dock {
+    position: absolute;
+    right: -.8rem;
+    top: 7rem;
+    width: 9.5rem;
+    min-height: 11.5rem;
+    padding: .75rem;
+    border: 1px solid rgba(212,175,55,.42);
+    background: #071629;
+    color: #fffdf8;
+    box-shadow: -8px 10px 24px rgba(7,22,41,.16);
+    transform-origin: right center;
+    transition: transform .42s cubic-bezier(.22,1,.36,1);
+  }
+  #da-motion-choice .ambient-dock::before { content: 'Explore the idea'; display: block; margin-bottom: .35rem; color: #f0c86a; font-size: .58rem; font-weight: 700; }
+  #da-motion-choice .ambient-dock .detail { overflow: hidden; opacity: 0; font-size: .62rem; line-height: 1.45; transition: opacity .25s ease; }
+  #da-motion-choice .page-slice:hover .ambient-dock { transform: translate(-6.5rem, 1rem) scale(1.72); }
+  #da-motion-choice .page-slice:hover .ambient-dock .detail { opacity: 1; }
+  #da-motion-choice svg { display: block; width: 100%; height: auto; overflow: visible; }
+  #da-motion-choice .axis { stroke: rgba(255,255,255,.22); stroke-width: 1; }
+  #da-motion-choice .curve { fill: none; stroke: url(#gold-beam-a); stroke-width: 3; filter: drop-shadow(0 0 5px rgba(240,200,106,.58)); }
+  #da-motion-choice .dot { fill: #fff5bd; stroke: #d4af37; stroke-width: 2; filter: drop-shadow(0 0 5px #d4af37); }
+  #da-motion-choice .porthole-row { display: flex; gap: .65rem; padding: 0 1.25rem; }
+  #da-motion-choice .porthole {
+    width: 5.4rem;
+    height: 5.4rem;
+    padding: .55rem;
+    overflow: hidden;
+    border-radius: 50%;
+    background: #071629;
+    box-shadow: 0 0 0 1px rgba(212,175,55,.35), 0 8px 18px rgba(7,22,41,.14);
+    transition: transform .3s cubic-bezier(.22,1,.36,1), border-radius .3s ease;
+  }
+  #da-motion-choice .porthole:hover { transform: scale(1.7); border-radius: .65rem; z-index: 3; }
+  #da-motion-choice .porthole-label { margin-top: .4rem; color: #8a6812; font-size: .58rem; font-weight: 700; }
+  #da-motion-choice .focus-overlay {
+    position: absolute;
+    inset: 3rem .8rem .8rem;
+    display: grid;
+    grid-template-columns: 1.1fr .9fr;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    pointer-events: none;
+    opacity: 0;
+    transform: scale(.96);
+    background: #071629;
+    color: white;
+    transition: opacity .3s ease, transform .3s cubic-bezier(.22,1,.36,1);
+  }
+  #da-motion-choice .porthole-area:hover + .focus-overlay { opacity: 1; transform: scale(1); }
+  #da-motion-choice .focus-overlay h4 { margin: 0 0 .5rem; color: white; font-family: Georgia, serif; font-size: 1.25rem; }
+  #da-motion-choice .focus-overlay p { margin: 0; color: rgba(255,255,255,.74); font-size: .65rem; line-height: 1.55; }
+  #da-motion-choice .focus-overlay strong { color: #f0c86a; }
+  #da-motion-choice .motion-path { stroke-dasharray: 1; stroke-dashoffset: 1; animation: da-draw 4s linear infinite; }
+  #da-motion-choice .moving-dot { animation: da-dot 4s linear infinite; }
+  @keyframes da-draw { 0% { stroke-dashoffset: 1; } 76%,100% { stroke-dashoffset: 0; } }
+  @keyframes da-dot { 0% { transform: translate(0,0); } 50% { transform: translate(72px,-35px); } 100% { transform: translate(145px,3px); } }
+  @media (max-width: 700px) {
+    #da-motion-choice .cards { grid-template-columns: 1fr; }
+    #da-motion-choice .page-slice { min-height: 27rem; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    #da-motion-choice *, #da-motion-choice *::before, #da-motion-choice *::after { animation: none !important; transition: none !important; }
+  }
+</style>
+
+<div id="da-motion-choice">
+  <div class="choice-intro">
+    <h2>Where should the living diagrams sit?</h2>
+    <p class="subtitle">Hover over each page preview to see its focus behaviour, then click the option you prefer.</p>
+  </div>
+
+  <div class="cards">
+    <div class="card" data-choice="edge-dock" onclick="toggleSelect(this)">
+      <div class="card-image">
+        <div class="page-slice">
+          <div class="mini-nav"><strong>DA Tuition</strong><span>Programs&nbsp;&nbsp; Subjects&nbsp;&nbsp; Contact</span></div>
+          <div class="lesson-copy">
+            <small>MATHEMATICS</small>
+            <h4>Understand the idea, not just the steps.</h4>
+            <p>Guided tutoring helps students connect equations, diagrams and exam questions.</p>
+            <div class="lesson-rule"></div>
+            <p>Continue scrolling through the normal Mathematics page without interruption.</p>
+          </div>
+          <div class="ambient-dock">
+            <svg viewBox="0 0 170 100" aria-label="A tangent revealing a gradient curve">
+              <defs><linearGradient id="gold-beam-a"><stop stop-color="#fff6bd"/><stop offset=".45" stop-color="#f0c86a"/><stop offset="1" stop-color="#b78712"/></linearGradient></defs>
+              <path class="axis" d="M8 78H164M18 91V8"/>
+              <path class="curve motion-path" pathLength="1" d="M18 73 C54 11 92 26 107 62 C122 91 146 73 162 25"/>
+              <circle class="dot moving-dot" cx="18" cy="73" r="4"/>
+            </svg>
+            <div class="detail"><strong>Tangent → derivative</strong><br>Open the diagram to watch slope values draw the gradient function.</div>
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <h3>A — Edge-mounted living diagrams</h3>
+        <p>Small animated diagrams occupy otherwise-empty outer space. Hover, focus or tap expands one into a centred teaching layer.</p>
+      </div>
+    </div>
+
+    <div class="card" data-choice="inline-portholes" onclick="toggleSelect(this)">
+      <div class="card-image">
+        <div class="page-slice">
+          <div class="mini-nav"><strong>DA Tuition</strong><span>Programs&nbsp;&nbsp; Subjects&nbsp;&nbsp; Contact</span></div>
+          <div class="lesson-copy" style="width:82%">
+            <small>MATHEMATICS</small>
+            <h4>Understand the idea, not just the steps.</h4>
+            <p>Short mathematical windows punctuate the page between normal content blocks.</p>
+          </div>
+          <div class="porthole-area">
+            <div class="porthole-row">
+              <div><div class="porthole"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="30" fill="none" stroke="#477dd6"/><line x1="50" y1="50" x2="78" y2="35" stroke="#f0c86a" stroke-width="3"/><circle cx="78" cy="35" r="5" class="dot"/></svg></div><div class="porthole-label">Sine & cosine</div></div>
+              <div><div class="porthole"><svg viewBox="0 0 100 100"><path class="axis" d="M8 82H94"/><path d="M12 78L30 61L48 28L66 35L88 73" fill="rgba(212,175,55,.2)" stroke="#f0c86a" stroke-width="2"/></svg></div><div class="porthole-label">Area estimate</div></div>
+              <div><div class="porthole"><svg viewBox="0 0 100 100"><path class="axis" d="M8 80H94"/><path d="M12 77C33 22 67 86 91 20" fill="none" stroke="#477dd6" stroke-width="3"/><circle cx="48" cy="55" r="5" class="dot"/></svg></div><div class="porthole-label">Gradient</div></div>
+            </div>
+          </div>
+          <div class="focus-overlay">
+            <svg viewBox="0 0 170 110"><defs><linearGradient id="gold-beam-b"><stop stop-color="#fff6bd"/><stop offset=".45" stop-color="#f0c86a"/><stop offset="1" stop-color="#b78712"/></linearGradient></defs><path class="axis" d="M8 90H164M18 103V8"/><path class="curve" d="M18 82 C58 11 101 35 117 70 C132 99 151 73 162 22"/><circle class="dot" cx="95" cy="50" r="5"/></svg>
+            <div><h4>One idea at a time</h4><p><strong>Focused explanation</strong><br>The selected porthole opens over the page, then closes back into the reading flow.</p></div>
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <h3>B — Inline mathematical portholes</h3>
+        <p>Several small circular previews sit inside the content flow. Hover, focus or tap opens the chosen idea into a centred teaching layer.</p>
+      </div>
+    </div>
+  </div>
+</div>

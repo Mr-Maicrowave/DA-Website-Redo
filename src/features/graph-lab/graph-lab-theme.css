@@ -1,0 +1,182 @@
+.graph-lab-themed {
+  --gl-page: #eef3f9;
+  --gl-panel: #ffffff;
+  --gl-panel-raised: #f8fbff;
+  --gl-plot: #fbfaf5;
+  --gl-ink: #13233b;
+  --gl-muted: #536077;
+  --gl-border: rgba(7, 22, 41, 0.16);
+  --gl-grid: rgba(39, 54, 79, 0.12);
+  --gl-axis: #27364f;
+  --gl-violet: #5d568e;
+  --gl-violet-soft: #eee8f4;
+  --gl-gold: #9a6d07;
+  --gl-gold-soft: #fff5d8;
+  color: var(--gl-ink);
+}
+
+[data-graph-lab-theme='dark'] .graph-lab-themed {
+  --gl-page: #050d18;
+  --gl-panel: #091523;
+  --gl-panel-raised: #0d1b2b;
+  --gl-plot: #06111e;
+  --gl-ink: #f5f7fb;
+  --gl-muted: #aebbd0;
+  --gl-border: rgba(167, 190, 219, 0.22);
+  --gl-grid: rgba(151, 178, 210, 0.15);
+  --gl-axis: #eaf0f8;
+  --gl-violet: #b58cff;
+  --gl-violet-soft: #211b38;
+  --gl-gold: #f7c84b;
+  --gl-gold-soft: #2a220f;
+}
+
+.graph-lab-workspace {
+  background: var(--gl-page) !important;
+  color: var(--gl-ink);
+  transition: background-color 180ms ease-out, color 180ms ease-out;
+}
+
+[data-graph-lab-theme='dark'] .graph-lab-workspace {
+  background-image:
+    radial-gradient(circle at 51% 13%, rgba(247, 200, 75, 0.06), transparent 30%),
+    radial-gradient(circle at 18% 55%, rgba(181, 140, 255, 0.06), transparent 28%) !important;
+}
+
+.graph-lab-panel {
+  background: var(--gl-panel) !important;
+  border-color: var(--gl-border) !important;
+  color: var(--gl-ink) !important;
+  transition: background-color 180ms ease-out, border-color 180ms ease-out, color 180ms ease-out;
+}
+
+[data-graph-lab-theme='dark'] .graph-lab-panel {
+  box-shadow: 0 5px 8px rgba(0, 0, 0, 0.28);
+}
+
+.graph-lab-themed .graph-lab-panel :is(h1, h2, h3, label, legend) {
+  color: var(--gl-ink) !important;
+}
+
+.graph-lab-themed .graph-lab-panel :is(p, span, code) {
+  border-color: var(--gl-border);
+}
+
+[data-graph-lab-theme='dark'] .graph-lab-panel :is(.text-\[\#40516b\], .text-\[\#536077\], .text-\[\#68758b\]) {
+  color: var(--gl-muted) !important;
+}
+
+[data-graph-lab-theme='dark'] .graph-lab-panel :is(.text-\[\#071629\], .text-\[\#172033\]) {
+  color: var(--gl-ink) !important;
+}
+
+[data-graph-lab-theme='dark'] .graph-lab-panel :is(.text-\[\#7a5709\], .text-\[\#5d568e\], .text-\[\#392e59\]) {
+  color: var(--gl-gold) !important;
+}
+
+[data-graph-lab-theme='dark'] .graph-lab-panel :is(input:not([type='range']), select, button[aria-label*='edit'], div[aria-label^='Expression']) {
+  background: var(--gl-panel-raised) !important;
+  border-color: var(--gl-border) !important;
+  color: var(--gl-ink) !important;
+}
+
+[data-graph-lab-theme='dark'] .graph-lab-panel option {
+  background: #0d1b2b;
+  color: #f5f7fb;
+}
+
+[data-graph-lab-theme='dark'] .graph-lab-panel :is(.bg-white, .bg-\[\#f3f7fb\], .bg-\[\#f3f0f8\]) {
+  background-color: var(--gl-panel-raised) !important;
+  color: var(--gl-ink) !important;
+}
+
+[data-graph-lab-theme='dark'] .graph-lab-panel .bg-\[\#fff7df\] {
+  background-color: var(--gl-gold-soft) !important;
+  color: #f5d875 !important;
+}
+
+[data-graph-lab-theme='dark'] .graph-lab-panel button:not(:disabled):not([aria-pressed='true']):hover {
+  border-color: rgba(181, 140, 255, 0.7) !important;
+  background-color: rgba(181, 140, 255, 0.1) !important;
+}
+
+[data-graph-lab-theme='dark'] .graph-lab-example-chip[aria-pressed='true'] {
+  background: var(--gl-violet) !important;
+  border-color: var(--gl-violet) !important;
+  color: #07111e !important;
+}
+
+[data-graph-lab-theme='dark'] .graph-lab-panel button.bg-\[\#071629\] {
+  background-color: #f7c84b !important;
+  color: #07111e !important;
+}
+
+[data-graph-lab-theme='dark'] .graph-lab-panel button:disabled {
+  color: #bac4d3 !important;
+}
+
+[data-graph-lab-theme='dark'] .graph-lab-panel input[type='range'] {
+  accent-color: var(--gl-gold);
+}
+
+.graph-lab-graph-stage {
+  background: var(--gl-plot) !important;
+  border: 1px solid var(--gl-border);
+}
+
+[data-graph-lab-theme='dark'] .graph-lab-graph-stage {
+  background-image: radial-gradient(circle at 50% 48%, rgba(247, 200, 75, 0.055), transparent 42%) !important;
+}
+
+.graph-lab-drag-hint {
+  background: color-mix(in srgb, var(--gl-panel) 90%, transparent) !important;
+  color: var(--gl-muted) !important;
+}
+
+.graph-lab-graph-panel > div > ul {
+  color: var(--gl-muted) !important;
+}
+
+[data-graph-lab-theme='dark'] .graph-lab-graph-panel > .mt-5 {
+  border-color: var(--gl-border) !important;
+}
+
+[data-graph-lab-theme='dark'] .graph-lab-graph-panel :is(label, legend) {
+  color: var(--gl-ink) !important;
+}
+
+[data-graph-lab-theme='dark'] .graph-lab-graph-panel input[type='number'] {
+  background: var(--gl-panel-raised);
+  border-color: var(--gl-border);
+  color: var(--gl-ink);
+}
+
+[data-graph-lab-theme='dark'] .graph-lab-graph-panel button {
+  border-color: var(--gl-border) !important;
+  color: var(--gl-ink);
+}
+
+[data-graph-lab-theme='dark'] .graph-lab-graph-panel button:hover {
+  background: rgba(181, 140, 255, 0.1) !important;
+}
+
+[data-graph-lab-theme='dark'] .graph-lab-graph-panel button.bg-\[\#071629\] {
+  background: #f7c84b !important;
+  color: #07111e !important;
+}
+
+[data-graph-lab-theme='dark'] .graph-lab-themed > section:not(.graph-lab-workspace) {
+  background-color: var(--gl-page) !important;
+  color: var(--gl-ink);
+}
+
+[data-graph-lab-theme='dark'] .graph-lab-themed > section:not(.graph-lab-workspace) :is(h2, p) {
+  color: var(--gl-ink) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .graph-lab-workspace,
+  .graph-lab-panel {
+    transition: none;
+  }
+}

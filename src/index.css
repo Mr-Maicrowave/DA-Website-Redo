@@ -7,7 +7,7 @@
 @tailwind utilities;
 
 /* Stable homepage chapter anchors: clear the fixed navigation on arrival. */
-:where(#welcome, #philosophy, #journey, #programs, #subjects, #environment, #guides, #stories, #contact) {
+:where(#welcome, #philosophy, #journey, #programs, #programs-catalogue, #subjects, #environment, #guides, #stories, #contact) {
   scroll-margin-top: 72px;
 }
 
@@ -156,9 +156,9 @@
     mix-blend-mode: overlay;
   }
 
-  /* Youthful display font for special articles */
+  /* Keep special-article text within the shared reading system. */
   .font-fun {
-    font-family: 'Baloo 2', system-ui, -apple-system, Segoe UI, Roboto, Inter, 'Helvetica Neue', Arial, 'Noto Sans', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', sans-serif;
+    font-family: 'Cabin', system-ui, -apple-system, Segoe UI, Arial, 'Noto Sans', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', sans-serif;
   }
 
   html {
@@ -232,6 +232,11 @@
   }
 
   body[data-da-intro-active="true"] .site-sticky-book-button {
+    display: none !important;
+  }
+
+  /* The floating conversion CTA obscures graph controls on small screens. */
+  body[data-da-graph-lab-active="true"] .site-sticky-book-button {
     display: none !important;
   }
 
@@ -496,11 +501,20 @@
 }
 
 .trusted-schools-track {
-  animation: trusted-schools-scroll 25.3s linear infinite;
+  animation: trusted-schools-scroll 11.2s linear infinite;
 }
 
 .trusted-schools-strip:hover .trusted-schools-track {
   animation-play-state: paused;
+}
+
+.subject-school-strip-compact > div {
+  padding-top: 0.85rem;
+  padding-bottom: 1.05rem;
+}
+
+.subject-school-strip-compact > div > div:first-child {
+  margin-bottom: 0.65rem;
 }
 
 .trusted-schools-crest {

@@ -36,20 +36,11 @@ const FADE_DELAY = Math.round(SHAPE_MS * 0.4); // the layer becoming visible wai
 
 const NavigationNew = () => {
   const [sheetOpen, setSheetOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [reducedMotion, setReducedMotion] = useState(false);
   const [mobileHeaderHidden, setMobileHeaderHidden] = useState(false);
   const location = useLocation();
   const isHomepage = location.pathname === '/';
-  const isBookExperience = location.pathname === '/english-sample';
-  // Trial: pages whose hero is a full-bleed dark-overlay photo get the same
-  // wash-at-top-then-solid-on-scroll treatment as the home page, so the photo
-  // reads as one continuous image instead of a bar sitting on top of it.
-  // Unlike the home page's lighter hero imagery, these need light nav text
-  // while in the wash state — see heroTextLight below.
-  const transparentHeroPaths = ['/subjects/english', '/programs/high-school'];
-  const isTransparentHero = transparentHeroPaths.includes(location.pathname);
   const isEnglishMobileTrial = location.pathname === '/subjects/english';
 
   const { navState, pin, expand } = useAdaptiveNav();
@@ -69,12 +60,6 @@ const NavigationNew = () => {
     collapsedLayerRef.current?.toggleAttribute('inert', !isCollapsed);
     expandedLayerRef.current?.toggleAttribute('inert', isCollapsed);
   }, [isCollapsed]);
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 60);
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
 
   useEffect(() => {
     if (!isEnglishMobileTrial) {
@@ -208,36 +193,13 @@ const NavigationNew = () => {
     }
   ];
 
-  const handleNavClick = (href: string) => {
-    if (href.startsWith('#') && !['/', '/english-sample'].includes(location.pathname)) {
-      window.location.href = '/' + href;
-    }
-  };
-
-  // While the wash sits over this page's dark hero photo, nav text switches
-  // to a light colour with a soft shadow for legibility (the overlay gradient
-  // it sits on runs dark-to-nearly-transparent left-to-right, so the shadow
-  // matters most on the right side, where the underlying photo shows through
-  // almost unfiltered). Reverts to the normal navy once solid.
-  const heroTextLight = isTransparentHero && !scrolled;
-  const heroTextShadow = heroTextLight ? { textShadow: '0 1px 6px rgba(4,11,23,0.55)' } : undefined;
-
-  const linkClass = `relative px-2.5 xl:px-3.5 py-2 text-sm xl:text-[0.9rem] font-medium transition-colors whitespace-nowrap ${heroTextLight ? 'text-white hover:text-brand-gold' : 'text-brand-navy hover:text-brand-blue-dark'}`;
+  const linkClass = 'relative px-2.5 xl:px-3.5 py-2 text-sm xl:text-[0.9rem] font-medium transition-colors whitespace-nowrap text-brand-navy hover:text-brand-blue-dark';
   const navLinkClass = (active = false) => `${linkClass} ${active ? 'after:absolute after:left-2.5 after:right-2.5 after:-bottom-0.5 after:h-px after:bg-brand-gold/80' : ''}`;
-  const logoTextClass = heroTextLight ? 'text-white' : 'text-brand-navy';
-  const hamburgerIconClass = heroTextLight ? 'text-white/90 hover:text-white' : 'text-brand-midnight/80 hover:text-brand-blue-dark';
-  const collapsedPillIconClass = heroTextLight ? 'text-white hover:bg-white/10' : 'text-brand-navy hover:bg-brand-navy/10';
-
-  const barBackground = scrolled
-    ? 'linear-gradient(110deg, rgba(250,245,234,0.95), rgba(247,239,222,0.92) 58%, rgba(235,215,175,0.88))'
-    : isHomepage || isBookExperience || isTransparentHero
-      ? 'linear-gradient(110deg, rgba(250,245,233,0.44), rgba(248,241,225,0.34) 58%, rgba(236,217,180,0.28))'
-      : 'linear-gradient(110deg, rgba(250,245,234,0.92), rgba(247,239,222,0.88) 58%, rgba(235,215,175,0.82))';
-  const barShadow = scrolled
-    ? '0 5px 14px rgba(10,27,52,0.10), inset 0 1px 0 rgba(255,250,239,0.72)'
-    : isHomepage || isTransparentHero
-      ? '0 1px 0 rgba(255,250,239,0.34), 0 8px 28px rgba(10,27,52,0.08)'
-      : '0 2px 7px rgba(10,27,52,0.065), inset 0 1px 0 rgba(255,250,239,0.62)';
+  const logoTextClass = 'text-brand-navy';
+  const hamburgerIconClass = 'text-brand-midnight/80 hover:text-brand-blue-dark';
+  const collapsedPillIconClass = 'text-brand-navy hover:bg-brand-navy/10';
+  const barBackground = 'linear-gradient(110deg, rgba(250,245,234,0.95), rgba(247,239,222,0.92) 58%, rgba(235,215,175,0.88))';
+  const barShadow = '0 5px 14px rgba(10,27,52,0.10), inset 0 1px 0 rgba(255,250,239,0.72)';
 
   const shapeTransition = reducedMotion ? 'none' : `clip-path ${SHAPE_MS}ms cubic-bezier(0.16,1,0.3,1)`;
   const collapsedLayerTransition = reducedMotion ? 'none' : `opacity ${FADE_MS}ms ease ${isCollapsed ? FADE_DELAY : 0}ms`;
@@ -260,7 +222,7 @@ const NavigationNew = () => {
               />
               <span
                 className={`text-[1.02rem] font-bold whitespace-nowrap leading-none ${logoTextClass}`}
-                style={{ fontFamily: "'Libre Baskerville', Georgia, serif", letterSpacing: '-0.01em', ...heroTextShadow }}
+                style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", letterSpacing: '-0.01em' }}
               >
                 DA <span className="text-brand-gold italic font-bold">Tuition</span>
               </span>
@@ -373,7 +335,7 @@ const NavigationNew = () => {
                     />
                     <span
                       className={`text-[1.08rem] font-bold whitespace-nowrap leading-none ${logoTextClass}`}
-                      style={{ fontFamily: "'Libre Baskerville', Georgia, serif", letterSpacing: '-0.01em', ...heroTextShadow }}
+                      style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", letterSpacing: '-0.01em' }}
                     >
                       DA <span className="text-brand-gold italic font-bold">Tuition</span>
                     </span>
@@ -382,11 +344,11 @@ const NavigationNew = () => {
 
                 <div className="flex items-center flex-1 justify-center">
                   <div className="flex gap-0.5 items-center">
-                    <Link to="/" className={navLinkClass(isHomepage)} style={heroTextShadow}>Home</Link>
+                    <Link to="/" className={navLinkClass(isHomepage)}>Home</Link>
 
                     <HoverCard openDelay={120} closeDelay={180} onOpenChange={(open) => handleDropdownChange('programs', open)}>
                       <HoverCardTrigger asChild>
-                        <button type="button" className={`${navLinkClass(location.pathname.startsWith('/programs') || location.pathname === '/hsc-excellence')} inline-flex items-center gap-0.5`} style={heroTextShadow}>
+                        <button type="button" className={`${navLinkClass(location.pathname.startsWith('/programs') || location.pathname === '/hsc-excellence')} inline-flex items-center gap-0.5`}>
                           Programs <ChevronDown className="h-3.5 w-3.5" />
                         </button>
                       </HoverCardTrigger>
@@ -409,7 +371,7 @@ const NavigationNew = () => {
 
                     <HoverCard openDelay={120} closeDelay={180} onOpenChange={(open) => handleDropdownChange('subjects', open)}>
                       <HoverCardTrigger asChild>
-                        <button type="button" className={`${navLinkClass(location.pathname.startsWith('/subjects') || location.pathname === '/english-sample')} inline-flex items-center gap-0.5`} style={heroTextShadow}>
+                        <button type="button" className={`${navLinkClass(location.pathname.startsWith('/subjects') || location.pathname === '/english-sample')} inline-flex items-center gap-0.5`}>
                           Subjects <ChevronDown className="h-3.5 w-3.5" />
                         </button>
                       </HoverCardTrigger>
@@ -432,7 +394,7 @@ const NavigationNew = () => {
 
                     <HoverCard openDelay={120} closeDelay={180} onOpenChange={(open) => handleDropdownChange('about', open)}>
                       <HoverCardTrigger asChild>
-                        <button type="button" className={`${navLinkClass(['/why-choose-da', '/find-teacher', '/principal-reflections', '/learning-formats'].includes(location.pathname))} inline-flex items-center gap-0.5`} style={heroTextShadow}>
+                        <button type="button" className={`${navLinkClass(['/why-choose-da', '/find-teacher', '/principal-reflections', '/learning-formats'].includes(location.pathname))} inline-flex items-center gap-0.5`}>
                           About <ChevronDown className="h-3.5 w-3.5" />
                         </button>
                       </HoverCardTrigger>
@@ -453,11 +415,11 @@ const NavigationNew = () => {
                       </HoverCardContent>
                     </HoverCard>
 
-                    <Link to="/success-stories" className={navLinkClass(location.pathname === '/success-stories')} style={heroTextShadow}>Success Stories</Link>
+                    <Link to="/success-stories" className={navLinkClass(location.pathname === '/success-stories')}>Success Stories</Link>
 
                     <HoverCard openDelay={120} closeDelay={180} onOpenChange={(open) => handleDropdownChange('resources', open)}>
                       <HoverCardTrigger asChild>
-                        <button type="button" className={`${navLinkClass(['/faq', '/tutoring-canley-heights', '/articles'].some((path) => location.pathname.startsWith(path)))} inline-flex items-center gap-0.5`} style={heroTextShadow}>
+                        <button type="button" className={`${navLinkClass(['/faq', '/tutoring-canley-heights', '/articles'].some((path) => location.pathname.startsWith(path)))} inline-flex items-center gap-0.5`}>
                           Resources <ChevronDown className="h-3.5 w-3.5" />
                         </button>
                       </HoverCardTrigger>
@@ -494,14 +456,9 @@ const NavigationNew = () => {
                       </HoverCardContent>
                     </HoverCard>
 
-                    <a
-                      href="#contact"
-                      onClick={() => handleNavClick('#contact')}
-                      className={linkClass}
-                      style={heroTextShadow}
-                    >
+                    <Link to="/contact" className={linkClass}>
                       Contact
-                    </a>
+                    </Link>
                   </div>
                 </div>
 

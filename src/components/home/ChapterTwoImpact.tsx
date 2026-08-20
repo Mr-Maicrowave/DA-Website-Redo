@@ -19,7 +19,7 @@ const impactStats = [
   },
   {
     id: "students",
-    value: "650+",
+    value: "1,500+",
     endValue: 650,
     suffix: "+",
     label: "STUDENTS",
@@ -300,7 +300,7 @@ function StatMark({
         <motion.strong className="block whitespace-nowrap font-['Playfair_Display',Georgia,serif] text-[clamp(56px,6vw,72px)] font-bold leading-none text-[#E8C36A] transition duration-300 group-hover:text-[#F4D07A] group-hover:[text-shadow:0_0_18px_rgba(232,195,106,0.42)]">
           {displayValue}
         </motion.strong>
-        <span className="mt-3 block max-w-full font-['Cinzel',serif] text-[15px] font-semibold uppercase leading-[1.25] tracking-[0.25em] text-[#F6EFD8]">
+        <span className="mt-3 block max-w-full font-sans text-[15px] font-semibold uppercase leading-[1.25] tracking-[0.25em] text-[#F6EFD8]">
           {stat.label}
         </span>
         <span className="mt-3 block max-w-[13ch] font-['Cormorant_Garamond',Georgia,serif] text-[24px] font-normal leading-[1.5] text-[rgba(255,245,220,0.92)]">

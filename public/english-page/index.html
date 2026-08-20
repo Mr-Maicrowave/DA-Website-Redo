@@ -76,7 +76,7 @@
   .image-card p{margin:0;color:#5c4a1e;line-height:1.65}
 
   /* ─── WHAT MAKES DA DIFFERENT ─── */
-  .diff-section{position:relative;overflow:hidden;padding:48px 32px 0;background:#FBEDDC}
+  .diff-section{position:relative;overflow:hidden;padding:48px 32px 0;background:linear-gradient(180deg,#FBEDDC 0%,#FBEDDC 78%,#fff 100%)}
   .diff-inner{position:relative;z-index:1;padding-bottom:48px}
   .diff-head{text-align:center;max-width:860px;margin:0 auto 28px}
   .diff-eyebrow{display:inline-block;color:var(--gold);font-size:13px;font-weight:900;letter-spacing:.24em;text-transform:uppercase;margin-bottom:14px}
@@ -164,17 +164,46 @@
   .pull span{display:block;color:var(--gold);font-weight:900;letter-spacing:.14em;text-transform:uppercase;font-size:10px;margin-bottom:10px}
   .pull p{font-family:"Playfair Display",Georgia,serif;font-size:24px;line-height:1.25;margin:0}
 
-  .pathway{background:linear-gradient(180deg,#fff 0%,#fbf6ea 100%);overflow:hidden}
-  .roadmap{position:relative;display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:22px;padding:12px 0 10px}
-  .road-step{
-    position:relative;z-index:1;min-height:245px;border-radius:8px;background:#fff;
-    border:1px solid rgba(201,162,39,.2);box-shadow:0 18px 44px rgba(7,22,41,.08);
-    padding:22px 20px 24px;display:flex;flex-direction:column;justify-content:flex-start
-  }
-  .road-step:nth-child(2),.road-step:nth-child(5){transform:translateY(24px)}
-  .road-num{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:var(--navy);color:var(--gold-soft);font-weight:900;margin-bottom:18px}
-  .road-step h3{font-size:19px;margin:0 0 10px;color:var(--navy)}
-  .road-step p{color:#59647a;line-height:1.6;margin:0;font-size:14px}
+    .pathway{background:linear-gradient(180deg,#fff 0%,#fff 16%,#fbf6ea 100%);overflow:hidden;padding-top:64px}
+    .process-head{text-align:center;max-width:1080px;margin:0 auto 30px}
+    .process-title-row{display:grid;grid-template-columns:minmax(70px,1fr) auto minmax(70px,1fr);align-items:center;gap:28px}
+    .process-title-row::before,.process-title-row::after{content:"";height:1px;background:linear-gradient(90deg,transparent,rgba(201,162,39,.72))}
+    .process-title-row::after{background:linear-gradient(90deg,rgba(201,162,39,.72),transparent)}
+    .process-title-row h2{font-size:clamp(2.5rem,5vw,4.8rem);line-height:.95;margin:0;color:var(--navy)}
+    .process-title-row span{position:relative;display:block}
+    .process-title-row span::before,.process-title-row span::after{content:"";position:absolute;top:50%;width:9px;height:9px;background:var(--gold);transform:translateY(-50%) rotate(45deg)}
+    .process-title-row span::before{left:-28px}
+    .process-title-row span::after{right:-28px}
+    .process-subtitle{margin:14px 0 0;color:rgba(201,162,39,.78);font-weight:900;letter-spacing:.26em;text-transform:uppercase;font-size:clamp(.9rem,1.45vw,1.24rem)}
+    .process-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+    .process-card{min-height:405px;border-radius:8px;background:rgba(255,255,255,.92);border:1px solid rgba(201,162,39,.2);box-shadow:0 18px 44px rgba(7,22,41,.08);padding:22px 20px 24px}
+    .process-card-head{display:flex;align-items:center;gap:18px;margin-bottom:8px}
+    .process-num{flex:0 0 auto;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:var(--navy);color:var(--gold-soft);font-weight:900;font-size:20px}
+    .process-card h3{font-size:20px;line-height:1.16;margin:0;color:var(--navy)}
+    .process-card p{color:#59647a;line-height:1.55;margin:14px 4px 0;font-size:18px}
+    .process-video-button{display:block;width:100%;border:0;background:transparent;padding:0;margin:0;text-align:left;cursor:pointer}
+    .process-media{position:relative;display:block;height:210px;border-radius:8px;overflow:hidden;background:#eadfc9;box-shadow:inset 0 0 0 1px rgba(7,22,41,.1)}
+    .process-media video,.process-media img{display:block;width:100%;height:100%;object-fit:cover}
+    .process-media--placeholder{background:linear-gradient(145deg,#f8f1e3 0%,#fdfaf3 52%,#e8dcc8 100%)}
+    .process-media--placeholder::before{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(255,255,255,.08),rgba(255,255,255,.08)),repeating-linear-gradient(0deg,transparent 0 29px,rgba(7,22,41,.13) 30px,transparent 31px);opacity:.75}
+    .process-media--analysis::after{content:"Technique: imagery\\A Purpose: create atmosphere\\A Meaning: reveal uncertainty";white-space:pre;position:absolute;left:38px;top:34px;color:#324057;font-family:'Bradley Hand ITC','Segoe Print',cursive;font-size:20px;line-height:1.55;transform:rotate(-3deg)}
+    .process-media--response::after{content:"Thesis: I agree that...\\A Topic Sentence: This is shown when...\\A Evidence: \\"...\\"\\A Commentary: This shows that...\\A Link: Therefore...";white-space:pre;position:absolute;left:40px;top:28px;color:#324057;font-family:'Bradley Hand ITC','Segoe Print',cursive;font-size:18px;line-height:1.42}
+    .process-media--draft::after{content:"Live edits + draft development";position:absolute;left:28px;bottom:56px;color:#fff;background:rgba(7,22,41,.74);border-radius:999px;padding:8px 14px;font-weight:800}
+    .process-media--draft{background:linear-gradient(135deg,#4d4438,#d8c5a5 48%,#18263b 49%,#0b1526 100%)}
+    .process-media--feedback::after{content:"Stronger topic sentence\\A Great evidence choice!\\A Explain how this proves your idea";white-space:pre;position:absolute;right:24px;top:28px;color:#7458a7;font-family:'Bradley Hand ITC','Segoe Print',cursive;font-size:18px;line-height:1.55}
+    .process-media--exam{background:linear-gradient(135deg,#efe4ce 0%,#fffaf0 55%,#d9c4a0 100%)}
+    .process-media--exam::after{content:"02:00:00";position:absolute;left:34px;bottom:58px;color:#253146;background:#c8d1cd;border:2px solid rgba(7,22,41,.22);border-radius:8px;padding:8px 12px;font-family:monospace;font-size:22px}
+    .process-play{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:70px;height:70px;border-radius:50%;background:rgba(7,22,41,.78);box-shadow:0 12px 32px rgba(7,22,41,.25);display:grid;place-items:center}
+    .process-play::before{content:"";display:block;margin-left:5px;border-top:16px solid transparent;border-bottom:16px solid transparent;border-left:24px solid #fff}
+    .process-bar{position:absolute;left:0;right:0;bottom:0;height:42px;background:rgba(5,7,11,.75);display:flex;align-items:center;gap:10px;padding:0 14px;color:#fff;font-size:12px}
+    .process-bar::before{content:"";width:0;height:0;border-top:8px solid transparent;border-bottom:8px solid transparent;border-left:12px solid #fff}
+    .process-bar::after{content:"0:00 / 0:10";margin-left:auto;color:#fff}
+    .process-progress{height:4px;flex:1;border-radius:999px;background:rgba(255,255,255,.24);position:relative}
+    .process-progress::before{content:"";position:absolute;left:0;top:0;bottom:0;width:24%;border-radius:inherit;background:var(--gold-soft)}
+    .video-lightbox{position:absolute;left:0;right:0;top:var(--video-top,0px);height:var(--video-height,100vh);z-index:3000;background:rgba(0,0,0,.82);display:none;align-items:center;justify-content:center;padding:24px;cursor:pointer}
+    .video-lightbox.is-open{display:flex}
+    .video-lightbox__frame{width:min(50vw,920px);max-width:calc(100vw - 48px);cursor:auto}
+    .video-lightbox__frame video{display:block;width:100%;max-height:calc(var(--video-height,100vh) - 96px);border-radius:10px;background:#000;box-shadow:0 28px 80px rgba(0,0,0,.45)}
 
   .quote-section{background:#F8F4EC}
 
@@ -690,6 +719,7 @@
     --c-navy:#061A34;--c-navy2:#0B294D;--c-gold:#D3A62C;--c-cream:#FFF9EF;--c-soft:#F8F4EC;
     position:relative;overflow:hidden;color:var(--c-cream);
     background:
+      linear-gradient(180deg,rgba(251,237,220,0) 72%,#FBEDDC 100%),
       radial-gradient(ellipse 900px 520px at 50% 0%,rgba(211,166,44,.09),transparent 62%),
       linear-gradient(160deg,var(--c-navy) 0%,var(--c-navy2) 100%);
   }
@@ -756,7 +786,7 @@
   }
   .classes-benefit-icon svg{width:22px;height:22px;display:block;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
   .classes-benefit-copy strong{display:block;color:var(--c-cream);font-size:15.5px;font-weight:800;margin-bottom:4px}
-  .classes-benefit-copy span{display:block;color:rgba(248,244,236,.7);font-size:13.5px;line-height:1.55}
+  .classes-benefit-copy span{display:block;color:rgba(255,255,255,.88);font-size:13.5px;line-height:1.55}
   .classes-benefit-sep{width:1px;align-self:stretch;min-height:52px;background:linear-gradient(rgba(211,166,44,0),rgba(211,166,44,.4),rgba(211,166,44,0))}
   @media (prefers-reduced-motion:reduce){
     .class-card,.class-icon,.class-photo img{transition:none}
@@ -765,34 +795,46 @@
     .class-card:hover .class-photo img{transform:none}
   }
 
-  .preview-modal{position:fixed;inset:0;z-index:80;display:none;align-items:center;justify-content:center;padding:28px;background:rgba(3,10,20,.82);backdrop-filter:blur(10px)}
+  html.preview-open,body.preview-open{overflow:hidden}
+  .preview-modal{position:absolute;left:0;right:0;top:var(--preview-top,0px);height:var(--preview-height,100vh);z-index:80;display:none;align-items:center;justify-content:center;padding:12px;background:rgba(3,10,20,.88);backdrop-filter:blur(10px);overscroll-behavior:contain}
   .preview-modal.is-open{display:flex}
-  .preview-shell{width:min(980px,100%);max-height:92vh;display:grid;grid-template-rows:auto 1fr auto;gap:14px}
+  .preview-shell{width:min(1080px,calc(100vw - 24px));height:calc(var(--preview-height,100vh) - 24px);display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:10px}
   .preview-top{display:flex;align-items:center;justify-content:space-between;color:#fff}
-  .preview-top strong{font-family:"Playfair Display",Georgia,serif;font-size:24px}
+  .preview-top strong{font-family:"Playfair Display",Georgia,serif;font-size:clamp(18px,2vw,24px)}
   .preview-close,.preview-arrow{
     border:1px solid rgba(255,255,255,.26);background:rgba(255,255,255,.09);color:#fff;
     border-radius:999px;min-width:44px;height:44px;font-weight:900;cursor:pointer
   }
-  .preview-stage{min-height:0;display:grid;place-items:center}
-  .preview-stage img{max-height:76vh;max-width:100%;border-radius:8px;background:#fff;box-shadow:0 28px 80px rgba(0,0,0,.45)}
+  .preview-arrow{font-size:24px;line-height:1}
+  .preview-arrow:disabled{opacity:.32;cursor:default}
+  .preview-stage{min-height:0;display:grid;place-items:center;overflow:hidden}
+  .preview-stage img{display:block;width:auto;height:auto;max-height:calc(var(--preview-height,100vh) - 126px);max-width:100%;border-radius:8px;background:#fff;box-shadow:0 28px 80px rgba(0,0,0,.45);object-fit:contain}
+  .preview-stage img.preview-image--feedback{width:auto;height:auto;max-width:100%;max-height:calc(var(--preview-height,100vh) - 170px)}
   .preview-controls{display:flex;justify-content:center;gap:12px}
-  .preview-pdf-frame{width:min(900px,100%);height:76vh;border:0;border-radius:8px;background:#fff;box-shadow:0 28px 80px rgba(0,0,0,.45)}
   .preview-placeholder{width:min(560px,100%);background:#fff;border-radius:8px;padding:48px 36px;text-align:center;box-shadow:0 28px 80px rgba(0,0,0,.45)}
   .preview-placeholder-title{font-family:"Playfair Display",Georgia,serif;font-size:22px;color:#071629;margin:0 0 10px}
   .preview-placeholder-note{font-size:14px;color:#536077;margin:0;line-height:1.6}
+  .preview-cta{width:min(620px,100%);border-radius:10px;background:#fff;padding:56px 42px;text-align:center;box-shadow:0 28px 80px rgba(0,0,0,.45)}
+  .preview-cta h3{font-family:"Playfair Display",Georgia,serif;font-size:clamp(2rem,4vw,3.1rem);line-height:1.05;color:#071629;margin:0 0 18px}
+  .preview-cta p{margin:0 auto 28px;max-width:36ch;color:#536077;line-height:1.65}
+  .preview-cta a{display:inline-flex;align-items:center;justify-content:center;min-height:48px;border-radius:999px;background:#c9a227;color:#071629;text-decoration:none;font-weight:900;padding:0 24px}
 
   @media (max-width:900px){
     .nav{position:absolute;top:12px;gap:18px;overflow:hidden}
     .nav-links{display:none}
     .hero-inner,.editorial-grid{grid-template-columns:1fr}
-    .image-cards,.proofs,.year-row,.year-panel,.year-content,.roadmap{grid-template-columns:1fr}
+      .image-cards,.proofs,.year-row,.year-panel,.year-content,.process-grid{grid-template-columns:1fr}
     .hero{padding-top:130px}
     .section-head{display:block}
     .section-head h2{margin-bottom:14px}
     .editorial-image img{height:420px}
     .sample-stack{padding:24px}
-    .road-step:nth-child(2),.road-step:nth-child(5){transform:none}
+      .process-title-row{grid-template-columns:1fr;gap:12px}
+      .process-title-row::before,.process-title-row::after{display:none}
+      .process-title-row span::before,.process-title-row span::after{display:none}
+      .process-card{min-height:auto}
+      .process-media{height:220px}
+      .video-lightbox__frame{width:min(92vw,720px)}
     .quote-grid{grid-template-columns:repeat(2,1fr);gap:20px}
     .concern-face{padding:22px 20px 18px}
     .quote-section .section-head{flex-direction:column}
@@ -847,102 +889,6 @@
     </defs>
   </svg>
 
-
-  <section class="diff-section">
-    <div class="section-inner diff-inner">
-      <div class="diff-head">
-        <span class="diff-eyebrow">What makes DA different</span>
-        <h2 class="serif diff-heading">More than tutoring.<br>We mentor, coach and care.</h2>
-      </div>
-
-      <div class="diff-highlights">
-        <div class="diff-highlight">
-          <span class="diff-highlight-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.4"></circle><path d="M5 20c0-3.9 3.1-7 7-7s7 3.1 7 7"></path><path d="M18 3.2l.6 1.4 1.4.6-1.4.6-.6 1.4-.6-1.4-1.4-.6 1.4-.6Z"></path></svg></span>
-          <p>Personal mentoring,<br>not just subject teaching</p>
-        </div>
-        <span class="diff-highlight-sep" aria-hidden="true"></span>
-        <div class="diff-highlight">
-          <span class="diff-highlight-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 14.5c-2.6-2-4.6-3.8-4.6-6A2.9 2.9 0 0 1 12 6.7a2.9 2.9 0 0 1 4.6 1.8c0 2.2-2 4-4.6 6Z"></path><path d="M5 18c2-1.6 4.5-2.4 7-2.4s5 .8 7 2.4"></path></svg></span>
-          <p>Care that supports<br>confidence and<br>student wellbeing</p>
-        </div>
-        <span class="diff-highlight-sep" aria-hidden="true"></span>
-        <div class="diff-highlight">
-          <span class="diff-highlight-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 19V14"></path><path d="M9 19V10"></path><path d="M14 19v-7"></path><path d="M19 19V6"></path><path d="M17 4l.6 1.4L19 6l-1.4.6L17 8l-.6-1.4L15 6l1.4-.6Z"></path></svg></span>
-          <p>Skills, mindset and<br>guidance that extend<br>beyond school</p>
-        </div>
-        <span class="diff-highlight-sep" aria-hidden="true"></span>
-        <div class="diff-highlight">
-          <span class="diff-highlight-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"></circle><path d="M12 8v4l3 2"></path></svg></span>
-          <p>24-hour support so<br>students never<br>feel alone</p>
-        </div>
-      </div>
-
-      <div class="diff-table-wrap">
-      <img class="diff-side-img diff-side-img--left" src="images/diff-left-cluster.png" alt="" aria-hidden="true">
-      <img class="diff-side-img diff-side-img--right" src="images/diff-right-polaroid.png" alt="" aria-hidden="true">
-      <div class="diff-table">
-        <div class="diff-cell diff-cell--title diff-cell--typical">Typical Tuition</div>
-        <div class="diff-cell diff-cell--title diff-cell--da">DA Tuition</div>
-
-        <div class="diff-cell diff-cell--typical diff-row">
-          <span class="diff-row-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 5.5C6 4.6 9 4.4 12 5.6c3-1.2 6-1 8-.1v13c-2-.9-5-1.1-8 .1-3-1.2-6-1-8-.1Z"></path><path d="M12 5.6v13"></path></svg></span>
-          <div class="diff-row-copy"><strong>Content taught.</strong><p>The lesson stays focused on the subject only.</p></div>
-        </div>
-        <div class="diff-cell diff-cell--da diff-row">
-          <span class="diff-row-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"></circle><path d="M3.5 19.5c0-3.6 2.5-6.2 5.5-6.2 1 0 1.9.3 2.7.8"></path><path d="M17.5 12.6c-2.2-1.7-3.9-3.2-3.9-5.1a2.5 2.5 0 0 1 3.9-2 2.5 2.5 0 0 1 3.9 2c0 1.9-1.7 3.4-3.9 5.1Z"></path></svg></span>
-          <div class="diff-row-copy"><strong>The whole student mentored.</strong><p>We guide students academically, personally and emotionally.</p></div>
-        </div>
-
-        <div class="diff-cell diff-cell--typical diff-row">
-          <span class="diff-row-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="8.4" r="3.4"></circle><path d="M5.5 20c0-3.7 2.9-6.6 6.5-6.6s6.5 2.9 6.5 6.6"></path></svg></span>
-          <div class="diff-row-copy"><strong>Support ends after class.</strong><p>Students are often left to manage stress and confusion alone.</p></div>
-        </div>
-        <div class="diff-cell diff-cell--da diff-row">
-          <span class="diff-row-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 13v-1a8 8 0 0 1 16 0v1"></path><rect x="3" y="13" width="4" height="6" rx="1.4"></rect><rect x="17" y="13" width="4" height="6" rx="1.4"></rect><path d="M20 19v.6a2.4 2.4 0 0 1-2.4 2.4H14"></path></svg></span>
-          <div class="diff-row-copy"><strong>24-hour support.</strong><p>Students can reach out for help, clarity and reassurance whenever they need it.</p></div>
-        </div>
-
-        <div class="diff-cell diff-cell--typical diff-row">
-          <span class="diff-row-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="6" y="4.5" width="12" height="16" rx="1.6"></rect><path d="M9.5 3.6h5a.9.9 0 0 1 .9.9v1.2h-6.8V4.5a.9.9 0 0 1 .9-.9Z"></path><path d="M9 11h6"></path><path d="M9 14.5h6"></path><path d="M9 8h3"></path></svg></span>
-          <div class="diff-row-copy"><strong>Focus stays on school tasks.</strong><p>Learning is often limited to the next worksheet, essay or test.</p></div>
-        </div>
-        <div class="diff-cell diff-cell--da diff-row">
-          <span class="diff-row-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 21v-9"></path><path d="M12 12c0-3.5-2.8-6-6.5-6C5.2 9.7 8 12.5 12 12Z"></path><path d="M12 9c0-3 2.4-5 5.5-5C18 7.5 15.5 9.8 12 9Z"></path></svg></span>
-          <div class="diff-row-copy"><strong>Growth beyond school.</strong><p>We teach confidence, communication, habits and thinking skills that last beyond the classroom.</p></div>
-        </div>
-
-        <div class="diff-cell diff-cell--typical diff-row">
-          <span class="diff-row-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 1 3.4 6.5L4 20l1.2-3.4A7.96 7.96 0 0 1 4 12Z"></path><path d="M10 10a2 2 0 1 1 2.6 1.9c-.9.3-1.3 1-1.3 1.8"></path><path d="M11.3 16h.05"></path></svg></span>
-          <div class="diff-row-copy"><strong>Advice feels generic.</strong><p>Strategies may not reflect what students are truly going through.</p></div>
-        </div>
-        <div class="diff-cell diff-cell--da diff-row">
-          <span class="diff-row-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3.2 19 6v6c0 4.6-3 7.9-7 9-4-1.1-7-4.4-7-9V6Z"></path><path d="M12 8.6l.9 1.9 2.1.3-1.5 1.5.35 2.1L12 13.4l-1.85 1 .35-2.1-1.5-1.5 2.1-.3Z"></path></svg></span>
-          <div class="diff-row-copy"><strong>Led by experience.</strong><p>Our team has been in their position before and uses tried, proven methods that genuinely work.</p></div>
-        </div>
-
-        <div class="diff-cell diff-cell--typical diff-row">
-          <span class="diff-row-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"></circle><path d="M12 7v10"></path><path d="M15 9.5c0-1.1-1.3-2-3-2s-3 .9-3 2 1.3 1.6 3 2 3 .9 3 2-1.3 2-3 2-3-.9-3-2"></path></svg></span>
-          <div class="diff-row-copy"><strong>Tutoring feels transactional.</strong><p>Correction is given, but deep care and connection are limited.</p></div>
-        </div>
-        <div class="diff-cell diff-cell--da diff-row">
-          <span class="diff-row-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 19.5c-4.4-3.1-8-6-8-9.9A4.3 4.3 0 0 1 12 7.3a4.3 4.3 0 0 1 8 2.3c0 3.9-3.6 6.8-8 9.9Z"></path></svg></span>
-          <div class="diff-row-copy"><strong>Heart-and-soul teaching.</strong><p>We teach with heart and soul, building trust, resilience and long-term growth.</p></div>
-        </div>
-      </div>
-      </div>
-    </div>
-
-    <div class="diff-quote-banner">
-      <span class="diff-quote-line diff-quote-line--top" aria-hidden="true"></span>
-      <div class="diff-quote-inner">
-        <span class="diff-quote-glyph" aria-hidden="true">&#10078;</span>
-        <p class="diff-quote-text" id="diffQuoteText"></p>
-        <span class="diff-quote-rule" aria-hidden="true"></span>
-        <p class="diff-quote-author" id="diffQuoteAuthor"></p>
-      </div>
-      <span class="diff-quote-line diff-quote-line--bottom" aria-hidden="true"></span>
-    </div>
-  </section>
 
   <section class="year-map">
     <div class="section-inner">
@@ -1154,19 +1100,161 @@
     </div>
   </section>
 
+  <section class="diff-section">
+    <div class="section-inner diff-inner">
+      <div class="diff-head">
+        <span class="diff-eyebrow">What makes DA different</span>
+        <h2 class="serif diff-heading">More than tutoring.<br>We mentor, coach and care.</h2>
+      </div>
+
+      <div class="diff-highlights">
+        <div class="diff-highlight">
+          <span class="diff-highlight-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.4"></circle><path d="M5 20c0-3.9 3.1-7 7-7s7 3.1 7 7"></path><path d="M18 3.2l.6 1.4 1.4.6-1.4.6-.6 1.4-.6-1.4-1.4-.6 1.4-.6Z"></path></svg></span>
+          <p>Personal mentoring,<br>not just subject teaching</p>
+        </div>
+        <span class="diff-highlight-sep" aria-hidden="true"></span>
+        <div class="diff-highlight">
+          <span class="diff-highlight-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 14.5c-2.6-2-4.6-3.8-4.6-6A2.9 2.9 0 0 1 12 6.7a2.9 2.9 0 0 1 4.6 1.8c0 2.2-2 4-4.6 6Z"></path><path d="M5 18c2-1.6 4.5-2.4 7-2.4s5 .8 7 2.4"></path></svg></span>
+          <p>Care that supports<br>confidence and<br>student wellbeing</p>
+        </div>
+        <span class="diff-highlight-sep" aria-hidden="true"></span>
+        <div class="diff-highlight">
+          <span class="diff-highlight-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 19V14"></path><path d="M9 19V10"></path><path d="M14 19v-7"></path><path d="M19 19V6"></path><path d="M17 4l.6 1.4L19 6l-1.4.6L17 8l-.6-1.4L15 6l1.4-.6Z"></path></svg></span>
+          <p>Skills, mindset and<br>guidance that extend<br>beyond school</p>
+        </div>
+        <span class="diff-highlight-sep" aria-hidden="true"></span>
+        <div class="diff-highlight">
+          <span class="diff-highlight-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"></circle><path d="M12 8v4l3 2"></path></svg></span>
+          <p>24-hour support so<br>students never<br>feel alone</p>
+        </div>
+      </div>
+
+      <div class="diff-table-wrap">
+      <img class="diff-side-img diff-side-img--left" src="images/diff-left-cluster.png" alt="" aria-hidden="true">
+      <img class="diff-side-img diff-side-img--right" src="images/diff-right-polaroid.png" alt="" aria-hidden="true">
+      <div class="diff-table">
+        <div class="diff-cell diff-cell--title diff-cell--typical">Typical Tuition</div>
+        <div class="diff-cell diff-cell--title diff-cell--da">DA Tuition</div>
+
+        <div class="diff-cell diff-cell--typical diff-row">
+          <span class="diff-row-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 5.5C6 4.6 9 4.4 12 5.6c3-1.2 6-1 8-.1v13c-2-.9-5-1.1-8 .1-3-1.2-6-1-8-.1Z"></path><path d="M12 5.6v13"></path></svg></span>
+          <div class="diff-row-copy"><strong>Content taught.</strong><p>The lesson stays focused on the subject only.</p></div>
+        </div>
+        <div class="diff-cell diff-cell--da diff-row">
+          <span class="diff-row-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"></circle><path d="M3.5 19.5c0-3.6 2.5-6.2 5.5-6.2 1 0 1.9.3 2.7.8"></path><path d="M17.5 12.6c-2.2-1.7-3.9-3.2-3.9-5.1a2.5 2.5 0 0 1 3.9-2 2.5 2.5 0 0 1 3.9 2c0 1.9-1.7 3.4-3.9 5.1Z"></path></svg></span>
+          <div class="diff-row-copy"><strong>The whole student mentored.</strong><p>We guide students academically, personally and emotionally.</p></div>
+        </div>
+
+        <div class="diff-cell diff-cell--typical diff-row">
+          <span class="diff-row-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="8.4" r="3.4"></circle><path d="M5.5 20c0-3.7 2.9-6.6 6.5-6.6s6.5 2.9 6.5 6.6"></path></svg></span>
+          <div class="diff-row-copy"><strong>Support ends after class.</strong><p>Students are often left to manage stress and confusion alone.</p></div>
+        </div>
+        <div class="diff-cell diff-cell--da diff-row">
+          <span class="diff-row-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 13v-1a8 8 0 0 1 16 0v1"></path><rect x="3" y="13" width="4" height="6" rx="1.4"></rect><rect x="17" y="13" width="4" height="6" rx="1.4"></rect><path d="M20 19v.6a2.4 2.4 0 0 1-2.4 2.4H14"></path></svg></span>
+          <div class="diff-row-copy"><strong>24-hour support.</strong><p>Students can reach out for help, clarity and reassurance whenever they need it.</p></div>
+        </div>
+
+        <div class="diff-cell diff-cell--typical diff-row">
+          <span class="diff-row-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="6" y="4.5" width="12" height="16" rx="1.6"></rect><path d="M9.5 3.6h5a.9.9 0 0 1 .9.9v1.2h-6.8V4.5a.9.9 0 0 1 .9-.9Z"></path><path d="M9 11h6"></path><path d="M9 14.5h6"></path><path d="M9 8h3"></path></svg></span>
+          <div class="diff-row-copy"><strong>Focus stays on school tasks.</strong><p>Learning is often limited to the next worksheet, essay or test.</p></div>
+        </div>
+        <div class="diff-cell diff-cell--da diff-row">
+          <span class="diff-row-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 21v-9"></path><path d="M12 12c0-3.5-2.8-6-6.5-6C5.2 9.7 8 12.5 12 12Z"></path><path d="M12 9c0-3 2.4-5 5.5-5C18 7.5 15.5 9.8 12 9Z"></path></svg></span>
+          <div class="diff-row-copy"><strong>Growth beyond school.</strong><p>We teach confidence, communication, habits and thinking skills that last beyond the classroom.</p></div>
+        </div>
+
+        <div class="diff-cell diff-cell--typical diff-row">
+          <span class="diff-row-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 1 3.4 6.5L4 20l1.2-3.4A7.96 7.96 0 0 1 4 12Z"></path><path d="M10 10a2 2 0 1 1 2.6 1.9c-.9.3-1.3 1-1.3 1.8"></path><path d="M11.3 16h.05"></path></svg></span>
+          <div class="diff-row-copy"><strong>Advice feels generic.</strong><p>Strategies may not reflect what students are truly going through.</p></div>
+        </div>
+        <div class="diff-cell diff-cell--da diff-row">
+          <span class="diff-row-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3.2 19 6v6c0 4.6-3 7.9-7 9-4-1.1-7-4.4-7-9V6Z"></path><path d="M12 8.6l.9 1.9 2.1.3-1.5 1.5.35 2.1L12 13.4l-1.85 1 .35-2.1-1.5-1.5 2.1-.3Z"></path></svg></span>
+          <div class="diff-row-copy"><strong>Led by experience.</strong><p>Our team has been in their position before and uses tried, proven methods that genuinely work.</p></div>
+        </div>
+
+        <div class="diff-cell diff-cell--typical diff-row">
+          <span class="diff-row-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"></circle><path d="M12 7v10"></path><path d="M15 9.5c0-1.1-1.3-2-3-2s-3 .9-3 2 1.3 1.6 3 2 3 .9 3 2-1.3 2-3 2-3-.9-3-2"></path></svg></span>
+          <div class="diff-row-copy"><strong>Tutoring feels transactional.</strong><p>Correction is given, but deep care and connection are limited.</p></div>
+        </div>
+        <div class="diff-cell diff-cell--da diff-row">
+          <span class="diff-row-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 19.5c-4.4-3.1-8-6-8-9.9A4.3 4.3 0 0 1 12 7.3a4.3 4.3 0 0 1 8 2.3c0 3.9-3.6 6.8-8 9.9Z"></path></svg></span>
+          <div class="diff-row-copy"><strong>Heart-and-soul teaching.</strong><p>We teach with heart and soul, building trust, resilience and long-term growth.</p></div>
+        </div>
+      </div>
+      </div>
+    </div>
+  </section>
+
   <section class="pathway" id="pathway">
     <div class="section-inner">
-      <div class="section-head">
-        <h2 class="serif">The senior lesson pathway</h2>
-        <p>A premium roadmap replaces the bulky step boxes. It still feels structured, but the staggered path gives the section more movement and polish.</p>
+      <div class="process-head">
+        <div class="process-title-row">
+          <span><h2 class="serif">The HSC English Process</h2></span>
+        </div>
+        <p class="process-subtitle">From Understanding to Excellence</p>
       </div>
-      <div class="roadmap">
-        <article class="road-step"><div class="road-num">1</div><h3>Rubric Deconstruction</h3><p>Students unpack the module rubric so they understand what the syllabus requires.</p></article>
-        <article class="road-step"><div class="road-num">2</div><h3>Textual Analysis</h3><p>They learn to notice technique, purpose and meaning, then connect evidence to argument.</p></article>
-        <article class="road-step"><div class="road-num">3</div><h3>Guided Response Building</h3><p>Ideas become paragraphs with thesis, topic sentence, evidence and commentary working together.</p></article>
-        <article class="road-step"><div class="road-num">4</div><h3>Draft Development</h3><p>Students refine expression, structure and depth before moving into timed performance.</p></article>
-        <article class="road-step"><div class="road-num">5</div><h3>Personalised Feedback</h3><p>Corrections are specific enough that students know what to fix next.</p></article>
-        <article class="road-step"><div class="road-num">6</div><h3>Refinement and Exam Prep</h3><p>Students practise adapting their strongest ideas under real exam conditions.</p></article>
+      <div class="process-grid">
+        <article class="process-card">
+          <div class="process-card-head"><div class="process-num">1</div><h3>Rubric Deconstruction</h3></div>
+          <button class="process-video-button" type="button" data-process-video="/videos/english/rubric-annotated.mp4" aria-label="Play Rubric Deconstruction video">
+            <span class="process-media">
+              <video src="/videos/english/rubric-annotated.mp4" muted preload="metadata" playsinline></video>
+              <span class="process-play" aria-hidden="true"></span>
+              <span class="process-bar" aria-hidden="true"><span class="process-progress"></span></span>
+            </span>
+          </button>
+          <p>Students unpack the module rubric so they understand what the syllabus requires.</p>
+        </article>
+        <article class="process-card">
+          <div class="process-card-head"><div class="process-num">2</div><h3>Textual Analysis</h3></div>
+          <button class="process-video-button" type="button" aria-label="Textual Analysis video placeholder">
+            <span class="process-media process-media--placeholder process-media--analysis">
+              <span class="process-play" aria-hidden="true"></span>
+              <span class="process-bar" aria-hidden="true"><span class="process-progress"></span></span>
+            </span>
+          </button>
+          <p>They learn to notice technique, purpose and meaning, then connect evidence to argument.</p>
+        </article>
+        <article class="process-card">
+          <div class="process-card-head"><div class="process-num">3</div><h3>Guided Response Building</h3></div>
+          <button class="process-video-button" type="button" aria-label="Guided Response Building video placeholder">
+            <span class="process-media process-media--placeholder process-media--response">
+              <span class="process-play" aria-hidden="true"></span>
+              <span class="process-bar" aria-hidden="true"><span class="process-progress"></span></span>
+            </span>
+          </button>
+          <p>Ideas become paragraphs with thesis, topic sentence, evidence and commentary working together.</p>
+        </article>
+        <article class="process-card">
+          <div class="process-card-head"><div class="process-num">4</div><h3>Draft Development</h3></div>
+          <button class="process-video-button" type="button" aria-label="Draft Development video placeholder">
+            <span class="process-media process-media--draft">
+              <span class="process-play" aria-hidden="true"></span>
+              <span class="process-bar" aria-hidden="true"><span class="process-progress"></span></span>
+            </span>
+          </button>
+          <p>Students refine expression, structure and depth before moving into timed performance.</p>
+        </article>
+        <article class="process-card">
+          <div class="process-card-head"><div class="process-num">5</div><h3>Personalised Feedback</h3></div>
+          <button class="process-video-button" type="button" aria-label="Personalised Feedback video placeholder">
+            <span class="process-media process-media--placeholder process-media--feedback">
+              <span class="process-play" aria-hidden="true"></span>
+              <span class="process-bar" aria-hidden="true"><span class="process-progress"></span></span>
+            </span>
+          </button>
+          <p>Corrections are specific enough that students know what to fix next.</p>
+        </article>
+        <article class="process-card">
+          <div class="process-card-head"><div class="process-num">6</div><h3>Refinement and Exam Prep</h3></div>
+          <button class="process-video-button" type="button" aria-label="Refinement and Exam Prep video placeholder">
+            <span class="process-media process-media--exam">
+              <span class="process-play" aria-hidden="true"></span>
+              <span class="process-bar" aria-hidden="true"><span class="process-progress"></span></span>
+            </span>
+          </button>
+          <p>Students practise adapting their strongest ideas under real exam conditions.</p>
+        </article>
       </div>
     </div>
   </section>
@@ -1311,6 +1399,17 @@
     </div>
   </section>
 
+  <div class="diff-quote-banner">
+      <span class="diff-quote-line diff-quote-line--top" aria-hidden="true"></span>
+      <div class="diff-quote-inner">
+        <span class="diff-quote-glyph" aria-hidden="true">&#10078;</span>
+        <p class="diff-quote-text" id="diffQuoteText"></p>
+        <span class="diff-quote-rule" aria-hidden="true"></span>
+        <p class="diff-quote-author" id="diffQuoteAuthor"></p>
+      </div>
+      <span class="diff-quote-line diff-quote-line--bottom" aria-hidden="true"></span>
+    </div>
+
   <div class="preview-modal" aria-hidden="true">
     <div class="preview-shell" role="dialog" aria-modal="true" aria-label="Booklet preview">
       <div class="preview-top">
@@ -1319,16 +1418,26 @@
       </div>
       <div class="preview-stage">
         <img class="preview-image" src="samples/essay_page_1.png" alt="Senior feedback preview">
-        <iframe class="preview-pdf-frame" title="Sample document preview" hidden></iframe>
+        <div class="preview-cta" hidden>
+          <h3>End of Preview</h3>
+          <p>You have seen a small sample of the resource. Click below to find out more about joining DA Tuition.</p>
+          <a href="/book-interview" target="_parent">End of Preview - Click here to find out more</a>
+        </div>
         <div class="preview-placeholder" hidden>
           <p class="preview-placeholder-title"></p>
           <p class="preview-placeholder-note">Sample PDF coming soon &mdash; ask your consultant to see a printed copy in the meantime.</p>
         </div>
       </div>
       <div class="preview-controls">
-        <button class="preview-arrow" type="button" data-preview-direction="-1" aria-label="Previous page">Prev</button>
-        <button class="preview-arrow" type="button" data-preview-direction="1" aria-label="Next page">Next</button>
+        <button class="preview-arrow" type="button" data-preview-direction="-1" aria-label="Previous page">&larr;</button>
+        <button class="preview-arrow" type="button" data-preview-direction="1" aria-label="Next page">&rarr;</button>
       </div>
+    </div>
+  </div>
+
+  <div class="video-lightbox" aria-hidden="true" data-video-lightbox>
+    <div class="video-lightbox__frame" role="dialog" aria-modal="true" aria-label="English process video">
+      <video data-process-video-player controls playsinline></video>
     </div>
   </div>
 
@@ -1356,9 +1465,42 @@
       },
       feedback: {
         title: "Senior feedback preview",
+        type: "feedback",
         pages: [
           "samples/essay_page_1.png",
           "samples/essay_page_2.png"
+        ]
+      },
+      "fairy-tales": {
+        title: "Fairy Tales booklet preview",
+        pages: [
+          "previews/fairy-01.png",
+          "previews/fairy-02.png",
+          "previews/fairy-03.png",
+          "previews/fairy-04.png",
+          "previews/fairy-05.png",
+          { kind: "cta" }
+        ]
+      },
+      romanticism: {
+        title: "Romanticism booklet preview",
+        pages: [
+          "previews/romanticism-01.png",
+          "previews/romanticism-02.png",
+          "previews/romanticism-04.png",
+          "previews/romanticism-05.png",
+          "previews/romanticism-12.png",
+          "previews/romanticism-16.png",
+          { kind: "cta" }
+        ]
+      },
+      "feedback-sample": {
+        title: "Marked feedback sample preview",
+        type: "feedback",
+        pages: [
+          "previews/feedback-1.png",
+          "previews/feedback-2.png",
+          { kind: "cta" }
         ]
       }
     };
@@ -1367,29 +1509,117 @@
     const previewTitle = document.querySelector(".preview-title");
     const previewImage = document.querySelector(".preview-image");
     const previewControls = document.querySelector(".preview-controls");
-    const previewPdfFrame = document.querySelector(".preview-pdf-frame");
+    const previewCta = document.querySelector(".preview-cta");
     const previewPlaceholder = document.querySelector(".preview-placeholder");
     const previewPlaceholderTitle = document.querySelector(".preview-placeholder-title");
     let activeGroup = "feedback";
     let activeIndex = 0;
+    let parentOverflow = null;
+    let previewViewportSyncTimer = null;
+
+    function setPreviewViewport(){
+      let top = window.scrollY || document.documentElement.scrollTop || 0;
+      let height = window.innerHeight || document.documentElement.clientHeight || 800;
+      try{
+        if(window.parent && window.parent !== window && window.frameElement){
+          const parentWindow = window.parent;
+          const parentDoc = parentWindow.document;
+          let frameTop = 0;
+          let frameNode = window.frameElement;
+          while(frameNode){
+            frameTop += frameNode.offsetTop || 0;
+            frameNode = frameNode.offsetParent;
+          }
+          height = parentWindow.innerHeight || parentDoc.documentElement.clientHeight || height;
+          top = Math.max(0, (parentWindow.scrollY || parentDoc.documentElement.scrollTop || 0) - frameTop);
+        }
+      } catch(error){}
+      modal.style.setProperty("--preview-top", `${top}px`);
+      modal.style.setProperty("--preview-height", `${height}px`);
+    }
+
+    function updatePreviewViewportIfOpen(){
+      if(modal.classList.contains("is-open")){
+        setPreviewViewport();
+      }
+    }
+
+    function startPreviewViewportSync(){
+      clearInterval(previewViewportSyncTimer);
+      let ticks = 0;
+      previewViewportSyncTimer = setInterval(() => {
+        updatePreviewViewportIfOpen();
+        ticks += 1;
+        if(ticks >= 20 || !modal.classList.contains("is-open")){
+          clearInterval(previewViewportSyncTimer);
+          previewViewportSyncTimer = null;
+        }
+      }, 50);
+    }
+
+    function setPreviewScrollLock(locked){
+      if(locked) setPreviewViewport();
+      document.documentElement.classList.toggle("preview-open", locked);
+      document.body.classList.toggle("preview-open", locked);
+      try{
+        if(window.parent && window.parent !== window){
+          const parentDoc = window.parent.document;
+          if(locked){
+            if(!parentOverflow){
+              parentOverflow = {
+                html: parentDoc.documentElement.style.overflow,
+                body: parentDoc.body.style.overflow
+              };
+            }
+            parentDoc.documentElement.style.overflow = "hidden";
+            parentDoc.body.style.overflow = "hidden";
+          } else if(parentOverflow){
+            parentDoc.documentElement.style.overflow = parentOverflow.html;
+            parentDoc.body.style.overflow = parentOverflow.body;
+            parentOverflow = null;
+          }
+        }
+      } catch(error){}
+    }
 
     function renderPreview(){
       const set = previewSets[activeGroup];
       previewTitle.textContent = `${set.title} (${activeIndex + 1} of ${set.pages.length})`;
-      previewImage.src = set.pages[activeIndex];
-      previewImage.alt = previewTitle.textContent;
+      const page = set.pages[activeIndex];
+      const isCta = page && page.kind === "cta";
+      previewImage.hidden = isCta;
+      previewCta.hidden = !isCta;
+      previewPlaceholder.hidden = true;
+      previewImage.classList.toggle("preview-image--feedback", set.type === "feedback");
+      if(!isCta){
+        previewImage.src = page.src || page;
+        previewImage.alt = page.alt || previewTitle.textContent;
+      }
+      document.querySelectorAll("[data-preview-direction]").forEach((button) => {
+        const nextIndex = activeIndex + Number(button.dataset.previewDirection);
+        button.disabled = nextIndex < 0 || nextIndex >= set.pages.length;
+      });
+    }
+
+    function movePreviewPage(direction){
+      if(!modal.classList.contains("is-open")) return;
+      const set = previewSets[activeGroup];
+      activeIndex = Math.max(0, Math.min(set.pages.length - 1, activeIndex + direction));
+      renderPreview();
     }
 
     function openPreview(group, index){
       activeGroup = group;
       activeIndex = Number(index) || 0;
       renderPreview();
-      previewImage.hidden = false;
       previewControls.style.display = "";
-      previewPdfFrame.hidden = true;
-      previewPdfFrame.src = "";
-      previewPlaceholder.hidden = true;
+      setPreviewScrollLock(true);
       modal.classList.add("is-open");
+      setPreviewViewport();
+      requestAnimationFrame(setPreviewViewport);
+      setTimeout(setPreviewViewport, 50);
+      setTimeout(setPreviewViewport, 150);
+      startPreviewViewportSync();
       modal.setAttribute("aria-hidden","false");
     }
 
@@ -1399,29 +1629,182 @@
 
     document.querySelectorAll("[data-preview-direction]").forEach((button) => {
       button.addEventListener("click", () => {
-        const set = previewSets[activeGroup];
-        activeIndex = (activeIndex + Number(button.dataset.previewDirection) + set.pages.length) % set.pages.length;
-        renderPreview();
+        movePreviewPage(Number(button.dataset.previewDirection));
       });
     });
 
     function closePreviewModal(){
       modal.classList.remove("is-open");
       modal.setAttribute("aria-hidden","true");
-      previewPdfFrame.src = "";
+      clearInterval(previewViewportSyncTimer);
+      previewViewportSyncTimer = null;
+      setPreviewScrollLock(false);
+      previewImage.removeAttribute("src");
     }
 
     document.querySelector(".preview-close").addEventListener("click", closePreviewModal);
 
+    function handlePreviewKeydown(event){
+      if(!modal.classList.contains("is-open")) return;
+      if(event.key === "Escape"){
+        closePreviewModal();
+      } else if(event.key === "ArrowLeft"){
+        event.preventDefault();
+        movePreviewPage(-1);
+      } else if(event.key === "ArrowRight"){
+        event.preventDefault();
+        movePreviewPage(1);
+      }
+    }
+
+    document.addEventListener("keydown", handlePreviewKeydown);
+
     modal.addEventListener("click", (event) => {
-      if(event.target === modal) closePreviewModal();
+      const previewContent = event.target.closest(".preview-image,.preview-cta,.preview-controls,.preview-close");
+      if(!previewContent) closePreviewModal();
     });
 
+    window.addEventListener("resize", updatePreviewViewportIfOpen);
+    try{
+      if(window.parent && window.parent !== window){
+        window.parent.addEventListener("resize", updatePreviewViewportIfOpen);
+        window.parent.addEventListener("scroll", updatePreviewViewportIfOpen, { passive: true });
+        window.parent.addEventListener("keydown", handlePreviewKeydown);
+      }
+    } catch(error){}
+
+    const processVideoModal = document.querySelector("[data-video-lightbox]");
+    const processVideoPlayer = document.querySelector("[data-process-video-player]");
+    let processVideoParentOverflow = null;
+    let processVideoViewportSyncTimer = null;
+
+    function setProcessVideoViewport(){
+      if(!processVideoModal) return;
+      let top = window.scrollY || document.documentElement.scrollTop || 0;
+      let height = window.innerHeight || document.documentElement.clientHeight || 800;
+      try{
+        if(window.parent && window.parent !== window && window.frameElement){
+          const parentWindow = window.parent;
+          const parentDoc = parentWindow.document;
+          let frameTop = 0;
+          let frameNode = window.frameElement;
+          while(frameNode){
+            frameTop += frameNode.offsetTop || 0;
+            frameNode = frameNode.offsetParent;
+          }
+          height = parentWindow.innerHeight || parentDoc.documentElement.clientHeight || height;
+          top = Math.max(0, (parentWindow.scrollY || parentDoc.documentElement.scrollTop || 0) - frameTop);
+        }
+      } catch(error){}
+      processVideoModal.style.setProperty("--video-top", `${top}px`);
+      processVideoModal.style.setProperty("--video-height", `${height}px`);
+    }
+
+    function updateProcessVideoViewportIfOpen(){
+      if(processVideoModal && processVideoModal.classList.contains("is-open")){
+        setProcessVideoViewport();
+      }
+    }
+
+    function startProcessVideoViewportSync(){
+      clearInterval(processVideoViewportSyncTimer);
+      let ticks = 0;
+      processVideoViewportSyncTimer = setInterval(() => {
+        updateProcessVideoViewportIfOpen();
+        ticks += 1;
+        if(ticks >= 20 || !processVideoModal.classList.contains("is-open")){
+          clearInterval(processVideoViewportSyncTimer);
+          processVideoViewportSyncTimer = null;
+        }
+      }, 50);
+    }
+
+    function setProcessVideoScrollLock(locked){
+      if(locked) setProcessVideoViewport();
+      document.documentElement.classList.toggle("preview-open", locked);
+      document.body.classList.toggle("preview-open", locked);
+      try{
+        if(window.parent && window.parent !== window){
+          const parentDoc = window.parent.document;
+          if(locked){
+            if(!processVideoParentOverflow){
+              processVideoParentOverflow = {
+                html: parentDoc.documentElement.style.overflow,
+                body: parentDoc.body.style.overflow
+              };
+            }
+            parentDoc.documentElement.style.overflow = "hidden";
+            parentDoc.body.style.overflow = "hidden";
+          } else if(processVideoParentOverflow){
+            parentDoc.documentElement.style.overflow = processVideoParentOverflow.html;
+            parentDoc.body.style.overflow = processVideoParentOverflow.body;
+            processVideoParentOverflow = null;
+          }
+        }
+      } catch(error){}
+    }
+
+    function openProcessVideo(src){
+      if(!processVideoModal || !processVideoPlayer || !src) return;
+      processVideoPlayer.src = src;
+      processVideoModal.classList.add("is-open");
+      processVideoModal.setAttribute("aria-hidden", "false");
+      setProcessVideoScrollLock(true);
+      setProcessVideoViewport();
+      requestAnimationFrame(setProcessVideoViewport);
+      setTimeout(setProcessVideoViewport, 50);
+      setTimeout(setProcessVideoViewport, 150);
+      startProcessVideoViewportSync();
+      const playPromise = processVideoPlayer.play();
+      if(playPromise && typeof playPromise.catch === "function"){
+        playPromise.catch(() => {});
+      }
+    }
+
+    function closeProcessVideo(){
+      if(!processVideoModal || !processVideoModal.classList.contains("is-open")) return;
+      processVideoModal.classList.remove("is-open");
+      processVideoModal.setAttribute("aria-hidden", "true");
+      clearInterval(processVideoViewportSyncTimer);
+      processVideoViewportSyncTimer = null;
+      setProcessVideoScrollLock(false);
+      if(processVideoPlayer){
+        processVideoPlayer.pause();
+        processVideoPlayer.removeAttribute("src");
+        processVideoPlayer.load();
+      }
+    }
+
+    document.querySelectorAll("[data-process-video]").forEach((button) => {
+      button.addEventListener("click", () => openProcessVideo(button.dataset.processVideo));
+    });
+
+    if(processVideoModal){
+      processVideoModal.addEventListener("click", closeProcessVideo);
+      const processVideoFrame = processVideoModal.querySelector(".video-lightbox__frame");
+      if(processVideoFrame){
+        processVideoFrame.addEventListener("click", (event) => event.stopPropagation());
+      }
+    }
+
+    function handleProcessVideoKeydown(event){
+      if(!processVideoModal || !processVideoModal.classList.contains("is-open")) return;
+      if(event.key === "Escape"){
+        closeProcessVideo();
+      }
+    }
+
+    document.addEventListener("keydown", handleProcessVideoKeydown);
+    window.addEventListener("resize", updateProcessVideoViewportIfOpen);
+    try{
+      if(window.parent && window.parent !== window){
+        window.parent.addEventListener("resize", updateProcessVideoViewportIfOpen);
+        window.parent.addEventListener("scroll", updateProcessVideoViewportIfOpen, { passive: true });
+        window.parent.addEventListener("keydown", handleProcessVideoKeydown);
+      }
+    } catch(error){}
+
     // ---- English resources: sample booklets + feedback (shelf above "Choose the class style") ----
-    // To go live with a real PDF: set `pdfUrl` below to the file's path, e.g.
-    // pdfUrl: "resources/fairy-tales-sample.pdf", with the PDF placed in
-    // /public/english-page/resources/. Nothing else needs to change — the button,
-    // modal and click handler already read from this field.
     const ENGLISH_RESOURCES = [
       {
         id: "fairy-tales",
@@ -1433,7 +1816,7 @@
         title: "Fairy Tales,<br>Reimagined",
         subtitle: "Narrative &amp; creative<br>writing booklet",
         buttonLabel: "Open sample booklet",
-        pdfUrl: "resources/year-7-fairy-tales.pdf",
+        previewGroup: "fairy-tales",
         alt: "Sample Year 7 Fairy Tales, Reimagined booklet"
       },
       {
@@ -1446,7 +1829,7 @@
         title: "Literary Movements<br>Romanticism",
         subtitle: "HSC advanced English<br>booklet",
         buttonLabel: "Open sample booklet",
-        pdfUrl: "resources/romanticism-student-booklet.pdf",
+        previewGroup: "romanticism",
         alt: "Sample Romanticism HSC booklet"
       },
       {
@@ -1459,7 +1842,7 @@
         title: "Marked Feedback<br>Sample",
         subtitle: "A real page of<br>teacher annotation",
         buttonLabel: "View sample feedback",
-        pdfUrl: "resources/hsc-english-feedback-sample.pdf",
+        previewGroup: "feedback-sample",
         alt: "Sample page of marked HSC English feedback"
       }
     ];
@@ -1526,36 +1909,37 @@
 
       shelf.innerHTML = `<div class="resources-row">${niche}${books}</div>${connector}`;
 
-      shelf.querySelectorAll(".resource-btn").forEach((btn) => {
-        btn.addEventListener("click", () => {
-          const resource = ENGLISH_RESOURCES.find((r) => r.id === btn.dataset.resourceId);
-          if(resource) openResourceModal(resource);
-        });
-      });
     }
 
     function openResourceModal(resource){
-      previewTitle.textContent = stripTags(resource.title);
-      previewImage.hidden = true;
-      previewControls.style.display = "none";
-
-      if(resource.pdfUrl){
-        previewPlaceholder.hidden = true;
-        previewPdfFrame.hidden = false;
-        previewPdfFrame.src = resource.pdfUrl;
+      if(resource.previewGroup){
+        openPreview(resource.previewGroup, 0);
       } else {
-        previewPdfFrame.hidden = true;
-        previewPdfFrame.src = "";
+        previewTitle.textContent = stripTags(resource.title);
+        previewImage.hidden = true;
+        previewControls.style.display = "none";
+        previewCta.hidden = true;
         previewPlaceholderTitle.textContent = stripTags(resource.title);
         previewPlaceholder.hidden = false;
+        setPreviewScrollLock(true);
+        modal.classList.add("is-open");
+        modal.setAttribute("aria-hidden","false");
       }
-
-      modal.classList.add("is-open");
-      modal.setAttribute("aria-hidden","false");
     }
 
+    document.addEventListener("click", (event) => {
+      const btn = event.target.closest("[data-resource-id]");
+      if(btn){
+        event.preventDefault();
+        const resource = ENGLISH_RESOURCES.find((r) => r.id === btn.dataset.resourceId);
+        if(resource) openResourceModal(resource);
+      }
+    });
+
     document.querySelectorAll("[data-resource-id]").forEach((btn) => {
-      btn.addEventListener("click", () => {
+      btn.addEventListener("click", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
         const resource = ENGLISH_RESOURCES.find((r) => r.id === btn.dataset.resourceId);
         if(resource) openResourceModal(resource);
       });

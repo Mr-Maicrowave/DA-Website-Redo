@@ -13,10 +13,12 @@ interface SubjectHeroProps {
   headlineGold: string;
   /** Supporting paragraph under the motto */
   subtext: string;
-  /** Three short proof points shown as a pill row, e.g. ["Booklet-led lessons", "Marked feedback", "Clear writing pathway"] */
-  proofPills: [string, string, string];
+  /** Short proof points shown as a pill row, e.g. ["Booklet-led lessons", "Marked feedback", "Clear writing pathway"] */
+  proofPills?: [string, string, string];
   /** Id (no #) of the section the Explore button should scroll to */
   exploreTargetId: string;
+  /** Hide the Explore button for hero variants that should lead with copy only. */
+  showExploreButton?: boolean;
   /** Short label describing what photo should eventually replace the placeholder, e.g. "Mathematics classroom" */
   placeholderLabel: string;
   /** Keep an internal placeholder without exposing unfinished-production copy to visitors. */
@@ -28,10 +30,14 @@ interface SubjectHeroProps {
   mobileBackgroundPosition?: string;
   /** Desktop focal point for a source image. */
   backgroundPosition?: string;
+  /** Use contain when the entire source image must remain visible. */
+  backgroundFit?: 'cover' | 'contain';
   /** Optional zoom for photos that need tighter art direction behind the fixed copy. */
   backgroundScale?: number;
   /** English trial: place the copy low in the mobile hero to preserve the photo's focal subject. */
   mobileContentPosition?: 'center' | 'bottom';
+  /** Optional page-specific nudge for the copy block, without changing the shared hero layout. */
+  copyOffsetClassName?: string;
 }
 
 /**
@@ -48,14 +54,17 @@ const SubjectHero = ({
   subtext,
   proofPills,
   exploreTargetId,
+  showExploreButton = true,
   placeholderLabel,
   showPlaceholderBadge = true,
   backgroundImageSrc,
   backgroundImageAlt,
   mobileBackgroundPosition,
   backgroundPosition,
+  backgroundFit = 'cover',
   backgroundScale,
   mobileContentPosition = 'center',
+  copyOffsetClassName,
 }: SubjectHeroProps) => {
   const scrollToExplore = () => {
     document.getElementById(exploreTargetId)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -70,7 +79,8 @@ const SubjectHero = ({
             alt={backgroundImageAlt ?? ''}
             className="subject-hero-image h-full w-full object-cover"
             style={{
-              ...(backgroundPosition ? { objectPosition: backgroundPosition } : {}),
+              objectFit: backgroundFit,
+              ...(backgroundPosition ? { '--subject-hero-desktop-position': backgroundPosition } : {}),
               ...(mobileBackgroundPosition ? { '--subject-hero-mobile-position': mobileBackgroundPosition } : {}),
               ...(backgroundScale ? { transform: `scale(${backgroundScale})`, transformOrigin: backgroundPosition ?? 'center center' } : {}),
             } as CSSProperties}
@@ -108,7 +118,7 @@ const SubjectHero = ({
           initial={{ opacity: 0, y: 28 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, ease: 'easeOut' }}
-          className="subject-hero-copy max-w-3xl"
+          className={`subject-hero-copy max-w-3xl ${copyOffsetClassName ?? ''}`}
         >
           <div className="mb-5 inline-flex items-center gap-2.5 text-xs font-black uppercase tracking-[0.18em] text-[#f1df9a]">
             <span className="h-[2px] w-7 bg-[#c9a227]" />
@@ -131,30 +141,38 @@ const SubjectHero = ({
 
           <p className="mt-7 max-w-[54ch] text-lg leading-[1.75] text-white/85">{subtext}</p>
 
-          <div className="mt-8">
-            <button
-              type="button"
-              onClick={scrollToExplore}
-              className="inline-flex h-12 items-center rounded-full bg-[#c9a227] px-7 font-black text-[#101521] shadow-xl shadow-[#c9a227]/25 transition hover:bg-[#e0bd4b]"
-            >
-              Explore
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </button>
-          </div>
+          {showExploreButton ? (
+            <div className="mt-8">
+              <button
+                type="button"
+                onClick={scrollToExplore}
+                className="inline-flex h-12 items-center rounded-full bg-[#c9a227] px-7 font-black text-[#101521] shadow-xl shadow-[#c9a227]/25 transition hover:bg-[#e0bd4b]"
+              >
+                Explore
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </button>
+            </div>
+          ) : null}
 
-          <div className="mt-9 flex flex-wrap gap-x-5 gap-y-2 text-[13px] font-black uppercase tracking-[0.06em] text-white">
-            {proofPills.map((pill) => (
-              <span key={pill} className="border-l-2 border-[#c9a227] pl-3">
-                {pill}
-              </span>
-            ))}
-          </div>
+          {proofPills ? (
+            <div className="mt-9 flex flex-wrap gap-x-5 gap-y-2 text-[13px] font-black uppercase tracking-[0.06em] text-white">
+              {proofPills.map((pill) => (
+                <span key={pill} className="border-l-2 border-[#c9a227] pl-3">
+                  {pill}
+                </span>
+              ))}
+            </div>
+          ) : null}
         </motion.div>
       </div>
-      {(mobileBackgroundPosition || mobileContentPosition === 'bottom') && (
-        <style>{`
+      <style>{`
+          .subject-hero-image {
+            object-position: var(--subject-hero-desktop-position, center center);
+          }
           @media (max-width: 767px) {
-            .subject-hero-image { object-position: var(--subject-hero-mobile-position); }
+            .subject-hero-image {
+              object-position: var(--subject-hero-mobile-position, var(--subject-hero-desktop-position, center center));
+            }
             .subject-hero--mobile-bottom-copy {
               min-height: 44rem;
               justify-content: flex-end;
@@ -177,7 +195,6 @@ const SubjectHero = ({
             }
           }
         `}</style>
-      )}
     </section>
   );
 };
