@@ -196,7 +196,13 @@ export default function MathsTopicNetworkDiagram() {
         <circle className="maths-topic-network__halo" cx={x} cy={y} r={radii.halo} fill={colors.fill} />
         <circle className="maths-topic-network__dot" cx={x} cy={y} r={radii.dot} fill={colors.dot} />
         <line className="maths-topic-network__link maths-topic-network__leader" x1={x} y1={y} x2={labelX} y2={labelY} />
-        <text className={LABEL_CLASS[node.tier]} x={labelX} y={labelY} textAnchor={anchorFor(labelX)}>
+        <text
+          ref={(el) => { textRefs.current[node.id] = el; }}
+          className={LABEL_CLASS[node.tier]}
+          x={labelX}
+          y={labelY}
+          textAnchor={anchorFor(labelX)}
+        >
           {node.tier === 'core'
             ? CORE_TOPICS.find((c) => c.id === node.id)?.label
             : node.tier === 'domain'
