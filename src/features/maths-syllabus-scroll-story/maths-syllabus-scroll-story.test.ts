@@ -34,6 +34,19 @@ test('story has the restrained point, line, tangent, integral and vector overlay
   assert.doesNotMatch(source, /<circle[^>]+(?:cx|cy)=/);
 });
 
+test('point animation preserves the curve start as a non-animated base transform', () => {
+  const source = readFileSync(componentUrl, 'utf8');
+
+  assert.match(
+    source,
+    /<g transform="translate\(102 646\)">\s*<g className="maths-syllabus-story__point-group">/,
+  );
+  assert.doesNotMatch(
+    source,
+    /<g className="maths-syllabus-story__point-group"[^>]+transform=/,
+  );
+});
+
 test('reduced motion returns plates and beats to normal flow', () => {
   const source = readFileSync(stylesUrl, 'utf8');
   const reducedMotionStyles = source.split('@media (prefers-reduced-motion: reduce)')[1]

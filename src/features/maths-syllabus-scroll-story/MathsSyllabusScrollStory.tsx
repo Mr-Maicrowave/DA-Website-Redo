@@ -163,8 +163,10 @@ export const MathsSyllabusScrollStory = () => {
           <path className="maths-syllabus-story__line" d={STORY_CURVE} pathLength="1" />
           <path className="maths-syllabus-story__tangent" d="M 704 272 L 920 452" />
           <path className="maths-syllabus-story__vector" d="M 1038 496 L 1168 358 M 1168 358 L 1159 381 M 1168 358 L 1145 366" />
-          <g className="maths-syllabus-story__point-group" transform="translate(102 646)">
-            <circle className="maths-syllabus-story__point" r="5" />
+          <g transform="translate(102 646)">
+            <g className="maths-syllabus-story__point-group">
+              <circle className="maths-syllabus-story__point" r="5" />
+            </g>
           </g>
         </svg>
 
