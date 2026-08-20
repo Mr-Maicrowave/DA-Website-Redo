@@ -1,5 +1,6 @@
 // src/features/maths-topic-network/MathsTopicNetworkDiagram.tsx
 import { useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { motion, useMotionValueEvent, useReducedMotion, useScroll, useTransform } from 'framer-motion';
 import {
   CENTER_X,
   CENTER_Y,
@@ -11,6 +12,7 @@ import {
   type LabelBox,
   type TopicLayout,
   type LayoutNode,
+  type LayoutEdge,
 } from './topic-network-layout';
 import { CORE_TOPICS, DOMAIN_TOPICS, SUBTOPICS, CROSS_LINKS } from './topic-network-data';
 import { animateValue } from './topic-network-tween';
@@ -95,6 +97,39 @@ export default function MathsTopicNetworkDiagram() {
   const organicLayout = useMemo<TopicLayout>(() => computeOrganicLayout(seedRef.current), []);
   const tidyLayout = useMemo<TopicLayout>(() => computeTidyLayout(), []);
 
+  const prefersReducedMotion = useReducedMotion();
+  const trackRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: trackRef,
+    offset: ['start start', 'end end'],
+  });
+
+  // Growth resolves by 68% of the track; the rest is the held "soft lock" zone.
+  const GROWTH_END = 0.68;
+  const growthProgress = useTransform(scrollYProgress, (raw) => Math.min(1, raw / GROWTH_END));
+  const domainOpacity = useTransform(growthProgress, [0.10, 0.42], [0, 1], { clamp: true });
+  const subtopicOpacity = useTransform(growthProgress, [0.48, 0.80], [0, 1], { clamp: true });
+  const crossOpacity = useTransform(growthProgress, [0.86, 1.0], [0, 1], { clamp: true });
+  const progressFillScale = useTransform(scrollYProgress, (raw) => Math.max(0, Math.min(1, raw)));
+
+  const [grownEnough, setGrownEnough] = useState(() => !!prefersReducedMotion);
+  const [lockPromptVisible, setLockPromptVisible] = useState(false);
+  useMotionValueEvent(scrollYProgress, 'change', (raw) => {
+    // Deviation from brief: the brief's callback ran unconditionally, which
+    // would immediately flip `grownEnough` back to false for reduced-motion
+    // visitors on the very first scroll-progress event after mount (the track
+    // is height: 'auto' under reduced motion, so `raw` doesn't represent "fully
+    // scrolled past" the way it does for the 380vh track) — contradicting the
+    // brief's own Step 4 requirement that reduced-motion visitors stay
+    // interactive immediately without scrolling. Reduced-motion visitors are
+    // always fully grown with no lock zone, so this subscription is a no-op
+    // for them.
+    if (prefersReducedMotion) return;
+    const isGrown = raw >= GROWTH_END - 0.01;
+    setGrownEnough(isGrown);
+    setLockPromptVisible(raw >= GROWTH_END && raw < 0.97);
+  });
+
   const [organicLabels, setOrganicLabels] = useState(() =>
     Object.fromEntries(Object.values(organicLayout.nodes).map((n) => [n.id, { x: n.labelX, y: n.labelY }])),
   );
@@ -115,6 +150,7 @@ export default function MathsTopicNetworkDiagram() {
   const cancelTweenRef = useRef<(() => void) | null>(null);
 
   function toggleView() {
+    if (!grownEnough) return;
     cancelTweenRef.current?.();
     const next = !tidyActive;
     setTidyActive(next);
@@ -189,6 +225,7 @@ export default function MathsTopicNetworkDiagram() {
         style={{ opacity: dimmed ? 0.14 : 1, cursor: 'pointer' }}
         onClick={(event) => {
           event.stopPropagation();
+          if (!grownEnough) return;
           setSelectedId((current) => (current === node.id ? null : node.id));
         }}
       >
@@ -214,58 +251,98 @@ export default function MathsTopicNetworkDiagram() {
     );
   }
 
+  function renderEdge(edge: LayoutEdge) {
+    const dimmed = activeNeighbors !== null && !(activeNeighbors.has(edge.from) && activeNeighbors.has(edge.to));
+    const fromOrganic = organicLayout.nodes[edge.from];
+    const toOrganic = organicLayout.nodes[edge.to];
+    const fromTidy = tidyLayout.nodes[edge.from];
+    const toTidy = tidyLayout.nodes[edge.to];
+    const ax = lerp(fromOrganic.x, fromTidy.x, viewT);
+    const ay = lerp(fromOrganic.y, fromTidy.y, viewT);
+    const bx = lerp(toOrganic.x, toTidy.x, viewT);
+    const by = lerp(toOrganic.y, toTidy.y, viewT);
+    const tidyEdge = tidyLayout.edges.find((e) => e.from === edge.from && e.to === edge.to)!;
+    const cx = lerp(edge.controlX, tidyEdge.controlX, viewT);
+    const cy = lerp(edge.controlY, tidyEdge.controlY, viewT);
+    return (
+      <path
+        key={`${edge.from}-${edge.to}`}
+        className={edge.kind === 'cross' ? 'maths-topic-network__link maths-topic-network__link--cross' : 'maths-topic-network__link'}
+        style={{ opacity: dimmed ? 0.05 : 1 }}
+        d={`M${ax},${ay} Q${cx},${cy} ${bx},${by}`}
+      />
+    );
+  }
+
+  const ring1Edges = organicLayout.edges.filter((e) => e.kind === 'ring1');
+  const ring2Edges = organicLayout.edges.filter((e) => e.kind === 'ring2');
+  const crossEdges = organicLayout.edges.filter((e) => e.kind === 'cross');
+
   return (
     <div
-      className="maths-topic-network__panel"
-      style={{ height: '92vh', maxHeight: 820 }}
-      onClick={() => setSelectedId(null)}
+      className="maths-topic-network__track"
+      ref={trackRef}
+      style={prefersReducedMotion ? { height: 'auto' } : undefined}
     >
-      <svg
-        className="maths-topic-network__svg"
-        viewBox={`0 0 ${VIEWBOX_WIDTH} ${VIEWBOX_HEIGHT}`}
-        role="img"
-        aria-label="A network diagram of Years 7 to 12 maths topics, showing how fundamentals, domains, and specific subtopics connect."
+      <div
+        className="maths-topic-network__panel maths-topic-network__pin"
+        style={{ height: '92vh', maxHeight: 820 }}
+        onClick={() => grownEnough && setSelectedId(null)}
       >
-        <g>
-          {organicLayout.edges.map((edge) => {
-            const dimmed = activeNeighbors !== null && !(activeNeighbors.has(edge.from) && activeNeighbors.has(edge.to));
-            const fromOrganic = organicLayout.nodes[edge.from];
-            const toOrganic = organicLayout.nodes[edge.to];
-            const fromTidy = tidyLayout.nodes[edge.from];
-            const toTidy = tidyLayout.nodes[edge.to];
-            const ax = lerp(fromOrganic.x, fromTidy.x, viewT);
-            const ay = lerp(fromOrganic.y, fromTidy.y, viewT);
-            const bx = lerp(toOrganic.x, toTidy.x, viewT);
-            const by = lerp(toOrganic.y, toTidy.y, viewT);
-            const tidyEdge = tidyLayout.edges.find((e) => e.from === edge.from && e.to === edge.to)!;
-            const cx = lerp(edge.controlX, tidyEdge.controlX, viewT);
-            const cy = lerp(edge.controlY, tidyEdge.controlY, viewT);
-            return (
-              <path
-                key={`${edge.from}-${edge.to}`}
-                className={edge.kind === 'cross' ? 'maths-topic-network__link maths-topic-network__link--cross' : 'maths-topic-network__link'}
-                style={{ opacity: dimmed ? 0.05 : 1 }}
-                d={`M${ax},${ay} Q${cx},${cy} ${bx},${by}`}
-              />
-            );
-          })}
-        </g>
-        <g>{nodesByTier.core.map(renderNode)}</g>
-        <g>{nodesByTier.domain.map(renderNode)}</g>
-        <g>{nodesByTier.sub.map(renderNode)}</g>
-      </svg>
-      {selectedId && (
-        <div className="maths-topic-network__card maths-topic-network__card--show">
-          <h4>{lookup[selectedId].label}</h4>
-          <p>{lookup[selectedId].blurb}</p>
-          <p className="maths-topic-network__card-connections">
-            Connects to: {[...neighborsOf(selectedId)].filter((id) => id !== selectedId).map((id) => lookup[id].label).slice(0, 5).join(', ')}
-          </p>
+        <p className={`maths-topic-network__caption ${grownEnough ? 'maths-topic-network__caption--locked' : ''}`}>
+          {grownEnough ? 'Fully connected' : 'Stage 1 · Fundamentals'}
+        </p>
+        <div className="maths-topic-network__progress-rail">
+          <motion.div className="maths-topic-network__progress-fill" style={{ scaleY: prefersReducedMotion ? 1 : progressFillScale }} />
         </div>
-      )}
-      <button type="button" className="maths-topic-network__toggle" onClick={toggleView}>
-        {tidyActive ? 'Back to organic view' : 'Snap to tidy view'}
-      </button>
+        <svg
+          className="maths-topic-network__svg"
+          viewBox={`0 0 ${VIEWBOX_WIDTH} ${VIEWBOX_HEIGHT}`}
+          role="img"
+          aria-label="A network diagram of Years 7 to 12 maths topics, showing how fundamentals, domains, and specific subtopics connect."
+        >
+          <motion.g style={{ opacity: prefersReducedMotion ? 1 : domainOpacity }}>
+            {ring1Edges.map(renderEdge)}
+          </motion.g>
+          <motion.g style={{ opacity: prefersReducedMotion ? 1 : subtopicOpacity }}>
+            {ring2Edges.map(renderEdge)}
+          </motion.g>
+          <motion.g style={{ opacity: prefersReducedMotion ? 1 : crossOpacity }}>
+            {crossEdges.map(renderEdge)}
+          </motion.g>
+          <g>{nodesByTier.core.map(renderNode)}</g>
+          <motion.g style={{ opacity: prefersReducedMotion ? 1 : domainOpacity, pointerEvents: grownEnough || prefersReducedMotion ? 'auto' : 'none' }}>
+            {nodesByTier.domain.map(renderNode)}
+          </motion.g>
+          <motion.g style={{ opacity: prefersReducedMotion ? 1 : subtopicOpacity, pointerEvents: grownEnough || prefersReducedMotion ? 'auto' : 'none' }}>
+            {nodesByTier.sub.map(renderNode)}
+          </motion.g>
+        </svg>
+        {lockPromptVisible && !prefersReducedMotion && (
+          <div className="maths-topic-network__lock-prompt">
+            <span>All connected — scroll to continue</span>
+            <span>↓</span>
+          </div>
+        )}
+        {selectedId && grownEnough && (
+          <div className="maths-topic-network__card maths-topic-network__card--show">
+            <h4>{lookup[selectedId].label}</h4>
+            <p>{lookup[selectedId].blurb}</p>
+            <p className="maths-topic-network__card-connections">
+              Connects to: {[...neighborsOf(selectedId)].filter((id) => id !== selectedId).map((id) => lookup[id].label).slice(0, 5).join(', ')}
+            </p>
+          </div>
+        )}
+        <button
+          type="button"
+          className="maths-topic-network__toggle"
+          onClick={toggleView}
+          disabled={!grownEnough}
+          style={{ opacity: grownEnough ? 1 : 0.4 }}
+        >
+          {tidyActive ? 'Back to organic view' : 'Snap to tidy view'}
+        </button>
+      </div>
     </div>
   );
 }

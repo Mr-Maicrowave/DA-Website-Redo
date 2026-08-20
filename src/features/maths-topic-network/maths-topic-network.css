@@ -138,3 +138,78 @@
 .maths-topic-network__toggle:hover {
   background: rgba(201, 162, 39, 0.35);
 }
+
+.maths-topic-network__track {
+  position: relative;
+  height: 380vh;
+}
+
+.maths-topic-network__pin {
+  position: sticky;
+  top: 8px;
+}
+
+.maths-topic-network__caption {
+  position: absolute;
+  left: 22px;
+  top: 20px;
+  z-index: 2;
+  color: #f1df9a;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  background: rgba(7, 22, 41, 0.55);
+  padding: 7px 12px;
+  border-radius: 999px;
+  backdrop-filter: blur(4px);
+}
+
+.maths-topic-network__caption--locked {
+  background: rgba(201, 162, 39, 0.35);
+}
+
+.maths-topic-network__progress-rail {
+  position: absolute;
+  right: 18px;
+  top: 22px;
+  bottom: 22px;
+  width: 3px;
+  z-index: 2;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 3px;
+}
+
+.maths-topic-network__progress-fill {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 3px;
+  background: linear-gradient(180deg, #c9a227, #f1df9a);
+  transform-origin: bottom;
+}
+
+.maths-topic-network__lock-prompt {
+  position: absolute;
+  left: 50%;
+  bottom: 26px;
+  z-index: 3;
+  color: #f8ecc4;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  background: rgba(7, 22, 41, 0.6);
+  padding: 8px 16px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  pointer-events: none;
+  /* Brief's reference CSS omitted this; every other `left: 50%` centering rule
+     in this codebase (BookHero, FindTeacher, SuccessStories, HighSchool, ...)
+     pairs it with translateX(-50%). Without it the pill's left EDGE sits at
+     center, shifting it visibly right. */
+  transform: translateX(-50%);
+}
