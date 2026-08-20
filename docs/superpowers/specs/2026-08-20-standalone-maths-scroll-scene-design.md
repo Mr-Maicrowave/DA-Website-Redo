@@ -6,7 +6,7 @@
 
 ## Purpose
 
-Create one continuous, native-scroll mathematical journey that begins with a precise relationship and gradually reveals a spatial field of connected NSW Stage 6 topics. The final syllabus network is the destination and longest sustained moment: earlier scenes seed its motifs and relationships, rather than acting as isolated demonstrations. It is an experiential prototype, not a teaching lesson, navigation system, or production integration.
+Create one continuous, native-scroll mathematical journey that begins with a precise relationship and gradually reveals a spatial field of connected NSW Stage 6 topics. The final syllabus network is the destination and longest sustained moment: subtle connections are seeded from the Function Families stage onward, so the final network feels uncovered rather than introduced as a new visual system. Earlier scenes act as spatial evidence for that structure, rather than isolated demonstrations. It is an experiential prototype, not a teaching lesson, navigation system, or production integration.
 
 ## Product Boundary
 
@@ -41,6 +41,7 @@ No manual raster or vector artwork is used. Every visual element is generated fr
 src/prototypes/maths-scroll/
   MathsScrollScene.tsx          # Public component; owns reduced-motion and shell
   MathsSceneCanvas.tsx          # R3F canvas and scene graph
+  MathsScrollSceneAfterglow.tsx # Static post-pin section that retains the completed network
   maths-scene-state.ts          # Typed stage values, bounds, labels, and interpolation helpers
   maths-scene-geometry.ts       # Pure generated families, calculus, vectors, mechanics, orbit, and network geometry
   useMathsScrollTimeline.ts     # GSAP ScrollTrigger setup, teardown, and scrubbed master timeline
@@ -59,13 +60,13 @@ The component places a `position: sticky` scene inside a normal document-flow sc
 | --- | --- | --- |
 | 0.00–0.07 | Point / relationship | A gold point establishes an origin on a near-flat coordinate folio; a quiet second point hints that relations, not isolated objects, are the starting idea. |
 | 0.07–0.15 | Function emerges | A quadratic relationship, `f(x) = 0.16x² - 0.7x + 0.25`, is drawn from the point field; the original points remain as anchors. |
-| 0.15–0.25 | Function families branch | Adjacent, faint coordinate planes slide into view. The quadratic is joined by a linear and exponential family, while two fine branch lines mark Functions → Trigonometry and Functions → Calculus. |
-| 0.25–0.34 | Trigonometric behaviour | A sine wave travels across a neighbouring plane and aligns with the function field. The camera shifts laterally, keeping the quadratic present rather than transforming it into the wave. |
-| 0.34–0.47 | Calculus | The camera moves toward the quadratic plane. A tangent reveals rate of change, then accumulation appears as a restrained area mesh; a second branch glows from Calculus → Further Calculus. |
-| 0.47–0.57 | Space opens | The existing planes separate gently in depth. Their sample points gain modest z-offset and parallax before becoming a coherent vector field. |
-| 0.57–0.65 | Complex rotation | One vector plane rotates toward the viewer and becomes a complex-plane orbit. The camera follows the relationship; other function and calculus planes remain visible at a distance. |
-| 0.65–0.72 | Mechanics | A vector resolves into a restrained projectile trace on a newly revealed plane, linking Vectors → Mechanics without replacing the complex orbit. |
-| 0.72–0.80 | Major pullback | Camera retreats decisively to reveal the full field: functions, trigonometry, calculus, vectors, rotation, mechanics, and a quiet combinatorics/probability cluster already connected by fine lines. |
+| 0.15–0.25 | Function families branch | Adjacent, faint coordinate planes slide into view. The quadratic is joined by a linear and exponential family, while fine, initially incomplete relationship strokes seed Functions → Trigonometry and Functions → Calculus. |
+| 0.25–0.34 | Trigonometric behaviour | A sine wave travels across a neighbouring plane and aligns with the function field. The camera shifts laterally, keeping the quadratic present rather than transforming it into the wave; its earlier branch stroke gains a second segment. |
+| 0.34–0.47 | Calculus | The camera moves toward the quadratic plane. A tangent reveals rate of change, then accumulation appears as a restrained area mesh; Calculus → Further Calculus is introduced as another incomplete structural stroke. |
+| 0.47–0.57 | Space opens | The existing planes separate gently in depth. Their sample points gain modest z-offset and parallax before becoming a coherent vector field; subtle distant connection marks remain behind them. |
+| 0.57–0.65 | Complex rotation | One vector plane rotates toward the viewer and becomes a complex-plane orbit. The camera follows the relationship; other function and calculus planes remain visible at a distance, connected by the faint structure already seeded. |
+| 0.65–0.72 | Mechanics | A vector resolves into a restrained projectile trace on a newly revealed plane, completing the visible Vectors → Mechanics relation without replacing the complex orbit. |
+| 0.72–0.80 | Major pullback | This is the primary cinematic reveal: a substantial camera-scale change exposes a markedly more complex field of functions, trigonometry, calculus, vectors, rotation, mechanics, and a combinatorics/probability cluster. The earlier incomplete relationship strokes become visibly part of one larger structure. |
 | 0.80–0.91 | Network reveal | Earlier motifs condense into topic nodes; inter-topic lines draw in sequence. Functions, calculus, vectors, combinatorics, probability, statistics, and mechanics are the primary reading order. |
 | 0.91–1.00 | Network settling / pathways | Connections illuminate, settle, and then reveal Standard, Advanced, Extension 1, and Extension 2 as secondary membership treatments distributed across the same network. |
 
@@ -88,11 +89,15 @@ The minimal caption changes only at the midpoint of a range so it does not flick
 
 ## Final Network
 
-The final graph is a sparse, deliberately readable topic network rather than four course columns or a dense curriculum map. It is spatially organised by mathematical relationship first: Functions sits near the main function-family field and connects to Trigonometry and Calculus; Calculus connects to Further Calculus; Vectors links to Mechanics; Combinatorics branches into Probability and Statistics. Complex Numbers occupy the rotational area adjacent to vectors/further calculus. Each node retains a small visual signature from the scene that preceded it.
+The final graph is a sparse, deliberately readable topic network rather than four course columns or a dense curriculum map. It is spatially organised by mathematical relationship first: Functions sits near the main function-family field and connects to Trigonometry and Calculus; Calculus connects to Further Calculus; Vectors links to Mechanics; Combinatorics branches into Probability and Statistics. Complex Numbers occupy the rotational area adjacent to vectors/further calculus. Each node retains a small visual signature from the scene that preceded it, and each final edge completes or clarifies a structural line first seen earlier in the journey.
 
 Standard, Advanced, Extension 1, and Extension 2 are secondary overlays across this shared graph, never separate buckets. Their membership is conveyed with subtle perimeter tints, line treatments, and low-opacity halos; nodes may show multiple appropriate pathways when a topic spans them. A very small course key may appear only after the topic topology is legible and must never become a panel or dashboard control.
 
 The network has three phases: topic motifs coalesce into nodes, genuine prerequisite/application connections illuminate in waves, and course-membership treatments settle over the already connected structure. The final 30–35% of the timeline is intentionally quiet enough to let visitors read this result and reverse through its construction.
+
+### Curriculum-validation gate
+
+Before implementation, validate every displayed final-network node, every relationship edge, and every Standard/Advanced/Extension 1/Extension 2 membership treatment against the official [NESA Mathematics 11–12 syllabus collection](https://curriculum.nsw.edu.au/learning-areas/mathematics), specifically the 2024 Mathematics Standard, Mathematics Advanced, Mathematics Extension 1, and Mathematics Extension 2 syllabuses. Record the source syllabus page and relevant content/overview reference for each visualised item in the implementation plan. Do not infer a course membership from older 2017 syllabuses, textbook conventions, or a mathematically plausible relationship; if a proposed link cannot be supported by the 2024 material, omit it or mark it for user review before implementation.
 
 ## Responsiveness and Accessibility
 
@@ -102,6 +107,7 @@ The network has three phases: topic motifs coalesce into nodes, genuine prerequi
 - `prefers-reduced-motion` disables pinning and scroll animation, then renders the completed concept-first syllabus network with a static ordered relationship list and course-membership key below it.
 - Text remains DOM text, scene canvas is labelled, and the reduced-motion content carries the same meaning without animation.
 - The scene does not require pointer interaction, autoplay, or keyboard interception.
+- Once `ScrollTrigger` releases the pinned scene, the completed network remains as the visual basis of the immediately following static section. That section uses the same final layout at reduced, non-animated complexity as a calm visual anchor; it must not replace the network with a new illustration or abruptly remove it.
 
 ## Performance Contract
 
@@ -118,7 +124,10 @@ The network has three phases: topic motifs coalesce into nodes, genuine prerequi
 - Traverse the master timeline slowly, rapidly, and in reverse; confirm the scene moves through related spatial objects without hard cuts or forced literal mesh morphs.
 - Confirm depth arrives progressively: a flat folio field first, neighbouring planes/parallax next, and fully spatial vectors, rotation, mechanics, then network only later.
 - Confirm early branches remain visible or are spatially recalled: Functions → Trigonometry, Functions → Calculus, Calculus → Further Calculus, Vectors → Mechanics, and Combinatorics → Probability / Statistics.
-- Confirm the final 30–35% is devoted to topic-network formation, connection illumination, and settling; ensure concepts are visually primary and course membership is secondary.
+- Confirm the 0.72–0.80 pullback is the primary cinematic reveal, with a substantial camera-scale shift and clear increase in visible field complexity.
+- Confirm the final 30–35% is devoted to topic-network formation, connection illumination, and settling; ensure every final network edge reads as an extension of earlier structural marks, concepts are visually primary, and course membership is secondary.
+- Validate and document every final node, relationship edge, and course-membership treatment against the 2024 NESA Mathematics Standard, Advanced, Extension 1, and Extension 2 syllabuses before scene implementation begins.
+- Confirm the completed network remains recognisable and visually continuous in the first static section after the pinned scene releases.
 - Check browser console for scene, WebGL, and React errors.
 - Check the reduced-motion state.
 - Monitor frame cadence using browser performance tools across the pullback and full network; refine geometry, distant-plane detail, or DPR if interaction drops below a smooth normal-laptop experience.
