@@ -40,3 +40,6 @@ git_fix*.bat
 
 # Isolated local worktrees
 .worktrees/
+
+# Brainstorming visual companion (local scratch, not for commit)
+.superpowers/
