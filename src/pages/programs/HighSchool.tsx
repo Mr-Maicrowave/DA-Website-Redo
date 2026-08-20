@@ -539,7 +539,7 @@ function Curriculum() {
 function FindYourVoice() {
   const reduceMotion = useReducedMotion();
   const ref = useRef<HTMLDivElement>(null);
-  const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start start', 'end end'] });
+  const { scrollYProgress: p } = useScroll({ target: reduceMotion ? undefined : ref, offset: ['start start', 'end end'] });
 
   const useFadeRange = (a: number, b: number, c: number, d: number) => useTransform(p, [a, b, c, d], [0, 1, 1, 0]);
   const useRiseInRange = (a: number, b: number) => useTransform(p, [a, b], [0, 1]);

@@ -109,7 +109,7 @@ const VisualIntro = ({ children }: VisualIntroProps) => {
   );
 
   const { scrollYProgress } = useScroll({
-    target: sectionRef,
+    target: prefersReducedMotion ? undefined : sectionRef,
     offset: ['start start', 'end end'],
   });
 

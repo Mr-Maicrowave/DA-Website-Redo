@@ -119,7 +119,7 @@ const atarMomentEase = [0.22, 1, 0.36, 1] as const;
 function AtarTurningPoint() {
   const reduceMotion = useReducedMotion();
   const ref = useRef<HTMLDivElement>(null);
-  const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start start', 'end end'] });
+  const { scrollYProgress: p } = useScroll({ target: reduceMotion ? undefined : ref, offset: ['start start', 'end end'] });
 
   // Once the reveal has fully played out, stop reacting to scroll position —
   // scrolling back up should hold on "94.35" rather than unwind the sequence.

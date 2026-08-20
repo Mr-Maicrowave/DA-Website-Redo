@@ -6,6 +6,7 @@ import SubjectTypedBanner from '@/components/subjects/SubjectTypedBanner';
 import TrustedSchoolsStrip from '@/components/subjects/TrustedSchoolsStrip';
 import BusinessSyllabusQuiz from '@/components/subjects/BusinessSyllabusQuiz';
 import BusinessTransformationSteps from '@/components/subjects/BusinessTransformationSteps';
+import { BusinessStudiesIntroVideoGate } from '@/features/business-intro-video/BusinessStudiesIntroVideoGate';
 import { Button } from '@/components/ui/button';
 import {
   TrendingUp,
@@ -153,6 +154,7 @@ const BusinessStudies = () => {
 
   return (
     <div className="min-h-screen bg-white">
+      <BusinessStudiesIntroVideoGate />
       <SEO
         title="HSC Business Studies Tutoring"
         description="Master business concepts through case studies and real-world applications at DA Tuition."

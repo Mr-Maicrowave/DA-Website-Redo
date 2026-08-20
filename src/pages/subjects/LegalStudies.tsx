@@ -6,6 +6,7 @@ import SubjectTypedBanner from '@/components/subjects/SubjectTypedBanner';
 import TrustedSchoolsStrip from '@/components/subjects/TrustedSchoolsStrip';
 import LegalSyllabusQuiz from '@/components/subjects/LegalSyllabusQuiz';
 import LegalTransformationSteps from '@/components/subjects/LegalTransformationSteps';
+import { LegalStudiesIntroVideoGate } from '@/features/legal-intro-video/LegalStudiesIntroVideoGate';
 import { Button } from '@/components/ui/button';
 import {
   Scale,
@@ -392,6 +393,7 @@ const LegalStudies = () => {
 
   return (
     <div className="min-h-screen bg-white">
+      <LegalStudiesIntroVideoGate />
       <SEO
         title="HSC Legal Studies Tutoring"
         description="Master the Australian legal system through case analysis and critical evaluation at DA Tuition."
