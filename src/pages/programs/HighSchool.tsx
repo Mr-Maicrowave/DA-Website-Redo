@@ -4,6 +4,7 @@ import SEO from '@/components/SEO';
 import NavigationNew from '@/components/NavigationNew';
 import { Button } from '@/components/ui/button';
 import SubjectHero from '@/components/subjects/SubjectHero';
+import HighSchoolCinematicScene from '@/components/programs/HighSchoolCinematicScene';
 import { AnimatePresence, motion, useMotionValueEvent, useReducedMotion, useScroll, useTransform } from 'framer-motion';
 import { ArrowRight, ArrowUpRight, ChevronLeft, ChevronRight, GraduationCap, Star } from 'lucide-react';
 
@@ -901,6 +902,7 @@ const HighSchool = () => {
 
       <div id="highschool-page-content">
         <main>
+          <HighSchoolCinematicScene />
           <YearJourney />
           <WhyItMatters />
           <TeacherBeside />

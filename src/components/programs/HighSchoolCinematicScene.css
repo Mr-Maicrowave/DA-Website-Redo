@@ -1,0 +1,133 @@
+/* =========================================================
+   High School — Cinematic Forward-Moving Parallax Scene
+   Four flat, pre-composited PNG layers (mountains / water & mist /
+   floating objects / foreground desk) sharing one identical canvas.
+   A sticky 100vh viewport clips the scene; the section's extra height
+   supplies the scroll distance the GSAP ScrollTrigger scrub reads from.
+   ========================================================= */
+
+.hs-cine {
+  position: relative;
+  height: 300vh; /* scroll distance driving the sticky scene */
+  background: #fffdf8; /* cream/ivory page background behind the PNG layers */
+}
+
+.hs-cine__sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: hidden;
+  background: #fffdf8;
+}
+
+.hs-cine__scene {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+/* ---------- depth layers ----------
+   z-index increases with depth order: mountains (farthest) through
+   foreground desk (closest), per spec. */
+
+.hs-cine__layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.hs-cine__layer--mountains { z-index: 1; }
+.hs-cine__layer--water { z-index: 2; }
+.hs-cine__layer--floating { z-index: 3; }
+.hs-cine__layer--foreground { z-index: 4; }
+
+/* Manual per-layer alignment nudge, left at 0 by default since all four
+   source canvases share identical dimensions/registration. Adjust here
+   (not the animated layers below) if any layer needs a static offset. */
+.hs-cine__align {
+  position: absolute;
+  inset: 0;
+  transform: translate(var(--hs-cine-ox, 0px), var(--hs-cine-oy, 0px));
+}
+
+.hs-cine__layer--mountains .hs-cine__align { --hs-cine-ox: 0px; --hs-cine-oy: 0px; }
+.hs-cine__layer--water .hs-cine__align { --hs-cine-ox: 0px; --hs-cine-oy: 0px; }
+.hs-cine__layer--floating .hs-cine__align { --hs-cine-ox: 0px; --hs-cine-oy: 0px; }
+.hs-cine__layer--foreground .hs-cine__align { --hs-cine-ox: 0px; --hs-cine-oy: 0px; }
+
+/* Scroll-driven scale + translateY, set by GSAP. transform-only, GPU-friendly. */
+.hs-cine__depth {
+  position: absolute;
+  inset: 0;
+  transform-origin: 50% 100%;
+  will-change: transform;
+}
+
+/* Desktop mouse-parallax offset, nested separately so it composes with
+   (rather than overwrites) the scroll transform above it. */
+.hs-cine__mouse {
+  position: absolute;
+  inset: 0;
+  will-change: transform;
+}
+
+.hs-cine__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 50%;
+  user-select: none;
+  pointer-events: none;
+}
+
+/* ---------- foreground left/right split ----------
+   Same untouched source image shown twice, each copy clip-masked to one
+   half so the two together reconstruct the original artwork exactly at
+   rest. GSAP nudges them apart on scroll for the "passing between the
+   desk objects" read. */
+
+.hs-cine__fg-half {
+  position: absolute;
+  inset: 0;
+  will-change: transform;
+}
+
+.hs-cine__fg-half--left {
+  clip-path: inset(0 50% 0 0);
+}
+
+.hs-cine__fg-half--right {
+  clip-path: inset(0 0 0 50%);
+}
+
+/* ---------- tablet ---------- */
+
+@media (min-width: 640px) and (max-width: 1023px) {
+  .hs-cine {
+    height: 280vh;
+  }
+}
+
+/* ---------- mobile: simplified motion, shorter scroll runway ---------- */
+
+@media (max-width: 639px) {
+  .hs-cine {
+    height: 240vh;
+  }
+}
+
+/* ---------- reduced motion: static, aligned composition ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .hs-cine {
+    height: 100vh;
+  }
+
+  .hs-cine__depth,
+  .hs-cine__mouse,
+  .hs-cine__fg-half {
+    will-change: auto;
+  }
+}
