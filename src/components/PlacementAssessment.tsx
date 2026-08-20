@@ -631,7 +631,7 @@ export default function PlacementAssessment() {
               </p>
             </div>
             <div style={{ display: 'flex', gap: 10, flexShrink: 0 }}>
-              <Link to="/interview">
+              <Link to="/book-interview">
                 <button style={{ padding: '13px 28px', background: C.gold, color: C.navy, fontFamily: sans, fontSize: 12, fontWeight: 700, letterSpacing: '0.04em', border: 'none', borderRadius: 2, cursor: 'pointer' }}>
                   Book an Interview →
                 </button>

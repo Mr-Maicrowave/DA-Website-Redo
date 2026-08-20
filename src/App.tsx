@@ -10,7 +10,7 @@ import PageTransition from "@/components/animations/PageTransition";
 import ScrollProgress from "@/components/animations/ScrollProgress";
 import StickyBookButton from "@/components/StickyBookButton";
 import Index from "./pages/Index";
-import Interview from "./pages/Interview";
+import EnglishSample from "./pages/EnglishSample";
 import BookInterview from "./pages/BookInterview";
 import Reviews from "./pages/Reviews";
 import NotFound from "./pages/NotFound";
@@ -29,12 +29,10 @@ import Smithfield from "./pages/locations/Smithfield";
 import Lansvale from "./pages/locations/Lansvale";
 import SuccessStories from "./pages/SuccessStories";
 import FAQ from "./pages/FAQ";
+import ContactUs from "./pages/ContactUs";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import WhyChooseDA from "./pages/WhyChooseDA";
 import PrincipalReflections from "./pages/PrincipalReflections";
-import ContactUs from "./pages/ContactUs";
-import PrincipalVoiceBook from "./pages/PrincipalVoiceBook";
-import Subjects from "./pages/Subjects";
 // Program pages
 import PrimarySchool from "./pages/programs/PrimarySchool";
 import HighSchool from "./pages/programs/HighSchool";
@@ -43,6 +41,7 @@ import Year34 from "./pages/programs/Year34";
 import Year56 from "./pages/programs/Year56";
 // Subject pages
 import Mathematics from "./pages/subjects/Mathematics";
+import MathsGraphLab from "./pages/MathsGraphLab";
 import English from "./pages/subjects/English";
 import Science from "./pages/subjects/Science";
 import BusinessStudies from "./pages/subjects/BusinessStudies";
@@ -50,6 +49,8 @@ import LegalStudies from "./pages/subjects/LegalStudies";
 import Testimonials from "./pages/Testimonials";
 import TestimonialDetail from "./pages/TestimonialDetail";
 import ScrollToTop from "./components/ScrollToTop";
+import RouteScrollReset from "./components/RouteScrollReset";
+import BookIntroCalibration from "./pages/BookIntroCalibration";
 
 const queryClient = new QueryClient();
 
@@ -60,15 +61,21 @@ const AnimatedRoutes = () => {
     <AnimatePresence mode="wait">
       <Routes location={location} key={location.pathname}>
         <Route path="/" element={<PageTransition><Index /></PageTransition>} />
+        {/* Do NOT change this to <Index />. See src/pages/EnglishSample.tsx header comment. */}
+        <Route path="/english-sample" element={<PageTransition><EnglishSample /></PageTransition>} />
+        <Route
+          path="/book-intro-calibration"
+          element={import.meta.env.DEV ? <BookIntroCalibration /> : <Navigate to="/" replace />}
+        />
 
-        <Route path="/interview" element={<PageTransition><Interview /></PageTransition>} />
+        <Route path="/interview" element={<Navigate to="/principal-reflections" replace />} />
         <Route path="/book-interview" element={<PageTransition><BookInterview /></PageTransition>} />
-        <Route path="/reviews" element={<PageTransition><Reviews /></PageTransition>} />
+        <Route path="/reviews" element={<Navigate to="/success-stories" replace />} />
         <Route path="/find-teacher" element={<PageTransition><FindTeacher /></PageTransition>} />
         <Route path="/teachers" element={<Navigate to="/find-teacher" replace />} />
         <Route path="/articles" element={<PageTransition><Articles /></PageTransition>} />
         <Route path="/articles/:slug" element={<PageTransition><ArticleView /></PageTransition>} />
-        <Route path="/appreciation-advice" element={<PageTransition><AppreciationAdvice /></PageTransition>} />
+        <Route path="/appreciation-advice" element={<Navigate to="/success-stories" replace />} />
         <Route path="/learning-formats" element={<PageTransition><LearningFormats /></PageTransition>} />
         <Route path="/hsc-excellence" element={<PageTransition><HSCExcellence /></PageTransition>} />
         <Route path="/our-teachers" element={<Navigate to="/find-teacher" replace />} />
@@ -85,8 +92,8 @@ const AnimatedRoutes = () => {
         <Route path="/our-approach" element={<PageTransition><WhyChooseDA /></PageTransition>} />
         <Route path="/why-choose-da" element={<PageTransition><WhyChooseDA /></PageTransition>} />
         <Route path="/principal-reflections" element={<PageTransition><PrincipalReflections /></PageTransition>} />
-        <Route path="/principal-voice-book" element={<PageTransition><PrincipalVoiceBook /></PageTransition>} />
-        <Route path="/subjects" element={<PageTransition><Subjects /></PageTransition>} />
+        {/* "All Subjects" hub page retired — content removed from src/pages/Subjects.tsx (still on disk, unused). Redirects to the flagship subject page. */}
+        <Route path="/subjects" element={<Navigate to="/subjects/english" replace />} />
 
         {/* Program Routes */}
         <Route path="/programs/primary-school" element={<PageTransition><PrimarySchool /></PageTransition>} />
@@ -98,13 +105,14 @@ const AnimatedRoutes = () => {
 
         {/* Subject Routes */}
         <Route path="/subjects/mathematics" element={<PageTransition><Mathematics /></PageTransition>} />
+        <Route path="/maths-graph-lab" element={<PageTransition><MathsGraphLab /></PageTransition>} />
         <Route path="/subjects/english" element={<PageTransition><English /></PageTransition>} />
         <Route path="/subjects/science" element={<PageTransition><Science /></PageTransition>} />
         <Route path="/subjects/business-studies" element={<PageTransition><BusinessStudies /></PageTransition>} />
         <Route path="/subjects/legal-studies" element={<PageTransition><LegalStudies /></PageTransition>} />
 
         {/* Testimonials */}
-        <Route path="/testimonials" element={<PageTransition><Testimonials /></PageTransition>} />
+        <Route path="/testimonials" element={<Navigate to="/success-stories" replace />} />
         <Route path="/testimonials/:slug" element={<PageTransition><TestimonialDetail /></PageTransition>} />
 
         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
@@ -122,11 +130,13 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
+          <RouteScrollReset />
           <ScrollProgress />
           <StickyBookButton />
           <div
-            className="min-h-screen overflow-x-hidden gradient-transition"
+            className="min-h-screen gradient-transition"
             style={{
+              overflowX: 'clip',
               background:
                 'linear-gradient(180deg, rgba(249, 250, 251, 1) 0%, rgba(239, 246, 255, 0.95) 40%, rgba(219, 234, 254, 0.5) 70%, rgba(147, 197, 253, 0.3) 100%)',
             }}

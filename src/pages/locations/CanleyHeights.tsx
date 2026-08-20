@@ -209,7 +209,7 @@ const CanleyHeights = () => {
           <Reveal>
             <motion.figure variants={fadeUp} style={{ position: 'relative', margin: 0 }}>
               <div aria-hidden="true" style={{ position: 'absolute', height: 3, width: 94, background: C.gold, top: -12, right: 28, borderRadius: 99 }} />
-              <div style={{ position: 'relative', minHeight: 'clamp(400px,43vw,530px)', overflow: 'hidden', borderRadius: '150px 30px 30px 30px', backgroundImage: "url('/images/programs/highschool-classroom-wide-1-joyful-clean.png')", backgroundPosition: 'center 80%', backgroundSize: 'auto 125%', boxShadow: '0 24px 50px rgba(10,27,52,.14)' }} />
+              <div style={{ position: 'relative', minHeight: 'clamp(400px,43vw,530px)', overflow: 'hidden', borderRadius: '150px 30px 30px 30px', backgroundImage: "url('/images/programs/highschool-classroom-wide-1-joyful-clean.png')", backgroundPosition: 'center 80%', backgroundSize: 'auto 125%', boxShadow: '0 24px 50px rgba(10,27,52,.14)', filter: 'brightness(1.04) contrast(1.02) saturate(1.03)' }} />
               <figcaption style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, marginTop: 17, padding: '0 4px', color: C.navy }}>
                 <span style={{ ...s, color: C.gold, fontSize: '.64rem', letterSpacing: '.17em', fontWeight: 700, textTransform: 'uppercase' }}>Canley Heights, NSW</span>
                 <span style={{ ...s, color: C.muted, fontSize: '.78rem', textAlign: 'right' }}>A calm place to focus and grow.</span>
@@ -261,7 +261,8 @@ const CanleyHeights = () => {
       <section style={{ background: C.cream, padding: '72px 24px' }}>
         <div style={{ maxWidth: 1200, margin: '0 auto' }}>
           <Reveal>
-            <motion.div variants={fadeUp} aria-label="About DA Tuition Canley Heights" style={{ minHeight: 620, borderRadius: 12, padding: 'clamp(32px,6vw,72px)', position: 'relative', overflow: 'hidden', display: 'flex', alignItems: 'center', backgroundImage: 'url(/images/community/canley-heights-classroom-hallway-clean.png)', backgroundSize: 'cover', backgroundPosition: 'center' }}>
+            <motion.div variants={fadeUp} aria-label="About DA Tuition Canley Heights" style={{ minHeight: 620, borderRadius: 12, padding: 'clamp(32px,6vw,72px)', position: 'relative', overflow: 'hidden', display: 'flex', alignItems: 'center' }}>
+              <div aria-hidden="true" style={{ position: 'absolute', inset: 0, backgroundImage: 'url(/images/community/canley-heights-classroom-hallway-clean.png)', backgroundSize: 'cover', backgroundPosition: 'center', filter: 'brightness(1.05) contrast(1.02) saturate(1.03)' }} />
               <div aria-hidden="true" style={{ position: 'absolute', inset: 0, background: `linear-gradient(90deg, ${C.navy} 0%, rgba(10,27,52,.94) 38%, rgba(10,27,52,.62) 66%, rgba(10,27,52,.12) 100%)` }} />
               <div aria-hidden="true" style={{ position: 'absolute', inset: 0, background: 'linear-gradient(0deg, rgba(10,27,52,.38), transparent 55%)' }} />
               <div style={{ position: 'relative', zIndex: 1, maxWidth: 670 }}>

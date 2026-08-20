@@ -1,10 +1,22 @@
 import React from 'react';
 import NavigationNew from '@/components/NavigationNew';
 import FooterNew from '@/components/FooterNew';
+import SubjectHero from '@/components/subjects/SubjectHero';
+import SubjectTypedBanner from '@/components/subjects/SubjectTypedBanner';
+import TrustedSchoolsStrip from '@/components/subjects/TrustedSchoolsStrip';
 import { Button } from '@/components/ui/button';
 import { Scale, Gavel, BookOpen, CheckCircle, ArrowRight, Quote, Shield, Info } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import SEO from '@/components/SEO';
+import { LegalStudiesIntroVideoGate } from '@/features/legal-intro-video/LegalStudiesIntroVideoGate';
+
+const legalTrustedSchools = [
+  { name: 'Freeman Catholic College', logoSrc: '/images/schools/freeman-catholic-college.png' },
+  { name: 'Canley Vale High School', logoSrc: '/images/schools/canley-vale-high-school.png' },
+  { name: 'Bonnyrigg High School', logoSrc: '/images/schools/bonnyrigg-high-school.png' },
+  { name: 'Mary MacKillop Catholic College', logoSrc: '/images/schools/mary-mackillop-catholic-college.png' },
+  { name: 'Al-Faisal College', logoSrc: '/images/schools/al-faisal-college.png' },
+];
 
 const LegalStudies = () => {
   const topics = [
@@ -76,6 +88,7 @@ const LegalStudies = () => {
 
   return (
     <div className="min-h-screen bg-white">
+      <LegalStudiesIntroVideoGate />
       <SEO
         title="HSC Legal Studies Tutoring"
         description="Master the Australian legal system through case analysis and critical evaluation at DA Tuition."
@@ -83,39 +96,29 @@ const LegalStudies = () => {
       />
       <NavigationNew />
 
-      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 mt-[120px]">
-        {/* Hero Section */}
-        <section className="relative rounded-[2.5rem] overflow-hidden shadow-2xl mx-4 sm:mx-0 mt-6 mb-16">
-          <div className="absolute inset-0">
-            <img src="/images/programs/highschool-peer-notes.jpg" alt="Legal Studies Tutoring" className="w-full h-full object-cover" />
-            <div className="absolute inset-0 bg-brand-navy/80 mix-blend-multiply"></div>
-            <div className="absolute inset-0 bg-gradient-to-t from-brand-navy/90 via-brand-navy/50 to-brand-navy/30"></div>
-          </div>
+      <SubjectHero
+        eyebrow="Years 11-12 Legal Studies"
+        icon={Scale}
+        headlineWhite="Case law with clarity."
+        headlineGold="Essays with precision."
+        subtext="HSC Legal Studies through case analysis, statutory interpretation, and the LCMR essay method — built for confident, well-evidenced responses across Crime, Human Rights, Family, and Workplace."
+        proofPills={['Real case law', 'Marked feedback', 'Clear HSC pathway']}
+        exploreTargetId="legal-topics"
+        placeholderLabel="Legal Studies classroom"
+        backgroundImageSrc="/images/subjects/legal-studies/hero-background.png"
+        backgroundImageAlt="DA Tuition Legal Studies classroom"
+        backgroundPosition="right center"
+        backgroundScale={1.23}
+      />
 
-          <div className="relative z-10 max-w-4xl mx-auto text-center py-12 sm:py-16 lg:py-24 px-6">
-            <div className="inline-flex items-center justify-center space-x-2 bg-white/10 backdrop-blur-md rounded-full px-6 py-2 border border-white/20 mb-8">
-              <Scale className="w-5 h-5 text-purple-400" />
-              <span className="text-sm font-bold text-white tracking-wide uppercase">Years 11 & 12</span>
-            </div>
-
-            <h1 className="text-3xl sm:text-4xl lg:text-7xl font-extrabold text-white mb-6 tracking-tight leading-tight drop-shadow-lg">
-              Legal <br />
-              <span className="text-purple-400">Studies</span>
-            </h1>
-
-            <p className="text-xl text-white/90 max-w-2xl mx-auto mb-10 leading-relaxed drop-shadow-md">
-              HSC Legal Excellence. Master the Australian legal system through case analysis and critical evaluation.
-            </p>
-
-            <div className="flex justify-center">
-              <Button size="lg" className="bg-purple-500 text-white hover:bg-purple-600 font-bold px-8 h-14 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all">
-                Book Interview
-                <ArrowRight className="ml-2 w-5 h-5" />
-              </Button>
-            </div>
-          </div>
-        </section>
-      </div>
+      <TrustedSchoolsStrip schools={legalTrustedSchools} className="subject-school-strip-compact" />
+      <SubjectTypedBanner
+        imageSrc="/images/subjects/legal-studies/master-legal-studies-banner.png"
+        imageAlt="Legal Studies banner with scales of justice, law books, and a gavel"
+        headline="Master Legal Studies."
+        emphasis="Understand the law. Think critically."
+        variant="legal"
+      />
 
       {/* Learning Formats Callout */}
       <section className="py-12">
@@ -143,7 +146,7 @@ const LegalStudies = () => {
       </section>
 
       {/* HSC Legal Studies Topics */}
-      <section className="py-16 bg-gray-50">
+      <section id="legal-topics" className="py-16 bg-gray-50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-center text-brand-midnight mb-4">
             HSC Legal Studies Core & Options

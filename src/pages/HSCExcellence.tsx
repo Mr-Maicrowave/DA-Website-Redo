@@ -1,12 +1,16 @@
+import { useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Award } from 'lucide-react';
+import { motion, useMotionValueEvent, useReducedMotion, useScroll, useTransform } from 'framer-motion';
 import SEO from '@/components/SEO';
 import NavigationNew from '@/components/NavigationNew';
+import FooterNew from '@/components/FooterNew';
+import SubjectHero from '@/components/subjects/SubjectHero';
 
 const cardTones = [
   'linear-gradient(180deg, #f7fbff, #e8f2ff)',
   'linear-gradient(180deg, #fbfff8, #eaf8ef)',
   'linear-gradient(180deg, #fffdf7, #fff1cd)',
-  'linear-gradient(180deg, #fbf8ff, #ede5fb)',
 ];
 
 const stakesCards = [
@@ -28,7 +32,7 @@ const stakesCards = [
   {
     title: 'Burnout Is a Real Risk',
     text: 'Year 12 is a marathon. Students who do not manage time, energy, and stress through the year perform well below their potential in the final exams. We build good habits alongside knowledge.',
-    tone: cardTones[3],
+    tone: cardTones[0],
   },
 ];
 
@@ -87,7 +91,7 @@ const approachCards = [
   {
     title: 'Progress Reports and Parent Check-Ins',
     text: 'Written progress updates every term. Direct tutor access between sessions. You stay in the loop at every step.',
-    tone: cardTones[3],
+    tone: cardTones[0],
   },
 ];
 
@@ -100,6 +104,143 @@ const fitItems = [
   'Your child needs support managing Year 12 workload and stress',
   'You want written progress updates, not just verbal reassurance',
 ];
+
+/* ============================================================================
+   ATAR TURNING POINT — the one authored scroll-pinned moment on this page,
+   built from the existing testimonial copy (no new content). Doubt phrase and
+   the "80" hold, then dissolve into the "94.35" reveal, then the rest of the
+   quote and attribution settle in. Mirrors the pin-and-scrub technique used
+   in FindYourVoice on the High School page. Reduced-motion users get the
+   original static testimonial card, unchanged.
+============================================================================ */
+
+const atarMomentEase = [0.22, 1, 0.36, 1] as const;
+
+function AtarTurningPoint() {
+  const reduceMotion = useReducedMotion();
+  const ref = useRef<HTMLDivElement>(null);
+  const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start start', 'end end'] });
+
+  // Once the reveal has fully played out, stop reacting to scroll position —
+  // scrolling back up should hold on "94.35" rather than unwind the sequence.
+  const [revealed, setRevealed] = useState(false);
+  useMotionValueEvent(p, 'change', (latest) => {
+    if (latest >= 0.96 && !revealed) setRevealed(true);
+  });
+
+  const useFadeRange = (a: number, b: number, c: number, d: number) => useTransform(p, [a, b, c, d], [0, 1, 1, 0]);
+  const useRiseInRange = (a: number, b: number) => useTransform(p, [a, b], [0, 1]);
+
+  const oIntroScroll = useFadeRange(0.04, 0.1, 0.22, 0.3);
+  const oEightyScroll = useFadeRange(0.28, 0.36, 0.46, 0.54);
+  const oFinalScroll = useRiseInRange(0.54, 0.66);
+  const underlineScroll = useRiseInRange(0.68, 0.8);
+  const oSupportScroll = useRiseInRange(0.82, 0.96);
+
+  const oIntro = revealed ? 0 : oIntroScroll;
+  const oEighty = revealed ? 0 : oEightyScroll;
+  const oFinal = revealed ? 1 : oFinalScroll;
+  const underline = revealed ? 1 : underlineScroll;
+  const oSupport = revealed ? 1 : oSupportScroll;
+
+  if (reduceMotion) {
+    return (
+      <section className="hsc-section hsc-testi-section">
+        <div className="hsc-section-tag" style={{ marginBottom: 32 }}>Real Families, Real Results</div>
+        <div className="hsc-testi-card">
+          <div className="hsc-testi-stars" aria-label="Five star review">★★★★★</div>
+          <div className="hsc-testi-quote-icon">&ldquo;</div>
+          <p className="hsc-testi-text">
+            Our daughter came into Year 12 thinking she would be lucky to get an <strong>ATAR of 80</strong>.
+            She finished with <strong>94.35</strong>. The tutors knew the HSC inside out: not just the content,
+            but how the markers think. That is the difference.
+          </p>
+          <div className="hsc-testi-author">
+            <div className="hsc-testi-avatar">D</div>
+            <div>
+              <div className="hsc-testi-name">Dad of Year 12 student, Chatswood</div>
+              <div className="hsc-testi-role">ATAR 94.35</div>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  return (
+    <section
+      ref={ref}
+      className="relative"
+      style={{ height: '280vh', background: 'radial-gradient(ellipse 90% 70% at 50% 50%, var(--soft) 0%, var(--white) 65%)' }}
+    >
+      <div className="sticky top-0 flex h-screen items-center justify-center overflow-hidden px-5 sm:px-8 lg:px-[52px]">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0"
+          style={{ background: 'radial-gradient(ellipse 50% 42% at 50% 50%, rgba(201,162,39,0.14) 0%, transparent 72%)' }}
+        />
+
+        <div className="relative mx-auto w-full max-w-3xl text-center">
+          <p
+            className="mb-12 text-xs font-black uppercase tracking-[0.28em]"
+            style={{ color: 'var(--gold-dark)' }}
+          >
+            Real Families, Real Results
+          </p>
+
+          <motion.p
+            style={{ opacity: oIntro, fontFamily: 'var(--font-serif)', color: 'var(--muted)' }}
+            className="absolute inset-x-0 text-2xl italic leading-snug sm:text-3xl lg:text-4xl"
+          >
+            Our daughter came into Year 12 thinking she&rsquo;d be lucky to get an ATAR of&hellip;
+          </motion.p>
+
+          <motion.p
+            style={{ opacity: oEighty, color: 'var(--muted)', fontFamily: 'var(--font-serif)' }}
+            className="absolute inset-x-0 text-8xl font-bold sm:text-9xl lg:text-[10rem]"
+          >
+            80.
+          </motion.p>
+
+          <motion.div style={{ opacity: oFinal }} className="relative" transition={{ ease: atarMomentEase }}>
+            <p className="text-sm font-bold uppercase tracking-[0.24em]" style={{ color: 'var(--muted)' }}>
+              She finished with
+            </p>
+            <p
+              className="mt-3 text-8xl font-bold leading-none sm:text-9xl lg:text-[11rem]"
+              style={{ color: 'var(--gold-dark)', fontFamily: 'var(--font-serif)' }}
+            >
+              94.35
+            </p>
+            <svg viewBox="0 0 300 20" className="mx-auto mt-6 h-4 w-72" preserveAspectRatio="none" aria-hidden="true">
+              <motion.path
+                d="M4 12 Q 80 4 150 10 T 296 8"
+                stroke="var(--gold)"
+                strokeWidth="7"
+                strokeLinecap="round"
+                fill="none"
+                style={{ pathLength: underline }}
+              />
+            </svg>
+            <motion.div style={{ opacity: oSupport }} className="mx-auto mt-10 max-w-lg">
+              <p className="text-lg italic leading-relaxed" style={{ fontFamily: 'var(--font-serif)', color: 'var(--text)' }}>
+                &ldquo;The tutors knew the HSC inside out: not just the content, but how the markers think.
+                That is the difference.&rdquo;
+              </p>
+              <div className="mt-7 flex items-center justify-center gap-3">
+                <div className="hsc-testi-avatar">D</div>
+                <div className="text-left">
+                  <div className="hsc-testi-name">Dad of Year 12 student, Chatswood</div>
+                  <div className="hsc-testi-role">ATAR 94.35</div>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        </div>
+      </div>
+    </section>
+  );
+}
 
 const HSCExcellence = () => {
   return (
@@ -122,7 +263,6 @@ const HSCExcellence = () => {
           color: var(--text);
           font-family: 'Segoe UI', system-ui, sans-serif;
           line-height: 1.6;
-          padding-top: 120px;
         }
 
         .hsc-page *, .hsc-page *::before, .hsc-page *::after { box-sizing: border-box; }
@@ -141,10 +281,7 @@ const HSCExcellence = () => {
         .hsc-urgency-item { display: flex; align-items: center; gap: 10px; font-size: .88rem; font-weight: 700; color: var(--navy); }
         .hsc-urgency-highlight { background: var(--navy); color: #fff; font-size: .75rem; font-weight: 800; padding: 3px 12px; border-radius: 999px; white-space: nowrap; }
 
-        .hsc-hero { background: linear-gradient(160deg,#fff6e7 0%,#fffdf8 50%,#fff6e7 100%); padding: 80px 52px 72px; text-align: center; border-bottom: 1px solid var(--border); position: relative; overflow: hidden; }
-        .hsc-hero-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.45; z-index: 0; }
-        .hsc-hero-overlay { position: absolute; inset: 0; z-index: 0; background: linear-gradient(160deg, rgba(255,246,231,0.7) 0%, rgba(255,253,248,0.6) 55%, rgba(201,162,39,0.22) 100%); }
-        .hsc-hero-content { position: relative; z-index: 1; }
+        .hsc-hero { background: linear-gradient(160deg,#fff6e7 0%,#fffdf8 50%,#fff6e7 100%); padding: 80px 52px 72px; text-align: center; border-bottom: 1px solid var(--border); }
         .hsc-hero-tag { display: inline-block; font-size: .72rem; font-weight: 800; letter-spacing: 3px; text-transform: uppercase; color: var(--gold-dark); background: #fff; border: 1.5px solid var(--gold-mid); padding: 6px 20px; border-radius: 999px; margin-bottom: 24px; }
         .hsc-hero h1 { font-family: var(--font-serif); font-size: clamp(2.4rem,5vw,3.6rem); font-weight: 700; line-height: 1.1; letter-spacing: -1.5px; color: var(--navy); margin: 0 0 20px; text-wrap: balance; }
         .hsc-hero h1 em { font-style: normal; color: var(--gold-dark); }
@@ -234,7 +371,6 @@ const HSCExcellence = () => {
         .hsc-photo-pair-item img { width: 100%; height: 100%; object-fit: cover; object-position: center; }
 
         @media (max-width: 768px) {
-          .hsc-page { padding-top: 104px; }
           .hsc-hero, .hsc-section, .hsc-cta-section { padding-left: 20px; padding-right: 20px; }
           .hsc-breadcrumb, .hsc-urgency-banner { padding-left: 20px; padding-right: 20px; }
           .hsc-sibling-tabs { justify-content: flex-start; }
@@ -249,47 +385,35 @@ const HSCExcellence = () => {
 
       <NavigationNew />
 
-      <div className="hsc-breadcrumb">
-        <Link to="/">Home</Link><span>&rsaquo;</span>
-        <Link to="/#programs">Programs</Link><span>&rsaquo;</span>
-        HSC Excellence
-      </div>
+      <SubjectHero
+        eyebrow="HSC Excellence · Years 11-12"
+        icon={Award}
+        headlineWhite="The HSC Is"
+        headlineGold="Two Years of Decisions."
+        subtext="Every subject choice, every assessment mark, every study hour counts toward the ATAR. DA Tuition's HSC Excellence program is built for students who want to walk out with their best possible result."
+        proofPills={['100+ Band 6 results', 'Subject-specialist tutors', 'Written progress updates']}
+        exploreTargetId="hsc-excellence-page-content"
+        placeholderLabel="HSC Excellence classroom"
+        backgroundImageSrc="/images/programs/hsc-maths.jpg"
+        backgroundImageAlt="HSC Mathematics tutor working through a calculus problem with a Year 12 student"
+      />
 
-      <div className="hsc-sibling-tabs">
-        <Link className="hsc-stab" to="/programs/high-school">High School (Y7-10)</Link>
-        <Link className="hsc-stab active" to="/hsc-excellence">HSC Excellence (Y11-12)</Link>
-      </div>
-
-      <div className="hsc-urgency-banner">
-        <div className="hsc-urgency-item">Limited Places This Term <div className="hsc-urgency-highlight">Filling Fast</div></div>
-        <div className="hsc-urgency-item">Years 11-12 HSC Preparation</div>
-        <div className="hsc-urgency-item">Band 6 Results Track Record</div>
-        <div className="hsc-urgency-item">Enrolments Now Open</div>
-      </div>
-
+      <div id="hsc-excellence-page-content">
       <main>
         <div className="hsc-hero">
-          <img
-            className="hsc-hero-bg"
-            src="/images/programs/highschool-classroom-wide-2.jpg"
-            alt="HSC tutor working closely with senior students on exam preparation at DA Tuition"
-          />
-          <div className="hsc-hero-overlay" />
-          <div className="hsc-hero-content">
-            <div className="hsc-hero-tag">HSC EXCELLENCE &middot; YEARS 11-12</div>
-            <h1>The HSC Is <em>Two Years of Decisions</em></h1>
-            <p className="hsc-hero-sub">
-              Every subject choice, every assessment mark, every study hour counts toward the ATAR. DA Tuition's HSC
-              Excellence program is built for students who want to walk out with their best possible result.
-            </p>
-            <div className="hsc-hero-btns">
-              <Link className="hsc-btn-navy" to="/book-interview">Secure a Spot - Limited Places</Link>
-            </div>
-            <div className="hsc-hero-badge">
-              <div>
-                <div className="hsc-hero-badge-bold">100+ Band 6 Results</div>
-                <div className="hsc-hero-badge-small">Across English, Maths, Science and Humanities</div>
-              </div>
+          <div className="hsc-hero-tag">HSC EXCELLENCE &middot; YEARS 11-12</div>
+          <h1>The HSC Is <em>Two Years of Decisions</em></h1>
+          <p className="hsc-hero-sub">
+            Every subject choice, every assessment mark, every study hour counts toward the ATAR. DA Tuition's HSC
+            Excellence program is built for students who want to walk out with their best possible result.
+          </p>
+          <div className="hsc-hero-btns">
+            <Link className="hsc-btn-navy" to="/book-interview">Book an Interview</Link>
+          </div>
+          <div className="hsc-hero-badge">
+            <div>
+              <div className="hsc-hero-badge-bold">100+ Band 6 Results</div>
+              <div className="hsc-hero-badge-small">Across English, Maths, Science and Humanities</div>
             </div>
           </div>
         </div>
@@ -368,29 +492,11 @@ const HSCExcellence = () => {
             <img src="/images/programs/hsc-physics.jpg" alt="HSC Physics tutor explaining a concept on a whiteboard to Year 11-12 students" />
           </div>
           <div className="hsc-photo-pair-item">
-            <img src="/images/programs/highschool-tutor-laugh.jpg" alt="A DA Tuition HSC student celebrating a Band 6 result" />
+            <img src="/images/v3/success_medal.jpg" alt="A DA Tuition HSC student celebrating a Band 6 result" />
           </div>
         </div>
 
-        <section className="hsc-section hsc-testi-section">
-          <div className="hsc-section-tag" style={{ marginBottom: 32 }}>Real Families, Real Results</div>
-          <div className="hsc-testi-card">
-            <div className="hsc-testi-stars" aria-label="Five star review">*****</div>
-            <div className="hsc-testi-quote-icon">"</div>
-            <p className="hsc-testi-text">
-              Our daughter came into Year 12 thinking she would be lucky to get an <strong>ATAR of 80</strong>.
-              She finished with <strong>94.35</strong>. The tutors knew the HSC inside out: not just the content,
-              but how the markers think. That is the difference.
-            </p>
-            <div className="hsc-testi-author">
-              <div className="hsc-testi-avatar">D</div>
-              <div>
-                <div className="hsc-testi-name">Dad of Year 12 student</div>
-                <div className="hsc-testi-role">ATAR 94.35</div>
-              </div>
-            </div>
-          </div>
-        </section>
+        <AtarTurningPoint />
 
         <section className="hsc-section hsc-fit-section">
           <div className="hsc-fit-inner">
@@ -419,18 +525,15 @@ const HSCExcellence = () => {
             and find out exactly what is possible for your child's ATAR.
           </p>
           <div className="hsc-cta-btns">
-            <Link className="hsc-btn-gold" to="/book-interview">Secure a Spot - Limited Places Available</Link>
-            <Link className="hsc-btn-outline-cta" to="/book-interview">Book an Interview Now</Link>
+              <Link className="hsc-btn-gold" to="/book-interview">Book an Interview</Link>
+              <Link className="hsc-btn-outline-cta" to="/success-stories">See Results</Link>
           </div>
-          <p className="hsc-cta-note">No entrance exam &nbsp;&middot;&nbsp; No lock-in contract &nbsp;&middot;&nbsp; Results guaranteed or additional support at no cost</p>
+          <p className="hsc-cta-note">No entrance exam &nbsp;&middot;&nbsp; Honest placement advice &nbsp;&middot;&nbsp; Limited spots each term</p>
         </div>
       </main>
 
-      <footer className="hsc-footer">
-        <div className="hsc-footer-logo">DA <span>Tuition</span></div>
-        <p>&copy; 2025 DA Tuition &middot; Sydney, Australia</p>
-        <p>hello@datuition.com.au</p>
-      </footer>
+      <FooterNew />
+      </div>
     </div>
   );
 };

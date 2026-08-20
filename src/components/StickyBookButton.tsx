@@ -1,16 +1,19 @@
 import { useState } from 'react';
 import { Phone } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 const StickyBookButton = () => {
   const [hovered, setHovered] = useState(false);
+  const location = useLocation();
+
+  if (location.pathname === '/subjects/english') return null;
 
   return (
     <Link
       to="/book-interview"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      className="fixed bottom-6 right-6 z-50 flex items-center overflow-hidden rounded-full shadow-2xl transition-all duration-300 ease-in-out"
+      className="site-sticky-book-button fixed bottom-6 right-6 z-50 flex items-center overflow-hidden rounded-full shadow-2xl transition-all duration-300 ease-in-out"
       style={{
         backgroundColor: '#D4AF37',
         width: hovered ? '180px' : '56px',

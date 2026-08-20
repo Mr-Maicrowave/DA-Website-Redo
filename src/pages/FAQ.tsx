@@ -184,10 +184,10 @@ const faqs: FAQItem[] = [
     question: 'When are classes held?',
     schemaAnswer: 'DA Tuition classes run after school and on weekends, with exact times depending on subject, year level, and availability.',
     keywords: ['time', 'schedule', 'weekend', 'after school', 'hours'],
-    links: [{ label: 'Contact DA Tuition', href: '/#contact' }],
+    links: [{ label: 'Contact DA Tuition', href: '/contact' }],
     answer: (
       <p>
-        Classes run after school and on weekends. Exact times depend on the subject, year level, and current availability. If timing is your main concern, <Link to="/#contact" className={inlineLink}>contact us</Link> and we can check realistic options.
+        Classes run after school and on weekends. Exact times depend on the subject, year level, and current availability. If timing is your main concern, <Link to="/contact" className={inlineLink}>contact us</Link> and we can check realistic options.
       </p>
     ),
   },
@@ -646,12 +646,12 @@ const FAQ = () => {
           <div className="absolute inset-x-6 top-0 h-px bg-gradient-to-r from-transparent via-[#c9a227]/35 to-transparent" />
           <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[1fr_360px] lg:items-center">
             <div>
-              <p className="text-sm font-bold uppercase tracking-[0.16em] text-brand-lightGold">Need a human answer?</p>
+              <p className="text-sm font-bold uppercase tracking-[0.16em] text-brand-lightGold">Still need help?</p>
               <h2 className="mt-4 max-w-3xl font-serif text-4xl font-semibold leading-tight tracking-[-0.02em] sm:text-5xl">
-                Bring the question to the interview.
+                Send us an enquiry.
               </h2>
               <p className="mt-5 max-w-2xl text-base leading-8 text-white/72">
-                The fastest answer is often personal: year level, subject, confidence, school goals, and timing all matter. We will help you find the right starting point.
+                Tell us what you need help with and our team will point you towards the right next step.
               </p>
             </div>
 
@@ -661,9 +661,9 @@ const FAQ = () => {
                   <Phone className="h-4 w-4 text-brand-lightGold" />
                   Call 0401 940 207
                 </a>
-                <Link to="/book-interview" className="flex items-center gap-3 rounded-xl bg-brand-gold px-4 py-3 text-sm font-bold text-brand-navy hover:bg-brand-lightGold">
-                  <School className="h-4 w-4" />
-                  Book an Interview
+                <Link to="/contact" className="flex items-center gap-3 rounded-xl bg-brand-gold px-4 py-3 text-sm font-bold text-brand-navy hover:bg-brand-lightGold">
+                  <ArrowRight className="h-4 w-4" />
+                  Send an enquiry
                 </Link>
                 <Link to="/tutoring-canley-heights" className="flex items-center gap-3 rounded-xl border border-white/14 px-4 py-3 text-sm font-semibold text-white hover:bg-white/10">
                   <MapPin className="h-4 w-4 text-brand-lightGold" />
@@ -684,7 +684,7 @@ const FAQ = () => {
               <p className="mt-6 max-w-xl text-lg leading-8 text-white/76">Clear answers before you commit, about classes, fees, teachers, progress and getting started.</p>
             </motion.div>
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.85, delay: 0.08 }} className="relative min-h-[330px] overflow-hidden lg:min-h-[500px] lg:rounded-bl-[2rem]">
-              <img src="/images/faq/faq-hero-tutor-student-brow-touchup.png" alt="A DA Tuition tutor and student smiling gently while they work through mathematics together" className="h-full w-full object-cover object-[54%_42%] lg:object-[54%_38%]" />
+              <img src="/images/faq/faq-hero-tutor-student-brow-touchup.png" alt="A DA Tuition tutor and student smiling gently while they work through mathematics together" className="h-full w-full object-cover brightness-[1.04] contrast-[1.02] saturate-[1.03] object-[54%_42%] lg:object-[54%_38%]" />
               <div className="absolute inset-0 bg-gradient-to-t from-[#071629]/45 via-transparent to-transparent lg:bg-gradient-to-r lg:from-[#071629] lg:via-[#071629]/10 lg:to-transparent" />
             </motion.div>
           </div>
@@ -741,13 +741,13 @@ const FAQ = () => {
         </section>
 
         <section className="mx-4 grid overflow-hidden rounded-2xl bg-brand-navy text-white sm:mx-6 lg:mx-8 lg:grid-cols-[0.85fr_1.15fr]">
-          <div className="min-h-[320px] overflow-hidden lg:min-h-[420px]"><img src="/images/faq/faq-human-answer-focus-with-tables.png" alt="A DA Tuition tutor and student smiling while working together at a laptop" className="h-full w-full object-cover" /></div>
+          <div className="min-h-[320px] overflow-hidden lg:min-h-[420px]"><img src="/images/faq/faq-human-answer-focus-with-tables.png" alt="A DA Tuition tutor and student smiling while working together at a laptop" className="h-full w-full object-cover brightness-[1.04] contrast-[1.02] saturate-[1.03]" /></div>
           <div className="flex flex-col justify-center px-6 py-14 sm:px-10 lg:px-[clamp(3rem,8vw,8rem)] lg:py-20">
-            <p className="text-sm font-bold text-brand-lightGold">The human answer desk</p>
-            <h2 className="mt-4 max-w-2xl text-balance font-serif text-4xl font-medium leading-tight tracking-[-0.035em] sm:text-5xl">Some questions are easier to talk through.</h2>
-            <p className="mt-5 max-w-2xl text-base leading-8 text-white/72">Every child starts from a different place. Tell us what is on your mind and we’ll help you work out the most useful next step.</p>
+            <p className="text-sm font-bold text-brand-lightGold">Still need help?</p>
+            <h2 className="mt-4 max-w-2xl text-balance font-serif text-4xl font-medium leading-tight tracking-[-0.035em] sm:text-5xl">Send us an enquiry.</h2>
+            <p className="mt-5 max-w-2xl text-base leading-8 text-white/72">Tell us what you need help with and our team will point you towards the right next step.</p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <Link to="/book-interview" className="inline-flex items-center rounded-full bg-brand-gold px-5 py-3 text-sm font-bold text-brand-navy hover:bg-brand-lightGold">Book an Interview<ArrowRight className="ml-2 h-4 w-4" /></Link>
+              <Link to="/contact" className="inline-flex items-center rounded-full bg-brand-gold px-5 py-3 text-sm font-bold text-brand-navy hover:bg-brand-lightGold">Send an enquiry<ArrowRight className="ml-2 h-4 w-4" /></Link>
               <a href="tel:0401940207" className="inline-flex items-center rounded-full border border-white/25 px-5 py-3 text-sm font-bold text-white hover:bg-white/10"><Phone className="mr-2 h-4 w-4 text-brand-lightGold" />Call 0401 940 207</a>
               <Link to="/tutoring-canley-heights" className="inline-flex items-center px-2 py-3 text-sm font-bold text-white/78 hover:text-brand-lightGold"><MapPin className="mr-2 h-4 w-4" />Visit Canley Heights</Link>
             </div>

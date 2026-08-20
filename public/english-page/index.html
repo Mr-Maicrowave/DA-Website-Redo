@@ -1,0 +1,2145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>English Page Redesign Demo - DA Tuition</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:wght@600;700&family=Caveat:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#071629;
+    --navy-2:#0b2344;
+    --gold:#c9a227;
+    --gold-soft:#f2df9d;
+    --paper:#f7f0e3;
+    --cream:#fff8df;
+    --ink:#08172b;
+    --muted:#536077;
+    --line:rgba(7,22,41,.12);
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;font-family:Inter,system-ui,sans-serif;background:var(--paper);color:var(--ink);-webkit-font-smoothing:antialiased}
+  img{display:block;max-width:100%}
+  .serif{font-family:"Playfair Display",Georgia,serif}
+  .nav{
+    position:absolute;top:16px;left:0;right:0;z-index:10;
+    width:min(1220px,calc(100% - 32px));margin:0 auto;
+    height:70px;border-radius:8px;background:rgba(255,255,255,.86);
+    border:1px solid rgba(255,255,255,.65);box-shadow:0 16px 44px rgba(7,22,41,.13);
+    backdrop-filter:blur(16px);display:flex;align-items:center;gap:34px;padding:0 30px;
+  }
+  .brand{display:flex;align-items:center;gap:12px;font-weight:900;font-size:22px;color:var(--navy)}
+  .brand img{width:42px;height:42px;object-fit:contain}
+  .brand span span{color:#1267ff}
+  .nav-links{display:flex;gap:28px;color:#334257;font-weight:500;font-size:15px}
+
+  .hero{
+    min-height:760px;padding:170px 32px 84px;
+    background:
+      linear-gradient(90deg,rgba(4,11,23,.86) 0%,rgba(4,11,23,.66) 46%,rgba(4,11,23,.22) 100%),
+      url("images/subjects/english/classroom-discussion-concepts.jpg") center/cover;
+    color:#fff;overflow:hidden;display:flex;align-items:center;
+  }
+  .hero-inner{width:min(1220px,100%);margin:0 auto;display:block}
+  .hero-copy{max-width:760px}
+  .eyebrow{display:inline-flex;align-items:center;gap:10px;font-size:12px;font-weight:900;letter-spacing:.18em;text-transform:uppercase;color:var(--gold-soft);margin-bottom:20px}
+  .eyebrow::before{content:"";width:28px;height:2px;background:var(--gold)}
+  .hero h1{font-size:clamp(3.4rem,7vw,6.6rem);line-height:.94;margin:0 0 28px;letter-spacing:-.01em}
+  .hero h1 em{display:block;color:var(--gold);font-style:normal}
+  .hero p{max-width:54ch;font-size:18px;line-height:1.75;color:rgba(255,255,255,.86);margin:0 0 30px}
+  .hero-actions{display:flex;flex-wrap:wrap;gap:14px}
+  .hero-proof{
+    display:flex;flex-wrap:wrap;gap:14px;margin-top:34px;color:rgba(255,255,255,.82);
+    font-size:13px;font-weight:800;letter-spacing:.06em;text-transform:uppercase
+  }
+  .hero-proof span{border-left:2px solid var(--gold);padding-left:12px}
+  .btn{display:inline-flex;align-items:center;justify-content:center;height:50px;padding:0 24px;border-radius:999px;font-weight:800;text-decoration:none}
+  .btn-gold{background:var(--gold);color:var(--navy);box-shadow:0 16px 38px rgba(201,162,39,.24)}
+  .btn-ghost{color:#fff;border:1px solid rgba(255,255,255,.3)}
+
+  section{padding:76px 32px}
+  .section-inner{width:min(1220px,100%);margin:0 auto}
+  .section-head{display:flex;align-items:end;justify-content:space-between;gap:32px;margin-bottom:34px}
+  .section-head h2{font-size:clamp(2rem,4vw,3.4rem);line-height:1;margin:0}
+  .section-head p{max-width:58ch;margin:0;color:var(--muted);line-height:1.7}
+  .image-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+  .image-card{background:var(--cream);border-radius:8px;overflow:hidden;box-shadow:0 18px 44px rgba(7,22,41,.12)}
+  .image-window{position:relative;height:250px;overflow:hidden}
+  .image-window img{width:100%;height:100%;object-fit:cover}
+  .image-window::after{content:"";position:absolute;inset:auto 0 0;height:70px;background:linear-gradient(to top,var(--cream),rgba(255,248,223,.52),transparent)}
+  .image-card-body{padding:26px 28px 32px}
+  .label{font-size:11px;font-weight:900;letter-spacing:.18em;color:var(--gold);text-transform:uppercase}
+  .gold-line{width:34px;height:2px;background:var(--gold);margin:12px 0 18px}
+  .image-card h3{font-family:"Playfair Display",Georgia,serif;font-size:25px;line-height:1.18;margin:0 0 16px}
+  .image-card p{margin:0;color:#5c4a1e;line-height:1.65}
+
+  /* ─── WHAT MAKES DA DIFFERENT ─── */
+  .diff-section{position:relative;overflow:hidden;padding:48px 32px 0;background:linear-gradient(180deg,#FBEDDC 0%,#FBEDDC 78%,#fff 100%)}
+  .diff-inner{position:relative;z-index:1;padding-bottom:48px}
+  .diff-head{text-align:center;max-width:860px;margin:0 auto 28px}
+  .diff-eyebrow{display:inline-block;color:var(--gold);font-size:13px;font-weight:900;letter-spacing:.24em;text-transform:uppercase;margin-bottom:14px}
+  .diff-heading{font-size:clamp(1.9rem,3.6vw,3rem);line-height:1.14;color:var(--navy);margin:0}
+  .diff-highlights{display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:center;gap:0;margin:26px auto 34px;max-width:960px}
+  .diff-highlight{display:flex;align-items:flex-start;gap:12px;padding:4px 16px;max-width:220px}
+  .diff-highlight-icon{
+    flex:0 0 auto;width:42px;height:42px;border-radius:50%;border:1.5px solid var(--gold);
+    display:flex;align-items:center;justify-content:center;color:var(--gold)
+  }
+  .diff-highlight-icon svg{width:19px;height:19px;display:block;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+  .diff-highlight p{margin:4px 0 0;color:var(--navy);font-size:13px;line-height:1.42;font-weight:600}
+  .diff-highlight-sep{width:1px;align-self:stretch;min-height:40px;background:linear-gradient(rgba(200,154,43,0),rgba(200,154,43,.4),rgba(200,154,43,0))}
+  .diff-table-wrap{position:relative;display:flex;align-items:center;justify-content:center;width:100%;max-width:720px;margin:0 auto}
+  .diff-side-img{
+    position:absolute;bottom:-14px;
+    width:40%;height:auto;
+    pointer-events:none;z-index:0;
+  }
+  .diff-side-img--left{right:calc(100% + 4px)}
+  .diff-side-img--right{left:calc(100% + 4px)}
+  @media (max-width:1250px){.diff-side-img{display:none}}
+  .diff-table{
+    display:grid;grid-template-columns:1fr 1fr;border-radius:18px;overflow:hidden;
+    box-shadow:0 24px 56px rgba(10,35,66,.16);border:1px solid rgba(200,154,43,.28);
+    position:relative;z-index:1;margin-bottom:22px;background:#FBFAF6;
+    width:100%;max-width:720px;margin-left:auto;margin-right:auto;
+  }
+  .diff-cell--typical{background:#FBFAF6;border-right:1px solid rgba(10,35,66,.08)}
+  .diff-cell--da{background:#F6EFD9}
+  .diff-cell--title{padding:11px 16px;font-size:10.5px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;text-align:center}
+  .diff-cell--title.diff-cell--typical{color:var(--navy);background:#F2F0E9}
+  .diff-cell--title.diff-cell--da{color:var(--gold);background:#F1E2B4}
+  .diff-row{display:flex;align-items:flex-start;gap:10px;padding:11px 16px;border-top:1px solid rgba(10,35,66,.08)}
+  .diff-cell--da.diff-row{border-top-color:rgba(200,154,43,.28)}
+  .diff-row-icon{width:30px;height:30px;border-radius:50%;flex:0 0 auto;display:flex;align-items:center;justify-content:center}
+  .diff-cell--typical .diff-row-icon{background:#ECEAE3;color:var(--navy);border:1px solid rgba(10,35,66,.14)}
+  .diff-cell--da .diff-row-icon{background:var(--gold);color:#fff;box-shadow:0 8px 16px rgba(200,154,43,.35)}
+  .diff-row-icon svg{width:15px;height:15px;display:block;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+  .diff-row-copy strong{display:block;color:var(--navy);font-size:12.5px;margin-bottom:1px}
+  .diff-row-copy p{margin:0;color:#5B6577;font-size:11px;line-height:1.35}
+  .diff-cell--da .diff-row-copy p{color:#6B5B2E}
+
+  /* full-bleed cycling review banner */
+  .diff-quote-banner{
+    position:relative;left:50%;right:50%;margin-left:-50vw;margin-right:-50vw;width:100vw;
+    background:var(--navy);padding:86px 24px;text-align:center;overflow:hidden;margin-top:80px;
+    min-height:560px;display:grid;place-items:center;
+  }
+  .diff-quote-line{position:absolute;left:50%;transform:translateX(-50%);width:1px;height:80px}
+  .diff-quote-line--top{top:0;background:linear-gradient(180deg,transparent,var(--gold))}
+  .diff-quote-line--bottom{bottom:0;background:linear-gradient(180deg,var(--gold),transparent)}
+  .diff-quote-inner{max-width:800px;margin:0 auto;position:relative;z-index:1;width:100%}
+  .diff-quote-glyph{display:block;font-family:"Playfair Display",Georgia,serif;font-size:4rem;line-height:1;color:rgba(212,175,55,.3);margin-bottom:16px}
+  .diff-quote-text{
+    font-family:"Playfair Display",Georgia,serif;font-style:italic;font-weight:300;
+    font-size:var(--quote-size,clamp(1.5rem,3.2vw,2.6rem));line-height:1.45;color:#fff;margin:0;
+    letter-spacing:.01em;transition:opacity .5s ease;height:340px;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .diff-quote-rule{display:block;width:40px;height:1px;background:var(--gold);margin:32px auto 18px}
+  .diff-quote-author{font-family:Inter,system-ui,sans-serif;font-size:.74rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(212,175,55,.85);font-weight:700;margin:0;transition:opacity .5s ease}
+  .diff-quote-text--medium{--quote-size:clamp(1.35rem,2.65vw,2.18rem)}
+  .diff-quote-text--long{--quote-size:clamp(1.08rem,2.05vw,1.62rem)}
+  .diff-quote-fade{opacity:0}
+  @media (prefers-reduced-motion:reduce){
+    .diff-quote-text,.diff-quote-author{transition:none}
+  }
+
+  .editorial{background:#fff}
+  .editorial-grid{display:grid;grid-template-columns:.95fr 1.05fr;gap:58px;align-items:center}
+  .editorial-copy h2{font-size:clamp(2.2rem,4vw,4rem);line-height:1;margin:0 0 22px}
+  .editorial-copy p{font-size:17px;line-height:1.75;color:#43506a;margin:0 0 26px}
+  .proofs{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  .proof{border-left:2px solid var(--gold);padding:10px 0 10px 14px}
+  .proof strong{display:block;font-size:14px;color:var(--navy);margin-bottom:4px}
+  .proof span{font-size:13px;color:#667086;line-height:1.4}
+  .editorial-image{position:relative}
+  .editorial-image img{width:100%;height:520px;object-fit:cover;border-radius:8px;box-shadow:0 24px 60px rgba(7,22,41,.16)}
+  .pull{
+    position:absolute;right:28px;bottom:28px;width:min(360px,78%);
+    background:var(--navy);color:#fff;border-radius:8px;padding:24px;
+    box-shadow:0 18px 44px rgba(7,22,41,.28)
+  }
+  .pull span{display:block;color:var(--gold);font-weight:900;letter-spacing:.14em;text-transform:uppercase;font-size:10px;margin-bottom:10px}
+  .pull p{font-family:"Playfair Display",Georgia,serif;font-size:24px;line-height:1.25;margin:0}
+
+    .pathway{background:linear-gradient(180deg,#fff 0%,#fff 16%,#fbf6ea 100%);overflow:hidden;padding-top:64px}
+    .process-head{text-align:center;max-width:1080px;margin:0 auto 30px}
+    .process-title-row{display:grid;grid-template-columns:minmax(70px,1fr) auto minmax(70px,1fr);align-items:center;gap:28px}
+    .process-title-row::before,.process-title-row::after{content:"";height:1px;background:linear-gradient(90deg,transparent,rgba(201,162,39,.72))}
+    .process-title-row::after{background:linear-gradient(90deg,rgba(201,162,39,.72),transparent)}
+    .process-title-row h2{font-size:clamp(2.5rem,5vw,4.8rem);line-height:.95;margin:0;color:var(--navy)}
+    .process-title-row span{position:relative;display:block}
+    .process-title-row span::before,.process-title-row span::after{content:"";position:absolute;top:50%;width:9px;height:9px;background:var(--gold);transform:translateY(-50%) rotate(45deg)}
+    .process-title-row span::before{left:-28px}
+    .process-title-row span::after{right:-28px}
+    .process-subtitle{margin:14px 0 0;color:rgba(201,162,39,.78);font-weight:900;letter-spacing:.26em;text-transform:uppercase;font-size:clamp(.9rem,1.45vw,1.24rem)}
+    .process-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+    .process-card{min-height:405px;border-radius:8px;background:rgba(255,255,255,.92);border:1px solid rgba(201,162,39,.2);box-shadow:0 18px 44px rgba(7,22,41,.08);padding:22px 20px 24px}
+    .process-card-head{display:flex;align-items:center;gap:18px;margin-bottom:8px}
+    .process-num{flex:0 0 auto;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:var(--navy);color:var(--gold-soft);font-weight:900;font-size:20px}
+    .process-card h3{font-size:20px;line-height:1.16;margin:0;color:var(--navy)}
+    .process-card p{color:#59647a;line-height:1.55;margin:14px 4px 0;font-size:18px}
+    .process-video-button{display:block;width:100%;border:0;background:transparent;padding:0;margin:0;text-align:left;cursor:pointer}
+    .process-media{position:relative;display:block;height:210px;border-radius:8px;overflow:hidden;background:#eadfc9;box-shadow:inset 0 0 0 1px rgba(7,22,41,.1)}
+    .process-media video,.process-media img{display:block;width:100%;height:100%;object-fit:cover}
+    .process-media--placeholder{background:linear-gradient(145deg,#f8f1e3 0%,#fdfaf3 52%,#e8dcc8 100%)}
+    .process-media--placeholder::before{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(255,255,255,.08),rgba(255,255,255,.08)),repeating-linear-gradient(0deg,transparent 0 29px,rgba(7,22,41,.13) 30px,transparent 31px);opacity:.75}
+    .process-media--analysis::after{content:"Technique: imagery\\A Purpose: create atmosphere\\A Meaning: reveal uncertainty";white-space:pre;position:absolute;left:38px;top:34px;color:#324057;font-family:'Bradley Hand ITC','Segoe Print',cursive;font-size:20px;line-height:1.55;transform:rotate(-3deg)}
+    .process-media--response::after{content:"Thesis: I agree that...\\A Topic Sentence: This is shown when...\\A Evidence: \\"...\\"\\A Commentary: This shows that...\\A Link: Therefore...";white-space:pre;position:absolute;left:40px;top:28px;color:#324057;font-family:'Bradley Hand ITC','Segoe Print',cursive;font-size:18px;line-height:1.42}
+    .process-media--draft::after{content:"Live edits + draft development";position:absolute;left:28px;bottom:56px;color:#fff;background:rgba(7,22,41,.74);border-radius:999px;padding:8px 14px;font-weight:800}
+    .process-media--draft{background:linear-gradient(135deg,#4d4438,#d8c5a5 48%,#18263b 49%,#0b1526 100%)}
+    .process-media--feedback::after{content:"Stronger topic sentence\\A Great evidence choice!\\A Explain how this proves your idea";white-space:pre;position:absolute;right:24px;top:28px;color:#7458a7;font-family:'Bradley Hand ITC','Segoe Print',cursive;font-size:18px;line-height:1.55}
+    .process-media--exam{background:linear-gradient(135deg,#efe4ce 0%,#fffaf0 55%,#d9c4a0 100%)}
+    .process-media--exam::after{content:"02:00:00";position:absolute;left:34px;bottom:58px;color:#253146;background:#c8d1cd;border:2px solid rgba(7,22,41,.22);border-radius:8px;padding:8px 12px;font-family:monospace;font-size:22px}
+    .process-play{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:70px;height:70px;border-radius:50%;background:rgba(7,22,41,.78);box-shadow:0 12px 32px rgba(7,22,41,.25);display:grid;place-items:center}
+    .process-play::before{content:"";display:block;margin-left:5px;border-top:16px solid transparent;border-bottom:16px solid transparent;border-left:24px solid #fff}
+    .process-bar{position:absolute;left:0;right:0;bottom:0;height:42px;background:rgba(5,7,11,.75);display:flex;align-items:center;gap:10px;padding:0 14px;color:#fff;font-size:12px}
+    .process-bar::before{content:"";width:0;height:0;border-top:8px solid transparent;border-bottom:8px solid transparent;border-left:12px solid #fff}
+    .process-bar::after{content:"0:00 / 0:10";margin-left:auto;color:#fff}
+    .process-progress{height:4px;flex:1;border-radius:999px;background:rgba(255,255,255,.24);position:relative}
+    .process-progress::before{content:"";position:absolute;left:0;top:0;bottom:0;width:24%;border-radius:inherit;background:var(--gold-soft)}
+    .video-lightbox{position:absolute;left:0;right:0;top:var(--video-top,0px);height:var(--video-height,100vh);z-index:3000;background:rgba(0,0,0,.82);display:none;align-items:center;justify-content:center;padding:24px;cursor:pointer}
+    .video-lightbox.is-open{display:flex}
+    .video-lightbox__frame{width:min(50vw,920px);max-width:calc(100vw - 48px);cursor:auto}
+    .video-lightbox__frame video{display:block;width:100%;max-height:calc(var(--video-height,100vh) - 96px);border-radius:10px;background:#000;box-shadow:0 28px 80px rgba(0,0,0,.45)}
+
+  .quote-section{background:#F8F4EC}
+
+  /* ─── FAQ HEADER ─── */
+  .quote-section .section-head{align-items:flex-start}
+  .faq-heading{line-height:1.08}
+  .faq-word{position:relative;display:inline-block}
+  .faq-stroke{position:absolute;left:-2%;bottom:-9px;width:104%;height:12px;pointer-events:none}
+  .faq-stroke path{fill:none;stroke:var(--gold);stroke-width:3;stroke-linecap:round;opacity:.8}
+  .faq-badge{
+    position:relative;width:128px;height:128px;border-radius:50%;flex:0 0 auto;
+    background:#FFFDF8;border:1px solid var(--gold-soft);
+    box-shadow:0 3px 0 -1px var(--gold),0 18px 34px rgba(7,22,41,.14);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;text-align:center
+  }
+  .faq-badge-icon{width:24px;height:24px;color:var(--gold)}
+  .faq-badge-icon svg{width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:1.8}
+  .faq-badge-text{font-size:12.5px;font-weight:700;color:var(--navy);line-height:1.35;margin:0}
+
+  /* ─── PARENT-CONCERN NOTEBOOK CARDS ─── */
+  .quote-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:26px 22px}
+  .concern-card{
+    position:relative;min-height:270px;perspective:1400px;cursor:pointer;outline:none;
+    border-radius:14px;transition:transform .3s cubic-bezier(.25,.8,.35,1);
+  }
+  .concern-card::before{
+    content:"";position:absolute;inset:0;transform:translate(9px,9px);
+    background:var(--navy);border-radius:14px;z-index:0;
+    box-shadow:0 18px 40px rgba(7,22,41,.22);
+  }
+  .concern-card:hover{transform:translateY(-6px) scale(1.025)}
+  .concern-inner{
+    position:relative;z-index:1;display:block;width:100%;height:100%;min-height:270px;
+    border-radius:14px;transition:transform .65s cubic-bezier(.45,.05,.15,1),box-shadow .2s ease;
+    transform-style:preserve-3d;transform-origin:50% 50%;
+  }
+  .concern-card.is-flipped .concern-inner{transform:rotateY(180deg)}
+  .concern-card:focus-visible .concern-inner{box-shadow:0 0 0 3px #fffdf8,0 0 0 6px var(--gold)}
+  .concern-face{
+    position:absolute;inset:0;backface-visibility:hidden;border-radius:14px;
+    padding:26px 26px 22px;overflow:hidden;display:flex;flex-direction:column
+  }
+  .concern-front{
+    background-color:#FFFDF8;
+    background-image:repeating-linear-gradient(to bottom,transparent,transparent 29px,#DCE4E8 29px,#DCE4E8 30px);
+    background-position:0 60px;border:1px solid rgba(201,162,39,.3);
+    box-shadow:0 14px 32px rgba(7,22,41,.12);
+    transition:background-color .3s cubic-bezier(.25,.8,.35,1),border-color .3s ease,box-shadow .3s cubic-bezier(.25,.8,.35,1);
+  }
+  .concern-front::before{content:"";position:absolute;top:0;bottom:0;left:44px;width:1px;background:#E9B7B0;z-index:1}
+  .concern-clip{position:absolute;top:12px;left:14px;width:18px;height:32px;color:var(--gold);opacity:.85;transform:rotate(-6deg);transition:opacity .3s ease,filter .3s ease;z-index:2}
+  .concern-clip svg{width:100%;height:100%;display:block;fill:none;stroke:currentColor;stroke-width:1.6}
+  .concern-num{position:absolute;top:14px;left:56px;font-family:"Playfair Display",Georgia,serif;font-style:italic;font-weight:800;font-size:20px;color:var(--gold);opacity:.85;transition:opacity .3s ease,filter .3s ease;z-index:2}
+  .concern-front blockquote{
+    position:relative;z-index:1;flex:1;margin:0;padding:38px 30px 34px 20px;
+    display:flex;align-items:center;
+    font-family:"Playfair Display",Georgia,serif;font-size:19px;line-height:1.34;color:var(--navy)
+  }
+  .concern-card:hover .concern-clip,.concern-card:hover .concern-num{opacity:1;filter:brightness(1.2)}
+  .concern-card:hover .concern-front{
+    background-color:#FFF9E8;border-color:var(--gold);
+    box-shadow:0 22px 44px rgba(201,162,39,.22),0 0 20px rgba(201,162,39,.14);
+  }
+  .concern-fold{
+    position:absolute;right:0;bottom:0;width:30px;height:30px;z-index:2;pointer-events:none;
+    clip-path:polygon(100% 0,100% 100%,0 100%);
+    background:linear-gradient(135deg,rgba(7,22,41,0) 46%,var(--gold) 47%,var(--navy) 52%,var(--navy) 100%);
+    transition:width .3s cubic-bezier(.25,.8,.35,1),height .3s cubic-bezier(.25,.8,.35,1),transform .3s cubic-bezier(.25,.8,.35,1);
+  }
+  .concern-card:hover .concern-fold{width:38px;height:38px;transform:translate(-2px,-2px)}
+  .concern-flip-icon{
+    position:absolute;right:12px;bottom:12px;width:26px;height:26px;border-radius:50%;z-index:3;
+    background:#FFFDF8;border:1px solid var(--gold);display:flex;align-items:center;justify-content:center;
+    color:var(--gold);box-shadow:0 4px 10px rgba(7,22,41,.14);transition:transform .3s ease,filter .3s ease
+  }
+  .concern-flip-icon svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2}
+  .concern-card:hover .concern-flip-icon{transform:rotate(24deg);filter:brightness(1.15)}
+
+  .concern-back{
+    background:#FBF3DF;color:var(--navy);transform:rotateY(180deg);
+    border:1px solid rgba(201,162,39,.4);
+    box-shadow:0 16px 38px rgba(7,22,41,.18);
+    align-items:center;text-align:center;padding:28px 26px 22px;
+    transition:box-shadow .3s ease;
+  }
+  .concern-card.is-flipped:hover .concern-back{box-shadow:0 22px 46px rgba(201,162,39,.28)}
+  .concern-back-label{position:relative;z-index:1;display:block;margin:0 0 8px;font-family:"Playfair Display",Georgia,serif;font-style:italic;font-weight:700;font-size:19px;color:var(--gold)}
+  .concern-back-divider{position:relative;z-index:1;display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin:0 0 14px}
+  .concern-back-divider::before,.concern-back-divider::after{content:"";flex:1;max-width:46px;height:1px;background:var(--gold)}
+  .concern-back-divider span{color:var(--gold);font-size:10px}
+  .concern-back-list{position:relative;z-index:1;list-style:none;margin:0;padding:0;width:100%;text-align:left;display:flex;flex-direction:column}
+  .concern-back-list li{display:flex;align-items:flex-start;gap:10px;padding:9px 0;font-size:13px;line-height:1.5;color:var(--navy)}
+  .concern-back-list li+li{border-top:1px solid rgba(201,162,39,.22)}
+  .concern-back-check{flex:0 0 auto;width:18px;height:18px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;margin-top:1px}
+  .concern-back-check svg{width:10px;height:10px;fill:none;stroke:#fff;stroke-width:2.4}
+
+  @media (prefers-reduced-motion:reduce){
+    .concern-card,.concern-inner,.concern-fold,.concern-flip-icon{transition:none}
+    .concern-inner{transform:none !important}
+    .concern-face{transition:opacity .25s ease}
+    .concern-back{opacity:0;pointer-events:none}
+    .concern-card.is-flipped .concern-front{opacity:0;pointer-events:none}
+    .concern-card.is-flipped .concern-back{opacity:1;pointer-events:auto}
+  }
+
+
+  .year-map{
+    position:relative;overflow:hidden;isolation:isolate;
+    background:
+      linear-gradient(180deg,#F8F1E6 0%,#F8F1E6 68%,#F3ECDF 100%);
+    padding-top:0;padding-bottom:170px;
+  }
+  .year-map::before{
+    content:"";position:absolute;left:0;right:0;top:0;height:clamp(620px,58vw,860px);z-index:0;pointer-events:none;
+    background-image:url('images/english-journey-frame.png');
+    background-repeat:no-repeat;
+    background-position:center bottom;
+    background-size:100% auto;
+    opacity:0;transition:opacity 1.2s ease;
+  }
+  .year-map::after{
+    content:"";position:absolute;left:0;right:0;top:clamp(620px,56vw,820px);height:180px;z-index:1;pointer-events:none;
+    background:linear-gradient(180deg,rgba(248,241,230,0),rgba(248,241,230,.84) 50%,#F8F1E6 100%);
+  }
+  .year-map .section-inner::after{
+    content:"";position:absolute;left:50%;bottom:-170px;width:100vw;height:220px;
+    transform:translateX(-50%);z-index:0;pointer-events:none;
+    background:linear-gradient(180deg,rgba(248,241,230,0),#F3ECDF 76%);
+  }
+  .year-map.is-revealed::before{opacity:1}
+  @media (prefers-reduced-motion:reduce){
+    .year-map::before{transition:none}
+  }
+  .year-map .section-inner{position:relative;z-index:2}
+  .year-map .section-head{
+    position:relative;
+    min-height:clamp(520px,50vw,724px);
+    display:grid;place-items:center;
+    grid-template-columns:minmax(0,1fr);
+    margin:0 0 72px;
+    padding:72px 28px 154px;
+    text-align:center;
+  }
+  .year-map .section-head::before{
+    content:"✦";
+    position:absolute;top:84px;left:50%;width:min(440px,38vw);height:22px;
+    transform:translateX(-50%);
+    background:linear-gradient(90deg,transparent 0,rgba(178,132,45,.5) 12%,rgba(178,132,45,.5) 44%,transparent 44%,transparent 56%,rgba(178,132,45,.5) 56%,rgba(178,132,45,.5) 88%,transparent 100%) center/100% 1px no-repeat;
+    color:rgba(178,132,45,.78);
+    font-size:22px;
+    line-height:20px;
+    opacity:.82;
+  }
+  .year-map .section-head h2{
+    justify-self:center;
+    width:100%;
+    max-width:none;
+    position:relative;
+    z-index:2;
+    color:var(--navy);
+    font-size:clamp(3rem,5.7vw,5.6rem);
+    line-height:1.05;
+    text-wrap:balance;
+    transform:translateY(clamp(54px,6vw,96px));
+  }
+  .year-map .type-cursor{
+    display:inline-block;width:3px;height:.82em;margin-left:4px;vertical-align:-.08em;
+    background:var(--gold);animation:year-map-type-blink 1s step-end infinite;
+  }
+  .year-map .type-cursor.is-done{animation:none;opacity:0;transition:opacity .5s ease}
+  @keyframes year-map-type-blink{0%,100%{opacity:1}50%{opacity:0}}
+  .year-map-grid{display:grid;gap:28px}
+  .year-row{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:24px;align-items:stretch}
+  .year-panel{
+    display:grid;grid-template-columns:330px minmax(0,1fr);gap:0;align-items:stretch;
+    border-radius:8px;background:#fbf7ee;overflow:hidden;box-shadow:0 16px 44px rgba(7,22,41,.09)
+  }
+  .year-row:nth-child(even) .year-panel,.year-row:nth-child(even) .sample-stack{background:#fff}
+  .year-media{position:relative;min-height:310px;background:#071629}
+  .year-media img{width:100%;height:100%;object-fit:cover;opacity:.95}
+  .year-badge{
+    position:absolute;left:22px;top:22px;background:var(--navy);color:var(--gold-soft);
+    border-radius:999px;padding:8px 14px;font-size:11px;font-weight:900;letter-spacing:.16em;text-transform:uppercase
+  }
+  .year-content{padding:34px 38px}
+  .year-copy h3{font-family:"Playfair Display",Georgia,serif;font-size:32px;line-height:1.08;margin:0 0 14px;color:var(--navy)}
+  .year-copy p{margin:0 0 18px;color:#536077;line-height:1.7}
+  .skill-list{display:grid;gap:8px;margin:0;padding-left:20px;color:#536077;line-height:1.45}
+  .skill-list li::marker{color:var(--gold);font-size:1.1em}
+  .sample-stack{
+    display:flex;flex-direction:column;justify-content:center;gap:14px;
+    border-radius:8px;background:#fbf7ee;padding:24px;box-shadow:0 16px 44px rgba(7,22,41,.09)
+  }
+  .sample-stack h4{margin:0;color:var(--navy);font-size:16px}
+  .sample-thumb-row{display:flex;gap:10px;align-items:end;overflow:hidden}
+  .preview-thumb{border:0;background:transparent;padding:0;cursor:pointer;position:relative}
+  .preview-thumb img{height:124px;border-radius:6px;background:#fff;box-shadow:0 10px 24px rgba(7,22,41,.13);transition:transform .2s ease,box-shadow .2s ease}
+  .sample-stack .preview-thumb img{height:300px;width:214px;object-fit:cover;object-position:top}
+  .preview-thumb:hover img,.preview-thumb:focus-visible img{transform:translateY(-3px) scale(1.03);box-shadow:0 16px 34px rgba(7,22,41,.2)}
+  .preview-thumb::after{
+    content:"Click to preview";position:absolute;left:8px;right:8px;bottom:8px;border-radius:999px;
+    background:rgba(7,22,41,.82);color:#fff;font-size:10px;font-weight:800;letter-spacing:.08em;
+    text-transform:uppercase;padding:6px 8px;text-align:center;opacity:0;transition:opacity .2s ease
+  }
+  .preview-thumb:hover::after,.preview-thumb:focus-visible::after{opacity:1}
+  .sample-note{font-size:13px;color:#69748a;line-height:1.5;margin:0}
+  .year-map-stages{position:relative;z-index:2;display:flex;flex-direction:column;gap:96px}
+  .stage{
+    display:grid;column-gap:64px;row-gap:14px;align-items:center;
+    grid-template-columns:1fr 1.05fr;
+    grid-template-areas:"head photo" "list photo";
+  }
+  .stage--reverse{grid-template-columns:1.05fr 1fr;grid-template-areas:"photo head" "photo list"}
+  .stage-head{grid-area:head;align-self:end}
+  .stage-list-wrap{grid-area:list}
+  .stage-photo-frame{
+    grid-area:photo;position:relative;align-self:stretch;
+    opacity:0;transform:translateY(42px) scale(.98);
+    transition:opacity .8s cubic-bezier(.22,1,.36,1),transform .8s cubic-bezier(.22,1,.36,1);
+  }
+  .stage.is-in .stage-photo-frame{opacity:1;transform:translateY(0) scale(1)}
+  .stage-photo{
+    position:relative;overflow:hidden;aspect-ratio:4/3.2;height:100%;
+    filter:drop-shadow(0 20px 34px rgba(7,22,41,.16));
+    transition:filter .4s ease;
+  }
+  .stage-photo img{width:100%;height:100%;object-fit:cover;transition:transform .5s cubic-bezier(.22,1,.36,1)}
+  .stage:nth-of-type(1) .stage-photo{clip-path:url(#stage-wave-a)}
+  .stage:nth-of-type(2) .stage-photo{clip-path:url(#stage-wave-b)}
+  .stage:nth-of-type(3) .stage-photo{clip-path:url(#stage-wave-c)}
+  .stage-photo-outline{
+    position:absolute;inset:0;width:100%;height:100%;pointer-events:none;
+    opacity:0;transition:opacity .7s .25s ease;
+  }
+  .stage.is-in .stage-photo-outline{opacity:1}
+  .stage-photo-outline-halo{fill:none;stroke:#FFF9F0;stroke-width:7;vector-effect:non-scaling-stroke;opacity:.6}
+  .stage-photo-outline-gold{fill:none;stroke:var(--gold);stroke-width:1.5;vector-effect:non-scaling-stroke;opacity:.8;transition:opacity .35s ease,stroke-width .35s ease}
+  .stage-photo-frame:hover .stage-photo-outline-gold{opacity:1;stroke-width:2}
+  .stage-photo-frame:hover .stage-photo img{transform:scale(1.018)}
+  .stage-photo-frame:hover .stage-photo{filter:drop-shadow(0 24px 40px rgba(7,22,41,.22))}
+  .stage-head,.stage-list-wrap{
+    opacity:0;transform:translateY(26px);
+    transition:opacity .8s .12s cubic-bezier(.22,1,.36,1),transform .8s .12s cubic-bezier(.22,1,.36,1);
+  }
+  .stage.is-in .stage-head,.stage.is-in .stage-list-wrap{opacity:1;transform:translateY(0)}
+  .stage-meta{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+  .stage-number{font-family:"Playfair Display",Georgia,serif;font-size:15px;font-weight:700;color:var(--gold)}
+  .stage-years{font-size:11.5px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--muted,#536077);border-left:2px solid var(--gold);padding-left:12px}
+  .stage-head h3{font-family:"Playfair Display",Georgia,serif;font-size:clamp(1.5rem,2.5vw,2.05rem);line-height:1.18;color:var(--navy);margin:0}
+  .stage-list{display:grid;gap:13px;margin:0 0 16px;padding:0;list-style:none}
+  .stage-list li{display:flex;align-items:flex-start;gap:11px;color:#4b5568;font-size:18.85px;line-height:1.45}
+  .stage-list li::before{content:"";flex:0 0 auto;width:8px;height:8px;margin-top:9px;border-radius:50%;background:var(--gold)}
+  .stage-icon{
+    display:none;opacity:0;transform:translateY(8px);
+    transition:opacity .6s .5s ease,transform .6s .5s ease;
+  }
+  .stage.is-in .stage-icon{opacity:1;transform:translateY(0)}
+  .stage-icon img{
+    display:block;width:52px;height:52px;object-fit:contain;
+    filter:drop-shadow(0 6px 12px rgba(7,22,41,.18));
+  }
+  @media (max-width:900px){
+    .stage,.stage--reverse{
+      grid-template-columns:1fr;
+      grid-template-areas:"head" "photo" "list";
+      row-gap:24px;
+    }
+    .year-map-stages{gap:64px}
+    .year-map{padding-bottom:130px}
+    .year-map .section-head{margin-bottom:54px}
+  }
+  @media (max-width:640px){
+    .year-map{padding-bottom:96px}
+    .year-map::before{height:450px;background-size:auto 100%;background-position:center bottom}
+    .year-map::after{top:390px;height:120px}
+    .year-map .section-head{min-height:360px;padding:64px 18px 92px}
+    .year-map .section-head::before{display:none}
+    .year-map .section-head h2{font-size:clamp(2.4rem,12vw,3.4rem)}
+  }
+
+  /* ===== Resources: sample booklet + feedback preview ===== */
+  .resources{
+    --r-navy:#071B35;--r-ivory:#F8F1E6;--r-cream:#FFF9EE;
+    --r-gold:#C99A2E;--r-gold-light:#DDB85F;--r-terracotta:#A9472C;--r-muted:#536078;
+    position:relative;overflow:hidden;background:var(--r-ivory);
+    padding:104px 24px 84px;
+  }
+  .resources::before{
+    content:"";position:absolute;inset:0;pointer-events:none;opacity:.05;
+    background-image:radial-gradient(circle at 8% 12%,var(--r-navy) 0,transparent 45%),radial-gradient(circle at 94% 88%,var(--r-navy) 0,transparent 45%);
+  }
+  .resources .section-inner{position:relative;z-index:1}
+  .resources-head{text-align:center;max-width:640px;margin:0 auto 68px}
+  .resources-eyebrow{font-size:11px;font-weight:800;letter-spacing:.19em;text-transform:uppercase;color:var(--r-gold);margin-bottom:16px}
+  .resources-head h2{font-family:"Playfair Display",Georgia,serif;font-weight:700;font-size:clamp(2.3rem,4.6vw,3.6rem);line-height:1.1;color:var(--r-navy);margin:0 0 18px}
+  .resources-rule{display:flex;align-items:center;justify-content:center;gap:12px;margin:0 auto 20px;max-width:200px}
+  .resources-rule span{flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--r-gold),transparent)}
+  .resources-rule i{color:var(--r-gold);font-style:normal;font-size:11px}
+  .resources-head p{margin:0;color:var(--r-muted);font-size:15.5px;line-height:1.6}
+
+  .resources-shelf{display:flex;flex-direction:column;align-items:center;position:relative}
+
+  .resources-row{
+    position:relative;display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:center;
+    gap:56px;row-gap:64px;padding-top:84px;width:100%;
+  }
+
+  .resources-niche{position:absolute;left:50%;bottom:0;width:280px;height:340px;transform:translateX(-50%);z-index:0;pointer-events:none;opacity:.6}
+  .resources-niche path{fill:none;stroke:var(--r-gold);stroke-width:1;opacity:.32}
+  .resources-niche ellipse{fill:var(--r-gold-light);opacity:.1}
+
+  .resource-btn{
+    appearance:none;background:none;border:0;padding:0;margin:0;width:220px;position:relative;
+    font-family:inherit;text-align:center;cursor:pointer;-webkit-tap-highlight-color:transparent;
+    --tilt:0deg;--lift:0px;--scale:1;z-index:1;
+    transform:rotate(var(--tilt)) translateY(var(--lift)) scale(var(--scale));
+    transition:transform .5s cubic-bezier(.22,1,.36,1);
+  }
+  .resource-btn--left{--tilt:-3deg;--lift:16px;--scale:0.99}
+  .resource-btn--center{--tilt:-0.5deg;--lift:-36px;--scale:1.04;z-index:3}
+  .resource-btn--right{--tilt:3deg;--lift:16px;--scale:0.99}
+
+  @media (prefers-reduced-motion:no-preference){
+    .resource-btn--left:hover,.resource-btn--left:focus-visible{--tilt:-1deg;--lift:8px;--scale:1.025}
+    .resource-btn--center:hover,.resource-btn--center:focus-visible{--tilt:0deg;--lift:-48px;--scale:1.065}
+    .resource-btn--right:hover,.resource-btn--right:focus-visible{--tilt:1deg;--lift:8px;--scale:1.025}
+  }
+
+  .resource-btn:focus-visible{outline:none}
+  .resource-btn:focus-visible .resource-cover{outline:2px solid var(--r-gold);outline-offset:6px}
+
+  .resource-featured{display:block;margin:0 0 12px;font-size:10px;font-weight:800;letter-spacing:.22em;text-transform:uppercase;color:var(--r-gold)}
+
+  .resource-cover{
+    position:relative;z-index:2;width:100%;height:270px;border-radius:3px 6px 6px 3px;
+    display:flex;flex-direction:column;align-items:center;
+    padding:30px 20px 26px;
+    box-shadow:0 20px 36px rgba(7,27,53,.2),0 3px 8px rgba(7,27,53,.1);
+    transition:box-shadow .4s ease;
+  }
+  .resource-btn--center .resource-cover{box-shadow:0 26px 46px rgba(7,27,53,.24),0 0 46px rgba(221,184,95,.2)}
+  .resource-btn:hover .resource-cover,.resource-btn:focus-visible .resource-cover{
+    box-shadow:0 32px 54px rgba(7,27,53,.3),0 0 0 1px rgba(201,154,46,.32),0 0 34px rgba(221,184,95,.26);
+  }
+  .resource-cover::before{
+    content:"";position:absolute;left:0;top:0;bottom:0;width:10px;
+    background:linear-gradient(90deg,rgba(0,0,0,.28),rgba(255,255,255,.06) 40%,transparent);
+  }
+  .resource-cover::after{
+    content:"";position:absolute;right:-3px;top:8px;bottom:8px;width:3px;
+    background:repeating-linear-gradient(180deg,rgba(255,255,255,.55) 0,rgba(255,255,255,.55) 1px,rgba(7,27,53,.12) 1px,rgba(7,27,53,.12) 2px);
+    border-radius:0 2px 2px 0;
+  }
+  .resource-cover--terracotta{background:linear-gradient(155deg,#B85231 0%,var(--r-terracotta) 60%,#8F3A20 100%);border:1px solid rgba(221,184,95,.4)}
+  .resource-cover--navy{background:linear-gradient(155deg,#0C2542 0%,var(--r-navy) 60%,#04121F 100%);border:1px solid rgba(201,154,46,.55)}
+  .resource-cover--paper{background:var(--r-cream);border:1px solid rgba(7,27,53,.12)}
+
+  .resource-crest{width:34px;height:34px;margin-bottom:14px;opacity:.92;color:var(--r-gold-light)}
+  .resource-crest svg{width:100%;height:100%;display:block}
+  .resource-tag{font-size:9.5px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;margin-bottom:10px}
+  .resource-cover--terracotta .resource-tag,.resource-cover--navy .resource-tag{color:var(--r-gold-light)}
+  .resource-cover--paper .resource-tag{color:var(--r-gold)}
+  .resource-title-rule{width:26px;height:1px;background:var(--r-gold-light);margin-bottom:12px;opacity:.7}
+  .resource-cover--paper .resource-title-rule{background:var(--r-gold)}
+  .resource-title{font-family:"Playfair Display",Georgia,serif;font-weight:700;font-size:20px;line-height:1.22;margin-bottom:10px}
+  .resource-cover--terracotta .resource-title,.resource-cover--navy .resource-title{color:#fff}
+  .resource-cover--paper .resource-title{color:var(--r-navy)}
+  .resource-subtitle{font-size:11.5px;line-height:1.5}
+  .resource-cover--terracotta .resource-subtitle{color:rgba(255,248,238,.82)}
+  .resource-cover--navy .resource-subtitle{color:rgba(242,223,157,.78)}
+  .resource-cover--paper .resource-subtitle{color:var(--r-muted)}
+
+  .resource-motif{position:absolute;right:10px;bottom:10px;width:64px;height:64px;pointer-events:none;opacity:.16}
+  .resource-motif svg{width:100%;height:100%;display:block}
+  .resource-cover--navy .resource-motif{opacity:.14;color:var(--r-gold-light)}
+  .resource-cover--terracotta .resource-motif{opacity:.18;color:#fff}
+
+  .resource-mark{
+    width:30px;height:30px;border-radius:50%;border:1.3px solid var(--r-gold);
+    display:flex;align-items:center;justify-content:center;margin-bottom:12px;color:var(--r-gold)
+  }
+  .resource-mark svg{width:14px;height:14px}
+  .resource-feedback-note{margin-top:auto;padding-top:14px;text-align:left;width:100%;display:flex;align-items:flex-end;justify-content:space-between;gap:10px}
+  .resource-feedback-script{
+    font-family:"Playfair Display",Georgia,serif;font-style:italic;font-size:12px;line-height:1.4;
+    color:var(--r-terracotta);transform:rotate(-2deg);display:block;max-width:130px
+  }
+  .resource-feedback-grade{
+    flex:0 0 auto;width:30px;height:30px;border-radius:50%;border:1.5px solid var(--r-terracotta);
+    display:flex;align-items:center;justify-content:center;font-family:"Playfair Display",Georgia,serif;
+    font-weight:700;font-size:14px;color:var(--r-terracotta);transform:rotate(-6deg)
+  }
+
+  .resource-caption{display:block;margin-top:22px}
+  .resource-btn--center .resource-caption{margin-top:32px}
+  .resource-caption-rule{display:block;height:1px;width:100%;background:linear-gradient(90deg,var(--r-gold),transparent 85%);margin-bottom:12px}
+  .resource-caption-row{display:flex;align-items:center;justify-content:center;gap:10px}
+  .resource-caption-label{font-size:13.5px;color:var(--r-navy);font-weight:600}
+  .resource-arrow{
+    width:28px;height:28px;border-radius:50%;background:var(--r-gold);color:var(--r-navy);
+    display:flex;align-items:center;justify-content:center;transition:background .25s ease,transform .25s ease
+  }
+  .resource-arrow svg{width:13px;height:13px}
+  .resource-btn:hover .resource-arrow,.resource-btn:focus-visible .resource-arrow{background:var(--r-gold-light);transform:translateX(2px)}
+
+  .resources-connector{position:relative;width:min(640px,84%);height:40px;margin:8px auto 0;opacity:.55;pointer-events:none}
+  .resources-connector svg{width:100%;height:100%;display:block}
+  .resources-connector svg path{fill:none;stroke:var(--r-gold);stroke-width:1}
+  .resources-connector svg circle{fill:var(--r-gold)}
+  .resources-connector-diamond{position:absolute;left:50%;top:8px;transform:translate(-50%,-50%);color:var(--r-gold);font-size:11px}
+
+  .resources-transition{position:absolute;left:0;right:0;bottom:0;height:34px;pointer-events:none;z-index:1}
+  .resources-transition svg{display:block;width:100%;height:100%}
+
+  @media (prefers-reduced-motion:reduce){
+    .resource-btn{transition:none}
+    .resource-btn:hover .resource-arrow,.resource-btn:focus-visible .resource-arrow{transform:none}
+  }
+
+  @media (max-width:900px){
+    .resources{padding:80px 24px 64px}
+    .resources-row{gap:36px;row-gap:52px}
+    .resource-btn--left{--lift:10px}
+    .resource-btn--center{--lift:-24px}
+    .resource-btn--right{--lift:10px}
+  }
+  @media (max-width:760px){
+    .resource-btn--center{order:-1;flex-basis:100%}
+    .resources-row{row-gap:40px}
+    .resource-btn--left{--lift:0px}
+    .resource-btn--right{--lift:0px}
+  }
+  @media (max-width:640px){
+    .resources-row{flex-direction:column;align-items:center;gap:44px}
+    .resource-btn{width:240px}
+    .resource-btn--left,.resource-btn--center,.resource-btn--right{--tilt:0deg;--lift:0px;--scale:1;order:0}
+    .resource-cover{height:250px}
+    .resources-niche{display:none}
+  }
+
+  .resources{
+    padding:0;
+    margin-top:-72px;
+    background:#F3ECDF;
+  }
+  .resources::before{
+    content:"";position:absolute;left:0;right:0;top:0;height:clamp(42px,5.5vw,82px);
+    display:block;z-index:3;pointer-events:none;opacity:1;
+    background:linear-gradient(180deg,#F3ECDF 0%,rgba(243,236,223,.34) 44%,rgba(243,236,223,0) 100%);
+  }
+  .resources .section-inner{
+    width:100%;
+    max-width:none;
+  }
+  .resources-head{display:none}
+  .resources-shelf{
+    width:100%;
+    display:block;
+  }
+  .resources-shelf::before{
+    content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
+    background:url("images/english-resources-preview.png") center top/cover no-repeat;
+    filter:blur(18px) saturate(.9);
+    transform:scale(1.04);
+    opacity:.6;
+  }
+  .resources-shelf::after{
+    content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
+    background:linear-gradient(90deg,rgba(243,236,223,.72),rgba(243,236,223,.18) 18%,rgba(243,236,223,.18) 82%,rgba(243,236,223,.72));
+  }
+  .resources-preview{
+    position:relative;
+    left:50%;
+    z-index:1;
+    width:100vw;
+    margin-left:-50vw;
+    overflow:hidden;
+    background:#F3ECDF;
+    padding-top:72px;
+  }
+  .resources-preview img{
+    display:block;
+    width:100%;
+    height:auto;
+    margin-top:-72px;
+  }
+  .resources-hotspot{
+    position:absolute;
+    appearance:none;
+    border:0;
+    background:transparent;
+    cursor:pointer;
+    border-radius:8px;
+  }
+  .resources-hotspot:focus-visible{
+    outline:3px solid var(--r-gold);
+    outline-offset:4px;
+    background:rgba(255,255,255,.08);
+  }
+  .resources-hotspot--fairy{left:12.4%;top:29.8%;width:25%;height:63%}
+  .resources-hotspot--romanticism{left:38.6%;top:29.8%;width:25%;height:63%}
+  .resources-hotspot--feedback{left:65.6%;top:29.8%;width:25%;height:63%}
+  @media (hover:hover){
+    .resources-hotspot:hover{background:rgba(255,255,255,.06)}
+  }
+  @media (max-width:720px){
+    .resources-shelf{overflow-x:auto}
+    .resources-preview{width:920px}
+    .resources-preview img{width:100%;max-width:none}
+  }
+
+  .classes{
+    --c-navy:#061A34;--c-navy2:#0B294D;--c-gold:#D3A62C;--c-cream:#FFF9EF;--c-soft:#F8F4EC;
+    position:relative;overflow:hidden;color:var(--c-cream);
+    background:
+      linear-gradient(180deg,rgba(251,237,220,0) 72%,#FBEDDC 100%),
+      radial-gradient(ellipse 900px 520px at 50% 0%,rgba(211,166,44,.09),transparent 62%),
+      linear-gradient(160deg,var(--c-navy) 0%,var(--c-navy2) 100%);
+  }
+  .classes::before,.classes::after{content:"";position:absolute;border-radius:50%;border:1px solid rgba(211,166,44,.32);pointer-events:none}
+  .classes::before{top:-150px;left:-150px;width:340px;height:340px}
+  .classes::after{bottom:-170px;right:-170px;width:380px;height:380px}
+  .classes-dots{position:absolute;width:120px;height:120px;background-image:radial-gradient(rgba(255,255,255,.14) 1px,transparent 1.5px);background-size:14px 14px;pointer-events:none;opacity:.5}
+  .classes-dots--tl{top:22px;left:26px}
+  .classes-dots--br{bottom:22px;right:26px}
+  .classes-star{position:absolute;color:var(--c-gold);opacity:.8;text-shadow:0 0 8px rgba(211,166,44,.55);pointer-events:none}
+  .classes-star--1{top:52px;left:16%;font-size:13px}
+  .classes-star--2{top:66px;right:13%;font-size:16px}
+  .classes .section-head{display:block;text-align:center;max-width:760px;margin:0 auto 46px;position:relative;z-index:1}
+  .classes-divider{display:flex;align-items:center;justify-content:center;gap:14px;margin:0 auto 20px;max-width:320px}
+  .classes-divider span{flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--c-gold),transparent)}
+  .classes-divider i{font-style:normal;color:var(--c-gold);font-size:13px;text-shadow:0 0 8px rgba(211,166,44,.6)}
+  .classes-divider--bottom{margin:44px auto 0}
+  .classes .section-head h2{font-size:clamp(2.3rem,5.4vw,4.2rem);line-height:1.14;letter-spacing:.005em;color:var(--c-cream);margin:0}
+  .classes .section-inner{width:min(1480px,94%)}
+  .class-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:26px;position:relative;z-index:1}
+  .class-card{
+    position:relative;border-radius:16px;overflow:hidden;background:var(--c-cream);
+    border:1px solid var(--card-accent,rgba(211,166,44,.3));box-shadow:0 20px 46px rgba(0,0,0,.32);
+    display:flex;flex-direction:column;height:100%;
+    transition:transform .35s cubic-bezier(.25,.8,.35,1),box-shadow .35s cubic-bezier(.25,.8,.35,1),border-color .35s ease;
+  }
+  .class-card:hover{
+    transform:translateY(-7px) scale(1.015);
+    box-shadow:0 30px 60px rgba(0,0,0,.42),0 0 0 1px var(--c-gold),0 0 26px var(--card-glow,rgba(211,166,44,.28));
+    border-color:var(--c-gold);
+  }
+  .class-card--lavender{--card-bg:#EDE9FB;--card-accent:#B9A6E8;--card-glow:rgba(185,166,232,.35)}
+  .class-card--mint{--card-bg:#E3F5EE;--card-accent:#8FCDB0;--card-glow:rgba(143,205,176,.35)}
+  .class-card--peach{--card-bg:#FDEDE1;--card-accent:#F0B27E;--card-glow:rgba(240,178,126,.35)}
+  .class-card--blue{--card-bg:#E5F1FB;--card-accent:#8FC1E8;--card-glow:rgba(143,193,232,.35)}
+  .class-card--pink{--card-bg:#FBEAF0;--card-accent:#E8A0BE;--card-glow:rgba(232,160,190,.35)}
+  .class-photo{height:225px;overflow:hidden;background:#102b4b;position:relative}
+  .class-photo img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .35s ease}
+  .class-card:hover .class-photo img{transform:scale(1.04)}
+  .class-photo::after{content:"";position:absolute;left:0;right:0;bottom:0;height:6px;background:var(--card-accent)}
+  .class-body{padding:0 24px 30px;text-align:center;flex:1;display:flex;flex-direction:column;align-items:center}
+  .class-icon{
+    margin:-34px 0 14px;width:72px;height:72px;border-radius:50%;flex:0 0 auto;
+    background:var(--card-bg);border:1.5px solid var(--card-accent);color:var(--card-accent);
+    display:flex;align-items:center;justify-content:center;box-shadow:0 10px 20px rgba(6,26,52,.24);
+    position:relative;z-index:2;transition:transform .35s cubic-bezier(.25,.8,.35,1);
+  }
+  .class-card:hover .class-icon{transform:translateY(-3px)}
+  .class-icon svg{width:30px;height:30px;display:block;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+  .class-body h3{font-family:"Playfair Display",Georgia,serif;margin:0 0 12px;color:var(--c-navy);font-size:23px}
+  .class-divider{display:flex;align-items:center;justify-content:center;gap:6px;margin:0 0 16px}
+  .class-divider span{width:26px;height:1px;background:var(--card-accent)}
+  .class-divider i{width:4px;height:4px;border-radius:50%;background:var(--c-gold);display:block}
+  .class-body p{margin:0;color:#4B5A72;font-size:15px;line-height:1.66}
+
+  .classes-benefits{
+    position:relative;z-index:1;display:flex;align-items:flex-start;justify-content:center;
+    flex-wrap:wrap;gap:0;margin-top:56px;padding-top:34px;border-top:1px solid rgba(211,166,44,.2)
+  }
+  .classes-benefit{display:flex;align-items:flex-start;gap:14px;padding:6px 26px;max-width:250px}
+  .classes-benefit-icon{
+    flex:0 0 auto;width:46px;height:46px;border-radius:50%;border:1.5px solid var(--c-gold);
+    display:flex;align-items:center;justify-content:center;color:var(--c-gold)
+  }
+  .classes-benefit-icon svg{width:22px;height:22px;display:block;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+  .classes-benefit-copy strong{display:block;color:var(--c-cream);font-size:15.5px;font-weight:800;margin-bottom:4px}
+  .classes-benefit-copy span{display:block;color:rgba(255,255,255,.88);font-size:13.5px;line-height:1.55}
+  .classes-benefit-sep{width:1px;align-self:stretch;min-height:52px;background:linear-gradient(rgba(211,166,44,0),rgba(211,166,44,.4),rgba(211,166,44,0))}
+  @media (prefers-reduced-motion:reduce){
+    .class-card,.class-icon,.class-photo img{transition:none}
+    .class-card:hover{transform:none}
+    .class-card:hover .class-icon{transform:none}
+    .class-card:hover .class-photo img{transform:none}
+  }
+
+  html.preview-open,body.preview-open{overflow:hidden}
+  .preview-modal{position:absolute;left:0;right:0;top:var(--preview-top,0px);height:var(--preview-height,100vh);z-index:80;display:none;align-items:center;justify-content:center;padding:12px;background:rgba(3,10,20,.88);backdrop-filter:blur(10px);overscroll-behavior:contain}
+  .preview-modal.is-open{display:flex}
+  .preview-shell{width:min(1080px,calc(100vw - 24px));height:calc(var(--preview-height,100vh) - 24px);display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:10px}
+  .preview-top{display:flex;align-items:center;justify-content:space-between;color:#fff}
+  .preview-top strong{font-family:"Playfair Display",Georgia,serif;font-size:clamp(18px,2vw,24px)}
+  .preview-close,.preview-arrow{
+    border:1px solid rgba(255,255,255,.26);background:rgba(255,255,255,.09);color:#fff;
+    border-radius:999px;min-width:44px;height:44px;font-weight:900;cursor:pointer
+  }
+  .preview-arrow{font-size:24px;line-height:1}
+  .preview-arrow:disabled{opacity:.32;cursor:default}
+  .preview-stage{min-height:0;display:grid;place-items:center;overflow:hidden}
+  .preview-stage img{display:block;width:auto;height:auto;max-height:calc(var(--preview-height,100vh) - 126px);max-width:100%;border-radius:8px;background:#fff;box-shadow:0 28px 80px rgba(0,0,0,.45);object-fit:contain}
+  .preview-stage img.preview-image--feedback{width:auto;height:auto;max-width:100%;max-height:calc(var(--preview-height,100vh) - 170px)}
+  .preview-controls{display:flex;justify-content:center;gap:12px}
+  .preview-placeholder{width:min(560px,100%);background:#fff;border-radius:8px;padding:48px 36px;text-align:center;box-shadow:0 28px 80px rgba(0,0,0,.45)}
+  .preview-placeholder-title{font-family:"Playfair Display",Georgia,serif;font-size:22px;color:#071629;margin:0 0 10px}
+  .preview-placeholder-note{font-size:14px;color:#536077;margin:0;line-height:1.6}
+  .preview-cta{width:min(620px,100%);border-radius:10px;background:#fff;padding:56px 42px;text-align:center;box-shadow:0 28px 80px rgba(0,0,0,.45)}
+  .preview-cta h3{font-family:"Playfair Display",Georgia,serif;font-size:clamp(2rem,4vw,3.1rem);line-height:1.05;color:#071629;margin:0 0 18px}
+  .preview-cta p{margin:0 auto 28px;max-width:36ch;color:#536077;line-height:1.65}
+  .preview-cta a{display:inline-flex;align-items:center;justify-content:center;min-height:48px;border-radius:999px;background:#c9a227;color:#071629;text-decoration:none;font-weight:900;padding:0 24px}
+
+  @media (max-width:900px){
+    .nav{position:absolute;top:12px;gap:18px;overflow:hidden}
+    .nav-links{display:none}
+    .hero-inner,.editorial-grid{grid-template-columns:1fr}
+      .image-cards,.proofs,.year-row,.year-panel,.year-content,.process-grid{grid-template-columns:1fr}
+    .hero{padding-top:130px}
+    .section-head{display:block}
+    .section-head h2{margin-bottom:14px}
+    .editorial-image img{height:420px}
+    .sample-stack{padding:24px}
+      .process-title-row{grid-template-columns:1fr;gap:12px}
+      .process-title-row::before,.process-title-row::after{display:none}
+      .process-title-row span::before,.process-title-row span::after{display:none}
+      .process-card{min-height:auto}
+      .process-media{height:220px}
+      .video-lightbox__frame{width:min(92vw,720px)}
+    .quote-grid{grid-template-columns:repeat(2,1fr);gap:20px}
+    .concern-face{padding:22px 20px 18px}
+    .quote-section .section-head{flex-direction:column}
+    .faq-badge{margin-top:18px;width:104px;height:104px}
+    .class-grid{grid-template-columns:repeat(3,1fr)}
+    .classes-benefit-sep{display:none}
+    .classes-benefit{padding:6px 16px}
+    .diff-highlight-sep{display:none}
+    .diff-highlight{flex:0 0 45%;justify-content:center;text-align:left}
+    .diff-quote-banner{padding:76px 24px;min-height:540px}
+  }
+  @media (max-width:640px){
+    .quote-grid{grid-template-columns:1fr}
+    .class-grid{grid-template-columns:1fr;max-width:340px;margin:0 auto}
+    .classes-benefits{justify-content:flex-start}
+    .classes-benefit{max-width:100%;width:100%;justify-content:flex-start}
+    .concern-card:hover{transform:none}
+    /* Keep the comparison legible as a comparison: each pair stays side-by-side. */
+    .diff-highlights{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px 10px;margin:24px auto 30px;max-width:430px}
+    .diff-highlight{justify-content:flex-start;gap:9px;max-width:none;padding:0;min-width:0}
+    .diff-highlight-icon{width:38px;height:38px;flex:0 0 38px}
+    .diff-highlight-icon svg{width:17px;height:17px}
+    .diff-highlight p{margin-top:2px;font-size:12px;line-height:1.34}
+    .diff-table{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .diff-cell--typical{border-right:1px solid rgba(10,35,66,.08)}
+    .diff-cell--title{display:flex;align-items:center;justify-content:center;min-height:48px;padding:10px 8px;font-size:9px;line-height:1.25}
+    .diff-row{gap:7px;padding:10px 8px}
+    .diff-row-icon{width:29px;height:29px}
+    .diff-row-copy{min-width:0}
+    .diff-row-copy strong{font-size:11.5px;line-height:1.22}
+    .diff-row-copy p{font-size:10px;line-height:1.3}
+    .diff-quote-banner{padding:64px 20px;min-height:520px}
+    .diff-quote-text{height:360px}
+  }
+</style>
+</head>
+<body>
+  <!-- Nav + hero now render outside this iframe as real React (NavigationNew + SubjectHero)
+       in src/pages/subjects/English.tsx, so the rest of this page starts here. -->
+
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <clipPath id="stage-wave-a" clipPathUnits="objectBoundingBox">
+        <path d="M0.5,0.015 C0.63,0.015 0.68,0.075 0.8,0.085 C0.93,0.095 1,0.19 0.965,0.32 C0.94,0.42 0.99,0.48 0.975,0.6 C0.96,0.74 0.9,0.8 0.8,0.885 C0.7,0.97 0.62,0.945 0.49,0.975 C0.36,1 0.24,0.95 0.14,0.87 C0.045,0.795 0.015,0.68 0.03,0.56 C0.045,0.44 0,0.38 0.02,0.26 C0.04,0.14 0.13,0.06 0.26,0.035 C0.34,0.015 0.41,0.015 0.5,0.015 Z" />
+      </clipPath>
+      <clipPath id="stage-wave-b" clipPathUnits="objectBoundingBox">
+        <path d="M0.52,0.02 C0.66,0.03 0.72,0.1 0.84,0.1 C0.96,0.1 1,0.22 0.96,0.35 C0.93,0.46 0.98,0.52 0.96,0.64 C0.94,0.78 0.86,0.83 0.75,0.9 C0.64,0.97 0.56,0.93 0.44,0.97 C0.32,1 0.2,0.93 0.12,0.84 C0.04,0.75 0.02,0.62 0.04,0.5 C0.06,0.4 0.01,0.34 0.03,0.22 C0.05,0.1 0.15,0.04 0.28,0.02 C0.36,0.005 0.43,0.01 0.52,0.02 Z" />
+      </clipPath>
+      <clipPath id="stage-wave-c" clipPathUnits="objectBoundingBox">
+        <path d="M0.46,0.03 C0.6,0 0.7,0.06 0.82,0.05 C0.95,0.04 1,0.16 0.94,0.29 C0.9,0.4 0.97,0.46 0.93,0.58 C0.9,0.72 0.94,0.8 0.82,0.89 C0.7,0.98 0.6,0.9 0.47,0.94 C0.35,0.98 0.22,0.96 0.13,0.86 C0.04,0.76 0.08,0.64 0.05,0.52 C0.02,0.4 0.06,0.32 0.1,0.2 C0.14,0.08 0.26,0.02 0.38,0.02 C0.41,0.02 0.43,0.025 0.46,0.03 Z" />
+      </clipPath>
+    </defs>
+  </svg>
+
+
+  <section class="year-map">
+    <div class="section-inner">
+      <div class="section-head">
+        <h2 class="serif" id="year-map-heading" aria-label="A Clear English Journey, From Foundations to HSC">
+          <span class="type-line" id="year-map-type-1"></span><br>
+          <span class="type-line" id="year-map-type-2"></span><span class="type-cursor" id="year-map-cursor"></span>
+        </h2>
+      </div>
+      <div class="year-map-stages">
+        <article class="stage stage--reverse">
+          <div class="stage-head">
+            <div class="stage-meta">
+              <span class="stage-number">01</span>
+              <span class="stage-years">Years 7&ndash;8</span>
+            </div>
+            <h3 class="serif">Building high school English skills</h3>
+          </div>
+          <div class="stage-photo-frame">
+            <div class="stage-photo"><img src="images/subjects/english/support-24-7.jpeg" alt="DA Tuition English students working together"></div>
+            <svg class="stage-photo-outline" viewBox="0 0 1 1" preserveAspectRatio="none" aria-hidden="true">
+              <path class="stage-photo-outline-halo" d="M0.5,0.015 C0.63,0.015 0.68,0.075 0.8,0.085 C0.93,0.095 1,0.19 0.965,0.32 C0.94,0.42 0.99,0.48 0.975,0.6 C0.96,0.74 0.9,0.8 0.8,0.885 C0.7,0.97 0.62,0.945 0.49,0.975 C0.36,1 0.24,0.95 0.14,0.87 C0.045,0.795 0.015,0.68 0.03,0.56 C0.045,0.44 0,0.38 0.02,0.26 C0.04,0.14 0.13,0.06 0.26,0.035 C0.34,0.015 0.41,0.015 0.5,0.015 Z"/>
+              <path class="stage-photo-outline-gold" d="M0.5,0.015 C0.63,0.015 0.68,0.075 0.8,0.085 C0.93,0.095 1,0.19 0.965,0.32 C0.94,0.42 0.99,0.48 0.975,0.6 C0.96,0.74 0.9,0.8 0.8,0.885 C0.7,0.97 0.62,0.945 0.49,0.975 C0.36,1 0.24,0.95 0.14,0.87 C0.045,0.795 0.015,0.68 0.03,0.56 C0.045,0.44 0,0.38 0.02,0.26 C0.04,0.14 0.13,0.06 0.26,0.035 C0.34,0.015 0.41,0.015 0.5,0.015 Z"/>
+            </svg>
+          </div>
+          <div class="stage-list-wrap">
+            <ul class="stage-list">
+              <li>Reading comprehension and inference</li>
+              <li>Paragraph structure and clear expression</li>
+              <li>Textual analysis and evidence use</li>
+              <li>Creative and persuasive writing</li>
+              <li>Grammar, vocabulary and assessment habits</li>
+            </ul>
+            <span class="stage-icon" aria-hidden="true">
+              <img src="images/icons/icon-quill.png" alt="">
+            </span>
+          </div>
+        </article>
+
+        <article class="stage">
+          <div class="stage-head">
+            <div class="stage-meta">
+              <span class="stage-number">02</span>
+              <span class="stage-years">Years 9&ndash;10</span>
+            </div>
+            <h3 class="serif">Strengthening analysis and assessment confidence</h3>
+          </div>
+          <div class="stage-photo-frame">
+            <div class="stage-photo"><img src="images/subjects/english/structured-classroom-cr3.jpeg" alt="DA Tuition English classroom in session"></div>
+            <svg class="stage-photo-outline" viewBox="0 0 1 1" preserveAspectRatio="none" aria-hidden="true">
+              <path class="stage-photo-outline-halo" d="M0.52,0.02 C0.66,0.03 0.72,0.1 0.84,0.1 C0.96,0.1 1,0.22 0.96,0.35 C0.93,0.46 0.98,0.52 0.96,0.64 C0.94,0.78 0.86,0.83 0.75,0.9 C0.64,0.97 0.56,0.93 0.44,0.97 C0.32,1 0.2,0.93 0.12,0.84 C0.04,0.75 0.02,0.62 0.04,0.5 C0.06,0.4 0.01,0.34 0.03,0.22 C0.05,0.1 0.15,0.04 0.28,0.02 C0.36,0.005 0.43,0.01 0.52,0.02 Z"/>
+              <path class="stage-photo-outline-gold" d="M0.52,0.02 C0.66,0.03 0.72,0.1 0.84,0.1 C0.96,0.1 1,0.22 0.96,0.35 C0.93,0.46 0.98,0.52 0.96,0.64 C0.94,0.78 0.86,0.83 0.75,0.9 C0.64,0.97 0.56,0.93 0.44,0.97 C0.32,1 0.2,0.93 0.12,0.84 C0.04,0.75 0.02,0.62 0.04,0.5 C0.06,0.4 0.01,0.34 0.03,0.22 C0.05,0.1 0.15,0.04 0.28,0.02 C0.36,0.005 0.43,0.01 0.52,0.02 Z"/>
+            </svg>
+          </div>
+          <div class="stage-list-wrap">
+            <ul class="stage-list">
+              <li>Sophisticated essay structure</li>
+              <li>Deeper analysis of technique and meaning</li>
+              <li>Fluent quotation integration</li>
+              <li>Writing across analytical and creative forms</li>
+              <li>Drafting, feedback and timed assessment practice</li>
+            </ul>
+            <span class="stage-icon" aria-hidden="true">
+              <img src="images/icons/icon-fountain-pen.png" alt="">
+            </span>
+          </div>
+        </article>
+
+        <article class="stage stage--reverse">
+          <div class="stage-head">
+            <div class="stage-meta">
+              <span class="stage-number">03</span>
+              <span class="stage-years">Years 11&ndash;12</span>
+            </div>
+            <h3 class="serif">Senior English and HSC preparation</h3>
+          </div>
+          <div class="stage-photo-frame">
+            <div class="stage-photo"><img src="images/subjects/english/feedback-tutor.jpeg" alt="DA Tuition tutor giving feedback to a senior English student"></div>
+            <svg class="stage-photo-outline" viewBox="0 0 1 1" preserveAspectRatio="none" aria-hidden="true">
+              <path class="stage-photo-outline-halo" d="M0.46,0.03 C0.6,0 0.7,0.06 0.82,0.05 C0.95,0.04 1,0.16 0.94,0.29 C0.9,0.4 0.97,0.46 0.93,0.58 C0.9,0.72 0.94,0.8 0.82,0.89 C0.7,0.98 0.6,0.9 0.47,0.94 C0.35,0.98 0.22,0.96 0.13,0.86 C0.04,0.76 0.08,0.64 0.05,0.52 C0.02,0.4 0.06,0.32 0.1,0.2 C0.14,0.08 0.26,0.02 0.38,0.02 C0.41,0.02 0.43,0.025 0.46,0.03 Z"/>
+              <path class="stage-photo-outline-gold" d="M0.46,0.03 C0.6,0 0.7,0.06 0.82,0.05 C0.95,0.04 1,0.16 0.94,0.29 C0.9,0.4 0.97,0.46 0.93,0.58 C0.9,0.72 0.94,0.8 0.82,0.89 C0.7,0.98 0.6,0.9 0.47,0.94 C0.35,0.98 0.22,0.96 0.13,0.86 C0.04,0.76 0.08,0.64 0.05,0.52 C0.02,0.4 0.06,0.32 0.1,0.2 C0.14,0.08 0.26,0.02 0.38,0.02 C0.41,0.02 0.43,0.025 0.46,0.03 Z"/>
+            </svg>
+          </div>
+          <div class="stage-list-wrap">
+            <ul class="stage-list">
+              <li>Rubric and module mastery</li>
+              <li>Conceptual thesis and argument development</li>
+              <li>Close analysis, context and textual synthesis</li>
+              <li>Advanced essays and Craft of Writing responses</li>
+              <li>HSC exam technique, adaptability and timed performance</li>
+            </ul>
+            <span class="stage-icon" aria-hidden="true">
+              <img src="images/icons/icon-graduation-cap.png" alt="">
+            </span>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="resources" id="resources">
+    <div class="section-inner">
+      <div class="resources-head">
+        <div class="resources-eyebrow">Inside the classroom</div>
+        <h2 class="serif">Preview Our English Resources</h2>
+        <div class="resources-rule" aria-hidden="true"><span></span><i>&#10022;</i><span></span></div>
+        <p>Explore real examples of the resources and feedback our students receive.</p>
+      </div>
+      <div class="resources-shelf" id="resources-shelf">
+        <div class="resources-preview">
+          <img src="images/english-resources-preview.png" alt="Preview Our English Resources: Fairy Tales, Romanticism, and Marked Feedback Sample booklets">
+          <button class="resources-hotspot resources-hotspot--fairy" type="button" data-resource-id="fairy-tales" aria-label="Open Year 7 Fairy Tales sample booklet"></button>
+          <button class="resources-hotspot resources-hotspot--romanticism" type="button" data-resource-id="romanticism" aria-label="Open Romanticism sample booklet"></button>
+          <button class="resources-hotspot resources-hotspot--feedback" type="button" data-resource-id="feedback-sample" aria-label="Open marked feedback sample"></button>
+        </div>
+      </div>
+    </div>
+    <div class="resources-transition" aria-hidden="true">
+      <svg viewBox="0 0 1440 34" preserveAspectRatio="none">
+        <path d="M0 16 C 360 2 1080 30 1440 12 L1440 34 L0 34 Z" fill="#061A34"></path>
+      </svg>
+    </div>
+  </section>
+
+  <section class="classes">
+    <span class="classes-dots classes-dots--tl" aria-hidden="true"></span>
+    <span class="classes-dots classes-dots--br" aria-hidden="true"></span>
+    <span class="classes-star classes-star--1" aria-hidden="true">&#10022;</span>
+    <span class="classes-star classes-star--2" aria-hidden="true">&#10022;</span>
+    <div class="section-inner">
+      <div class="section-head">
+        <div class="classes-divider" aria-hidden="true"><span></span><i>&#10022;</i><span></span></div>
+        <h2 class="serif">Choose the class style<br>that fits the student</h2>
+      </div>
+      <div class="class-grid">
+        <article class="class-card class-card--lavender">
+          <div class="class-photo"><img src="images/subjects/english/class-private.png" alt="Tutor and student working one-to-one on laptops in a private DA Tuition class"></div>
+          <div class="class-body">
+            <span class="class-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.4"></circle><path d="M5 20c0-3.9 3.1-7 7-7s7 3.1 7 7"></path><path d="M18 3.2l.6 1.4 1.4.6-1.4.6-.6 1.4-.6-1.4-1.4-.6 1.4-.6Z"></path></svg></span>
+            <h3>Private Classes</h3>
+            <span class="class-divider" aria-hidden="true"><span></span><i></i><span></span></span>
+            <p>One-to-one support for students who need individual attention, targeted feedback, or a personalised pace.</p>
+          </div>
+        </article>
+        <article class="class-card class-card--mint">
+          <div class="class-photo"><img src="images/subjects/english/class-gat.png" alt="Students working through extension-style GAT class material at DA Tuition"></div>
+          <div class="class-body">
+            <span class="class-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 19V13"></path><path d="M10 19V9"></path><path d="M16 19v-7"></path><path d="M20 19V5"></path><path d="M4 9l6-4 6 3 4-4"></path></svg></span>
+            <h3>GAT Class</h3>
+            <span class="class-divider" aria-hidden="true"><span></span><i></i><span></span></span>
+            <p>Extension-style learning for high-performing students who need challenge, depth, and sharper analytical thinking.</p>
+          </div>
+        </article>
+        <article class="class-card class-card--peach">
+          <div class="class-photo"><img src="images/subjects/english/class-bullet.png" alt="Students in a fast-paced Bullet Class exam-technique session at DA Tuition"></div>
+          <div class="class-body">
+            <span class="class-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M13 3 6 14h5l-1 7 8-12h-5l1-6Z"></path></svg></span>
+            <h3>Bullet Class</h3>
+            <span class="class-divider" aria-hidden="true"><span></span><i></i><span></span></span>
+            <p>Fast, focused lessons built around exam techniques, key skills, and high-impact revision.</p>
+          </div>
+        </article>
+        <article class="class-card class-card--blue">
+          <div class="class-photo"><img src="images/subjects/english/class-creative.png" alt="Students collaborating in a Creative Writing workshop at DA Tuition"></div>
+          <div class="class-body">
+            <span class="class-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M18 4c-3.5 0-7.5 2.4-9 6.6-.8 2-.9 3.8-.9 5 0 .2.1.4.3.5.2.1.4.1.5 0C10.6 14.8 12.6 13.7 14.6 13c4-1.4 4-6.6 4-9Z"></path><path d="M4 20l5.5-5.5"></path></svg></span>
+            <h3>Creative Writing</h3>
+            <span class="class-divider" aria-hidden="true"><span></span><i></i><span></span></span>
+            <p>Dedicated writing workshops for voice, structure, imagery, narrative control, and originality.</p>
+          </div>
+        </article>
+        <article class="class-card class-card--pink">
+          <div class="class-photo"><img src="images/subjects/english/class-focus.png" alt="Small group of students and a tutor in a Focus Class at DA Tuition"></div>
+          <div class="class-body">
+            <span class="class-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="9" cy="9" r="2.6"></circle><circle cx="17" cy="10.2" r="2.1"></circle><path d="M4 19c0-3 2.2-5.4 5-5.4s5 2.4 5 5.4"></path><path d="M14.5 19c.2-2.2 1.7-4 3.7-4"></path></svg></span>
+            <h3>Focus Class</h3>
+            <span class="class-divider" aria-hidden="true"><span></span><i></i><span></span></span>
+            <p>Small-group support for students who need clarity, consistency, and confidence with English fundamentals.</p>
+          </div>
+        </article>
+      </div>
+      <div class="classes-benefits">
+        <div class="classes-benefit">
+          <span class="classes-benefit-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M2 8l10-4 10 4-10 4Z"></path><path d="M6 10.5V16c0 1.3 2.7 3 6 3s6-1.7 6-3v-5.5"></path><path d="M22 8v6"></path></svg></span>
+          <div class="classes-benefit-copy"><strong>Expert Teachers</strong><span>Highly qualified and passionate educators</span></div>
+        </div>
+        <span class="classes-benefit-sep" aria-hidden="true"></span>
+        <div class="classes-benefit">
+          <span class="classes-benefit-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 18l6-6 4 4 8-9"></path><path d="M15 7h6v6"></path></svg></span>
+          <div class="classes-benefit-copy"><strong>Proven Results</strong><span>A track record of stronger confidence and outcomes</span></div>
+        </div>
+        <span class="classes-benefit-sep" aria-hidden="true"></span>
+        <div class="classes-benefit">
+          <span class="classes-benefit-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.6"></circle><path d="M5 20c0-3.9 3.1-7 7-7s7 3.1 7 7"></path></svg></span>
+          <div class="classes-benefit-copy"><strong>Personalised Support</strong><span>Tailored guidance to help every student succeed</span></div>
+        </div>
+        <span class="classes-benefit-sep" aria-hidden="true"></span>
+        <div class="classes-benefit">
+          <span class="classes-benefit-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3l7 3v6c0 4.4-3 7.6-7 9-4-1.4-7-4.6-7-9V6Z"></path><path d="M9 12l2 2 4-4"></path></svg></span>
+          <div class="classes-benefit-copy"><strong>Premium Learning</strong><span>High-quality resources and structured programs</span></div>
+        </div>
+        <span class="classes-benefit-sep" aria-hidden="true"></span>
+        <div class="classes-benefit">
+          <span class="classes-benefit-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-9.6C5 7 7 5 9.5 5c1.4 0 2.6.7 3.3 1.8C13.4 5.7 14.6 5 16 5c2.5 0 4.5 2 4.5 5.4C20.5 15.6 12 20 12 20Z"></path></svg></span>
+          <div class="classes-benefit-copy"><strong>Student-Centred</strong><span>A supportive environment where students thrive</span></div>
+        </div>
+      </div>
+      <div class="classes-divider classes-divider--bottom" aria-hidden="true"><span></span><i>&#10022;</i><span></span></div>
+    </div>
+  </section>
+
+  <section class="diff-section">
+    <div class="section-inner diff-inner">
+      <div class="diff-head">
+        <span class="diff-eyebrow">What makes DA different</span>
+        <h2 class="serif diff-heading">More than tutoring.<br>We mentor, coach and care.</h2>
+      </div>
+
+      <div class="diff-highlights">
+        <div class="diff-highlight">
+          <span class="diff-highlight-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.4"></circle><path d="M5 20c0-3.9 3.1-7 7-7s7 3.1 7 7"></path><path d="M18 3.2l.6 1.4 1.4.6-1.4.6-.6 1.4-.6-1.4-1.4-.6 1.4-.6Z"></path></svg></span>
+          <p>Personal mentoring,<br>not just subject teaching</p>
+        </div>
+        <span class="diff-highlight-sep" aria-hidden="true"></span>
+        <div class="diff-highlight">
+          <span class="diff-highlight-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 14.5c-2.6-2-4.6-3.8-4.6-6A2.9 2.9 0 0 1 12 6.7a2.9 2.9 0 0 1 4.6 1.8c0 2.2-2 4-4.6 6Z"></path><path d="M5 18c2-1.6 4.5-2.4 7-2.4s5 .8 7 2.4"></path></svg></span>
+          <p>Care that supports<br>confidence and<br>student wellbeing</p>
+        </div>
+        <span class="diff-highlight-sep" aria-hidden="true"></span>
+        <div class="diff-highlight">
+          <span class="diff-highlight-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 19V14"></path><path d="M9 19V10"></path><path d="M14 19v-7"></path><path d="M19 19V6"></path><path d="M17 4l.6 1.4L19 6l-1.4.6L17 8l-.6-1.4L15 6l1.4-.6Z"></path></svg></span>
+          <p>Skills, mindset and<br>guidance that extend<br>beyond school</p>
+        </div>
+        <span class="diff-highlight-sep" aria-hidden="true"></span>
+        <div class="diff-highlight">
+          <span class="diff-highlight-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"></circle><path d="M12 8v4l3 2"></path></svg></span>
+          <p>24-hour support so<br>students never<br>feel alone</p>
+        </div>
+      </div>
+
+      <div class="diff-table-wrap">
+      <img class="diff-side-img diff-side-img--left" src="images/diff-left-cluster.png" alt="" aria-hidden="true">
+      <img class="diff-side-img diff-side-img--right" src="images/diff-right-polaroid.png" alt="" aria-hidden="true">
+      <div class="diff-table">
+        <div class="diff-cell diff-cell--title diff-cell--typical">Typical Tuition</div>
+        <div class="diff-cell diff-cell--title diff-cell--da">DA Tuition</div>
+
+        <div class="diff-cell diff-cell--typical diff-row">
+          <span class="diff-row-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 5.5C6 4.6 9 4.4 12 5.6c3-1.2 6-1 8-.1v13c-2-.9-5-1.1-8 .1-3-1.2-6-1-8-.1Z"></path><path d="M12 5.6v13"></path></svg></span>
+          <div class="diff-row-copy"><strong>Content taught.</strong><p>The lesson stays focused on the subject only.</p></div>
+        </div>
+        <div class="diff-cell diff-cell--da diff-row">
+          <span class="diff-row-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"></circle><path d="M3.5 19.5c0-3.6 2.5-6.2 5.5-6.2 1 0 1.9.3 2.7.8"></path><path d="M17.5 12.6c-2.2-1.7-3.9-3.2-3.9-5.1a2.5 2.5 0 0 1 3.9-2 2.5 2.5 0 0 1 3.9 2c0 1.9-1.7 3.4-3.9 5.1Z"></path></svg></span>
+          <div class="diff-row-copy"><strong>The whole student mentored.</strong><p>We guide students academically, personally and emotionally.</p></div>
+        </div>
+
+        <div class="diff-cell diff-cell--typical diff-row">
+          <span class="diff-row-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="8.4" r="3.4"></circle><path d="M5.5 20c0-3.7 2.9-6.6 6.5-6.6s6.5 2.9 6.5 6.6"></path></svg></span>
+          <div class="diff-row-copy"><strong>Support ends after class.</strong><p>Students are often left to manage stress and confusion alone.</p></div>
+        </div>
+        <div class="diff-cell diff-cell--da diff-row">
+          <span class="diff-row-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 13v-1a8 8 0 0 1 16 0v1"></path><rect x="3" y="13" width="4" height="6" rx="1.4"></rect><rect x="17" y="13" width="4" height="6" rx="1.4"></rect><path d="M20 19v.6a2.4 2.4 0 0 1-2.4 2.4H14"></path></svg></span>
+          <div class="diff-row-copy"><strong>24-hour support.</strong><p>Students can reach out for help, clarity and reassurance whenever they need it.</p></div>
+        </div>
+
+        <div class="diff-cell diff-cell--typical diff-row">
+          <span class="diff-row-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="6" y="4.5" width="12" height="16" rx="1.6"></rect><path d="M9.5 3.6h5a.9.9 0 0 1 .9.9v1.2h-6.8V4.5a.9.9 0 0 1 .9-.9Z"></path><path d="M9 11h6"></path><path d="M9 14.5h6"></path><path d="M9 8h3"></path></svg></span>
+          <div class="diff-row-copy"><strong>Focus stays on school tasks.</strong><p>Learning is often limited to the next worksheet, essay or test.</p></div>
+        </div>
+        <div class="diff-cell diff-cell--da diff-row">
+          <span class="diff-row-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 21v-9"></path><path d="M12 12c0-3.5-2.8-6-6.5-6C5.2 9.7 8 12.5 12 12Z"></path><path d="M12 9c0-3 2.4-5 5.5-5C18 7.5 15.5 9.8 12 9Z"></path></svg></span>
+          <div class="diff-row-copy"><strong>Growth beyond school.</strong><p>We teach confidence, communication, habits and thinking skills that last beyond the classroom.</p></div>
+        </div>
+
+        <div class="diff-cell diff-cell--typical diff-row">
+          <span class="diff-row-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 1 3.4 6.5L4 20l1.2-3.4A7.96 7.96 0 0 1 4 12Z"></path><path d="M10 10a2 2 0 1 1 2.6 1.9c-.9.3-1.3 1-1.3 1.8"></path><path d="M11.3 16h.05"></path></svg></span>
+          <div class="diff-row-copy"><strong>Advice feels generic.</strong><p>Strategies may not reflect what students are truly going through.</p></div>
+        </div>
+        <div class="diff-cell diff-cell--da diff-row">
+          <span class="diff-row-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3.2 19 6v6c0 4.6-3 7.9-7 9-4-1.1-7-4.4-7-9V6Z"></path><path d="M12 8.6l.9 1.9 2.1.3-1.5 1.5.35 2.1L12 13.4l-1.85 1 .35-2.1-1.5-1.5 2.1-.3Z"></path></svg></span>
+          <div class="diff-row-copy"><strong>Led by experience.</strong><p>Our team has been in their position before and uses tried, proven methods that genuinely work.</p></div>
+        </div>
+
+        <div class="diff-cell diff-cell--typical diff-row">
+          <span class="diff-row-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"></circle><path d="M12 7v10"></path><path d="M15 9.5c0-1.1-1.3-2-3-2s-3 .9-3 2 1.3 1.6 3 2 3 .9 3 2-1.3 2-3 2-3-.9-3-2"></path></svg></span>
+          <div class="diff-row-copy"><strong>Tutoring feels transactional.</strong><p>Correction is given, but deep care and connection are limited.</p></div>
+        </div>
+        <div class="diff-cell diff-cell--da diff-row">
+          <span class="diff-row-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 19.5c-4.4-3.1-8-6-8-9.9A4.3 4.3 0 0 1 12 7.3a4.3 4.3 0 0 1 8 2.3c0 3.9-3.6 6.8-8 9.9Z"></path></svg></span>
+          <div class="diff-row-copy"><strong>Heart-and-soul teaching.</strong><p>We teach with heart and soul, building trust, resilience and long-term growth.</p></div>
+        </div>
+      </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="pathway" id="pathway">
+    <div class="section-inner">
+      <div class="process-head">
+        <div class="process-title-row">
+          <span><h2 class="serif">The HSC English Process</h2></span>
+        </div>
+        <p class="process-subtitle">From Understanding to Excellence</p>
+      </div>
+      <div class="process-grid">
+        <article class="process-card">
+          <div class="process-card-head"><div class="process-num">1</div><h3>Rubric Deconstruction</h3></div>
+          <button class="process-video-button" type="button" data-process-video="/videos/english/rubric-annotated.mp4" aria-label="Play Rubric Deconstruction video">
+            <span class="process-media">
+              <video src="/videos/english/rubric-annotated.mp4" muted preload="metadata" playsinline></video>
+              <span class="process-play" aria-hidden="true"></span>
+              <span class="process-bar" aria-hidden="true"><span class="process-progress"></span></span>
+            </span>
+          </button>
+          <p>Students unpack the module rubric so they understand what the syllabus requires.</p>
+        </article>
+        <article class="process-card">
+          <div class="process-card-head"><div class="process-num">2</div><h3>Textual Analysis</h3></div>
+          <button class="process-video-button" type="button" aria-label="Textual Analysis video placeholder">
+            <span class="process-media process-media--placeholder process-media--analysis">
+              <span class="process-play" aria-hidden="true"></span>
+              <span class="process-bar" aria-hidden="true"><span class="process-progress"></span></span>
+            </span>
+          </button>
+          <p>They learn to notice technique, purpose and meaning, then connect evidence to argument.</p>
+        </article>
+        <article class="process-card">
+          <div class="process-card-head"><div class="process-num">3</div><h3>Guided Response Building</h3></div>
+          <button class="process-video-button" type="button" aria-label="Guided Response Building video placeholder">
+            <span class="process-media process-media--placeholder process-media--response">
+              <span class="process-play" aria-hidden="true"></span>
+              <span class="process-bar" aria-hidden="true"><span class="process-progress"></span></span>
+            </span>
+          </button>
+          <p>Ideas become paragraphs with thesis, topic sentence, evidence and commentary working together.</p>
+        </article>
+        <article class="process-card">
+          <div class="process-card-head"><div class="process-num">4</div><h3>Draft Development</h3></div>
+          <button class="process-video-button" type="button" aria-label="Draft Development video placeholder">
+            <span class="process-media process-media--draft">
+              <span class="process-play" aria-hidden="true"></span>
+              <span class="process-bar" aria-hidden="true"><span class="process-progress"></span></span>
+            </span>
+          </button>
+          <p>Students refine expression, structure and depth before moving into timed performance.</p>
+        </article>
+        <article class="process-card">
+          <div class="process-card-head"><div class="process-num">5</div><h3>Personalised Feedback</h3></div>
+          <button class="process-video-button" type="button" aria-label="Personalised Feedback video placeholder">
+            <span class="process-media process-media--placeholder process-media--feedback">
+              <span class="process-play" aria-hidden="true"></span>
+              <span class="process-bar" aria-hidden="true"><span class="process-progress"></span></span>
+            </span>
+          </button>
+          <p>Corrections are specific enough that students know what to fix next.</p>
+        </article>
+        <article class="process-card">
+          <div class="process-card-head"><div class="process-num">6</div><h3>Refinement and Exam Prep</h3></div>
+          <button class="process-video-button" type="button" aria-label="Refinement and Exam Prep video placeholder">
+            <span class="process-media process-media--exam">
+              <span class="process-play" aria-hidden="true"></span>
+              <span class="process-bar" aria-hidden="true"><span class="process-progress"></span></span>
+            </span>
+          </button>
+          <p>Students practise adapting their strongest ideas under real exam conditions.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="quote-section">
+    <div class="section-inner">
+      <div class="section-head">
+        <h2 class="serif faq-heading">What <span class="faq-word">parents<svg class="faq-stroke" viewBox="0 0 140 14" preserveAspectRatio="none" aria-hidden="true"><path d="M2 8c20-6 100-6 136 2"></path></svg></span><br>often <span class="faq-word">ask us<svg class="faq-stroke" viewBox="0 0 110 14" preserveAspectRatio="none" aria-hidden="true"><path d="M2 9c16-7 78-7 106 1"></path></svg></span></h2>
+        <div class="faq-badge">
+          <span class="faq-badge-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15.5-6.2M21 12a9 9 0 0 1-15.5 6.2"></path><path d="M17 3v4h-4"></path><path d="M7 21v-4h4"></path></svg></span>
+          <span class="faq-badge-text">Tap a card<br>to flip</span>
+        </div>
+      </div>
+      <div class="quote-grid">
+        <article class="concern-card" tabindex="0" role="button" aria-expanded="false" aria-label="I do not know if they truly understand what senior English requires of them. Flip card to reveal how DA helps.">
+          <div class="concern-inner">
+            <div class="concern-face concern-front">
+              <span class="concern-clip" aria-hidden="true"><svg viewBox="0 0 18 32"><path d="M9 4v18a4 4 0 0 1-8 0V9a2.5 2.5 0 0 1 5 0v13"></path></svg></span>
+              <span class="concern-num" aria-hidden="true">1</span>
+              <blockquote>&ldquo;I do not know if they truly understand what senior English requires of them.&rdquo;</blockquote>
+              <span class="concern-fold" aria-hidden="true"></span>
+              <span class="concern-flip-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15.5-6.2M21 12a9 9 0 0 1-15.5 6.2"></path><path d="M17 3v4h-4"></path><path d="M7 21v-4h4"></path></svg></span>
+            </div>
+            <div class="concern-face concern-back">
+              <span class="concern-back-label">How DA helps</span>
+              <span class="concern-back-divider" aria-hidden="true"><span>&#10022;</span></span>
+              <ul class="concern-back-list">
+                <li><span class="concern-back-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"></path></svg></span>Clarifies senior English expectations in simple terms</li>
+                <li><span class="concern-back-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"></path></svg></span>Introduces the skills students will need before Year 11</li>
+                <li><span class="concern-back-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"></path></svg></span>Builds confidence through guided and gradual preparation</li>
+              </ul>
+              <span class="concern-flip-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15.5-6.2M21 12a9 9 0 0 1-15.5 6.2"></path><path d="M17 3v4h-4"></path><path d="M7 21v-4h4"></path></svg></span>
+            </div>
+          </div>
+        </article>
+        <article class="concern-card" tabindex="0" role="button" aria-expanded="false" aria-label="They know the texts well but their essay marks do not reflect that. Flip card to reveal how DA helps.">
+          <div class="concern-inner">
+            <div class="concern-face concern-front">
+              <span class="concern-clip" aria-hidden="true"><svg viewBox="0 0 18 32"><path d="M9 4v18a4 4 0 0 1-8 0V9a2.5 2.5 0 0 1 5 0v13"></path></svg></span>
+              <span class="concern-num" aria-hidden="true">2</span>
+              <blockquote>&ldquo;They know the texts well but their essay marks do not reflect that.&rdquo;</blockquote>
+              <span class="concern-fold" aria-hidden="true"></span>
+              <span class="concern-flip-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15.5-6.2M21 12a9 9 0 0 1-15.5 6.2"></path><path d="M17 3v4h-4"></path><path d="M7 21v-4h4"></path></svg></span>
+            </div>
+            <div class="concern-face concern-back">
+              <span class="concern-back-label">How DA helps</span>
+              <span class="concern-back-divider" aria-hidden="true"><span>&#10022;</span></span>
+              <ul class="concern-back-list">
+                <li><span class="concern-back-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"></path></svg></span>Identifies why marks are being lost</li>
+                <li><span class="concern-back-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"></path></svg></span>Provides annotated examples and strong model responses</li>
+                <li><span class="concern-back-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"></path></svg></span>Gives specific feedback students can apply independently</li>
+              </ul>
+              <span class="concern-flip-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15.5-6.2M21 12a9 9 0 0 1-15.5 6.2"></path><path d="M17 3v4h-4"></path><path d="M7 21v-4h4"></path></svg></span>
+            </div>
+          </div>
+        </article>
+        <article class="concern-card" tabindex="0" role="button" aria-expanded="false" aria-label="I am worried about how they will perform under real HSC exam conditions. Flip card to reveal how DA helps.">
+          <div class="concern-inner">
+            <div class="concern-face concern-front">
+              <span class="concern-clip" aria-hidden="true"><svg viewBox="0 0 18 32"><path d="M9 4v18a4 4 0 0 1-8 0V9a2.5 2.5 0 0 1 5 0v13"></path></svg></span>
+              <span class="concern-num" aria-hidden="true">3</span>
+              <blockquote>&ldquo;I am worried about how they will perform under real HSC exam conditions.&rdquo;</blockquote>
+              <span class="concern-fold" aria-hidden="true"></span>
+              <span class="concern-flip-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15.5-6.2M21 12a9 9 0 0 1-15.5 6.2"></path><path d="M17 3v4h-4"></path><path d="M7 21v-4h4"></path></svg></span>
+            </div>
+            <div class="concern-face concern-back">
+              <span class="concern-back-label">How DA helps</span>
+              <span class="concern-back-divider" aria-hidden="true"><span>&#10022;</span></span>
+              <ul class="concern-back-list">
+                <li><span class="concern-back-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"></path></svg></span>Practises timed responses under realistic conditions</li>
+                <li><span class="concern-back-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"></path></svg></span>Teaches planning and time-management strategies</li>
+                <li><span class="concern-back-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"></path></svg></span>Reviews performance to improve speed, clarity and control</li>
+              </ul>
+              <span class="concern-flip-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15.5-6.2M21 12a9 9 0 0 1-15.5 6.2"></path><path d="M17 3v4h-4"></path><path d="M7 21v-4h4"></path></svg></span>
+            </div>
+          </div>
+        </article>
+        <article class="concern-card" tabindex="0" role="button" aria-expanded="false" aria-label="My child studies hard but still struggles to write with clarity and depth. Flip card to reveal how DA helps.">
+          <div class="concern-inner">
+            <div class="concern-face concern-front">
+              <span class="concern-clip" aria-hidden="true"><svg viewBox="0 0 18 32"><path d="M9 4v18a4 4 0 0 1-8 0V9a2.5 2.5 0 0 1 5 0v13"></path></svg></span>
+              <span class="concern-num" aria-hidden="true">4</span>
+              <blockquote>&ldquo;My child studies hard but still struggles to write with clarity and depth.&rdquo;</blockquote>
+              <span class="concern-fold" aria-hidden="true"></span>
+              <span class="concern-flip-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15.5-6.2M21 12a9 9 0 0 1-15.5 6.2"></path><path d="M17 3v4h-4"></path><path d="M7 21v-4h4"></path></svg></span>
+            </div>
+            <div class="concern-face concern-back">
+              <span class="concern-back-label">How DA helps</span>
+              <span class="concern-back-divider" aria-hidden="true"><span>&#10022;</span></span>
+              <ul class="concern-back-list">
+                <li><span class="concern-back-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"></path></svg></span>Explicitly teaches clarity, expression and analytical depth</li>
+                <li><span class="concern-back-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"></path></svg></span>Breaks complex writing skills into manageable steps</li>
+                <li><span class="concern-back-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"></path></svg></span>Tracks recurring weaknesses across multiple responses</li>
+              </ul>
+              <span class="concern-flip-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15.5-6.2M21 12a9 9 0 0 1-15.5 6.2"></path><path d="M17 3v4h-4"></path><path d="M7 21v-4h4"></path></svg></span>
+            </div>
+          </div>
+        </article>
+        <article class="concern-card" tabindex="0" role="button" aria-expanded="false" aria-label="They have good ideas but do not know how to structure an English response. Flip card to reveal how DA helps.">
+          <div class="concern-inner">
+            <div class="concern-face concern-front">
+              <span class="concern-clip" aria-hidden="true"><svg viewBox="0 0 18 32"><path d="M9 4v18a4 4 0 0 1-8 0V9a2.5 2.5 0 0 1 5 0v13"></path></svg></span>
+              <span class="concern-num" aria-hidden="true">5</span>
+              <blockquote>&ldquo;They have good ideas but do not know how to structure an English response.&rdquo;</blockquote>
+              <span class="concern-fold" aria-hidden="true"></span>
+              <span class="concern-flip-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15.5-6.2M21 12a9 9 0 0 1-15.5 6.2"></path><path d="M17 3v4h-4"></path><path d="M7 21v-4h4"></path></svg></span>
+            </div>
+            <div class="concern-face concern-back">
+              <span class="concern-back-label">How DA helps</span>
+              <span class="concern-back-divider" aria-hidden="true"><span>&#10022;</span></span>
+              <ul class="concern-back-list">
+                <li><span class="concern-back-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"></path></svg></span>Provides clear paragraph and essay planning frameworks</li>
+                <li><span class="concern-back-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"></path></svg></span>Shows students how ideas connect logically</li>
+                <li><span class="concern-back-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"></path></svg></span>Gradually removes scaffolds as independence develops</li>
+              </ul>
+              <span class="concern-flip-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15.5-6.2M21 12a9 9 0 0 1-15.5 6.2"></path><path d="M17 3v4h-4"></path><path d="M7 21v-4h4"></path></svg></span>
+            </div>
+          </div>
+        </article>
+        <article class="concern-card" tabindex="0" role="button" aria-expanded="false" aria-label="How can I help them build confidence in reading, writing and analysis? Flip card to reveal how DA helps.">
+          <div class="concern-inner">
+            <div class="concern-face concern-front">
+              <span class="concern-clip" aria-hidden="true"><svg viewBox="0 0 18 32"><path d="M9 4v18a4 4 0 0 1-8 0V9a2.5 2.5 0 0 1 5 0v13"></path></svg></span>
+              <span class="concern-num" aria-hidden="true">6</span>
+              <blockquote>&ldquo;How can I help them build confidence in reading, writing and analysis?&rdquo;</blockquote>
+              <span class="concern-fold" aria-hidden="true"></span>
+              <span class="concern-flip-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15.5-6.2M21 12a9 9 0 0 1-15.5 6.2"></path><path d="M17 3v4h-4"></path><path d="M7 21v-4h4"></path></svg></span>
+            </div>
+            <div class="concern-face concern-back">
+              <span class="concern-back-label">How DA helps</span>
+              <span class="concern-back-divider" aria-hidden="true"><span>&#10022;</span></span>
+              <ul class="concern-back-list">
+                <li><span class="concern-back-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"></path></svg></span>Creates a supportive environment where questions are welcomed</li>
+                <li><span class="concern-back-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"></path></svg></span>Celebrates progress while maintaining high expectations</li>
+                <li><span class="concern-back-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"></path></svg></span>Helps students recognise and trust their own improvement</li>
+              </ul>
+              <span class="concern-flip-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15.5-6.2M21 12a9 9 0 0 1-15.5 6.2"></path><path d="M17 3v4h-4"></path><path d="M7 21v-4h4"></path></svg></span>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <div class="diff-quote-banner">
+      <span class="diff-quote-line diff-quote-line--top" aria-hidden="true"></span>
+      <div class="diff-quote-inner">
+        <span class="diff-quote-glyph" aria-hidden="true">&#10078;</span>
+        <p class="diff-quote-text" id="diffQuoteText"></p>
+        <span class="diff-quote-rule" aria-hidden="true"></span>
+        <p class="diff-quote-author" id="diffQuoteAuthor"></p>
+      </div>
+      <span class="diff-quote-line diff-quote-line--bottom" aria-hidden="true"></span>
+    </div>
+
+  <div class="preview-modal" aria-hidden="true">
+    <div class="preview-shell" role="dialog" aria-modal="true" aria-label="Booklet preview">
+      <div class="preview-top">
+        <strong class="preview-title">Sample preview</strong>
+        <button class="preview-close" type="button" aria-label="Close preview">X</button>
+      </div>
+      <div class="preview-stage">
+        <img class="preview-image" src="samples/essay_page_1.png" alt="Senior feedback preview">
+        <div class="preview-cta" hidden>
+          <h3>End of Preview</h3>
+          <p>You have seen a small sample of the resource. Click below to find out more about joining DA Tuition.</p>
+          <a href="/book-interview" target="_parent">End of Preview - Click here to find out more</a>
+        </div>
+        <div class="preview-placeholder" hidden>
+          <p class="preview-placeholder-title"></p>
+          <p class="preview-placeholder-note">Sample PDF coming soon &mdash; ask your consultant to see a printed copy in the meantime.</p>
+        </div>
+      </div>
+      <div class="preview-controls">
+        <button class="preview-arrow" type="button" data-preview-direction="-1" aria-label="Previous page">&larr;</button>
+        <button class="preview-arrow" type="button" data-preview-direction="1" aria-label="Next page">&rarr;</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="video-lightbox" aria-hidden="true" data-video-lightbox>
+    <div class="video-lightbox__frame" role="dialog" aria-modal="true" aria-label="English process video">
+      <video data-process-video-player controls playsinline></video>
+    </div>
+  </div>
+
+  <script>
+    const previewSets = {
+      y78: {
+        title: "Years 7-8 booklet preview",
+        pages: [
+          "samples/flash_y78_page_1.png",
+          "samples/flash_y78_page_2.png",
+          "samples/flash_y78_page_3.png",
+          "samples/flash_y78_page_4.png",
+          "samples/flash_y78_page_5.png",
+          "samples/flash_y78_page_6.png"
+        ]
+      },
+      y910: {
+        title: "Years 9-10 booklet preview",
+        pages: [
+          "samples/lear_page_1.png",
+          "samples/lear_page_2.png",
+          "samples/lear_page_8.png",
+          "samples/lear_page_14.png"
+        ]
+      },
+      feedback: {
+        title: "Senior feedback preview",
+        type: "feedback",
+        pages: [
+          "samples/essay_page_1.png",
+          "samples/essay_page_2.png"
+        ]
+      },
+      "fairy-tales": {
+        title: "Fairy Tales booklet preview",
+        pages: [
+          "previews/fairy-01.png",
+          "previews/fairy-02.png",
+          "previews/fairy-03.png",
+          "previews/fairy-04.png",
+          "previews/fairy-05.png",
+          { kind: "cta" }
+        ]
+      },
+      romanticism: {
+        title: "Romanticism booklet preview",
+        pages: [
+          "previews/romanticism-01.png",
+          "previews/romanticism-02.png",
+          "previews/romanticism-04.png",
+          "previews/romanticism-05.png",
+          "previews/romanticism-12.png",
+          "previews/romanticism-16.png",
+          { kind: "cta" }
+        ]
+      },
+      "feedback-sample": {
+        title: "Marked feedback sample preview",
+        type: "feedback",
+        pages: [
+          "previews/feedback-1.png",
+          "previews/feedback-2.png",
+          { kind: "cta" }
+        ]
+      }
+    };
+
+    const modal = document.querySelector(".preview-modal");
+    const previewTitle = document.querySelector(".preview-title");
+    const previewImage = document.querySelector(".preview-image");
+    const previewControls = document.querySelector(".preview-controls");
+    const previewCta = document.querySelector(".preview-cta");
+    const previewPlaceholder = document.querySelector(".preview-placeholder");
+    const previewPlaceholderTitle = document.querySelector(".preview-placeholder-title");
+    let activeGroup = "feedback";
+    let activeIndex = 0;
+    let parentOverflow = null;
+    let previewViewportSyncTimer = null;
+
+    function setPreviewViewport(){
+      let top = window.scrollY || document.documentElement.scrollTop || 0;
+      let height = window.innerHeight || document.documentElement.clientHeight || 800;
+      try{
+        if(window.parent && window.parent !== window && window.frameElement){
+          const parentWindow = window.parent;
+          const parentDoc = parentWindow.document;
+          let frameTop = 0;
+          let frameNode = window.frameElement;
+          while(frameNode){
+            frameTop += frameNode.offsetTop || 0;
+            frameNode = frameNode.offsetParent;
+          }
+          height = parentWindow.innerHeight || parentDoc.documentElement.clientHeight || height;
+          top = Math.max(0, (parentWindow.scrollY || parentDoc.documentElement.scrollTop || 0) - frameTop);
+        }
+      } catch(error){}
+      modal.style.setProperty("--preview-top", `${top}px`);
+      modal.style.setProperty("--preview-height", `${height}px`);
+    }
+
+    function updatePreviewViewportIfOpen(){
+      if(modal.classList.contains("is-open")){
+        setPreviewViewport();
+      }
+    }
+
+    function startPreviewViewportSync(){
+      clearInterval(previewViewportSyncTimer);
+      let ticks = 0;
+      previewViewportSyncTimer = setInterval(() => {
+        updatePreviewViewportIfOpen();
+        ticks += 1;
+        if(ticks >= 20 || !modal.classList.contains("is-open")){
+          clearInterval(previewViewportSyncTimer);
+          previewViewportSyncTimer = null;
+        }
+      }, 50);
+    }
+
+    function setPreviewScrollLock(locked){
+      if(locked) setPreviewViewport();
+      document.documentElement.classList.toggle("preview-open", locked);
+      document.body.classList.toggle("preview-open", locked);
+      try{
+        if(window.parent && window.parent !== window){
+          const parentDoc = window.parent.document;
+          if(locked){
+            if(!parentOverflow){
+              parentOverflow = {
+                html: parentDoc.documentElement.style.overflow,
+                body: parentDoc.body.style.overflow
+              };
+            }
+            parentDoc.documentElement.style.overflow = "hidden";
+            parentDoc.body.style.overflow = "hidden";
+          } else if(parentOverflow){
+            parentDoc.documentElement.style.overflow = parentOverflow.html;
+            parentDoc.body.style.overflow = parentOverflow.body;
+            parentOverflow = null;
+          }
+        }
+      } catch(error){}
+    }
+
+    function renderPreview(){
+      const set = previewSets[activeGroup];
+      previewTitle.textContent = `${set.title} (${activeIndex + 1} of ${set.pages.length})`;
+      const page = set.pages[activeIndex];
+      const isCta = page && page.kind === "cta";
+      previewImage.hidden = isCta;
+      previewCta.hidden = !isCta;
+      previewPlaceholder.hidden = true;
+      previewImage.classList.toggle("preview-image--feedback", set.type === "feedback");
+      if(!isCta){
+        previewImage.src = page.src || page;
+        previewImage.alt = page.alt || previewTitle.textContent;
+      }
+      document.querySelectorAll("[data-preview-direction]").forEach((button) => {
+        const nextIndex = activeIndex + Number(button.dataset.previewDirection);
+        button.disabled = nextIndex < 0 || nextIndex >= set.pages.length;
+      });
+    }
+
+    function movePreviewPage(direction){
+      if(!modal.classList.contains("is-open")) return;
+      const set = previewSets[activeGroup];
+      activeIndex = Math.max(0, Math.min(set.pages.length - 1, activeIndex + direction));
+      renderPreview();
+    }
+
+    function openPreview(group, index){
+      activeGroup = group;
+      activeIndex = Number(index) || 0;
+      renderPreview();
+      previewControls.style.display = "";
+      setPreviewScrollLock(true);
+      modal.classList.add("is-open");
+      setPreviewViewport();
+      requestAnimationFrame(setPreviewViewport);
+      setTimeout(setPreviewViewport, 50);
+      setTimeout(setPreviewViewport, 150);
+      startPreviewViewportSync();
+      modal.setAttribute("aria-hidden","false");
+    }
+
+    document.querySelectorAll("[data-preview-group]").forEach((button) => {
+      button.addEventListener("click", () => openPreview(button.dataset.previewGroup, button.dataset.previewIndex));
+    });
+
+    document.querySelectorAll("[data-preview-direction]").forEach((button) => {
+      button.addEventListener("click", () => {
+        movePreviewPage(Number(button.dataset.previewDirection));
+      });
+    });
+
+    function closePreviewModal(){
+      modal.classList.remove("is-open");
+      modal.setAttribute("aria-hidden","true");
+      clearInterval(previewViewportSyncTimer);
+      previewViewportSyncTimer = null;
+      setPreviewScrollLock(false);
+      previewImage.removeAttribute("src");
+    }
+
+    document.querySelector(".preview-close").addEventListener("click", closePreviewModal);
+
+    function handlePreviewKeydown(event){
+      if(!modal.classList.contains("is-open")) return;
+      if(event.key === "Escape"){
+        closePreviewModal();
+      } else if(event.key === "ArrowLeft"){
+        event.preventDefault();
+        movePreviewPage(-1);
+      } else if(event.key === "ArrowRight"){
+        event.preventDefault();
+        movePreviewPage(1);
+      }
+    }
+
+    document.addEventListener("keydown", handlePreviewKeydown);
+
+    modal.addEventListener("click", (event) => {
+      const previewContent = event.target.closest(".preview-image,.preview-cta,.preview-controls,.preview-close");
+      if(!previewContent) closePreviewModal();
+    });
+
+    window.addEventListener("resize", updatePreviewViewportIfOpen);
+    try{
+      if(window.parent && window.parent !== window){
+        window.parent.addEventListener("resize", updatePreviewViewportIfOpen);
+        window.parent.addEventListener("scroll", updatePreviewViewportIfOpen, { passive: true });
+        window.parent.addEventListener("keydown", handlePreviewKeydown);
+      }
+    } catch(error){}
+
+    const processVideoModal = document.querySelector("[data-video-lightbox]");
+    const processVideoPlayer = document.querySelector("[data-process-video-player]");
+    let processVideoParentOverflow = null;
+    let processVideoViewportSyncTimer = null;
+
+    function setProcessVideoViewport(){
+      if(!processVideoModal) return;
+      let top = window.scrollY || document.documentElement.scrollTop || 0;
+      let height = window.innerHeight || document.documentElement.clientHeight || 800;
+      try{
+        if(window.parent && window.parent !== window && window.frameElement){
+          const parentWindow = window.parent;
+          const parentDoc = parentWindow.document;
+          let frameTop = 0;
+          let frameNode = window.frameElement;
+          while(frameNode){
+            frameTop += frameNode.offsetTop || 0;
+            frameNode = frameNode.offsetParent;
+          }
+          height = parentWindow.innerHeight || parentDoc.documentElement.clientHeight || height;
+          top = Math.max(0, (parentWindow.scrollY || parentDoc.documentElement.scrollTop || 0) - frameTop);
+        }
+      } catch(error){}
+      processVideoModal.style.setProperty("--video-top", `${top}px`);
+      processVideoModal.style.setProperty("--video-height", `${height}px`);
+    }
+
+    function updateProcessVideoViewportIfOpen(){
+      if(processVideoModal && processVideoModal.classList.contains("is-open")){
+        setProcessVideoViewport();
+      }
+    }
+
+    function startProcessVideoViewportSync(){
+      clearInterval(processVideoViewportSyncTimer);
+      let ticks = 0;
+      processVideoViewportSyncTimer = setInterval(() => {
+        updateProcessVideoViewportIfOpen();
+        ticks += 1;
+        if(ticks >= 20 || !processVideoModal.classList.contains("is-open")){
+          clearInterval(processVideoViewportSyncTimer);
+          processVideoViewportSyncTimer = null;
+        }
+      }, 50);
+    }
+
+    function setProcessVideoScrollLock(locked){
+      if(locked) setProcessVideoViewport();
+      document.documentElement.classList.toggle("preview-open", locked);
+      document.body.classList.toggle("preview-open", locked);
+      try{
+        if(window.parent && window.parent !== window){
+          const parentDoc = window.parent.document;
+          if(locked){
+            if(!processVideoParentOverflow){
+              processVideoParentOverflow = {
+                html: parentDoc.documentElement.style.overflow,
+                body: parentDoc.body.style.overflow
+              };
+            }
+            parentDoc.documentElement.style.overflow = "hidden";
+            parentDoc.body.style.overflow = "hidden";
+          } else if(processVideoParentOverflow){
+            parentDoc.documentElement.style.overflow = processVideoParentOverflow.html;
+            parentDoc.body.style.overflow = processVideoParentOverflow.body;
+            processVideoParentOverflow = null;
+          }
+        }
+      } catch(error){}
+    }
+
+    function openProcessVideo(src){
+      if(!processVideoModal || !processVideoPlayer || !src) return;
+      processVideoPlayer.src = src;
+      processVideoModal.classList.add("is-open");
+      processVideoModal.setAttribute("aria-hidden", "false");
+      setProcessVideoScrollLock(true);
+      setProcessVideoViewport();
+      requestAnimationFrame(setProcessVideoViewport);
+      setTimeout(setProcessVideoViewport, 50);
+      setTimeout(setProcessVideoViewport, 150);
+      startProcessVideoViewportSync();
+      const playPromise = processVideoPlayer.play();
+      if(playPromise && typeof playPromise.catch === "function"){
+        playPromise.catch(() => {});
+      }
+    }
+
+    function closeProcessVideo(){
+      if(!processVideoModal || !processVideoModal.classList.contains("is-open")) return;
+      processVideoModal.classList.remove("is-open");
+      processVideoModal.setAttribute("aria-hidden", "true");
+      clearInterval(processVideoViewportSyncTimer);
+      processVideoViewportSyncTimer = null;
+      setProcessVideoScrollLock(false);
+      if(processVideoPlayer){
+        processVideoPlayer.pause();
+        processVideoPlayer.removeAttribute("src");
+        processVideoPlayer.load();
+      }
+    }
+
+    document.querySelectorAll("[data-process-video]").forEach((button) => {
+      button.addEventListener("click", () => openProcessVideo(button.dataset.processVideo));
+    });
+
+    if(processVideoModal){
+      processVideoModal.addEventListener("click", closeProcessVideo);
+      const processVideoFrame = processVideoModal.querySelector(".video-lightbox__frame");
+      if(processVideoFrame){
+        processVideoFrame.addEventListener("click", (event) => event.stopPropagation());
+      }
+    }
+
+    function handleProcessVideoKeydown(event){
+      if(!processVideoModal || !processVideoModal.classList.contains("is-open")) return;
+      if(event.key === "Escape"){
+        closeProcessVideo();
+      }
+    }
+
+    document.addEventListener("keydown", handleProcessVideoKeydown);
+    window.addEventListener("resize", updateProcessVideoViewportIfOpen);
+    try{
+      if(window.parent && window.parent !== window){
+        window.parent.addEventListener("resize", updateProcessVideoViewportIfOpen);
+        window.parent.addEventListener("scroll", updateProcessVideoViewportIfOpen, { passive: true });
+        window.parent.addEventListener("keydown", handleProcessVideoKeydown);
+      }
+    } catch(error){}
+
+    // ---- English resources: sample booklets + feedback (shelf above "Choose the class style") ----
+    const ENGLISH_RESOURCES = [
+      {
+        id: "fairy-tales",
+        kind: "booklet",
+        position: "left",
+        accent: "terracotta",
+        motif: "leaf",
+        tag: "Year 7 &middot; Term 3, Week 5",
+        title: "Fairy Tales,<br>Reimagined",
+        subtitle: "Narrative &amp; creative<br>writing booklet",
+        buttonLabel: "Open sample booklet",
+        previewGroup: "fairy-tales",
+        alt: "Sample Year 7 Fairy Tales, Reimagined booklet"
+      },
+      {
+        id: "romanticism",
+        kind: "booklet",
+        position: "center",
+        accent: "navy",
+        motif: "crown",
+        tag: "Year 11&ndash;12 &middot; Term 2, Week 8",
+        title: "Literary Movements<br>Romanticism",
+        subtitle: "HSC advanced English<br>booklet",
+        buttonLabel: "Open sample booklet",
+        previewGroup: "romanticism",
+        alt: "Sample Romanticism HSC booklet"
+      },
+      {
+        id: "feedback-sample",
+        kind: "feedback",
+        position: "right",
+        accent: "paper",
+        motif: null,
+        tag: "HSC English",
+        title: "Marked Feedback<br>Sample",
+        subtitle: "A real page of<br>teacher annotation",
+        buttonLabel: "View sample feedback",
+        previewGroup: "feedback-sample",
+        alt: "Sample page of marked HSC English feedback"
+      }
+    ];
+
+    const RESOURCE_ICONS = {
+      crest: '<svg viewBox="0 0 40 46" fill="none" stroke="currentColor" stroke-width="1.1"><path d="M20 2 L37 8 V21 C37 33 30 41 20 44 C10 41 3 33 3 21 V8 Z"/><text x="20" y="23" text-anchor="middle" font-family="Playfair Display, Georgia, serif" font-size="11" stroke="none" fill="currentColor">DA</text><text x="20" y="32" text-anchor="middle" font-family="Inter, sans-serif" font-size="4" letter-spacing="1.5" stroke="none" fill="currentColor">TUITION</text></svg>',
+      pencil: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 20l1-4.6L15.4 5 19 8.6 8.6 19 4 20Z"/><path d="M13.3 6.7 17 10.4"/></svg>',
+      crown: '<svg viewBox="0 0 100 70" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M6 60 12 20 30 42 50 12 70 42 88 20 94 60Z"/><path d="M6 60H94"/></svg>',
+      leaf: '<svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M10 90C30 60 40 30 90 10"/><path d="M30 70C40 60 46 50 50 40"/><path d="M50 50C58 44 64 38 70 28"/></svg>',
+      arrow: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>'
+    };
+
+    function stripTags(html){
+      return html.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+    }
+
+    function renderResources(){
+      const shelf = document.getElementById("resources-shelf");
+      if(!shelf) return;
+
+      const niche = `
+        <svg class="resources-niche" viewBox="0 0 280 340" aria-hidden="true">
+          <path d="M14 340 V118 C14 52 72 12 140 12 C208 12 266 52 266 118 V340"></path>
+          <ellipse cx="140" cy="160" rx="126" ry="160"></ellipse>
+        </svg>`;
+
+      const books = ENGLISH_RESOURCES.map((r) => `
+        <button class="resource-btn resource-btn--${r.position}" type="button" data-resource-id="${r.id}" aria-label="${r.buttonLabel}: ${r.alt}">
+          ${r.position === "center" ? `<span class="resource-featured" aria-hidden="true">Featured HSC resource</span>` : ""}
+          <span class="resource-cover resource-cover--${r.accent}">
+            ${r.kind === "feedback"
+              ? `<span class="resource-mark" aria-hidden="true">${RESOURCE_ICONS.pencil}</span>`
+              : `<span class="resource-crest" aria-hidden="true">${RESOURCE_ICONS.crest}</span>`}
+            <span class="resource-tag">${r.tag}</span>
+            <span class="resource-title-rule" aria-hidden="true"></span>
+            <span class="resource-title serif">${r.title}</span>
+            <span class="resource-subtitle">${r.subtitle}</span>
+            ${r.motif ? `<span class="resource-motif" aria-hidden="true">${RESOURCE_ICONS[r.motif]}</span>` : ""}
+            ${r.kind === "feedback" ? `
+              <span class="resource-feedback-note">
+                <span class="resource-feedback-script">Insightful analysis and clear use of evidence.</span>
+                <span class="resource-feedback-grade">A</span>
+              </span>` : ""}
+          </span>
+          <span class="resource-caption">
+            <span class="resource-caption-rule" aria-hidden="true"></span>
+            <span class="resource-caption-row">
+              <span class="resource-caption-label">${r.buttonLabel}</span>
+              <span class="resource-arrow" aria-hidden="true">${RESOURCE_ICONS.arrow}</span>
+            </span>
+          </span>
+        </button>
+      `).join("");
+
+      const connector = `
+        <div class="resources-connector" aria-hidden="true">
+          <svg viewBox="0 0 640 40" preserveAspectRatio="none">
+            <path d="M16 28 C 200 28 240 8 320 8 C 400 8 440 28 624 28"></path>
+            <circle cx="16" cy="28" r="2"></circle>
+            <circle cx="624" cy="28" r="2"></circle>
+          </svg>
+          <span class="resources-connector-diamond">&#10022;</span>
+        </div>`;
+
+      shelf.innerHTML = `<div class="resources-row">${niche}${books}</div>${connector}`;
+
+    }
+
+    function openResourceModal(resource){
+      if(resource.previewGroup){
+        openPreview(resource.previewGroup, 0);
+      } else {
+        previewTitle.textContent = stripTags(resource.title);
+        previewImage.hidden = true;
+        previewControls.style.display = "none";
+        previewCta.hidden = true;
+        previewPlaceholderTitle.textContent = stripTags(resource.title);
+        previewPlaceholder.hidden = false;
+        setPreviewScrollLock(true);
+        modal.classList.add("is-open");
+        modal.setAttribute("aria-hidden","false");
+      }
+    }
+
+    document.addEventListener("click", (event) => {
+      const btn = event.target.closest("[data-resource-id]");
+      if(btn){
+        event.preventDefault();
+        const resource = ENGLISH_RESOURCES.find((r) => r.id === btn.dataset.resourceId);
+        if(resource) openResourceModal(resource);
+      }
+    });
+
+    document.querySelectorAll("[data-resource-id]").forEach((btn) => {
+      btn.addEventListener("click", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        const resource = ENGLISH_RESOURCES.find((r) => r.id === btn.dataset.resourceId);
+        if(resource) openResourceModal(resource);
+      });
+    });
+
+    const concernCards = document.querySelectorAll(".concern-card");
+
+    function toggleConcernCard(card){
+      const open = !card.classList.contains("is-flipped");
+      card.classList.toggle("is-flipped", open);
+      card.setAttribute("aria-expanded", open ? "true" : "false");
+    }
+
+    concernCards.forEach((card) => {
+      card.addEventListener("click", () => toggleConcernCard(card));
+      card.addEventListener("keydown", (event) => {
+        if(event.key === "Enter" || event.key === " "){
+          event.preventDefault();
+          toggleConcernCard(card);
+        }
+      });
+    });
+
+    // Real DA Tuition Google reviews about English tutors, trimmed for a rotating pull-quote.
+    const diffQuotes = [
+      {
+        text: "My English tutor, Ms Lai, has tremendously helped me throughout my whole year 12. I was able to achieve a mark of 97 for my HSC and got 2nd in the state, boosting my ATAR to 99.85.",
+        author: "Ruby Nguyen — Year 12 Student, Google Review, 5 Stars"
+      },
+      {
+        text: "My tutor Ms Jenny has been exceptionally patient, kind and knowledgeable. I had a drastic improvement, moving from 15th to 6th in my final HSC assessment.",
+        author: "Katelin Trinh — Year 12 Student, Google Review, 5 Stars"
+      },
+      {
+        text: "Miss Kassandra is the best English tutor I have ever had. After having her for the past year, she has had a real impact on my marks — I achieved 90% on my Extension English task.",
+        author: "Sasha Cio — Year 11 Student, Google Review, 5 Stars"
+      },
+      {
+        text: "Once I met Miss Christina as my tutor, I was so happy to see my first ever A in an English assessment task. I never achieved under an A again — going on to achieve 1st in Year 11 and 3rd in Year 12, being 1 of 5 people to achieve a band 6 in my school.",
+        author: "Jimmy Sieu — Google Review, 5 Stars"
+      },
+      {
+        text: "Miss Kathleen is the best English tutor I have ever had. Before her I was averaging a low B — now I'm achieving a high A, and reached 1st place ranking in Year 11.",
+        author: "Jasmine Nguyen — Year 11 Student, Google Review, 5 Stars"
+      },
+      {
+        text: "Mr Danny has transformed my attitude toward English, a subject I used to dislike. Thanks to his engaging lessons, I've developed a real passion for English and am now scoring in the 90% range.",
+        author: "Yvan Nguyen — Google Review, 5 Stars"
+      },
+      {
+        text: "This place is amazing, this is my first term here at DA. My teacher Miss Amy is incredible and amazing. I find that DA is very dedicated and supportive to their students and their learning. At DA it really shows results even in seven weeks.",
+        author: "Joshua Dong — Google Review, 5 Stars"
+      }
+    ];
+
+    const diffQuoteText = document.getElementById("diffQuoteText");
+    const diffQuoteAuthor = document.getElementById("diffQuoteAuthor");
+
+    if(diffQuoteText && diffQuoteAuthor){
+      const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      let diffQuoteIndex = 0;
+
+      function renderDiffQuote(){
+        const q = diffQuotes[diffQuoteIndex];
+        diffQuoteText.classList.toggle("diff-quote-text--medium", q.text.length > 210 && q.text.length <= 300);
+        diffQuoteText.classList.toggle("diff-quote-text--long", q.text.length > 300);
+        diffQuoteText.textContent = "“" + q.text + "”";
+        diffQuoteAuthor.textContent = q.author;
+      }
+
+      renderDiffQuote();
+
+      setInterval(() => {
+        diffQuoteIndex = (diffQuoteIndex + 1) % diffQuotes.length;
+        if(prefersReducedMotion){
+          renderDiffQuote();
+          return;
+        }
+        diffQuoteText.classList.add("diff-quote-fade");
+        diffQuoteAuthor.classList.add("diff-quote-fade");
+        setTimeout(() => {
+          renderDiffQuote();
+          diffQuoteText.classList.remove("diff-quote-fade");
+          diffQuoteAuthor.classList.remove("diff-quote-fade");
+        }, 500);
+      }, 6500);
+    }
+
+    const yearMapSection = document.querySelector(".year-map");
+    if(yearMapSection){
+      if("IntersectionObserver" in window){
+        const yearMapObserver = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if(entry.isIntersecting){
+              yearMapSection.classList.add("is-revealed");
+              yearMapObserver.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.25 });
+        yearMapObserver.observe(yearMapSection);
+      } else {
+        yearMapSection.classList.add("is-revealed");
+      }
+    }
+
+    const stageEls = document.querySelectorAll(".year-map .stage");
+    if("IntersectionObserver" in window){
+      const stageObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if(entry.isIntersecting){
+            entry.target.classList.add("is-in");
+            stageObserver.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.22 });
+      stageEls.forEach((el) => stageObserver.observe(el));
+    } else {
+      stageEls.forEach((el) => el.classList.add("is-in"));
+    }
+
+    function typeYearMapHeading(){
+      const line1 = "A Clear English Journey,";
+      const line2 = "From Foundations to HSC";
+      const el1 = document.getElementById("year-map-type-1");
+      const el2 = document.getElementById("year-map-type-2");
+      const cursor = document.getElementById("year-map-cursor");
+      if(!el1 || !el2 || !cursor) return;
+      const speed = 34;
+
+      function typeLine(text, el, onDone){
+        let j = 0;
+        (function step(){
+          if(j <= text.length){
+            el.textContent = text.slice(0, j);
+            j++;
+            setTimeout(step, speed);
+          } else if(onDone){
+            onDone();
+          }
+        })();
+      }
+
+      typeLine(line1, el1, () => {
+        typeLine(line2, el2, () => {
+          cursor.classList.add("is-done");
+        });
+      });
+    }
+
+    const yearMapHeading = document.getElementById("year-map-heading");
+    if(yearMapHeading){
+      const prefersReducedMotionHeading = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if(prefersReducedMotionHeading){
+        document.getElementById("year-map-type-1").textContent = "A Clear English Journey,";
+        document.getElementById("year-map-type-2").textContent = "From Foundations to HSC";
+      } else if("IntersectionObserver" in window){
+        const headingObserver = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if(entry.isIntersecting){
+              typeYearMapHeading();
+              headingObserver.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.5 });
+        headingObserver.observe(yearMapHeading);
+      } else {
+        typeYearMapHeading();
+      }
+    }
+
+    // On touch devices, this page is embedded in a full-height iframe. Native
+    // touch scrolling stays inside that frame instead of continuing the site
+    // scroll, so relay vertical gestures to the parent page while preserving
+    // taps on cards and previews.
+    if(window.parent !== window && window.matchMedia("(max-width: 767px)").matches){
+      let lastTouchY = null;
+      const canForwardTouch = () => !modal.classList.contains("is-open");
+
+      document.addEventListener("touchstart", (event) => {
+        if(event.touches.length === 1 && canForwardTouch()){
+          lastTouchY = event.touches[0].clientY;
+        }
+      }, { passive: true });
+
+      document.addEventListener("touchmove", (event) => {
+        if(lastTouchY === null || event.touches.length !== 1 || !canForwardTouch()) return;
+
+        const nextTouchY = event.touches[0].clientY;
+        const distance = lastTouchY - nextTouchY;
+        lastTouchY = nextTouchY;
+
+        if(distance !== 0){
+          window.parent.scrollBy({ top: distance, left: 0, behavior: "auto" });
+          if(event.cancelable) event.preventDefault();
+        }
+      }, { passive: false });
+
+      document.addEventListener("touchend", () => { lastTouchY = null; }, { passive: true });
+      document.addEventListener("touchcancel", () => { lastTouchY = null; }, { passive: true });
+    }
+  </script>
+</body>
+</html>

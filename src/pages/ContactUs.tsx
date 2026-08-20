@@ -81,20 +81,34 @@ const ContactUs = () => {
       <NavigationNew />
 
       <main>
-        <section style={{ background: C.navy, padding: 'clamp(72px, 10vw, 128px) 24px 92px', position: 'relative', overflow: 'hidden' }}>
-          <div aria-hidden="true" style={{ position: 'absolute', inset: 0, background: 'radial-gradient(circle at 85% 15%, rgba(212,175,55,.18), transparent 30%), radial-gradient(circle at 12% 90%, rgba(240,200,106,.10), transparent 33%)' }} />
-          <div style={{ position: 'relative', maxWidth: 1120, margin: '0 auto' }}>
-            <p style={{ color: C.goldL, fontWeight: 800, letterSpacing: '.14em', textTransform: 'uppercase', fontSize: '.76rem', marginBottom: 18 }}>Contact Us</p>
-            <h1 style={{ maxWidth: 720, fontFamily: serif, fontWeight: 500, fontSize: 'clamp(3rem, 7vw, 5.5rem)', lineHeight: .96, letterSpacing: '-.035em', color: C.white, margin: 0, textWrap: 'balance' }}>A helpful answer starts with a conversation.</h1>
-            <p style={{ maxWidth: 600, color: 'rgba(247,244,238,.78)', fontSize: '1.05rem', lineHeight: 1.75, marginTop: 28 }}>Tell us what is on your mind. Whether you are exploring tutoring for the first time or looking for support with a specific subject, our team will point you in the right direction.</p>
-          </div>
-        </section>
+      <section aria-label="Contact DA Tuition" style={{ maxWidth: 1120, margin: '0 auto', padding: 'clamp(122px, 13vw, 164px) 24px 0' }}>
+        <div className="relative isolate min-h-[300px] overflow-hidden rounded-2xl sm:min-h-[360px]">
+          <img
+            src="/images/programs/highschool-tutor-1on1-1-contact-enhanced.png"
+            alt="A DA Tuition tutor smiling as she helps a student"
+            className="absolute inset-0 h-full w-full object-cover brightness-[1.02] contrast-[1.02] saturate-[1.02]"
+            style={{ objectPosition: '0% center', transform: 'translateX(18%) scale(1.05)', transformOrigin: 'right center' }}
+          />
+          <div
+            className="absolute inset-0"
+            style={{ background: 'linear-gradient(90deg, rgba(10,27,52,.98) 0%, rgba(10,27,52,.9) 36%, rgba(10,27,52,.38) 62%, rgba(10,27,52,.04) 100%)' }}
+          />
+          <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#0A1B34]/65 to-transparent" />
 
-        <section style={{ maxWidth: 1120, margin: '0 auto', padding: 'clamp(48px, 7vw, 88px) 24px', display: 'grid', gridTemplateColumns: 'minmax(0, 1.5fr) minmax(260px, .75fr)', gap: 'clamp(32px, 6vw, 80px)', alignItems: 'start' }}>
+          <div className="relative z-10 flex min-h-[300px] items-end p-6 sm:min-h-[360px] sm:p-10">
+            <div style={{ maxWidth: 460 }}>
+              <p style={{ color: C.goldL, fontSize: '.76rem', fontWeight: 800, letterSpacing: '.14em', textTransform: 'uppercase', margin: 0 }}>Contact Us</p>
+              <p style={{ color: C.white, fontFamily: serif, fontSize: 'clamp(2rem, 4vw, 3.25rem)', fontWeight: 500, lineHeight: 1.02, letterSpacing: '-.025em', margin: '10px 0 0', textWrap: 'balance' }}>A friendly conversation can make all the difference.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+        <section id="enquiry" className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.5fr)_minmax(260px,.75fr)]" style={{ maxWidth: 1120, margin: '0 auto', padding: 'clamp(44px, 6vw, 72px) 24px clamp(56px, 8vw, 96px)', gap: 'clamp(32px, 6vw, 80px)', alignItems: 'start', scrollMarginTop: 24 }}>
           <div>
             <p style={{ color: '#8a6810', fontSize: '.78rem', fontWeight: 800, letterSpacing: '.12em', textTransform: 'uppercase', marginBottom: 12 }}>Send an enquiry</p>
-            <h2 style={{ fontFamily: serif, fontSize: 'clamp(2.25rem, 4vw, 3.5rem)', fontWeight: 500, letterSpacing: '-.03em', lineHeight: 1.05, margin: 0 }}>How can we help?</h2>
-            <p style={{ color: 'rgba(10,27,52,.68)', maxWidth: 580, lineHeight: 1.75, margin: '16px 0 30px' }}>A few details help us give you a more useful response. Fields marked with an asterisk are required.</p>
+            <h1 style={{ fontFamily: serif, fontSize: 'clamp(2.5rem, 5vw, 4rem)', fontWeight: 500, letterSpacing: '-.03em', lineHeight: 1.05, margin: 0, textWrap: 'balance' }}>How can we help?</h1>
+            <p style={{ color: 'rgba(10,27,52,.68)', maxWidth: 580, lineHeight: 1.75, margin: '14px 0 30px' }}>Share a few details and our team will point you towards the right next step. Fields marked with an asterisk are required.</p>
 
             {submitted ? <div role="status" className="rounded-xl border border-brand-gold/40 bg-white p-7" style={{ boxShadow: '0 6px 20px rgba(10,27,52,.08)' }}><CheckCircle2 size={30} color={C.gold} /><h2 style={{ fontFamily: serif, fontSize: '2rem', fontWeight: 500, margin: '14px 0 8px' }}>Thank you. We have received your enquiry.</h2><p style={{ color: 'rgba(10,27,52,.7)', lineHeight: 1.7 }}>A member of the DA Tuition team will be in touch soon.</p></div> : <form onSubmit={submitEnquiry} className="rounded-xl bg-white p-5 sm:p-8" style={{ boxShadow: '0 6px 20px rgba(10,27,52,.08)' }}>
               <div className="grid gap-5 sm:grid-cols-2">

@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 340" role="img" aria-labelledby="extTitle extDesc">
+  <title id="extTitle">An extension plan</title>
+  <desc id="extDesc">A four step plan taking a capable student above the syllabus, from securing the course to competition style problems.</desc>
+  <defs>
+    <filter id="extShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="6" stdDeviation="10" flood-color="#071629" flood-opacity="0.14"/>
+    </filter>
+  </defs>
+
+  <g filter="url(#extShadow)">
+    <rect x="24" y="18" width="472" height="304" rx="6" fill="#ffffff" stroke="#e3e6ea"/>
+    <rect x="24" y="18" width="472" height="6" fill="#c9a227"/>
+  </g>
+
+  <text x="52" y="56" font-family="Georgia, serif" font-size="12" fill="#a88314" letter-spacing="1.8">EXTENSION PLAN &#183; ABOVE THE SYLLABUS</text>
+
+  <line x1="70" y1="88" x2="70" y2="264" stroke="#c9a227" stroke-width="2" stroke-dasharray="4 6"/>
+
+  <g>
+    <circle cx="70" cy="96" r="9" fill="#dfe8e1" stroke="#c9a227" stroke-width="2"/>
+    <text x="96" y="94" font-family="Georgia, serif" font-size="15" fill="#2b3b4f">Secure the course work first. No gaps left behind.</text>
+    <text x="96" y="114" font-family="Georgia, serif" font-size="12" fill="#8fa0b2">Weeks 1 to 3</text>
+  </g>
+  <g>
+    <circle cx="70" cy="152" r="9" fill="#e4d39e" stroke="#c9a227" stroke-width="2"/>
+    <text x="96" y="150" font-family="Georgia, serif" font-size="15" fill="#2b3b4f">Harder problem sets, chosen not invented.</text>
+    <text x="96" y="170" font-family="Georgia, serif" font-size="12" fill="#8fa0b2">Weeks 4 to 8</text>
+  </g>
+  <g>
+    <circle cx="70" cy="208" r="9" fill="#e7dcc0" stroke="#c9a227" stroke-width="2"/>
+    <text x="96" y="206" font-family="Georgia, serif" font-size="15" fill="#2b3b4f">Explain a method to the group, out loud.</text>
+    <text x="96" y="226" font-family="Georgia, serif" font-size="12" fill="#8fa0b2">Ongoing</text>
+  </g>
+  <g>
+    <circle cx="70" cy="264" r="9" fill="#c9a227" stroke="#c9a227" stroke-width="2"/>
+    <text x="96" y="262" font-family="Georgia, serif" font-size="15" fill="#2b3b4f">Past papers under time, then competition style questions.</text>
+    <text x="96" y="282" font-family="Georgia, serif" font-size="12" fill="#8fa0b2">Term 2 onwards</text>
+  </g>
+
+  <text x="96" y="308" font-family="Georgia, serif" font-style="italic" font-size="14" fill="#a88314">Stretch, with someone standing close enough to catch it.</text>
+</svg>

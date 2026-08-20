@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 340" role="img" aria-labelledby="exTitle exDesc">
+  <title id="exTitle">Exam paper analysis</title>
+  <desc id="exDesc">A breakdown of where a student lost marks in an exam, showing most marks were lost to an earlier foundation gap rather than to the current topic.</desc>
+  <defs>
+    <filter id="exShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="6" stdDeviation="10" flood-color="#071629" flood-opacity="0.14"/>
+    </filter>
+  </defs>
+
+  <g filter="url(#exShadow)">
+    <rect x="24" y="18" width="472" height="304" rx="6" fill="#ffffff" stroke="#e3e6ea"/>
+    <rect x="24" y="18" width="472" height="6" fill="#c9a227"/>
+  </g>
+
+  <text x="52" y="56" font-family="Georgia, serif" font-size="12" fill="#a88314" letter-spacing="1.8">EXAM ANALYSIS &#183; WHERE THE MARKS WENT</text>
+
+  <g font-family="Georgia, serif" font-size="13" fill="#40536a">
+    <text x="52" y="96">Careless slips</text>
+    <text x="52" y="146">Current topic</text>
+    <text x="52" y="196">Exam technique</text>
+    <text x="52" y="246">Foundation gap</text>
+  </g>
+
+  <g>
+    <rect x="176" y="82" width="46" height="18" rx="3" fill="#dfe8e1"/>
+    <rect x="176" y="132" width="78" height="18" rx="3" fill="#dfe8e1"/>
+    <rect x="176" y="182" width="112" height="18" rx="3" fill="#e4d39e"/>
+    <rect x="176" y="232" width="242" height="18" rx="3" fill="#c9a227"/>
+  </g>
+
+  <g font-family="Georgia, serif" font-size="12" fill="#8a6810">
+    <text x="230" y="96">2 marks</text>
+    <text x="262" y="146">4 marks</text>
+    <text x="296" y="196">6 marks</text>
+    <text x="426" y="246">14 marks</text>
+  </g>
+
+  <g transform="translate(300 258)">
+    <path d="M60 4 q-14 16 -44 10" fill="none" stroke="#c9a227" stroke-width="2" stroke-linecap="round"/>
+    <path d="M22 8 l-6 6 7 4" fill="none" stroke="#c9a227" stroke-width="2" stroke-linecap="round"/>
+  </g>
+
+  <text x="52" y="292" font-family="Georgia, serif" font-style="italic" font-size="15" fill="#4a3c0d">The effort was never the problem. The gap was three years old.</text>
+</svg>

@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 340" role="img" aria-labelledby="obsTitle obsDesc">
+  <title id="obsTitle">First lesson observation</title>
+  <desc id="obsDesc">A tutor's observation card from a student's first lesson, listing what was noticed about their confidence rather than their marks.</desc>
+  <defs>
+    <filter id="obsShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="6" stdDeviation="10" flood-color="#071629" flood-opacity="0.14"/>
+    </filter>
+  </defs>
+
+  <g filter="url(#obsShadow)">
+    <rect x="24" y="18" width="472" height="304" rx="6" fill="#ffffff" stroke="#e3e6ea"/>
+    <rect x="24" y="18" width="472" height="6" fill="#c9a227"/>
+  </g>
+
+  <text x="52" y="56" font-family="Georgia, serif" font-size="12" fill="#a88314" letter-spacing="1.8">FIRST LESSON &#183; WHAT THE TUTOR NOTICED</text>
+
+  <g font-family="Georgia, serif" font-size="15" fill="#2b3b4f">
+    <text x="76" y="98">Knows the content. Waits to be asked.</text>
+    <text x="76" y="140">Erases correct working before showing it.</text>
+    <text x="76" y="182">Answers quietly, then checks a face for approval.</text>
+    <text x="76" y="224">Volunteers nothing in the first forty minutes.</text>
+  </g>
+
+  <g fill="none" stroke="#c9a227" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M52 92 l6 7 12 -16"/>
+    <path d="M52 134 l6 7 12 -16"/>
+    <path d="M52 176 l6 7 12 -16"/>
+    <path d="M52 218 l6 7 12 -16"/>
+  </g>
+
+  <line x1="52" y1="248" x2="468" y2="248" stroke="#eef1f4" stroke-width="1"/>
+
+  <text x="52" y="276" font-family="Georgia, serif" font-size="12" fill="#a88314" letter-spacing="1.6">STARTING POINT</text>
+  <text x="52" y="302" font-family="Georgia, serif" font-style="italic" font-size="16" fill="#4a3c0d">Questions she can win. Then wait for the hand.</text>
+</svg>

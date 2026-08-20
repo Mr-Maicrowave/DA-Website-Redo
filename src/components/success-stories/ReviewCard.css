@@ -1,0 +1,213 @@
+.review-plaque {
+  --plaque-depth: 12px;
+  --plaque-half-depth: 6px;
+  --plaque-rotate-x: 0deg;
+  --plaque-rotate-y: 0deg;
+  --plaque-light-x: 28%;
+  --plaque-light-y: 18%;
+  --plaque-shadow-x: 0px;
+  --plaque-shadow-y: 10px;
+  position: relative;
+  width: min(100%, 22.5rem);
+  min-height: 15.625rem;
+  border-radius: 20px;
+  transform: translateZ(0) rotateX(var(--plaque-rotate-x)) rotateY(var(--plaque-rotate-y));
+  transform-style: preserve-3d;
+  transition: transform 440ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+
+.review-plaque:hover {
+  transform: translateZ(38px) rotateX(var(--plaque-rotate-x)) rotateY(var(--plaque-rotate-y)) scale(1.025);
+}
+
+.review-plaque__shell,
+.review-plaque__back,
+.review-plaque__edge {
+  position: absolute;
+  border: 1px solid rgba(174, 128, 43, 0.24);
+  background: linear-gradient(90deg, #c4a36c, #ead8b1 46%, #b69054);
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+  pointer-events: none;
+}
+
+.review-plaque__shell {
+  inset: 0;
+  border-radius: 20px;
+  background: linear-gradient(145deg, #f5ead3 0%, #ddc69a 72%, #c29f65 100%);
+  box-shadow: 0 14px 26px rgba(91, 65, 25, 0.09);
+}
+
+.review-plaque__shell--far {
+  opacity: 0;
+  transform: translate3d(8px, 8px, -12px);
+}
+
+.review-plaque__shell--near {
+  border-color: rgba(182, 132, 38, 0.26);
+  background: linear-gradient(145deg, #f4e8d0 0%, #e2cda6 78%, #c5a36b 100%);
+  transform: translate3d(8px, 8px, -10px);
+}
+
+.review-plaque__back {
+  inset: 0;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #e2cea7, #b79760);
+  transform: translateZ(calc(var(--plaque-half-depth) * -1)) rotateY(180deg);
+}
+
+.review-plaque__edge--left,
+.review-plaque__edge--right {
+  top: 20px;
+  bottom: 20px;
+  width: var(--plaque-depth);
+}
+
+.review-plaque__edge--left {
+  left: calc(var(--plaque-half-depth) * -1);
+  transform: rotateY(-90deg);
+}
+
+.review-plaque__edge--right {
+  right: calc(var(--plaque-half-depth) * -1);
+  background: linear-gradient(180deg, #ead9b7, #c6a064);
+  transform: rotateY(90deg);
+}
+
+.review-plaque__edge--top,
+.review-plaque__edge--bottom {
+  right: 20px;
+  left: 20px;
+  height: var(--plaque-depth);
+}
+
+.review-plaque__edge--top {
+  top: calc(var(--plaque-half-depth) * -1);
+  transform: rotateX(90deg);
+}
+
+.review-plaque__edge--bottom {
+  bottom: calc(var(--plaque-half-depth) * -1);
+  background: linear-gradient(90deg, #e5cea0, #be985d);
+  transform: rotateX(-90deg);
+}
+
+.review-card {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  width: 100%;
+  min-height: inherit;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 32px 34px 30px;
+  border: 1px solid rgba(194, 145, 42, 0.32);
+  border-radius: 20px;
+  background:
+    radial-gradient(circle at 16% 20%, rgba(155, 109, 33, 0.035) 0 0.7px, transparent 1px),
+    linear-gradient(135deg, #fffaf0 0%, #f8edda 100%);
+  background-size: 25px 25px, auto;
+  box-shadow:
+    var(--plaque-shadow-x) calc(var(--plaque-shadow-y) + 8px) 36px rgba(78, 56, 22, 0.12),
+    var(--plaque-shadow-x) var(--plaque-shadow-y) 12px rgba(78, 56, 22, 0.07),
+    inset 1px 1px rgba(255, 255, 255, 0.92),
+    inset -2px -2px rgba(104, 72, 27, 0.16);
+  color: #071a33;
+  transform: translateZ(var(--plaque-half-depth));
+  transform-style: preserve-3d;
+  transition: border-color 440ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 440ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.review-plaque:hover .review-card {
+  border-color: rgba(194, 145, 42, 0.4);
+  box-shadow:
+    var(--plaque-shadow-x) calc(var(--plaque-shadow-y) + 12px) 42px rgba(78, 56, 22, 0.16),
+    var(--plaque-shadow-x) var(--plaque-shadow-y) 15px rgba(78, 56, 22, 0.09),
+    inset 1px 1px rgba(255, 255, 255, 0.82),
+    inset -1px -1px rgba(129, 95, 35, 0.1);
+}
+
+.review-card__light {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  background: radial-gradient(circle at var(--plaque-light-x) var(--plaque-light-y), rgba(255, 235, 183, 0.16), transparent 38%);
+  opacity: 0.35;
+  pointer-events: none;
+  transition: opacity 300ms ease;
+}
+
+.review-plaque:hover .review-card__light { opacity: 1; }
+
+.review-card__header,
+.review-card__review,
+.review-card__reviewer {
+  position: relative;
+  z-index: 2;
+  transform-style: preserve-3d;
+}
+
+.review-card__header { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+
+.review-card__stars {
+  display: inline-flex;
+  color: #b88724;
+  font-size: 0.94rem;
+  letter-spacing: 0.075em;
+  line-height: 1;
+  transform: translateZ(7px);
+}
+
+.review-card__empty-stars { color: rgba(184, 135, 36, 0.24); }
+
+.review-card__google-icon {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  transform: translateZ(10px);
+}
+
+.review-card__review {
+  display: -webkit-box;
+  overflow: hidden;
+  max-width: 34ch;
+  margin: 28px 0 26px;
+  color: #10223a;
+  font-family: var(--font-sans, Arial, sans-serif);
+  font-size: 17px;
+  line-height: 1.55;
+  text-wrap: pretty;
+  transform: translateZ(4px);
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 5;
+  line-clamp: 5;
+}
+
+.review-card__reviewer {
+  display: grid;
+  gap: 0.28rem;
+  margin-top: auto;
+  font-family: var(--font-sans, Arial, sans-serif);
+  font-style: normal;
+  transform: translateZ(5px);
+}
+
+.review-card__reviewer strong { color: #071a33; font-size: 15px; font-weight: 700; letter-spacing: 0.01em; }
+.review-card__reviewer span { color: #8d6720; font-size: 12px; font-weight: 600; letter-spacing: 0.04em; }
+
+@media (max-width: 48rem) {
+  .review-plaque { width: min(85vw, 21rem); min-height: 14.5rem; transform: rotateX(1.5deg) rotateY(-2deg); }
+  .review-plaque:hover { transform: rotateX(1.5deg) rotateY(-2deg); }
+  .review-card { padding: 1.5rem; }
+}
+
+@media (hover: none), (pointer: coarse) {
+  .review-plaque:hover { transform: translateZ(0) rotateX(1.5deg) rotateY(-2deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .review-plaque, .review-card { transition-duration: 1ms; }
+  .review-plaque, .review-plaque:hover { transform: rotateX(1.5deg) rotateY(-2deg); }
+}

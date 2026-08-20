@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 360" role="img" aria-labelledby="paperTitle paperDesc">
+  <title id="paperTitle">A marked practice paper</title>
+  <desc id="paperDesc">A student's worked mathematics question annotated by a DA tutor, with a circled step, a margin note and a tick.</desc>
+  <defs>
+    <filter id="pshadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="6" stdDeviation="10" flood-color="#071629" flood-opacity="0.14"/>
+    </filter>
+  </defs>
+
+  <g filter="url(#pshadow)">
+    <rect x="24" y="18" width="472" height="324" rx="6" fill="#ffffff"/>
+    <rect x="24" y="18" width="472" height="324" rx="6" fill="none" stroke="#e3e6ea" stroke-width="1"/>
+  </g>
+
+  <g stroke="#eef1f4" stroke-width="1">
+    <line x1="24" y1="66" x2="496" y2="66"/>
+    <line x1="24" y1="106" x2="496" y2="106"/>
+    <line x1="24" y1="146" x2="496" y2="146"/>
+    <line x1="24" y1="186" x2="496" y2="186"/>
+    <line x1="24" y1="226" x2="496" y2="226"/>
+    <line x1="24" y1="266" x2="496" y2="266"/>
+    <line x1="24" y1="306" x2="496" y2="306"/>
+  </g>
+  <line x1="82" y1="18" x2="82" y2="342" stroke="#f2d9d6" stroke-width="1.5"/>
+
+  <text x="100" y="46" font-family="Georgia, serif" font-size="13" fill="#8fa0b2" letter-spacing="1.4">PRACTICE PAPER · QUESTION 3</text>
+
+  <g font-family="Georgia, serif" font-size="16" fill="#2b3b4f">
+    <text x="100" y="94">3.  Solve for x:</text>
+    <text x="236" y="94" font-style="italic">2x&#178; &#8722; 5x &#8722; 3 = 0</text>
+    <text x="118" y="134" font-style="italic">(2x + 1)(x &#8722; 3) = 0</text>
+    <text x="118" y="174" font-style="italic">x = &#8722;&#189;   ,   x = 3</text>
+  </g>
+
+  <g font-family="Georgia, serif" font-size="15" fill="#94a3b3">
+    <text x="118" y="214" font-style="italic">4.  Solve for x:  3x&#178; + 7x = 0</text>
+    <text x="118" y="252" font-style="italic">x(3x + 7) = 0</text>
+    <text x="118" y="290" font-style="italic">x = 0  ,  x = &#8722;7/3</text>
+  </g>
+
+  <ellipse cx="184" cy="129" rx="86" ry="20" fill="none" stroke="#c9a227" stroke-width="2.4" transform="rotate(-1.5 184 129)"/>
+
+  <g stroke="#c9a227" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M300 166 l7 9 15 -21"/>
+  </g>
+
+  <g transform="translate(300 190)">
+    <path d="M-6 6 q22 -20 52 -12" fill="none" stroke="#c9a227" stroke-width="2" stroke-linecap="round"/>
+    <path d="M40 -8 l6 2 -3 6" fill="none" stroke="#c9a227" stroke-width="2" stroke-linecap="round"/>
+    <text x="2" y="30" font-family="Georgia, serif" font-style="italic" font-size="14" fill="#a88314">factorising is solid now,</text>
+    <text x="2" y="50" font-family="Georgia, serif" font-style="italic" font-size="14" fill="#a88314">check the sign on the second root</text>
+  </g>
+
+  <g transform="translate(96 246)">
+    <path d="M0 0 q10 -14 24 -8" fill="none" stroke="#c9a227" stroke-width="2" stroke-linecap="round"/>
+    <text x="-58" y="10" font-family="Georgia, serif" font-style="italic" font-size="14" fill="#a88314">slow</text>
+    <text x="-62" y="28" font-family="Georgia, serif" font-style="italic" font-size="14" fill="#a88314">down</text>
+    <text x="-56" y="46" font-family="Georgia, serif" font-style="italic" font-size="14" fill="#a88314">here</text>
+  </g>
+</svg>

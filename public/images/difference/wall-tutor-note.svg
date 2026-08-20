@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 300" role="img" aria-labelledby="wnTitle wnDesc">
+  <title id="wnTitle">A tutor note from the wall</title>
+  <desc id="wnDesc">A cream notepad page pinned to the wall, carrying a short handwritten line from Mr Phillip about a student who stopped rushing question three.</desc>
+  <defs>
+    <linearGradient id="wnPaper" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fffdf6"/>
+      <stop offset="100%" stop-color="#f7f0dd"/>
+    </linearGradient>
+  </defs>
+
+  <rect x="10" y="10" width="400" height="280" rx="8" fill="url(#wnPaper)" stroke="#e2d6b4"/>
+  <rect x="10" y="10" width="400" height="34" rx="8" fill="#e7dcc0"/>
+  <rect x="10" y="36" width="400" height="8" fill="#e7dcc0"/>
+
+  <circle cx="120" cy="27" r="5" fill="#c9a227" opacity="0.55"/>
+  <circle cx="200" cy="27" r="5" fill="#c9a227" opacity="0.55"/>
+  <circle cx="280" cy="27" r="5" fill="#c9a227" opacity="0.55"/>
+
+  <text x="40" y="76" font-family="Georgia, serif" font-size="11" fill="#a88314" letter-spacing="1.8">TUTOR NOTE</text>
+
+  <g stroke="#e5dcc4" stroke-width="1">
+    <line x1="40" y1="112" x2="380" y2="112"/>
+    <line x1="40" y1="150" x2="380" y2="150"/>
+    <line x1="40" y1="188" x2="380" y2="188"/>
+    <line x1="40" y1="226" x2="380" y2="226"/>
+  </g>
+  <line x1="56" y1="60" x2="56" y2="266" stroke="#e9c9c4" stroke-width="1.5"/>
+
+  <g font-family="Georgia, serif" font-style="italic" fill="#4a3c0d">
+    <text x="70" y="132" font-size="17">She has stopped rushing</text>
+    <text x="70" y="170" font-size="17">question three. That was</text>
+    <text x="70" y="208" font-size="17">never carelessness.</text>
+  </g>
+
+  <path d="M68 216 q80 8 170 2" fill="none" stroke="#c9a227" stroke-width="2" stroke-linecap="round" opacity="0.75"/>
+
+  <text x="70" y="258" font-family="Georgia, serif" font-size="12" fill="#a88314">Mr Phillip</text>
+  <text x="292" y="258" font-family="Georgia, serif" font-size="11" fill="#b9a878" letter-spacing="1.2">WEEK 6</text>
+</svg>

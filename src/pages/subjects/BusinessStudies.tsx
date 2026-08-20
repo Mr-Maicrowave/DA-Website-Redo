@@ -1,10 +1,24 @@
 import React from 'react';
 import NavigationNew from '@/components/NavigationNew';
 import FooterNew from '@/components/FooterNew';
+import SubjectHero from '@/components/subjects/SubjectHero';
+import SubjectTypedBanner from '@/components/subjects/SubjectTypedBanner';
+import TrustedSchoolsStrip from '@/components/subjects/TrustedSchoolsStrip';
 import { Button } from '@/components/ui/button';
 import { TrendingUp, Briefcase, LineChart, CheckCircle, ArrowRight, Quote, Target, Info } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import SEO from '@/components/SEO';
+import { BusinessStudiesIntroVideoGate } from '@/features/business-intro-video/BusinessStudiesIntroVideoGate';
+
+const businessTrustedSchools = [
+  { name: 'Freeman Catholic College', logoSrc: '/images/schools/freeman-catholic-college.png' },
+  { name: 'Mary MacKillop Catholic College', logoSrc: '/images/schools/mary-mackillop-catholic-college.png' },
+  { name: 'Canley Vale High School', logoSrc: '/images/schools/canley-vale-high-school.png' },
+  { name: 'Fairvale High School', logoSrc: '/images/schools/fairvale-high-school.png' },
+  { name: 'Patrician Brothers Catholic College Fairfield', logoSrc: '/images/schools/patrician-brothers-fairfield.png' },
+  { name: "St John's Park High School", logoSrc: '/images/schools/st-johns-park-high-school.png' },
+  { name: 'Al-Faisal College', logoSrc: '/images/schools/al-faisal-college.png' },
+];
 
 const BusinessStudies = () => {
   const topics = [
@@ -66,6 +80,7 @@ const BusinessStudies = () => {
 
   return (
     <div className="min-h-screen bg-white">
+      <BusinessStudiesIntroVideoGate />
       <SEO
         title="HSC Business Studies Tutoring"
         description="Master business concepts through case studies and real-world applications at DA Tuition."
@@ -73,39 +88,26 @@ const BusinessStudies = () => {
       />
       <NavigationNew />
 
-      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 mt-[120px]">
-        {/* Hero Section */}
-        <section className="relative rounded-[2.5rem] overflow-hidden shadow-2xl mx-4 sm:mx-0 mt-6 mb-16">
-          <div className="absolute inset-0">
-            <img src="/images/programs/highschool-tutor-laugh.jpg" alt="Business Studies Tutoring" className="w-full h-full object-cover" />
-            <div className="absolute inset-0 bg-brand-navy/80 mix-blend-multiply"></div>
-            <div className="absolute inset-0 bg-gradient-to-t from-brand-navy/90 via-brand-navy/50 to-brand-navy/30"></div>
-          </div>
+      <SubjectHero
+        eyebrow="Years 11-12 Business Studies"
+        icon={Briefcase}
+        headlineWhite="From Business Knowledge to"
+        headlineGold="HSC Mastery."
+        subtext="Understand the syllabus. Apply real case studies. Analyse business strategy. Write responses built for the HSC."
+        proofPills={['Real case studies', 'Marked feedback', 'Clear HSC pathway']}
+        exploreTargetId="business-modules"
+        placeholderLabel="Business Studies classroom"
+        backgroundImageSrc="/images/subjects/business-studies/hero-background.png"
+        backgroundImageAlt="DA Tuition Business Studies classroom"
+      />
 
-          <div className="relative z-10 max-w-4xl mx-auto text-center py-12 sm:py-16 lg:py-24 px-6">
-            <div className="inline-flex items-center justify-center space-x-2 bg-white/10 backdrop-blur-md rounded-full px-6 py-2 border border-white/20 mb-8">
-              <Briefcase className="w-5 h-5 text-blue-400" />
-              <span className="text-sm font-bold text-white tracking-wide uppercase">Years 11 & 12</span>
-            </div>
-
-            <h1 className="text-3xl sm:text-4xl lg:text-7xl font-extrabold text-white mb-6 tracking-tight leading-tight drop-shadow-lg">
-              Business <br />
-              <span className="text-blue-400">Studies</span>
-            </h1>
-
-            <p className="text-xl text-white/90 max-w-2xl mx-auto mb-10 leading-relaxed drop-shadow-md">
-              HSC Business Excellence. Master business concepts through case studies and real-world applications.
-            </p>
-
-            <div className="flex justify-center">
-              <Button size="lg" className="bg-blue-500 text-white hover:bg-blue-600 font-bold px-8 h-14 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all">
-                Book Interview
-                <ArrowRight className="ml-2 w-5 h-5" />
-              </Button>
-            </div>
-          </div>
-        </section>
-      </div>
+      <TrustedSchoolsStrip schools={businessTrustedSchools} className="subject-school-strip-compact" />
+      <SubjectTypedBanner
+        imageSrc="/images/subjects/business-studies/master-business-studies-banner.png"
+        imageAlt="Business Studies banner with business books, a globe, stationery, and a growth chart"
+        headline="Master Business Studies."
+        emphasis="Think strategically. Lead with insight."
+      />
 
       {/* Learning Formats Callout */}
       <section className="py-12">
@@ -133,7 +135,7 @@ const BusinessStudies = () => {
       </section>
 
       {/* HSC Business Studies Modules */}
-      <section className="py-16 bg-gray-50">
+      <section id="business-modules" className="py-16 bg-gray-50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-center text-brand-midnight mb-4">
             HSC Business Studies Syllabus

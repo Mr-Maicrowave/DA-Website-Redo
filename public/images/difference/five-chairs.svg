@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 300" role="img" aria-labelledby="chairsTitle chairsDesc">
+  <title id="chairsTitle">One table, four students, one empty seat</title>
+  <desc id="chairsDesc">A line drawing of a DA table seating four students with a fifth seat deliberately left empty, illustrating the small group size.</desc>
+
+  <rect width="520" height="300" fill="#fbf8ef"/>
+
+  <ellipse cx="260" cy="168" rx="150" ry="62" fill="#f3ecda" stroke="#c9a227" stroke-width="1.6"/>
+  <ellipse cx="260" cy="162" rx="150" ry="62" fill="#fffdf6" stroke="#c9a227" stroke-width="2"/>
+
+  <g fill="none" stroke="#c9a227" stroke-width="1.4" opacity="0.65">
+    <rect x="176" y="146" width="42" height="28" rx="2" transform="rotate(-8 197 160)"/>
+    <rect x="240" y="140" width="44" height="28" rx="2" transform="rotate(3 262 154)"/>
+    <rect x="310" y="150" width="40" height="26" rx="2" transform="rotate(-4 330 163)"/>
+  </g>
+
+  <g>
+    <circle cx="132" cy="118" r="21" fill="#e7dcc0" stroke="#a88314" stroke-width="2"/>
+    <path d="M108 152 q24 -22 48 0" fill="#e7dcc0" stroke="#a88314" stroke-width="2"/>
+  </g>
+  <g>
+    <circle cx="216" cy="90" r="21" fill="#dfe8e1" stroke="#a88314" stroke-width="2"/>
+    <path d="M192 124 q24 -22 48 0" fill="#dfe8e1" stroke="#a88314" stroke-width="2"/>
+  </g>
+  <g>
+    <circle cx="304" cy="90" r="21" fill="#e4d39e" stroke="#a88314" stroke-width="2"/>
+    <path d="M280 124 q24 -22 48 0" fill="#e4d39e" stroke="#a88314" stroke-width="2"/>
+  </g>
+  <g>
+    <circle cx="388" cy="118" r="21" fill="#dce2df" stroke="#a88314" stroke-width="2"/>
+    <path d="M364 152 q24 -22 48 0" fill="#dce2df" stroke="#a88314" stroke-width="2"/>
+  </g>
+
+  <g stroke="#c9a227" stroke-width="2" stroke-dasharray="6 6" fill="none">
+    <circle cx="260" cy="252" r="21"/>
+    <path d="M236 286 q24 -22 48 0"/>
+  </g>
+
+  <g transform="translate(300 246)">
+    <path d="M-8 6 q26 -14 54 -6" fill="none" stroke="#c9a227" stroke-width="2" stroke-linecap="round"/>
+    <path d="M40 -4 l6 4 -4 5" fill="none" stroke="#c9a227" stroke-width="2" stroke-linecap="round"/>
+    <text x="54" y="10" font-family="Georgia, serif" font-style="italic" font-size="15" fill="#a88314">we stop at five</text>
+    <text x="54" y="30" font-family="Georgia, serif" font-style="italic" font-size="15" fill="#a88314">on purpose</text>
+  </g>
+
+  <text x="40" y="42" font-family="Georgia, serif" font-size="15" fill="#a88314" letter-spacing="1.6">ONE TABLE</text>
+</svg>

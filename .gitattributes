@@ -1,2 +1,4 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+public/videos/stories/*.mp4 filter=lfs diff=lfs merge=lfs -text
+public/Photos[[:space:]]and[[:space:]]Videos/jenseriamy.MP4 filter=lfs diff=lfs merge=lfs -text
