@@ -1,6 +1,7 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { ArrowLeft, ArrowRight, Check, ChevronLeft, ChevronRight, Search, X } from 'lucide-react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import { useSearchParams } from 'react-router-dom';
 import NavigationNew from '@/components/NavigationNew';
 import FooterNew from '@/components/FooterNew';
 import SEO from '@/components/SEO';
@@ -13,6 +14,8 @@ import {
   teachesMath,
   teachesScience,
 } from '@/data/teacherCatalogue';
+import { profileContentFor, profilePronounsFor, profileSubjectGroupsFor } from './profileContent';
+import { resetProfileScroll } from './profileNavigation';
 import './FindTeacher.css';
 
 type FilterKey = 'all' | 'english' | 'maths' | 'science' | 'primary';
@@ -127,7 +130,7 @@ function EducatorCard({
               <span key={strength}><b>{String(index + 1).padStart(2, '0')}</b>{strength}</span>
             ))}
           </div>
-          <button ref={buttonRef} type="button" onClick={() => buttonRef.current && onOpen(buttonRef.current)}>
+          <button ref={buttonRef} data-tutor-id={teacher.id} type="button" onClick={() => buttonRef.current && onOpen(buttonRef.current)}>
             Read full profile <ArrowRight />
           </button>
         </div>
@@ -195,7 +198,15 @@ function FullProfile({
   returnFocusTo: HTMLElement | null;
 }) {
   const panelRef = useRef<HTMLDivElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
   const reduceMotion = useReducedMotion();
+  const content = profileContentFor(teacher);
+  const pronouns = profilePronounsFor(teacher.name);
+  const subjectGroups = profileSubjectGroupsFor(subjects(teacher));
+
+  useLayoutEffect(() => {
+    resetProfileScroll(scrollRef.current);
+  }, [teacher.id]);
 
   useEffect(() => {
     panelRef.current?.focus();
@@ -234,58 +245,74 @@ function FullProfile({
         </div>
       </header>
 
-      <div className="full-profile__scroll">
-        <section className="full-profile__hero">
-          <div className="full-profile__photo"><Portrait teacher={teacher} eager /></div>
-          <div className="full-profile__intro">
-            <p>{subjectLabel(teacher)}</p>
-            <h1 id="full-profile-name">{teacher.name}</h1>
-            <h2>{teacher.designation}</h2>
-            <blockquote>“{teacher.tagline}”</blockquote>
-            <a href="/book-interview">Discuss the right class <ArrowRight /></a>
-          </div>
-        </section>
-
-        <div className="full-profile__body">
-          <aside>
-            <h2>A good fit if your child…</h2>
-            <ul>{fitGuidance(teacher).map(item => <li key={item}><Check />{item}</li>)}</ul>
-            <small>Class placement also considers year level, availability and your child’s goals.</small>
+      <div ref={scrollRef} className="full-profile__scroll">
+        <AnimatePresence initial={false} mode="popLayout">
+        <motion.section
+          key={teacher.id}
+          className="full-profile__layout"
+          initial={{ opacity: 0, x: reduceMotion ? 0 : 18 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: reduceMotion ? 0 : -18 }}
+          transition={{ duration: reduceMotion ? .1 : .26, ease: [0.2, 0.75, 0.2, 1] }}
+        >
+          <aside className="full-profile__rail" aria-label={`${teacher.name} portrait`}>
+            <div className="full-profile__photo"><Portrait teacher={teacher} eager /></div>
           </aside>
-          <main>
-            <section>
-              <h2>In the classroom</h2>
-              <p className="full-profile__lead">{biography(teacher)}</p>
-            </section>
-            <blockquote className="full-profile__motto">“{teacher.motto}”</blockquote>
-            <section className="full-profile__columns">
+
+          <main className="full-profile__content">
+            <header className="full-profile__intro">
+              <p>{subjectLabel(teacher)}</p>
+              <div className="full-profile__subject-chips" aria-label={`Subjects taught by ${teacher.name}`}>
+                {subjectGroups.map(group => <span key={group.category} className={`full-profile__subject-chip full-profile__subject-chip--${group.category}`}>{group.label}</span>)}
+              </div>
+              <h1 id="full-profile-name">{teacher.name}</h1>
+              <h2>{teacher.designation}</h2>
+              <blockquote>“{teacher.tagline}”</blockquote>
+            </header>
+
+            {content.strengths.length > 0 && (
+              <section className="full-profile__strengths">
+                <h2>Teaching strengths</h2>
+                <ul>{content.strengths.map(strength => <li key={strength}>{strength}</li>)}</ul>
+              </section>
+            )}
+
+            <section className="full-profile__story">
               <div>
-                <h2>What I want for students</h2>
-                <p>{teacher.profile?.goals ?? teacher.motto}</p>
+                <h2>{pronouns.possessive[0].toUpperCase() + pronouns.possessive.slice(1)} approach</h2>
+                <p>{content.approach}</p>
               </div>
               <div>
-                <h2>Subjects and year levels</h2>
-                <ul>{subjects(teacher).map(subject => <li key={subject}>{subject}</li>)}</ul>
+                <h2>What {pronouns.subject} {pronouns.subject === 'they' ? 'hope' : 'hopes'} students remember</h2>
+                <p>{content.remembered}</p>
               </div>
             </section>
-            <section className="full-profile__remembered">
-              <h2>What I hope students remember</h2>
-              <p>{teacher.profile?.remembered ?? teacher.motto}</p>
+
+            <section className="full-profile__why-da">
+              <h2>Why {firstName(teacher.name)} teaches at DA</h2>
+              <p>{content.whyDA}</p>
             </section>
           </main>
-        </div>
+        </motion.section>
+        </AnimatePresence>
       </div>
     </motion.div>
   );
 }
 
 const FindTeacher = () => {
+  const [searchParams] = useSearchParams();
   const [filter, setFilter] = useState<FilterKey>('all');
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const [preview, setPreview] = useState<CatalogueTutor>(TUTORS[0]);
   const [selected, setSelected] = useState<CatalogueTutor | null>(null);
   const triggerRef = useRef<HTMLElement | null>(null);
+  const requestedTutor = useMemo(() => TUTORS.find(teacher => teacher.id === searchParams.get('tutor')), [searchParams]);
+
+  useEffect(() => {
+    if (requestedTutor) setSelected(requestedTutor);
+  }, [requestedTutor]);
 
   const filtered = useMemo(() => {
     let list = TUTORS;
@@ -420,10 +447,9 @@ const FindTeacher = () => {
       </section>
       <FooterNew />
 
-      <AnimatePresence mode="wait">
+      <AnimatePresence>
         {selected && (
           <FullProfile
-            key={selected.id}
             teacher={selected}
             position={selectedIndex + 1}
             onClose={() => setSelected(null)}

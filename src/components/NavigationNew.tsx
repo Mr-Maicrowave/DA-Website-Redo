@@ -172,9 +172,9 @@ const NavigationNew = () => {
       description: "Our unique approach and why parents trust us"
     },
     {
-      title: "Find a Tutor",
-      href: "/find-teacher",
-      description: "Search our exceptional educators"
+      title: "Tutors",
+      href: "/tutors",
+      description: "Meet the people behind the progress"
     },
     {
       title: "Principal's Reflection",
@@ -389,7 +389,7 @@ const NavigationNew = () => {
 
                     <HoverCard openDelay={120} closeDelay={180} onOpenChange={(open) => handleDropdownChange('about', open)}>
                       <HoverCardTrigger asChild>
-                        <button type="button" className={`${navLinkClass(['/why-choose-da', '/find-teacher', '/principal-reflections', '/learning-formats'].includes(location.pathname))} inline-flex items-center gap-0.5`}>
+                        <button type="button" className={`${navLinkClass(['/why-choose-da', '/find-teacher', '/tutors', '/principal-reflections', '/learning-formats'].includes(location.pathname))} inline-flex items-center gap-0.5`}>
                           About <ChevronDown className="h-3.5 w-3.5" />
                         </button>
                       </HoverCardTrigger>
