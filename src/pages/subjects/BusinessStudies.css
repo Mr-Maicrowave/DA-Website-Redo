@@ -121,7 +121,7 @@
   gap: 1.25rem;
   margin-bottom: 1.1rem;
   color: var(--biz-quiz-gold-bright);
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: "Playfair Display", Georgia, "Times New Roman", serif;
   font-size: 1.45rem;
 }
 
@@ -138,7 +138,7 @@
 .business-quiz-heading h2 {
   margin: 0;
   color: var(--biz-quiz-navy);
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: "Playfair Display", Georgia, "Times New Roman", serif;
   font-size: clamp(2.5rem, 4.6vw, 3.6rem);
   font-weight: 700;
   letter-spacing: 0;
@@ -148,7 +148,7 @@
 .business-quiz-heading p {
   margin: 0.75rem 0 0;
   color: var(--biz-quiz-gold);
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: "Playfair Display", Georgia, "Times New Roman", serif;
   font-size: clamp(1.2rem, 2.2vw, 1.6rem);
   line-height: 1.15;
 }
@@ -195,7 +195,7 @@
 .business-quiz-year-card strong {
   display: block;
   margin-top: 0.9rem;
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: "Playfair Display", Georgia, "Times New Roman", serif;
   font-size: 2.65rem;
   font-weight: 500;
   line-height: 1.05;
@@ -258,7 +258,7 @@
   width: min(100%, 760px);
   margin: 2rem auto 0;
   color: var(--biz-quiz-navy);
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: "Playfair Display", Georgia, "Times New Roman", serif;
   font-size: 1.55rem;
   line-height: 1.28;
   text-align: center;
@@ -550,7 +550,7 @@
   display: block;
   margin-top: 0.6rem;
   color: #f0d284;
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: "Playfair Display", Georgia, "Times New Roman", serif;
   font-size: 4.8rem;
   font-weight: 500;
   line-height: 0.95;
@@ -583,7 +583,7 @@
 .business-quiz-review h3 {
   margin: 0;
   color: var(--biz-quiz-navy);
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: "Playfair Display", Georgia, "Times New Roman", serif;
   font-size: 2rem;
   font-weight: 500;
 }
@@ -669,7 +669,7 @@
 .biz-exam-structure-heading h2 {
   margin: 0;
   color: #fffaf4;
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: "Playfair Display", Georgia, "Times New Roman", serif;
   font-size: clamp(2.85rem, min(5.55vw, 7.1svh), 5rem);
   font-weight: 600;
   letter-spacing: 0;
@@ -730,7 +730,7 @@
 }
 
 .biz-exam-flip-prompt strong {
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: "Playfair Display", Georgia, "Times New Roman", serif;
   font-size: clamp(1.1rem, min(2.1vw, 3svh), 1.8rem);
   font-weight: 700;
   line-height: 1;
@@ -830,7 +830,7 @@
   max-width: 17rem;
   margin: 0 auto;
   color: var(--biz-exam-text);
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: "Playfair Display", Georgia, "Times New Roman", serif;
   font-size: clamp(1.78rem, min(2.65vw, 4.3svh), 2.7rem);
   font-weight: 700;
   line-height: 1.12;
@@ -975,7 +975,7 @@
 }
 
 .biz-exam-time strong {
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: "Playfair Display", Georgia, "Times New Roman", serif;
   font-size: clamp(1.25rem, min(2.2vw, 3.2svh), 2rem);
   font-weight: 700;
   line-height: 1.05;

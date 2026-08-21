@@ -76,7 +76,7 @@
   .image-card p{margin:0;color:#5c4a1e;line-height:1.65}
 
   /* ─── WHAT MAKES DA DIFFERENT ─── */
-  .diff-section{position:relative;overflow:hidden;padding:48px 32px 0;background:linear-gradient(180deg,#FBEDDC 0%,#FBEDDC 78%,#fff 100%)}
+  .diff-section{position:relative;overflow:hidden;padding:48px 32px 0;background:linear-gradient(180deg,#FBEDDC 0%,#FBEDDC 76%,#F8F3EA 100%)}
   .diff-inner{position:relative;z-index:1;padding-bottom:48px}
   .diff-head{text-align:center;max-width:860px;margin:0 auto 28px}
   .diff-eyebrow{display:inline-block;color:var(--gold);font-size:13px;font-weight:900;letter-spacing:.24em;text-transform:uppercase;margin-bottom:14px}
@@ -197,7 +197,7 @@
     .process-play::before{content:"";display:block;margin-left:5px;border-top:16px solid transparent;border-bottom:16px solid transparent;border-left:24px solid #fff}
     .process-bar{position:absolute;left:0;right:0;bottom:0;height:42px;background:rgba(5,7,11,.75);display:flex;align-items:center;gap:10px;padding:0 14px;color:#fff;font-size:12px}
     .process-bar::before{content:"";width:0;height:0;border-top:8px solid transparent;border-bottom:8px solid transparent;border-left:12px solid #fff}
-    .process-bar::after{content:"0:00 / 0:10";margin-left:auto;color:#fff}
+    .process-bar::after{content:attr(data-time);margin-left:auto;color:#fff}
     .process-progress{height:4px;flex:1;border-radius:999px;background:rgba(255,255,255,.24);position:relative}
     .process-progress::before{content:"";position:absolute;left:0;top:0;bottom:0;width:24%;border-radius:inherit;background:var(--gold-soft)}
     .video-lightbox{position:absolute;left:0;right:0;top:var(--video-top,0px);height:var(--video-height,100vh);z-index:3000;background:rgba(0,0,0,.82);display:none;align-items:center;justify-content:center;padding:24px;cursor:pointer}
@@ -223,90 +223,416 @@
   .faq-badge-icon svg{width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:1.8}
   .faq-badge-text{font-size:12.5px;font-weight:700;color:var(--navy);line-height:1.35;margin:0}
 
-  /* ─── PARENT-CONCERN NOTEBOOK CARDS ─── */
-  .quote-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:26px 22px}
-  .concern-card{
-    position:relative;min-height:270px;perspective:1400px;cursor:pointer;outline:none;
-    border-radius:14px;transition:transform .3s cubic-bezier(.25,.8,.35,1);
-  }
-  .concern-card::before{
-    content:"";position:absolute;inset:0;transform:translate(9px,9px);
-    background:var(--navy);border-radius:14px;z-index:0;
-    box-shadow:0 18px 40px rgba(7,22,41,.22);
-  }
-  .concern-card:hover{transform:translateY(-6px) scale(1.025)}
-  .concern-inner{
-    position:relative;z-index:1;display:block;width:100%;height:100%;min-height:270px;
-    border-radius:14px;transition:transform .65s cubic-bezier(.45,.05,.15,1),box-shadow .2s ease;
-    transform-style:preserve-3d;transform-origin:50% 50%;
-  }
-  .concern-card.is-flipped .concern-inner{transform:rotateY(180deg)}
-  .concern-card:focus-visible .concern-inner{box-shadow:0 0 0 3px #fffdf8,0 0 0 6px var(--gold)}
-  .concern-face{
-    position:absolute;inset:0;backface-visibility:hidden;border-radius:14px;
-    padding:26px 26px 22px;overflow:hidden;display:flex;flex-direction:column
-  }
-  .concern-front{
-    background-color:#FFFDF8;
-    background-image:repeating-linear-gradient(to bottom,transparent,transparent 29px,#DCE4E8 29px,#DCE4E8 30px);
-    background-position:0 60px;border:1px solid rgba(201,162,39,.3);
-    box-shadow:0 14px 32px rgba(7,22,41,.12);
-    transition:background-color .3s cubic-bezier(.25,.8,.35,1),border-color .3s ease,box-shadow .3s cubic-bezier(.25,.8,.35,1);
-  }
-  .concern-front::before{content:"";position:absolute;top:0;bottom:0;left:44px;width:1px;background:#E9B7B0;z-index:1}
-  .concern-clip{position:absolute;top:12px;left:14px;width:18px;height:32px;color:var(--gold);opacity:.85;transform:rotate(-6deg);transition:opacity .3s ease,filter .3s ease;z-index:2}
-  .concern-clip svg{width:100%;height:100%;display:block;fill:none;stroke:currentColor;stroke-width:1.6}
-  .concern-num{position:absolute;top:14px;left:56px;font-family:"Playfair Display",Georgia,serif;font-style:italic;font-weight:800;font-size:20px;color:var(--gold);opacity:.85;transition:opacity .3s ease,filter .3s ease;z-index:2}
-  .concern-front blockquote{
-    position:relative;z-index:1;flex:1;margin:0;padding:38px 30px 34px 20px;
-    display:flex;align-items:center;
-    font-family:"Playfair Display",Georgia,serif;font-size:19px;line-height:1.34;color:var(--navy)
-  }
-  .concern-card:hover .concern-clip,.concern-card:hover .concern-num{opacity:1;filter:brightness(1.2)}
-  .concern-card:hover .concern-front{
-    background-color:#FFF9E8;border-color:var(--gold);
-    box-shadow:0 22px 44px rgba(201,162,39,.22),0 0 20px rgba(201,162,39,.14);
-  }
-  .concern-fold{
-    position:absolute;right:0;bottom:0;width:30px;height:30px;z-index:2;pointer-events:none;
-    clip-path:polygon(100% 0,100% 100%,0 100%);
-    background:linear-gradient(135deg,rgba(7,22,41,0) 46%,var(--gold) 47%,var(--navy) 52%,var(--navy) 100%);
-    transition:width .3s cubic-bezier(.25,.8,.35,1),height .3s cubic-bezier(.25,.8,.35,1),transform .3s cubic-bezier(.25,.8,.35,1);
-  }
-  .concern-card:hover .concern-fold{width:38px;height:38px;transform:translate(-2px,-2px)}
-  .concern-flip-icon{
-    position:absolute;right:12px;bottom:12px;width:26px;height:26px;border-radius:50%;z-index:3;
-    background:#FFFDF8;border:1px solid var(--gold);display:flex;align-items:center;justify-content:center;
-    color:var(--gold);box-shadow:0 4px 10px rgba(7,22,41,.14);transition:transform .3s ease,filter .3s ease
-  }
-  .concern-flip-icon svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2}
-  .concern-card:hover .concern-flip-icon{transform:rotate(24deg);filter:brightness(1.15)}
+  /* ─── "WHAT PARENTS OFTEN ASK US" — editorial notebook composition ─── */
+  .parents-faq-body{position:relative;padding:14px 0 6px}
+  .parents-faq-route{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;overflow:visible}
+  .parents-faq-route-seg{fill:none;stroke:var(--line);stroke-width:1.5;stroke-linecap:round;transition:stroke .6s ease,opacity .6s ease,filter .6s ease}
+  .parents-faq-route-seg.is-lit{stroke:var(--gold);opacity:.85;filter:drop-shadow(0 0 3px rgba(201,162,39,.4))}
+  .parents-faq-route-node{fill:#F8F4EC;stroke:var(--line);stroke-width:1.5;transition:fill .5s ease,stroke .5s ease,filter .5s ease}
+  .parents-faq-route-node.is-lit{fill:var(--gold);stroke:var(--gold);filter:drop-shadow(0 0 5px rgba(201,162,39,.55))}
 
-  .concern-back{
-    background:#FBF3DF;color:var(--navy);transform:rotateY(180deg);
-    border:1px solid rgba(201,162,39,.4);
-    box-shadow:0 16px 38px rgba(7,22,41,.18);
-    align-items:center;text-align:center;padding:28px 26px 22px;
-    transition:box-shadow .3s ease;
+  .parents-faq-grid{position:relative;z-index:1;display:grid;grid-template-columns:1fr 1fr;column-gap:60px;row-gap:56px;padding:18px 0 8px}
+  .parent-q{
+    all:unset;position:relative;display:flex;flex-direction:column;align-items:flex-start;
+    max-width:38ch;padding:6px 8px;cursor:pointer;border-radius:8px;
+    transition:transform .3s cubic-bezier(.25,.8,.35,1),opacity .35s ease;
   }
-  .concern-card.is-flipped:hover .concern-back{box-shadow:0 22px 46px rgba(201,162,39,.28)}
-  .concern-back-label{position:relative;z-index:1;display:block;margin:0 0 8px;font-family:"Playfair Display",Georgia,serif;font-style:italic;font-weight:700;font-size:19px;color:var(--gold)}
-  .concern-back-divider{position:relative;z-index:1;display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin:0 0 14px}
-  .concern-back-divider::before,.concern-back-divider::after{content:"";flex:1;max-width:46px;height:1px;background:var(--gold)}
-  .concern-back-divider span{color:var(--gold);font-size:10px}
-  .concern-back-list{position:relative;z-index:1;list-style:none;margin:0;padding:0;width:100%;text-align:left;display:flex;flex-direction:column}
-  .concern-back-list li{display:flex;align-items:flex-start;gap:10px;padding:9px 0;font-size:13px;line-height:1.5;color:var(--navy)}
-  .concern-back-list li+li{border-top:1px solid rgba(201,162,39,.22)}
-  .concern-back-check{flex:0 0 auto;width:18px;height:18px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;margin-top:1px}
-  .concern-back-check svg{width:10px;height:10px;fill:none;stroke:#fff;stroke-width:2.4}
+  .parent-q--2{margin-top:60px}
+  .parent-q--3{margin-top:6px}
+  .parent-q--4{margin-top:-20px}
+  .parent-q--5{margin-top:36px}
+  .parent-q--6{margin-top:-10px}
+  .parent-q-mark{
+    position:absolute;top:-22px;left:-4px;font-family:"Playfair Display",Georgia,serif;
+    font-size:68px;line-height:1;color:var(--gold);opacity:.13;pointer-events:none;
+    transition:opacity .3s ease;
+  }
+  .parent-q-clip{position:absolute;top:0;left:-4px;width:13px;height:24px;color:var(--gold);opacity:.5;transform:rotate(-9deg);transition:opacity .3s ease}
+  .parent-q-clip svg{width:100%;height:100%;display:block;fill:none;stroke:currentColor;stroke-width:1.7}
+  .parent-q--2 .parent-q-clip,.parent-q--4 .parent-q-clip,.parent-q--6 .parent-q-clip{display:none}
+  .parent-q-num{
+    position:relative;z-index:1;display:block;margin:0 0 10px 22px;
+    font-family:"Playfair Display",Georgia,serif;font-style:italic;font-weight:800;
+    font-size:15px;letter-spacing:.03em;color:var(--gold);opacity:.82;
+    transition:opacity .3s ease,filter .3s ease,color .3s ease;
+  }
+  .parent-q-text{
+    position:relative;z-index:1;font-family:"Playfair Display",Georgia,serif;
+    font-size:18px;line-height:1.42;color:var(--navy);
+  }
+  .parent-q-underline{position:relative;display:block;width:96px;height:9px;margin-top:9px;opacity:.5;transition:opacity .3s ease}
+  .parent-q-underline path{fill:none;stroke:var(--gold);stroke-width:2.3;stroke-linecap:round}
+  .parent-q:hover{transform:translateY(-4px)}
+  .parent-q:hover .parent-q-num{opacity:1;filter:brightness(1.15)}
+  .parent-q:hover .parent-q-underline{opacity:.92}
+  .parent-q:hover .parent-q-mark{opacity:.22}
+  .parent-q:hover .parent-q-clip{opacity:.85}
+  .parent-q:focus-visible{outline:none;box-shadow:0 0 0 3px rgba(201,162,39,.35);border-radius:10px}
+  .parent-q.is-active .parent-q-num{opacity:1;filter:brightness(1.1)}
+  .parent-q.is-active .parent-q-underline{opacity:1}
+  .parents-faq-grid.has-active .parent-q:not(.is-active){opacity:.8}
+  .parents-faq-grid.has-active .parent-q:not(.is-active) .parent-q-mark{opacity:.08}
+  .parents-faq-grid.has-active .parent-q:not(.is-active) .parent-q-underline{opacity:.32}
+
+  .parents-faq-paper{
+    position:relative;grid-column:1 / -1;z-index:2;width:min(660px,100%);margin:6px auto 8px;
+    padding:clamp(28px,4vw,44px) clamp(26px,4vw,40px) clamp(24px,4vw,34px);
+    background:radial-gradient(circle at 8% 0%,rgba(201,162,39,.09),transparent 42%),#FFFDF8;
+    border-radius:3px 16px 16px 3px;border:1px solid rgba(201,162,39,.32);
+    box-shadow:0 26px 60px rgba(7,22,41,.18),0 2px 0 rgba(201,162,39,.32);
+    opacity:0;transform:translateY(16px) scale(.98);pointer-events:none;
+    transition:opacity .5s cubic-bezier(.16,1,.3,1),transform .5s cubic-bezier(.16,1,.3,1);
+  }
+  .parents-faq-paper.is-open{opacity:1;transform:translateY(0) scale(1);pointer-events:auto}
+  .parents-faq-paper-close{
+    position:absolute;top:14px;right:14px;width:30px;height:30px;border:none;border-radius:50%;
+    background:transparent;color:var(--muted);font-size:22px;line-height:1;cursor:pointer;
+    transition:color .2s ease,background .2s ease;
+  }
+  .parents-faq-paper-close:hover{color:var(--navy);background:rgba(7,22,41,.06)}
+  .parents-faq-paper-clip{
+    position:absolute;top:-15px;left:36px;width:19px;height:32px;color:var(--gold);
+    transform:rotate(-8deg);filter:drop-shadow(0 4px 6px rgba(7,22,41,.18));
+  }
+  .parents-faq-paper-clip svg{width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:1.7}
+  .parents-faq-paper-num{display:block;margin:4px 0 2px;font-family:"Playfair Display",Georgia,serif;font-style:italic;font-weight:800;font-size:15px;color:var(--gold)}
+  .parents-faq-paper-mark{display:block;font-family:"Playfair Display",Georgia,serif;font-size:42px;line-height:.6;color:var(--gold);opacity:.28;margin-bottom:6px}
+  .parents-faq-paper-question{margin:0 0 18px;font-family:"Playfair Display",Georgia,serif;font-size:clamp(1.1rem,2vw,1.45rem);line-height:1.4;color:var(--navy)}
+  .parents-faq-paper-divider{display:flex;align-items:center;gap:10px;margin:0 0 16px}
+  .parents-faq-paper-divider::before{content:"";width:44px;height:1px;background:var(--gold)}
+  .parents-faq-paper-divider span{color:var(--gold);font-size:10px}
+  .parents-faq-paper-label{display:flex;align-items:center;gap:6px;font-family:"Playfair Display",Georgia,serif;font-style:italic;font-weight:700;font-size:14.5px;color:var(--gold);margin-bottom:8px}
+  .parents-faq-paper-label i{font-style:normal;font-size:11px}
+  .parents-faq-paper-answer{margin:0 0 16px;font-size:14.5px;line-height:1.7;color:var(--navy)}
+  .parents-faq-paper-list{list-style:none;margin:0 0 22px;padding:14px 0 0;border-top:1px solid rgba(201,162,39,.22);display:flex;flex-direction:column;gap:9px}
+  .parents-faq-paper-list li{position:relative;padding-left:18px;font-size:13px;line-height:1.55;color:var(--navy);opacity:.85}
+  .parents-faq-paper-list li::before{content:"";position:absolute;left:0;top:8px;width:6px;height:6px;border-radius:50%;background:var(--gold)}
+  .parents-faq-paper-cta{
+    display:inline-flex;align-items:center;gap:8px;font-family:"Playfair Display",Georgia,serif;
+    font-weight:700;font-size:14.5px;color:var(--gold);text-decoration:none;
+    border-bottom:1px solid rgba(201,162,39,.5);padding-bottom:2px;
+    transition:gap .25s ease,border-color .25s ease;
+  }
+  .parents-faq-paper-cta svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;transition:transform .25s ease}
+  .parents-faq-paper-cta:hover{gap:12px;border-color:var(--gold)}
+  .parents-faq-paper-cta:hover svg{transform:translateX(2px)}
+
+  @media (max-width:780px){
+    .parents-faq-route{display:none}
+    .parents-faq-grid{grid-template-columns:1fr;row-gap:44px}
+    .parent-q--2,.parent-q--3,.parent-q--4,.parent-q--5,.parent-q--6{margin-top:0}
+    .parents-faq-body{padding-left:26px}
+    .parents-faq-body::after{content:"";position:absolute;top:10px;bottom:10px;left:8px;width:2px;background:linear-gradient(to bottom,transparent,var(--gold-soft) 8%,var(--gold-soft) 92%,transparent);opacity:.6}
+    .parents-faq-paper{width:100%;margin:4px 0 6px}
+  }
 
   @media (prefers-reduced-motion:reduce){
-    .concern-card,.concern-inner,.concern-fold,.concern-flip-icon{transition:none}
-    .concern-inner{transform:none !important}
-    .concern-face{transition:opacity .25s ease}
-    .concern-back{opacity:0;pointer-events:none}
-    .concern-card.is-flipped .concern-front{opacity:0;pointer-events:none}
-    .concern-card.is-flipped .concern-back{opacity:1;pointer-events:auto}
+    .parent-q,.parents-faq-paper{transition:none}
+    .parent-q:hover{transform:none}
+  }
+
+  /* Refined parent-question sequence */
+  .parents-faq{
+    position:relative;
+    overflow:hidden;
+    margin-top:-1px;
+    padding:clamp(86px,8vw,124px) 32px clamp(94px,8vw,132px);
+    background:#F8F3EA;
+  }
+  .parents-faq .section-inner{width:min(1600px,100%)}
+  .parents-faq .section-head{
+    position:relative;
+    z-index:2;
+    align-items:flex-start;
+    margin-bottom:clamp(42px,4.4vw,70px);
+  }
+  .parents-faq .faq-heading{
+    color:#071D38;
+    font-size:clamp(54px,5vw,82px);
+    line-height:.96;
+    letter-spacing:0;
+  }
+  .parents-faq .faq-stroke{left:-3%;bottom:-9px;width:108%;height:15px}
+  .parents-faq .faq-stroke path{stroke:#C99A20;stroke-width:3;opacity:.86}
+  .parents-faq-paperclip{
+    position:absolute;
+    top:clamp(26px,3vw,48px);
+    left:clamp(22px,3vw,42px);
+    width:34px;
+    height:82px;
+    color:#C99A20;
+    opacity:.82;
+    transform:rotate(-7deg);
+    filter:drop-shadow(0 8px 11px rgba(90,63,22,.15));
+    pointer-events:none;
+  }
+  .parents-faq-paperclip svg{display:block;width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:1.7}
+  .parents-faq .faq-badge{
+    width:168px;height:168px;
+    background:#FFFDF8;
+    border:1px solid rgba(201,154,32,.86);
+    box-shadow:0 3px 0 -1px #C99A20,0 18px 38px rgba(62,46,26,.12);
+  }
+  .parents-faq .faq-badge-icon{width:27px;height:27px;color:#C99A20}
+  .parents-faq .faq-badge-icon svg{stroke-width:1.65;stroke-linecap:round;stroke-linejoin:round}
+  .parents-faq .faq-badge-text{font-size:13px;color:#071D38}
+  .parents-faq-body{position:relative;padding:0}
+  .parents-faq-body::after{display:none}
+  .parents-faq-layout{
+    position:relative;
+    display:grid;
+    grid-template-columns:minmax(0,45%) minmax(520px,55%);
+    gap:clamp(54px,6vw,116px);
+    align-items:center;
+  }
+  .parents-faq-questions{position:relative;z-index:2;display:flex;flex-direction:column;gap:clamp(22px,2.1vw,34px)}
+  .parent-q{
+    appearance:none;
+    position:relative;
+    display:grid;
+    grid-template-columns:76px 18px minmax(0,1fr);
+    align-items:center;
+    gap:14px;
+    width:100%;
+    max-width:none;
+    margin:0!important;
+    padding:0;
+    border:0;
+    border-radius:0;
+    background:transparent;
+    color:#071D38;
+    text-align:left;
+    cursor:pointer;
+    opacity:1!important;
+    transform:none;
+  }
+  .parent-q-num{
+    position:relative;
+    z-index:1;
+    justify-self:end;
+    display:block;
+    margin:0;
+    color:#C99A20;
+    font-family:"Caveat","Playfair Display",Georgia,serif;
+    font-size:clamp(42px,3.2vw,48px);
+    font-weight:600;
+    font-style:italic;
+    letter-spacing:0;
+    line-height:.86;
+    opacity:1;
+    transition:transform .32s cubic-bezier(.22,1,.36,1),filter .32s ease,color .32s ease;
+  }
+  .parent-q-node{
+    position:relative;
+    z-index:2;
+    width:10px;
+    height:10px;
+    border:2px solid #C99A20;
+    border-radius:50%;
+    background:#F8F3EA;
+    transition:background .3s ease,box-shadow .3s ease,transform .3s ease;
+  }
+  .parent-q-node::after{
+    position:absolute;
+    top:50%;
+    left:100%;
+    width:0;
+    height:1px;
+    background:rgba(201,154,32,.62);
+    content:"";
+    transform:translateY(-50%);
+    transition:width .32s cubic-bezier(.22,1,.36,1);
+  }
+  .parent-q-text{
+    position:relative;
+    z-index:1;
+    justify-self:start;
+    max-width:34ch;
+    color:#071D38;
+    font-family:"Playfair Display",Georgia,serif;
+    font-size:clamp(21px,1.55vw,27px);
+    font-weight:600;
+    line-height:1.3;
+    transition:transform .32s cubic-bezier(.22,1,.36,1),color .32s ease;
+  }
+  .parent-q-mark,.parent-q-clip,.parent-q-underline{display:none}
+  .parent-q:hover{transform:none}
+  .parent-q:hover .parent-q-num{transform:translateX(4px);filter:brightness(1.08)}
+  .parent-q:hover .parent-q-node{box-shadow:0 0 0 8px rgba(201,154,32,.12),0 0 15px rgba(201,154,32,.3)}
+  .parent-q:hover .parent-q-node::after{width:24px}
+  .parent-q:hover .parent-q-text{transform:translateX(2px);color:#031225}
+  .parent-q:focus-visible{outline:none;box-shadow:none}
+  .parent-q:focus-visible .parent-q-text{outline:2px solid rgba(201,154,32,.58);outline-offset:7px;border-radius:8px}
+  .parent-q.is-active .parent-q-num{color:#D2A326;filter:drop-shadow(0 0 14px rgba(201,154,32,.38))}
+  .parent-q.is-active .parent-q-num::before{
+    position:absolute;
+    inset:-7px -10px -4px;
+    z-index:-1;
+    border-radius:50%;
+    background:radial-gradient(circle,rgba(201,154,32,.18),transparent 65%);
+    content:"";
+  }
+  .parent-q.is-active .parent-q-node{background:#C99A20;box-shadow:0 0 0 9px rgba(201,154,32,.13),0 0 18px rgba(201,154,32,.38)}
+  .parent-q.is-active .parent-q-text::after{
+    position:absolute;
+    top:50%;
+    right:-34px;
+    width:14px;
+    height:14px;
+    border-radius:50%;
+    background:#C99A20;
+    box-shadow:0 0 0 10px rgba(201,154,32,.12),0 0 18px rgba(201,154,32,.35);
+    content:"";
+    transform:translateY(-50%);
+  }
+  .parents-faq-connector{
+    position:absolute;
+    inset:0;
+    z-index:1;
+    width:100%;
+    height:100%;
+    pointer-events:none;
+    overflow:visible;
+  }
+  .parents-faq-connector path{
+    fill:none;
+    stroke:#C99A20;
+    stroke-width:1.35;
+    stroke-linecap:round;
+    opacity:.72;
+    filter:drop-shadow(0 2px 4px rgba(201,154,32,.12));
+  }
+  .parents-faq-connector.is-drawing path{animation:parents-faq-line-draw .58s cubic-bezier(.22,1,.36,1)}
+  @keyframes parents-faq-line-draw{
+    from{stroke-dashoffset:var(--faq-line-length,520)}
+    to{stroke-dashoffset:0}
+  }
+  .parents-faq-note-wrap{position:relative;z-index:2;display:flex;justify-content:center}
+  .parents-faq-paper{
+    position:relative;
+    z-index:2;
+    grid-column:auto;
+    width:min(720px,100%);
+    min-height:clamp(410px,31vw,470px);
+    margin:0;
+    padding:clamp(52px,4.4vw,68px) clamp(44px,4.4vw,72px) clamp(42px,4vw,58px);
+    overflow:hidden;
+    border:1px solid rgba(201,154,32,.16);
+    border-radius:10px 12px 44px 8px;
+    background-color:#FFFDF9;
+    background-image:
+      linear-gradient(110deg,rgba(255,255,255,.58),transparent 38%),
+      repeating-linear-gradient(to bottom,transparent 0,transparent 39px,rgba(175,160,135,.16) 40px);
+    box-shadow:0 18px 45px rgba(62,46,26,.12),0 4px 12px rgba(62,46,26,.06);
+    opacity:1;
+    transform:rotate(1deg);
+    pointer-events:auto;
+  }
+  .parents-faq-paper::after{
+    position:absolute;
+    right:0;
+    bottom:0;
+    width:88px;
+    height:70px;
+    border-top-left-radius:42px;
+    background:linear-gradient(135deg,rgba(255,255,255,.2) 0%,#efe1c7 55%,#d4b367 100%);
+    box-shadow:-11px -9px 20px rgba(62,46,26,.12);
+    content:"";
+    clip-path:polygon(100% 0,100% 100%,0 100%);
+  }
+  .parents-faq-pin{
+    position:absolute;
+    top:-13px;
+    left:50%;
+    width:31px;
+    height:31px;
+    border-radius:50%;
+    background:radial-gradient(circle at 34% 30%,#fff0b8 0 13%,#d8a536 30%,#b87b13 72%,#7d5008 100%);
+    box-shadow:0 8px 14px rgba(62,46,26,.2),inset 0 2px 5px rgba(255,255,255,.45);
+    transform:translateX(-50%);
+  }
+  .parents-faq-paper-content{
+    position:relative;
+    z-index:1;
+    opacity:1;
+    transform:translateY(0);
+    transition:opacity .28s ease,transform .28s ease;
+  }
+  .parents-faq-paper-content.is-changing{opacity:0;transform:translateY(6px)}
+  .parents-faq-paper-label{
+    display:inline-block;
+    color:#C58E16;
+    font-family:"Caveat","Playfair Display",Georgia,serif;
+    font-size:clamp(36px,3vw,44px);
+    font-weight:600;
+    line-height:1;
+  }
+  .parents-faq-paper-label::after{
+    display:block;
+    width:82%;
+    height:13px;
+    margin-top:2px;
+    background:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 18' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M3 11c32-7 104-8 174 1' fill='none' stroke='%23C58E16' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E") center/100% 100% no-repeat;
+    content:"";
+  }
+  .parents-faq-paper-answer{
+    margin:clamp(22px,2vw,32px) 0 0;
+    color:#071D38;
+    font-family:"Playfair Display",Georgia,serif;
+    font-size:clamp(20px,1.45vw,24px);
+    line-height:1.5;
+  }
+  .parents-faq-paper-list{
+    display:flex;
+    flex-direction:column;
+    gap:clamp(12px,1vw,17px);
+    margin:clamp(28px,2.6vw,42px) 0 0;
+    padding:0;
+    list-style:none;
+    border-top:0;
+  }
+  .parents-faq-paper-list li{
+    position:relative;
+    padding-left:28px;
+    color:#071D38;
+    font-size:clamp(18px,1.25vw,21px);
+    line-height:1.45;
+    opacity:1;
+  }
+  .parents-faq-paper-list li::before{
+    position:absolute;
+    left:2px;
+    top:.62em;
+    width:8px;
+    height:8px;
+    border-radius:50%;
+    background:#C99A20;
+    content:"";
+    transform:translateY(-50%);
+  }
+
+  @media (max-width:1100px){
+    .parents-faq-layout{grid-template-columns:minmax(0,43%) minmax(440px,57%);gap:42px}
+    .parent-q{grid-template-columns:62px 16px minmax(0,1fr);gap:11px}
+    .parent-q-text{font-size:clamp(18px,2vw,22px)}
+    .parents-faq-paper{padding-inline:38px}
+  }
+
+  @media (max-width:780px){
+    .parents-faq{padding:70px 22px 82px}
+    .parents-faq-paperclip{width:26px;height:62px;left:18px}
+    .parents-faq .section-head{display:block}
+    .parents-faq .faq-badge{display:none}
+    .parents-faq-layout{display:flex;flex-direction:column;align-items:stretch;gap:42px}
+    .parents-faq-questions{gap:24px}
+    .parent-q{grid-template-columns:58px 16px minmax(0,1fr)}
+    .parents-faq-connector{display:none}
+    .parents-faq-note-wrap{justify-content:stretch}
+    .parents-faq-paper{width:100%;min-height:auto;transform:none}
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    .parent-q,.parent-q *,.parents-faq-paper-content,.parents-faq-connector path{transition:none!important;animation:none!important}
   }
 
 
@@ -322,7 +648,7 @@
     background-repeat:no-repeat;
     background-position:center bottom;
     background-size:100% auto;
-    opacity:0;transition:opacity 1.2s ease;
+    opacity:1;transition:opacity 1.2s ease;
   }
   .year-map::after{
     content:"";position:absolute;left:0;right:0;top:clamp(620px,56vw,820px);height:180px;z-index:1;pointer-events:none;
@@ -431,6 +757,11 @@
     transition:filter .4s ease;
   }
   .stage-photo img{width:100%;height:100%;object-fit:cover;transition:transform .5s cubic-bezier(.22,1,.36,1)}
+  .stage-photo-img--year78{object-position:32% center}
+  .stage-photo-img--year910{object-position:62% center}
+  .stage-photo-img--year1112{object-position:50% 42%;transform:translateX(-4%)}
+  .stage:nth-of-type(3) .stage-photo{background:#efefed}
+  .stage-photo-frame:hover .stage-photo img.stage-photo-img--year1112{transform:translateX(-4%) scale(1.018)}
   .stage:nth-of-type(1) .stage-photo{clip-path:url(#stage-wave-a)}
   .stage:nth-of-type(2) .stage-photo{clip-path:url(#stage-wave-b)}
   .stage:nth-of-type(3) .stage-photo{clip-path:url(#stage-wave-c)}
@@ -465,12 +796,100 @@
     display:block;width:52px;height:52px;object-fit:contain;
     filter:drop-shadow(0 6px 12px rgba(7,22,41,.18));
   }
+  .stage--senior-hsc{
+    row-gap:22px;
+  }
+  .senior-hsc-list{gap:13px;margin-bottom:0}
+  .senior-hsc-list li{
+    display:grid;
+    grid-template-columns:8px minmax(0,1fr);
+    gap:10px 11px;
+    color:#4b5568;
+    font-size:18.85px;
+  }
+  .senior-hsc-list li::before{grid-column:1;margin-top:10px}
+  .senior-hsc-list li span{grid-column:2}
+  .senior-hsc-list li em{
+    grid-column:2;
+    display:block;
+    margin-top:-7px;
+    color:#43506a;
+    font-size:16.5px;
+    line-height:1.55;
+  }
+  .rubric-video-section{
+    width:100%;
+    margin:clamp(56px,7vw,92px) auto 0;
+    padding:clamp(34px,4.5vw,56px) clamp(26px,4vw,56px);
+    border:1px solid rgba(201,162,39,.18);
+    border-radius:8px;
+    background:rgba(255,255,255,.76);
+    box-shadow:
+      0 22px 58px rgba(62,46,26,.11),
+      0 4px 12px rgba(62,46,26,.05);
+  }
+  .rubric-video-eyebrow{
+    margin:0 0 8px;
+    color:var(--gold);
+    font-size:clamp(13px,1.2vw,16px);
+    font-weight:900;
+    letter-spacing:.26em;
+    text-transform:uppercase;
+  }
+  .rubric-video-title{
+    max-width:100%;
+    margin:0 0 clamp(24px,3.2vw,36px);
+    color:var(--navy);
+    font-family:"Playfair Display",Georgia,serif;
+    font-size:clamp(2.16rem,4.176vw,4.032rem);
+    font-style:italic;
+    line-height:.98;
+    letter-spacing:0;
+    white-space:nowrap;
+  }
+  .rubric-video-grid{
+    display:grid;
+    grid-template-columns:minmax(0,1.35fr) minmax(280px,.65fr);
+    gap:clamp(42px,6vw,78px);
+    align-items:end;
+  }
+  .rubric-video-media{
+    height:clamp(320px,34vw,450px);
+    border-radius:4px;
+    background:#fff;
+    box-shadow:
+      inset 0 0 0 1px rgba(7,22,41,.08),
+      0 18px 38px rgba(7,22,41,.14);
+  }
+  .rubric-video-media video{
+    object-position:top center;
+  }
+  .rubric-video-note{
+    position:relative;
+    margin:0;
+    padding-bottom:42px;
+    color:var(--navy);
+    font-family:"Playfair Display",Georgia,serif;
+    font-size:clamp(1rem,1.55vw,1.5rem);
+    line-height:1.34;
+  }
+  .rubric-video-note::before{
+    content:"";
+    position:absolute;
+    bottom:0;
+    left:0;
+    width:118px;
+    height:1px;
+    background:var(--gold);
+  }
   @media (max-width:900px){
     .stage,.stage--reverse{
       grid-template-columns:1fr;
       grid-template-areas:"head" "photo" "list";
       row-gap:24px;
     }
+    .rubric-video-title{white-space:normal}
+    .rubric-video-grid{grid-template-columns:1fr;align-items:start}
     .year-map-stages{gap:64px}
     .year-map{padding-bottom:130px}
     .year-map .section-head{margin-bottom:54px}
@@ -482,6 +901,86 @@
     .year-map .section-head{min-height:360px;padding:64px 18px 92px}
     .year-map .section-head::before{display:none}
     .year-map .section-head h2{font-size:clamp(2.4rem,12vw,3.4rem)}
+    .rubric-video-section{padding:28px 18px}
+    .rubric-video-media{height:220px}
+  }
+
+  /* ===== Short Answer Transformation: Band 3 -> Band 6 ===== */
+  .sat-section{
+    --sat-navy:#071B35;--sat-navy-deep:#04101F;--sat-cream:#FFFAF0;--sat-gold:#DDB85F;
+    --sat-blue:#0369A1;--sat-green:#047857;--sat-orange:#A9472C;--sat-purple:#6D28D9;--sat-red:#BE123C;
+    position:relative;overflow:hidden;
+    background:
+      radial-gradient(circle at 50% 0%,rgba(65,132,206,.16),transparent 38%),
+      radial-gradient(circle at 8% 96%,rgba(11,76,128,.26),transparent 36%),
+      linear-gradient(180deg,var(--sat-navy) 0%,var(--sat-navy-deep) 100%);
+    padding:88px 24px;
+  }
+  .sat-panel{margin-bottom:56px}
+  .sat-panel:last-child{margin-bottom:0}
+  .sat-panel-header{display:grid;justify-items:center;gap:14px;margin-bottom:34px;text-align:center}
+  .sat-panel-header h2,.sat-panel-header h3{
+    margin:0;color:#fffaf4;font-family:"Playfair Display",Georgia,serif;font-weight:700;
+    font-size:clamp(1.7rem,3.4vw,2.7rem);line-height:1.18;text-shadow:0 8px 24px rgba(0,0,0,.32);
+  }
+  .sat-panel-header em{color:var(--sat-gold);font-style:italic;font-weight:600;font-size:.62em}
+  .sat-rule{display:grid;grid-template-columns:minmax(2rem,8rem) auto minmax(2rem,8rem);align-items:center;gap:12px;width:min(100%,32rem)}
+  .sat-rule span{height:1px;background:linear-gradient(90deg,transparent,rgba(221,184,95,.75))}
+  .sat-rule span:last-child{background:linear-gradient(90deg,rgba(221,184,95,.75),transparent)}
+  .sat-rule i{width:8px;height:8px;border-radius:999px;background:var(--sat-gold);transform:rotate(45deg);display:block}
+  .sat-card{
+    position:relative;border:1px solid rgba(221,184,95,.55);border-radius:22px;
+    background:linear-gradient(180deg,#fffdf8 0%,var(--sat-cream) 100%);
+    box-shadow:0 24px 50px rgba(0,0,0,.32);padding:clamp(24px,3.4vw,44px);
+  }
+  .sat-tag{
+    display:inline-block;border:1px solid rgba(221,184,95,.7);border-radius:999px;background:#fdecc8;
+    padding:9px 20px;margin-bottom:22px;color:var(--sat-navy);font-weight:700;font-size:.92rem;
+  }
+  .sat-before-grid{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:clamp(24px,3vw,48px)}
+  .sat-before-copy p{margin:0 0 16px;color:rgba(7,27,53,.85);font-size:1rem;line-height:1.7}
+  .sat-before-copy p:last-child{margin-bottom:0}
+  .sat-weakness-list{display:flex;flex-direction:column;border-left:1px solid rgba(7,27,53,.1);padding-left:clamp(20px,2.6vw,36px)}
+  .sat-weakness-row{display:flex;align-items:center;gap:16px;padding:15px 0;border-bottom:1px dashed rgba(221,184,95,.45)}
+  .sat-weakness-row:last-child{border-bottom:none}
+  .sat-weakness-icon{
+    display:flex;align-items:center;justify-content:center;flex-shrink:0;width:44px;height:44px;border-radius:999px;
+  }
+  .sat-weakness-icon svg{width:20px;height:20px}
+  .sat-weakness-row p{margin:0;color:var(--sat-navy);font-size:.98rem;line-height:1.4}
+  .sat-tone-gold-bg{background:#fdf1d6;color:#a3760f}
+  .sat-tone-blue-bg{background:#dceefc;color:var(--sat-blue)}
+  .sat-tone-green-bg{background:#dcf3e8;color:var(--sat-green)}
+  .sat-tone-purple-bg{background:#eae2fb;color:var(--sat-purple)}
+  .sat-tone-red-bg{background:#fbe0e7;color:var(--sat-red)}
+  .sat-tone-orange-bg{background:#f3e0d8;color:var(--sat-orange)}
+  .sat-tone-blue{color:var(--sat-blue);font-weight:600}
+  .sat-tone-green{color:var(--sat-green);font-weight:600}
+  .sat-tone-orange{color:var(--sat-orange);font-weight:600}
+  .sat-tone-purple{color:var(--sat-purple);font-weight:600}
+  .sat-tone-red{color:var(--sat-red);font-weight:600}
+  .sat-pairs{display:flex;flex-direction:column;gap:22px}
+  .sat-pair{
+    display:grid;grid-template-columns:minmax(0,1.9fr) minmax(0,1fr);gap:16px 32px;align-items:start;
+    opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease;
+  }
+  .sat-pair.is-visible{opacity:1;transform:translateY(0)}
+  .sat-paragraph{margin:0;color:#071B35;font-size:1rem;line-height:1.75}
+  .sat-annotation-row{display:flex;align-items:flex-start;gap:12px;padding-top:2px}
+  .sat-annotation-bar{width:3px;align-self:stretch;border-radius:999px;flex-shrink:0}
+  .sat-annotation-text{font-size:.92rem;font-weight:600;line-height:1.45}
+  @media (prefers-reduced-motion:reduce){
+    .sat-panel{opacity:1 !important;transform:none !important;transition:none !important}
+    .sat-pair{opacity:1 !important;transform:none !important;transition:none !important}
+  }
+  @media (min-width:0px) and (prefers-reduced-motion:no-preference){
+    .sat-panel{opacity:0;transform:translateY(40px);transition:opacity .9s cubic-bezier(.16,1,.3,1),transform .9s cubic-bezier(.16,1,.3,1)}
+    .sat-panel.is-visible{opacity:1;transform:translateY(0)}
+  }
+  @media (max-width:860px){
+    .sat-before-grid{grid-template-columns:1fr}
+    .sat-weakness-list{border-left:none;padding-left:0;border-top:1px solid rgba(7,27,53,.1);padding-top:22px;margin-top:22px}
+    .sat-pair{grid-template-columns:1fr;gap:10px}
   }
 
   /* ===== Resources: sample booklet + feedback preview ===== */
@@ -615,7 +1114,7 @@
   .resources-connector svg circle{fill:var(--r-gold)}
   .resources-connector-diamond{position:absolute;left:50%;top:8px;transform:translate(-50%,-50%);color:var(--r-gold);font-size:11px}
 
-  .resources-transition{position:absolute;left:0;right:0;bottom:0;height:34px;pointer-events:none;z-index:1}
+  .resources-transition{position:absolute;left:0;right:0;bottom:0;height:34px;pointer-events:none;z-index:1;background:#061A34}
   .resources-transition svg{display:block;width:100%;height:100%}
 
   @media (prefers-reduced-motion:reduce){
@@ -665,7 +1164,7 @@
   }
   .resources-shelf::before{
     content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
-    background:url("images/english-resources-preview.png") center top/cover no-repeat;
+    background:url("images/english-resources-books-background.png") center top/cover no-repeat;
     filter:blur(18px) saturate(.9);
     transform:scale(1.04);
     opacity:.6;
@@ -690,8 +1189,71 @@
     height:auto;
     margin-top:-72px;
   }
+  .resources-overlay{
+    position:absolute;
+    inset:0;
+    z-index:2;
+    pointer-events:none;
+    color:var(--r-navy);
+    text-align:center;
+  }
+  .resources-overlay-eyebrow{
+    position:absolute;
+    top:2.8%;
+    left:50%;
+    transform:translateX(-50%);
+    color:var(--r-gold);
+    font-size:clamp(.66rem,1vw,.9rem);
+    font-weight:900;
+    letter-spacing:.22em;
+    text-transform:uppercase;
+    white-space:nowrap;
+  }
+  .resources-overlay-title{
+    position:absolute;
+    top:5.4%;
+    left:50%;
+    width:min(72%,62rem);
+    transform:translateX(-50%);
+    font-family:"Playfair Display",Georgia,serif;
+    font-size:clamp(2rem,5.2vw,5.1rem);
+    font-weight:700;
+    letter-spacing:0;
+    line-height:.98;
+    text-wrap:balance;
+  }
+  .resources-overlay-label{
+    position:absolute;
+    top:26.7%;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:.72em;
+    transform:translateX(-50%);
+    color:var(--r-navy);
+    font-size:clamp(.86rem,1.28vw,1.35rem);
+    font-weight:700;
+    line-height:1;
+    white-space:nowrap;
+  }
+  .resources-overlay-label--fairy{left:25.5%}
+  .resources-overlay-label--romanticism{left:51.2%}
+  .resources-overlay-label--feedback{left:76.6%}
+  .resources-overlay-label i{
+    display:grid;
+    width:clamp(1.5rem,2.3vw,2.35rem);
+    height:clamp(1.5rem,2.3vw,2.35rem);
+    place-items:center;
+    border-radius:50%;
+    background:var(--r-gold);
+    color:var(--r-navy);
+    font-style:normal;
+    font-size:.9em;
+    line-height:1;
+  }
   .resources-hotspot{
     position:absolute;
+    z-index:3;
     appearance:none;
     border:0;
     background:transparent;
@@ -713,15 +1275,16 @@
     .resources-shelf{overflow-x:auto}
     .resources-preview{width:920px}
     .resources-preview img{width:100%;max-width:none}
+    .resources-overlay-title{font-size:3.05rem;width:72%}
+    .resources-overlay-label{font-size:1rem}
   }
 
   .classes{
-    --c-navy:#061A34;--c-navy2:#0B294D;--c-gold:#D3A62C;--c-cream:#FFF9EF;--c-soft:#F8F4EC;
+    --c-navy:#061A34;--c-navy2:#061A34;--c-gold:#D3A62C;--c-cream:#FFF9EF;--c-soft:#F8F4EC;
     position:relative;overflow:hidden;color:var(--c-cream);
     background:
-      linear-gradient(180deg,rgba(251,237,220,0) 72%,#FBEDDC 100%),
       radial-gradient(ellipse 900px 520px at 50% 0%,rgba(211,166,44,.09),transparent 62%),
-      linear-gradient(160deg,var(--c-navy) 0%,var(--c-navy2) 100%);
+      var(--c-navy);
   }
   .classes::before,.classes::after{content:"";position:absolute;border-radius:50%;border:1px solid rgba(211,166,44,.32);pointer-events:none}
   .classes::before{top:-150px;left:-150px;width:340px;height:340px}
@@ -758,7 +1321,28 @@
   .class-card--pink{--card-bg:#FBEAF0;--card-accent:#E8A0BE;--card-glow:rgba(232,160,190,.35)}
   .class-photo{height:225px;overflow:hidden;background:#102b4b;position:relative}
   .class-photo img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .35s ease}
+  .class-photo--focus{
+    background:#eef3f4;
+    isolation:isolate;
+  }
+  .class-photo--focus::before{
+    content:"";
+    position:absolute;
+    inset:-18px;
+    z-index:0;
+    background:url("images/subjects/english/class-focus-school-group.png") center/cover no-repeat;
+    filter:blur(14px) saturate(.9);
+    opacity:.38;
+    transform:scale(1.04);
+  }
+  .class-photo img.class-photo-img--focus{
+    position:relative;
+    z-index:1;
+    object-fit:cover;
+    object-position:left center;
+  }
   .class-card:hover .class-photo img{transform:scale(1.04)}
+  .class-card:hover .class-photo img.class-photo-img--focus{transform:none}
   .class-photo::after{content:"";position:absolute;left:0;right:0;bottom:0;height:6px;background:var(--card-accent)}
   .class-body{padding:0 24px 30px;text-align:center;flex:1;display:flex;flex-direction:column;align-items:center}
   .class-icon{
@@ -908,7 +1492,7 @@
             <h3 class="serif">Building high school English skills</h3>
           </div>
           <div class="stage-photo-frame">
-            <div class="stage-photo"><img src="images/subjects/english/support-24-7.jpeg" alt="DA Tuition English students working together"></div>
+            <div class="stage-photo"><img class="stage-photo-img--year78" src="images/subjects/english/year-7-8-student-writing.png" alt="DA Tuition English student writing at a classroom table"></div>
             <svg class="stage-photo-outline" viewBox="0 0 1 1" preserveAspectRatio="none" aria-hidden="true">
               <path class="stage-photo-outline-halo" d="M0.5,0.015 C0.63,0.015 0.68,0.075 0.8,0.085 C0.93,0.095 1,0.19 0.965,0.32 C0.94,0.42 0.99,0.48 0.975,0.6 C0.96,0.74 0.9,0.8 0.8,0.885 C0.7,0.97 0.62,0.945 0.49,0.975 C0.36,1 0.24,0.95 0.14,0.87 C0.045,0.795 0.015,0.68 0.03,0.56 C0.045,0.44 0,0.38 0.02,0.26 C0.04,0.14 0.13,0.06 0.26,0.035 C0.34,0.015 0.41,0.015 0.5,0.015 Z"/>
               <path class="stage-photo-outline-gold" d="M0.5,0.015 C0.63,0.015 0.68,0.075 0.8,0.085 C0.93,0.095 1,0.19 0.965,0.32 C0.94,0.42 0.99,0.48 0.975,0.6 C0.96,0.74 0.9,0.8 0.8,0.885 C0.7,0.97 0.62,0.945 0.49,0.975 C0.36,1 0.24,0.95 0.14,0.87 C0.045,0.795 0.015,0.68 0.03,0.56 C0.045,0.44 0,0.38 0.02,0.26 C0.04,0.14 0.13,0.06 0.26,0.035 C0.34,0.015 0.41,0.015 0.5,0.015 Z"/>
@@ -937,7 +1521,7 @@
             <h3 class="serif">Strengthening analysis and assessment confidence</h3>
           </div>
           <div class="stage-photo-frame">
-            <div class="stage-photo"><img src="images/subjects/english/structured-classroom-cr3.jpeg" alt="DA Tuition English classroom in session"></div>
+            <div class="stage-photo"><img class="stage-photo-img--year910" src="images/subjects/english/year-9-10-analysis-confidence.jpeg" alt="DA Tuition English tutor and student working together at a laptop"></div>
             <svg class="stage-photo-outline" viewBox="0 0 1 1" preserveAspectRatio="none" aria-hidden="true">
               <path class="stage-photo-outline-halo" d="M0.52,0.02 C0.66,0.03 0.72,0.1 0.84,0.1 C0.96,0.1 1,0.22 0.96,0.35 C0.93,0.46 0.98,0.52 0.96,0.64 C0.94,0.78 0.86,0.83 0.75,0.9 C0.64,0.97 0.56,0.93 0.44,0.97 C0.32,1 0.2,0.93 0.12,0.84 C0.04,0.75 0.02,0.62 0.04,0.5 C0.06,0.4 0.01,0.34 0.03,0.22 C0.05,0.1 0.15,0.04 0.28,0.02 C0.36,0.005 0.43,0.01 0.52,0.02 Z"/>
               <path class="stage-photo-outline-gold" d="M0.52,0.02 C0.66,0.03 0.72,0.1 0.84,0.1 C0.96,0.1 1,0.22 0.96,0.35 C0.93,0.46 0.98,0.52 0.96,0.64 C0.94,0.78 0.86,0.83 0.75,0.9 C0.64,0.97 0.56,0.93 0.44,0.97 C0.32,1 0.2,0.93 0.12,0.84 C0.04,0.75 0.02,0.62 0.04,0.5 C0.06,0.4 0.01,0.34 0.03,0.22 C0.05,0.1 0.15,0.04 0.28,0.02 C0.36,0.005 0.43,0.01 0.52,0.02 Z"/>
@@ -957,35 +1541,152 @@
           </div>
         </article>
 
-        <article class="stage stage--reverse">
+        <article class="stage stage--reverse stage--senior-hsc">
           <div class="stage-head">
             <div class="stage-meta">
               <span class="stage-number">03</span>
               <span class="stage-years">Years 11&ndash;12</span>
             </div>
-            <h3 class="serif">Senior English and HSC preparation</h3>
+            <h3 class="serif">Senior English and HSC Preparation</h3>
           </div>
           <div class="stage-photo-frame">
-            <div class="stage-photo"><img src="images/subjects/english/feedback-tutor.jpeg" alt="DA Tuition tutor giving feedback to a senior English student"></div>
+            <div class="stage-photo"><img class="stage-photo-img--year1112" src="images/subjects/english/year-11-12-hsc-prep.png" alt="DA Tuition English tutor and senior student working through HSC preparation"></div>
             <svg class="stage-photo-outline" viewBox="0 0 1 1" preserveAspectRatio="none" aria-hidden="true">
               <path class="stage-photo-outline-halo" d="M0.46,0.03 C0.6,0 0.7,0.06 0.82,0.05 C0.95,0.04 1,0.16 0.94,0.29 C0.9,0.4 0.97,0.46 0.93,0.58 C0.9,0.72 0.94,0.8 0.82,0.89 C0.7,0.98 0.6,0.9 0.47,0.94 C0.35,0.98 0.22,0.96 0.13,0.86 C0.04,0.76 0.08,0.64 0.05,0.52 C0.02,0.4 0.06,0.32 0.1,0.2 C0.14,0.08 0.26,0.02 0.38,0.02 C0.41,0.02 0.43,0.025 0.46,0.03 Z"/>
               <path class="stage-photo-outline-gold" d="M0.46,0.03 C0.6,0 0.7,0.06 0.82,0.05 C0.95,0.04 1,0.16 0.94,0.29 C0.9,0.4 0.97,0.46 0.93,0.58 C0.9,0.72 0.94,0.8 0.82,0.89 C0.7,0.98 0.6,0.9 0.47,0.94 C0.35,0.98 0.22,0.96 0.13,0.86 C0.04,0.76 0.08,0.64 0.05,0.52 C0.02,0.4 0.06,0.32 0.1,0.2 C0.14,0.08 0.26,0.02 0.38,0.02 C0.41,0.02 0.43,0.025 0.46,0.03 Z"/>
             </svg>
           </div>
           <div class="stage-list-wrap">
-            <ul class="stage-list">
-              <li>Rubric and module mastery</li>
+            <ul class="stage-list senior-hsc-list">
+              <li><span>Rubric &amp; Module Mastery</span><em>Students learn exactly what NESA is asking before they begin writing.</em></li>
               <li>Conceptual thesis and argument development</li>
               <li>Close analysis, context and textual synthesis</li>
               <li>Advanced essays and Craft of Writing responses</li>
-              <li>HSC exam technique, adaptability and timed performance</li>
+              <li>HSC exam technique and timed performance</li>
             </ul>
-            <span class="stage-icon" aria-hidden="true">
-              <img src="images/icons/icon-graduation-cap.png" alt="">
-            </span>
           </div>
         </article>
       </div>
+
+      <section class="rubric-video-section" aria-labelledby="rubric-video-heading">
+        <p class="rubric-video-eyebrow">See our teaching in action</p>
+        <h3 class="rubric-video-title" id="rubric-video-heading">How we deconstruct the HSC rubric</h3>
+        <div class="rubric-video-grid">
+          <button class="process-video-button" type="button" data-process-video="/videos/english/rubric-annotated.mp4" aria-label="Play How we deconstruct the HSC rubric video">
+            <span class="process-media rubric-video-media">
+              <video src="/videos/english/rubric-annotated.mp4" muted preload="metadata" playsinline></video>
+              <span class="process-play" aria-hidden="true"></span>
+              <span class="process-bar" data-video-time data-time="0:00 / 0:37" aria-hidden="true"><span class="process-progress"></span></span>
+            </span>
+          </button>
+          <p class="rubric-video-note">Before students write, we teach them how to understand exactly what the rubric is asking.</p>
+        </div>
+      </section>
+    </div>
+  </section>
+
+  <section class="sat-section" id="short-answer-transform">
+    <div class="section-inner">
+
+      <div class="sat-panel" id="sat-panel-before">
+        <div class="sat-panel-header">
+          <h2>2025 HSC Short Answer Transformation</h2>
+          <div class="sat-rule" aria-hidden="true"><span></span><i></i><span></span></div>
+        </div>
+
+        <div class="sat-card">
+          <span class="sat-tag">Before &ndash; Typical Band 3 Response</span>
+          <div class="sat-before-grid">
+            <div class="sat-before-copy">
+              <p>Kooser shows that change can be upsetting. In the opening, &ldquo;Dawn comes later and later now&rdquo; suggests that things are changing and the speaker feels that life is not the same as it used to be.</p>
+              <p>The poem also shows that change affects everyday routines. The speaker says he &ldquo;could sit with coffee every morning&rdquo;, which shows he used to have a normal and comforting routine. This suggests that change can interrupt ordinary parts of life.</p>
+              <p>Kooser also uses imagery to show the difference between the past and the present. The &ldquo;garden / of trees that grew as if by magic&rdquo; suggests the past was calm and beautiful, but later &ldquo;mirrored by darkness&rdquo; shows that things now feel darker and more uncertain.</p>
+              <p>The poem also makes change seem difficult through the images of &ldquo;night in its thick winter jacket&rdquo; and the &ldquo;black horse&rdquo;. These images make change seem harsh and uncomfortable for the speaker.</p>
+              <p>Overall, Kooser shows that change is hard because it affects routine, changes the way the speaker sees the world, and leaves him feeling unsettled.</p>
+            </div>
+            <div class="sat-weakness-list">
+              <div class="sat-weakness-row">
+                <span class="sat-weakness-icon sat-tone-gold-bg" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.3h6c0-1 .4-1.8 1-2.3A7 7 0 0 0 12 2Z"/></svg>
+                </span>
+                <p>valid understanding of the poem, but ideas stay broad</p>
+              </div>
+              <div class="sat-weakness-row">
+                <span class="sat-weakness-icon sat-tone-blue-bg" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 8c-2 0-3.5 1.6-3.5 3.8 0 2 1.3 3.4 3 3.6-.2 1.6-1.3 2.7-2.5 3.1M17 8c-2 0-3.5 1.6-3.5 3.8 0 2 1.3 3.4 3 3.6-.2 1.6-1.3 2.7-2.5 3.1"/></svg>
+                </span>
+                <p>uses quotations, but analysis is mostly descriptive</p>
+              </div>
+              <div class="sat-weakness-row">
+                <span class="sat-weakness-icon sat-tone-green-bg" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+                </span>
+                <p>some relevant technique discussion, but limited depth</p>
+              </div>
+              <div class="sat-weakness-row">
+                <span class="sat-weakness-icon sat-tone-purple-bg" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2" fill="currentColor" stroke="none"/></svg>
+                </span>
+                <p>focuses on obvious meanings rather than deeper insight</p>
+              </div>
+              <div class="sat-weakness-row">
+                <span class="sat-weakness-icon sat-tone-red-bg" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M7 21h10M5 7h4M15 7h4M5 7 3 12a2 2 0 0 0 4 0L5 7ZM19 7l-2 5a2 2 0 0 0 4 0l-2-5Z"/></svg>
+                </span>
+                <p>overall judgement is simple and not especially sophisticated</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sat-panel" id="sat-panel-band6">
+        <div class="sat-panel-header">
+          <h3>The DA Transformation <em>(Band 6 response)</em></h3>
+          <div class="sat-rule" aria-hidden="true"><span></span><i></i><span></span></div>
+        </div>
+
+        <div class="sat-card">
+          <div class="sat-pairs" id="sat-pairs">
+            <div class="sat-pair">
+              <p class="sat-paragraph">Kooser <span class="sat-tone-blue">insightfully portrays change as a disorienting loss of light and connection</span>, as the speaker observes, &ldquo;Dawn comes later and later now&rdquo;, using temporal shift to signal a world out of balance and a sense of personal estrangement from what was once familiar.</p>
+              <div class="sat-annotation-row">
+                <span class="sat-annotation-bar sat-tone-blue-bg" aria-hidden="true"></span>
+                <span class="sat-annotation-text sat-tone-blue">Conceptual thesis &mdash; directly answers the question with insight</span>
+              </div>
+            </div>
+            <div class="sat-pair">
+              <p class="sat-paragraph">He reveals how change <span class="sat-tone-green">disrupts the intimacy of daily rituals and erodes meaning</span>, recalling that he &ldquo;could sit with coffee every morning&rdquo;, a mundane habit that once anchored him, now replaced by absence, highlighting how change invades the ordinary.</p>
+              <div class="sat-annotation-row">
+                <span class="sat-annotation-bar sat-tone-green-bg" aria-hidden="true"></span>
+                <span class="sat-annotation-text sat-tone-green">Moves beyond summary by analysing the impact of change on everyday life</span>
+              </div>
+            </div>
+            <div class="sat-pair">
+              <p class="sat-paragraph">Through delicate natural imagery, Kooser <span class="sat-tone-orange">contrasts past harmony with present desolation</span>; the &ldquo;light step out upon the water&rdquo; and &ldquo;a garden of trees that grew as if by magic&rdquo; evoke a time of beauty and wonder, deepening the ache of what has been lost.</p>
+              <div class="sat-annotation-row">
+                <span class="sat-annotation-bar sat-tone-orange-bg" aria-hidden="true"></span>
+                <span class="sat-annotation-text sat-tone-orange">Integrates quotation smoothly and analyses imagery with precision</span>
+              </div>
+            </div>
+            <div class="sat-pair">
+              <p class="sat-paragraph">Change is <span class="sat-tone-purple">personified as a mysterious, almost malevolent force</span>: &ldquo;startled by time&rdquo; and &ldquo;night in its thick winter jacket&rdquo; suggest time as an active agent cloaked in cold, while the &ldquo;black horse with harness&rdquo; that &ldquo;creaked like a cricket&rdquo; introduces menace and inevitability, overturning the calm of &ldquo;the water garden&rdquo;.</p>
+              <div class="sat-annotation-row">
+                <span class="sat-annotation-bar sat-tone-purple-bg" aria-hidden="true"></span>
+                <span class="sat-annotation-text sat-tone-purple">Identifies technique clearly and explains its effect in depth</span>
+              </div>
+            </div>
+            <div class="sat-pair">
+              <p class="sat-paragraph">Ultimately, Kooser presents change as <span class="sat-tone-red">a relentless transformation that isolates the self</span>; the closing lines &ldquo;And I, who only wished to keep looking out, / must now keep looking in&rdquo; capture the solitary retreat from the world, where looking in becomes both refuge and resignation.</p>
+              <div class="sat-annotation-row">
+                <span class="sat-annotation-bar sat-tone-red-bg" aria-hidden="true"></span>
+                <span class="sat-annotation-text sat-tone-red">Ends with a sophisticated overall insight and strong concluding judgement</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
   </section>
 
@@ -999,7 +1700,14 @@
       </div>
       <div class="resources-shelf" id="resources-shelf">
         <div class="resources-preview">
-          <img src="images/english-resources-preview.png" alt="Preview Our English Resources: Fairy Tales, Romanticism, and Marked Feedback Sample booklets">
+          <img src="images/english-resources-books-background.png" alt="Preview Our English Resources: Fairy Tales, Romanticism, and Marked Feedback Sample booklets">
+          <div class="resources-overlay" aria-hidden="true">
+            <span class="resources-overlay-eyebrow">Inside the classroom</span>
+            <span class="resources-overlay-title">Preview Our English Resources</span>
+            <span class="resources-overlay-label resources-overlay-label--fairy">Open sample booklet <i>&rarr;</i></span>
+            <span class="resources-overlay-label resources-overlay-label--romanticism">Open sample booklet <i>&rarr;</i></span>
+            <span class="resources-overlay-label resources-overlay-label--feedback">View sample Feedback <i>&rarr;</i></span>
+          </div>
           <button class="resources-hotspot resources-hotspot--fairy" type="button" data-resource-id="fairy-tales" aria-label="Open Year 7 Fairy Tales sample booklet"></button>
           <button class="resources-hotspot resources-hotspot--romanticism" type="button" data-resource-id="romanticism" aria-label="Open Romanticism sample booklet"></button>
           <button class="resources-hotspot resources-hotspot--feedback" type="button" data-resource-id="feedback-sample" aria-label="Open marked feedback sample"></button>
@@ -1061,12 +1769,12 @@
           </div>
         </article>
         <article class="class-card class-card--pink">
-          <div class="class-photo"><img src="images/subjects/english/class-focus.png" alt="Small group of students and a tutor in a Focus Class at DA Tuition"></div>
+          <div class="class-photo class-photo--focus"><img class="class-photo-img--focus" src="images/subjects/english/class-focus-school-group.png" alt="Focus Class students learning together at DA Tuition"></div>
           <div class="class-body">
             <span class="class-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="9" cy="9" r="2.6"></circle><circle cx="17" cy="10.2" r="2.1"></circle><path d="M4 19c0-3 2.2-5.4 5-5.4s5 2.4 5 5.4"></path><path d="M14.5 19c.2-2.2 1.7-4 3.7-4"></path></svg></span>
             <h3>Focus Class</h3>
             <span class="class-divider" aria-hidden="true"><span></span><i></i><span></span></span>
-            <p>Small-group support for students who need clarity, consistency, and confidence with English fundamentals.</p>
+            <p>Learn alongside students from your school, with lessons tailored to the same texts, assessments and classroom content.</p>
           </div>
         </article>
       </div>
@@ -1185,216 +1893,72 @@
     </div>
   </section>
 
-  <section class="pathway" id="pathway">
-    <div class="section-inner">
-      <div class="process-head">
-        <div class="process-title-row">
-          <span><h2 class="serif">The HSC English Process</h2></span>
-        </div>
-        <p class="process-subtitle">From Understanding to Excellence</p>
-      </div>
-      <div class="process-grid">
-        <article class="process-card">
-          <div class="process-card-head"><div class="process-num">1</div><h3>Rubric Deconstruction</h3></div>
-          <button class="process-video-button" type="button" data-process-video="/videos/english/rubric-annotated.mp4" aria-label="Play Rubric Deconstruction video">
-            <span class="process-media">
-              <video src="/videos/english/rubric-annotated.mp4" muted preload="metadata" playsinline></video>
-              <span class="process-play" aria-hidden="true"></span>
-              <span class="process-bar" aria-hidden="true"><span class="process-progress"></span></span>
-            </span>
-          </button>
-          <p>Students unpack the module rubric so they understand what the syllabus requires.</p>
-        </article>
-        <article class="process-card">
-          <div class="process-card-head"><div class="process-num">2</div><h3>Textual Analysis</h3></div>
-          <button class="process-video-button" type="button" aria-label="Textual Analysis video placeholder">
-            <span class="process-media process-media--placeholder process-media--analysis">
-              <span class="process-play" aria-hidden="true"></span>
-              <span class="process-bar" aria-hidden="true"><span class="process-progress"></span></span>
-            </span>
-          </button>
-          <p>They learn to notice technique, purpose and meaning, then connect evidence to argument.</p>
-        </article>
-        <article class="process-card">
-          <div class="process-card-head"><div class="process-num">3</div><h3>Guided Response Building</h3></div>
-          <button class="process-video-button" type="button" aria-label="Guided Response Building video placeholder">
-            <span class="process-media process-media--placeholder process-media--response">
-              <span class="process-play" aria-hidden="true"></span>
-              <span class="process-bar" aria-hidden="true"><span class="process-progress"></span></span>
-            </span>
-          </button>
-          <p>Ideas become paragraphs with thesis, topic sentence, evidence and commentary working together.</p>
-        </article>
-        <article class="process-card">
-          <div class="process-card-head"><div class="process-num">4</div><h3>Draft Development</h3></div>
-          <button class="process-video-button" type="button" aria-label="Draft Development video placeholder">
-            <span class="process-media process-media--draft">
-              <span class="process-play" aria-hidden="true"></span>
-              <span class="process-bar" aria-hidden="true"><span class="process-progress"></span></span>
-            </span>
-          </button>
-          <p>Students refine expression, structure and depth before moving into timed performance.</p>
-        </article>
-        <article class="process-card">
-          <div class="process-card-head"><div class="process-num">5</div><h3>Personalised Feedback</h3></div>
-          <button class="process-video-button" type="button" aria-label="Personalised Feedback video placeholder">
-            <span class="process-media process-media--placeholder process-media--feedback">
-              <span class="process-play" aria-hidden="true"></span>
-              <span class="process-bar" aria-hidden="true"><span class="process-progress"></span></span>
-            </span>
-          </button>
-          <p>Corrections are specific enough that students know what to fix next.</p>
-        </article>
-        <article class="process-card">
-          <div class="process-card-head"><div class="process-num">6</div><h3>Refinement and Exam Prep</h3></div>
-          <button class="process-video-button" type="button" aria-label="Refinement and Exam Prep video placeholder">
-            <span class="process-media process-media--exam">
-              <span class="process-play" aria-hidden="true"></span>
-              <span class="process-bar" aria-hidden="true"><span class="process-progress"></span></span>
-            </span>
-          </button>
-          <p>Students practise adapting their strongest ideas under real exam conditions.</p>
-        </article>
-      </div>
-    </div>
-  </section>
-
-  <section class="quote-section">
+  <section class="quote-section parents-faq" id="parents-faq" aria-labelledby="parents-faq-title">
+    <span class="parents-faq-paperclip" aria-hidden="true"><svg viewBox="0 0 28 84"><path d="M20 16v46a12 12 0 0 1-24 0V18a17 17 0 0 1 34 0v49a23 23 0 0 1-46 0V20"></path></svg></span>
     <div class="section-inner">
       <div class="section-head">
-        <h2 class="serif faq-heading">What <span class="faq-word">parents<svg class="faq-stroke" viewBox="0 0 140 14" preserveAspectRatio="none" aria-hidden="true"><path d="M2 8c20-6 100-6 136 2"></path></svg></span><br>often <span class="faq-word">ask us<svg class="faq-stroke" viewBox="0 0 110 14" preserveAspectRatio="none" aria-hidden="true"><path d="M2 9c16-7 78-7 106 1"></path></svg></span></h2>
+        <h2 class="serif faq-heading" id="parents-faq-title">What <span class="faq-word">parents<svg class="faq-stroke" viewBox="0 0 140 14" preserveAspectRatio="none" aria-hidden="true"><path d="M2 8c20-6 100-6 136 2"></path></svg></span><br>often <span class="faq-word">ask us<svg class="faq-stroke" viewBox="0 0 110 14" preserveAspectRatio="none" aria-hidden="true"><path d="M2 9c16-7 78-7 106 1"></path></svg></span></h2>
         <div class="faq-badge">
-          <span class="faq-badge-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15.5-6.2M21 12a9 9 0 0 1-15.5 6.2"></path><path d="M17 3v4h-4"></path><path d="M7 21v-4h4"></path></svg></span>
-          <span class="faq-badge-text">Tap a card<br>to flip</span>
+          <span class="faq-badge-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 11V6a1.7 1.7 0 0 1 3.4 0v5"></path><path d="M12.4 10V8a1.7 1.7 0 0 1 3.4 0v4"></path><path d="M15.8 11.5v-1a1.7 1.7 0 0 1 3.4 0v3.8c0 4-2.7 6.7-6.8 6.7h-.7a6.4 6.4 0 0 1-5.1-2.5L4 15.1a1.7 1.7 0 0 1 2.5-2.2l2.5 2.4"></path><path d="M7 5 5.5 3.5M10 3V1M14 3l1.5-1.5"></path></svg></span>
+          <span class="faq-badge-text" id="parentsFaqBadgeText">Question 01<br>open</span>
         </div>
       </div>
-      <div class="quote-grid">
-        <article class="concern-card" tabindex="0" role="button" aria-expanded="false" aria-label="I do not know if they truly understand what senior English requires of them. Flip card to reveal how DA helps.">
-          <div class="concern-inner">
-            <div class="concern-face concern-front">
-              <span class="concern-clip" aria-hidden="true"><svg viewBox="0 0 18 32"><path d="M9 4v18a4 4 0 0 1-8 0V9a2.5 2.5 0 0 1 5 0v13"></path></svg></span>
-              <span class="concern-num" aria-hidden="true">1</span>
-              <blockquote>&ldquo;I do not know if they truly understand what senior English requires of them.&rdquo;</blockquote>
-              <span class="concern-fold" aria-hidden="true"></span>
-              <span class="concern-flip-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15.5-6.2M21 12a9 9 0 0 1-15.5 6.2"></path><path d="M17 3v4h-4"></path><path d="M7 21v-4h4"></path></svg></span>
-            </div>
-            <div class="concern-face concern-back">
-              <span class="concern-back-label">How DA helps</span>
-              <span class="concern-back-divider" aria-hidden="true"><span>&#10022;</span></span>
-              <ul class="concern-back-list">
-                <li><span class="concern-back-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"></path></svg></span>Clarifies senior English expectations in simple terms</li>
-                <li><span class="concern-back-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"></path></svg></span>Introduces the skills students will need before Year 11</li>
-                <li><span class="concern-back-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"></path></svg></span>Builds confidence through guided and gradual preparation</li>
-              </ul>
-              <span class="concern-flip-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15.5-6.2M21 12a9 9 0 0 1-15.5 6.2"></path><path d="M17 3v4h-4"></path><path d="M7 21v-4h4"></path></svg></span>
+
+      <div class="parents-faq-body">
+        <div class="parents-faq-layout" id="parentsFaqLayout">
+          <svg class="parents-faq-connector" id="parentsFaqConnector" aria-hidden="true" focusable="false">
+            <path id="parentsFaqConnectorPath" d=""></path>
+          </svg>
+
+          <div class="parents-faq-questions" id="parentsFaqGrid">
+          <button type="button" class="parent-q parent-q--1" data-q="1" aria-expanded="true" aria-controls="parent-question-answer">
+            <span class="parent-q-num" aria-hidden="true">01</span>
+            <span class="parent-q-node" aria-hidden="true"></span>
+            <span class="parent-q-text">&ldquo;I do not know if they truly understand what senior English requires of them.&rdquo;</span>
+          </button>
+
+          <button type="button" class="parent-q parent-q--2" data-q="2" aria-expanded="false" aria-controls="parent-question-answer">
+            <span class="parent-q-num" aria-hidden="true">02</span>
+            <span class="parent-q-node" aria-hidden="true"></span>
+            <span class="parent-q-text">&ldquo;They know the texts well but their essay marks do not reflect that.&rdquo;</span>
+          </button>
+
+          <button type="button" class="parent-q parent-q--3" data-q="3" aria-expanded="false" aria-controls="parent-question-answer">
+            <span class="parent-q-num" aria-hidden="true">03</span>
+            <span class="parent-q-node" aria-hidden="true"></span>
+            <span class="parent-q-text">&ldquo;I am worried about how they will perform under real HSC exam conditions.&rdquo;</span>
+          </button>
+
+          <button type="button" class="parent-q parent-q--4" data-q="4" aria-expanded="false" aria-controls="parent-question-answer">
+            <span class="parent-q-num" aria-hidden="true">04</span>
+            <span class="parent-q-node" aria-hidden="true"></span>
+            <span class="parent-q-text">&ldquo;My child studies hard but still struggles to write with clarity and depth.&rdquo;</span>
+          </button>
+
+          <button type="button" class="parent-q parent-q--5" data-q="5" aria-expanded="false" aria-controls="parent-question-answer">
+            <span class="parent-q-num" aria-hidden="true">05</span>
+            <span class="parent-q-node" aria-hidden="true"></span>
+            <span class="parent-q-text">&ldquo;They have good ideas but do not know how to structure an English response.&rdquo;</span>
+          </button>
+
+          <button type="button" class="parent-q parent-q--6" data-q="6" aria-expanded="false" aria-controls="parent-question-answer">
+            <span class="parent-q-num" aria-hidden="true">06</span>
+            <span class="parent-q-node" aria-hidden="true"></span>
+            <span class="parent-q-text">&ldquo;How can I help them build confidence in reading, writing and analysis?&rdquo;</span>
+          </button>
+          </div>
+
+          <div class="parents-faq-note-wrap">
+            <div class="parents-faq-paper" id="parent-question-answer" role="region" aria-live="polite">
+              <span class="parents-faq-pin" aria-hidden="true"></span>
+              <div class="parents-faq-paper-content" id="parentsFaqPaperContent">
+                <span class="parents-faq-paper-label">How DA can help</span>
+                <p class="parents-faq-paper-answer" id="parentsFaqPaperAnswer"></p>
+                <ul class="parents-faq-paper-list" id="parentsFaqPaperList"></ul>
+              </div>
             </div>
           </div>
-        </article>
-        <article class="concern-card" tabindex="0" role="button" aria-expanded="false" aria-label="They know the texts well but their essay marks do not reflect that. Flip card to reveal how DA helps.">
-          <div class="concern-inner">
-            <div class="concern-face concern-front">
-              <span class="concern-clip" aria-hidden="true"><svg viewBox="0 0 18 32"><path d="M9 4v18a4 4 0 0 1-8 0V9a2.5 2.5 0 0 1 5 0v13"></path></svg></span>
-              <span class="concern-num" aria-hidden="true">2</span>
-              <blockquote>&ldquo;They know the texts well but their essay marks do not reflect that.&rdquo;</blockquote>
-              <span class="concern-fold" aria-hidden="true"></span>
-              <span class="concern-flip-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15.5-6.2M21 12a9 9 0 0 1-15.5 6.2"></path><path d="M17 3v4h-4"></path><path d="M7 21v-4h4"></path></svg></span>
-            </div>
-            <div class="concern-face concern-back">
-              <span class="concern-back-label">How DA helps</span>
-              <span class="concern-back-divider" aria-hidden="true"><span>&#10022;</span></span>
-              <ul class="concern-back-list">
-                <li><span class="concern-back-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"></path></svg></span>Identifies why marks are being lost</li>
-                <li><span class="concern-back-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"></path></svg></span>Provides annotated examples and strong model responses</li>
-                <li><span class="concern-back-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"></path></svg></span>Gives specific feedback students can apply independently</li>
-              </ul>
-              <span class="concern-flip-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15.5-6.2M21 12a9 9 0 0 1-15.5 6.2"></path><path d="M17 3v4h-4"></path><path d="M7 21v-4h4"></path></svg></span>
-            </div>
-          </div>
-        </article>
-        <article class="concern-card" tabindex="0" role="button" aria-expanded="false" aria-label="I am worried about how they will perform under real HSC exam conditions. Flip card to reveal how DA helps.">
-          <div class="concern-inner">
-            <div class="concern-face concern-front">
-              <span class="concern-clip" aria-hidden="true"><svg viewBox="0 0 18 32"><path d="M9 4v18a4 4 0 0 1-8 0V9a2.5 2.5 0 0 1 5 0v13"></path></svg></span>
-              <span class="concern-num" aria-hidden="true">3</span>
-              <blockquote>&ldquo;I am worried about how they will perform under real HSC exam conditions.&rdquo;</blockquote>
-              <span class="concern-fold" aria-hidden="true"></span>
-              <span class="concern-flip-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15.5-6.2M21 12a9 9 0 0 1-15.5 6.2"></path><path d="M17 3v4h-4"></path><path d="M7 21v-4h4"></path></svg></span>
-            </div>
-            <div class="concern-face concern-back">
-              <span class="concern-back-label">How DA helps</span>
-              <span class="concern-back-divider" aria-hidden="true"><span>&#10022;</span></span>
-              <ul class="concern-back-list">
-                <li><span class="concern-back-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"></path></svg></span>Practises timed responses under realistic conditions</li>
-                <li><span class="concern-back-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"></path></svg></span>Teaches planning and time-management strategies</li>
-                <li><span class="concern-back-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"></path></svg></span>Reviews performance to improve speed, clarity and control</li>
-              </ul>
-              <span class="concern-flip-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15.5-6.2M21 12a9 9 0 0 1-15.5 6.2"></path><path d="M17 3v4h-4"></path><path d="M7 21v-4h4"></path></svg></span>
-            </div>
-          </div>
-        </article>
-        <article class="concern-card" tabindex="0" role="button" aria-expanded="false" aria-label="My child studies hard but still struggles to write with clarity and depth. Flip card to reveal how DA helps.">
-          <div class="concern-inner">
-            <div class="concern-face concern-front">
-              <span class="concern-clip" aria-hidden="true"><svg viewBox="0 0 18 32"><path d="M9 4v18a4 4 0 0 1-8 0V9a2.5 2.5 0 0 1 5 0v13"></path></svg></span>
-              <span class="concern-num" aria-hidden="true">4</span>
-              <blockquote>&ldquo;My child studies hard but still struggles to write with clarity and depth.&rdquo;</blockquote>
-              <span class="concern-fold" aria-hidden="true"></span>
-              <span class="concern-flip-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15.5-6.2M21 12a9 9 0 0 1-15.5 6.2"></path><path d="M17 3v4h-4"></path><path d="M7 21v-4h4"></path></svg></span>
-            </div>
-            <div class="concern-face concern-back">
-              <span class="concern-back-label">How DA helps</span>
-              <span class="concern-back-divider" aria-hidden="true"><span>&#10022;</span></span>
-              <ul class="concern-back-list">
-                <li><span class="concern-back-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"></path></svg></span>Explicitly teaches clarity, expression and analytical depth</li>
-                <li><span class="concern-back-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"></path></svg></span>Breaks complex writing skills into manageable steps</li>
-                <li><span class="concern-back-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"></path></svg></span>Tracks recurring weaknesses across multiple responses</li>
-              </ul>
-              <span class="concern-flip-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15.5-6.2M21 12a9 9 0 0 1-15.5 6.2"></path><path d="M17 3v4h-4"></path><path d="M7 21v-4h4"></path></svg></span>
-            </div>
-          </div>
-        </article>
-        <article class="concern-card" tabindex="0" role="button" aria-expanded="false" aria-label="They have good ideas but do not know how to structure an English response. Flip card to reveal how DA helps.">
-          <div class="concern-inner">
-            <div class="concern-face concern-front">
-              <span class="concern-clip" aria-hidden="true"><svg viewBox="0 0 18 32"><path d="M9 4v18a4 4 0 0 1-8 0V9a2.5 2.5 0 0 1 5 0v13"></path></svg></span>
-              <span class="concern-num" aria-hidden="true">5</span>
-              <blockquote>&ldquo;They have good ideas but do not know how to structure an English response.&rdquo;</blockquote>
-              <span class="concern-fold" aria-hidden="true"></span>
-              <span class="concern-flip-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15.5-6.2M21 12a9 9 0 0 1-15.5 6.2"></path><path d="M17 3v4h-4"></path><path d="M7 21v-4h4"></path></svg></span>
-            </div>
-            <div class="concern-face concern-back">
-              <span class="concern-back-label">How DA helps</span>
-              <span class="concern-back-divider" aria-hidden="true"><span>&#10022;</span></span>
-              <ul class="concern-back-list">
-                <li><span class="concern-back-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"></path></svg></span>Provides clear paragraph and essay planning frameworks</li>
-                <li><span class="concern-back-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"></path></svg></span>Shows students how ideas connect logically</li>
-                <li><span class="concern-back-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"></path></svg></span>Gradually removes scaffolds as independence develops</li>
-              </ul>
-              <span class="concern-flip-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15.5-6.2M21 12a9 9 0 0 1-15.5 6.2"></path><path d="M17 3v4h-4"></path><path d="M7 21v-4h4"></path></svg></span>
-            </div>
-          </div>
-        </article>
-        <article class="concern-card" tabindex="0" role="button" aria-expanded="false" aria-label="How can I help them build confidence in reading, writing and analysis? Flip card to reveal how DA helps.">
-          <div class="concern-inner">
-            <div class="concern-face concern-front">
-              <span class="concern-clip" aria-hidden="true"><svg viewBox="0 0 18 32"><path d="M9 4v18a4 4 0 0 1-8 0V9a2.5 2.5 0 0 1 5 0v13"></path></svg></span>
-              <span class="concern-num" aria-hidden="true">6</span>
-              <blockquote>&ldquo;How can I help them build confidence in reading, writing and analysis?&rdquo;</blockquote>
-              <span class="concern-fold" aria-hidden="true"></span>
-              <span class="concern-flip-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15.5-6.2M21 12a9 9 0 0 1-15.5 6.2"></path><path d="M17 3v4h-4"></path><path d="M7 21v-4h4"></path></svg></span>
-            </div>
-            <div class="concern-face concern-back">
-              <span class="concern-back-label">How DA helps</span>
-              <span class="concern-back-divider" aria-hidden="true"><span>&#10022;</span></span>
-              <ul class="concern-back-list">
-                <li><span class="concern-back-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"></path></svg></span>Creates a supportive environment where questions are welcomed</li>
-                <li><span class="concern-back-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"></path></svg></span>Celebrates progress while maintaining high expectations</li>
-                <li><span class="concern-back-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"></path></svg></span>Helps students recognise and trust their own improvement</li>
-              </ul>
-              <span class="concern-flip-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15.5-6.2M21 12a9 9 0 0 1-15.5 6.2"></path><path d="M17 3v4h-4"></path><path d="M7 21v-4h4"></path></svg></span>
-            </div>
-          </div>
-        </article>
+        </div>
       </div>
     </div>
   </section>
@@ -1779,6 +2343,30 @@
       button.addEventListener("click", () => openProcessVideo(button.dataset.processVideo));
     });
 
+    function formatProcessVideoDuration(seconds){
+      if(!Number.isFinite(seconds) || seconds <= 0) return "";
+      const total = Math.floor(seconds);
+      const minutes = Math.floor(total / 60);
+      const remainingSeconds = String(total % 60).padStart(2, "0");
+      return `${minutes}:${remainingSeconds}`;
+    }
+
+    document.querySelectorAll(".process-media video").forEach((video) => {
+      const timeBar = video.closest(".process-media")?.querySelector("[data-video-time]");
+      if(!timeBar) return;
+
+      const syncDuration = () => {
+        const durationLabel = formatProcessVideoDuration(video.duration);
+        if(durationLabel) timeBar.dataset.time = `0:00 / ${durationLabel}`;
+      };
+
+      if(video.readyState >= 1){
+        syncDuration();
+      } else {
+        video.addEventListener("loadedmetadata", syncDuration, { once: true });
+      }
+    });
+
     if(processVideoModal){
       processVideoModal.addEventListener("click", closeProcessVideo);
       const processVideoFrame = processVideoModal.querySelector(".video-lightbox__frame");
@@ -1945,23 +2533,163 @@
       });
     });
 
-    const concernCards = document.querySelectorAll(".concern-card");
-
-    function toggleConcernCard(card){
-      const open = !card.classList.contains("is-flipped");
-      card.classList.toggle("is-flipped", open);
-      card.setAttribute("aria-expanded", open ? "true" : "false");
-    }
-
-    concernCards.forEach((card) => {
-      card.addEventListener("click", () => toggleConcernCard(card));
-      card.addEventListener("keydown", (event) => {
-        if(event.key === "Enter" || event.key === " "){
-          event.preventDefault();
-          toggleConcernCard(card);
+    // "What parents often ask us" — interactive parent question sequence
+    (function(){
+      const PARENT_FAQS = {
+        1: {
+          answer: "We break down what senior English really involves and build deep understanding through explicit teaching, modelled examples and guided practice.",
+          list: [
+            "Clarifies senior English expectations in simple terms",
+            "Introduces the skills students will need before Year 11",
+            "Builds confidence through guided and gradual preparation"
+          ]
+        },
+        2: {
+          answer: "We teach students how to turn textual knowledge into strong arguments, purposeful analysis and responses that directly address the question.",
+          list: [
+            "Identifies why marks are being lost",
+            "Provides annotated examples and strong model responses",
+            "Gives specific feedback students can apply independently"
+          ]
+        },
+        3: {
+          answer: "Students regularly practise under HSC-style conditions so that planning, timing and writing under pressure become familiar rather than overwhelming.",
+          list: [
+            "Practises timed responses under realistic conditions",
+            "Teaches planning and time-management strategies",
+            "Reviews performance to improve speed, clarity and control"
+          ]
+        },
+        4: {
+          answer: "We explicitly teach students how to develop, express and refine their ideas so their writing becomes clearer, more analytical and more sophisticated.",
+          list: [
+            "Explicitly teaches clarity, expression and analytical depth",
+            "Breaks complex writing skills into manageable steps",
+            "Tracks recurring weaknesses across multiple responses"
+          ]
+        },
+        5: {
+          answer: "We give students practical writing frameworks and gradually teach them how to move beyond formulas into fluent, controlled and purposeful responses.",
+          list: [
+            "Provides clear paragraph and essay planning frameworks",
+            "Shows students how ideas connect logically",
+            "Gradually removes scaffolds as independence develops"
+          ]
+        },
+        6: {
+          answer: "Confidence grows through understanding. We combine explicit teaching, guided practice, individual feedback and encouragement so students know exactly how to improve.",
+          list: [
+            "Creates a supportive environment where questions are welcomed",
+            "Celebrates progress while maintaining high expectations",
+            "Helps students recognise and trust their own improvement"
+          ]
         }
+      };
+
+      const layout = document.getElementById("parentsFaqLayout");
+      const grid = document.getElementById("parentsFaqGrid");
+      const note = document.getElementById("parent-question-answer");
+      const content = document.getElementById("parentsFaqPaperContent");
+      const paperAnswer = document.getElementById("parentsFaqPaperAnswer");
+      const paperList = document.getElementById("parentsFaqPaperList");
+      const badgeText = document.getElementById("parentsFaqBadgeText");
+      const connector = document.getElementById("parentsFaqConnector");
+      const connectorPath = document.getElementById("parentsFaqConnectorPath");
+      if(!layout || !grid || !note || !content || !paperAnswer || !paperList) return;
+
+      const buttons = Array.from(grid.querySelectorAll(".parent-q"));
+      const reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      let selected = "1";
+      let changeTimer = null;
+
+      function renderAnswer(q, animate){
+        const data = PARENT_FAQS[q];
+        if(!data) return;
+        const update = () => {
+          paperAnswer.textContent = data.answer;
+          paperList.innerHTML = data.list.map((item) => `<li>${item}</li>`).join("");
+          if(badgeText) badgeText.innerHTML = `Question ${String(q).padStart(2, "0")}<br>open`;
+        };
+
+        if(!animate || reduceMotion){
+          update();
+          content.classList.remove("is-changing");
+          return;
+        }
+
+        content.classList.add("is-changing");
+        clearTimeout(changeTimer);
+        changeTimer = setTimeout(() => {
+          update();
+          requestAnimationFrame(() => content.classList.remove("is-changing"));
+        }, 230);
+      }
+
+      function drawConnector(activeBtn){
+        if(!connector || !connectorPath) return;
+        connector.classList.remove("is-drawing");
+
+        if(window.innerWidth <= 780){
+          connectorPath.setAttribute("d", "");
+          return;
+        }
+
+        const text = activeBtn.querySelector(".parent-q-text");
+        const layoutRect = layout.getBoundingClientRect();
+        const textRect = text ? text.getBoundingClientRect() : activeBtn.getBoundingClientRect();
+        const noteRect = note.getBoundingClientRect();
+        const startX = textRect.right - layoutRect.left + 27;
+        const startY = textRect.top - layoutRect.top + textRect.height / 2;
+        const endX = noteRect.left - layoutRect.left + Math.min(34, noteRect.width * .06);
+        const endY = noteRect.top - layoutRect.top + noteRect.height * .34;
+        const c1X = startX + Math.max(90, (endX - startX) * .42);
+        const c1Y = startY;
+        const c2X = endX - Math.max(70, (endX - startX) * .22);
+        const c2Y = endY;
+        const path = `M${startX},${startY} C${c1X},${c1Y} ${c2X},${c2Y} ${endX},${endY}`;
+        connector.setAttribute("viewBox", `0 0 ${layoutRect.width} ${layoutRect.height}`);
+        connectorPath.setAttribute("d", path);
+
+        if(!reduceMotion && typeof connectorPath.getTotalLength === "function"){
+          const length = connectorPath.getTotalLength();
+          connectorPath.style.strokeDasharray = String(length);
+          connectorPath.style.strokeDashoffset = "0";
+          connector.style.setProperty("--faq-line-length", String(length));
+          requestAnimationFrame(() => connector.classList.add("is-drawing"));
+        }
+      }
+
+      function selectQuestion(btn, options = {}){
+        const q = btn.dataset.q || "1";
+        buttons.forEach((button) => {
+          const isActive = button === btn;
+          button.classList.toggle("is-active", isActive);
+          button.setAttribute("aria-expanded", isActive ? "true" : "false");
+        });
+        renderAnswer(q, options.animate !== false && selected !== q);
+        selected = q;
+        requestAnimationFrame(() => drawConnector(btn));
+
+        if(options.scrollNote && window.innerWidth <= 780){
+          note.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
+        }
+      }
+
+      buttons.forEach((btn) => {
+        btn.addEventListener("click", () => selectQuestion(btn, { scrollNote: true }));
       });
-    });
+
+      const initialButton = buttons.find((btn) => btn.dataset.q === "1") || buttons[0];
+      if(initialButton) selectQuestion(initialButton, { animate: false });
+
+      window.addEventListener("resize", () => {
+        clearTimeout(window.__faqConnectorResizeTimer);
+        window.__faqConnectorResizeTimer = setTimeout(() => {
+          const active = buttons.find((btn) => btn.dataset.q === selected);
+          if(active) drawConnector(active);
+        }, 180);
+      });
+    })();
 
     // Real DA Tuition Google reviews about English tutors, trimmed for a rotating pull-quote.
     const diffQuotes = [
@@ -2140,6 +2868,50 @@
       document.addEventListener("touchend", () => { lastTouchY = null; }, { passive: true });
       document.addEventListener("touchcancel", () => { lastTouchY = null; }, { passive: true });
     }
+
+    // Short Answer Transformation: swipe-up+fade panels, staggered Band 6 pairs
+    (function(){
+      const prefersReducedMotionSat = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const satPanels = document.querySelectorAll(".sat-panel");
+      const satPairs = document.querySelectorAll("#sat-pairs .sat-pair");
+
+      if(prefersReducedMotionSat){
+        satPanels.forEach((panel) => panel.classList.add("is-visible"));
+        satPairs.forEach((pair) => pair.classList.add("is-visible"));
+        return;
+      }
+
+      if(!("IntersectionObserver" in window)){
+        satPanels.forEach((panel) => panel.classList.add("is-visible"));
+        satPairs.forEach((pair) => pair.classList.add("is-visible"));
+        return;
+      }
+
+      const satPanelObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if(entry.isIntersecting){
+            entry.target.classList.add("is-visible");
+            satPanelObserver.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.2 });
+      satPanels.forEach((panel) => satPanelObserver.observe(panel));
+
+      const satPairsContainer = document.getElementById("sat-pairs");
+      if(satPairsContainer){
+        const satPairsObserver = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if(entry.isIntersecting){
+              satPairs.forEach((pair, index) => {
+                setTimeout(() => pair.classList.add("is-visible"), index * 700);
+              });
+              satPairsObserver.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.15 });
+        satPairsObserver.observe(satPairsContainer);
+      }
+    })();
   </script>
 </body>
 </html>
