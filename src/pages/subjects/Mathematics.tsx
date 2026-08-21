@@ -35,6 +35,7 @@ import { MathsGraphLabInvitation, MathsTeachingProof } from '@/features/maths-te
 import { MathsIntroVideoGate } from '@/features/maths-intro-video/MathsIntroVideoGate';
 import { HscMathsPathway } from '@/features/hsc-maths-pathway/HscMathsPathway';
 import { MathsSyllabusScrollStory } from '@/features/maths-syllabus-scroll-story/MathsSyllabusScrollStory';
+import { MathsTopicNetwork } from '@/features/maths-topic-network/MathsTopicNetwork';
 
 interface StepRow {
   label: string;
@@ -1480,6 +1481,21 @@ const Mathematics = () => {
         <MathsSyllabusScrollStory />
 
         <HscMathsPathway />
+
+        <section className="bg-[#071629] px-5 py-20 lg:px-8" aria-labelledby="maths-topic-network-heading">
+          <div className="mx-auto max-w-7xl">
+            <p className="mb-3 text-xs font-black uppercase tracking-[0.16em] text-[#c9a227]">The whole picture</p>
+            <h2 id="maths-topic-network-heading" className="font-serif text-4xl font-medium leading-[1.03] tracking-[-0.04em] text-white sm:text-5xl">
+              Every topic connects to another.
+            </h2>
+            <p className="mt-5 max-w-[52ch] text-base leading-8 text-[#b9c4d6]">
+              Scroll to watch how Years 7–12 maths builds outward from a handful of fundamentals — click any topic to see what it depends on.
+            </p>
+            <div className="mt-10">
+              <MathsTopicNetwork />
+            </div>
+          </div>
+        </section>
 
         <MathsTeachingProof />
 
