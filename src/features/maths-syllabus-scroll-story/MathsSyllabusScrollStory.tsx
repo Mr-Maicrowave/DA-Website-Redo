@@ -2,123 +2,88 @@ import { useLayoutEffect, useRef } from 'react';
 import { useReducedMotion } from 'framer-motion';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { MATHS_SYLLABUS_STORY_BEATS } from './maths-syllabus-scroll-story-data';
+import {
+  LOGO_REVEAL_PROGRESS,
+  MATHS_TOWER_COPY_GROUPS,
+  TOWER_RAIL_POINTS,
+} from './maths-tower-story-data';
 import './maths-syllabus-scroll-story.css';
 
-const STORY_CURVE = 'M 102 646 C 244 562, 334 614, 454 482 S 694 222, 814 362 S 1058 618, 1328 166';
 const DESKTOP_MEDIA_QUERY = '(min-width: 768px)';
-const BEAT_TRANSITION_DURATION = 0.08;
 
-const STORY_POINT_OFFSETS = [
-  { x: 0, y: 0 },
-  { x: 250, y: -104 },
-  { x: 712, y: -284 },
-  { x: 860, y: -134 },
-  { x: 1018, y: -202 },
-  { x: 1226, y: -480 },
-] as const;
+function interpolate(progress: number) {
+  const after = TOWER_RAIL_POINTS.find((point) => point.progress >= progress) ?? TOWER_RAIL_POINTS.at(-1)!;
+  const before = [...TOWER_RAIL_POINTS].reverse().find((point) => point.progress <= progress) ?? TOWER_RAIL_POINTS[0];
+  const span = after.progress - before.progress || 1;
+  const ratio = Math.max(0, Math.min(1, (progress - before.progress) / span));
+  return {
+    x: before.x + (after.x - before.x) * ratio,
+    y: before.y + (after.y - before.y) * ratio,
+  };
+}
 
 export const MathsSyllabusScrollStory = () => {
   const rootRef = useRef<HTMLElement>(null);
   const prefersReducedMotion = Boolean(useReducedMotion());
 
   useLayoutEffect(() => {
-    if (prefersReducedMotion) return;
-    if (!rootRef.current) return;
+    if (prefersReducedMotion || !rootRef.current) return;
 
     gsap.registerPlugin(ScrollTrigger);
-
+    const root = rootRef.current;
     const media = gsap.matchMedia();
+
+    function applyTowerProgress(progress: number) {
+      const point = interpolate(progress);
+      const hidden = TOWER_RAIL_POINTS.some((railPoint) => railPoint.hidden && Math.abs(progress - railPoint.progress) < 0.022);
+      const logoProgress = Math.max(0, Math.min(1, (progress - LOGO_REVEAL_PROGRESS) / 0.015));
+      const exitProgress = Math.max(0, Math.min(1, (progress - 0.94) / (LOGO_REVEAL_PROGRESS - 0.94)));
+      const landingX = point.x + (50 - point.x) * exitProgress;
+      const landingY = point.y + (50 - point.y) * exitProgress;
+
+      root.style.setProperty('--tower-y', `${Math.min(100, progress * 108)}%`);
+      root.style.setProperty('--ball-x', `${landingX}%`);
+      root.style.setProperty('--ball-y', `${landingY}%`);
+      root.style.setProperty('--ball-scale', `${1 - exitProgress * 0.8}`);
+      root.style.setProperty('--ball-visibility', hidden || logoProgress > 0.2 ? '0' : '1');
+      root.style.setProperty('--logo-opacity', logoProgress > 0 ? '1' : '0');
+      root.style.setProperty('--logo-scale', `${0.04 + logoProgress * 0.96}`);
+      root.style.setProperty('--logo-mask', `${logoProgress * 72}%`);
+      root.style.setProperty('--ripple-scale', `${0.2 + logoProgress * 1.8}`);
+      root.style.setProperty('--ripple-opacity', `${Math.max(0, 1 - logoProgress)}`);
+      root.style.setProperty('--content-opacity', `${Math.max(0, 1 - exitProgress * 2.5)}`);
+    }
+
     const context = gsap.context(() => {
       media.add(DESKTOP_MEDIA_QUERY, () => {
-          const timeline = gsap.timeline({
-            defaults: { ease: 'none' },
-            scrollTrigger: {
-              trigger: rootRef.current,
-              start: 'top top',
-              end: '+=500%',
-              pin: true,
-              scrub: true,
-              anticipatePin: 1,
-              invalidateOnRefresh: true,
-            },
-          });
+        const copy = MATHS_TOWER_COPY_GROUPS.map((group) => `[data-tower-copy="${group.id}"]`);
+        const timeline = gsap.timeline({
+          defaults: { ease: 'none' },
+          scrollTrigger: {
+            trigger: root,
+            start: 'top top',
+            end: '+=620%',
+            pin: true,
+            scrub: true,
+            anticipatePin: 1,
+            invalidateOnRefresh: true,
+            onUpdate: (trigger) => applyTowerProgress(trigger.progress),
+          },
+        });
 
-          const point = '.maths-syllabus-story__point-group';
-          const mainLine = '.maths-syllabus-story__line:not(.maths-syllabus-story__line--glow)';
-          const glowLine = '.maths-syllabus-story__line--glow';
-          const tangent = '.maths-syllabus-story__tangent';
-          const integral = '.maths-syllabus-story__integral';
-          const vector = '.maths-syllabus-story__vector';
+        timeline.set(copy, { opacity: 0, y: 18 }, 0);
+        MATHS_TOWER_COPY_GROUPS.forEach((group, index) => {
+          const current = `[data-tower-copy="${group.id}"]`;
+          timeline.to(current, { opacity: 1, y: 0, duration: 0.07 }, group.progress);
+          if (index > 0) {
+            const previous = `[data-tower-copy="${MATHS_TOWER_COPY_GROUPS[index - 1].id}"]`;
+            timeline.to(previous, { opacity: 0, y: -12, duration: 0.06 }, group.progress);
+          }
+        });
 
-          timeline.set([mainLine, glowLine], { strokeDasharray: 1, strokeDashoffset: 1 }, 0);
-          timeline.set([tangent, integral, vector], { opacity: 0 }, 0);
-          timeline.set(point, { x: 0, y: 0 }, 0);
-
-          MATHS_SYLLABUS_STORY_BEATS.forEach((beat, index) => {
-            const pointOffset = STORY_POINT_OFFSETS[index];
-            const lineOffset = 1 - (index + 1) / MATHS_SYLLABUS_STORY_BEATS.length;
-
-            timeline.to(
-              point,
-              {
-                x: pointOffset.x,
-                y: pointOffset.y,
-                duration: BEAT_TRANSITION_DURATION,
-              },
-              beat.desktopProgress,
-            );
-            timeline.to(
-              mainLine,
-              { strokeDashoffset: lineOffset, duration: BEAT_TRANSITION_DURATION },
-              beat.desktopProgress,
-            );
-            timeline.to(
-              glowLine,
-              { strokeDashoffset: lineOffset, duration: BEAT_TRANSITION_DURATION },
-              beat.desktopProgress,
-            );
-
-            if (index > 0) {
-              const outgoingBeat = MATHS_SYLLABUS_STORY_BEATS[index - 1];
-
-              timeline.to(
-                [`[data-plate="${outgoingBeat.id}"]`, `[data-beat="${outgoingBeat.id}"]`],
-                { opacity: 0, duration: BEAT_TRANSITION_DURATION },
-                beat.desktopProgress,
-              );
-              timeline.to(
-                [`[data-plate="${beat.id}"]`, `[data-beat="${beat.id}"]`],
-                { opacity: 1, duration: BEAT_TRANSITION_DURATION },
-                beat.desktopProgress,
-              );
-            }
-
-            if (beat.id === 'change') {
-              timeline.to(tangent, { opacity: 0.92, duration: BEAT_TRANSITION_DURATION }, beat.desktopProgress);
-            }
-
-            if (beat.id === 'accumulate') {
-              timeline.to(tangent, { opacity: 0, duration: BEAT_TRANSITION_DURATION }, beat.desktopProgress);
-              timeline.to(integral, { opacity: 1, duration: BEAT_TRANSITION_DURATION }, beat.desktopProgress);
-            }
-
-            if (beat.id === 'extend') {
-              timeline.to(integral, { opacity: 0, duration: BEAT_TRANSITION_DURATION }, beat.desktopProgress);
-              timeline.to(vector, { opacity: 0.9, duration: BEAT_TRANSITION_DURATION }, beat.desktopProgress);
-              timeline.to(mainLine, { opacity: 0.48, duration: BEAT_TRANSITION_DURATION }, beat.desktopProgress);
-              timeline.to(glowLine, { opacity: 0.2, duration: BEAT_TRANSITION_DURATION }, beat.desktopProgress);
-            }
-
-            if (beat.id === 'explore') {
-              timeline.to(mainLine, { opacity: 0.36, duration: BEAT_TRANSITION_DURATION }, beat.desktopProgress);
-              timeline.to(glowLine, { opacity: 0.14, duration: BEAT_TRANSITION_DURATION }, beat.desktopProgress);
-            }
-          });
-
-          return () => timeline.kill();
+        return () => timeline.kill();
       });
-    }, rootRef);
+    }, root);
 
     return () => {
       media.revert();
@@ -127,70 +92,36 @@ export const MathsSyllabusScrollStory = () => {
   }, [prefersReducedMotion]);
 
   return (
-    <section ref={rootRef} className="maths-syllabus-story" aria-labelledby="maths-syllabus-story-heading">
-      <div className="maths-syllabus-story__sticky maths-syllabus-story__sticky-scene">
-        <div className="maths-syllabus-story__visual" aria-hidden="true">
-          <div className="maths-syllabus-story__plates">
-            {MATHS_SYLLABUS_STORY_BEATS.map((beat, index) => (
-              <img
-                key={beat.id}
-                className="maths-syllabus-story__plate"
-                data-plate={beat.id}
-                src={'/images/maths-syllabus-scroll-story/' + beat.plate + '.webp'}
-                alt=""
-                loading={index === 0 || beat.id === 'explore' ? 'eager' : 'lazy'}
-              />
-            ))}
-          </div>
-
-          <svg
-            className="maths-syllabus-story__overlay"
-            viewBox="0 0 1440 810"
-            preserveAspectRatio="xMidYMid slice"
-            focusable="false"
-          >
-            <defs>
-              <filter id="maths-syllabus-story-glow" x="-15%" y="-30%" width="130%" height="160%">
-                <feGaussianBlur stdDeviation="9" />
-              </filter>
-            </defs>
-            <path
-              className="maths-syllabus-story__line maths-syllabus-story__line--glow"
-              d={STORY_CURVE}
-              pathLength="1"
-            />
-            <path className="maths-syllabus-story__integral" d="M 776 422 C 844 474, 934 575, 1047 532 L 1047 640 L 776 640 Z" />
-            <path className="maths-syllabus-story__line" d={STORY_CURVE} pathLength="1" />
-            <path className="maths-syllabus-story__tangent" d="M 704 272 L 920 452" />
-            <path className="maths-syllabus-story__vector" d="M 1038 496 L 1168 358 M 1168 358 L 1159 381 M 1168 358 L 1145 366" />
-            <g transform="translate(102 646)">
-              <g className="maths-syllabus-story__point-group">
-                <circle className="maths-syllabus-story__point" r="5" />
-              </g>
-            </g>
-          </svg>
+    <section ref={rootRef} className="maths-syllabus-story maths-tower-story" aria-labelledby="maths-syllabus-story-heading">
+      <div className="maths-tower-story__sticky">
+        <div className="maths-tower-story__visual" aria-hidden="true">
+          <div className="maths-tower-story__rear" />
+          <div className="maths-tower-story__ball" />
+          <div className="maths-tower-story__front-mask maths-tower-story__front-mask--left" />
+          <div className="maths-tower-story__front-mask maths-tower-story__front-mask--right" />
+          <div className="maths-tower-story__ripple" />
         </div>
 
-        <div className="maths-syllabus-story__content">
-          <div className="maths-syllabus-story__heading-copy">
-            <p className="maths-syllabus-story__kicker">A connected HSC mathematics story</p>
+        <div className="maths-tower-story__content">
+          <div className="maths-tower-story__heading-copy">
+            <p className="maths-tower-story__kicker">Mathematics from Years 7 to 12</p>
             <h2 id="maths-syllabus-story-heading">Build ideas that travel further</h2>
-            <p className="maths-syllabus-story__intro">
-              Each course opens a different way to describe, test and extend the world around you.
-            </p>
+            <p>One connected approach to the concepts, methods and confidence that mathematics asks of you next.</p>
           </div>
 
-          <div className="maths-syllabus-story__beats">
-            {MATHS_SYLLABUS_STORY_BEATS.map((beat) => (
-              <article key={beat.id} className="maths-syllabus-story__beat" data-beat={beat.id}>
-                <p className="maths-syllabus-story__eyebrow">{beat.eyebrow}</p>
-                <p className="maths-syllabus-story__course">{beat.course}</p>
-                <h3>{beat.title}</h3>
-                <p className="maths-syllabus-story__anchor">{beat.syllabusAnchor}</p>
+          <div className="maths-tower-story__copies">
+            {MATHS_TOWER_COPY_GROUPS.map((group) => (
+              <article className="maths-tower-story__copy" data-tower-copy={group.id} key={group.id}>
+                <p className="maths-tower-story__eyebrow">{group.eyebrow}</p>
+                <p className="maths-tower-story__course">{group.course}</p>
+                <h3>{group.title}</h3>
+                <p>{group.teaching}</p>
               </article>
             ))}
           </div>
         </div>
+
+        <img className="maths-tower-story__logo" src="/images/maths-tower-story/da-logo-full-exact.png" alt="DA Tuition" />
       </div>
     </section>
   );
