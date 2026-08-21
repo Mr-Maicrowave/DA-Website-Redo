@@ -26,6 +26,7 @@ test('desktop mounts exactly one progress-driven 3D tower without raster masks o
   assert.match(componentSource, /import \{ MathsTowerScene \} from '.\/MathsTowerScene'/);
   assert.equal((componentSource.match(/<MathsTowerScene\b/g) ?? []).length, 1);
   assert.match(componentSource, /<MathsTowerScene[\s\S]*?progress=\{progress\}/);
+  assert.doesNotMatch(componentSource, /<video|currentTime/);
   assert.doesNotMatch(componentSource, /maths-tower-story__rear|maths-tower-story__front-mask/);
   assert.doesNotMatch(componentSource, /maths-tower-story__ball|--ball-visibility/);
   assert.doesNotMatch(stylesSource, /maths-tower-story__ball|--ball-visibility/);
