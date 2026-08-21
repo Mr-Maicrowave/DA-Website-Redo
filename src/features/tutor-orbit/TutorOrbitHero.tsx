@@ -35,10 +35,12 @@ export function TutorOrbitHero() {
           <img src={getPhotoUrl(tutor)} alt="" style={getPhotoStyle(tutor)} />
         </motion.button>;
       })}
-      <div className="tutor-orbit__centre">
-        <AnimatePresence mode="wait"><motion.img key={active.id} src={getPhotoUrl(active)} alt={`${active.name}, DA Tuition educator`} style={getPhotoStyle(active)} initial={reduced ? false : { opacity: 0, scale: 1.045, filter: 'blur(5px)' }} animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }} exit={reduced ? undefined : { opacity: 0, scale: .98, filter: 'blur(4px)' }} transition={{ duration: .42, ease: [0.16, 1, 0.3, 1] }} /></AnimatePresence>
+      <div className="tutor-orbit__centre-wrap">
+        <div className="tutor-orbit__centre">
+          <AnimatePresence mode="wait"><motion.img key={active.id} src={getPhotoUrl(active)} alt={`${active.name}, DA Tuition educator`} style={getPhotoStyle(active)} initial={reduced ? false : { opacity: 0, scale: 1.045, filter: 'blur(5px)' }} animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }} exit={reduced ? undefined : { opacity: 0, scale: .98, filter: 'blur(4px)' }} transition={{ duration: .42, ease: [0.16, 1, 0.3, 1] }} /></AnimatePresence>
+        </div>
+        <div className="tutor-orbit__centre-ring" aria-hidden="true" />
       </div>
-      <div className="tutor-orbit__name"><strong>{active.name}</strong><span>{active.designation} · {subject(active)}</span></div>
     </div>
     <motion.aside className="tutor-orbit__card" initial={reduced ? false : { opacity: 0, x: 22 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: .32 }}>
       <h2>{active.name}</h2><em>{active.designation}</em><div>{(active.profile?.tags ?? [subject(active), 'Warm, clear support', 'Confidence-building']).slice(0, 3).map(tag => <span key={tag}>{tag}</span>)}</div><p>“{active.motto}”</p><Link to="/find-teacher">Meet the whole team <ArrowRight /></Link>
