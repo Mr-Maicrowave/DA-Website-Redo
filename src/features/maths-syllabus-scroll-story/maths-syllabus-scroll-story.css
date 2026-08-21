@@ -1,5 +1,6 @@
 .maths-tower-story {
   --tower-opacity: 1;
+  --content-opacity: 1;
   --logo-progress: 0;
   --logo-mask: 0%;
   --logo-scale: 0.08;
@@ -111,6 +112,8 @@
   gap: clamp(1.5rem, 3vw, 4rem);
   min-height: 100vh;
   padding: clamp(2rem, 5vh, 5rem) clamp(2rem, 5vw, 6rem);
+  opacity: var(--content-opacity);
+  transition: opacity 40ms linear;
 }
 
 .maths-tower-story__heading-copy {
@@ -186,7 +189,7 @@
   line-height: 1.55;
 }
 
-@media (min-width: 768px) and (prefers-reduced-motion: no-preference) {
+@media (min-width: 768px) and (min-height: 640px) and (prefers-reduced-motion: no-preference) {
   .maths-tower-story:not([data-fallback='true']) .maths-tower-story__sticky {
     height: 100vh;
     min-height: 38rem;
@@ -212,6 +215,7 @@
   display: block;
   min-height: 0;
   padding: clamp(2.5rem, 6vw, 5rem) clamp(1.25rem, 5vw, 6rem);
+  opacity: 1 !important;
 }
 
 .maths-tower-story[data-fallback='true'] .maths-tower-story__copies {
@@ -241,7 +245,7 @@
   }
 }
 
-@media (min-width: 768px) and (max-height: 700px) and (prefers-reduced-motion: no-preference) {
+@media (min-width: 768px) and (min-height: 640px) and (max-height: 700px) and (prefers-reduced-motion: no-preference) {
   .maths-tower-story:not([data-fallback='true']) .maths-tower-story__content {
     gap: 1.25rem;
     padding-block: 1.5rem;

@@ -52,13 +52,43 @@ test('all six approved chapters remain live semantic articles', () => {
 });
 
 test('mobile, reduced-motion and WebGL failure paths remove Canvas and expose the poster cards', () => {
-  assert.match(componentSource, /const canRenderTower = isDesktop && !prefersReducedMotion && !webglFailed/);
+  assert.match(componentSource, /const canRenderTower = hasTowerViewport && webglReady && !prefersReducedMotion && !webglFailed/);
   assert.match(componentSource, /onContextFailure=\{handleContextFailure\}/);
   assert.match(componentSource, /\{canRenderTower \? \([\s\S]*?<MathsTowerScene[\s\S]*?\) : \([\s\S]*?tower-poster\.webp/);
   assert.match(componentSource, /data-fallback=\{!canRenderTower\}/);
   assert.match(stylesSource, /\[data-fallback='true'\][\s\S]*?maths-tower-story__copy/);
   assert.match(stylesSource, /@media \(max-width: 767px\)/);
   assert.match(stylesSource, /@media \(prefers-reduced-motion: reduce\)/);
+});
+
+test('WebGL is preflighted and initial Canvas errors fall through to the poster', () => {
+  assert.match(componentSource, /function canCreateWebGLContext\(\): boolean/);
+  assert.match(componentSource, /document\.createElement\('canvas'\)/);
+  assert.match(componentSource, /getContext\('webgl2'/);
+  assert.match(componentSource, /catch \{/);
+  assert.match(componentSource, /setWebglReady\(towerQuery\.matches && canCreateWebGLContext\(\)\)/);
+  assert.match(
+    componentSource,
+    /<TowerErrorBoundary onError=\{handleContextFailure\}>[\s\S]*?<MathsTowerScene[\s\S]*?<\/TowerErrorBoundary>/,
+  );
+});
+
+test('raw ending progress clears content by 0.985 and the GSAP clock remains normalised to one', () => {
+  assert.match(componentSource, /'--content-opacity': ending\.towerOpacity/);
+  assert.match(componentSource, /timeline\.to\(\{ progress: 0 \}, \{ progress: 1, duration: 1 \}, 0\)/);
+  assert.doesNotMatch(componentSource, /timeline\.to\(content/);
+  assert.match(stylesSource, /\.maths-tower-story__content[\s\S]*?opacity: var\(--content-opacity\)/);
+  assert.match(stylesSource, /\[data-fallback='true'\][\s\S]*?maths-tower-story__content[\s\S]*?opacity: 1 !important/);
+});
+
+test('short or zoomed desktop viewports use the normal-flow fallback', () => {
+  assert.match(
+    componentSource,
+    /const TOWER_MEDIA_QUERY = '\(min-width: 768px\) and \(min-height: 640px\)'/,
+  );
+  assert.match(componentSource, /window\.matchMedia\(TOWER_MEDIA_QUERY\)/);
+  assert.match(stylesSource, /@media \(min-width: 768px\) and \(min-height: 640px\)/);
+  assert.match(stylesSource, /\[data-fallback='true'\][\s\S]*?overflow: visible/);
 });
 
 test('tower fades to cream before the logo blooms from the central landing', () => {

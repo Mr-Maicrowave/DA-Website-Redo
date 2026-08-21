@@ -1,4 +1,12 @@
-import { useCallback, useLayoutEffect, useRef, useState, type CSSProperties } from 'react';
+import {
+  Component,
+  useCallback,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type ReactNode,
+} from 'react';
 import { useReducedMotion } from 'framer-motion';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -6,10 +14,52 @@ import { MathsTowerScene } from './MathsTowerScene';
 import { TOWER_CHAPTERS, getEndingProgress } from './maths-tower-scene-data';
 import './maths-syllabus-scroll-story.css';
 
-const DESKTOP_MEDIA_QUERY = '(min-width: 768px)';
+const TOWER_MEDIA_QUERY = '(min-width: 768px) and (min-height: 640px)';
+
+interface TowerErrorBoundaryProps {
+  children: ReactNode;
+  onError: () => void;
+}
+
+interface TowerErrorBoundaryState {
+  hasError: boolean;
+}
+
+class TowerErrorBoundary extends Component<TowerErrorBoundaryProps, TowerErrorBoundaryState> {
+  state: TowerErrorBoundaryState = { hasError: false };
+
+  static getDerivedStateFromError(): TowerErrorBoundaryState {
+    return { hasError: true };
+  }
+
+  componentDidCatch() {
+    this.props.onError();
+  }
+
+  render() {
+    return this.state.hasError ? null : this.props.children;
+  }
+}
+
+function canCreateWebGLContext(): boolean {
+  if (typeof document === 'undefined') return false;
+
+  try {
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('webgl2', { alpha: true, antialias: true })
+      ?? canvas.getContext('webgl', { alpha: true, antialias: true });
+
+    if (!context) return false;
+    context.getExtension('WEBGL_lose_context')?.loseContext();
+    return true;
+  } catch {
+    return false;
+  }
+}
 
 type StoryStyle = CSSProperties & {
   '--tower-opacity': number;
+  '--content-opacity': number;
   '--logo-progress': number;
   '--logo-mask': string;
   '--logo-scale': number;
@@ -21,13 +71,15 @@ type StoryStyle = CSSProperties & {
 export const MathsSyllabusScrollStory = () => {
   const rootRef = useRef<HTMLElement>(null);
   const prefersReducedMotion = Boolean(useReducedMotion());
-  const [isDesktop, setIsDesktop] = useState(false);
+  const [hasTowerViewport, setHasTowerViewport] = useState(false);
+  const [webglReady, setWebglReady] = useState(false);
   const [webglFailed, setWebglFailed] = useState(false);
   const [progress, setProgress] = useState(0);
-  const canRenderTower = isDesktop && !prefersReducedMotion && !webglFailed;
+  const canRenderTower = hasTowerViewport && webglReady && !prefersReducedMotion && !webglFailed;
   const ending = getEndingProgress(progress);
   const storyStyle: StoryStyle = {
     '--tower-opacity': ending.towerOpacity,
+    '--content-opacity': ending.towerOpacity,
     '--logo-progress': ending.logoProgress,
     '--logo-mask': `${ending.logoProgress * 72}%`,
     '--logo-scale': 0.08 + ending.logoProgress * 0.92,
@@ -41,12 +93,15 @@ export const MathsSyllabusScrollStory = () => {
   }, []);
 
   useLayoutEffect(() => {
-    const desktopQuery = window.matchMedia(DESKTOP_MEDIA_QUERY);
-    const updateDesktopMatch = () => setIsDesktop(desktopQuery.matches);
+    const towerQuery = window.matchMedia(TOWER_MEDIA_QUERY);
+    const updateTowerEligibility = () => {
+      setHasTowerViewport(towerQuery.matches);
+      setWebglReady(towerQuery.matches && canCreateWebGLContext());
+    };
 
-    updateDesktopMatch();
-    desktopQuery.addEventListener('change', updateDesktopMatch);
-    return () => desktopQuery.removeEventListener('change', updateDesktopMatch);
+    updateTowerEligibility();
+    towerQuery.addEventListener('change', updateTowerEligibility);
+    return () => towerQuery.removeEventListener('change', updateTowerEligibility);
   }, []);
 
   useLayoutEffect(() => {
@@ -57,9 +112,8 @@ export const MathsSyllabusScrollStory = () => {
     const media = gsap.matchMedia();
 
     const context = gsap.context(() => {
-      media.add(DESKTOP_MEDIA_QUERY, () => {
+      media.add(TOWER_MEDIA_QUERY, () => {
         const cards = TOWER_CHAPTERS.map((chapter) => `[data-tower-copy="${chapter.id}"]`);
-        const content = root.querySelector('.maths-tower-story__content');
         const timeline = gsap.timeline({
           defaults: { ease: 'none' },
           scrollTrigger: {
@@ -74,6 +128,7 @@ export const MathsSyllabusScrollStory = () => {
           },
         });
 
+        timeline.to({ progress: 0 }, { progress: 1, duration: 1 }, 0);
         timeline.set(cards, { autoAlpha: 0 }, 0);
         TOWER_CHAPTERS.forEach((chapter, index) => {
           const current = `[data-tower-copy="${chapter.id}"]`;
@@ -84,8 +139,6 @@ export const MathsSyllabusScrollStory = () => {
             timeline.to(previous, { autoAlpha: 0, duration: 0.018 }, Math.max(0, chapter.progress - 0.018));
           }
         });
-
-        if (content) timeline.to(content, { opacity: 0, duration: 0.045 }, 0.94);
 
         return () => timeline.kill();
       });
@@ -110,7 +163,9 @@ export const MathsSyllabusScrollStory = () => {
           {canRenderTower ? (
             <>
               <div className="maths-tower-story__scene">
-                <MathsTowerScene progress={progress} onContextFailure={handleContextFailure} />
+                <TowerErrorBoundary onError={handleContextFailure}>
+                  <MathsTowerScene progress={progress} onContextFailure={handleContextFailure} />
+                </TowerErrorBoundary>
               </div>
 
               <div className="maths-tower-story__ending" aria-hidden={ending.logoProgress === 0}>
