@@ -37,7 +37,7 @@
 .legal-transform-intro h2 {
   margin: 0 0 1rem;
   color: #fffaf4;
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: "Playfair Display", Georgia, "Times New Roman", serif;
   font-size: clamp(1.9rem, 3.6vw, 2.85rem);
   font-weight: 700;
   line-height: 1.15;
@@ -70,7 +70,7 @@
 .legal-transform-step-header h3 {
   margin: 0;
   color: #fffaf4;
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: "Playfair Display", Georgia, "Times New Roman", serif;
   font-size: clamp(1.5rem, 2.8vw, 2.15rem);
   font-weight: 700;
   line-height: 1.2;
@@ -131,7 +131,7 @@
 .legal-transform-question-box h4 {
   margin: 0 0 0.65rem;
   color: #071b44;
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: "Playfair Display", Georgia, "Times New Roman", serif;
   font-size: clamp(1.3rem, 2.1vw, 1.65rem);
   font-weight: 700;
 }
@@ -167,7 +167,7 @@
 
 .legal-transform-column-heading > span {
   display: block;
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: "Playfair Display", Georgia, "Times New Roman", serif;
   font-weight: 700;
   font-size: clamp(0.95rem, 1.5vw, 1.2rem);
   margin-bottom: 0.4rem;
@@ -226,7 +226,7 @@
 
 .legal-transform-column-card strong {
   display: block;
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: "Playfair Display", Georgia, "Times New Roman", serif;
   font-size: clamp(0.95rem, 1.4vw, 1.1rem);
   font-weight: 700;
   margin-bottom: 0.5rem;
@@ -291,7 +291,7 @@
 
 .legal-transform-band3-copy > strong {
   color: #071b44;
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: "Playfair Display", Georgia, "Times New Roman", serif;
   font-size: clamp(1.15rem, 1.9vw, 1.4rem);
   font-weight: 700;
 }
@@ -327,7 +327,7 @@
   margin: 0;
   color: rgba(7, 27, 68, 0.86);
   font-style: italic;
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: "Playfair Display", Georgia, "Times New Roman", serif;
   font-size: 1.3rem;
   line-height: 1.7;
   text-align: left;

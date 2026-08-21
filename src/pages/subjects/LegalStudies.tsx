@@ -6,7 +6,6 @@ import SubjectTypedBanner from '@/components/subjects/SubjectTypedBanner';
 import TrustedSchoolsStrip from '@/components/subjects/TrustedSchoolsStrip';
 import LegalSyllabusQuiz from '@/components/subjects/LegalSyllabusQuiz';
 import LegalTransformationSteps from '@/components/subjects/LegalTransformationSteps';
-import { LegalStudiesIntroVideoGate } from '@/features/legal-intro-video/LegalStudiesIntroVideoGate';
 import { Button } from '@/components/ui/button';
 import {
   Scale,
@@ -393,7 +392,6 @@ const LegalStudies = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      <LegalStudiesIntroVideoGate />
       <SEO
         title="HSC Legal Studies Tutoring"
         description="Master the Australian legal system through case analysis and critical evaluation at DA Tuition."
@@ -413,8 +411,7 @@ const LegalStudies = () => {
         backgroundImageSrc="/images/subjects/legal-studies/hero-background-full.png"
         backgroundImageAlt="DA Tuition Legal Studies classroom"
         backgroundPosition="center center"
-        backgroundFit="contain"
-        backgroundScale={1.15}
+        backgroundFit="cover"
       />
 
       <TrustedSchoolsStrip schools={legalTrustedSchools} className="subject-school-strip-compact" />
@@ -553,16 +550,36 @@ const LegalStudies = () => {
         <div className="legal-access-shell">
           <div className="legal-access-visual">
             <img
-              src="/images/subjects/legal-studies/exclusive-access-preview-compact.png"
-              alt="Exclusive access to Legal Studies state rank notes and sample essays"
+              src="/images/subjects/legal-studies/exclusive-access-background.png"
+              alt="Legal Studies state rank notes and sample essays book with Crime, Human Rights, Family and Workplace topic pages"
               className="legal-access-image"
             />
             <img
-              src="/images/subjects/legal-studies/exclusive-access-preview-compact.png"
+              src="/images/subjects/legal-studies/exclusive-access-background.png"
               alt=""
               className="legal-book-pulse-image"
               aria-hidden="true"
             />
+            <div className="legal-access-copy">
+              <h2 id="legal-access-title">
+                <span>Exclusive Access:</span>
+                <em>State Rank Notes<br />&amp; Sample Essays</em>
+              </h2>
+              <p>
+                Get ahead with premium resources<br />
+                for all Legal Studies topics.
+              </p>
+              <ul aria-label="Included Legal Studies topics">
+                <li><span aria-hidden="true">✓</span>Crime</li>
+                <li><span aria-hidden="true">✓</span>Human Rights</li>
+                <li><span aria-hidden="true">✓</span>Family</li>
+                <li><span aria-hidden="true">✓</span>Workplace</li>
+              </ul>
+              <p>
+                Plus guidance and resources across<br />
+                all other Legal Studies Options
+              </p>
+            </div>
             <button
               type="button"
               className="legal-preview-button legal-preview-button--book"
@@ -577,12 +594,6 @@ const LegalStudies = () => {
             >
               <span className="legal-preview-badge-label">Click<br />To View</span>
             </button>
-          </div>
-          <div className="legal-access-copy sr-only">
-            <h2 id="legal-access-title">Exclusive Access: State Rank Notes and Sample Essays</h2>
-            <p id="legal-access-description">
-              Click the Legal Studies book or the Click to View badge to open the sample module preview.
-            </p>
           </div>
         </div>
       </section>
@@ -659,12 +670,6 @@ const LegalStudies = () => {
           </div>
 
           <p className="legal-journey-reassurance">You don't have to know everything before you walk through the door.</p>
-          <p className="legal-journey-copy">
-            Every student's journey with Legal Studies looks a little different. Some may need more support
-            understanding the content, while others are ready to strengthen their writing, exam technique or use of
-            evidence. We take the time to understand what each student needs, build on what they already do well and
-            guide them forward at a pace that helps them feel supported, capable and confident.
-          </p>
         </div>
       </section>
 
