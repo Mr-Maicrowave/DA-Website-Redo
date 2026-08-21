@@ -34,4 +34,4 @@
 .tutor-orbit__vignette{position:absolute;inset:0;z-index:1;pointer-events:none;background:radial-gradient(ellipse 80% 80% at 50% 50%,transparent 55%,rgba(4,12,24,.4) 100%)}
 .tutor-orbit::before{animation:tutor-orbit-twinkle 7s ease-in-out infinite}
 @keyframes tutor-orbit-twinkle{0%,100%{opacity:.75}50%{opacity:.95}}
-@media(prefers-reduced-motion:reduce){.tutor-orbit *{animation:none!important;transition:none!important}}
+@media(prefers-reduced-motion:reduce){.tutor-orbit *,.tutor-orbit::before{animation:none!important;transition:none!important}}
