@@ -97,6 +97,13 @@ test('desktop GSAP work is scoped and reverted while reduced motion skips it', (
   assert.match(source, /scrub: true/);
 });
 
+test('tower story uses approved ball-free assets and exact logo', () => {
+  const base = resolve(process.cwd(), 'public/images/maths-tower-story');
+  for (const name of ['tower-master.webp', 'tower-poster.webp', 'da-logo-full-exact.png']) {
+    assert.equal(existsSync(resolve(base, name)), true, name + ' is missing');
+  }
+});
+
 test('mobile and reduced motion keep the story static and fully visible', () => {
   const source = readFileSync(stylesUrl, 'utf8');
   const reducedMotionStyles = source.split('@media (prefers-reduced-motion: reduce)')[1]
