@@ -676,31 +676,46 @@ const FAQ = () => {
       </main>}
 
       <main>
-        <section className="relative bg-[#071629] text-white">
-          <div className="mx-auto grid min-h-[500px] max-w-[1600px] lg:grid-cols-[0.9fr_1.1fr]">
-            <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, ease: easeOut }} className="relative z-10 flex flex-col justify-center px-5 py-14 sm:px-8 lg:px-[clamp(2rem,7vw,7rem)] lg:py-20">
-              <p className="mb-4 text-sm font-bold text-[#f1df9a]">DA Answer Desk</p>
-              <h1 className="max-w-2xl text-balance font-serif text-5xl font-medium leading-[0.96] tracking-[-0.04em] sm:text-6xl lg:text-7xl">Start with what’s on your mind.</h1>
-              <p className="mt-6 max-w-xl text-lg leading-8 text-white/76">Clear answers before you commit, about classes, fees, teachers, progress and getting started.</p>
-            </motion.div>
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.85, delay: 0.08 }} className="relative min-h-[330px] overflow-hidden lg:min-h-[500px] lg:rounded-bl-[2rem]">
-              <img src="/images/faq/faq-hero-tutor-student-brow-touchup.png" alt="A DA Tuition tutor and student smiling gently while they work through mathematics together" className="h-full w-full object-cover object-[54%_42%] lg:object-[54%_38%]" />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#071629]/45 via-transparent to-transparent lg:bg-gradient-to-r lg:from-[#071629] lg:via-[#071629]/10 lg:to-transparent" />
+        <section className="relative flex min-h-screen items-center overflow-hidden bg-[#071629] px-5 py-28 text-white lg:px-8">
+          <div className="absolute inset-0">
+            <img src="/images/faq/faq-hero-tutor-student-brow-touchup.png" alt="A DA Tuition tutor and student smiling gently while they work through mathematics together" className="h-full w-full object-cover object-[54%_42%] lg:object-[54%_38%]" />
+            {/* subject-hero-style overlay */}
+            <div className="absolute inset-0" style={{ background: 'linear-gradient(90deg, rgba(4,11,23,.9) 0%, rgba(4,11,23,.7) 46%, rgba(4,11,23,.22) 100%)' }} />
+          </div>
+          <div className="relative z-10 mx-auto w-full max-w-7xl">
+            <motion.div initial={{ opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, ease: easeOut }} className="max-w-3xl">
+              <div className="mb-5 inline-flex items-center gap-2.5 text-xs font-black uppercase tracking-[0.18em] text-[#f1df9a]">
+                <span className="h-[2px] w-7 bg-[#c9a227]" />
+                DA Answer Desk
+              </div>
+              <h1 className="text-balance text-white" style={{ fontFamily: '"Playfair Display", Georgia, serif', fontSize: 'clamp(3rem, 6.5vw, 6.6rem)', lineHeight: 0.96, letterSpacing: '-0.01em', margin: 0 }}>
+                Start with what’s
+                <span className="block text-[#c9a227]">on your mind.</span>
+              </h1>
+              <p className="mt-7 max-w-[54ch] text-lg leading-[1.75] text-white/85">Clear answers before you commit: classes, fees, teachers, progress and getting started.</p>
+              <div className="mt-8">
+                <button type="button" onClick={() => document.getElementById('faq-answers')?.scrollIntoView({ behavior: 'smooth', block: 'start' })} className="inline-flex h-12 items-center rounded-full bg-[#c9a227] px-7 font-black text-[#101521] shadow-xl shadow-[#c9a227]/25 transition hover:bg-[#e0bd4b]">
+                  Explore answers <ArrowRight className="ml-2 h-4 w-4" />
+                </button>
+              </div>
+              <div className="mt-9 flex flex-wrap gap-x-5 gap-y-2 text-[13px] font-black uppercase tracking-[0.06em] text-white">
+                <span className="border-l-2 border-[#c9a227] pl-3">Clear fees</span>
+                <span className="border-l-2 border-[#c9a227] pl-3">Right class fit</span>
+                <span className="border-l-2 border-[#c9a227] pl-3">Real progress</span>
+              </div>
             </motion.div>
           </div>
-          <div className="absolute inset-x-0 bottom-0 z-20 translate-y-[75%] px-4 sm:px-6">
-            <label className="relative mx-auto flex max-w-6xl items-center rounded-2xl bg-white px-5 shadow-lg shadow-[#071629]/20 sm:px-7">
+        </section>
+
+        <section className={`bg-[#fbf6ea] px-4 pb-6 pt-10 sm:px-6 sm:pt-12 lg:px-8 ${searchTerm ? 'lg:pb-20' : 'lg:pb-8'}`}>
+          <div className="mx-auto max-w-7xl">
+            <label className="relative flex items-center rounded-2xl bg-white px-5 shadow-lg shadow-[#071629]/10 sm:px-7">
               <Search className="h-5 w-5 shrink-0 text-brand-gold" aria-hidden="true" />
               <span className="sr-only">Search frequently asked questions</span>
               <input type="search" placeholder="Search in your own words. Try “class size”" value={searchTerm} onChange={(event) => { const value = event.target.value; const isStartingSearch = value.trim().length > 0 && searchTerm.trim().length === 0; setSearchTerm(value); setSelectedCategory('all'); setOpenQuestion(undefined); setShowAllQuestions(false); if (isStartingSearch) revealQuickAnswer(); }} className="h-16 min-w-0 flex-1 bg-transparent px-4 text-base font-medium text-brand-navy outline-none placeholder:text-brand-navy/55 sm:h-[72px] sm:text-lg" />
               {searchTerm && <button type="button" onClick={() => { setSearchTerm(''); setOpenQuestion(undefined); setShowAllQuestions(false); }} className="shrink-0 text-sm font-bold text-brand-navy/65 hover:text-brand-gold">Clear</button>}
             </label>
-            <div id="popular-questions" className="mx-auto mt-3 max-w-6xl"><p className="mb-2 px-1 text-xs font-bold uppercase tracking-[0.14em] text-[#8a6810]">Popular questions</p><div className="flex flex-wrap gap-2">{starterSearches.map((suggestion) => { const faq = faqByQuestion.get(suggestion.question); return <button key={suggestion.question} type="button" onClick={() => { if (faq) openAnswer(faq); }} className="rounded-full border border-white/35 bg-[#071629] px-3.5 py-2 text-sm font-semibold text-white shadow-sm transition hover:border-brand-gold hover:bg-brand-gold hover:text-brand-navy">{suggestion.label}</button>; })}</div></div>
-          </div>
-        </section>
-
-        <section className={`bg-[#fbf6ea] px-4 sm:px-6 lg:px-8 ${searchTerm ? 'pb-14 pt-44 sm:pt-48 lg:pb-20' : 'pb-6 pt-32 sm:pt-36 lg:pb-8'}`}>
-          <div className="mx-auto max-w-7xl">
+            <div id="popular-questions" className="mt-4"><p className="mb-2 px-1 text-xs font-bold uppercase tracking-[0.14em] text-[#8a6810]">Popular questions</p><div className="flex flex-wrap gap-2">{starterSearches.map((suggestion) => { const faq = faqByQuestion.get(suggestion.question); return <button key={suggestion.question} type="button" onClick={() => { if (faq) openAnswer(faq); }} className="rounded-full border border-white/35 bg-[#071629] px-3.5 py-2 text-sm font-semibold text-white shadow-sm transition hover:border-brand-gold hover:bg-brand-gold hover:text-brand-navy">{suggestion.label}</button>; })}</div></div>
             {searchTerm && <div id="quick-answer" className="mb-12 scroll-mt-24 rounded-2xl border border-brand-gold/30 bg-[#fffdf8] p-5 shadow-lg shadow-[#071629]/10 sm:p-6" aria-live="polite">
               {quickAnswer ? <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between"><div className="max-w-3xl"><p className="text-sm font-bold text-[#8a6810]">Quick answer</p><h2 className="mt-1 font-serif text-2xl font-medium tracking-[-0.025em] text-brand-navy">{quickAnswer.question}</h2><p className="mt-2 text-sm leading-6 text-brand-navy/75 sm:text-base">{quickAnswer.schemaAnswer}</p></div><button type="button" onClick={() => openAnswer(quickAnswer)} className="inline-flex shrink-0 items-center self-start rounded-full bg-brand-navy px-4 py-2.5 text-sm font-bold text-white transition hover:bg-brand-gold hover:text-brand-navy sm:self-auto">Read full answer <ArrowRight className="ml-1.5 h-4 w-4" /></button></div> : <div><p className="text-sm font-bold text-[#8a6810]">No close match yet</p><p className="mt-1 text-brand-navy/75">Try “fees”, “HSC”, “teachers” or “class size”, or ask our team directly.</p></div>}
             </div>}
@@ -708,7 +723,7 @@ const FAQ = () => {
           </div>
         </section>
 
-        <section id="faq-answer-desk" className="scroll-mt-24 bg-[#fbf6ea] px-4 pb-20 sm:px-6 lg:px-8 lg:pb-28">
+        <section id="faq-answers" className="scroll-mt-24 bg-[#fbf6ea] px-4 pb-20 sm:px-6 lg:px-8 lg:pb-28">
           <div className="mx-auto grid max-w-7xl overflow-hidden rounded-2xl bg-[#fffdf8] shadow-lg shadow-[#071629]/10 lg:grid-cols-[250px_1fr]">
             <aside className="border-b border-brand-navy/12 p-5 lg:border-b-0 lg:border-r lg:p-7" aria-label="FAQ topics">
               <p className="mb-4 font-serif text-xl font-medium text-brand-navy">Browse all topics</p>
