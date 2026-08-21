@@ -18,7 +18,7 @@ test('passes one shared Catmull-Rom curve to the visible tube and ball position'
   );
   assert.match(source, /function TowerRail\(\{ curve \}[\s\S]*?new TubeGeometry\(curve,/);
   assert.match(source, /<TowerRail curve=\{curve\} \/>/);
-  assert.match(source, /const point = curve\.getPointAt\(progress\);/);
+  assert.match(source, /const point = curve\.getPointAt\(getBallProgress\(progress\)\);/);
   assert.match(getBallSource(), /position=\{point\}/);
   assert.equal((source.match(/name="maths-tower-ball"/g) ?? []).length, 1);
 });
@@ -41,11 +41,17 @@ test('caps canvas density and reports WebGL context loss', () => {
   assert.match(source, /handleContextLost[\s\S]*?onContextFailure\(\)/);
 });
 
+test('renders only on demand and invalidates after imperative camera updates', () => {
+  assert.match(source, /frameloop="demand"/);
+  assert.match(source, /useThree\(\(state\) => state\.invalidate\)/);
+  assert.match(source, /camera\.updateMatrixWorld\(\);\s*invalidate\(\);/);
+});
+
 test('initializes area-light textures and bounds contact-shadow work', () => {
   assert.match(source, /RectAreaLightUniformsLib\.init\(\);/);
 
   const contactShadows = source.match(/<ContactShadows[\s\S]*?\/>/);
   assert.ok(contactShadows, 'expected a ContactShadows element');
   const frames = contactShadows[0].match(/frames=\{([0-9]+)\}/);
-  assert.ok(frames && Number(frames[1]) > 0, 'contact shadows must use a finite positive frame budget');
+  assert.equal(Number(frames?.[1]), 1, 'contact shadows must render exactly once');
 });

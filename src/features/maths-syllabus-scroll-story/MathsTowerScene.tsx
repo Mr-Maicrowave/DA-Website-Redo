@@ -12,9 +12,9 @@ import { RectAreaLightUniformsLib } from 'three/examples/jsm/lights/RectAreaLigh
 
 import {
   TOWER_RAIL_POINTS,
+  getBallProgress,
   getCameraPose,
   getEndingProgress,
-  getRailPoint,
 } from './maths-tower-scene-data';
 
 // Three r170 needs the LTC lookup textures installed before area-light shaders compile.
@@ -109,19 +109,21 @@ function ContextFailureBridge({ onContextFailure }: Pick<MathsTowerSceneProps, '
 
 function CameraRig({ progress }: Pick<MathsTowerSceneProps, 'progress'>) {
   const camera = useThree((state) => state.camera);
+  const invalidate = useThree((state) => state.invalidate);
 
   useLayoutEffect(() => {
     const pose = getCameraPose(progress);
     camera.position.set(...pose.position);
     camera.lookAt(...pose.target);
     camera.updateMatrixWorld();
-  }, [camera, progress]);
+    invalidate();
+  }, [camera, invalidate, progress]);
 
   return null;
 }
 
 function TowerArchitecture({ landingGlow }: { landingGlow: number }) {
-  const landing = getRailPoint(1).position;
+  const landing = TOWER_RAIL_POINTS.at(-1)!.position;
 
   return (
     <group>
@@ -261,7 +263,7 @@ export function MathsTowerScene({ progress: requestedProgress, onContextFailure 
     () => new CatmullRomCurve3(TOWER_RAIL_POINTS.map(({ position }) => new Vector3(...position))),
     [],
   );
-  const point = curve.getPointAt(progress);
+  const point = curve.getPointAt(getBallProgress(progress));
   const ending = getEndingProgress(progress);
 
   return (
@@ -270,6 +272,7 @@ export function MathsTowerScene({ progress: requestedProgress, onContextFailure 
       camera={{ fov: 36, near: 0.1, far: 100, position: [9.5, 6.1, 11.5] }}
       className="maths-tower-story__canvas"
       dpr={[1, 1.5]}
+      frameloop="demand"
       gl={{ alpha: true, antialias: true, powerPreference: 'high-performance' }}
       shadows
       style={{ background: 'transparent', pointerEvents: 'none' }}

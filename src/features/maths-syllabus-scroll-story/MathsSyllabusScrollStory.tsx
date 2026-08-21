@@ -1,5 +1,7 @@
 import {
   Component,
+  Suspense,
+  lazy,
   useCallback,
   useLayoutEffect,
   useRef,
@@ -10,11 +12,12 @@ import {
 import { useReducedMotion } from 'framer-motion';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { MathsTowerScene } from './MathsTowerScene';
+import { isLowPerformanceDevice, readTowerPerformanceSignals } from './maths-tower-eligibility';
 import { TOWER_CHAPTERS, getEndingProgress } from './maths-tower-scene-data';
 import './maths-syllabus-scroll-story.css';
 
 const TOWER_MEDIA_QUERY = '(min-width: 768px) and (min-height: 640px)';
+const MathsTowerScene = lazy(() => import('./MathsTowerScene').then(({ MathsTowerScene: Scene }) => ({ default: Scene })));
 
 interface TowerErrorBoundaryProps {
   children: ReactNode;
@@ -72,10 +75,12 @@ export const MathsSyllabusScrollStory = () => {
   const rootRef = useRef<HTMLElement>(null);
   const prefersReducedMotion = Boolean(useReducedMotion());
   const [hasTowerViewport, setHasTowerViewport] = useState(false);
+  const [hasEnoughPerformance, setHasEnoughPerformance] = useState(false);
   const [webglReady, setWebglReady] = useState(false);
   const [webglFailed, setWebglFailed] = useState(false);
   const [progress, setProgress] = useState(0);
-  const canRenderTower = hasTowerViewport && webglReady && !prefersReducedMotion && !webglFailed;
+  const canRenderTower = hasTowerViewport && hasEnoughPerformance && webglReady
+    && !prefersReducedMotion && !webglFailed;
   const ending = getEndingProgress(progress);
   const storyStyle: StoryStyle = {
     '--tower-opacity': ending.towerOpacity,
@@ -95,8 +100,13 @@ export const MathsSyllabusScrollStory = () => {
   useLayoutEffect(() => {
     const towerQuery = window.matchMedia(TOWER_MEDIA_QUERY);
     const updateTowerEligibility = () => {
+      const hasEnoughDevicePerformance = !isLowPerformanceDevice(
+        readTowerPerformanceSignals(typeof navigator === 'undefined' ? undefined : navigator),
+      );
+
       setHasTowerViewport(towerQuery.matches);
-      setWebglReady(towerQuery.matches && canCreateWebGLContext());
+      setHasEnoughPerformance(hasEnoughDevicePerformance);
+      setWebglReady(towerQuery.matches && hasEnoughDevicePerformance && canCreateWebGLContext());
     };
 
     updateTowerEligibility();
@@ -164,7 +174,18 @@ export const MathsSyllabusScrollStory = () => {
             <>
               <div className="maths-tower-story__scene">
                 <TowerErrorBoundary onError={handleContextFailure}>
-                  <MathsTowerScene progress={progress} onContextFailure={handleContextFailure} />
+                  <Suspense
+                    fallback={(
+                      <img
+                        className="maths-tower-story__poster"
+                        src="/images/maths-tower-story/tower-poster.webp"
+                        alt=""
+                        decoding="async"
+                      />
+                    )}
+                  >
+                    <MathsTowerScene progress={progress} onContextFailure={handleContextFailure} />
+                  </Suspense>
                 </TowerErrorBoundary>
               </div>
 

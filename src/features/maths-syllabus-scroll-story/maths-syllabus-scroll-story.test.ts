@@ -8,6 +8,7 @@ import { TOWER_CHAPTERS } from './maths-tower-scene-data.ts';
 const componentUrl = new URL('./MathsSyllabusScrollStory.tsx', import.meta.url);
 const stylesUrl = new URL('./maths-syllabus-scroll-story.css', import.meta.url);
 const mathematicsUrl = new URL('../../pages/subjects/Mathematics.tsx', import.meta.url);
+const eligibilityUrl = new URL('./maths-tower-eligibility.ts', import.meta.url);
 
 const componentSource = readFileSync(componentUrl, 'utf8');
 const stylesSource = readFileSync(stylesUrl, 'utf8');
@@ -23,7 +24,9 @@ test('story uses the static poster fallback and exact DA Tuition logo assets', (
 });
 
 test('desktop mounts exactly one progress-driven 3D tower without raster masks or a CSS ball', () => {
-  assert.match(componentSource, /import \{ MathsTowerScene \} from '.\/MathsTowerScene'/);
+  assert.match(componentSource, /lazy\(\(\) => import\('.\/MathsTowerScene'\)/);
+  assert.doesNotMatch(componentSource, /^import .*MathsTowerScene.*from/m);
+  assert.match(componentSource, /<Suspense[\s\S]*?<MathsTowerScene/);
   assert.equal((componentSource.match(/<MathsTowerScene\b/g) ?? []).length, 1);
   assert.match(componentSource, /<MathsTowerScene[\s\S]*?progress=\{progress\}/);
   assert.doesNotMatch(componentSource, /<video|currentTime/);
@@ -52,8 +55,9 @@ test('all six approved chapters remain live semantic articles', () => {
   assert.match(TOWER_CHAPTERS.find(({ id }) => id === 'extension-2')?.teaching ?? '', /Advanced and Extension 1/i);
 });
 
-test('mobile, reduced-motion and WebGL failure paths remove Canvas and expose the poster cards', () => {
-  assert.match(componentSource, /const canRenderTower = hasTowerViewport && webglReady && !prefersReducedMotion && !webglFailed/);
+test('mobile, reduced-motion, low-performance and WebGL failure paths remove Canvas and expose the poster cards', () => {
+  assert.match(componentSource, /const \[hasEnoughPerformance, setHasEnoughPerformance\] = useState\(false\)/);
+  assert.match(componentSource, /hasTowerViewport && hasEnoughPerformance && webglReady/);
   assert.match(componentSource, /onContextFailure=\{handleContextFailure\}/);
   assert.match(componentSource, /\{canRenderTower \? \([\s\S]*?<MathsTowerScene[\s\S]*?\) : \([\s\S]*?tower-poster\.webp/);
   assert.match(componentSource, /data-fallback=\{!canRenderTower\}/);
@@ -62,12 +66,44 @@ test('mobile, reduced-motion and WebGL failure paths remove Canvas and expose th
   assert.match(stylesSource, /@media \(prefers-reduced-motion: reduce\)/);
 });
 
+test('low-performance eligibility is safely feature-detected across memory, CPU and data saver', async () => {
+  assert.equal(existsSync(eligibilityUrl), true, 'expected a pure tower eligibility module');
+  const { isLowPerformanceDevice, readTowerPerformanceSignals } = await import('./maths-tower-eligibility.ts');
+
+  assert.equal(isLowPerformanceDevice(undefined), false);
+  assert.equal(isLowPerformanceDevice({ hardwareConcurrency: 8, deviceMemory: 8, saveData: false }), false);
+  assert.equal(isLowPerformanceDevice({ hardwareConcurrency: 4, deviceMemory: 8, saveData: false }), true);
+  assert.equal(isLowPerformanceDevice({ hardwareConcurrency: 8, deviceMemory: 4, saveData: false }), true);
+  assert.equal(isLowPerformanceDevice({ hardwareConcurrency: 8, deviceMemory: 8, saveData: true }), true);
+  assert.equal(isLowPerformanceDevice({}), false, 'missing optional browser signals must not force fallback');
+  assert.deepEqual(
+    readTowerPerformanceSignals({
+      hardwareConcurrency: 8,
+      deviceMemory: 4,
+      connection: { saveData: true },
+    }),
+    { hardwareConcurrency: 8, deviceMemory: 4, saveData: true },
+  );
+  assert.deepEqual(
+    readTowerPerformanceSignals({
+      hardwareConcurrency: '8',
+      deviceMemory: null,
+      connection: { saveData: 'yes' },
+    }),
+    {},
+    'malformed optional hints must be ignored safely',
+  );
+});
+
 test('WebGL is preflighted and initial Canvas errors fall through to the poster', () => {
   assert.match(componentSource, /function canCreateWebGLContext\(\): boolean/);
   assert.match(componentSource, /document\.createElement\('canvas'\)/);
   assert.match(componentSource, /getContext\('webgl2'/);
   assert.match(componentSource, /catch \{/);
-  assert.match(componentSource, /setWebglReady\(towerQuery\.matches && canCreateWebGLContext\(\)\)/);
+  assert.match(
+    componentSource,
+    /setWebglReady\(towerQuery\.matches && hasEnoughDevicePerformance && canCreateWebGLContext\(\)\)/,
+  );
   assert.match(
     componentSource,
     /<TowerErrorBoundary onError=\{handleContextFailure\}>[\s\S]*?<MathsTowerScene[\s\S]*?<\/TowerErrorBoundary>/,
@@ -101,6 +137,14 @@ test('tower fades to cream before the logo blooms from the central landing', () 
   assert.match(stylesSource, /\.maths-tower-story__logo[\s\S]*?scale\(var\(--logo-scale\)\)/);
   assert.match(stylesSource, /\.maths-tower-story__ending-bloom/);
   assert.match(stylesSource, /\.maths-tower-story__ending-ripple/);
+
+  const sceneStyles = stylesSource.match(/\.maths-tower-story__scene\s*\{[\s\S]*?\}/);
+  assert.ok(sceneStyles, 'expected tower scene styles');
+  assert.doesNotMatch(sceneStyles[0], /transition:/, 'scene opacity must follow the non-overlapping timeline exactly');
+
+  const contentStyles = stylesSource.match(/\.maths-tower-story__content\s*\{[\s\S]*?\}/);
+  assert.ok(contentStyles, 'expected tower content styles');
+  assert.doesNotMatch(contentStyles[0], /transition:/, 'content opacity must clear on the same exact phase clock');
 });
 
 test('story remains before the HSC pathway map', () => {

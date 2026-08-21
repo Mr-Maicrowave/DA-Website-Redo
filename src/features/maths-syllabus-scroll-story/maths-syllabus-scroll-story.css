@@ -36,7 +36,6 @@
 
 .maths-tower-story__scene {
   opacity: var(--tower-opacity);
-  transition: opacity 40ms linear;
   will-change: opacity;
 }
 
@@ -113,7 +112,6 @@
   min-height: 100vh;
   padding: clamp(2rem, 5vh, 5rem) clamp(2rem, 5vw, 6rem);
   opacity: var(--content-opacity);
-  transition: opacity 40ms linear;
 }
 
 .maths-tower-story__heading-copy {

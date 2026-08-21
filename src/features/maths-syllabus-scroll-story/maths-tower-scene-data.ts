@@ -40,6 +40,7 @@ interface CameraKeyframe extends TowerCameraPose {
 const TOWER_FADE_START_PROGRESS = 0.94;
 const TOWER_FADE_COMPLETE_PROGRESS = 0.985;
 const LOGO_REVEAL_START_PROGRESS = TOWER_FADE_COMPLETE_PROGRESS;
+const BALL_LANDING_PROGRESS = 0.92;
 
 /**
  * The reading order is shared with the semantic story cards so the visual route
@@ -115,10 +116,6 @@ export const TOWER_RAIL_POINTS: readonly TowerRailPoint[] = [
   { progress: 0.965, position: [0, -5.9, 0], kind: 'landing' },
 ] as const;
 
-const TOWER_RAIL_CURVE = new CatmullRomCurve3(
-  TOWER_RAIL_POINTS.map(({ position }) => new Vector3(...position)),
-);
-
 const CAMERA_KEYFRAMES: readonly CameraKeyframe[] = [
   { progress: 0, position: [9.5, 6.1, 11.5], target: [0, 1.5, 0] },
   { progress: 0.42, position: [-10.2, 2.2, 9.4], target: [0, 0.25, 0] },
@@ -156,15 +153,8 @@ function interpolationAmount(fromProgress: number, toProgress: number, progress:
   return (progress - fromProgress) / (toProgress - fromProgress);
 }
 
-export function getRailPoint(progress: number): TowerRailPoint {
-  const boundedProgress = clampProgress(progress);
-  const point = TOWER_RAIL_CURVE.getPointAt(boundedProgress);
-
-  return {
-    progress: boundedProgress,
-    position: [point.x, point.y, point.z],
-    kind: boundedProgress >= TOWER_RAIL_POINTS.at(-1)!.progress ? 'landing' : 'rail',
-  };
+export function getBallProgress(progress: number): number {
+  return clampProgress(clampProgress(progress) / BALL_LANDING_PROGRESS);
 }
 
 export function getCameraPose(progress: number): TowerCameraPose {
@@ -192,4 +182,3 @@ export function getEndingProgress(progress: number): TowerEndingProgress {
     logoProgress: logoRevealAmount,
   };
 }
-import { CatmullRomCurve3, Vector3 } from 'three';
