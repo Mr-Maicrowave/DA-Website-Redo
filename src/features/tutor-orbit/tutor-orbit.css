@@ -34,4 +34,11 @@
 .tutor-orbit__vignette{position:absolute;inset:0;z-index:1;pointer-events:none;background:radial-gradient(ellipse 80% 80% at 50% 50%,transparent 55%,rgba(4,12,24,.4) 100%)}
 .tutor-orbit::before{animation:tutor-orbit-twinkle 7s ease-in-out infinite}
 @keyframes tutor-orbit-twinkle{0%,100%{opacity:.75}50%{opacity:.95}}
+.tutor-orbit__ring{box-shadow:0 0 32px 6px rgba(229,194,118,.22),0 0 60px 18px rgba(229,194,118,.12)}
+.tutor-orbit__ring::before,.tutor-orbit__ring::after{box-shadow:0 0 0 3px rgba(255,255,255,.9),0 0 14px 6px rgba(228,191,112,.45)}
+.tutor-orbit__comet{position:absolute;inset:5% 1%;border-radius:50%;transform:rotate(-17deg);pointer-events:none}
+.tutor-orbit__comet-spin{position:absolute;inset:0;border-radius:50%;transform-origin:50% 50%;animation:tutor-orbit-comet-spin 20s linear infinite}
+.tutor-orbit__comet-spin span{position:absolute;top:-4px;left:50%;width:10px;height:10px;margin-left:-5px;border-radius:50%;background:radial-gradient(circle,#fff6df 0%,#e9c98f 45%,transparent 75%);box-shadow:0 0 12px 4px rgba(233,201,143,.65)}
+@keyframes tutor-orbit-comet-spin{to{transform:rotate(360deg)}}
+@media(max-width:900px){.tutor-orbit__comet{display:none}}
 @media(prefers-reduced-motion:reduce){.tutor-orbit *,.tutor-orbit::before{animation:none!important;transition:none!important}}

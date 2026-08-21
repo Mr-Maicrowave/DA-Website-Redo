@@ -27,6 +27,7 @@ export function TutorOrbitHero() {
     </div>
     <div className="tutor-orbit__stage">
       <div className="tutor-orbit__ring" aria-hidden="true" />
+      <div className="tutor-orbit__comet" aria-hidden="true"><div className="tutor-orbit__comet-spin"><span /></div></div>
       {featured.map((tutor, index) => {
         const drift = orbitMotionFor(tutor.id);
         const isActive = tutor.id === active.id;
