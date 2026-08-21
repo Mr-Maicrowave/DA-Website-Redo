@@ -5,6 +5,8 @@ import NavigationNew from '@/components/NavigationNew';
 import { Button } from '@/components/ui/button';
 import SubjectHero from '@/components/subjects/SubjectHero';
 import HighSchoolCinematicScene from '@/components/programs/HighSchoolCinematicScene';
+import { highSchoolJourneyAssets } from '@/data/highSchoolJourneyAssets';
+import { highSchoolJourneyStages } from '@/data/highSchoolJourneyScenes';
 import { AnimatePresence, motion, useMotionValueEvent, useReducedMotion, useScroll, useTransform } from 'framer-motion';
 import { ArrowRight, ArrowUpRight, ChevronLeft, ChevronRight, GraduationCap, Star } from 'lucide-react';
 
@@ -23,12 +25,19 @@ const focusRows = [
   { area: 'Exam and Study Skills', build: 'Organisation, note-taking, revision strategies', skills: 'Time management, past-paper practice, reducing exam anxiety', Icon: SketchClock },
 ];
 
-const stakesCards = [
-  { title: 'The Curriculum Gets Serious', color: '#3578C6', text: 'Year 7 introduces more complex ideas that build the foundations for future success.', icon: 'book', asset: '/images/programs/highschool-stakes-blue.png' },
-  { title: 'Habits Form Now or Not at All', color: '#47775C', text: 'The habits developed in Years 7–8 shape how students handle pressure in Years 11–12.', icon: 'sprout', asset: '/images/programs/highschool-stakes-green.png' },
-  { title: 'Selective & Scholarship Pressure', color: '#7553B7', text: 'Year 9–10 decisions can shape opportunities. We help students stay prepared and confident.', icon: 'route', asset: '/images/programs/highschool-stakes-purple.png' },
-  { title: 'Confidence Decides Outcomes', color: '#CC642D', text: 'When students believe in themselves, they’re willing to take on bigger challenges.', icon: 'summit', asset: '/images/programs/highschool-stakes-orange.png' },
-];
+const stakesCards = highSchoolJourneyStages.map((stage, index) => ({
+  title: stage.heading,
+  color: stage.colour,
+  text: stage.body,
+  icon: ['book', 'sprout', 'route', 'summit'][index],
+  asset: highSchoolJourneyAssetsForStage(stage.sceneId),
+}));
+
+function highSchoolJourneyAssetsForStage(sceneId: (typeof highSchoolJourneyStages)[number]['sceneId']) {
+  const asset = highSchoolJourneyAssets[sceneId].largeWash;
+  if (!asset.src) throw new Error(`Missing large watercolour wash for ${sceneId}`);
+  return asset.src;
+}
 
 const approachCards = [
   { title: 'We Diagnose Before We Teach', text: "We identify exactly where each student's gaps are and why. Then we fix the root cause, not just the symptom.", color: '#2563EB' },
@@ -903,16 +912,10 @@ const HighSchool = () => {
       <div id="highschool-page-content">
         <main>
           <HighSchoolCinematicScene />
-          <YearJourney />
-          <WhyItMatters />
           <TeacherBeside />
           <Curriculum />
-          <FindYourVoice />
           <HowWeTeach />
-          <RealResults />
-          <PhotoDuo />
           <PerfectIf />
-          <HSCTransition />
         </main>
 
         <footer className="flex flex-wrap items-center justify-between gap-3.5 border-t border-white/10 bg-[#0A1B34] px-5 py-7 lg:px-8">
