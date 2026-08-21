@@ -71,13 +71,16 @@ export const MathsSyllabusScrollStory = () => {
           },
         });
 
-        timeline.set(copy, { opacity: 0, y: 18 }, 0);
+        timeline.set(copy, { opacity: 0 }, 0);
         MATHS_TOWER_COPY_GROUPS.forEach((group, index) => {
           const current = `[data-tower-copy="${group.id}"]`;
-          timeline.to(current, { opacity: 1, y: 0, duration: 0.07 }, group.progress);
+          // Keep each explanation legible for the vast majority of its chapter.
+          // A short dissolve prevents the two large serif headings from ever
+          // reading as a stack of presentation slides.
+          timeline.to(current, { opacity: 1, duration: 0.014 }, group.progress);
           if (index > 0) {
             const previous = `[data-tower-copy="${MATHS_TOWER_COPY_GROUPS[index - 1].id}"]`;
-            timeline.to(previous, { opacity: 0, y: -12, duration: 0.06 }, group.progress);
+            timeline.to(previous, { opacity: 0, duration: 0.014 }, group.progress);
           }
         });
 
