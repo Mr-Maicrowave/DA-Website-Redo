@@ -8,6 +8,7 @@ import {
   TubeGeometry,
   Vector3,
 } from 'three';
+import { RectAreaLightUniformsLib } from 'three/examples/jsm/lights/RectAreaLightUniformsLib.js';
 
 import {
   TOWER_RAIL_POINTS,
@@ -15,6 +16,10 @@ import {
   getEndingProgress,
   getRailPoint,
 } from './maths-tower-scene-data';
+
+// Three r170 needs the LTC lookup textures installed before area-light shaders compile.
+// ESM module evaluation makes this a single initialization for the scene bundle.
+RectAreaLightUniformsLib.init();
 
 interface MathsTowerSceneProps {
   progress: number;
@@ -305,6 +310,7 @@ export function MathsTowerScene({ progress: requestedProgress, onContextFailure 
         blur={2.8}
         color="#10233e"
         far={16}
+        frames={1}
         opacity={0.34}
         position={[0, -6.16, 0]}
         resolution={512}
