@@ -308,16 +308,6 @@ const BusinessTransformationSteps = () => {
                 );
               })}
             </div>
-
-            <div className="biz-transform-objectives-bar">
-              <span className="biz-transform-objectives-icon">
-                <Target aria-hidden="true" />
-              </span>
-              <p>
-                <strong>Related operations performance objectives:</strong> quality, speed, dependability,
-                flexibility, cost.
-              </p>
-            </div>
           </div>
         </motion.div>
 
