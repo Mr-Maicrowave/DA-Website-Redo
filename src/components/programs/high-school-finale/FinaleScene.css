@@ -1,0 +1,486 @@
+.hs-finale {
+  position: absolute;
+  z-index: 22;
+  inset: 0;
+  visibility: hidden;
+  overflow: hidden;
+  background: #fffdf8;
+  color: #0a1b34;
+  pointer-events: none;
+}
+.hs-finale__background {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  background: #fffdf8;
+}
+.hs-finale__hero {
+  position: absolute;
+  z-index: 1;
+  left: 50%;
+  bottom: 0;
+  width: min(88vw, 940px);
+  height: 96%;
+  overflow: visible;
+  transform: translateX(-50%);
+  transform-origin: 50% 82%;
+}
+.hs-finale__hero clipPath path {
+  transform-box: view-box;
+  transform-origin: center;
+}
+.hs-finale__hero image {
+  mix-blend-mode: multiply;
+}
+.hs-finale__composite {
+  opacity: 1;
+}
+.hs-finale__final-heading {
+  position: absolute;
+  z-index: 3;
+  top: 8%;
+  right: 4%;
+  width: min(53vw, 820px);
+  visibility: hidden;
+  color: #0a1b34;
+}
+.hs-finale__final-heading p {
+  margin: 0 0 1.15rem;
+  color: #a87617;
+  font-size: clamp(0.72rem, 1vw, 0.95rem);
+  font-weight: 800;
+  letter-spacing: 0.24em;
+}
+.hs-finale__final-heading h3 {
+  margin: 0;
+  font-family: Georgia, serif !important;
+  font-size: clamp(3rem, 5.35vw, 6rem);
+  font-weight: 500;
+  line-height: 0.96;
+  letter-spacing: -0.04em;
+  text-wrap: balance;
+}
+.hs-finale__years {
+  position: absolute;
+  z-index: 2;
+  top: 37%;
+  right: 1.5%;
+  width: min(58vw, 940px);
+  height: 61%;
+}
+.hs-journey .hs-finale__bubble-image {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  opacity: 0.84;
+}
+.hs-finale__year-copy {
+  z-index: 1;
+}
+.hs-journey .hs-finale__year-icon {
+  position: absolute;
+  z-index: 2;
+  top: -14%;
+  right: -4%;
+  width: 38%;
+  height: 38%;
+  object-fit: contain;
+}
+.hs-journey .hs-finale__year-arrow {
+  position: absolute;
+  z-index: 3;
+  width: clamp(92px, 9vw, 150px);
+  height: clamp(62px, 6vw, 104px);
+  object-fit: contain;
+  visibility: hidden;
+  opacity: 0;
+  transform-origin: center;
+}
+.hs-journey .hs-finale__year-arrow--1 {
+  left: 19%;
+  bottom: 17%;
+  rotate: -4deg;
+}
+.hs-journey .hs-finale__year-arrow--2 {
+  left: 44%;
+  bottom: 36%;
+  rotate: -3deg;
+}
+.hs-journey .hs-finale__year-arrow--3 {
+  left: 70%;
+  bottom: 56%;
+  rotate: -2deg;
+}
+.hs-finale__story {
+  position: absolute;
+  z-index: 2;
+  top: 6%;
+  right: 4%;
+  width: min(54vw, 740px);
+  height: 90%;
+  visibility: hidden;
+}
+.hs-finale__heading {
+  position: absolute;
+  top: 2%;
+  right: 2%;
+  width: min(43vw, 560px);
+}
+.hs-finale__heading p {
+  margin: 0 0 0.55rem;
+  color: #8b651e;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+}
+.hs-finale__heading h3 {
+  margin: 0;
+  font-size: clamp(2.25rem, 4vw, 4.75rem);
+  line-height: 0.96;
+  letter-spacing: -0.04em;
+  text-wrap: balance;
+}
+.hs-journey .hs-finale__underline {
+  display: block;
+  width: min(62%, 250px);
+  height: 18px;
+  object-fit: contain;
+  object-position: left center;
+}
+.hs-finale__journey {
+  position: absolute;
+  right: 0;
+  bottom: 1%;
+  width: 100%;
+  height: 58%;
+}
+.hs-journey .hs-finale__path {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+.hs-journey .hs-finale__path-segment {
+  position: absolute;
+  width: 112px;
+  height: 72px;
+  object-fit: contain;
+}
+.hs-finale__path-segment--1 {
+  left: 16%;
+  bottom: 20%;
+  rotate: -7deg;
+}
+.hs-finale__path-segment--2 {
+  left: 43%;
+  bottom: 42%;
+  rotate: -5deg;
+}
+.hs-finale__path-segment--3 {
+  left: 69%;
+  bottom: 64%;
+  rotate: -3deg;
+}
+.hs-journey .hs-finale__accents {
+  position: absolute;
+  top: 19%;
+  left: 43%;
+  width: 220px;
+  height: 190px;
+  object-fit: contain;
+  opacity: 0.28;
+  pointer-events: none;
+}
+.hs-finale__year {
+  position: absolute;
+  width: clamp(130px, 13vw, 220px);
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  visibility: hidden;
+}
+.hs-finale__year--1 {
+  left: 2%;
+  bottom: 0;
+}
+.hs-finale__year--2 {
+  left: 27%;
+  bottom: 16%;
+}
+.hs-finale__year--3 {
+  left: 52%;
+  bottom: 35%;
+}
+.hs-finale__year--4 {
+  right: 0;
+  top: 0;
+}
+.hs-finale__bubble {
+  position: absolute;
+  inset: 0;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  opacity: 0.82;
+  transform: rotate(-5deg);
+}
+.hs-finale__year > div {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.hs-finale__year strong {
+  font-family: Georgia, serif;
+  font-size: clamp(2.1rem, 3.2vw, 3.5rem);
+  line-height: 1;
+}
+.hs-finale__year span,
+.hs-finale__year em {
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+}
+.hs-finale__year em {
+  font-family: Georgia, serif;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+.hs-finale__curtain {
+  position: absolute;
+  z-index: 4;
+  top: -4%;
+  width: 61%;
+  height: 108%;
+  overflow: visible;
+}
+.hs-finale__curtain--left {
+  left: -5%;
+  clip-path: polygon(
+    0 0,
+    92% 0,
+    82% 12%,
+    96% 25%,
+    80% 39%,
+    94% 54%,
+    78% 70%,
+    91% 84%,
+    80% 100%,
+    0 100%
+  );
+  transform-origin: right center;
+}
+.hs-finale__curtain--right {
+  right: -5%;
+  clip-path: polygon(
+    8% 0,
+    100% 0,
+    100% 100%,
+    18% 100%,
+    9% 86%,
+    22% 71%,
+    7% 55%,
+    20% 40%,
+    6% 25%,
+    18% 12%
+  );
+  transform-origin: left center;
+}
+.hs-finale__curtain image {
+  opacity: 0.97;
+}
+.hs-finale__streaks,
+.hs-finale__fragments {
+  position: absolute;
+  z-index: 5;
+  inset: 0;
+}
+.hs-finale__streak {
+  position: absolute;
+  width: 42%;
+  height: 6%;
+  opacity: 0;
+  overflow: visible;
+}
+.hs-finale__streak path {
+  fill: #e88b45;
+  opacity: 0.72;
+}
+.hs-finale__streak--left {
+  left: 14%;
+}
+.hs-finale__streak--right {
+  right: 14%;
+}
+.hs-finale__fragments span {
+  position: absolute;
+  opacity: 0;
+  border-radius: 55% 45% 62% 38%;
+  background: #d77435;
+}
+.hs-finale__fragments span:nth-child(3n) {
+  background: #f1ae61;
+}
+.hs-finale__fragments span:nth-child(4n) {
+  background: #b85f31;
+}
+@media (max-width: 1023px) {
+  .hs-finale__hero {
+    width: min(100vw, 820px);
+    height: 88%;
+  }
+  .hs-finale__story {
+    right: 3%;
+    width: 64vw;
+  }
+  .hs-finale__heading h3 {
+    font-size: clamp(2rem, 4.7vw, 3.5rem);
+  }
+  .hs-finale__year {
+    width: 104px;
+  }
+  .hs-finale__final-heading {
+    right: 3%;
+    width: 58vw;
+  }
+  .hs-finale__final-heading h3 {
+    font-size: clamp(2.5rem, 5.8vw, 4.5rem);
+  }
+}
+@media (max-width: 639px) {
+  .hs-finale__hero {
+    top: 1%;
+    bottom: auto;
+    width: 120vw;
+    height: 57%;
+  }
+  .hs-finale__years {
+    top: 62%;
+    right: 2%;
+    width: 96%;
+    height: 35%;
+  }
+  .hs-finale__final-heading {
+    top: 48%;
+    right: 5%;
+    left: 5%;
+    width: auto;
+    text-align: center;
+  }
+  .hs-finale__final-heading p {
+    margin-bottom: 0.55rem;
+  }
+  .hs-finale__final-heading h3 {
+    font-size: clamp(2rem, 9vw, 3rem);
+  }
+  .hs-finale__story {
+    top: 46%;
+    right: 18px;
+    left: 18px;
+    width: auto;
+    height: 52%;
+  }
+  .hs-finale__heading {
+    position: relative;
+    top: 0;
+    right: auto;
+    width: 100%;
+    text-align: center;
+  }
+  .hs-finale__heading h3 {
+    font-size: clamp(2rem, 9vw, 3rem);
+  }
+  .hs-journey .hs-finale__underline {
+    width: 72%;
+  }
+  .hs-finale__journey {
+    height: 62%;
+    bottom: 0;
+  }
+  .hs-journey .hs-finale__path {
+    opacity: 0.7;
+  }
+  .hs-finale__year {
+    width: 78px;
+  }
+  .hs-journey .hs-finale__year-arrow {
+    width: 58px;
+    height: 42px;
+  }
+  .hs-finale__year--1 {
+    left: 5%;
+    bottom: 1%;
+  }
+  .hs-finale__year--2 {
+    left: 31%;
+    bottom: 25%;
+  }
+  .hs-finale__year--3 {
+    left: 56%;
+    bottom: 49%;
+  }
+  .hs-finale__year--4 {
+    right: 0;
+    top: 0;
+  }
+  .hs-journey .hs-finale__year-icon {
+    width: 36%;
+    height: 36%;
+    top: -12%;
+  }
+  .hs-journey .hs-finale__path-segment {
+    width: 74px;
+    height: 48px;
+  }
+  .hs-journey .hs-finale__accents {
+    width: 130px;
+    height: 110px;
+  }
+  .hs-finale__curtain {
+    width: 72%;
+  }
+  .hs-finale__streak:nth-child(n + 4),
+  .hs-finale__fragments span:nth-child(n + 6) {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hs-finale {
+    position: relative;
+    min-height: 100svh;
+    visibility: visible;
+  }
+  .hs-finale__hero {
+    transform: translateX(-73%);
+  }
+  .hs-finale__year {
+    visibility: visible;
+    opacity: 1;
+  }
+  .hs-finale__year-arrow {
+    visibility: visible;
+    opacity: 1;
+  }
+  .hs-finale__final-heading {
+    visibility: visible;
+    opacity: 1;
+  }
+  .hs-finale__hero clipPath path {
+    transform: scale(4);
+  }
+  .hs-finale__story,
+  .hs-finale__heading,
+  .hs-finale__year {
+    visibility: visible;
+  }
+  .hs-finale__curtain,
+  .hs-finale__streaks,
+  .hs-finale__fragments {
+    display: none;
+  }
+}
