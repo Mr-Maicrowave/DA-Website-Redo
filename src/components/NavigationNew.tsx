@@ -144,11 +144,6 @@ const NavigationNew = () => {
       description: "Reading, writing, and critical analysis"
     },
     {
-      title: "English Sample",
-      href: "/english-sample",
-      description: "Temporary interactive English concept"
-    },
-    {
       title: "Sciences",
       href: "/subjects/science",
       description: "Physics, Chemistry, Biology"
@@ -371,7 +366,7 @@ const NavigationNew = () => {
 
                     <HoverCard openDelay={120} closeDelay={180} onOpenChange={(open) => handleDropdownChange('subjects', open)}>
                       <HoverCardTrigger asChild>
-                        <button type="button" className={`${navLinkClass(location.pathname.startsWith('/subjects') || location.pathname === '/english-sample')} inline-flex items-center gap-0.5`}>
+                        <button type="button" className={`${navLinkClass(location.pathname.startsWith('/subjects'))} inline-flex items-center gap-0.5`}>
                           Subjects <ChevronDown className="h-3.5 w-3.5" />
                         </button>
                       </HoverCardTrigger>
