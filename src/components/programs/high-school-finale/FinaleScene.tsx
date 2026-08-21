@@ -12,11 +12,16 @@ const fragments=[[42,21,10],[59,17,7],[47,35,6],[55,41,11],[39,54,8],[63,59,6],[
 
 function YearContent({year,state}:{year:FinaleYear;state:"active"|"outgoing"}){
  return <article className={`hs-finale__year-content hs-finale__year-content--${state}`} data-year-content={state} style={{"--year-color":year.color} as React.CSSProperties}>
-  <img className="hs-finale__content-wash" src={year.wash} alt=""/><span className="hs-finale__ghost-number" aria-hidden="true">{year.number}</span>
-  <div className="hs-finale__content-piece hs-finale__content-intro"><p>YEAR {year.number}</p><h3>{year.title}</h3><strong>{year.supporting}</strong></div>
-  <div className="hs-finale__content-columns"><section className="hs-finale__content-piece"><h4>WHAT THEY’RE LEARNING</h4><ul>{year.learning.map(item=><li key={item}>{item}</li>)}</ul></section><section className="hs-finale__content-piece"><h4>WHAT WE DO AT DA</h4><ul>{year.support.map(item=><li key={item}>{item}</li>)}</ul></section></div>
-  <blockquote className="hs-finale__content-piece">“{year.closing}”</blockquote>
-  {year.year===10&&<Link className="hs-finale__hsc-link hs-finale__content-piece" to="/hsc-excellence">Explore our HSC program <span aria-hidden="true">→</span></Link>}
+  <div className="hs-finale__year-decoration" aria-hidden="true">
+   <img className="hs-finale__content-wash" src={year.wash} alt=""/>
+   <span className="hs-finale__ghost-number">{year.number}</span>
+  </div>
+  <div className="hs-finale__year-copy-content">
+   <div className="hs-finale__content-piece hs-finale__content-intro"><p>YEAR {year.number}</p><h3>{year.title}</h3><strong>{year.supporting}</strong></div>
+   <div className="hs-finale__content-columns"><section className="hs-finale__content-piece"><h4>WHAT THEY’RE LEARNING</h4><ul>{year.learning.map(item=><li key={item}>{item}</li>)}</ul></section><section className="hs-finale__content-piece"><h4>WHAT WE DO AT DA</h4><ul>{year.support.map(item=><li key={item}>{item}</li>)}</ul></section></div>
+   <blockquote className="hs-finale__content-piece">“{year.closing}”</blockquote>
+   {year.year===10&&<Link className="hs-finale__hsc-link hs-finale__content-piece" to="/hsc-excellence">Explore our HSC program <span aria-hidden="true">→</span></Link>}
+  </div>
  </article>;
 }
 

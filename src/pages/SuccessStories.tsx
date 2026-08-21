@@ -2,14 +2,15 @@ import FooterNew from '@/components/FooterNew';
 import ReviewCard from '@/components/success-stories/ReviewCard';
 import NoticeFlipCard from '@/components/success-stories/NoticeFlipCard';
 import GratitudeSection from '@/components/success-stories/GratitudeSection';
+import { getAdjacentStoryIndex } from '@/components/success-stories/carouselNavigation';
 import NavigationNew from '@/components/NavigationNew';
 import SEO from '@/components/SEO';
 import { successStories, type SuccessStory } from '@/data/successStories';
 import { testimonials } from '@/data/testimonials';
 import { googleReviews, type GoogleReview } from '@/data/googleReviews';
 import { successStoryReviewCards } from '@/data/successStoryReviewCards';
-import { AnimatePresence, motion, useReducedMotion, useScroll, useTransform, type MotionStyle, type MotionValue } from 'framer-motion';
-import { ChartNoAxesCombined, GraduationCap, Heart, Sparkles, Sprout } from 'lucide-react';
+import { AnimatePresence, motion, useReducedMotion, useScroll, useTransform, type MotionValue } from 'framer-motion';
+import { CalendarCheck2, ChartNoAxesCombined, GraduationCap, Heart, Sparkles, Sprout, Star, Target } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState, type CSSProperties, type KeyboardEvent, type PointerEvent } from 'react';
 import { createPortal } from 'react-dom';
 import './SuccessStories.css';
@@ -40,6 +41,13 @@ type StoryPanel = {
   before: string;
   after: string;
   resultLabel: string;
+  cardSubtitle: string;
+  cardQuote: string;
+  highlights: [
+    { label: string; text: string },
+    { label: string; text: string },
+    { label: string; text: string },
+  ];
   story: SuccessStory | (typeof testimonials)[number];
 };
 
@@ -82,6 +90,13 @@ const storyPanels: StoryPanel[] = [
     before: '15TH',
     after: '6TH',
     resultLabel: 'Final HSC English assessment rank',
+    cardSubtitle: '15th → 6th',
+    cardQuote: katelinStory.quote,
+    highlights: [
+      { label: 'Clear Goals', text: 'Focused English strategy' },
+      { label: 'Consistent Effort', text: 'Questions, practice and feedback' },
+      { label: 'Outstanding Results', text: '6th in final HSC assessment' },
+    ],
     story: katelinStory,
   },
   {
@@ -93,7 +108,13 @@ const storyPanels: StoryPanel[] = [
       'That understanding changed what she expected of herself. Her mathematics results moved into the high 90s, culminating in second place in her grade and a perfect score on her most recent test.',
     ],
     quote: emilyStory.quote,
-    beforeLabel: 'Starting point', afterLabel: 'Outcome', before: 'ABOVE AVERAGE', after: '2ND PLACE', resultLabel: 'Mathematics — plus 100% in her most recent test', story: emilyStory,
+    beforeLabel: 'Starting point', afterLabel: 'Outcome', before: 'ABOVE AVERAGE', after: '2ND PLACE', resultLabel: 'Mathematics — plus 100% in her most recent test',
+    cardSubtitle: '2nd in Mathematics', cardQuote: emilyStory.quote,
+    highlights: [
+      { label: 'Clear Goals', text: 'Build deep understanding' },
+      { label: 'Consistent Effort', text: 'Steady learning since Year 5' },
+      { label: 'Outstanding Results', text: 'High 90s and a 100% test' },
+    ], story: emilyStory,
   },
   {
     id: 'breaking-through', number: '03', chapterTitle: 'Breaking Through', artwork: '/images/success-stories/story-cards/03-breaking-through-text-free.png',
@@ -104,7 +125,13 @@ const storyPanels: StoryPanel[] = [
       'Across two years, her marks climbed into the 80–100% range. The breakthrough was not one isolated result—it included her first-ever 100% on a 2-unit assessment and first place in her 2-unit trial exam.',
     ],
     quote: melissaStory.quote,
-    beforeLabel: 'Starting point', afterLabel: 'Result', before: 'STRUGGLING', after: 'RANKED 1ST', resultLabel: '2-unit Mathematics trial examination', story: melissaStory,
+    beforeLabel: 'Starting point', afterLabel: 'Result', before: 'STRUGGLING', after: 'RANKED 1ST', resultLabel: '2-unit Mathematics trial examination',
+    cardSubtitle: 'Ranked 1st', cardQuote: melissaStory.quote,
+    highlights: [
+      { label: 'Clear Goals', text: 'Rebuild maths foundations' },
+      { label: 'Consistent Effort', text: 'Two years of deliberate work' },
+      { label: 'Outstanding Results', text: '1st in the 2-unit trial' },
+    ], story: melissaStory,
   },
   {
     id: 'five-lights', number: '04', chapterTitle: 'Five Lights', artwork: '/images/success-stories/story-cards/04-five-lights-text-free.png',
@@ -115,7 +142,13 @@ const storyPanels: StoryPanel[] = [
       'That consistency carried into the HSC. Five subjects became five Band 6 results—and an ATAR that made his parents proud. More importantly, Bryant left believing the skills he built could travel with him into the future.',
     ],
     quote: bryantStory.quote,
-    beforeLabel: 'Then', afterLabel: 'HSC outcome', before: 'AVERAGE STUDENT', after: 'FIVE BAND 6s', resultLabel: 'Consistent achievement across five HSC subjects', story: bryantStory,
+    beforeLabel: 'Then', afterLabel: 'HSC outcome', before: 'AVERAGE STUDENT', after: 'FIVE BAND 6s', resultLabel: 'Consistent achievement across five HSC subjects',
+    cardSubtitle: 'Five Band 6s', cardQuote: bryantStory.quote,
+    highlights: [
+      { label: 'Clear Goals', text: 'Strong academic foundations' },
+      { label: 'Consistent Effort', text: 'Eight years of growth' },
+      { label: 'Outstanding Results', text: 'Band 6 in five HSC subjects' },
+    ], story: bryantStory,
   },
   {
     id: 'the-hundred', number: '05', chapterTitle: 'The Hundred', artwork: '/images/success-stories/story-cards/05-the-hundred-text-free.png',
@@ -126,7 +159,13 @@ const storyPanels: StoryPanel[] = [
       'The milestone arrived quickly: 100% in both assessments two and three, followed by 97% in her mathematics trial. Her rank moved from 13th in semester one to first overall in her school’s Mathematics Standard course by the end of Year 12.',
     ],
     quote: joieStory.quote,
-    beforeLabel: 'Semester one', afterLabel: 'Year 12 outcome', before: 'RANKED 13TH', after: 'RANKED 1ST', resultLabel: 'Mathematics Standard — including two 100% assessments', story: joieStory,
+    beforeLabel: 'Semester one', afterLabel: 'Year 12 outcome', before: 'RANKED 13TH', after: 'RANKED 1ST', resultLabel: 'Mathematics Standard — including two 100% assessments',
+    cardSubtitle: 'First 100%!', cardQuote: joieStory.quote,
+    highlights: [
+      { label: 'Clear Goals', text: 'Targeted HSC preparation' },
+      { label: 'Consistent Effort', text: 'Past papers and trial practice' },
+      { label: 'Outstanding Results', text: 'Two 100% scores and ranked 1st' },
+    ], story: joieStory,
   },
   {
     id: 'beyond-the-result', number: '06', chapterTitle: 'Beyond the Result', artwork: '/images/success-stories/story-cards/06-beyond-the-result-text-free.png',
@@ -137,68 +176,29 @@ const storyPanels: StoryPanel[] = [
       'The marks that followed were extraordinary, but Tu’s lasting outcome was a new discipline and belief in growth. He ranked first in every subject throughout Year 12 and attained a 99.05 ATAR, carrying forward a conviction that achievement can be cultivated.',
     ],
     quote: tuStory.bottomQuote ?? tuStory.pullQuotes[4]?.text,
-    beforeLabel: 'Starting point', afterLabel: 'Overall outcome', before: 'LOW CONFIDENCE', after: '99.05 ATAR', resultLabel: 'Ranked 1st in every subject throughout Year 12', story: tuStory,
+    beforeLabel: 'Starting point', afterLabel: 'Overall outcome', before: 'LOW CONFIDENCE', after: '99.05 ATAR', resultLabel: 'Ranked 1st in every subject throughout Year 12',
+    cardSubtitle: 'A future of possibilities', cardQuote: tuStory.bottomQuote ?? tuStory.pullQuotes[4]?.text ?? 'Achievement can be cultivated.',
+    highlights: [
+      { label: 'Clear Goals', text: 'Rebuild confidence and foundations' },
+      { label: 'Consistent Effort', text: 'Discipline across every subject' },
+      { label: 'Outstanding Results', text: '99.05 ATAR and ranked 1st' },
+    ], story: tuStory,
   },
 ];
 
 type SuccessStoryPanelProps = {
   panel: StoryPanel;
-  reduceMotion: boolean | null;
   stackIndex: number;
-  stackProgress: MotionValue<number>;
   onOpenStory: (index: number) => void;
 };
 
-const SuccessStoryPanel = ({ panel, reduceMotion, stackIndex, stackProgress, onOpenStory }: SuccessStoryPanelProps) => {
-  const panelCount = storyPanels.length;
-  const transitionCount = Math.max(panelCount - 1, 1);
-  const isFinalPanel = stackIndex === panelCount - 1;
-  const carouselY = useTransform(stackProgress, (progress) => {
-    const phase = progress * transitionCount - stackIndex;
-    if (phase < 0) return `${Math.min(Math.abs(phase), 5) * 58}px`;
-    // Keep the final story framed in place until the sticky sequence releases.
-    // It then leaves through normal document flow, allowing the review scene
-    // immediately below to follow it without an empty transition viewport.
-    if (isFinalPanel) return '0%';
-    if (phase > 1) return '-118%';
-    return `${phase * -118}%`;
-  });
-  const carouselRotate = useTransform(stackProgress, (progress) => {
-    const phase = progress * transitionCount - stackIndex;
-    if (phase <= 0 || isFinalPanel) return 0;
-    return Math.min(phase, 1) * (stackIndex % 2 === 0 ? -2.2 : 2.2);
-  });
-  const carouselTilt = useTransform(stackProgress, (progress) => {
-    const phase = progress * transitionCount - stackIndex;
-    if (phase <= 0 || isFinalPanel) return 0;
-    return Math.min(phase, 1) * -4.5;
-  });
-  const carouselScale = useTransform(stackProgress, (progress) => {
-    const phase = progress * transitionCount - stackIndex;
-    if (phase < 0) return 1 - Math.min(Math.abs(phase), 5) * 0.004;
-    if (isFinalPanel) return 1;
-    return 1 - Math.min(phase, 1) * 0.035;
-  });
-  const carouselOpacity = useTransform(stackProgress, (progress) => {
-    const phase = progress * transitionCount - stackIndex;
-    if (phase < 0) return Math.max(0.9, 1 - Math.abs(phase) * 0.02);
-    if (isFinalPanel) return 1;
-    if (phase > 0.82) return Math.max(0, 1 - ((phase - 0.82) / 0.18));
-    return 1;
-  });
+const SuccessStoryPanel = ({ panel, stackIndex, onOpenStory }: SuccessStoryPanelProps) => {
   const panelStyle = {
     '--story-accent': panel.accent,
     '--stack-index': stackIndex,
     '--artwork-position': panel.artworkPosition,
     '--artwork-fit': panel.artworkFit,
-    ...(reduceMotion ? {} : {
-      y: carouselY,
-      rotateZ: carouselRotate,
-      rotateX: carouselTilt,
-      scale: carouselScale,
-      opacity: carouselOpacity,
-    }),
-  } as unknown as MotionStyle;
+  } as CSSProperties;
   return (
     <motion.article
       id={`story-${panel.id}`}
@@ -230,24 +230,25 @@ const SuccessStoryPanel = ({ panel, reduceMotion, stackIndex, stackProgress, onO
           <span>{panel.number}</span>
           <div>
             <strong>{panel.chapterTitle}</strong>
-            <small>{panel.studentName} · {panel.subject}</small>
+            <small>{panel.cardSubtitle}</small>
           </div>
         </header>
 
-        <div className="ss-story-panel__asset-result">
-          <div>
-            <span>{panel.beforeLabel}</span>
-            <strong>{panel.before}</strong>
-          </div>
-          <i>→</i>
-          <div>
-            <span>{panel.afterLabel}</span>
-            <strong>{panel.after}</strong>
-          </div>
+        <blockquote>“{panel.cardQuote}”</blockquote>
+
+        <div className="ss-story-panel__highlights">
+          {panel.highlights.map((highlight, index) => {
+            const HighlightIcon = [Target, CalendarCheck2, Star][index];
+            return (
+              <div key={highlight.label}>
+                <HighlightIcon aria-hidden="true" />
+                <strong>{highlight.label}:</strong>
+                <span>{highlight.text}</span>
+              </div>
+            );
+          })}
         </div>
 
-        <p className="ss-story-panel__asset-result-label">{panel.resultLabel}</p>
-        {panel.quote && <blockquote>“{panel.quote}”</blockquote>}
         <span className="ss-story-panel__asset-cta">
           Read {panel.studentName.split(' ')[0]}'s full story <b>→</b>
         </span>
@@ -257,38 +258,68 @@ const SuccessStoryPanel = ({ panel, reduceMotion, stackIndex, stackProgress, onO
 };
 
 const SuccessStoryCarousel = ({ reduceMotion, onOpenStory }: { reduceMotion: boolean | null; onOpenStory: (index: number) => void }) => {
-  const stackRef = useRef<HTMLElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: stackRef,
-    offset: ['start start', 'end end'],
-  });
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [direction, setDirection] = useState<1 | -1>(1);
+  const pointerStartX = useRef<number | null>(null);
+
+  const move = useCallback((nextDirection: 1 | -1) => {
+    setDirection(nextDirection);
+    setActiveIndex((currentIndex) => getAdjacentStoryIndex(currentIndex, nextDirection, storyPanels.length));
+  }, []);
+
+  const handlePointerDown = (event: PointerEvent<HTMLDivElement>) => {
+    pointerStartX.current = event.clientX;
+  };
+
+  const handlePointerUp = (event: PointerEvent<HTMLDivElement>) => {
+    if (pointerStartX.current === null) return;
+    const distance = event.clientX - pointerStartX.current;
+    pointerStartX.current = null;
+    if (Math.abs(distance) < 48) return;
+    move(distance < 0 ? 1 : -1);
+  };
 
   return (
     <section
-      ref={stackRef}
       className={`ss-story-stack${reduceMotion ? ' ss-story-stack--reduced' : ''}`}
-      style={{
-        // A sticky stage needs one viewport for its own visible height plus
-        // one viewport per transition. This makes the sixth story arrive at
-        // the exact end of the runway, with the review scene immediately next.
-        '--story-scroll-height': `${Math.max(storyPanels.length, 1) * 100}svh`,
-      } as CSSProperties}
       aria-label="Student turning point stories"
+      onKeyDown={(event) => {
+        if (event.key === 'ArrowLeft') move(-1);
+        if (event.key === 'ArrowRight') move(1);
+      }}
     >
-      <div className="ss-story-stack__stage">
+      <div
+        className="ss-story-stack__stage"
+        onPointerDown={handlePointerDown}
+        onPointerUp={handlePointerUp}
+        onPointerCancel={() => { pointerStartX.current = null; }}
+      >
         <div className="ss-container ss-story-stack__track">
-          {storyPanels.map((panel, index) => (
-            <SuccessStoryPanel
-              key={panel.number}
-              panel={panel}
-              reduceMotion={reduceMotion}
-              stackIndex={index}
-              stackProgress={scrollYProgress}
-              onOpenStory={onOpenStory}
-            />
-          ))}
+          <AnimatePresence initial={false} mode="wait" custom={direction}>
+            <motion.div
+              key={storyPanels[activeIndex].id}
+              className="ss-story-stack__slide"
+              custom={direction}
+              initial={reduceMotion ? false : { x: direction * 120, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={reduceMotion ? { opacity: 0 } : { x: direction * -120, opacity: 0 }}
+              transition={{ duration: reduceMotion ? 0 : 0.42, ease: easeOut }}
+            >
+                <SuccessStoryPanel
+                  panel={storyPanels[activeIndex]}
+                  stackIndex={activeIndex}
+                  onOpenStory={onOpenStory}
+                />
+            </motion.div>
+          </AnimatePresence>
         </div>
+
+        <button type="button" className="ss-story-stack__arrow ss-story-stack__arrow--previous" onClick={() => move(-1)} aria-label="Previous success story">←</button>
+        <button type="button" className="ss-story-stack__arrow ss-story-stack__arrow--next" onClick={() => move(1)} aria-label="Next success story">→</button>
       </div>
+      <p className="ss-story-stack__counter" aria-live="polite">
+        <span>{String(activeIndex + 1).padStart(2, '0')}</span> / {String(storyPanels.length).padStart(2, '0')}
+      </p>
     </section>
   );
 };

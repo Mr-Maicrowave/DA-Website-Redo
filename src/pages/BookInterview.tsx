@@ -2,12 +2,14 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   ArrowLeft, ArrowRight, CheckCircle, Plus, Trash2,
-  Phone, Home, ChevronDown, GraduationCap,
+  Phone, Home, ChevronDown, GraduationCap, Users, ShieldCheck,
+  HandHeart, Star, Clock3, Smile,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import SEO from '@/components/SEO';
 import NavigationNew from '@/components/NavigationNew';
 import FooterNew from '@/components/FooterNew';
+import './BookInterview.css';
 
 // ─── Palette ──────────────────────────────────────────────────────────────────
 const C = {
@@ -108,6 +110,12 @@ const NEXT_STEPS = [
   },
 ] as const;
 const ORDINALS = ['First','Second','Third','Fourth','Fifth'];
+const BENEFITS = [
+  { icon: Users, text: 'Personalised Recommendations' },
+  { icon: ShieldCheck, text: 'Expert Guidance You Can Trust' },
+  { icon: HandHeart, text: 'A Supportive Start to Their Journey' },
+  { icon: Star, text: 'Small Groups Big Impact' },
+] as const;
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -647,23 +655,21 @@ function Step1({ form, setForm, errors }: {
       <div className="mb-10">
         <p className="text-[7.5px] font-black uppercase mb-4"
            style={{ color: C.goldDim, letterSpacing: '0.44em' }}>
-          Step 1 of 2 &nbsp;·&nbsp; Parent Details
+          Step 1 of 3
         </p>
+        <div className="interview-form-heading-row">
         <h2 className="font-serif leading-[1.15]"
             style={{
-              fontSize: 'clamp(1.55rem, 3.8vw, 2rem)',
+              fontSize: 'clamp(2.4rem, 4.5vw, 3rem)',
               color: C.navy,
               letterSpacing: '-0.025em',
             }}>
-          Every student's journey starts with<br className="hidden sm:block" />
-          understanding where they are now.
+          Parent Details
         </h2>
+        <span className="interview-duration"><Clock3 aria-hidden="true" />Takes 2 minutes</span>
+        </div>
         <div className="mt-4 w-12 h-[1.5px] rounded-full"
              style={{ background: `linear-gradient(90deg, ${C.gold}, ${C.gold}30)` }} />
-        <p className="mt-4 text-[13px] leading-[1.85] max-w-lg" style={{ color: `${C.text}55` }}>
-          We'll use your details to reach out personally — not with a generic email,
-          but a real conversation about what's right for your child.
-        </p>
       </div>
 
       <SectionDivider label="Your Details" />
@@ -1081,66 +1087,38 @@ const BookInterview = () => {
   const isConfirmation = step === 3;
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen interview-page">
       <SEO
         title="Book an Interview | DA Tuition"
         description="Book an interview with DA Tuition — a premium K-12 tutoring service in Canley Heights."
       />
       <NavigationNew />
 
-      {/* ── HERO — compact ── */}
-      <div className="relative overflow-hidden" style={{ background: C.navy }}>
-        {/* Gold radial glow */}
-        <div className="absolute inset-0 pointer-events-none" style={{
-          background: 'radial-gradient(ellipse 70% 55% at 28% 55%, rgba(212,175,55,0.09) 0%, transparent 68%)',
-        }} />
-
-        <div className="relative max-w-2xl mx-auto px-4 sm:px-8 pt-[96px] pb-10">
-
-          {/* Back link */}
-          <Link to="/"
-            className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.16em] mb-8 transition-colors duration-200"
-            style={{ color: 'rgba(255,255,255,0.28)' }}
-            onMouseEnter={(e) => (e.currentTarget.style.color = 'rgba(255,255,255,0.55)')}
-            onMouseLeave={(e) => (e.currentTarget.style.color = 'rgba(255,255,255,0.28)')}>
-            <ArrowLeft className="w-3.5 h-3.5" />Back to Home
-          </Link>
-
-          {/* Heading block */}
-          <div className="mb-8">
-            <p className="text-[7.5px] font-black uppercase tracking-[0.42em] mb-3.5"
-               style={{ color: C.goldDim }}>
-              DA Tuition · Canley Heights NSW
-            </p>
-            <h1 className="font-serif font-medium tracking-[-0.03em] text-white"
-                style={{ fontSize: 'clamp(1.75rem, 5vw, 2.5rem)', lineHeight: 1.08 }}>
-              Book an Interview
-            </h1>
-            {/* Decorative gold rule under heading */}
-            <div className="mt-3 mb-4 w-14 h-[2px] rounded-full"
-                 style={{ background: `linear-gradient(90deg, ${C.gold}, ${C.gold}55)` }} />
-            <p className="text-[13px] leading-[1.75] max-w-sm" style={{ color: 'rgba(255,255,255,0.42)' }}>
-              Let's find the right starting point. Tell us a little about your child and
-              we'll recommend the most suitable subject, level and pathway.
-            </p>
-          </div>
-
-          {/* Journey indicator */}
-          <EnrolmentJourney step={step} />
+      <section className="interview-hero">
+        <div className="interview-hero-room" aria-hidden="true" />
+        <div className="interview-hero-inner">
+          <motion.div className="interview-hero-copy" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .7 }}>
+            <h1>Book an<br />Interview</h1>
+            <div className="interview-brush" aria-hidden="true" />
+            <p className="interview-handwritten">A thoughtful conversation today<br /><span>can shape their tomorrow. ♡</span></p>
+            <p className="interview-intro">Tell us a little about your child and we'll recommend the most suitable subject, level and pathway.</p>
+          </motion.div>
+          <motion.img className="interviewers" src="/images/interview/interviewers.png" alt="Two DA Tuition interviewers ready to meet your family" initial={{ opacity: 0, x: 25, scale: .98 }} animate={{ opacity: 1, x: 0, scale: 1 }} transition={{ duration: .9, ease: 'easeOut' }} />
         </div>
+      </section>
 
-        {/* Gold rule separating hero from body */}
-        <div className="h-[3px] w-full"
-             style={{ background: `linear-gradient(90deg, ${C.gold} 0%, ${C.gold}55 60%, transparent 100%)` }} />
-      </div>
+      <motion.section className="interview-benefits" aria-label="Why families choose DA Tuition" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: .2, duration: .6 }}>
+        {BENEFITS.map(({ icon: Icon, text }, index) => <div className="interview-benefit" key={text}><Icon aria-hidden="true" /><span><b>0{index + 1}</b>{text}</span></div>)}
+      </motion.section>
 
       {/* ── BODY — cream background ── */}
-      <div className="pb-24" style={{ background: C.cream }}>
-        <div className="max-w-2xl mx-auto px-4 sm:px-6">
+      <div className="interview-form-canvas">
+        <aside className="interview-side-note" aria-hidden="true">We're here<br />to listen,<br />understand and<br />guide your family<br />every step of<br />the way. ♡</aside>
+        <div className="interview-form-wrap">
 
           {/* Form card */}
           <div
-            className="rounded-3xl overflow-hidden"
+            className="interview-form-card"
             style={{
               background: isConfirmation
                 ? C.navy
@@ -1149,8 +1127,8 @@ const BookInterview = () => {
                 ? `1px solid ${C.gold}22`
                 : `1.5px solid rgba(212,175,55,0.18)`,
               boxShadow: isConfirmation
-                ? `0 8px 48px rgba(10,27,52,0.22), 0 2px 8px rgba(10,27,52,0.10)`
-                : `0 8px 48px rgba(10,27,52,0.08), 0 2px 12px rgba(10,27,52,0.05), 0 0 0 0.5px rgba(212,175,55,0.12)`,
+                ? `0 6px 8px rgba(10,27,52,0.18)`
+                : `0 6px 8px rgba(10,27,52,0.08)`,
             }}
           >
             {/* Gold top bar — premium document seal */}
@@ -1161,7 +1139,7 @@ const BookInterview = () => {
               </div>
             )}
 
-            <div className="p-8 sm:p-12">
+            <div className="interview-form-padding">
               <AnimatePresence mode="wait">
                 {step === 1 && <Step1 key="s1" form={parentForm} setForm={setParentForm} errors={errors} />}
                 {step === 2 && <Step2 key="s2" students={students} setStudents={setStudents} errors={errors} />}
@@ -1170,7 +1148,7 @@ const BookInterview = () => {
 
               {/* Nav buttons */}
               {step < 3 && (
-                <div className={`mt-12 pt-8 flex gap-4 ${step > 1 ? 'justify-between' : 'justify-end'}`}
+                <div className={`interview-form-actions ${step > 1 ? 'justify-between' : 'justify-end'}`}
                      style={{ borderTop: `1px solid rgba(10,27,52,0.07)` }}>
                   {step > 1 && (
                     <motion.button type="button" onClick={handleBack}
@@ -1187,7 +1165,7 @@ const BookInterview = () => {
                     </motion.button>
                   )}
                   <motion.button type="button" onClick={handleNext}
-                    className="inline-flex items-center gap-2.5 rounded-xl px-9 py-4 text-[11px] font-bold uppercase"
+                    className="interview-primary-cta inline-flex items-center justify-center gap-2.5 text-[11px] font-bold uppercase"
                     style={{
                       background: C.navy,
                       color: C.white,
@@ -1207,23 +1185,11 @@ const BookInterview = () => {
             </div>
           </div>
 
-          {/* Trust strip — understated */}
-          {step < 3 && (
-            <div className="mt-6 flex flex-wrap items-center justify-center gap-x-8 gap-y-2">
-              {['20+ years experience', '1,500+ students helped', 'Small groups of 3–5'].map((t, i, arr) => (
-                <div key={t} className="flex items-center gap-6">
-                  <span className="text-[11px]" style={{ color: `${C.text}42`, letterSpacing: '0.04em' }}>
-                    {t}
-                  </span>
-                  {i < arr.length - 1 && (
-                    <div className="w-[3px] h-[3px] rounded-full" style={{ background: `${C.gold}40` }} />
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
         </div>
       </div>
+
+      {step < 3 && <section className="interview-trust-strip" aria-label="DA Tuition experience"><div><Smile aria-hidden="true" /><strong>20+</strong><span>Years of experience</span></div><div><Users aria-hidden="true" /><strong>1,500+</strong><span>Students helped</span></div><div><GraduationCap aria-hidden="true" /><strong>Small groups</strong><span>of 3–5</span></div></section>}
+      {step < 3 && <p className="interview-closing">Every conversation is the start of something great. <span>♡</span></p>}
 
       <FooterNew />
     </div>

@@ -6,6 +6,7 @@ import SEO from '@/components/SEO';
 import NavigationNew from '@/components/NavigationNew';
 import FooterNew from '@/components/FooterNew';
 import SubjectHero from '@/components/subjects/SubjectHero';
+import HSCFutureStory from '@/components/hsc-future-v2/HSCFutureStory';
 
 const cardTones = [
   'linear-gradient(180deg, #f7fbff, #e8f2ff)',
@@ -400,32 +401,7 @@ const HSCExcellence = () => {
 
       <div id="hsc-excellence-page-content">
       <main>
-        <div className="hsc-hero">
-          <div className="hsc-hero-tag">HSC EXCELLENCE &middot; YEARS 11-12</div>
-          <h1>The HSC Is <em>Two Years of Decisions</em></h1>
-          <p className="hsc-hero-sub">
-            Every subject choice, every assessment mark, every study hour counts toward the ATAR. DA Tuition's HSC
-            Excellence program is built for students who want to walk out with their best possible result.
-          </p>
-          <div className="hsc-hero-btns">
-            <Link className="hsc-btn-navy" to="/book-interview">Book an Interview</Link>
-          </div>
-          <div className="hsc-hero-badge">
-            <div>
-              <div className="hsc-hero-badge-bold">100+ Band 6 Results</div>
-              <div className="hsc-hero-badge-small">Across English, Maths, Science and Humanities</div>
-            </div>
-          </div>
-        </div>
-
-        <div className="hsc-photo-banner">
-          <div className="hsc-photo-banner-inner">
-            <img src="/images/programs/hsc-maths.jpg" alt="HSC Mathematics tutor working through a calculus problem with a Year 12 student" />
-            <div className="hsc-photo-banner-caption">
-              <p>Subject-specialist tutors who know exactly what Band 6 looks like.</p>
-            </div>
-          </div>
-        </div>
+        <HSCFutureStory />
 
         <section className="hsc-section hsc-stakes-section" id="programs">
           <div className="hsc-center">
