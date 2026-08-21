@@ -4,7 +4,14 @@ import { resetProfileScroll } from './profileNavigation.ts';
 
 test('returns the profile scroll container to the top without a smooth-scroll delay', () => {
   let received: ScrollToOptions | undefined;
-  const container = { scrollTo: (options: ScrollToOptions) => { received = options; } };
+  function scrollTo(options?: ScrollToOptions): void;
+  function scrollTo(x: number, y: number): void;
+  function scrollTo(optionsOrX?: ScrollToOptions | number, _y?: number) {
+    if (typeof optionsOrX !== 'number') {
+      received = optionsOrX;
+    }
+  }
+  const container = { scrollTo };
 
   resetProfileScroll(container);
 
