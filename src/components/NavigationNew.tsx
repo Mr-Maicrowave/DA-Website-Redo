@@ -158,11 +158,6 @@ const NavigationNew = () => {
       href: "/subjects/legal-studies",
       description: "Case law, statutory interpretation and essay technique"
     },
-    {
-      title: "All Subjects",
-      href: "/subjects",
-      description: "View our complete subject offerings"
-    }
   ];
 
   const aboutItems = [

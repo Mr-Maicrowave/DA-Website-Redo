@@ -7,6 +7,7 @@ import TrustedSchoolsStrip from '@/components/subjects/TrustedSchoolsStrip';
 import BusinessSyllabusQuiz from '@/components/subjects/BusinessSyllabusQuiz';
 import BusinessTransformationSteps from '@/components/subjects/BusinessTransformationSteps';
 import BusinessCareerPathways from '@/components/subjects/BusinessCareerPathways';
+import { BusinessStudiesIntroVideoGate } from '@/features/business-intro-video/BusinessStudiesIntroVideoGate';
 import {
   Briefcase,
   LineChart,
@@ -90,6 +91,7 @@ const businessExamStructureCards = [
 const BusinessStudies = () => {
   return (
     <div className="min-h-screen bg-white">
+      <BusinessStudiesIntroVideoGate />
       <SEO
         title="HSC Business Studies Tutoring"
         description="Master business concepts through case studies and real-world applications at DA Tuition."
