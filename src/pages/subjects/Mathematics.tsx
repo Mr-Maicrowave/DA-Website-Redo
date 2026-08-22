@@ -1344,11 +1344,11 @@ const Mathematics = () => {
         <nav aria-label="Mathematics page sections" className="border-y border-[#071629]/12 bg-[#fffdf8] px-5 lg:px-8">
           <div className="mx-auto flex max-w-7xl gap-6 overflow-x-auto snap-x md:grid md:grid-cols-5 md:gap-8">
             {[
-              { label: 'Year levels', href: '#math-pathways' },
-              { label: 'Class options', href: '#maths-class-options' },
-              { label: 'HSC streams', href: '#hsc-maths' },
-              { label: 'How learning changes', href: '#math-teaching-proof' },
-              { label: 'Graphing lab', href: '/maths-graph-lab', opensPage: true },
+              { label: 'Where they are now', href: '#math-pathways' },
+              { label: 'Their right class', href: '#maths-class-options' },
+              { label: 'HSC direction', href: '#hsc-maths' },
+              { label: 'How progress is built', href: '#math-teaching-proof' },
+              { label: 'Optional exploration', href: '/maths-graph-lab', opensPage: true },
             ].map(({ label, href, opensPage }) => (
               <a
                 key={href}

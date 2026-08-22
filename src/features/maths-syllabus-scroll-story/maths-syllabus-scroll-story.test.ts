@@ -26,6 +26,30 @@ test('every beat has an optimised public art plate', () => {
   }
 });
 
+test('desktop story includes the Veo curve-to-area bridge as an optimised video asset', () => {
+  const source = readFileSync(componentUrl, 'utf8');
+  const video = resolve(process.cwd(), 'public/videos/maths-syllabus-scroll-story/curve-to-area-scrub.mp4');
+
+  assert.equal(existsSync(video), true, 'the approved Veo bridge video is missing');
+  assert.match(source, /ref=\{videoRef\}/);
+  assert.match(source, /src="\/videos\/maths-syllabus-scroll-story\/curve-to-area-scrub\.mp4"/);
+  assert.match(source, /poster="\/images\/veo-frames\/maths-veo-start-frame\.png"/);
+  assert.match(source, /preload="none"/);
+  assert.match(source, /video\.preload = 'auto'/);
+  assert.match(source, /video\.load\(\)/);
+  assert.match(source, /video\.currentTime/);
+  assert.match(source, /VIDEO_SCROLL_PORTION/);
+});
+
+test('video scrubber coalesces scroll seeks while the decoder is busy', () => {
+  const source = readFileSync(componentUrl, 'utf8');
+
+  assert.match(source, /let pendingVideoTime: number \| null = null/);
+  assert.match(source, /if \(video\.seeking \|\| videoSeekInFlight\)/);
+  assert.match(source, /video\?\.addEventListener\('seeked', flushPendingVideoSeek\)/);
+  assert.match(source, /video\?\.removeEventListener\('seeked', flushPendingVideoSeek\)/);
+});
+
 test('story uses semantic labels and decorative plates', () => {
   const source = readFileSync(componentUrl, 'utf8');
 

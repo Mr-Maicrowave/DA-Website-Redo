@@ -8,6 +8,7 @@ import './maths-syllabus-scroll-story.css';
 const STORY_CURVE = 'M 102 646 C 244 562, 334 614, 454 482 S 694 222, 814 362 S 1058 618, 1328 166';
 const DESKTOP_MEDIA_QUERY = '(min-width: 768px)';
 const BEAT_TRANSITION_DURATION = 0.08;
+const VIDEO_SCROLL_PORTION = 0.42;
 
 const STORY_POINT_OFFSETS = [
   { x: 0, y: 0 },
@@ -20,6 +21,7 @@ const STORY_POINT_OFFSETS = [
 
 export const MathsSyllabusScrollStory = () => {
   const rootRef = useRef<HTMLElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
   const prefersReducedMotion = Boolean(useReducedMotion());
 
   useLayoutEffect(() => {
@@ -31,6 +33,47 @@ export const MathsSyllabusScrollStory = () => {
     const media = gsap.matchMedia();
     const context = gsap.context(() => {
       media.add(DESKTOP_MEDIA_QUERY, () => {
+          const video = videoRef.current;
+          if (video) {
+            video.preload = 'auto';
+            video.load();
+          }
+
+          let storyProgress = 0;
+          let pendingVideoTime: number | null = null;
+          let videoSeekInFlight = false;
+
+          const requestVideoSeek = (targetTime: number) => {
+            if (!video || Math.abs(video.currentTime - targetTime) <= 1 / 30) return;
+
+            if (video.seeking || videoSeekInFlight) {
+              pendingVideoTime = targetTime;
+              return;
+            }
+
+            videoSeekInFlight = true;
+            video.currentTime = targetTime;
+          };
+
+          const flushPendingVideoSeek = () => {
+            videoSeekInFlight = false;
+            if (pendingVideoTime === null) return;
+
+            const targetTime = pendingVideoTime;
+            pendingVideoTime = null;
+            requestVideoSeek(targetTime);
+          };
+
+          const syncVideoToScroll = () => {
+            if (!video || !Number.isFinite(video.duration) || video.duration <= 0) return;
+
+            const targetTime = Math.min(storyProgress / VIDEO_SCROLL_PORTION, 1) * video.duration;
+            requestVideoSeek(targetTime);
+          };
+
+          video?.addEventListener('loadedmetadata', syncVideoToScroll);
+          video?.addEventListener('seeked', flushPendingVideoSeek);
+
           const timeline = gsap.timeline({
             defaults: { ease: 'none' },
             scrollTrigger: {
@@ -41,6 +84,10 @@ export const MathsSyllabusScrollStory = () => {
               scrub: true,
               anticipatePin: 1,
               invalidateOnRefresh: true,
+              onUpdate: (trigger) => {
+                storyProgress = trigger.progress;
+                syncVideoToScroll();
+              },
             },
           });
 
@@ -50,10 +97,16 @@ export const MathsSyllabusScrollStory = () => {
           const tangent = '.maths-syllabus-story__tangent';
           const integral = '.maths-syllabus-story__integral';
           const vector = '.maths-syllabus-story__vector';
+          const overlay = '.maths-syllabus-story__overlay';
+          const videoBridge = '.maths-syllabus-story__veo-bridge';
 
           timeline.set([mainLine, glowLine], { strokeDasharray: 1, strokeDashoffset: 1 }, 0);
           timeline.set([tangent, integral, vector], { opacity: 0 }, 0);
           timeline.set(point, { x: 0, y: 0 }, 0);
+          timeline.set(overlay, { opacity: 0 }, 0);
+          timeline.set(videoBridge, { opacity: 1 }, 0);
+          timeline.to(videoBridge, { opacity: 0, duration: 0.08 }, VIDEO_SCROLL_PORTION);
+          timeline.to(overlay, { opacity: 1, duration: 0.08 }, VIDEO_SCROLL_PORTION);
 
           MATHS_SYLLABUS_STORY_BEATS.forEach((beat, index) => {
             const pointOffset = STORY_POINT_OFFSETS[index];
@@ -116,7 +169,11 @@ export const MathsSyllabusScrollStory = () => {
             }
           });
 
-          return () => timeline.kill();
+          return () => {
+            video?.removeEventListener('loadedmetadata', syncVideoToScroll);
+            video?.removeEventListener('seeked', flushPendingVideoSeek);
+            timeline.kill();
+          };
       });
     }, rootRef);
 
@@ -130,6 +187,15 @@ export const MathsSyllabusScrollStory = () => {
     <section ref={rootRef} className="maths-syllabus-story" aria-labelledby="maths-syllabus-story-heading">
       <div className="maths-syllabus-story__sticky maths-syllabus-story__sticky-scene">
         <div className="maths-syllabus-story__visual" aria-hidden="true">
+          <video
+            ref={videoRef}
+            className="maths-syllabus-story__veo-bridge"
+            src="/videos/maths-syllabus-scroll-story/curve-to-area-scrub.mp4"
+            poster="/images/veo-frames/maths-veo-start-frame.png"
+            muted
+            playsInline
+            preload="none"
+          />
           <div className="maths-syllabus-story__plates">
             {MATHS_SYLLABUS_STORY_BEATS.map((beat, index) => (
               <img

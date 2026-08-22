@@ -202,10 +202,6 @@ const LegalTransformationSteps = () => {
         <div className="legal-transform-intro">
           <span className="legal-transform-eyebrow">Short-answer mastery</span>
           <h2 id="legal-transform-title">From Band 3 to Band 6, One Sentence at a Time</h2>
-          <p>
-            See how a real HSC-style Human Rights question is deconstructed, compared against a typical student
-            response, and rebuilt into a Band 6 answer &mdash; the exact process we teach in every session.
-          </p>
         </div>
 
         {/* Step 1 */}
@@ -231,12 +227,6 @@ const LegalTransformationSteps = () => {
                 const palette = toneClasses[tone];
                 return (
                   <div key={label} className="legal-transform-column">
-                    <div className="legal-transform-column-heading">
-                      <span className={palette.text}>{label}</span>
-                      <span className={`legal-transform-column-underline ${palette.text}`} aria-hidden="true">
-                        <i />
-                      </span>
-                    </div>
                     <div className={`legal-transform-column-card ${palette.bg} ${palette.border}`}>
                       <span className={`legal-transform-column-icon ${palette.iconBg} ${palette.iconColor}`}>
                         <Icon aria-hidden="true" />

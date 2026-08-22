@@ -19,7 +19,8 @@
 
 .maths-syllabus-story__visual,
 .maths-syllabus-story__plates,
-.maths-syllabus-story__overlay {
+.maths-syllabus-story__overlay,
+.maths-syllabus-story__veo-bridge {
   position: absolute;
   inset: 0;
 }
@@ -42,6 +43,15 @@
   z-index: 1;
   width: 100%;
   height: 100%;
+  pointer-events: none;
+}
+
+.maths-syllabus-story__veo-bridge {
+  z-index: 1;
+  display: none;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
   pointer-events: none;
 }
 
@@ -185,6 +195,10 @@
 
   .maths-syllabus-story__heading-copy {
     max-width: 40rem;
+  }
+
+  .maths-syllabus-story__veo-bridge {
+    display: block;
   }
 
   .maths-syllabus-story__plate:not(:first-child),

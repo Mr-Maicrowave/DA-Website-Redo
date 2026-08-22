@@ -37,7 +37,7 @@
 .biz-transform-intro h2 {
   margin: 0 0 1rem;
   color: #fffaf4;
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: "Playfair Display", Georgia, "Times New Roman", serif;
   font-size: clamp(1.9rem, 3.6vw, 2.85rem);
   font-weight: 700;
   line-height: 1.15;
@@ -70,7 +70,7 @@
 .biz-transform-step-header h3 {
   margin: 0;
   color: #fffaf4;
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: "Playfair Display", Georgia, "Times New Roman", serif;
   font-size: clamp(1.5rem, 2.8vw, 2.15rem);
   font-weight: 700;
   line-height: 1.2;
@@ -133,7 +133,7 @@
 .biz-transform-question-left h4 {
   margin: 0 0 0.85rem;
   color: #071b44;
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: "Playfair Display", Georgia, "Times New Roman", serif;
   font-size: clamp(1.35rem, 2.2vw, 1.7rem);
   font-weight: 700;
 }
@@ -237,7 +237,7 @@
 
 .biz-transform-column-card strong {
   display: block;
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: "Playfair Display", Georgia, "Times New Roman", serif;
   font-size: clamp(0.95rem, 1.3vw, 1.08rem);
   font-weight: 700;
   margin-bottom: 0.6rem;
@@ -346,7 +346,7 @@
 
 .biz-transform-band3-copy > strong {
   color: #071b44;
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: "Playfair Display", Georgia, "Times New Roman", serif;
   font-size: clamp(1.15rem, 1.9vw, 1.4rem);
   font-weight: 700;
 }
@@ -382,7 +382,7 @@
   margin: 0;
   color: rgba(7, 27, 68, 0.86);
   font-style: italic;
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: "Playfair Display", Georgia, "Times New Roman", serif;
   line-height: 1.75;
   text-align: left;
 }

@@ -16,7 +16,7 @@ test('locks the document until an immediate skip, completion, or playback failur
   assert.match(source, /createPortal/);
   assert.match(source, /z-\[10000\]/);
   assert.match(source, /document\.body\.style\.overflow = 'hidden'/);
-  assert.match(source, /\n\s*muted\n/);
+  assert.match(source, /\r?\n\s*muted\r?\n/);
   assert.match(source, /onEnded=\{dismiss\}/);
   assert.match(source, /onError=\{dismiss\}/);
   assert.match(source, />\s*Skip intro\s*</);

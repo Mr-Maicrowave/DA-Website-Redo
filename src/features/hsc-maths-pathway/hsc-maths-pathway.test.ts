@@ -48,53 +48,22 @@ test('Extension 2 includes both prerequisites and is Year 12 only', () => {
   ]);
 });
 
-test('pathway exposes selection, accordion, focus, and reduced-motion semantics', () => {
+test('pathway begins with a course chooser and keeps the dependency map subordinate', () => {
+  const source = readFileSync(componentUrl, 'utf8');
+  assert.match(source, /Choose an HSC maths course with confidence/);
+  assert.match(source, /Which course is your child considering\?/);
+  assert.match(source, /I&apos;m not sure which course fits yet/);
+  assert.match(source, /How the courses connect/);
+  assert.doesNotMatch(source, /hsc-pathway-map/);
+  assert.doesNotMatch(source, /ROUTE_SEGMENTS/);
+});
+
+test('pathway makes each course a keyboard-accessible single selection', () => {
   const source = readFileSync(componentUrl, 'utf8');
   assert.match(source, /aria-pressed=\{isSelected\}/);
-  assert.match(source, /aria-expanded=\{isSelected\}/);
-  assert.match(source, /aria-controls=\{panelId\}/);
+  assert.match(source, /aria-controls="hsc-course-guide"/);
+  assert.match(source, /role="region" aria-live="polite"/);
   assert.match(source, /focus-visible:ring-2/);
-  assert.match(source, /useReducedMotion/);
-  assert.doesNotMatch(source, /role="tab"/);
-});
-
-test('every pathway control names the approved navy focus treatment', () => {
-  const source = readFileSync(componentUrl, 'utf8');
-  assert.match(source, /<summary className="[^"]*focus-visible:ring-\[#071629\][^"]*"/);
-  assert.match(source, /to="\/book-interview" className="[^"]*focus-visible:ring-\[#071629\][^"]*"/);
-  assert.match(source, /to="\/hsc-excellence" className="[^"]*focus-visible:ring-\[#071629\][^"]*"/);
-  assert.equal(
-    source.match(/<button[\s\S]*?className=(?:"[^"]*focus-visible:ring-\[#071629\][^"]*"|\{`[^`]*focus-visible:ring-\[#071629\][^`]*`\})/g)?.length,
-    1,
-  );
-  assert.match(source, /className=\{`hsc-pathway-course group absolute/);
-  assert.doesNotMatch(source, /hsc-pathway-course[^`]*bg-\[#fffdf8\]\/90/);
-});
-
-test('accordion keeps every controlled panel mounted while hiding inactive details', () => {
-  const source = readFileSync(componentUrl, 'utf8');
-  assert.match(source, /id=\{panelId\} hidden=\{!isSelected\} role="region" aria-labelledby=\{headingId\}/);
-  assert.doesNotMatch(source, /\{isSelected \? \(\s*<div id=\{panelId\}/);
-});
-
-test('route segments stay mounted, reveal once in view, and include the Advanced companion label', () => {
-  const source = readFileSync(componentUrl, 'utf8');
-  assert.match(source, /key=\{pathId\}/);
-  assert.doesNotMatch(source, /key=\{`\$\{activeStreamId\}-\$\{pathId\}`\}/);
-  assert.match(source, /onViewportEnter=\{\(\) => setPathwayInView\(true\)\}/);
-  assert.match(source, /viewport=\{\{ once: true/);
-  assert.match(source, />\s*Studied with Advanced\s*</);
-});
-
-test('laptop widths retain a compact spatial pathway while smaller screens use the accordion', () => {
-  const source = readFileSync(componentUrl, 'utf8');
-  assert.match(source, /lg:grid lg:grid-cols-\[1\.15fr_0\.85fr\]/);
-  assert.match(source, /xl:grid-cols-\[0\.72fr_1\.15fr_0\.9fr\]/);
-  assert.match(source, /hsc-pathway-guidance hidden[^"]*xl:block/);
-  assert.match(source, /hsc-pathway-map[^"]*lg:ml-12[^"]*xl:ml-0/);
-  assert.match(source, /className="hidden[^"]*xl:inline"/);
-  assert.match(source, /lg:hidden/);
-  assert.doesNotMatch(source, /pt-52/);
 });
 
 test('pathway presents the approved decision content and actions', () => {
@@ -122,30 +91,34 @@ test('secondary actions and topic disclosure keep a 48px minimum target', () => 
   assert.doesNotMatch(source, /to="\/hsc-excellence" className="[^"]*min-h-11/);
 });
 
-test('desktop and mobile details use caller-scoped heading ids', () => {
+test('course guide uses a stable heading relationship', () => {
   const source = readFileSync(componentUrl, 'utf8');
-  assert.match(source, /function StreamDetails\(\{ stream, headingId, compact = false \}/);
-  assert.match(source, /id=\{headingId\}/);
-  assert.doesNotMatch(source, /id=\{`hsc-stream-heading-\$\{stream\.id\}`\}/);
-  assert.match(source, /const desktopHeadingId = `hsc-stream-desktop-heading-\$\{activeStream\.id\}`/);
-  assert.match(source, /aria-labelledby=\{desktopHeadingId\}/);
-  assert.match(source, /<StreamDetails stream=\{activeStream\} headingId=\{desktopHeadingId\} \/>/);
-  assert.match(source, /const headingId = `\$\{panelId\}-heading`/);
-  assert.match(source, /id=\{panelId\} hidden=\{!isSelected\} role="region" aria-labelledby=\{headingId\}/);
-  assert.match(source, /<StreamDetails stream=\{stream\} headingId=\{headingId\} compact \/>/);
+  assert.match(source, /id="hsc-course-guide-heading"/);
+  assert.match(source, /aria-labelledby="hsc-course-guide-heading"/);
 });
 
-test('every small pathway label uses approved navy while course colour remains an accent', () => {
+test('course colour remains an accent rather than the only source of meaning', () => {
   const source = readFileSync(componentUrl, 'utf8');
-  assert.doesNotMatch(source, /style=\{\{ color: stream\.color \}\}/);
   assert.match(source, /borderColor: stream\.color/);
-  assert.match(source, /className="[^"]*text-\[#071629\][^"]*">HSC pathway map<\/p>/);
-  assert.equal(
-    source.match(/className="[^"]*text-\[#071629\][^"]*">\{stream\.shortDescriptor\}<\/span>/g)?.length,
-    2,
-  );
-  assert.match(source, /className="[^"]*text-\[#071629\][^"]*" aria-hidden="true">\s*Year 10/);
-  assert.match(source, /className="[^"]*text-\[#071629\][^"]*">Extension 2 becomes available<\/p>/);
-  assert.match(source, /className="[^"]*text-\[#071629\][^"]*">Year 12 only<\/p>/);
-  assert.match(source, /className="[^"]*text-\[#071629\][^"]*">Requires Advanced \+ Extension 1<\/p>/);
+  assert.match(source, /backgroundColor: stream\.color/);
+  assert.match(source, /\{stream\.availability\}/);
+});
+
+test('chooser is full-bleed, rounds its course controls, and gives unsure families a non-diagnostic next step', () => {
+  const source = readFileSync(componentUrl, 'utf8');
+  assert.match(source, /max-w-none/);
+  assert.match(source, /rounded-xl/);
+  assert.match(source, /Start with the facts, not a score/);
+  assert.match(source, /What year is your child entering\?/);
+  assert.match(source, /What are they studying now\?/);
+  assert.match(source, /What has the school recommended or offered\?/);
+  assert.match(source, /This is a comparison checklist, not a placement recommendation/);
+  assert.doesNotMatch(source, /Book a course-choice conversation/);
+  assert.doesNotMatch(source, /bg-\[#171716\]/);
+});
+
+test('Extension 2 makes its Year 12 Advanced-course replacement explicit', () => {
+  const source = readFileSync(componentUrl, 'utf8');
+  assert.match(source, /replaces the Advanced HSC course in Year 12/);
+  assert.match(getHscStream('extension-2').whatChanges, /replaces the Advanced HSC course in Year 12/);
 });

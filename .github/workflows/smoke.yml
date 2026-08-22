@@ -13,7 +13,7 @@ on:
       base_url:
         description: 'URL to smoke test'
         required: false
-        default: 'https://da-tuition-website.vercel.app'
+        default: 'https://da-website-updated.vercel.app'
 
 jobs:
   smoke:
@@ -50,5 +50,5 @@ jobs:
         # which is gated by Vercel SSO deployment protection (HTTP 401), so it's
         # unreachable from CI. The aliased production hostname is not protected.
         env:
-          BASE: ${{ inputs.base_url || 'https://da-tuition-website.vercel.app' }}
+          BASE: ${{ inputs.base_url || 'https://da-website-updated.vercel.app' }}
         run: npm run smoke

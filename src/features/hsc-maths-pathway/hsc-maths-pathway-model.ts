@@ -86,7 +86,7 @@ export const HSC_STREAMS: HscStream[] = [
     year12Only: true,
     prerequisites: ['Advanced', 'Extension 1'],
     bestFit: 'Students who already thrive in Extension 1 and genuinely enjoy abstract, rigorous mathematics.',
-    whatChanges: 'Extension 2 begins in Year 12 and adds complex numbers, mechanics, deeper integration and more demanding proof.',
+    whatChanges: 'Extension 2 begins in Year 12, replaces the Advanced HSC course in Year 12, and adds complex numbers, mechanics, deeper integration and more demanding proof.',
     helpNeeded: 'Turning insight into rigorous working, choosing a path through unfamiliar problems and maintaining precision under pressure.',
     daSupport: 'Specialist teachers make advanced ideas accessible, strengthen proof writing and build calm strategies for the hardest questions.',
     topics: ['Complex numbers', 'Proof and further integration', 'Vectors and mechanics'],
