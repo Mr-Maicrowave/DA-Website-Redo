@@ -1,7 +1,7 @@
 import FooterNew from '@/components/FooterNew';
 import NavigationNew from '@/components/NavigationNew';
 import SEO from '@/components/SEO';
-import { TutorOrbitHero } from '@/features/tutor-orbit/TutorOrbitHero';
+import { TutorDirectory } from '@/features/tutor-directory/TutorDirectory';
 
 const Tutors = () => (
   <div className="tutors-page">
@@ -12,7 +12,7 @@ const Tutors = () => (
     />
     <NavigationNew />
     <main>
-      <TutorOrbitHero />
+      <TutorDirectory />
     </main>
     <FooterNew />
   </div>

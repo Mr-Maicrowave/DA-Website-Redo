@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
-import { ArrowLeft, ArrowRight, Check, ChevronLeft, ChevronRight, Search, X } from 'lucide-react';
-import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { ArrowRight, Check, ChevronLeft, ChevronRight, Search } from 'lucide-react';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useSearchParams } from 'react-router-dom';
 import NavigationNew from '@/components/NavigationNew';
 import FooterNew from '@/components/FooterNew';
@@ -14,8 +14,7 @@ import {
   teachesMath,
   teachesScience,
 } from '@/data/teacherCatalogue';
-import { profileContentFor, profilePronounsFor, profileSubjectGroupsFor } from './profileContent';
-import { resetProfileScroll } from './profileNavigation';
+import { FullTutorProfile } from '@/features/tutor-directory/FullTutorProfile';
 import './FindTeacher.css';
 
 type FilterKey = 'all' | 'english' | 'maths' | 'science' | 'primary';
@@ -182,124 +181,6 @@ function ProfilePreview({ teacher, onOpen }: { teacher: CatalogueTutor; onOpen: 
   );
 }
 
-function FullProfile({
-  teacher,
-  position,
-  onClose,
-  onPrevious,
-  onNext,
-  returnFocusTo,
-}: {
-  teacher: CatalogueTutor;
-  position: number;
-  onClose: () => void;
-  onPrevious: () => void;
-  onNext: () => void;
-  returnFocusTo: HTMLElement | null;
-}) {
-  const panelRef = useRef<HTMLDivElement>(null);
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const reduceMotion = useReducedMotion();
-  const content = profileContentFor(teacher);
-  const pronouns = profilePronounsFor(teacher.name);
-  const subjectGroups = profileSubjectGroupsFor(subjects(teacher));
-
-  useLayoutEffect(() => {
-    resetProfileScroll(scrollRef.current);
-  }, [teacher.id]);
-
-  useEffect(() => {
-    panelRef.current?.focus();
-    const handleKeyboard = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') onClose();
-      if (event.key === 'ArrowLeft') onPrevious();
-      if (event.key === 'ArrowRight') onNext();
-    };
-    window.addEventListener('keydown', handleKeyboard);
-    return () => {
-      window.removeEventListener('keydown', handleKeyboard);
-      returnFocusTo?.focus();
-    };
-  }, [onClose, onNext, onPrevious, returnFocusTo, teacher.id]);
-
-  return (
-    <motion.div
-      ref={panelRef}
-      className="full-profile"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="full-profile-name"
-      tabIndex={-1}
-      initial={{ opacity: 0, y: reduceMotion ? 0 : 24 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: reduceMotion ? 0 : 16 }}
-      transition={{ duration: reduceMotion ? .1 : .42, ease: [0.2, 0.75, 0.2, 1] }}
-    >
-      <header className="full-profile__nav">
-        <button type="button" onClick={onClose}><ArrowLeft /> All educators</button>
-        <span>{String(position).padStart(2, '0')} / {String(TUTORS.length).padStart(2, '0')}</span>
-        <div>
-          <button type="button" onClick={onPrevious} disabled={position === 1} aria-label="Previous educator"><ChevronLeft /></button>
-          <button type="button" onClick={onNext} disabled={position === TUTORS.length} aria-label="Next educator"><ChevronRight /></button>
-          <button type="button" onClick={onClose} aria-label="Close profile"><X /></button>
-        </div>
-      </header>
-
-      <div ref={scrollRef} className="full-profile__scroll">
-        <AnimatePresence initial={false} mode="popLayout">
-        <motion.section
-          key={teacher.id}
-          className="full-profile__layout"
-          initial={{ opacity: 0, x: reduceMotion ? 0 : 18 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: reduceMotion ? 0 : -18 }}
-          transition={{ duration: reduceMotion ? .1 : .26, ease: [0.2, 0.75, 0.2, 1] }}
-        >
-          <aside className="full-profile__rail" aria-label={`${teacher.name} portrait`}>
-            <div className="full-profile__photo"><Portrait teacher={teacher} eager /></div>
-          </aside>
-
-          <main className="full-profile__content">
-            <header className="full-profile__intro">
-              <p>{subjectLabel(teacher)}</p>
-              <div className="full-profile__subject-chips" aria-label={`Subjects taught by ${teacher.name}`}>
-                {subjectGroups.map(group => <span key={group.category} className={`full-profile__subject-chip full-profile__subject-chip--${group.category}`}>{group.label}</span>)}
-              </div>
-              <h1 id="full-profile-name">{teacher.name}</h1>
-              <h2>{teacher.designation}</h2>
-              <blockquote>“{teacher.tagline}”</blockquote>
-            </header>
-
-            {content.strengths.length > 0 && (
-              <section className="full-profile__strengths">
-                <h2>Teaching strengths</h2>
-                <ul>{content.strengths.map(strength => <li key={strength}>{strength}</li>)}</ul>
-              </section>
-            )}
-
-            <section className="full-profile__story">
-              <div>
-                <h2>{pronouns.possessive[0].toUpperCase() + pronouns.possessive.slice(1)} approach</h2>
-                <p>{content.approach}</p>
-              </div>
-              <div>
-                <h2>What {pronouns.subject} {pronouns.subject === 'they' ? 'hope' : 'hopes'} students remember</h2>
-                <p>{content.remembered}</p>
-              </div>
-            </section>
-
-            <section className="full-profile__why-da">
-              <h2>Why {firstName(teacher.name)} teaches at DA</h2>
-              <p>{content.whyDA}</p>
-            </section>
-          </main>
-        </motion.section>
-        </AnimatePresence>
-      </div>
-    </motion.div>
-  );
-}
-
 const FindTeacher = () => {
   const [searchParams] = useSearchParams();
   const [filter, setFilter] = useState<FilterKey>('all');
@@ -335,15 +216,6 @@ const FindTeacher = () => {
   useEffect(() => {
     if (pageTutors.length && !pageTutors.some(teacher => teacher.id === preview.id)) setPreview(pageTutors[0]);
   }, [pageTutors, preview.id]);
-
-  useEffect(() => {
-    document.body.classList.toggle('teacher-profile-open', Boolean(selected));
-    document.body.style.overflow = selected ? 'hidden' : '';
-    return () => {
-      document.body.classList.remove('teacher-profile-open');
-      document.body.style.overflow = '';
-    };
-  }, [selected]);
 
   const openProfile = useCallback((teacher: CatalogueTutor, trigger?: HTMLElement) => {
     if (trigger) triggerRef.current = trigger;
@@ -449,7 +321,7 @@ const FindTeacher = () => {
 
       <AnimatePresence>
         {selected && (
-          <FullProfile
+          <FullTutorProfile
             teacher={selected}
             position={selectedIndex + 1}
             onClose={() => setSelected(null)}
