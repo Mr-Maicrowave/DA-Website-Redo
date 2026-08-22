@@ -50,6 +50,7 @@ import TestimonialDetail from "./pages/TestimonialDetail";
 import ScrollToTop from "./components/ScrollToTop";
 import RouteScrollReset from "./components/RouteScrollReset";
 import BookIntroCalibration from "./pages/BookIntroCalibration";
+import { LegacyTutorRedirect } from "./components/LegacyTutorRedirect";
 
 const queryClient = new QueryClient();
 
@@ -68,7 +69,7 @@ const AnimatedRoutes = () => {
         <Route path="/interview" element={<Navigate to="/principal-reflections" replace />} />
         <Route path="/book-interview" element={<PageTransition><BookInterview /></PageTransition>} />
         <Route path="/reviews" element={<Navigate to="/success-stories" replace />} />
-        <Route path="/find-teacher" element={<Navigate to="/tutors" replace />} />
+        <Route path="/find-teacher" element={<LegacyTutorRedirect />} />
         <Route path="/tutors" element={<PageTransition><Tutors /></PageTransition>} />
         <Route path="/teachers" element={<Navigate to="/tutors" replace />} />
         <Route path="/articles" element={<PageTransition><Articles /></PageTransition>} />

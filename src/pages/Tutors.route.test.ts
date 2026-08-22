@@ -9,8 +9,12 @@ test('uses TutorDirectory for the canonical tutors route and redirects legacy tu
   assert.match(appSource, /<Route path="\/tutors" element={<PageTransition><Tutors \/><\/PageTransition>} \/>/);
   assert.match(tutorsPageSource, /import \{ TutorDirectory \} from ['"]@\/features\/tutor-directory\/TutorDirectory['"]/);
   assert.match(tutorsPageSource, /<TutorDirectory \/>/);
+  assert.match(
+    appSource,
+    /<Route path="\/find-teacher" element={<LegacyTutorRedirect \/>} \/>/,
+  );
 
-  for (const legacyPath of ['/find-teacher', '/teachers', '/our-teachers']) {
+  for (const legacyPath of ['/teachers', '/our-teachers']) {
     assert.match(
       appSource,
       new RegExp(`<Route path="${legacyPath}" element={<Navigate to="/tutors" replace \/>} \/>`),

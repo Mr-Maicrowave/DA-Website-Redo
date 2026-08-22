@@ -36,7 +36,7 @@ const STATIC_ROUTES = [
     { path: '/success-stories', priority: 0.9, changefreq: 'weekly' },
     { path: '/why-choose-da', priority: 0.85, changefreq: 'monthly' },
     { path: '/our-approach', priority: 0.85, changefreq: 'monthly' },
-    { path: '/find-teacher', priority: 0.85, changefreq: 'monthly' },
+    { path: '/tutors', priority: 0.85, changefreq: 'monthly' },
     { path: '/hsc-excellence', priority: 0.9, changefreq: 'monthly' },
     { path: '/subjects', priority: 0.85, changefreq: 'monthly' },
     { path: '/subjects/mathematics', priority: 0.8, changefreq: 'monthly' },
