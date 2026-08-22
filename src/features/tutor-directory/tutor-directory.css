@@ -224,33 +224,98 @@
   transform: rotate(8deg);
 }
 
-.tutor-directory__rings {
-  position: absolute;
-  inset: 50% auto auto 50%;
-  width: min(64vw, 54rem);
-  aspect-ratio: 1.7;
-  border: 1px solid rgba(240, 212, 139, 0.16);
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
-}
-
-.tutor-directory__rings::before,
-.tutor-directory__rings::after {
-  content: '';
-  position: absolute;
-  inset: 13%;
-  border: 1px solid rgba(240, 212, 139, 0.12);
-  border-radius: inherit;
-}
-
-.tutor-directory__rings::after {
-  inset: 28%;
-}
-
+.tutor-directory__systems,
+.tutor-directory__system,
 .tutor-directory__portraits {
   position: absolute;
   inset: 0;
+}
+
+.tutor-directory__systems {
   z-index: 2;
+}
+
+.tutor-directory__system {
+  pointer-events: none;
+}
+
+.tutor-directory__system-ring {
+  position: absolute;
+  border: 1px solid rgba(240, 212, 139, 0.2);
+  border-radius: 50%;
+}
+
+.tutor-directory__system-ring::after {
+  content: '';
+  position: absolute;
+  inset: 7px;
+  border: 1px solid rgba(255, 255, 255, 0.055);
+  border-radius: inherit;
+}
+
+.tutor-directory__system-label {
+  position: absolute;
+  z-index: 1;
+  margin: 0;
+  padding: 0.28rem 0.55rem;
+  color: #f4dda1;
+  background: rgba(7, 26, 51, 0.9);
+  font: 600 0.88rem / 1.1 'Cormorant Garamond', Georgia, serif;
+  letter-spacing: 0.025em;
+}
+
+.tutor-directory__system[data-orbit-group='mathematics'] .tutor-directory__system-ring {
+  top: 13%;
+  left: 3.5%;
+  width: 27%;
+  height: 59%;
+  transform: rotate(-4deg);
+}
+
+.tutor-directory__system[data-orbit-group='mathematics'] .tutor-directory__system-label {
+  top: 43%;
+  left: 11.5%;
+  transform: rotate(-90deg);
+}
+
+.tutor-directory__system[data-orbit-group='english'] .tutor-directory__system-ring {
+  top: 4%;
+  left: 27.5%;
+  width: 31%;
+  height: 23%;
+  transform: rotate(1.5deg);
+}
+
+.tutor-directory__system[data-orbit-group='english'] .tutor-directory__system-label {
+  top: 4.5%;
+  left: 40%;
+}
+
+.tutor-directory__system[data-orbit-group='science'] .tutor-directory__system-ring {
+  top: 4.5%;
+  right: 2.5%;
+  width: 37%;
+  height: 24%;
+  transform: rotate(-2deg);
+}
+
+.tutor-directory__system[data-orbit-group='science'] .tutor-directory__system-label {
+  top: 5%;
+  right: 18%;
+}
+
+.tutor-directory__system[data-orbit-group='foundations'] .tutor-directory__system-ring {
+  right: 2.5%;
+  bottom: 3%;
+  left: 2.5%;
+  height: 25%;
+  transform: rotate(-0.5deg);
+}
+
+.tutor-directory__system[data-orbit-group='foundations'] .tutor-directory__system-label {
+  top: 70.5%;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 .tutor-directory__portrait-button {
@@ -263,8 +328,50 @@
   background: transparent;
   border: 0;
   cursor: pointer;
+  pointer-events: auto;
   transform: translate(-50%, -50%);
   transition: opacity 200ms ease, filter 200ms ease;
+}
+
+.tutor-directory__portrait-drift {
+  --td-drift-x: 4px;
+  --td-drift-y: -3px;
+  position: relative;
+  display: block;
+  width: 100%;
+  animation: tutor-directory-ambient-drift var(--td-drift-duration) ease-in-out var(--td-drift-delay) infinite alternate;
+  will-change: transform;
+}
+
+.tutor-directory__system[data-orbit-group='english'] .tutor-directory__portrait-drift {
+  --td-drift-x: -3px;
+  --td-drift-y: 5px;
+}
+
+.tutor-directory__system[data-orbit-group='science'] .tutor-directory__portrait-drift {
+  --td-drift-x: 5px;
+  --td-drift-y: 3px;
+}
+
+.tutor-directory__system[data-orbit-group='foundations'] .tutor-directory__portrait-drift {
+  --td-drift-x: -4px;
+  --td-drift-y: -3px;
+}
+
+@keyframes tutor-directory-ambient-drift {
+  from {
+    transform: translate(calc(var(--td-drift-x) * -0.5), calc(var(--td-drift-y) * -0.5));
+  }
+
+  to {
+    transform: translate(var(--td-drift-x), var(--td-drift-y));
+  }
+}
+
+.tutor-directory__portrait-button:hover .tutor-directory__portrait-drift,
+.tutor-directory__portrait-button:focus-visible .tutor-directory__portrait-drift,
+.tutor-directory__portrait-button.is-selected .tutor-directory__portrait-drift {
+  animation-play-state: paused;
 }
 
 .tutor-directory__portrait-button.is-partial {
@@ -620,6 +727,11 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .tutor-directory__portrait-drift {
+    animation: none !important;
+    transform: none !important;
+  }
+
   .tutor-directory *,
   .tutor-directory *::before,
   .tutor-directory *::after {

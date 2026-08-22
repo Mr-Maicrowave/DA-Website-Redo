@@ -16,6 +16,11 @@ import {
   type TutorSubject,
   type TutorYearLevel,
 } from './tutorDiscovery';
+import {
+  TUTOR_ORBIT_GROUPS,
+  TUTOR_ORBIT_SLOTS,
+  type TutorOrbitSlot,
+} from './tutorOrbitLayout';
 import './tutor-directory.css';
 
 const SUBJECT_FILTERS: Array<{ value: TutorSubject; label: string }> = [
@@ -32,27 +37,26 @@ const YEAR_FILTERS: Array<{ value: TutorYearLevel; label: string }> = [
 ];
 
 const DISCOVERY_RECORDS = TUTORS.map(toDiscoveryRecord);
+const DISCOVERY_RECORDS_BY_ID = new Map(
+  DISCOVERY_RECORDS.map(record => [record.tutor.id, record]),
+);
 
-type ConstellationStyle = CSSProperties & {
+type OrbitSlotStyle = CSSProperties & {
   '--td-x': string;
   '--td-y': string;
   '--td-size': string;
+  '--td-drift-delay': string;
+  '--td-drift-duration': string;
 };
 
-function constellationStyle(index: number): ConstellationStyle {
-  const ring = index < 12 ? 0 : index < 27 ? 1 : 2;
-  const ringStart = ring === 0 ? 0 : ring === 1 ? 12 : 27;
-  const ringCount = ring === 0 ? 12 : ring === 1 ? 15 : DISCOVERY_RECORDS.length - 27;
-  const angleOffset = ring === 0 ? -86 : ring === 1 ? -78 : -90;
-  const angle = ((index - ringStart) / ringCount) * Math.PI * 2 + (angleOffset * Math.PI) / 180;
-  const radiusX = [26, 38, 47][ring];
-  const radiusY = [29, 40, 46][ring];
-  const size = [72, 64, 58][ring] + ((index * 7) % 3) * 3;
-
+function orbitSlotStyle(slot: TutorOrbitSlot): OrbitSlotStyle {
+  const groupIndex = TUTOR_ORBIT_GROUPS.findIndex(group => group.id === slot.groupId);
   return {
-    '--td-x': `${50 + Math.cos(angle) * radiusX}%`,
-    '--td-y': `${50 + Math.sin(angle) * radiusY}%`,
-    '--td-size': `${size}px`,
+    '--td-x': `${slot.x}%`,
+    '--td-y': `${slot.y}%`,
+    '--td-size': `${slot.size}px`,
+    '--td-drift-delay': `${-(groupIndex * 1.1 + slot.groupSlotIndex * 0.37)}s`,
+    '--td-drift-duration': `${8 + ((groupIndex + slot.groupSlotIndex) % 4) * 0.8}s`,
   };
 }
 
@@ -235,32 +239,51 @@ export function TutorDirectory() {
         </p>
       </section>
 
-      <div className="tutor-directory__stage" aria-label="DA Tuition educator constellation">
-        <div className="tutor-directory__rings" aria-hidden="true" />
-        <div className="tutor-directory__portraits">
-          {DISCOVERY_RECORDS.map((record, index) => {
-            const focused = focusedIds.has(record.tutor.id);
-            const selected = selectedTutorId === record.tutor.id;
-            const partial = !focused
-              && subjects.size > 0
-              && record.subjects.some(subject => subjects.has(subject));
-            const stateClass = focused ? 'is-focused' : partial ? 'is-partial' : 'is-dimmed';
+      <div className="tutor-directory__stage" aria-label="DA Tuition educators grouped by teaching subject">
+        <div className="tutor-directory__systems">
+          {TUTOR_ORBIT_GROUPS.map(group => (
+            <section
+              key={group.id}
+              className="tutor-directory__system"
+              data-orbit-group={group.id}
+              aria-labelledby={`tutor-system-${group.id}`}
+            >
+              <div className="tutor-directory__system-ring" aria-hidden="true" />
+              <h2 id={`tutor-system-${group.id}`} className="tutor-directory__system-label">{group.label}</h2>
+              <div className="tutor-directory__portraits">
+                {TUTOR_ORBIT_SLOTS.filter(slot => slot.groupId === group.id).map(slot => {
+                  const record = DISCOVERY_RECORDS_BY_ID.get(slot.tutorId);
+                  if (!record) return null;
 
-            return (
-              <button
-                key={record.tutor.id}
-                type="button"
-                className={`tutor-directory__portrait-button ${stateClass}${selected ? ' is-selected' : ''}`}
-                style={constellationStyle(index)}
-                aria-label={`Select ${record.tutor.name}`}
-                aria-pressed={selected}
-                onClick={() => setSelectedTutorId(record.tutor.id)}
-              >
-                <span className="tutor-directory__portrait-frame"><Portrait tutor={record.tutor} eager={index < 12} /></span>
-                <span className="tutor-directory__portrait-name">{record.tutor.name}</span>
-              </button>
-            );
-          })}
+                  const focused = focusedIds.has(record.tutor.id);
+                  const selected = selectedTutorId === record.tutor.id;
+                  const partial = !focused
+                    && subjects.size > 0
+                    && record.subjects.some(subject => subjects.has(subject));
+                  const stateClass = focused ? 'is-focused' : partial ? 'is-partial' : 'is-dimmed';
+
+                  return (
+                    <button
+                      key={record.tutor.id}
+                      type="button"
+                      className={`tutor-directory__portrait-button ${stateClass}${selected ? ' is-selected' : ''}`}
+                      style={orbitSlotStyle(slot)}
+                      aria-label={`Select ${record.tutor.name}`}
+                      aria-pressed={selected}
+                      onClick={() => setSelectedTutorId(record.tutor.id)}
+                    >
+                      <span className="tutor-directory__portrait-drift">
+                        <span className="tutor-directory__portrait-frame">
+                          <Portrait tutor={record.tutor} eager={slot.groupId !== 'foundations'} />
+                        </span>
+                        <span className="tutor-directory__portrait-name">{record.tutor.name}</span>
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </section>
+          ))}
         </div>
 
         <div className={`tutor-directory__focus${selectedRecord ? ' has-selection' : ''}`}>

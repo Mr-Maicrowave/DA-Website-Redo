@@ -33,3 +33,40 @@ test('does not nest a second main landmark inside the tutors page', () => {
   const source = readFileSync(new URL('./FullTutorProfile.tsx', import.meta.url), 'utf8');
   assert.doesNotMatch(source, /<main className="full-profile__content">/);
 });
+
+test('renders every named subject system from the shared orbit contract', () => {
+  const component = readFileSync(new URL('./TutorDirectory.tsx', import.meta.url), 'utf8');
+  const layout = readFileSync(new URL('./tutorOrbitLayout.ts', import.meta.url), 'utf8');
+
+  assert.match(component, /TUTOR_ORBIT_GROUPS\.map\(group =>/);
+  assert.match(component, /\{group\.label\}/);
+  for (const label of ['Mathematics', 'English', 'Science', 'Foundations']) {
+    assert.match(layout, new RegExp(`label: '${label}'`));
+  }
+});
+
+test('uses tiny CSS-only drift that pauses locally and respects reduced motion', () => {
+  const component = readFileSync(new URL('./TutorDirectory.tsx', import.meta.url), 'utf8');
+  const styles = readFileSync(new URL('./tutor-directory.css', import.meta.url), 'utf8');
+
+  assert.match(component, /tutor-directory__portrait-drift/);
+  assert.match(styles, /@keyframes tutor-directory-ambient-drift/);
+  assert.match(styles, /--td-drift-x:\s*[+-]?[3-6]px/);
+  assert.match(styles, /--td-drift-y:\s*[+-]?[3-6]px/);
+  assert.match(
+    styles,
+    /\.tutor-directory__portrait-button:hover\s+\.tutor-directory__portrait-drift[\s\S]*?animation-play-state:\s*paused/,
+  );
+  assert.match(
+    styles,
+    /\.tutor-directory__portrait-button:focus-visible\s+\.tutor-directory__portrait-drift/,
+  );
+  assert.match(
+    styles,
+    /\.tutor-directory__portrait-button\.is-selected\s+\.tutor-directory__portrait-drift/,
+  );
+  assert.match(
+    styles,
+    /@media \(prefers-reduced-motion: reduce\)[\s\S]*?\.tutor-directory__portrait-drift\s*\{[\s\S]*?animation:\s*none\s*!important/,
+  );
+});
