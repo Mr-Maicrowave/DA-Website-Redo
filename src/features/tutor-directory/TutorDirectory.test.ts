@@ -34,15 +34,36 @@ test('does not nest a second main landmark inside the tutors page', () => {
   assert.doesNotMatch(source, /<main className="full-profile__content">/);
 });
 
-test('renders every named subject system from the shared orbit contract', () => {
+test('renders exactly three named subject systems from the shared orbit contract', () => {
   const component = readFileSync(new URL('./TutorDirectory.tsx', import.meta.url), 'utf8');
   const layout = readFileSync(new URL('./tutorOrbitLayout.ts', import.meta.url), 'utf8');
 
   assert.match(component, /TUTOR_ORBIT_GROUPS\.map\(group =>/);
   assert.match(component, /\{group\.label\}/);
-  for (const label of ['Mathematics', 'English', 'Science', 'Foundations']) {
+  for (const label of ['Mathematics', 'English', 'Science']) {
     assert.match(layout, new RegExp(`label: '${label}'`));
   }
+  assert.doesNotMatch(layout, /label: 'Foundations'/);
+});
+
+test('presents Primary as a K–6 filter and an activated path without portrait slots', () => {
+  const component = readFileSync(new URL('./TutorDirectory.tsx', import.meta.url), 'utf8');
+  assert.match(component, /label: 'Primary · K–6'/);
+  assert.match(component, /subjects\.has\('primary'\)/);
+  assert.match(component, /tutor-directory__primary-pathway/);
+  assert.match(component, /Primary pathway · K–6/);
+  assert.doesNotMatch(component, /data-orbit-group=\{['"]foundations['"]\}/);
+});
+
+test('renders code-native background, path, and portrait depth planes', () => {
+  const component = readFileSync(new URL('./TutorDirectory.tsx', import.meta.url), 'utf8');
+  const styles = readFileSync(new URL('./tutor-directory.css', import.meta.url), 'utf8');
+  assert.match(component, /tutor-directory__space-depth/);
+  assert.match(component, /tutor-directory__path-depth/);
+  assert.match(component, /tutor-directory__portrait-depth/);
+  assert.match(styles, /tutor-directory__anchor-halo/);
+  assert.match(styles, /tutor-directory__system-ring--inner/);
+  assert.match(styles, /tutor-directory__focus\.has-selection[\s\S]*?var\(--directory-cream\)/);
 });
 
 test('uses tiny CSS-only drift that pauses locally and respects reduced motion', () => {
@@ -56,7 +77,7 @@ test('uses tiny CSS-only drift that pauses locally and respects reduced motion',
   const driftVectors = [...styles.matchAll(
     /--td-drift-x:\s*(-?\d+)px;\s*\n\s*--td-drift-y:\s*(-?\d+)px;/g,
   )].map(match => Math.hypot(Number(match[1]), Number(match[2])));
-  assert.equal(driftVectors.length, 4, 'expected one authored drift vector per subject system');
+  assert.equal(driftVectors.length, 5, 'expected one authored drift vector per subject or bridge placement');
   for (const travel of driftVectors) {
     assert.ok(travel >= 3 && travel <= 6, `drift travel ${travel.toFixed(2)}px must remain within 3–6px`);
   }

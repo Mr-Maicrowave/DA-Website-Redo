@@ -1,121 +1,126 @@
 import { TUTORS } from '../../data/teacherCatalogue.ts';
 import { toDiscoveryRecord, type TutorDiscoveryRecord } from './tutorDiscovery.ts';
 
-export type TutorOrbitGroupId = 'mathematics' | 'english' | 'science' | 'foundations';
+export type TutorOrbitGroupId = 'mathematics' | 'english' | 'science';
+export type TutorOrbitPlacementId = TutorOrbitGroupId | 'maths-english-bridge' | 'maths-science-bridge';
 
 export interface TutorOrbitSlot {
   tutorId: string;
-  groupId: TutorOrbitGroupId;
-  groupSlotIndex: number;
+  placementId: TutorOrbitPlacementId;
+  placementSlotIndex: number;
+  isAnchor: boolean;
   x: number;
   y: number;
   size: number;
 }
 
 interface AuthoredSlot {
+  tutorId: string;
   x: number;
   y: number;
-  size: number;
+  size?: number;
 }
 
 export const TUTOR_ORBIT_GROUPS = [
-  { id: 'mathematics', label: 'Mathematics' },
-  { id: 'english', label: 'English' },
-  { id: 'science', label: 'Science' },
-  { id: 'foundations', label: 'Foundations' },
-] as const satisfies ReadonlyArray<{ id: TutorOrbitGroupId; label: string }>;
+  { id: 'mathematics', label: 'Mathematics', anchorTutorId: 'T011' },
+  { id: 'english', label: 'English', anchorTutorId: 'T005' },
+  { id: 'science', label: 'Science', anchorTutorId: 'T010' },
+] as const satisfies ReadonlyArray<{ id: TutorOrbitGroupId; label: string; anchorTutorId: string }>;
 
-const AUTHORED_SLOTS: Record<TutorOrbitGroupId, readonly AuthoredSlot[]> = {
+const AUTHORED_SLOTS: Record<TutorOrbitPlacementId, readonly AuthoredSlot[]> = {
   mathematics: [
-    { x: 16, y: 20, size: 54 },
-    { x: 20.7, y: 24.6, size: 54 },
-    { x: 23.6, y: 36.6, size: 54 },
-    { x: 23.6, y: 51.4, size: 54 },
-    { x: 20.7, y: 63.4, size: 54 },
-    { x: 16, y: 68, size: 54 },
-    { x: 11.3, y: 63.4, size: 54 },
-    { x: 8.4, y: 51.4, size: 54 },
-    { x: 8.4, y: 36.6, size: 54 },
-    { x: 11.3, y: 24.6, size: 54 },
+    { tutorId: 'T011', x: 15, y: 42, size: 68 },
+    { tutorId: 'T012', x: 8, y: 15 },
+    { tutorId: 'T015', x: 15, y: 12 },
+    { tutorId: 'T002', x: 22, y: 16 },
+    { tutorId: 'T009', x: 6, y: 28 },
+    { tutorId: 'T004', x: 13, y: 26 },
+    { tutorId: 'T008', x: 21, y: 29 },
+    { tutorId: 'T013', x: 6, y: 42 },
+    { tutorId: 'T020', x: 23, y: 43 },
+    { tutorId: 'T022', x: 6, y: 56 },
+    { tutorId: 'T023', x: 13, y: 58 },
+    { tutorId: 'T028', x: 22, y: 57 },
+    { tutorId: 'T029', x: 7, y: 70 },
+    { tutorId: 'T031', x: 15, y: 72 },
+    { tutorId: 'T035', x: 23, y: 70 },
+    { tutorId: 'T037', x: 6, y: 84 },
+    { tutorId: 'T040', x: 13, y: 87 },
+    { tutorId: 'T041', x: 21, y: 84 },
+    { tutorId: 'T043', x: 28, y: 10 },
+    { tutorId: 'T046', x: 28, y: 91 },
   ],
   english: [
-    { x: 31, y: 16, size: 56 },
-    { x: 49, y: 9.9, size: 56 },
-    { x: 49, y: 22.1, size: 56 },
+    { tutorId: 'T005', x: 47, y: 14, size: 68 },
+    { tutorId: 'T003', x: 34, y: 9 },
+    { tutorId: 'T001', x: 38, y: 22 },
+    { tutorId: 'T007', x: 42, y: 5.5 },
+    { tutorId: 'T014', x: 53, y: 5.5 },
+    { tutorId: 'T024', x: 56, y: 22 },
+    { tutorId: 'T027', x: 61, y: 9 },
+    { tutorId: 'T045', x: 65, y: 23 },
   ],
   science: [
-    { x: 63, y: 17, size: 56 },
-    { x: 84, y: 10.9, size: 56 },
-    { x: 84, y: 23.1, size: 56 },
+    { tutorId: 'T010', x: 85, y: 38, size: 68 },
   ],
-  foundations: [
-    { x: 5, y: 76, size: 46 },
-    { x: 11.9, y: 76, size: 46 },
-    { x: 18.8, y: 76, size: 46 },
-    { x: 25.8, y: 76, size: 46 },
-    { x: 32.7, y: 76, size: 46 },
-    { x: 39.6, y: 76, size: 46 },
-    { x: 46.5, y: 76, size: 46 },
-    { x: 53.5, y: 76, size: 46 },
-    { x: 60.4, y: 76, size: 46 },
-    { x: 67.3, y: 76, size: 46 },
-    { x: 74.2, y: 76, size: 46 },
-    { x: 81.2, y: 76, size: 46 },
-    { x: 88.1, y: 76, size: 46 },
-    { x: 95, y: 76, size: 46 },
-    { x: 8.5, y: 88.5, size: 46 },
-    { x: 15.4, y: 88.5, size: 46 },
-    { x: 22.3, y: 88.5, size: 46 },
-    { x: 29.3, y: 88.5, size: 46 },
-    { x: 36.2, y: 88.5, size: 46 },
-    { x: 43.1, y: 88.5, size: 46 },
-    { x: 50, y: 88.5, size: 46 },
-    { x: 56.9, y: 88.5, size: 46 },
-    { x: 63.8, y: 88.5, size: 46 },
-    { x: 70.8, y: 88.5, size: 46 },
-    { x: 77.7, y: 88.5, size: 46 },
-    { x: 84.6, y: 88.5, size: 46 },
-    { x: 91.5, y: 88.5, size: 46 },
+  'maths-english-bridge': [
+    { tutorId: 'T006', x: 29, y: 77 },
+    { tutorId: 'T017', x: 36, y: 84 },
+    { tutorId: 'T021', x: 43, y: 78 },
+    { tutorId: 'T025', x: 50, y: 87 },
+    { tutorId: 'T026', x: 57, y: 78 },
+    { tutorId: 'T030', x: 64, y: 84 },
+    { tutorId: 'T033', x: 71, y: 77 },
+    { tutorId: 'T036', x: 33, y: 93 },
+    { tutorId: 'T038', x: 42, y: 94 },
+    { tutorId: 'T042', x: 58, y: 94 },
+    { tutorId: 'T044', x: 67, y: 93 },
+  ],
+  'maths-science-bridge': [
+    { tutorId: 'T016', x: 73, y: 11 },
+    { tutorId: 'T019', x: 80, y: 20 },
+    { tutorId: 'T034', x: 88, y: 11 },
   ],
 };
 
-export function getTutorOrbitGroup(record: TutorDiscoveryRecord): TutorOrbitGroupId {
-  if (record.tutor.hasPrimary || record.tutor.primarySubject === 'both') return 'foundations';
+const ANCHOR_IDS = new Set<string>(TUTOR_ORBIT_GROUPS.map(group => group.anchorTutorId));
+
+function expectedPlacement(record: TutorDiscoveryRecord): TutorOrbitPlacementId {
+  if (record.tutor.primarySubject === 'both' && record.tutor.hasPrimary) return 'maths-english-bridge';
+  if (record.tutor.primarySubject === 'science' && record.subjects.includes('maths')) return 'maths-science-bridge';
   if (record.tutor.primarySubject === 'math') return 'mathematics';
+  if (record.tutor.primarySubject === 'both') return 'mathematics';
   return record.tutor.primarySubject;
 }
 
 export function createTutorOrbitLayout(records: readonly TutorDiscoveryRecord[]): TutorOrbitSlot[] {
-  const nextIndex: Record<TutorOrbitGroupId, number> = {
-    mathematics: 0,
-    english: 0,
-    science: 0,
-    foundations: 0,
-  };
+  const recordsById = new Map(records.map(record => [record.tutor.id, record]));
+  const authoredTutorIds = new Set<string>();
+  const layout: TutorOrbitSlot[] = [];
 
-  // Tutor IDs are the catalogue's stable identity, so caller order cannot move portraits.
-  const recordsByStableIdentity = [...records].sort((first, second) => {
-    if (first.tutor.id === second.tutor.id) return 0;
-    return first.tutor.id < second.tutor.id ? -1 : 1;
-  });
+  for (const [placementId, slots] of Object.entries(AUTHORED_SLOTS) as Array<[TutorOrbitPlacementId, readonly AuthoredSlot[]]>) {
+    slots.forEach((slot, placementSlotIndex) => {
+      const record = recordsById.get(slot.tutorId);
+      if (!record) return;
+      if (expectedPlacement(record) !== placementId) {
+        throw new Error(`${slot.tutorId} is authored in ${placementId}, but catalogue data maps it to ${expectedPlacement(record)}`);
+      }
+      authoredTutorIds.add(slot.tutorId);
+      layout.push({
+        tutorId: slot.tutorId,
+        placementId,
+        placementSlotIndex,
+        isAnchor: ANCHOR_IDS.has(slot.tutorId),
+        x: slot.x,
+        y: slot.y,
+        size: slot.size ?? 42,
+      });
+    });
+  }
 
-  return recordsByStableIdentity.map(record => {
-    const groupId = getTutorOrbitGroup(record);
-    const groupSlotIndex = nextIndex[groupId];
-    const authoredSlot = AUTHORED_SLOTS[groupId][groupSlotIndex];
-
-    if (!authoredSlot) {
-      throw new Error(`No authored ${groupId} orbit slot for ${record.tutor.id}`);
-    }
-
-    nextIndex[groupId] += 1;
-    return {
-      tutorId: record.tutor.id,
-      groupId,
-      groupSlotIndex,
-      ...authoredSlot,
-    };
-  });
+  const missing = records.map(record => record.tutor.id).filter(id => !authoredTutorIds.has(id));
+  if (missing.length > 0) throw new Error(`No authored orbit slot for ${missing.join(', ')}`);
+  return layout;
 }
 
 export const TUTOR_ORBIT_SLOTS = createTutorOrbitLayout(TUTORS.map(toDiscoveryRecord));

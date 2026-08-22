@@ -27,7 +27,7 @@ const SUBJECT_FILTERS: Array<{ value: TutorSubject; label: string }> = [
   { value: 'english', label: 'English' },
   { value: 'maths', label: 'Mathematics' },
   { value: 'science', label: 'Science' },
-  { value: 'primary', label: 'Primary' },
+  { value: 'primary', label: 'Primary · K–6' },
 ];
 
 const YEAR_FILTERS: Array<{ value: TutorYearLevel; label: string }> = [
@@ -50,13 +50,19 @@ type OrbitSlotStyle = CSSProperties & {
 };
 
 function orbitSlotStyle(slot: TutorOrbitSlot): OrbitSlotStyle {
-  const groupIndex = TUTOR_ORBIT_GROUPS.findIndex(group => group.id === slot.groupId);
+  const placementIndex = [
+    'mathematics',
+    'english',
+    'science',
+    'maths-english-bridge',
+    'maths-science-bridge',
+  ].indexOf(slot.placementId);
   return {
     '--td-x': `${slot.x}%`,
     '--td-y': `${slot.y}%`,
     '--td-size': `${slot.size}px`,
-    '--td-drift-delay': `${-(groupIndex * 1.1 + slot.groupSlotIndex * 0.37)}s`,
-    '--td-drift-duration': `${8 + ((groupIndex + slot.groupSlotIndex) % 4) * 0.8}s`,
+    '--td-drift-delay': `${-(placementIndex * 1.1 + slot.placementSlotIndex * 0.37)}s`,
+    '--td-drift-duration': `${8 + ((placementIndex + slot.placementSlotIndex) % 4) * 0.8}s`,
   };
 }
 
@@ -119,6 +125,7 @@ export function TutorDirectory() {
   const profileTutor = profileTutorId ? TUTORS.find(tutor => tutor.id === profileTutorId) ?? null : null;
   const profilePosition = profileTutor ? TUTORS.findIndex(tutor => tutor.id === profileTutor.id) : -1;
   const filtersActive = query.trim().length > 0 || subjects.size > 0 || yearLevels.size > 0;
+  const primaryPathwayActive = subjects.has('primary');
 
   useEffect(() => {
     if (!requestedTutorId) return;
@@ -239,8 +246,17 @@ export function TutorDirectory() {
         </p>
       </section>
 
-      <div className="tutor-directory__stage" aria-label="DA Tuition educators grouped by teaching subject">
-        <div className="tutor-directory__systems">
+      <div
+        className={`tutor-directory__stage${primaryPathwayActive ? ' is-primary-active' : ''}`}
+        aria-label="DA Tuition educators grouped by teaching subject"
+      >
+        <div className="tutor-directory__space-depth" aria-hidden="true">
+          <span />
+          <span />
+          <span />
+        </div>
+
+        <div className="tutor-directory__path-depth">
           {TUTOR_ORBIT_GROUPS.map(group => (
             <section
               key={group.id}
@@ -248,42 +264,56 @@ export function TutorDirectory() {
               data-orbit-group={group.id}
               aria-labelledby={`tutor-system-${group.id}`}
             >
-              <div className="tutor-directory__system-ring" aria-hidden="true" />
+              <div className="tutor-directory__system-glow" aria-hidden="true" />
+              <div className="tutor-directory__system-ring tutor-directory__system-ring--outer" aria-hidden="true" />
+              <div className="tutor-directory__system-ring tutor-directory__system-ring--inner" aria-hidden="true" />
               <h2 id={`tutor-system-${group.id}`} className="tutor-directory__system-label">{group.label}</h2>
-              <div className="tutor-directory__portraits">
-                {TUTOR_ORBIT_SLOTS.filter(slot => slot.groupId === group.id).map(slot => {
-                  const record = DISCOVERY_RECORDS_BY_ID.get(slot.tutorId);
-                  if (!record) return null;
-
-                  const focused = focusedIds.has(record.tutor.id);
-                  const selected = selectedTutorId === record.tutor.id;
-                  const partial = !focused
-                    && subjects.size > 0
-                    && record.subjects.some(subject => subjects.has(subject));
-                  const stateClass = focused ? 'is-focused' : partial ? 'is-partial' : 'is-dimmed';
-
-                  return (
-                    <button
-                      key={record.tutor.id}
-                      type="button"
-                      className={`tutor-directory__portrait-button ${stateClass}${selected ? ' is-selected' : ''}`}
-                      style={orbitSlotStyle(slot)}
-                      aria-label={`Select ${record.tutor.name}`}
-                      aria-pressed={selected}
-                      onClick={() => setSelectedTutorId(record.tutor.id)}
-                    >
-                      <span className="tutor-directory__portrait-drift">
-                        <span className="tutor-directory__portrait-frame">
-                          <Portrait tutor={record.tutor} eager={slot.groupId !== 'foundations'} />
-                        </span>
-                        <span className="tutor-directory__portrait-name">{record.tutor.name}</span>
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
             </section>
           ))}
+
+          <div className="tutor-directory__bridge-line tutor-directory__bridge-line--maths-english" aria-hidden="true" />
+          <div className="tutor-directory__bridge-line tutor-directory__bridge-line--maths-science" aria-hidden="true" />
+          <div
+            className={`tutor-directory__primary-pathway${primaryPathwayActive ? ' is-active' : ''}`}
+            aria-hidden="true"
+          >
+            <span>Primary pathway · K–6</span>
+          </div>
+        </div>
+
+        <div className="tutor-directory__portrait-depth">
+          {TUTOR_ORBIT_SLOTS.map(slot => {
+            const record = DISCOVERY_RECORDS_BY_ID.get(slot.tutorId);
+            if (!record) return null;
+
+            const focused = focusedIds.has(record.tutor.id);
+            const selected = selectedTutorId === record.tutor.id;
+            const partial = !focused
+              && subjects.size > 0
+              && record.subjects.some(subject => subjects.has(subject));
+            const stateClass = focused ? 'is-focused' : partial ? 'is-partial' : 'is-dimmed';
+
+            return (
+              <button
+                key={record.tutor.id}
+                type="button"
+                className={`tutor-directory__portrait-button ${stateClass}${slot.isAnchor ? ' is-anchor' : ''}${selected ? ' is-selected' : ''}`}
+                style={orbitSlotStyle(slot)}
+                data-placement={slot.placementId}
+                aria-label={`Select ${record.tutor.name}`}
+                aria-pressed={selected}
+                onClick={() => setSelectedTutorId(record.tutor.id)}
+              >
+                <span className="tutor-directory__portrait-drift">
+                  {slot.isAnchor && <span className="tutor-directory__anchor-halo" aria-hidden="true" />}
+                  <span className="tutor-directory__portrait-frame">
+                    <Portrait tutor={record.tutor} eager={slot.isAnchor} />
+                  </span>
+                  <span className="tutor-directory__portrait-name">{record.tutor.name}</span>
+                </span>
+              </button>
+            );
+          })}
         </div>
 
         <div className={`tutor-directory__focus${selectedRecord ? ' has-selection' : ''}`}>
