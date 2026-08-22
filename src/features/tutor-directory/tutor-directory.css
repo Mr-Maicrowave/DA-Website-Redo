@@ -23,7 +23,8 @@
 }
 
 .tutor-directory button:focus-visible,
-.tutor-directory input:focus-visible {
+.tutor-directory input:focus-visible,
+.tutor-directory:focus-visible {
   outline: 3px solid var(--directory-gold);
   outline-offset: 4px;
 }
@@ -276,10 +277,6 @@
   filter: grayscale(0.75);
 }
 
-.tutor-directory__portrait-button:disabled {
-  cursor: default;
-}
-
 .tutor-directory__portrait-frame {
   position: relative;
   display: block;
@@ -305,6 +302,13 @@
 .tutor-directory__portrait-button.is-selected .tutor-directory__portrait-frame {
   border-color: #fff2bf;
   transform: scale(1.1);
+}
+
+.tutor-directory__portrait-button:hover,
+.tutor-directory__portrait-button:focus-visible,
+.tutor-directory__portrait-button.is-selected {
+  opacity: 1;
+  filter: none;
 }
 
 .tutor-directory__portrait-button.is-selected .tutor-directory__portrait-frame {

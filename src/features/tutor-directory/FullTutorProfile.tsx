@@ -9,6 +9,7 @@ import {
 } from '@/data/teacherCatalogue';
 import { profileContentFor, profilePronounsFor, profileSubjectGroupsFor } from '@/pages/profileContent';
 import { resetProfileScroll } from '@/pages/profileNavigation';
+import { restoreProfileReturnFocus } from './profileFocus';
 import '@/pages/FindTeacher.css';
 
 interface FullTutorProfileProps {
@@ -18,6 +19,7 @@ interface FullTutorProfileProps {
   onPrevious: () => void;
   onNext: () => void;
   returnFocusTo: HTMLElement | null;
+  fallbackFocusTo?: HTMLElement | null;
 }
 
 const firstName = (name: string) => name.replace(/^(Mr|Mrs|Ms|Miss|Dr)\.?\s+/i, '').split(/\s+/)[0];
@@ -51,6 +53,7 @@ export function FullTutorProfile({
   onPrevious,
   onNext,
   returnFocusTo,
+  fallbackFocusTo = null,
 }: FullTutorProfileProps) {
   const panelRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -80,9 +83,9 @@ export function FullTutorProfile({
       window.removeEventListener('keydown', handleKeyboard);
       document.body.classList.remove('teacher-profile-open');
       document.body.style.overflow = previousOverflow;
-      returnFocusTo?.focus();
+      restoreProfileReturnFocus(returnFocusTo, fallbackFocusTo);
     };
-  }, [onClose, onNext, onPrevious, returnFocusTo, teacher.id]);
+  }, [fallbackFocusTo, onClose, onNext, onPrevious, returnFocusTo, teacher.id]);
 
   return (
     <motion.div
@@ -121,7 +124,7 @@ export function FullTutorProfile({
               <div className="full-profile__photo"><Portrait teacher={teacher} /></div>
             </aside>
 
-            <main className="full-profile__content">
+            <div className="full-profile__content">
               <header className="full-profile__intro">
                 <p>{subjectLabel(teacher)}</p>
                 <div className="full-profile__subject-chips" aria-label={`Subjects taught by ${teacher.name}`}>
@@ -158,7 +161,7 @@ export function FullTutorProfile({
                 <h2>Why {firstName(teacher.name)} teaches at DA</h2>
                 <p>{content.whyDA}</p>
               </section>
-            </main>
+            </div>
           </motion.section>
         </AnimatePresence>
       </div>

@@ -101,6 +101,7 @@ export function TutorDirectory() {
   const [yearLevels, setYearLevels] = useState<Set<TutorYearLevel>>(() => new Set());
   const [selectedTutorId, setSelectedTutorId] = useState<string | null>(null);
   const [profileTutorId, setProfileTutorId] = useState<string | null>(null);
+  const directoryRef = useRef<HTMLElement>(null);
   const profileTriggerRef = useRef<HTMLElement | null>(null);
 
   const focusedRecords = useMemo(
@@ -124,8 +125,8 @@ export function TutorDirectory() {
   }, [requestedTutorId]);
 
   useEffect(() => {
-    if (selectedTutorId && !focusedIds.has(selectedTutorId)) setSelectedTutorId(null);
-  }, [focusedIds, selectedTutorId]);
+    setSelectedTutorId(current => current && !focusedIds.has(current) ? null : current);
+  }, [focusedIds]);
 
   const toggleSubject = useCallback((subject: TutorSubject) => {
     setSubjects(current => {
@@ -164,19 +165,19 @@ export function TutorDirectory() {
     if (profilePosition <= 0) return;
     const previousTutorId = TUTORS[profilePosition - 1].id;
     setProfileTutorId(previousTutorId);
-    setSelectedTutorId(focusedIds.has(previousTutorId) ? previousTutorId : null);
-  }, [focusedIds, profilePosition]);
+    setSelectedTutorId(previousTutorId);
+  }, [profilePosition]);
 
   const showNextProfile = useCallback(() => {
     if (profilePosition >= 0 && profilePosition < TUTORS.length - 1) {
       const nextTutorId = TUTORS[profilePosition + 1].id;
       setProfileTutorId(nextTutorId);
-      setSelectedTutorId(focusedIds.has(nextTutorId) ? nextTutorId : null);
+      setSelectedTutorId(nextTutorId);
     }
-  }, [focusedIds, profilePosition]);
+  }, [profilePosition]);
 
   return (
-    <section className="tutor-directory" aria-labelledby="tutor-directory-title">
+    <section ref={directoryRef} className="tutor-directory" aria-labelledby="tutor-directory-title" tabIndex={-1}>
       <header className="tutor-directory__intro">
         <p>DA Tuition educators</p>
         <h1 id="tutor-directory-title">Meet the people behind the progress.</h1>
@@ -253,7 +254,6 @@ export function TutorDirectory() {
                 style={constellationStyle(index)}
                 aria-label={`Select ${record.tutor.name}`}
                 aria-pressed={selected}
-                disabled={!focused}
                 onClick={() => setSelectedTutorId(record.tutor.id)}
               >
                 <span className="tutor-directory__portrait-frame"><Portrait tutor={record.tutor} eager={index < 12} /></span>
@@ -283,9 +283,9 @@ export function TutorDirectory() {
             </>
           ) : (
             <div className="tutor-directory__neutral">
-              <span aria-hidden="true">43</span>
+              <span aria-hidden="true">{TUTORS.length}</span>
               <h2>Explore the DA team</h2>
-              <p>Select any focused portrait to meet the educator behind it.</p>
+              <p>Select any portrait to meet the educator behind it.</p>
             </div>
           )}
         </div>
@@ -334,6 +334,7 @@ export function TutorDirectory() {
             onPrevious={showPreviousProfile}
             onNext={showNextProfile}
             returnFocusTo={profileTriggerRef.current}
+            fallbackFocusTo={directoryRef.current}
           />
         )}
       </AnimatePresence>
