@@ -51,6 +51,13 @@ test('matches an English Advanced tutor at Years 11-12 but not Years 7-10', () =
   );
 });
 
+test('normalises senior science subjects to Years 11-12', () => {
+  const record = toDiscoveryRecord(tutorFixture('Chemistry / Biology / Business Studies'));
+
+  assert.deepEqual(record.subjects, ['science']);
+  assert.deepEqual(record.yearLevels, ['years-11-12']);
+});
+
 test('requires every active filter group while allowing OR within a group', () => {
   const record = toDiscoveryRecord(
     tutorFixture('English (Yr 7–10) / Mathematics Advanced'),

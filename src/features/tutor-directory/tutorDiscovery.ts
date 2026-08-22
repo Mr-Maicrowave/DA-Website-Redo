@@ -31,7 +31,7 @@ export function toDiscoveryRecord(tutor: CatalogueTutor): TutorDiscoveryRecord {
   const yearLevels: TutorYearLevel[] = [];
   if (tutor.hasPrimary || has(rawSubjects, /\bprimary\b/i)) yearLevels.push('years-3-6');
   if (has(rawSubjects, /\(\s*yr\s*7\s*[–-]\s*10\s*\)/i)) yearLevels.push('years-7-10');
-  if (has(rawSubjects, /\b(?:standard|advanced|extension(?:\s*\d)?)\b/i)) {
+  if (has(rawSubjects, /\b(?:standard|advanced|extension(?:\s*\d)?|chemistry|biology|business studies)\b/i)) {
     yearLevels.push('years-11-12');
   }
 
