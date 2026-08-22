@@ -13,7 +13,6 @@ import Index from "./pages/Index";
 import BookInterview from "./pages/BookInterview";
 import Reviews from "./pages/Reviews";
 import NotFound from "./pages/NotFound";
-import FindTeacher from "./pages/FindTeacher";
 import Tutors from "./pages/Tutors";
 import Articles from "./pages/Articles";
 import ArticleView from "./pages/ArticleView";
@@ -69,15 +68,15 @@ const AnimatedRoutes = () => {
         <Route path="/interview" element={<Navigate to="/principal-reflections" replace />} />
         <Route path="/book-interview" element={<PageTransition><BookInterview /></PageTransition>} />
         <Route path="/reviews" element={<Navigate to="/success-stories" replace />} />
-        <Route path="/find-teacher" element={<PageTransition><FindTeacher /></PageTransition>} />
+        <Route path="/find-teacher" element={<Navigate to="/tutors" replace />} />
         <Route path="/tutors" element={<PageTransition><Tutors /></PageTransition>} />
-        <Route path="/teachers" element={<Navigate to="/find-teacher" replace />} />
+        <Route path="/teachers" element={<Navigate to="/tutors" replace />} />
         <Route path="/articles" element={<PageTransition><Articles /></PageTransition>} />
         <Route path="/articles/:slug" element={<PageTransition><ArticleView /></PageTransition>} />
         <Route path="/appreciation-advice" element={<Navigate to="/success-stories" replace />} />
         <Route path="/learning-formats" element={<PageTransition><LearningFormats /></PageTransition>} />
         <Route path="/hsc-excellence" element={<PageTransition><HSCExcellence /></PageTransition>} />
-        <Route path="/our-teachers" element={<Navigate to="/find-teacher" replace />} />
+        <Route path="/our-teachers" element={<Navigate to="/tutors" replace />} />
         <Route path="/tutoring-canley-heights" element={<PageTransition><CanleyHeights /></PageTransition>} />
         <Route path="/tutoring-cabramatta" element={<PageTransition><Cabramatta /></PageTransition>} />
         <Route path="/tutoring-fairfield" element={<PageTransition><Fairfield /></PageTransition>} />
