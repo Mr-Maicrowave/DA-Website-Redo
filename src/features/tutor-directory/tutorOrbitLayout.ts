@@ -27,16 +27,16 @@ export const TUTOR_ORBIT_GROUPS = [
 
 const AUTHORED_SLOTS: Record<TutorOrbitGroupId, readonly AuthoredSlot[]> = {
   mathematics: [
-    { x: 17, y: 20, size: 54 },
-    { x: 22.9, y: 24.6, size: 54 },
-    { x: 26.5, y: 36.6, size: 54 },
-    { x: 26.5, y: 51.4, size: 54 },
-    { x: 22.9, y: 63.4, size: 54 },
-    { x: 17, y: 68, size: 54 },
-    { x: 11.1, y: 63.4, size: 54 },
-    { x: 7.5, y: 51.4, size: 54 },
-    { x: 7.5, y: 36.6, size: 54 },
-    { x: 11.1, y: 24.6, size: 54 },
+    { x: 16, y: 20, size: 54 },
+    { x: 20.7, y: 24.6, size: 54 },
+    { x: 23.6, y: 36.6, size: 54 },
+    { x: 23.6, y: 51.4, size: 54 },
+    { x: 20.7, y: 63.4, size: 54 },
+    { x: 16, y: 68, size: 54 },
+    { x: 11.3, y: 63.4, size: 54 },
+    { x: 8.4, y: 51.4, size: 54 },
+    { x: 8.4, y: 36.6, size: 54 },
+    { x: 11.3, y: 24.6, size: 54 },
   ],
   english: [
     { x: 31, y: 16, size: 56 },
@@ -93,7 +93,13 @@ export function createTutorOrbitLayout(records: readonly TutorDiscoveryRecord[])
     foundations: 0,
   };
 
-  return records.map(record => {
+  // Tutor IDs are the catalogue's stable identity, so caller order cannot move portraits.
+  const recordsByStableIdentity = [...records].sort((first, second) => {
+    if (first.tutor.id === second.tutor.id) return 0;
+    return first.tutor.id < second.tutor.id ? -1 : 1;
+  });
+
+  return recordsByStableIdentity.map(record => {
     const groupId = getTutorOrbitGroup(record);
     const groupSlotIndex = nextIndex[groupId];
     const authoredSlot = AUTHORED_SLOTS[groupId][groupSlotIndex];

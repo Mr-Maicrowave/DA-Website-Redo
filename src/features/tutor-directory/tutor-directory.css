@@ -267,7 +267,7 @@
 .tutor-directory__system[data-orbit-group='mathematics'] .tutor-directory__system-ring {
   top: 13%;
   left: 3.5%;
-  width: 27%;
+  width: 24%;
   height: 59%;
   transform: rotate(-4deg);
 }
@@ -334,8 +334,8 @@
 }
 
 .tutor-directory__portrait-drift {
-  --td-drift-x: 4px;
-  --td-drift-y: -3px;
+  --td-drift-x: 3px;
+  --td-drift-y: 3px;
   position: relative;
   display: block;
   width: 100%;
@@ -345,22 +345,22 @@
 
 .tutor-directory__system[data-orbit-group='english'] .tutor-directory__portrait-drift {
   --td-drift-x: -3px;
-  --td-drift-y: 5px;
+  --td-drift-y: 4px;
 }
 
 .tutor-directory__system[data-orbit-group='science'] .tutor-directory__portrait-drift {
-  --td-drift-x: 5px;
+  --td-drift-x: 4px;
   --td-drift-y: 3px;
 }
 
 .tutor-directory__system[data-orbit-group='foundations'] .tutor-directory__portrait-drift {
-  --td-drift-x: -4px;
+  --td-drift-x: -3px;
   --td-drift-y: -3px;
 }
 
 @keyframes tutor-directory-ambient-drift {
   from {
-    transform: translate(calc(var(--td-drift-x) * -0.5), calc(var(--td-drift-y) * -0.5));
+    transform: translate(0, 0);
   }
 
   to {

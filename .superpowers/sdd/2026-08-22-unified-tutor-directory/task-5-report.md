@@ -46,7 +46,7 @@ Same command after the smallest production implementation: exit 0; 20 tests, 20 
 
 - Actual route: `/find-teacher` redirects to `/tutors`; `/find-teacher?tutor=T010` redirects to `/tutors?tutor=T010` and opened Mr Danny Q.'s full-profile dialog.
 - At a 1440×1000 viewport, the rendered stage measured 1344×768. All four labels were visible, all 43 portraits rendered, no portrait bounding boxes overlapped, and no portrait intersected the focus card.
-- At the lower desktop edge tested (browser inner width 1062px), the stage measured about 988.3×768 and still showed zero portrait overlaps and zero focus-card collisions.
+- At the lower desktop edge tested (browser inner width 1062px), the stage measured about 988.3×768 and still showed zero portrait overlaps and zero neutral focus-card collisions.
 - At 1060px, the desktop stage was hidden and the existing mobile list displayed all 43 educator articles.
 - Applying the Science filter produced 4 focused and 39 dimmed portraits, disabled none, and moved zero authored portrait buttons relative to the stage.
 - Selecting a portrait changed the centre panel and reported `animation-play-state: paused` on that portrait's local drift wrapper.
@@ -57,7 +57,7 @@ Same command after the smallest production implementation: exit 0; 20 tests, 20 
 - Catalogue coverage is exact and duplicate-free; each record has one scalar `groupId`, never multiple homes.
 - `hasPrimary` and broad `primarySubject: 'both'` records are classified as Foundations before specialist fallbacks.
 - Slot geometry is independent of filtering and selection state.
-- The 32–68% x / 30–70% y protected rectangle is tested against the full portrait bounds, not just portrait centre points.
+- The current geometry tests model both the 34% neutral card and wider 42% selected card at the supported minimum and maximum desktop stage widths, including portrait scale and drift envelopes.
 - Pairwise separation is tested against both portrait radii plus an 8px gutter on the authored 1440×768 coordinate system.
 - Ambient movement is isolated to a child transform and does not animate the authored button positions. There is no physics, dragging, `requestAnimationFrame`, or full-orbit animation.
 - Existing deep-link, full-profile, focus-return, filter, selection, and mobile-list code paths were left in place.
@@ -66,3 +66,47 @@ Same command after the smallest production implementation: exit 0; 20 tests, 20 
 
 - Foundations contains 27 of the 43 current educators, so its two lower rows are intentionally denser than the specialist systems even though they remain non-overlapping at the tested desktop widths.
 - Authored slot capacity matches the current catalogue counts. Adding educators to a group without authoring another safe slot throws a clear error instead of silently causing overlap; future catalogue growth therefore requires a deliberate layout update.
+
+## Post-review corrective TDD cycle
+
+### Review findings addressed
+
+- Critical: the initial 32–68% protected rectangle represented the neutral focus card but not the selected card, which reaches about 29–71% at the minimum desktop stage width. The test also omitted the 1.1 interaction scale and drift envelope.
+- Important: slot assignment depended on discovery-record input order.
+- Minor: the original alternate keyframes travelled 1.5 times the authored drift vector, making the effective motion envelope harder to defend as 3–6px.
+
+### Corrective RED
+
+Command:
+
+```text
+node --test --experimental-strip-types src/features/tutor-directory/*.test.ts
+```
+
+Result before corrective production changes: exit 1; 20 tests, 17 passed, 3 failed.
+
+- Drift failed because keyframes travelled from `-0.5 × vector` to `1 × vector` instead of from the authored origin.
+- Reversing all discovery records changed tutor-to-slot identity throughout the layout.
+- `T015` entered the selected focus-card envelope at the 988px stage width once 1.1 scale plus 6px worst-case drift was included.
+
+### Corrective implementation
+
+- Discovery records are now sorted by stable tutor ID before group-slot allocation, so input order cannot move portraits.
+- Mathematics slots were pulled from a 7.5–26.5% range to an 8.4–23.6% range, and the Mathematics ring width was reduced from 27% to 24% to match the authored system.
+- The four group vectors now travel directly from `(0, 0)` to vectors of 4.24px or 5px total length. Delay and duration remain staggered by group and slot.
+- Geometry tests cover neutral and selected focus cards at 988px and 1440px stage widths, expanding portrait bounds by 1.1 scale plus a conservative 6px drift allowance.
+
+### Corrective GREEN and verification
+
+- Same focused Node command: exit 0; 20 tests, 20 passed, 0 failed.
+- `npm.cmd run typecheck`: exit 0.
+- Focused ESLint for the corrected production/test files: exit 0.
+- `git diff --check`: exit 0 with only repository line-ending conversion warnings.
+- Rendered minimum desktop: viewport 1062px, stage 988.3×768, selected card 415.1×304 at x 286.6–701.7 relative to the stage. The two nearest scaled Mathematics portraits had zero intersections and minimum gaps of 21.7px and 21.2px.
+- Rendered maximum desktop: viewport 1600px, stage 1440×768, selected card 544×304 at x 448–992. The same two portraits had zero intersections and minimum gaps of 21.7px and 22.3px.
+- Visual inspection showed the selected profile card, Mathematics ring, and lower Foundations system clear and legible.
+- Local application console warnings/errors during the corrective QA: none. Browser-extension-only errors were excluded from application results.
+
+### Remaining concerns after correction
+
+- The selected card is currently 304px high for the rendered tutor profiles tested. If future focus-card content is allowed to grow materially taller, the vertical authored clearance should be revalidated alongside the existing width contract.

@@ -53,6 +53,14 @@ test('uses tiny CSS-only drift that pauses locally and respects reduced motion',
   assert.match(styles, /@keyframes tutor-directory-ambient-drift/);
   assert.match(styles, /--td-drift-x:\s*[+-]?[3-6]px/);
   assert.match(styles, /--td-drift-y:\s*[+-]?[3-6]px/);
+  const driftVectors = [...styles.matchAll(
+    /--td-drift-x:\s*(-?\d+)px;\s*\n\s*--td-drift-y:\s*(-?\d+)px;/g,
+  )].map(match => Math.hypot(Number(match[1]), Number(match[2])));
+  assert.equal(driftVectors.length, 4, 'expected one authored drift vector per subject system');
+  for (const travel of driftVectors) {
+    assert.ok(travel >= 3 && travel <= 6, `drift travel ${travel.toFixed(2)}px must remain within 3–6px`);
+  }
+  assert.match(styles, /from\s*\{\s*transform:\s*translate\(0, 0\);\s*\}/);
   assert.match(
     styles,
     /\.tutor-directory__portrait-button:hover\s+\.tutor-directory__portrait-drift[\s\S]*?animation-play-state:\s*paused/,

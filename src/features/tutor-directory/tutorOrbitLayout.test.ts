@@ -33,10 +33,12 @@ test('assigns the complete catalogue to one deterministic home system', async ()
   const { createTutorOrbitLayout } = await loadLayout();
   const first = createTutorOrbitLayout(records);
   const second = createTutorOrbitLayout(records);
+  const reordered = createTutorOrbitLayout([...records].reverse());
 
   assert.equal(first.length, records.length);
   assert.equal(new Set(first.map(slot => slot.tutorId)).size, records.length);
   assert.deepEqual(first, second);
+  assert.deepEqual(reordered, first, 'slot identity must not depend on discovery-record input order');
   assert.deepEqual(
     new Set(first.map(slot => slot.tutorId)),
     new Set(records.map(record => record.tutor.id)),
@@ -65,36 +67,52 @@ test('places primary and broad English plus Mathematics educators in Foundations
   }
 });
 
-test('keeps every portrait outside the protected centre and inside the authored desktop stage', async () => {
+test('clears neutral and selected focus cards at minimum and maximum desktop widths', async () => {
   const { createTutorOrbitLayout } = await loadLayout();
   const slots = createTutorOrbitLayout(records);
-  const stageWidth = 1440;
   const stageHeight = 768;
-  const protectedRect = {
-    left: stageWidth * 0.32,
-    right: stageWidth * 0.68,
-    top: stageHeight * 0.30,
-    bottom: stageHeight * 0.70,
-  };
+  const desktopWidths = [988, 1440];
+  const focusCards = [
+    { name: 'neutral', maxWidth: 432, widthRatio: 0.34, height: 304 },
+    { name: 'selected', maxWidth: 544, widthRatio: 0.42, height: 304 },
+  ];
+  const interactionScale = 1.1;
+  const maximumDrift = 6;
 
-  for (const slot of slots) {
-    const x = stageWidth * slot.x / 100;
-    const y = stageHeight * slot.y / 100;
-    const radius = slot.size / 2;
-    const portrait = {
-      left: x - radius,
-      right: x + radius,
-      top: y - radius,
-      bottom: y + radius,
-    };
-    const clearsCentre = portrait.right <= protectedRect.left
-      || portrait.left >= protectedRect.right
-      || portrait.bottom <= protectedRect.top
-      || portrait.top >= protectedRect.bottom;
+  for (const stageWidth of desktopWidths) {
+    for (const focusCard of focusCards) {
+      const cardWidth = Math.min(focusCard.maxWidth, stageWidth * focusCard.widthRatio);
+      const protectedRect = {
+        left: (stageWidth - cardWidth) / 2,
+        right: (stageWidth + cardWidth) / 2,
+        top: (stageHeight - focusCard.height) / 2,
+        bottom: (stageHeight + focusCard.height) / 2,
+      };
 
-    assert.equal(clearsCentre, true, `${slot.tutorId} intrudes into the protected centre`);
-    assert.ok(portrait.left >= 0 && portrait.right <= stageWidth, `${slot.tutorId} exceeds the stage width`);
-    assert.ok(portrait.top >= 0 && portrait.bottom <= stageHeight, `${slot.tutorId} exceeds the stage height`);
+      for (const slot of slots) {
+        const x = stageWidth * slot.x / 100;
+        const y = stageHeight * slot.y / 100;
+        const radius = slot.size * interactionScale / 2 + maximumDrift;
+        const portrait = {
+          left: x - radius,
+          right: x + radius,
+          top: y - radius,
+          bottom: y + radius,
+        };
+        const clearsCentre = portrait.right <= protectedRect.left
+          || portrait.left >= protectedRect.right
+          || portrait.bottom <= protectedRect.top
+          || portrait.top >= protectedRect.bottom;
+
+        assert.equal(
+          clearsCentre,
+          true,
+          `${slot.tutorId} intrudes into the ${focusCard.name} focus card at ${stageWidth}px`,
+        );
+        assert.ok(portrait.left >= 0 && portrait.right <= stageWidth, `${slot.tutorId} exceeds the stage width`);
+        assert.ok(portrait.top >= 0 && portrait.bottom <= stageHeight, `${slot.tutorId} exceeds the stage height`);
+      }
+    }
   }
 });
 
