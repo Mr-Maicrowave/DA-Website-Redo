@@ -27,6 +27,8 @@ export const TUTOR_ORBIT_GROUPS = [
   { id: 'science', label: 'Science', anchorTutorId: 'T010' },
 ] as const satisfies ReadonlyArray<{ id: TutorOrbitGroupId; label: string; anchorTutorId: string }>;
 
+export const PRIMARY_PATHWAY_BOUNDS = { left: 23, right: 77, top: 74 } as const;
+
 const AUTHORED_SLOTS: Record<TutorOrbitPlacementId, readonly AuthoredSlot[]> = {
   mathematics: [
     { tutorId: 'T011', x: 15, y: 42, size: 68 },
@@ -46,9 +48,9 @@ const AUTHORED_SLOTS: Record<TutorOrbitPlacementId, readonly AuthoredSlot[]> = {
     { tutorId: 'T035', x: 23, y: 70 },
     { tutorId: 'T037', x: 6, y: 84 },
     { tutorId: 'T040', x: 13, y: 87 },
-    { tutorId: 'T041', x: 21, y: 84 },
+    { tutorId: 'T041', x: 19, y: 84 },
     { tutorId: 'T043', x: 28, y: 10 },
-    { tutorId: 'T046', x: 28, y: 91 },
+    { tutorId: 'T046', x: 18, y: 94 },
   ],
   english: [
     { tutorId: 'T005', x: 47, y: 14, size: 68 },
@@ -64,22 +66,22 @@ const AUTHORED_SLOTS: Record<TutorOrbitPlacementId, readonly AuthoredSlot[]> = {
     { tutorId: 'T010', x: 85, y: 38, size: 68 },
   ],
   'maths-english-bridge': [
-    { tutorId: 'T006', x: 29, y: 77 },
-    { tutorId: 'T017', x: 36, y: 84 },
-    { tutorId: 'T021', x: 43, y: 78 },
-    { tutorId: 'T025', x: 50, y: 87 },
-    { tutorId: 'T026', x: 57, y: 78 },
-    { tutorId: 'T030', x: 64, y: 84 },
-    { tutorId: 'T033', x: 71, y: 77 },
-    { tutorId: 'T036', x: 33, y: 93 },
-    { tutorId: 'T038', x: 42, y: 94 },
-    { tutorId: 'T042', x: 58, y: 94 },
-    { tutorId: 'T044', x: 67, y: 93 },
+    { tutorId: 'T006', x: 10, y: 33 },
+    { tutorId: 'T017', x: 4, y: 49 },
+    { tutorId: 'T021', x: 10, y: 65 },
+    { tutorId: 'T025', x: 19, y: 77 },
+    { tutorId: 'T026', x: 10, y: 81 },
+    { tutorId: 'T030', x: 4, y: 93 },
+    { tutorId: 'T033', x: 28, y: 17 },
+    { tutorId: 'T036', x: 34, y: 25 },
+    { tutorId: 'T038', x: 43, y: 25 },
+    { tutorId: 'T042', x: 52, y: 25 },
+    { tutorId: 'T044', x: 61, y: 17 },
   ],
   'maths-science-bridge': [
-    { tutorId: 'T016', x: 73, y: 11 },
-    { tutorId: 'T019', x: 80, y: 20 },
-    { tutorId: 'T034', x: 88, y: 11 },
+    { tutorId: 'T016', x: 25, y: 5 },
+    { tutorId: 'T019', x: 67, y: 5 },
+    { tutorId: 'T034', x: 79, y: 25 },
   ],
 };
 

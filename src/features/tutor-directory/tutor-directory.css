@@ -324,21 +324,26 @@
 }
 
 .tutor-directory__bridge-line--maths-english {
-  left: 20%; bottom: 1%; width: 58%; height: 28%; transform: rotate(1.5deg);
-  border-top-color: rgba(240, 212, 139, 0.24);
+  top: -7%; left: 1%; width: 67%; height: 83%; transform: rotate(-7deg);
+  border-right-color: transparent;
+  border-bottom-color: transparent;
+  border-left-color: rgba(240, 212, 139, 0.25);
+  border-top-color: rgba(240, 212, 139, 0.22);
 }
 
 .tutor-directory__bridge-line--maths-science {
-  top: -5%; right: 2%; width: 33%; height: 35%; transform: rotate(-10deg);
-  border-bottom-color: rgba(173, 205, 225, 0.24);
+  top: -8%; right: 10%; width: 73%; height: 30%; transform: rotate(1deg);
+  border-right-color: rgba(173, 205, 225, 0.2);
+  border-bottom-color: rgba(173, 205, 225, 0.26);
+  border-left-color: rgba(240, 212, 139, 0.17);
 }
 
 .tutor-directory__primary-pathway {
   position: absolute;
   z-index: 2;
-  right: 20%;
+  right: 23%;
   bottom: 2.5%;
-  left: 20%;
+  left: 23%;
   height: 24%;
   opacity: 0.2;
   border-top: 1px solid rgba(240, 212, 139, 0.42);

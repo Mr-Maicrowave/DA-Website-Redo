@@ -117,3 +117,54 @@ test('separates every portrait at the minimum desktop layout width', async () =>
     }
   }
 });
+
+test('distributes Maths–English bridges over connecting arcs rather than a lower belt', async () => {
+  const { createTutorOrbitLayout } = await loadLayout();
+  const bridgeSlots = createTutorOrbitLayout(records)
+    .filter(slot => slot.placementId === 'maths-english-bridge');
+  const yValues = bridgeSlots.map(slot => slot.y);
+  const fivePercentBands = new Map<number, number>();
+
+  for (const y of yValues) {
+    const band = Math.floor(y / 5);
+    fivePercentBands.set(band, (fivePercentBands.get(band) ?? 0) + 1);
+  }
+
+  assert.ok(Math.max(...yValues) - Math.min(...yValues) >= 45, 'bridges should traverse a real vertical arc');
+  assert.ok(Math.max(...fivePercentBands.values()) <= 3, 'no bridge row may become a portrait belt');
+  assert.ok(bridgeSlots.filter(slot => slot.y <= 27).length >= 3, 'upper arc must visibly meet English');
+  assert.ok(bridgeSlots.filter(slot => slot.x <= 23).length >= 3, 'side arc must visibly meet Mathematics');
+});
+
+test('keeps the Primary pathway corridor portrait-free', async () => {
+  const { createTutorOrbitLayout, PRIMARY_PATHWAY_BOUNDS } = await loadLayout();
+  const slots = createTutorOrbitLayout(records);
+  const stageWidth = 1061;
+  const stageHeight = 768;
+  const intruders = slots.filter(slot => (
+    slot.x + (slot.size * 1.1 / 2 + 6) / stageWidth * 100 >= PRIMARY_PATHWAY_BOUNDS.left
+    && slot.x - (slot.size * 1.1 / 2 + 6) / stageWidth * 100 <= PRIMARY_PATHWAY_BOUNDS.right
+    && slot.y + (slot.size * 1.1 / 2 + 6) / stageHeight * 100 >= PRIMARY_PATHWAY_BOUNDS.top
+  ));
+
+  assert.deepEqual(intruders, [], 'Primary pathway is a visual filter path, not a portrait track');
+});
+
+test('spans Maths–Science bridge coordinates from the Maths bound toward Science', async () => {
+  const { createTutorOrbitLayout } = await loadLayout();
+  const slots = createTutorOrbitLayout(records);
+  const mathsSlots = slots.filter(slot => slot.placementId === 'mathematics');
+  const scienceSlots = slots.filter(slot => slot.placementId === 'science');
+  const bridgeSlots = slots.filter(slot => slot.placementId === 'maths-science-bridge');
+  const mathsRight = Math.max(...mathsSlots.map(slot => slot.x));
+  const scienceLeft = Math.min(...scienceSlots.map(slot => slot.x));
+
+  assert.ok(bridgeSlots[0].x <= mathsRight + 3, 'bridge must start at the Maths system bound');
+  assert.ok(bridgeSlots.at(-1).x >= scienceLeft - 10, 'bridge must arrive at the Science system bound');
+  assert.ok(bridgeSlots.at(-1).x - bridgeSlots[0].x >= 45, 'bridge must visibly span the two systems');
+  assert.deepEqual(
+    bridgeSlots.map(slot => slot.x),
+    [...bridgeSlots].map(slot => slot.x).sort((first, second) => first - second),
+    'authored bridge direction must progress from Maths to Science',
+  );
+});
