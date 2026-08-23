@@ -1,566 +1,194 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, Check, Heart, Play } from 'lucide-react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { ArrowRight, Check, ChevronLeft, ChevronRight, Flag, Mountain, Play, Sparkles } from 'lucide-react';
 import NavigationNew from '@/components/NavigationNew';
 import FooterNew from '@/components/FooterNew';
 import SEO from '@/components/SEO';
-import SubjectHero from '@/components/subjects/SubjectHero';
-import {
-  hasStoryVideo,
-  journeys,
-  startingPoints,
-  studentStories,
-  type JourneyArtifact,
-  type StartingPoint,
-} from '@/data/why-da';
+import { hasStoryVideo, journeys, startingPoints, studentStories, type StartingPoint } from '@/data/why-da';
+import './WhyChooseDA.css';
 
-/**
- * The DA Difference, told as chapters of a year.
- *
- * The page is one school year told through the eyes of the child the parent
- * recognises. The sticky selector rewrites the four term chapters; the weekly
- * rhythm is its own standalone section (it is true for every child, so it sits
- * outside the per-child story); the student-film slot is the Term 4 payoff; and
- * the proof wall closes by widening out to twenty years of the same story.
- */
+type PathId = StartingPoint['id'];
 
-const WEEKLY_RHYTHM = [
-  {
-    moment: 'Arrive',
-    title: 'Walk into a familiar room.',
-    body: 'The welcome is real. Faces are familiar, names are remembered, and students settle before the work begins.',
-    image: '/images/difference/rhythm-arrive.jpg',
-    alt: 'Students smiling together at the start of a DA lesson',
-  },
-  {
-    moment: 'Feel known',
-    title: 'Be seen as a whole person.',
-    body: 'Tutors notice confidence as well as content, and understand the goals and pressures a student carries in from school.',
-    image: '/images/difference/rhythm-feel-known.jpg',
-    alt: 'A DA tutor sharing a warm moment with a young student',
-  },
-  {
-    moment: 'Be challenged',
-    title: 'Do work worth being proud of.',
-    body: 'Thoughtful teaching gives students enough support to start, and enough room to think for themselves.',
-    image: '/images/difference/rhythm-be-challenged.jpg',
-    alt: 'A student working with focus on a problem at DA',
-  },
-  {
-    moment: 'Grow',
-    title: 'Notice what they can now do.',
-    body: 'A clearer method, a raised hand, a better question. Progress becomes visible in how students carry themselves.',
-    image: '/images/difference/rhythm-grow.jpg',
-    alt: 'Two DA students smiling over their work together',
-  },
-  {
-    moment: 'Belong',
-    title: 'Leave with more than a finished worksheet.',
-    body: 'They leave with direction, encouragement and a community that expects good things from them.',
-    image: '/images/difference/rhythm-belong.jpg',
-    alt: 'DA students sharing a laptop and a laugh between tasks',
-  },
-] as const;
-
-const STUDENT_GAINS = [
-  { title: 'A voice of their own', body: 'They learn to ask a question, explain a method and contribute when an idea is still taking shape.', tone: 'bg-white shadow-[0_8px_20px_rgba(7,22,41,0.06)]' },
-  { title: 'Habits that travel', body: 'Preparation, follow-through and a calmer way to approach difficult work become how they learn everywhere.', tone: 'bg-[#e4d39e]' },
-  { title: 'The courage to persist', body: 'Challenge stops being a verdict on their ability. It becomes where capability is built.', tone: 'bg-[#dfe8e1]' },
-  { title: 'People in their corner', body: 'Friendships and trusted tutors make it easier to take healthy risks and recover from setbacks.', tone: 'bg-white shadow-[0_8px_20px_rgba(7,22,41,0.06)]' },
-] as const;
-
-const fadeUp = {
-  hidden: { opacity: 0, y: 28 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] } },
+const PATHWAY_LABELS: Record<PathId, string> = {
+  confidence: 'Confidence',
+  stuck: 'Clarity',
+  challenge: 'Challenge',
 };
 
-/**
- * The Term 1 artifact, rendered as real HTML rather than an image so the text
- * stays at a readable size, reflows on small screens and can be selected.
- */
-function ArtifactCard({ artifact }: { artifact: JourneyArtifact }) {
-  const maxMarks = artifact.kind === 'analysis' ? Math.max(...artifact.rows.map((row) => row.marks)) : 0;
+const QUESTIONS: ReadonlyArray<{ question: string; choices: ReadonlyArray<{ label: string; path: PathId }> }> = [
+  { question: 'When work gets difficult, what happens first?', choices: [
+    { label: 'They doubt themselves, even when they know more than they think.', path: 'confidence' },
+    { label: 'They keep trying, but do not know where the gap is.', path: 'stuck' },
+    { label: 'They finish quickly and want something more to reach for.', path: 'challenge' },
+  ] },
+  { question: 'What would make the biggest difference right now?', choices: [
+    { label: 'Feeling safe enough to speak up and give it a go.', path: 'confidence' },
+    { label: 'A clearer way through what is holding them back.', path: 'stuck' },
+    { label: 'A tutor who can stretch their thinking with purpose.', path: 'challenge' },
+  ] },
+  { question: 'What do you hope they leave DA feeling?', choices: [
+    { label: 'More sure of their own voice.', path: 'confidence' },
+    { label: 'Capable again, with a way forward.', path: 'stuck' },
+    { label: 'Excited by what they can do next.', path: 'challenge' },
+  ] },
+];
 
-  return (
-    <figure className="relative flex flex-col overflow-hidden rounded-2xl bg-[#fffaf0] shadow-[0_12px_28px_rgba(7,22,41,0.08)]">
-      <div aria-hidden="true" className="absolute -right-20 -top-20 h-44 w-44 rounded-full border-[14px] border-[#e4c76c]/20" />
-      <div aria-hidden="true" className="absolute -right-10 -top-10 h-28 w-28 rounded-full border border-[#c9a227]/35" />
-      <p className="relative border-b border-[#e2d3ab] bg-[#f4e7c7] px-7 py-5 text-xs font-black uppercase tracking-[0.16em] text-[#8a6810] sm:px-8">
-        <span className="border-b-2 border-[#c9a227] pb-1.5">{artifact.label}</span>
-      </p>
+const RHYTHM = [
+  { moment: 'Arrive', title: 'Walk into a familiar room.', body: 'Faces are familiar, names are remembered, and students settle before the work begins.', image: '/images/difference/student-moment-01-natural-smiles.png', alt: 'A group of DA students gathered in their classroom' },
+  { moment: 'Feel known', title: 'Be seen as a whole person.', body: 'Tutors notice confidence as well as content, and understand the pressures a student carries in from school.', image: '/images/difference/rhythm-belong.jpg', alt: 'Two DA students during a lesson' },
+  { moment: 'Be challenged', title: 'Do work worth being proud of.', body: 'Thoughtful teaching gives students enough support to start, and enough room to think for themselves.', image: '/images/difference/student-moment-03.jpg', alt: 'Students working together during a DA lesson' },
+  { moment: 'Grow', title: 'Notice what they can now do.', body: 'A clearer method, a raised hand, a better question. Progress becomes visible in how students carry themselves.', image: '/images/difference/rhythm-grow.jpg', alt: 'Two DA students smiling over their work together' },
+  { moment: 'Belong', title: 'Leave with more than a finished worksheet.', body: 'They leave with direction, encouragement and a community that expects good things from them.', image: '/images/difference/student-moment-02-smiles.png', alt: 'DA students gathered with their tutor during a lesson' },
+] as const;
 
-      <div className="relative px-7 py-8 sm:px-8 sm:py-10">
-        {artifact.kind === 'observation' ? (
-          <ul className="space-y-5">
-            {artifact.items.map((item) => (
-              <li key={item} className="flex gap-4">
-                <Check aria-hidden="true" className="mt-1 h-6 w-6 shrink-0 text-[#c9a227]" strokeWidth={2.5} />
-                <span className="font-serif text-xl leading-8 text-[#1c2b45]">{item}</span>
-              </li>
-            ))}
-          </ul>
-        ) : null}
+const GAINS = [
+  ['A voice of their own', 'They learn to ask a question, explain a method and contribute when an idea is still taking shape.'],
+  ['Habits that travel', 'Preparation, follow-through and a calmer way to approach difficult work become how they learn everywhere.'],
+  ['The courage to persist', 'Challenge stops being a verdict on their ability. It becomes where capability is built.'],
+  ['People in their corner', 'Friendships and trusted tutors make it easier to take healthy risks and recover from setbacks.'],
+] as const;
 
-        {artifact.kind === 'analysis' ? (
-          <dl className="space-y-7">
-            {artifact.rows.map((row, index) => {
-              const isLargest = row.marks === maxMarks;
-              return (
-                <div key={row.label}>
-                  <div className="flex items-baseline justify-between gap-4">
-                    <dt className="font-serif text-xl text-[#1c2b45]">{row.label}</dt>
-                    <dd className={`text-lg font-black tabular-nums ${isLargest ? 'text-[#8a6810]' : 'text-[#52657b]'}`}>
-                      {row.marks} marks
-                    </dd>
-                  </div>
-                  <div className="mt-3 h-3.5 overflow-hidden rounded-full bg-[#f1eee4]">
-                    <motion.div
-                      initial={{ width: 0 }}
-                      whileInView={{ width: `${Math.round((row.marks / maxMarks) * 100)}%` }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 0.7, delay: index * 0.08, ease: [0.22, 1, 0.36, 1] }}
-                      className={`h-full rounded-full ${isLargest ? 'bg-[#c9a227]' : 'bg-[#dfe8e1]'}`}
-                    />
-                  </div>
-                </div>
-              );
-            })}
-          </dl>
-        ) : null}
+const PROGRAM_FITS: Record<PathId, ReadonlyArray<{ name: string; detail: string }>> = {
+  confidence: [
+    { name: 'Focus Class', detail: 'Small-group support that builds clarity, consistency and confidence in the fundamentals.' },
+    { name: 'Bullet Class', detail: 'Focused revision that helps students see what they know and use it with confidence.' },
+  ],
+  stuck: [
+    { name: 'Focus Class', detail: 'A calm, structured way to repair foundations and make each next step clear.' },
+    { name: 'Bullet Class', detail: 'Fast, focused exam preparation built around key skills, technique and revision.' },
+  ],
+  challenge: [
+    { name: 'GAT Class', detail: 'Extension-style learning for high-performing students ready for greater depth.' },
+    { name: 'Bullet Class', detail: 'High-impact lessons to sharpen exam technique and stretch performance.' },
+  ],
+};
 
-        {artifact.kind === 'plan' ? (
-          <ol className="space-y-6">
-            {artifact.steps.map((step, index) => (
-              <li key={step.title} className="flex gap-4">
-                <span
-                  aria-hidden="true"
-                  className={`mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 border-[#c9a227] font-serif text-base ${
-                    index === artifact.steps.length - 1 ? 'bg-[#c9a227] text-[#071629]' : 'bg-[#faf6ea] text-[#a88314]'
-                  }`}
-                >
-                  {index + 1}
-                </span>
-                <span>
-                  <span className="block font-serif text-xl leading-8 text-[#1c2b45]">{step.title}</span>
-                  <span className="mt-1 block text-base font-bold text-[#6f849a]">{step.timing}</span>
-                </span>
-              </li>
-            ))}
-          </ol>
-        ) : null}
-      </div>
+const fadeUp = { hidden: { opacity: 0, y: 28 }, visible: { opacity: 1, y: 0, transition: { duration: 0.65, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] } } };
 
-      <figcaption className="relative border-t border-[#e2d3ab] bg-[#f7edcf] px-7 py-6 sm:px-8">
-        <p className="font-serif text-xl italic leading-8 text-[#4a3c0d]">
-          {artifact.kind === 'observation' ? (
-            <>
-              <span className="mb-1 block text-xs font-black uppercase not-italic tracking-[0.16em] text-[#a88314]">
-                {artifact.footerLabel}
-              </span>
-              {artifact.footerLine}
-            </>
-          ) : (
-            artifact.footerLine
-          )}
-        </p>
-      </figcaption>
-    </figure>
-  );
+function PathMarker({ value, filled = false }: { value: string; filled?: boolean }) {
+  return <span aria-hidden="true" className={`absolute -left-14 top-1 hidden h-9 w-9 items-center justify-center rounded-full border-2 border-[#c9a227] font-serif text-sm lg:flex ${filled ? 'bg-[#c9a227] text-[#071629]' : 'bg-[#fbf8ef] text-[#a88314]'}`}>{value}</span>;
 }
 
-/** A tutor's handwritten note, styled as a notepad page. Text differs per journey. */
-function TutorNote({ note, week, author }: { note: string; week: string; author: string }) {
-  return (
-    <figure className="flex h-full min-h-[25rem] -rotate-1 flex-col overflow-hidden rounded-2xl bg-[#fffdf6] shadow-[0_16px_34px_rgba(7,22,41,0.16)] sm:min-h-[29rem]">
-      <div className="flex items-center gap-2 bg-[#e7dcc0] px-8 py-5">
-        <span aria-hidden="true" className="h-2.5 w-2.5 rounded-full bg-[#c9a227]/60" />
-        <span aria-hidden="true" className="h-2.5 w-2.5 rounded-full bg-[#c9a227]/60" />
-        <span aria-hidden="true" className="h-2.5 w-2.5 rounded-full bg-[#c9a227]/60" />
-        <p className="ml-2 text-xs font-black uppercase tracking-[0.18em] text-[#8a6810]">Tutor note</p>
-      </div>
-      <blockquote className="flex flex-1 items-center px-8 py-12 sm:px-10 sm:py-14">
-        <p className="font-serif text-3xl italic leading-[1.3] text-[#4a3c0d] sm:text-4xl lg:text-[2.8rem]">&ldquo;{note}&rdquo;</p>
-      </blockquote>
-      <figcaption className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 border-t border-[#efe6cc] px-8 py-6 sm:px-10">
-        <span className="font-serif text-xl text-[#6b5510]">{author}</span>
-        <span className="text-sm font-black uppercase tracking-[0.16em] text-[#a88314]">{week}</span>
-      </figcaption>
-    </figure>
-  );
-}
-
-function ChapterMarker({ numeral, filled = false }: { numeral: string; filled?: boolean }) {
-  return (
-    <span
-      aria-hidden="true"
-      className={`absolute left-0 top-1 hidden h-9 w-9 items-center justify-center rounded-full border-2 border-[#c9a227] font-serif text-sm lg:flex ${
-        filled ? 'bg-[#c9a227] text-[#071629]' : 'bg-[#fbf8ef] text-[#a88314]'
-      }`}
-    >
-      {numeral}
-    </span>
-  );
+function PathwayIcon({ path }: { path: PathId }) {
+  const Icon = path === 'confidence' ? Mountain : path === 'stuck' ? Sparkles : Flag;
+  return <span aria-hidden="true" className="da-difference__choice-map-number"><Icon className="h-6 w-6" strokeWidth={1.5} /></span>;
 }
 
 export default function WhyChooseDA() {
-  const [selectedId, setSelectedId] = useState<StartingPoint['id']>(startingPoints[0].id);
-  const journey = journeys[selectedId];
+  const [answers, setAnswers] = useState<(PathId | null)[]>([null, null, null]);
+  const [selectedId, setSelectedId] = useState<PathId | null>(null);
+  const [isRailPaused, setIsRailPaused] = useState(false);
+  const lifeRailRef = useRef<HTMLOListElement>(null);
+  const answeredCount = answers.filter(Boolean).length;
+  const journey = selectedId ? journeys[selectedId] : null;
+  const story = selectedId ? studentStories.find((item) => item.journeyId === selectedId && hasStoryVideo(item)) : undefined;
 
-  const journeyStories = studentStories.filter((story) => story.journeyId === selectedId);
-  const playableStories = journeyStories.filter(hasStoryVideo);
-  const [activeStoryId, setActiveStoryId] = useState(playableStories[0]?.id);
-  const activeStory = playableStories.find((story) => story.id === activeStoryId) ?? playableStories[0];
+  function choose(questionIndex: number, path: PathId) {
+    const next = answers.map((answer, index) => index === questionIndex ? path : answer);
+    setAnswers(next);
+    if (next.every(Boolean)) {
+      const counts = next.reduce<Record<PathId, number>>((total, answer) => {
+        if (answer) total[answer] += 1;
+        return total;
+      }, { confidence: 0, stuck: 0, challenge: 0 });
+      setSelectedId((Object.entries(counts).sort(([, a], [, b]) => b - a)[0]?.[0] ?? 'confidence') as PathId);
+    }
+  }
 
-  return (
-    <>
-      <SEO
-        title="The DA Difference | One School Year, Told Through Your Child's Eyes"
-        description="Choose the student who sounds most like yours and follow their year at DA Tuition, from the first week to their own words on film. Small groups, tutors who notice, confidence that lasts."
-        canonicalUrl="/why-choose-da"
-      />
-      <NavigationNew />
+  function chooseStartingPoint(path: PathId) {
+    setSelectedId(path);
+    window.setTimeout(() => document.getElementById('quick-questions')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 80);
+  }
 
-      <main className="overflow-hidden bg-[#fbf8ef]">
-        <SubjectHero
-          eyebrow="The DA Difference"
-          icon={Heart}
-          headlineWhite="One school year."
-          headlineGold="Told through your child's eyes."
-          subtext="Choose the student who sounds most like yours. This page becomes their story, term by term, all the way to their own words on film."
-          proofPills={['Small-group learning', 'Tutors who know them', 'Confidence that lasts']}
-          exploreTargetId="their-year"
-          placeholderLabel="DA Tuition classroom community"
-          backgroundImageSrc="/images/difference/difference-hero-enhanced.png"
-          backgroundImageAlt="A DA Tuition class with students raising their hands"
-          mobileBackgroundPosition="62% center"
-        />
+  function moveLifeRail(direction: -1 | 1) {
+    const rail = lifeRailRef.current;
+    const firstCard = rail?.querySelector<HTMLElement>('li');
+    if (!rail || !firstCard) return;
+    rail.scrollBy({ left: direction * (firstCard.getBoundingClientRect().width + 24), behavior: 'smooth' });
+  }
 
-        {/* STICKY CHILD SELECTOR */}
-        <div
-          id="their-year"
-          className="sticky top-14 z-30 scroll-mt-20 border-y-2 border-[#c9a227]/45 bg-[#eee3c8]/95 px-5 py-5 shadow-[0_6px_18px_rgba(7,22,41,0.06)] backdrop-blur-sm sm:py-6 lg:px-8"
-        >
-          <div className="mx-auto max-w-7xl lg:flex lg:items-center lg:gap-10">
-            <div className="shrink-0">
-              <p className="text-xs font-black uppercase tracking-[0.2em] text-[#a88314]">Choose a starting point</p>
-              <p className="mt-1.5 font-serif text-xl leading-tight text-[#071629] sm:text-2xl">Which one sounds like yours?</p>
-            </div>
+  useEffect(() => {
+    if (isRailPaused) return;
+    const rail = lifeRailRef.current;
+    if (!rail) return;
+    const interval = window.setInterval(() => {
+      const firstCard = rail.querySelector<HTMLElement>('li');
+      if (!firstCard) return;
+      const cardWidth = firstCard.getBoundingClientRect().width + 24;
+      const atEnd = rail.scrollLeft + rail.clientWidth >= rail.scrollWidth - 8;
+      rail.scrollTo({ left: atEnd ? 0 : rail.scrollLeft + cardWidth, behavior: 'smooth' });
+    }, 6500);
+    return () => window.clearInterval(interval);
+  }, [isRailPaused]);
 
-            <div
-              className="mt-4 grid gap-2.5 sm:grid-cols-3 lg:mt-0 lg:flex-1"
-              role="group"
-              aria-label="Choose the student this story follows"
-            >
-              {startingPoints.map((point) => {
-                const isSelected = point.id === selectedId;
-                return (
-                  <button
-                    key={point.id}
-                    type="button"
-                    aria-pressed={isSelected}
-                    onClick={() => setSelectedId(point.id)}
-                    className={`flex items-center justify-between gap-3 rounded-xl px-5 py-4 text-left text-base font-bold leading-6 transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#a88314] ${
-                      isSelected
-                        ? 'bg-[#173552] text-white shadow-[0_8px_18px_rgba(7,22,41,0.22)]'
-                        : 'bg-white/85 text-[#19324d] hover:bg-white hover:shadow-[0_6px_14px_rgba(7,22,41,0.1)]'
-                    }`}
-                  >
-                    <span>{journeys[point.id].selectorLabel}</span>
-                    <span
-                      aria-hidden="true"
-                      className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-2 transition-colors ${
-                        isSelected ? 'border-[#e4c76c] bg-[#e4c76c] text-[#173552]' : 'border-[#c9a227]/45 text-transparent'
-                      }`}
-                    >
-                      <Check className="h-3.5 w-3.5" strokeWidth={3} />
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
+  return <>
+    <SEO title="The DA Difference | A Story That Starts With Your Child" description="Discover how DA Tuition sees each student, then follow a pathway shaped around confidence, clarity or challenge." canonicalUrl="/why-choose-da" />
+    <NavigationNew />
+    <main className="da-difference overflow-hidden bg-[#fbf8ef]">
+      <section className="da-difference__cinematic-art relative overflow-hidden bg-[#071b33]" aria-label="The DA Difference: every child arrives differently, the care does not.">
+        <img src="/images/difference/da-difference-cinematic-hero-one-to-one.png" alt="A DA tutor looking warmly toward one student during a lesson" className="da-difference__cinematic-art-image block w-full" />
+        <div className="da-difference__hero-journey absolute inset-x-0 bottom-0 z-10 px-5 pb-8 pt-16 sm:px-10 sm:pb-11 lg:px-16 lg:pb-14">
+          <div className="max-w-4xl">
+            <p className="text-xs font-black uppercase tracking-[0.18em] text-[#e4c76c] sm:text-sm">The DA journey</p>
+            <h2 className="mt-3 font-serif text-3xl leading-[1.08] tracking-[-0.025em] text-white sm:text-4xl">We notice the person doing the work.</h2>
+            <p className="mt-4 max-w-[62ch] text-base leading-7 text-[#d4dce5] sm:text-lg sm:leading-8">We pay attention to how each child learns, what they carry into the room and the kind of support that helps them move forward. The work matters. So does the child doing it.</p>
           </div>
         </div>
+      </section>
 
-        {/* THE YEAR: chapters connected by the gold thread */}
-        <div className="relative mx-auto max-w-7xl px-5 py-16 sm:py-20 lg:px-8">
-          <div aria-hidden="true" className="absolute bottom-16 left-[calc(1.25rem+17px)] top-16 hidden w-0.5 bg-gradient-to-b from-transparent via-[#c9a227] to-transparent lg:left-[calc(2rem+17px)] lg:block" />
-
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={selectedId}
-              initial={{ opacity: 0, y: 14 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.35 }}
-            >
-              {/* TERM 1 */}
-              <section aria-label="Term one" className="relative lg:pl-16">
-                <ChapterMarker numeral="I" />
-                <p className="text-sm font-black uppercase tracking-[0.18em] text-[#a88314]">Term 1 · Arrive</p>
-                <h2 className="mt-3 max-w-2xl font-serif text-3xl font-medium leading-tight tracking-[-0.02em] text-[#071629] sm:text-4xl">{journey.term1Heading}</h2>
-                <p className="mt-4 max-w-2xl text-base leading-8 text-[#30445e]">{journey.term1Body}</p>
-                <div className="mt-8 grid items-stretch gap-6 lg:grid-cols-[0.85fr_1.15fr]">
-                  <figure className="flex flex-col overflow-hidden rounded-2xl shadow-[0_12px_28px_rgba(7,22,41,0.08)]">
-                    <img src={journey.term1Image} alt={journey.term1ImageAlt} className="h-72 w-full flex-1 object-cover brightness-[1.04] contrast-[1.02] saturate-[1.03] sm:h-auto" />
-                  </figure>
-                  <div className="flex flex-col gap-4">
-                    <ArtifactCard artifact={journey.term1Artifact} />
-                    <p className="text-[15px] leading-7 text-[#40536a]">{journey.term1ArtifactCaption}</p>
-                  </div>
-                </div>
-              </section>
-
-              {/* TERM 2 */}
-              <section aria-label="Term two" className="relative mt-16 lg:pl-16">
-                <ChapterMarker numeral="II" />
-                <p className="text-sm font-black uppercase tracking-[0.18em] text-[#a88314]">Term 2 · The turn</p>
-                <h2 className="mt-3 max-w-2xl font-serif text-3xl font-medium leading-tight tracking-[-0.02em] text-[#071629] sm:text-4xl">{journey.term2Heading}</h2>
-                <p className="mt-4 max-w-xl text-base leading-8 text-[#30445e]">{journey.term2Body}</p>
-                <div className="mt-8 grid items-stretch gap-6 lg:grid-cols-[1.35fr_0.65fr]">
-                  <TutorNote note={journey.term2Note} week={journey.term2NoteWeek} author={journey.term2NoteAuthor} />
-
-                  <div className="rounded-2xl bg-[#173552] p-7 text-white sm:p-8">
-                    <p className="text-xs font-black uppercase tracking-[0.18em] text-[#e4c76c]">What changed this term</p>
-                    <dl className="mt-6 space-y-6">
-                      {journey.term2Signals.map((signal) => (
-                        <div key={signal.label} className="border-l-2 border-[#c9a227]/60 pl-5">
-                          <dt className="font-serif text-xl leading-tight text-[#e4c76c]">{signal.label}</dt>
-                          <dd className="mt-2 text-[15px] leading-7 text-white/80">{signal.detail}</dd>
-                        </div>
-                      ))}
-                    </dl>
-                  </div>
-                </div>
-              </section>
-
-              {/* TERM 3 */}
-              <section aria-label="Term three" className="relative mt-16 lg:pl-16">
-                <ChapterMarker numeral="III" />
-                <p className="text-sm font-black uppercase tracking-[0.18em] text-[#a88314]">Term 3 · Momentum</p>
-                <h2 className="mt-3 max-w-2xl font-serif text-3xl font-medium leading-tight tracking-[-0.02em] text-[#071629] sm:text-4xl">{journey.term3Heading}</h2>
-                <p className="mt-4 max-w-xl text-base leading-8 text-[#30445e]">{journey.term3Body}</p>
-                <div className="mt-8 grid gap-5 lg:grid-cols-[0.9fr_1.1fr] lg:items-stretch">
-                  <div className="flex flex-col gap-5">
-                    <figure className="overflow-hidden rounded-2xl shadow-[0_12px_28px_rgba(7,22,41,0.08)]">
-                      <img src={journey.term3Image} alt={journey.term3ImageAlt} className="h-64 w-full object-cover brightness-[1.04] contrast-[1.02] saturate-[1.03]" loading="lazy" />
-                    </figure>
-                    <blockquote className="rounded-2xl bg-[#173552] p-6 text-white">
-                      <p className="font-serif text-lg italic leading-relaxed">&ldquo;{journey.term3Quote}&rdquo;</p>
-                      <footer className="mt-4 text-[11px] font-black uppercase tracking-[0.14em] text-[#e4c76c]">{journey.term3QuoteAuthor}</footer>
-                    </blockquote>
-                  </div>
-                  <div className="grid gap-4 sm:grid-cols-2 lg:content-center">
-                    {STUDENT_GAINS.map((gain) => (
-                      <article key={gain.title} className={`rounded-2xl p-5 ${gain.tone}`}>
-                        <h3 className="font-serif text-xl leading-tight text-[#071629]">{gain.title}</h3>
-                        <p className="mt-2.5 text-sm leading-6 text-[#30445e]">{gain.body}</p>
-                      </article>
-                    ))}
-                  </div>
-                </div>
-              </section>
-
-              {/* TERM 4: the film */}
-              <section aria-label="Term four" className="relative mt-16 lg:pl-16">
-                <ChapterMarker numeral="IV" filled />
-                <p className="text-sm font-black uppercase tracking-[0.18em] text-[#a88314]">Term 4 · In their own words</p>
-                <h2 className="mt-3 max-w-5xl font-serif text-3xl font-medium italic leading-tight tracking-[-0.02em] text-[#071629] [text-wrap:balance] sm:text-4xl lg:text-5xl">&ldquo;{journey.term4Quote}&rdquo;</h2>
-
-                <div className="mt-8 rounded-3xl bg-[#102b47] p-5 text-white sm:p-7 lg:max-w-4xl">
-                  <div className="overflow-hidden rounded-2xl bg-[#173a5a]">
-                    {activeStory ? (
-                      <video key={activeStory.id} controls poster={activeStory.poster} className="aspect-video w-full" aria-label={`${activeStory.student}, student story`}>
-                        <source src={activeStory.src} />
-                        Your browser does not support the video tag.
-                      </video>
-                    ) : (
-                      <div className="flex aspect-video flex-col items-center justify-center px-6 text-center">
-                        <span className="flex h-14 w-14 items-center justify-center rounded-full border border-[#e4c76c] text-[#e4c76c]" aria-hidden="true">
-                          <Play className="ml-0.5 h-5 w-5" fill="currentColor" />
-                        </span>
-                        <p className="mt-5 font-serif text-xl text-white sm:text-2xl">Student stories on film, coming soon.</p>
-                        <p className="mt-3 max-w-md text-sm leading-6 text-[#c5cfdb]">The end of the year, in the students&apos; own words. Films appear here as they are ready.</p>
-                      </div>
-                    )}
-                  </div>
-
-                  <ul className="mt-5 grid gap-3 sm:grid-cols-3" aria-label="Student stories">
-                    {journeyStories.map((story) => {
-                      const playable = hasStoryVideo(story);
-                      const isActive = activeStory?.id === story.id;
-                      return (
-                        <li key={story.id}>
-                          <button
-                            type="button"
-                            disabled={!playable}
-                            aria-pressed={isActive}
-                            onClick={() => setActiveStoryId(story.id)}
-                            className={`w-full rounded-xl p-4 text-left transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#e4c76c] ${
-                              isActive ? 'bg-[#e4c76c] text-[#071629]' : playable ? 'bg-[#173a5a] text-white hover:bg-[#1d456a]' : 'cursor-default bg-white/[0.04] text-[#8fa1b5]'
-                            }`}
-                          >
-                            <span className="flex items-center gap-2.5">
-                              <span aria-hidden="true" className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full border ${isActive ? 'border-[#071629]/40' : playable ? 'border-[#e4c76c] text-[#e4c76c]' : 'border-white/20 text-white/30'}`}>
-                                <Play className="ml-0.5 h-3 w-3" fill="currentColor" />
-                              </span>
-                              <span className="min-w-0">
-                                <span className="block truncate font-serif text-base leading-5">{story.student}</span>
-                                <span className={`block text-[11px] font-bold uppercase tracking-wide ${isActive ? 'text-[#071629]/70' : playable ? 'text-[#8fa1b5]' : 'text-white/30'}`}>
-                                  {playable ? story.detail : 'Coming soon'}
-                                </span>
-                              </span>
-                            </span>
-                          </button>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                </div>
-              </section>
-            </motion.div>
-          </AnimatePresence>
+      <section className="relative bg-[#f5efdd] px-5 py-16 sm:py-20 lg:px-8">
+        <div className="mx-auto max-w-7xl">
+          <div className="max-w-3xl">
+            <p className="text-sm font-black uppercase tracking-[0.18em] text-[#a88314]">Life at DA</p>
+            <h2 className="mt-4 font-serif text-4xl font-medium leading-[1.06] tracking-[-0.03em] text-[#071629] sm:text-5xl">Whatever brings them here, the week looks like this.</h2>
+            <p className="mt-5 text-lg leading-8 text-[#30445e]">Five moments, week after week. It is the rhythm underneath every story on this page.</p>
+          </div>
+          <div className="da-difference__life-controls mt-8 flex justify-end">
+            <div className="flex gap-2"><button type="button" aria-label="Previous life at DA moment" onClick={() => moveLifeRail(-1)} className="da-difference__life-arrow"><ChevronLeft className="h-5 w-5" /></button><button type="button" aria-label="Next life at DA moment" onClick={() => moveLifeRail(1)} className="da-difference__life-arrow"><ChevronRight className="h-5 w-5" /></button></div>
+          </div>
+          <ol ref={lifeRailRef} onPointerEnter={() => setIsRailPaused(true)} onPointerLeave={() => setIsRailPaused(false)} onFocus={() => setIsRailPaused(true)} onBlur={() => setIsRailPaused(false)} className="da-difference__life-rail mt-8">
+            {RHYTHM.map((step, index) => <li key={step.moment} className="da-difference__life-card group"><figure className="overflow-hidden rounded-2xl bg-[#dce2df]"><img src={step.image} alt={step.alt} className="h-64 w-full object-cover transition-transform duration-500 motion-safe:group-hover:scale-105 sm:h-72" loading="lazy" /></figure><div className="mt-6"><p className="text-sm font-black uppercase tracking-[0.14em] text-[#a88314]">{index + 1} · {step.moment}</p><h3 className="mt-2.5 font-serif text-[1.7rem] leading-tight text-[#071629]">{step.title}</h3><p className="mt-3 text-base leading-7 text-[#40536a]">{step.body}</p></div></li>)}
+          </ol>
         </div>
+      </section>
 
-        {/* WEEKLY RHYTHM: its own section, true for every child */}
-        <section className="bg-[#f5efdd] px-5 py-20 sm:py-24 lg:px-8">
-          <div className="mx-auto max-w-7xl">
-            <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-80px' }} variants={fadeUp} className="max-w-3xl">
-              <p className="text-sm font-black uppercase tracking-[0.18em] text-[#a88314]">Life at DA</p>
-              <h2 className="mt-4 font-serif text-4xl font-medium leading-[1.06] tracking-[-0.03em] text-[#071629] [text-wrap:balance] sm:text-5xl">
-                Whichever student they are, the week looks like this.
-              </h2>
-              <p className="mt-5 text-base leading-8 text-[#30445e]">
-                Five moments, every week, all year. It is the rhythm underneath every story on this page.
-              </p>
-            </motion.div>
-
-            <ol className="mt-12 grid gap-10 sm:mt-16 sm:grid-cols-2 lg:grid-cols-3">
-              {WEEKLY_RHYTHM.map((step, index) => (
-                <motion.li
-                  key={step.moment}
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={{ once: true, margin: '-60px' }}
-                  variants={fadeUp}
-                  className="group"
-                >
-                  <figure className="overflow-hidden rounded-2xl bg-[#dce2df] shadow-[0_12px_26px_rgba(7,22,41,0.1)]">
-                    <img
-                      src={step.image}
-                      alt={step.alt}
-                      className="h-64 w-full object-cover brightness-[1.04] contrast-[1.02] saturate-[1.03] transition-transform duration-500 motion-safe:group-hover:scale-105 sm:h-72"
-                      loading="lazy"
-                    />
-                  </figure>
-                  <div className="mt-6">
-                    <p className="text-sm font-black uppercase tracking-[0.14em] text-[#a88314]">{index + 1} · {step.moment}</p>
-                    <h3 className="mt-2.5 font-serif text-2xl leading-tight text-[#071629]">{step.title}</h3>
-                    <p className="mt-3 text-[15px] leading-7 text-[#40536a]">{step.body}</p>
-                  </div>
-                </motion.li>
-              ))}
-
-              <motion.li initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-60px' }} variants={fadeUp} className="sm:col-span-2 lg:col-span-1">
-                <figure className="overflow-hidden rounded-2xl border border-[#c9a227]/35 bg-[#fbf8ef]">
-                  <img src="/images/difference/five-chairs.svg" alt="A diagram of one DA table seating four students with a fifth seat left empty" className="h-64 w-full object-contain p-4 sm:h-72" loading="lazy" />
-                </figure>
-                <div className="mt-6">
-                  <p className="text-sm font-black uppercase tracking-[0.14em] text-[#a88314]">Why it works</p>
-                  <h3 className="mt-2.5 font-serif text-2xl leading-tight text-[#071629]">Three to five students. Never more.</h3>
-                  <p className="mt-3 text-[15px] leading-7 text-[#40536a]">Small enough that noticing is not a promise. It is unavoidable. The quiet student speaks in a room of four.</p>
-                </div>
-              </motion.li>
-            </ol>
-          </div>
-        </section>
-
-        {/* THE WALL */}
-        <section className="bg-[#f8f7f3] px-5 py-20 sm:py-24 lg:px-8">
-          <div className="mx-auto max-w-7xl">
-            <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-80px' }} variants={fadeUp}>
-              <p className="text-sm font-black uppercase tracking-[0.18em] text-[#a88314]">And this year has happened hundreds of times</p>
-              <h2 className="mt-4 max-w-2xl font-serif text-4xl font-medium leading-[1.06] tracking-[-0.03em] text-[#071629] [text-wrap:balance] sm:text-5xl">
-                Twenty years of these stories, pinned in one place.
-              </h2>
-              <p className="mt-3 text-sm italic text-[#a88314]">Photos, quotes and tutor notes, all real, all DA families.</p>
-            </motion.div>
-
-            <div className="mt-12 grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-4">
-              <blockquote className="relative col-span-2 -rotate-1 rounded-2xl bg-[#173552] p-7 text-white shadow-[0_14px_30px_rgba(7,22,41,0.18)]">
-                <span aria-hidden="true" className="absolute -top-1.5 left-1/2 h-3.5 w-3.5 -translate-x-1/2 rounded-full bg-[#c9a227] shadow" />
-                <p className="font-serif text-xl leading-relaxed sm:text-2xl">&ldquo;DA has created an inviting and comfortable environment that makes you look forward to learning.&rdquo;</p>
-                <footer className="mt-6 text-xs font-black uppercase tracking-wide text-[#e4c76c]">Ellie Dang · 8 years at DA</footer>
-              </blockquote>
-
-              <figure className="relative rotate-1 overflow-hidden rounded-2xl shadow-[0_12px_24px_rgba(7,22,41,0.12)]">
-                <span aria-hidden="true" className="absolute -top-1.5 left-1/2 z-10 h-3.5 w-3.5 -translate-x-1/2 rounded-full bg-[#c9a227] shadow" />
-                <img src="/images/difference/wall-together-sign.jpg" alt="A wall display at DA Tuition reading Together We Make A Difference" className="h-56 w-full object-cover brightness-[1.04] contrast-[1.02] saturate-[1.03] sm:h-64" loading="lazy" />
-              </figure>
-
-              <figure className="relative -rotate-1 overflow-hidden rounded-2xl shadow-[0_12px_24px_rgba(7,22,41,0.12)]">
-                <span aria-hidden="true" className="absolute -top-1.5 left-1/2 z-10 h-3.5 w-3.5 -translate-x-1/2 rounded-full bg-[#c9a227] shadow" />
-                <img src="/images/difference/wall-whiteboard-teacher.jpg" alt="A DA teacher smiling mid-lesson at the whiteboard" className="h-56 w-full object-cover brightness-[1.04] contrast-[1.02] saturate-[1.03] sm:h-64" loading="lazy" />
-              </figure>
-
-              <figure className="relative rotate-1 overflow-hidden rounded-2xl bg-[#fffdf6] shadow-[0_12px_24px_rgba(7,22,41,0.12)]">
-                <span aria-hidden="true" className="absolute -top-1.5 left-1/2 z-10 h-3.5 w-3.5 -translate-x-1/2 rounded-full bg-[#c9a227] shadow" />
-                <img src="/images/difference/wall-tutor-note.svg" alt="A pinned tutor note from Mr Phillip about a student who has stopped rushing question three" className="h-56 w-full object-cover sm:h-64" loading="lazy" />
-              </figure>
-
-              <figure className="relative -rotate-1 overflow-hidden rounded-2xl bg-white p-3 shadow-[0_12px_24px_rgba(7,22,41,0.12)]">
-                <span aria-hidden="true" className="absolute -top-1.5 left-1/2 z-10 h-3.5 w-3.5 -translate-x-1/2 rounded-full bg-[#c9a227] shadow" />
-                <img src="/images/difference/marked-paper.svg" alt="A practice paper marked by a DA tutor, with a circled working step and a margin note" className="h-52 w-full object-contain sm:h-[14.5rem]" loading="lazy" />
-              </figure>
-
-              <blockquote className="relative rotate-1 rounded-2xl bg-white p-6 shadow-[0_10px_22px_rgba(7,22,41,0.08)]">
-                <span aria-hidden="true" className="absolute -top-1.5 left-1/2 h-3.5 w-3.5 -translate-x-1/2 rounded-full bg-[#c9a227] shadow" />
-                <p className="font-serif text-lg leading-relaxed text-[#19324d]">&ldquo;He had both a calm and encouraging attitude that made me feel very comfortable.&rdquo;</p>
-                <footer className="mt-4 text-[11px] font-black uppercase tracking-wide text-[#a88314]">Emma Thomas · Mathematics</footer>
-              </blockquote>
-
-              <figure className="relative -rotate-1 overflow-hidden rounded-2xl shadow-[0_12px_24px_rgba(7,22,41,0.12)]">
-                <span aria-hidden="true" className="absolute -top-1.5 left-1/2 z-10 h-3.5 w-3.5 -translate-x-1/2 rounded-full bg-[#c9a227] shadow" />
-                <img src="/images/difference/wall-laptop-smiles.jpg" alt="A DA tutor and student smiling together at a laptop" className="h-56 w-full object-cover brightness-[1.04] contrast-[1.02] saturate-[1.03] sm:h-64" loading="lazy" />
-              </figure>
-
-              <blockquote className="relative rotate-1 rounded-2xl bg-white p-6 shadow-[0_10px_22px_rgba(7,22,41,0.08)]">
-                <span aria-hidden="true" className="absolute -top-1.5 left-1/2 h-3.5 w-3.5 -translate-x-1/2 rounded-full bg-[#c9a227] shadow" />
-                <p className="font-serif text-lg leading-relaxed text-[#19324d]">&ldquo;They allowed me to believe that hard work trumps all.&rdquo;</p>
-                <footer className="mt-4 text-[11px] font-black uppercase tracking-wide text-[#a88314]">Anna Pham · Year 12</footer>
-              </blockquote>
-
-              <div className="col-span-2 flex min-h-[9rem] items-center justify-center rounded-2xl border-2 border-dashed border-[#c9a227] bg-[#fbf8ef]">
-                <p className="-rotate-2 font-serif text-xl italic text-[#a88314]">your child&apos;s story goes here</p>
-              </div>
+      <section id="find-your-child" className="da-difference__questionnaire relative overflow-hidden bg-[#071b33] px-5 py-20 text-white sm:px-8 sm:py-28 lg:px-10">
+        <div aria-hidden="true" className="da-difference__questionnaire-lines" />
+        <div className="relative mx-auto max-w-5xl">
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.4 }} variants={fadeUp} className="text-center"><p className="text-sm font-black uppercase tracking-[0.2em] text-[#e4c76c]">A place to begin</p><h2 className="mt-5 font-serif text-5xl leading-[0.95] tracking-[-0.04em] sm:text-6xl">Which sounds like <em className="not-italic text-[#e4c76c]">your child?</em></h2></motion.div>
+          <div className="da-difference__choice-map mt-16">
+            <p className="mb-7 text-center text-base text-[#d4dce5]">Choose the starting point that feels closest. We&rsquo;ll take you straight to the questions.</p>
+            <div className="grid gap-5 sm:grid-cols-3 sm:gap-8">
+              {startingPoints.map((point) => <button key={point.id} type="button" onClick={() => chooseStartingPoint(point.id)} className={`da-difference__choice-map-item ${selectedId === point.id ? 'is-selected' : ''}`}><PathwayIcon path={point.id} /><span className="mt-4 block font-serif text-3xl text-[#e4c76c]">{PATHWAY_LABELS[point.id]}</span><span className="mt-3 block text-base leading-7 text-[#e2e8ef]">{point.title}</span><span className="da-difference__choice-map-cta">Choose this starting point <ArrowRight className="h-4 w-4" /></span></button>)}
             </div>
-
-            <div className="mt-10 text-right">
-              <Link to="/success-stories" className="inline-flex items-center gap-2 border-b border-[#a88314] pb-2 text-sm font-black text-[#a88314] transition-colors hover:text-[#071629]">
-                Read more written stories <ArrowRight className="h-4 w-4" />
-              </Link>
-            </div>
+            <div className="da-difference__choice-map-route" aria-hidden="true"><svg viewBox="0 0 1200 130" preserveAspectRatio="none"><path d="M 200 0 C 200 58 470 52 600 128" /><path d="M 600 0 L 600 128" /><path d="M 1000 0 C 1000 58 730 52 600 128" /><circle cx="200" cy="0" r="4" /><circle cx="600" cy="0" r="4" /><circle cx="1000" cy="0" r="4" /><circle cx="600" cy="128" r="5" /></svg><span>Continue to the three quick questions</span></div>
           </div>
-        </section>
-
-        {/* CTA */}
-        <section className="relative overflow-hidden bg-[#071629] px-5 py-20 text-center text-white sm:py-24 lg:px-8">
-          <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_60%_60%_at_50%_100%,rgba(201,162,39,0.12),transparent_70%)]" />
-          <div className="relative mx-auto max-w-3xl">
-            <h2 className="font-serif text-4xl font-medium leading-[1.1] tracking-[-0.03em] [text-wrap:balance] sm:text-5xl">
-              Every one of these years started with <em className="text-[#e4c76c]">one conversation.</em>
-            </h2>
-            <p className="mt-6 text-base leading-8 text-[#d4dce5] sm:text-lg">
-              Bring your questions, concerns and hopes for your child. We will listen first, share how DA works, and help you decide whether it feels like the right fit. No pressure.
-            </p>
-            <Link to="/book-interview" className="mt-9 inline-flex items-center gap-2 rounded-full bg-[#c9a227] px-8 py-4 text-sm font-black text-[#071629] transition-colors hover:bg-[#e0bd4b]">
-              Book a conversation <ArrowRight className="h-4 w-4" />
-            </Link>
+          <div id="quick-questions" className="mx-auto mt-14 max-w-4xl scroll-mt-24 space-y-7 border-t border-[#e4c76c]/35 pt-12">
+            <p className="text-center text-sm font-black uppercase tracking-[0.2em] text-[#e4c76c]">Three quick questions</p>
+            {QUESTIONS.slice(0, Math.min(answeredCount + 1, QUESTIONS.length)).map((question, questionIndex) => <motion.fieldset key={question.question} initial={{ opacity: 0, y: 22 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="da-difference__question border-t border-[#e4c76c]/40 pt-7 first:border-t-0 first:pt-0"><legend className="flex items-baseline gap-4 font-serif text-2xl leading-tight text-white sm:text-3xl"><span className="text-[#e4c76c]">{questionIndex + 1}.</span>{question.question}</legend><div className="mt-5 grid gap-3 sm:grid-cols-3">{question.choices.map((choice) => { const active = answers[questionIndex] === choice.path; return <button key={choice.label} type="button" aria-pressed={active} onClick={() => choose(questionIndex, choice.path)} className={`min-h-28 border px-5 py-5 text-left text-[17px] leading-7 transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#e4c76c] ${active ? 'border-[#e4c76c] bg-[#e4c76c] text-[#071629]' : 'border-white/25 bg-white/[0.03] text-[#edf2f7] hover:border-[#e4c76c] hover:bg-white/[0.08]'}`}><span className="block">{choice.label}</span>{active ? <Check aria-hidden="true" className="mt-4 h-5 w-5" strokeWidth={3} /> : null}</button>; })}</div></motion.fieldset>)}
           </div>
-        </section>
-      </main>
+          <AnimatePresence>{journey ? <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="mt-14 border-t border-[#e4c76c]/45 pt-9 text-center"><p className="font-serif text-3xl text-white sm:text-4xl">This may feel familiar.</p><p className="mx-auto mt-3 max-w-2xl text-lg leading-8 text-[#d4dce5]">{startingPoints.find((point) => point.id === selectedId)?.responseHeading}</p><a href="#your-pathway" className="mt-7 inline-flex items-center gap-2 border-b border-[#e4c76c] pb-2 text-sm font-black text-[#e4c76c]">Follow this pathway <ArrowRight className="h-4 w-4" /></a></motion.div> : null}</AnimatePresence>
+        </div>
+      </section>
 
-      <FooterNew />
-    </>
-  );
+      <section id="your-pathway" className="scroll-mt-20 bg-[#fbf8ef] px-5 py-16 sm:py-24 lg:px-8">
+        <div className="mx-auto max-w-7xl">
+          <div className="flex flex-col justify-between gap-6 lg:flex-row lg:items-end"><div className="max-w-3xl"><p className="text-sm font-black uppercase tracking-[0.18em] text-[#a88314]">Three pathways. One promise.</p><h2 className="mt-4 font-serif text-4xl font-medium leading-[1.05] tracking-[-0.03em] text-[#071629] sm:text-5xl">Every child is met where they are, then taken somewhere further.</h2></div><p className="max-w-lg text-lg leading-8 text-[#40536a]">The questions above are only a starting point. Explore every story — your child may recognise pieces of themselves in more than one.</p></div>
+          <div className="mt-10 grid gap-3 sm:grid-cols-3" role="tablist" aria-label="Explore student pathways">{startingPoints.map((point) => { const active = point.id === selectedId; return <button key={point.id} id={`${point.id}-tab`} type="button" role="tab" aria-selected={active} onClick={() => setSelectedId(point.id)} className={`rounded-2xl border px-6 py-6 text-left transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#a88314] ${active ? 'border-[#173552] bg-[#173552] text-white shadow-[0_10px_20px_rgba(7,22,41,0.16)]' : 'border-[#d8c99f] bg-[#fffdf7] text-[#173552] hover:border-[#a88314]'}`}><span className="font-serif text-2xl leading-tight">{point.title}</span><span className={`mt-4 block text-base leading-7 ${active ? 'text-[#d4dce5]' : 'text-[#40536a]'}`}>{point.responseHeading}</span></button>; })}</div>
+
+          <AnimatePresence mode="wait">{journey ? <motion.div key={selectedId} initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} transition={{ duration: 0.38 }} className="relative mt-14 lg:pl-16"><motion.div aria-hidden="true" initial={{ scaleY: 0 }} animate={{ scaleY: 1 }} transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1] }} className="da-difference__path-line absolute bottom-16 left-4 top-6 hidden w-px origin-top bg-gradient-to-b from-transparent via-[#c9a227] to-transparent lg:block" />
+            <section className="mb-16 border-y border-[#c9a227]/35 py-8"><div className="grid gap-7 lg:grid-cols-[0.75fr_1.25fr]"><div><p className="text-sm font-black uppercase tracking-[0.18em] text-[#a88314]">The right kind of room</p><h3 className="mt-3 font-serif text-3xl leading-tight text-[#071629]">Support takes different shapes.</h3><p className="mt-4 text-base leading-7 text-[#40536a]">The pathway describes what a child may need. The class format is how DA meets them there.</p></div><div className="grid gap-5 sm:grid-cols-3">{PROGRAM_FITS[selectedId as PathId].map((program) => <article key={program.name} className="border-t border-[#c9a227]/45 pt-4"><h4 className="font-serif text-xl text-[#071629]">{program.name}</h4><p className="mt-2 text-[15px] leading-7 text-[#40536a]">{program.detail}</p></article>)}</div></div></section>
+            <section className="relative"><PathMarker value="I" /><p className="text-sm font-black uppercase tracking-[0.18em] text-[#a88314]">The first lesson</p><h3 className="mt-3 max-w-3xl font-serif text-4xl font-medium leading-[1.05] tracking-[-0.03em] text-[#071629] sm:text-5xl">{journey.term1Heading}</h3><p className="mt-5 max-w-3xl text-lg leading-8 text-[#30445e] sm:text-xl sm:leading-9">{journey.term1Body}</p><div className="mt-9 grid items-stretch gap-7 lg:grid-cols-[0.85fr_1.15fr]"><figure className="overflow-hidden rounded-2xl shadow-[0_12px_24px_rgba(7,22,41,0.1)]"><img src={journey.term1Image} alt={journey.term1ImageAlt} className="h-80 w-full object-cover lg:h-full" /></figure><div className="overflow-hidden rounded-2xl bg-[#fffaf0] shadow-[0_12px_24px_rgba(7,22,41,0.1)]"><p className="border-b border-[#e2d3ab] bg-[#f4e7c7] px-7 py-5 text-xs font-black uppercase tracking-[0.16em] text-[#8a6810]">{journey.term1Artifact.label}</p><div className="px-7 py-8"><p className="font-serif text-2xl leading-9 text-[#1c2b45]">{journey.term1Artifact.footerLine}</p></div><p className="border-t border-[#e2d3ab] bg-[#f7edcf] px-7 py-6 text-base leading-7 text-[#40536a]">{journey.term1ArtifactCaption}</p></div></div></section>
+            <section className="relative mt-16"><PathMarker value="II" /><p className="text-sm font-black uppercase tracking-[0.18em] text-[#a88314]">The turn</p><h3 className="mt-3 max-w-3xl font-serif text-4xl font-medium leading-[1.05] tracking-[-0.03em] text-[#071629] sm:text-5xl">{journey.term2Heading}</h3><p className="mt-5 max-w-3xl text-lg leading-8 text-[#30445e] sm:text-xl sm:leading-9">{journey.term2Body}</p><div className="mt-9 grid items-stretch gap-7 lg:grid-cols-[1.35fr_0.65fr]"><div className="rounded-2xl bg-[#fffdf6] p-8 shadow-[0_12px_24px_rgba(7,22,41,0.1)]"><p className="text-xs font-black uppercase tracking-[0.18em] text-[#8a6810]">Tutor note · {journey.term2NoteWeek}</p><blockquote className="mt-10 font-serif text-3xl italic leading-[1.3] text-[#4a3c0d] sm:text-4xl">&ldquo;{journey.term2Note}&rdquo;</blockquote><p className="mt-10 font-serif text-xl text-[#6b5510]">{journey.term2NoteAuthor}</p></div><div className="rounded-2xl bg-[#173552] p-8 text-white"><p className="text-xs font-black uppercase tracking-[0.18em] text-[#e4c76c]">What changed</p><dl className="mt-7 space-y-7">{journey.term2Signals.map((signal) => <div key={signal.label}><dt className="font-serif text-2xl leading-tight text-[#e4c76c]">{signal.label}</dt><dd className="mt-2 text-base leading-7 text-white/85">{signal.detail}</dd></div>)}</dl></div></div></section>
+            <section className="relative mt-16"><PathMarker value="III" /><p className="text-sm font-black uppercase tracking-[0.18em] text-[#a88314]">The momentum</p><h3 className="mt-3 max-w-3xl font-serif text-4xl font-medium leading-[1.05] tracking-[-0.03em] text-[#071629] sm:text-5xl">{journey.term3Heading}</h3><p className="mt-5 max-w-3xl text-lg leading-8 text-[#30445e] sm:text-xl sm:leading-9">{journey.term3Body}</p><div className="mt-9 grid gap-7 lg:grid-cols-[0.9fr_1.1fr]"><div className="space-y-6"><figure className="overflow-hidden rounded-2xl shadow-[0_12px_24px_rgba(7,22,41,0.1)]"><img src={journey.term3Image} alt={journey.term3ImageAlt} className="h-72 w-full object-cover" loading="lazy" /></figure><blockquote className="rounded-2xl bg-[#173552] p-7 text-white"><p className="font-serif text-2xl italic leading-relaxed">&ldquo;{journey.term3Quote}&rdquo;</p><footer className="mt-5 text-xs font-black uppercase tracking-[0.15em] text-[#e4c76c]">{journey.term3QuoteAuthor}</footer></blockquote></div><div className="grid gap-4 sm:grid-cols-2 lg:content-center">{GAINS.map(([title, body]) => <article key={title} className="rounded-2xl bg-[#f2ead5] p-6"><h4 className="font-serif text-2xl leading-tight text-[#071629]">{title}</h4><p className="mt-3 text-base leading-7 text-[#30445e]">{body}</p></article>)}</div></div></section>
+            <section className="relative mt-16"><PathMarker value="IV" filled /><p className="text-sm font-black uppercase tracking-[0.18em] text-[#a88314]">In their own words</p><h3 className="mt-3 max-w-5xl font-serif text-4xl font-medium italic leading-[1.08] tracking-[-0.03em] text-[#071629] sm:text-5xl">&ldquo;{journey.term4Quote}&rdquo;</h3><div className="mt-9 overflow-hidden rounded-2xl bg-[#102b47] p-4 text-white sm:p-7 lg:max-w-5xl">{story ? <video controls poster={story.poster} className="aspect-video w-full rounded-xl" aria-label={`${story.student}, student story`}><source src={story.src} />Your browser does not support the video tag.</video> : <div className="flex aspect-video flex-col items-center justify-center px-6 text-center"><span className="flex h-14 w-14 items-center justify-center rounded-full border border-[#e4c76c] text-[#e4c76c]"><Play className="ml-0.5 h-5 w-5" fill="currentColor" /></span><p className="mt-5 font-serif text-2xl">Student stories on film, coming soon.</p></div>}<p className="px-1 pt-5 font-serif text-2xl text-white">{story?.student ?? 'A DA student'}</p></div></section>
+          </motion.div> : <div className="mt-12 rounded-2xl bg-[#f2ead5] px-7 py-12 text-center"><p className="font-serif text-3xl text-[#071629]">Answer the three questions above to begin with a pathway.</p></div>}</AnimatePresence>
+        </div>
+      </section>
+
+      <section className="relative overflow-hidden bg-[#071629] px-5 py-16 text-center text-white sm:py-20 lg:px-8"><div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_60%_60%_at_50%_100%,rgba(201,162,39,0.12),transparent_70%)]" /><div className="relative mx-auto max-w-3xl"><h2 className="font-serif text-4xl font-medium leading-[1.1] tracking-[-0.03em] sm:text-5xl">Every story starts with <em className="text-[#e4c76c]">one conversation.</em></h2><p className="mt-6 text-lg leading-8 text-[#d4dce5]">Bring your questions, concerns and hopes for your child. We will listen first, then help you decide whether DA feels like the right fit.</p><Link to="/book-interview" className="mt-9 inline-flex items-center gap-2 rounded-full bg-[#c9a227] px-8 py-4 text-sm font-black text-[#071629] transition-colors hover:bg-[#e0bd4b]">Book a conversation <ArrowRight className="h-4 w-4" /></Link></div></section>
+    </main>
+    <FooterNew />
+  </>;
 }
