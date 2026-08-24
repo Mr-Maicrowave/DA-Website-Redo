@@ -6,6 +6,10 @@ import NavigationNew from '@/components/NavigationNew';
 import StickyBookButton from '@/components/StickyBookButton';
 import SEO from '@/components/SEO';
 import SubjectHero from '@/components/subjects/SubjectHero';
+import PrimaryAquarium from '@/features/primary-storybook/PrimaryAquarium';
+import PrimaryJourneyLayer from '@/features/primary-storybook/PrimaryJourneyLayer';
+import PrimaryJourneyOutro from '@/features/primary-storybook/PrimaryJourneyOutro';
+import PrimaryReferenceStory from '@/features/primary-storybook/PrimaryReferenceStory';
 
 const heroJourneyNav = [
   { number: '01', label: 'Foundation' },
@@ -189,7 +193,7 @@ const FoundationIntro = () => {
           </motion.div>
           <div className="ps-foundation-curriculum__journey">
             <motion.header className="ps-foundation-curriculum__header" {...reveal(0.08)}>
-              <h3><span>Years 1–2</span><b>Curriculum</b></h3>
+              <h3 aria-label="Years 1–2 Curriculum"><span>Years 1–2</span><b>Curriculum</b></h3>
               <i className="ps-foundation-curriculum__header-line" aria-hidden="true" />
             </motion.header>
             <div className="ps-foundation-curriculum__items">
@@ -378,6 +382,7 @@ const PrimarySchool = () => (
     <SEO title="Primary School Tutoring (Years 1–6)" description="One continuous primary learning journey from strong foundations to NAPLAN confidence, selective school preparation and high school readiness." canonicalUrl="/programs/primary-school" />
     <NavigationNew />
     <StickyBookButton />
+    <PrimaryJourneyLayer />
     <div className="ps-opening">
       <div className="ps-opening__hero">
         <SubjectHero
@@ -396,43 +401,7 @@ const PrimarySchool = () => (
         />
       </div>
     </div>
-    <div id="primary-page-content">
-      <main>
-      <section id="pathway" className="ps-landscape-breath" aria-label="Primary school journey landscape">
-        <div className="ps-landscape-breath__copy">
-          <p><i aria-hidden="true" /><span>Primary School Pathway</span><i aria-hidden="true" /></p>
-          <h2>A Clear Path<br />Through Every Stage.</h2>
-          <div className="ps-landscape-breath__rule" aria-hidden="true" />
-          <span>
-            From strong foundations to growing independence,<br className="ps-pathway-copy-break" />{' '}
-            every stage is designed to help your child<br className="ps-pathway-copy-break" />{' '}
-            move forward with confidence.
-          </span>
-        </div>
-        <div className="ps-landscape-breath__visual">
-          <img
-            className="ps-landscape-breath__image"
-            src="/images/programs/primary-school-staircase-landscape-v3.png"
-            alt="Two primary school students looking across a bright landscape beside a flower-lined stone staircase"
-          />
-          <div className="ps-landscape-breath__stages" aria-hidden="true">
-            <div className="ps-landscape-stage ps-landscape-stage--foundation"><small>Years 1–2</small><strong>Foundation</strong></div>
-            <div className="ps-landscape-stage ps-landscape-stage--growth"><small>Years 3–4</small><strong>Growth</strong></div>
-            <div className="ps-landscape-stage ps-landscape-stage--mastery"><small>Years 5–6</small><strong>Mastery</strong></div>
-          </div>
-          <nav className="ps-landscape-breath__year-nav" aria-label="Primary school year groups">
-            <a className="is-active" href="#foundation" aria-label="Go to Years 1–2">1–2</a>
-            <a href="#growth" aria-label="Go to Years 3–4">3–4</a>
-            <a href="#mastery" aria-label="Go to Years 5–6">5–6</a>
-          </nav>
-        </div>
-        <div className="ps-landscape-reflection" aria-hidden="true" />
-      </section>
-      <FoundationIntro />
-      <GrowthSection />
-      <MasterySection />
-      </main>
-    </div>
+    <PrimaryReferenceStory />
     <style>{`
       @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&display=swap');
       .primary-story{--navy:#06172c;--gold:#c8932f;--gold-light:#e1b453;--cream:#f6efe4;background:var(--cream);color:var(--navy);overflow:clip;font-family:"DM Sans",Arial,sans-serif}.primary-story *{box-sizing:border-box}.primary-story h1{font-family:"Cormorant Garamond",Georgia,serif}.ps-kicker{margin:0;color:var(--gold-light);font-size:.72rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase}.ps-button{display:inline-flex;min-height:3.35rem;align-items:center;justify-content:center;gap:.75rem;padding:0 1.45rem;border-radius:.7rem;font-size:.78rem;font-weight:700;text-decoration:none;transition:transform .3s cubic-bezier(.22,1,.36,1),background .3s ease,box-shadow .3s ease}.ps-button svg{width:1rem;transition:transform .3s ease}.ps-button:hover{transform:translateY(-2px)}.ps-button:hover svg{transform:translateX(4px)}.ps-button:focus-visible,.ps-how-link:focus-visible{outline:2px solid var(--gold-light);outline-offset:4px}.ps-button--gold{background:#d8a642;box-shadow:0 6px 8px rgba(6,23,44,.2);color:var(--navy)}.ps-button--gold:hover{background:#e3b95b}
