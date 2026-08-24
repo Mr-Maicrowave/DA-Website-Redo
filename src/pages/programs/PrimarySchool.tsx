@@ -6,9 +6,6 @@ import NavigationNew from '@/components/NavigationNew';
 import StickyBookButton from '@/components/StickyBookButton';
 import SEO from '@/components/SEO';
 import SubjectHero from '@/components/subjects/SubjectHero';
-import PrimaryAquarium from '@/features/primary-storybook/PrimaryAquarium';
-import PrimaryJourneyLayer from '@/features/primary-storybook/PrimaryJourneyLayer';
-import PrimaryJourneyOutro from '@/features/primary-storybook/PrimaryJourneyOutro';
 import PrimaryReferenceStory from '@/features/primary-storybook/PrimaryReferenceStory';
 
 const heroJourneyNav = [
@@ -382,7 +379,6 @@ const PrimarySchool = () => (
     <SEO title="Primary School Tutoring (Years 1–6)" description="One continuous primary learning journey from strong foundations to NAPLAN confidence, selective school preparation and high school readiness." canonicalUrl="/programs/primary-school" />
     <NavigationNew />
     <StickyBookButton />
-    <PrimaryJourneyLayer />
     <div className="ps-opening">
       <div className="ps-opening__hero">
         <SubjectHero

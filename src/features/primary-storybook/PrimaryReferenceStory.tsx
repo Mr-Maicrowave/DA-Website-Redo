@@ -3,62 +3,100 @@ import {
   familyReasons,
   foundationOutcomes,
   programChoices,
-  referenceStoryAssets,
-  stagePhotos,
   teachingSteps,
 } from './referenceStoryData';
 
-type StorySectionProps = {
-  id: string;
-  label: string;
-};
-
-const StorySection = ({ id, label }: StorySectionProps) => (
-  <section id={id} aria-labelledby={`${id}-title`} data-primary-reference-section={id}>
-    <h2 id={`${id}-title`}>{label}</h2>
+const FoundationSection = () => (
+  <section id="foundation" aria-labelledby="foundation-title" data-primary-reference-section="foundation">
+    <p>Years 1–2</p>
+    <h2 id="foundation-title">Strong foundations shape everything that follows.</h2>
+    <p>We build core skills, spark curiosity and nurture confidence—creating the strongest start for your child’s future.</p>
+    <ul>
+      {foundationOutcomes.map((outcome) => <li key={outcome.number}>{outcome.title}</li>)}
+    </ul>
   </section>
 );
 
-// These semantic slots deliberately own no visual composition. Their focused
-// implementations arrive in Tasks 3–6 without changing the story boundary.
-const FoundationSection = () => (
-  <StorySection id="foundation" label={`Years 1–2 foundations: ${foundationOutcomes.length} ways we build confidence`} />
-);
-
 const FoundationCurriculum = () => (
-  <StorySection id="foundation-curriculum" label={`${curriculumBands.foundation.years} ${curriculumBands.foundation.title}`} />
+  <section id="foundation-curriculum" aria-labelledby="foundation-curriculum-title" data-primary-reference-section="foundation-curriculum">
+    <p>{curriculumBands.foundation.years} {curriculumBands.foundation.title}</p>
+    <h2 id="foundation-curriculum-title">Explore what they’ll learn.</h2>
+    <ul>
+      {curriculumBands.foundation.items.map((item) => <li key={item.title}>{item.detail}</li>)}
+    </ul>
+  </section>
 );
 
 const HowWeTeach = () => (
-  <StorySection id="pathway" label={`How we teach in ${teachingSteps.length} connected moments`} />
+  <section id="pathway" aria-labelledby="pathway-title" data-primary-reference-section="pathway">
+    <h2 id="pathway-title">How we teach</h2>
+    <p>Clear teaching, guided practice and independent confidence make every lesson count.</p>
+    <ol>
+      {teachingSteps.map((step) => <li key={step.number}><h3>{step.title}</h3><p>{step.body}</p></li>)}
+    </ol>
+  </section>
 );
 
 const GrowthSection = () => (
-  <StorySection id="growth" label={`Years 3–4 growth with ${stagePhotos.growth.alt.toLowerCase()}`} />
+  <section id="growth" aria-labelledby="growth-title" data-primary-reference-section="growth">
+    <p>Years 3–4</p>
+    <h2 id="growth-title">Growing skills. Building independence.</h2>
+    <p>We help students think deeper, work independently and take on new challenges with confidence.</p>
+  </section>
 );
 
 const GrowthCurriculum = () => (
-  <StorySection id="growth-curriculum" label={`${curriculumBands.growth.years} ${curriculumBands.growth.title}`} />
+  <section id="growth-curriculum" aria-labelledby="growth-curriculum-title" data-primary-reference-section="growth-curriculum">
+    <p>{curriculumBands.growth.years} {curriculumBands.growth.title}</p>
+    <h2 id="growth-curriculum-title">Explore what they’ll master next.</h2>
+    <ul>
+      {curriculumBands.growth.items.map((item) => <li key={item.title}>{item.detail}</li>)}
+    </ul>
+  </section>
 );
 
 const MasterySection = () => (
-  <StorySection id="mastery" label={`Years 5–6 mastery with ${stagePhotos.mastery.alt.toLowerCase()}`} />
+  <section id="mastery" aria-labelledby="mastery-title" data-primary-reference-section="mastery">
+    <p>Years 5–6</p>
+    <h2 id="mastery-title">Ready for what comes next.</h2>
+    <p>We prepare students for selective entry, Year 7 transition and high school success with academic excellence and resilience.</p>
+  </section>
 );
 
 const MasteryCurriculum = () => (
-  <StorySection id="mastery-curriculum" label={`${curriculumBands.mastery.years} ${curriculumBands.mastery.title}`} />
+  <section id="mastery-curriculum" aria-labelledby="mastery-curriculum-title" data-primary-reference-section="mastery-curriculum">
+    <p>{curriculumBands.mastery.years} {curriculumBands.mastery.title}</p>
+    <h2 id="mastery-curriculum-title">Preparing them for the next chapter.</h2>
+    <ul>
+      {curriculumBands.mastery.items.map((item) => <li key={item.title}>{item.detail}</li>)}
+    </ul>
+  </section>
 );
 
 const ProgramBag = () => (
-  <StorySection id="programs" label={`Find their place across ${programChoices.length} DA programs`} />
+  <section id="programs" aria-labelledby="programs-title" data-primary-reference-section="programs">
+    <h2 id="programs-title">Find their place.</h2>
+    <p>Every child can find the support that suits how they learn best.</p>
+    <ul>
+      {programChoices.map((program) => <li key={program.id}><h3>{program.title}</h3><p>{program.description}</p></li>)}
+    </ul>
+  </section>
 );
 
 const FamilyReasons = () => (
-  <StorySection id="family-reasons" label={`${familyReasons.length} reasons families choose DA`} />
+  <section id="family-reasons" aria-labelledby="family-reasons-title" data-primary-reference-section="family-reasons">
+    <h2 id="family-reasons-title">Why families choose DA.</h2>
+    <ul>
+      {familyReasons.map((reason) => <li key={reason.title}><h3>{reason.title}</h3><p>{reason.body}</p></li>)}
+    </ul>
+  </section>
 );
 
 const PrimaryJourneyOutro = () => (
-  <StorySection id="primary-journey-outro" label={`The journey continues with ${referenceStoryAssets.closingLandscape}`} />
+  <section id="primary-journey-outro" aria-labelledby="primary-journey-outro-title" data-primary-reference-section="primary-journey-outro">
+    <h2 id="primary-journey-outro-title">A clear path. Every step matters.</h2>
+    <p>We’re here beside your child at every stage.</p>
+  </section>
 );
 
 const PrimaryReferenceStory = () => (
