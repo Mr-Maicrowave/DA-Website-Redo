@@ -11,6 +11,8 @@ const howWeTeachUrl = new URL('./HowWeTeach.tsx', import.meta.url);
 const aquariumUrl = new URL('./PrimaryAquarium.tsx', import.meta.url);
 const aquariumDataUrl = new URL('./primaryStoryData.ts', import.meta.url);
 const aquariumEngineUrl = new URL('./useAquariumEngine.ts', import.meta.url);
+const aquariumFactCardUrl = new URL('./AquariumFactCard.tsx', import.meta.url);
+const primaryReferenceCssUrl = new URL('./primary-reference.css', import.meta.url);
 
 test('Primary reference story keeps the approved ten-section sequence after the preserved hero', () => {
   assert.equal(existsSync(referenceStoryUrl), true, 'PrimaryReferenceStory must exist');
@@ -112,4 +114,43 @@ test('How We Teach renders four authentic DA photo moments from typed story data
   assert.match(source, /src=\{step\.photo\.src\}/);
   assert.match(source, /alt=\{step\.photo\.alt\}/);
   assert.equal((storyData.match(/number: '0[1-4]'/g) ?? []).length >= 8, true);
+});
+
+test('aquarium initialization is single-flight and cancellation-safe across asynchronous setup', () => {
+  const engine = readFileSync(aquariumEngineUrl, 'utf8');
+
+  assert.match(engine, /let initializing = false/);
+  assert.match(engine, /initializing \|\| dispose/);
+  assert.match(engine, /initializing = true/);
+  assert.ok((engine.match(/if \(cancelled\)/g) ?? []).length >= 3, 'cancellation must be checked after substantial awaits');
+  assert.match(engine, /catch \(error\)/);
+  assert.match(engine, /destroyAquariumApp/);
+});
+
+test('aquarium resize keeps cover layers, fish sprites, and hit targets aligned', () => {
+  const engine = readFileSync(aquariumEngineUrl, 'utf8');
+
+  assert.match(engine, /ResizeObserver/);
+  assert.match(engine, /resizeFishMotion/);
+  assert.match(engine, /coverSprite/);
+  assert.match(engine, /updateFishButton/);
+});
+
+test('aquarium fallbacks load below-fold and stop compositor work after Pixi takes over', () => {
+  const aquarium = readFileSync(aquariumUrl, 'utf8');
+  const styles = readFileSync(primaryReferenceCssUrl, 'utf8');
+
+  assert.ok((aquarium.match(/loading="lazy"/g) ?? []).length >= 6);
+  assert.ok((aquarium.match(/decoding="async"/g) ?? []).length >= 6);
+  assert.match(styles, /\.primary-aquarium\.is-pixi-ready \.primary-aquarium__bubbles[\s\S]*animation:\s*none/);
+  assert.match(styles, /\.primary-aquarium\.is-pixi-ready \.primary-aquarium__sprite[\s\S]*animation:\s*none/);
+  assert.match(styles, /visibility:\s*hidden/);
+});
+
+test('reduced-motion fact transitions are immediate on entrance and exit', () => {
+  const source = readFileSync(aquariumFactCardUrl, 'utf8');
+
+  assert.match(source, /exit=\{reducedMotion \? \{ opacity: 0 \}/);
+  assert.match(source, /transition=\{\{ duration: reducedMotion \? 0/);
+  assert.doesNotMatch(source, /exit=\{\{ opacity: 0, y: 8 \}\}/);
 });

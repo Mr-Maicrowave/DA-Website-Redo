@@ -27,15 +27,22 @@ const PrimaryAquarium = () => {
         <span className="primary-aquarium__instruction primary-aquarium__instruction--touch">Tap a fish to discover<br />a fun fact!</span>
       </div>
       <div ref={hostRef} className="primary-aquarium__canvas" aria-hidden="true">
-        <img className="primary-aquarium__water" src="/primary-reference/aquarium/water-background.png" alt="" />
-        <img className="primary-aquarium__far" src="/primary-reference/aquarium/distant-reef.png" alt="" />
-        <img className="primary-aquarium__mid" src="/primary-reference/aquarium/midground-reef.png" alt="" />
-        <img className="primary-aquarium__front" src="/primary-reference/aquarium/foreground-reef.png" alt="" />
-        <img className="primary-aquarium__bubbles" src="/primary-reference/aquarium/bubbles.png" alt="" />
+        <img className="primary-aquarium__water" src="/primary-reference/aquarium/water-background.png" alt="" loading="lazy" decoding="async" />
+        <img className="primary-aquarium__far" src="/primary-reference/aquarium/distant-reef.png" alt="" loading="lazy" decoding="async" />
+        <img className="primary-aquarium__mid" src="/primary-reference/aquarium/midground-reef.png" alt="" loading="lazy" decoding="async" />
+        <img className="primary-aquarium__front" src="/primary-reference/aquarium/foreground-reef.png" alt="" loading="lazy" decoding="async" />
+        <img className="primary-aquarium__bubbles" src="/primary-reference/aquarium/bubbles.png" alt="" loading="lazy" decoding="async" />
       </div>
       <div className="primary-aquarium__sprite-fallbacks" aria-hidden="true">
         {aquariumFish.map((fish, index) => (
-          <img key={fish.id} className={`primary-aquarium__sprite primary-aquarium__sprite--${index + 1}`} src={fish.src} alt="" />
+          <img
+            key={fish.id}
+            className={`primary-aquarium__sprite primary-aquarium__sprite--${index + 1}`}
+            src={fish.src}
+            alt=""
+            loading="lazy"
+            decoding="async"
+          />
         ))}
       </div>
       <div className="primary-aquarium__controls" aria-label="Discover aquarium creatures">

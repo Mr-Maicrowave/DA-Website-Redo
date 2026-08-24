@@ -7,6 +7,11 @@ export type FishMotion = Point & {
   speed: number;
 };
 
+type AquariumSize = {
+  width: number;
+  height: number;
+};
+
 const clampVelocity = (fish: FishMotion, maxVelocity: number): FishMotion => {
   const magnitude = Math.hypot(fish.vx, fish.vy);
   if (magnitude <= maxVelocity || magnitude === 0) return fish;
@@ -46,6 +51,22 @@ export const keepInBounds = (fish: FishMotion, width: number, height: number, ma
   if (fish.y < margin) vy = Math.abs(vy) + 0.08;
   if (fish.y > height - margin) vy = -Math.abs(vy) - 0.08;
   return { ...fish, vx, vy };
+};
+
+export const resizeFishMotion = (
+  fish: FishMotion,
+  previous: AquariumSize,
+  next: AquariumSize,
+): FishMotion => {
+  const xRatio = next.width / Math.max(previous.width, 1);
+  const yRatio = next.height / Math.max(previous.height, 1);
+  return {
+    ...fish,
+    x: fish.x * xRatio,
+    y: fish.y * yRatio,
+    vx: fish.vx * xRatio,
+    vy: fish.vy * yRatio,
+  };
 };
 
 export const markDiscovered = (discovered: string[], id: string): string[] =>

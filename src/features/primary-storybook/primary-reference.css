@@ -540,6 +540,13 @@
 .primary-aquarium.is-pixi-ready .primary-aquarium__canvas > img,
 .primary-aquarium.is-pixi-ready .primary-aquarium__sprite-fallbacks {
   opacity: 0;
+  visibility: hidden;
+  transition: opacity .35s ease, visibility 0s .35s;
+}
+
+.primary-aquarium.is-pixi-ready .primary-aquarium__bubbles,
+.primary-aquarium.is-pixi-ready .primary-aquarium__sprite {
+  animation: none;
 }
 
 .primary-reference-teaching {
