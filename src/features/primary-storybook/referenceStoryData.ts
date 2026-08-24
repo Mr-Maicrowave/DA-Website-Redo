@@ -74,6 +74,52 @@ export const foundationOutcomes = [
   },
 ] as const satisfies readonly [Outcome, Outcome, Outcome, Outcome];
 
+export const growthOutcomes = [
+  {
+    number: '01',
+    title: 'Independence and responsibility',
+    body: 'We encourage students to take ownership of their learning and develop strong habits for success.',
+  },
+  {
+    number: '02',
+    title: 'Stronger thinking and problem solving',
+    body: 'We develop logical thinking and apply strategies to solve problems with confidence.',
+  },
+  {
+    number: '03',
+    title: 'Collaborative learning',
+    body: 'We learn together, share ideas and build the communication skills needed for the future.',
+  },
+  {
+    number: '04',
+    title: 'NAPLAN readiness',
+    body: 'We build the skills and stamina needed for NAPLAN and future academic challenges.',
+  },
+] as const satisfies readonly [Outcome, Outcome, Outcome, Outcome];
+
+export const masteryOutcomes = [
+  {
+    number: '01',
+    title: 'Advanced literacy & comprehension',
+    body: 'We develop strong analytical reading skills and deeper understanding across a wide range of texts.',
+  },
+  {
+    number: '02',
+    title: 'Mathematical reasoning & problem solving',
+    body: 'We strengthen mathematical thinking and apply strategies to solve complex problems with accuracy and confidence.',
+  },
+  {
+    number: '03',
+    title: 'Independent study & organisation',
+    body: 'We build effective study habits, time management and the independence needed to thrive in high school and beyond.',
+  },
+  {
+    number: '04',
+    title: 'High school readiness',
+    body: 'We prepare students for Year 7 transition, selective schools and future academic challenges.',
+  },
+] as const satisfies readonly [Outcome, Outcome, Outcome, Outcome];
+
 export const curriculumBands = {
   foundation: {
     years: 'Years 1–2',

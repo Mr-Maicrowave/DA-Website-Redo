@@ -1,48 +1,15 @@
 import {
-  curriculumBands,
   familyReasons,
   programChoices,
 } from './referenceStoryData';
 import FoundationCurriculum from './FoundationCurriculum';
 import FoundationSection from './FoundationSection';
+import GrowthCurriculum from './GrowthCurriculum';
+import GrowthSection from './GrowthSection';
 import HowWeTeach from './HowWeTeach';
+import MasteryCurriculum from './MasteryCurriculum';
+import MasterySection from './MasterySection';
 import './primary-reference.css';
-
-const GrowthSection = () => (
-  <section id="growth" aria-labelledby="growth-title" data-primary-reference-section="growth">
-    <p>Years 3–4</p>
-    <h2 id="growth-title">Growing skills. Building independence.</h2>
-    <p>We help students think deeper, work independently and take on new challenges with confidence.</p>
-  </section>
-);
-
-const GrowthCurriculum = () => (
-  <section id="growth-curriculum" aria-labelledby="growth-curriculum-title" data-primary-reference-section="growth-curriculum">
-    <p>{curriculumBands.growth.years} {curriculumBands.growth.title}</p>
-    <h2 id="growth-curriculum-title">Explore what they’ll master next.</h2>
-    <ul>
-      {curriculumBands.growth.items.map((item) => <li key={item.title}>{item.detail}</li>)}
-    </ul>
-  </section>
-);
-
-const MasterySection = () => (
-  <section id="mastery" aria-labelledby="mastery-title" data-primary-reference-section="mastery">
-    <p>Years 5–6</p>
-    <h2 id="mastery-title">Ready for what comes next.</h2>
-    <p>We prepare students for selective entry, Year 7 transition and high school success with academic excellence and resilience.</p>
-  </section>
-);
-
-const MasteryCurriculum = () => (
-  <section id="mastery-curriculum" aria-labelledby="mastery-curriculum-title" data-primary-reference-section="mastery-curriculum">
-    <p>{curriculumBands.mastery.years} {curriculumBands.mastery.title}</p>
-    <h2 id="mastery-curriculum-title">Preparing them for the next chapter.</h2>
-    <ul>
-      {curriculumBands.mastery.items.map((item) => <li key={item.title}>{item.detail}</li>)}
-    </ul>
-  </section>
-);
 
 const ProgramBag = () => (
   <section id="programs" aria-labelledby="programs-title" data-primary-reference-section="programs">

@@ -8,6 +8,10 @@ const referenceStoryDataUrl = new URL('./referenceStoryData.ts', import.meta.url
 const foundationUrl = new URL('./FoundationSection.tsx', import.meta.url);
 const foundationCurriculumUrl = new URL('./FoundationCurriculum.tsx', import.meta.url);
 const howWeTeachUrl = new URL('./HowWeTeach.tsx', import.meta.url);
+const growthUrl = new URL('./GrowthSection.tsx', import.meta.url);
+const growthCurriculumUrl = new URL('./GrowthCurriculum.tsx', import.meta.url);
+const masteryUrl = new URL('./MasterySection.tsx', import.meta.url);
+const masteryCurriculumUrl = new URL('./MasteryCurriculum.tsx', import.meta.url);
 const aquariumUrl = new URL('./PrimaryAquarium.tsx', import.meta.url);
 const aquariumDataUrl = new URL('./primaryStoryData.ts', import.meta.url);
 const aquariumEngineUrl = new URL('./useAquariumEngine.ts', import.meta.url);
@@ -46,7 +50,7 @@ test('Primary reference story keeps the approved ten-section sequence after the 
 });
 
 test('story slots expose approved copy as semantic HTML rather than implementation artifacts', () => {
-  const source = [referenceStoryUrl, foundationUrl, howWeTeachUrl]
+  const source = [referenceStoryUrl, foundationUrl, howWeTeachUrl, growthUrl, masteryUrl]
     .filter((url) => existsSync(url))
     .map((url) => readFileSync(url, 'utf8'))
     .join('\n');
@@ -114,6 +118,76 @@ test('How We Teach renders four authentic DA photo moments from typed story data
   assert.match(source, /src=\{step\.photo\.src\}/);
   assert.match(source, /alt=\{step\.photo\.alt\}/);
   assert.equal((storyData.match(/number: '0[1-4]'/g) ?? []).length >= 8, true);
+});
+
+test('Years 3–4 renders the complete growth story from typed outcomes and an authentic group photo', () => {
+  assert.equal(existsSync(growthUrl), true, 'GrowthSection must exist');
+  assert.equal(existsSync(growthCurriculumUrl), true, 'GrowthCurriculum must exist');
+
+  const story = readFileSync(referenceStoryUrl, 'utf8');
+  const growth = readFileSync(growthUrl, 'utf8');
+  const curriculum = readFileSync(growthCurriculumUrl, 'utf8');
+  const data = readFileSync(referenceStoryDataUrl, 'utf8');
+  const source = `${growth}\n${curriculum}\n${data}`;
+
+  assert.match(story, /import GrowthSection from '\.\/GrowthSection'/);
+  assert.match(story, /import GrowthCurriculum from '\.\/GrowthCurriculum'/);
+  assert.match(growth, /growthOutcomes\.map/);
+  assert.match(growth, /stagePhotos\.growth/);
+  assert.match(growth, /<figure/);
+  assert.match(growth, /loading="lazy"/);
+  assert.match(growth, /decoding="async"/);
+  assert.match(curriculum, /curriculumBands\.growth/);
+  assert.match(curriculum, /curriculum\.items\.map/);
+  [
+    'Growing skills. Building independence.',
+    'Independence and responsibility',
+    'Stronger thinking and problem solving',
+    'Collaborative learning',
+    'NAPLAN readiness',
+    'Reading to learn through comprehension and inference',
+    'Narrative and informative writing with language conventions',
+    'NAPLAN-aligned numeracy, data and multi-step problem solving',
+    '/images/community/tutor_mentor_girls.jpg',
+    '/primary-reference/decor/growth-crayon-set.png',
+  ].forEach((copy) => assert.ok(source.includes(copy), `growth story must include ${copy}`));
+  assert.doesNotMatch(source, /Card/);
+});
+
+test('Years 5–6 remains complete at every breakpoint with four outcomes, curriculum and classroom photography', () => {
+  assert.equal(existsSync(masteryUrl), true, 'MasterySection must exist');
+  assert.equal(existsSync(masteryCurriculumUrl), true, 'MasteryCurriculum must exist');
+
+  const story = readFileSync(referenceStoryUrl, 'utf8');
+  const mastery = readFileSync(masteryUrl, 'utf8');
+  const curriculum = readFileSync(masteryCurriculumUrl, 'utf8');
+  const data = readFileSync(referenceStoryDataUrl, 'utf8');
+  const styles = readFileSync(primaryReferenceCssUrl, 'utf8');
+  const source = `${mastery}\n${curriculum}\n${data}`;
+
+  assert.match(story, /import MasterySection from '\.\/MasterySection'/);
+  assert.match(story, /import MasteryCurriculum from '\.\/MasteryCurriculum'/);
+  assert.match(mastery, /masteryOutcomes\.map/);
+  assert.match(mastery, /stagePhotos\.mastery/);
+  assert.match(mastery, /<figure/);
+  assert.match(mastery, /loading="lazy"/);
+  assert.match(mastery, /decoding="async"/);
+  assert.match(curriculum, /curriculumBands\.mastery/);
+  assert.match(curriculum, /curriculum\.items\.map/);
+  [
+    'Ready for what comes next.',
+    'Advanced literacy & comprehension',
+    'Mathematical reasoning & problem solving',
+    'Independent study & organisation',
+    'High school readiness',
+    'Persuasive and narrative writing at a high level',
+    'Selective-school reasoning, speed and accuracy',
+    'Independent study habits, organisation and Year 7 preparation',
+    '/images/community/0X1A7290.jpeg',
+    '/primary-reference/decor/mastery-crayon-set.png',
+  ].forEach((copy) => assert.ok(source.includes(copy), `mastery story must include ${copy}`));
+  assert.doesNotMatch(styles, /\.primary-reference-mastery[^,{]*\{[^}]*display:\s*none/s);
+  assert.doesNotMatch(source, /Card/);
 });
 
 test('aquarium initialization is single-flight and cancellation-safe across asynchronous setup', () => {
