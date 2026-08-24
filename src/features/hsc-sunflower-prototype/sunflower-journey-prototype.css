@@ -1,0 +1,84 @@
+.sunflowerJourney {
+  position: relative;
+  width: 100%;
+  height: 800vh;
+  background: #b9943d;
+  overflow-x: clip;
+}
+
+.sunflowerStage {
+  position: relative;
+  width: 100vw;
+  height: 100svh;
+  overflow: hidden;
+  isolation: isolate;
+  background: #d9b65f;
+}
+
+.backgroundLayer,
+.midgroundLayer,
+.foregroundLayer,
+.atmosphereLayer,
+.storyLayer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.backgroundLayer { z-index: 1; }
+.midgroundLayer { z-index: 2; }
+.foregroundLayer { z-index: 3; }
+.atmosphereLayer { z-index: 4; }
+.storyLayer { z-index: 5; }
+
+.sunflowerBackground {
+  position: absolute;
+  inset: -4%;
+  width: 108%;
+  height: 108%;
+  max-width: none;
+  object-fit: cover;
+  opacity: 0;
+  visibility: hidden;
+  will-change: transform, opacity;
+}
+
+.sunflowerBackground:first-child {
+  opacity: 1;
+  visibility: visible;
+}
+
+.midgroundLayer .sunflowerPlant {
+  opacity: 0;
+}
+
+.sunflowerPlant {
+  position: absolute;
+  left: var(--plant-x);
+  bottom: var(--plant-y);
+  width: var(--plant-width);
+  max-width: none;
+  height: auto;
+  opacity: var(--plant-opacity);
+  transform: translateX(-50%);
+  transform-origin: 50% 100%;
+  will-change: transform, opacity;
+}
+
+.atmosphereLayer {
+  background:
+    radial-gradient(circle at 82% 28%, rgba(255, 222, 145, 0.12), transparent 40%),
+    linear-gradient(180deg, rgba(17, 32, 34, 0), rgba(10, 25, 24, 0.06));
+  mix-blend-mode: multiply;
+  opacity: 0.15;
+  will-change: opacity, background-color;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sunflowerPlant,
+  .sunflowerBackground,
+  .atmosphereLayer {
+    animation: none !important;
+    transition: none !important;
+  }
+}
