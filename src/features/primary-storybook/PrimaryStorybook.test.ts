@@ -16,6 +16,7 @@ const aquariumUrl = new URL('./PrimaryAquarium.tsx', import.meta.url);
 const aquariumDataUrl = new URL('./primaryStoryData.ts', import.meta.url);
 const aquariumEngineUrl = new URL('./useAquariumEngine.ts', import.meta.url);
 const aquariumFactCardUrl = new URL('./AquariumFactCard.tsx', import.meta.url);
+const programBagUrl = new URL('./ProgramBag.tsx', import.meta.url);
 const primaryReferenceCssUrl = new URL('./primary-reference.css', import.meta.url);
 
 test('Primary reference story keeps the approved ten-section sequence after the preserved hero', () => {
@@ -227,4 +228,31 @@ test('reduced-motion fact transitions are immediate on entrance and exit', () =>
   assert.match(source, /exit=\{reducedMotion \? \{ opacity: 0 \}/);
   assert.match(source, /transition=\{\{ duration: reducedMotion \? 0/);
   assert.doesNotMatch(source, /exit=\{\{ opacity: 0, y: 8 \}\}/);
+});
+
+test('program bag exposes three native pressed-state controls around a stationary branded bag', () => {
+  assert.equal(existsSync(programBagUrl), true, 'ProgramBag must exist');
+
+  const story = readFileSync(referenceStoryUrl, 'utf8');
+  const programBag = readFileSync(programBagUrl, 'utf8');
+  const data = readFileSync(referenceStoryDataUrl, 'utf8');
+  const styles = readFileSync(primaryReferenceCssUrl, 'utf8');
+  const programData = data.slice(
+    data.indexOf('export const programChoices'),
+    data.indexOf('export const familyReasons'),
+  );
+
+  assert.match(story, /import ProgramBag from '\.\/ProgramBag'/);
+  assert.match(story, /<ProgramBag/);
+  assert.match(programBag, /programChoices\.map/);
+  assert.match(programBag, /<button/);
+  assert.match(programBag, /aria-pressed=\{isSelected\}/);
+  assert.match(programBag, /role="group"/);
+  assert.match(programBag, /src="\/images\/da-logo\.png"/);
+  assert.match(programBag, /primaryAssetManifest\.schoolbag/);
+  assert.equal((programData.match(/id: '(?:small-group|private-tuition|creative-writing)'/g) ?? []).length, 3);
+  assert.doesNotMatch(programBag, /\/primary-reference\/programs\/[^'"}]*logo/i);
+  assert.match(styles, /translate3d\(0,\s*-14px,\s*0\)/);
+  assert.match(styles, /\.primary-program-bag__control:focus-visible/);
+  assert.match(styles, /min-(?:width|height):\s*44px/);
 });

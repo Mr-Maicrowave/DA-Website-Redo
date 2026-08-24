@@ -1,6 +1,5 @@
 import {
   familyReasons,
-  programChoices,
 } from './referenceStoryData';
 import FoundationCurriculum from './FoundationCurriculum';
 import FoundationSection from './FoundationSection';
@@ -9,17 +8,8 @@ import GrowthSection from './GrowthSection';
 import HowWeTeach from './HowWeTeach';
 import MasteryCurriculum from './MasteryCurriculum';
 import MasterySection from './MasterySection';
+import ProgramBag from './ProgramBag';
 import './primary-reference.css';
-
-const ProgramBag = () => (
-  <section id="programs" aria-labelledby="programs-title" data-primary-reference-section="programs">
-    <h2 id="programs-title">Find their place.</h2>
-    <p>Every child can find the support that suits how they learn best.</p>
-    <ul>
-      {programChoices.map((program) => <li key={program.id}><h3>{program.title}</h3><p>{program.description}</p></li>)}
-    </ul>
-  </section>
-);
 
 const FamilyReasons = () => (
   <section id="family-reasons" aria-labelledby="family-reasons-title" data-primary-reference-section="family-reasons">

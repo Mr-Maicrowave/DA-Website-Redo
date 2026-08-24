@@ -1080,6 +1080,248 @@
   color: #2d5b77;
 }
 
+.primary-program-bag {
+  position: relative;
+  display: grid;
+  width: min(100% - clamp(2rem, 7vw, 7rem), 90rem);
+  min-height: clamp(44rem, 56vw, 52rem);
+  align-items: center;
+  grid-template-columns: minmax(17rem, .7fr) minmax(34rem, 1.65fr);
+  gap: clamp(2rem, 5vw, 6rem);
+  margin: 0 auto;
+  padding: clamp(5.5rem, 9vw, 8.5rem) 0 clamp(6rem, 10vw, 9rem);
+  isolation: isolate;
+}
+
+.primary-program-bag::before {
+  position: absolute;
+  z-index: -1;
+  right: -7%;
+  bottom: 9%;
+  width: min(63vw, 56rem);
+  height: 20%;
+  border-radius: 50%;
+  background: rgba(79, 148, 196, .12);
+  content: "";
+  filter: blur(2px);
+  transform: rotate(-2deg);
+}
+
+.primary-program-bag__intro {
+  position: relative;
+  z-index: 6;
+  align-self: center;
+}
+
+.primary-program-bag__chapter {
+  margin: 0 0 .8rem;
+  color: #8b641a;
+  font-size: .78rem;
+  font-weight: 800;
+}
+
+.primary-program-bag__intro > h2 {
+  max-width: 8ch;
+  margin: 0;
+  font-size: clamp(3rem, 5vw, 5.75rem);
+  font-weight: 600;
+  letter-spacing: -.035em;
+  line-height: .94;
+}
+
+.primary-program-bag__lead {
+  max-width: 34ch;
+  margin: 1.35rem 0 0;
+  color: #314e64;
+  font-size: .95rem;
+  line-height: 1.7;
+}
+
+.primary-program-bag__guide {
+  margin-top: clamp(2.5rem, 5vw, 4.25rem);
+}
+
+.primary-program-bag__guide > h3 {
+  margin: 0 0 .45rem;
+  color: #6f5118;
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.primary-program-bag__guide ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.primary-program-bag__guide li {
+  display: grid;
+  grid-template-columns: 2rem 1fr;
+  gap: .75rem;
+  border-top: 1px solid rgba(7, 27, 53, .17);
+  padding: .9rem 0 1rem;
+}
+
+.primary-program-bag__guide li:last-child {
+  border-bottom: 1px solid rgba(7, 27, 53, .17);
+}
+
+.primary-program-bag__guide li > span {
+  padding-top: .16rem;
+  color: #956b1c;
+  font-size: .68rem;
+  font-weight: 800;
+}
+
+.primary-program-bag__guide h4 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  line-height: 1.1;
+}
+
+.primary-program-bag__guide li[data-selected="true"] h4 {
+  color: #744f10;
+}
+
+.primary-program-bag__guide p {
+  margin: .35rem 0 0;
+  color: #38556a;
+  font-size: .73rem;
+  line-height: 1.5;
+}
+
+.primary-program-bag__stage {
+  position: relative;
+  min-width: 0;
+  min-height: clamp(36rem, 47vw, 44rem);
+}
+
+.primary-program-bag__stage::after {
+  position: absolute;
+  z-index: 0;
+  right: 4%;
+  bottom: 3%;
+  left: 7%;
+  height: 8%;
+  border-radius: 50%;
+  background: rgba(7, 27, 53, .16);
+  content: "";
+  filter: blur(13px);
+}
+
+.primary-program-bag__bag {
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  left: 18%;
+  width: min(64%, 35rem);
+  pointer-events: none;
+}
+
+.primary-program-bag__bag-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 7px 4px rgba(7, 27, 53, .16));
+}
+
+.primary-program-bag__crest {
+  position: absolute;
+  z-index: 3;
+  top: 48%;
+  left: 43%;
+  width: 15%;
+  height: auto;
+  filter: drop-shadow(0 2px 1px rgba(7, 27, 53, .2));
+}
+
+.primary-program-bag__controls {
+  position: absolute;
+  z-index: 3;
+  inset: 0;
+}
+
+.primary-program-bag__control {
+  position: absolute;
+  min-width: 44px;
+  min-height: 44px;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: var(--primary-reference-navy);
+  cursor: pointer;
+  font: inherit;
+}
+
+.primary-program-bag__control--small-group {
+  z-index: 2;
+  top: 10%;
+  left: 0;
+  width: min(32%, 16.5rem);
+}
+
+.primary-program-bag__control--private-tuition {
+  z-index: 5;
+  top: 63%;
+  right: 0;
+  width: min(43%, 23rem);
+}
+
+.primary-program-bag__control--creative-writing {
+  z-index: 1;
+  top: 7%;
+  right: 0;
+  width: min(25%, 13.5rem);
+}
+
+.primary-program-bag__object {
+  display: block;
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 4px 2px rgba(7, 27, 53, .14));
+  opacity: .64;
+  transform: translate3d(0, 0, 0);
+  transition:
+    filter .35s cubic-bezier(.22, 1, .36, 1),
+    opacity .35s cubic-bezier(.22, 1, .36, 1),
+    transform .35s cubic-bezier(.22, 1, .36, 1);
+}
+
+.primary-program-bag__control[aria-pressed="true"] {
+  z-index: 7;
+}
+
+.primary-program-bag__control[aria-pressed="true"] .primary-program-bag__object {
+  filter: drop-shadow(0 10px 5px rgba(7, 27, 53, .24));
+  opacity: 1;
+  transform: translate3d(0, -14px, 0);
+}
+
+.primary-program-bag__control > span {
+  display: inline-block;
+  margin-top: .45rem;
+  border-bottom: 1px solid currentColor;
+  padding: .18rem 0;
+  font-size: .72rem;
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+.primary-program-bag__control[aria-pressed="true"] > span {
+  color: #8a6118;
+}
+
+.primary-program-bag__control:focus-visible {
+  border-radius: .35rem;
+  outline: 3px solid #9a6d19;
+  outline-offset: 5px;
+}
+
+.primary-program-bag__control:hover .primary-program-bag__object {
+  opacity: 1;
+}
+
 @keyframes primary-reference-bubbles {
   to { transform: translate3d(0, -4%, 0); }
 }
@@ -1139,6 +1381,17 @@
 
   .primary-reference-teaching li:nth-child(even) { padding-top: 4rem; }
   .primary-reference-teaching__path { top: 25%; }
+
+  .primary-program-bag {
+    width: min(100% - 3rem, 70rem);
+    grid-template-columns: minmax(15rem, .7fr) minmax(27rem, 1.4fr);
+    gap: 2rem;
+  }
+
+  .primary-program-bag__bag {
+    left: 16%;
+    width: 66%;
+  }
 }
 
 @media (max-width: 900px) {
@@ -1207,6 +1460,33 @@
 
   .primary-reference-mastery__outcomes li:nth-child(3) {
     padding-left: 0;
+  }
+
+  .primary-program-bag {
+    display: block;
+    width: min(100% - 3rem, 46rem);
+    min-height: 0;
+  }
+
+  .primary-program-bag__intro {
+    display: grid;
+    grid-template-columns: minmax(15rem, .8fr) minmax(18rem, 1fr);
+    column-gap: 3rem;
+  }
+
+  .primary-program-bag__lead {
+    grid-column: 1;
+  }
+
+  .primary-program-bag__guide {
+    grid-row: 1 / span 3;
+    grid-column: 2;
+    margin-top: 0;
+  }
+
+  .primary-program-bag__stage {
+    min-height: 39rem;
+    margin-top: 3rem;
   }
 }
 
@@ -1461,6 +1741,115 @@
 
   .primary-reference-mastery__outcomes h3 {
     max-width: 19ch;
+  }
+
+  .primary-program-bag {
+    width: min(100% - 2rem, 34rem);
+    padding: 5rem 0 6rem;
+  }
+
+  .primary-program-bag::before {
+    right: -30%;
+    bottom: 20%;
+    width: 125%;
+    height: 11%;
+  }
+
+  .primary-program-bag__intro {
+    display: block;
+  }
+
+  .primary-program-bag__intro > h2 {
+    max-width: 7ch;
+    font-size: clamp(3.25rem, 15vw, 4.65rem);
+  }
+
+  .primary-program-bag__lead {
+    max-width: 36ch;
+  }
+
+  .primary-program-bag__guide {
+    margin-top: 2.75rem;
+  }
+
+  .primary-program-bag__stage {
+    display: flex;
+    min-height: 0;
+    flex-direction: column;
+    margin-top: 3.5rem;
+    overflow: visible;
+  }
+
+  .primary-program-bag__stage::after {
+    top: clamp(20rem, 79vw, 27rem);
+    right: 4%;
+    bottom: auto;
+    left: 4%;
+    height: 2.5rem;
+  }
+
+  .primary-program-bag__bag {
+    position: relative;
+    top: auto;
+    left: auto;
+    order: 1;
+    width: min(92%, 29rem);
+    align-self: center;
+  }
+
+  .primary-program-bag__controls {
+    position: relative;
+    order: 2;
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+    margin-top: -3rem;
+  }
+
+  .primary-program-bag__control,
+  .primary-program-bag__control--small-group,
+  .primary-program-bag__control--private-tuition,
+  .primary-program-bag__control--creative-writing {
+    position: relative;
+    top: auto;
+    right: auto;
+    left: auto;
+    display: grid;
+    width: min(84%, 24rem);
+    min-height: 94px;
+    grid-template-columns: minmax(7rem, 42%) 1fr;
+    align-items: center;
+    gap: 1rem;
+    text-align: left;
+  }
+
+  .primary-program-bag__control + .primary-program-bag__control {
+    margin-top: -1.1rem;
+  }
+
+  .primary-program-bag__control--small-group {
+    align-self: flex-start;
+  }
+
+  .primary-program-bag__control--private-tuition {
+    align-self: flex-end;
+  }
+
+  .primary-program-bag__control--creative-writing {
+    align-self: center;
+  }
+
+  .primary-program-bag__control--small-group .primary-program-bag__object,
+  .primary-program-bag__control--creative-writing .primary-program-bag__object {
+    width: 82%;
+    justify-self: center;
+  }
+
+  .primary-program-bag__control > span {
+    margin-top: 0;
+    justify-self: start;
+    font-size: .78rem;
   }
 }
 
