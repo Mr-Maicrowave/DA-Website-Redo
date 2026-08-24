@@ -1,0 +1,871 @@
+.primary-reference-story {
+  --primary-reference-cream: #f7f0e3;
+  --primary-reference-paper: #fffaf0;
+  --primary-reference-navy: #071b35;
+  --primary-reference-blue: #4f94c4;
+  --primary-reference-pink: #db7d91;
+  --primary-reference-green: #6f9d62;
+  --primary-reference-gold: #c58d25;
+  position: relative;
+  width: 100%;
+  overflow-x: clip;
+  background: var(--primary-reference-cream);
+  color: var(--primary-reference-navy);
+}
+
+.primary-reference-story h2,
+.primary-reference-story h3,
+.primary-reference-story h4 {
+  color: inherit;
+  font-family: var(--font-heading, "Cormorant Garamond", Georgia, serif);
+  text-wrap: balance;
+}
+
+.primary-reference-story p {
+  text-wrap: pretty;
+}
+
+.primary-reference-year-nav {
+  position: relative;
+  z-index: 20;
+  display: flex;
+  width: min(100% - 2rem, 58rem);
+  min-height: 4rem;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(1.3rem, 5vw, 4.5rem);
+  margin: 0 auto;
+  border-bottom: 1px solid rgba(7, 27, 53, .18);
+}
+
+.primary-reference-year-nav a {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  color: #183955;
+  font-size: .78rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.primary-reference-year-nav a:focus-visible {
+  outline: 3px solid var(--primary-reference-gold);
+  outline-offset: 3px;
+}
+
+.primary-reference-foundation {
+  position: relative;
+  display: grid;
+  width: min(100% - clamp(2rem, 8vw, 8rem), 90rem);
+  min-height: 46rem;
+  align-items: center;
+  grid-template-columns: minmax(14rem, .8fr) minmax(20rem, 1.15fr) minmax(18rem, 1fr);
+  gap: clamp(2rem, 4vw, 4.75rem);
+  margin: 0 auto;
+  padding: clamp(5rem, 9vw, 8rem) 0;
+  isolation: isolate;
+}
+
+.primary-reference-foundation__doodles {
+  position: absolute;
+  z-index: -1;
+  inset: 3% -5% 0;
+  pointer-events: none;
+}
+
+.primary-reference-foundation__doodles img {
+  position: absolute;
+  top: 2%;
+  right: -2%;
+  width: min(32vw, 31rem);
+  opacity: .72;
+  transform: rotate(2deg);
+}
+
+.primary-reference-foundation__intro {
+  align-self: start;
+  padding-top: clamp(2.5rem, 6vw, 6rem);
+}
+
+.primary-reference-chapter {
+  display: flex;
+  align-items: center;
+  gap: .8rem;
+  margin-bottom: 1.4rem;
+}
+
+.primary-reference-chapter span {
+  display: grid;
+  width: 2.75rem;
+  aspect-ratio: 1;
+  place-items: center;
+  border: 1px solid rgba(7, 27, 53, .38);
+  border-radius: 50%;
+  color: #8b641a;
+  font: 700 .76rem/1 var(--font-body, Cabin, sans-serif);
+}
+
+.primary-reference-chapter p {
+  margin: 0;
+  color: #815e1b;
+  font-size: .82rem;
+  font-weight: 700;
+}
+
+.primary-reference-foundation__intro h2 {
+  max-width: 11ch;
+  margin: 0;
+  font-size: clamp(2.8rem, 4.35vw, 4.85rem);
+  font-weight: 600;
+  letter-spacing: -.035em;
+  line-height: .96;
+}
+
+.primary-reference-foundation__lead {
+  max-width: 31ch;
+  margin: 1.45rem 0 0;
+  color: #2f4b61;
+  font-size: .94rem;
+  line-height: 1.7;
+}
+
+.primary-reference-foundation__photo {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  margin: 1rem 0 0;
+  transform: rotate(-1.6deg);
+}
+
+.primary-reference-foundation__photo::before {
+  position: absolute;
+  z-index: 3;
+  top: -1.2rem;
+  left: 43%;
+  width: 5.4rem;
+  height: 1.8rem;
+  background: rgba(241, 200, 116, .78);
+  box-shadow: 0 2px 4px rgba(53, 42, 26, .12);
+  content: "";
+  transform: rotate(4deg);
+}
+
+.primary-reference-foundation__photo > div {
+  aspect-ratio: 4 / 4.8;
+  overflow: hidden;
+  background: var(--primary-reference-paper);
+  box-shadow: 0 8px 8px rgba(7, 27, 53, .15);
+  clip-path: polygon(2% 3%, 25% 1%, 47% 3%, 71% 1%, 98% 4%, 99% 25%, 97% 49%, 100% 73%, 97% 98%, 72% 96%, 48% 99%, 24% 96%, 1% 98%, 3% 73%, 1% 49%, 3% 25%);
+}
+
+.primary-reference-foundation__photo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 48% center;
+}
+
+.primary-reference-foundation__photo figcaption {
+  width: 82%;
+  margin: .75rem auto 0;
+  color: #536574;
+  font-family: var(--font-heading, "Cormorant Garamond", Georgia, serif);
+  font-size: .93rem;
+  font-style: italic;
+  text-align: center;
+}
+
+.primary-reference-foundation__outcomes {
+  align-self: center;
+  margin: 3.2rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.primary-reference-foundation__outcomes li {
+  display: grid;
+  grid-template-columns: 2.3rem 1fr;
+  gap: 1rem;
+  padding: 1.15rem 0 1.25rem;
+  border-top: 1px solid rgba(7, 27, 53, .18);
+}
+
+.primary-reference-foundation__outcomes li:last-child {
+  border-bottom: 1px solid rgba(7, 27, 53, .18);
+}
+
+.primary-reference-foundation__outcomes li > span {
+  color: #a17320;
+  font: 700 .72rem/1.6 var(--font-body, Cabin, sans-serif);
+}
+
+.primary-reference-foundation__outcomes h3 {
+  margin: 0;
+  font-size: clamp(1.25rem, 1.6vw, 1.7rem);
+  font-weight: 600;
+  line-height: 1.06;
+}
+
+.primary-reference-foundation__outcomes p {
+  margin: .48rem 0 0;
+  color: #3f596d;
+  font-size: .78rem;
+  line-height: 1.55;
+}
+
+.primary-reference-curriculum {
+  position: relative;
+  display: grid;
+  width: min(100% - clamp(1rem, 4vw, 4rem), 90rem);
+  min-height: clamp(38rem, 52vw, 48rem);
+  grid-template-columns: minmax(19rem, 38fr) minmax(0, 62fr);
+  margin: 0 auto;
+  overflow: hidden;
+  background: var(--primary-reference-paper);
+  box-shadow: 0 8px 8px rgba(7, 27, 53, .1);
+}
+
+.primary-reference-curriculum__lesson {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  padding: clamp(2.5rem, 4vw, 4.5rem) clamp(1.5rem, 3.5vw, 3.8rem) 2.4rem;
+  background: var(--primary-reference-paper);
+}
+
+.primary-reference-curriculum__lesson::after {
+  position: absolute;
+  z-index: 3;
+  top: 0;
+  right: -2.1rem;
+  width: 3rem;
+  height: 100%;
+  background: var(--primary-reference-paper);
+  clip-path: polygon(0 0, 64% 2%, 38% 6%, 72% 11%, 45% 16%, 79% 22%, 43% 29%, 72% 36%, 36% 44%, 76% 51%, 41% 60%, 74% 68%, 39% 76%, 70% 84%, 42% 91%, 68% 97%, 0 100%);
+  content: "";
+  pointer-events: none;
+}
+
+.primary-reference-curriculum__lesson header {
+  position: relative;
+  z-index: 2;
+}
+
+.primary-reference-curriculum__lesson header > p {
+  margin: 0 0 .65rem;
+  color: #8b651c;
+  font-size: .78rem;
+  font-weight: 700;
+}
+
+.primary-reference-curriculum__lesson header h2 {
+  max-width: 9ch;
+  margin: 0;
+  font-size: clamp(2.5rem, 3.45vw, 4.15rem);
+  font-weight: 600;
+  letter-spacing: -.035em;
+  line-height: .98;
+}
+
+.primary-reference-curriculum__illustration {
+  position: absolute;
+  top: 9%;
+  right: -4%;
+  width: min(60%, 20rem);
+  max-height: 45%;
+  object-fit: contain;
+  opacity: .88;
+  pointer-events: none;
+}
+
+.primary-reference-curriculum__list {
+  position: relative;
+  z-index: 2;
+  margin-top: auto;
+}
+
+.primary-reference-curriculum__list > h3 {
+  margin: 0 0 .75rem;
+  color: #845f1a;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.primary-reference-curriculum__list ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.primary-reference-curriculum__list li {
+  display: grid;
+  grid-template-columns: 1rem 1fr;
+  gap: .8rem;
+  padding: .78rem 0;
+  border-top: 1px solid rgba(7, 27, 53, .14);
+}
+
+.primary-reference-curriculum__list li > span {
+  width: .72rem;
+  height: .72rem;
+  margin-top: .2rem;
+  border-radius: 50%;
+  background: var(--primary-reference-blue);
+}
+
+.primary-reference-curriculum__list li[data-accent="pink"] > span { background: var(--primary-reference-pink); }
+.primary-reference-curriculum__list li[data-accent="green"] > span { background: var(--primary-reference-green); }
+
+.primary-reference-curriculum__list h4 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  line-height: 1.1;
+}
+
+.primary-reference-curriculum__list li p {
+  margin: .25rem 0 0;
+  color: #496176;
+  font-size: .74rem;
+  line-height: 1.45;
+}
+
+.primary-aquarium {
+  position: relative;
+  min-width: 0;
+  min-height: 100%;
+  overflow: hidden;
+  background: #77cbe2;
+  color: #06203b;
+  isolation: isolate;
+}
+
+.primary-aquarium__surface {
+  position: absolute;
+  z-index: 8;
+  inset: 0 0 auto;
+  height: 4.5rem;
+  background: linear-gradient(180deg, rgba(255, 255, 255, .62), rgba(255, 255, 255, 0));
+  filter: blur(6px);
+  opacity: .62;
+}
+
+.primary-aquarium__canvas,
+.primary-aquarium__canvas canvas,
+.primary-aquarium__canvas img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.primary-aquarium__canvas {
+  touch-action: pan-y;
+}
+
+.primary-aquarium__canvas canvas {
+  z-index: 5;
+  object-fit: cover;
+}
+
+.primary-aquarium__canvas img {
+  display: block;
+  max-width: none;
+  object-fit: cover;
+  pointer-events: none;
+}
+
+.primary-aquarium__water { z-index: 0; }
+.primary-aquarium__far { z-index: 1; object-position: center bottom; }
+.primary-aquarium__mid { z-index: 2; object-position: center bottom; }
+.primary-aquarium__front { z-index: 6; object-position: center bottom; }
+
+.primary-aquarium__bubbles {
+  z-index: 4;
+  opacity: .32;
+  animation: primary-reference-bubbles 16s linear infinite;
+}
+
+.primary-aquarium__copy {
+  position: absolute;
+  z-index: 10;
+  top: clamp(2.5rem, 7vw, 5rem);
+  left: clamp(1.5rem, 4vw, 3.5rem);
+  width: min(24rem, calc(100% - 3rem));
+  text-shadow: 0 1px rgba(255, 255, 255, .38);
+  pointer-events: none;
+}
+
+.primary-aquarium__copy > p {
+  margin: 0 0 .7rem;
+  color: #65440d;
+  font-size: .68rem;
+  font-weight: 800;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+
+.primary-aquarium__copy h2 {
+  max-width: 10ch;
+  margin: 0;
+  font-size: clamp(2.25rem, 3.6vw, 4rem);
+  font-weight: 600;
+  letter-spacing: -.035em;
+  line-height: .96;
+}
+
+.primary-aquarium__instruction {
+  display: block;
+  margin-top: 1rem;
+  color: #173b57;
+  font-size: .76rem;
+  line-height: 1.5;
+}
+
+.primary-aquarium__instruction--touch { display: none; }
+
+.primary-aquarium__controls {
+  position: absolute;
+  z-index: 12;
+  inset: 0;
+  pointer-events: none;
+}
+
+.primary-aquarium__fish-button {
+  position: absolute;
+  width: clamp(3rem, 6vw, 5.4rem);
+  min-width: 44px;
+  aspect-ratio: 1;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.primary-aquarium__fish-button:focus-visible {
+  outline: 3px solid #fff8e8;
+  outline-offset: 3px;
+  box-shadow: 0 0 0 6px rgba(6, 32, 59, .72);
+}
+
+.primary-aquarium__fish-button--1 { top: 48%; left: 22%; }
+.primary-aquarium__fish-button--2 { top: 28%; left: 68%; }
+.primary-aquarium__fish-button--3 { top: 62%; left: 76%; }
+.primary-aquarium__fish-button--4 { top: 67%; left: 44%; }
+.primary-aquarium__fish-button--5 { top: 43%; left: 84%; }
+.primary-aquarium__fish-button--6 { top: 30%; left: 38%; }
+.primary-aquarium__fish-button--7 { top: 78%; left: 16%; }
+
+.primary-aquarium__sprite-fallbacks {
+  position: absolute;
+  z-index: 4;
+  inset: 0;
+  pointer-events: none;
+}
+
+.primary-aquarium__sprite {
+  position: absolute;
+  display: block;
+  width: clamp(3.8rem, 8vw, 7.5rem);
+  height: auto;
+  filter: drop-shadow(0 3px 2px rgba(9, 62, 90, .16));
+  animation: primary-reference-fish-drift 5.5s ease-in-out infinite;
+}
+
+.primary-aquarium__sprite--1 { top: 45%; left: 18%; }
+.primary-aquarium__sprite--2 { top: 25%; left: 64%; animation-delay: -1.2s; }
+.primary-aquarium__sprite--3 { top: 59%; left: 72%; width: clamp(3.3rem, 6vw, 5.7rem); animation-delay: -2.4s; }
+.primary-aquarium__sprite--4 { top: 64%; left: 40%; width: clamp(3.2rem, 6vw, 5.5rem); animation-delay: -3s; }
+.primary-aquarium__sprite--5 { top: 40%; left: 80%; width: clamp(3rem, 5vw, 4.7rem); animation-delay: -.7s; }
+.primary-aquarium__sprite--6 { top: 27%; left: 34%; width: clamp(3rem, 5vw, 5rem); animation-delay: -3.8s; }
+.primary-aquarium__sprite--7 { top: 75%; left: 12%; width: clamp(3rem, 4.5vw, 4.4rem); animation: none; }
+
+.primary-aquarium__fact {
+  position: absolute;
+  z-index: 14;
+  right: clamp(1.25rem, 3vw, 2.5rem);
+  bottom: 4.7rem;
+  width: min(17rem, calc(100% - 2.5rem));
+  border: 1px solid rgba(6, 32, 59, .2);
+  border-radius: .75rem;
+  padding: 1.15rem 1.25rem 1.3rem;
+  background: #fffaf0;
+  color: #08213b;
+}
+
+.primary-aquarium__fact > span {
+  position: absolute;
+  top: .55rem;
+  right: .75rem;
+  color: #bd841f;
+  font-size: 1.35rem;
+}
+
+.primary-aquarium__fact strong {
+  font-family: var(--font-heading, "Cormorant Garamond", Georgia, serif);
+  font-size: 1.45rem;
+  text-transform: capitalize;
+}
+
+.primary-aquarium__fact p {
+  margin: .45rem 0 0;
+  font-size: .78rem;
+  line-height: 1.5;
+}
+
+.primary-aquarium__progress {
+  position: absolute;
+  z-index: 14;
+  right: clamp(1.25rem, 3vw, 2.5rem);
+  bottom: 2rem;
+  display: flex;
+  gap: .28rem;
+  color: rgba(255, 250, 240, .55);
+  font-size: 1rem;
+  text-shadow: 0 1px 2px rgba(4, 29, 51, .25);
+}
+
+.primary-aquarium__progress .is-found { color: #f4ca58; }
+.primary-aquarium__exit { display: none; }
+
+.primary-aquarium__canvas > img,
+.primary-aquarium__sprite-fallbacks {
+  transition: opacity .35s ease;
+}
+
+.primary-aquarium.is-pixi-ready .primary-aquarium__canvas > img,
+.primary-aquarium.is-pixi-ready .primary-aquarium__sprite-fallbacks {
+  opacity: 0;
+}
+
+.primary-reference-teaching {
+  position: relative;
+  width: min(100% - clamp(2rem, 8vw, 8rem), 90rem);
+  margin: 0 auto;
+  padding: clamp(6rem, 10vw, 9rem) 0 clamp(7rem, 11vw, 10rem);
+}
+
+.primary-reference-teaching__header {
+  position: relative;
+  z-index: 2;
+  max-width: 42rem;
+  margin: 0 auto clamp(4rem, 7vw, 6.5rem);
+  text-align: center;
+}
+
+.primary-reference-teaching__header > p {
+  margin: 0 0 .65rem;
+  color: #8c641b;
+  font-size: .78rem;
+  font-weight: 700;
+}
+
+.primary-reference-teaching__header h2 {
+  margin: 0;
+  font-size: clamp(3rem, 5.2vw, 5.8rem);
+  font-weight: 600;
+  letter-spacing: -.035em;
+  line-height: .95;
+}
+
+.primary-reference-teaching__header span {
+  display: block;
+  max-width: 55ch;
+  margin: 1rem auto 0;
+  color: #405a6e;
+  font-size: .94rem;
+  line-height: 1.65;
+}
+
+.primary-reference-teaching__journey {
+  position: relative;
+}
+
+.primary-reference-teaching__path {
+  position: absolute;
+  z-index: 0;
+  top: 36%;
+  left: 4%;
+  width: 92%;
+  height: auto;
+  object-fit: contain;
+  opacity: .68;
+  pointer-events: none;
+}
+
+.primary-reference-teaching ol {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(1.25rem, 3vw, 3rem);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.primary-reference-teaching li:nth-child(even) { padding-top: clamp(3rem, 7vw, 6rem); }
+.primary-reference-teaching li:nth-child(1) figure { transform: rotate(-1.4deg); }
+.primary-reference-teaching li:nth-child(2) figure { transform: rotate(1.2deg); }
+.primary-reference-teaching li:nth-child(3) figure { transform: rotate(-.8deg); }
+.primary-reference-teaching li:nth-child(4) figure { transform: rotate(1.5deg); }
+
+.primary-reference-teaching figure {
+  margin: 0;
+}
+
+.primary-reference-teaching__photo {
+  position: relative;
+  aspect-ratio: 4 / 4.8;
+  overflow: hidden;
+  background: var(--primary-reference-paper);
+  box-shadow: 0 7px 8px rgba(7, 27, 53, .14);
+  clip-path: polygon(2% 3%, 28% 1%, 53% 3%, 76% 1%, 98% 4%, 99% 28%, 97% 52%, 100% 76%, 97% 98%, 72% 96%, 48% 99%, 23% 96%, 1% 98%, 3% 73%, 1% 48%, 3% 24%);
+}
+
+.primary-reference-teaching li:nth-child(2) .primary-reference-teaching__photo,
+.primary-reference-teaching li:nth-child(4) .primary-reference-teaching__photo {
+  aspect-ratio: 4 / 4.3;
+  clip-path: polygon(1% 2%, 24% 4%, 49% 1%, 73% 3%, 99% 1%, 97% 27%, 99% 54%, 97% 79%, 99% 98%, 76% 96%, 52% 99%, 25% 97%, 2% 99%, 3% 74%, 1% 50%, 3% 26%);
+}
+
+.primary-reference-teaching__photo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.primary-reference-teaching li:nth-child(1) img { object-position: 48% center; }
+.primary-reference-teaching li:nth-child(2) img { object-position: 42% center; }
+.primary-reference-teaching li:nth-child(3) img { object-position: 63% center; }
+.primary-reference-teaching li:nth-child(4) img { object-position: 52% center; }
+
+.primary-reference-teaching figcaption {
+  position: relative;
+  padding: 1rem .4rem 0 2.4rem;
+}
+
+.primary-reference-teaching figcaption > span {
+  position: absolute;
+  top: 1.25rem;
+  left: .3rem;
+  color: #a4741f;
+  font-size: .72rem;
+  font-weight: 800;
+}
+
+.primary-reference-teaching figcaption h3 {
+  margin: 0;
+  font-size: clamp(1.35rem, 1.8vw, 1.85rem);
+  font-weight: 600;
+  line-height: 1.04;
+}
+
+.primary-reference-teaching figcaption p {
+  margin: .5rem 0 0;
+  color: #466075;
+  font-size: .76rem;
+  line-height: 1.55;
+}
+
+@keyframes primary-reference-bubbles {
+  to { transform: translate3d(0, -4%, 0); }
+}
+
+@keyframes primary-reference-fish-drift {
+  50% { transform: translate3d(10px, -5px, 0) rotate(1deg); }
+}
+
+@keyframes primary-reference-teaching-settle {
+  from { transform: translate3d(0, 18px, 0) rotate(var(--teaching-rotation, 0deg)); }
+  to { transform: translate3d(0, 0, 0) rotate(var(--teaching-rotation, 0deg)); }
+}
+
+@supports (animation-timeline: view()) {
+  .primary-reference-teaching li figure {
+    animation: primary-reference-teaching-settle .8s cubic-bezier(.22, 1, .36, 1) both;
+    animation-timeline: view();
+    animation-range: entry 8% cover 35%;
+  }
+}
+
+@media (max-width: 1050px) {
+  .primary-reference-foundation {
+    width: min(100% - 3rem, 70rem);
+    grid-template-columns: minmax(13rem, .78fr) minmax(19rem, 1.12fr);
+  }
+
+  .primary-reference-foundation__outcomes {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0 clamp(2rem, 5vw, 4rem);
+    margin-top: 1rem;
+  }
+
+  .primary-reference-foundation__outcomes li:nth-last-child(2) { border-bottom: 1px solid rgba(7, 27, 53, .18); }
+
+  .primary-reference-curriculum {
+    width: calc(100% - 2rem);
+    grid-template-columns: minmax(17rem, 42fr) minmax(0, 58fr);
+  }
+
+  .primary-reference-curriculum__illustration {
+    top: 15%;
+    right: -8%;
+    opacity: .72;
+  }
+
+  .primary-reference-teaching {
+    width: min(100% - 3rem, 70rem);
+  }
+
+  .primary-reference-teaching ol {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 3rem clamp(2rem, 7vw, 5rem);
+  }
+
+  .primary-reference-teaching li:nth-child(even) { padding-top: 4rem; }
+  .primary-reference-teaching__path { top: 25%; }
+}
+
+@media (max-width: 760px) {
+  .primary-reference-year-nav {
+    width: calc(100% - 2rem);
+    justify-content: flex-start;
+    gap: 1.5rem;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    scrollbar-width: none;
+  }
+
+  .primary-reference-year-nav::-webkit-scrollbar { display: none; }
+  .primary-reference-year-nav a { flex: 0 0 auto; }
+
+  .primary-reference-foundation {
+    display: flex;
+    width: min(100% - 2rem, 34rem);
+    min-height: 0;
+    align-items: stretch;
+    flex-direction: column;
+    gap: 2.4rem;
+    padding: 4.5rem 0 5rem;
+  }
+
+  .primary-reference-foundation__doodles { display: none; }
+  .primary-reference-foundation__intro { padding-top: 0; }
+  .primary-reference-foundation__intro h2 { max-width: 10ch; font-size: clamp(2.9rem, 14vw, 4.25rem); }
+  .primary-reference-foundation__lead { max-width: 36ch; }
+  .primary-reference-foundation__photo { width: min(92%, 28rem); align-self: center; margin: 0; }
+
+  .primary-reference-foundation__outcomes {
+    display: block;
+    width: 100%;
+    margin: 0;
+  }
+
+  .primary-reference-foundation__outcomes li:nth-last-child(2) { border-bottom: 0; }
+
+  .primary-reference-curriculum {
+    display: flex;
+    width: 100%;
+    min-height: 0;
+    flex-direction: column;
+    box-shadow: none;
+  }
+
+  .primary-reference-curriculum__lesson {
+    min-height: 38rem;
+    padding: 3.8rem max(1.25rem, calc((100vw - 32rem) / 2)) 2.8rem;
+  }
+
+  .primary-reference-curriculum__lesson::after {
+    top: auto;
+    right: 0;
+    bottom: -1.6rem;
+    left: 0;
+    width: 100%;
+    height: 2.2rem;
+    clip-path: polygon(0 0, 8% 48%, 17% 24%, 27% 64%, 38% 28%, 49% 70%, 61% 30%, 72% 67%, 84% 27%, 94% 59%, 100% 34%, 100% 0);
+  }
+
+  .primary-reference-curriculum__lesson header h2 { font-size: clamp(2.8rem, 13vw, 4rem); }
+  .primary-reference-curriculum__illustration { top: 13%; right: -2%; width: min(58vw, 18rem); opacity: .78; }
+
+  .primary-aquarium {
+    min-height: 42rem;
+  }
+
+  .primary-aquarium__copy {
+    top: 3.4rem;
+    left: 1.25rem;
+  }
+
+  .primary-aquarium__copy h2 { font-size: clamp(2.4rem, 12vw, 3.65rem); }
+  .primary-aquarium__instruction--desktop { display: none; }
+  .primary-aquarium__instruction--touch { display: block; }
+  .primary-aquarium__fish-button { width: 4rem; }
+
+  .primary-aquarium__fact {
+    right: 1.25rem;
+    bottom: 4.8rem;
+    left: 1.25rem;
+    width: auto;
+  }
+
+  .primary-aquarium__progress { right: 1.35rem; bottom: 2rem; }
+
+  .primary-reference-teaching {
+    width: min(100% - 2rem, 34rem);
+    padding: 5.5rem 0 6rem;
+  }
+
+  .primary-reference-teaching__header { margin-bottom: 3.5rem; }
+  .primary-reference-teaching__header h2 { font-size: clamp(3.1rem, 15vw, 4.7rem); }
+  .primary-reference-teaching__journey::before {
+    position: absolute;
+    top: 1rem;
+    bottom: 2rem;
+    left: 1rem;
+    border-left: 2px dashed rgba(79, 148, 196, .55);
+    content: "";
+  }
+
+  .primary-reference-teaching__path { display: none; }
+
+  .primary-reference-teaching ol {
+    display: block;
+    padding-left: 2.4rem;
+  }
+
+  .primary-reference-teaching li,
+  .primary-reference-teaching li:nth-child(even) {
+    padding: 0 0 3.5rem;
+  }
+
+  .primary-reference-teaching li:last-child { padding-bottom: 0; }
+  .primary-reference-teaching__photo { aspect-ratio: 4 / 3.5; }
+  .primary-reference-teaching li:nth-child(2) .primary-reference-teaching__photo,
+  .primary-reference-teaching li:nth-child(4) .primary-reference-teaching__photo { aspect-ratio: 4 / 3.5; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .primary-reference-story *,
+  .primary-reference-story *::before,
+  .primary-reference-story *::after {
+    scroll-behavior: auto !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+
+  .primary-aquarium__bubbles,
+  .primary-aquarium__sprite {
+    animation: none;
+  }
+}
