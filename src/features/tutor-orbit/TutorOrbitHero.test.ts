@@ -8,6 +8,8 @@ const css = readFileSync(new URL('./tutor-orbit.css', import.meta.url), 'utf8');
 const page = readFileSync(new URL('../../pages/Tutors.tsx', import.meta.url), 'utf8');
 const profileUrl = new URL('./TutorOrbitProfile.tsx', import.meta.url);
 const profile = existsSync(profileUrl) ? readFileSync(profileUrl, 'utf8') : '';
+const navigatorUrl = new URL('./TutorOrbitMobileNavigator.tsx', import.meta.url);
+const navigator = existsSync(navigatorUrl) ? readFileSync(navigatorUrl, 'utf8') : '';
 
 test('keeps the existing editorial hero and non-marketplace routes', () => {
   assert.match(component, /Meet the educators[\s\S]*students[\s\S]*remember\./);
@@ -62,8 +64,8 @@ test('pauses ambient motion for hover, focus, transition, and reduced motion', (
 });
 
 test('simplifies the outer tier on tablet and mobile while preserving interaction', () => {
-  assert.match(css, /@media \(max-width: 1100px\)[\s\S]*tutor-orbit__outer-slot:nth-child\(n\+7\)/);
-  assert.match(css, /@media \(max-width: 720px\)[\s\S]*tutor-orbit__outer-slot:nth-child\(n\+5\)/);
+  assert.match(css, /@media \(max-width: 1199px\)[\s\S]*tutor-orbit__outer-slot:nth-child\(n\+7\)/);
+  assert.match(css, /@media \(max-width: 720px\)[\s\S]*tutor-orbit__inner-orbit,[\s\S]*tutor-orbit__outer-orbit[\s\S]*display:\s*none/);
   assert.match(stage, /aria-label=\{`View \$\{tutor\.name\}`\}/);
   assert.match(stage, /Select an educator to learn more/);
   assert.doesNotMatch(css, /tutor-orbit__outer-slot[\s\S]{0,300}opacity:\s*0\.58/);
@@ -138,4 +140,32 @@ test('keeps each selected profile item in the keyed stagger from tier through CT
   assert.ok(orderedIndexes.every((index, position) => position === 0 || index > orderedIndexes[position - 1]));
   assert.equal((keyedSequence.match(/variants=\{reduced \? undefined : itemVariants\}/g) ?? []).length, 7);
   assert.match(keyedSequence, /tutor-orbit__profile-cta[\s\S]*Open full profile/);
+});
+
+test('provides every educator through a four-person responsive navigator', () => {
+  assert.ok(existsSync(navigatorUrl));
+  assert.match(component, /<TutorOrbitMobileNavigator[\s\S]*tutors=\{facultyTutors\}[\s\S]*activeId=\{activeId\}[\s\S]*onSelect=\{selectTutor\}/);
+  assert.match(component, /const facultyTutors = useMemo\([\s\S]*active,[\s\S]*innerTutors,[\s\S]*outerTutors/);
+  assert.match(navigator, /rosterWindow\(tutors\.map\(\(tutor\) => tutor\.id\), page, 4\)/);
+  assert.match(navigator, /aria-label="Previous educators"/);
+  assert.match(navigator, /aria-label="Next educators"/);
+  assert.match(navigator, /Educators \{start\}–\{end\} of \{tutors\.length\}/);
+  assert.match(navigator, /Math\.abs\(dx\) >= 48 && Math\.abs\(dx\) > Math\.abs\(dy\)/);
+  assert.match(navigator, /nextRosterPage\(current, dx < 0 \? 1 : -1, tutors\.length, 4\)/);
+  assert.match(navigator, /onSelect\(tutor\.id\)/);
+});
+
+test('uses the tablet and mobile topology without hiding profile layout boxes', () => {
+  assert.match(css, /@media \(max-width: 1199px\)[\s\S]*grid-template-columns:\s*minmax\(250px,\s*\.72fr\)\s*minmax\(0,\s*1\.28fr\)/);
+  assert.match(css, /@media \(max-width: 1199px\)[\s\S]*tutor-orbit__outer-slot:nth-child\(n\s*\+\s*7\)[\s\S]*display:\s*none/);
+  assert.match(css, /@media \(max-width: 1199px\)[\s\S]*tutor-orbit__mobile-navigator[\s\S]*display:\s*grid/);
+  assert.match(css, /@media \(max-width: 720px\)[\s\S]*tutor-orbit__inner-orbit,[\s\S]*tutor-orbit__outer-orbit[\s\S]*display:\s*none/);
+  assert.match(css, /@media \(max-width: 720px\)[\s\S]*tutor-orbit__mobile-navigator[\s\S]*display:\s*grid/);
+  assert.doesNotMatch(css, /display:\s*contents/);
+});
+
+test('keeps short reduced-motion navigator and selection transitions', () => {
+  assert.match(navigator, /duration:\s*reduced\s*\?\s*0\.12\s*:\s*0\.16/);
+  assert.match(css, /@media \(prefers-reduced-motion: reduce\)[\s\S]*tutor-orbit__marker[\s\S]*animation:\s*none !important/);
+  assert.match(css, /@media \(prefers-reduced-motion: reduce\)[\s\S]*tutor-orbit__stage[\s\S]*transform:\s*none !important/);
 });

@@ -20,6 +20,7 @@ import {
   type SelectionPhase,
 } from './tutor-orbit-config';
 import { TutorOrbitProfile } from './TutorOrbitProfile';
+import { TutorOrbitMobileNavigator } from './TutorOrbitMobileNavigator';
 import { TutorOrbitStage } from './TutorOrbitStage';
 import {
   canBeginSelection,
@@ -50,6 +51,10 @@ export function TutorOrbitHero() {
   const outerTutors = useMemo(
     () => outerIds.map(tutorById).filter((tutor): tutor is CatalogueTutor => Boolean(tutor)),
     [outerIds],
+  );
+  const facultyTutors = useMemo(
+    () => [active, ...innerTutors, ...outerTutors],
+    [active, innerTutors, outerTutors],
   );
 
   const clearSelectionTimers = useCallback(() => {
@@ -123,6 +128,12 @@ export function TutorOrbitHero() {
           phase={selection.phase}
           selectedId={selection.selectedId}
           originTier={selection.originTier}
+          reduced={reduced}
+          onSelect={selectTutor}
+        />
+        <TutorOrbitMobileNavigator
+          tutors={facultyTutors}
+          activeId={activeId}
           reduced={reduced}
           onSelect={selectTutor}
         />
