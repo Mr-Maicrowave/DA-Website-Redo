@@ -1,0 +1,110 @@
+{
+  "targetUrl": "http://127.0.0.1:53144/tutors",
+  "generatedAt": "2026-08-25T12:21:45.364Z",
+  "motionCapture": "artifacts/tutor-orbit/tutor-orbit-motion.webm",
+  "motionCaptureError": "The existing Puppeteer and ffmpeg binaries produced a decodable WebM, but recorder.stop() did not return within 60 seconds; the harness no longer attempts to overwrite the retained recording.",
+  "interactions": {
+    "movement": {
+      "before": "matrix(1.03764, 0, 0, 1.03764, -200.596, -146.33)",
+      "after": "matrix(1.0385, 0, 0, 1.0385, -201.449, -146.194)",
+      "confirmed": true
+    },
+    "hoverPause": {
+      "start": "matrix(1.03856, 0, 0, 1.03856, -201.516, -146.185)",
+      "end": "matrix(1.03856, 0, 0, 1.03856, -201.516, -146.185)",
+      "exact": true
+    },
+    "regularPointerSelection": {
+      "selectedId": "T002",
+      "selectedSlot": "1",
+      "previousCentreId": "T003",
+      "phaseLog": [
+        "idle",
+        "promoting",
+        "exchanging",
+        "idle"
+      ],
+      "centreId": "T002",
+      "replacementId": "T003",
+      "profileName": "Ms Helen A."
+    },
+    "reducedMotionKeyboardSelection": {
+      "selectedId": "T002",
+      "selectedSlot": "1",
+      "previousCentreId": "T003",
+      "phaseLog": [
+        "idle",
+        "exchanging",
+        "idle"
+      ],
+      "centreId": "T002",
+      "replacementId": "T003",
+      "profileName": "Ms Helen A."
+    },
+    "consoleErrors": [],
+    "externalResourceNoise": [],
+    "failures": []
+  },
+  "results": [
+    {
+      "viewport": "1920x1080",
+      "visiblePortraits": 14,
+      "visibleInnerPortraits": 5,
+      "visibleOuterPortraits": 9,
+      "collisions": [],
+      "horizontalOverflow": false,
+      "scrollWidth": 1920,
+      "consoleErrors": [],
+      "externalResourceNoise": [],
+      "screenshot": "artifacts/tutor-orbit/tutors-1920x1080.png"
+    },
+    {
+      "viewport": "1440x900",
+      "visiblePortraits": 14,
+      "visibleInnerPortraits": 5,
+      "visibleOuterPortraits": 9,
+      "collisions": [],
+      "horizontalOverflow": false,
+      "scrollWidth": 1440,
+      "consoleErrors": [],
+      "externalResourceNoise": [],
+      "screenshot": "artifacts/tutor-orbit/tutors-1440x900.png"
+    },
+    {
+      "viewport": "1366x768",
+      "visiblePortraits": 14,
+      "visibleInnerPortraits": 5,
+      "visibleOuterPortraits": 9,
+      "collisions": [],
+      "horizontalOverflow": false,
+      "scrollWidth": 1366,
+      "consoleErrors": [],
+      "externalResourceNoise": [],
+      "screenshot": "artifacts/tutor-orbit/tutors-1366x768.png"
+    },
+    {
+      "viewport": "1024x768",
+      "visiblePortraits": 15,
+      "visibleInnerPortraits": 5,
+      "visibleOuterPortraits": 6,
+      "collisions": [],
+      "horizontalOverflow": false,
+      "scrollWidth": 1024,
+      "consoleErrors": [],
+      "externalResourceNoise": [],
+      "screenshot": "artifacts/tutor-orbit/tutors-1024x768.png"
+    },
+    {
+      "viewport": "390x844",
+      "visiblePortraits": 4,
+      "visibleInnerPortraits": 0,
+      "visibleOuterPortraits": 0,
+      "collisions": [],
+      "horizontalOverflow": false,
+      "scrollWidth": 390,
+      "consoleErrors": [],
+      "externalResourceNoise": [],
+      "screenshot": "artifacts/tutor-orbit/tutors-390x844.png"
+    }
+  ]
+}

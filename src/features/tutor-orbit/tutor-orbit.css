@@ -782,6 +782,12 @@
   24%, 68% { opacity: 0.72; }
 }
 
+@media (min-width: 1200px) {
+  .tutor-orbit {
+    --orbit-centre-size: clamp(280px, 21vw, 330px);
+  }
+}
+
 @media (min-width: 1600px) {
   .tutor-orbit {
     --orbit-safe-stage-width: 760px;

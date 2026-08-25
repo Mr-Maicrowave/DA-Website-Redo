@@ -104,10 +104,15 @@ export function TutorOrbitMobileNavigator({
               aria-label={`View ${tutor.name}`}
               onClick={() => onSelect(tutor.id)}
             >
-              <span className="tutor-orbit__navigator-portrait">
+              <span
+                className="tutor-orbit__navigator-portrait"
+                data-orbit-portrait=""
+                data-orbit-tier="navigator"
+                data-tutor-id={tutor.id}
+              >
                 <img src={getPhotoUrl(tutor)} alt="" style={getPhotoStyle(tutor)} />
               </span>
-              <span>{tutor.name}</span>
+              <span data-orbit-label="" data-tutor-id={tutor.id}>{tutor.name}</span>
             </button>
           ))}
         </motion.div>

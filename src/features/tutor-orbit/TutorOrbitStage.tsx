@@ -153,6 +153,10 @@ function OrbitTutor({
       <button
         type="button"
         className={`tutor-orbit__satellite tutor-orbit__satellite--${tier}`}
+        data-orbit-portrait=""
+        data-orbit-tier={tier}
+        data-orbit-slot-index={index}
+        data-tutor-id={tutor.id}
         onMouseEnter={() => setMotionHold(`hover:${tutor.id}`, true)}
         onMouseLeave={() => setMotionHold(`hover:${tutor.id}`, false)}
         onFocus={() => setMotionHold(`focus:${tutor.id}`, true)}
@@ -171,7 +175,12 @@ function OrbitTutor({
           <img src={getPhotoUrl(tutor)} alt="" style={getPhotoStyle(tutor)} />
         </motion.span>
       </button>
-      <span className={`tutor-orbit__satellite-name${tier === 'outer' ? ' tutor-orbit__satellite-name--tooltip' : ''}`} aria-hidden="true">
+      <span
+        className={`tutor-orbit__satellite-name${tier === 'outer' ? ' tutor-orbit__satellite-name--tooltip' : ''}`}
+        data-orbit-label=""
+        data-tutor-id={tutor.id}
+        aria-hidden="true"
+      >
         {tutor.name}
       </span>
     </motion.div>
@@ -286,7 +295,8 @@ export function TutorOrbitStage({
 
   return (
     <motion.div
-      className={`tutor-orbit__stage${paused ? ' is-paused' : ''}${phase !== 'idle' ? ' is-transitioning' : ''}`}
+      className={`tutor-orbit__stage${paused ? ' is-paused' : ''}${phase !== 'idle' ? ` is-transitioning is-${phase}` : ''}`}
+      data-selection-phase={phase}
       initial="hidden"
       animate="visible"
       onPointerMove={reduced || parallax.field === 0 ? undefined : onPointerMove}
@@ -318,6 +328,7 @@ export function TutorOrbitStage({
           <div className="tutor-orbit__featured-float">
             <motion.div
               className="tutor-orbit__featured-frame"
+              data-featured-tutor-id={active.id}
               layoutId={`tutor-${active.id}`}
               animate={reduced && phase !== 'idle' ? { opacity: [1, 0.78, 1], scale: [1, 0.985, 1] } : { opacity: 1, scale: 1 }}
               transition={portraitTransition(reduced)}
