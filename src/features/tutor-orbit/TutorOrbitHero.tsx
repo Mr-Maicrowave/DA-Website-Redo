@@ -23,6 +23,10 @@ import {
   type SelectionPhase,
 } from './tutor-orbit-config';
 import { TutorOrbitStage } from './TutorOrbitStage';
+import {
+  canBeginSelection,
+  transitionSelectionLock,
+} from './tutor-orbit-stage-helpers';
 import './tutor-orbit.css';
 
 const tutorById = (id: string) => TUTORS.find((tutor) => tutor.id === id);
@@ -45,6 +49,7 @@ export function TutorOrbitHero() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [originTier, setOriginTier] = useState<'inner' | 'outer' | null>(null);
   const transitionTimers = useRef<number[]>([]);
+  const selectionLock = useRef({ locked: false });
 
   const active = useMemo(() => tutorById(activeId) ?? tutorById(DEFAULT_FEATURED_TUTOR_ID), [activeId]);
   const innerTutors = useMemo(
@@ -58,14 +63,17 @@ export function TutorOrbitHero() {
 
   useEffect(() => () => {
     transitionTimers.current.forEach((timer) => window.clearTimeout(timer));
+    selectionLock.current = transitionSelectionLock(selectionLock.current, 'cleanup');
   }, []);
 
   if (!active) return null;
 
   const selectTutor = (selectedId: string) => {
+    if (!canBeginSelection(selectionLock.current)) return;
     const result = swapFacultyTutor(activeId, innerIds, outerIds, selectedId);
     if (result.selectedSlot === -1 || phase !== 'idle') return;
 
+    selectionLock.current = transitionSelectionLock(selectionLock.current, 'select');
     setSelectedId(selectedId);
     setOriginTier(result.selectedTier);
     transitionTimers.current.forEach((timer) => window.clearTimeout(timer));
@@ -81,6 +89,7 @@ export function TutorOrbitHero() {
         setSelectedId(null);
         setOriginTier(null);
         transitionTimers.current = [];
+        selectionLock.current = transitionSelectionLock(selectionLock.current, 'idle');
       }
     };
     applyStep(steps[0].phase);
@@ -97,7 +106,12 @@ export function TutorOrbitHero() {
     <section className="tutor-orbit" aria-labelledby="tutor-orbit-title">
       <div className="tutor-orbit__ambient" aria-hidden="true" />
 
-      <div className="tutor-orbit__editorial">
+      <motion.div
+        className="tutor-orbit__editorial"
+        initial={reduced ? false : { opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: reduced ? 0 : 0.12, duration: reduced ? 0 : 0.5 }}
+      >
         <p className="tutor-orbit__eyebrow">Meet the people behind the progress</p>
         <h1 id="tutor-orbit-title">Meet the educators students <em>remember.</em></h1>
         <div className="tutor-orbit__rule" aria-hidden="true"><span /></div>
@@ -108,7 +122,7 @@ export function TutorOrbitHero() {
         <Link className="tutor-orbit__directory-link" to="/find-teacher">
           Explore the whole team <ArrowRight aria-hidden="true" />
         </Link>
-      </div>
+      </motion.div>
 
       <LayoutGroup id="tutor-faculty-orbit">
         <TutorOrbitStage

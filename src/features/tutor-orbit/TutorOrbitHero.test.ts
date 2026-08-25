@@ -34,6 +34,7 @@ test('renders the faculty stage from safe sectors with shared clocks and pointer
   assert.match(stage, /onPointerMove/);
   assert.match(stage, /Math\.abs\([^)]*\) \* 5/);
   assert.match(stage, /document\.hidden/);
+  assert.match(stage, /visibilitychange/);
   assert.match(stage, /elapsedMs\.current \+= time - lastFrameAt\.current/);
   assert.doesNotMatch(css, /rotate\([^)]*turn/);
 });
@@ -42,10 +43,13 @@ test('uses shared-layout motion, promotion, and marker layers for selections', (
   assert.match(component, /swapFacultyTutor\(activeId, innerIds, outerIds, selectedId\)/);
   assert.match(stage, /layoutId=\{`tutor-\$\{active\.id\}`\}/);
   assert.match(stage, /layoutId=\{`tutor-\$\{tutor\.id\}`\}/);
-  assert.match(stage, /duration: reduced \? 0 : 0\.9/);
+  assert.match(stage, /duration: reduced \? 0 : 0\.8/);
   assert.match(stage, /tutor-orbit__promotion-portrait/);
   assert.match(stage, /phase === 'promoting'/);
   assert.match(stage, /tutor-orbit__marker/);
+  assert.match(stage, /isPromotedSource/);
+  assert.match(stage, /zIndex: 7/);
+  assert.match(stage, /objectFit: 'cover'/);
 });
 
 test('pauses ambient motion for hover, focus, transition, and reduced motion', () => {
@@ -63,9 +67,17 @@ test('simplifies the outer tier on tablet and mobile while preserving interactio
   assert.doesNotMatch(css, /tutor-orbit__outer-slot[\s\S]{0,300}opacity:\s*0\.58/);
 });
 
-test('limits mobile portraits to their authored safe-sector maps', () => {
-  assert.match(stage, /innerTutors\.slice\(0, SAFE_SECTORS\[band\]\.inner\.length\)/);
-  assert.match(stage, /outerTutors\.slice\(0, SAFE_SECTORS\[band\]\.outer\.length\)/);
+test('maps every responsive band to its authored safe-sector capacity', () => {
+  assert.match(stage, /tutorsForGeometryBand\(innerTutors, band, 'inner'\)/);
+  assert.match(stage, /tutorsForGeometryBand\(outerTutors, band, 'outer'\)/);
+});
+
+test('wires promotion cleanup, clamped pointer input, and the imperative selection lock', () => {
+  assert.match(stage, /clearTutorHolds\(tutor\.id\)/);
+  assert.match(stage, /normalizeStagePointer\(event\.clientX, rect\.left, rect\.width\)/);
+  assert.match(component, /canBeginSelection\(selectionLock\.current\)/);
+  assert.match(component, /transitionSelectionLock\(selectionLock\.current, 'select'\)/);
+  assert.match(component, /transitionSelectionLock\(selectionLock\.current, 'idle'\)/);
 });
 
 test('keeps the selected tutor panel concise and data driven', () => {

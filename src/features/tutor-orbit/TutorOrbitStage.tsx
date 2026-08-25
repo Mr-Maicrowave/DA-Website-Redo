@@ -24,11 +24,16 @@ import {
   poseForSector,
   type GeometryBand,
 } from './tutor-orbit-geometry';
+import {
+  normalizeStagePointer,
+  pruneTutorHoldKeys,
+  tutorsForGeometryBand,
+} from './tutor-orbit-stage-helpers';
 
 const TAU = Math.PI * 2;
 
 const portraitTransition = (reduced: boolean) => ({
-  layout: { duration: reduced ? 0 : 0.9, ease: [0.22, 1, 0.36, 1] as const },
+  layout: { duration: reduced ? 0 : 0.8, ease: [0.22, 1, 0.36, 1] as const },
 });
 
 function useGeometryBand() {
@@ -47,6 +52,14 @@ function useOrbitClock(enabled: boolean, durationSeconds: number, direction: 1 |
   const clock = useMotionValue(0);
   const lastFrameAt = useRef<number | null>(null);
   const elapsedMs = useRef(0);
+
+  useEffect(() => {
+    const resetFrame = () => {
+      lastFrameAt.current = null;
+    };
+    document.addEventListener('visibilitychange', resetFrame);
+    return () => document.removeEventListener('visibilitychange', resetFrame);
+  }, []);
 
   useAnimationFrame((time) => {
     if (!enabled || document.hidden) {
@@ -74,8 +87,10 @@ interface OrbitTutorProps {
   band: GeometryBand;
   clock: MotionValue<number>;
   reduced: boolean;
+  isPromotedSource: boolean;
   onSelect: (id: string) => void;
   setMotionHold: (key: string, held: boolean) => void;
+  clearTutorHolds: (id: string) => void;
 }
 
 function OrbitTutor({
@@ -85,8 +100,10 @@ function OrbitTutor({
   band,
   clock,
   reduced,
+  isPromotedSource,
   onSelect,
   setMotionHold,
+  clearTutorHolds,
 }: OrbitTutorProps) {
   const sector = SAFE_SECTORS[band][tier][index] ?? SAFE_SECTORS[band][tier][0];
   const progress = useTransform(clock, (angle) => ((angle / TAU) % 1 + 1) % 1);
@@ -99,7 +116,7 @@ function OrbitTutor({
   return (
     <motion.div
       className={`tutor-orbit__${tier}-slot tutor-orbit__${tier}-slot--${index}`}
-      style={{ top: '50%', left: '50%', x, y, scale, opacity }}
+      style={{ top: '50%', left: '50%', x, y, scale, opacity: isPromotedSource ? 0 : opacity }}
     >
       <button
         type="button"
@@ -108,7 +125,10 @@ function OrbitTutor({
         onMouseLeave={() => setMotionHold(`hover:${tutor.id}`, false)}
         onFocus={() => setMotionHold(`focus:${tutor.id}`, true)}
         onBlur={() => setMotionHold(`focus:${tutor.id}`, false)}
-        onClick={() => onSelect(tutor.id)}
+        onClick={() => {
+          clearTutorHolds(tutor.id);
+          onSelect(tutor.id);
+        }}
         aria-label={`View ${tutor.name}`}
       >
         <motion.span
@@ -144,7 +164,7 @@ function OrbitMarker({
   const x = useTransform(progress, (value) => poseForSector(sector, value).x);
   const y = useTransform(progress, (value) => poseForSector(sector, value).y);
 
-  return <motion.span className={`tutor-orbit__marker tutor-orbit__marker--${tier}`} style={reduced ? undefined : { x, y }} />;
+  return <motion.span className={`tutor-orbit__marker tutor-orbit__marker--${tier}`} style={{ x, y }} />;
 }
 
 const entrance = {
@@ -195,8 +215,13 @@ export function TutorOrbitStage({
   const originProgress = ((outerClock.get() / TAU) % 1 + 1) % 1;
   const origin = originSector ? poseForSector(originSector, originProgress) : { x: 0, y: 0 };
   const waypoint = poseForSector(waypointSector, 0.5);
-  const stageInnerTutors = band === 'mobile' ? innerTutors.slice(0, SAFE_SECTORS[band].inner.length) : innerTutors;
-  const stageOuterTutors = band === 'mobile' ? outerTutors.slice(0, SAFE_SECTORS[band].outer.length) : outerTutors;
+  const stageInnerTutors = tutorsForGeometryBand(innerTutors, band, 'inner');
+  const stageOuterTutors = tutorsForGeometryBand(outerTutors, band, 'outer');
+
+  useEffect(() => {
+    if (phase === 'idle' || !selectedId) return;
+    setHoldKeys((current) => pruneTutorHoldKeys(current, selectedId));
+  }, [phase, selectedId]);
 
   const setMotionHold = (key: string, held: boolean) => {
     setHoldKeys((current) => {
@@ -207,10 +232,14 @@ export function TutorOrbitStage({
     });
   };
 
+  const clearTutorHolds = (tutorId: string) => {
+    setHoldKeys((current) => pruneTutorHoldKeys(current, tutorId));
+  };
+
   const onPointerMove = (event: PointerEvent<HTMLDivElement>) => {
     const rect = event.currentTarget.getBoundingClientRect();
-    pointerX.set(((event.clientX - rect.left) / rect.width) * 2 - 1);
-    pointerY.set(((event.clientY - rect.top) / rect.height) * 2 - 1);
+    pointerX.set(normalizeStagePointer(event.clientX, rect.left, rect.width));
+    pointerY.set(normalizeStagePointer(event.clientY, rect.top, rect.height));
   };
 
   const resetPointer = () => {
@@ -226,23 +255,24 @@ export function TutorOrbitStage({
       onPointerMove={reduced ? undefined : onPointerMove}
       onPointerLeave={resetPointer}
     >
-      <motion.svg
-        className="tutor-orbit__geometry"
-        viewBox="0 0 700 650"
-        preserveAspectRatio="none"
-        aria-hidden="true"
-        variants={entrance}
-        transition={{ duration: reduced ? 0 : 0.3 }}
-        style={reduced ? undefined : { x: geometryX, y: geometryY }}
-      >
-        <ellipse className="tutor-orbit__path tutor-orbit__path--outer" cx="350" cy="326" rx="322" ry="258" transform="rotate(-7 350 326)" />
-        <ellipse className="tutor-orbit__path tutor-orbit__path--middle" cx="350" cy="326" rx="258" ry="205" transform="rotate(6 350 326)" />
-        <ellipse className="tutor-orbit__path tutor-orbit__path--inner" cx="350" cy="324" rx="174" ry="165" transform="rotate(-4 350 324)" />
-        <path className="tutor-orbit__path tutor-orbit__path--dash" d="M36 380C116 106 472 36 666 240" />
-      </motion.svg>
+      <motion.div aria-hidden="true" variants={entrance} transition={{ duration: reduced ? 0 : 0.3 }} style={{ position: 'absolute', inset: 0 }}>
+        <motion.svg
+          className="tutor-orbit__geometry"
+          viewBox="0 0 700 650"
+          preserveAspectRatio="none"
+          style={reduced ? undefined : { x: geometryX, y: geometryY }}
+        >
+          <ellipse className="tutor-orbit__path tutor-orbit__path--outer" cx="350" cy="326" rx="322" ry="258" transform="rotate(-7 350 326)" />
+          <ellipse className="tutor-orbit__path tutor-orbit__path--middle" cx="350" cy="326" rx="258" ry="205" transform="rotate(6 350 326)" />
+          <ellipse className="tutor-orbit__path tutor-orbit__path--inner" cx="350" cy="324" rx="174" ry="165" transform="rotate(-4 350 324)" />
+          <path className="tutor-orbit__path tutor-orbit__path--dash" d="M36 380C116 106 472 36 666 240" />
+        </motion.svg>
+      </motion.div>
 
-      <motion.div aria-hidden="true" variants={entrance} transition={{ duration: reduced ? 0 : 0.3 }} style={{ position: 'absolute', inset: 0, ...(reduced ? {} : { x: haloX, y: haloY }) }}>
-        <div className={`tutor-orbit__halo tutor-orbit__halo--${active.primarySubject.toLowerCase()}`} />
+      <motion.div aria-hidden="true" variants={entrance} transition={{ duration: reduced ? 0 : 0.3 }} style={{ position: 'absolute', inset: 0 }}>
+        <motion.div style={{ position: 'absolute', inset: 0, ...(reduced ? {} : { x: haloX, y: haloY }) }}>
+          <div className={`tutor-orbit__halo tutor-orbit__halo--${active.primarySubject.toLowerCase()}`} />
+        </motion.div>
       </motion.div>
 
       <motion.div variants={entrance} transition={{ delay: reduced ? 0 : 0.3, duration: reduced ? 0 : 0.46 }} style={{ position: 'absolute', inset: 0, zIndex: 4, pointerEvents: 'none' }}>
@@ -260,16 +290,17 @@ export function TutorOrbitStage({
         </div>
       </motion.div>
 
-      <motion.div className="tutor-orbit__portrait-field" variants={entrance} transition={{ delay: reduced ? 0 : 0.5, duration: reduced ? 0 : 0.6 }} style={{ position: 'absolute', inset: 0, ...(reduced ? {} : { x: fieldX, y: fieldY }) }}>
+      <motion.div variants={entrance} transition={{ delay: reduced ? 0 : 0.5, duration: reduced ? 0 : 0.6 }} style={{ position: 'absolute', inset: 0 }}>
+      <motion.div className="tutor-orbit__portrait-field" style={{ position: 'absolute', inset: 0, ...(reduced ? {} : { x: fieldX, y: fieldY }) }}>
         <motion.div className="tutor-orbit__inner-orbit" variants={entrance} transition={{ delay: reduced ? 0 : 0.5, duration: reduced ? 0 : 0.6 }}>
           {stageInnerTutors.map((tutor, index) => (
-            <OrbitTutor key={tutor.id} tutor={tutor} index={index} tier="inner" band={band} clock={innerClock} reduced={reduced} onSelect={onSelect} setMotionHold={setMotionHold} />
+            <OrbitTutor key={tutor.id} tutor={tutor} index={index} tier="inner" band={band} clock={innerClock} reduced={reduced} isPromotedSource={false} onSelect={onSelect} setMotionHold={setMotionHold} clearTutorHolds={clearTutorHolds} />
           ))}
         </motion.div>
 
         <motion.div className="tutor-orbit__outer-orbit" variants={entrance} transition={{ delay: reduced ? 0 : 0.72, duration: reduced ? 0 : 0.73 }}>
           {stageOuterTutors.map((tutor, index) => (
-            <OrbitTutor key={tutor.id} tutor={tutor} index={index} tier="outer" band={band} clock={outerClock} reduced={reduced} onSelect={onSelect} setMotionHold={setMotionHold} />
+            <OrbitTutor key={tutor.id} tutor={tutor} index={index} tier="outer" band={band} clock={outerClock} reduced={reduced} isPromotedSource={phase === 'promoting' && originTier === 'outer' && tutor.id === selectedId} onSelect={onSelect} setMotionHold={setMotionHold} clearTutorHolds={clearTutorHolds} />
           ))}
         </motion.div>
 
@@ -280,11 +311,12 @@ export function TutorOrbitStage({
             initial={{ x: origin.x, y: origin.y, scale: 0.9, opacity: 0.7 }}
             animate={{ x: [origin.x, waypoint.x], y: [origin.y, waypoint.y], scale: [0.9, 1.08], opacity: 1 }}
             transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
-            style={{ position: 'absolute', top: '50%', left: '50%', width: 56, aspectRatio: '1', overflow: 'hidden', borderRadius: '50%', pointerEvents: 'none' }}
+            style={{ position: 'absolute', zIndex: 7, top: '50%', left: '50%', width: 56, aspectRatio: '1', overflow: 'hidden', borderRadius: '50%', pointerEvents: 'none' }}
           >
-            <img src={getPhotoUrl(selectedTutor)} alt="" style={getPhotoStyle(selectedTutor)} />
+            <img src={getPhotoUrl(selectedTutor)} alt="" style={{ ...getPhotoStyle(selectedTutor), width: '100%', height: '100%', objectFit: 'cover' }} />
           </motion.div>
         ) : null}
+      </motion.div>
       </motion.div>
 
       <OrbitMarker tier="inner" index={1} band={band} clock={innerClock} reduced={reduced} />
