@@ -36,6 +36,8 @@ function decodeImage(image: HTMLImageElement) {
 
 export function MethodTransition() {
   const [active, setActive] = useState(0);
+  const [methodsAvailable, setMethodsAvailable] = useState(false);
+  const methodsAvailableRef = useRef(false);
   const sectionRef = useRef<HTMLElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
   const centerBloomRef = useRef<HTMLImageElement>(null);
@@ -43,6 +45,10 @@ export function MethodTransition() {
   const methodsRef = useRef<HTMLDivElement>(null);
   const diagnoseRef = useRef<HTMLSpanElement>(null);
   const buttonRefs = useRef<Array<HTMLButtonElement | null>>([]);
+
+  useLayoutEffect(() => {
+    methodsRef.current?.toggleAttribute('inert', !methodsAvailable);
+  }, [methodsAvailable]);
 
   useLayoutEffect(() => {
     const section = sectionRef.current;
@@ -65,6 +71,11 @@ export function MethodTransition() {
     const finale = source?.closest<HTMLElement>('.hs-finale') ?? null;
     const media = gsap.matchMedia();
     let mounted = true;
+    const updateMethodsAvailability = (available: boolean) => {
+      if (methodsAvailableRef.current === available) return;
+      methodsAvailableRef.current = available;
+      setMethodsAvailable(available);
+    };
     const context = gsap.context(() => {
       const artwork = Array.from(
         section.querySelectorAll<HTMLImageElement>('img'),
@@ -89,6 +100,7 @@ export function MethodTransition() {
               gsap.set(methods, { opacity: conditions.reduce ? 0 : 1 });
 
               if (conditions.reduce || !source) {
+                updateMethodsAvailability(true);
                 gsap.set(buttons, { opacity: 1, scale: 1, y: 0 });
                 gsap.set(diagnose, { opacity: 1 });
                 gsap.set(proxy, { opacity: 0 });
@@ -128,6 +140,8 @@ export function MethodTransition() {
                 };
               }
 
+              updateMethodsAvailability(false);
+
               const peakSize = conditions.desktop ? 220 : conditions.tablet ? 180 : 136;
               const poses: Record<'source' | 'detach' | 'center' | 'diagnose', ProxyPose> = {
                 source: { x: 0, y: 0, scale: 1 },
@@ -147,8 +161,21 @@ export function MethodTransition() {
                 };
               };
 
+              const measureUntransformedSource = () => {
+                if (!finale) return source.getBoundingClientRect();
+
+                const inlineTransform = finale.style.transform;
+                try {
+                  // This synchronous read/restore completes before the browser paints.
+                  finale.style.transform = 'none';
+                  return source.getBoundingClientRect();
+                } finally {
+                  finale.style.transform = inlineTransform;
+                }
+              };
+
               const measure = () => {
-                const sourceRect = source.getBoundingClientRect();
+                const sourceRect = measureUntransformedSource();
                 const centerRect = centerBloom.getBoundingClientRect();
                 const diagnoseRect = diagnose.getBoundingClientRect();
                 const diagnoseButton = buttons[0];
@@ -258,6 +285,11 @@ export function MethodTransition() {
                 }, 0.84)
                 .to(buttons, { scale: 1, y: 0, duration: 0.06, ease: 'power2.out' }, 0.94);
 
+              master.eventCallback('onUpdate', () => {
+                const progress = master.progress();
+                updateMethodsAvailability(progress >= 0.94);
+              });
+
               return () => {
                 master.scrollTrigger?.kill();
                 master.kill();
@@ -320,6 +352,8 @@ export function MethodTransition() {
           ref={methodsRef}
           role="toolbar"
           aria-label="DA Tuition teaching methods"
+          aria-hidden={!methodsAvailable}
+          data-available={methodsAvailable}
         >
           {methodItems.map((method, index) => (
             <button
@@ -331,7 +365,8 @@ export function MethodTransition() {
               type="button"
               aria-label={method.label}
               aria-pressed={active === index}
-              tabIndex={active === index ? 0 : -1}
+              disabled={!methodsAvailable}
+              tabIndex={methodsAvailable && active === index ? 0 : -1}
               onClick={() => setActive(index)}
               onKeyDown={(event) => selectFromKeyboard(event, index)}
               style={{ '--method-accent': method.accent } as CSSProperties}

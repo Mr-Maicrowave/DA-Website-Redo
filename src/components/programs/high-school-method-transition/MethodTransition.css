@@ -56,6 +56,10 @@
   transform: translateX(-50%);
 }
 
+.hsm-transition__methods[data-available='false'] {
+  pointer-events: none;
+}
+
 .hsm-transition__method {
   position: relative;
   display: grid;
@@ -132,11 +136,6 @@
 }
 
 @media (max-width: 639px) {
-  .hsm-transition {
-    --method-transition-scroll: 260vh;
-    min-height: 260svh;
-  }
-
   .hsm-transition__center-bloom {
     top: 44%;
     width: min(88vw, 330px);
