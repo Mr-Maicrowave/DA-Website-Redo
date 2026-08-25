@@ -1,69 +1,164 @@
-import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
-import { ArrowRight } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useMemo, useState } from 'react';
-import { TUTORS, getPhotoStyle, getPhotoUrl, type CatalogueTutor } from '@/data/teacherCatalogue';
-import { FEATURED_TUTOR_IDS, TUTOR_ORBIT_LAYOUT, orbitMotionFor, orbitPositionFor } from './tutor-orbit-config';
+import {
+  AnimatePresence,
+  LayoutGroup,
+  motion,
+  useReducedMotion,
+} from 'framer-motion';
+import { ArrowRight, BookOpen, HeartHandshake, Sparkles } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import {
+  TUTORS,
+  teachesEnglish,
+  teachesMath,
+  teachesScience,
+  type CatalogueTutor,
+} from '@/data/teacherCatalogue';
+import {
+  DEFAULT_FEATURED_TUTOR_ID,
+  INNER_ORBIT_TUTOR_IDS,
+  OUTER_ORBIT_TUTOR_IDS,
+  selectionSequenceFor,
+  swapFacultyTutor,
+  type SelectionPhase,
+} from './tutor-orbit-config';
+import { TutorOrbitStage } from './TutorOrbitStage';
 import './tutor-orbit.css';
 
-const featured = FEATURED_TUTOR_IDS.map(id => TUTORS.find(t => t.id === id)).filter((t): t is CatalogueTutor => Boolean(t));
+const tutorById = (id: string) => TUTORS.find((tutor) => tutor.id === id);
 
-const subject = (tutor: CatalogueTutor) => tutor.primarySubject === 'math' ? 'Mathematics' : tutor.primarySubject === 'both' ? 'English & Mathematics' : tutor.primarySubject[0].toUpperCase() + tutor.primarySubject.slice(1);
-
-const tutorYearRange = (tutor: CatalogueTutor) => tutor.hasPrimary ? 'Primary to Year 12' : 'Years 7–12';
-
-const subjectTone = (tutor: CatalogueTutor) => ({
-  math: 'tutor-orbit__match-signal--subject--math',
-  english: 'tutor-orbit__match-signal--subject--english',
-  science: 'tutor-orbit__match-signal--subject--science',
-  both: 'tutor-orbit__match-signal--subject--both',
-}[tutor.primarySubject]);
+function subjectLabels(tutor: CatalogueTutor) {
+  const labels: string[] = [];
+  if (teachesEnglish(tutor)) labels.push('English');
+  if (teachesMath(tutor)) labels.push('Mathematics');
+  if (teachesScience(tutor)) labels.push('Science');
+  if (tutor.hasPrimary) labels.push('Primary');
+  return labels.slice(0, 3);
+}
 
 export function TutorOrbitHero() {
-  const reduced = useReducedMotion();
-  const navigate = useNavigate();
-  const [activeId, setActiveId] = useState(FEATURED_TUTOR_IDS[5]);
-  const active = useMemo(() => featured.find(t => t.id === activeId) ?? featured[0], [activeId]);
+  const reduced = Boolean(useReducedMotion());
+  const [activeId, setActiveId] = useState(DEFAULT_FEATURED_TUTOR_ID);
+  const [innerIds, setInnerIds] = useState<string[]>(() => [...INNER_ORBIT_TUTOR_IDS]);
+  const [outerIds, setOuterIds] = useState<string[]>(() => [...OUTER_ORBIT_TUTOR_IDS]);
+  const [phase, setPhase] = useState<SelectionPhase>('idle');
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [originTier, setOriginTier] = useState<'inner' | 'outer' | null>(null);
+  const transitionTimers = useRef<number[]>([]);
+
+  const active = useMemo(() => tutorById(activeId) ?? tutorById(DEFAULT_FEATURED_TUTOR_ID), [activeId]);
+  const innerTutors = useMemo(
+    () => innerIds.map(tutorById).filter((tutor): tutor is CatalogueTutor => Boolean(tutor)),
+    [innerIds],
+  );
+  const outerTutors = useMemo(
+    () => outerIds.map(tutorById).filter((tutor): tutor is CatalogueTutor => Boolean(tutor)),
+    [outerIds],
+  );
+
+  useEffect(() => () => {
+    transitionTimers.current.forEach((timer) => window.clearTimeout(timer));
+  }, []);
+
   if (!active) return null;
-  const choose = (id: string) => { setActiveId(id as typeof activeId); };
+
+  const selectTutor = (selectedId: string) => {
+    const result = swapFacultyTutor(activeId, innerIds, outerIds, selectedId);
+    if (result.selectedSlot === -1 || phase !== 'idle') return;
+
+    setSelectedId(selectedId);
+    setOriginTier(result.selectedTier);
+    transitionTimers.current.forEach((timer) => window.clearTimeout(timer));
+    const steps = selectionSequenceFor(result.selectedTier, reduced);
+    const applyStep = (nextPhase: SelectionPhase) => {
+      setPhase(nextPhase);
+      if (nextPhase === 'exchanging') {
+        setActiveId(result.activeId);
+        setInnerIds(result.innerIds);
+        setOuterIds(result.outerIds);
+      }
+      if (nextPhase === 'idle') {
+        setSelectedId(null);
+        setOriginTier(null);
+        transitionTimers.current = [];
+      }
+    };
+    applyStep(steps[0].phase);
+    transitionTimers.current = steps.slice(1).map(({ phase: nextPhase, at }) => (
+      window.setTimeout(() => applyStep(nextPhase), at)
+    ));
+  };
+
+  const subjects = subjectLabels(active);
+  const strengths = (active.profile?.tags ?? []).slice(0, 3);
   const profileHref = `/find-teacher?tutor=${active.id}`;
 
-  return <section className={`tutor-orbit tutor-orbit--${TUTOR_ORBIT_LAYOUT}`} aria-labelledby="tutor-orbit-title">
-    <div className="tutor-orbit__glow" aria-hidden="true" />
-    <div className="tutor-orbit__vignette" aria-hidden="true" />
-    <div className="tutor-orbit__heading">
-      <p>Meet the people behind the progress</p>
-      <h1 id="tutor-orbit-title">Find the teacher your child will remember.</h1>
-      <div className="tutor-orbit__intro"><span>A great match is more than a subject. Explore the mentors who bring clarity, momentum and belief to every lesson.</span><Link to="/find-teacher">Meet the whole team <ArrowRight /></Link></div>
-    </div>
-    <div className="tutor-orbit__stage">
-      <div className="tutor-orbit__ring" aria-hidden="true" />
-      {featured.map((tutor, index) => {
-        const drift = orbitMotionFor(tutor.id);
-        const isActive = tutor.id === active.id;
-        return <motion.button key={tutor.id} type="button" className={`tutor-orbit__satellite tutor-orbit__satellite--${orbitPositionFor(tutor.id)}${isActive ? ' is-active' : ''}`} onMouseEnter={() => choose(tutor.id)} onFocus={() => choose(tutor.id)} onClick={() => navigate(`/find-teacher?tutor=${tutor.id}`)} animate={reduced ? { scale: isActive ? 1.1 : .84, opacity: isActive ? 1 : .72 } : { x: drift.x, y: drift.y, scale: isActive ? 1.1 : .84, opacity: isActive ? 1 : .72 }} transition={{ x: { duration: drift.duration, delay: index * .36, repeat: Infinity, ease: 'easeInOut' }, y: { duration: drift.duration, delay: index * .36, repeat: Infinity, ease: 'easeInOut' }, scale: { duration: .36, ease: [0.16, 1, 0.3, 1] }, opacity: { duration: .3, ease: 'easeOut' } }} aria-label={`Open ${tutor.name}'s full profile`}>
-          <img src={getPhotoUrl(tutor)} alt="" style={getPhotoStyle(tutor)} />
-        </motion.button>;
-      })}
-      <div className="tutor-orbit__centre-wrap">
-        <Link className="tutor-orbit__centre-profile" to={profileHref} aria-label={`Open ${active.name}'s full profile`}>
-          <div className="tutor-orbit__centre">
-            <AnimatePresence mode="sync"><motion.img key={active.id} src={getPhotoUrl(active)} alt={`${active.name}, DA Tuition educator`} style={getPhotoStyle(active)} initial={reduced ? false : { opacity: 0, scale: 1.02, filter: 'blur(2px)' }} animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }} exit={reduced ? undefined : { opacity: 0, scale: .99, filter: 'blur(2px)' }} transition={{ duration: .24, ease: [0.16, 1, 0.3, 1] }} /></AnimatePresence>
-          </div>
+  return (
+    <section className="tutor-orbit" aria-labelledby="tutor-orbit-title">
+      <div className="tutor-orbit__ambient" aria-hidden="true" />
+
+      <div className="tutor-orbit__editorial">
+        <p className="tutor-orbit__eyebrow">Meet the people behind the progress</p>
+        <h1 id="tutor-orbit-title">Meet the educators students <em>remember.</em></h1>
+        <div className="tutor-orbit__rule" aria-hidden="true"><span /></div>
+        <p className="tutor-orbit__lede">
+          Great teaching is more than knowledge. It&apos;s the belief, encouragement and people who
+          keep showing up for their students.
+        </p>
+        <Link className="tutor-orbit__directory-link" to="/find-teacher">
+          Explore the whole team <ArrowRight aria-hidden="true" />
         </Link>
-        <div className="tutor-orbit__centre-ring" aria-hidden="true" />
       </div>
-    </div>
-    <motion.aside className="tutor-orbit__card" initial={reduced ? false : { opacity: 0, x: 22 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: .32 }}>
-      <h2>{active.name}</h2>
-      <em>{active.designation}</em>
-      <dl className="tutor-orbit__match-signals">
-        <div><dt>Year levels</dt><dd>{tutorYearRange(active)}</dd></div>
-        <div className={`tutor-orbit__match-signal--subject ${subjectTone(active)}`}><dt>Subjects</dt><dd>{subject(active)}</dd></div>
-        <div><dt>How they teach</dt><dd>{active.tagline}</dd></div>
-      </dl>
-      <div className="tutor-orbit__card-tags">{(active.profile?.tags ?? [subject(active), 'Warm, clear support', 'Confidence-building']).slice(0, 3).map(tag => <span key={tag}>{tag}</span>)}</div>
-      <Link to={profileHref}>Open full profile <ArrowRight /></Link>
-    </motion.aside>
-  </section>;
+
+      <LayoutGroup id="tutor-faculty-orbit">
+        <TutorOrbitStage
+          active={active}
+          innerTutors={innerTutors}
+          outerTutors={outerTutors}
+          phase={phase}
+          selectedId={selectedId}
+          originTier={originTier}
+          reduced={reduced}
+          onSelect={selectTutor}
+        />
+
+        <motion.aside className="tutor-orbit__profile" aria-live="polite" initial={false} animate={{ opacity: 1 }}>
+          <div className="tutor-orbit__profile-heading">
+            <p>{active.tier === 'senior' ? 'Senior educator' : 'Educator'}</p>
+            <Sparkles aria-hidden="true" />
+          </div>
+
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.div
+              className="tutor-orbit__profile-content"
+              key={active.id}
+              initial={reduced ? false : { opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={reduced ? undefined : { opacity: 0, y: -8 }}
+              transition={{ duration: reduced ? 0 : 0.3 }}
+            >
+              <h2>{active.name}</h2>
+              <p className="tutor-orbit__designation">{active.designation}</p>
+              <dl className="tutor-orbit__details">
+                <div><dt>Subjects</dt><dd className="tutor-orbit__subjects">{subjects.map((item) => <span key={item}>{item}</span>)}</dd></div>
+                <div><dt>Year levels</dt><dd>{active.hasPrimary ? 'Primary–Year 12' : 'Years 7–12'}</dd></div>
+                <div><dt>Teaching style</dt><dd>&ldquo;{active.tagline}&rdquo;</dd></div>
+              </dl>
+              <div className="tutor-orbit__strengths">
+                <p>Strengths</p>
+                <ul>
+                  {strengths.map((strength, index) => {
+                    const Icon = [HeartHandshake, BookOpen, Sparkles][index] ?? Sparkles;
+                    return <li key={strength}><Icon aria-hidden="true" /><span>{strength}</span></li>;
+                  })}
+                </ul>
+              </div>
+            </motion.div>
+          </AnimatePresence>
+
+          <Link className="tutor-orbit__profile-link" to={profileHref}>Open full profile <ArrowRight aria-hidden="true" /></Link>
+        </motion.aside>
+      </LayoutGroup>
+    </section>
+  );
 }
