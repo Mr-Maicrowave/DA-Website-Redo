@@ -17,6 +17,9 @@ const aquariumDataUrl = new URL('./primaryStoryData.ts', import.meta.url);
 const aquariumEngineUrl = new URL('./useAquariumEngine.ts', import.meta.url);
 const aquariumFactCardUrl = new URL('./AquariumFactCard.tsx', import.meta.url);
 const programBagUrl = new URL('./ProgramBag.tsx', import.meta.url);
+const familyReasonsUrl = new URL('./FamilyReasons.tsx', import.meta.url);
+const outroUrl = new URL('./PrimaryJourneyOutro.tsx', import.meta.url);
+const referenceMotionUrl = new URL('./usePrimaryReferenceMotion.ts', import.meta.url);
 const primaryReferenceCssUrl = new URL('./primary-reference.css', import.meta.url);
 
 test('Primary reference story keeps the approved ten-section sequence after the preserved hero', () => {
@@ -51,7 +54,7 @@ test('Primary reference story keeps the approved ten-section sequence after the 
 });
 
 test('story slots expose approved copy as semantic HTML rather than implementation artifacts', () => {
-  const source = [referenceStoryUrl, foundationUrl, howWeTeachUrl, growthUrl, masteryUrl]
+  const source = [referenceStoryUrl, foundationUrl, howWeTeachUrl, growthUrl, masteryUrl, familyReasonsUrl, outroUrl]
     .filter((url) => existsSync(url))
     .map((url) => readFileSync(url, 'utf8'))
     .join('\n');
@@ -62,7 +65,7 @@ test('story slots expose approved copy as semantic HTML rather than implementati
   assert.match(source, /Why families choose DA\./);
   assert.match(source, /A clear path\. Every step matters\./);
   assert.doesNotMatch(source, /\.alt\.toLowerCase\(\)/);
-  assert.doesNotMatch(source, /referenceStoryAssets\.closingLandscape/);
+  assert.doesNotMatch(source, /<h2[^>]*>\{?referenceStoryAssets\.closingLandscape/);
 });
 
 test('Years 1–2 foundations present all four outcomes without turning them into cards', () => {
@@ -255,4 +258,62 @@ test('program bag exposes three native pressed-state controls around a stationar
   assert.match(styles, /translate3d\(0,\s*-14px,\s*0\)/);
   assert.match(styles, /\.primary-program-bag__control:focus-visible/);
   assert.match(styles, /min-(?:width|height):\s*44px/);
+});
+
+test('family reasons form a four-column unboxed editorial strip with the reviewed icon artwork', () => {
+  assert.equal(existsSync(familyReasonsUrl), true, 'FamilyReasons must exist');
+
+  const story = readFileSync(referenceStoryUrl, 'utf8');
+  const familyReasons = readFileSync(familyReasonsUrl, 'utf8');
+  const data = readFileSync(referenceStoryDataUrl, 'utf8');
+  const styles = readFileSync(primaryReferenceCssUrl, 'utf8');
+  const familyData = data.slice(data.indexOf('export const familyReasons'));
+
+  assert.match(story, /import FamilyReasons from '\.\/FamilyReasons'/);
+  assert.match(story, /<FamilyReasons/);
+  assert.match(familyReasons, /familyReasons\.map/);
+  assert.match(familyReasons, /referenceStoryAssets\.familyIcons/);
+  assert.match(familyReasons, /<ol/);
+  assert.equal((familyData.match(/title: '/g) ?? []).length, 4);
+  assert.match(styles, /\.primary-family-reasons__list\s*\{[\s\S]*grid-template-columns:\s*repeat\(4,/);
+  assert.doesNotMatch(familyReasons, /Card/);
+});
+
+test('closing landscape carries semantic CTA copy and both expected journey links', () => {
+  assert.equal(existsSync(outroUrl), true, 'PrimaryJourneyOutro must exist');
+  const story = readFileSync(referenceStoryUrl, 'utf8');
+  const outro = readFileSync(outroUrl, 'utf8');
+
+  assert.match(story, /import PrimaryJourneyOutro from '\.\/PrimaryJourneyOutro'/);
+  assert.match(outro, /referenceStoryAssets\.closingLandscape/);
+  assert.match(outro, /A clear path\. Every step matters\./);
+  assert.match(outro, /We’re here beside your child at every stage\./);
+  assert.match(outro, /to="\/book-interview"/);
+  assert.match(outro, /href="#pathway"/);
+  assert.match(outro, /See How It Works/);
+  assert.match(outro, /<h2/);
+});
+
+test('reference motion stays root-scoped, clears reduced-motion transforms, and fully cleans up', () => {
+  assert.equal(existsSync(referenceMotionUrl), true, 'usePrimaryReferenceMotion must exist');
+  const story = readFileSync(referenceStoryUrl, 'utf8');
+  const motion = readFileSync(referenceMotionUrl, 'utf8');
+
+  assert.match(story, /useRef<HTMLElement>/);
+  assert.match(story, /usePrimaryReferenceMotion\(rootRef\)/);
+  assert.match(story, /<main ref=\{rootRef\}/);
+  assert.match(motion, /usePrimaryReferenceMotion\s*=\s*\(rootRef:\s*RefObject<HTMLElement>\)/);
+  assert.match(motion, /gsap\.registerPlugin\(ScrollTrigger\)/);
+  assert.match(motion, /const context = gsap\.context/);
+  assert.match(motion, /gsap\.matchMedia\(\)/);
+  assert.match(motion, /root\.querySelector<HTMLElement>\('#pathway'\)/);
+  assert.match(motion, /trigger:\s*pathway/);
+  assert.doesNotMatch(motion, /trigger:\s*['"]#/);
+  assert.match(motion, /prefers-reduced-motion:\s*reduce/);
+  assert.match(motion, /prefers-reduced-motion:\s*no-preference/);
+  assert.match(motion, /clearProps:\s*'transform,opacity,visibility,clipPath'/);
+  assert.match(motion, /\.primary-reference-teaching__path/);
+  assert.match(motion, /\.primary-program-bag__control/);
+  assert.match(motion, /media\.revert\(\)/);
+  assert.match(motion, /context\.revert\(\)/);
 });
