@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { SAFE_SECTORS } from './tutor-orbit-geometry.ts';
 import {
   canBeginSelection,
+  holdKeysAfterSelection,
   normalizeStagePointer,
   pruneTutorHoldKeys,
   tutorsForGeometryBand,
@@ -22,6 +23,12 @@ test('prunes both hover and focus holds for a promoted tutor only', () => {
     [...pruneTutorHoldKeys(holds, 'T001')],
     ['hover:T002', 'keyboard:global'],
   );
+});
+
+test('retains rejected selection holds and prunes accepted selection holds', () => {
+  const holds = new Set(['hover:T001', 'focus:T001', 'hover:T002']);
+  assert.deepEqual([...holdKeysAfterSelection(holds, 'T001', false)], [...holds]);
+  assert.deepEqual([...holdKeysAfterSelection(holds, 'T001', true)], ['hover:T002']);
 });
 
 test('limits every band to its authored safe-sector count', () => {

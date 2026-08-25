@@ -26,6 +26,7 @@ import {
 } from './tutor-orbit-geometry';
 import {
   normalizeStagePointer,
+  holdKeysAfterSelection,
   pruneTutorHoldKeys,
   tutorsForGeometryBand,
 } from './tutor-orbit-stage-helpers';
@@ -88,9 +89,9 @@ interface OrbitTutorProps {
   clock: MotionValue<number>;
   reduced: boolean;
   isPromotedSource: boolean;
-  onSelect: (id: string) => void;
+  onSelect: (id: string) => boolean;
   setMotionHold: (key: string, held: boolean) => void;
-  clearTutorHolds: (id: string) => void;
+  applySelectionHolds: (id: string, accepted: boolean) => void;
 }
 
 function OrbitTutor({
@@ -103,7 +104,7 @@ function OrbitTutor({
   isPromotedSource,
   onSelect,
   setMotionHold,
-  clearTutorHolds,
+  applySelectionHolds,
 }: OrbitTutorProps) {
   const sector = SAFE_SECTORS[band][tier][index] ?? SAFE_SECTORS[band][tier][0];
   const progress = useTransform(clock, (angle) => ((angle / TAU) % 1 + 1) % 1);
@@ -126,8 +127,8 @@ function OrbitTutor({
         onFocus={() => setMotionHold(`focus:${tutor.id}`, true)}
         onBlur={() => setMotionHold(`focus:${tutor.id}`, false)}
         onClick={() => {
-          clearTutorHolds(tutor.id);
-          onSelect(tutor.id);
+          const accepted = onSelect(tutor.id);
+          applySelectionHolds(tutor.id, accepted);
         }}
         aria-label={`View ${tutor.name}`}
       >
@@ -180,7 +181,7 @@ export interface TutorOrbitStageProps {
   selectedId: string | null;
   originTier: OrbitTier | null;
   reduced: boolean;
-  onSelect: (id: string) => void;
+  onSelect: (id: string) => boolean;
 }
 
 export function TutorOrbitStage({
@@ -232,8 +233,8 @@ export function TutorOrbitStage({
     });
   };
 
-  const clearTutorHolds = (tutorId: string) => {
-    setHoldKeys((current) => pruneTutorHoldKeys(current, tutorId));
+  const applySelectionHolds = (tutorId: string, accepted: boolean) => {
+    setHoldKeys((current) => holdKeysAfterSelection(current, tutorId, accepted));
   };
 
   const onPointerMove = (event: PointerEvent<HTMLDivElement>) => {
@@ -294,13 +295,13 @@ export function TutorOrbitStage({
       <motion.div className="tutor-orbit__portrait-field" style={{ position: 'absolute', inset: 0, ...(reduced ? {} : { x: fieldX, y: fieldY }) }}>
         <motion.div className="tutor-orbit__inner-orbit" variants={entrance} transition={{ delay: reduced ? 0 : 0.5, duration: reduced ? 0 : 0.6 }}>
           {stageInnerTutors.map((tutor, index) => (
-            <OrbitTutor key={tutor.id} tutor={tutor} index={index} tier="inner" band={band} clock={innerClock} reduced={reduced} isPromotedSource={false} onSelect={onSelect} setMotionHold={setMotionHold} clearTutorHolds={clearTutorHolds} />
+            <OrbitTutor key={tutor.id} tutor={tutor} index={index} tier="inner" band={band} clock={innerClock} reduced={reduced} isPromotedSource={false} onSelect={onSelect} setMotionHold={setMotionHold} applySelectionHolds={applySelectionHolds} />
           ))}
         </motion.div>
 
         <motion.div className="tutor-orbit__outer-orbit" variants={entrance} transition={{ delay: reduced ? 0 : 0.72, duration: reduced ? 0 : 0.73 }}>
           {stageOuterTutors.map((tutor, index) => (
-            <OrbitTutor key={tutor.id} tutor={tutor} index={index} tier="outer" band={band} clock={outerClock} reduced={reduced} isPromotedSource={phase === 'promoting' && originTier === 'outer' && tutor.id === selectedId} onSelect={onSelect} setMotionHold={setMotionHold} clearTutorHolds={clearTutorHolds} />
+            <OrbitTutor key={tutor.id} tutor={tutor} index={index} tier="outer" band={band} clock={outerClock} reduced={reduced} isPromotedSource={phase === 'promoting' && originTier === 'outer' && tutor.id === selectedId} onSelect={onSelect} setMotionHold={setMotionHold} applySelectionHolds={applySelectionHolds} />
           ))}
         </motion.div>
 

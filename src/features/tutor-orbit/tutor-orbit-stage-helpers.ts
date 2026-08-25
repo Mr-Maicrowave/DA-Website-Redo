@@ -13,6 +13,14 @@ export function pruneTutorHoldKeys(holdKeys: ReadonlySet<string>, tutorId: strin
   );
 }
 
+export function holdKeysAfterSelection(
+  holdKeys: ReadonlySet<string>,
+  tutorId: string,
+  accepted: boolean,
+) {
+  return accepted ? pruneTutorHoldKeys(holdKeys, tutorId) : new Set(holdKeys);
+}
+
 export function tutorsForGeometryBand<T>(tutors: readonly T[], band: GeometryBand, tier: OrbitTier) {
   return tutors.slice(0, SAFE_SECTORS[band][tier].length);
 }

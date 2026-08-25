@@ -72,8 +72,9 @@ test('maps every responsive band to its authored safe-sector capacity', () => {
   assert.match(stage, /tutorsForGeometryBand\(outerTutors, band, 'outer'\)/);
 });
 
-test('wires promotion cleanup, clamped pointer input, and the imperative selection lock', () => {
-  assert.match(stage, /clearTutorHolds\(tutor\.id\)/);
+test('wires accepted-selection cleanup, clamped pointer input, and the imperative selection lock', () => {
+  assert.match(stage, /applySelectionHolds\(tutor\.id, accepted\)/);
+  assert.match(stage, /onSelect: \(id: string\) => boolean/);
   assert.match(stage, /normalizeStagePointer\(event\.clientX, rect\.left, rect\.width\)/);
   assert.match(component, /canBeginSelection\(selectionLock\.current\)/);
   assert.match(component, /transitionSelectionLock\(selectionLock\.current, 'select'\)/);

@@ -69,9 +69,9 @@ export function TutorOrbitHero() {
   if (!active) return null;
 
   const selectTutor = (selectedId: string) => {
-    if (!canBeginSelection(selectionLock.current)) return;
+    if (!canBeginSelection(selectionLock.current)) return false;
     const result = swapFacultyTutor(activeId, innerIds, outerIds, selectedId);
-    if (result.selectedSlot === -1 || phase !== 'idle') return;
+    if (result.selectedSlot === -1 || phase !== 'idle') return false;
 
     selectionLock.current = transitionSelectionLock(selectionLock.current, 'select');
     setSelectedId(selectedId);
@@ -96,6 +96,7 @@ export function TutorOrbitHero() {
     transitionTimers.current = steps.slice(1).map(({ phase: nextPhase, at }) => (
       window.setTimeout(() => applyStep(nextPhase), at)
     ));
+    return true;
   };
 
   const subjects = subjectLabels(active);
