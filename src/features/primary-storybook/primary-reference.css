@@ -1323,54 +1323,47 @@
 }
 
 .primary-family-reasons {
+  --family-strip-padding-block: clamp(1.25rem, 2vw, 1.75rem);
+  --family-icon-size: clamp(3.5rem, 4.5vw, 4.25rem);
   position: relative;
   width: min(100% - clamp(2rem, 8vw, 8rem), 90rem);
   margin: 0 auto;
   border-top: 1px solid rgba(7, 27, 53, .2);
   border-bottom: 1px solid rgba(7, 27, 53, .2);
-  padding: clamp(3.5rem, 6vw, 5.25rem) 0 clamp(3.75rem, 6vw, 5.5rem);
+  padding: var(--family-strip-padding-block) 0;
 }
 
 .primary-family-reasons__header {
   display: flex;
-  align-items: flex-end;
+  align-items: baseline;
   justify-content: space-between;
-  gap: 2rem;
+  gap: 1.5rem;
+  margin-bottom: 1.25rem;
 }
 
 .primary-family-reasons__header > p {
-  margin: 0 0 .45rem;
+  margin: 0;
   color: #7b5919;
   font-size: .76rem;
   font-weight: 800;
 }
 
 .primary-family-reasons__header h2 {
-  max-width: 12ch;
   margin: 0;
-  font-size: clamp(2.5rem, 4vw, 4.1rem);
+  font-size: clamp(1.8rem, 2.6vw, 2.4rem);
   font-weight: 600;
-  letter-spacing: -.035em;
-  line-height: .97;
+  letter-spacing: -.025em;
+  line-height: 1;
   text-align: right;
 }
 
-.primary-family-reasons__icons {
-  position: relative;
-  height: clamp(5.75rem, 12vw, 9rem);
-  margin: clamp(1.2rem, 2.5vw, 2rem) 0 .1rem;
-  overflow: hidden;
-  pointer-events: none;
-}
-
-.primary-family-reasons__icons img {
-  position: absolute;
-  top: 50%;
-  left: 0;
+.primary-family-reasons__icon {
   display: block;
-  width: 100%;
-  height: auto;
-  transform: translate3d(0, -50%, 0);
+  width: var(--family-icon-size);
+  height: calc(var(--family-icon-size) * .78);
+  background-repeat: no-repeat;
+  background-size: 400% auto;
+  pointer-events: none;
 }
 
 .primary-family-reasons__list {
@@ -1382,9 +1375,12 @@
 }
 
 .primary-family-reasons__list li {
+  display: grid;
+  min-height: 8rem;
   min-width: 0;
+  align-content: start;
   border-left: 1px solid rgba(7, 27, 53, .17);
-  padding: .8rem clamp(1rem, 2.2vw, 2rem) .25rem;
+  padding: 0 clamp(1rem, 2.2vw, 2rem);
 }
 
 .primary-family-reasons__list li:first-child {
@@ -1396,23 +1392,17 @@
   padding-right: 0;
 }
 
-.primary-family-reasons__list li > span {
-  color: #9a6d1b;
-  font-size: .68rem;
-  font-weight: 800;
-}
-
 .primary-family-reasons__list h3 {
   max-width: 16ch;
-  margin: .65rem 0 0;
-  font-size: clamp(1.2rem, 1.55vw, 1.55rem);
+  margin: .5rem 0 0;
+  font-size: clamp(1.1rem, 1.4vw, 1.35rem);
   font-weight: 600;
   line-height: 1.08;
 }
 
 .primary-family-reasons__list p {
   max-width: 28ch;
-  margin: .55rem 0 0;
+  margin: .3rem 0 0;
   color: #38566b;
   font-size: .76rem;
   line-height: 1.55;
@@ -1537,19 +1527,6 @@
 
 @keyframes primary-reference-fish-drift {
   50% { transform: translate3d(10px, -5px, 0) rotate(1deg); }
-}
-
-@keyframes primary-reference-teaching-settle {
-  from { transform: translate3d(0, 18px, 0) rotate(var(--teaching-rotation, 0deg)); }
-  to { transform: translate3d(0, 0, 0) rotate(var(--teaching-rotation, 0deg)); }
-}
-
-@supports (animation-timeline: view()) {
-  .primary-reference-teaching li figure {
-    animation: primary-reference-teaching-settle .8s cubic-bezier(.22, 1, .36, 1) both;
-    animation-timeline: view();
-    animation-range: entry 8% cover 35%;
-  }
 }
 
 @media (max-width: 1050px) {
@@ -1719,11 +1696,11 @@
 
   .primary-family-reasons__list li:nth-child(-n + 2) {
     border-bottom: 1px solid rgba(7, 27, 53, .17);
-    padding-bottom: 1.3rem;
+    padding-bottom: 1.25rem;
   }
 
   .primary-family-reasons__list li:nth-child(n + 3) {
-    padding-top: 1.4rem;
+    padding-top: 1.25rem;
   }
 
   .primary-family-reasons__list li:nth-child(3) {
@@ -2105,12 +2082,7 @@
 
   .primary-family-reasons {
     width: min(100% - 2rem, 34rem);
-    padding: 3.75rem 0 4rem;
-  }
-
-  .primary-family-reasons__icons {
-    height: clamp(4.4rem, 20vw, 6.25rem);
-    margin-top: 1.4rem;
+    padding: 2rem 0;
   }
 
   .primary-family-reasons__list li {
@@ -2176,6 +2148,7 @@
   }
 
   .primary-reference-foundation__photo,
+  .primary-reference-teaching li,
   .primary-reference-teaching li figure,
   .primary-reference-growth__photo,
   .primary-reference-mastery__photo,

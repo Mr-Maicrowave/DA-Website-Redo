@@ -273,10 +273,32 @@ test('family reasons form a four-column unboxed editorial strip with the reviewe
   assert.match(story, /<FamilyReasons/);
   assert.match(familyReasons, /familyReasons\.map/);
   assert.match(familyReasons, /referenceStoryAssets\.familyIcons/);
+  assert.match(familyReasons, /backgroundPosition/);
+  assert.match(familyReasons, /\['4%', '38%', '67%', '100%'\] as const/);
+  assert.match(familyReasons, /primary-family-reasons__icon/);
   assert.match(familyReasons, /<ol/);
   assert.equal((familyData.match(/title: '/g) ?? []).length, 4);
+  assert.match(familyData, /title: 'Small classes',[\s\S]*body: 'More attention, better outcomes\.'/);
+  assert.match(familyData, /title: 'Loved by parents',[\s\S]*body: 'Real results, real relationships\.'/);
+  assert.match(familyData, /title: 'Experienced tutors',[\s\S]*body: 'Qualified, passionate and caring\.'/);
+  assert.match(familyData, /title: 'Proven progress',[\s\S]*body: 'Confidence today, success tomorrow\.'/);
   assert.match(styles, /\.primary-family-reasons__list\s*\{[\s\S]*grid-template-columns:\s*repeat\(4,/);
   assert.doesNotMatch(familyReasons, /Card/);
+});
+
+test('family reasons use compact desktop geometry and one complete atlas slice per reason', () => {
+  const styles = readFileSync(primaryReferenceCssUrl, 'utf8');
+  const familyStyles = styles.slice(
+    styles.indexOf('.primary-family-reasons {'),
+    styles.indexOf('.primary-journey-outro {'),
+  );
+
+  assert.match(familyStyles, /--family-strip-padding-block:\s*clamp\(1\.25rem,\s*2vw,\s*1\.75rem\)/);
+  assert.match(familyStyles, /--family-icon-size:\s*clamp\(3\.5rem,\s*4\.5vw,\s*4\.25rem\)/);
+  assert.match(familyStyles, /padding:\s*var\(--family-strip-padding-block\) 0/);
+  assert.match(familyStyles, /\.primary-family-reasons__icon\s*\{[\s\S]*background-size:\s*400% auto/);
+  assert.doesNotMatch(familyStyles, /\.primary-family-reasons__icons/);
+  assert.doesNotMatch(familyStyles, /padding:\s*clamp\(3\.5rem/);
 });
 
 test('closing landscape carries semantic CTA copy and both expected journey links', () => {
@@ -298,6 +320,7 @@ test('reference motion stays root-scoped, clears reduced-motion transforms, and 
   assert.equal(existsSync(referenceMotionUrl), true, 'usePrimaryReferenceMotion must exist');
   const story = readFileSync(referenceStoryUrl, 'utf8');
   const motion = readFileSync(referenceMotionUrl, 'utf8');
+  const styles = readFileSync(primaryReferenceCssUrl, 'utf8');
 
   assert.match(story, /useRef<HTMLElement>/);
   assert.match(story, /usePrimaryReferenceMotion\(rootRef\)/);
@@ -312,8 +335,13 @@ test('reference motion stays root-scoped, clears reduced-motion transforms, and 
   assert.match(motion, /prefers-reduced-motion:\s*reduce/);
   assert.match(motion, /prefers-reduced-motion:\s*no-preference/);
   assert.match(motion, /clearProps:\s*'transform,opacity,visibility,clipPath'/);
+  assert.match(motion, /'\.primary-reference-teaching li'/);
+  assert.doesNotMatch(motion, /'\.primary-reference-teaching li figure'/);
   assert.match(motion, /\.primary-reference-teaching__path/);
   assert.match(motion, /\.primary-program-bag__control/);
   assert.match(motion, /media\.revert\(\)/);
   assert.match(motion, /context\.revert\(\)/);
+  assert.doesNotMatch(styles, /@keyframes primary-reference-teaching-settle/);
+  assert.doesNotMatch(styles, /animation:\s*primary-reference-teaching-settle/);
+  assert.match(styles, /\.primary-reference-teaching li:nth-child\(1\) figure\s*\{\s*transform:\s*rotate\(-1\.4deg\)/);
 });

@@ -202,10 +202,10 @@ export const programChoices = [
 ] as const satisfies readonly [ProgramChoice, ProgramChoice, ProgramChoice];
 
 export const familyReasons = [
-  { title: 'Small classes, real attention', body: 'Every child is known, supported and encouraged to ask questions.' },
-  { title: 'A clear Years 1–6 pathway', body: 'Skills build deliberately from strong foundations to Year 7 readiness.' },
-  { title: 'Confidence that carries forward', body: 'We celebrate progress so students feel capable of the next challenge.' },
-  { title: 'Families as partners', body: 'We share progress and work alongside parents at every stage.' },
+  { title: 'Small classes', body: 'More attention, better outcomes.' },
+  { title: 'Loved by parents', body: 'Real results, real relationships.' },
+  { title: 'Experienced tutors', body: 'Qualified, passionate and caring.' },
+  { title: 'Proven progress', body: 'Confidence today, success tomorrow.' },
 ] as const satisfies readonly [FamilyReason, FamilyReason, FamilyReason, FamilyReason];
 
 export const stagePhotos = {

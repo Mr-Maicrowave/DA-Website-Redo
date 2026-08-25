@@ -34,7 +34,7 @@ const usePrimaryReferenceMotion = (rootRef: RefObject<HTMLElement>): void => {
             root,
           );
           const teachingMoments = gsap.utils.toArray<HTMLElement>(
-            '.primary-reference-teaching li figure',
+            '.primary-reference-teaching li',
             root,
           );
           const teachingPath = root.querySelector<HTMLElement>('.primary-reference-teaching__path');
