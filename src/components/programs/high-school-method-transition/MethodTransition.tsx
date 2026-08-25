@@ -7,6 +7,10 @@ import {
 } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import {
+  reconcileSourceHandoffPose,
+  type TransitionPose,
+} from './methodTransitionGeometry';
 import { methodItems } from './methodTransitionData';
 import { getNextMethodIndex } from './methodTransitionKeyboard';
 import './MethodTransition.css';
@@ -15,18 +19,14 @@ gsap.registerPlugin(ScrollTrigger);
 
 const CENTER_BLOOM = '/images/programs/high-school-method-transition/method-bloom-center-green-v1.png';
 const MAGNIFIER = '/high-school-journey/finale/year-08-magnifying-glass-ai.png';
+const SOURCE_HANDOFF_START = 0.15;
+const SOURCE_HANDOFF_END = 0.32;
 
 type MediaConditions = {
   desktop: boolean;
   tablet: boolean;
   mobile: boolean;
   reduce: boolean;
-};
-
-type ProxyPose = {
-  x: number;
-  y: number;
-  scale: number;
 };
 
 function decodeImage(image: HTMLImageElement) {
@@ -147,14 +147,15 @@ export function MethodTransition() {
               updateMethodsAvailability(false);
 
               const peakSize = conditions.desktop ? 216 : conditions.tablet ? 180 : 136;
-              const poses: Record<'source' | 'detach' | 'center' | 'diagnose', ProxyPose> = {
+              const poses: Record<'source' | 'detach' | 'center' | 'diagnose', TransitionPose> = {
                 source: { x: 0, y: 0, scale: 1 },
                 detach: { x: 0, y: 0, scale: 1 },
                 center: { x: 0, y: 0, scale: 1 },
                 diagnose: { x: 0, y: 0, scale: 1 },
               };
+              let normalizedSourceRect: DOMRect | null = null;
 
-              const poseForRect = (rect: DOMRect, targetWidth = rect.width): ProxyPose => {
+              const poseForRect = (rect: DOMRect, targetWidth = rect.width): TransitionPose => {
                 const proxyWidth = proxy.offsetWidth;
                 const proxyHeight = proxy.offsetHeight;
                 const scale = targetWidth / proxyWidth;
@@ -199,6 +200,7 @@ export function MethodTransition() {
 
               const measure = () => {
                 const sourceRect = measureUntransformedSource();
+                normalizedSourceRect = sourceRect;
                 const stageRect = stage.getBoundingClientRect();
                 const centerRect = centerBloom.getBoundingClientRect();
                 const diagnoseRect = diagnose.getBoundingClientRect();
@@ -316,6 +318,27 @@ export function MethodTransition() {
 
               master.eventCallback('onUpdate', () => {
                 const progress = master.progress();
+                if (
+                  normalizedSourceRect
+                  && progress >= SOURCE_HANDOFF_START
+                  && progress <= SOURCE_HANDOFF_END
+                ) {
+                  const strength = 1 - (
+                    (progress - SOURCE_HANDOFF_START)
+                    / (SOURCE_HANDOFF_END - SOURCE_HANDOFF_START)
+                  );
+                  const reconciledPose = reconcileSourceHandoffPose(
+                    {
+                      x: Number(gsap.getProperty(proxy, 'x')) || 0,
+                      y: Number(gsap.getProperty(proxy, 'y')) || 0,
+                      scale: Number(gsap.getProperty(proxy, 'scaleX')) || 1,
+                    },
+                    normalizedSourceRect,
+                    source.getBoundingClientRect(),
+                    strength,
+                  );
+                  gsap.set(proxy, reconciledPose);
+                }
                 updateMethodsAvailability(progress >= 0.94);
               });
 
