@@ -444,8 +444,8 @@
 .tutor-orbit__profile {
   position: relative;
   z-index: 6;
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr);
   align-self: center;
   width: min(100%, 390px);
   min-height: 540px;
@@ -496,9 +496,12 @@
   color: #aa7929;
 }
 
-.tutor-orbit__profile-content {
+.tutor-orbit__profile-sequence {
   position: relative;
   z-index: 1;
+  display: grid;
+  min-height: 0;
+  grid-template-rows: auto auto auto minmax(76px, auto) minmax(92px, 1fr) minmax(118px, auto) auto;
 }
 
 .tutor-orbit__profile h2 {
@@ -551,6 +554,11 @@
 
 .tutor-orbit__details > div:last-child dd {
   font-style: italic;
+}
+
+.tutor-orbit__profile-teaching {
+  padding-top: 0;
+  border-top: 0;
 }
 
 .tutor-orbit__subjects {
@@ -620,6 +628,19 @@
   text-decoration: none;
   text-transform: uppercase;
   transition: background 180ms ease, color 180ms ease;
+}
+
+.tutor-orbit__profile-cta {
+  z-index: 1;
+  display: flex;
+  grid-row: 7;
+  align-self: end;
+  margin-top: 18px;
+}
+
+.tutor-orbit__profile-cta .tutor-orbit__profile-link {
+  width: 100%;
+  margin-top: 0;
 }
 
 .tutor-orbit__profile-link:hover,
@@ -738,18 +759,30 @@
     display: none;
   }
 
-  .tutor-orbit__profile-content {
-    display: contents;
+  .tutor-orbit__profile-sequence {
+    display: grid;
+    grid-column: 1 / -1;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-rows: auto auto auto minmax(88px, auto) minmax(96px, auto);
+    column-gap: 30px;
   }
 
-  .tutor-orbit__profile-content h2,
+  .tutor-orbit__profile-heading,
+  .tutor-orbit__profile-name,
   .tutor-orbit__designation,
-  .tutor-orbit__details {
+  .tutor-orbit__profile-details,
+  .tutor-orbit__profile-teaching {
     grid-column: 1;
   }
 
+  .tutor-orbit__profile-heading { grid-row: 1; }
+  .tutor-orbit__profile-name { grid-row: 2; }
+  .tutor-orbit__designation { grid-row: 3; }
+  .tutor-orbit__profile-details { grid-row: 4; }
+  .tutor-orbit__profile-teaching { grid-row: 5; }
+
   .tutor-orbit__strengths,
-  .tutor-orbit__profile-link {
+  .tutor-orbit__profile-cta {
     grid-column: 2;
   }
 
@@ -758,7 +791,8 @@
     margin-top: 4px;
   }
 
-  .tutor-orbit__profile-link {
+  .tutor-orbit__profile-cta {
+    grid-row: 5;
     align-self: end;
     margin-top: 18px;
   }
@@ -867,15 +901,29 @@
   }
 
   .tutor-orbit__profile {
-    display: flex;
+    display: block;
     width: 100%;
     min-height: 0;
     margin: 12px 0 0;
     padding: 28px 24px 24px;
   }
 
-  .tutor-orbit__profile-content {
-    display: block;
+  .tutor-orbit__profile-sequence {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: none;
+    min-height: 0;
+  }
+
+  .tutor-orbit__profile-heading,
+  .tutor-orbit__profile-name,
+  .tutor-orbit__designation,
+  .tutor-orbit__profile-details,
+  .tutor-orbit__profile-teaching,
+  .tutor-orbit__strengths,
+  .tutor-orbit__profile-cta {
+    grid-column: auto;
+    grid-row: auto;
   }
 
   .tutor-orbit__profile h2 {
@@ -886,7 +934,7 @@
     gap: 5px;
   }
 
-  .tutor-orbit__profile-link {
+  .tutor-orbit__profile-cta {
     margin-top: 24px;
   }
 }

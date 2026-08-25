@@ -89,6 +89,8 @@ interface OrbitTutorProps {
   clock: MotionValue<number>;
   reduced: boolean;
   isPromotedSource: boolean;
+  phase: SelectionPhase;
+  selectedId: string | null;
   onSelect: (id: string) => boolean;
   setMotionHold: (key: string, held: boolean) => void;
   applySelectionHolds: (id: string, accepted: boolean) => void;
@@ -102,6 +104,8 @@ function OrbitTutor({
   clock,
   reduced,
   isPromotedSource,
+  phase,
+  selectedId,
   onSelect,
   setMotionHold,
   applySelectionHolds,
@@ -113,11 +117,20 @@ function OrbitTutor({
   const y = useTransform(progress, (value) => poseAtProgress(value).y + Math.sin((value + sector.phase) * TAU) * 2);
   const scale = useTransform(progress, (value) => poseAtProgress(value).scale);
   const opacity = useTransform(progress, (value) => poseAtProgress(value).opacity);
+  const rebalancedY = useTransform(y, (value) => (
+    value + (phase === 'promoting' && tier === 'inner' ? -4 : 0)
+  ));
+  const rebalancedOpacity = useTransform(opacity, (value) => {
+    if (isPromotedSource) return 0;
+    if (phase === 'promoting' && tier === 'outer' && selectedId !== tutor.id) return value * 0.48;
+    if (phase === 'exchanging') return value * 0.72;
+    return value;
+  });
 
   return (
     <motion.div
       className={`tutor-orbit__${tier}-slot tutor-orbit__${tier}-slot--${index}`}
-      style={{ top: '50%', left: '50%', x, y, scale, opacity: isPromotedSource ? 0 : opacity }}
+      style={{ top: '50%', left: '50%', x, y: rebalancedY, scale, opacity: rebalancedOpacity }}
     >
       <button
         type="button"
@@ -207,6 +220,8 @@ export function TutorOrbitStage({
   const haloY = useSpring(useTransform(pointerY, [-1, 1], [-8, 8]), { stiffness: 55, damping: 22 });
   const geometryX = useSpring(useTransform(pointerX, [-1, 1], [-3, 3]), { stiffness: 55, damping: 22 });
   const geometryY = useSpring(useTransform(pointerY, [-1, 1], [-3, 3]), { stiffness: 55, damping: 22 });
+  const rebalancedGeometryX = useTransform(geometryX, (value) => value + (phase === 'exchanging' ? 3 : 0));
+  const rebalancedGeometryY = useTransform(geometryY, (value) => value + (phase === 'exchanging' ? -3 : 0));
   const selectedTutor = [active, ...innerTutors, ...outerTutors].find((tutor) => tutor.id === selectedId);
   const selectedIndex = originTier === 'outer'
     ? outerTutors.findIndex((tutor) => tutor.id === selectedId)
@@ -261,7 +276,7 @@ export function TutorOrbitStage({
           className="tutor-orbit__geometry"
           viewBox="0 0 700 650"
           preserveAspectRatio="none"
-          style={reduced ? undefined : { x: geometryX, y: geometryY }}
+          style={reduced ? undefined : { x: rebalancedGeometryX, y: rebalancedGeometryY }}
         >
           <ellipse className="tutor-orbit__path tutor-orbit__path--outer" cx="350" cy="326" rx="322" ry="258" transform="rotate(-7 350 326)" />
           <ellipse className="tutor-orbit__path tutor-orbit__path--middle" cx="350" cy="326" rx="258" ry="205" transform="rotate(6 350 326)" />
@@ -295,13 +310,13 @@ export function TutorOrbitStage({
       <motion.div className="tutor-orbit__portrait-field" style={{ position: 'absolute', inset: 0, ...(reduced ? {} : { x: fieldX, y: fieldY }) }}>
         <motion.div className="tutor-orbit__inner-orbit" variants={entrance} transition={{ delay: reduced ? 0 : 0.5, duration: reduced ? 0 : 0.6 }}>
           {stageInnerTutors.map((tutor, index) => (
-            <OrbitTutor key={tutor.id} tutor={tutor} index={index} tier="inner" band={band} clock={innerClock} reduced={reduced} isPromotedSource={false} onSelect={onSelect} setMotionHold={setMotionHold} applySelectionHolds={applySelectionHolds} />
+            <OrbitTutor key={tutor.id} tutor={tutor} index={index} tier="inner" band={band} clock={innerClock} reduced={reduced} isPromotedSource={false} phase={phase} selectedId={selectedId} onSelect={onSelect} setMotionHold={setMotionHold} applySelectionHolds={applySelectionHolds} />
           ))}
         </motion.div>
 
         <motion.div className="tutor-orbit__outer-orbit" variants={entrance} transition={{ delay: reduced ? 0 : 0.72, duration: reduced ? 0 : 0.73 }}>
           {stageOuterTutors.map((tutor, index) => (
-            <OrbitTutor key={tutor.id} tutor={tutor} index={index} tier="outer" band={band} clock={outerClock} reduced={reduced} isPromotedSource={phase === 'promoting' && originTier === 'outer' && tutor.id === selectedId} onSelect={onSelect} setMotionHold={setMotionHold} applySelectionHolds={applySelectionHolds} />
+            <OrbitTutor key={tutor.id} tutor={tutor} index={index} tier="outer" band={band} clock={outerClock} reduced={reduced} isPromotedSource={phase === 'promoting' && originTier === 'outer' && tutor.id === selectedId} phase={phase} selectedId={selectedId} onSelect={onSelect} setMotionHold={setMotionHold} applySelectionHolds={applySelectionHolds} />
           ))}
         </motion.div>
 

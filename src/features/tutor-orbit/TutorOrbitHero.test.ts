@@ -1,17 +1,19 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 
 const component = readFileSync(new URL('./TutorOrbitHero.tsx', import.meta.url), 'utf8');
 const stage = readFileSync(new URL('./TutorOrbitStage.tsx', import.meta.url), 'utf8');
 const css = readFileSync(new URL('./tutor-orbit.css', import.meta.url), 'utf8');
 const page = readFileSync(new URL('../../pages/Tutors.tsx', import.meta.url), 'utf8');
+const profileUrl = new URL('./TutorOrbitProfile.tsx', import.meta.url);
+const profile = existsSync(profileUrl) ? readFileSync(profileUrl, 'utf8') : '';
 
 test('keeps the existing editorial hero and non-marketplace routes', () => {
   assert.match(component, /Meet the educators[\s\S]*students[\s\S]*remember\./);
   assert.match(component, /Great teaching is more than knowledge/);
   assert.match(component, /Explore the whole team/);
-  assert.match(component, /\/find-teacher\?tutor=\$\{active\.id\}/);
+  assert.match(profile, /\/find-teacher\?tutor=\$\{tutor\.id\}/);
   assert.doesNotMatch(component, /Book this tutor|Check availability|matching questionnaire/i);
   assert.doesNotMatch(page, /tutor-match-proof-heading|Book a Consultation/);
 });
@@ -81,13 +83,59 @@ test('wires accepted-selection cleanup, clamped pointer input, and the imperativ
   assert.match(component, /transitionSelectionLock\(selectionLock\.current, 'idle'\)/);
 });
 
-test('keeps the selected tutor panel concise and data driven', () => {
-  assert.match(component, /active\.designation/);
-  assert.match(component, /active\.tagline/);
-  assert.match(component, /active\.profile\?\.tags/);
-  assert.match(component, /Subjects/);
-  assert.match(component, /Year levels/);
-  assert.match(component, /Teaching style/);
-  assert.match(component, /Strengths/);
-  assert.match(component, /Open full profile/);
+test('choreographs each selection through the configured phase sequence and clears timers', () => {
+  assert.match(component, /selectionSequenceFor\(originTier, reduced\)/);
+  assert.match(component, /const \[selection, setSelection\] = useState<\{ phase: SelectionPhase; selectedId: string \| null; originTier: OrbitTier \| null \}>/);
+  assert.match(component, /timers\.current\.forEach\(\(timer\) => window\.clearTimeout\(timer\)\)/);
+  assert.match(component, /if \(selection\.phase !== 'idle' \|\| !canBeginSelection\(selectionLock\.current\)\) return false;/);
+  assert.match(component, /step\.phase === 'exchanging'/);
+  assert.match(component, /swapFacultyTutor\(activeId, innerIds, outerIds, selectedId\)/);
+});
+
+test('extracts the polite profile with staggered semantic content and stable CTA order', () => {
+  assert.match(component, /import \{ TutorOrbitProfile \} from '\.\/TutorOrbitProfile'/);
+  assert.match(component, /<TutorOrbitProfile tutor=\{active\} reduced=\{reduced\} changing=\{selection\.phase !== 'idle'\} \/>/);
+  assert.match(profile, /export const shellVariants/);
+  assert.match(profile, /export const contentVariants/);
+  assert.match(profile, /export const itemVariants/);
+  assert.match(profile, /staggerChildren:\s*0\.0[4-7]/);
+  assert.match(profile, /changing:\s*\{\s*y:\s*-?[4-6]\s*\}/);
+  assert.match(profile, /aria-live="polite"/);
+  assert.match(profile, /Senior educator[\s\S]*motion\.h2[\s\S]*designation[\s\S]*tutor-orbit__details[\s\S]*Teaching style[\s\S]*tutor-orbit__strengths[\s\S]*Open full profile/);
+  assert.match(css, /\.tutor-orbit__profile-sequence\s*\{[\s\S]*?grid-template-rows/);
+});
+
+test('rebalances stage tutors and paths only within safe transition bounds', () => {
+  assert.match(stage, /phase === 'promoting'/);
+  assert.match(stage, /selectedId !== tutor\.id/);
+  assert.match(stage, /-4/);
+  assert.match(stage, /phase === 'exchanging'/);
+  assert.match(stage, /\? 3 : 0/);
+  assert.match(stage, /value \* 0\.[0-9]/);
+});
+
+test('keeps the profile sequence responsive without inline grid overrides', () => {
+  assert.doesNotMatch(profile, /style=\{\{\s*display:\s*'grid'/);
+  assert.match(css, /\.tutor-orbit__profile\s*\{[\s\S]*?grid-template-rows:\s*minmax\(0, 1fr\)/);
+  assert.match(css, /\.tutor-orbit__profile-sequence\s*\{[\s\S]*?display:\s*grid/);
+  assert.match(css, /\.tutor-orbit__profile-cta\s*\{[\s\S]*?grid-row:\s*7/);
+});
+
+test('keeps each selected profile item in the keyed stagger from tier through CTA', () => {
+  const keyedSequence = profile.slice(profile.indexOf('key={tutor.id}'), profile.indexOf('</AnimatePresence>'));
+  const orderedClasses = [
+    'tutor-orbit__profile-heading',
+    'tutor-orbit__profile-name',
+    'tutor-orbit__designation',
+    'tutor-orbit__profile-details',
+    'tutor-orbit__profile-teaching',
+    'tutor-orbit__strengths',
+    'tutor-orbit__profile-cta',
+  ];
+  const orderedIndexes = orderedClasses.map((className) => keyedSequence.indexOf(className));
+
+  assert.ok(orderedIndexes.every((index) => index !== -1));
+  assert.ok(orderedIndexes.every((index, position) => position === 0 || index > orderedIndexes[position - 1]));
+  assert.equal((keyedSequence.match(/variants=\{reduced \? undefined : itemVariants\}/g) ?? []).length, 7);
+  assert.match(keyedSequence, /tutor-orbit__profile-cta[\s\S]*Open full profile/);
 });
