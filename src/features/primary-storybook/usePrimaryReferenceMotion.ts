@@ -37,7 +37,11 @@ const usePrimaryReferenceMotion = (rootRef: RefObject<HTMLElement>): void => {
             '.primary-reference-teaching li',
             root,
           );
-          const teachingPath = root.querySelector<HTMLElement>('.primary-reference-teaching__path');
+          const teachingSegments = gsap.utils.toArray<HTMLElement>(
+            '.primary-reference-teaching__segment',
+            root,
+          );
+          const storyConnectors = gsap.utils.toArray<HTMLElement>('.primary-story-connector', root);
           const programObjects = gsap.utils.toArray<HTMLElement>('.primary-program-bag__control', root);
           const pathway = root.querySelector<HTMLElement>('#pathway');
           const programs = root.querySelector<HTMLElement>('#programs');
@@ -47,8 +51,9 @@ const usePrimaryReferenceMotion = (rootRef: RefObject<HTMLElement>): void => {
           const motionTargets = [
             ...scrapbookPhotos,
             ...teachingMoments,
+            ...teachingSegments,
+            ...storyConnectors,
             ...programObjects,
-            ...(teachingPath ? [teachingPath] : []),
             ...(outroLandscape ? [outroLandscape] : []),
             ...(outroContent ? [outroContent] : []),
           ];
@@ -76,6 +81,24 @@ const usePrimaryReferenceMotion = (rootRef: RefObject<HTMLElement>): void => {
             });
           });
 
+          storyConnectors.forEach((connector) => {
+            gsap.fromTo(
+              connector,
+              { clipPath: 'inset(0 100% 0 0)' },
+              {
+                clipPath: 'inset(0 0% 0 0)',
+                duration: .9,
+                ease: 'power2.inOut',
+                immediateRender: false,
+                scrollTrigger: {
+                  trigger: connector,
+                  start: 'top 88%',
+                  once: true,
+                },
+              },
+            );
+          });
+
           if (teachingMoments.length && pathway) {
             const teachingTimeline = gsap.timeline({
               scrollTrigger: {
@@ -85,22 +108,23 @@ const usePrimaryReferenceMotion = (rootRef: RefObject<HTMLElement>): void => {
               },
             });
 
-            teachingTimeline.from(teachingMoments, {
-              y: desktop ? 24 : 14,
-              scale: .99,
-              duration: .72,
-              ease: 'power4.out',
-              stagger: .12,
-            });
+            teachingMoments.forEach((moment, index) => {
+              teachingTimeline.from(moment, {
+                y: desktop ? 24 : 14,
+                scale: .99,
+                duration: .56,
+                ease: 'power4.out',
+              }, index === 0 ? 0 : '>-.08');
 
-            if (teachingPath) {
+              const segment = teachingSegments[index];
+              if (!segment) return;
               teachingTimeline.fromTo(
-                teachingPath,
+                segment,
                 { clipPath: 'inset(0 100% 0 0)' },
-                { clipPath: 'inset(0 0% 0 0)', duration: 1.15, ease: 'power2.inOut' },
-                .16,
+                { clipPath: 'inset(0 0% 0 0)', duration: .42, ease: 'power2.inOut', immediateRender: false },
+                '>-.14',
               );
-            }
+            });
           }
 
           if (programObjects.length && programs) {

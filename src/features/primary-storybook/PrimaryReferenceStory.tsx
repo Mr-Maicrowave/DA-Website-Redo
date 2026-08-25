@@ -9,6 +9,7 @@ import MasteryCurriculum from './MasteryCurriculum';
 import MasterySection from './MasterySection';
 import PrimaryJourneyOutro from './PrimaryJourneyOutro';
 import ProgramBag from './ProgramBag';
+import { GrowthBridgeConnector } from './StoryConnectors';
 import usePrimaryReferenceMotion from './usePrimaryReferenceMotion';
 import './primary-reference.css';
 
@@ -26,6 +27,7 @@ const PrimaryReferenceStory = () => {
       <FoundationSection />
       <FoundationCurriculum />
       <HowWeTeach />
+      <GrowthBridgeConnector />
       <GrowthSection />
       <GrowthCurriculum />
       <MasterySection />

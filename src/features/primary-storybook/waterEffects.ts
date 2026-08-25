@@ -19,6 +19,28 @@ export type WaterRipple = {
   kind: 'click' | 'wake';
 };
 
+export type AquariumMotionPolicy = {
+  trackPointer: boolean;
+  spawnClickRipple: boolean;
+  spawnDragBubbles: boolean;
+  spawnWake: boolean;
+  updateDisplacement: boolean;
+  animateFish: boolean;
+};
+
+export const createAquariumMotionPolicy = (prefersReducedMotion: boolean): AquariumMotionPolicy => {
+  const motionEnabled = !prefersReducedMotion;
+
+  return {
+    trackPointer: motionEnabled,
+    spawnClickRipple: motionEnabled,
+    spawnDragBubbles: motionEnabled,
+    spawnWake: motionEnabled,
+    updateDisplacement: motionEnabled,
+    animateFish: motionEnabled,
+  };
+};
+
 export const lerp = (from: number, to: number, amount: number) => from + (to - from) * amount;
 export const easeOutCubic = (progress: number) => 1 - Math.pow(1 - Math.min(Math.max(progress, 0), 1), 3);
 

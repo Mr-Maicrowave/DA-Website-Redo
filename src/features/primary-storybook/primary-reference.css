@@ -333,6 +333,61 @@
   line-height: 1.45;
 }
 
+.primary-story-connector {
+  color: #277fb2;
+  pointer-events: none;
+}
+
+.primary-story-connector svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.primary-story-connector__understroke,
+.primary-story-connector__stroke {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.primary-story-connector__understroke {
+  stroke: rgba(255, 250, 240, .72);
+  stroke-width: 9;
+}
+
+.primary-story-connector__stroke {
+  stroke: currentColor;
+  stroke-width: 3.5;
+  stroke-dasharray: .075 .032;
+}
+
+.primary-story-connector__plane path {
+  fill: rgba(255, 250, 240, .92);
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2.5;
+}
+
+.primary-story-connector circle {
+  fill: rgba(255, 250, 240, .28);
+  stroke: currentColor;
+  stroke-width: 2;
+}
+
+.primary-story-connector--curriculum {
+  position: absolute;
+  z-index: 9;
+  top: 18%;
+  left: calc(38% - 4rem);
+  width: min(20vw, 17rem);
+  height: 10rem;
+  color: #4f94c4;
+  transform: rotate(4deg);
+}
+
 .primary-aquarium {
   position: relative;
   min-width: 0;
@@ -530,7 +585,34 @@
 }
 
 .primary-aquarium__progress .is-found { color: #f4ca58; }
-.primary-aquarium__exit { display: none; }
+
+.primary-aquarium__exit {
+  position: absolute;
+  z-index: 13;
+  bottom: .35rem;
+  left: 4%;
+  width: min(19vw, 15rem);
+  height: 7.5rem;
+  color: rgba(238, 250, 255, .86);
+  opacity: .78;
+}
+
+.primary-aquarium__exit-fish path {
+  fill: rgba(26, 111, 155, .7);
+  stroke: #eafcff;
+  stroke-linejoin: round;
+  stroke-width: 1.5;
+}
+
+.primary-aquarium__exit-fish circle {
+  fill: #fffaf0;
+  stroke: none;
+}
+
+.primary-aquarium__exit-bubble {
+  fill: rgba(255, 255, 255, .12);
+  stroke: #eafcff;
+}
 
 .primary-aquarium__canvas > img,
 .primary-aquarium__sprite-fallbacks {
@@ -592,16 +674,51 @@
   position: relative;
 }
 
-.primary-reference-teaching__path {
+.primary-reference-teaching__segments {
   position: absolute;
   z-index: 0;
-  top: 36%;
-  left: 4%;
-  width: 92%;
-  height: auto;
-  object-fit: contain;
-  opacity: .68;
+  inset: 0;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(1.25rem, 3vw, 3rem);
   pointer-events: none;
+}
+
+.primary-reference-teaching__segment {
+  position: relative;
+  min-width: 0;
+  color: rgba(61, 133, 177, .76);
+}
+
+.primary-reference-teaching__segment-row {
+  position: absolute;
+  top: 30%;
+  left: 82%;
+  display: block;
+  width: calc(38% + 3rem);
+  height: 5rem;
+  overflow: visible;
+}
+
+.primary-reference-teaching__segment-turn {
+  display: none;
+}
+
+.primary-reference-teaching__segment-column {
+  display: none;
+}
+
+.primary-story-connector--growth {
+  position: relative;
+  z-index: 4;
+  width: min(100% - clamp(2rem, 8vw, 8rem), 90rem);
+  height: 7rem;
+  margin: -3rem auto -3.25rem;
+  color: rgba(47, 132, 184, .74);
+}
+
+.primary-story-connector--growth .primary-story-connector__plane {
+  display: none;
 }
 
 .primary-reference-teaching ol {
@@ -1155,40 +1272,29 @@
 }
 
 .primary-program-bag__guide li {
-  display: grid;
-  grid-template-columns: 2rem 1fr;
+  display: flex;
+  min-height: 3.25rem;
+  align-items: center;
   gap: .75rem;
-  border-top: 1px solid rgba(7, 27, 53, .17);
-  padding: .9rem 0 1rem;
+  padding: .18rem 0;
 }
 
-.primary-program-bag__guide li:last-child {
-  border-bottom: 1px solid rgba(7, 27, 53, .17);
+.primary-program-bag__need-icon {
+  display: block;
+  width: 3.75rem;
+  height: 3.1rem;
+  flex: 0 0 auto;
+  background-image: url('/primary-reference/decor/program-helper-icons.png');
+  background-repeat: no-repeat;
+  background-size: 500% auto;
 }
 
-.primary-program-bag__guide li > span {
-  padding-top: .16rem;
-  color: #956b1c;
+.primary-program-bag__need-label {
+  max-width: 20ch;
+  color: #29495f;
   font-size: .875rem;
-  font-weight: 800;
-}
-
-.primary-program-bag__guide h4 {
-  margin: 0;
-  font-size: 1.1rem;
-  font-weight: 600;
-  line-height: 1.1;
-}
-
-.primary-program-bag__guide li[data-selected="true"] h4 {
-  color: #744f10;
-}
-
-.primary-program-bag__guide p {
-  margin: .35rem 0 0;
-  color: #38556a;
-  font-size: .875rem;
-  line-height: 1.5;
+  font-weight: 700;
+  line-height: 1.3;
 }
 
 .primary-program-bag__stage {
@@ -1529,6 +1635,129 @@
   50% { transform: translate3d(10px, -5px, 0) rotate(1deg); }
 }
 
+@media (min-width: 1051px) {
+  .primary-reference-foundation {
+    min-height: 0;
+    grid-template-columns: minmax(14rem, .78fr) minmax(19rem, 1fr) minmax(18rem, 1fr);
+    gap: clamp(1.75rem, 3vw, 3.5rem);
+    padding: 4rem 0 3.75rem;
+  }
+
+  .primary-reference-foundation__intro { padding-top: 1rem; }
+
+  .primary-reference-foundation__photo {
+    width: 88%;
+    justify-self: center;
+    margin-top: 0;
+  }
+
+  .primary-reference-foundation__photo > div { aspect-ratio: 4 / 4.25; }
+  .primary-reference-foundation__outcomes { margin-top: .5rem; }
+  .primary-reference-foundation__outcomes li { padding: .78rem 0 .88rem; }
+
+  .primary-reference-curriculum { min-height: 36rem; }
+
+  .primary-reference-curriculum__lesson {
+    padding: 2.5rem clamp(1.5rem, 3vw, 3rem) 2rem;
+  }
+
+  .primary-reference-curriculum__illustration {
+    width: min(52%, 16rem);
+    max-height: 41%;
+  }
+
+  .primary-reference-teaching {
+    padding: 4.25rem 0 4.5rem;
+  }
+
+  .primary-reference-teaching__header {
+    margin-bottom: 2.75rem;
+  }
+
+  .primary-reference-teaching ol {
+    gap: clamp(1.25rem, 2.35vw, 2.25rem);
+  }
+
+  .primary-reference-teaching__segments {
+    gap: clamp(1.25rem, 2.35vw, 2.25rem);
+  }
+
+  .primary-reference-teaching li:nth-child(even) { padding-top: 2.5rem; }
+  .primary-reference-teaching__photo { aspect-ratio: 4 / 4.05; }
+
+  .primary-reference-teaching li:nth-child(2) .primary-reference-teaching__photo,
+  .primary-reference-teaching li:nth-child(4) .primary-reference-teaching__photo {
+    aspect-ratio: 4 / 3.8;
+  }
+
+  .primary-reference-teaching figcaption { padding-top: .8rem; }
+
+  .primary-reference-growth {
+    gap: clamp(1.75rem, 3vw, 3.25rem);
+    padding: 4rem 0 3.25rem;
+  }
+
+  .primary-reference-growth__intro { padding-top: 1rem; }
+  .primary-reference-growth__photo > div { aspect-ratio: 4 / 3.75; }
+  .primary-reference-growth__outcomes { margin-top: .5rem; }
+  .primary-reference-growth__outcomes li { padding: .75rem 0 .82rem; }
+
+  .primary-reference-stage-curriculum {
+    padding-top: 2.25rem;
+    padding-bottom: 2.25rem;
+  }
+
+  .primary-reference-stage-curriculum--growth { margin-bottom: 4rem; }
+
+  .primary-reference-mastery {
+    grid-template-columns: minmax(16rem, .8fr) minmax(28rem, 1.45fr);
+    gap: 3rem;
+    padding-top: 4rem;
+    padding-bottom: 3.5rem;
+  }
+
+  .primary-reference-mastery__photo > div { aspect-ratio: 16 / 8.3; }
+
+  .primary-reference-mastery__outcomes {
+    margin-top: 1rem;
+  }
+
+  .primary-reference-mastery__outcomes li {
+    padding-top: .9rem;
+    padding-bottom: 1rem;
+  }
+
+  .primary-reference-mastery__outcomes h3 { margin-top: .5rem; }
+
+  .primary-program-bag {
+    min-height: 0;
+    grid-template-columns: minmax(17rem, .72fr) minmax(32rem, 1.7fr);
+    gap: 3rem;
+    padding: 4rem 0 4.5rem;
+  }
+
+  .primary-program-bag__guide { margin-top: 1.75rem; }
+  .primary-program-bag__stage { min-height: 31rem; }
+
+  .primary-program-bag__bag {
+    left: 20%;
+    width: min(58%, 31rem);
+  }
+
+  .primary-program-bag__control--small-group { top: 7%; }
+  .primary-program-bag__control--private-tuition { top: 59%; }
+  .primary-program-bag__control--creative-writing { top: 4%; }
+
+  .primary-journey-outro {
+    min-height: clamp(30rem, 42vw, 38rem);
+    margin-top: 4rem;
+  }
+
+  .primary-journey-outro__content {
+    margin-top: 4.5rem;
+  }
+}
+
 @media (max-width: 1050px) {
   .primary-reference-foundation {
     width: min(100% - 3rem, 70rem);
@@ -1566,7 +1795,22 @@
   }
 
   .primary-reference-teaching li:nth-child(even) { padding-top: 4rem; }
-  .primary-reference-teaching__path { top: 25%; }
+  .primary-reference-teaching__segments {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 3rem clamp(2rem, 7vw, 5rem);
+  }
+
+  .primary-reference-teaching__segment--2 .primary-reference-teaching__segment-row { display: none; }
+
+  .primary-reference-teaching__segment--2 .primary-reference-teaching__segment-turn {
+    position: absolute;
+    top: 60%;
+    right: 48%;
+    display: block;
+    width: calc(100% + clamp(2rem, 7vw, 5rem));
+    height: 9rem;
+    overflow: visible;
+  }
 
   .primary-program-bag {
     width: min(100% - 3rem, 70rem);
@@ -1781,6 +2025,14 @@
   .primary-reference-curriculum__lesson header h2 { font-size: clamp(2.8rem, 13vw, 4rem); }
   .primary-reference-curriculum__illustration { top: 13%; right: -2%; width: min(58vw, 18rem); opacity: .78; }
 
+  .primary-story-connector--curriculum {
+    top: 33.5rem;
+    left: calc(50% - 5.5rem);
+    width: 11rem;
+    height: 7rem;
+    transform: rotate(72deg);
+  }
+
   .primary-aquarium {
     min-height: 42rem;
   }
@@ -1804,6 +2056,14 @@
 
   .primary-aquarium__progress { right: 1.35rem; bottom: 2rem; }
 
+  .primary-aquarium__exit {
+    bottom: .5rem;
+    left: .75rem;
+    width: 8.5rem;
+    height: 5rem;
+    opacity: .52;
+  }
+
   .primary-reference-teaching {
     width: min(100% - 2rem, 34rem);
     padding: 5.5rem 0 6rem;
@@ -1811,16 +2071,29 @@
 
   .primary-reference-teaching__header { margin-bottom: 3.5rem; }
   .primary-reference-teaching__header h2 { font-size: clamp(3.1rem, 15vw, 4.7rem); }
-  .primary-reference-teaching__journey::before {
-    position: absolute;
-    top: 1rem;
-    bottom: 2rem;
-    left: 1rem;
-    border-left: 2px dashed rgba(79, 148, 196, .55);
-    content: "";
+  .primary-reference-teaching__segments {
+    inset: 0 auto 0 0;
+    display: grid;
+    width: 2.2rem;
+    grid-template-columns: 1fr;
+    grid-template-rows: repeat(4, minmax(0, 1fr));
+    gap: 0;
   }
 
-  .primary-reference-teaching__path { display: none; }
+  .primary-reference-teaching__segment-row,
+  .primary-reference-teaching__segment-turn {
+    display: none !important;
+  }
+
+  .primary-reference-teaching__segment-column {
+    position: absolute;
+    top: 60%;
+    left: .1rem;
+    display: block;
+    width: 2rem;
+    height: 50%;
+    overflow: visible;
+  }
 
   .primary-reference-teaching ol {
     display: block;
@@ -1844,6 +2117,13 @@
     flex-direction: column;
     gap: 2.5rem;
     padding: 5rem 0 4rem;
+  }
+
+  .primary-story-connector--growth {
+    width: calc(100% - 2rem);
+    height: 4.5rem;
+    margin: -2rem auto -2.25rem;
+    opacity: .7;
   }
 
   .primary-reference-growth__doodles {
@@ -2158,7 +2438,8 @@
     transform: none !important;
   }
 
-  .primary-reference-teaching__path {
+  .primary-reference-teaching__segment,
+  .primary-story-connector {
     clip-path: inset(0 0 0 0) !important;
   }
 }

@@ -1,7 +1,15 @@
 import { useEffect, type RefObject } from 'react';
 import { aquariumFish } from './primaryStoryData';
 import { keepInBounds, resizeFishMotion, steerFromPointer, stepFish, type FishMotion } from './aquariumPhysics';
-import { advanceRipple, createRipple, createWakeRipple, smoothPointer, type WaterPointer, type WaterRipple } from './waterEffects';
+import {
+  advanceRipple,
+  createAquariumMotionPolicy,
+  createRipple,
+  createWakeRipple,
+  smoothPointer,
+  type WaterPointer,
+  type WaterRipple,
+} from './waterEffects';
 
 type Pixi = typeof import('pixi.js');
 type BubbleVisual = { graphic: import('pixi.js').Graphics; x: number; y: number; vx: number; vy: number; size: number; age: number; maxAge: number; phase: number; active: boolean };
@@ -152,6 +160,7 @@ export const useAquariumEngine = (hostRef: RefObject<HTMLDivElement>) => {
         const ripplesRef: { current: RippleVisual[] } = { current: [] };
         const bubblePoolRef: { current: BubbleVisual[] } = { current: [] };
         const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+        const getMotionPolicy = () => createAquariumMotionPolicy(reducedMotion.matches);
         const fishButtons = Array.from(section?.querySelectorAll<HTMLButtonElement>('.primary-aquarium__fish-button') ?? []);
         let lastWakeAt = 0;
         let viewport: AquariumSize = { width: app.screen.width, height: app.screen.height };
@@ -189,22 +198,29 @@ export const useAquariumEngine = (hostRef: RefObject<HTMLDivElement>) => {
           return { x: (event.clientX - rect.left) * (app.screen.width / rect.width), y: (event.clientY - rect.top) * (app.screen.height / rect.height) };
         };
         const onMove = (event: PointerEvent) => {
+          const motionPolicy = getMotionPolicy();
+          if (!motionPolicy.trackPointer) {
+            Object.assign(pointerRef.current, { active: false, dragging: false, speed: 0, targetSpeed: 0 });
+            return;
+          }
           const point = localPoint(event);
           const now = performance.now();
           const elapsed = Math.max(now - pointerRef.current.lastTime, 8);
           const distance = Math.hypot(point.x - pointerRef.current.lastX, point.y - pointerRef.current.lastY);
           Object.assign(pointerRef.current, { targetX: point.x, targetY: point.y, targetSpeed: distance / elapsed * 16.667, active: event.pointerType === 'mouse' || pointerRef.current.dragging, lastX: point.x, lastY: point.y, lastTime: now });
-          if (!reducedMotion.matches && distance > 3 && now - lastWakeAt > 38) {
+          if (motionPolicy.spawnWake && distance > 3 && now - lastWakeAt > 38) {
             spawnCursorWake(point.x, point.y);
             lastWakeAt = now;
           }
-          if (pointerRef.current.dragging && Math.random() < .14) spawnBubble(point.x, point.y);
+          if (motionPolicy.spawnDragBubbles && pointerRef.current.dragging && Math.random() < .14) spawnBubble(point.x, point.y);
         };
         const onDown = (event: PointerEvent) => {
           if ((event.target as HTMLElement).closest('button, a, aside, .primary-aquarium__fact')) return;
+          const motionPolicy = getMotionPolicy();
+          if (!motionPolicy.trackPointer) return;
           const point = localPoint(event);
           Object.assign(pointerRef.current, { dragging: true, active: true, targetX: point.x, targetY: point.y });
-          spawnRipple(point.x, point.y);
+          if (motionPolicy.spawnClickRipple) spawnRipple(point.x, point.y);
         };
         const onUp = () => { pointerRef.current.dragging = false; };
         const onLeave = () => { pointerRef.current.active = pointerRef.current.dragging; pointerRef.current.targetSpeed = 0; };
@@ -268,21 +284,33 @@ export const useAquariumEngine = (hostRef: RefObject<HTMLDivElement>) => {
         app.ticker.add((ticker) => {
           const deltaMs = Math.min(ticker.deltaMS, 40);
           const pointer = pointerRef.current;
-          Object.assign(pointer, smoothPointer(pointer, .2));
-          pointer.targetSpeed *= .9;
-          const motionStrength = reducedMotion.matches ? 0 : Math.min(pointer.speed / 48, 1);
+          const motionPolicy = getMotionPolicy();
+          if (motionPolicy.trackPointer) {
+            Object.assign(pointer, smoothPointer(pointer, .2));
+            pointer.targetSpeed *= .9;
+          } else {
+            Object.assign(pointer, { active: false, dragging: false, speed: 0, targetSpeed: 0 });
+          }
+          const motionStrength = motionPolicy.updateDisplacement ? Math.min(pointer.speed / 48, 1) : 0;
           const activeStrength = pointer.active ? (.4 + motionStrength * .75 + (pointer.dragging ? .18 : 0)) : 0;
-          displacementSprite.position.set(pointer.x, pointer.y);
-          const radius = 105 + motionStrength * 55 + (pointer.dragging ? 18 : 0);
-          displacementSprite.width = radius * 2;
-          displacementSprite.height = radius * 2;
-          displacementSprite.rotation += (.0015 + motionStrength * .004) * ticker.deltaTime;
-          displacement.scale.x = 12 * activeStrength;
-          displacement.scale.y = 10 * activeStrength;
+          if (motionPolicy.updateDisplacement) {
+            displacementSprite.position.set(pointer.x, pointer.y);
+            const radius = 105 + motionStrength * 55 + (pointer.dragging ? 18 : 0);
+            displacementSprite.width = radius * 2;
+            displacementSprite.height = radius * 2;
+            displacementSprite.rotation += (.0015 + motionStrength * .004) * ticker.deltaTime;
+            displacement.scale.x = 12 * activeStrength;
+            displacement.scale.y = 10 * activeStrength;
+          } else {
+            displacementSprite.position.set(-500, -500);
+            displacementSprite.rotation = 0;
+            displacement.scale.x = 0;
+            displacement.scale.y = 0;
+          }
 
           wakeClock += deltaMs;
-          if (!reducedMotion.matches && pointer.active && pointer.speed > 8 && wakeClock > 90) { spawnBubble(pointer.x, pointer.y); wakeClock = 0; }
-          if (!reducedMotion.matches) sprites.forEach((sprite, index) => {
+          if (motionPolicy.spawnDragBubbles && pointer.active && pointer.speed > 8 && wakeClock > 90) { spawnBubble(pointer.x, pointer.y); wakeClock = 0; }
+          if (motionPolicy.animateFish) sprites.forEach((sprite, index) => {
             let next = stepFish(motions[index], deltaMs);
             if (pointer.active) next = steerFromPointer(next, pointer, 175, 2.4);
             next = keepInBounds(next, app.screen.width, app.screen.height, 54);

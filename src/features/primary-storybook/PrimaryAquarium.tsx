@@ -3,6 +3,7 @@ import AquariumFactCard from './AquariumFactCard';
 import { aquariumFish } from './primaryStoryData';
 import { markDiscovered } from './aquariumPhysics';
 import { useAquariumEngine } from './useAquariumEngine';
+import { AquariumExitConnector } from './StoryConnectors';
 
 const PrimaryAquarium = () => {
   const hostRef = useRef<HTMLDivElement>(null);
@@ -62,7 +63,7 @@ const PrimaryAquarium = () => {
         <span className="sr-only">{discovered.length} of {aquariumFish.length} creatures discovered</span>
         {aquariumFish.map((fish) => <span key={fish.id} className={discovered.includes(fish.id) ? 'is-found' : ''} aria-hidden="true">★</span>)}
       </div>
-      <div className="primary-aquarium__exit" aria-hidden="true"><span>fish</span><i /></div>
+      <AquariumExitConnector />
     </section>
   );
 };

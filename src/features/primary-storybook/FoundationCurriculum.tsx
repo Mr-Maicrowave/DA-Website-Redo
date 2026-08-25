@@ -1,4 +1,5 @@
 import PrimaryAquarium from './PrimaryAquarium';
+import { CurriculumToAquariumConnector } from './StoryConnectors';
 import { curriculumBands, referenceStoryAssets } from './referenceStoryData';
 
 const FoundationCurriculum = () => {
@@ -40,6 +41,7 @@ const FoundationCurriculum = () => {
         </div>
       </div>
 
+      <CurriculumToAquariumConnector />
       <PrimaryAquarium />
     </section>
   );

@@ -1,4 +1,5 @@
-import { referenceStoryAssets, teachingSteps } from './referenceStoryData';
+import { teachingSteps } from './referenceStoryData';
+import { TeachingPathSegment } from './StoryConnectors';
 
 const HowWeTeach = () => (
   <section
@@ -14,12 +15,11 @@ const HowWeTeach = () => (
     </header>
 
     <div className="primary-reference-teaching__journey">
-      <img
-        className="primary-reference-teaching__path"
-        src={referenceStoryAssets.teachingPath}
-        alt=""
-        aria-hidden="true"
-      />
+      <div className="primary-reference-teaching__segments" aria-hidden="true">
+        {teachingSteps.slice(0, -1).map((step, index) => (
+          <TeachingPathSegment key={`${step.number}-connector`} index={index} />
+        ))}
+      </div>
       <ol>
         {teachingSteps.map((step) => (
           <li key={step.number}>

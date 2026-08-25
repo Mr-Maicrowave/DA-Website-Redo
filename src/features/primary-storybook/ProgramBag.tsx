@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { primaryAssetManifest } from './primaryAssetManifest';
-import { programChoices } from './referenceStoryData';
+import { programChoices, programNeeds } from './referenceStoryData';
 import { selectProgram, type ProgramId } from './programSelection';
 
-const programNumbers = ['01', '02', '03'] as const;
+const needIconPositions = ['0%', '25%', '50%', '75%', '100%'] as const;
 
 const ProgramBag = () => {
   const [selectedProgram, setSelectedProgram] = useState<ProgramId>('small-group');
@@ -29,13 +29,14 @@ const ProgramBag = () => {
         <div className="primary-program-bag__guide" aria-labelledby="program-guide-title">
           <h3 id="program-guide-title">What kind of support would help most right now?</h3>
           <ul>
-            {programChoices.map((program, index) => (
-              <li key={program.id} data-selected={selectedProgram === program.id}>
-                <span aria-hidden="true">{programNumbers[index]}</span>
-                <div>
-                  <h4>{program.title}</h4>
-                  <p>{program.description}</p>
-                </div>
+            {programNeeds.map((need, index) => (
+              <li key={need}>
+                <span
+                  className="primary-program-bag__need-icon"
+                  style={{ backgroundPosition: `${needIconPositions[index]} center` }}
+                  aria-hidden="true"
+                />
+                <span className="primary-program-bag__need-label">{need}</span>
               </li>
             ))}
           </ul>

@@ -208,6 +208,14 @@ export const programChoices = [
   },
 ] as const satisfies readonly [ProgramChoice, ProgramChoice, ProgramChoice];
 
+export const programNeeds = [
+  'More individual support',
+  'Learns well with others',
+  'Loves stories & imagination',
+  'Needs stronger foundations',
+  'Help with something specific',
+] as const;
+
 export const familyReasons = [
   { title: 'Small classes', body: 'More attention, better outcomes.' },
   { title: 'Loved by parents', body: 'Real results, real relationships.' },
