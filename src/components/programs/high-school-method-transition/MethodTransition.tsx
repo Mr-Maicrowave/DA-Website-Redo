@@ -69,6 +69,10 @@ export function MethodTransition() {
     const sourceOpacity = source?.style.opacity ?? '';
     const sourceVisibility = source?.style.visibility ?? '';
     const finale = source?.closest<HTMLElement>('.hs-finale') ?? null;
+    const sourceYear = source?.closest<HTMLElement>(
+      '[data-method-transition-source="year-8"]',
+    ) ?? null;
+    const journeySticky = source?.closest<HTMLElement>('.hs-journey__sticky') ?? null;
     const media = gsap.matchMedia();
     let mounted = true;
     const updateMethodsAvailability = (available: boolean) => {
@@ -142,7 +146,7 @@ export function MethodTransition() {
 
               updateMethodsAvailability(false);
 
-              const peakSize = conditions.desktop ? 220 : conditions.tablet ? 180 : 136;
+              const peakSize = conditions.desktop ? 216 : conditions.tablet ? 180 : 136;
               const poses: Record<'source' | 'detach' | 'center' | 'diagnose', ProxyPose> = {
                 source: { x: 0, y: 0, scale: 1 },
                 detach: { x: 0, y: 0, scale: 1 },
@@ -162,20 +166,40 @@ export function MethodTransition() {
               };
 
               const measureUntransformedSource = () => {
-                if (!finale) return source.getBoundingClientRect();
-
-                const inlineTransform = finale.style.transform;
+                const inlineTransform = finale?.style.transform ?? '';
+                const inlineYearAnimation = sourceYear?.style.animation ?? '';
+                const inlineYearTransform = sourceYear?.style.transform ?? '';
                 try {
-                  // This synchronous read/restore completes before the browser paints.
-                  finale.style.transform = 'none';
-                  return source.getBoundingClientRect();
+                  // Normalize both GSAP layers before the synchronous read. The
+                  // sticky offset projects the final cinematic pose into the
+                  // viewport even when setup runs before the journey arrives.
+                  if (finale) finale.style.transform = 'none';
+                  if (sourceYear) {
+                    sourceYear.style.animation = 'none';
+                    sourceYear.style.transform = 'none';
+                  }
+                  const sourceRect = source.getBoundingClientRect();
+                  const stickyRect = journeySticky?.getBoundingClientRect();
+                  if (!stickyRect) return sourceRect;
+                  const handoffTravel = section.offsetHeight * 0.15;
+                  return new DOMRect(
+                    sourceRect.left,
+                    sourceRect.top - stickyRect.top - handoffTravel,
+                    sourceRect.width,
+                    sourceRect.height,
+                  );
                 } finally {
-                  finale.style.transform = inlineTransform;
+                  if (sourceYear) {
+                    sourceYear.style.animation = inlineYearAnimation;
+                    sourceYear.style.transform = inlineYearTransform;
+                  }
+                  if (finale) finale.style.transform = inlineTransform;
                 }
               };
 
               const measure = () => {
                 const sourceRect = measureUntransformedSource();
+                const stageRect = stage.getBoundingClientRect();
                 const centerRect = centerBloom.getBoundingClientRect();
                 const diagnoseRect = diagnose.getBoundingClientRect();
                 const diagnoseButton = buttons[0];
@@ -195,13 +219,18 @@ export function MethodTransition() {
                 poses.center = poseForRect(
                   new DOMRect(
                     centerRect.left,
-                    centerRect.top,
+                    centerRect.top - stageRect.top,
                     centerRect.width,
                     centerRect.height,
                   ),
                   peakSize,
                 );
-                poses.diagnose = poseForRect(finalDiagnoseRect);
+                poses.diagnose = poseForRect(new DOMRect(
+                  finalDiagnoseRect.left,
+                  finalDiagnoseRect.top - stageRect.top,
+                  finalDiagnoseRect.width,
+                  finalDiagnoseRect.height,
+                ));
                 poses.detach = {
                   x: poses.source.x + (poses.center.x - poses.source.x) * 0.18,
                   y: poses.source.y + (poses.center.y - poses.source.y) * 0.18,
@@ -217,7 +246,7 @@ export function MethodTransition() {
                 defaults: { ease: 'none' },
                 scrollTrigger: {
                   trigger: section,
-                  start: 'top top',
+                  start: 'top bottom',
                   end: 'bottom bottom',
                   scrub: 0.8,
                   invalidateOnRefresh: true,

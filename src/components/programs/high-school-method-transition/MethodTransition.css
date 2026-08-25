@@ -1,11 +1,15 @@
+.hs-professional:has(> .hsm-transition) {
+  overflow: visible;
+}
+
 .hsm-transition {
   --method-transition-scroll: 300vh;
   position: relative;
   z-index: 4;
   height: var(--method-transition-scroll);
   min-height: 300svh;
-  overflow: clip;
-  background: #fffdf8;
+  overflow: visible;
+  background: linear-gradient(to bottom, transparent 0 100svh, #fffdf8 100svh);
   color: #0a1b34;
 }
 
@@ -148,22 +152,18 @@
   .hsm-transition__methods {
     top: auto;
     bottom: max(10vh, 64px);
-    justify-content: flex-start;
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
     width: min(90vw, 1050px);
     gap: 8px;
-    overflow-x: auto;
+    overflow-x: visible;
     padding: 7px 5px 14px;
-    overscroll-behavior-x: contain;
-    scrollbar-width: thin;
-    scroll-snap-type: x proximity;
   }
 
   .hsm-transition__method {
-    flex-basis: 76px;
-    width: 76px;
+    width: 100%;
     min-width: 44px;
     min-height: 44px;
-    scroll-snap-align: center;
   }
 
   .hsm-transition__method-symbol {
@@ -175,6 +175,7 @@
   .hsm-transition {
     --method-transition-scroll: 100vh;
     min-height: 100svh;
+    background: #fffdf8;
   }
 
   .hsm-transition__proxy,
