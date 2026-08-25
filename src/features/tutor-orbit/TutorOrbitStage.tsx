@@ -30,11 +30,14 @@ import {
   pruneTutorHoldKeys,
   tutorsForGeometryBand,
 } from './tutor-orbit-stage-helpers';
+import { parallaxLimitsForBand } from './tutor-orbit-responsive-helpers';
 
 const TAU = Math.PI * 2;
 
 const portraitTransition = (reduced: boolean) => ({
-  layout: { duration: reduced ? 0 : 0.8, ease: [0.22, 1, 0.36, 1] as const },
+  layout: { duration: reduced ? 0.15 : 0.8, ease: [0.22, 1, 0.36, 1] as const },
+  opacity: { duration: reduced ? 0.15 : 0.8, ease: [0.22, 1, 0.36, 1] as const },
+  scale: { duration: reduced ? 0.15 : 0.8, ease: [0.22, 1, 0.36, 1] as const },
 });
 
 function useGeometryBand() {
@@ -214,12 +217,13 @@ export function TutorOrbitStage({
   const outerClock = useOrbitClock(!reduced && !paused, OUTER_ORBIT_DURATION_SECONDS, -1);
   const pointerX = useMotionValue(0);
   const pointerY = useMotionValue(0);
-  const fieldX = useSpring(useTransform(pointerX, (value) => Math.sign(value) * Math.abs(value) * 5), { stiffness: 55, damping: 22 });
-  const fieldY = useSpring(useTransform(pointerY, (value) => Math.sign(value) * Math.abs(value) * 5), { stiffness: 55, damping: 22 });
-  const haloX = useSpring(useTransform(pointerX, [-1, 1], [-8, 8]), { stiffness: 55, damping: 22 });
-  const haloY = useSpring(useTransform(pointerY, [-1, 1], [-8, 8]), { stiffness: 55, damping: 22 });
-  const geometryX = useSpring(useTransform(pointerX, [-1, 1], [-3, 3]), { stiffness: 55, damping: 22 });
-  const geometryY = useSpring(useTransform(pointerY, [-1, 1], [-3, 3]), { stiffness: 55, damping: 22 });
+  const parallax = parallaxLimitsForBand(band);
+  const fieldX = useSpring(useTransform(pointerX, (value) => Math.sign(value) * Math.abs(value) * parallax.field), { stiffness: 55, damping: 22 });
+  const fieldY = useSpring(useTransform(pointerY, (value) => Math.sign(value) * Math.abs(value) * parallax.field), { stiffness: 55, damping: 22 });
+  const haloX = useSpring(useTransform(pointerX, [-1, 1], [-parallax.halo, parallax.halo]), { stiffness: 55, damping: 22 });
+  const haloY = useSpring(useTransform(pointerY, [-1, 1], [-parallax.halo, parallax.halo]), { stiffness: 55, damping: 22 });
+  const geometryX = useSpring(useTransform(pointerX, [-1, 1], [-parallax.geometry, parallax.geometry]), { stiffness: 55, damping: 22 });
+  const geometryY = useSpring(useTransform(pointerY, [-1, 1], [-parallax.geometry, parallax.geometry]), { stiffness: 55, damping: 22 });
   const rebalancedGeometryX = useTransform(geometryX, (value) => value + (phase === 'exchanging' ? 3 : 0));
   const rebalancedGeometryY = useTransform(geometryY, (value) => value + (phase === 'exchanging' ? -3 : 0));
   const selectedTutor = [active, ...innerTutors, ...outerTutors].find((tutor) => tutor.id === selectedId);
@@ -268,7 +272,7 @@ export function TutorOrbitStage({
       className={`tutor-orbit__stage${paused ? ' is-paused' : ''}${phase !== 'idle' ? ' is-transitioning' : ''}`}
       initial="hidden"
       animate="visible"
-      onPointerMove={reduced ? undefined : onPointerMove}
+      onPointerMove={reduced || parallax.field === 0 ? undefined : onPointerMove}
       onPointerLeave={resetPointer}
     >
       <motion.div aria-hidden="true" variants={entrance} transition={{ duration: reduced ? 0 : 0.3 }} style={{ position: 'absolute', inset: 0 }}>
@@ -298,6 +302,7 @@ export function TutorOrbitStage({
             <motion.div
               className="tutor-orbit__featured-frame"
               layoutId={`tutor-${active.id}`}
+              animate={reduced && phase !== 'idle' ? { opacity: [1, 0.78, 1], scale: [1, 0.985, 1] } : { opacity: 1, scale: 1 }}
               transition={portraitTransition(reduced)}
             >
               <img src={getPhotoUrl(active)} alt={`${active.name}, DA Tuition educator`} style={getPhotoStyle(active)} />

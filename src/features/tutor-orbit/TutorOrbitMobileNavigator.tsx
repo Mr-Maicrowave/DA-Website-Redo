@@ -1,53 +1,76 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { useRef, useState, type PointerEvent } from 'react';
+import { useRef, useState, type MouseEvent, type PointerEvent } from 'react';
 import { getPhotoStyle, getPhotoUrl, type CatalogueTutor } from '@/data/teacherCatalogue';
 import { nextRosterPage, rosterWindow } from './tutor-orbit-config';
+import {
+  NAVIGATOR_PAGE_SIZE,
+  beginNavigatorSwipe,
+  cancelNavigatorSwipe,
+  consumeNavigatorClickSuppression,
+  navigatorRosterStatus,
+  resolveNavigatorSwipe,
+  type NavigatorSwipeState,
+} from './tutor-orbit-responsive-helpers';
 
 interface TutorOrbitMobileNavigatorProps {
   tutors: readonly CatalogueTutor[];
-  activeId: string;
   reduced: boolean;
   onSelect: (id: string) => boolean;
 }
 
 export function TutorOrbitMobileNavigator({
   tutors,
-  activeId,
   reduced,
   onSelect,
 }: TutorOrbitMobileNavigatorProps) {
   const [page, setPage] = useState(0);
-  const pointerStart = useRef<{ x: number; y: number } | null>(null);
-  const visibleIds = rosterWindow(tutors.map((tutor) => tutor.id), page, 4);
+  const swipeState = useRef<NavigatorSwipeState>({ pointerId: null, x: 0, y: 0, suppressNextClick: false });
+  const visibleIds = rosterWindow(tutors.map((tutor) => tutor.id), page, NAVIGATOR_PAGE_SIZE);
   const visibleTutors = visibleIds
     .map((id) => tutors.find((tutor) => tutor.id === id))
     .filter((tutor): tutor is CatalogueTutor => Boolean(tutor));
-  const start = tutors.length === 0 ? 0 : page * 4 + 1;
-  const end = Math.min(start + 3, tutors.length);
   const changePage = (direction: 1 | -1) => {
-    setPage((current) => nextRosterPage(current, direction, tutors.length, 4));
+    setPage((current) => nextRosterPage(current, direction, tutors.length, NAVIGATOR_PAGE_SIZE));
   };
   const finishSwipe = (event: PointerEvent<HTMLDivElement>) => {
-    if (!pointerStart.current) return;
-    const dx = event.clientX - pointerStart.current.x;
-    const dy = event.clientY - pointerStart.current.y;
-    if (Math.abs(dx) >= 48 && Math.abs(dx) > Math.abs(dy)) {
-      setPage((current) => nextRosterPage(current, dx < 0 ? 1 : -1, tutors.length, 4));
+    const result = resolveNavigatorSwipe(swipeState.current, event.pointerId, event.clientX, event.clientY);
+    swipeState.current = result.state;
+    if (result.direction !== 0) {
+      setPage((current) => nextRosterPage(current, result.direction, tutors.length, NAVIGATOR_PAGE_SIZE));
     }
-    pointerStart.current = null;
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    }
+  };
+  const cancelSwipe = (event: PointerEvent<HTMLDivElement>) => {
+    swipeState.current = cancelNavigatorSwipe(swipeState.current, event.pointerId);
+  };
+  const selectTutor = (event: MouseEvent<HTMLButtonElement>, id: string) => {
+    const result = consumeNavigatorClickSuppression(swipeState.current);
+    swipeState.current = result.state;
+    if (result.suppressed) {
+      event.preventDefault();
+      event.stopPropagation();
+      return;
+    }
+    onSelect(id);
   };
 
   return (
     <nav
       className="tutor-orbit__mobile-navigator"
       aria-label="Educator navigator"
-      onPointerDown={(event) => { pointerStart.current = { x: event.clientX, y: event.clientY }; }}
+      onPointerDown={(event) => {
+        swipeState.current = beginNavigatorSwipe(event.pointerId, event.clientX, event.clientY);
+        event.currentTarget.setPointerCapture(event.pointerId);
+      }}
       onPointerUp={finishSwipe}
-      onPointerCancel={() => { pointerStart.current = null; }}
+      onPointerCancel={cancelSwipe}
+      onLostPointerCapture={cancelSwipe}
     >
       <div className="tutor-orbit__navigator-heading">
-        <p aria-live="polite">Educators {start}–{end} of {tutors.length}</p>
+        <p aria-live="polite">{navigatorRosterStatus(tutors.length, page)}</p>
         <div className="tutor-orbit__navigator-controls">
           <button type="button" aria-label="Previous educators" onClick={() => changePage(-1)}>
             <ChevronLeft aria-hidden="true" />
@@ -71,9 +94,8 @@ export function TutorOrbitMobileNavigator({
               key={tutor.id}
               type="button"
               className="tutor-orbit__navigator-tutor"
-              aria-current={tutor.id === activeId ? 'true' : undefined}
               aria-label={`View ${tutor.name}`}
-              onClick={() => onSelect(tutor.id)}
+              onClick={(event) => selectTutor(event, tutor.id)}
             >
               <span className="tutor-orbit__navigator-portrait">
                 <img src={getPhotoUrl(tutor)} alt="" style={getPhotoStyle(tutor)} />

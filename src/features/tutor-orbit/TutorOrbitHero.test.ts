@@ -36,7 +36,7 @@ test('renders the faculty stage from safe sectors with shared clocks and pointer
   assert.match(stage, /useMotionValue/);
   assert.match(stage, /useSpring/);
   assert.match(stage, /onPointerMove/);
-  assert.match(stage, /Math\.abs\([^)]*\) \* 5/);
+  assert.match(stage, /parallaxLimitsForBand\(band\)/);
   assert.match(stage, /document\.hidden/);
   assert.match(stage, /visibilitychange/);
   assert.match(stage, /elapsedMs\.current \+= time - lastFrameAt\.current/);
@@ -47,7 +47,7 @@ test('uses shared-layout motion, promotion, and marker layers for selections', (
   assert.match(component, /swapFacultyTutor\(activeId, innerIds, outerIds, selectedId\)/);
   assert.match(stage, /layoutId=\{`tutor-\$\{active\.id\}`\}/);
   assert.match(stage, /layoutId=\{`tutor-\$\{tutor\.id\}`\}/);
-  assert.match(stage, /duration: reduced \? 0 : 0\.8/);
+  assert.match(stage, /duration: reduced \? 0\.15 : 0\.8/);
   assert.match(stage, /tutor-orbit__promotion-portrait/);
   assert.match(stage, /phase === 'promoting'/);
   assert.match(stage, /tutor-orbit__marker/);
@@ -144,15 +144,15 @@ test('keeps each selected profile item in the keyed stagger from tier through CT
 
 test('provides every educator through a four-person responsive navigator', () => {
   assert.ok(existsSync(navigatorUrl));
-  assert.match(component, /<TutorOrbitMobileNavigator[\s\S]*tutors=\{facultyTutors\}[\s\S]*activeId=\{activeId\}[\s\S]*onSelect=\{selectTutor\}/);
-  assert.match(component, /const facultyTutors = useMemo\([\s\S]*active,[\s\S]*innerTutors,[\s\S]*outerTutors/);
-  assert.match(navigator, /rosterWindow\(tutors\.map\(\(tutor\) => tutor\.id\), page, 4\)/);
+  assert.match(component, /<TutorOrbitMobileNavigator[\s\S]*tutors=\{supportingTutors\}[\s\S]*onSelect=\{selectTutor\}/);
+  assert.match(component, /const supportingTutors = useMemo\([\s\S]*supportingTutorIds\(activeId, innerIds, outerIds\)/);
+  assert.match(navigator, /rosterWindow\(tutors\.map\(\(tutor\) => tutor\.id\), page, NAVIGATOR_PAGE_SIZE\)/);
   assert.match(navigator, /aria-label="Previous educators"/);
   assert.match(navigator, /aria-label="Next educators"/);
-  assert.match(navigator, /Educators \{start\}–\{end\} of \{tutors\.length\}/);
-  assert.match(navigator, /Math\.abs\(dx\) >= 48 && Math\.abs\(dx\) > Math\.abs\(dy\)/);
-  assert.match(navigator, /nextRosterPage\(current, dx < 0 \? 1 : -1, tutors\.length, 4\)/);
-  assert.match(navigator, /onSelect\(tutor\.id\)/);
+  assert.match(navigator, /navigatorRosterStatus\(tutors\.length, page\)/);
+  assert.match(navigator, /resolveNavigatorSwipe/);
+  assert.match(navigator, /nextRosterPage\(current, result\.direction, tutors\.length, NAVIGATOR_PAGE_SIZE\)/);
+  assert.match(navigator, /onSelect\(id\)/);
 });
 
 test('uses the tablet and mobile topology without hiding profile layout boxes', () => {
@@ -168,4 +168,21 @@ test('keeps short reduced-motion navigator and selection transitions', () => {
   assert.match(navigator, /duration:\s*reduced\s*\?\s*0\.12\s*:\s*0\.16/);
   assert.match(css, /@media \(prefers-reduced-motion: reduce\)[\s\S]*tutor-orbit__marker[\s\S]*animation:\s*none !important/);
   assert.match(css, /@media \(prefers-reduced-motion: reduce\)[\s\S]*tutor-orbit__stage[\s\S]*transform:\s*none !important/);
+});
+
+test('wires the supporting-only navigator and hardened pointer controls', () => {
+  assert.match(component, /supportingTutorIds\(activeId, innerIds, outerIds\)/);
+  assert.match(navigator, /setPointerCapture\(event\.pointerId\)/);
+  assert.match(navigator, /onLostPointerCapture/);
+  assert.match(navigator, /consumeNavigatorClickSuppression/);
+  assert.match(css, /touch-action:\s*pan-y/);
+  assert.match(css, /@media \(max-width: 720px\)[\s\S]*tutor-orbit__marker[\s\S]*display:\s*none/);
+});
+
+test('keeps short visible reduced-motion profile and centre selection transitions', () => {
+  assert.match(stage, /duration: reduced \? 0\.15 : 0\.8/);
+  assert.match(stage, /opacity: \[1, 0\.78, 1\], scale: \[1, 0\.985, 1\]/);
+  assert.match(stage, /opacity: \{ duration: reduced \? 0\.15 : 0\.8/);
+  assert.match(profile, /duration: reduced \? 0\.15 : 0\.2/);
+  assert.match(profile, /reducedContentVariants/);
 });

@@ -651,6 +651,7 @@
 
 .tutor-orbit__mobile-navigator {
   display: none;
+  touch-action: pan-y;
 }
 
 @keyframes tutor-orbit-centre-float {
@@ -716,9 +717,6 @@
   .tutor-orbit__outer-slot--7 { --static-x: 18%; --static-y: 4%; }
   .tutor-orbit__outer-slot--8 { --static-x: 83%; --static-y: 8%; }
 
-  .tutor-orbit__marker {
-    display: none;
-  }
 }
 
 @media (max-width: 1199px) {
@@ -865,6 +863,10 @@
 
   .tutor-orbit__mobile-navigator {
     display: grid;
+  }
+
+  .tutor-orbit__marker {
+    display: none;
   }
 
   .tutor-orbit__path--outer,
@@ -1090,5 +1092,9 @@
 
   .tutor-orbit__stage {
     transform: none !important;
+  }
+
+  .tutor-orbit__marker {
+    display: none;
   }
 }

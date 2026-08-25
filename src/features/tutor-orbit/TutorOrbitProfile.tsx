@@ -19,6 +19,12 @@ export const contentVariants = {
   exit: { opacity: 0, y: -6, transition: { duration: 0.16 } },
 };
 
+const reducedContentVariants = {
+  hidden: { opacity: 0, scale: 0.98 },
+  visible: { opacity: 1, scale: 1, transition: { duration: 0.15, ease: [0.22, 1, 0.36, 1] as const } },
+  exit: { opacity: 0, scale: 0.98, transition: { duration: 0.15, ease: [0.22, 1, 0.36, 1] as const } },
+};
+
 export const itemVariants = {
   hidden: { opacity: 0, y: 6 },
   visible: {
@@ -47,7 +53,7 @@ export function TutorOrbitProfile({ tutor, reduced, changing }: TutorOrbitProfil
   const subjects = subjectLabels(tutor);
   const strengths = (tutor.profile?.tags ?? []).slice(0, 3);
   const profileHref = `/find-teacher?tutor=${tutor.id}`;
-  const animationState = reduced ? 'idle' : changing ? 'changing' : 'idle';
+  const animationState = changing ? 'changing' : 'idle';
 
   return (
     <motion.aside
@@ -56,16 +62,16 @@ export function TutorOrbitProfile({ tutor, reduced, changing }: TutorOrbitProfil
       initial={false}
       animate={animationState}
       variants={shellVariants}
-      transition={{ duration: reduced ? 0 : 0.2, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ duration: reduced ? 0.15 : 0.2, ease: [0.22, 1, 0.36, 1] }}
     >
       <AnimatePresence mode="wait" initial={false}>
         <motion.div
           key={tutor.id}
           className="tutor-orbit__profile-sequence"
-          variants={reduced ? undefined : contentVariants}
-          initial={reduced ? false : 'hidden'}
-          animate={reduced ? undefined : 'visible'}
-          exit={reduced ? undefined : 'exit'}
+          variants={reduced ? reducedContentVariants : contentVariants}
+          initial="hidden"
+          animate="visible"
+          exit="exit"
         >
           <motion.div className="tutor-orbit__profile-heading" variants={reduced ? undefined : itemVariants}>
             <p>{tutor.tier === 'senior' ? 'Senior educator' : 'Educator'}</p>

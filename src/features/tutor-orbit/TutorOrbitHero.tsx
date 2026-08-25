@@ -22,6 +22,7 @@ import {
 import { TutorOrbitProfile } from './TutorOrbitProfile';
 import { TutorOrbitMobileNavigator } from './TutorOrbitMobileNavigator';
 import { TutorOrbitStage } from './TutorOrbitStage';
+import { supportingTutorIds } from './tutor-orbit-responsive-helpers';
 import {
   canBeginSelection,
   transitionSelectionLock,
@@ -52,9 +53,11 @@ export function TutorOrbitHero() {
     () => outerIds.map(tutorById).filter((tutor): tutor is CatalogueTutor => Boolean(tutor)),
     [outerIds],
   );
-  const facultyTutors = useMemo(
-    () => [active, ...innerTutors, ...outerTutors],
-    [active, innerTutors, outerTutors],
+  const supportingTutors = useMemo(
+    () => supportingTutorIds(activeId, innerIds, outerIds)
+      .map(tutorById)
+      .filter((tutor): tutor is CatalogueTutor => Boolean(tutor)),
+    [activeId, innerIds, outerIds],
   );
 
   const clearSelectionTimers = useCallback(() => {
@@ -132,8 +135,7 @@ export function TutorOrbitHero() {
           onSelect={selectTutor}
         />
         <TutorOrbitMobileNavigator
-          tutors={facultyTutors}
-          activeId={activeId}
+          tutors={supportingTutors}
           reduced={reduced}
           onSelect={selectTutor}
         />
