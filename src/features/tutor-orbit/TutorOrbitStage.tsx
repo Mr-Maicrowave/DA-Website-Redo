@@ -35,7 +35,7 @@ import { parallaxLimitsForBand } from './tutor-orbit-responsive-helpers';
 const TAU = Math.PI * 2;
 
 const portraitTransition = (reduced: boolean) => ({
-  layout: { duration: reduced ? 0.15 : 0.8, ease: [0.22, 1, 0.36, 1] as const },
+  layout: { duration: reduced ? 0 : 0.8, ease: [0.22, 1, 0.36, 1] as const },
   opacity: { duration: reduced ? 0.15 : 0.8, ease: [0.22, 1, 0.36, 1] as const },
   scale: { duration: reduced ? 0.15 : 0.8, ease: [0.22, 1, 0.36, 1] as const },
 });

@@ -8,8 +8,9 @@ import {
   beginNavigatorSwipe,
   cancelNavigatorSwipe,
   consumeNavigatorClickSuppression,
+  finishNavigatorSwipe,
   navigatorRosterStatus,
-  resolveNavigatorSwipe,
+  trackNavigatorSwipe,
   type NavigatorSwipeState,
 } from './tutor-orbit-responsive-helpers';
 
@@ -25,7 +26,7 @@ export function TutorOrbitMobileNavigator({
   onSelect,
 }: TutorOrbitMobileNavigatorProps) {
   const [page, setPage] = useState(0);
-  const swipeState = useRef<NavigatorSwipeState>({ pointerId: null, x: 0, y: 0, suppressNextClick: false });
+  const swipeState = useRef<NavigatorSwipeState>({ pointerId: null, x: 0, y: 0, captured: false, accepted: false, suppressClickUntil: 0 });
   const visibleIds = rosterWindow(tutors.map((tutor) => tutor.id), page, NAVIGATOR_PAGE_SIZE);
   const visibleTutors = visibleIds
     .map((id) => tutors.find((tutor) => tutor.id === id))
@@ -33,28 +34,33 @@ export function TutorOrbitMobileNavigator({
   const changePage = (direction: 1 | -1) => {
     setPage((current) => nextRosterPage(current, direction, tutors.length, NAVIGATOR_PAGE_SIZE));
   };
-  const finishSwipe = (event: PointerEvent<HTMLDivElement>) => {
-    const result = resolveNavigatorSwipe(swipeState.current, event.pointerId, event.clientX, event.clientY);
+  const trackSwipe = (event: PointerEvent<HTMLDivElement>) => {
+    const result = trackNavigatorSwipe(swipeState.current, event.pointerId, event.clientX, event.clientY);
     swipeState.current = result.state;
-    if (result.direction !== 0) {
+    if (result.accepted) {
+      event.currentTarget.setPointerCapture(event.pointerId);
       setPage((current) => nextRosterPage(current, result.direction, tutors.length, NAVIGATOR_PAGE_SIZE));
     }
-    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+  };
+  const finishSwipe = (event: PointerEvent<HTMLDivElement>) => {
+    const wasCaptured = swipeState.current.pointerId === event.pointerId && swipeState.current.captured;
+    swipeState.current = finishNavigatorSwipe(swipeState.current, event.pointerId, Date.now());
+    if (wasCaptured && event.currentTarget.hasPointerCapture(event.pointerId)) {
       event.currentTarget.releasePointerCapture(event.pointerId);
     }
   };
   const cancelSwipe = (event: PointerEvent<HTMLDivElement>) => {
     swipeState.current = cancelNavigatorSwipe(swipeState.current, event.pointerId);
   };
-  const selectTutor = (event: MouseEvent<HTMLButtonElement>, id: string) => {
-    const result = consumeNavigatorClickSuppression(swipeState.current);
+  const suppressSwipeClick = (event: MouseEvent<HTMLElement>) => {
+    // Keyboard activation must always retain native button semantics.
+    const detail = event.detail === 0 ? 0 : event.detail;
+    const result = consumeNavigatorClickSuppression(swipeState.current, detail, Date.now());
     swipeState.current = result.state;
     if (result.suppressed) {
       event.preventDefault();
       event.stopPropagation();
-      return;
     }
-    onSelect(id);
   };
 
   return (
@@ -63,11 +69,12 @@ export function TutorOrbitMobileNavigator({
       aria-label="Educator navigator"
       onPointerDown={(event) => {
         swipeState.current = beginNavigatorSwipe(event.pointerId, event.clientX, event.clientY);
-        event.currentTarget.setPointerCapture(event.pointerId);
       }}
+      onPointerMove={trackSwipe}
       onPointerUp={finishSwipe}
       onPointerCancel={cancelSwipe}
       onLostPointerCapture={cancelSwipe}
+      onClickCapture={suppressSwipeClick}
     >
       <div className="tutor-orbit__navigator-heading">
         <p aria-live="polite">{navigatorRosterStatus(tutors.length, page)}</p>
@@ -95,7 +102,7 @@ export function TutorOrbitMobileNavigator({
               type="button"
               className="tutor-orbit__navigator-tutor"
               aria-label={`View ${tutor.name}`}
-              onClick={(event) => selectTutor(event, tutor.id)}
+              onClick={() => onSelect(tutor.id)}
             >
               <span className="tutor-orbit__navigator-portrait">
                 <img src={getPhotoUrl(tutor)} alt="" style={getPhotoStyle(tutor)} />

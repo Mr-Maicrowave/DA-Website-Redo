@@ -1,12 +1,15 @@
 import type { GeometryBand } from './tutor-orbit-geometry.ts';
 
 export const NAVIGATOR_PAGE_SIZE = 4;
+const SWIPE_CLICK_SUPPRESSION_MS = 400;
 
 export interface NavigatorSwipeState {
   pointerId: number | null;
   x: number;
   y: number;
-  suppressNextClick: boolean;
+  captured: boolean;
+  accepted: boolean;
+  suppressClickUntil: number;
 }
 
 export type NavigatorSwipeResult =
@@ -33,34 +36,47 @@ export function navigatorRosterStatus(total: number, page: number, pageSize = NA
 }
 
 export function beginNavigatorSwipe(pointerId: number, x: number, y: number): NavigatorSwipeState {
-  return { pointerId, x, y, suppressNextClick: false };
+  return { pointerId, x, y, captured: false, accepted: false, suppressClickUntil: 0 };
 }
 
-export function resolveNavigatorSwipe(
+export function trackNavigatorSwipe(
   state: NavigatorSwipeState,
   pointerId: number,
   x: number,
   y: number,
 ): NavigatorSwipeResult {
   if (state.pointerId !== pointerId) return { accepted: false, direction: 0, state };
+  if (state.accepted) return { accepted: false, direction: 0, state };
   const dx = x - state.x;
   const dy = y - state.y;
   const accepted = Math.abs(dx) >= 48 && Math.abs(dx) > Math.abs(dy);
-  const nextState = { pointerId: null, x: 0, y: 0, suppressNextClick: accepted };
-  if (!accepted) return { accepted: false, direction: 0, state: nextState };
-  return { accepted: true, direction: dx < 0 ? 1 : -1, state: nextState };
+  if (!accepted) return { accepted: false, direction: 0, state };
+  return { accepted: true, direction: dx < 0 ? 1 : -1, state: { ...state, captured: true, accepted: true } };
+}
+
+export function finishNavigatorSwipe(state: NavigatorSwipeState, pointerId: number, now: number) {
+  if (state.pointerId !== pointerId) return state;
+  return {
+    pointerId: null,
+    x: 0,
+    y: 0,
+    captured: false,
+    accepted: false,
+    suppressClickUntil: state.accepted ? now + SWIPE_CLICK_SUPPRESSION_MS : 0,
+  };
 }
 
 export function cancelNavigatorSwipe(state: NavigatorSwipeState, pointerId: number) {
   return state.pointerId === pointerId
-    ? { ...state, pointerId: null, x: 0, y: 0 }
+    ? { pointerId: null, x: 0, y: 0, captured: false, accepted: false, suppressClickUntil: 0 }
     : state;
 }
 
-export function consumeNavigatorClickSuppression(state: NavigatorSwipeState) {
+export function consumeNavigatorClickSuppression(state: NavigatorSwipeState, detail: number, now: number) {
+  const suppressed = detail !== 0 && state.suppressClickUntil > now;
   return {
-    suppressed: state.suppressNextClick,
-    state: { ...state, suppressNextClick: false },
+    suppressed,
+    state: { ...state, suppressClickUntil: 0 },
   };
 }
 

@@ -4,8 +4,9 @@ import {
   beginNavigatorSwipe,
   cancelNavigatorSwipe,
   consumeNavigatorClickSuppression,
+  finishNavigatorSwipe,
   navigatorRosterStatus,
-  resolveNavigatorSwipe,
+  trackNavigatorSwipe,
   supportingTutorIds,
   parallaxLimitsForBand,
 } from './tutor-orbit-responsive-helpers.ts';
@@ -32,26 +33,42 @@ test('describes normal and wrapped four-supporter roster pages accurately', () =
   assert.equal(navigatorRosterStatus(14, 3, 4), 'Educators 13–14 and 1–2 of 14');
 });
 
-test('accepts only horizontal swipes at the 48px threshold for the initiating pointer', () => {
+test('captures only when the initiating pointer crosses the horizontal swipe threshold', () => {
   const started = beginNavigatorSwipe(7, 100, 60);
-  const accepted = resolveNavigatorSwipe(started, 7, 52, 64);
-  const wrongPointer = resolveNavigatorSwipe(started, 8, 20, 60);
-  const vertical = resolveNavigatorSwipe(started, 7, 50, 130);
+  const belowThreshold = trackNavigatorSwipe(started, 7, 53, 60);
+  const accepted = trackNavigatorSwipe(started, 7, 52, 64);
+  const wrongPointer = trackNavigatorSwipe(started, 8, 20, 60);
+  const vertical = trackNavigatorSwipe(started, 7, 50, 130);
 
+  assert.equal(started.captured, false);
+  assert.equal(belowThreshold.accepted, false);
   assert.equal(accepted.direction, 1);
   assert.equal(accepted.accepted, true);
+  assert.equal(accepted.state.captured, true);
   assert.equal(wrongPointer.accepted, false);
   assert.equal(vertical.accepted, false);
   assert.equal(cancelNavigatorSwipe(accepted.state, 7).pointerId, null);
 });
 
-test('consumes precisely the click that follows an accepted swipe', () => {
-  const accepted = resolveNavigatorSwipe(beginNavigatorSwipe(7, 100, 60), 7, 52, 60);
-  const firstClick = consumeNavigatorClickSuppression(accepted.state);
-  const secondClick = consumeNavigatorClickSuppression(firstClick.state);
+test('consumes only the immediate pointer click after an accepted swipe and expires it', () => {
+  const accepted = trackNavigatorSwipe(beginNavigatorSwipe(7, 100, 60), 7, 52, 60);
+  const finished = finishNavigatorSwipe(accepted.state, 7, 1000);
+  const firstClick = consumeNavigatorClickSuppression(finished, 1, 1100);
+  const secondClick = consumeNavigatorClickSuppression(firstClick.state, 1, 1101);
+  const expired = consumeNavigatorClickSuppression(finished, 1, 1501);
 
   assert.equal(firstClick.suppressed, true);
   assert.equal(secondClick.suppressed, false);
+  assert.equal(expired.suppressed, false);
+});
+
+test('never suppresses keyboard activation after a swipe', () => {
+  const accepted = trackNavigatorSwipe(beginNavigatorSwipe(7, 100, 60), 7, 52, 60);
+  const finished = finishNavigatorSwipe(accepted.state, 7, 1000);
+  const keyboard = consumeNavigatorClickSuppression(finished, 0, 1100);
+
+  assert.equal(keyboard.suppressed, false);
+  assert.equal(keyboard.state.suppressClickUntil, 0);
 });
 
 test('uses reduced tablet parallax while leaving mobile static', () => {

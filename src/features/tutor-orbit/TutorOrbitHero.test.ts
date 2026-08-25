@@ -47,7 +47,7 @@ test('uses shared-layout motion, promotion, and marker layers for selections', (
   assert.match(component, /swapFacultyTutor\(activeId, innerIds, outerIds, selectedId\)/);
   assert.match(stage, /layoutId=\{`tutor-\$\{active\.id\}`\}/);
   assert.match(stage, /layoutId=\{`tutor-\$\{tutor\.id\}`\}/);
-  assert.match(stage, /duration: reduced \? 0\.15 : 0\.8/);
+  assert.match(stage, /layout: \{ duration: reduced \? 0 : 0\.8/);
   assert.match(stage, /tutor-orbit__promotion-portrait/);
   assert.match(stage, /phase === 'promoting'/);
   assert.match(stage, /tutor-orbit__marker/);
@@ -150,9 +150,9 @@ test('provides every educator through a four-person responsive navigator', () =>
   assert.match(navigator, /aria-label="Previous educators"/);
   assert.match(navigator, /aria-label="Next educators"/);
   assert.match(navigator, /navigatorRosterStatus\(tutors\.length, page\)/);
-  assert.match(navigator, /resolveNavigatorSwipe/);
+  assert.match(navigator, /trackNavigatorSwipe/);
   assert.match(navigator, /nextRosterPage\(current, result\.direction, tutors\.length, NAVIGATOR_PAGE_SIZE\)/);
-  assert.match(navigator, /onSelect\(id\)/);
+  assert.match(navigator, /onSelect\(tutor\.id\)/);
 });
 
 test('uses the tablet and mobile topology without hiding profile layout boxes', () => {
@@ -172,7 +172,12 @@ test('keeps short reduced-motion navigator and selection transitions', () => {
 
 test('wires the supporting-only navigator and hardened pointer controls', () => {
   assert.match(component, /supportingTutorIds\(activeId, innerIds, outerIds\)/);
+  const pointerDown = navigator.slice(navigator.indexOf('onPointerDown'), navigator.indexOf('onPointerMove'));
+  assert.doesNotMatch(pointerDown, /setPointerCapture/);
+  assert.match(navigator, /onPointerMove=\{trackSwipe\}/);
   assert.match(navigator, /setPointerCapture\(event\.pointerId\)/);
+  assert.match(navigator, /onClickCapture/);
+  assert.match(navigator, /event\.detail === 0/);
   assert.match(navigator, /onLostPointerCapture/);
   assert.match(navigator, /consumeNavigatorClickSuppression/);
   assert.match(css, /touch-action:\s*pan-y/);
@@ -180,9 +185,11 @@ test('wires the supporting-only navigator and hardened pointer controls', () => 
 });
 
 test('keeps short visible reduced-motion profile and centre selection transitions', () => {
-  assert.match(stage, /duration: reduced \? 0\.15 : 0\.8/);
-  assert.match(stage, /opacity: \[1, 0\.78, 1\], scale: \[1, 0\.985, 1\]/);
+  assert.match(stage, /layout: \{ duration: reduced \? 0 : 0\.8/);
   assert.match(stage, /opacity: \{ duration: reduced \? 0\.15 : 0\.8/);
+  assert.match(stage, /opacity: \[1, 0\.78, 1\], scale: \[1, 0\.985, 1\]/);
+  assert.match(profile, /reducedShellVariants/);
+  assert.match(profile, /changing: \{ y: 0 \}/);
   assert.match(profile, /duration: reduced \? 0\.15 : 0\.2/);
   assert.match(profile, /reducedContentVariants/);
 });

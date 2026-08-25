@@ -13,6 +13,11 @@ export const shellVariants = {
   changing: { y: -6 },
 };
 
+const reducedShellVariants = {
+  idle: { y: 0 },
+  changing: { y: 0 },
+};
+
 export const contentVariants = {
   hidden: { opacity: 0, y: 8 },
   visible: { opacity: 1, y: 0, transition: { staggerChildren: 0.06 } },
@@ -61,7 +66,7 @@ export function TutorOrbitProfile({ tutor, reduced, changing }: TutorOrbitProfil
       aria-live="polite"
       initial={false}
       animate={animationState}
-      variants={shellVariants}
+      variants={reduced ? reducedShellVariants : shellVariants}
       transition={{ duration: reduced ? 0.15 : 0.2, ease: [0.22, 1, 0.36, 1] }}
     >
       <AnimatePresence mode="wait" initial={false}>
