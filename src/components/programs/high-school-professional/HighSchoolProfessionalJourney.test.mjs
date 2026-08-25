@@ -6,7 +6,14 @@ const page = await readFile(new URL('../../../pages/programs/HighSchool.tsx', im
 const feature = await readFile(new URL('./HighSchoolProfessionalJourney.tsx', import.meta.url), 'utf8').catch(() => '');
 
 test('mounts the professional journey immediately after the cinematic journey', () => {
+  assert.match(page, /import HighSchoolProfessionalJourney from '@\/components\/programs\/high-school-professional\/HighSchoolProfessionalJourney';/);
   assert.match(page, /<HighSchoolCinematicScene\s*\/>\s*<HighSchoolProfessionalJourney\s*\/>/);
+});
+
+test('replaces the obsolete post-hero page chain', () => {
+  for (const name of ['TeacherBeside', 'Curriculum', 'HowWeTeach', 'PerfectIf']) {
+    assert.doesNotMatch(page, new RegExp(`<${name}\\s*\\/>`));
+  }
 });
 
 test('composes every approved lower-page section', () => {
