@@ -40,6 +40,13 @@ type FamilyReason = {
   body: string;
 };
 
+type StagePhoto = {
+  src: CommunityPhotoPath;
+  alt: string;
+  srcSet?: string;
+  sizes?: string;
+};
+
 export const referenceStoryAssets = {
   foundationDecor: primaryAssetManifest.foundations,
   curriculumHouse: primaryAssetManifest.curriculumHouse,
@@ -216,9 +223,21 @@ export const stagePhotos = {
   growth: {
     src: '/images/community/tutor_mentor_girls.jpg',
     alt: 'A DA Tuition tutor guiding a small group of upper-primary students',
+    srcSet: [
+      '/images/community/responsive/tutor_mentor_girls-720.webp 720w',
+      '/images/community/responsive/tutor_mentor_girls-1200.webp 1200w',
+      '/images/community/responsive/tutor_mentor_girls-1800.webp 1800w',
+    ].join(', '),
+    sizes: '(max-width: 760px) 94vw, (max-width: 1050px) 54vw, 32vw',
   },
   mastery: {
     src: '/images/community/0X1A7290.jpeg',
     alt: 'Upper-primary DA Tuition students engaged in classroom learning',
+    srcSet: [
+      '/images/community/responsive/0X1A7290-720.webp 720w',
+      '/images/community/responsive/0X1A7290-1200.webp 1200w',
+      '/images/community/responsive/0X1A7290-1800.webp 1800w',
+    ].join(', '),
+    sizes: '(max-width: 760px) 100vw, (max-width: 900px) 58vw, 56vw',
   },
-} as const satisfies Record<'foundation' | 'growth' | 'mastery', { src: CommunityPhotoPath; alt: string }>;
+} as const satisfies Record<'foundation' | 'growth' | 'mastery', StagePhoto>;

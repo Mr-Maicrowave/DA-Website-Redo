@@ -24,7 +24,14 @@ const MasterySection = () => (
 
     <figure className="primary-reference-mastery__photo">
       <div>
-        <img src={stagePhotos.mastery.src} alt={stagePhotos.mastery.alt} loading="lazy" decoding="async" />
+        <img
+          src={stagePhotos.mastery.src}
+          srcSet={stagePhotos.mastery.srcSet}
+          sizes={stagePhotos.mastery.sizes}
+          alt={stagePhotos.mastery.alt}
+          loading="lazy"
+          decoding="async"
+        />
       </div>
       <figcaption>A capable classroom, looking ahead together.</figcaption>
     </figure>

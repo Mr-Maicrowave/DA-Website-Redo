@@ -24,7 +24,14 @@ const GrowthSection = () => (
 
     <figure className="primary-reference-growth__photo">
       <div>
-        <img src={stagePhotos.growth.src} alt={stagePhotos.growth.alt} loading="lazy" decoding="async" />
+        <img
+          src={stagePhotos.growth.src}
+          srcSet={stagePhotos.growth.srcSet}
+          sizes={stagePhotos.growth.sizes}
+          alt={stagePhotos.growth.alt}
+          loading="lazy"
+          decoding="async"
+        />
       </div>
       <figcaption>Guidance nearby. Ownership growing.</figcaption>
     </figure>

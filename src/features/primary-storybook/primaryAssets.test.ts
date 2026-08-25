@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import sharp from 'sharp';
 import { primaryAssetManifest } from './primaryAssetManifest.ts';
 
 const publicDir = fileURLToPath(new URL('../../../public', import.meta.url));
@@ -55,4 +56,28 @@ test('all 24 reference assets exist with the expected compositing mode', () => {
     assert.equal(existsSync(path), true, `${url} must exist`);
     assert.equal(pngHasAlpha(path), expectedAlpha, `${url} alpha mode must match its runtime layer`);
   });
+});
+
+test('upper-primary classroom photos have width-described WebP variants', async () => {
+  const responsivePhotos = [
+    {
+      source: 'tutor_mentor_girls',
+      variants: [720, 1200, 1800],
+    },
+    {
+      source: '0X1A7290',
+      variants: [720, 1200, 1800],
+    },
+  ] as const;
+
+  for (const photo of responsivePhotos) {
+    for (const width of photo.variants) {
+      const path = join(publicDir, `/images/community/responsive/${photo.source}-${width}.webp`);
+      assert.equal(existsSync(path), true, `${photo.source} must provide a ${width}px WebP candidate`);
+
+      const metadata = await sharp(path).metadata();
+      assert.equal(metadata.format, 'webp');
+      assert.equal(metadata.width, width, `${photo.source}-${width}.webp must match its width descriptor`);
+    }
+  }
 });

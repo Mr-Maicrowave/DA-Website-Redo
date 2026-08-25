@@ -27,7 +27,7 @@ const ProgramBag = () => {
         </p>
 
         <div className="primary-program-bag__guide" aria-labelledby="program-guide-title">
-          <h3 id="program-guide-title">Which format feels right?</h3>
+          <h3 id="program-guide-title">What kind of support would help most right now?</h3>
           <ul>
             {programChoices.map((program, index) => (
               <li key={program.id} data-selected={selectedProgram === program.id}>
