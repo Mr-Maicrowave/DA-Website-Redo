@@ -59,6 +59,23 @@ export function boundsForPose(pose: OrbitPose, diameter: number): Bounds {
   return { left: pose.x - radius, top: pose.y - radius, right: pose.x + radius, bottom: pose.y + radius };
 }
 
+/**
+ * A conservative axis-aligned envelope for every pose in a sector. The
+ * coefficients bound the two harmonic drift terms in poseForSector, while
+ * max scale bounds the portrait footprint at every depth.
+ */
+export function boundsForSectorEnvelope(sector: SafeSector, diameter: number): Bounds {
+  const radius = diameter * Math.max(...sector.scale) / 2;
+  const extentX = Math.abs(sector.driftX) * 1.16 + radius;
+  const extentY = Math.abs(sector.driftY) * 1.12 + radius;
+  return {
+    left: sector.x - extentX,
+    top: sector.y - extentY,
+    right: sector.x + extentX,
+    bottom: sector.y + extentY,
+  };
+}
+
 export function rectsOverlap(a: Bounds, b: Bounds, gap = 0): boolean {
   return !(a.right + gap <= b.left || a.left - gap >= b.right || a.bottom + gap <= b.top || a.top - gap >= b.bottom);
 }
@@ -66,7 +83,7 @@ export function rectsOverlap(a: Bounds, b: Bounds, gap = 0): boolean {
 const wideInner = [[-230, -175], [0, -265], [185, -220], [185, 220], [-225, 190]] as const;
 const wideOuter = [[-400, -80], [-340, -300], [-120, -365], [100, -365], [335, -300], [335, 320], [90, 375], [-140, 370], [-360, 280]] as const;
 const desktopInner = [[-205, -155], [0, -235], [165, -200], [165, 200], [-205, 165]] as const;
-const desktopOuter = [[-355, -85], [-295, -270], [-100, -325], [80, -330], [300, -280], [300, 305], [75, 340], [-125, 335], [-315, 245]] as const;
+const desktopOuter = [[-355, -85], [-295, -270], [-150, -325], [150, -330], [300, -280], [300, 305], [75, 340], [-125, 335], [-315, 245]] as const;
 
 function makeSectors(
   band: GeometryBand,
@@ -90,10 +107,10 @@ function makeSectors(
   }));
 }
 
-const tabletInner = desktopInner.map(([x, y]) => [x * 0.82, y * 0.78] as const);
-const tabletOuter = desktopOuter.slice(0, 6).map(([x, y]) => [x * 0.78, y * 0.76] as const);
-const mobileInner = [[-118, -102], [118, -102], [128, 115], [-128, 115]] as const;
-const mobileOuter = [[-165, -35], [165, -35], [145, 150], [-145, 150]] as const;
+const tabletInner = desktopInner.map(([x, y]) => [x * 1.2, y * 1.2] as const);
+const tabletOuter = desktopOuter.slice(0, 6).map(([x, y]) => [x * 1.35, y * 1.3] as const);
+const mobileInner = [[-190, -170], [190, -170], [190, 170], [-190, 170]] as const;
+const mobileOuter = [[-280, -40], [280, -40], [300, 300], [-300, 300]] as const;
 
 export const SAFE_SECTORS: Record<GeometryBand, Record<OrbitTier, SafeSector[]>> = {
   wide: {
@@ -125,6 +142,18 @@ const desktopZones = (profileLeft: number): ProtectedZones => ({
 export const PROTECTED_ZONES: Record<GeometryBand, ProtectedZones> = {
   wide: desktopZones(390),
   desktop: desktopZones(370),
-  tablet: { ...desktopZones(330), innerDiameter: 104, outerDiameter: 82 },
-  mobile: { ...desktopZones(280), innerDiameter: 84, outerDiameter: 68 },
+  tablet: {
+    innerDiameter: 104,
+    outerDiameter: 82,
+    centre: { left: -110, top: -110, right: 110, bottom: 110 },
+    profile: { left: -220, top: 360, right: 220, bottom: 700 },
+    headline: { left: -650, top: -250, right: -550, bottom: 190 },
+  },
+  mobile: {
+    innerDiameter: 84,
+    outerDiameter: 68,
+    centre: { left: -110, top: -110, right: 110, bottom: 110 },
+    profile: { left: -220, top: 300, right: 220, bottom: 620 },
+    headline: { left: -650, top: -250, right: -500, bottom: 190 },
+  },
 };
