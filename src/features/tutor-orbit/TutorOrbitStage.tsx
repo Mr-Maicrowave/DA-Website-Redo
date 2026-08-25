@@ -6,7 +6,7 @@ import {
   useTransform,
   type MotionValue,
 } from 'framer-motion';
-import { useEffect, useRef, useState, type PointerEvent } from 'react';
+import { useEffect, useRef, useState, type CSSProperties, type PointerEvent } from 'react';
 import {
   getPhotoStyle,
   getPhotoUrl,
@@ -33,6 +33,21 @@ import {
 import { parallaxLimitsForBand } from './tutor-orbit-responsive-helpers';
 
 const TAU = Math.PI * 2;
+
+function promotionCorridorStyle(
+  from: { x: number; y: number },
+  to: { x: number; y: number },
+): CSSProperties {
+  const deltaX = to.x - from.x;
+  const deltaY = to.y - from.y;
+
+  return {
+    left: `calc(50% + ${from.x}px)`,
+    top: `calc(50% + ${from.y}px)`,
+    width: Math.hypot(deltaX, deltaY),
+    transform: `rotate(${Math.atan2(deltaY, deltaX)}rad)`,
+  };
+}
 
 const portraitTransition = (reduced: boolean) => ({
   layout: { duration: reduced ? 0 : 0.8, ease: [0.22, 1, 0.36, 1] as const },
@@ -235,6 +250,8 @@ export function TutorOrbitStage({
   const originProgress = ((outerClock.get() / TAU) % 1 + 1) % 1;
   const origin = originSector ? poseForSector(originSector, originProgress) : { x: 0, y: 0 };
   const waypoint = poseForSector(waypointSector, 0.5);
+  const originToWaypoint = promotionCorridorStyle(origin, waypoint);
+  const waypointToCentre = promotionCorridorStyle(waypoint, { x: 0, y: 0 });
   const stageInnerTutors = tutorsForGeometryBand(innerTutors, band, 'inner');
   const stageOuterTutors = tutorsForGeometryBand(outerTutors, band, 'outer');
 
@@ -326,16 +343,22 @@ export function TutorOrbitStage({
         </motion.div>
 
         {phase === 'promoting' && selectedTutor ? (
-          <motion.div
-            className="tutor-orbit__promotion-portrait"
-            aria-hidden="true"
-            initial={{ x: origin.x, y: origin.y, scale: 0.9, opacity: 0.7 }}
-            animate={{ x: [origin.x, waypoint.x], y: [origin.y, waypoint.y], scale: [0.9, 1.08], opacity: 1 }}
-            transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
-            style={{ position: 'absolute', zIndex: 7, top: '50%', left: '50%', width: 56, aspectRatio: '1', overflow: 'hidden', borderRadius: '50%', pointerEvents: 'none' }}
-          >
-            <img src={getPhotoUrl(selectedTutor)} alt="" style={{ ...getPhotoStyle(selectedTutor), width: '100%', height: '100%', objectFit: 'cover' }} />
-          </motion.div>
+          <>
+            <div className="tutor-orbit__promotion-corridor" aria-hidden="true">
+              <span className="tutor-orbit__promotion-corridor-segment tutor-orbit__promotion-corridor-segment--origin" style={originToWaypoint} />
+              <span className="tutor-orbit__promotion-corridor-segment tutor-orbit__promotion-corridor-segment--centre" style={waypointToCentre} />
+            </div>
+            <motion.div
+              className="tutor-orbit__promotion-portrait"
+              aria-hidden="true"
+              initial={{ x: origin.x, y: origin.y, scale: 0.9, opacity: 0.7 }}
+              animate={{ x: [origin.x, waypoint.x], y: [origin.y, waypoint.y], scale: [0.9, 1.08], opacity: 1 }}
+              transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
+              style={{ position: 'absolute', top: '50%', left: '50%', width: 56, aspectRatio: '1', overflow: 'hidden', borderRadius: '50%', pointerEvents: 'none' }}
+            >
+              <img src={getPhotoUrl(selectedTutor)} alt="" style={{ ...getPhotoStyle(selectedTutor), width: '100%', height: '100%', objectFit: 'cover' }} />
+            </motion.div>
+          </>
         ) : null}
       </motion.div>
       </motion.div>

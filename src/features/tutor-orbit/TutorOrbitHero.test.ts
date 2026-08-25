@@ -52,8 +52,22 @@ test('uses shared-layout motion, promotion, and marker layers for selections', (
   assert.match(stage, /phase === 'promoting'/);
   assert.match(stage, /tutor-orbit__marker/);
   assert.match(stage, /isPromotedSource/);
-  assert.match(stage, /zIndex: 7/);
+  assert.doesNotMatch(stage, /zIndex:\s*[78]/);
   assert.match(stage, /objectFit: 'cover'/);
+});
+
+test('renders two directional promotion-corridor segments from the authored origin, waypoint, and centre', () => {
+  assert.match(stage, /function promotionCorridorStyle\(\s*from:[\s\S]*?to:[\s\S]*?CSSProperties/);
+  assert.match(stage, /const deltaX = to\.x - from\.x/);
+  assert.match(stage, /const deltaY = to\.y - from\.y/);
+  assert.match(stage, /width:\s*Math\.hypot\(deltaX, deltaY\)/);
+  assert.match(stage, /transform:\s*`rotate\(\$\{Math\.atan2\(deltaY, deltaX\)\}rad\)`/);
+  assert.match(stage, /const originToWaypoint = promotionCorridorStyle\(origin, waypoint\)/);
+  assert.match(stage, /const waypointToCentre = promotionCorridorStyle\(waypoint, \{ x: 0, y: 0 \}\)/);
+  assert.equal((stage.match(/className="tutor-orbit__promotion-corridor-segment/g) ?? []).length, 2);
+  assert.match(stage, /phase === 'promoting'[\s\S]*?tutor-orbit__promotion-corridor[\s\S]*?originToWaypoint[\s\S]*?waypointToCentre/);
+  assert.match(css, /\.tutor-orbit__promotion-corridor\s*\{[\s\S]*?z-index:\s*6[\s\S]*?pointer-events:\s*none/);
+  assert.match(css, /\.tutor-orbit__promotion-corridor-segment\s*\{[\s\S]*?height:\s*(?:1|1\.5|2)px[\s\S]*?linear-gradient[\s\S]*?transform-origin:\s*left center/);
 });
 
 test('pauses ambient motion for hover, focus, transition, and reduced motion', () => {
@@ -208,6 +222,7 @@ test('uses semantic tokens for the safe stage, portrait hierarchy, spacing, and 
   assert.match(css, /\.tutor-orbit__featured\s*\{[\s\S]*?width:\s*var\(--orbit-centre-size\)/);
   assert.match(css, /\.tutor-orbit__satellite--inner\s*\{[\s\S]*?width:\s*var\(--orbit-primary-size\)/);
   assert.match(css, /\.tutor-orbit__satellite--outer\s*\{[\s\S]*?width:\s*var\(--orbit-secondary-size\)/);
+  assert.match(css, /\.tutor-orbit__navigator-heading\s*\{[\s\S]*?gap:\s*var\(--orbit-gap-standard\)/);
 });
 
 test('keeps primary names readable and discloses secondary names only on hover or focus', () => {
@@ -232,10 +247,19 @@ test('styles promotion and exchange as restrained hierarchy states with marker-o
   assert.match(profile, /changing:\s*\{\s*y:\s*-6\s*\}/);
 });
 
+test('keeps the profile wedge desktop-only and scopes profile transform promotion to transitions', () => {
+  assert.match(css, /@media \(max-width: 1199px\)[\s\S]*?\.tutor-orbit__stage::after\s*\{[\s\S]*?display:\s*none/);
+
+  const baseProfileRule = css.match(/\.tutor-orbit__profile\s*\{([^}]*)\}/)?.[1] ?? '';
+  assert.doesNotMatch(baseProfileRule, /will-change:\s*transform/);
+  assert.match(css, /\.tutor-orbit:has\(\.tutor-orbit__stage\.is-transitioning\) \.tutor-orbit__profile\s*\{[\s\S]*?will-change:\s*transform/);
+});
+
 test('keeps centre motion bounded and disables every continuous visual motion layer when requested', () => {
   assert.match(css, /@keyframes tutor-orbit-centre-float\s*\{[\s\S]*?translateY\(-2px\)[\s\S]*?translateY\(3px\)/);
   assert.match(css, /@media \(prefers-reduced-motion: reduce\)[\s\S]*?\.tutor-orbit__featured-float,[\s\S]*?\.tutor-orbit__portrait-field,[\s\S]*?\.tutor-orbit__halo,[\s\S]*?\.tutor-orbit__geometry,[\s\S]*?\.tutor-orbit__marker[\s\S]*?animation:\s*none !important/);
   assert.match(css, /@media \(prefers-reduced-motion: reduce\)[\s\S]*?\.tutor-orbit__portrait-field,[\s\S]*?\.tutor-orbit__halo,[\s\S]*?\.tutor-orbit__geometry[\s\S]*?transform:\s*none !important/);
+  assert.match(css, /@media \(prefers-reduced-motion: reduce\)[\s\S]*?\.tutor-orbit__promotion-corridor[\s\S]*?display:\s*none/);
   assert.doesNotMatch(css, /transition:\s*all(?:\s|;)/);
 
   const portraitRules = [...css.matchAll(/\.tutor-orbit__(?:featured|satellite)[^{]*\{([^}]*)\}/g)]
