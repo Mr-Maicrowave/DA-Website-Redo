@@ -5,12 +5,21 @@
   --orbit-cream: #f8f1e5;
   --orbit-gold: #d6a044;
   --orbit-gold-light: #f0cd82;
+  --orbit-centre-size: clamp(300px, 23vw, 360px);
+  --orbit-primary-size: clamp(68px, 5vw, 82px);
+  --orbit-secondary-size: clamp(40px, 3vw, 50px);
+  --orbit-safe-stage-width: min(100%, 720px);
+  --orbit-safe-stage-height: 640px;
+  --orbit-gap-tight: 8px;
+  --orbit-gap-standard: 16px;
+  --orbit-gap-generous: 32px;
+  --orbit-card-exclusion: 92px;
   position: relative;
   isolation: isolate;
   display: grid;
   grid-template-columns: minmax(260px, 0.68fr) minmax(520px, 1.46fr) minmax(320px, 0.86fr);
   align-items: center;
-  gap: clamp(8px, 1.4vw, 28px);
+  gap: clamp(var(--orbit-gap-tight), 1.4vw, var(--orbit-gap-generous));
   min-height: max(720px, 100svh);
   overflow: hidden;
   padding: clamp(116px, 10vh, 148px) clamp(28px, 3.3vw, 66px) clamp(48px, 6vh, 72px);
@@ -159,12 +168,52 @@
 }
 
 .tutor-orbit__stage {
+  --orbit-field-response: 0.2;
   position: relative;
   z-index: 2;
-  width: min(100%, 720px);
-  min-height: 640px;
+  width: var(--orbit-safe-stage-width);
+  min-height: var(--orbit-safe-stage-height);
   justify-self: center;
   overflow: visible;
+}
+
+.tutor-orbit__stage::before,
+.tutor-orbit__stage::after {
+  position: absolute;
+  content: '';
+}
+
+.tutor-orbit__stage::before {
+  inset: 9% 7%;
+  z-index: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(95, 150, 207, 0.24), rgba(214, 160, 68, 0.08) 48%, transparent 72%);
+  opacity: var(--orbit-field-response);
+  pointer-events: none;
+  transition: opacity 260ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Decorative paths and markers may disappear behind the card wedge; tutor layers stay above it. */
+.tutor-orbit__stage::after {
+  top: 0;
+  right: 0;
+  width: var(--orbit-card-exclusion);
+  height: 100%;
+  z-index: 2;
+  background: rgba(2, 13, 31, 0.9);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 72%);
+  mask-image: linear-gradient(90deg, transparent, #000 72%);
+  pointer-events: none;
+}
+
+.tutor-orbit__stage.is-promoting,
+.tutor-orbit__stage:has(.tutor-orbit__promotion-portrait) {
+  --orbit-field-response: 0.32;
+}
+
+.tutor-orbit__stage.is-exchanging,
+.tutor-orbit__stage.is-transitioning:not(:has(.tutor-orbit__promotion-portrait)) {
+  --orbit-field-response: 0.12;
 }
 
 .tutor-orbit__geometry {
@@ -213,7 +262,7 @@
     radial-gradient(circle, transparent 57%, rgba(236, 197, 112, 0.22) 58% 58.5%, transparent 59%),
     radial-gradient(circle at 58% 42%, rgba(89, 137, 187, 0.42), rgba(13, 42, 77, 0.13) 54%, transparent 72%);
   box-shadow: 18px 14px 64px rgba(217, 164, 70, 0.13);
-  transform: translate(-50%, -50%);
+  translate: -50% -50%;
 }
 
 .tutor-orbit__featured {
@@ -221,7 +270,7 @@
   z-index: 4;
   top: 50%;
   left: 50%;
-  width: clamp(290px, 25vw, 405px);
+  width: var(--orbit-centre-size);
   aspect-ratio: 1;
   transform: translate(-50%, -50%);
 }
@@ -230,10 +279,13 @@
   position: absolute;
   inset: 0;
   overflow: hidden;
-  border: 1.5px solid rgba(234, 193, 103, 0.78);
+  border: 2px solid rgba(244, 211, 138, 0.92);
   border-radius: 50%;
   background: #0a1b35;
-  box-shadow: 0 22px 42px rgba(0, 4, 13, 0.44), 16px 10px 38px rgba(203, 148, 53, 0.12);
+  box-shadow:
+    0 24px 46px rgba(0, 4, 13, 0.48),
+    14px 12px 38px rgba(203, 148, 53, 0.16),
+    0 0 0 6px rgba(214, 160, 68, 0.07);
 }
 
 .tutor-orbit__featured-float {
@@ -311,18 +363,18 @@
 }
 
 .tutor-orbit__inner-slot {
-  width: 82px;
-  margin: -41px 0 0 -41px;
+  width: var(--orbit-primary-size);
+  margin: calc(var(--orbit-primary-size) / -2) 0 0 calc(var(--orbit-primary-size) / -2);
 }
 
 .tutor-orbit__outer-slot {
-  width: 50px;
-  margin: -25px 0 0 -25px;
+  width: var(--orbit-secondary-size);
+  margin: calc(var(--orbit-secondary-size) / -2) 0 0 calc(var(--orbit-secondary-size) / -2);
 }
 
 .tutor-orbit__satellite {
   position: relative;
-  width: clamp(66px, 5.4vw, 88px);
+  width: var(--orbit-primary-size);
   aspect-ratio: 1;
   padding: 0;
   overflow: hidden;
@@ -332,16 +384,19 @@
   background: #091a32;
   box-shadow: 0 9px 18px rgba(0, 4, 12, 0.36);
   cursor: pointer;
-  transition: border-color 180ms ease, box-shadow 180ms ease, filter 180ms ease, outline 180ms ease;
+  transition: border-color 180ms ease, box-shadow 180ms ease, filter 180ms ease, opacity 180ms ease, outline 180ms ease;
 }
 
 .tutor-orbit__satellite--inner {
-  width: clamp(66px, 5.1vw, 82px);
+  width: var(--orbit-primary-size);
+  border-color: rgba(240, 205, 130, 0.9);
+  box-shadow: 0 10px 20px rgba(0, 4, 12, 0.38), 0 0 0 3px rgba(214, 160, 68, 0.05);
 }
 
 .tutor-orbit__satellite--outer {
-  width: clamp(40px, 3.2vw, 50px);
+  width: var(--orbit-secondary-size);
   border-color: rgba(240, 205, 130, 0.54);
+  opacity: 0.78;
   box-shadow: 0 7px 14px rgba(0, 4, 12, 0.3);
 }
 
@@ -359,6 +414,16 @@
   outline: 5px solid rgba(214, 160, 68, 0.16);
   box-shadow: 0 11px 22px rgba(0, 4, 12, 0.46), 0 0 24px rgba(214, 160, 68, 0.38);
   filter: brightness(1.08) saturate(1.04);
+  opacity: 1;
+}
+
+.tutor-orbit__stage.is-transitioning .tutor-orbit__satellite:not(:hover):not(:focus) {
+  filter: brightness(.88) saturate(0.92);
+}
+
+.tutor-orbit__stage.is-transitioning .tutor-orbit__satellite:hover,
+.tutor-orbit__stage.is-transitioning .tutor-orbit__satellite:focus {
+  filter: brightness(1.1) saturate(1.05);
 }
 
 .tutor-orbit__satellite:focus-visible,
@@ -375,27 +440,53 @@
   font-weight: 600;
   line-height: 1.2;
   white-space: nowrap;
-  opacity: 0.82;
+  opacity: 1;
   transition: color 180ms ease, opacity 180ms ease, transform 180ms ease;
+}
+
+.tutor-orbit__inner-slot .tutor-orbit__satellite-name {
+  opacity: 1;
 }
 
 .tutor-orbit__outer-slot .tutor-orbit__satellite-name {
   margin-top: 6px;
   max-width: 72px;
+  padding: 4px 7px;
   overflow: hidden;
+  border: 1px solid rgba(240, 205, 130, 0.24);
+  border-radius: 6px;
+  background: rgba(2, 13, 31, 0.92);
   font-size: 0.56rem;
-  font-weight: 500;
+  font-weight: 600;
   text-overflow: ellipsis;
   opacity: 0;
+  transform: translateY(4px);
+  pointer-events: none;
 }
 
 .tutor-orbit__inner-slot:hover .tutor-orbit__satellite-name,
-.tutor-orbit__inner-slot:focus-within .tutor-orbit__satellite-name,
+.tutor-orbit__inner-slot:focus-within .tutor-orbit__satellite-name {
+  color: var(--orbit-ivory);
+}
+
 .tutor-orbit__outer-slot:hover .tutor-orbit__satellite-name,
 .tutor-orbit__outer-slot:focus-within .tutor-orbit__satellite-name {
   color: var(--orbit-ivory);
   opacity: 1;
-  transform: translateY(2px);
+  transform: translateY(0);
+}
+
+.tutor-orbit__promotion-portrait {
+  z-index: 8;
+  width: var(--orbit-primary-size) !important;
+  border: 1.5px solid rgba(255, 232, 179, 0.94);
+  background: #091a32;
+  box-shadow: 0 12px 24px rgba(0, 4, 12, 0.4);
+  filter: drop-shadow(0 0 18px rgba(214, 160, 68, .42));
+}
+
+.tutor-orbit__promotion-portrait img {
+  display: block;
 }
 
 .tutor-orbit__marker {
@@ -455,6 +546,12 @@
   background: linear-gradient(140deg, #fbf6ed, var(--orbit-cream));
   color: #07182e;
   box-shadow: 0 24px 48px rgba(0, 4, 13, 0.38), -14px 10px 42px rgba(178, 126, 42, 0.12);
+  transition: box-shadow 220ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+
+.tutor-orbit:has(.tutor-orbit__stage.is-transitioning) .tutor-orbit__profile {
+  box-shadow: 0 30px 54px rgba(0, 4, 13, 0.42), -14px 12px 44px rgba(178, 126, 42, 0.16);
 }
 
 .tutor-orbit__profile::before {
@@ -662,13 +759,10 @@
 
 @media (min-width: 1600px) {
   .tutor-orbit {
+    --orbit-safe-stage-width: 760px;
+    --orbit-safe-stage-height: 680px;
     grid-template-columns: minmax(260px, 0.62fr) minmax(680px, 1.56fr) minmax(360px, 0.86fr);
     padding-inline: clamp(54px, 4vw, 86px);
-  }
-
-  .tutor-orbit__stage {
-    width: 760px;
-    min-height: 680px;
   }
 
   .tutor-orbit__profile {
@@ -679,12 +773,9 @@
 
 @media (max-width: 1250px) {
   .tutor-orbit {
+    --orbit-safe-stage-height: 590px;
     grid-template-columns: minmax(230px, 0.62fr) minmax(480px, 1.38fr) minmax(290px, 0.76fr);
     padding-inline: 28px;
-  }
-
-  .tutor-orbit__stage {
-    min-height: 590px;
   }
 
   .tutor-orbit__profile {
@@ -721,6 +812,8 @@
 
 @media (max-width: 1199px) {
   .tutor-orbit {
+    --orbit-safe-stage-width: min(100%, 650px);
+    --orbit-safe-stage-height: 610px;
     grid-template-columns: minmax(250px, .72fr) minmax(0, 1.28fr);
     grid-template-rows: auto auto;
     align-items: start;
@@ -735,11 +828,6 @@
   .tutor-orbit__editorial h1 {
     font-size: clamp(3.4rem, 6vw, 4.7rem);
     max-width: 8ch;
-  }
-
-  .tutor-orbit__stage {
-    width: min(100%, 650px);
-    min-height: 610px;
   }
 
   .tutor-orbit__outer-slot:nth-child(n+7) {
@@ -809,6 +897,12 @@
 
 @media (max-width: 720px) {
   .tutor-orbit {
+    --orbit-centre-size: clamp(220px, 62vw, 300px);
+    --orbit-primary-size: clamp(54px, 15vw, 68px);
+    --orbit-secondary-size: clamp(35px, 10vw, 44px);
+    --orbit-safe-stage-width: min(100%, 520px);
+    --orbit-safe-stage-height: 470px;
+    --orbit-card-exclusion: 0px;
     display: flex;
     flex-direction: column;
     min-height: 0;
@@ -847,9 +941,11 @@
   }
 
   .tutor-orbit__stage {
-    width: min(100%, 520px);
-    min-height: 470px;
     margin-top: 30px;
+  }
+
+  .tutor-orbit__stage::after {
+    display: none;
   }
 
   .tutor-orbit__geometry {
@@ -880,7 +976,6 @@
 
   .tutor-orbit__featured {
     top: 48%;
-    width: clamp(220px, 62vw, 300px);
   }
 
   .tutor-orbit__featured-label {
@@ -889,11 +984,11 @@
   }
 
   .tutor-orbit__satellite--inner {
-    width: clamp(54px, 15vw, 68px);
+    width: var(--orbit-primary-size);
   }
 
   .tutor-orbit__satellite--outer {
-    width: clamp(35px, 10vw, 44px);
+    width: var(--orbit-secondary-size);
   }
 
   .tutor-orbit__satellite-name {
@@ -1051,15 +1146,9 @@
 
 @media (max-width: 410px) {
   .tutor-orbit {
+    --orbit-centre-size: 215px;
+    --orbit-safe-stage-height: 420px;
     padding-inline: 15px;
-  }
-
-  .tutor-orbit__stage {
-    min-height: 420px;
-  }
-
-  .tutor-orbit__featured {
-    width: 215px;
   }
 
   .tutor-orbit__satellite--inner {
@@ -1085,9 +1174,18 @@
 
 @media (prefers-reduced-motion: reduce) {
   .tutor-orbit__featured-float,
+  .tutor-orbit__portrait-field,
+  .tutor-orbit__halo,
+  .tutor-orbit__geometry,
   .tutor-orbit__marker,
   .tutor-orbit__portrait-life {
     animation: none !important;
+  }
+
+  .tutor-orbit__portrait-field,
+  .tutor-orbit__halo,
+  .tutor-orbit__geometry {
+    transform: none !important;
   }
 
   .tutor-orbit__stage {

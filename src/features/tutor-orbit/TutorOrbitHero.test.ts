@@ -193,3 +193,53 @@ test('keeps short visible reduced-motion profile and centre selection transition
   assert.match(profile, /duration: reduced \? 0\.15 : 0\.2/);
   assert.match(profile, /reducedContentVariants/);
 });
+
+test('uses semantic tokens for the safe stage, portrait hierarchy, spacing, and card exclusion', () => {
+  assert.match(css, /--orbit-centre-size:\s*clamp\(300px,\s*23vw,\s*360px\)/);
+  assert.match(css, /--orbit-primary-size:\s*clamp\(68px,\s*5vw,\s*82px\)/);
+  assert.match(css, /--orbit-secondary-size:\s*clamp\(40px,\s*3vw,\s*50px\)/);
+  assert.match(css, /--orbit-safe-stage-width:\s*min\(100%,\s*720px\)/);
+  assert.match(css, /--orbit-safe-stage-height:\s*640px/);
+  assert.match(css, /--orbit-gap-tight:\s*8px/);
+  assert.match(css, /--orbit-gap-standard:\s*16px/);
+  assert.match(css, /--orbit-gap-generous:\s*32px/);
+  assert.match(css, /--orbit-card-exclusion:\s*92px/);
+  assert.match(css, /\.tutor-orbit__stage\s*\{[\s\S]*?width:\s*var\(--orbit-safe-stage-width\)[\s\S]*?min-height:\s*var\(--orbit-safe-stage-height\)/);
+  assert.match(css, /\.tutor-orbit__featured\s*\{[\s\S]*?width:\s*var\(--orbit-centre-size\)/);
+  assert.match(css, /\.tutor-orbit__satellite--inner\s*\{[\s\S]*?width:\s*var\(--orbit-primary-size\)/);
+  assert.match(css, /\.tutor-orbit__satellite--outer\s*\{[\s\S]*?width:\s*var\(--orbit-secondary-size\)/);
+});
+
+test('keeps primary names readable and discloses secondary names only on hover or focus', () => {
+  assert.match(css, /\.tutor-orbit__inner-slot \.tutor-orbit__satellite-name\s*\{[\s\S]*?opacity:\s*1/);
+  assert.match(css, /\.tutor-orbit__outer-slot \.tutor-orbit__satellite-name\s*\{[\s\S]*?opacity:\s*0[\s\S]*?transform:\s*translateY\(4px\)[\s\S]*?pointer-events:\s*none/);
+  assert.match(css, /\.tutor-orbit__outer-slot:hover \.tutor-orbit__satellite-name,\s*\.tutor-orbit__outer-slot:focus-within \.tutor-orbit__satellite-name\s*\{[\s\S]*?opacity:\s*1[\s\S]*?transform:\s*translateY\(0\)/);
+
+  const outerNameRule = css.match(/\.tutor-orbit__outer-slot \.tutor-orbit__satellite-name\s*\{([^}]*)\}/)?.[1] ?? '';
+  assert.doesNotMatch(outerNameRule, /opacity:\s*(?!0(?:\D|$))\d/);
+});
+
+test('styles promotion and exchange as restrained hierarchy states with marker-only profile masking', () => {
+  assert.match(css, /\.tutor-orbit__stage\.is-promoting,\s*\.tutor-orbit__stage:has\(\.tutor-orbit__promotion-portrait\)/);
+  assert.match(css, /\.tutor-orbit__stage\.is-exchanging,\s*\.tutor-orbit__stage\.is-transitioning:not\(:has\(\.tutor-orbit__promotion-portrait\)\)/);
+  assert.match(css, /\.tutor-orbit__stage::before\s*\{[\s\S]*?opacity:\s*var\(--orbit-field-response\)[\s\S]*?transition:\s*opacity/);
+  assert.match(css, /\.tutor-orbit__stage\.is-transitioning \.tutor-orbit__satellite:not\(:hover\):not\(:focus\)\s*\{[\s\S]*?brightness\(\.88\)/);
+  assert.match(css, /\.tutor-orbit__stage\.is-transitioning \.tutor-orbit__satellite:hover,[\s\S]*?\.tutor-orbit__satellite:focus\s*\{[\s\S]*?brightness\(1\.1\)/);
+  assert.match(css, /\.tutor-orbit__promotion-portrait\s*\{[\s\S]*?z-index:\s*8[\s\S]*?drop-shadow\(0 0 18px rgba\(214,\s*160,\s*68,\s*\.42\)\)/);
+  assert.match(css, /\.tutor-orbit__stage::after\s*\{[\s\S]*?width:\s*var\(--orbit-card-exclusion\)[\s\S]*?z-index:\s*2[\s\S]*?mask-image:[\s\S]*?pointer-events:\s*none/);
+  assert.match(css, /\.tutor-orbit__outer-orbit\s*\{[\s\S]*?z-index:\s*3/);
+  assert.match(css, /\.tutor-orbit__satellite--outer\s*\{[\s\S]*?opacity:\s*0\.78/);
+  assert.match(profile, /changing:\s*\{\s*y:\s*-6\s*\}/);
+});
+
+test('keeps centre motion bounded and disables every continuous visual motion layer when requested', () => {
+  assert.match(css, /@keyframes tutor-orbit-centre-float\s*\{[\s\S]*?translateY\(-2px\)[\s\S]*?translateY\(3px\)/);
+  assert.match(css, /@media \(prefers-reduced-motion: reduce\)[\s\S]*?\.tutor-orbit__featured-float,[\s\S]*?\.tutor-orbit__portrait-field,[\s\S]*?\.tutor-orbit__halo,[\s\S]*?\.tutor-orbit__geometry,[\s\S]*?\.tutor-orbit__marker[\s\S]*?animation:\s*none !important/);
+  assert.match(css, /@media \(prefers-reduced-motion: reduce\)[\s\S]*?\.tutor-orbit__portrait-field,[\s\S]*?\.tutor-orbit__halo,[\s\S]*?\.tutor-orbit__geometry[\s\S]*?transform:\s*none !important/);
+  assert.doesNotMatch(css, /transition:\s*all(?:\s|;)/);
+
+  const portraitRules = [...css.matchAll(/\.tutor-orbit__(?:featured|satellite)[^{]*\{([^}]*)\}/g)]
+    .map((match) => match[1])
+    .join('\n');
+  assert.doesNotMatch(portraitRules, /blur\((?:[2-9]|\d{2,})(?:\.\d+)?px\)/);
+});
