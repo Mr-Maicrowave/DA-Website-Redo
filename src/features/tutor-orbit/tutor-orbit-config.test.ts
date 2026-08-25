@@ -8,6 +8,10 @@ import {
   OUTER_ORBIT_TUTOR_IDS,
   orbitPoint,
   nextRosterPage,
+  FEATURED_TUTOR_IDS,
+  TUTOR_ORBIT_LAYOUT,
+  orbitMotionFor,
+  orbitPositionFor,
   rosterWindow,
   selectionSequenceFor,
   swapFacultyTutor,
@@ -97,4 +101,20 @@ test('pages all fifteen tutors through four-person mobile windows', () => {
   assert.deepEqual(rosterWindow(ids, 3, 4), ['T13', 'T14', 'T15', 'T1']);
   assert.equal(nextRosterPage(3, 1, 15, 4), 0);
   assert.equal(nextRosterPage(0, -1, 15, 4), 3);
+});
+
+test('keeps the legacy orbit exports available during hero migration', () => {
+  assert.deepEqual(FEATURED_TUTOR_IDS, ['T010', 'T003', 'T011', 'T005', 'T012', 'T015']);
+  assert.equal(TUTOR_ORBIT_LAYOUT, 'always-expanded');
+  assert.equal(orbitPositionFor('T010'), 'north');
+  assert.deepEqual(orbitMotionFor('T010'), {
+    x: [0, 16, 0, -16, 0],
+    y: [-11, 0, 11, 0, -11],
+    duration: 18,
+  });
+});
+
+test('handles empty mobile rosters', () => {
+  assert.deepEqual(rosterWindow([], 0, 4), []);
+  assert.equal(nextRosterPage(0, 1, 0, 4), 0);
 });
