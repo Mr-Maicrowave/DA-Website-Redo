@@ -176,7 +176,7 @@ function OrbitTutor({
         </motion.span>
       </button>
       <span
-        className={`tutor-orbit__satellite-name${tier === 'outer' ? ' tutor-orbit__satellite-name--tooltip' : ''}`}
+        className={`tutor-orbit__satellite-name tutor-orbit__satellite-name--${sector.labelSide}${tier === 'outer' ? ' tutor-orbit__satellite-name--tooltip' : ''}`}
         data-orbit-label=""
         data-tutor-id={tutor.id}
         aria-hidden="true"

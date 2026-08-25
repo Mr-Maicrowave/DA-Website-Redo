@@ -448,6 +448,12 @@
   opacity: 1;
 }
 
+.tutor-orbit__satellite-name--top {
+  order: -1;
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
 .tutor-orbit__outer-slot .tutor-orbit__satellite-name {
   margin-top: 6px;
   max-width: 72px;

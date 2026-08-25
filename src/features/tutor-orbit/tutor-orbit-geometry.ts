@@ -83,7 +83,7 @@ export function rectsOverlap(a: Bounds, b: Bounds, gap = 0): boolean {
 const wideInner = [[-230, -175], [0, -265], [185, -235], [185, 235], [-225, 190]] as const;
 const wideOuter = [[-400, -80], [-340, -300], [-120, -365], [100, -365], [335, -300], [335, 320], [90, 375], [-140, 370], [-360, 280]] as const;
 const desktopInner = [[-205, -155], [0, -235], [165, -200], [165, 200], [-205, 165]] as const;
-const desktopOuter = [[-355, -85], [-295, -270], [-150, -325], [40, -360], [220, -300], [220, 315], [75, 340], [-125, 335], [-315, 245]] as const;
+const desktopOuter = [[-320, -85], [-295, -270], [-150, -325], [40, -360], [220, -300], [220, 315], [75, 340], [-125, 335], [-315, 245]] as const;
 
 function makeSectors(
   band: GeometryBand,
@@ -103,7 +103,9 @@ function makeSectors(
     phase: (index + 1) / (anchors.length + 1),
     scale,
     opacity,
-    labelSide: y < 0 ? 'bottom' : 'top',
+    labelSide: tier === 'inner' && index === 1 && (band === 'wide' || band === 'desktop')
+      ? 'top'
+      : y < 0 ? 'bottom' : 'top',
   }));
 }
 
