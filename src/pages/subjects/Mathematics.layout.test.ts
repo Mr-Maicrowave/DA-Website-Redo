@@ -51,6 +51,20 @@ test('uses a compact horizontal quick-link rail on mobile and distinguishes the 
   assert.match(source, /ArrowUpRight/);
 });
 
+test('frames the quick-link rail as a parent decision journey', () => {
+  const source = readFileSync(mathematicsUrl, 'utf8');
+  const component = source.slice(source.indexOf('const Mathematics = () => {'));
+  const indexStart = component.indexOf('{/* Anchor navigation */}');
+  const indexEnd = component.indexOf('</nav>', indexStart) + '</nav>'.length;
+  const sectionIndex = component.slice(indexStart, indexEnd);
+
+  assert.match(sectionIndex, /Where they are now/);
+  assert.match(sectionIndex, /Their right class/);
+  assert.match(sectionIndex, /How progress is built/);
+  assert.match(sectionIndex, /HSC direction/);
+  assert.match(sectionIndex, /Optional exploration/);
+});
+
 test('uses a flat section index without ambient diagrams crowding the opening transition', () => {
   const source = readFileSync(mathematicsUrl, 'utf8');
   const component = source.slice(source.indexOf('const Mathematics = () => {'));

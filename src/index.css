@@ -444,6 +444,17 @@
   }
 }
 
+@keyframes intro-prelude {
+  0%,
+  100% {
+    transform: translateX(-100%);
+  }
+
+  50% {
+    transform: translateX(200%);
+  }
+}
+
 .animate-pulse-gentle {
   animation: pulse-gentle 2s infinite ease-in-out;
 }

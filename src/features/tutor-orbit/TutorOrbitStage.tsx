@@ -6,7 +6,8 @@ import {
   useTransform,
   type MotionValue,
 } from 'framer-motion';
-import { useEffect, useRef, useState, type CSSProperties, type PointerEvent } from 'react';
+import { Link } from 'react-router-dom';
+import { useEffect, useRef, useState, type CSSProperties, type PointerEvent, type RefObject } from 'react';
 import {
   getPhotoStyle,
   getPhotoUrl,
@@ -30,7 +31,7 @@ import {
   pruneTutorHoldKeys,
   tutorsForGeometryBand,
 } from './tutor-orbit-stage-helpers';
-import { parallaxLimitsForBand } from './tutor-orbit-responsive-helpers';
+import { parallaxLimitsForBand, shouldRunOrbitClocks } from './tutor-orbit-responsive-helpers';
 
 const TAU = Math.PI * 2;
 
@@ -109,7 +110,7 @@ interface OrbitTutorProps {
   isPromotedSource: boolean;
   phase: SelectionPhase;
   selectedId: string | null;
-  onSelect: (id: string) => boolean;
+  onSelect: (id: string, options?: { focusCentre?: boolean }) => boolean;
   setMotionHold: (key: string, held: boolean) => void;
   applySelectionHolds: (id: string, accepted: boolean) => void;
 }
@@ -161,8 +162,8 @@ function OrbitTutor({
         onMouseLeave={() => setMotionHold(`hover:${tutor.id}`, false)}
         onFocus={() => setMotionHold(`focus:${tutor.id}`, true)}
         onBlur={() => setMotionHold(`focus:${tutor.id}`, false)}
-        onClick={() => {
-          const accepted = onSelect(tutor.id);
+        onClick={(event) => {
+          const accepted = onSelect(tutor.id, { focusCentre: event.detail === 0 });
           applySelectionHolds(tutor.id, accepted);
         }}
         aria-label={`View ${tutor.name}`}
@@ -221,7 +222,8 @@ export interface TutorOrbitStageProps {
   selectedId: string | null;
   originTier: OrbitTier | null;
   reduced: boolean;
-  onSelect: (id: string) => boolean;
+  onSelect: (id: string, options?: { focusCentre?: boolean }) => boolean;
+  featuredActionRef: RefObject<HTMLAnchorElement>;
 }
 
 export function TutorOrbitStage({
@@ -233,12 +235,14 @@ export function TutorOrbitStage({
   originTier,
   reduced,
   onSelect,
+  featuredActionRef,
 }: TutorOrbitStageProps) {
   const band = useGeometryBand();
   const [holdKeys, setHoldKeys] = useState<Set<string>>(() => new Set());
   const paused = holdKeys.size > 0 || phase !== 'idle';
-  const innerClock = useOrbitClock(!reduced && !paused, INNER_ORBIT_DURATION_SECONDS, 1);
-  const outerClock = useOrbitClock(!reduced && !paused, OUTER_ORBIT_DURATION_SECONDS, -1);
+  const clocksEnabled = shouldRunOrbitClocks(band, reduced, paused);
+  const innerClock = useOrbitClock(clocksEnabled, INNER_ORBIT_DURATION_SECONDS, 1);
+  const outerClock = useOrbitClock(clocksEnabled, OUTER_ORBIT_DURATION_SECONDS, -1);
   const pointerX = useMotionValue(0);
   const pointerY = useMotionValue(0);
   const parallax = parallaxLimitsForBand(band);
@@ -250,19 +254,34 @@ export function TutorOrbitStage({
   const geometryY = useSpring(useTransform(pointerY, [-1, 1], [-parallax.geometry, parallax.geometry]), { stiffness: 55, damping: 22 });
   const rebalancedGeometryX = useTransform(geometryX, (value) => value + (phase === 'exchanging' ? 3 : 0));
   const rebalancedGeometryY = useTransform(geometryY, (value) => value + (phase === 'exchanging' ? -3 : 0));
-  const selectedTutor = [active, ...innerTutors, ...outerTutors].find((tutor) => tutor.id === selectedId);
-  const selectedIndex = originTier === 'outer'
-    ? outerTutors.findIndex((tutor) => tutor.id === selectedId)
-    : innerTutors.findIndex((tutor) => tutor.id === selectedId);
-  const originSector = originTier ? SAFE_SECTORS[band][originTier][Math.max(0, selectedIndex)] : undefined;
-  const waypointSector = SAFE_SECTORS[band].inner[Math.max(0, selectedIndex) % SAFE_SECTORS[band].inner.length];
-  const originProgress = ((outerClock.get() / TAU) % 1 + 1) % 1;
-  const origin = originSector ? poseForSector(originSector, originProgress) : { x: 0, y: 0 };
-  const waypoint = poseForSector(waypointSector, 0.5);
-  const originToWaypoint = promotionCorridorStyle(origin, waypoint);
-  const waypointToCentre = promotionCorridorStyle(waypoint, { x: 0, y: 0 });
+  const [promotionJourney, setPromotionJourney] = useState<{
+    selectedId: string;
+    tutor: CatalogueTutor;
+    origin: { x: number; y: number };
+    waypoint: { x: number; y: number };
+  } | null>(null);
   const stageInnerTutors = tutorsForGeometryBand(innerTutors, band, 'inner');
   const stageOuterTutors = tutorsForGeometryBand(outerTutors, band, 'outer');
+
+  useEffect(() => {
+    if (phase === 'idle') {
+      setPromotionJourney(null);
+      return;
+    }
+    if (phase !== 'promoting' || originTier !== 'outer' || !selectedId) return;
+    const selectedIndex = outerTutors.findIndex((tutor) => tutor.id === selectedId);
+    const tutor = outerTutors[selectedIndex];
+    const originSector = SAFE_SECTORS[band].outer[selectedIndex];
+    const waypointSector = SAFE_SECTORS[band].inner[selectedIndex % SAFE_SECTORS[band].inner.length];
+    if (!tutor || !originSector || !waypointSector) return;
+    const originProgress = ((outerClock.get() / TAU) % 1 + 1) % 1;
+    setPromotionJourney({
+      selectedId,
+      tutor,
+      origin: poseForSector(originSector, originProgress),
+      waypoint: poseForSector(waypointSector, 0.5),
+    });
+  }, [band, originTier, outerClock, outerTutors, phase, selectedId]);
 
   useEffect(() => {
     if (phase === 'idle' || !selectedId) return;
@@ -293,13 +312,32 @@ export function TutorOrbitStage({
     pointerY.set(0);
   };
 
+  useEffect(() => {
+    if (!paused) return;
+    pointerX.jump(0);
+    pointerY.jump(0);
+    fieldX.jump(0);
+    fieldY.jump(0);
+    haloX.jump(0);
+    haloY.jump(0);
+    geometryX.jump(0);
+    geometryY.jump(0);
+  }, [fieldX, fieldY, geometryX, geometryY, haloX, haloY, paused, pointerX, pointerY]);
+
+  const originToWaypoint = promotionJourney
+    ? promotionCorridorStyle(promotionJourney.origin, promotionJourney.waypoint)
+    : undefined;
+  const waypointToCentre = promotionJourney
+    ? promotionCorridorStyle(promotionJourney.waypoint, { x: 0, y: 0 })
+    : undefined;
+
   return (
     <motion.div
       className={`tutor-orbit__stage${paused ? ' is-paused' : ''}${phase !== 'idle' ? ` is-transitioning is-${phase}` : ''}`}
       data-selection-phase={phase}
       initial="hidden"
       animate="visible"
-      onPointerMove={reduced || parallax.field === 0 ? undefined : onPointerMove}
+      onPointerMove={reduced || parallax.field === 0 || paused ? undefined : onPointerMove}
       onPointerLeave={resetPointer}
     >
       <motion.div aria-hidden="true" variants={entrance} transition={{ duration: reduced ? 0 : 0.3 }} style={{ position: 'absolute', inset: 0 }}>
@@ -325,23 +363,36 @@ export function TutorOrbitStage({
       <motion.div variants={entrance} transition={{ delay: reduced ? 0 : 0.3, duration: reduced ? 0 : 0.46 }} style={{ position: 'absolute', inset: 0, zIndex: 4, pointerEvents: 'none' }}>
         <div className="tutor-orbit__featured">
           <div className="tutor-orbit__featured-label">{active.tier === 'senior' ? 'Senior educator' : 'Educator'}</div>
-          <div className="tutor-orbit__featured-float">
-            <motion.div
-              className="tutor-orbit__featured-frame"
-              data-featured-tutor-id={active.id}
-              layoutId={`tutor-${active.id}`}
-              animate={reduced && phase !== 'idle' ? { opacity: [1, 0.78, 1], scale: [1, 0.985, 1] } : { opacity: 1, scale: 1 }}
-              transition={portraitTransition(reduced)}
-            >
-              <img src={getPhotoUrl(active)} alt={`${active.name}, DA Tuition educator`} style={getPhotoStyle(active)} />
-            </motion.div>
-          </div>
+          <Link
+            ref={featuredActionRef}
+            className="tutor-orbit__featured-action"
+            to={`/find-teacher?tutor=${active.id}`}
+            aria-label={`Open ${active.name}'s full profile`}
+            data-featured-portrait=""
+            data-featured-tutor-id={active.id}
+            onMouseEnter={() => setMotionHold(`hover:${active.id}`, true)}
+            onMouseLeave={() => setMotionHold(`hover:${active.id}`, false)}
+            onFocus={() => setMotionHold(`focus:${active.id}`, true)}
+            onBlur={() => setMotionHold(`focus:${active.id}`, false)}
+          >
+            <div className="tutor-orbit__featured-float">
+              <motion.div
+                className="tutor-orbit__featured-frame"
+                layoutId={`tutor-${active.id}`}
+                animate={reduced && phase !== 'idle' ? { opacity: [1, 0.78, 1], scale: [1, 0.985, 1] } : { opacity: 1, scale: 1 }}
+                transition={portraitTransition(reduced)}
+              >
+                <img src={getPhotoUrl(active)} alt="" style={getPhotoStyle(active)} />
+              </motion.div>
+            </div>
+          </Link>
         </div>
       </motion.div>
 
       <motion.div variants={entrance} transition={{ delay: reduced ? 0 : 0.5, duration: reduced ? 0 : 0.6 }} style={{ position: 'absolute', inset: 0 }}>
       <motion.div className="tutor-orbit__portrait-field" style={{ position: 'absolute', inset: 0, ...(reduced ? {} : { x: fieldX, y: fieldY }) }}>
-        <motion.div className="tutor-orbit__inner-orbit" variants={entrance} transition={{ delay: reduced ? 0 : 0.5, duration: reduced ? 0 : 0.6 }}>
+        {band !== 'mobile' ? (
+        <><motion.div className="tutor-orbit__inner-orbit" variants={entrance} transition={{ delay: reduced ? 0 : 0.5, duration: reduced ? 0 : 0.6 }}>
           {stageInnerTutors.map((tutor, index) => (
             <OrbitTutor key={tutor.id} tutor={tutor} index={index} tier="inner" band={band} clock={innerClock} reduced={reduced} isPromotedSource={false} phase={phase} selectedId={selectedId} onSelect={onSelect} setMotionHold={setMotionHold} applySelectionHolds={applySelectionHolds} />
           ))}
@@ -353,7 +404,7 @@ export function TutorOrbitStage({
           ))}
         </motion.div>
 
-        {phase === 'promoting' && selectedTutor ? (
+        {phase !== 'idle' && promotionJourney ? (
           <>
             <div className="tutor-orbit__promotion-corridor" aria-hidden="true">
               <span className="tutor-orbit__promotion-corridor-segment tutor-orbit__promotion-corridor-segment--origin" style={originToWaypoint} />
@@ -361,22 +412,33 @@ export function TutorOrbitStage({
             </div>
             <motion.div
               className="tutor-orbit__promotion-portrait"
+              data-promotion-tutor-id={promotionJourney.selectedId}
               aria-hidden="true"
-              initial={{ x: origin.x, y: origin.y, scale: 0.9, opacity: 0.7 }}
-              animate={{ x: [origin.x, waypoint.x], y: [origin.y, waypoint.y], scale: [0.9, 1.08], opacity: 1 }}
-              transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
-              style={{ position: 'absolute', top: '50%', left: '50%', width: 56, aspectRatio: '1', overflow: 'hidden', borderRadius: '50%', pointerEvents: 'none' }}
+              initial={{ x: promotionJourney.origin.x, y: promotionJourney.origin.y, scale: 0.15, opacity: 0.7 }}
+              animate={{
+                x: [promotionJourney.origin.x, promotionJourney.waypoint.x, 0],
+                y: [promotionJourney.origin.y, promotionJourney.waypoint.y, 0],
+                scale: [0.15, 0.24, 1],
+                opacity: [0.7, 1, 1],
+              }}
+              transition={{ duration: 0.84, times: [0, 0.286, 1], ease: [0.22, 1, 0.36, 1] }}
+              style={{ position: 'absolute', top: '50%', left: '50%', aspectRatio: '1', overflow: 'hidden', borderRadius: '50%', pointerEvents: 'none' }}
             >
-              <img src={getPhotoUrl(selectedTutor)} alt="" style={{ ...getPhotoStyle(selectedTutor), width: '100%', height: '100%', objectFit: 'cover' }} />
+              <img src={getPhotoUrl(promotionJourney.tutor)} alt="" style={{ ...getPhotoStyle(promotionJourney.tutor), width: '100%', height: '100%', objectFit: 'cover' }} />
             </motion.div>
           </>
+        ) : null}</>
         ) : null}
       </motion.div>
       </motion.div>
 
-      <OrbitMarker tier="inner" index={1} band={band} clock={innerClock} reduced={reduced} />
-      <OrbitMarker tier="outer" index={3} band={band} clock={outerClock} reduced={reduced} />
-      <OrbitMarker tier="outer" index={7} band={band} clock={outerClock} reduced={reduced} />
+      {band !== 'mobile' ? (
+        <>
+          <OrbitMarker tier="inner" index={1} band={band} clock={innerClock} reduced={reduced} />
+          <OrbitMarker tier="outer" index={3} band={band} clock={outerClock} reduced={reduced} />
+          <OrbitMarker tier="outer" index={7} band={band} clock={outerClock} reduced={reduced} />
+        </>
+      ) : null}
 
       <motion.p className="tutor-orbit__hint" variants={entrance} transition={{ delay: reduced ? 0 : 1.05, duration: reduced ? 0 : 0.75 }}><span aria-hidden="true" />Select an educator to learn more</motion.p>
     </motion.div>

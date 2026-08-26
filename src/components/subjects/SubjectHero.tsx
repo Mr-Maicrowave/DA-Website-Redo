@@ -38,6 +38,12 @@ interface SubjectHeroProps {
   mobileContentPosition?: 'center' | 'bottom';
   /** Optional page-specific nudge for the copy block, without changing the shared hero layout. */
   copyOffsetClassName?: string;
+  /** Choose the photographic wash: bright ivory, muted stone, neutral charcoal, or the original dark treatment. */
+  heroTone?: 'dark' | 'light' | 'muted' | 'charcoal';
+  /** Optional subject-specific accent colour for the second headline line. */
+  headlineAccentClassName?: string;
+  /** Optional subject-specific supporting-copy colour for photograph-led heroes. */
+  subtextClassName?: string;
 }
 
 /**
@@ -65,13 +71,18 @@ const SubjectHero = ({
   backgroundScale,
   mobileContentPosition = 'center',
   copyOffsetClassName,
+  heroTone = 'dark',
+  headlineAccentClassName,
+  subtextClassName,
 }: SubjectHeroProps) => {
+  const isLightTone = heroTone === 'light';
+  const isWarmTone = heroTone === 'light' || heroTone === 'muted';
   const scrollToExplore = () => {
     document.getElementById(exploreTargetId)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
   return (
-    <section className={`subject-hero relative flex min-h-screen flex-col justify-center overflow-hidden bg-[#071629] px-5 py-28 lg:px-8 ${mobileContentPosition === 'bottom' ? 'subject-hero--mobile-bottom-copy' : ''}`}>
+    <section className={`subject-hero relative flex min-h-screen flex-col justify-center overflow-hidden bg-[#071629] px-5 py-28 lg:px-8 ${mobileContentPosition === 'bottom' ? 'subject-hero--mobile-bottom-copy' : ''} ${isLightTone ? 'subject-hero--light' : ''} ${heroTone === 'muted' ? 'subject-hero--muted' : ''} ${isWarmTone ? 'subject-hero--warm' : ''}`}>
       <div className="absolute inset-0">
         {backgroundImageSrc ? (
           <img
@@ -108,7 +119,13 @@ const SubjectHero = ({
         <div
           className="subject-hero-overlay absolute inset-0"
           style={{
-            background: 'linear-gradient(90deg, rgba(4,11,23,.86) 0%, rgba(4,11,23,.66) 46%, rgba(4,11,23,.22) 100%)',
+            background: heroTone === 'light'
+              ? 'linear-gradient(90deg, rgba(250,244,231,.95) 0%, rgba(250,244,231,.86) 38%, rgba(250,244,231,.40) 61%, rgba(250,244,231,.06) 100%)'
+              : heroTone === 'muted'
+                ? 'linear-gradient(90deg, rgba(189,178,160,.88) 0%, rgba(189,178,160,.75) 40%, rgba(189,178,160,.35) 63%, rgba(189,178,160,.07) 100%)'
+                : heroTone === 'charcoal'
+                  ? 'linear-gradient(90deg, rgba(18,18,16,.84) 0%, rgba(18,18,16,.64) 46%, rgba(18,18,16,.20) 100%)'
+                  : 'linear-gradient(90deg, rgba(4,11,23,.86) 0%, rgba(4,11,23,.66) 46%, rgba(4,11,23,.22) 100%)',
           }}
         />
       </div>
@@ -120,13 +137,13 @@ const SubjectHero = ({
           transition={{ duration: 0.7, ease: 'easeOut' }}
           className={`subject-hero-copy max-w-3xl ${copyOffsetClassName ?? ''}`}
         >
-          <div className="mb-5 inline-flex items-center gap-2.5 text-xs font-black uppercase tracking-[0.18em] text-[#f1df9a]">
+          <div className={`mb-5 inline-flex items-center gap-2.5 text-xs font-black uppercase tracking-[0.18em] ${isWarmTone ? 'text-[#765714]' : 'text-[#f1df9a]'}`}>
             <span className="h-[2px] w-7 bg-[#c9a227]" />
             {eyebrow}
           </div>
 
           <h1
-            className="subject-hero-heading text-white"
+            className={`subject-hero-heading ${isWarmTone ? 'text-[#15243a]' : 'text-white'}`}
             style={{
               fontFamily: '"Playfair Display", Georgia, serif',
               fontSize: 'clamp(3rem, 6.5vw, 6.6rem)',
@@ -136,10 +153,10 @@ const SubjectHero = ({
             }}
           >
             {headlineWhite}
-            <span className="block text-[#c9a227]">{headlineGold}</span>
+            <span className={`block ${headlineAccentClassName ?? 'text-[#c9a227]'}`}>{headlineGold}</span>
           </h1>
 
-          <p className="mt-7 max-w-[54ch] text-lg leading-[1.75] text-white/85">{subtext}</p>
+          <p className={`mt-7 max-w-[54ch] text-lg leading-[1.75] ${subtextClassName ?? (isWarmTone ? 'text-[#30425a]' : 'text-white/85')}`}>{subtext}</p>
 
           {showExploreButton ? (
             <div className="mt-8">
@@ -155,7 +172,7 @@ const SubjectHero = ({
           ) : null}
 
           {proofPills ? (
-            <div className="mt-9 flex flex-wrap gap-x-5 gap-y-2 text-[13px] font-black uppercase tracking-[0.06em] text-white">
+            <div className={`mt-9 flex flex-wrap gap-x-5 gap-y-2 text-[13px] font-black uppercase tracking-[0.06em] ${isWarmTone ? 'text-[#1e3048]' : 'text-white'}`}>
               {proofPills.map((pill) => (
                 <span key={pill} className="border-l-2 border-[#c9a227] pl-3">
                   {pill}
@@ -181,6 +198,9 @@ const SubjectHero = ({
             }
             .subject-hero--mobile-bottom-copy .subject-hero-overlay {
               background: linear-gradient(180deg, rgba(4,11,23,.24) 0%, rgba(4,11,23,.18) 33%, rgba(4,11,23,.5) 58%, rgba(4,11,23,.94) 100%), linear-gradient(90deg, rgba(4,11,23,.68) 0%, rgba(4,11,23,.32) 100%) !important;
+            }
+            .subject-hero--warm.subject-hero--mobile-bottom-copy .subject-hero-overlay {
+              background: linear-gradient(180deg, rgba(189,178,160,.14) 0%, rgba(189,178,160,.22) 33%, rgba(189,178,160,.62) 58%, rgba(189,178,160,.92) 100%), linear-gradient(90deg, rgba(189,178,160,.58) 0%, rgba(189,178,160,.18) 100%) !important;
             }
             .subject-hero--mobile-bottom-copy .subject-hero-heading {
               font-size: clamp(3rem, 12.5vw, 3.7rem) !important;

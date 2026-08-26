@@ -4,6 +4,7 @@ import { ArrowRight, BookOpen, ChevronLeft, ChevronRight, GraduationCap, Quote, 
 import { Link } from 'react-router-dom';
 import {
   TUTORS,
+  HOME_TUTOR_IDS,
   getPhotoStyle,
   getPhotoUrl,
   type CatalogueTutor,
@@ -14,8 +15,7 @@ const GOLD = '#D4AF37';
 const CREAM = '#F7F2E9';
 const SERIF = "'Cormorant Garamond', Georgia, serif";
 const SANS = "'DM Sans', 'Inter', sans-serif";
-const FEATURED_TUTOR_IDS = ['T010', 'T003', 'T011', 'T005', 'T012', 'T015'] as const;
-const FEATURED_TUTORS = FEATURED_TUTOR_IDS
+const CAROUSEL_TUTORS = HOME_TUTOR_IDS
   .map(id => TUTORS.find(teacher => teacher.id === id))
   .filter((teacher): teacher is CatalogueTutor => Boolean(teacher));
 
@@ -36,24 +36,21 @@ const CSS = `
   .faculty-portrait-column{grid-area:portrait;min-width:0}
   .faculty-carousel{position:relative;outline:none}
   .faculty-carousel:focus-visible{border-radius:22px;outline:3px solid rgba(183,126,22,.42);outline-offset:8px}
-  .faculty-portrait-stage{position:relative;width:min(100%,540px);margin-inline:auto;touch-action:pan-y}
-  .faculty-portrait-frame{position:relative;width:min(100%,540px);aspect-ratio:4/5;margin-inline:auto;overflow:hidden;border:1.5px solid rgba(183,126,22,.82);border-radius:50% 50% 14px 14px / 23% 23% 14px 14px;background:${NAVY};box-shadow:0 8px 8px rgba(10,31,63,.14)}
+  .faculty-portrait-stage{position:relative;width:min(100%,600px);margin-inline:auto;touch-action:pan-y}
+  .faculty-portrait-frame{position:relative;width:min(100%,600px);aspect-ratio:4/5;margin-inline:auto;overflow:hidden;border:1.5px solid rgba(183,126,22,.82);border-radius:50% 50% 14px 14px / 23% 23% 14px 14px;background:${NAVY};box-shadow:0 8px 8px rgba(10,31,63,.14)}
   .faculty-portrait-slide{position:absolute;inset:0}
   .faculty-portrait{width:100%;height:100%;display:block;object-fit:cover;transform-origin:center top;user-select:none;-webkit-user-drag:none}
   .faculty-arrow{position:absolute;z-index:4;top:50%;width:50px;height:50px;display:grid;place-items:center;border:1px solid rgba(183,126,22,.28);border-radius:50%;background:rgba(255,252,246,.94);color:#B77E16;box-shadow:0 8px 24px rgba(10,31,63,.13);cursor:pointer;transform:translateY(-50%);transition:transform .25s ease,background .25s ease,color .25s ease}
   .faculty-arrow--prev{left:-70px}.faculty-arrow--next{right:-70px}
   .faculty-arrow:hover{background:${NAVY};color:${CREAM};transform:translateY(-50%) scale(1.06)}
   .faculty-arrow:focus-visible,.faculty-selector-button:focus-visible,.faculty-dot:focus-visible{outline:3px solid rgba(183,126,22,.48);outline-offset:3px}
-  .faculty-selector{display:flex;justify-content:center;gap:clamp(9px,1vw,16px);margin:24px auto 0;padding:3px;overflow-x:auto;scrollbar-width:none}
+  .faculty-selector{display:grid;grid-auto-flow:column;grid-auto-columns:calc((100% - 60px)/6);justify-content:start;gap:12px;width:min(100%,600px);margin:38px auto 0;position:relative;z-index:5;padding:3px;overflow-x:auto;scrollbar-width:none;scroll-snap-type:x mandatory}
   .faculty-selector::-webkit-scrollbar{display:none}
-  .faculty-selector-button{flex:0 0 auto;display:grid;justify-items:center;gap:6px;min-width:58px;padding:0;border:0;background:transparent;color:rgba(10,31,63,.7);font:500 .76rem/1.2 ${SERIF};cursor:pointer}
-  .faculty-selector-thumb{width:54px;height:54px;overflow:hidden;border:1px solid rgba(183,126,22,.25);border-radius:50%;background:${CREAM};box-shadow:0 4px 12px rgba(10,31,63,.08);opacity:.84;transition:border-color .25s ease,box-shadow .25s ease,opacity .25s ease,transform .25s ease}
+  .faculty-selector-button{display:grid;justify-items:center;gap:7px;min-width:0;padding:0;border:0;background:transparent;color:rgba(10,31,63,.7);font:500 clamp(.84rem,.9vw,.94rem)/1.2 ${SERIF};white-space:nowrap;scroll-snap-align:start;cursor:pointer}
+  .faculty-selector-thumb{width:min(100%,64px);aspect-ratio:1;overflow:hidden;border:1px solid rgba(183,126,22,.25);border-radius:50%;background:${CREAM};box-shadow:0 4px 12px rgba(10,31,63,.08);opacity:.84;transition:border-color .25s ease,box-shadow .25s ease,opacity .25s ease,transform .25s ease}
   .faculty-selector-thumb img{width:100%;height:100%;display:block;object-fit:cover}
   .faculty-selector-button:hover .faculty-selector-thumb,.faculty-selector-button[aria-current=true] .faculty-selector-thumb{border:2px solid #C8922B;box-shadow:0 5px 16px rgba(183,126,22,.22);opacity:1;transform:translateY(-2px) scale(1.06)}
   .faculty-selector-button[aria-current=true]{color:${NAVY}}
-  .faculty-dots{display:flex;justify-content:center;gap:10px;margin-top:16px}
-  .faculty-dot{width:9px;height:9px;padding:0;border:0;border-radius:50%;background:rgba(10,31,63,.2);cursor:pointer;transition:background .25s ease,transform .25s ease}
-  .faculty-dot[aria-current=true]{background:#C8922B;transform:scale(1.18)}
   .faculty-profile{grid-area:profile;align-self:center;max-width:440px;min-height:390px;display:flex;align-items:center}
   .faculty-profile-content{width:100%}
   .faculty-profile-label{margin:0 0 16px;font:700 clamp(.8rem,.9vw,.95rem)/1.4 ${SANS};letter-spacing:.18em;text-transform:uppercase;color:#B77E16}
@@ -81,12 +78,12 @@ const CSS = `
   .faculty-spark{position:absolute;z-index:1;width:9px;height:9px;background:#C8922B;transform:rotate(45deg);opacity:.62;pointer-events:none}
   .faculty-spark--one{top:11%;left:7%}.faculty-spark--two{top:14%;right:25%;width:7px;height:7px}.faculty-spark--three{right:6%;bottom:17%;width:8px;height:8px}
   @media(max-width:1180px){
-    .faculty-section{padding-top:72px}.faculty-shell{max-width:1000px;grid-template-columns:minmax(300px,.9fr) minmax(390px,1.1fr);grid-template-areas:'intro intro' 'portrait profile';gap:46px 58px}.faculty-intro{text-align:center}.faculty-kicker{justify-content:center;margin-bottom:18px}.faculty-title{font-size:clamp(3.2rem,7vw,5rem);line-height:.96}.faculty-title br{display:none}.faculty-title span{display:inline}.faculty-rule{margin:20px auto}.faculty-lede{max-width:620px;margin-inline:auto}.faculty-portrait-stage,.faculty-portrait-frame{max-width:470px}.faculty-arrow--prev{left:-26px}.faculty-arrow--next{right:-26px}.faculty-profile{max-width:420px}.faculty-trust{padding-inline:0}.faculty-trust-item{padding-inline:24px}.faculty-trust-item{grid-template-columns:54px minmax(0,1fr)}.faculty-trust-icon{width:52px;height:52px}
+    .faculty-section{padding-top:72px}.faculty-shell{max-width:1080px;grid-template-columns:minmax(300px,.9fr) minmax(390px,1.1fr);grid-template-areas:'intro intro' 'portrait profile';gap:46px 58px}.faculty-intro{text-align:center}.faculty-kicker{justify-content:center;margin-bottom:18px}.faculty-title{font-size:clamp(3.2rem,7vw,5rem);line-height:.96;letter-spacing:-.015em}.faculty-title br{display:none}.faculty-title span{display:inline}.faculty-rule{margin:20px auto}.faculty-lede{max-width:620px;margin-inline:auto}.faculty-portrait-stage,.faculty-portrait-frame{max-width:520px}.faculty-arrow--prev{left:-26px}.faculty-arrow--next{right:-26px}.faculty-profile{max-width:420px}.faculty-trust{padding-inline:0}.faculty-trust-item{padding-inline:24px}.faculty-trust-item{grid-template-columns:54px minmax(0,1fr)}.faculty-trust-icon{width:52px;height:52px}
   }
   @media(max-width:760px){
-    .faculty-section{padding:62px 0 0}.faculty-shell{width:min(calc(100% - 32px),620px);display:flex;flex-direction:column;align-items:stretch;gap:34px}.faculty-intro{text-align:left}.faculty-kicker{justify-content:flex-start;margin-bottom:18px}.faculty-title{font-size:clamp(2.9rem,14vw,4.4rem)}.faculty-title br{display:block}.faculty-title span{display:block}.faculty-rule{margin:22px 0}.faculty-lede{margin:0;max-width:35rem}.faculty-portrait-column{order:2}.faculty-portrait-stage,.faculty-portrait-frame{width:min(82vw,380px)}.faculty-arrow{width:44px;height:44px}.faculty-arrow--prev{left:-19px}.faculty-arrow--next{right:-19px}.faculty-selector{justify-content:flex-start;width:min(100%,430px);padding-inline:18px}.faculty-selector-button{min-width:57px}.faculty-profile{order:3;max-width:none;min-height:350px;text-align:center}.faculty-profile-rule{margin-inline:auto}.faculty-quote{margin-inline:auto}.faculty-cta{width:min(100%,360px)}.faculty-trust{width:min(calc(100% - 32px),620px);margin-top:46px;padding:24px 0;grid-template-columns:1fr}.faculty-trust-item{padding:18px 8px;grid-template-columns:52px minmax(0,1fr)}.faculty-trust-item+.faculty-trust-item{border-left:0;border-top:1px solid rgba(183,126,22,.24)}.faculty-watermark{width:230px;right:-80px}.faculty-laurel{display:none}.faculty-spark--two,.faculty-spark--three{display:none}
+    .faculty-section{padding:62px 0 0}.faculty-shell{width:min(calc(100% - 32px),620px);display:flex;flex-direction:column;align-items:stretch;gap:34px}.faculty-intro{text-align:left}.faculty-kicker{justify-content:flex-start;margin-bottom:18px}.faculty-title{font-size:clamp(2.9rem,14vw,4.4rem)}.faculty-title br{display:block}.faculty-title span{display:block}.faculty-rule{margin:22px 0}.faculty-lede{margin:0;max-width:35rem}.faculty-portrait-column{order:2}.faculty-portrait-stage,.faculty-portrait-frame{width:min(82vw,380px)}.faculty-arrow{width:44px;height:44px}.faculty-arrow--prev{left:-19px}.faculty-arrow--next{right:-19px}.faculty-selector{grid-auto-columns:calc((100% - 40px)/5);gap:10px;width:min(100%,430px);padding-inline:0}.faculty-profile{order:3;max-width:none;min-height:350px;text-align:center}.faculty-profile-rule{margin-inline:auto}.faculty-quote{margin-inline:auto}.faculty-cta{width:min(100%,360px)}.faculty-trust{width:min(calc(100% - 32px),620px);margin-top:46px;padding:24px 0;grid-template-columns:1fr}.faculty-trust-item{padding:18px 8px;grid-template-columns:52px minmax(0,1fr)}.faculty-trust-item+.faculty-trust-item{border-left:0;border-top:1px solid rgba(183,126,22,.24)}.faculty-watermark{width:230px;right:-80px}.faculty-laurel{display:none}.faculty-spark--two,.faculty-spark--three{display:none}
   }
-  @media(prefers-reduced-motion:reduce){.faculty-cta,.faculty-cta svg,.faculty-arrow,.faculty-selector-thumb,.faculty-dot{transition:none!important}}
+  @media(prefers-reduced-motion:reduce){.faculty-cta,.faculty-cta svg,.faculty-arrow,.faculty-selector-thumb{transition:none!important}}
 `;
 
 const TeachersPreview = () => {
@@ -98,8 +95,9 @@ const TeachersPreview = () => {
   const [hasFocus, setHasFocus] = useState(false);
   const [pageVisible, setPageVisible] = useState(() => typeof document === 'undefined' || document.visibilityState === 'visible');
   const dragStartX = useRef<number | null>(null);
-  const featured = FEATURED_TUTORS[activeIndex] ?? FEATURED_TUTORS[0] ?? TUTORS[0];
-  const tutorCount = FEATURED_TUTORS.length;
+  const selectorRef = useRef<HTMLDivElement>(null);
+  const featured = CAROUSEL_TUTORS[activeIndex] ?? CAROUSEL_TUTORS[0] ?? TUTORS[0];
+  const tutorCount = CAROUSEL_TUTORS.length;
   const ease = [0.22, 1, 0.36, 1] as const;
   const selectTutor = useCallback((nextIndex: number, nextDirection?: number) => {
     if (!tutorCount) return;
@@ -111,11 +109,25 @@ const TeachersPreview = () => {
   const showNext = useCallback(() => selectTutor(activeIndex + 1, 1), [activeIndex, selectTutor]);
 
   useEffect(() => {
-    FEATURED_TUTORS.forEach(teacher => {
+    [-1, 0, 1].forEach(offset => {
+      const teacher = CAROUSEL_TUTORS[(activeIndex + offset + tutorCount) % tutorCount];
+      if (!teacher) return;
       const image = new Image();
       image.src = getPhotoUrl(teacher);
     });
-  }, []);
+  }, [activeIndex, tutorCount]);
+
+  useEffect(() => {
+    const selector = selectorRef.current;
+    const selectedTutor = selector?.querySelector<HTMLElement>('[aria-current="true"]');
+    if (!selector || !selectedTutor) return;
+
+    const targetLeft = Math.max(0, selectedTutor.offsetLeft - (selector.clientWidth - selectedTutor.offsetWidth) / 2);
+    selector.scrollTo({
+      left: targetLeft,
+      behavior: reduceMotion ? 'auto' : 'smooth',
+    });
+  }, [activeIndex, reduceMotion]);
 
   useEffect(() => {
     const handleVisibility = () => setPageVisible(document.visibilityState === 'visible');
@@ -154,7 +166,7 @@ const TeachersPreview = () => {
       <div className="faculty-shell">
         <motion.header className="faculty-intro" {...reveal(0)}>
           <p className="faculty-kicker"><span aria-hidden="true">✦</span>{TUTORS.length} Educators · All Subjects</p>
-          <h2 id="faculty-title" className="faculty-title">The People<br />Behind the<br /><span>Results</span></h2>
+          <h2 id="faculty-title" className="faculty-title">The People{' '}<br />Behind the{' '}<br /><span>Results</span></h2>
           <div className="faculty-rule" aria-hidden="true"><span>◆</span></div>
           <p className="faculty-lede">Teachers who care as much about who your child is becoming as they do about grades.</p>
         </motion.header>
@@ -221,17 +233,12 @@ const TeachersPreview = () => {
               <button className="faculty-arrow faculty-arrow--next" type="button" onClick={showNext} aria-label="View next featured tutor"><ChevronRight aria-hidden="true" /></button>
             </div>
 
-            <div className="faculty-selector" aria-label="Choose a featured educator">
-              {FEATURED_TUTORS.map((teacher, index) => (
+            <div ref={selectorRef} className="faculty-selector" aria-label="Choose an educator">
+              {CAROUSEL_TUTORS.map((teacher, index) => (
                 <button key={teacher.id} className="faculty-selector-button" type="button" aria-label={`Show ${teacher.name}`} aria-current={index === activeIndex} onClick={() => selectTutor(index)}>
-                  <span className="faculty-selector-thumb"><img src={getPhotoUrl(teacher)} alt="" style={getPhotoStyle(teacher)} draggable={false} /></span>
+                  <span className="faculty-selector-thumb"><img src={getPhotoUrl(teacher)} alt="" style={getPhotoStyle(teacher)} draggable={false} loading="lazy" decoding="async" /></span>
                   <span>{shortName(teacher)}</span>
                 </button>
-              ))}
-            </div>
-            <div className="faculty-dots" aria-label="Educator slides">
-              {FEATURED_TUTORS.map((teacher, index) => (
-                <button key={teacher.id} className="faculty-dot" type="button" aria-label={`Go to educator ${index + 1} of ${tutorCount}`} aria-current={index === activeIndex} onClick={() => selectTutor(index)} />
               ))}
             </div>
           </div>
@@ -247,7 +254,7 @@ const TeachersPreview = () => {
               exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: -10 }}
               transition={{ duration: transitionDuration, ease }}
             >
-              <p className="faculty-profile-label">Featured Educator</p>
+              <p className="faculty-profile-label">Educator {activeIndex + 1} of {tutorCount}</p>
               <div className="faculty-profile-rule" aria-hidden="true"><span>◆</span></div>
               <h3 className="faculty-name">{featured.name}</h3>
               <p className="faculty-role">{tierLabel(featured.tier)}</p>

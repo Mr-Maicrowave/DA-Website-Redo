@@ -1,0 +1,423 @@
+/* The Procession — a single shallow ring seen at a low camera angle. */
+
+.tp {
+  --tp-ivory: #f6f0e4;
+  --tp-gold: #c9a45c;
+  --tp-gold-light: #e6ca92;
+  --tp-backdrop: #111e3c;
+  --tp-drift-x: 0px;
+  --tp-drift-y: 0px;
+
+  position: relative;
+  z-index: 3;
+  align-self: center;
+  width: 100%;
+  min-height: min(760px, 78svh);
+  isolation: isolate;
+  /* The stage is a surface you grab, so nothing inside it should turn into a
+     text selection mid-drag. The editorial copy beside it stays selectable. */
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: grab;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: pan-y;
+}
+
+.tp.is-dragging,
+.tp.is-dragging .tp__portrait {
+  cursor: grabbing;
+}
+
+.tp img {
+  -webkit-user-drag: none;
+  user-drag: none;
+}
+
+.tp__ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+}
+
+/* ---------- ambient light. This is the only thing pointer drift touches. ---------- */
+
+.tp__glow,
+.tp__pool {
+  position: absolute;
+  left: 50%;
+  border-radius: 50%;
+  pointer-events: none;
+  transform: translate(-50%, -50%) translate(var(--tp-drift-x), var(--tp-drift-y));
+  transition: transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.tp__glow {
+  z-index: 1;
+  background:
+    radial-gradient(closest-side, rgba(230, 202, 146, 0.16), rgba(201, 164, 92, 0.06) 40%, rgba(201, 164, 92, 0) 66%),
+    radial-gradient(closest-side, rgba(34, 58, 106, 0.62), rgba(24, 42, 80, 0.3) 46%, rgba(18, 32, 62, 0) 74%);
+  filter: blur(30px);
+}
+
+.tp__pool {
+  top: 0;
+  z-index: 2;
+  background: radial-gradient(closest-side, rgba(201, 164, 92, 0.2), rgba(201, 164, 92, 0.05) 55%, rgba(201, 164, 92, 0) 100%);
+  filter: blur(14px);
+}
+
+/* ---------- the ring line: one hairline in front, one fainter behind ---------- */
+
+.tp__arc {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  overflow: visible;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.tp__arc path {
+  fill: none;
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.tp__arc--rear {
+  z-index: 6;
+}
+
+.tp__arc--rear path {
+  stroke: url(#tp-arc-rear);
+}
+
+.tp__arc--front path {
+  stroke: url(#tp-arc-front);
+}
+
+/* ---------- the featured educator ---------- */
+
+.tp__featured {
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/*
+ * An opaque disc behind the portrait. Soft enough to disappear against the
+ * ground, hard enough that an educator crossing behind it visibly cuts
+ * rather than merely fading.
+ */
+.tp__occluder {
+  position: absolute;
+  inset: -3%;
+  border-radius: 50%;
+  background: radial-gradient(
+    closest-side,
+    var(--tp-backdrop) 0%,
+    var(--tp-backdrop) 58%,
+    rgba(17, 30, 60, 0.96) 66%,
+    rgba(15, 26, 52, 0.6) 76%,
+    rgba(13, 22, 45, 0.24) 86%,
+    rgba(11, 19, 39, 0) 100%
+  );
+  pointer-events: none;
+}
+
+.tp__featured-action {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  outline-offset: 6px;
+}
+
+.tp__featured-action:focus-visible {
+  outline: 2px solid var(--tp-gold-light);
+}
+
+/* ---------- portraits: the studio backdrop dissolves into the stage ---------- */
+
+.tp__mask {
+  display: block;
+  width: 100%;
+  height: 100%;
+  -webkit-mask-image: radial-gradient(closest-side, #000 0 72%, rgba(0, 0, 0, 0) 100%);
+  mask-image: radial-gradient(closest-side, #000 0 72%, rgba(0, 0, 0, 0) 100%);
+}
+
+.tp__mask--featured {
+  -webkit-mask-image: radial-gradient(closest-side, #000 0 62%, rgba(0, 0, 0, 0) 98%);
+  mask-image: radial-gradient(closest-side, #000 0 62%, rgba(0, 0, 0, 0) 98%);
+}
+
+/* The portraits are framed for a full-bleed square, so the head is scaled up to fill the feathered disc. */
+.tp__zoom {
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform: scale(1.24);
+  transform-origin: 50% 42%;
+}
+
+.tp__station .tp__zoom {
+  transform: scale(1.16);
+  transform-origin: 50% 44%;
+}
+
+.tp__mask img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ---------- the name, engraved on the educator rather than in a card ---------- */
+
+.tp__plate {
+  position: absolute;
+  left: 50%;
+  z-index: 1090;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.tp__plate::before {
+  position: absolute;
+  z-index: -1;
+  inset: -40% -4% -30%;
+  content: '';
+  background: radial-gradient(
+    closest-side,
+    rgba(5, 11, 24, 0.88) 0%,
+    rgba(5, 11, 24, 0.7) 42%,
+    rgba(5, 11, 24, 0.22) 74%,
+    rgba(5, 11, 24, 0) 100%
+  );
+  filter: blur(12px);
+}
+
+.tp__plate-tier {
+  font-size: 0.66em;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--tp-gold);
+}
+
+.tp__plate-name {
+  margin-top: 0.62em;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 2.7em;
+  font-weight: 500;
+  line-height: 1;
+  color: var(--tp-ivory);
+}
+
+.tp__plate-designation {
+  margin-top: 0.5em;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 1.13em;
+  font-style: italic;
+  color: rgba(230, 202, 146, 0.82);
+}
+
+/* ---------- ring stations ---------- */
+
+.tp__station {
+  position: absolute;
+  top: 0;
+  left: 0;
+  will-change: transform, filter;
+}
+
+.tp__portrait {
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  cursor: pointer;
+  transition: transform 320ms cubic-bezier(0.22, 1, 0.36, 1);
+  outline-offset: 4px;
+}
+
+.tp__portrait::after {
+  position: absolute;
+  inset: 12%;
+  border-radius: 50%;
+  content: '';
+  box-shadow: 0 0 0 1px rgba(230, 202, 146, calc(var(--tp-depth, 0) * 0.22));
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 240ms ease;
+}
+
+.tp__portrait:hover,
+.tp__portrait:focus-visible {
+  transform: scale(1.05);
+}
+
+.tp__portrait:hover::after,
+.tp__portrait:focus-visible::after {
+  opacity: 1;
+}
+
+.tp__portrait:focus-visible {
+  outline: 2px solid var(--tp-gold-light);
+}
+
+.tp__label {
+  position: absolute;
+  top: 99%;
+  left: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  white-space: nowrap;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.tp__label-name {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 17px;
+  font-weight: 500;
+  color: var(--tp-ivory);
+}
+
+.tp__label-designation {
+  margin-top: 4px;
+  font-size: 9.5px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(201, 164, 92, 0.82);
+}
+
+/* ---------- hint and reduced-motion controls ---------- */
+
+.tp__hint,
+.tp__advance {
+  position: absolute;
+  bottom: 2%;
+  left: 50%;
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(246, 240, 228, 0.42);
+  transform: translateX(-50%);
+  z-index: 1200;
+}
+
+.tp__hint {
+  pointer-events: none;
+}
+
+.tp__hint span {
+  width: 56px;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(201, 164, 92, 0), rgba(201, 164, 92, 0.5));
+}
+
+.tp__hint span:last-child {
+  background: linear-gradient(90deg, rgba(201, 164, 92, 0.5), rgba(201, 164, 92, 0));
+}
+
+.tp__advance button {
+  width: 34px;
+  height: 34px;
+  border: 1px solid rgba(201, 164, 92, 0.4);
+  border-radius: 50%;
+  background: none;
+  color: var(--tp-gold-light);
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.tp__advance button:focus-visible {
+  outline: 2px solid var(--tp-gold-light);
+  outline-offset: 2px;
+}
+
+.tp[data-band='mobile'] .tp__label-name {
+  font-size: 13px;
+}
+
+.tp[data-band='mobile'] .tp__plate-name {
+  font-size: 2.2em;
+}
+
+.tp[data-band='mobile'] .tp__hint span {
+  display: none;
+}
+
+.tp[data-band='mobile'] .tp__label-designation,
+.tp[data-band='tablet'] .tp__label-designation {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tp__glow,
+  .tp__pool,
+  .tp__portrait {
+    transition: none;
+  }
+}
+
+/* ---------- the hero drops to two columns: the cream card is gone ---------- */
+
+.tutor-orbit--procession {
+  grid-template-columns: minmax(300px, 0.64fr) minmax(600px, 1.56fr);
+  padding-right: clamp(24px, 2.4vw, 48px);
+}
+
+@media (max-width: 1199px) {
+  .tutor-orbit--procession {
+    grid-template-columns: minmax(240px, 0.72fr) minmax(420px, 1.4fr);
+  }
+}
+
+/* Stacked from the mobile band down. The stage takes whatever the editorial
+   block leaves, so the whole hero still fits the first viewport. */
+@media (max-width: 899px) {
+  /* The legacy hero switches to flex below 720px; the procession stays a grid
+     so the stage can take the row the editorial block leaves. */
+  .tutor-orbit--procession {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(260px, 1fr);
+    align-items: start;
+    gap: 16px;
+    min-height: 100svh;
+    padding: clamp(84px, 12vh, 108px) clamp(20px, 5vw, 40px) 24px;
+  }
+
+  .tutor-orbit--procession .tutor-orbit__editorial h1 {
+    font-size: clamp(38px, 9vw, 54px);
+  }
+
+  .tutor-orbit--procession .tutor-orbit__lede {
+    font-size: 15px;
+    line-height: 1.7;
+  }
+
+  .tutor-orbit--procession .tp {
+    min-height: 0;
+    align-self: stretch;
+  }
+
+  .tutor-orbit--procession .tp__hint {
+    bottom: 0;
+  }
+}

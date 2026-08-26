@@ -671,8 +671,37 @@ export const TUTORS: CatalogueTutor[] = [
   },
 ];
 
-// Featured teachers for the home page (in order)
-export const FEATURED_IDS = ['T015', 'T011', 'T010', 'T005', 'T012'];
+// Homepage educator order: the seniority sequence set by DA, followed by the
+// remaining catalogue order so every current educator remains discoverable.
+const HOME_TUTOR_PRIORITY_IDS = [
+  'T011', // King
+  'T003', // Jenny
+  'T010', // Danny
+  'T005', // Lai
+  'T015', // Linda
+  'T012', // Bunsea
+  'T007', // Christina L. (Lee)
+  'T008', // Phillip (Phil)
+  'T006', // Christina H. (Ha)
+  'T020', // William (Will)
+  'T021', // Amy
+  'T004', // Huyen
+  'T022', // Serina (Serena)
+  'T019', // Adem (Adam)
+  'T001', // Kassandra (Kass)
+  'T016', // Leyna
+  'T028', // Marcus
+  'T033', // Ngoc
+  'T034', // Jayden
+] as const;
+
+export const HOME_TUTOR_IDS = [
+  ...HOME_TUTOR_PRIORITY_IDS,
+  ...TUTORS.map(teacher => teacher.id).filter(id => !HOME_TUTOR_PRIORITY_IDS.includes(id as typeof HOME_TUTOR_PRIORITY_IDS[number])),
+];
+
+// Retained for any external consumers that use the previous featured-list export.
+export const FEATURED_IDS = HOME_TUTOR_IDS;
 
 export function getTutor(id: string): CatalogueTutor | undefined {
   return TUTORS.find(t => t.id === id);

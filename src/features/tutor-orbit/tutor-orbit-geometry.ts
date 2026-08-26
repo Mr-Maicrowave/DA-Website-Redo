@@ -26,14 +26,60 @@ export interface SafeSector {
   scale: [number, number];
   opacity: [number, number];
   labelSide: 'top' | 'bottom' | 'left' | 'right';
+  labelEnvelope: {
+    width: number;
+    height: number;
+    gap: number;
+  };
 }
 
 export interface ProtectedZones {
   innerDiameter: number;
   outerDiameter: number;
   centre: Bounds;
+  featuredBadge: Bounds;
   profile: Bounds;
   headline: Bounds;
+}
+
+export function boundsForLabelEnvelope(
+  sector: SafeSector,
+  pose: OrbitPose,
+  diameter: number,
+  _tier: OrbitTier,
+): Bounds {
+  const radius = diameter * pose.scale / 2;
+  const { width, height, gap } = sector.labelEnvelope;
+  if (sector.labelSide === 'top') {
+    return {
+      left: pose.x - width / 2,
+      top: pose.y - radius - gap - height,
+      right: pose.x + width / 2,
+      bottom: pose.y - radius - gap,
+    };
+  }
+  if (sector.labelSide === 'left') {
+    return {
+      left: pose.x - radius - gap - width,
+      top: pose.y - height / 2,
+      right: pose.x - radius - gap,
+      bottom: pose.y + height / 2,
+    };
+  }
+  if (sector.labelSide === 'right') {
+    return {
+      left: pose.x + radius + gap,
+      top: pose.y - height / 2,
+      right: pose.x + radius + gap + width,
+      bottom: pose.y + height / 2,
+    };
+  }
+  return {
+    left: pose.x - width / 2,
+    top: pose.y + radius + gap,
+    right: pose.x + width / 2,
+    bottom: pose.y + radius + gap + height,
+  };
 }
 
 export function geometryBandForWidth(width: number): GeometryBand {
@@ -81,9 +127,9 @@ export function rectsOverlap(a: Bounds, b: Bounds, gap = 0): boolean {
 }
 
 const wideInner = [[-230, -175], [0, -265], [185, -235], [185, 235], [-225, 190]] as const;
-const wideOuter = [[-400, -80], [-340, -300], [-120, -365], [100, -365], [335, -300], [335, 320], [90, 375], [-140, 370], [-360, 280]] as const;
+const wideOuter = [[-400, -80], [-340, -300], [-120, -365], [100, -365], [325, -300], [325, 320], [90, 375], [-140, 370], [-360, 280]] as const;
 const desktopInner = [[-205, -155], [0, -235], [165, -200], [165, 200], [-205, 165]] as const;
-const desktopOuter = [[-320, -85], [-295, -270], [-150, -325], [40, -360], [220, -300], [220, 315], [75, 340], [-125, 335], [-315, 245]] as const;
+const desktopOuter = [[-320, -85], [-295, -270], [-150, -325], [40, -360], [220, -345], [220, 315], [75, 340], [-125, 335], [-315, 245]] as const;
 
 function makeSectors(
   band: GeometryBand,
@@ -103,9 +149,19 @@ function makeSectors(
     phase: (index + 1) / (anchors.length + 1),
     scale,
     opacity,
-    labelSide: tier === 'inner' && index === 1 && (band === 'wide' || band === 'desktop')
+    labelSide: tier === 'inner' && (
+      index === 1 && (band === 'wide' || band === 'desktop')
+      || index === 2 && band === 'desktop'
+    )
       ? 'top'
-      : y < 0 ? 'bottom' : 'top',
+      : tier === 'outer' && band === 'desktop' && index === 3
+        ? 'left'
+        : tier === 'outer' && band === 'desktop' && index === 4
+          ? 'top'
+          : y < 0 ? 'bottom' : 'top',
+    labelEnvelope: tier === 'inner'
+      ? { width: 86, height: 18, gap: 8 }
+      : { width: 72, height: 22, gap: 6 },
   }));
 }
 
@@ -137,6 +193,7 @@ const desktopZones = (profileLeft: number): ProtectedZones => ({
   innerDiameter: 80,
   outerDiameter: 56,
   centre: { left: -110, top: -110, right: 110, bottom: 110 },
+  featuredBadge: { left: -92, top: -190, right: 92, bottom: -145 },
   profile: { left: profileLeft, top: -330, right: profileLeft + 310, bottom: 330 },
   headline: { left: -650, top: -250, right: -500, bottom: 190 },
 });
@@ -148,6 +205,7 @@ export const PROTECTED_ZONES: Record<GeometryBand, ProtectedZones> = {
     innerDiameter: 104,
     outerDiameter: 82,
     centre: { left: -110, top: -110, right: 110, bottom: 110 },
+    featuredBadge: { left: -92, top: -190, right: 92, bottom: -145 },
     profile: { left: -220, top: 360, right: 220, bottom: 700 },
     headline: { left: -650, top: -250, right: -550, bottom: 190 },
   },
@@ -155,6 +213,7 @@ export const PROTECTED_ZONES: Record<GeometryBand, ProtectedZones> = {
     innerDiameter: 84,
     outerDiameter: 68,
     centre: { left: -110, top: -110, right: 110, bottom: 110 },
+    featuredBadge: { left: -92, top: -190, right: 92, bottom: -145 },
     profile: { left: -220, top: 300, right: 220, bottom: 620 },
     headline: { left: -650, top: -250, right: -500, bottom: 190 },
   },

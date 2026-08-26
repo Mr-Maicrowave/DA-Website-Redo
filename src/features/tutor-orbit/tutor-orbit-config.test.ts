@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
   DEFAULT_FEATURED_TUTOR_ID,
+  FACULTY_ROSTER_IDS,
   INNER_ORBIT_DURATION_SECONDS,
   INNER_ORBIT_TUTOR_IDS,
   OUTER_ORBIT_DURATION_SECONDS,
@@ -25,6 +26,15 @@ test('defines a deterministic and unique 1 + 5 + 9 faculty hierarchy', () => {
   assert.equal(OUTER_ORBIT_TUTOR_IDS.length, 9);
   assert.equal(visibleIds.length, 15);
   assert.equal(new Set(visibleIds).size, 15);
+});
+
+test('keeps one stable fifteen-person navigator roster including the active centre', () => {
+  assert.deepEqual(FACULTY_ROSTER_IDS, [
+    'T003',
+    'T011', 'T005', 'T010', 'T012', 'T015',
+    'T001', 'T002', 'T009', 'T004', 'T006', 'T007', 'T008', 'T013', 'T014',
+  ]);
+  assert.equal(new Set(FACULTY_ROSTER_IDS).size, 15);
 });
 
 test('uses calmer counter-moving timings for the two orbit tiers', () => {

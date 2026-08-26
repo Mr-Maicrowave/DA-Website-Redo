@@ -76,6 +76,12 @@ export const OUTER_ORBIT_TUTOR_IDS = [
   'T014',
 ] as const;
 
+export const FACULTY_ROSTER_IDS = [
+  DEFAULT_FEATURED_TUTOR_ID,
+  ...INNER_ORBIT_TUTOR_IDS,
+  ...OUTER_ORBIT_TUTOR_IDS,
+] as const;
+
 export const INNER_ORBIT_DURATION_SECONDS = 52;
 export const OUTER_ORBIT_DURATION_SECONDS = 86;
 

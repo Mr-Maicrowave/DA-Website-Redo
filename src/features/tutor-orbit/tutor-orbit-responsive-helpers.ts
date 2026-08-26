@@ -31,8 +31,12 @@ export function navigatorRosterStatus(total: number, page: number, pageSize = NA
   const wrapped = start + pageSize - 1 - total;
 
   return wrapped > 0
-    ? `Educators ${start}–${finalContiguous} and 1–${wrapped} of ${total}`
+    ? `Educators ${start}–${finalContiguous} and ${wrapped === 1 ? '1' : `1–${wrapped}`} of ${total}`
     : `Educators ${start}–${finalContiguous} of ${total}`;
+}
+
+export function shouldRunOrbitClocks(band: GeometryBand, reduced: boolean, paused: boolean) {
+  return band !== 'mobile' && !reduced && !paused;
 }
 
 export function beginNavigatorSwipe(pointerId: number, x: number, y: number): NavigatorSwipeState {
