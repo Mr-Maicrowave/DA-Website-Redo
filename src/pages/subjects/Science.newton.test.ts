@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 
 const pageUrl = new URL('./Science.tsx', import.meta.url);
 
@@ -14,6 +15,14 @@ test('builds Newton orchard from one clean background and reusable transparent a
   assert.doesNotMatch(source, /newton-apple-cover/);
   assert.doesNotMatch(source, /newton-apple__sprite/);
   assert.doesNotMatch(source, /background-image: url\('\/images\/apple-tree-background\.png'\)/);
+
+  for (const asset of ['apple-red.png', 'apple-gold.png', 'apple-green.png']) {
+    assert.equal(
+      existsSync(fileURLToPath(new URL(`../../../public/images/newton-apples/${asset}`, import.meta.url))),
+      true,
+      `${asset} must ship with the orchard`,
+    );
+  }
 });
 
 test('caps the orchard at seven deterministic controls with a curated mobile subset', () => {

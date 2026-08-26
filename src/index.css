@@ -107,7 +107,7 @@
     position: relative;
   }
 
-  /* Robust text wrapping for all block-level elements */
+  /* Robust text wrapping for text elements without constraining layout primitives. */
   p,
   h1,
   h2,
@@ -115,9 +115,7 @@
   h4,
   h5,
   h6,
-  li,
-  span,
-  div {
+  li {
     overflow-wrap: break-word;
     word-wrap: break-word;
     max-width: 100%;
