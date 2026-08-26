@@ -1,9 +1,13 @@
 import {
   type CSSProperties,
   type KeyboardEvent,
+  useEffect,
   useRef,
   useState,
 } from 'react';
+import { flushSync } from 'react-dom';
+import gsap from 'gsap';
+import { Flip } from 'gsap/Flip';
 import { MethodDetail } from './MethodDetail';
 import {
   methodItems,
@@ -13,6 +17,8 @@ import {
   getAdjacentMethodId,
   getInactiveMethods,
 } from './methodTeachingDeckState';
+
+gsap.registerPlugin(Flip);
 
 const TUTOR_PHOTOGRAPH =
   '/images/programs/high-school-method-transition/how-we-teach-tutor-student-v1.png';
@@ -27,6 +33,9 @@ type DeckProperties = CSSProperties & {
 export function MethodTeachingDeck({ ready }: { ready: boolean }) {
   const [activeId, setActiveId] = useState<MethodId>('diagnose');
   const [expanded, setExpanded] = useState(false);
+  const deckRef = useRef<HTMLElement>(null);
+  const selectionTokenRef = useRef(0);
+  const contentTimelineRef = useRef<gsap.core.Timeline | null>(null);
   const cardRefs = useRef<Record<MethodId, HTMLButtonElement | null>>({
     diagnose: null,
     explain: null,
@@ -45,9 +54,106 @@ export function MethodTeachingDeck({ ready }: { ready: boolean }) {
     cardRefs.current[methodId]?.focus();
   };
 
-  const selectMethod = (methodId: MethodId) => {
-    setActiveId(methodId);
-    setExpanded(true);
+  useEffect(() => () => {
+    selectionTokenRef.current += 1;
+    contentTimelineRef.current?.kill();
+    gsap.killTweensOf(Object.values(cardRefs.current));
+  }, []);
+
+  const selectMethod = (nextId: MethodId) => {
+    const selectionToken = ++selectionTokenRef.current;
+    const cardElements = Object.values(cardRefs.current).filter(
+      (card): card is HTMLButtonElement => card !== null,
+    );
+    const outgoingContent = deckRef.current?.querySelectorAll<HTMLElement>(
+      '[data-method-copy], [data-method-action], [data-method-annotation]',
+    ) ?? [];
+    const reducedMotion = window.matchMedia(
+      '(prefers-reduced-motion: reduce)',
+    ).matches;
+
+    contentTimelineRef.current?.kill();
+    contentTimelineRef.current = null;
+    gsap.killTweensOf([...cardElements, ...outgoingContent]);
+
+    const state = reducedMotion ? null : Flip.getState(cardElements);
+
+    flushSync(() => {
+      setActiveId(nextId);
+      setExpanded(true);
+    });
+
+    const detail = deckRef.current?.querySelector<HTMLElement>('#hsm-method-detail');
+    if (!detail) return;
+
+    const copy = Array.from(
+      detail.querySelectorAll<HTMLElement>('[data-method-copy]'),
+    );
+    const actions = Array.from(
+      detail.querySelectorAll<HTMLElement>('[data-method-action]'),
+    );
+    const annotations = Array.from(
+      detail.querySelectorAll<HTMLElement>('[data-method-annotation]'),
+    );
+
+    if (reducedMotion) {
+      gsap.set(copy, { autoAlpha: 1, y: 0 });
+      gsap.set(actions, { autoAlpha: 1, y: 0 });
+      gsap.set(annotations, { autoAlpha: 1, x: 0 });
+      return;
+    }
+
+    if (state) {
+      Flip.from(state, {
+        duration: 0.68,
+        ease: 'power3.inOut',
+        absolute: true,
+        nested: true,
+        prune: true,
+      });
+    }
+
+    const timeline = gsap.timeline({
+      onComplete: () => {
+        if (selectionTokenRef.current !== selectionToken) return;
+        gsap.set([...copy, ...actions, ...annotations], {
+          clearProps: 'opacity,visibility,transform',
+        });
+        contentTimelineRef.current = null;
+      },
+    });
+    contentTimelineRef.current = timeline;
+
+    timeline
+      .fromTo(
+        copy,
+        { autoAlpha: 0, y: 14 },
+        { autoAlpha: 1, y: 0, duration: 0.45, ease: 'power3.out' },
+      )
+      .fromTo(
+        actions,
+        { autoAlpha: 0, y: 14 },
+        {
+          autoAlpha: 1,
+          y: 0,
+          duration: 0.45,
+          ease: 'power3.out',
+          stagger: 0.1,
+        },
+        '<0.08',
+      )
+      .fromTo(
+        annotations,
+        { autoAlpha: 0, x: 8 },
+        {
+          autoAlpha: 1,
+          x: 0,
+          duration: 0.3,
+          ease: 'power3.out',
+          stagger: 0.1,
+        },
+        '>0.15',
+      );
   };
 
   const handleKeyDown = (
@@ -76,7 +182,7 @@ export function MethodTeachingDeck({ ready }: { ready: boolean }) {
 
     event.preventDefault();
     const nextId = getAdjacentMethodId(methodId, direction);
-    setActiveId(nextId);
+    selectMethod(nextId);
     focusMethod(nextId);
   };
 
@@ -88,6 +194,7 @@ export function MethodTeachingDeck({ ready }: { ready: boolean }) {
       data-layout-ratio="42/58"
       style={deckStyle}
       aria-labelledby="hsm-deck-heading"
+      ref={deckRef}
     >
       <img
         className="hsm-deck__atmosphere"

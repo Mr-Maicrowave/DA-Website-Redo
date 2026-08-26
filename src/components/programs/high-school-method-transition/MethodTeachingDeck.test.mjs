@@ -36,3 +36,30 @@ test('provides one live editorial detail renderer', () => {
 test('declares the expanded 42\/58 composition contract', () => {
   assert.match(featureSource, /42(?:fr|%)?\s*[/,: ]\s*58(?:fr|%)?|42\/58/);
 });
+
+test('moves the card deck with the approved Flip choreography', () => {
+  assert.match(deckSource, /from ['"]gsap\/Flip['"]/);
+  assert.match(deckSource, /gsap\.registerPlugin\(Flip\)/);
+  assert.match(deckSource, /Flip\.getState\(/);
+  assert.match(deckSource, /flushSync\(/);
+  assert.match(deckSource, /gsap\.killTweensOf\(/);
+  assert.match(
+    deckSource,
+    /Flip\.from\([\s\S]*duration:\s*0\.68[\s\S]*ease:\s*['"]power3\.inOut['"][\s\S]*absolute:\s*true[\s\S]*nested:\s*true[\s\S]*prune:\s*true/,
+  );
+});
+
+test('makes the newest method selection win content animation completion', () => {
+  assert.match(deckSource, /selectionTokenRef/);
+  assert.match(deckSource, /\+\+selectionTokenRef\.current/);
+  assert.match(deckSource, /selectionTokenRef\.current\s*!==\s*selectionToken/);
+  assert.match(deckSource, /data-method-copy/);
+  assert.match(deckSource, /data-method-action/);
+  assert.match(deckSource, /data-method-annotation/);
+});
+
+test('uses a static reduced-motion fallback and no rotational choreography', () => {
+  assert.match(deckSource, /prefers-reduced-motion:\s*reduce/);
+  assert.match(deckSource, /gsap\.set\(/);
+  assert.doesNotMatch(deckSource, /rotation\s*:/);
+});
