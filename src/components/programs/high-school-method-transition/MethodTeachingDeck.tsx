@@ -66,6 +66,29 @@ function setDetailFinal(detail: HTMLElement) {
   ), { autoAlpha: 1, x: 0, y: 0 });
 }
 
+async function decodeCardArtwork(cardElements: readonly HTMLButtonElement[]) {
+  const images = cardElements.flatMap((card) => {
+    const image = card.querySelector<HTMLImageElement>('img');
+    return image ? [image] : [];
+  });
+  if (images.length !== cardElements.length) return false;
+
+  const decoded = await Promise.all(images.map(async (image) => {
+    if (typeof image.decode !== 'function') {
+      return image.complete && image.naturalWidth > 0;
+    }
+
+    try {
+      await image.decode();
+      return image.complete && image.naturalWidth > 0;
+    } catch {
+      return false;
+    }
+  }));
+
+  return decoded.every(Boolean);
+}
+
 // eslint-disable-next-line react-refresh/only-export-components -- Testable coordinator must stay in this two-file feature scope.
 export function createMethodSelectionCoordinator(
   initialActiveId: MethodId,
@@ -203,9 +226,16 @@ export function MethodTeachingDeck({ ready }: { ready: boolean }) {
       '(prefers-reduced-motion: reduce)',
     ).matches;
 
-    const commitSelection = () => {
+    const commitSelection = async () => {
       if (!selectionRequest.isCurrent()) return;
-      const state = reducedMotion ? null : Flip.getState(cardElements);
+      const artworkReady = reducedMotion
+        ? true
+        : await decodeCardArtwork(cardElements);
+      if (!selectionRequest.isCurrent()) return;
+
+      const state = reducedMotion || !artworkReady
+        ? null
+        : Flip.getState(cardElements);
       const committedId = selectionRequest.commit();
       if (!committedId) return;
 
@@ -216,7 +246,7 @@ export function MethodTeachingDeck({ ready }: { ready: boolean }) {
       );
       if (!detail) return;
 
-      if (reducedMotion) {
+      if (reducedMotion || !artworkReady) {
         setDetailFinal(detail);
         return;
       }
@@ -298,7 +328,7 @@ export function MethodTeachingDeck({ ready }: { ready: boolean }) {
     };
 
     if (reducedMotion || !outgoingDetail) {
-      commitSelection();
+      void commitSelection();
       return;
     }
 
@@ -313,7 +343,7 @@ export function MethodTeachingDeck({ ready }: { ready: boolean }) {
       })
       .call(() => {
         if (!selectionRequest.isCurrent()) return;
-        commitSelection();
+        void commitSelection();
       });
   };
 
@@ -330,7 +360,10 @@ export function MethodTeachingDeck({ ready }: { ready: boolean }) {
 
     const horizontalDirection =
       event.key === 'ArrowLeft' ? -1 : event.key === 'ArrowRight' ? 1 : null;
-    const verticalDirection = expanded
+    const usesStackedDeck = expanded && window.matchMedia(
+      '(min-width: 768px)',
+    ).matches;
+    const verticalDirection = usesStackedDeck
       ? event.key === 'ArrowUp'
         ? -1
         : event.key === 'ArrowDown'

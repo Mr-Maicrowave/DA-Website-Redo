@@ -53,7 +53,13 @@
   border-radius: 24px;
   background:
     #173d2a
-    url('/images/programs/high-school-method-transition/method-card-diagnose-forest-v1.png')
+    image-set(
+      url('/images/programs/high-school-method-transition/method-card-diagnose-forest-v1-512w.avif') type('image/avif') 1x,
+      url('/images/programs/high-school-method-transition/method-card-diagnose-forest-v1-1024w.avif') type('image/avif') 2x,
+      url('/images/programs/high-school-method-transition/method-card-diagnose-forest-v1-512w.webp') type('image/webp') 1x,
+      url('/images/programs/high-school-method-transition/method-card-diagnose-forest-v1-1024w.webp') type('image/webp') 2x,
+      url('/images/programs/high-school-method-transition/method-card-diagnose-forest-v1.png') type('image/png') 1x
+    )
     center / cover no-repeat;
   box-shadow: 0 20px 60px rgb(20 40 20 / 0.12);
   pointer-events: none;
@@ -109,6 +115,7 @@
 }
 
 .hsm-transition__companion-card {
+  --hsm-card-art-scale: 1.2;
   position: relative;
   overflow: hidden;
   background: #173d2a;
@@ -116,13 +123,23 @@
   will-change: transform, opacity;
 }
 
+.hsm-transition__companion-card--apply {
+  --hsm-card-art-scale: 1.24;
+}
+
+.hsm-transition__companion-card picture,
 .hsm-transition__companion-card img {
   position: absolute;
-  inset: -10%;
-  width: 120%;
+  inset: 0;
+  width: 100%;
   max-width: none;
-  height: 120%;
+  height: 100%;
+}
+
+.hsm-transition__companion-card img {
   object-fit: cover;
+  scale: var(--hsm-card-art-scale);
+  transform-origin: 49% 50%;
 }
 
 .hsm-transition__interaction {

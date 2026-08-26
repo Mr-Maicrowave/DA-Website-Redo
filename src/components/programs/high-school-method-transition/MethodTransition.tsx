@@ -25,6 +25,28 @@ function decodeImage(image: HTMLImageElement) {
   return image.decode().catch(() => undefined);
 }
 
+async function decodeDiagnoseBackground() {
+  const diagnose = methodItems[0];
+  const highDensity = window.devicePixelRatio > 1;
+  const candidates = [
+    highDensity ? diagnose.cardAvifLarge : diagnose.cardAvifSmall,
+    highDensity ? diagnose.cardWebpLarge : diagnose.cardWebpSmall,
+    diagnose.card,
+  ];
+
+  for (const source of candidates) {
+    const image = new Image();
+    image.decoding = 'async';
+    image.src = source;
+    try {
+      await image.decode();
+      if (image.naturalWidth > 0) return;
+    } catch {
+      // Try the next supported optimized format, then the PNG fallback.
+    }
+  }
+}
+
 export function MethodTransition() {
   const [deckReady, setDeckReady] = useState(false);
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -62,7 +84,10 @@ export function MethodTransition() {
 
     const context = gsap.context(() => {
       const artwork = Array.from(section.querySelectorAll<HTMLImageElement>('img'));
-      void Promise.all(artwork.map(decodeImage)).then(() => {
+      void Promise.all([
+        ...artwork.map(decodeImage),
+        decodeDiagnoseBackground(),
+      ]).then(() => {
         if (!mounted) return;
 
         context.add(() => {
@@ -383,13 +408,31 @@ export function MethodTransition() {
             <div className="hsm-transition__card-slot" ref={cardSlotRef} />
             {methodItems.slice(1).map((method, index) => (
               <div
-                className="hsm-transition__companion-card"
+                className={`hsm-transition__companion-card hsm-transition__companion-card--${method.id}`}
                 key={method.id}
                 ref={(node) => {
                   companionRefs.current[index] = node;
                 }}
               >
-                <img src={method.card} alt="" decoding="async" />
+                <picture>
+                  <source
+                    type="image/avif"
+                    srcSet={`${method.cardAvifSmall} 512w, ${method.cardAvifLarge} 1024w`}
+                    sizes="(max-width: 639px) calc((94vw - 24px) / 5), min(18vw, 190px)"
+                  />
+                  <source
+                    type="image/webp"
+                    srcSet={`${method.cardWebpSmall} 512w, ${method.cardWebpLarge} 1024w`}
+                    sizes="(max-width: 639px) calc((94vw - 24px) / 5), min(18vw, 190px)"
+                  />
+                  <img
+                    src={method.card}
+                    alt=""
+                    width={1024}
+                    height={1536}
+                    decoding="async"
+                  />
+                </picture>
               </div>
             ))}
           </div>

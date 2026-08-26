@@ -22,6 +22,10 @@ const transitionStyles = readFileSync(
   new URL('./MethodTransition.css', import.meta.url),
   'utf8',
 );
+const transitionSource = readFileSync(
+  new URL('./MethodTransition.tsx', import.meta.url),
+  'utf8',
+);
 const deckStyles = readFileSync(
   new URL('./MethodTeachingDeck.css', import.meta.url),
   'utf8',
@@ -29,6 +33,9 @@ const deckStyles = readFileSync(
 const featureSource = `${deckSource}\n${detailSource}\n${dataSource}\n${transitionStyles}\n${deckStyles}`;
 const deckModuleUrl = `/@fs${fileURLToPath(
   new URL('./MethodTeachingDeck.tsx', import.meta.url),
+)}`;
+const transitionModuleUrl = `/@fs${fileURLToPath(
+  new URL('./MethodTransition.tsx', import.meta.url),
 )}`;
 const assetDirectory = new URL('../../../../public/images/programs/high-school-method-transition/', import.meta.url);
 
@@ -120,7 +127,33 @@ function createMountedDeckFixturePlugin() {
           removeListener(listener) { motionListeners.delete(listener); },
           dispatchEvent() { return true; },
         };
-        window.matchMedia = () => motionQuery;
+        window.matchMedia = (query) => {
+          if (query === motionQuery.media) return motionQuery;
+          return {
+            media: query,
+            onchange: null,
+            matches: query === '(min-width: 768px)' ? innerWidth >= 768 : false,
+            addEventListener() {},
+            removeEventListener() {},
+            addListener() {},
+            removeListener() {},
+            dispatchEvent() { return true; },
+          };
+        };
+
+        const originalImageDecode = HTMLImageElement.prototype.decode;
+        let artworkDecodeMode = 'native';
+        let artworkDecodeCallCount = 0;
+        const pendingArtworkDecodes = [];
+        HTMLImageElement.prototype.decode = function () {
+          artworkDecodeCallCount += 1;
+          if (artworkDecodeMode !== 'defer') {
+            return originalImageDecode.call(this);
+          }
+          return new Promise((resolve, reject) => {
+            pendingArtworkDecodes.push({ resolve, reject });
+          });
+        };
 
         const timelines = [];
         const flips = [];
@@ -225,6 +258,8 @@ function createMountedDeckFixturePlugin() {
               reverted: record.reverted,
             })),
             killTweensCallCount,
+            artworkDecodeCallCount,
+            pendingArtworkDecodeCount: pendingArtworkDecodes.length,
             listenerCount: motionListeners.size,
             rootChildCount: document.querySelector('#root')?.childElementCount ?? -1,
           };
@@ -256,6 +291,17 @@ function createMountedDeckFixturePlugin() {
             for (const listener of [...motionListeners]) listener(event);
             motionQuery.onchange?.(event);
           },
+          deferArtworkDecodes() {
+            artworkDecodeMode = 'defer';
+          },
+          settleArtworkDecodes(outcome = 'resolve') {
+            artworkDecodeMode = 'native';
+            const pending = pendingArtworkDecodes.splice(0);
+            for (const deferred of pending) {
+              if (outcome === 'reject') deferred.reject(new Error('forced decode failure'));
+              else deferred.resolve();
+            }
+          },
           unmount() { root.unmount(); },
         };
       `;
@@ -265,6 +311,41 @@ function createMountedDeckFixturePlugin() {
         <html lang="en">
           <head><meta charset="UTF-8"><title>Method deck runtime test</title></head>
           <body>
+            <div id="root"></div>
+            <script type="module" src="/@id/${fixtureId}"></script>
+          </body>
+        </html>`;
+    },
+  };
+}
+
+function createMethodRouteFixturePlugin() {
+  const fixtureId = 'virtual:method-transition-route-runtime';
+  const resolvedFixtureId = `\0${fixtureId}`;
+
+  return {
+    name: 'method-transition-route-runtime-fixture',
+    resolveId(id) {
+      return id === fixtureId ? resolvedFixtureId : null;
+    },
+    load(id) {
+      if (id !== resolvedFixtureId) return null;
+
+      return `
+        import { createElement } from 'react';
+        import { createRoot } from 'react-dom/client';
+        import { MethodTransition } from ${JSON.stringify(transitionModuleUrl)};
+
+        const rootElement = document.querySelector('#root');
+        if (!rootElement) throw new Error('Route fixture root is missing');
+        createRoot(rootElement).render(createElement(MethodTransition));
+      `;
+    },
+    transformIndexHtml() {
+      return `<!doctype html>
+        <html lang="en">
+          <head><meta charset="UTF-8"><title>High School method route</title></head>
+          <body style="margin:0">
             <div id="root"></div>
             <script type="module" src="/@id/${fixtureId}"></script>
           </body>
@@ -424,6 +505,29 @@ test('uses a dedicated AA text accent for every method', () => {
   assert.match(deckStyles, /\.hsm-deck__emotional\s*\{[\s\S]*color:\s*var\(--hsm-active-text-accent\)/);
 });
 
+test('uses AA textual gold and a focus ring that contrasts with ivory and dark cards', () => {
+  const textualGold = deckStyles.match(/--hsm-textual-gold:\s*(#[\da-f]{6})/i)?.[1];
+  const focusRing = deckStyles.match(/--hsm-focus-ring:\s*(#[\da-f]{6})/i)?.[1];
+
+  assert.ok(textualGold, 'Expected a textual-gold design token');
+  assert.ok(focusRing, 'Expected a focus-ring design token');
+  assert.ok(contrastRatio(textualGold, '#fffdf7') >= 4.5);
+  assert.ok(contrastRatio(focusRing, '#fffdf7') >= 3);
+  assert.ok(contrastRatio(focusRing, '#173d2a') >= 3);
+  assert.match(
+    deckStyles,
+    /\.hsm-deck__method-index\s*\{[\s\S]*color:\s*var\(--hsm-textual-gold\)/,
+  );
+  assert.match(
+    deckStyles,
+    /\.hsm-deck__detail li em\s*\{[\s\S]*color:\s*var\(--hsm-textual-gold\)/,
+  );
+  assert.match(
+    deckStyles,
+    /\.hsm-deck__card:focus-visible\s*\{[\s\S]*outline:\s*3px solid var\(--hsm-focus-ring\)/,
+  );
+});
+
 test('pins the mobile hero independently of selector scroll position', () => {
   assert.match(
     deckStyles,
@@ -456,6 +560,29 @@ test('serves responsive AVIF and WebP deck imagery with intrinsic dimensions', (
   assert.ok(
     optimizedBytes < originalBytes,
     `Optimized responsive set (${optimizedBytes}) must stay below original delivery (${originalBytes})`,
+  );
+});
+
+test('uses optimized handoff art without original card delivery and crops Apply consistently', () => {
+  assert.match(
+    transitionSource,
+    /method\.cardAvifSmall[\s\S]*method\.cardAvifLarge[\s\S]*method\.cardWebpSmall[\s\S]*method\.cardWebpLarge/,
+  );
+  assert.match(
+    transitionSource,
+    /<picture>[\s\S]*type="image\/avif"[\s\S]*type="image\/webp"[\s\S]*<img[\s\S]*src=\{method\.card\}/,
+  );
+  assert.match(
+    transitionStyles,
+    /\.hsm-transition__card\s*\{[\s\S]*image-set\([\s\S]*method-card-diagnose-forest-v1-512w\.avif[\s\S]*method-card-diagnose-forest-v1-1024w\.avif[\s\S]*method-card-diagnose-forest-v1\.png/,
+  );
+  assert.match(
+    deckStyles,
+    /\.hsm-deck__card--apply\s*\{[\s\S]*--hsm-card-art-scale:\s*1\.2[3-9]/,
+  );
+  assert.match(
+    transitionStyles,
+    /\.hsm-transition__companion-card--apply\s*\{[\s\S]*--hsm-card-art-scale:\s*1\.2[3-9]/,
   );
 });
 
@@ -580,7 +707,7 @@ test('mounted deck keeps the newest rapid selection and disposes owned motion', 
     page.on('console', (message) => {
       if (message.type() === 'error') runtimeErrors.push(message.text());
     });
-    await page.goto(baseUrl, { timeout: 90_000, waitUntil: 'domcontentloaded' });
+    await page.goto(baseUrl, { timeout: 180_000, waitUntil: 'domcontentloaded' });
     try {
       await page.waitForFunction(
         () => Boolean(window.__methodDeckRuntime),
@@ -606,6 +733,25 @@ test('mounted deck keeps the newest rapid selection and disposes owned motion', 
       optimizedCardSources.every((source) => /\.(?:avif|webp)$/.test(source)),
       `Expected optimized card sources, received ${optimizedCardSources.join(', ')}`,
     );
+    const overviewApplyCoverage = await page.$eval(
+      '.hsm-deck__card[data-method-id="apply"]',
+      (card) => {
+        const image = card.querySelector('img');
+        if (!(image instanceof HTMLImageElement)) {
+          throw new Error('Apply overview artwork is missing');
+        }
+        const cardRect = card.getBoundingClientRect();
+        const imageRect = image.getBoundingClientRect();
+        return {
+          widthRatio: imageRect.width / cardRect.width,
+          coversLeft: imageRect.left <= cardRect.left,
+          coversRight: imageRect.right >= cardRect.right,
+        };
+      },
+    );
+    assert.ok(overviewApplyCoverage.widthRatio >= 1.23);
+    assert.equal(overviewApplyCoverage.coversLeft, true);
+    assert.equal(overviewApplyCoverage.coversRight, true);
 
     const initialSemantics = await page.evaluate(() => {
       const collections = [...document.querySelectorAll('.hsm-deck__cards')];
@@ -721,31 +867,39 @@ test('mounted deck keeps the newest rapid selection and disposes owned motion', 
     assert.equal(state.allDetailRegionsVisible, true);
     assert.equal(state.listenerCount, 1);
 
-    await page.evaluate(() => window.__methodDeckRuntime.setReducedMotion(false));
     await page.evaluate(() => {
-      const explain = document.querySelector(
-        '.hsm-deck__card[data-method-id="explain"]',
-      );
-      const review = document.querySelector(
-        '.hsm-deck__card[data-method-id="review"]',
-      );
-      if (!(explain instanceof HTMLButtonElement)
-        || !(review instanceof HTMLButtonElement)) {
-        throw new Error('Rapid-selection cards are missing');
-      }
-      explain.click();
-      review.click();
+      window.__methodDeckRuntime.setReducedMotion(false);
+      window.__methodDeckRuntime.deferArtworkDecodes();
     });
+    await clickMethod('explain');
+    state = await snapshot();
+    assert.equal(state.timelines.length, 1);
+    assert.equal(state.timelines[0].callbackCount, 1);
 
+    await page.evaluate(() => window.__methodDeckRuntime.completeTimeline(0));
+    state = await snapshot();
+    assert.equal(state.pendingArtworkDecodeCount, 5);
+    assert.equal(state.flipStateCaptures, 0);
+    assert.deepEqual(state.activeIds, ['diagnose']);
+
+    await clickMethod('review');
     state = await snapshot();
     assert.equal(state.timelines.length, 2);
-    assert.equal(state.timelines[0].callbackCount, 1);
     assert.equal(state.timelines[0].reverted, true);
     assert.equal(state.timelines[0].killed, true);
     assert.equal(state.timelines[1].callbackCount, 1);
     assert.equal(state.timelines[1].killed, false);
 
     await page.evaluate(() => window.__methodDeckRuntime.completeTimeline(1));
+    state = await snapshot();
+    assert.equal(state.pendingArtworkDecodeCount, 10);
+    assert.equal(state.flipStateCaptures, 0);
+    assert.deepEqual(state.activeIds, ['diagnose']);
+
+    await page.evaluate(() => window.__methodDeckRuntime.settleArtworkDecodes());
+    await page.waitForFunction(() => (
+      window.__methodDeckRuntime.snapshot().activeIds[0] === 'review'
+    ));
     state = await snapshot();
     assert.deepEqual(state.activeIds, ['review']);
     assert.equal(state.detailHeading, 'Review');
@@ -762,6 +916,7 @@ test('mounted deck keeps the newest rapid selection and disposes owned motion', 
     assert.deepEqual(state.activeIds, ['review']);
     assert.equal(state.detailHeading, 'Review');
 
+    await page.evaluate(() => window.__methodDeckRuntime.deferArtworkDecodes());
     await clickMethod('apply');
     state = await snapshot();
     assert.equal(state.flips[0].reverted, true);
@@ -771,19 +926,25 @@ test('mounted deck keeps the newest rapid selection and disposes owned motion', 
     const applyExitIndex = state.timelines.length - 1;
     assert.equal(state.timelines[applyExitIndex].callbackCount, 1);
 
-    await page.evaluate(() => window.__methodDeckRuntime.setReducedMotion(true));
     await page.evaluate((index) => {
-      window.__methodDeckRuntime.forceTimelineCallbacks(index);
+      window.__methodDeckRuntime.completeTimeline(index);
     }, applyExitIndex);
+    state = await snapshot();
+    assert.equal(state.pendingArtworkDecodeCount, 5);
+    const flipCountBeforeDecodeFailure = state.flipStateCaptures;
+    await page.evaluate(() => window.__methodDeckRuntime.settleArtworkDecodes('reject'));
+    await page.waitForFunction(() => (
+      window.__methodDeckRuntime.snapshot().activeIds[0] === 'apply'
+    ));
     state = await snapshot();
     assert.deepEqual(state.activeIds, ['apply']);
     assert.equal(state.detailHeading, 'Apply');
     assert.match(state.detailText, /We make sure they can do it themselves\./);
     assert.equal(state.allDetailRegionsVisible, true);
-    assert.equal(state.timelines[applyExitIndex].reverted, true);
-    assert.equal(state.timelines[applyExitIndex].killed, true);
+    assert.equal(state.flipStateCaptures, flipCountBeforeDecodeFailure);
 
     await page.setViewport({ width: 390, height: 844, deviceScaleFactor: 1 });
+    await page.evaluate(() => window.__methodDeckRuntime.setReducedMotion(true));
     await page.evaluate(() => {
       const selector = document.querySelector('.hsm-deck__cards');
       if (!(selector instanceof HTMLElement)) {
@@ -791,7 +952,69 @@ test('mounted deck keeps the newest rapid selection and disposes owned motion', 
       }
       selector.scrollLeft = selector.scrollWidth;
     });
-    await clickMethod('review');
+    const heroApplyCoverage = await page.$eval(
+      '.hsm-deck__card[data-method-id="apply"]',
+      (card) => {
+        const image = card.querySelector('img');
+        if (!(image instanceof HTMLImageElement)) {
+          throw new Error('Apply hero artwork is missing');
+        }
+        const cardRect = card.getBoundingClientRect();
+        const imageRect = image.getBoundingClientRect();
+        return {
+          widthRatio: imageRect.width / cardRect.width,
+          coversLeft: imageRect.left <= cardRect.left,
+          coversRight: imageRect.right >= cardRect.right,
+        };
+      },
+    );
+    assert.ok(heroApplyCoverage.widthRatio >= 1.23);
+    assert.equal(heroApplyCoverage.coversLeft, true);
+    assert.equal(heroApplyCoverage.coversRight, true);
+    const mobileKeyboard = await page.$eval(
+      '.hsm-deck__card[data-method-id="apply"]',
+      (button) => {
+        if (!(button instanceof HTMLButtonElement)) {
+          throw new Error('Apply mobile card is missing');
+        }
+        button.focus();
+        const down = new KeyboardEvent('keydown', {
+          key: 'ArrowDown',
+          bubbles: true,
+          cancelable: true,
+        });
+        const downDispatchResult = button.dispatchEvent(down);
+        const afterDown = document.querySelector(
+          '.hsm-deck__card[aria-pressed="true"]',
+        )?.getAttribute('data-method-id');
+        const right = new KeyboardEvent('keydown', {
+          key: 'ArrowRight',
+          bubbles: true,
+          cancelable: true,
+        });
+        const rightDispatchResult = button.dispatchEvent(right);
+        return {
+          downDefaultPrevented: down.defaultPrevented,
+          downDispatchResult,
+          activeAfterDown: afterDown,
+          rightDefaultPrevented: right.defaultPrevented,
+          rightDispatchResult,
+          activeAfterRight: document.querySelector(
+            '.hsm-deck__card[aria-pressed="true"]',
+          )?.getAttribute('data-method-id'),
+          focusedAfterRight: document.activeElement instanceof HTMLButtonElement
+            ? document.activeElement.dataset.methodId
+            : null,
+        };
+      },
+    );
+    assert.equal(mobileKeyboard.downDefaultPrevented, false);
+    assert.equal(mobileKeyboard.downDispatchResult, true);
+    assert.equal(mobileKeyboard.activeAfterDown, 'apply');
+    assert.equal(mobileKeyboard.rightDefaultPrevented, true);
+    assert.equal(mobileKeyboard.rightDispatchResult, false);
+    assert.equal(mobileKeyboard.activeAfterRight, 'review');
+    assert.equal(mobileKeyboard.focusedAfterRight, 'review');
     const mobileHero = await page.evaluate(() => {
       const selector = document.querySelector('.hsm-deck__cards');
       const hero = document.querySelector('.hsm-deck__card.is-active');
@@ -817,6 +1040,27 @@ test('mounted deck keeps the newest rapid selection and disposes owned motion', 
       `Hero right edge ${mobileHero.right} exceeds ${mobileHero.viewportWidth}`,
     );
     assert.ok(mobileHero.height >= 300 && mobileHero.height <= 360);
+    const mobileScreenshot = await page.screenshot({ type: 'png' });
+    assert.ok(mobileScreenshot.byteLength > 0);
+    const inactiveApplyCoverage = await page.$eval(
+      '.hsm-deck__card[data-method-id="apply"]',
+      (card) => {
+        const image = card.querySelector('img');
+        if (!(image instanceof HTMLImageElement)) {
+          throw new Error('Apply inactive artwork is missing');
+        }
+        const cardRect = card.getBoundingClientRect();
+        const imageRect = image.getBoundingClientRect();
+        return {
+          widthRatio: imageRect.width / cardRect.width,
+          coversLeft: imageRect.left <= cardRect.left,
+          coversRight: imageRect.right >= cardRect.right,
+        };
+      },
+    );
+    assert.ok(inactiveApplyCoverage.widthRatio >= 1.23);
+    assert.equal(inactiveApplyCoverage.coversLeft, true);
+    assert.equal(inactiveApplyCoverage.coversRight, true);
 
     const computedTextAccents = [];
     for (const methodId of ['diagnose', 'explain', 'practise', 'apply', 'review']) {
@@ -835,6 +1079,26 @@ test('mounted deck keeps the newest rapid selection and disposes owned motion', 
         `${computedTextAccent} must reach 4.5:1 against #fffdf7`,
       );
     }
+    const goldAndFocusColors = await page.evaluate(() => {
+      const methodIndex = document.querySelector('.hsm-deck__method-index');
+      const annotation = document.querySelector('[data-method-annotation]');
+      const focusedCard = document.querySelector('.hsm-deck__card[aria-pressed="true"]');
+      if (!(methodIndex instanceof HTMLElement)
+        || !(annotation instanceof HTMLElement)
+        || !(focusedCard instanceof HTMLButtonElement)) {
+        throw new Error('Contrast targets are missing');
+      }
+      focusedCard.focus();
+      return {
+        methodIndex: getComputedStyle(methodIndex).color,
+        annotation: getComputedStyle(annotation).color,
+        focusRing: getComputedStyle(focusedCard).outlineColor,
+      };
+    });
+    assert.ok(contrastRatio(goldAndFocusColors.methodIndex, '#fffdf7') >= 4.5);
+    assert.ok(contrastRatio(goldAndFocusColors.annotation, '#fffdf7') >= 4.5);
+    assert.ok(contrastRatio(goldAndFocusColors.focusRing, '#fffdf7') >= 3);
+    assert.ok(contrastRatio(goldAndFocusColors.focusRing, '#173d2a') >= 3);
 
     await page.setViewport({ width: 800, height: 600, deviceScaleFactor: 1 });
 
@@ -870,13 +1134,17 @@ test('mounted deck keeps the newest rapid selection and disposes owned motion', 
   }
 });
 
-test('high-school route decodes and visibly renders every card artwork before capture', {
+test('high-school method route decodes artwork and stays within its request budget', {
   timeout: 240_000,
 }, async () => {
   const projectRoot = fileURLToPath(new URL('../../../..', import.meta.url));
   const server = await createServer({
+    appType: 'spa',
+    configFile: false,
     root: projectRoot,
     logLevel: 'silent',
+    optimizeDeps: { entries: [] },
+    plugins: [createMethodRouteFixturePlugin()],
     server: { host: '127.0.0.1', port: 0, hmr: false },
   });
   let browser;
@@ -892,11 +1160,23 @@ test('high-school route decodes and visibly renders every card artwork before ca
       args: isolatedRunner ? ['--no-sandbox', '--disable-setuid-sandbox'] : [],
     });
     const page = await browser.newPage();
+    page.setDefaultTimeout(90_000);
+    const routeErrors = [];
+    page.on('pageerror', (error) => routeErrors.push(error.message));
+    page.on('console', (message) => {
+      if (message.type() === 'error') routeErrors.push(message.text());
+    });
     await page.setViewport({ width: 1440, height: 1000, deviceScaleFactor: 1 });
     await page.emulateMediaFeatures([
       { name: 'prefers-reduced-motion', value: 'reduce' },
     ]);
     const failedArtworkRequests = [];
+    const requestedCardAssets = [];
+    page.on('request', (request) => {
+      if (/method-card-/.test(request.url())) {
+        requestedCardAssets.push(new URL(request.url()).pathname.split('/').at(-1));
+      }
+    });
     page.on('requestfailed', (request) => {
       if (/method-card-/.test(request.url())) {
         failedArtworkRequests.push(
@@ -906,19 +1186,52 @@ test('high-school route decodes and visibly renders every card artwork before ca
     });
 
     await page.goto(`${baseUrl}/programs/high-school`, {
-      timeout: 90_000,
+      timeout: 180_000,
       waitUntil: 'domcontentloaded',
     });
-    await page.waitForSelector('.hsm-deck__card[data-method-id="diagnose"]');
+    try {
+      await page.waitForSelector('.hsm-deck__card[data-method-id="diagnose"]');
+    } catch (error) {
+      assert.fail(`Route deck did not render: ${error.message}; ${routeErrors.join(' | ')}`);
+    }
     await page.waitForFunction(
       () => document.querySelector('.hsm-deck')?.getAttribute('data-ready') === 'true',
-      { timeout: 30_000 },
+      { timeout: 90_000 },
     );
+    const transitionTop = await page.$eval(
+      '.hsm-transition__runway',
+      (runway) => runway.getBoundingClientRect().top + scrollY,
+    );
+    await page.evaluate((top) => scrollTo(0, top), transitionTop);
+    await page.evaluate(() => new Promise((resolve) => (
+      requestAnimationFrame(() => requestAnimationFrame(resolve))
+    )));
+    const handoffScreenshot = await page.screenshot({ type: 'png' });
+    assert.ok(handoffScreenshot.byteLength > 0);
     const deckTop = await page.$eval(
       '.hsm-deck',
       (deck) => deck.getBoundingClientRect().top + scrollY,
     );
     await page.evaluate((top) => scrollTo(0, top + 40), deckTop);
+    const upstreamApplyCoverage = await page.$eval(
+      '.hsm-transition__companion-card--apply',
+      (card) => {
+        const image = card.querySelector('img');
+        if (!(image instanceof HTMLImageElement)) {
+          throw new Error('Upstream Apply companion artwork is missing');
+        }
+        const cardRect = card.getBoundingClientRect();
+        const imageRect = image.getBoundingClientRect();
+        return {
+          widthRatio: imageRect.width / cardRect.width,
+          coversLeft: imageRect.left <= cardRect.left,
+          coversRight: imageRect.right >= cardRect.right,
+        };
+      },
+    );
+    assert.ok(upstreamApplyCoverage.widthRatio >= 1.23);
+    assert.equal(upstreamApplyCoverage.coversLeft, true);
+    assert.equal(upstreamApplyCoverage.coversRight, true);
 
     const inspectArtworksBeforeCapture = async (expectedActiveId) => {
       const evidence = await page.evaluate(async () => {
@@ -971,6 +1284,9 @@ test('high-school route decodes and visibly renders every card artwork before ca
         assert.equal(artwork.cardVisibility, 'visible');
         assert.equal(artwork.imageOpacity, '1');
         assert.equal(artwork.imageVisibility, 'visible');
+        if (artwork.id === 'apply') {
+          assert.ok(artwork.imageWidth / artwork.cardWidth >= 1.23);
+        }
       }
 
       const screenshot = await page.screenshot({ type: 'png' });
@@ -990,6 +1306,29 @@ test('high-school route decodes and visibly renders every card artwork before ca
       await inspectArtworksBeforeCapture(methodId);
     }
 
+    const uniqueCardAssets = [...new Set(requestedCardAssets)].sort();
+    const originalCardRequests = uniqueCardAssets.filter((asset) => /-v1\.png$/.test(asset));
+    assert.deepEqual(originalCardRequests, []);
+    const expectedCardAssets = CARD_BASES
+      .flatMap((base) => [
+        `${base}-512w.avif`,
+        `${base}-1024w.avif`,
+      ])
+      .sort();
+    assert.deepEqual(uniqueCardAssets, expectedCardAssets);
+    const originalHandoffBytes = CARD_BASES
+      .map((base) => statSync(new URL(`${base}.png`, assetDirectory)).size)
+      .reduce((total, size) => total + size, 0);
+    const optimizedHandoffBytes = CARD_BASES
+      .map((base) => statSync(new URL(`${base}-512w.avif`, assetDirectory)).size)
+      .reduce((total, size) => total + size, 0);
+    const currentRouteCardBytes = CARD_BASES
+      .flatMap((base) => [`${base}-512w.avif`, `${base}-1024w.avif`])
+      .map((asset) => statSync(new URL(asset, assetDirectory)).size)
+      .reduce((total, size) => total + size, 0);
+    const previousUniqueRouteCardBytes = originalHandoffBytes + currentRouteCardBytes;
+    assert.equal(previousUniqueRouteCardBytes - currentRouteCardBytes, 14_297_202);
+    assert.equal(originalHandoffBytes - optimizedHandoffBytes, 14_121_074);
     assert.deepEqual(failedArtworkRequests, []);
   } finally {
     await browser?.close();
