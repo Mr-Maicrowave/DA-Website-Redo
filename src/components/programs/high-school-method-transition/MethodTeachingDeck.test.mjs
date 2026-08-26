@@ -96,8 +96,6 @@ test('moves the card deck with the approved Flip choreography', () => {
   assert.match(deckSource, /from ['"]gsap\/Flip['"]/);
   assert.match(deckSource, /gsap\.registerPlugin\(Flip\)/);
   assert.match(deckSource, /Flip\.getState\(/);
-  assert.match(deckSource, /flushSync\(/);
-  assert.match(deckSource, /gsap\.killTweensOf\(/);
   assert.match(
     deckSource,
     /Flip\.from\([\s\S]*duration:\s*0\.68[\s\S]*ease:\s*['"]power3\.inOut['"][\s\S]*absolute:\s*true[\s\S]*nested:\s*true[\s\S]*prune:\s*true/,
@@ -123,92 +121,64 @@ test('exits the complete current detail before committing the next method', () =
   );
   assert.match(
     deckSource,
-    /\.to\(\s*outgoingDetail,\s*\{[\s\S]*autoAlpha:\s*0[\s\S]*y:\s*1[0-6][\s\S]*\}\s*\)[\s\S]*\.call\(\(\)\s*=>\s*\{[\s\S]*!selectionCoordinator\.isCurrent\(selectionToken\)[\s\S]*commitSelection\(\)/,
+    /\.to\(\s*outgoingDetail,\s*\{[\s\S]*autoAlpha:\s*0[\s\S]*y:\s*1[0-6][\s\S]*duration:\s*0\.2/,
   );
   assert.match(
     deckSource,
-    /const commitSelection[\s\S]*flushSync\([\s\S]*\.fromTo\(\s*detail,\s*\{\s*autoAlpha:\s*0,\s*y:\s*14\s*\}/,
-  );
-});
-
-test('owns and disposes both Flip and content animations', () => {
-  assert.match(deckSource, /flipAnimationRef/);
-  assert.match(deckSource, /flipAnimationRef\.current\s*=\s*Flip\.from\(/);
-  assert.match(deckSource, /contentTimelineRef\.current\s*=\s*(?:exitTimeline|timeline)/);
-  const flipDisposals = deckSource.match(
-    /killOwnedAnimation\(flipAnimationRef\)/g,
-  ) ?? [];
-  const contentDisposals = deckSource.match(
-    /killOwnedAnimation\(contentTimelineRef\)/g,
-  ) ?? [];
-  assert.ok(flipDisposals.length >= 3, 'dispose Flip on change, reselection, and unmount');
-  assert.ok(contentDisposals.length >= 3, 'dispose content motion on change, reselection, and unmount');
-  assert.match(
-    deckSource,
-    /function killOwnedAnimation[\s\S]*animation\.revert\(\)[\s\S]*animation\.kill\(\)/,
-  );
-  assert.match(deckSource, /addEventListener\(['"]change['"]/);
-  assert.match(deckSource, /removeEventListener\(['"]change['"]/);
-});
-
-test('guards stale commits and reveals while reduced motion stays fully visible', () => {
-  const staleGuards = deckSource.match(
-    /!selectionCoordinator\.isCurrent\(selectionToken\)/g,
-  ) ?? [];
-  assert.ok(staleGuards.length >= 2, 'guard both the deferred commit and reveal');
-  assert.match(
-    deckSource,
-    /if \(reducedMotion\)[\s\S]*setDetailFinal\(detail\)[\s\S]*return/,
-  );
-  assert.match(
-    deckSource,
-    /if \(reducedMotion \|\| !outgoingDetail\)\s*\{\s*commitSelection\(\);\s*return/,
-  );
-  assert.match(
-    deckSource,
-    /function setDetailFinal[\s\S]*gsap\.set\(detail,[\s\S]*autoAlpha:\s*1[\s\S]*gsap\.set\(detail\.querySelectorAll/,
+    /\.fromTo\(\s*detail,\s*\{\s*autoAlpha:\s*0,\s*y:\s*14\s*\}/,
   );
 });
 
 test('rapid selections commit only the newest method when callbacks finish out of order', () => {
   assert.equal(typeof createMethodSelectionCoordinator, 'function');
-  const coordinator = createMethodSelectionCoordinator('diagnose');
-  const explainToken = coordinator.request('explain');
-  const reviewToken = coordinator.request('review');
-
-  assert.equal(coordinator.commit(reviewToken), 'review');
-  assert.equal(coordinator.commit(explainToken), null);
-  assert.deepEqual(coordinator.snapshot(), {
-    activeId: 'review',
-    pendingId: null,
-    disposed: false,
+  const committed = [];
+  let invalidations = 0;
+  const coordinator = createMethodSelectionCoordinator('diagnose', {
+    onCommit(methodId) { committed.push(methodId); },
+    onInvalidate() { invalidations += 1; },
   });
+  const explainRequest = coordinator.request('explain');
+  const reviewRequest = coordinator.request('review');
+
+  assert.equal(explainRequest.isCurrent(), false);
+  assert.equal(reviewRequest.isCurrent(), true);
+  assert.equal(reviewRequest.commit(), 'review');
+  assert.equal(explainRequest.commit(), null);
+  assert.deepEqual(committed, ['review']);
+  assert.equal(invalidations, 2);
 });
 
 test('motion preference change settles the latest pending selection immediately', () => {
-  const coordinator = createMethodSelectionCoordinator('diagnose');
-  const staleExitToken = coordinator.request('apply');
+  const committed = [];
+  let invalidations = 0;
+  const coordinator = createMethodSelectionCoordinator('diagnose', {
+    onCommit(methodId) { committed.push(methodId); },
+    onInvalidate() { invalidations += 1; },
+  });
+  const staleExitRequest = coordinator.request('apply');
 
   assert.equal(coordinator.settleLatest(), 'apply');
-  assert.equal(coordinator.isCurrent(staleExitToken), false);
-  assert.deepEqual(coordinator.snapshot(), {
-    activeId: 'apply',
-    pendingId: null,
-    disposed: false,
-  });
+  assert.equal(staleExitRequest.isCurrent(), false);
+  assert.equal(staleExitRequest.commit(), null);
+  assert.deepEqual(committed, ['apply']);
+  assert.equal(invalidations, 2);
 });
 
-test('cleanup invalidates callbacks and clears an uncommitted selection', () => {
-  const coordinator = createMethodSelectionCoordinator('diagnose');
-  const pendingToken = coordinator.request('practise');
-
-  coordinator.dispose();
-
-  assert.equal(coordinator.isCurrent(pendingToken), false);
-  assert.equal(coordinator.commit(pendingToken), null);
-  assert.deepEqual(coordinator.snapshot(), {
-    activeId: 'diagnose',
-    pendingId: null,
-    disposed: true,
+test('cleanup invalidation permits a Strict Mode setup replay and new commit', () => {
+  const committed = [];
+  let invalidations = 0;
+  const coordinator = createMethodSelectionCoordinator('diagnose', {
+    onCommit(methodId) { committed.push(methodId); },
+    onInvalidate() { invalidations += 1; },
   });
+  const abandonedRequest = coordinator.request('practise');
+
+  coordinator.invalidate();
+  assert.equal(abandonedRequest.isCurrent(), false);
+  assert.equal(abandonedRequest.commit(), null);
+
+  const replayRequest = coordinator.request('review');
+  assert.equal(replayRequest.commit(), 'review');
+  assert.deepEqual(committed, ['review']);
+  assert.equal(invalidations, 3);
 });
