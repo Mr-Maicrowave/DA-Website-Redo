@@ -1,0 +1,408 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { existsSync, readFileSync } from 'node:fs';
+
+const pageUrl = new URL('../../pages/programs/PrimarySchool.tsx', import.meta.url);
+const referenceStoryUrl = new URL('./PrimaryReferenceStory.tsx', import.meta.url);
+const referenceStoryDataUrl = new URL('./referenceStoryData.ts', import.meta.url);
+const foundationUrl = new URL('./FoundationSection.tsx', import.meta.url);
+const foundationCurriculumUrl = new URL('./FoundationCurriculum.tsx', import.meta.url);
+const howWeTeachUrl = new URL('./HowWeTeach.tsx', import.meta.url);
+const growthUrl = new URL('./GrowthSection.tsx', import.meta.url);
+const growthCurriculumUrl = new URL('./GrowthCurriculum.tsx', import.meta.url);
+const masteryUrl = new URL('./MasterySection.tsx', import.meta.url);
+const masteryCurriculumUrl = new URL('./MasteryCurriculum.tsx', import.meta.url);
+const aquariumUrl = new URL('./PrimaryAquarium.tsx', import.meta.url);
+const aquariumDataUrl = new URL('./primaryStoryData.ts', import.meta.url);
+const aquariumEngineUrl = new URL('./useAquariumEngine.ts', import.meta.url);
+const aquariumFactCardUrl = new URL('./AquariumFactCard.tsx', import.meta.url);
+const programBagUrl = new URL('./ProgramBag.tsx', import.meta.url);
+const familyReasonsUrl = new URL('./FamilyReasons.tsx', import.meta.url);
+const outroUrl = new URL('./PrimaryJourneyOutro.tsx', import.meta.url);
+const referenceMotionUrl = new URL('./usePrimaryReferenceMotion.ts', import.meta.url);
+const storyConnectorsUrl = new URL('./StoryConnectors.tsx', import.meta.url);
+const primaryReferenceCssUrl = new URL('./primary-reference.css', import.meta.url);
+
+test('Primary reference story keeps the approved ten-section sequence after the preserved hero', () => {
+  assert.equal(existsSync(referenceStoryUrl), true, 'PrimaryReferenceStory must exist');
+  assert.equal(existsSync(referenceStoryDataUrl), true, 'reference story data must exist');
+
+  const source = readFileSync(referenceStoryUrl, 'utf8');
+  const pageSource = readFileSync(pageUrl, 'utf8');
+  const ordered = [
+    '<FoundationSection',
+    '<FoundationCurriculum',
+    '<HowWeTeach',
+    '<GrowthSection',
+    '<GrowthCurriculum',
+    '<MasterySection',
+    '<MasteryCurriculum',
+    '<ProgramBag',
+    '<FamilyReasons',
+    '<PrimaryJourneyOutro',
+  ];
+
+  ordered.reduce((cursor, marker) => {
+    const next = source.indexOf(marker);
+    assert.ok(next > cursor, `${marker} must follow the previous section`);
+    return next;
+  }, -1);
+
+  assert.match(pageSource, /<SubjectHero[\s\S]*<PrimaryReferenceStory/);
+  assert.match(pageSource, /exploreTargetId="pathway"/);
+  assert.doesNotMatch(pageSource, /Primary(?:Aquarium|JourneyLayer|JourneyOutro)/);
+  assert.match(readFileSync(referenceStoryDataUrl, 'utf8'), /as const satisfies/);
+});
+
+test('story slots expose approved copy as semantic HTML rather than implementation artifacts', () => {
+  const source = [referenceStoryUrl, foundationUrl, howWeTeachUrl, growthUrl, masteryUrl, familyReasonsUrl, outroUrl]
+    .filter((url) => existsSync(url))
+    .map((url) => readFileSync(url, 'utf8'))
+    .join('\n');
+
+  assert.match(source, /Strong foundations shape everything that follows\./);
+  assert.match(source, /Growing skills\. Building independence\./);
+  assert.match(source, /Ready for what comes next\./);
+  assert.match(source, /Why families choose DA\./);
+  assert.match(source, /A clear path\. Every step matters\./);
+  assert.doesNotMatch(source, /\.alt\.toLowerCase\(\)/);
+  assert.doesNotMatch(source, /<h2[^>]*>\{?referenceStoryAssets\.closingLandscape/);
+});
+
+test('Years 1–2 foundations present all four outcomes without turning them into cards', () => {
+  assert.equal(existsSync(foundationUrl), true, 'FoundationSection must exist');
+  const source = `${readFileSync(foundationUrl, 'utf8')}\n${readFileSync(referenceStoryDataUrl, 'utf8')}`;
+
+  [
+    'Core reading and number skills',
+    'Confidence through small wins',
+    'Individual attention every lesson',
+    'Loved by parents for real results',
+  ].forEach((label) => assert.match(source, new RegExp(label)));
+
+  assert.match(source, /stagePhotos\.foundation/);
+  assert.match(source, /\/images\/community\/primary-foundation-framed\.png/);
+  assert.match(source, /foundationLeftDecor/);
+  assert.match(source, /foundationOutcomeDecor/);
+  assert.match(source, /primary-reference-foundation__outcome-icon/);
+  assert.match(source, /foundationOutcomes\.map/);
+  assert.doesNotMatch(source, /Card/);
+});
+
+test('Years 1–2 curriculum preserves the complete interactive aquarium', () => {
+  assert.equal(existsSync(foundationCurriculumUrl), true, 'FoundationCurriculum must exist');
+  assert.equal(existsSync(aquariumUrl), true, 'PrimaryAquarium must exist');
+  assert.equal(existsSync(aquariumDataUrl), true, 'aquarium data must exist');
+  assert.equal(existsSync(aquariumEngineUrl), true, 'aquarium engine must exist');
+
+  const curriculum = readFileSync(foundationCurriculumUrl, 'utf8');
+  const aquarium = readFileSync(aquariumUrl, 'utf8');
+  const aquariumData = readFileSync(aquariumDataUrl, 'utf8');
+  const engine = readFileSync(aquariumEngineUrl, 'utf8');
+
+  assert.match(curriculum, /<PrimaryAquarium/);
+  assert.equal((aquariumData.match(/id: '/g) ?? []).length, 7);
+  assert.match(aquarium, /aquariumFish\.map/);
+  assert.match(aquarium, /<button/);
+  assert.match(aquarium, /aria-label=\{`Show fun fact about \$\{fish\.label\}`\}/);
+  assert.match(aquarium, /primary-aquarium__progress/);
+  assert.match(aquarium, /\/primary-reference\/aquarium\/water-background\.png/);
+  assert.match(aquariumData, /\/primary-reference\/aquarium\/fish\/clownfish\.png/);
+  assert.match(engine, /pointermove/);
+  assert.match(engine, /ripplesRef/);
+  assert.match(engine, /bubblePoolRef/);
+  assert.match(engine, /prefers-reduced-motion/);
+  assert.match(engine, /visibilityObserver/);
+  assert.match(engine, /app\.ticker\.stop\(\)/);
+  assert.match(engine, /app\.ticker\.start\(\)/);
+});
+
+test('How We Teach renders four authentic DA photo moments from typed story data', () => {
+  assert.equal(existsSync(howWeTeachUrl), true, 'HowWeTeach must exist');
+  const source = readFileSync(howWeTeachUrl, 'utf8');
+  const storyData = readFileSync(referenceStoryDataUrl, 'utf8');
+
+  assert.match(source, /teachingSteps\.map/);
+  assert.match(source, /<figure/);
+  assert.match(source, /src=\{step\.photo\.src\}/);
+  assert.match(source, /alt=\{step\.photo\.alt\}/);
+  assert.equal((storyData.match(/number: '0[1-4]'/g) ?? []).length >= 8, true);
+});
+
+test('the post-hero story exposes static connector markers and three teaching segments', () => {
+  assert.equal(existsSync(storyConnectorsUrl), true, 'StoryConnectors must exist');
+  if (!existsSync(storyConnectorsUrl)) return;
+
+  const story = readFileSync(referenceStoryUrl, 'utf8');
+  const curriculum = readFileSync(foundationCurriculumUrl, 'utf8');
+  const aquarium = readFileSync(aquariumUrl, 'utf8');
+  const teaching = readFileSync(howWeTeachUrl, 'utf8');
+  const connectors = readFileSync(storyConnectorsUrl, 'utf8');
+  const styles = readFileSync(primaryReferenceCssUrl, 'utf8');
+
+  assert.match(curriculum, /<CurriculumToAquariumConnector/);
+  assert.match(aquarium, /<AquariumExitConnector/);
+  assert.match(story, /<HowWeTeach\s*\/>[\s\S]*<GrowthBridgeConnector\s*\/>[\s\S]*<GrowthSection\s*\/>/);
+  assert.match(connectors, /data-story-connector="curriculum-to-aquarium"/);
+  assert.match(connectors, /data-story-connector="aquarium-exit"/);
+  assert.match(connectors, /data-story-connector="aquarium-to-growth"/);
+  assert.match(teaching, /teachingSteps\.slice\(0, -1\)\.map/);
+  assert.match(teaching, /<TeachingPathSegment/);
+  assert.equal((connectors.match(/data-teaching-segment=/g) ?? []).length, 1, 'mapped segment marker must be present');
+  assert.doesNotMatch(styles, /\.primary-aquarium__exit\s*\{\s*display:\s*none/);
+});
+
+test('Years 3–4 renders the complete growth story from typed outcomes and an authentic group photo', () => {
+  assert.equal(existsSync(growthUrl), true, 'GrowthSection must exist');
+  assert.equal(existsSync(growthCurriculumUrl), true, 'GrowthCurriculum must exist');
+
+  const story = readFileSync(referenceStoryUrl, 'utf8');
+  const growth = readFileSync(growthUrl, 'utf8');
+  const curriculum = readFileSync(growthCurriculumUrl, 'utf8');
+  const data = readFileSync(referenceStoryDataUrl, 'utf8');
+  const source = `${growth}\n${curriculum}\n${data}`;
+
+  assert.match(story, /import GrowthSection from '\.\/GrowthSection'/);
+  assert.match(story, /import GrowthCurriculum from '\.\/GrowthCurriculum'/);
+  assert.match(growth, /growthOutcomes\.map/);
+  assert.match(growth, /stagePhotos\.growth/);
+  assert.match(growth, /<figure/);
+  assert.match(growth, /loading="lazy"/);
+  assert.match(growth, /decoding="async"/);
+  assert.match(curriculum, /curriculumBands\.growth/);
+  assert.match(curriculum, /curriculum\.items\.map/);
+  [
+    'Growing skills. Building independence.',
+    'Independence and responsibility',
+    'Stronger thinking and problem solving',
+    'Collaborative learning',
+    'NAPLAN readiness',
+    'Reading to learn through comprehension and inference',
+    'Narrative and informative writing with language conventions',
+    'NAPLAN-aligned numeracy, data and multi-step problem solving',
+    '/images/community/tutor_mentor_girls.jpg',
+    '/primary-reference/decor/growth-crayon-set.png',
+  ].forEach((copy) => assert.ok(source.includes(copy), `growth story must include ${copy}`));
+  assert.doesNotMatch(source, /Card/);
+});
+
+test('Years 5–6 remains complete at every breakpoint with four outcomes, curriculum and classroom photography', () => {
+  assert.equal(existsSync(masteryUrl), true, 'MasterySection must exist');
+  assert.equal(existsSync(masteryCurriculumUrl), true, 'MasteryCurriculum must exist');
+
+  const story = readFileSync(referenceStoryUrl, 'utf8');
+  const mastery = readFileSync(masteryUrl, 'utf8');
+  const curriculum = readFileSync(masteryCurriculumUrl, 'utf8');
+  const data = readFileSync(referenceStoryDataUrl, 'utf8');
+  const styles = readFileSync(primaryReferenceCssUrl, 'utf8');
+  const source = `${mastery}\n${curriculum}\n${data}`;
+
+  assert.match(story, /import MasterySection from '\.\/MasterySection'/);
+  assert.match(story, /import MasteryCurriculum from '\.\/MasteryCurriculum'/);
+  assert.match(mastery, /masteryOutcomes\.map/);
+  assert.match(mastery, /stagePhotos\.mastery/);
+  assert.match(mastery, /<figure/);
+  assert.match(mastery, /loading="lazy"/);
+  assert.match(mastery, /decoding="async"/);
+  assert.match(curriculum, /curriculumBands\.mastery/);
+  assert.match(curriculum, /curriculum\.items\.map/);
+  [
+    'Ready for what comes next.',
+    'Advanced literacy & comprehension',
+    'Mathematical reasoning & problem solving',
+    'Independent study & organisation',
+    'High school readiness',
+    'Persuasive and narrative writing at a high level',
+    'Selective-school reasoning, speed and accuracy',
+    'Independent study habits, organisation and Year 7 preparation',
+    '/images/community/0X1A7290.jpeg',
+    '/primary-reference/decor/mastery-crayon-set.png',
+  ].forEach((copy) => assert.ok(source.includes(copy), `mastery story must include ${copy}`));
+  assert.doesNotMatch(styles, /\.primary-reference-mastery[^,{]*\{[^}]*display:\s*none/s);
+  assert.doesNotMatch(source, /Card/);
+});
+
+test('aquarium initialization is single-flight and cancellation-safe across asynchronous setup', () => {
+  const engine = readFileSync(aquariumEngineUrl, 'utf8');
+
+  assert.match(engine, /let initializing = false/);
+  assert.match(engine, /initializing \|\| dispose/);
+  assert.match(engine, /initializing = true/);
+  assert.ok((engine.match(/if \(cancelled\)/g) ?? []).length >= 3, 'cancellation must be checked after substantial awaits');
+  assert.match(engine, /catch \(error\)/);
+  assert.match(engine, /destroyAquariumApp/);
+});
+
+test('aquarium resize keeps cover layers, fish sprites, and hit targets aligned', () => {
+  const engine = readFileSync(aquariumEngineUrl, 'utf8');
+
+  assert.match(engine, /ResizeObserver/);
+  assert.match(engine, /resizeFishMotion/);
+  assert.match(engine, /coverSprite/);
+  assert.match(engine, /updateFishButton/);
+});
+
+test('reduced-motion displacement reset uses the supported Pixi filter scale fields', () => {
+  const engine = readFileSync(aquariumEngineUrl, 'utf8');
+
+  assert.match(engine, /displacement\.scale\.x = 0/);
+  assert.match(engine, /displacement\.scale\.y = 0/);
+  assert.doesNotMatch(engine, /displacement\.scale\.set\(/);
+});
+
+test('aquarium fallbacks load below-fold and stop compositor work after Pixi takes over', () => {
+  const aquarium = readFileSync(aquariumUrl, 'utf8');
+  const styles = readFileSync(primaryReferenceCssUrl, 'utf8');
+
+  assert.ok((aquarium.match(/loading="lazy"/g) ?? []).length >= 6);
+  assert.ok((aquarium.match(/decoding="async"/g) ?? []).length >= 6);
+  assert.match(styles, /\.primary-aquarium\.is-pixi-ready \.primary-aquarium__bubbles[\s\S]*animation:\s*none/);
+  assert.match(styles, /\.primary-aquarium\.is-pixi-ready \.primary-aquarium__sprite[\s\S]*animation:\s*none/);
+  assert.match(styles, /visibility:\s*hidden/);
+});
+
+test('reduced-motion fact transitions are immediate on entrance and exit', () => {
+  const source = readFileSync(aquariumFactCardUrl, 'utf8');
+
+  assert.match(source, /exit=\{reducedMotion \? \{ opacity: 0 \}/);
+  assert.match(source, /transition=\{\{ duration: reducedMotion \? 0/);
+  assert.doesNotMatch(source, /exit=\{\{ opacity: 0, y: 8 \}\}/);
+});
+
+test('program bag exposes three native pressed-state controls around a stationary branded bag', () => {
+  assert.equal(existsSync(programBagUrl), true, 'ProgramBag must exist');
+
+  const story = readFileSync(referenceStoryUrl, 'utf8');
+  const programBag = readFileSync(programBagUrl, 'utf8');
+  const data = readFileSync(referenceStoryDataUrl, 'utf8');
+  const styles = readFileSync(primaryReferenceCssUrl, 'utf8');
+  const programData = data.slice(
+    data.indexOf('export const programChoices'),
+    data.indexOf('export const familyReasons'),
+  );
+
+  assert.match(story, /import ProgramBag from '\.\/ProgramBag'/);
+  assert.match(story, /<ProgramBag/);
+  assert.match(programBag, /programChoices\.map/);
+  assert.match(programBag, /<button/);
+  assert.match(programBag, /aria-pressed=\{isSelected\}/);
+  assert.match(programBag, /role="group"/);
+  assert.match(programBag, /src="\/images\/da-logo\.png"/);
+  assert.match(programBag, /primaryAssetManifest\.schoolbag/);
+  assert.equal((programData.match(/id: '(?:small-group|private-tuition|creative-writing)'/g) ?? []).length, 3);
+  assert.doesNotMatch(programBag, /\/primary-reference\/programs\/[^'"}]*logo/i);
+  assert.match(styles, /translate3d\(0,\s*-14px,\s*0\)/);
+  assert.match(styles, /\.primary-program-bag__control:focus-visible/);
+  assert.match(styles, /min-(?:width|height):\s*44px/);
+});
+
+test('program helper uses the five need prompts and icon atlas without duplicating programs', () => {
+  const programBag = readFileSync(programBagUrl, 'utf8');
+  const data = readFileSync(referenceStoryDataUrl, 'utf8');
+  const styles = readFileSync(primaryReferenceCssUrl, 'utf8');
+  const source = `${programBag}\n${data}`;
+
+  [
+    'More individual support',
+    'Learns well with others',
+    'Loves stories & imagination',
+    'Needs stronger foundations',
+    'Help with something specific',
+  ].forEach((prompt) => assert.ok(source.includes(prompt), `program helper must include ${prompt}`));
+
+  assert.match(programBag, /programNeeds\.map/);
+  assert.match(programBag, /primary-program-bag__need-icon/);
+  assert.match(styles, /program-helper-icons\.png/);
+  assert.match(styles, /background-size:\s*500% auto/);
+  assert.doesNotMatch(programBag, /programNumbers/);
+  assert.doesNotMatch(programBag, /data-selected=/);
+});
+
+test('family reasons form a four-column unboxed editorial strip with the reviewed icon artwork', () => {
+  assert.equal(existsSync(familyReasonsUrl), true, 'FamilyReasons must exist');
+
+  const story = readFileSync(referenceStoryUrl, 'utf8');
+  const familyReasons = readFileSync(familyReasonsUrl, 'utf8');
+  const data = readFileSync(referenceStoryDataUrl, 'utf8');
+  const styles = readFileSync(primaryReferenceCssUrl, 'utf8');
+  const familyData = data.slice(data.indexOf('export const familyReasons'));
+
+  assert.match(story, /import FamilyReasons from '\.\/FamilyReasons'/);
+  assert.match(story, /<FamilyReasons/);
+  assert.match(familyReasons, /familyReasons\.map/);
+  assert.match(familyReasons, /referenceStoryAssets\.familyIcons/);
+  assert.match(familyReasons, /backgroundPosition/);
+  assert.match(familyReasons, /\['4%', '38%', '67%', '100%'\] as const/);
+  assert.match(familyReasons, /primary-family-reasons__icon/);
+  assert.match(familyReasons, /<ol/);
+  assert.equal((familyData.match(/title: '/g) ?? []).length, 4);
+  assert.match(familyData, /title: 'Small classes',[\s\S]*body: 'More attention, better outcomes\.'/);
+  assert.match(familyData, /title: 'Loved by parents',[\s\S]*body: 'Real results, real relationships\.'/);
+  assert.match(familyData, /title: 'Experienced tutors',[\s\S]*body: 'Qualified, passionate and caring\.'/);
+  assert.match(familyData, /title: 'Proven progress',[\s\S]*body: 'Confidence today, success tomorrow\.'/);
+  assert.match(styles, /\.primary-family-reasons__list\s*\{[\s\S]*grid-template-columns:\s*repeat\(4,/);
+  assert.doesNotMatch(familyReasons, /Card/);
+});
+
+test('family reasons use compact desktop geometry and one complete atlas slice per reason', () => {
+  const styles = readFileSync(primaryReferenceCssUrl, 'utf8');
+  const familyStyles = styles.slice(
+    styles.indexOf('.primary-family-reasons {'),
+    styles.indexOf('.primary-journey-outro {'),
+  );
+
+  assert.match(familyStyles, /--family-strip-padding-block:\s*clamp\(1\.25rem,\s*2vw,\s*1\.75rem\)/);
+  assert.match(familyStyles, /--family-icon-size:\s*clamp\(3\.5rem,\s*4\.5vw,\s*4\.25rem\)/);
+  assert.match(familyStyles, /padding:\s*var\(--family-strip-padding-block\) 0/);
+  assert.match(familyStyles, /\.primary-family-reasons__icon\s*\{[\s\S]*background-size:\s*400% auto/);
+  assert.doesNotMatch(familyStyles, /\.primary-family-reasons__icons/);
+  assert.doesNotMatch(familyStyles, /padding:\s*clamp\(3\.5rem/);
+});
+
+test('closing landscape carries semantic CTA copy and both expected journey links', () => {
+  assert.equal(existsSync(outroUrl), true, 'PrimaryJourneyOutro must exist');
+  const story = readFileSync(referenceStoryUrl, 'utf8');
+  const outro = readFileSync(outroUrl, 'utf8');
+
+  assert.match(story, /import PrimaryJourneyOutro from '\.\/PrimaryJourneyOutro'/);
+  assert.match(outro, /referenceStoryAssets\.closingLandscape/);
+  assert.match(outro, /A clear path\. Every step matters\./);
+  assert.match(outro, /We’re here beside your child at every stage\./);
+  assert.match(outro, /to="\/book-interview"/);
+  assert.match(outro, /href="#pathway"/);
+  assert.match(outro, /See How It Works/);
+  assert.match(outro, /<h2/);
+});
+
+test('reference motion stays root-scoped, clears reduced-motion transforms, and fully cleans up', () => {
+  assert.equal(existsSync(referenceMotionUrl), true, 'usePrimaryReferenceMotion must exist');
+  const story = readFileSync(referenceStoryUrl, 'utf8');
+  const motion = readFileSync(referenceMotionUrl, 'utf8');
+  const styles = readFileSync(primaryReferenceCssUrl, 'utf8');
+
+  assert.match(story, /useRef<HTMLElement>/);
+  assert.match(story, /usePrimaryReferenceMotion\(rootRef\)/);
+  assert.match(story, /<main ref=\{rootRef\}/);
+  assert.match(motion, /usePrimaryReferenceMotion\s*=\s*\(rootRef:\s*RefObject<HTMLElement>\)/);
+  assert.match(motion, /gsap\.registerPlugin\(ScrollTrigger\)/);
+  assert.match(motion, /const context = gsap\.context/);
+  assert.match(motion, /gsap\.matchMedia\(\)/);
+  assert.match(motion, /root\.querySelector<HTMLElement>\('#pathway'\)/);
+  assert.match(motion, /trigger:\s*pathway/);
+  assert.doesNotMatch(motion, /trigger:\s*['"]#/);
+  assert.match(motion, /prefers-reduced-motion:\s*reduce/);
+  assert.match(motion, /prefers-reduced-motion:\s*no-preference/);
+  assert.match(motion, /clearProps:\s*'transform,opacity,visibility,clipPath'/);
+  assert.match(motion, /'\.primary-reference-teaching li'/);
+  assert.doesNotMatch(motion, /'\.primary-reference-teaching li figure'/);
+  assert.match(motion, /\.primary-reference-teaching__segment/);
+  assert.match(motion, /teachingSegments/);
+  assert.match(motion, /teachingMoments\.forEach/);
+  assert.ok((motion.match(/immediateRender:\s*false/g) ?? []).length >= 2, 'static connectors must stay visible before their timelines begin');
+  assert.match(motion, /\.primary-program-bag__control/);
+  assert.match(motion, /media\.revert\(\)/);
+  assert.match(motion, /context\.revert\(\)/);
+  assert.doesNotMatch(styles, /@keyframes primary-reference-teaching-settle/);
+  assert.doesNotMatch(styles, /animation:\s*primary-reference-teaching-settle/);
+  assert.match(styles, /\.primary-reference-teaching li:nth-child\(1\) figure\s*\{\s*transform:\s*rotate\(-1\.4deg\)/);
+});

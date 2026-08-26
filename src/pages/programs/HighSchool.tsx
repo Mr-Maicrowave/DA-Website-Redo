@@ -5,6 +5,7 @@ import NavigationNew from '@/components/NavigationNew';
 import { Button } from '@/components/ui/button';
 import SubjectHero from '@/components/subjects/SubjectHero';
 import HighSchoolCinematicScene from '@/components/programs/HighSchoolCinematicScene';
+import HighSchoolProfessionalJourney from '@/components/programs/high-school-professional/HighSchoolProfessionalJourney';
 import { highSchoolJourneyAssets } from '@/data/highSchoolJourneyAssets';
 import { highSchoolJourneyStages } from '@/data/highSchoolJourneyScenes';
 import { AnimatePresence, motion, useMotionValueEvent, useReducedMotion, useScroll, useTransform } from 'framer-motion';
@@ -912,10 +913,7 @@ const HighSchool = () => {
       <div id="highschool-page-content">
         <main>
           <HighSchoolCinematicScene />
-          <TeacherBeside />
-          <Curriculum />
-          <HowWeTeach />
-          <PerfectIf />
+          <HighSchoolProfessionalJourney />
         </main>
 
         <footer className="flex flex-wrap items-center justify-between gap-3.5 border-t border-white/10 bg-[#0A1B34] px-5 py-7 lg:px-8">

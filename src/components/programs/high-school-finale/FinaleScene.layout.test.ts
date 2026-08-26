@@ -16,6 +16,18 @@ test("year decoration is grouped behind a dedicated foreground copy layer", () =
 
 test("the shared year background is enlarged and shifted left in CSS", () => {
   assert.match(styles, /\.hs-journey \.hs-finale__year-decoration\s*\{[^}]*left:-5%/s);
-  assert.match(styles, /\.hs-journey \.hs-finale__year-decoration\s*\{[^}]*right:-5%/s);
+assert.match(styles, /\.hs-journey \.hs-finale__year-decoration\s*\{[^}]*right:-5%/s);
   assert.match(styles, /\.hs-journey \.hs-finale__content-wash\s*\{[^}]*object-position:center/s);
+});
+
+test("the shared foreground copy is moved toward the vertical center", () => {
+  assert.match(
+    styles,
+    /\.hs-journey \.hs-finale__year-copy-content\s*\{[^}]*padding-top:clamp\(4rem,10vh,11rem\)/s,
+  );
+});
+
+test('exposes stable Year 8 transition measurement hooks', () => {
+  assert.match(component, /data-method-transition-source=\{year\.year===8\?"year-8":undefined\}/);
+  assert.match(component, /data-method-transition-magnifier=\{year\.year===8\?true:undefined\}/);
 });

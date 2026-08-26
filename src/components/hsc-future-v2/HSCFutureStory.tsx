@@ -10,7 +10,7 @@ import './hsc-future-story.css';
 
 gsap.registerPlugin(ScrollTrigger, MotionPathPlugin);
 
-const assetRoot = '/images/hsc-future-v2';
+const assetRoot = '/images/hsc-storyboard-v3';
 
 const futures = [
   { name: 'Medicine', Icon: HeartPulse, x: 18, y: 27, path: 'M500 480 C395 385 300 255 180 230' },
@@ -20,16 +20,6 @@ const futures = [
   { name: 'Engineering', Icon: Settings, x: 78, y: 26, path: 'M500 480 C610 365 690 250 780 220' },
   { name: 'Science', Icon: FlaskConical, x: 86, y: 44, path: 'M500 480 C650 425 750 385 860 390' },
   { name: 'Design', Icon: Pencil, x: 80, y: 63, path: 'M500 480 C635 490 720 550 800 565' },
-] as const;
-
-const opportunities = [
-  ['University', 'opportunity-university.webp'],
-  ['City', 'opportunity-city.webp'],
-  ['Laboratory', 'opportunity-laboratory.webp'],
-  ['Library', 'opportunity-library.webp'],
-  ['Engineering studio', 'opportunity-engineering.webp'],
-  ['Design studio', 'opportunity-design.webp'],
-  ['An undiscovered future', 'opportunity-undiscovered.webp'],
 ] as const;
 
 const support = [
@@ -62,21 +52,17 @@ export default function HSCFutureStory() {
         const perspectivePaths = q<SVGPathElement>('.hfs-perspective-path');
         const supportNodes = q<HTMLElement>('.hfs-support-node');
         const roadmapNodes = q<HTMLElement>('.hfs-roadmap-node');
-        const frames = q<HTMLElement>('.hfs-opportunity');
 
         gsap.set(['.hfs-copy-student', '.hfs-copy-parent', '.hfs-copy-horizon', '.hfs-copy-opportunity', '.hfs-copy-support', '.hfs-copy-roadmap'], { autoAlpha: 0 });
         gsap.set('.hfs-year11', { autoAlpha: 0, y: 20 });
         gsap.set('.hfs-ben', { autoAlpha: 0, y: 54, scale: .97 });
         gsap.set('.hfs-watercolor', { autoAlpha: 0, scale: .76 });
-        gsap.set(['.hfs-horizon', '.hfs-roadmap-bg'], { autoAlpha: 0 });
+        gsap.set(['.hfs-horizon', '.hfs-roadmap-bg', '.hfs-door-camera', '.hfs-clear-plan', '.hfs-gold-line'], { autoAlpha: 0 });
+        gsap.set('.hfs-wipe', { xPercent: -125 });
         gsap.set(branches, { strokeDasharray: 1, strokeDashoffset: 1 });
         gsap.set(perspectivePaths, { strokeDasharray: 1, strokeDashoffset: 1, autoAlpha: 0 });
         gsap.set('.hfs-future-label', { autoAlpha: 0, y: 8 });
         gsap.set('.hfs-light-dot', { autoAlpha: 0 });
-        gsap.set(frames, { autoAlpha: 0 });
-        gsap.set(q<HTMLElement>('.hfs-opportunity-edge'), { scaleY: 0, transformOrigin: 'bottom center' });
-        gsap.set(q<HTMLElement>('.hfs-opportunity-top'), { scaleX: 0, transformOrigin: 'left center' });
-        gsap.set(q<HTMLElement>('.hfs-opportunity-image'), { autoAlpha: 0, scale: 1.04 });
         gsap.set('.hfs-support-line', { scaleX: 0, transformOrigin: 'left center' });
         gsap.set([...supportNodes, ...roadmapNodes], { autoAlpha: 0, y: 18, scale: .9 });
         gsap.set('.hfs-roadmap-line', { scaleX: 0, transformOrigin: 'left center' });
@@ -123,46 +109,49 @@ export default function HSCFutureStory() {
           .to('.hfs-copy-parent', { autoAlpha: 1, duration: .5 }, 'parent+=.22')
           .fromTo('.hfs-copy-parent > *', { x: -30, autoAlpha: 0 }, { x: 0, autoAlpha: 1, stagger: .17, duration: .55 }, 'parent+=.22')
 
-          .addLabel('horizon', 5.85)
-          .to('.hfs-copy-parent', { y: -55, autoAlpha: 0, duration: .75 }, 'horizon')
+          .addLabel('wipe', 5.72)
+          .to('.hfs-copy-parent', { y: -55, autoAlpha: 0, duration: .5 }, 'wipe')
+          .to('.hfs-future-label', { autoAlpha: 0, duration: .35 }, 'wipe')
+          .to(branches, { opacity: 0, duration: .45 }, 'wipe')
+          .to('.hfs-wipe', { xPercent: 125, duration: 1.15 }, 'wipe')
+          .to('.hfs-watercolor', { autoAlpha: 0, duration: .15 }, 'wipe+=.55')
+
+          .addLabel('horizon', 6.35)
           .to('.hfs-ben', { xPercent: 0, scale: .82, yPercent: 20, duration: 1.2 }, 'horizon')
           .to('.hfs-ben-front', { autoAlpha: 0, duration: .55 }, 'horizon+=.12')
           .to('.hfs-ben-rear', { autoAlpha: 1, duration: .55 }, 'horizon+=.12')
           .to('.hfs-horizon', { autoAlpha: 1, duration: 1.05 }, 'horizon')
-          .to('.hfs-watercolor', { scaleX: 1.28, opacity: .34, duration: 1.1 }, 'horizon')
-          .to(branches, { opacity: 0, duration: .7 }, 'horizon+=.15')
-          .to('.hfs-future-label', { autoAlpha: 0, duration: .55 }, 'horizon+=.15')
           .to(perspectivePaths, { autoAlpha: 1, strokeDashoffset: 0, duration: 1.15, stagger: .04 }, 'horizon+=.15')
           .to('.hfs-copy-horizon', { autoAlpha: 1, duration: .55 }, 'horizon+=.4')
 
-          .addLabel('opportunities', 7.25)
+          .addLabel('opportunities', 7.75)
           .to('.hfs-copy-horizon', { y: -45, autoAlpha: 0, duration: .65 }, 'opportunities')
-          .to(frames, { autoAlpha: 1, duration: .15, stagger: .08 }, 'opportunities')
-          .to('.hfs-opportunity-edge', { scaleY: 1, duration: .42, stagger: .045 }, 'opportunities+=.12')
-          .to('.hfs-opportunity-top', { scaleX: 1, duration: .32, stagger: .08 }, 'opportunities+=.34')
-          .to('.hfs-opportunity-image', { autoAlpha: .94, scale: 1, duration: .5, stagger: .09 }, 'opportunities+=.48')
+          .to('.hfs-door-camera', { autoAlpha: 1, duration: .8 }, 'opportunities')
           .to('.hfs-copy-opportunity', { autoAlpha: 1, duration: .6 }, 'opportunities+=.5')
           .to('.hfs-light-dot-3', { autoAlpha: 1, motionPath: { path: '#hfs-perspective-4', align: '#hfs-perspective-4', alignOrigin: [.5, .5] }, duration: .8 }, 'opportunities+=.55')
           .to('.hfs-light-dot-3', { autoAlpha: 0, duration: .2 }, 'opportunities+=1.25')
 
-          .addLabel('converge', 8.85)
-          .to('.hfs-copy-opportunity', { autoAlpha: 0, duration: .45 }, 'converge')
-          .to('.hfs-opportunity-image', { autoAlpha: 0, duration: .35, stagger: { each: .05, from: 'edges' } }, 'converge')
-          .to('.hfs-opportunity-top', { scaleX: 0, duration: .28, stagger: { each: .04, from: 'edges' } }, 'converge+=.18')
-          .to('.hfs-opportunity-edge', { scaleY: 0, duration: .35, stagger: { each: .035, from: 'edges' } }, 'converge+=.22')
-          .to(frames, { autoAlpha: 0, duration: .15 }, 'converge+=.55')
-          .to(perspectivePaths, { strokeDashoffset: 1, opacity: 0, duration: .85, stagger: { each: .08, from: 'edges' } }, 'converge+=.25')
-          .to('.hfs-horizon', { autoAlpha: 0, duration: .8 }, 'converge+=.45')
-          .to('.hfs-ben-rear', { autoAlpha: 0, duration: .4 }, 'converge+=.5')
-          .to('.hfs-ben-front', { autoAlpha: 1, duration: .4 }, 'converge+=.5')
-          .to('.hfs-ben', { xPercent: -72, yPercent: 28, scale: .58, duration: 1 }, 'converge+=.4')
+          .addLabel('doorZoom', 9.25)
+          .to('.hfs-copy-opportunity', { autoAlpha: 0, y: -45, duration: .4 }, 'doorZoom')
+          .to('.hfs-door-camera', { scale: 3.7, xPercent: -1.5, yPercent: 8, duration: 1.35, ease: 'power2.inOut' }, 'doorZoom')
+          .to('.hfs-door-glow', { autoAlpha: 1, scale: 1.45, duration: 1.1 }, 'doorZoom+=.25')
+          .to('.hfs-ben', { yPercent: 48, scale: .58, autoAlpha: 0, duration: .9 }, 'doorZoom+=.2')
 
-          .addLabel('support', 10.15)
+          .addLabel('clearPlan', 10.55)
+          .to('.hfs-door-camera', { autoAlpha: 0, duration: .35 }, 'clearPlan')
+          .to('.hfs-door-glow', { scale: 5, backgroundColor: '#fffaf0', duration: .7 }, 'clearPlan')
+          .to(perspectivePaths, { strokeDashoffset: 1, opacity: 0, duration: .55 }, 'clearPlan')
+          .to('.hfs-horizon', { autoAlpha: 0, duration: .5 }, 'clearPlan')
+          .to('.hfs-gold-line', { autoAlpha: 1, duration: .45 }, 'clearPlan+=.3')
+          .to('.hfs-clear-plan', { autoAlpha: 1, duration: .45 }, 'clearPlan+=.38')
+
+          .addLabel('support', 11.55)
+          .to('.hfs-clear-plan', { y: -45, autoAlpha: 0, duration: .45 }, 'support')
           .to('.hfs-copy-support', { autoAlpha: 1, duration: .5 }, 'support')
           .to('.hfs-support-line', { scaleX: 1, duration: 1.4 }, 'support+=.1')
           .to(supportNodes, { autoAlpha: 1, y: 0, scale: 1, duration: .38, stagger: .3 }, 'support+=.22')
 
-          .addLabel('roadmap', 11.75)
+          .addLabel('roadmap', 13.15)
           .to('.hfs-copy-support', { autoAlpha: 0, y: -35, duration: .5 }, 'roadmap')
           .to('.hfs-support', { autoAlpha: 0, duration: .55 }, 'roadmap')
           .to('.hfs-ben', { autoAlpha: 0, xPercent: -95, duration: .55 }, 'roadmap')
@@ -181,9 +170,13 @@ export default function HSCFutureStory() {
   return (
     <section ref={rootRef} className="hfs-story" aria-labelledby="hfs-title">
       <div ref={stageRef} className="hfs-stage">
-        <img className="hfs-watercolor" src={`${assetRoot}/watercolor-atmosphere.webp`} alt="" aria-hidden="true" />
-        <img className="hfs-horizon" src={`${assetRoot}/future-horizon.webp`} alt="" aria-hidden="true" />
-        <img className="hfs-roadmap-bg" src={`${assetRoot}/roadmap-horizon.webp`} alt="" aria-hidden="true" />
+        <img className="hfs-watercolor" src={`${assetRoot}/watercolor-bloom.png`} alt="" aria-hidden="true" />
+        <img className="hfs-horizon" src={`${assetRoot}/future-horizon.png`} alt="" aria-hidden="true" />
+        <img className="hfs-roadmap-bg" src={`${assetRoot}/hsc-roadmap-horizon.png`} alt="" aria-hidden="true" />
+        <img className="hfs-gold-line" src={`${assetRoot}/gold-journey-line.png`} alt="" aria-hidden="true" />
+        <div className="hfs-wipe" aria-hidden="true" />
+        <div className="hfs-door-camera" aria-hidden="true"><img src={`${assetRoot}/opportunity-portals.png`} alt="" /></div>
+        <div className="hfs-door-glow" aria-hidden="true" />
 
         <svg className="hfs-journey-network" viewBox="0 0 1000 900" preserveAspectRatio="none" aria-hidden="true">
           <defs>
@@ -228,8 +221,8 @@ export default function HSCFutureStory() {
           <h2>What matters is having<br/>the foundation to reach them.</h2>
         </div>
 
-        <div className="hfs-opportunities">{opportunities.map(([label, image]) => <figure className="hfs-opportunity" key={label}><span className="hfs-opportunity-edge hfs-opportunity-left"/><span className="hfs-opportunity-edge hfs-opportunity-right"/><span className="hfs-opportunity-top"/><img className="hfs-opportunity-image" src={`${assetRoot}/${image}`} alt={label} /></figure>)}</div>
         <div className="hfs-copy-opportunity"><h2>Our job isn’t to<br/><em>choose the dream</em><br/>for them.</h2><h2>It’s to help keep<br/>their <em>possibilities</em><br/>open.</h2></div>
+        <div className="hfs-clear-plan"><p className="hfs-kicker">Through the door</p><h2>One clear plan.</h2></div>
 
         <div className="hfs-support">
           <div className="hfs-support-line" aria-hidden="true"/>

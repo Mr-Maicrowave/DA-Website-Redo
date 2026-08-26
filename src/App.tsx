@@ -65,7 +65,6 @@ const AnimatedRoutes = () => {
           path="/book-intro-calibration"
           element={import.meta.env.DEV ? <BookIntroCalibration /> : <Navigate to="/" replace />}
         />
-
         <Route path="/interview" element={<Navigate to="/principal-reflections" replace />} />
         <Route path="/book-interview" element={<PageTransition><BookInterview /></PageTransition>} />
         <Route path="/reviews" element={<Navigate to="/success-stories" replace />} />

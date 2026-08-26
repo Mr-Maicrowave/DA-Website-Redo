@@ -1,0 +1,232 @@
+.primary-landscape-journey {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 185svh;
+  background: #72bceb;
+}
+
+.primary-landscape-journey__viewport {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  height: 100svh;
+  overflow: hidden;
+  background: #72bceb;
+  isolation: isolate;
+}
+
+.primary-landscape-journey__image,
+.primary-landscape-journey__overlay {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.primary-landscape-journey__image {
+  z-index: 1;
+  object-fit: cover;
+  object-position: 100% 0%;
+  transform-origin: 72% 55%;
+  will-change: transform;
+}
+
+.primary-landscape-journey__overlay {
+  z-index: 3;
+  pointer-events: none;
+}
+
+.primary-landscape-journey__path-shadow,
+.primary-landscape-journey__path-progress {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.primary-landscape-journey__path-shadow {
+  stroke: rgba(83, 53, 11, 0.25);
+  stroke-width: 7;
+}
+
+.primary-landscape-journey__path-progress {
+  stroke: #f0bd45;
+  stroke-width: 4.5;
+  filter: drop-shadow(0 1px 0 rgba(255, 243, 184, 0.9));
+}
+
+.primary-landscape-journey__sparkle {
+  color: #ffe188;
+  fill: currentColor;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-width: 3;
+  filter: drop-shadow(0 0 5px rgba(255, 218, 108, 0.9));
+}
+
+.primary-landscape-journey__door-glow {
+  position: absolute;
+  z-index: 2;
+  top: 17%;
+  right: 10.1%;
+  width: clamp(5rem, 8.8vw, 9rem);
+  aspect-ratio: 0.72;
+  border-radius: 48% 48% 12% 12%;
+  background: radial-gradient(ellipse at center, rgba(255, 224, 134, 0.62), rgba(255, 202, 83, 0.15) 55%, transparent 74%);
+  box-shadow: 0 0 2rem rgba(255, 221, 125, 0.34);
+  mix-blend-mode: screen;
+  pointer-events: none;
+  transform-origin: center;
+}
+
+.primary-landscape-journey__fireflies {
+  position: absolute;
+  z-index: 4;
+  top: 12%;
+  right: 5%;
+  width: 23%;
+  height: 48%;
+  pointer-events: none;
+}
+
+.primary-landscape-journey__firefly {
+  position: absolute;
+  display: block;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #ffdf83;
+  box-shadow: 0 0 5px #ffe8a6, 0 0 11px rgba(255, 210, 90, 0.72);
+  opacity: 0.42;
+}
+
+.primary-landscape-journey__firefly:nth-child(1) { top: 24%; left: 18%; }
+.primary-landscape-journey__firefly:nth-child(2) { top: 39%; left: 65%; }
+.primary-landscape-journey__firefly:nth-child(3) { top: 67%; left: 33%; }
+.primary-landscape-journey__firefly:nth-child(4) { top: 13%; left: 79%; }
+
+.primary-landscape-journey__year-nav {
+  position: absolute;
+  z-index: 6;
+  top: 50%;
+  left: clamp(1rem, 2.5vw, 2.75rem);
+  display: grid;
+  gap: 0.65rem;
+  transform: translateY(-50%);
+}
+
+.primary-landscape-journey__year-nav a {
+  display: grid;
+  width: clamp(2.65rem, 3.4vw, 3.25rem);
+  aspect-ratio: 1;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.78);
+  border-radius: 50%;
+  background: rgba(255, 251, 238, 0.9);
+  box-shadow: 0 5px 8px rgba(10, 46, 69, 0.18);
+  color: #102f47;
+  font-size: clamp(0.62rem, 0.75vw, 0.72rem);
+  font-weight: 800;
+  text-decoration: none;
+  transition: background 180ms ease, color 180ms ease, transform 180ms ease;
+}
+
+.primary-landscape-journey__year-nav a:hover,
+.primary-landscape-journey__year-nav a:focus-visible {
+  transform: translateX(3px);
+}
+
+.primary-landscape-journey__year-nav a:focus-visible {
+  outline: 3px solid #092f4f;
+  outline-offset: 3px;
+}
+
+.primary-landscape-journey__year-nav a.is-active {
+  background: #d7a22f;
+  color: #08243c;
+}
+
+.primary-landscape-journey__cream-handoff {
+  position: absolute;
+  z-index: 5;
+  right: 0;
+  bottom: -1px;
+  left: 0;
+  height: clamp(4rem, 9vw, 7rem);
+  pointer-events: none;
+}
+
+.primary-landscape-journey__cream-handoff::before {
+  position: absolute;
+  inset: -5rem 0 0;
+  background: linear-gradient(to bottom, transparent, rgba(247, 240, 227, 0.2) 48%, rgba(247, 240, 227, 0.82) 82%, #f7f0e3 100%);
+  content: '';
+}
+
+.primary-landscape-journey__cream-handoff svg {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  fill: #f7f0e3;
+}
+
+.primary-landscape-journey__handoff-stroke {
+  fill: none;
+  stroke: #d7a22f;
+  stroke-dasharray: 9 8;
+  stroke-linecap: round;
+  stroke-width: 3;
+}
+
+@media (max-width: 820px) {
+  .primary-landscape-journey { height: 160svh; }
+  .primary-landscape-journey__image { object-position: 100% 0%; }
+  .primary-landscape-journey__door-glow { right: 7%; }
+  .primary-landscape-journey__year-nav { top: 42%; left: 0.75rem; }
+  .primary-landscape-journey__firefly:nth-child(n + 3) { display: none; }
+}
+
+@media (max-width: 540px) {
+  .primary-landscape-journey { height: 145svh; }
+  .primary-landscape-journey__viewport::before {
+    position: absolute;
+    z-index: 0;
+    inset: -1.5rem;
+    background: linear-gradient(rgba(70, 160, 215, 0.18), rgba(62, 125, 84, 0.2)), url('/primary-reference/journey-landscape.png') 100% center / cover no-repeat;
+    content: '';
+    filter: blur(18px) saturate(0.9);
+    transform: scale(1.08);
+  }
+  .primary-landscape-journey__image {
+    inset: auto;
+    top: 50%;
+    left: -50%;
+    width: 150%;
+    max-width: none;
+    height: auto;
+    aspect-ratio: 1672 / 941;
+    object-fit: contain;
+    object-position: center;
+    translate: 0 -50%;
+  }
+  .primary-landscape-journey__overlay {
+    inset: auto;
+    top: 50%;
+    left: -50%;
+    width: 150%;
+    height: auto;
+    aspect-ratio: 1672 / 941;
+    translate: 0 -50%;
+  }
+  .primary-landscape-journey__door-glow { top: 43%; right: 8%; width: 2.8rem; }
+  .primary-landscape-journey__fireflies { display: none; }
+  .primary-landscape-journey__cream-handoff { height: 4.5rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .primary-landscape-journey { height: 100svh; }
+  .primary-landscape-journey__image { transform: none !important; will-change: auto; }
+  .primary-landscape-journey__path-progress { stroke-dasharray: none !important; stroke-dashoffset: 0 !important; }
+  .primary-landscape-journey__fireflies { display: none; }
+  .primary-landscape-journey__year-nav a { transition: none; }
+}
