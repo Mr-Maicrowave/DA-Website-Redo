@@ -357,6 +357,16 @@ export function MethodTeachingDeck({ ready }: { ready: boolean }) {
       aria-labelledby="hsm-deck-heading"
       ref={deckRef}
     >
+      <p
+        className="sr-only"
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+        data-method-status
+      >
+        {expanded ? `${activeMethod.label} selected` : ''}
+      </p>
+
       <picture className="hsm-deck__atmosphere" aria-hidden="true">
         <source
           type="image/avif"

@@ -360,9 +360,8 @@ test('only exposes the detail relationship while its target is mounted', () => {
   );
 });
 
-test('provides one live editorial detail renderer', () => {
+test('provides one editorial detail renderer', () => {
   assert.match(detailSource, /WHAT WE DO/);
-  assert.match(detailSource, /aria-live="polite"/);
 });
 
 test('declares the expanded 42\/58 composition contract', () => {
@@ -613,32 +612,73 @@ test('mounted deck keeps the newest rapid selection and disposes owned motion', 
       const buttons = collections.flatMap((collection) => (
         [...collection.querySelectorAll(':scope > button.hsm-deck__card')]
       ));
+      const status = document.querySelector('[data-method-status]');
 
       return {
         collectionCount: collections.length,
         buttonCount: buttons.length,
         controlledTargets: buttons.map((button) => button.getAttribute('aria-controls')),
         detailExists: document.querySelector('#hsm-method-detail') !== null,
+        statusCount: document.querySelectorAll('[data-method-status]').length,
+        statusText: status?.textContent ?? null,
+        statusRole: status?.getAttribute('role') ?? null,
+        statusLive: status?.getAttribute('aria-live') ?? null,
+        statusAtomic: status?.getAttribute('aria-atomic') ?? null,
       };
     });
     assert.equal(initialSemantics.collectionCount, 1);
     assert.equal(initialSemantics.buttonCount, 5);
     assert.deepEqual(initialSemantics.controlledTargets, [null, null, null, null, null]);
     assert.equal(initialSemantics.detailExists, false);
+    assert.equal(initialSemantics.statusCount, 1);
+    assert.equal(initialSemantics.statusText, '');
+    assert.equal(initialSemantics.statusRole, 'status');
+    assert.equal(initialSemantics.statusLive, 'polite');
+    assert.equal(initialSemantics.statusAtomic, 'true');
 
     await page.evaluate(() => window.__methodDeckRuntime.setReducedMotion(true));
+    await page.evaluate(() => {
+      const status = document.querySelector('[data-method-status]');
+      if (!(status instanceof HTMLElement)) {
+        throw new Error('Method status region is missing');
+      }
+      window.__methodStatusElement = status;
+      window.__methodStatusUpdates = [];
+      window.__methodStatusObserver = new MutationObserver(() => {
+        const text = status.textContent ?? '';
+        if (window.__methodStatusUpdates.at(-1) !== text) {
+          window.__methodStatusUpdates.push(text);
+        }
+      });
+      window.__methodStatusObserver.observe(status, {
+        childList: true,
+        characterData: true,
+        subtree: true,
+      });
+    });
     await page.focus('.hsm-deck__card[data-method-id="diagnose"]');
     await page.keyboard.press('ArrowRight');
-    const keyboardSelection = await page.evaluate(() => ({
-      focusedId: document.activeElement instanceof HTMLButtonElement
-        ? document.activeElement.dataset.methodId ?? null
-        : null,
-      activeIds: [...document.querySelectorAll('.hsm-deck__card[aria-pressed="true"]')]
-        .map((button) => button.getAttribute('data-method-id')),
-      controlledTargets: [...document.querySelectorAll('.hsm-deck__card')]
-        .map((button) => button.getAttribute('aria-controls')),
-      detailExists: document.querySelector('#hsm-method-detail') !== null,
-    }));
+    const keyboardSelection = await page.evaluate(async () => {
+      await new Promise((resolve) => queueMicrotask(resolve));
+      const status = document.querySelector('[data-method-status]');
+      const detail = document.querySelector('#hsm-method-detail');
+      return {
+        focusedId: document.activeElement instanceof HTMLButtonElement
+          ? document.activeElement.dataset.methodId ?? null
+          : null,
+        activeIds: [...document.querySelectorAll('.hsm-deck__card[aria-pressed="true"]')]
+          .map((button) => button.getAttribute('data-method-id')),
+        controlledTargets: [...document.querySelectorAll('.hsm-deck__card')]
+          .map((button) => button.getAttribute('aria-controls')),
+        detailExists: detail !== null,
+        detailLive: detail?.getAttribute('aria-live') ?? null,
+        detailAtomic: detail?.getAttribute('aria-atomic') ?? null,
+        statusCount: document.querySelectorAll('[data-method-status]').length,
+        statusText: status?.textContent ?? null,
+        statusUpdates: [...window.__methodStatusUpdates],
+        statusStayedMounted: status === window.__methodStatusElement,
+      };
+    });
     assert.equal(keyboardSelection.focusedId, 'explain');
     assert.deepEqual(keyboardSelection.activeIds, ['explain']);
     assert.deepEqual(
@@ -646,6 +686,12 @@ test('mounted deck keeps the newest rapid selection and disposes owned motion', 
       Array.from({ length: 5 }, () => 'hsm-method-detail'),
     );
     assert.equal(keyboardSelection.detailExists, true);
+    assert.equal(keyboardSelection.detailLive, null);
+    assert.equal(keyboardSelection.detailAtomic, null);
+    assert.equal(keyboardSelection.statusCount, 1);
+    assert.equal(keyboardSelection.statusText, 'Explain selected');
+    assert.deepEqual(keyboardSelection.statusUpdates, ['Explain selected']);
+    assert.equal(keyboardSelection.statusStayedMounted, true);
 
     await page.reload({ waitUntil: 'domcontentloaded' });
     await page.waitForFunction(
@@ -818,6 +864,133 @@ test('mounted deck keeps the newest rapid selection and disposes owned motion', 
     assert.equal(state.flips[pendingFlipIndex].killed, true);
     assert.ok(state.killTweensCallCount > killTweensBeforeUnmount);
     assert.deepEqual(runtimeErrors, []);
+  } finally {
+    await browser?.close();
+    await server.close();
+  }
+});
+
+test('high-school route decodes and visibly renders every card artwork before capture', {
+  timeout: 240_000,
+}, async () => {
+  const projectRoot = fileURLToPath(new URL('../../../..', import.meta.url));
+  const server = await createServer({
+    root: projectRoot,
+    logLevel: 'silent',
+    server: { host: '127.0.0.1', port: 0, hmr: false },
+  });
+  let browser;
+
+  try {
+    await server.listen();
+    const address = server.httpServer?.address();
+    assert.ok(address && typeof address === 'object');
+    const baseUrl = `http://127.0.0.1:${address.port}`;
+    const isolatedRunner = process.env.CI || process.env.CODEX_CI;
+    browser = await puppeteer.launch({
+      headless: true,
+      args: isolatedRunner ? ['--no-sandbox', '--disable-setuid-sandbox'] : [],
+    });
+    const page = await browser.newPage();
+    await page.setViewport({ width: 1440, height: 1000, deviceScaleFactor: 1 });
+    await page.emulateMediaFeatures([
+      { name: 'prefers-reduced-motion', value: 'reduce' },
+    ]);
+    const failedArtworkRequests = [];
+    page.on('requestfailed', (request) => {
+      if (/method-card-/.test(request.url())) {
+        failedArtworkRequests.push(
+          `${request.url()}: ${request.failure()?.errorText ?? 'unknown failure'}`,
+        );
+      }
+    });
+
+    await page.goto(`${baseUrl}/programs/high-school`, {
+      timeout: 90_000,
+      waitUntil: 'domcontentloaded',
+    });
+    await page.waitForSelector('.hsm-deck__card[data-method-id="diagnose"]');
+    await page.waitForFunction(
+      () => document.querySelector('.hsm-deck')?.getAttribute('data-ready') === 'true',
+      { timeout: 30_000 },
+    );
+    const deckTop = await page.$eval(
+      '.hsm-deck',
+      (deck) => deck.getBoundingClientRect().top + scrollY,
+    );
+    await page.evaluate((top) => scrollTo(0, top + 40), deckTop);
+
+    const inspectArtworksBeforeCapture = async (expectedActiveId) => {
+      const evidence = await page.evaluate(async () => {
+        const cards = [...document.querySelectorAll('.hsm-deck__card')];
+        await Promise.all(cards.map(async (card) => {
+          const image = card.querySelector('img');
+          if (!(image instanceof HTMLImageElement)) {
+            throw new Error(`Artwork image missing for ${card.getAttribute('data-method-id')}`);
+          }
+          await image.decode();
+        }));
+        await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+
+        return cards.map((card) => {
+          const image = card.querySelector('img');
+          const cardRect = card.getBoundingClientRect();
+          const imageRect = image.getBoundingClientRect();
+          const cardStyle = getComputedStyle(card);
+          const imageStyle = getComputedStyle(image);
+          return {
+            id: card.getAttribute('data-method-id'),
+            active: card.matches('.is-active'),
+            complete: image.complete,
+            naturalWidth: image.naturalWidth,
+            currentSrc: image.currentSrc,
+            cardWidth: cardRect.width,
+            cardHeight: cardRect.height,
+            imageWidth: imageRect.width,
+            imageHeight: imageRect.height,
+            cardOpacity: cardStyle.opacity,
+            cardVisibility: cardStyle.visibility,
+            imageOpacity: imageStyle.opacity,
+            imageVisibility: imageStyle.visibility,
+          };
+        });
+      });
+
+      assert.equal(evidence.length, 5);
+      assert.deepEqual(
+        evidence.filter((artwork) => artwork.active).map((artwork) => artwork.id),
+        [expectedActiveId],
+      );
+      for (const artwork of evidence) {
+        assert.equal(artwork.complete, true, `${artwork.id} must finish loading`);
+        assert.ok(artwork.naturalWidth > 0, `${artwork.id} must decode`);
+        assert.match(artwork.currentSrc, /method-card-.+\.(?:avif|webp|png)$/);
+        assert.ok(artwork.cardWidth > 0 && artwork.cardHeight > 0, `${artwork.id} card must have visible bounds`);
+        assert.ok(artwork.imageWidth > 0 && artwork.imageHeight > 0, `${artwork.id} image must have visible bounds`);
+        assert.equal(artwork.cardOpacity, '1');
+        assert.equal(artwork.cardVisibility, 'visible');
+        assert.equal(artwork.imageOpacity, '1');
+        assert.equal(artwork.imageVisibility, 'visible');
+      }
+
+      const screenshot = await page.screenshot({ type: 'png' });
+      assert.ok(screenshot.byteLength > 0);
+    };
+
+    await inspectArtworksBeforeCapture('diagnose');
+    for (const methodId of ['diagnose', 'explain', 'practise', 'apply', 'review']) {
+      await page.$eval(
+        `.hsm-deck__card[data-method-id="${methodId}"]`,
+        (button) => button.click(),
+      );
+      await page.waitForFunction((expectedId) => (
+        document.querySelector('.hsm-deck__card[aria-pressed="true"]')
+          ?.getAttribute('data-method-id') === expectedId
+      ), {}, methodId);
+      await inspectArtworksBeforeCapture(methodId);
+    }
+
+    assert.deepEqual(failedArtworkRequests, []);
   } finally {
     await browser?.close();
     await server.close();

@@ -2,12 +2,7 @@ import type { MethodItem } from './methodTransitionData';
 
 export function MethodDetail({ method }: { method: MethodItem }) {
   return (
-    <article
-      id="hsm-method-detail"
-      className="hsm-deck__detail"
-      aria-live="polite"
-      aria-atomic="true"
-    >
+    <article id="hsm-method-detail" className="hsm-deck__detail">
       <div className="hsm-deck__method-index">
         <span>{method.number}</span>
         <i aria-hidden="true" />
