@@ -81,6 +81,10 @@ test('Years 1–2 foundations present all four outcomes without turning them int
   ].forEach((label) => assert.match(source, new RegExp(label)));
 
   assert.match(source, /stagePhotos\.foundation/);
+  assert.match(source, /\/images\/community\/primary-foundation-framed\.png/);
+  assert.match(source, /foundationLeftDecor/);
+  assert.match(source, /foundationOutcomeDecor/);
+  assert.match(source, /primary-reference-foundation__outcome-icon/);
   assert.match(source, /foundationOutcomes\.map/);
   assert.doesNotMatch(source, /Card/);
 });

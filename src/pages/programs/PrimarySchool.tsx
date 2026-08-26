@@ -7,6 +7,7 @@ import StickyBookButton from '@/components/StickyBookButton';
 import SEO from '@/components/SEO';
 import SubjectHero from '@/components/subjects/SubjectHero';
 import PrimaryReferenceStory from '@/features/primary-storybook/PrimaryReferenceStory';
+import PrimaryLandscapeJourney from '@/features/primary-storybook/PrimaryLandscapeJourney';
 
 const heroJourneyNav = [
   { number: '01', label: 'Foundation' },
@@ -397,6 +398,7 @@ const PrimarySchool = () => (
         />
       </div>
     </div>
+    <PrimaryLandscapeJourney />
     <PrimaryReferenceStory />
     <style>{`
       @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&display=swap');

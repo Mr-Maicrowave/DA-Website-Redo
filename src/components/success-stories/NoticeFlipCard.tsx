@@ -2,6 +2,7 @@ import { useRef, useState, type PointerEvent } from 'react';
 import { motion } from 'framer-motion';
 
 import './NoticeFlipCard.css';
+import { getHoverFlipState } from './noticeFlipInteraction';
 
 // Matches the refined, non-bouncy easing already used for premium motion
 // elsewhere on this page (see SuccessStories.tsx `easeOut`).
@@ -43,6 +44,11 @@ const NoticeFlipCard = ({
   const [flipped, setFlipped] = useState(false);
   const sceneRef = useRef<HTMLDivElement>(null);
   const frameRef = useRef<number>();
+  const supportsHover = () => window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+  const handlePointerEnter = () => {
+    setFlipped((current) => getHoverFlipState(supportsHover(), true, current));
+  };
 
   const handlePointerMove = (event: PointerEvent<HTMLDivElement>) => {
     if (reduceMotion) return;
@@ -67,6 +73,15 @@ const NoticeFlipCard = ({
     if (!scene) return;
     scene.style.setProperty('--notice-tilt-x', '0deg');
     scene.style.setProperty('--notice-tilt-y', '0deg');
+    setFlipped((current) => getHoverFlipState(supportsHover(), false, current));
+  };
+
+  const handleClick = () => {
+    if (supportsHover()) {
+      setFlipped(true);
+      return;
+    }
+    setFlipped((current) => !current);
   };
 
   return (
@@ -79,17 +94,20 @@ const NoticeFlipCard = ({
     >
       <div
         ref={sceneRef}
-        className="notice-card__scene"
+        className={`notice-card__scene${flipped ? ' notice-card__scene--is-flipped' : ''}`}
+        onPointerEnter={handlePointerEnter}
         onPointerMove={handlePointerMove}
         onPointerLeave={handlePointerLeave}
+        onFocusCapture={() => setFlipped(true)}
+        onBlurCapture={() => setFlipped(false)}
       >
-        <div className="notice-card__tilt">
+        <div className={`notice-card__tilt${flipped ? ' notice-card__tilt--is-flipped' : ''}`}>
           <button
             type="button"
             className={`notice-card__flip${flipped ? ' notice-card__flip--is-flipped' : ''}`}
             aria-pressed={flipped}
             aria-label={`${theme}. ${flipped ? 'Showing the parent comment. Press to flip back to the front.' : 'Press to flip and read a parent comment.'}`}
-            onClick={() => setFlipped((current) => !current)}
+            onClick={handleClick}
           >
             <span className="notice-card__face notice-card__face--front" aria-hidden={flipped}>
               <img src={frontSrc} alt={frontAlt} loading="lazy" draggable={false} />

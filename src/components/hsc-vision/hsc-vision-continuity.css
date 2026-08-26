@@ -1,0 +1,15 @@
+.hscv-year,.hscv-student{background-color:#f7f1e6;background-image:radial-gradient(circle at 58% 54%,rgba(255,250,240,.92),transparent 48%)}
+.hscv-student,.hscv-futures,.hscv-parents,.hscv-roadmap{margin-top:-1px}
+.hscv-futures,.hscv-parents{background-color:#f7f1e6;background-image:linear-gradient(rgba(247,241,230,.68),rgba(247,241,230,.68)),url('/images/hsc-vision/hsc-watercolour-atmosphere.png');background-size:cover;background-position:center}
+.hscv-parents{background-position:center 72%}
+.hscv-architecture-frame{position:absolute;inset:0;z-index:1;pointer-events:none;opacity:0;mask-image:linear-gradient(90deg,#000 0%,transparent 27%,transparent 73%,#000 100%)}
+.hscv-architecture-frame img{width:100%;height:100%;object-fit:cover;filter:saturate(.72) sepia(.12)}
+.hscv-landscape-copy{z-index:3}
+.hscv-plan{min-height:130vh;display:block;padding-top:10vh;overflow:hidden}
+.hscv-plan-card{position:sticky;top:8vh;z-index:2}
+.hscv-ink-wash{position:absolute;inset:0;z-index:3;pointer-events:none;background:radial-gradient(circle at 50% 100%,#102a49 0,#071b34 52%,#041326 100%);clip-path:polygon(0 100%,0 100%,100% 100%,100% 100%)}
+.hscv-gold-carry{position:absolute;left:50%;bottom:5vh;z-index:4;width:18px;height:18px;border-radius:50%;background:#d8b66a;box-shadow:0 0 0 8px rgba(216,182,106,.12),0 0 40px rgba(216,182,106,.7);transform:translateX(-50%)}
+.hscv-roadmap{background:#071b34}
+.hscv-roadmap-content{z-index:5}
+@media(max-width:768px){.hscv-architecture-frame{display:none}.hscv-plan{min-height:auto;padding-top:80px}.hscv-plan-card{position:relative;top:auto}.hscv-ink-wash,.hscv-gold-carry{display:none}}
+@media(prefers-reduced-motion:reduce){.hscv-architecture-frame{opacity:.2!important;clip-path:none!important}.hscv-ink-wash,.hscv-gold-carry{display:none}}

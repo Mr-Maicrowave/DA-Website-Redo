@@ -6,7 +6,8 @@ import SEO from '@/components/SEO';
 import NavigationNew from '@/components/NavigationNew';
 import FooterNew from '@/components/FooterNew';
 import SubjectHero from '@/components/subjects/SubjectHero';
-import HSCFutureStory from '@/components/hsc-future-v2/HSCFutureStory';
+import HSCJourneyFilm from '@/components/hsc-journey/HSCJourneyFilm';
+import HSCWhyYearsMatter from '@/components/hsc/HSCWhyYearsMatter';
 
 const cardTones = [
   'linear-gradient(180deg, #f7fbff, #e8f2ff)',
@@ -172,7 +173,7 @@ function AtarTurningPoint() {
     <section
       ref={ref}
       className="relative"
-      style={{ height: '280vh', background: 'radial-gradient(ellipse 90% 70% at 50% 50%, var(--soft) 0%, var(--white) 65%)' }}
+      style={{ height: '280vh', background: 'radial-gradient(ellipse 90% 70% at 50% 50%, rgba(248,243,232,.88) 0%, rgba(255,253,248,.62) 65%, rgba(248,243,232,.38) 100%)' }}
     >
       <div className="sticky top-0 flex h-screen items-center justify-center overflow-hidden px-5 sm:px-8 lg:px-[52px]">
         <div
@@ -268,6 +269,52 @@ const HSCExcellence = () => {
 
         .hsc-page *, .hsc-page *::before, .hsc-page *::after { box-sizing: border-box; }
 
+        .hsc-landscape-shell {
+          position: relative;
+          isolation: isolate;
+          background: #f8f3e8;
+        }
+        .hsc-video-only { min-height: 100svh; }
+        .hsc-video-only .hsc-landscape-background {
+          position: sticky;
+          inset: auto;
+          top: 0;
+        }
+        .hsc-video-only-footer { display: none; }
+        .hsc-landscape-background {
+          position: sticky;
+          top: 0;
+          width: 100%;
+          height: 100svh;
+          overflow: hidden;
+          pointer-events: none;
+          z-index: 0;
+        }
+        .hsc-landscape-poster,
+        .hsc-landscape-video {
+          position: absolute;
+          inset: 0;
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          object-position: center;
+        }
+        .hsc-landscape-poster {
+          background: #f8f3e8 url('/media/hsc/living-landscape-poster.jpg') center / cover no-repeat;
+        }
+        .hsc-landscape-video { z-index: 0; }
+        .hsc-landscape-overlay {
+          position: absolute;
+          inset: 0;
+          z-index: 1;
+          background: rgba(248, 243, 232, .64);
+        }
+        .hsc-landscape-content {
+          position: relative;
+          z-index: 1;
+          margin-top: -100svh;
+        }
+
         .hsc-breadcrumb { background: var(--soft); border-bottom: 1px solid var(--border); padding: 14px 52px; font-size: .82rem; color: var(--muted); }
         .hsc-breadcrumb a { color: var(--navy); text-decoration: none; font-weight: 600; }
         .hsc-breadcrumb a:hover { text-decoration: underline; }
@@ -301,14 +348,14 @@ const HSCExcellence = () => {
         .hsc-center { text-align: center; }
         .hsc-section-sub.hsc-center { margin: 0 auto 40px; }
 
-        .hsc-stakes-section { background: var(--soft); }
+        .hsc-stakes-section { background: rgba(248,243,232,.78); }
         .hsc-stakes-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(240px,1fr)); gap: 20px; max-width: 1100px; margin: 0 auto; }
         .hsc-stakes-card { border-radius: 32px; padding: 28px 24px; border: 1px solid rgba(7,22,41,0.1); box-shadow: 0 4px 18px rgba(7,22,41,.05); transition: all .22s; }
         .hsc-stakes-card:hover { transform: translateY(-4px); box-shadow: 0 10px 28px rgba(7,22,41,.1); border-color: rgba(7,22,41,0.16); }
         .hsc-stakes-card h3 { font-family: var(--font-serif); font-size: 1rem; font-weight: 700; color: var(--navy); margin: 0 0 10px; }
         .hsc-stakes-card p { font-size: .9rem; color: var(--muted); line-height: 1.7; margin: 0; }
 
-        .hsc-focus-section { background: var(--white); }
+        .hsc-focus-section { background: rgba(255,253,248,.93); }
         .hsc-focus-wrap { max-width: 960px; margin: 0 auto; overflow-x: auto; border-radius: 20px; box-shadow: 0 4px 20px rgba(7,22,41,.07); border: 1.5px solid var(--border); }
         .hsc-focus-table { width: 100%; border-collapse: collapse; }
         .hsc-focus-table thead th { background: var(--navy); color: #fff; padding: 15px 22px; font-size: .85rem; font-weight: 800; text-align: left; letter-spacing: .3px; }
@@ -320,7 +367,7 @@ const HSCExcellence = () => {
         .hsc-focus-table td { padding: 15px 22px; font-size: .9rem; color: var(--text); }
         .hsc-focus-table td:first-child { font-weight: 800; color: var(--gold-dark); min-width: 200px; }
 
-        .hsc-approach-section { background: var(--soft); }
+        .hsc-approach-section { background: rgba(248,243,232,.88); }
         .hsc-approach-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(240px,1fr)); gap: 20px; max-width: 1100px; margin: 0 auto; }
         .hsc-approach-card { border-radius: 32px; padding: 28px 24px; border: 1px solid rgba(7,22,41,0.1); box-shadow: 0 4px 18px rgba(7,22,41,.05); transition: all .22s; }
         .hsc-approach-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(7,22,41,.1); border-color: rgba(7,22,41,0.16); }
@@ -328,7 +375,7 @@ const HSCExcellence = () => {
         .hsc-approach-card h3 { font-family: var(--font-serif); font-size: 1rem; font-weight: 700; color: var(--navy); margin: 0 0 9px; }
         .hsc-approach-card p { font-size: .9rem; color: var(--muted); line-height: 1.7; margin: 0; }
 
-        .hsc-testi-section { background: var(--white); text-align: center; }
+        .hsc-testi-section { background: rgba(255,253,248,.84); text-align: center; }
         .hsc-testi-card { max-width: 660px; margin: 0 auto; background: var(--white); border: 1.5px solid var(--border); border-top: 4px solid var(--gold-light); border-radius: 24px; padding: 44px 40px; box-shadow: 0 6px 28px rgba(7,22,41,.07); }
         .hsc-testi-stars { color: var(--gold-light); font-size: 1.3rem; letter-spacing: 4px; margin-bottom: 20px; }
         .hsc-testi-quote-icon { font-size: 3rem; line-height: 1; color: var(--gold-mid); margin-bottom: 8px; }
@@ -339,7 +386,7 @@ const HSCExcellence = () => {
         .hsc-testi-name { font-size: .9rem; font-weight: 800; color: var(--navy); text-align: left; }
         .hsc-testi-role { font-size: .79rem; color: var(--muted); text-align: left; }
 
-        .hsc-fit-section { background: var(--amber); border-top: 2px solid var(--amber-mid); border-bottom: 2px solid var(--amber-mid); }
+        .hsc-fit-section { background: rgba(255,246,231,.93); border-top: 2px solid var(--amber-mid); border-bottom: 2px solid var(--amber-mid); }
         .hsc-fit-inner { max-width: 820px; margin: 0 auto; }
         .hsc-fit-list { list-style: none; display: grid; grid-template-columns: repeat(auto-fit,minmax(320px,1fr)); gap: 12px; margin: 0 0 36px; padding: 0; }
         .hsc-fit-list li { display: flex; align-items: flex-start; gap: 12px; font-size: .95rem; color: var(--text); line-height: 1.6; }
@@ -372,6 +419,7 @@ const HSCExcellence = () => {
         .hsc-photo-pair-item img { width: 100%; height: 100%; object-fit: cover; object-position: center; }
 
         @media (max-width: 768px) {
+          .hsc-landscape-overlay { background: rgba(248,243,232,.70); }
           .hsc-hero, .hsc-section, .hsc-cta-section { padding-left: 20px; padding-right: 20px; }
           .hsc-breadcrumb, .hsc-urgency-banner { padding-left: 20px; padding-right: 20px; }
           .hsc-sibling-tabs { justify-content: flex-start; }
@@ -381,6 +429,10 @@ const HSCExcellence = () => {
           .hsc-footer { padding: 20px; flex-direction: column; align-items: flex-start; }
           .hsc-photo-banner, .hsc-photo-pair { padding-left: 20px; padding-right: 20px; }
           .hsc-photo-pair { grid-template-columns: 1fr; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .hsc-landscape-video { display: none; }
         }
       `}</style>
 
@@ -399,9 +451,27 @@ const HSCExcellence = () => {
         backgroundImageAlt="HSC Mathematics tutor working through a calculus problem with a Year 12 student"
       />
 
-      <div id="hsc-excellence-page-content">
-      <main>
-        <HSCFutureStory />
+      <div id="hsc-excellence-page-content" className="hsc-landscape-shell hsc-video-only">
+        <div className="hsc-landscape-background" aria-hidden="true">
+          <div className="hsc-landscape-poster" />
+          <video
+            className="hsc-landscape-video"
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="metadata"
+            poster="/media/hsc/living-landscape-poster.jpg"
+            tabIndex={-1}
+          >
+            <source src="/media/hsc/living-landscape.mp4" type="video/mp4" />
+          </video>
+        </div>
+      <main className="hsc-landscape-content">
+        <HSCWhyYearsMatter />
+      </main>
+      <main className="hsc-landscape-content" hidden>
+        <HSCJourneyFilm />
 
         <section className="hsc-section hsc-stakes-section" id="programs">
           <div className="hsc-center">
@@ -507,8 +577,9 @@ const HSCExcellence = () => {
           <p className="hsc-cta-note">No entrance exam &nbsp;&middot;&nbsp; Honest placement advice &nbsp;&middot;&nbsp; Limited spots each term</p>
         </div>
       </main>
-
-      <FooterNew />
+      </div>
+      <div className="hsc-video-only-footer" hidden>
+        <FooterNew />
       </div>
     </div>
   );

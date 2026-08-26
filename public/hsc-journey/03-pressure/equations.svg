@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 520" fill="none">
+  <g stroke="#17365f" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity=".72">
+    <path d="M70 365c95-210 192-210 292 0M70 365h350M116 145h178m-138-45v92M510 132l58-58 58 58m-116 0 58 58 58-58M760 92h300M760 170h215"/>
+    <path d="M725 400h360M780 410V248m0 0 88 98 75-130 116 194"/>
+    <circle cx="568" cy="132" r="92"/>
+    <circle cx="780" cy="248" r="7" fill="#17365f"/>
+    <circle cx="868" cy="346" r="7" fill="#17365f"/>
+    <circle cx="943" cy="216" r="7" fill="#17365f"/>
+  </g>
+  <g fill="#17365f" opacity=".76" font-family="Georgia, serif" font-style="italic">
+    <text x="55" y="64" font-size="43">x² + y² = r²</text>
+    <text x="380" y="290" font-size="48">f(x) = ax² + bx + c</text>
+    <text x="765" y="70" font-size="42">Δ = b² − 4ac</text>
+    <text x="930" y="475" font-size="38">∑ n = n(n+1) / 2</text>
+  </g>
+  <g fill="#c58b24" opacity=".65"><circle cx="344" cy="85" r="5"/><circle cx="675" cy="340" r="4"/><circle cx="1110" cy="155" r="5"/></g>
+</svg>

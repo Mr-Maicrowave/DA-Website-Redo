@@ -8,7 +8,7 @@ const FoundationSection = () => (
     data-primary-reference-section="foundation"
   >
     <div className="primary-reference-foundation__doodles" aria-hidden="true">
-      <img src={referenceStoryAssets.foundationDecor} alt="" />
+      <img src={referenceStoryAssets.foundationLeftDecor} alt="" />
     </div>
 
     <div className="primary-reference-foundation__intro">
@@ -16,7 +16,11 @@ const FoundationSection = () => (
         <span>01</span>
         <p>Years 1–2</p>
       </div>
-      <h2 id="foundation-title">Strong foundations shape everything that follows.</h2>
+      <h2 id="foundation-title" aria-label="Strong foundations shape everything that follows.">
+        <span aria-hidden="true">Strong <em>foundations</em></span>
+        <span aria-hidden="true">shape everything</span>
+        <span aria-hidden="true">that follows.</span>
+      </h2>
       <p className="primary-reference-foundation__lead">
         We build core skills, spark curiosity and nurture confidence—creating the strongest start for your child’s future.
       </p>
@@ -32,8 +36,13 @@ const FoundationSection = () => (
     <ol className="primary-reference-foundation__outcomes" aria-label="Years 1–2 learning outcomes">
       {foundationOutcomes.map((outcome) => (
         <li key={outcome.number}>
-          <span aria-hidden="true">{outcome.number}</span>
+          <span
+            className={`primary-reference-foundation__outcome-icon primary-reference-foundation__outcome-icon--${outcome.number}`}
+            style={{ backgroundImage: `url(${referenceStoryAssets.foundationOutcomeDecor})` }}
+            aria-hidden="true"
+          />
           <div>
+            <b aria-hidden="true">{outcome.number}</b>
             <h3>{outcome.title}</h3>
             <p>{outcome.body}</p>
           </div>

@@ -10,10 +10,6 @@ const styles = readFileSync(
   new URL('./MethodTransition.css', import.meta.url),
   'utf8',
 );
-const dataSource = readFileSync(
-  new URL('./methodTransitionData.ts', import.meta.url),
-  'utf8',
-);
 const mobileStyles = styles.slice(
   styles.indexOf('@media (max-width: 639px)'),
   styles.indexOf('@media (prefers-reduced-motion: reduce)'),
@@ -21,31 +17,38 @@ const mobileStyles = styles.slice(
 
 test('uses one reversible pinned master timeline', () => {
   assert.equal((source.match(/gsap\.timeline\(/g) ?? []).length, 1);
-  assert.match(source, /scrub:\s*0\.8/);
+  assert.match(source, /scrub:\s*true/);
   assert.match(source, /invalidateOnRefresh:\s*true/);
   assert.match(source, /--method-transition-scroll/);
 });
 
-test('renders five accessible symbol buttons and a reduced-motion branch', () => {
-  assert.match(source, /methodItems\.map/);
-  assert.match(source, /aria-label=\{method\.label\}/);
-  assert.match(source, /role="toolbar"/);
+test('renders one decorative green card and a reduced-motion branch', () => {
+  assert.match(source, /cardRef/);
+  assert.match(source, /className="hsm-transition__card"/);
+  assert.match(source, /aria-hidden="true"/);
   assert.match(source, /prefers-reduced-motion/);
   assert.doesNotMatch(source, /<h[1-6]/);
+  assert.doesNotMatch(source, /methodItems\.map/);
+  assert.doesNotMatch(source, /role="toolbar"/);
+  assert.match(
+    styles,
+    /@media \(prefers-reduced-motion: reduce\)[\s\S]*\.hsm-transition__center-bloom[\s\S]*display:\s*none/,
+  );
 });
 
-test('fixes the selector contract at five labelled methods', () => {
-  assert.equal((dataSource.match(/\blabel:\s*'/g) ?? []).length, 5);
-  for (const label of ['Diagnose', 'Explain', 'Practise', 'Apply', 'Review']) {
-    assert.match(dataSource, new RegExp(`label: '${label}'`));
-  }
+test('keeps the cards decorative with no controls or text', () => {
+  assert.doesNotMatch(source, /<button/);
+  assert.doesNotMatch(source, /<p|<h[1-6]|<span/);
+  assert.equal((source.match(/className="hsm-transition__card"/g) ?? []).length, 1);
+  assert.match(source, /className="hsm-transition__card-row"/);
+  assert.match(source, /methodItems\.slice\(1\)\.map/);
 });
 
-test('measures source and destination for a proxy handoff', () => {
+test('measures source and green-card destination for the shared proxy', () => {
   assert.match(source, /data-method-transition-magnifier/);
   assert.match(source, /getBoundingClientRect/);
   assert.match(source, /proxyRef/);
-  assert.match(source, /diagnoseRef/);
+  assert.match(source, /cardRef/);
 });
 
 test('normalizes the transformed finale before measuring the source', () => {
@@ -66,39 +69,65 @@ test('prepares a viewport-continuous source handoff', () => {
   assert.match(source, /sourceYear\.style\.transform\s*=\s*'none'/);
   assert.match(
     source,
-    /const handoffTravel\s*=\s*section\.offsetHeight\s*\*\s*0\.15/,
+    /const handoffTravel\s*=\s*section\.offsetHeight\s*\*\s*SOURCE_HANDOFF_START/,
   );
   assert.match(source, /sourceRect\.top\s*-\s*stickyRect\.top\s*-\s*handoffTravel/);
 });
 
-test('projects sticky-stage destinations into viewport coordinates', () => {
+test('projects the card landing destination into viewport coordinates', () => {
   assert.match(source, /const stageRect\s*=\s*stage\.getBoundingClientRect\(\)/);
   assert.match(source, /centerRect\.top\s*-\s*stageRect\.top/);
-  assert.match(source, /finalDiagnoseRect\.top\s*-\s*stageRect\.top/);
+  assert.match(source, /cardRect\.top\s*-\s*stageRect\.top/);
 });
 
-test('keeps the transition stage sticky and the desktop peak within bounds', () => {
+test('keeps the transition stage sticky and reaches a viewport-dominant early peak', () => {
   assert.match(styles, /\.hsm-transition\s*\{[^}]*overflow:\s*visible/s);
   assert.match(
     styles,
     /\.hs-professional:has\(> \.hsm-transition\)\s*\{[^}]*overflow:\s*visible/s,
   );
-  assert.match(source, /conditions\.desktop\s*\?\s*216\s*:/);
+  assert.match(source, /getViewportZoomTargets\(stageRect\.width, stageRect\.height\)/);
+  assert.match(source, /zoomTargets\.fast/);
+  assert.doesNotMatch(source, /zoomTargets\.portal/);
 });
 
-test('retains 300vh on mobile and gates hidden controls from interaction', () => {
-  assert.match(styles, /--method-transition-scroll:\s*300vh/);
-  assert.match(styles, /min-height:\s*300svh/);
-  assert.doesNotMatch(styles, /--method-transition-scroll:\s*260vh/);
-  assert.doesNotMatch(styles, /min-height:\s*260svh/);
-  assert.match(source, /toggleAttribute\('inert',\s*!methodsAvailable\)/);
-  assert.match(source, /disabled=\{!methodsAvailable\}/);
-  assert.match(source, /methodsAvailable\s*&&\s*active\s*===\s*index\s*\?\s*0\s*:\s*-1/);
-  assert.match(source, /progress\s*>=\s*0\.94/);
+test('uses a shorter 230vh runway without hidden interactive controls', () => {
+  assert.match(styles, /--method-transition-scroll:\s*230vh/);
+  assert.match(styles, /min-height:\s*230svh/);
+  assert.doesNotMatch(source, /methodsAvailable/);
 });
 
-test('fits all five mobile methods in one unclipped row', () => {
-  assert.match(mobileStyles, /grid-template-columns:\s*repeat\(5,\s*minmax\(0,\s*1fr\)\)/);
-  assert.match(mobileStyles, /overflow-x:\s*visible/);
+test('coordinates a downward glass with an upward card inside one master timeline', () => {
+  assert.match(source, /yPercent:\s*115/);
+  assert.match(source, /METHOD_TRANSITION_TIMING\.cardRiseStart/);
+  assert.match(source, /METHOD_TRANSITION_TIMING\.insertionStart/);
+  assert.match(source, /METHOD_TRANSITION_TIMING\.reactionEnd/);
+  assert.match(source, /scale:\s*0\.985/);
+});
+
+test('moves the completed card down to join the four companion cards', () => {
+  assert.match(source, /joinedCard/);
+  assert.match(source, /joinedGlass/);
+  assert.match(source, /METHOD_TRANSITION_TIMING\.joinStart/);
+  assert.match(source, /METHOD_TRANSITION_TIMING\.joinEnd/);
+  assert.match(source, /METHOD_TRANSITION_TIMING\.companionsEnd/);
+  assert.match(source, /companionRefs/);
+});
+
+test('hands the larger magnifier to a static image inside the settled green card', () => {
+  assert.match(source, /staticGlassRef/);
+  assert.match(source, /className="hsm-transition__static-glass"/);
+  assert.match(source, /slotRect\.width\s*\*\s*0\.72/);
+  assert.match(source, /gsap\.set\(staticGlass,\s*\{\s*opacity:\s*0/);
+  assert.match(source, /METHOD_TRANSITION_TIMING\.joinEnd[\s\S]*opacity:\s*0/);
+  assert.match(source, /staticGlass[\s\S]*opacity:\s*1/);
+  assert.match(styles, /\.hsm-transition__static-glass\s*\{[^}]*width:\s*72%/s);
+});
+
+test('keeps the single card centered and within mobile viewports', () => {
+  assert.match(styles, /width:\s*clamp\(280px,\s*24vw,\s*380px\)/);
+  assert.match(styles, /aspect-ratio:\s*2\s*\/\s*3/);
+  assert.match(styles, /method-card-diagnose-forest-v1\.png/);
+  assert.match(mobileStyles, /width:\s*min\(76vw,\s*310px\)/);
   assert.doesNotMatch(mobileStyles, /overflow-x:\s*auto/);
 });

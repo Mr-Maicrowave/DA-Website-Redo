@@ -49,6 +49,8 @@ type StagePhoto = {
 
 export const referenceStoryAssets = {
   foundationDecor: primaryAssetManifest.foundations,
+  foundationLeftDecor: '/primary-reference/decor/foundation-left-crayon-atlas.png',
+  foundationOutcomeDecor: '/primary-reference/decor/foundation-outcome-crayon-atlas.png',
   curriculumHouse: primaryAssetManifest.curriculumHouse,
   teachingPath: '/primary-reference/decor/how-we-teach-path-set.png',
   growthDecor: '/primary-reference/decor/growth-crayon-set.png',
@@ -225,8 +227,8 @@ export const familyReasons = [
 
 export const stagePhotos = {
   foundation: {
-    src: '/images/community/tutor_one_on_one.jpg',
-    alt: 'A DA Tuition tutor supporting a young primary student with her work',
+    src: '/images/community/primary-foundation-framed.png',
+    alt: 'A DA Tuition tutor guiding a smiling primary student through his worksheet',
   },
   growth: {
     src: '/images/community/tutor_mentor_girls.jpg',

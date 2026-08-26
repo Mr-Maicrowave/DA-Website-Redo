@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f8f2e8" />
+    <title>The Final Ascent — HSC Journey Prototype</title>
+    <link rel="preload" href="assets/hsc-world.webp" as="image" />
+    <link rel="preload" href="assets/desk-foreground.webp" as="image" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main>
+      <section class="final-ascent" aria-label="The final ascent through Years 11 and 12">
+        <div class="sticky-stage">
+          <div class="progress" aria-hidden="true"><span></span></div>
+
+          <div class="camera-window" aria-hidden="true">
+            <div class="camera">
+              <div class="camera-drift">
+                <div class="world">
+                  <div class="layer background">
+                    <img src="assets/map-background.webp" alt="" />
+                  </div>
+
+                  <div class="layer midground">
+                    <img class="world-map" src="assets/hsc-world.webp" alt="" />
+                    <img class="map-wash" src="assets/map-midground.webp" alt="" />
+                  </div>
+
+                  <svg class="route-network" viewBox="0 0 1000 620" role="presentation">
+                    <path class="route route-private" data-route="private" d="M132 500 C218 462 210 374 316 357 C420 340 436 280 536 250 C652 214 712 178 854 122" />
+                    <path class="route route-classes" data-route="classes" d="M132 500 C246 478 292 430 354 392 C466 326 530 365 616 286 C690 220 758 204 854 122" />
+                    <path class="route route-hsc" data-route="hsc-prep" d="M132 500 C220 530 306 528 390 468 C476 408 584 430 664 338 C736 254 790 202 854 122" />
+                    <path class="route route-trial" data-route="trial-prep" d="M132 500 C242 558 366 574 474 522 C590 466 680 470 744 358 C796 266 818 202 854 122" />
+                    <circle class="route-origin" cx="132" cy="500" r="8" />
+                    <circle class="destination" cx="854" cy="122" r="10" />
+                  </svg>
+
+                  <div class="map-marker marker-private" data-marker="private">
+                    <img src="assets/private-marker.svg" alt="" />
+                  </div>
+                  <div class="map-marker marker-classes" data-marker="classes">
+                    <img src="assets/classes-marker.svg" alt="" />
+                  </div>
+                  <div class="map-marker marker-hsc" data-marker="hsc-prep">
+                    <img src="assets/hsc-prep-marker.svg" alt="" />
+                  </div>
+                  <div class="map-marker marker-trial" data-marker="trial-prep">
+                    <img src="assets/trial-prep-marker.svg" alt="" />
+                  </div>
+
+                  <div class="destination-flag">
+                    <span>HSC</span>
+                    <i></i>
+                  </div>
+
+                  <div class="layer foreground">
+                    <img class="desk-scene" src="assets/desk-foreground.webp" alt="" />
+                    <img class="map-foreground" src="assets/map-foreground.webp" alt="" />
+                    <img class="compass" src="assets/compass.webp" alt="" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="editorial-copy" aria-live="polite">
+            <article class="message message-intro" data-message="intro">
+              <p class="kicker">Year 11–12</p>
+              <h1>The final ascent.</h1>
+              <p class="handwritten">Different paths.<br />The same support.</p>
+              <p class="supporting">The destination is theirs.<br />Our job is to help them find the way there.</p>
+            </article>
+
+            <article class="message message-routes" data-message="routes">
+              <p class="kicker">The route reveal</p>
+              <h2>No two students<br />need the same route.</h2>
+              <p>Different students. Different needs.<br />Different ways of learning.</p>
+              <p class="closing-line">So we build the support around them.</p>
+            </article>
+
+            <article class="message offering offering-private" data-message="private">
+              <p class="kicker">Private tuition</p>
+              <h2>Individual attention.<br />Personalised pace.<br />Targeted support.</h2>
+              <p>For students who need the space to work at their own pace.</p>
+            </article>
+
+            <article class="message offering offering-classes" data-message="classes">
+              <p class="kicker">Classes</p>
+              <h2>Weekly structure.<br />Shared learning.<br />Consistent progress.</h2>
+              <p>For students who learn well through discussion, routine and momentum.</p>
+            </article>
+
+            <article class="message offering offering-hsc" data-message="hsc-prep">
+              <p class="kicker">HSC preparation</p>
+              <h2>Exam technique.<br />Past papers.<br />Response structure.</h2>
+              <p>For students ready to turn subject knowledge into HSC performance.</p>
+            </article>
+
+            <article class="message offering offering-trial" data-message="trial-prep">
+              <p class="kicker">Trial preparation</p>
+              <h2>Intensive revision.<br />Timed practice.<br />Targeted gaps.</h2>
+              <p>For the critical stretch before Trials.</p>
+            </article>
+
+            <article class="message message-final" data-message="final">
+              <p class="kicker">The right route</p>
+              <h2>Different paths.<br />Different destinations.<br /><em>The right support for theirs.</em></h2>
+              <p class="question">What does your child need right now?</p>
+              <p>There is no single right way to prepare for the HSC.</p>
+            </article>
+          </div>
+
+          <div class="scroll-cue" aria-hidden="true">
+            <span>Scroll to explore</span><i></i>
+          </div>
+        </div>
+      </section>
+
+      <section class="reduced-journey" aria-label="The final ascent overview">
+        <article>
+          <img src="assets/desk-foreground.webp" alt="A Year 11 study desk" />
+          <div><span>Year 11–12</span><h1>The final ascent.</h1><p>Different paths. The same support.</p></div>
+        </article>
+        <article>
+          <img src="assets/hsc-world.webp" alt="An illustrated academic landscape with many paths" />
+          <div><span>The route reveal</span><h2>No two students need the same route.</h2><p>Different students. Different needs. Different ways of learning.</p></div>
+        </article>
+        <article class="reduced-options">
+          <h2>So we build the support around them.</h2>
+          <div><h3>Private tuition</h3><p>Individual attention. Personalised pace. Targeted support.</p></div>
+          <div><h3>Classes</h3><p>Weekly structure. Shared learning. Consistent progress.</p></div>
+          <div><h3>HSC preparation</h3><p>Exam technique. Past papers. Response structure.</p></div>
+          <div><h3>Trial preparation</h3><p>Intensive revision. Timed practice. Targeted gaps.</p></div>
+        </article>
+        <article>
+          <img src="assets/map-background.webp" alt="A broad landscape beyond the HSC" />
+          <div><span>The right route</span><h2>Different paths. Different destinations.</h2><p>The right support for theirs.</p></div>
+        </article>
+      </section>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/ScrollTrigger.min.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>

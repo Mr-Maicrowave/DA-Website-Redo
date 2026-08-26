@@ -39,6 +39,10 @@
   left:-5%;
   right:-5%;
 }
+.hs-journey .hs-finale__year-copy-content{
+  box-sizing:border-box;
+  padding-top:clamp(4rem,10vh,11rem);
+}
 .hs-journey .hs-finale__content-wash{
   object-fit:contain;
   object-position:center;
@@ -52,4 +56,5 @@
   .hs-journey .hs-finale--exploring .hs-finale__content-stage{left:18px;right:18px;width:auto;overflow-x:clip}
   .hs-journey .hs-finale__content-intro h3{font-size:clamp(2.8rem,14vw,4.4rem)}
   .hs-journey .hs-finale__year-decoration{top:12%;bottom:-8%;left:-5%;right:-5%}
+  .hs-journey .hs-finale__year-copy-content{padding-top:1rem}
 }

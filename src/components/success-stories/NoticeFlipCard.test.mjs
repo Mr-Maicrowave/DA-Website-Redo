@@ -140,3 +140,11 @@ test('uses the requested premium testimonial spacing rhythm', () => {
   assert.match(css, /\.notice-card--3 \.notice-card__back-body\s*\{[^}]*right:\s*36%/s);
   assert.match(css, /\.notice-card--2 \.notice-card__back-attribution span\s*\{[^}]*max-width:\s*18ch/s);
 });
+
+test('gives the flipped card an angled pose with raised testimonial layers', () => {
+  assert.match(component, /notice-card__tilt--is-flipped/);
+  assert.match(css, /\.notice-card__tilt--is-flipped\s*\{[^}]*rotateX\([^}]*rotateY\([^}]*translateY\(/s);
+  assert.match(css, /\.notice-card__back-heading\s*\{[^}]*translateZ\(-\d+px\)/s);
+  assert.match(css, /\.notice-card__back-quote-mark\s*\{[^}]*translateZ\(-\d+px\)/s);
+  assert.match(css, /\.notice-card__back-body\s*\{[^}]*translateZ\(-\d+px\)/s);
+});

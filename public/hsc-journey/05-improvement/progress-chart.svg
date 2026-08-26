@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 560" fill="none">
+  <rect x="18" y="18" width="764" height="524" rx="18" fill="#fffaf0" stroke="#d6c3a1" stroke-width="3"/>
+  <g stroke="#9bafaa" stroke-width="2" opacity=".42"><path d="M110 110v350h590M110 390h590M110 320h590M110 250h590M110 180h590"/></g>
+  <path d="M115 414l92-49 91 24 93-118 92 43 94-122 105-57" stroke="#244c68" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+  <g fill="#c68a24"><circle cx="115" cy="414" r="10"/><circle cx="207" cy="365" r="10"/><circle cx="298" cy="389" r="10"/><circle cx="391" cy="271" r="10"/><circle cx="483" cy="314" r="10"/><circle cx="577" cy="192" r="10"/><circle cx="682" cy="135" r="10"/></g>
+  <g fill="#17365f" font-family="Arial, sans-serif" font-weight="700"><text x="64" y="82" font-size="34">PROGRESS</text><text x="102" y="500" font-size="24">W1</text><text x="285" y="500" font-size="24">W3</text><text x="470" y="500" font-size="24">W5</text><text x="655" y="500" font-size="24">W9</text></g>
+</svg>

@@ -1,0 +1,459 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DA Tuition — Tutor Orbit Prototype</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cabin:wght@400;500;600;700&family=Cormorant+Garamond:wght@500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --navy: #06111f;
+      --navy-soft: #0b1b30;
+      --cream: #f7f4ee;
+      --cream-deep: #e9e2d4;
+      --ink: #0a1b34;
+      --gold: #d9b866;
+      --white: #fafaf8;
+      --sans: "Cabin", system-ui, sans-serif;
+      --serif: "Cormorant Garamond", Georgia, serif;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-width: 320px; background: var(--cream); color: var(--ink); }
+    body { font-family: var(--sans); overflow-x: clip; }
+    button { font: inherit; }
+
+    .spacer {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 3rem 1.5rem;
+      background:
+        radial-gradient(circle at 50% 42%, rgba(217,184,102,.14), transparent 32%),
+        var(--cream);
+      text-align: center;
+    }
+    .spacer-inner { max-width: 42rem; }
+    .spacer-mark {
+      width: 2.2rem; height: 1px; margin: 0 auto 1.75rem;
+      background: var(--gold);
+    }
+    .spacer h1, .spacer h2 {
+      margin: 0;
+      font-family: var(--serif);
+      font-weight: 600;
+      font-size: clamp(2.4rem, 5vw, 4.8rem);
+      line-height: .98;
+      letter-spacing: -.025em;
+      text-wrap: balance;
+    }
+    .spacer p { margin: 1.35rem auto 0; color: rgba(10,27,52,.66); font-size: .94rem; letter-spacing: .08em; }
+    .scroll-cue { display: inline-flex; gap: .65rem; align-items: center; }
+    .scroll-cue span { animation: cue 1.8s ease-in-out infinite; }
+
+    .orbit-section { position: relative; background: var(--navy); }
+    .experience {
+      position: relative;
+      width: 100%; height: 100vh; min-height: 640px;
+      overflow: hidden;
+      isolation: isolate;
+      color: var(--white);
+      background:
+        radial-gradient(circle at 67% 50%, rgba(68,106,157,.14), transparent 34%),
+        radial-gradient(circle at 62% 45%, rgba(217,184,102,.035), transparent 16%),
+        var(--navy);
+    }
+    .experience::before {
+      content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 8;
+      background: linear-gradient(90deg, rgba(6,17,31,.22), transparent 44%, rgba(6,17,31,.04));
+    }
+
+    .copy {
+      position: absolute; z-index: 20; left: clamp(2rem, 6vw, 7rem); top: 50%;
+      width: min(32vw, 31rem); transform: translateY(-50%);
+    }
+    .copy-piece { opacity: 0; transform: translateY(24px); clip-path: inset(0 0 100% 0); }
+    .eyebrow { margin: 0 0 1.25rem; color: var(--gold); font-size: .72rem; font-weight: 700; letter-spacing: .19em; }
+    .copy h2 { margin: 0; font-family: var(--serif); font-size: clamp(3.35rem, 5vw, 5.8rem); font-weight: 500; line-height: .88; letter-spacing: -.035em; text-wrap: balance; }
+    .copy h2 span { display: block; color: #dce6f2; }
+    .copy-body { max-width: 29rem; margin: 1.75rem 0 0; color: rgba(240,244,249,.72); font-size: clamp(.98rem, 1.15vw, 1.12rem); line-height: 1.65; text-wrap: pretty; }
+    .instruction { position: absolute; left: clamp(2rem, 6vw, 7rem); bottom: 2.5rem; z-index: 20; color: rgba(233,241,250,.52); font-size: .68rem; font-weight: 600; letter-spacing: .16em; }
+
+    .orbit-stage {
+      position: absolute; z-index: 10; left: 66%; top: 50%;
+      width: min(70vw, 1040px); aspect-ratio: 10 / 7;
+      transform: translate(-50%, -50%) scale(1.1);
+      transform-origin: center;
+    }
+    .orbit-svg, .node-layer { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+    .orbit-line, .orbit-pulse { fill: none; vector-effect: non-scaling-stroke; }
+    .orbit-line { stroke-width: .85px; stroke-dasharray: 100; stroke-dashoffset: 100; transition: opacity .35s ease, stroke-width .35s ease; }
+    .orbit-pulse { stroke-width: 1.25px; stroke-linecap: round; stroke-dasharray: 3 20 1 29 5 42; opacity: 0; filter: url(#pulseGlow); transition: opacity .35s ease; }
+    .orbit-group.is-active .orbit-line { opacity: .48 !important; stroke-width: 1.05px; }
+    .orbit-group.is-active .orbit-pulse { opacity: .92 !important; }
+    .particle { opacity: 0; transform-box: fill-box; transform-origin: center; }
+
+    .core-wrap { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 12; }
+    .core {
+      width: clamp(110px, 9vw, 132px); aspect-ratio: 1; border-radius: 50%;
+      display: grid; place-items: center; cursor: pointer; color: #f4dfaa;
+      border: 1px solid rgba(217,184,102,.66); background: radial-gradient(circle at 44% 38%, #112844, #071321 67%);
+      box-shadow: 0 0 0 7px rgba(217,184,102,.025), 0 0 42px rgba(217,184,102,.14), inset 1px 1px 0 rgba(255,245,211,.22);
+      font-family: var(--serif); font-size: 3.35rem; font-weight: 600; letter-spacing: -.06em;
+      opacity: 0; transform: scale(.8); filter: blur(10px);
+      transition: box-shadow .4s ease;
+    }
+    .core:hover, .core:focus-visible { outline: none; box-shadow: 0 0 0 8px rgba(217,184,102,.05), 0 0 60px rgba(217,184,102,.24), inset 1px 1px 0 rgba(255,245,211,.28); }
+    .core-note {
+      position: absolute; left: 50%; top: calc(100% + 17px); width: max-content; max-width: 220px;
+      transform: translate(-50%, 5px); opacity: 0; pointer-events: none;
+      color: rgba(245,232,197,.8); font-size: .68rem; letter-spacing: .08em; transition: .35s ease;
+    }
+    .core-wrap.is-active .core-note { opacity: 1; transform: translate(-50%, 0); }
+
+    .tutor-node {
+      --size: 70px; --mag-x: 0px; --mag-y: 0px; --mag-scale: 1;
+      position: absolute; left: 0; top: 0; width: var(--size); height: var(--size);
+      z-index: 16; border: 0; border-radius: 50%; padding: 0; color: #eef4fb; cursor: pointer;
+      opacity: 0; background: transparent; transform: translate(-50%, -50%);
+      will-change: transform, opacity;
+    }
+    .tutor-node::before {
+      content: ""; position: absolute; inset: -8px; border-radius: inherit;
+      background: radial-gradient(circle, var(--halo) 0%, transparent 66%); opacity: .42; transition: opacity .35s ease;
+    }
+    .portrait {
+      position: absolute; inset: 0; display: grid; place-items: center; overflow: hidden; border-radius: inherit;
+      border: 1px solid var(--rim); background: radial-gradient(circle at 38% 30%, #203957, #0b192a 74%);
+      box-shadow: inset 0 0 16px rgba(255,255,255,.025), 0 3px 8px rgba(0,0,0,.25);
+      transform: translate(var(--mag-x), var(--mag-y)) scale(var(--mag-scale)); transition: transform .35s cubic-bezier(.22,1,.36,1), filter .35s ease;
+      font-family: var(--serif); font-size: calc(var(--size) * .31); font-weight: 600; letter-spacing: .02em;
+    }
+    .portrait img { width: 100%; height: 100%; object-fit: cover; }
+    .tutor-node:hover .portrait, .tutor-node:focus-visible .portrait, .tutor-node.is-active .portrait { transform: translate(var(--mag-x), var(--mag-y)) scale(1.16); filter: brightness(1.12); }
+    .tutor-node:hover::before, .tutor-node:focus-visible::before, .tutor-node.is-active::before { opacity: .82; }
+    .tutor-node:focus-visible { outline: 2px solid rgba(245,225,170,.85); outline-offset: 5px; }
+    .node-layer.has-active .tutor-node:not(.is-active) { opacity: .45 !important; }
+
+    .profile-panel {
+      position: absolute; z-index: 30; right: clamp(1.5rem, 3vw, 3.5rem); bottom: clamp(2rem, 7vh, 5.5rem);
+      width: min(290px, calc(100vw - 3rem)); padding: 1.25rem 1.35rem 1.2rem;
+      border: 1px solid rgba(196,215,239,.16); border-radius: 4px;
+      background: rgba(7,20,35,.88); backdrop-filter: blur(7px); pointer-events: none;
+      opacity: 0; transform: translateX(15px) scale(.97); transition: opacity .3s ease, transform .4s cubic-bezier(.22,1,.36,1);
+    }
+    .profile-panel.is-visible { opacity: 1; transform: translateX(0) scale(1); }
+    .profile-role { margin: 0 0 .5rem; color: var(--gold); font-size: .66rem; font-weight: 700; letter-spacing: .13em; text-transform: uppercase; }
+    .profile-panel h3 { margin: 0; font-family: var(--serif); font-weight: 600; font-size: 1.8rem; }
+    .profile-panel p { margin: .65rem 0 1rem; color: rgba(239,244,250,.68); font-size: .88rem; line-height: 1.5; }
+    .profile-link { color: #f1dda9; font-size: .78rem; font-weight: 600; letter-spacing: .04em; }
+
+    .debug-box, .debug-label, .debug-centre, .debug-progress { display: none; }
+    .debug-box { position: absolute; inset: 0; border: 1px dashed #ff4fd8; pointer-events: none; }
+    .debug-label { fill: #ff70df; font: 14px var(--sans); }
+    .debug-centre { fill: #ff4fd8; }
+    .debug-progress { position: absolute; z-index: 99; top: 1rem; right: 1rem; color: #ff70df; font: 12px monospace; }
+    .debug .debug-box, .debug .debug-progress { display: block; }
+    .debug .debug-label, .debug .debug-centre { display: initial; }
+    .debug .orbit-line { opacity: .65 !important; stroke-width: 1.2px; }
+
+    @keyframes cue { 0%,100% { transform: translateY(0); } 50% { transform: translateY(5px); } }
+
+    @media (max-width: 1100px) {
+      .copy { left: 2.5rem; width: 35vw; }
+      .instruction { left: 2.5rem; }
+      .orbit-stage { left: 69%; width: min(76vw, 900px); }
+      .tutor-node[data-index="10"], .tutor-node[data-index="11"] { display: none; }
+      .particle:nth-of-type(n+16) { display: none; }
+    }
+
+    @media (max-width: 767px) {
+      .experience { min-height: 680px; }
+      .copy { top: 9vh; left: 1.5rem; right: 1.5rem; width: auto; transform: none; text-align: center; }
+      .copy h2 { font-size: clamp(2.55rem, 12vw, 3.65rem); line-height: .91; }
+      .eyebrow { margin-bottom: .7rem; }
+      .copy-body { margin: 1rem auto 0; max-width: 29rem; font-size: .92rem; line-height: 1.5; }
+      .orbit-stage { left: 50%; top: 62%; width: min(140vw, 680px); }
+      .orbit-group[data-orbit="4"], .orbit-group[data-orbit="5"] { display: none; }
+      .tutor-node[data-index="6"], .tutor-node[data-index="7"], .tutor-node[data-index="8"], .tutor-node[data-index="9"], .tutor-node[data-index="10"], .tutor-node[data-index="11"] { display: none; }
+      .tutor-node { width: 56px; height: 56px; }
+      .tutor-node[data-index="0"], .tutor-node[data-index="2"] { width: 66px; height: 66px; }
+      .particle:nth-of-type(n+10) { display: none; }
+      .instruction { display: none; }
+      .profile-panel { right: 1rem; left: 1rem; bottom: 1rem; width: auto; }
+      .core { width: 96px; font-size: 2.7rem; }
+      .core-note { display: none; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .scroll-cue span { animation: none; }
+      .portrait, .profile-panel, .core-note { transition-duration: .01ms; }
+    }
+  </style>
+</head>
+<body>
+  <section class="spacer" aria-label="Prototype introduction">
+    <div class="spacer-inner">
+      <div class="spacer-mark"></div>
+      <h1>Scroll down to preview<br>the DA Tutor Orbit</h1>
+      <p class="scroll-cue">VISUAL PROTOTYPE <span aria-hidden="true">↓</span></p>
+    </div>
+  </section>
+
+  <main class="orbit-section">
+    <section class="experience" aria-labelledby="team-heading">
+      <div class="copy">
+        <p class="eyebrow copy-piece">OUR PEOPLE</p>
+        <h2 id="team-heading"><span class="copy-piece">Great people.</span><span class="copy-piece">Stronger together.</span></h2>
+        <p class="copy-body copy-piece">Every tutor brings something different to the journey — united by one shared commitment to helping students grow.</p>
+      </div>
+      <div class="instruction">SCROLL TO SET THE TEAM IN MOTION ↓</div>
+
+      <div class="orbit-stage" aria-label="DA Tuition teaching team orbit">
+        <svg class="orbit-svg" viewBox="0 0 1000 700" role="img" aria-labelledby="orbit-title orbit-desc">
+          <title id="orbit-title">DA Tuition educator community</title>
+          <desc id="orbit-desc">Tutor portraits moving gently around a shared DA centre.</desc>
+          <defs>
+            <filter id="pulseGlow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="2.5" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+            <linearGradient id="line1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#bad6fa" stop-opacity=".05"/><stop offset=".48" stop-color="#dbeaff" stop-opacity=".19"/><stop offset="1" stop-color="#bad6fa" stop-opacity=".07"/></linearGradient>
+            <linearGradient id="line2" x1="1" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#cbbdff" stop-opacity=".04"/><stop offset=".58" stop-color="#d8ceff" stop-opacity=".16"/><stop offset="1" stop-color="#cbbdff" stop-opacity=".06"/></linearGradient>
+            <linearGradient id="line3"><stop offset="0" stop-color="#efcf8e" stop-opacity=".045"/><stop offset=".52" stop-color="#efd39a" stop-opacity=".17"/><stop offset="1" stop-color="#efcf8e" stop-opacity=".055"/></linearGradient>
+            <linearGradient id="line4" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#dce8fb" stop-opacity=".035"/><stop offset=".45" stop-color="#dce8fb" stop-opacity=".14"/><stop offset="1" stop-color="#dce8fb" stop-opacity=".06"/></linearGradient>
+            <linearGradient id="line5" x1="1" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#aecff4" stop-opacity=".025"/><stop offset=".6" stop-color="#aecff4" stop-opacity=".12"/><stop offset="1" stop-color="#aecff4" stop-opacity=".045"/></linearGradient>
+          </defs>
+          <g class="orbit-group" data-orbit="1" transform="rotate(-13 500 350)"><path id="orbit-1" class="orbit-line" pathLength="100" d="M 295 350 A 205 88 0 1 0 705 350 A 205 88 0 1 0 295 350" stroke="url(#line1)"/><path class="orbit-pulse" pathLength="100" d="M 295 350 A 205 88 0 1 0 705 350 A 205 88 0 1 0 295 350" stroke="#d8eaff"/></g>
+          <g class="orbit-group" data-orbit="2" transform="rotate(12 500 350)"><path id="orbit-2" class="orbit-line" pathLength="100" d="M 228 350 A 272 120 0 1 0 772 350 A 272 120 0 1 0 228 350" stroke="url(#line2)"/><path class="orbit-pulse" pathLength="100" d="M 228 350 A 272 120 0 1 0 772 350 A 272 120 0 1 0 228 350" stroke="#cfc6ff"/></g>
+          <g class="orbit-group" data-orbit="3" transform="rotate(-22 500 350)"><path id="orbit-3" class="orbit-line" pathLength="100" d="M 160 350 A 340 151 0 1 0 840 350 A 340 151 0 1 0 160 350" stroke="url(#line3)"/><path class="orbit-pulse" pathLength="100" d="M 160 350 A 340 151 0 1 0 840 350 A 340 151 0 1 0 160 350" stroke="#e9c879"/></g>
+          <g class="orbit-group" data-orbit="4" transform="rotate(7 500 350)"><path id="orbit-4" class="orbit-line" pathLength="100" d="M 98 350 A 402 184 0 1 0 902 350 A 402 184 0 1 0 98 350" stroke="url(#line4)"/><path class="orbit-pulse" pathLength="100" d="M 98 350 A 402 184 0 1 0 902 350 A 402 184 0 1 0 98 350" stroke="#d9e7fb"/></g>
+          <g class="orbit-group" data-orbit="5" transform="rotate(20 500 350)"><path id="orbit-5" class="orbit-line" pathLength="100" d="M 47 350 A 453 207 0 1 0 953 350 A 453 207 0 1 0 47 350" stroke="url(#line5)"/><path class="orbit-pulse" pathLength="100" d="M 47 350 A 453 207 0 1 0 953 350 A 453 207 0 1 0 47 350" stroke="#b8d5f8"/></g>
+          <g id="particles"></g>
+          <circle class="debug-centre" cx="500" cy="350" r="4"/>
+          <text class="debug-label" x="690" y="307">1</text><text class="debug-label" x="760" y="266">2</text><text class="debug-label" x="820" y="216">3</text><text class="debug-label" x="900" y="185">4</text><text class="debug-label" x="940" y="148">5</text>
+        </svg>
+        <div class="node-layer"></div>
+        <div class="core-wrap">
+          <button class="core" type="button" aria-describedby="core-note">DA</button>
+          <span class="core-note" id="core-note">50+ educators. One shared standard.</span>
+        </div>
+        <div class="debug-box"></div>
+      </div>
+
+      <aside class="profile-panel" aria-live="polite" aria-hidden="true">
+        <p class="profile-role"></p><h3></h3><p class="profile-description"></p><span class="profile-link"></span>
+      </aside>
+      <output class="debug-progress">progress: 0.000</output>
+    </section>
+  </main>
+
+  <section class="spacer" aria-label="Prototype conclusion">
+    <div class="spacer-inner"><div class="spacer-mark"></div><h2>End of prototype</h2><p>DA TUITION · OUR PEOPLE</p></div>
+  </section>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/MotionPathPlugin.min.js"></script>
+  <script>
+    const DEBUG = false;
+
+    const tutors = [
+      { id: 1, initials: "AM", name: "Amanda Morgan", role: "Principal", description: "Guiding the DA community with purpose and care.", orbit: 1, start: 0.08, size: 88, tone: "gold" },
+      { id: 2, initials: "NH", name: "Nathan Ho", role: "Mathematics Tutor", description: "Turning complex ideas into clear, confident steps.", orbit: 1, start: 0.58, size: 66, tone: "blue" },
+      { id: 3, initials: "ET", name: "Emily Tan", role: "Head of English", description: "Helping students find confidence in their own voice.", orbit: 2, start: 0.21, size: 82, tone: "lavender" },
+      { id: 4, initials: "JL", name: "James Lee", role: "Science Tutor", description: "Making curiosity the starting point for deeper learning.", orbit: 2, start: 0.71, size: 68, tone: "white" },
+      { id: 5, initials: "SK", name: "Sofia Kim", role: "Primary Coordinator", description: "Building strong foundations with patience and imagination.", orbit: 3, start: 0.88, size: 74, tone: "gold" },
+      { id: 6, initials: "MT", name: "Marcus Tran", role: "HSC Mathematics", description: "Helping students approach every problem with composure.", orbit: 3, start: 0.36, size: 64, tone: "blue" },
+      { id: 7, initials: "CL", name: "Chloe Lam", role: "English Tutor", description: "Creating thoughtful readers and persuasive writers.", orbit: 3, start: 0.69, size: 72, tone: "lavender" },
+      { id: 8, initials: "AL", name: "Alex Le", role: "Chemistry Tutor", description: "Connecting theory to the patterns students can see.", orbit: 4, start: 0.12, size: 68, tone: "white" },
+      { id: 9, initials: "JT", name: "Jessica Tang", role: "Learning Adviser", description: "Finding the right path forward for every learner.", orbit: 4, start: 0.47, size: 76, tone: "gold" },
+      { id: 10, initials: "SL", name: "Samuel Lim", role: "Physics Tutor", description: "Encouraging disciplined thinking and genuine discovery.", orbit: 4, start: 0.92, size: 63, tone: "blue" },
+      { id: 11, initials: "RK", name: "Rachel Kwon", role: "Biology Tutor", description: "Bringing living systems to life through clear explanation.", orbit: 5, start: 0.30, size: 70, tone: "lavender" },
+      { id: 12, initials: "LC", name: "Lucas Chen", role: "Senior Mathematics", description: "Building the habits that turn effort into lasting progress.", orbit: 5, start: 0.61, size: 66, tone: "white" }
+    ];
+
+    const orbitConfig = {
+      1: { duration: 42, direction: 1 },
+      2: { duration: 51, direction: -1 },
+      3: { duration: 63, direction: 1 },
+      4: { duration: 74, direction: -1 },
+      5: { duration: 86, direction: 1 }
+    };
+    const tones = {
+      blue: ["rgba(94,164,245,.32)", "rgba(156,205,255,.62)"],
+      lavender: ["rgba(165,139,245,.30)", "rgba(209,193,255,.60)"],
+      gold: ["rgba(217,184,102,.31)", "rgba(238,210,145,.64)"],
+      white: ["rgba(209,229,250,.28)", "rgba(225,239,255,.58)"]
+    };
+
+    const experience = document.querySelector(".experience");
+    const nodeLayer = document.querySelector(".node-layer");
+    const panel = document.querySelector(".profile-panel");
+    const coreWrap = document.querySelector(".core-wrap");
+    const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const finePointer = matchMedia("(hover: hover) and (pointer: fine)").matches;
+    const orbitTimelines = {};
+    let activeNode = null;
+
+    if (DEBUG) experience.classList.add("debug");
+
+    function createPortrait(tutor) {
+      const node = document.createElement("button");
+      node.type = "button";
+      node.className = "tutor-node";
+      node.dataset.orbit = tutor.orbit;
+      node.dataset.index = tutor.id - 1;
+      node.setAttribute("aria-label", `${tutor.name}, ${tutor.role}`);
+      node.style.setProperty("--size", `${tutor.size}px`);
+      node.style.setProperty("--halo", tones[tutor.tone][0]);
+      node.style.setProperty("--rim", tones[tutor.tone][1]);
+      const portrait = document.createElement("span");
+      portrait.className = "portrait";
+      if (tutor.image) {
+        const image = document.createElement("img");
+        image.src = tutor.image; image.alt = ""; portrait.appendChild(image);
+      } else portrait.textContent = tutor.initials;
+      node.appendChild(portrait);
+      nodeLayer.appendChild(node);
+      return node;
+    }
+
+    const nodes = tutors.map(createPortrait);
+
+    function addParticles() {
+      const group = document.querySelector("#particles");
+      const palette = ["#eaf3ff", "#a9cef8", "#c8b9f1", "#dfc47f"];
+      const points = [
+        [470,322,1.3],[534,371,1],[616,315,1.8],[391,382,.9],[702,399,1.2],
+        [275,300,1.5],[766,253,.8],[197,420,1.1],[832,442,1.7],[640,506,1],
+        [362,199,.9],[895,330,1.2],[112,360,.8],[530,141,1.4],[452,563,1],
+        [740,561,.9],[222,527,1.3],[927,463,.8],[92,239,1],[820,145,1.5]
+      ];
+      points.forEach((point, index) => {
+        const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        circle.classList.add("particle"); circle.setAttribute("cx", point[0]); circle.setAttribute("cy", point[1]);
+        circle.setAttribute("r", point[2]); circle.setAttribute("fill", palette[index % palette.length]);
+        group.appendChild(circle);
+      });
+    }
+    addParticles();
+
+    function showProfile(tutor, node) {
+      if (activeNode && activeNode !== node) activeNode.classList.remove("is-active");
+      activeNode = node; node.classList.add("is-active"); nodeLayer.classList.add("has-active");
+      document.querySelectorAll(".orbit-group").forEach(group => group.classList.toggle("is-active", Number(group.dataset.orbit) === tutor.orbit));
+      panel.querySelector(".profile-role").textContent = tutor.role;
+      panel.querySelector("h3").textContent = tutor.name;
+      panel.querySelector(".profile-description").textContent = tutor.description;
+      panel.querySelector(".profile-link").textContent = `Meet ${tutor.name.split(" ")[0]} →`;
+      panel.classList.add("is-visible"); panel.setAttribute("aria-hidden", "false");
+      gsap.to(orbitTimelines[tutor.orbit], { timeScale: .2, duration: .45, ease: "power2.out" });
+    }
+
+    function hideProfile(tutor, node) {
+      if (document.activeElement === node) return;
+      node.classList.remove("is-active"); activeNode = null; nodeLayer.classList.remove("has-active");
+      document.querySelectorAll(".orbit-group").forEach(group => group.classList.remove("is-active"));
+      panel.classList.remove("is-visible"); panel.setAttribute("aria-hidden", "true");
+      gsap.to(orbitTimelines[tutor.orbit], { timeScale: 1, duration: .7, ease: "power2.out" });
+    }
+
+    tutors.forEach((tutor, index) => {
+      const node = nodes[index];
+      node.addEventListener("mouseenter", () => showProfile(tutor, node));
+      node.addEventListener("mouseleave", () => hideProfile(tutor, node));
+      node.addEventListener("focus", () => showProfile(tutor, node));
+      node.addEventListener("blur", () => hideProfile(tutor, node));
+      node.addEventListener("click", () => activeNode === node ? hideProfile(tutor, node) : showProfile(tutor, node));
+    });
+
+    document.querySelector(".core").addEventListener("mouseenter", () => {
+      coreWrap.classList.add("is-active"); document.querySelectorAll(".orbit-group").forEach(group => group.classList.add("is-active"));
+    });
+    document.querySelector(".core").addEventListener("mouseleave", () => {
+      coreWrap.classList.remove("is-active"); document.querySelectorAll(".orbit-group").forEach(group => group.classList.remove("is-active"));
+    });
+    document.querySelector(".core").addEventListener("focus", () => coreWrap.classList.add("is-active"));
+    document.querySelector(".core").addEventListener("blur", () => coreWrap.classList.remove("is-active"));
+
+    if (finePointer) {
+      experience.addEventListener("pointermove", event => {
+        nodes.forEach(node => {
+          if (node.offsetParent === null) return;
+          const rect = node.getBoundingClientRect();
+          const dx = event.clientX - (rect.left + rect.width / 2), dy = event.clientY - (rect.top + rect.height / 2);
+          const distance = Math.hypot(dx, dy), range = 140;
+          if (distance < range) {
+            const pull = (1 - distance / range) * 3.5;
+            node.style.setProperty("--mag-x", `${dx / Math.max(distance, 1) * pull}px`);
+            node.style.setProperty("--mag-y", `${dy / Math.max(distance, 1) * pull}px`);
+            node.style.setProperty("--mag-scale", String(1 + (1 - distance / range) * .025));
+          } else {
+            node.style.setProperty("--mag-x", "0px"); node.style.setProperty("--mag-y", "0px"); node.style.setProperty("--mag-scale", "1");
+          }
+        });
+      });
+    }
+
+    if (window.gsap && window.ScrollTrigger && window.MotionPathPlugin) {
+      gsap.registerPlugin(ScrollTrigger, MotionPathPlugin);
+
+      tutors.forEach((tutor, index) => {
+        const path = `#orbit-${tutor.orbit}`;
+        gsap.set(nodes[index], { motionPath: { path, align: path, alignOrigin: [.5,.5], autoRotate: false, start: tutor.start, end: tutor.start } });
+        if (!orbitTimelines[tutor.orbit]) orbitTimelines[tutor.orbit] = gsap.timeline({ paused: true, repeat: -1 });
+        orbitTimelines[tutor.orbit].to(nodes[index], {
+          duration: orbitConfig[tutor.orbit].duration,
+          motionPath: { path, align: path, alignOrigin: [.5,.5], autoRotate: false, start: tutor.start, end: tutor.start + orbitConfig[tutor.orbit].direction },
+          ease: "none"
+        }, 0);
+      });
+
+      document.querySelectorAll(".orbit-pulse").forEach((pulse, index) => {
+        if (!reducedMotion) gsap.to(pulse, { strokeDashoffset: index % 2 ? 100 : -100, duration: [7,9,11,13,16][index], repeat: -1, ease: "none" });
+      });
+      document.querySelectorAll(".particle").forEach((particle, index) => {
+        if (!reducedMotion) gsap.to(particle, { opacity: .18 + (index % 4) * .12, duration: 2.6 + (index % 5) * .45, yoyo: true, repeat: -1, ease: "sine.inOut", delay: index * .11 });
+      });
+
+      if (reducedMotion) {
+        gsap.set(".core", { opacity: 1, scale: 1, filter: "blur(0px)" });
+        gsap.set(".orbit-line", { strokeDashoffset: 0 });
+        gsap.set(".orbit-pulse", { opacity: .45 });
+        gsap.set(".particle", { opacity: .45 });
+        gsap.set(nodes, { opacity: 1, scale: 1 });
+        gsap.set(".copy-piece", { opacity: 1, y: 0, clipPath: "inset(0 0 0% 0)" });
+        gsap.set(".instruction", { opacity: 0 });
+      } else {
+        let ambientStarted = false;
+        const master = gsap.timeline({
+          scrollTrigger: {
+            trigger: ".orbit-section", start: "top top", end: "+=3000", pin: ".experience", scrub: 1,
+            onUpdate(self) {
+              if (!ambientStarted && self.progress >= .58) {
+                ambientStarted = true; Object.values(orbitTimelines).forEach(timeline => timeline.play());
+              }
+              if (DEBUG) document.querySelector(".debug-progress").textContent = `progress: ${self.progress.toFixed(3)}`;
+            }
+          }
+        });
+        master
+          .to(".core", { opacity: 1, scale: 1, filter: "blur(0px)", duration: 8, ease: "power2.out" }, 0)
+          .fromTo(".particle", { opacity: 0, scale: .3, x: 0, y: 0 }, { opacity: .45, scale: 1, x: "random(-18,18)", y: "random(-14,14)", stagger: .15, duration: 8 }, 8)
+          .to(".orbit-line", { strokeDashoffset: 0, stagger: 1.1, duration: 7, ease: "power2.inOut" }, 18)
+          .to(".orbit-pulse", { opacity: .62, stagger: .7, duration: 3 }, 23)
+          .fromTo(nodes[0], { opacity: 0, scale: .4 }, { opacity: 1, scale: 1, duration: 6, ease: "back.out(1.5)" }, 30)
+          .fromTo(nodes.slice(1), { opacity: 0, scale: .55 }, { opacity: 1, scale: 1, stagger: 1.45, duration: 5, ease: "back.out(1.35)" }, 37)
+          .to(".orbit-stage", { scale: 1, x: 12, duration: 12, ease: "power2.inOut" }, 60)
+          .to(".copy-piece", { opacity: 1, y: 0, clipPath: "inset(0 0 0% 0)", stagger: 2.6, duration: 5, ease: "power3.out" }, 64)
+          .to(".instruction", { opacity: 0, duration: 3 }, 66)
+          .to(".copy", { opacity: 0, y: -20, duration: 10 }, 90)
+          .to(".orbit-stage", { scale: .94, y: -40, opacity: .35, duration: 10 }, 90);
+      }
+    } else {
+      document.body.insertAdjacentHTML("afterbegin", '<p style="position:fixed;z-index:100;inset:1rem auto auto 1rem;background:#fff3cd;color:#332800;padding:.75rem 1rem">Animation library failed to load. Check your internet connection.</p>');
+    }
+  </script>
+</body>
+</html>
