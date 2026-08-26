@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import NavigationNew from '@/components/NavigationNew';
 import FooterNew from '@/components/FooterNew';
 import SubjectHero from '@/components/subjects/SubjectHero';
@@ -23,6 +23,7 @@ import {
   RotateCcw,
   ChevronLeft,
   ChevronRight,
+  type LucideIcon,
 } from 'lucide-react';
 import SEO from '@/components/SEO';
 import './BusinessStudies.css';
@@ -92,6 +93,136 @@ const businessExamStructureCards = [
       'Identify the directive verb, key syllabus concept and required judgement.',
       'Follow this evaluation structure: syllabus concept → business example → analysis → judgement.',
       'Link back to the key words from the question.',
+    ],
+  },
+];
+
+type BusinessMythOutcome = {
+  number: string;
+  label: string;
+  text: string;
+  Icon: LucideIcon;
+};
+
+type BusinessMythItem = {
+  id: number;
+  myth: string;
+  headline: string;
+  goldLine: string;
+  body: Array<string | { strong: string }>;
+  outcomes: BusinessMythOutcome[];
+};
+
+const businessMyths: BusinessMythItem[] = [
+  {
+    id: 1,
+    myth: 'Business Studies is just common sense.',
+    headline: 'Familiar ideas aren’t enough.',
+    goldLine: 'Business thinking needs structure.',
+    body: [
+      'Business Studies can feel familiar because many of its concepts relate to real businesses, but high-level responses require much more than common sense. Students need to use ',
+      { strong: 'precise syllabus terminology, apply concepts to unfamiliar scenarios, integrate relevant case studies and make clear business judgements' },
+      '.',
+      '\n\nAt DA, we teach students how to turn what they intuitively understand into the kind of ',
+      { strong: 'structured, syllabus-driven response the HSC rewards' },
+      '. The goal is not simply to know what a business might do, but to explain ',
+      { strong: 'why a strategy works, how it affects business performance and when it is appropriate' },
+      '.',
+    ],
+    outcomes: [
+      { number: '01', label: 'Terminology', text: 'Use the language the syllabus rewards.', Icon: ClipboardCheck },
+      { number: '02', label: 'Application', text: 'Apply concepts to real business situations.', Icon: Briefcase },
+      { number: '03', label: 'Judgement', text: 'Explain why strategies work and when they are appropriate.', Icon: Scale },
+    ],
+  },
+  {
+    id: 2,
+    myth: 'It’s an easy subject, so I don’t need tutoring.',
+    headline: 'Accessible doesn’t mean easy to master.',
+    goldLine: 'Top marks come from refinement.',
+    body: [
+      'Business Studies can be accessible to learn, but that does not automatically make it easy to score highly. The difference between an average response and a top-band response often comes down to ',
+      { strong: 'application, depth, judgement, case-study integration and exam technique' },
+      '.',
+      '\n\nAt DA, we help students ',
+      { strong: 'identify exactly where marks are being lost' },
+      ' and refine those higher-level skills. Whether a student is struggling or already performing well, tutoring gives them the opportunity to ',
+      { strong: 'practise more deliberately, receive targeted feedback' },
+      ' and develop a much clearer understanding of ',
+      { strong: 'what separates a good response from an excellent one' },
+      '.',
+    ],
+    outcomes: [
+      { number: '01', label: 'Identify', text: 'Find exactly where marks are being lost.', Icon: Target },
+      { number: '02', label: 'Refine', text: 'Strengthen higher-level response skills.', Icon: FileEdit },
+      { number: '03', label: 'Elevate', text: 'Turn good responses into top-band responses.', Icon: LineChart },
+    ],
+  },
+  {
+    id: 3,
+    myth: 'I just need to memorise the textbook.',
+    headline: 'Knowing the content is only step one.',
+    goldLine: 'Using it earns the marks.',
+    body: [
+      'Knowing the content is important, but memorising definitions alone will not prepare students for questions that require them to ',
+      { strong: 'analyse, assess, recommend or evaluate' },
+      '. Students must be able to ',
+      { strong: 'select the right syllabus content, connect it to a business scenario and explain its impact' },
+      '.',
+      '\n\nAt DA, we help students move beyond passive memorisation by teaching them ',
+      { strong: 'how the syllabus connects, which examples are most useful, how to apply case studies strategically and how to construct strong business judgements' },
+      '. Students learn the content with a purpose — so they can actually use it when the question changes.',
+    ],
+    outcomes: [
+      { number: '01', label: 'Select', text: 'Choose the content the question actually needs.', Icon: BookOpen },
+      { number: '02', label: 'Apply', text: 'Use case studies strategically.', Icon: Briefcase },
+      { number: '03', label: 'Evaluate', text: 'Construct strong business judgements.', Icon: Scale },
+    ],
+  },
+  {
+    id: 4,
+    myth: 'Business is one of those subjects you can cram for right before the exam.',
+    headline: 'Cramming builds recognition.',
+    goldLine: 'Practice builds performance.',
+    body: [
+      'Business Studies can feel overwhelming because students are expected to manage ',
+      { strong: 'a lot of interconnected content across Operations, Marketing, Finance and Human Resources' },
+      '. It can be hard to know what deserves the most attention, what needs to be remembered and how everything fits together. While cramming may help with recognising definitions, strong HSC responses require students to ',
+      { strong: 'choose the right content, apply it confidently to the question and make clear business judgements under exam conditions' },
+      '.',
+      '\n\nAt DA, we work through this with students step by step. We ',
+      { strong: 'break the course into manageable sections, revisit important ideas and give students regular opportunities to practise across multiple-choice questions, short answers, business reports and essays' },
+      '. Over time, students begin to feel more certain about ',
+      { strong: 'what to focus on, how to approach different question types and how to use what they know effectively' },
+      '. By the time exams arrive, the goal is for students to feel prepared rather than overwhelmed — with ',
+      { strong: 'greater confidence, stronger exam habits and a much clearer sense of how to tackle the paper' },
+      '.',
+    ],
+    outcomes: [
+      { number: '01', label: 'Build', text: 'Develop knowledge progressively.', Icon: BookOpen },
+      { number: '02', label: 'Practise', text: 'Apply it across every exam section.', Icon: FileEdit },
+      { number: '03', label: 'Perform', text: 'Enter the exam with a tested system.', Icon: Target },
+    ],
+  },
+  {
+    id: 5,
+    myth: 'Tutoring is only useful if you’re failing.',
+    headline: 'Tutoring isn’t only about catching up.',
+    goldLine: 'It’s also about moving ahead.',
+    body: [
+      'Tutoring is not only about catching up. For many students, the greatest value comes from identifying the ',
+      { strong: 'small weaknesses that are preventing a good response from becoming a top-band response' },
+      '.',
+      '\n\nAt DA, we can focus closely on each student’s ',
+      { strong: 'writing, application, case-study use, business terminology, judgement and exam technique' },
+      '. That personalised refinement is particularly valuable for students who already understand the content but want to become ',
+      { strong: 'more precise, adaptable and confident under HSC conditions' },
+      '.',
+    ],
+    outcomes: [
+      { number: '01', label: 'Diagnose', text: 'Identify the small gaps holding marks back.', Icon: Target },
+      { number: '02', label: 'Personalise', text: 'Target the individual student’s needs.', Icon: Users },
+      { number: '03', label: 'Refine', text: 'Become more precise, adaptable and confident.', Icon: FileEdit },
     ],
   },
 ];
@@ -602,6 +733,246 @@ const BusinessPracticePreviewCard = ({
   </button>
 );
 
+const BUSINESS_MYTH_PAGE_TURN_MS = 720;
+
+const renderBusinessMythBody = (body: BusinessMythItem['body']) =>
+  body.map((part, index) => {
+    if (typeof part !== 'string') {
+      return <strong key={`strong-${index}`}>{part.strong}</strong>;
+    }
+
+    return part.split('\n').map((segment, segmentIndex) => (
+      <React.Fragment key={`text-${index}-${segmentIndex}`}>
+        {segmentIndex > 0 && <br />}
+        {segment}
+      </React.Fragment>
+    ));
+  });
+
+const BusinessMythPage = ({ item, className = '' }: { item: BusinessMythItem; className?: string }) => (
+  <div className={`biz-myth-page ${className}`}>
+    <div className="biz-myth-page__inner">
+      <span className="biz-myth-page__eyebrow">
+        <i aria-hidden="true" />
+        The DA Difference
+        <i aria-hidden="true" />
+      </span>
+      <h3>{item.headline}</h3>
+      <p className="biz-myth-page__gold-line">{item.goldLine}</p>
+      <div className="biz-myth-page__rule" aria-hidden="true">
+        <span />
+        <i />
+        <span />
+      </div>
+      <p className="biz-myth-page__body">{renderBusinessMythBody(item.body)}</p>
+
+      <div className="biz-myth-outcomes" aria-label="Business Studies myth outcomes">
+        {item.outcomes.map(({ number, label, text, Icon }) => (
+          <div className="biz-myth-outcome" key={`${item.id}-${label}`}>
+            <Icon aria-hidden="true" />
+            <strong>
+              <span>{number}.</span> {label}
+            </strong>
+            <p>{text}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+);
+
+const BusinessStudiesMyths = () => {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [pageIndex, setPageIndex] = useState(0);
+  const [nextPageIndex, setNextPageIndex] = useState<number | null>(null);
+  const [isTurning, setIsTurning] = useState(false);
+  const [reviewed, setReviewed] = useState<Set<number>>(() => new Set([0]));
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+  const timeoutRef = useRef<number | null>(null);
+  const mythButtonRefs = useRef<Array<HTMLButtonElement | null>>([]);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const updatePreference = () => setPrefersReducedMotion(mediaQuery.matches);
+
+    updatePreference();
+    mediaQuery.addEventListener('change', updatePreference);
+
+    return () => mediaQuery.removeEventListener('change', updatePreference);
+  }, []);
+
+  useEffect(() => () => {
+    if (timeoutRef.current !== null) {
+      window.clearTimeout(timeoutRef.current);
+    }
+  }, []);
+
+  const selectMyth = (index: number) => {
+    if (index === activeIndex) return;
+
+    if (timeoutRef.current !== null) {
+      window.clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
+    }
+
+    setActiveIndex(index);
+    setReviewed((current) => {
+      const next = new Set(current);
+      next.add(index);
+      return next;
+    });
+
+    if (prefersReducedMotion) {
+      setIsTurning(false);
+      setNextPageIndex(null);
+      setPageIndex(index);
+      return;
+    }
+
+    setNextPageIndex(index);
+    setIsTurning(true);
+    timeoutRef.current = window.setTimeout(() => {
+      setPageIndex(index);
+      setNextPageIndex(null);
+      setIsTurning(false);
+      timeoutRef.current = null;
+    }, BUSINESS_MYTH_PAGE_TURN_MS);
+  };
+
+  const handleMythKeyDown = (event: React.KeyboardEvent<HTMLButtonElement>, index: number) => {
+    const lastIndex = businessMyths.length - 1;
+    let nextIndex: number | null = null;
+
+    if (event.key === 'ArrowDown' || event.key === 'ArrowRight') {
+      nextIndex = index === lastIndex ? 0 : index + 1;
+    } else if (event.key === 'ArrowUp' || event.key === 'ArrowLeft') {
+      nextIndex = index === 0 ? lastIndex : index - 1;
+    } else if (event.key === 'Home') {
+      nextIndex = 0;
+    } else if (event.key === 'End') {
+      nextIndex = lastIndex;
+    }
+
+    if (nextIndex === null) return;
+    event.preventDefault();
+    selectMyth(nextIndex);
+    window.requestAnimationFrame(() => mythButtonRefs.current[nextIndex]?.focus());
+  };
+
+  const currentPage = businessMyths[pageIndex];
+  const nextPage = nextPageIndex === null ? null : businessMyths[nextPageIndex];
+
+  return (
+    <section className="biz-myths-section" aria-labelledby="biz-myths-title">
+      <div className="biz-myths-inner">
+        <header className="biz-myths-header">
+          <span className="biz-myths-eyebrow">
+            <i aria-hidden="true" />
+            Business Studies, Reframed
+            <i aria-hidden="true" />
+          </span>
+          <h2 id="biz-myths-title">
+            <span>What students assume.</span>{' '}
+            <em>What actually drives results.</em>
+          </h2>
+          <p>Select a myth to turn the page and see the DA approach.</p>
+        </header>
+
+        <div className="biz-myths-board">
+          <span className="biz-myths-board__corner biz-myths-board__corner--tl" aria-hidden="true" />
+          <span className="biz-myths-board__corner biz-myths-board__corner--tr" aria-hidden="true" />
+          <span className="biz-myths-board__corner biz-myths-board__corner--bl" aria-hidden="true" />
+          <span className="biz-myths-board__corner biz-myths-board__corner--br" aria-hidden="true" />
+
+          <div className="biz-myths-nav-column">
+            <div className="biz-myths-progress" aria-label="Business myths progress">
+              {businessMyths.map((item, index) => {
+                const isActive = index === activeIndex;
+                const isReviewed = reviewed.has(index);
+
+                return (
+                  <button
+                    key={item.id}
+                    type="button"
+                    className={[
+                      'biz-myth-progress-dot',
+                      isActive ? 'is-active' : '',
+                      isReviewed && !isActive ? 'is-reviewed' : '',
+                    ].filter(Boolean).join(' ')}
+                    onClick={() => selectMyth(index)}
+                    aria-label={`Go to myth ${String(item.id).padStart(2, '0')}`}
+                    aria-current={isActive ? 'step' : undefined}
+                  >
+                    <span>{String(item.id).padStart(2, '0')}</span>
+                    <i aria-hidden="true" />
+                  </button>
+                );
+              })}
+            </div>
+
+            <div className="biz-myth-list" role="tablist" aria-label="Business Studies myths">
+              {businessMyths.map((item, index) => {
+                const isActive = index === activeIndex;
+                const mythNumber = String(item.id).padStart(2, '0');
+
+                return (
+                  <button
+                    key={item.id}
+                    type="button"
+                    role="tab"
+                    aria-selected={isActive}
+                    aria-controls="biz-myth-page"
+                    className={`biz-myth-card ${isActive ? 'is-active' : ''}`}
+                    ref={(node) => {
+                      mythButtonRefs.current[index] = node;
+                    }}
+                    onClick={() => selectMyth(index)}
+                    onKeyDown={(event) => handleMythKeyDown(event, index)}
+                    tabIndex={isActive ? 0 : -1}
+                    aria-label={`Select myth ${mythNumber}: ${item.myth}`}
+                  >
+                    <span className="biz-myth-card__meta">
+                      <span>Myth</span>
+                      <strong>{mythNumber}</strong>
+                    </span>
+                    <span className="biz-myth-card__divider" aria-hidden="true" />
+                    <span className="biz-myth-card__copy">{item.myth}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          <div className="biz-myth-booklet" id="biz-myth-page" role="tabpanel" aria-live="polite">
+            <div className="biz-myth-booklet__instruction">
+              Click another myth to turn the page <RotateCcw aria-hidden="true" />
+            </div>
+            <div className="biz-myth-booklet__spine" aria-hidden="true">
+              <span />
+              <span />
+            </div>
+            <div className={`biz-myth-page-stack ${isTurning ? 'is-turning' : ''}`}>
+              <span className="biz-myth-page-layer biz-myth-page-layer--back" aria-hidden="true" />
+              <span className="biz-myth-page-layer biz-myth-page-layer--middle" aria-hidden="true" />
+              {nextPage && <BusinessMythPage item={nextPage} className="biz-myth-page--next" />}
+              <BusinessMythPage item={currentPage} className={isTurning ? 'biz-myth-page--turning' : 'biz-myth-page--current'} />
+            </div>
+          </div>
+        </div>
+
+        <div className="biz-myths-quote">
+          <span aria-hidden="true"><i /></span>
+          <figure>
+            <blockquote>You don’t need to figure it all out on your own.</blockquote>
+            <figcaption>We help students turn knowledge into confident business thinking.</figcaption>
+          </figure>
+          <span aria-hidden="true"><i /></span>
+        </div>
+      </div>
+    </section>
+  );
+};
+
 const BusinessStudies = () => {
   return (
     <div className="min-h-screen bg-white">
@@ -633,6 +1004,8 @@ const BusinessStudies = () => {
         headline="Master Business Studies."
         emphasis="Think strategically. Lead with insight."
       />
+
+      <BusinessStudiesMyths />
 
       <BusinessSyllabusQuiz />
 

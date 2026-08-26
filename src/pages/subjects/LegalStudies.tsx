@@ -23,6 +23,19 @@ import {
   Newspaper,
   Globe2,
   FileBarChart,
+  Target,
+  GitBranch,
+  Link2,
+  Layers,
+  ListChecks,
+  LayoutTemplate,
+  Shuffle,
+  SearchCheck,
+  FilePenLine,
+  Repeat2,
+  CircleDot,
+  Sparkles,
+  type LucideIcon,
 } from 'lucide-react';
 import SEO from '@/components/SEO';
 import './LegalStudies.css';
@@ -177,31 +190,146 @@ const examStructureCards = [
   },
 ];
 
-const legalJourneySteps = [
+type LegalMythOutcome = {
+  number: string;
+  label: string;
+  text: string;
+  Icon: LucideIcon;
+};
+
+type LegalMythItem = {
+  id: number;
+  myth: string;
+  headline: [string, string];
+  body: Array<string | { strong: string }>;
+  outcomes: LegalMythOutcome[];
+};
+
+const legalMyths: LegalMythItem[] = [
   {
-    number: '01',
-    title: 'Learn',
-    description: 'Break down a syllabus concept and clarify difficult terminology.',
+    id: 1,
+    myth: 'There is too much content.',
+    headline: ["You don't need everything.", 'You need to know what matters.'],
+    body: [
+      'Legal Studies can feel content-heavy, especially when every case, piece of legislation, media article and syllabus point appears equally important. At DA, we help students ',
+      { strong: 'separate what is essential from what is supplementary' },
+      '. We break the syllabus into ',
+      { strong: 'clear, examinable ideas' },
+      ', show students ',
+      { strong: 'how topics connect' },
+      ' and build a ',
+      { strong: 'purposeful bank of evidence that can be reused across different questions' },
+      '. Instead of trying to memorise everything, students develop a far more ',
+      { strong: 'organised and manageable way to study' },
+      '.',
+    ],
+    outcomes: [
+      { number: '01', label: 'Prioritise', text: "Focus on what’s examinable.", Icon: Target },
+      { number: '02', label: 'Connect', text: 'Understand how topics link together.', Icon: Link2 },
+      { number: '03', label: 'Reuse', text: 'Build evidence that works across questions.', Icon: Layers },
+    ],
   },
   {
-    number: '02',
-    title: 'Connect',
-    description: 'Link legislation, cases, media, international law and contemporary examples.',
+    id: 2,
+    myth: "I’m already getting 70–80%, so tutoring probably won’t make much difference.",
+    headline: ['Good marks can still move higher.', 'Refinement makes the difference.'],
+    body: [
+      'Students in the 70–80% range often already understand the course well. What usually holds them back is ',
+      { strong: 'not effort or knowledge, but refinement' },
+      '. At DA, we focus on the skills that lift strong responses higher — ',
+      { strong: 'sharper judgement' },
+      ', ',
+      { strong: 'more precise legal terminology' },
+      ', ',
+      { strong: 'stronger essay structure' },
+      ', ',
+      { strong: 'better integration of evidence' },
+      ' and ',
+      { strong: 'greater adaptability to unfamiliar questions' },
+      '. These smaller refinements can make a significant difference when students are working towards the ',
+      { strong: 'top bands' },
+      '.',
+    ],
+    outcomes: [
+      { number: '01', label: 'Judgement', text: 'Develop sharper evaluation.', Icon: SearchCheck },
+      { number: '02', label: 'Structure', text: 'Build more precise responses.', Icon: LayoutTemplate },
+      { number: '03', label: 'Adaptability', text: 'Respond confidently to unfamiliar questions.', Icon: Shuffle },
+    ],
   },
   {
-    number: '03',
-    title: 'Apply',
-    description: 'Work through HSC-style multiple choice, short answers or essays.',
+    id: 3,
+    myth: 'Legal Studies is just memorising.',
+    headline: ['Knowing it is only the beginning.', 'Applying it earns the marks.'],
+    body: [
+      'Memorisation is only one part of Legal Studies. High-level responses require students to know ',
+      { strong: 'how to use their knowledge' },
+      ': applying ',
+      { strong: 'legislation, cases and contemporary examples directly to the question' },
+      ', analysing their significance and making a ',
+      { strong: 'sustained judgement about effectiveness' },
+      '. At DA, we teach students ',
+      { strong: 'how to think through Legal Studies rather than simply recall facts' },
+      ', helping them write with greater ',
+      { strong: 'clarity, purpose and confidence' },
+      ' in exams.',
+    ],
+    outcomes: [
+      { number: '01', label: 'Apply', text: 'Use evidence purposefully.', Icon: FilePenLine },
+      { number: '02', label: 'Analyse', text: 'Explain significance and impact.', Icon: ListChecks },
+      { number: '03', label: 'Judge', text: 'Reach sustained, well-supported conclusions.', Icon: CircleDot },
+    ],
   },
   {
-    number: '04',
-    title: 'Write',
-    description: 'Construct and refine responses together.',
+    id: 4,
+    myth: 'My school teacher already teaches me everything I need.',
+    headline: ['School builds the foundation.', 'Individual feedback builds on it.'],
+    body: [
+      'School provides an important foundation, but every student has ',
+      { strong: 'different strengths, gaps and areas that require more individual attention' },
+      ". In a classroom, teachers may not always have the time to repeatedly unpack one student’s ",
+      { strong: 'writing, argument structure or exam technique' },
+      '. At DA, we complement what students are already learning at school through ',
+      { strong: 'targeted explanations' },
+      ', ',
+      { strong: 'guided practice' },
+      ' and ',
+      { strong: 'personalised feedback' },
+      ', helping them move from simply understanding the content to ',
+      { strong: 'applying it at a much higher level' },
+      '.',
+    ],
+    outcomes: [
+      { number: '01', label: 'Target', text: 'Identify individual gaps.', Icon: Target },
+      { number: '02', label: 'Practise', text: 'Work through guided application.', Icon: FilePenLine },
+      { number: '03', label: 'Refine', text: 'Receive personalised feedback.', Icon: Sparkles },
+    ],
   },
   {
-    number: '05',
-    title: 'Feedback',
-    description: 'Receive precise feedback on what moves the response higher.',
+    id: 5,
+    myth: 'Every essay question needs a completely different essay.',
+    headline: ['Don’t memorise five essays.', 'Build one adaptable way of thinking.'],
+    body: [
+      'Strong Legal Studies students do not memorise a brand-new essay for every possible question. Instead, they develop ',
+      { strong: 'adaptable arguments' },
+      ', ',
+      { strong: 'versatile evidence' },
+      ' and ',
+      { strong: 'flexible paragraph structures' },
+      ' that can be reshaped to suit different questions. At DA, we teach students ',
+      { strong: 'how to recognise what a question is really asking' },
+      ', select the ',
+      { strong: 'most relevant evidence' },
+      ' and adjust their argument accordingly. This makes essay preparation ',
+      { strong: 'far less overwhelming' },
+      ' while building the ',
+      { strong: 'adaptability students need in the HSC' },
+      '.',
+    ],
+    outcomes: [
+      { number: '01', label: 'Arguments', text: 'Build flexible arguments.', Icon: GitBranch },
+      { number: '02', label: 'Evidence', text: 'Develop a versatile evidence bank.', Icon: Layers },
+      { number: '03', label: 'Adapt', text: 'Reshape responses to suit the question.', Icon: Repeat2 },
+    ],
   },
 ];
 
@@ -808,13 +936,256 @@ const LegalAuthorityPreviewCard = ({
   </button>
 );
 
+const renderLegalMythBody = (body: LegalMythItem['body']) =>
+  body.map((part, index) => (
+    typeof part === 'string'
+      ? <React.Fragment key={`text-${index}`}>{part}</React.Fragment>
+      : <strong key={`strong-${index}`}>{part.strong}</strong>
+  ));
+
+const LEGAL_MYTH_FILE_TRANSITION_MS = 820;
+
+const LegalMythDocument = ({
+  item,
+  className = '',
+}: {
+  item: LegalMythItem;
+  className?: string;
+}) => (
+  <article className={`legal-case-sheet ${className}`} aria-hidden={className.includes('--exiting') ? true : undefined}>
+    <span className="legal-case-sheet__corner legal-case-sheet__corner--tl" aria-hidden="true" />
+    <span className="legal-case-sheet__corner legal-case-sheet__corner--tr" aria-hidden="true" />
+    <span className="legal-case-sheet__corner legal-case-sheet__corner--br" aria-hidden="true" />
+    <span className="legal-case-sheet__reviewed" aria-hidden="true">File reviewed</span>
+    <div className="legal-case-sheet__inner">
+      <span className="legal-case-sheet__eyebrow">
+        <i aria-hidden="true" />
+        The DA Difference
+        <i aria-hidden="true" />
+      </span>
+      <h3>
+        <span>{item.headline[0]}</span>
+        <em>{item.headline[1]}</em>
+      </h3>
+      <div className="legal-case-sheet__rule" aria-hidden="true">
+        <span />
+        <i />
+        <span />
+      </div>
+      <p className="legal-case-sheet__body">{renderLegalMythBody(item.body)}</p>
+      <div className="legal-myths-outcomes" aria-label="Key DA outcomes">
+        {item.outcomes.map(({ number, label, text, Icon }, index) => (
+          <div
+            className="legal-myths-outcome"
+            key={`${item.id}-${label}`}
+            style={{ '--outcome-index': index } as React.CSSProperties}
+          >
+            <Icon aria-hidden="true" />
+            <strong>
+              <span>{number}.</span> {label}
+            </strong>
+            <p>{text}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </article>
+);
+
+const LegalMythsDifferenceSection = () => {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [sheetIndex, setSheetIndex] = useState(0);
+  const [pendingIndex, setPendingIndex] = useState<number | null>(null);
+  const [isFiling, setIsFiling] = useState(false);
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+  const mythRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  const filingTimerRef = useRef<number | null>(null);
+  const activeMyth = legalMyths[sheetIndex];
+  const pendingMyth = pendingIndex === null ? null : legalMyths[pendingIndex];
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const updatePreference = () => setPrefersReducedMotion(mediaQuery.matches);
+
+    updatePreference();
+    mediaQuery.addEventListener('change', updatePreference);
+
+    return () => mediaQuery.removeEventListener('change', updatePreference);
+  }, []);
+
+  useEffect(() => () => {
+    if (filingTimerRef.current !== null) {
+      window.clearTimeout(filingTimerRef.current);
+    };
+  }, []);
+
+  const handleMythSelect = (index: number) => {
+    if (index === activeIndex || isFiling) return;
+
+    setActiveIndex(index);
+
+    if (prefersReducedMotion) {
+      setPendingIndex(null);
+      setSheetIndex(index);
+      return;
+    }
+
+    setPendingIndex(index);
+    setIsFiling(true);
+    filingTimerRef.current = window.setTimeout(() => {
+      setSheetIndex(index);
+      setPendingIndex(null);
+      setIsFiling(false);
+      filingTimerRef.current = null;
+    }, LEGAL_MYTH_FILE_TRANSITION_MS);
+  };
+
+  const handleMythKeyDown = (event: React.KeyboardEvent<HTMLButtonElement>, index: number) => {
+    const lastIndex = legalMyths.length - 1;
+    let nextIndex: number | null = null;
+
+    if (event.key === 'ArrowDown' || event.key === 'ArrowRight') {
+      nextIndex = index === lastIndex ? 0 : index + 1;
+    } else if (event.key === 'ArrowUp' || event.key === 'ArrowLeft') {
+      nextIndex = index === 0 ? lastIndex : index - 1;
+    } else if (event.key === 'Home') {
+      nextIndex = 0;
+    } else if (event.key === 'End') {
+      nextIndex = lastIndex;
+    }
+
+    if (nextIndex === null) return;
+    event.preventDefault();
+    mythRefs.current[nextIndex]?.focus();
+    handleMythSelect(nextIndex);
+  };
+
+  return (
+    <section className="legal-myths-section" aria-labelledby="legal-myths-title">
+      <div className="legal-myths-inner">
+        <header className="legal-myths-header">
+          <span className="legal-myths-eyebrow">
+            <i aria-hidden="true" />
+            Legal Studies, Reframed
+            <i aria-hidden="true" />
+          </span>
+          <h2 id="legal-myths-title">
+            <span>What students think.</span>{' '}
+            <em>What actually makes the difference.</em>
+          </h2>
+          <p>Select a common misconception to see how we approach it at DA.</p>
+        </header>
+
+        <div className="legal-myths-layout">
+          <div className="legal-myths-list" role="tablist" aria-label="Legal Studies misconceptions">
+            {legalMyths.map((item, index) => {
+              const isActive = index === activeIndex;
+              const mythNumber = String(item.id).padStart(2, '0');
+
+              return (
+                <button
+                  key={item.id}
+                  ref={(node) => {
+                    mythRefs.current[index] = node;
+                  }}
+                  className={`legal-myth-card ${isActive ? 'is-active' : ''}`}
+                  type="button"
+                  role="tab"
+                  aria-selected={isActive}
+                  aria-controls="legal-myths-response"
+                  aria-label={`Select myth ${mythNumber}: ${item.myth}`}
+                  tabIndex={isActive ? 0 : -1}
+                  disabled={isFiling}
+                  onClick={() => handleMythSelect(index)}
+                  onKeyDown={(event) => handleMythKeyDown(event, index)}
+                >
+                  <span className="legal-myth-card__meta">
+                    <span>Myth</span>
+                    <strong>{mythNumber}</strong>
+                  </span>
+                  <span className="legal-myth-card__divider" aria-hidden="true" />
+                  <span className="legal-myth-card__text">{item.myth}</span>
+                  <span className="legal-myth-card__arrow" aria-hidden="true">→</span>
+                </button>
+              );
+            })}
+          </div>
+
+          <div
+            className={`legal-case-file ${isFiling ? 'is-filing' : ''}`}
+            id="legal-myths-response"
+            role="tabpanel"
+            aria-live="polite"
+          >
+            <div className="legal-case-folder" aria-hidden="true">
+              <span className="legal-case-folder__tab">
+                <Scale />
+                Case File
+              </span>
+              <span className="legal-case-folder__pocket" />
+            </div>
+
+            <div className="legal-case-stack">
+              <span className="legal-case-back legal-case-back--4" aria-hidden="true" />
+              <span className="legal-case-back legal-case-back--3" aria-hidden="true" />
+              <span className="legal-case-back legal-case-back--2" aria-hidden="true" />
+              <span className="legal-case-back legal-case-back--1" aria-hidden="true" />
+              <span className="legal-case-paperclip" aria-hidden="true" />
+
+              {pendingMyth && (
+                <LegalMythDocument
+                  item={pendingMyth}
+                  className="legal-case-sheet--next"
+                />
+              )}
+              <LegalMythDocument
+                item={activeMyth}
+                className={isFiling ? 'legal-case-sheet--exiting' : 'legal-case-sheet--current'}
+              />
+
+              <div className="legal-case-tabs" role="tablist" aria-label="Legal case file tabs">
+                {legalMyths.map((item, index) => {
+                  const isActive = index === activeIndex;
+
+                  return (
+                    <button
+                      key={item.id}
+                      type="button"
+                      className={`legal-case-tab ${isActive ? 'is-active' : ''}`}
+                      aria-selected={isActive}
+                      aria-controls="legal-myths-response"
+                      aria-label={`Open myth ${item.id} case file`}
+                      disabled={isFiling}
+                      onClick={() => handleMythSelect(index)}
+                    >
+                      Myth {item.id}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="legal-myths-quote">
+          <span aria-hidden="true"><i /></span>
+          <figure>
+            <blockquote>You don’t have to know everything before you walk through the door.</blockquote>
+            <figcaption>That’s what we’re here to help with.</figcaption>
+          </figure>
+          <span aria-hidden="true"><i /></span>
+        </div>
+      </div>
+    </section>
+  );
+};
+
 const LegalStudies = () => {
   const [isSampleOpen, setIsSampleOpen] = useState(false);
   const [samplePage, setSamplePage] = useState(1);
   const accessSectionRef = useRef<HTMLElement>(null);
   const evaluationSectionRef = useRef<HTMLElement>(null);
   const examStructureRef = useRef<HTMLElement>(null);
-  const journeySectionRef = useRef<HTMLElement>(null);
   const scrollLockRef = useRef({ top: 0, overflow: '', position: '', width: '' });
   const lastWheelPageTurnRef = useRef(0);
 
@@ -916,34 +1287,6 @@ const LegalStudies = () => {
   }, []);
 
   useEffect(() => {
-    const node = journeySectionRef.current;
-    if (!node) return;
-
-    const setJourneyVisible = (isVisible: boolean) => {
-      if (isVisible) {
-        document.body.setAttribute('data-legal-journey-visible', 'true');
-      } else {
-        document.body.removeAttribute('data-legal-journey-visible');
-      }
-    };
-
-    const updateJourneyVisibility = () => {
-      const rect = node.getBoundingClientRect();
-      setJourneyVisible(rect.top < window.innerHeight && rect.bottom > 0);
-    };
-
-    updateJourneyVisibility();
-    window.addEventListener('scroll', updateJourneyVisibility, { passive: true });
-    window.addEventListener('resize', updateJourneyVisibility);
-
-    return () => {
-      window.removeEventListener('scroll', updateJourneyVisibility);
-      window.removeEventListener('resize', updateJourneyVisibility);
-      document.body.removeAttribute('data-legal-journey-visible');
-    };
-  }, []);
-
-  useEffect(() => {
     if (!isSampleOpen) return;
 
     const scrollTop = window.scrollY;
@@ -1035,6 +1378,8 @@ const LegalStudies = () => {
         emphasis="Understand the law. Think critically."
         variant="legal"
       />
+
+      <LegalMythsDifferenceSection />
 
       {/* Evaluation Criteria */}
       <section ref={evaluationSectionRef} className="legal-evaluation-section" aria-label="Evaluation Criteria">
@@ -1216,77 +1561,6 @@ const LegalStudies = () => {
       <LegalSyllabusQuiz />
 
       <LegalTransformationSteps />
-
-      {/* Legal Studies Journey */}
-      <section ref={journeySectionRef} className="legal-journey-section" aria-labelledby="legal-journey-title">
-        <div className="legal-journey-inner">
-          <h2 id="legal-journey-title">What Legal Studies feels like at DA</h2>
-
-          <div className="legal-journey-map" aria-label="Five step Legal Studies learning path">
-            <svg
-              className="legal-journey-path"
-              viewBox="0 0 1000 122"
-              preserveAspectRatio="none"
-              aria-hidden="true"
-            >
-              <defs>
-                <filter id="legalJourneyGlow" x="-12%" y="-70%" width="124%" height="240%">
-                  <feGaussianBlur stdDeviation="4.8" result="blur" />
-                  <feColorMatrix
-                    in="blur"
-                    type="matrix"
-                    values="1 0 0 0 1 0 1 0 0 0.74 0 0 1 0 0.18 0 0 0 0.95 0"
-                    result="goldGlow"
-                  />
-                  <feMerge>
-                    <feMergeNode in="goldGlow" />
-                    <feMergeNode in="SourceGraphic" />
-                  </feMerge>
-                </filter>
-              </defs>
-              <path
-                className="legal-journey-path-base"
-                d="M91 23 a38 38 0 1 1 0 76 a38 38 0 1 1 0 -76 M129 61 L258 61 M296 23 a38 38 0 1 1 0 76 a38 38 0 1 1 0 -76 M334 61 L462 61 M500 23 a38 38 0 1 1 0 76 a38 38 0 1 1 0 -76 M538 61 L666 61 M704 23 a38 38 0 1 1 0 76 a38 38 0 1 1 0 -76 M742 61 L871 61 M909 23 a38 38 0 1 1 0 76 a38 38 0 1 1 0 -76"
-                pathLength="1000"
-              />
-              <path
-                className="legal-journey-path-streak"
-                d="M91 23 a38 38 0 1 1 0 76 a38 38 0 1 1 0 -76 M129 61 L258 61 M296 23 a38 38 0 1 1 0 76 a38 38 0 1 1 0 -76 M334 61 L462 61 M500 23 a38 38 0 1 1 0 76 a38 38 0 1 1 0 -76 M538 61 L666 61 M704 23 a38 38 0 1 1 0 76 a38 38 0 1 1 0 -76 M742 61 L871 61 M909 23 a38 38 0 1 1 0 76 a38 38 0 1 1 0 -76"
-                pathLength="1000"
-                filter="url(#legalJourneyGlow)"
-              />
-              {[194, 398, 602, 806].map((x) => (
-                <rect
-                  key={x}
-                  className="legal-journey-diamond"
-                  x={x - 4}
-                  y="57"
-                  width="8"
-                  height="8"
-                  transform={`rotate(45 ${x} 61)`}
-                />
-              ))}
-            </svg>
-
-            <div className="legal-journey-steps">
-              {legalJourneySteps.map((step) => (
-                <article className="legal-journey-step" key={step.number}>
-                  <div className="legal-journey-number">{step.number}</div>
-                  <h3>{step.title}</h3>
-                  <div className="legal-journey-rule" aria-hidden="true">
-                    <span />
-                    <i />
-                    <span />
-                  </div>
-                  <p>{step.description}</p>
-                </article>
-              ))}
-            </div>
-          </div>
-
-          <p className="legal-journey-reassurance">You don't have to know everything before you walk through the door.</p>
-        </div>
-      </section>
 
       <LegalCareerPathways />
 
