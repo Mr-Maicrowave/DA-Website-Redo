@@ -48,12 +48,57 @@ function setDetailFinal(detail: HTMLElement) {
   ), { autoAlpha: 1, x: 0, y: 0 });
 }
 
+// eslint-disable-next-line react-refresh/only-export-components -- Testable coordinator must stay in this two-file feature scope.
+export function createMethodSelectionCoordinator(initialActiveId: MethodId) {
+  let selectionToken = 0;
+  let activeId = initialActiveId;
+  let pendingId: MethodId | null = null;
+  let disposed = false;
+
+  const isCurrent = (token: number) => !disposed && token === selectionToken;
+
+  return {
+    request(nextId: MethodId) {
+      if (disposed) throw new Error('Selection coordinator has been disposed');
+      pendingId = nextId;
+      selectionToken += 1;
+      return selectionToken;
+    },
+    isCurrent,
+    commit(token: number) {
+      if (!isCurrent(token) || pendingId === null) return null;
+      activeId = pendingId;
+      pendingId = null;
+      return activeId;
+    },
+    settleLatest() {
+      selectionToken += 1;
+      if (pendingId !== null) activeId = pendingId;
+      pendingId = null;
+      return activeId;
+    },
+    dispose() {
+      selectionToken += 1;
+      pendingId = null;
+      disposed = true;
+    },
+    snapshot() {
+      return { activeId, pendingId, disposed };
+    },
+  };
+}
+
 export function MethodTeachingDeck({ ready }: { ready: boolean }) {
   const [activeId, setActiveId] = useState<MethodId>('diagnose');
   const [expanded, setExpanded] = useState(false);
   const deckRef = useRef<HTMLElement>(null);
-  const selectionTokenRef = useRef(0);
-  const pendingSelectionRef = useRef<MethodId | null>(null);
+  const selectionCoordinatorRef = useRef<ReturnType<
+    typeof createMethodSelectionCoordinator
+  > | null>(null);
+  if (!selectionCoordinatorRef.current) {
+    selectionCoordinatorRef.current = createMethodSelectionCoordinator('diagnose');
+  }
+  const selectionCoordinator = selectionCoordinatorRef.current;
   const flipAnimationRef = useRef<gsap.core.Timeline | null>(null);
   const contentTimelineRef = useRef<gsap.core.Timeline | null>(null);
   const cardRefs = useRef<Record<MethodId, HTMLButtonElement | null>>({
@@ -82,16 +127,15 @@ export function MethodTeachingDeck({ ready }: { ready: boolean }) {
       (card): card is HTMLButtonElement => card !== null,
     );
     const handleMotionPreferenceChange = () => {
-      const pendingSelection = pendingSelectionRef.current;
-      selectionTokenRef.current += 1;
-      pendingSelectionRef.current = null;
+      const hadPendingSelection = selectionCoordinator.snapshot().pendingId !== null;
+      const latestSelection = selectionCoordinator.settleLatest();
       killOwnedAnimation(flipAnimationRef);
       killOwnedAnimation(contentTimelineRef);
       gsap.killTweensOf(mountedCardElements);
 
-      if (pendingSelection) {
+      if (hadPendingSelection) {
         flushSync(() => {
-          setActiveId(pendingSelection);
+          setActiveId(latestSelection);
           setExpanded(true);
         });
       }
@@ -106,17 +150,15 @@ export function MethodTeachingDeck({ ready }: { ready: boolean }) {
 
     return () => {
       motionPreference.removeEventListener('change', handleMotionPreferenceChange);
-      selectionTokenRef.current += 1;
-      pendingSelectionRef.current = null;
+      selectionCoordinator.dispose();
       killOwnedAnimation(flipAnimationRef);
       killOwnedAnimation(contentTimelineRef);
       gsap.killTweensOf(mountedCardElements);
     };
-  }, []);
+  }, [selectionCoordinator]);
 
   const selectMethod = (nextId: MethodId) => {
-    const selectionToken = ++selectionTokenRef.current;
-    pendingSelectionRef.current = nextId;
+    const selectionToken = selectionCoordinator.request(nextId);
     const cardElements = Object.values(cardRefs.current).filter(
       (card): card is HTMLButtonElement => card !== null,
     );
@@ -132,16 +174,17 @@ export function MethodTeachingDeck({ ready }: { ready: boolean }) {
     gsap.killTweensOf(outgoingDetail ? [...cardElements, outgoingDetail] : cardElements);
 
     const commitSelection = () => {
-      if (selectionTokenRef.current !== selectionToken) return;
+      if (!selectionCoordinator.isCurrent(selectionToken)) return;
       const state = reducedMotion ? null : Flip.getState(cardElements);
+      const committedId = selectionCoordinator.commit(selectionToken);
+      if (!committedId) return;
 
       flushSync(() => {
-        setActiveId(nextId);
+        setActiveId(committedId);
         setExpanded(true);
       });
 
-      if (selectionTokenRef.current !== selectionToken) return;
-      pendingSelectionRef.current = null;
+      if (!selectionCoordinator.isCurrent(selectionToken)) return;
 
       const detail = deckRef.current?.querySelector<HTMLElement>(
         '#hsm-method-detail',
@@ -180,7 +223,7 @@ export function MethodTeachingDeck({ ready }: { ready: boolean }) {
       );
       const timeline = gsap.timeline({
         onComplete: () => {
-          if (selectionTokenRef.current !== selectionToken) return;
+          if (!selectionCoordinator.isCurrent(selectionToken)) return;
           gsap.set([detail, ...copy, ...actions, ...annotations], {
             clearProps: 'opacity,visibility,transform',
           });
@@ -244,7 +287,7 @@ export function MethodTeachingDeck({ ready }: { ready: boolean }) {
         ease: 'power2.in',
       })
       .call(() => {
-        if (selectionTokenRef.current !== selectionToken) return;
+        if (!selectionCoordinator.isCurrent(selectionToken)) return;
         commitSelection();
       });
   };
