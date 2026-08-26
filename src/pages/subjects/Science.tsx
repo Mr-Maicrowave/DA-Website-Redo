@@ -1518,7 +1518,7 @@ const Science = () => {
               ['HSC focus areas',  '#hsc-sciences'],
               ['How we teach',     '#hsc-sciences'],
             ].map(([label, href]) => (
-              <a key={href} href={href} className="rounded-2xl px-4 py-3 text-center text-sm font-black text-[#10233f] transition hover:bg-[#f5ecd9]">
+              <a key={label} href={href} className="rounded-2xl px-4 py-3 text-center text-sm font-black text-[#10233f] transition hover:bg-[#f5ecd9]">
                 {label}
               </a>
             ))}
