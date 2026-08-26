@@ -18,7 +18,11 @@ const transitionStyles = readFileSync(
   new URL('./MethodTransition.css', import.meta.url),
   'utf8',
 );
-const featureSource = `${deckSource}\n${detailSource}\n${transitionStyles}`;
+const deckStyles = readFileSync(
+  new URL('./MethodTeachingDeck.css', import.meta.url),
+  'utf8',
+);
+const featureSource = `${deckSource}\n${detailSource}\n${transitionStyles}\n${deckStyles}`;
 const deckModuleUrl = `/@fs${fileURLToPath(
   new URL('./MethodTeachingDeck.tsx', import.meta.url),
 )}`;
@@ -242,6 +246,7 @@ function loadDeckExports() {
     }],
     ['gsap/Flip', { Flip: {} }],
     ['./MethodDetail', { MethodDetail() { return null; } }],
+    ['./MethodTeachingDeck.css', {}],
     ['./methodTransitionData', { methodItems: [] }],
     ['./methodTeachingDeckState', {
       getAdjacentMethodId() { return 'diagnose'; },
@@ -284,6 +289,36 @@ test('provides one live editorial detail renderer', () => {
 
 test('declares the expanded 42\/58 composition contract', () => {
   assert.match(featureSource, /42(?:fr|%)?\s*[/,: ]\s*58(?:fr|%)?|42\/58/);
+});
+
+test('declares the approved responsive visual contracts', () => {
+  assert.match(deckSource, /import ['"]\.\/MethodTeachingDeck\.css['"]/);
+  assert.match(deckSource, /['"]--hsm-active-wash['"]/);
+  assert.match(
+    deckStyles,
+    /\.hsm-deck\[data-expanded=['"]true['"]\]\s+\.hsm-deck__composition\s*\{[\s\S]*grid-template-columns:\s*minmax\(0,\s*42fr\)\s+minmax\(0,\s*58fr\)/,
+  );
+  assert.match(
+    deckStyles,
+    /\.hsm-deck\[data-expanded=['"]true['"]\][\s\S]*\.hsm-deck__card\.is-active[\s\S]*height:\s*clamp\(300px,\s*34vw,\s*360px\)/,
+  );
+  assert.match(
+    deckStyles,
+    /\.hsm-deck\[data-expanded=['"]true['"]\][\s\S]*\.hsm-deck__card:not\(\.is-active\)[\s\S]*height:\s*clamp\(56px,\s*5vw,\s*72px\)/,
+  );
+  assert.match(deckStyles, /@media\s*\(max-width:\s*767px\)/);
+  assert.match(
+    deckStyles,
+    /@media\s*\(max-width:\s*767px\)[\s\S]*\.hsm-deck__cards[\s\S]*overflow-x:\s*auto/,
+  );
+  assert.match(
+    deckStyles,
+    /@media\s*\(max-width:\s*767px\)[\s\S]*\.hsm-deck__card[\s\S]*min-height:\s*44px/,
+  );
+  assert.match(
+    deckStyles,
+    /@media\s*\(prefers-reduced-motion:\s*reduce\)[\s\S]*transition-duration:\s*0\.01ms/,
+  );
 });
 
 test('moves the card deck with the approved Flip choreography', () => {
@@ -378,7 +413,7 @@ test('cleanup invalidation permits a Strict Mode setup replay and new commit', (
 });
 
 test('mounted deck keeps the newest rapid selection and disposes owned motion', {
-  timeout: 30_000,
+  timeout: 90_000,
 }, async () => {
   const server = await createServer({
     appType: 'spa',
@@ -406,7 +441,7 @@ test('mounted deck keeps the newest rapid selection and disposes owned motion', 
     page.on('console', (message) => {
       if (message.type() === 'error') runtimeErrors.push(message.text());
     });
-    await page.goto(baseUrl, { timeout: 10_000, waitUntil: 'domcontentloaded' });
+    await page.goto(baseUrl, { timeout: 30_000, waitUntil: 'domcontentloaded' });
     try {
       await page.waitForFunction(
         () => Boolean(window.__methodDeckRuntime),

@@ -17,6 +17,7 @@ import {
   getAdjacentMethodId,
   getInactiveMethods,
 } from './methodTeachingDeckState';
+import './MethodTeachingDeck.css';
 
 gsap.registerPlugin(Flip);
 
