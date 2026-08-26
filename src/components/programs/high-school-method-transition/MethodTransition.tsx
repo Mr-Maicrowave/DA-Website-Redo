@@ -1,6 +1,7 @@
-import { type CSSProperties, useLayoutEffect, useRef } from 'react';
+import { type CSSProperties, useLayoutEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { MethodTeachingDeck } from './MethodTeachingDeck';
 import { reconcileSourceHandoffPose, type TransitionPose } from './methodTransitionGeometry';
 import { methodItems } from './methodTransitionData';
 import {
@@ -26,7 +27,8 @@ function decodeImage(image: HTMLImageElement) {
 }
 
 export function MethodTransition() {
-  const sectionRef = useRef<HTMLElement>(null);
+  const [deckReady, setDeckReady] = useState(false);
+  const sectionRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
   const centerBloomRef = useRef<HTMLImageElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
@@ -82,6 +84,7 @@ export function MethodTransition() {
               gsap.set(companions, { opacity: 0, y: 34, scale: 0.92 });
 
               if (conditions.reduce || !source) {
+                setDeckReady(true);
                 gsap.set(card, { xPercent: -50, yPercent: -50, scale: 1, opacity: 1 });
                 gsap.set(staticGlass, { opacity: 1 });
                 gsap.set(proxy, { opacity: 0 });
@@ -319,6 +322,7 @@ export function MethodTransition() {
 
               master.eventCallback('onUpdate', () => {
                 const progress = master.progress();
+                setDeckReady(progress >= METHOD_TRANSITION_TIMING.companionsEnd);
                 if (normalizedSourceRect && progress >= SOURCE_HANDOFF_START && progress <= SOURCE_HANDOFF_END) {
                   const strength = 1 - ((progress - SOURCE_HANDOFF_START) / (SOURCE_HANDOFF_END - SOURCE_HANDOFF_START));
                   const reconciledPose = reconcileSourceHandoffPose(
@@ -360,37 +364,42 @@ export function MethodTransition() {
   return (
     <section
       className="hsm-transition"
-      ref={sectionRef}
-      data-scroll-property="--method-transition-scroll"
       style={{ '--method-transition-scroll': `${METHOD_TRANSITION_SCROLL_VH}vh` } as CSSProperties}
     >
-      <div className="hsm-transition__stage" ref={stageRef}>
-        <img className="hsm-transition__center-bloom" ref={centerBloomRef} src={CENTER_BLOOM} alt="" aria-hidden="true" decoding="async" />
-        <div className="hsm-transition__card" ref={cardRef} aria-hidden="true">
-          <img
-            className="hsm-transition__static-glass"
-            ref={staticGlassRef}
-            src={MAGNIFIER}
-            alt=""
-            decoding="async"
-          />
-        </div>
-        <img className="hsm-transition__proxy" ref={proxyRef} src={MAGNIFIER} alt="" aria-hidden="true" decoding="async" />
-        <div className="hsm-transition__card-row" aria-hidden="true">
-          <div className="hsm-transition__card-slot" ref={cardSlotRef} />
-          {methodItems.slice(1).map((method, index) => (
-            <div
-              className="hsm-transition__companion-card"
-              key={method.id}
-              ref={(node) => {
-                companionRefs.current[index] = node;
-              }}
-            >
-              <img src={method.card} alt="" decoding="async" />
-            </div>
-          ))}
+      <div
+        className="hsm-transition__runway"
+        ref={sectionRef}
+        data-scroll-property="--method-transition-scroll"
+      >
+        <div className="hsm-transition__stage" ref={stageRef}>
+          <img className="hsm-transition__center-bloom" ref={centerBloomRef} src={CENTER_BLOOM} alt="" aria-hidden="true" decoding="async" />
+          <div className="hsm-transition__card" ref={cardRef} aria-hidden="true">
+            <img
+              className="hsm-transition__static-glass"
+              ref={staticGlassRef}
+              src={MAGNIFIER}
+              alt=""
+              decoding="async"
+            />
+          </div>
+          <img className="hsm-transition__proxy" ref={proxyRef} src={MAGNIFIER} alt="" aria-hidden="true" decoding="async" />
+          <div className="hsm-transition__card-row" aria-hidden="true">
+            <div className="hsm-transition__card-slot" ref={cardSlotRef} />
+            {methodItems.slice(1).map((method, index) => (
+              <div
+                className="hsm-transition__companion-card"
+                key={method.id}
+                ref={(node) => {
+                  companionRefs.current[index] = node;
+                }}
+              >
+                <img src={method.card} alt="" decoding="async" />
+              </div>
+            ))}
+          </div>
         </div>
       </div>
+      <div className="hsm-transition__interaction"><MethodTeachingDeck ready={deckReady} /></div>
     </section>
   );
 }

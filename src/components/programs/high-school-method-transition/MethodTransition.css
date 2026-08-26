@@ -6,11 +6,17 @@
   --method-transition-scroll: 230vh;
   position: relative;
   z-index: 4;
+  overflow: visible;
+  background: #fffdf8;
+  color: #0a1b34;
+}
+
+.hsm-transition__runway {
+  position: relative;
   height: var(--method-transition-scroll);
   min-height: 230svh;
   overflow: visible;
   background: linear-gradient(to bottom, transparent 0 100svh, #fffdf8 100svh);
-  color: #0a1b34;
 }
 
 .hsm-transition__stage {
@@ -119,6 +125,12 @@
   object-fit: cover;
 }
 
+.hsm-transition__interaction {
+  position: relative;
+  z-index: 1;
+  background: #fffdf8;
+}
+
 @media (max-width: 1023px) {
   .hsm-transition__center-bloom {
     width: clamp(260px, 46vw, 420px);
@@ -159,6 +171,10 @@
 @media (prefers-reduced-motion: reduce) {
   .hsm-transition {
     --method-transition-scroll: 100vh;
+    background: #fffdf8;
+  }
+
+  .hsm-transition__runway {
     min-height: 100svh;
     background: #fffdf8;
   }
