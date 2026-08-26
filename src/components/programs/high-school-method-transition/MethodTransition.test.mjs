@@ -108,6 +108,10 @@ test('keeps the transition stage sticky and reaches a viewport-dominant early pe
 
 test('uses a 230vh pinned runway followed by intrinsic normal-flow interaction', () => {
   assert.match(styles, /--method-transition-scroll:\s*230vh/);
+  assert.doesNotMatch(
+    source,
+    /style=\{\{\s*['"]--method-transition-scroll['"]:/,
+  );
   assert.match(
     styles,
     /\.hsm-transition__runway\s*\{[^}]*height:\s*var\(--method-transition-scroll\)[^}]*min-height:\s*230svh/s,

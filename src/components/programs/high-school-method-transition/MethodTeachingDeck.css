@@ -87,7 +87,7 @@
   content: '';
 }
 
-.hsm-deck__heading h2 {
+.hsm-deck .hsm-deck__heading h2 {
   margin: 0;
   color: var(--hsm-navy);
   font-family: var(--hsm-display);
@@ -339,7 +339,7 @@
   background: rgb(184 137 31 / 0.6);
 }
 
-.hsm-deck__detail h3 {
+.hsm-deck .hsm-deck__detail h3 {
   margin: 13px 0 0;
   color: var(--hsm-navy);
   font-family: var(--hsm-display);
@@ -507,7 +507,7 @@
     font-size: 0.66rem;
   }
 
-  .hsm-deck__heading h2 {
+  .hsm-deck .hsm-deck__heading h2 {
     font-size: clamp(2.85rem, 14vw, 4.6rem);
     line-height: 0.94;
   }
@@ -612,7 +612,7 @@
     padding: 58px 1px 0;
   }
 
-  .hsm-deck__detail h3 {
+  .hsm-deck .hsm-deck__detail h3 {
     font-size: clamp(3.2rem, 17vw, 4.8rem);
   }
 

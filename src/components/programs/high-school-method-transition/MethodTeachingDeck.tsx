@@ -418,7 +418,7 @@ export function MethodTeachingDeck({ ready }: { ready: boolean }) {
                   className={`hsm-deck__card hsm-deck__card--${method.id}${isActive ? ' is-active' : ''}`}
                   aria-label={method.label}
                   aria-pressed={isActive}
-                  aria-controls="hsm-method-detail"
+                  aria-controls={expanded ? 'hsm-method-detail' : undefined}
                   data-method-id={method.id}
                   data-deck-position={isActive ? 'hero' : `tab-${inactiveIndex + 1}`}
                   onClick={() => selectMethod(method.id)}

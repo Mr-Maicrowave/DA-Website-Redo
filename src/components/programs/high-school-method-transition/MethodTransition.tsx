@@ -1,11 +1,10 @@
-import { type CSSProperties, useLayoutEffect, useRef, useState } from 'react';
+import { useLayoutEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { MethodTeachingDeck } from './MethodTeachingDeck';
 import { reconcileSourceHandoffPose, type TransitionPose } from './methodTransitionGeometry';
 import { methodItems } from './methodTransitionData';
 import {
-  METHOD_TRANSITION_SCROLL_VH,
   METHOD_TRANSITION_TIMING,
   getViewportZoomTargets,
   zoomScaleAt,
@@ -362,10 +361,7 @@ export function MethodTransition() {
   }, []);
 
   return (
-    <section
-      className="hsm-transition"
-      style={{ '--method-transition-scroll': `${METHOD_TRANSITION_SCROLL_VH}vh` } as CSSProperties}
-    >
+    <section className="hsm-transition">
       <div
         className="hsm-transition__runway"
         ref={sectionRef}

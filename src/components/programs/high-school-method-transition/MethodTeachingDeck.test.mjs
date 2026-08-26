@@ -334,10 +334,30 @@ test('renders the approved care-led overview and process annotation', () => {
 });
 
 test('keeps the card deck semantic and keyboard operable', () => {
-  assert.match(deckSource, /methodItems\.map/);
-  assert.match(deckSource, /<button/);
+  assert.equal((deckSource.match(/methodItems\.map/g) ?? []).length, 1);
+  assert.equal((deckSource.match(/<button/g) ?? []).length, 1);
+  assert.match(
+    deckSource,
+    /methodItems\.map\([\s\S]*?<button[\s\S]*?cardRefs\.current\[method\.id\]\s*=\s*element[\s\S]*?<\/button>/,
+  );
   assert.match(deckSource, /aria-pressed/);
-  assert.match(deckSource, /onKeyDown/);
+  assert.match(
+    deckSource,
+    /const focusMethod[\s\S]*?cardRefs\.current\[methodId\]\?\.focus\(\)/,
+  );
+  assert.match(
+    deckSource,
+    /onKeyDown=\{\(event\) => handleKeyDown\(event, method\.id\)\}/,
+  );
+  assert.match(deckSource, /selectMethod\(nextId\);\s*focusMethod\(nextId\);/);
+});
+
+test('only exposes the detail relationship while its target is mounted', () => {
+  assert.doesNotMatch(deckSource, /aria-controls="hsm-method-detail"/);
+  assert.match(
+    deckSource,
+    /aria-controls=\{expanded\s*\?\s*['"]hsm-method-detail['"]\s*:\s*undefined\}/,
+  );
 });
 
 test('provides one live editorial detail renderer', () => {
@@ -376,6 +396,17 @@ test('declares the approved responsive visual contracts', () => {
   assert.match(
     deckStyles,
     /@media\s*\(prefers-reduced-motion:\s*reduce\)[\s\S]*transition-duration:\s*0\.01ms/,
+  );
+});
+
+test('keeps feature display typography stronger than the host page heading rule', () => {
+  assert.match(
+    deckStyles,
+    /\.hsm-deck\s+\.hsm-deck__heading h2\s*\{[\s\S]*?font-family:\s*var\(--hsm-display\)/,
+  );
+  assert.match(
+    deckStyles,
+    /\.hsm-deck\s+\.hsm-deck__detail h3\s*\{[\s\S]*?font-family:\s*var\(--hsm-display\)/,
   );
 });
 
@@ -575,6 +606,51 @@ test('mounted deck keeps the newest rapid selection and disposes owned motion', 
     assert.ok(
       optimizedCardSources.every((source) => /\.(?:avif|webp)$/.test(source)),
       `Expected optimized card sources, received ${optimizedCardSources.join(', ')}`,
+    );
+
+    const initialSemantics = await page.evaluate(() => {
+      const collections = [...document.querySelectorAll('.hsm-deck__cards')];
+      const buttons = collections.flatMap((collection) => (
+        [...collection.querySelectorAll(':scope > button.hsm-deck__card')]
+      ));
+
+      return {
+        collectionCount: collections.length,
+        buttonCount: buttons.length,
+        controlledTargets: buttons.map((button) => button.getAttribute('aria-controls')),
+        detailExists: document.querySelector('#hsm-method-detail') !== null,
+      };
+    });
+    assert.equal(initialSemantics.collectionCount, 1);
+    assert.equal(initialSemantics.buttonCount, 5);
+    assert.deepEqual(initialSemantics.controlledTargets, [null, null, null, null, null]);
+    assert.equal(initialSemantics.detailExists, false);
+
+    await page.evaluate(() => window.__methodDeckRuntime.setReducedMotion(true));
+    await page.focus('.hsm-deck__card[data-method-id="diagnose"]');
+    await page.keyboard.press('ArrowRight');
+    const keyboardSelection = await page.evaluate(() => ({
+      focusedId: document.activeElement instanceof HTMLButtonElement
+        ? document.activeElement.dataset.methodId ?? null
+        : null,
+      activeIds: [...document.querySelectorAll('.hsm-deck__card[aria-pressed="true"]')]
+        .map((button) => button.getAttribute('data-method-id')),
+      controlledTargets: [...document.querySelectorAll('.hsm-deck__card')]
+        .map((button) => button.getAttribute('aria-controls')),
+      detailExists: document.querySelector('#hsm-method-detail') !== null,
+    }));
+    assert.equal(keyboardSelection.focusedId, 'explain');
+    assert.deepEqual(keyboardSelection.activeIds, ['explain']);
+    assert.deepEqual(
+      keyboardSelection.controlledTargets,
+      Array.from({ length: 5 }, () => 'hsm-method-detail'),
+    );
+    assert.equal(keyboardSelection.detailExists, true);
+
+    await page.reload({ waitUntil: 'domcontentloaded' });
+    await page.waitForFunction(
+      () => Boolean(window.__methodDeckRuntime),
+      { timeout: 30_000 },
     );
 
     const clickMethod = async (methodId) => {
