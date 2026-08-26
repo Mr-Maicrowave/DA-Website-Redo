@@ -12,9 +12,14 @@ export type MethodItem = {
   actions: readonly [MethodAction, MethodAction, MethodAction, MethodAction];
   closingLines: readonly string[];
   accent: string;
+  textAccent: string;
   atmosphere: string;
   bloom: string;
   card: string;
+  cardAvifSmall: string;
+  cardAvifLarge: string;
+  cardWebpSmall: string;
+  cardWebpLarge: string;
   Icon: typeof Search;
 };
 
@@ -36,9 +41,14 @@ export const methodItems: MethodItem[] = [
     ],
     closingLines: ['Every student is different.', 'So we start differently.'],
     accent: '#1f766d',
+    textAccent: '#1f766d',
     atmosphere: '#e4f0e9',
     bloom: '/images/programs/high-school-method-transition/method-bloom-diagnose-teal-v1.png',
     card: '/images/programs/high-school-method-transition/method-card-diagnose-forest-v1.png',
+    cardAvifSmall: '/images/programs/high-school-method-transition/method-card-diagnose-forest-v1-512w.avif',
+    cardAvifLarge: '/images/programs/high-school-method-transition/method-card-diagnose-forest-v1-1024w.avif',
+    cardWebpSmall: '/images/programs/high-school-method-transition/method-card-diagnose-forest-v1-512w.webp',
+    cardWebpLarge: '/images/programs/high-school-method-transition/method-card-diagnose-forest-v1-1024w.webp',
     Icon: Search,
   },
   {
@@ -58,9 +68,14 @@ export const methodItems: MethodItem[] = [
     ],
     closingLines: ['The explanation can change.', 'The goal stays the same: understanding.'],
     accent: '#1f5d89',
+    textAccent: '#1f5d89',
     atmosphere: '#e6f0f7',
     bloom: '/images/programs/high-school-method-transition/method-bloom-explain-green-v1.png',
     card: '/images/programs/high-school-method-transition/method-card-explain-blue-v1.png',
+    cardAvifSmall: '/images/programs/high-school-method-transition/method-card-explain-blue-v1-512w.avif',
+    cardAvifLarge: '/images/programs/high-school-method-transition/method-card-explain-blue-v1-1024w.avif',
+    cardWebpSmall: '/images/programs/high-school-method-transition/method-card-explain-blue-v1-512w.webp',
+    cardWebpLarge: '/images/programs/high-school-method-transition/method-card-explain-blue-v1-1024w.webp',
     Icon: MessageCircle,
   },
   {
@@ -80,9 +95,14 @@ export const methodItems: MethodItem[] = [
     ],
     closingLines: ['Practice should build independence,', 'not dependence.'],
     accent: '#7652a8',
+    textAccent: '#7652a8',
     atmosphere: '#eee8f5',
     bloom: '/images/programs/high-school-method-transition/method-bloom-practise-lavender-v1.png',
     card: '/images/programs/high-school-method-transition/method-card-practise-purple-v1.png',
+    cardAvifSmall: '/images/programs/high-school-method-transition/method-card-practise-purple-v1-512w.avif',
+    cardAvifLarge: '/images/programs/high-school-method-transition/method-card-practise-purple-v1-1024w.avif',
+    cardWebpSmall: '/images/programs/high-school-method-transition/method-card-practise-purple-v1-512w.webp',
+    cardWebpLarge: '/images/programs/high-school-method-transition/method-card-practise-purple-v1-1024w.webp',
     Icon: Pencil,
   },
   {
@@ -102,9 +122,14 @@ export const methodItems: MethodItem[] = [
     ],
     closingLines: ['The goal is not remembering the example.', 'It is knowing what to do next.'],
     accent: '#cf6f35',
+    textAccent: '#9a471f',
     atmosphere: '#f8ebe2',
     bloom: '/images/programs/high-school-method-transition/method-bloom-apply-peach-v1.png',
     card: '/images/programs/high-school-method-transition/method-card-apply-orange-v1.png',
+    cardAvifSmall: '/images/programs/high-school-method-transition/method-card-apply-orange-v1-512w.avif',
+    cardAvifLarge: '/images/programs/high-school-method-transition/method-card-apply-orange-v1-1024w.avif',
+    cardWebpSmall: '/images/programs/high-school-method-transition/method-card-apply-orange-v1-512w.webp',
+    cardWebpLarge: '/images/programs/high-school-method-transition/method-card-apply-orange-v1-1024w.webp',
     Icon: Send,
   },
   {
@@ -124,9 +149,14 @@ export const methodItems: MethodItem[] = [
     ],
     closingLines: ['The pace changes.', 'The explanation changes.', 'The goal doesn’t:', 'genuine understanding.'],
     accent: '#ad7414',
+    textAccent: '#80530b',
     atmosphere: '#f7efdb',
     bloom: '/images/programs/high-school-method-transition/method-bloom-review-gold-v1.png',
     card: '/images/programs/high-school-method-transition/method-card-review-gold-v1.png',
+    cardAvifSmall: '/images/programs/high-school-method-transition/method-card-review-gold-v1-512w.avif',
+    cardAvifLarge: '/images/programs/high-school-method-transition/method-card-review-gold-v1-1024w.avif',
+    cardWebpSmall: '/images/programs/high-school-method-transition/method-card-review-gold-v1-512w.webp',
+    cardWebpLarge: '/images/programs/high-school-method-transition/method-card-review-gold-v1-1024w.webp',
     Icon: ClipboardCheck,
   },
 ];

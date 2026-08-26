@@ -45,8 +45,14 @@
   max-width: none;
   height: auto;
   opacity: 0.13;
-  object-fit: contain;
   pointer-events: none;
+}
+
+.hsm-deck__atmosphere img {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
 }
 
 .hsm-deck__heading,
@@ -150,6 +156,11 @@
   transition: filter 300ms ease, scale 500ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
+.hsm-deck__card picture {
+  position: absolute;
+  inset: 0;
+}
+
 .hsm-deck__card::after {
   position: absolute;
   inset: 52% 0 0;
@@ -204,10 +215,21 @@
   position: absolute;
   inset: -10% -12% -14%;
   z-index: -1;
-  background: url('/images/programs/high-school-method-transition/how-we-teach-watercolor-botanical-v1.png') center / cover no-repeat;
+  background-image: image-set(
+    url('/images/programs/high-school-method-transition/how-we-teach-watercolor-botanical-v1-1536w.avif') type('image/avif'),
+    url('/images/programs/high-school-method-transition/how-we-teach-watercolor-botanical-v1-1536w.webp') type('image/webp'),
+    url('/images/programs/high-school-method-transition/how-we-teach-watercolor-botanical-v1.png') type('image/png')
+  );
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
   content: '';
   opacity: 0.16;
   pointer-events: none;
+}
+
+.hsm-deck__photograph picture {
+  display: block;
 }
 
 .hsm-deck__photograph img {
@@ -330,7 +352,7 @@
 
 .hsm-deck__emotional {
   margin: 14px 0 28px;
-  color: var(--hsm-active-accent);
+  color: var(--hsm-active-text-accent);
   font-family: var(--hsm-display);
   font-size: clamp(1.45rem, 2.15vw, 2.15rem);
   font-style: italic;
@@ -429,7 +451,16 @@
   position: relative;
   margin-top: clamp(34px, 5vw, 60px);
   padding: clamp(24px, 3vw, 38px) clamp(22px, 4vw, 54px);
-  background: linear-gradient(96deg, rgb(255 253 247 / 0.12), rgb(255 253 247 / 0.82) 30%, rgb(255 253 247 / 0.92) 70%, transparent), url('/images/programs/high-school-method-transition/how-we-teach-watercolor-botanical-v1.png') center 69% / 140% auto no-repeat;
+  background-image:
+    linear-gradient(96deg, rgb(255 253 247 / 0.12), rgb(255 253 247 / 0.82) 30%, rgb(255 253 247 / 0.92) 70%, transparent),
+    image-set(
+      url('/images/programs/high-school-method-transition/how-we-teach-watercolor-botanical-v1-1536w.avif') type('image/avif'),
+      url('/images/programs/high-school-method-transition/how-we-teach-watercolor-botanical-v1-1536w.webp') type('image/webp'),
+      url('/images/programs/high-school-method-transition/how-we-teach-watercolor-botanical-v1.png') type('image/png')
+    );
+  background-position: center, center 69%;
+  background-size: auto, 140% auto;
+  background-repeat: no-repeat;
   color: var(--hsm-navy);
   font-family: var(--hsm-display);
   font-size: clamp(1.4rem, 2vw, 2rem);
@@ -538,6 +569,9 @@
   }
 
   .hsm-deck[data-expanded='true'] .hsm-deck__card.is-active {
+    position: sticky;
+    z-index: 2;
+    left: 0;
     order: -1;
     grid-row: 1;
     grid-column: 1 / -1;

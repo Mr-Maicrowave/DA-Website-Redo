@@ -23,11 +23,28 @@ gsap.registerPlugin(Flip);
 
 const TUTOR_PHOTOGRAPH =
   '/images/programs/high-school-method-transition/how-we-teach-tutor-student-v1.png';
+const TUTOR_PHOTOGRAPH_AVIF_SMALL =
+  '/images/programs/high-school-method-transition/how-we-teach-tutor-student-v1-768w.avif';
+const TUTOR_PHOTOGRAPH_AVIF_LARGE =
+  '/images/programs/high-school-method-transition/how-we-teach-tutor-student-v1-1536w.avif';
+const TUTOR_PHOTOGRAPH_WEBP_SMALL =
+  '/images/programs/high-school-method-transition/how-we-teach-tutor-student-v1-768w.webp';
+const TUTOR_PHOTOGRAPH_WEBP_LARGE =
+  '/images/programs/high-school-method-transition/how-we-teach-tutor-student-v1-1536w.webp';
 const BOTANICAL_ATMOSPHERE =
   '/images/programs/high-school-method-transition/how-we-teach-watercolor-botanical-v1.png';
+const BOTANICAL_ATMOSPHERE_AVIF_SMALL =
+  '/images/programs/high-school-method-transition/how-we-teach-watercolor-botanical-v1-768w.avif';
+const BOTANICAL_ATMOSPHERE_AVIF_LARGE =
+  '/images/programs/high-school-method-transition/how-we-teach-watercolor-botanical-v1-1536w.avif';
+const BOTANICAL_ATMOSPHERE_WEBP_SMALL =
+  '/images/programs/high-school-method-transition/how-we-teach-watercolor-botanical-v1-768w.webp';
+const BOTANICAL_ATMOSPHERE_WEBP_LARGE =
+  '/images/programs/high-school-method-transition/how-we-teach-watercolor-botanical-v1-1536w.webp';
 
 type DeckProperties = CSSProperties & {
   '--hsm-active-accent': string;
+  '--hsm-active-text-accent': string;
   '--hsm-active-wash': string;
 };
 
@@ -145,6 +162,7 @@ export function MethodTeachingDeck({ ready }: { ready: boolean }) {
   const inactiveMethods = getInactiveMethods(activeId);
   const deckStyle: DeckProperties = {
     '--hsm-active-accent': activeMethod.accent,
+    '--hsm-active-text-accent': activeMethod.textAccent,
     '--hsm-active-wash': activeMethod.atmosphere,
   };
 
@@ -339,12 +357,26 @@ export function MethodTeachingDeck({ ready }: { ready: boolean }) {
       aria-labelledby="hsm-deck-heading"
       ref={deckRef}
     >
-      <img
-        className="hsm-deck__atmosphere"
-        src={BOTANICAL_ATMOSPHERE}
-        alt=""
-        aria-hidden="true"
-      />
+      <picture className="hsm-deck__atmosphere" aria-hidden="true">
+        <source
+          type="image/avif"
+          srcSet={`${BOTANICAL_ATMOSPHERE_AVIF_SMALL} 768w, ${BOTANICAL_ATMOSPHERE_AVIF_LARGE} 1536w`}
+          sizes="(max-width: 767px) 760px, min(72vw, 1060px)"
+        />
+        <source
+          type="image/webp"
+          srcSet={`${BOTANICAL_ATMOSPHERE_WEBP_SMALL} 768w, ${BOTANICAL_ATMOSPHERE_WEBP_LARGE} 1536w`}
+          sizes="(max-width: 767px) 760px, min(72vw, 1060px)"
+        />
+        <img
+          src={BOTANICAL_ATMOSPHERE}
+          alt=""
+          width={1536}
+          height={1024}
+          loading="lazy"
+          decoding="async"
+        />
+      </picture>
 
       <header className="hsm-deck__heading">
         <p className="hsm-deck__eyebrow">02 — HOW WE TEACH</p>
@@ -392,7 +424,25 @@ export function MethodTeachingDeck({ ready }: { ready: boolean }) {
                   onClick={() => selectMethod(method.id)}
                   onKeyDown={(event) => handleKeyDown(event, method.id)}
                 >
-                  <img src={method.card} alt="" aria-hidden="true" />
+                  <picture aria-hidden="true">
+                    <source
+                      type="image/avif"
+                      srcSet={`${method.cardAvifSmall} 512w, ${method.cardAvifLarge} 1024w`}
+                      sizes={expanded ? '(max-width: 767px) calc(100vw - 44px), 42vw' : '(max-width: 767px) 120px, 20vw'}
+                    />
+                    <source
+                      type="image/webp"
+                      srcSet={`${method.cardWebpSmall} 512w, ${method.cardWebpLarge} 1024w`}
+                      sizes={expanded ? '(max-width: 767px) calc(100vw - 44px), 42vw' : '(max-width: 767px) 120px, 20vw'}
+                    />
+                    <img
+                      src={method.card}
+                      alt=""
+                      width={1024}
+                      height={1536}
+                      decoding="async"
+                    />
+                  </picture>
                   <span>{method.label}</span>
                 </button>
               );
@@ -404,10 +454,26 @@ export function MethodTeachingDeck({ ready }: { ready: boolean }) {
           </p>
 
           <figure className="hsm-deck__photograph">
-            <img
-              src={TUTOR_PHOTOGRAPH}
-              alt="A tutor and high-school student working through a workbook together"
-            />
+            <picture>
+              <source
+                type="image/avif"
+                srcSet={`${TUTOR_PHOTOGRAPH_AVIF_SMALL} 768w, ${TUTOR_PHOTOGRAPH_AVIF_LARGE} 1536w`}
+                sizes="(max-width: 767px) calc(100vw - 28px), min(48vw, 620px)"
+              />
+              <source
+                type="image/webp"
+                srcSet={`${TUTOR_PHOTOGRAPH_WEBP_SMALL} 768w, ${TUTOR_PHOTOGRAPH_WEBP_LARGE} 1536w`}
+                sizes="(max-width: 767px) calc(100vw - 28px), min(48vw, 620px)"
+              />
+              <img
+                src={TUTOR_PHOTOGRAPH}
+                alt="A tutor and high-school student working through a workbook together"
+                width={1536}
+                height={1024}
+                loading="lazy"
+                decoding="async"
+              />
+            </picture>
           </figure>
         </div>
 

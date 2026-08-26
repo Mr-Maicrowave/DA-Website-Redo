@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync, statSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import test from 'node:test';
 import puppeteer from 'puppeteer';
@@ -14,6 +14,10 @@ const detailSource = readFileSync(
   new URL('./MethodDetail.tsx', import.meta.url),
   'utf8',
 );
+const dataSource = readFileSync(
+  new URL('./methodTransitionData.ts', import.meta.url),
+  'utf8',
+);
 const transitionStyles = readFileSync(
   new URL('./MethodTransition.css', import.meta.url),
   'utf8',
@@ -22,10 +26,64 @@ const deckStyles = readFileSync(
   new URL('./MethodTeachingDeck.css', import.meta.url),
   'utf8',
 );
-const featureSource = `${deckSource}\n${detailSource}\n${transitionStyles}\n${deckStyles}`;
+const featureSource = `${deckSource}\n${detailSource}\n${dataSource}\n${transitionStyles}\n${deckStyles}`;
 const deckModuleUrl = `/@fs${fileURLToPath(
   new URL('./MethodTeachingDeck.tsx', import.meta.url),
 )}`;
+const assetDirectory = new URL('../../../../public/images/programs/high-school-method-transition/', import.meta.url);
+
+const CARD_BASES = [
+  'method-card-diagnose-forest-v1',
+  'method-card-explain-blue-v1',
+  'method-card-practise-purple-v1',
+  'method-card-apply-orange-v1',
+  'method-card-review-gold-v1',
+];
+const SUPPORT_BASES = [
+  'how-we-teach-tutor-student-v1',
+  'how-we-teach-watercolor-botanical-v1',
+];
+const optimizedAssetNames = [
+  ...CARD_BASES.flatMap((base) => [
+    `${base}-512w.avif`,
+    `${base}-512w.webp`,
+    `${base}-1024w.avif`,
+    `${base}-1024w.webp`,
+  ]),
+  ...SUPPORT_BASES.flatMap((base) => [
+    `${base}-768w.avif`,
+    `${base}-768w.webp`,
+    `${base}-1536w.avif`,
+    `${base}-1536w.webp`,
+  ]),
+];
+
+function relativeLuminance([red, green, blue]) {
+  const linear = [red, green, blue].map((channel) => {
+    const value = channel / 255;
+    return value <= 0.04045
+      ? value / 12.92
+      : ((value + 0.055) / 1.055) ** 2.4;
+  });
+  return (0.2126 * linear[0]) + (0.7152 * linear[1]) + (0.0722 * linear[2]);
+}
+
+function parseCssColor(color) {
+  const hex = color.match(/^#([\da-f]{2})([\da-f]{2})([\da-f]{2})$/i);
+  if (hex) return hex.slice(1).map((channel) => Number.parseInt(channel, 16));
+
+  const rgb = color.match(/^rgba?\((\d+)[, ]+(\d+)[, ]+(\d+)/);
+  assert.ok(rgb, `Expected an RGB or hex color, received ${color}`);
+  return rgb.slice(1, 4).map(Number);
+}
+
+function contrastRatio(foreground, background) {
+  const foregroundLuminance = relativeLuminance(parseCssColor(foreground));
+  const backgroundLuminance = relativeLuminance(parseCssColor(background));
+  const lighter = Math.max(foregroundLuminance, backgroundLuminance);
+  const darker = Math.min(foregroundLuminance, backgroundLuminance);
+  return (lighter + 0.05) / (darker + 0.05);
+}
 
 function createMountedDeckFixturePlugin() {
   const fixtureId = 'virtual:method-teaching-deck-runtime';
@@ -321,6 +379,56 @@ test('declares the approved responsive visual contracts', () => {
   );
 });
 
+test('uses a dedicated AA text accent for every method', () => {
+  const textAccents = [...dataSource.matchAll(/textAccent:\s*['"](#[\da-f]{6})['"]/gi)]
+    .map((match) => match[1]);
+
+  assert.equal(textAccents.length, 5);
+  for (const textAccent of textAccents) {
+    assert.ok(
+      contrastRatio(textAccent, '#fffdf7') >= 4.5,
+      `${textAccent} must reach 4.5:1 against #fffdf7`,
+    );
+  }
+  assert.match(deckSource, /['"]--hsm-active-text-accent['"]/);
+  assert.match(deckStyles, /\.hsm-deck__emotional\s*\{[\s\S]*color:\s*var\(--hsm-active-text-accent\)/);
+});
+
+test('pins the mobile hero independently of selector scroll position', () => {
+  assert.match(
+    deckStyles,
+    /@media\s*\(max-width:\s*767px\)[\s\S]*\.hsm-deck\[data-expanded=['"]true['"]\]\s+\.hsm-deck__card\.is-active\s*\{[\s\S]*position:\s*sticky[\s\S]*left:\s*0/,
+  );
+});
+
+test('serves responsive AVIF and WebP deck imagery with intrinsic dimensions', () => {
+  assert.ok(
+    optimizedAssetNames.every((name) => existsSync(new URL(name, assetDirectory))),
+    'Every card and supporting image needs both optimized widths in AVIF and WebP',
+  );
+  assert.match(dataSource, /cardAvifSmall/);
+  assert.match(dataSource, /cardAvifLarge/);
+  assert.match(dataSource, /cardWebpSmall/);
+  assert.match(dataSource, /cardWebpLarge/);
+  assert.match(deckSource, /type="image\/avif"/);
+  assert.match(deckSource, /type="image\/webp"/);
+  assert.match(deckSource, /srcSet=/);
+  assert.match(deckSource, /width=\{1024\}[\s\S]*height=\{1536\}/);
+  assert.match(deckSource, /width=\{1536\}[\s\S]*height=\{1024\}/);
+  assert.match(deckSource, /loading="lazy"/);
+
+  const originalBytes = [...CARD_BASES, ...SUPPORT_BASES]
+    .map((base) => statSync(new URL(`${base}.png`, assetDirectory)).size)
+    .reduce((total, size) => total + size, 0);
+  const optimizedBytes = optimizedAssetNames
+    .map((name) => statSync(new URL(name, assetDirectory)).size)
+    .reduce((total, size) => total + size, 0);
+  assert.ok(
+    optimizedBytes < originalBytes,
+    `Optimized responsive set (${optimizedBytes}) must stay below original delivery (${originalBytes})`,
+  );
+});
+
 test('moves the card deck with the approved Flip choreography', () => {
   assert.match(deckSource, /from ['"]gsap\/Flip['"]/);
   assert.match(deckSource, /gsap\.registerPlugin\(Flip\)/);
@@ -413,15 +521,16 @@ test('cleanup invalidation permits a Strict Mode setup replay and new commit', (
 });
 
 test('mounted deck keeps the newest rapid selection and disposes owned motion', {
-  timeout: 90_000,
+  timeout: 240_000,
 }, async () => {
   const server = await createServer({
     appType: 'spa',
     configFile: false,
     logLevel: 'silent',
+    optimizeDeps: { entries: [] },
     plugins: [createMountedDeckFixturePlugin()],
     root: fileURLToPath(new URL('../../../..', import.meta.url)),
-    server: { host: '127.0.0.1', port: 0 },
+    server: { host: '127.0.0.1', port: 0, hmr: false },
   });
   let browser;
 
@@ -441,16 +550,32 @@ test('mounted deck keeps the newest rapid selection and disposes owned motion', 
     page.on('console', (message) => {
       if (message.type() === 'error') runtimeErrors.push(message.text());
     });
-    await page.goto(baseUrl, { timeout: 30_000, waitUntil: 'domcontentloaded' });
+    await page.goto(baseUrl, { timeout: 90_000, waitUntil: 'domcontentloaded' });
     try {
       await page.waitForFunction(
         () => Boolean(window.__methodDeckRuntime),
-        { timeout: 5_000 },
+        { timeout: 30_000 },
       );
     } catch (error) {
       assert.fail(`Mounted runtime did not initialise: ${error.message}; ${runtimeErrors.join(' | ')}`);
     }
     await page.waitForSelector('.hsm-deck__card[data-method-id="diagnose"]');
+    await page.waitForFunction(
+      () => [...document.querySelectorAll('.hsm-deck__card img')]
+        .every((image) => image instanceof HTMLImageElement
+          && image.complete
+          && image.naturalWidth > 0),
+      { timeout: 10_000 },
+    );
+    const optimizedCardSources = await page.evaluate(() => (
+      [...document.querySelectorAll('.hsm-deck__card img')]
+        .map((image) => image instanceof HTMLImageElement ? image.currentSrc : '')
+    ));
+    assert.equal(optimizedCardSources.length, 5);
+    assert.ok(
+      optimizedCardSources.every((source) => /\.(?:avif|webp)$/.test(source)),
+      `Expected optimized card sources, received ${optimizedCardSources.join(', ')}`,
+    );
 
     const clickMethod = async (methodId) => {
       const clicked = await page.evaluate((nextId) => {
@@ -535,6 +660,61 @@ test('mounted deck keeps the newest rapid selection and disposes owned motion', 
     assert.equal(state.allDetailRegionsVisible, true);
     assert.equal(state.timelines[applyExitIndex].reverted, true);
     assert.equal(state.timelines[applyExitIndex].killed, true);
+
+    await page.setViewport({ width: 390, height: 844, deviceScaleFactor: 1 });
+    await page.evaluate(() => {
+      const selector = document.querySelector('.hsm-deck__cards');
+      if (!(selector instanceof HTMLElement)) {
+        throw new Error('Mobile selector is missing');
+      }
+      selector.scrollLeft = selector.scrollWidth;
+    });
+    await clickMethod('review');
+    const mobileHero = await page.evaluate(() => {
+      const selector = document.querySelector('.hsm-deck__cards');
+      const hero = document.querySelector('.hsm-deck__card.is-active');
+      if (!(selector instanceof HTMLElement)
+        || !(hero instanceof HTMLButtonElement)) {
+        throw new Error('Mobile hero layout is missing');
+      }
+      const heroRect = hero.getBoundingClientRect();
+      return {
+        activeId: hero.dataset.methodId,
+        left: heroRect.left,
+        right: heroRect.right,
+        height: heroRect.height,
+        viewportWidth: window.innerWidth,
+        selectorScrollLeft: selector.scrollLeft,
+      };
+    });
+    assert.equal(mobileHero.activeId, 'review');
+    assert.ok(mobileHero.selectorScrollLeft > 0);
+    assert.ok(mobileHero.left >= 0, `Hero left edge ${mobileHero.left} is clipped`);
+    assert.ok(
+      mobileHero.right <= mobileHero.viewportWidth,
+      `Hero right edge ${mobileHero.right} exceeds ${mobileHero.viewportWidth}`,
+    );
+    assert.ok(mobileHero.height >= 300 && mobileHero.height <= 360);
+
+    const computedTextAccents = [];
+    for (const methodId of ['diagnose', 'explain', 'practise', 'apply', 'review']) {
+      await clickMethod(methodId);
+      computedTextAccents.push(await page.evaluate(() => {
+        const emotional = document.querySelector('.hsm-deck__emotional');
+        if (!(emotional instanceof HTMLElement)) {
+          throw new Error('Emotional subheading is missing');
+        }
+        return getComputedStyle(emotional).color;
+      }));
+    }
+    for (const computedTextAccent of computedTextAccents) {
+      assert.ok(
+        contrastRatio(computedTextAccent, '#fffdf7') >= 4.5,
+        `${computedTextAccent} must reach 4.5:1 against #fffdf7`,
+      );
+    }
+
+    await page.setViewport({ width: 800, height: 600, deviceScaleFactor: 1 });
 
     await page.evaluate(() => window.__methodDeckRuntime.setReducedMotion(false));
     await clickMethod('practise');
