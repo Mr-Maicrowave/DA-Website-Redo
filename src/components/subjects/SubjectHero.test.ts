@@ -45,9 +45,9 @@ test('allows a subject to strengthen its accent and supporting-copy colours over
   assert.match(source, /subtextClassName\?: string/);
 });
 
-test('English keeps its headline in a single ink colour over the beige hero wash', () => {
+test('English supplies its current two-part headline to the shared hero', () => {
   const source = readFileSync(englishPageUrl, 'utf8');
 
-  assert.match(source, /headlineAccentClassName="text-\[#15243a\]"/);
-  assert.match(source, /subtextClassName="text-\[#1d3557\]"/);
+  assert.match(source, /headlineWhite="Writing with clarity\."/);
+  assert.match(source, /headlineGold="Thinking with depth\."/);
 });

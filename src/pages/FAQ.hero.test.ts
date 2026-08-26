@@ -4,20 +4,18 @@ import { readFileSync } from 'node:fs';
 
 const faqUrl = new URL('./FAQ.tsx', import.meta.url);
 
-test('uses the existing FAQ photograph in a subject-style full-viewport hero', () => {
+test('mounts the current FAQ answer desk', () => {
   const source = readFileSync(faqUrl, 'utf8');
 
-  assert.match(source, /faq-hero-tutor-student-brow-touchup\.png/);
+  assert.match(source, /FAQAnswerDesk/);
   assert.match(source, /min-h-screen/);
-  assert.match(source, /subject-hero-style overlay/);
+  assert.match(source, /NavigationNew/);
 });
 
-test('uses the subject-hero heading rhythm without moving FAQ search below the fold', () => {
+test('keeps FAQ structured data tied to the rendered question set', () => {
   const source = readFileSync(faqUrl, 'utf8');
 
-  assert.match(source, /Start with what’s/);
-  assert.match(source, /on your mind\./);
-  assert.match(source, /text-\[#c9a227\]/);
-  assert.match(source, /Explore answers/);
-  assert.match(source, /id="faq-answers"/);
+  assert.match(source, /allFaqQuestions/);
+  assert.match(source, /faqPageSchema/);
+  assert.match(source, /canonicalUrl="\/faq"/);
 });

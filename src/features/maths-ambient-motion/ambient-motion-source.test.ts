@@ -108,12 +108,12 @@ test('normal Mathematics route distributes three passive ambient moments beside 
   assert.ok(mathematicsComponent.indexOf('<NetworkAmbientMoment passive />') < mathematicsComponent.indexOf('<ConfidenceJourney'));
   assert.ok(mathematicsComponent.indexOf('<VectorAmbientMoment passive />') < mathematicsComponent.indexOf('<HscMathsPathway />'));
   assert.ok(mathematicsComponent.indexOf('<DerivativeAmbientMoment passive />') > mathematicsComponent.indexOf('<MathsGraphLabInvitation />'));
-  assert.ok(mathematicsComponent.indexOf('<DerivativeAmbientMoment passive />') < mathematicsComponent.indexOf('Student feedback placeholder'));
+  assert.ok(mathematicsComponent.indexOf('<DerivativeAmbientMoment passive />') < mathematicsComponent.indexOf('Real Google review'));
   assert.doesNotMatch(mathematicsComponent, /<(Sine|Integral)MotionStage\s*\/>/);
   assert.match(featureSource, /side="right"[\s\S]*side="left"[\s\S]*side="right"/);
 });
 
-test('live page omits the optional Fourier enrichment and keeps the teaching proof', () => {
+test('live Mathematics page omits the retired Fourier enrichment and keeps the teaching proof', () => {
   assert.match(mathsSource, /const SHOW_LEGACY_MATHS_INTERACTIONS = false/);
   assert.equal((mathematicsComponent.match(/<FourierDrawing\s*\/>/g) ?? []).length, 0);
   assert.doesNotMatch(mathematicsComponent, /How can simple rotations draw a picture\?|id="fourier-drawing"/);
@@ -124,8 +124,8 @@ test('live page omits the optional Fourier enrichment and keeps the teaching pro
   assert.match(mathematicsComponent, /\{SHOW_LEGACY_MATHS_INTERACTIONS \? \([\s\S]*id="math-method"[\s\S]*id="maths-interactive"[\s\S]*\) : null\}/);
   assert.match(mathematicsComponent, /<MathsTeachingProof\s*\/>/);
   assert.match(mathematicsComponent, /<MathsGraphLabInvitation\s*\/>/);
-  assert.match(mathematicsComponent, /\{ label: 'How learning changes', href: '#math-teaching-proof' \}/);
-  assert.match(mathematicsComponent, /\{ label: 'Graphing lab', href: '\/maths-graph-lab', opensPage: true \}/);
+  assert.match(mathematicsComponent, /\{ label: 'How progress is built', href: '#math-teaching-proof' \}/);
+  assert.match(mathematicsComponent, /\{ label: 'Optional exploration', href: '\/maths-graph-lab', opensPage: true \}/);
 });
 
 test('below the safe floating threshold, moments render in document flow instead of floating over content', () => {
