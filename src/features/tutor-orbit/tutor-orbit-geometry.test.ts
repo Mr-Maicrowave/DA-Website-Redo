@@ -5,6 +5,7 @@ import {
   SAFE_SECTORS,
   boundsForPose,
   boundsForSectorEnvelope,
+  boundsForLabelEnvelope,
   geometryBandForWidth,
   poseForSector,
   rectsOverlap,
@@ -91,6 +92,48 @@ test('conservative sector envelopes guarantee continuous separation', () => {
           false,
           `${band}:${portraits[left].sector.id}:${portraits[right].sector.id}-envelope`,
         );
+      }
+    }
+  }
+});
+
+test('authored label envelopes stay clear of every unrelated portrait and protected zone', () => {
+  for (const band of desktopBands) {
+    const zones = PROTECTED_ZONES[band];
+    const portraits = [
+      ...SAFE_SECTORS[band].inner.map((sector) => ({ sector, tier: 'inner' as const, diameter: zones.innerDiameter })),
+      ...SAFE_SECTORS[band].outer.map((sector) => ({ sector, tier: 'outer' as const, diameter: zones.outerDiameter })),
+    ];
+
+    for (let sample = 0; sample < 360; sample += 1) {
+      const progress = sample / 360;
+      const posed = portraits.map((entry) => ({
+        ...entry,
+        pose: poseForSector(entry.sector, progress),
+      }));
+      const labels = posed.map((entry) => ({
+        ...entry,
+        bounds: boundsForLabelEnvelope(entry.sector, entry.pose, entry.diameter, entry.tier),
+      }));
+
+      for (let labelIndex = 0; labelIndex < labels.length; labelIndex += 1) {
+        const label = labels[labelIndex];
+        assert.equal(rectsOverlap(label.bounds, zones.centre, 8), false, `${band}:${label.sector.id}:label-centre`);
+        assert.equal(rectsOverlap(label.bounds, zones.featuredBadge, 6), false, `${band}:${label.sector.id}:label-badge`);
+        assert.equal(rectsOverlap(label.bounds, zones.profile, 8), false, `${band}:${label.sector.id}:label-profile`);
+        assert.equal(rectsOverlap(label.bounds, zones.headline, 8), false, `${band}:${label.sector.id}:label-headline`);
+
+        for (let portraitIndex = 0; portraitIndex < posed.length; portraitIndex += 1) {
+          if (portraitIndex === labelIndex) continue;
+          assert.equal(
+            rectsOverlap(label.bounds, boundsForPose(posed[portraitIndex].pose, posed[portraitIndex].diameter), 6),
+            false,
+            `${band}:${label.sector.id}:label-portrait:${posed[portraitIndex].sector.id}`,
+          );
+        }
+        for (let other = labelIndex + 1; other < labels.length; other += 1) {
+          assert.equal(rectsOverlap(label.bounds, labels[other].bounds, 6), false, `${band}:${label.sector.id}:label-label:${labels[other].sector.id}`);
+        }
       }
     }
   }

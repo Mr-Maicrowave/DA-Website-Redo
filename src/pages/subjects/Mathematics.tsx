@@ -1334,6 +1334,7 @@ const Mathematics = () => {
           backgroundPosition="100% center"
           mobileBackgroundPosition="70% center"
           copyOffsetClassName="lg:-translate-y-10"
+          heroTone="light"
         />
 
         {SHOW_LEGACY_MATHS_INTERACTIONS ? <BasketballCalculusJourney /> : null}

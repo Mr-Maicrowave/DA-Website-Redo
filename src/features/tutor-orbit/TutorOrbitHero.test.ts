@@ -10,6 +10,9 @@ const profileUrl = new URL('./TutorOrbitProfile.tsx', import.meta.url);
 const profile = existsSync(profileUrl) ? readFileSync(profileUrl, 'utf8') : '';
 const navigatorUrl = new URL('./TutorOrbitMobileNavigator.tsx', import.meta.url);
 const navigator = existsSync(navigatorUrl) ? readFileSync(navigatorUrl, 'utf8') : '';
+const procession = readFileSync(new URL('./TutorProcessionStage.tsx', import.meta.url), 'utf8');
+const processionCss = readFileSync(new URL('./tutor-procession.css', import.meta.url), 'utf8');
+const geometry = readFileSync(new URL('./procession-geometry.ts', import.meta.url), 'utf8');
 
 test('keeps the existing editorial hero and non-marketplace routes', () => {
   assert.match(component, /Meet the educators[\s\S]*students[\s\S]*remember\./);
@@ -20,14 +23,14 @@ test('keeps the existing editorial hero and non-marketplace routes', () => {
   assert.doesNotMatch(page, /tutor-match-proof-heading|Book a Consultation/);
 });
 
-test('renders one centre, five inner tutors, and nine outer tutors from real catalogue ids', () => {
-  assert.match(component, /useState<string\[]>\(\(\) => \[\.\.\.INNER_ORBIT_TUTOR_IDS\]\)/);
-  assert.match(component, /useState<string\[]>\(\(\) => \[\.\.\.OUTER_ORBIT_TUTOR_IDS\]\)/);
-  assert.match(component, /<TutorOrbitStage/);
-  assert.match(stage, /className="tutor-orbit__inner-orbit"/);
-  assert.match(stage, /className="tutor-orbit__outer-orbit"/);
-  assert.match(stage, /tier="inner"/);
-  assert.match(stage, /tier="outer"/);
+test('mounts one featured educator and a single ring of stations from real catalogue ids', () => {
+  assert.match(component, /import \{ TutorProcessionStage \} from '\.\/TutorProcessionStage'/);
+  assert.match(component, /<TutorProcessionStage/);
+  assert.match(component, /roster=\{roster\}/);
+  assert.match(component, /FACULTY_ROSTER_IDS/);
+  assert.match(procession, /className="tp__station"/);
+  assert.match(procession, /Array\.from\(\{ length: ring\.stations \}/);
+  assert.doesNotMatch(component, /INNER_ORBIT_TUTOR_IDS|OUTER_ORBIT_TUTOR_IDS/);
 });
 
 test('renders the faculty stage from safe sectors with shared clocks and pointer response', () => {
@@ -43,17 +46,15 @@ test('renders the faculty stage from safe sectors with shared clocks and pointer
   assert.doesNotMatch(css, /rotate\([^)]*turn/);
 });
 
-test('uses shared-layout motion, promotion, and marker layers for selections', () => {
-  assert.match(component, /swapFacultyTutor\(activeId, innerIds, outerIds, selectedId\)/);
-  assert.match(stage, /layoutId=\{`tutor-\$\{active\.id\}`\}/);
-  assert.match(stage, /layoutId=\{`tutor-\$\{tutor\.id\}`\}/);
-  assert.match(stage, /layout: \{ duration: reduced \? 0 : 0\.8/);
-  assert.match(stage, /tutor-orbit__promotion-portrait/);
-  assert.match(stage, /phase === 'promoting'/);
-  assert.match(stage, /tutor-orbit__marker/);
-  assert.match(stage, /isPromotedSource/);
-  assert.doesNotMatch(stage, /zIndex:\s*[78]/);
-  assert.match(stage, /objectFit: 'cover'/);
+test('derives position, depth, sort order and labels from one angle per educator', () => {
+  assert.match(procession, /const pose = poseAt\(base \+ rotationDeg, geometry\)/);
+  assert.match(procession, /el\.style\.zIndex = String\(pose\.z\)/);
+  assert.match(procession, /label\.style\.opacity = pose\.labelOpacity/);
+  assert.match(geometry, /const depth = \(Math\.sin\(radians\) \+ 1\) \/ 2/);
+  assert.match(geometry, /z: Math\.round\(depth \* 1000\)/);
+  assert.match(geometry, /export const FEATURED_Z = 500/);
+  assert.match(geometry, /blurCeiling/);
+  assert.doesNotMatch(procession, /tutor-orbit__promotion-portrait|isPromotedSource/);
 });
 
 test('renders two directional promotion-corridor segments from the authored origin, waypoint, and centre', () => {
@@ -62,10 +63,10 @@ test('renders two directional promotion-corridor segments from the authored orig
   assert.match(stage, /const deltaY = to\.y - from\.y/);
   assert.match(stage, /width:\s*Math\.hypot\(deltaX, deltaY\)/);
   assert.match(stage, /transform:\s*`rotate\(\$\{Math\.atan2\(deltaY, deltaX\)\}rad\)`/);
-  assert.match(stage, /const originToWaypoint = promotionCorridorStyle\(origin, waypoint\)/);
-  assert.match(stage, /const waypointToCentre = promotionCorridorStyle\(waypoint, \{ x: 0, y: 0 \}\)/);
+  assert.match(stage, /promotionCorridorStyle\(promotionJourney\.origin, promotionJourney\.waypoint\)/);
+  assert.match(stage, /promotionCorridorStyle\(promotionJourney\.waypoint, \{ x: 0, y: 0 \}\)/);
   assert.equal((stage.match(/className="tutor-orbit__promotion-corridor-segment/g) ?? []).length, 2);
-  assert.match(stage, /phase === 'promoting'[\s\S]*?tutor-orbit__promotion-corridor[\s\S]*?originToWaypoint[\s\S]*?waypointToCentre/);
+  assert.match(stage, /phase !== 'idle' && promotionJourney[\s\S]*?tutor-orbit__promotion-corridor[\s\S]*?originToWaypoint[\s\S]*?waypointToCentre/);
   assert.match(css, /\.tutor-orbit__promotion-corridor\s*\{[\s\S]*?z-index:\s*6[\s\S]*?pointer-events:\s*none/);
   assert.match(css, /\.tutor-orbit__promotion-corridor-segment\s*\{[\s\S]*?height:\s*(?:1|1\.5|2)px[\s\S]*?linear-gradient[\s\S]*?transform-origin:\s*left center/);
 });
@@ -75,6 +76,29 @@ test('pauses ambient motion for hover, focus, transition, and reduced motion', (
   assert.match(stage, /setMotionHold\(`hover:\$\{tutor\.id\}`/);
   assert.match(stage, /setMotionHold\(`focus:\$\{tutor\.id\}`/);
   assert.match(css, /@media \(prefers-reduced-motion: reduce\)/);
+});
+
+test('makes the featured centre a named profile link that participates in exact holds and keyboard focus handoff', () => {
+  assert.match(stage, /className="tutor-orbit__featured-action"/);
+  assert.match(stage, /to=\{`\/find-teacher\?tutor=\$\{active\.id\}`\}/);
+  assert.match(stage, /aria-label=\{`Open \$\{active\.name\}'s full profile`\}/);
+  assert.match(stage, /setMotionHold\(`hover:\$\{active\.id\}`/);
+  assert.match(stage, /setMotionHold\(`focus:\$\{active\.id\}`/);
+  assert.match(component, /pendingCentreFocusId/);
+  assert.match(component, /featuredActionRef\.current\?\.focus\(\{ preventScroll: true \}\)/);
+  assert.match(stage, /featuredActionRef/);
+});
+
+test('freezes every shared parallax layer and featured float for portrait holds', () => {
+  assert.match(stage, /if \(!paused\) return;/);
+  assert.match(stage, /fieldX\.jump\(0\)/);
+  assert.match(stage, /fieldY\.jump\(0\)/);
+  assert.match(stage, /haloX\.jump\(0\)/);
+  assert.match(stage, /haloY\.jump\(0\)/);
+  assert.match(stage, /geometryX\.jump\(0\)/);
+  assert.match(stage, /geometryY\.jump\(0\)/);
+  assert.match(stage, /parallax\.field === 0 \|\| paused/);
+  assert.match(css, /\.tutor-orbit__stage\.is-paused \.tutor-orbit__featured-float[\s\S]*animation-play-state:\s*paused/);
 });
 
 test('simplifies the outer tier on tablet and mobile while preserving interaction', () => {
@@ -92,33 +116,31 @@ test('maps every responsive band to its authored safe-sector capacity', () => {
 
 test('wires accepted-selection cleanup, clamped pointer input, and the imperative selection lock', () => {
   assert.match(stage, /applySelectionHolds\(tutor\.id, accepted\)/);
-  assert.match(stage, /onSelect: \(id: string\) => boolean/);
+  assert.match(stage, /onSelect: \(id: string, options\?: \{ focusCentre\?: boolean \}\) => boolean/);
   assert.match(stage, /normalizeStagePointer\(event\.clientX, rect\.left, rect\.width\)/);
   assert.match(component, /canBeginSelection\(selectionLock\.current\)/);
   assert.match(component, /transitionSelectionLock\(selectionLock\.current, 'select'\)/);
   assert.match(component, /transitionSelectionLock\(selectionLock\.current, 'idle'\)/);
 });
 
-test('choreographs each selection through the configured phase sequence and clears timers', () => {
-  assert.match(component, /selectionSequenceFor\(originTier, reduced\)/);
-  assert.match(component, /const \[selection, setSelection\] = useState<\{ phase: SelectionPhase; selectedId: string \| null; originTier: OrbitTier \| null \}>/);
+test('locks, times out and clears a centre exchange', () => {
+  assert.match(component, /if \(!canBeginSelection\(selectionLock\.current\)\) return false;/);
   assert.match(component, /timers\.current\.forEach\(\(timer\) => window\.clearTimeout\(timer\)\)/);
-  assert.match(component, /if \(selection\.phase !== 'idle' \|\| !canBeginSelection\(selectionLock\.current\)\) return false;/);
-  assert.match(component, /step\.phase === 'exchanging'/);
-  assert.match(component, /swapFacultyTutor\(activeId, innerIds, outerIds, selectedId\)/);
+  assert.match(component, /setExchanging\(true\)/);
+  assert.match(component, /setActiveId\(selectedId\)/);
+  assert.match(component, /transitionSelectionLock\(selectionLock\.current, 'idle'\)/);
+  assert.match(procession, /holds\.current\.size > 0 \|\| exchanging \? 0 : 1/);
+  assert.doesNotMatch(component, /selectionSequenceFor|swapFacultyTutor/);
 });
 
-test('extracts the polite profile with staggered semantic content and stable CTA order', () => {
-  assert.match(component, /import \{ TutorOrbitProfile \} from '\.\/TutorOrbitProfile'/);
-  assert.match(component, /<TutorOrbitProfile tutor=\{active\} reduced=\{reduced\} changing=\{selection\.phase !== 'idle'\} \/>/);
-  assert.match(profile, /export const shellVariants/);
-  assert.match(profile, /export const contentVariants/);
-  assert.match(profile, /export const itemVariants/);
-  assert.match(profile, /staggerChildren:\s*0\.0[4-7]/);
-  assert.match(profile, /changing:\s*\{\s*y:\s*-?[4-6]\s*\}/);
-  assert.match(profile, /aria-live="polite"/);
-  assert.match(profile, /Senior educator[\s\S]*motion\.h2[\s\S]*designation[\s\S]*tutor-orbit__details[\s\S]*Teaching style[\s\S]*tutor-orbit__strengths[\s\S]*Open full profile/);
-  assert.match(css, /\.tutor-orbit__profile-sequence\s*\{[\s\S]*?grid-template-rows/);
+test('carries the featured name on the portrait instead of a profile card', () => {
+  assert.match(procession, /className="tp__plate"/);
+  assert.match(procession, /className="tp__plate-name">\{active\.name\}/);
+  assert.match(procession, /className="tp__plate-designation">\{active\.designation\}/);
+  assert.match(processionCss, /\.tp__plate::before/);
+  assert.match(processionCss, /\.tp__occluder/);
+  assert.match(processionCss, /mask-image: radial-gradient/);
+  assert.doesNotMatch(component, /TutorOrbitProfile/);
 });
 
 test('rebalances stage tutors and paths only within safe transition bounds', () => {
@@ -156,17 +178,32 @@ test('keeps each selected profile item in the keyed stagger from tier through CT
   assert.match(keyedSequence, /tutor-orbit__profile-cta[\s\S]*Open full profile/);
 });
 
-test('provides every educator through a four-person responsive navigator', () => {
-  assert.ok(existsSync(navigatorUrl));
-  assert.match(component, /<TutorOrbitMobileNavigator[\s\S]*tutors=\{supportingTutors\}[\s\S]*onSelect=\{selectTutor\}/);
-  assert.match(component, /const supportingTutors = useMemo\([\s\S]*supportingTutorIds\(activeId, innerIds, outerIds\)/);
-  assert.match(navigator, /rosterWindow\(tutors\.map\(\(tutor\) => tutor\.id\), page, NAVIGATOR_PAGE_SIZE\)/);
-  assert.match(navigator, /aria-label="Previous educators"/);
-  assert.match(navigator, /aria-label="Next educators"/);
-  assert.match(navigator, /navigatorRosterStatus\(tutors\.length, page\)/);
-  assert.match(navigator, /trackNavigatorSwipe/);
-  assert.match(navigator, /nextRosterPage\(current, result\.direction, tutors\.length, NAVIGATOR_PAGE_SIZE\)/);
-  assert.match(navigator, /onSelect\(tutor\.id\)/);
+test('reaches every educator through the rear handover and a reduced-motion advance control', () => {
+  assert.match(geometry, /export function handoverStride/);
+  assert.match(geometry, /export function occupantIndex/);
+  assert.match(procession, /occupantIndex\(i, geometry\.stations, base, rotationDeg, poolSizeRef\.current\)/);
+  assert.match(procession, /className="tp__advance"/);
+  assert.match(procession, /aria-label="Show the next educators"/);
+  assert.match(procession, /aria-label=\{`Feature \$\{tutor\.name\}, \$\{tutor\.designation\}`\}/);
+  assert.doesNotMatch(component, /TutorOrbitMobileNavigator|rosterWindow/);
+});
+
+test('keeps the full roster and rescales the ring for every band', () => {
+  assert.match(component, /FACULTY_ROSTER_IDS/);
+  assert.match(procession, /roster\.filter\(\(tutor\) => tutor\.id !== active\.id\)/);
+  assert.match(procession, /ringGeometryFor\(band, box\.width \? box : \{ width: 1080, height: 720 \}\)/);
+  assert.match(procession, /new ResizeObserver\(measure\)/);
+  assert.match(geometry, /wide:|desktop:|tablet:|mobile:/);
+  assert.match(geometry, /stations: 3/);
+  assert.match(procession, /reduced \? RESTING_ROTATION : 0/);
+});
+
+test('keeps one outer promotion layer mounted through exchanging and keyframes origin waypoint centre', () => {
+  assert.match(stage, /phase !== 'idle' && promotionJourney/);
+  assert.match(stage, /x:\s*\[promotionJourney\.origin\.x, promotionJourney\.waypoint\.x, 0\]/);
+  assert.match(stage, /y:\s*\[promotionJourney\.origin\.y, promotionJourney\.waypoint\.y, 0\]/);
+  assert.match(stage, /times:\s*\[0,\s*0\.28[0-9],\s*1\]/);
+  assert.match(stage, /duration:\s*0\.84/);
 });
 
 test('uses the tablet and mobile topology without hiding profile layout boxes', () => {
@@ -184,8 +221,8 @@ test('keeps short reduced-motion navigator and selection transitions', () => {
   assert.match(css, /@media \(prefers-reduced-motion: reduce\)[\s\S]*tutor-orbit__stage[\s\S]*transform:\s*none !important/);
 });
 
-test('wires the supporting-only navigator and hardened pointer controls', () => {
-  assert.match(component, /supportingTutorIds\(activeId, innerIds, outerIds\)/);
+test('wires the stable full-faculty navigator and hardened pointer controls', () => {
+  assert.match(component, /FACULTY_ROSTER_IDS/);
   const pointerDown = navigator.slice(navigator.indexOf('onPointerDown'), navigator.indexOf('onPointerMove'));
   assert.doesNotMatch(pointerDown, /setPointerCapture/);
   assert.match(navigator, /onPointerMove=\{trackSwipe\}/);
@@ -266,4 +303,8 @@ test('keeps centre motion bounded and disables every continuous visual motion la
     .map((match) => match[1])
     .join('\n');
   assert.doesNotMatch(portraitRules, /blur\((?:[2-9]|\d{2,})(?:\.\d+)?px\)/);
+});
+
+test('gives responsive navigator controls a minimum 44px pointer target', () => {
+  assert.match(css, /\.tutor-orbit__navigator-controls button\s*\{[\s\S]*?width:\s*44px[\s\S]*?height:\s*44px/);
 });

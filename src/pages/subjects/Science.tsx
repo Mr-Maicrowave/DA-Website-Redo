@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback, useEffect } from 'react';
+import { useState, useRef, useCallback, useEffect, useLayoutEffect } from 'react';
 import NavigationNew from '@/components/NavigationNew';
 import FooterNew from '@/components/FooterNew';
 import SubjectHero from '@/components/subjects/SubjectHero';
@@ -15,10 +15,9 @@ import {
   Zap,
   FlaskConical,
   Microscope,
-  Lightbulb,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { motion, AnimatePresence, useInView } from 'framer-motion';
+import { motion, AnimatePresence, useInView, useReducedMotion, useScroll, useTransform } from 'framer-motion';
 import SEO from '@/components/SEO';
 import DAMethodSection from '@/components/DAMethodSection';
 import { ScienceIntroVideoGate } from '@/features/science-intro-video/ScienceIntroVideoGate';
@@ -204,119 +203,159 @@ const SCIENCE_STORIES = [
 ];
 
 
-// ── HSC Subject editorial rows ───────────────────────────────────────────────
-const HSC_SUBJECTS = [
+// ── Programs: One World, Three Lenses ────────────────────────────────────────
+const SCIENCE_LENSES = [
   {
-    n: '01',
     label: 'Biology',
-    badge: 'Life Sciences',
+    scale: 'Living systems',
     tagline: 'Understand life from cells to ecosystems.',
-    color: '#16a34a',
     topics: ['Genetics & evolution', 'Human systems', 'Ecosystems', 'Scientific investigations'],
-    cta: 'Explore Biology',
+    diagram: 'biology',
   },
   {
-    n: '02',
     label: 'Chemistry',
-    badge: 'Physical Sciences',
+    scale: 'Matter & change',
     tagline: 'Master reactions, calculations and molecular thinking.',
-    color: '#c9a227',
     topics: ['Chemical reactions', 'Stoichiometry', 'Equilibrium', 'Organic chemistry'],
-    cta: 'Explore Chemistry',
+    diagram: 'chemistry',
   },
   {
-    n: '03',
     label: 'Physics',
-    badge: 'Physical Sciences',
+    scale: 'Forces & fields',
     tagline: 'Discover the principles that govern the universe.',
-    color: '#2563eb',
     topics: ['Mechanics', 'Electricity & magnetism', 'Waves', 'Quantum physics'],
-    cta: 'Explore Physics',
+    diagram: 'physics',
   },
 ] as const;
 
-function HscSubjectRow({ s, index }: { s: typeof HSC_SUBJECTS[number]; index: number }) {
-  const [hovered, setHovered] = useState(false);
+const LensStudy = ({ kind }: { kind: typeof SCIENCE_LENSES[number]['diagram'] }) => {
+  if (kind === 'biology') return (
+    <svg viewBox="0 0 240 112" aria-hidden="true" className="h-24 w-full overflow-visible fill-none stroke-current">
+      <circle cx="52" cy="56" r="31" strokeWidth="1.25" />
+      <circle cx="52" cy="56" r="11" stroke="#c9a227" strokeWidth="1.25" />
+      <path d="M96 23c36 13 48 35 66 69M89 68c34-2 57-21 84-52" strokeWidth="1.25" />
+      <path d="M154 18c17 5 30 17 45 34M159 81c15-5 27-16 37-31" stroke="#c9a227" strokeWidth="1.25" />
+    </svg>
+  );
+  if (kind === 'chemistry') return (
+    <svg viewBox="0 0 240 112" aria-hidden="true" className="h-24 w-full overflow-visible fill-none stroke-current">
+      <circle cx="28" cy="58" r="7" strokeWidth="1.25" /><circle cx="90" cy="27" r="7" stroke="#c9a227" strokeWidth="1.25" />
+      <circle cx="125" cy="78" r="7" strokeWidth="1.25" /><circle cx="190" cy="43" r="7" stroke="#c9a227" strokeWidth="1.25" />
+      <path d="M35 55l48-24M96 33l24 41M132 75l51-29" strokeWidth="1.25" />
+      <path d="M18 89h196" stroke="#c9a227" strokeWidth="1.25" strokeDasharray="3 5" />
+    </svg>
+  );
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-60px' }}
-      transition={{ duration: 0.45, delay: index * 0.1 }}
-      className="relative border-b border-[#071629]/10"
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-    >
-      {/* Hover tint */}
-      <motion.div
-        className="pointer-events-none absolute inset-0"
-        animate={{ opacity: hovered ? 1 : 0 }}
-        transition={{ duration: 0.28 }}
-        style={{ background: `${s.color}0c` }}
-      />
-      {/* Left accent bar — grows from top */}
-      <motion.div
-        className="absolute left-0 top-0 bottom-0 w-[3px]"
-        style={{ background: s.color, transformOrigin: 'top center' }}
-        animate={{ scaleY: hovered ? 1 : 0, opacity: hovered ? 1 : 0 }}
-        initial={{ scaleY: 0, opacity: 0 }}
-        transition={{ duration: 0.32, ease: [0.16, 1, 0.3, 1] }}
-      />
+    <svg viewBox="0 0 240 112" aria-hidden="true" className="h-24 w-full overflow-visible fill-none stroke-current">
+      <path d="M3 59c18-47 36 47 54 0s36-47 54 0 36 47 54 0 36-47 72-5" strokeWidth="1.25" />
+      <path d="M24 90h146M170 90l-10-6M170 90l-10 6" stroke="#c9a227" strokeWidth="1.25" />
+      <path d="M50 25v32M50 25l-6 9M50 25l6 9" strokeWidth="1.25" />
+    </svg>
+  );
+};
 
-      <Link to="/book-interview" className="relative block px-6 py-8 lg:px-8 lg:py-10">
-        <div className="flex items-start gap-6 lg:gap-10">
-          {/* Editorial number */}
-          <span className="hidden shrink-0 pt-1 font-mono text-[10px] font-black tracking-[0.24em] text-[#071629]/20 lg:block w-7">
-            {s.n}
-          </span>
+const SciencePrograms = () => {
+  const sectionRef = useRef<HTMLElement>(null);
+  const storyRef = useRef<HTMLDivElement>(null);
+  const reducedMotion = useReducedMotion();
+  const { scrollYProgress } = useScroll({ target: storyRef, offset: ['start start', 'end end'] });
+  // Each plate settles at its complete size. Handoffs mix a lens reveal with a
+  // light dissolve, travelling through a different point in every specimen.
+  const macroScale = useTransform(scrollYProgress, [0, .17, .3], [.9, 1, 1.12]);
+  const macroOpacity = useTransform(scrollYProgress, [.285, .3], [1, 0]);
+  const macroFocus = useTransform(scrollYProgress, [.22, .3], ['blur(0px)', 'blur(7px)']);
+  const macroX = useTransform(scrollYProgress, [0, .17, .3], ['0%', '0%', '-4%']);
+  const macroY = useTransform(scrollYProgress, [0, .17, .3], ['0%', '0%', '3%']);
+  const cellScale = useTransform(scrollYProgress, [.24, .34, .6], [1.1, 1, 1.12]);
+  const cellOpacity = useTransform(scrollYProgress, [.24, .31, .565, .58], [0, 1, 1, 0]);
+  const cellX = useTransform(scrollYProgress, [.24, .34, .6], ['-7%', '0%', '4%']);
+  const cellY = useTransform(scrollYProgress, [.24, .34, .6], ['5%', '0%', '-3%']);
+  // The aperture follows the outgoing plate's travel direction: upper-right,
+  // then lower-left, then upper-right again.
+  const cellReveal = useTransform(scrollYProgress, [.24, .32], ['circle(0% at 64% 36%)', 'circle(76% at 64% 36%)']);
+  const cellFocus = useTransform(scrollYProgress, [.24, .32, .53, .61], ['blur(7px)', 'blur(0px)', 'blur(0px)', 'blur(7px)']);
+  const moleculeScale = useTransform(scrollYProgress, [.53, .64, .9], [1.1, 1, 1.12]);
+  const moleculeOpacity = useTransform(scrollYProgress, [.53, .6, .865, .88], [0, 1, 1, 0]);
+  const moleculeX = useTransform(scrollYProgress, [.53, .64, .9], ['7%', '0%', '-3%']);
+  const moleculeY = useTransform(scrollYProgress, [.53, .64, .9], ['-5%', '0%', '4%']);
+  const moleculeReveal = useTransform(scrollYProgress, [.53, .61], ['circle(0% at 36% 64%)', 'circle(76% at 36% 64%)']);
+  const moleculeFocus = useTransform(scrollYProgress, [.53, .61, .83, .91], ['blur(7px)', 'blur(0px)', 'blur(0px)', 'blur(7px)']);
+  const fieldScale = useTransform(scrollYProgress, [.83, .93], [1.1, 1]);
+  const fieldOpacity = useTransform(scrollYProgress, [.83, .9], [0, 1]);
+  const fieldX = useTransform(scrollYProgress, [.83, .93], ['-5%', '0%']);
+  const fieldY = useTransform(scrollYProgress, [.83, .93], ['6%', '0%']);
+  const fieldReveal = useTransform(scrollYProgress, [.83, .91], ['circle(0% at 64% 37%)', 'circle(76% at 64% 37%)']);
+  const fieldFocus = useTransform(scrollYProgress, [.83, .91], ['blur(7px)', 'blur(0px)']);
+  const macroCaptionOpacity = useTransform(scrollYProgress, [.05, .09, .19, .22], [0, 1, 1, 0]);
+  const biologyCaptionOpacity = useTransform(scrollYProgress, [.34, .37, .49, .52], [0, 1, 1, 0]);
+  const chemistryCaptionOpacity = useTransform(scrollYProgress, [.64, .67, .79, .82], [0, 1, 1, 0]);
+  const physicsCaptionOpacity = useTransform(scrollYProgress, [.94, .97], [0, 1]);
+  const scaleProgress = useTransform(scrollYProgress, [0, 1], ['0%', '100%']);
 
-          <div className="min-w-0 flex-1">
-            {/* Subject meta */}
-            <p className="mb-3 text-[8px] font-black uppercase tracking-[0.34em] text-[#071629]/30">
-              HSC Subject&ensp;·&ensp;{s.badge}
-            </p>
-            {/* Subject name */}
-            <motion.h3
-              className="font-serif text-2xl font-medium tracking-[-0.03em] lg:text-[1.75rem]"
-              animate={{ color: hovered ? s.color : '#071629' }}
-              transition={{ duration: 0.22 }}
-            >
-              HSC {s.label}
-            </motion.h3>
-            {/* Tagline */}
-            <p className="mt-2 text-[13px] leading-[1.65] text-[#61708a]">{s.tagline}</p>
-            {/* Topics — inline with dividers */}
-            <div className="mt-4 flex flex-wrap items-center gap-y-1">
-              {s.topics.map((topic, ti) => (
-                <span key={topic} className="inline-flex items-center">
-                  <span className="text-[11.5px] font-medium text-[#071629]/40">{topic}</span>
-                  {ti < s.topics.length - 1 && (
-                    <span className="mx-2.5 text-[#071629]/18 text-xs select-none">·</span>
-                  )}
-                </span>
-              ))}
+  return (
+    <section ref={sectionRef} id="science-pathways" className="relative bg-[#fff8eb] px-5 pb-24 pt-12 lg:px-8 lg:pb-32 lg:pt-20">
+      <div aria-hidden="true" className="pointer-events-none absolute left-1/2 top-0 h-28 w-[min(68rem,92vw)] -translate-x-1/2 rounded-[50%] border-t border-[#c9a227]/70" />
+      <div className="relative mx-auto max-w-7xl">
+        <div className="max-w-3xl">
+          <p className="text-[10px] font-black uppercase tracking-[.28em] text-[#c9a227]">Science Programs</p>
+          <h2 className="mt-5 font-serif text-4xl font-medium leading-[1.03] tracking-[-.045em] text-[#071629] md:text-5xl lg:text-6xl">Start broad.<br />Then go deeper.</h2>
+          <p className="mt-5 max-w-2xl text-[15px] leading-7 text-[#43556e] lg:text-base">Years 7–10 Science builds understanding across Biology, Chemistry and Physics. In the HSC years, students can deepen that understanding through specialised subjects.</p>
+        </div>
+
+        <div ref={storyRef} className="science-scale-story relative mt-10 h-[360vh] lg:mt-14 lg:h-[410vh]">
+          <div className="sticky top-0 grid min-h-[100svh] place-items-center overflow-hidden border-y border-[#071629]/20 bg-[#fff8eb] px-4 py-16 lg:px-14">
+            <div className="science-macro-stage relative h-[min(69svh,72vw,620px)] w-full max-w-[1280px]" aria-label="A scientific view moving from the visible world to cells, molecules, and physical fields as the page scrolls">
+              <div className="science-plate absolute left-1/2 top-1/2 h-full w-[min(72vw,920px)] -translate-x-1/2 -translate-y-1/2">
+              <motion.div style={reducedMotion ? { opacity: 1, scale: 1 } : { x: macroX, y: macroY, scale: macroScale, opacity: macroOpacity, filter: macroFocus }} className="absolute inset-0 grid place-items-center will-change-transform">
+                <img src="/images/science-scale/visible-world-v1.png" alt="An apple specimen revealing botanical detail beneath its surface" className="h-full w-full object-contain" />
+              </motion.div>
+              <motion.div style={reducedMotion ? { opacity: 0 } : { x: cellX, y: cellY, scale: cellScale, opacity: cellOpacity, clipPath: cellReveal, filter: cellFocus }} className="absolute inset-0 grid place-items-center will-change-transform">
+                <img src="/images/science-scale/living-systems-v1.png" alt="Microscopic living cells and organelles" className="h-full w-full object-contain" />
+              </motion.div>
+              <motion.div style={reducedMotion ? { opacity: 0 } : { x: moleculeX, y: moleculeY, scale: moleculeScale, opacity: moleculeOpacity, clipPath: moleculeReveal, filter: moleculeFocus }} className="absolute inset-0 grid place-items-center will-change-transform">
+                <img src="/images/science-scale/molecules-v1.png" alt="Molecular structures and a chemistry reaction" className="h-full w-full object-contain" />
+              </motion.div>
+              <motion.div style={reducedMotion ? { opacity: 0 } : { x: fieldX, y: fieldY, scale: fieldScale, opacity: fieldOpacity, clipPath: fieldReveal, filter: fieldFocus }} className="absolute inset-0 grid place-items-center will-change-transform">
+                <img src="/images/science-scale/fields-and-waves-v1.png" alt="Magnetic fields, wavefronts and light emerging from a central source" className="h-full w-full object-contain" />
+              </motion.div>
+              </div>
+              <div className="pointer-events-none absolute left-1/2 top-4 w-full -translate-x-1/2 text-center xl:left-8 xl:top-1/2 xl:w-40 xl:-translate-y-1/2 xl:translate-x-0 xl:text-left"><p className="text-[10px] font-black uppercase tracking-[.3em] text-[#c9a227] xl:leading-5">Science at every scale</p><p className="mt-3 font-serif text-2xl tracking-[-.03em] text-[#071629] lg:text-3xl xl:text-3xl xl:leading-[1.05]">One world.<br />A closer look<br />changes everything.</p></div>
+              <div className="pointer-events-none absolute inset-x-0 bottom-1 border-t border-[#071629]/15 pt-5 text-[9px] font-black uppercase tracking-[.18em] text-[#657084]">
+                <motion.div aria-hidden="true" style={{ width: scaleProgress }} className="absolute left-0 top-[-1px] h-px bg-[#c9a227]" />
+                <motion.div aria-hidden="true" style={{ left: scaleProgress }} className="absolute -top-2 grid h-4 w-4 -translate-x-1/2 place-items-center rounded-full border border-[#071629]/70 bg-[#fff8eb] shadow-[0_0_0_3px_#fff8eb]"><span className="h-1.5 w-1.5 rounded-full bg-[#c9a227]" /></motion.div>
+                <div className="flex justify-between"><span>Visible world</span><span className="hidden sm:inline">Cells &amp; living systems</span><span className="hidden sm:inline">Molecules &amp; reactions</span><span>Fields &amp; waves</span></div>
+              </div>
+              <motion.div style={reducedMotion ? { opacity: 1 } : { opacity: macroCaptionOpacity }} className="science-scale-caption pointer-events-none absolute bottom-14 left-2 max-w-[18rem] border-l-2 border-[#c9a227] pl-4 xl:bottom-auto xl:left-auto xl:right-8 xl:top-1/2 xl:w-40 xl:-translate-y-1/2"><p className="text-[9px] font-black uppercase tracking-[.2em] text-[#c9a227]">Foundation Program · Years 7–10</p><p className="mt-2 font-serif text-2xl text-[#071629]">Junior Science</p><p className="mt-2 text-sm leading-5 text-[#43556e]">Start with the visible world: observe, ask, test and connect.</p></motion.div>
+              <motion.div style={reducedMotion ? { opacity: 0 } : { opacity: biologyCaptionOpacity }} className="science-scale-caption pointer-events-none absolute bottom-14 left-2 max-w-[18rem] border-l-2 border-[#c9a227] pl-4 xl:bottom-auto xl:left-auto xl:right-8 xl:top-1/2 xl:w-40 xl:-translate-y-1/2"><p className="text-[9px] font-black uppercase tracking-[.2em] text-[#c9a227]">HSC BIOLOGY · YEARS 11–12</p><p className="mt-2 font-serif text-2xl text-[#071629]">Living systems, in focus.</p><p className="mt-2 text-sm leading-5 text-[#43556e]">Explore cells, organisms and ecosystems in depth.</p></motion.div>
+              <motion.div style={reducedMotion ? { opacity: 0 } : { opacity: chemistryCaptionOpacity }} className="science-scale-caption pointer-events-none absolute bottom-14 left-2 max-w-[18rem] border-l-2 border-[#c9a227] pl-4 xl:bottom-auto xl:left-auto xl:right-8 xl:top-1/2 xl:w-40 xl:-translate-y-1/2"><p className="text-[9px] font-black uppercase tracking-[.2em] text-[#c9a227]">HSC CHEMISTRY · YEARS 11–12</p><p className="mt-2 font-serif text-2xl text-[#071629]">Matter, in motion.</p><p className="mt-2 text-sm leading-5 text-[#43556e]">Follow particles, bonds and reactions beneath the surface.</p></motion.div>
+              <motion.div style={reducedMotion ? { opacity: 0 } : { opacity: physicsCaptionOpacity }} className="science-scale-caption pointer-events-none absolute bottom-14 left-2 max-w-[18rem] border-l-2 border-[#c9a227] pl-4 xl:bottom-auto xl:left-auto xl:right-8 xl:top-1/2 xl:w-40 xl:-translate-y-1/2"><p className="text-[9px] font-black uppercase tracking-[.2em] text-[#c9a227]">HSC PHYSICS · YEARS 11–12</p><p className="mt-2 font-serif text-2xl text-[#071629]">The laws beneath it all.</p><p className="mt-2 text-sm leading-5 text-[#43556e]">Study forces, waves and fields that shape the physical world.</p></motion.div>
             </div>
           </div>
-
-          {/* CTA — slides in on hover, desktop only */}
-          <motion.div
-            className="hidden shrink-0 items-center gap-1.5 pt-1 text-[9.5px] font-black uppercase tracking-[0.16em] lg:flex"
-            animate={{ opacity: hovered ? 1 : 0, x: hovered ? 0 : 10 }}
-            transition={{ duration: 0.24, ease: 'easeOut' }}
-            style={{ color: s.color }}
-          >
-            {s.cta}
-            <ArrowRight className="h-3.5 w-3.5" />
-          </motion.div>
         </div>
 
-        {/* Mobile CTA */}
-        <div className="mt-4 flex items-center gap-1.5 text-[10px] font-black uppercase tracking-[0.16em] lg:hidden" style={{ color: s.color }}>
-          {s.cta}
-          <ArrowRight className="h-3 w-3" />
-        </div>
-      </Link>
-    </motion.div>
+        <article className="grid border-y border-[#071629]/20 bg-[#fff6e7] lg:grid-cols-[.9fr_1.1fr]">
+          <div className="p-8 lg:p-11"><p className="text-[9px] font-black uppercase tracking-[.26em] text-[#c9a227]">Foundation Program · Years 7–10</p><h3 className="mt-5 font-serif text-4xl font-medium tracking-[-.04em] text-[#071629]">Junior Science</h3><p className="mt-4 max-w-lg text-[15px] leading-7 text-[#43556e]">Build strong foundations across Biology, Chemistry and Physics while developing scientific thinking, practical skills and exam confidence.</p><Link to="/book-interview" className="mt-7 inline-flex items-center gap-2 border-b border-[#c9a227] pb-1.5 text-[10px] font-black uppercase tracking-[.16em] text-[#071629] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#071629]">Explore the program <ArrowRight className="h-3.5 w-3.5" /></Link></div>
+          <div className="grid grid-cols-3 border-t border-[#071629]/15 lg:border-l lg:border-t-0">{[['Biology', 'Cells'], ['Chemistry', 'Molecules'], ['Physics', 'Fields']].map(([subject, scale]) => <div key={subject} className="p-5 text-center lg:p-8"><p className="font-serif text-xl text-[#071629]">{subject}</p><p className="mt-2 text-[9px] font-black uppercase tracking-[.16em] text-[#657084]">{scale}</p></div>)}</div>
+        </article>
+
+        <div className="mt-16 border-l border-[#c9a227] pl-6"><p className="text-[10px] font-black uppercase tracking-[.24em] text-[#c9a227]">HSC SPECIALISATION</p><p className="mt-3 max-w-lg text-sm leading-6 text-[#52647a]">Follow the scale that most interests you, then study it in depth.</p></div>
+        <section className="science-programs__hsc mt-8 grid border-t border-[#071629]/20 lg:grid-cols-3" aria-label="HSC science specialisations">
+          {SCIENCE_LENSES.map((subject) => (
+            <article key={subject.label} className="group relative border-b border-[#071629]/20 p-7 transition-colors duration-200 hover:bg-[#fff6e7] focus-within:bg-[#fff6e7] lg:min-h-[465px] lg:border-b-0 lg:p-9 lg:not-first:border-l">
+              <p className="text-[9px] font-black uppercase tracking-[.23em] text-[#c9a227]">HSC {subject.label}</p>
+              <h3 className="mt-5 font-serif text-4xl font-medium tracking-[-.045em] text-[#071629]">{subject.label}</h3>
+              <p className="mt-3 text-[14px] leading-6 text-[#4c5e74]">{subject.tagline}</p>
+              <p className="mt-5 border-t border-[#071629]/15 pt-4 text-[10px] font-bold uppercase tracking-[.16em] text-[#657084]">{subject.scale}</p>
+              <ul className="mt-3 space-y-2 border-b border-[#071629]/15 pb-4 text-[12px] text-[#52647a]">{subject.topics.map((topic) => <li key={topic}>{topic}</li>)}</ul>
+              <div className="mt-5 text-[#071629] transition-transform duration-200 group-hover:translate-x-1 group-focus-within:translate-x-1"><LensStudy kind={subject.diagram} /></div>
+              <Link to="/book-interview" className="mt-3 inline-flex items-center gap-2 border-b border-[#c9a227] pb-1.5 text-[10px] font-black uppercase tracking-[.15em] text-[#071629] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#071629]">Explore program <ArrowRight className="h-3.5 w-3.5" /></Link>
+            </article>
+          ))}
+        </section>
+
+        <div className="mt-16 border-t border-[#071629]/20 pt-8 text-center"><svg viewBox="0 0 1100 35" aria-hidden="true" className="mx-auto h-8 w-full max-w-5xl fill-none"><path d="M0 5c120 0 170 25 310 25s178-25 240-25 98 25 240 25S980 5 1100 5" stroke="#c9a227" strokeWidth="1.2" /></svg><p className="mt-6 font-serif text-2xl tracking-[-.03em] text-[#071629]">Not sure which pathway is right?</p><Link to="/book-interview" className="mt-4 inline-flex items-center gap-2 border-b border-[#c9a227] pb-1.5 text-[10px] font-black uppercase tracking-[.16em] text-[#071629] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#071629]">Book a consultation <ArrowRight className="h-3.5 w-3.5" /></Link></div>
+      </div>
+    </section>
   );
 }
 
@@ -364,28 +403,33 @@ const SCIENCE_FACTS = [
 ] as const;
 
 const NEWTON_APPLES = [
-  { id: 'left-canopy-gold', sourceX: 646, sourceY: 159, sourceSize: 78, fallX: 42, fallY: 600 },
-  { id: 'upper-left-red', sourceX: 816, sourceY: 137, sourceSize: 78, fallX: 18, fallY: 620 },
-  { id: 'top-centre-red', sourceX: 895, sourceY: 56, sourceSize: 74, fallX: -8, fallY: 650 },
-  { id: 'upper-centre-hero', sourceX: 1104, sourceY: 122, sourceSize: 92, fallX: -44, fallY: 610 },
-  { id: 'upper-centre-right', sourceX: 1220, sourceY: 155, sourceSize: 78, fallX: -62, fallY: 590 },
-  { id: 'upper-right-cluster', sourceX: 1370, sourceY: 99, sourceSize: 86, fallX: -82, fallY: 610 },
-  { id: 'mid-left-hanging', sourceX: 746, sourceY: 217, sourceSize: 74, fallX: 30, fallY: 560 },
-  { id: 'mid-centre-gloss', sourceX: 1042, sourceY: 219, sourceSize: 82, fallX: -24, fallY: 545 },
-  { id: 'right-mid-red', sourceX: 1284, sourceY: 181, sourceSize: 72, fallX: -76, fallY: 570 },
-  { id: 'mid-right-round', sourceX: 1410, sourceY: 237, sourceSize: 80, fallX: -92, fallY: 540 },
-  { id: 'lower-left-hero', sourceX: 646, sourceY: 294, sourceSize: 74, fallX: 48, fallY: 450 },
-  { id: 'centre-lower-red', sourceX: 826, sourceY: 357, sourceSize: 74, fallX: 0, fallY: 430 },
-  { id: 'lower-centre-hero', sourceX: 927, sourceY: 322, sourceSize: 80, fallX: -6, fallY: 440 },
-  { id: 'right-lower-red', sourceX: 1131, sourceY: 334, sourceSize: 74, fallX: -48, fallY: 420 },
-  { id: 'mid-low-red', sourceX: 969, sourceY: 545, sourceSize: 68, fallX: -18, fallY: 260 },
-  { id: 'low-hanging-single', sourceX: 1068, sourceY: 646, sourceSize: 70, fallX: -26, fallY: 190 },
+  { id: 'upper-centre-right', sourceX: 1220, sourceY: 350, sourceSize: 74, fallX: -62, fallY: 395, asset: 'gold', rotation: -4, fallRotation: 51, mirror: true, scale: .94, mobileVisible: false, smallMobileVisible: false },
+  { id: 'lower-left-hero', sourceX: 646, sourceY: 322, sourceSize: 70, fallX: 48, fallY: 422, asset: 'gold', rotation: -5, fallRotation: 44, mirror: false, scale: .92, mobileVisible: false, smallMobileVisible: false },
+  { id: 'centre-lower-red', sourceX: 826, sourceY: 405, sourceSize: 70, fallX: 0, fallY: 382, asset: 'red', rotation: 4, fallRotation: 52, mirror: true, scale: .92, mobileVisible: false, smallMobileVisible: false },
+  { id: 'lower-centre-hero', sourceX: 927, sourceY: 376, sourceSize: 74, fallX: -6, fallY: 386, asset: 'green', rotation: -3, fallRotation: 48, mirror: false, scale: .94, mobileVisible: false, smallMobileVisible: false },
+  { id: 'right-lower-red', sourceX: 1131, sourceY: 380, sourceSize: 70, fallX: -48, fallY: 374, asset: 'red', rotation: 3, fallRotation: 55, mirror: false, scale: .92, mobileVisible: true, smallMobileVisible: true },
+  { id: 'mid-low-red', sourceX: 969, sourceY: 573, sourceSize: 64, fallX: -18, fallY: 232, asset: 'gold', rotation: -4, fallRotation: 43, mirror: true, scale: .9, mobileVisible: false, smallMobileVisible: false },
+  { id: 'low-hanging-single', sourceX: 1068, sourceY: 674, sourceSize: 66, fallX: -26, fallY: 162, asset: 'red', rotation: 2, fallRotation: 50, mirror: false, scale: .93, mobileVisible: true, smallMobileVisible: true },
 ] as const;
 
 const NEWTON_ARTWORK_WIDTH = 1536;
 const NEWTON_ARTWORK_HEIGHT = 1024;
+const NEWTON_IMPACT_MS = 1420;
+const NEWTON_RESET_MS = 4300;
+const NEWTON_APPLE_ASSETS = {
+  red: '/images/newton-apples/apple-red.png',
+  gold: '/images/newton-apples/apple-gold.png',
+  green: '/images/newton-apples/apple-green.png',
+} as const;
 
 type ScienceFact = typeof SCIENCE_FACTS[number];
+
+const formatFactTitle = (title: string) => title.replace(/^[\p{Extended_Pictographic}\uFE0F\u200D]+\s*/u, '');
+
+const factCatalogueNumber = (fact: ScienceFact) => {
+  const factIndex = SCIENCE_FACTS.findIndex((candidate) => candidate.title === fact.title);
+  return factIndex >= 0 ? String(factIndex + 1).padStart(2, '0') : '—';
+};
 
 const randomFact = (current: ScienceFact | null) => {
   let next = SCIENCE_FACTS[Math.floor(Math.random() * SCIENCE_FACTS.length)];
@@ -398,10 +442,23 @@ const randomFact = (current: ScienceFact | null) => {
 const NewtonGravityExperience = () => {
   const [activeFact, setActiveFact] = useState<ScienceFact | null>(null);
   const [fallingApple, setFallingApple] = useState<string | null>(null);
+  const [restoringApple, setRestoringApple] = useState<string | null>(null);
   const [reducedMotion, setReducedMotion] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const [isSmallMobile, setIsSmallMobile] = useState(false);
+  const [hasInteracted, setHasInteracted] = useState(false);
+  const [visibleAppleIds, setVisibleAppleIds] = useState<Set<string>>(() => new Set());
   const sectionRef = useRef<HTMLElement>(null);
+  const sceneRef = useRef<HTMLDivElement>(null);
+  const treeWrapRef = useRef<HTMLDivElement>(null);
+  const appleButtonRefs = useRef(new Map<string, HTMLButtonElement>());
   const resetTimerRef = useRef<number | null>(null);
   const factTimerRef = useRef<number | null>(null);
+  const restoreTimerRef = useRef<number | null>(null);
+  const lastFactRef = useRef<ScienceFact | null>(null);
+  const debugMode = import.meta.env.DEV
+    && typeof window !== 'undefined'
+    && new URLSearchParams(window.location.search).get('newtonDebug') === '1';
 
   useEffect(() => {
     const media = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -411,33 +468,114 @@ const NewtonGravityExperience = () => {
     return () => media.removeEventListener('change', update);
   }, []);
 
+  useEffect(() => {
+    const mobileMedia = window.matchMedia('(max-width: 680px)');
+    const smallMobileMedia = window.matchMedia('(max-width: 360px)');
+    const update = () => {
+      setIsMobile(mobileMedia.matches);
+      setIsSmallMobile(smallMobileMedia.matches);
+    };
+    update();
+    mobileMedia.addEventListener('change', update);
+    smallMobileMedia.addEventListener('change', update);
+    return () => {
+      mobileMedia.removeEventListener('change', update);
+      smallMobileMedia.removeEventListener('change', update);
+    };
+  }, []);
+
   useEffect(() => () => {
     if (resetTimerRef.current) window.clearTimeout(resetTimerRef.current);
     if (factTimerRef.current) window.clearTimeout(factTimerRef.current);
+    if (restoreTimerRef.current) window.clearTimeout(restoreTimerRef.current);
   }, []);
+
+  useLayoutEffect(() => {
+    const scene = sceneRef.current;
+    const treeWrap = treeWrapRef.current;
+    if (!scene || !treeWrap) return;
+
+    const updateAppleVisibility = () => {
+      const sceneRect = scene.getBoundingClientRect();
+      const wrapRect = treeWrap.getBoundingClientRect();
+      const clip = {
+        left: Math.max(sceneRect.left, wrapRect.left),
+        right: Math.min(sceneRect.right, wrapRect.right),
+        top: Math.max(sceneRect.top, wrapRect.top),
+        bottom: Math.min(sceneRect.bottom, wrapRect.bottom),
+      };
+      const next = new Set<string>();
+
+      appleButtonRefs.current.forEach((button, appleId) => {
+        if (button.hidden) return;
+        const rect = button.getBoundingClientRect();
+        if (rect.right > clip.left && rect.left < clip.right && rect.bottom > clip.top && rect.top < clip.bottom) {
+          next.add(appleId);
+        }
+      });
+
+      setVisibleAppleIds((current) => {
+        if (current.size === next.size && [...current].every((appleId) => next.has(appleId))) return current;
+        return next;
+      });
+    };
+
+    const observer = new ResizeObserver(updateAppleVisibility);
+    observer.observe(scene);
+    observer.observe(treeWrap);
+    const frame = window.requestAnimationFrame(updateAppleVisibility);
+    window.addEventListener('resize', updateAppleVisibility);
+
+    return () => {
+      window.cancelAnimationFrame(frame);
+      window.removeEventListener('resize', updateAppleVisibility);
+      observer.disconnect();
+    };
+  }, [isMobile, isSmallMobile]);
+
+  const revealFact = () => {
+    const nextFact = randomFact(lastFactRef.current);
+    lastFactRef.current = nextFact;
+    setActiveFact(nextFact);
+  };
+
+  const restoreApple = (appleId: string) => {
+    setFallingApple(null);
+    setRestoringApple(appleId);
+    restoreTimerRef.current = window.setTimeout(() => setRestoringApple(null), 180);
+  };
 
   const handleAppleClick = (appleId: string) => {
     if (fallingApple) return;
 
+    setHasInteracted(true);
+
     if (resetTimerRef.current) window.clearTimeout(resetTimerRef.current);
     if (factTimerRef.current) window.clearTimeout(factTimerRef.current);
+    if (restoreTimerRef.current) window.clearTimeout(restoreTimerRef.current);
 
     setFallingApple(appleId);
+    setRestoringApple(null);
     setActiveFact(null);
 
     if (reducedMotion) {
-      setActiveFact(prev => randomFact(prev));
-      resetTimerRef.current = window.setTimeout(() => setFallingApple(null), 900);
+      revealFact();
+      resetTimerRef.current = window.setTimeout(() => restoreApple(appleId), 900);
       return;
     }
 
-    factTimerRef.current = window.setTimeout(() => {
-      setActiveFact(prev => randomFact(prev));
-    }, 1550);
+    factTimerRef.current = window.setTimeout(revealFact, NEWTON_IMPACT_MS);
 
     resetTimerRef.current = window.setTimeout(() => {
-      setFallingApple(null);
-    }, 4300);
+      restoreApple(appleId);
+    }, NEWTON_RESET_MS);
+  };
+
+  const handleFactClose = () => {
+    if (resetTimerRef.current) window.clearTimeout(resetTimerRef.current);
+    if (factTimerRef.current) window.clearTimeout(factTimerRef.current);
+    setActiveFact(null);
+    if (fallingApple) restoreApple(fallingApple);
   };
 
   return (
@@ -595,8 +733,8 @@ const NewtonGravityExperience = () => {
 
         .newton-click-note {
           position: absolute;
-          left: 48%;
-          top: 56%;
+          left: clamp(390px, 32vw, 490px);
+          top: 38%;
           z-index: 6;
           width: 210px;
           color: #10233f;
@@ -681,113 +819,71 @@ const NewtonGravityExperience = () => {
           left: var(--apple-x);
           top: var(--apple-y);
           z-index: 4;
-          width: var(--apple-size);
-          height: var(--apple-size);
+          display: grid;
+          place-items: center;
+          width: max(44px, var(--apple-size));
+          height: max(44px, var(--apple-size));
+          padding: 0;
           border: 0;
-          border-radius: 52% 47% 51% 49%;
+          border-radius: 999px;
           background: transparent;
           box-shadow: none;
           cursor: pointer;
           pointer-events: auto;
           transform: translate3d(-50%, -50%, 0);
           transform-origin: 50% 18%;
-          transition: filter 260ms ease, box-shadow 260ms ease, transform 260ms cubic-bezier(.16, 1, .3, 1);
-          will-change: transform;
+          -webkit-tap-highlight-color: transparent;
         }
 
-        .newton-apple-cover {
-          position: absolute;
-          left: var(--apple-x);
-          top: var(--apple-y);
-          z-index: 3;
-          width: calc(var(--apple-size) * 1.08);
-          height: calc(var(--apple-size) * .96);
-          border-radius: 999px;
-          background:
-            radial-gradient(circle at 36% 28%, rgba(190, 175, 66, .72), transparent 26%),
-            radial-gradient(circle at 62% 56%, rgba(48, 82, 28, .86), transparent 58%),
-            radial-gradient(circle at 44% 62%, rgba(104, 126, 39, .88), rgba(42, 67, 25, .86) 72%);
-          filter: blur(2.4px) saturate(1.08);
-          opacity: 0;
-          transform: translate3d(-50%, -50%, 0) scale(.78);
+        .newton-apple[hidden] {
+          display: none;
+        }
+
+        .newton-apple__image {
+          display: block;
+          width: calc(var(--apple-size) * var(--apple-scale));
+          height: calc(var(--apple-size) * var(--apple-scale));
+          max-width: none;
+          object-fit: contain;
           pointer-events: none;
-          transition: opacity 220ms ease, transform 420ms cubic-bezier(.16, 1, .3, 1);
+          filter: drop-shadow(0 5px 5px rgba(50, 28, 7, .28));
+          transform: scaleX(var(--apple-mirror)) rotate(var(--apple-rotation));
+          transform-origin: 50% 18%;
+          transition: filter 180ms ease, transform 220ms cubic-bezier(.16, 1, .3, 1);
         }
 
-        .newton-apple-cover.is-active {
-          opacity: .84;
-          transform: translate3d(-50%, -50%, 0) scale(1);
+        .newton-apple.is-discovery-cue {
+          animation: newtonAppleDiscoveryCue 4.2s ease-in-out infinite;
         }
 
-        .newton-apple__sprite {
-          position: absolute;
-          inset: 0;
-          border-radius: inherit;
-          background-image: url('/images/apple-tree-background.png');
-          background-size: var(--tree-width) auto;
-          background-position:
-            calc(var(--apple-size) / 2 - var(--sprite-x))
-            calc(var(--apple-size) / 2 - var(--sprite-y));
-          background-repeat: no-repeat;
-          clip-path: ellipse(48% 46% at 50% 52%);
-          pointer-events: none;
+        .newton-apple.is-discovery-cue:hover,
+        .newton-apple.is-discovery-cue:focus-visible {
+          animation-play-state: paused;
         }
 
-        .newton-apple::before {
-          content: "";
-          position: absolute;
-          inset: -9px;
-          border-radius: 999px;
-          border: 1.5px dotted rgba(255, 255, 255, .86);
-          box-shadow:
-            0 0 18px rgba(255, 255, 255, .34),
-            inset 0 0 12px rgba(255, 255, 255, .14);
-          opacity: 0;
-          transform: scale(.84);
-          transition: opacity 240ms ease, transform 240ms cubic-bezier(.16, 1, .3, 1);
+        .newton-apple:hover:not(:disabled) .newton-apple__image {
+          filter: brightness(1.07) saturate(1.04) drop-shadow(0 7px 8px rgba(50, 28, 7, .34));
+          transform: scaleX(var(--apple-mirror)) rotate(var(--apple-hover-rotation)) translateY(-3px);
         }
 
-        .newton-apple:hover,
         .newton-apple:focus-visible {
-          filter: brightness(1.05) saturate(1.03);
-          outline: none;
-          transform: translate3d(-50%, -50%, 0) scale(1.05);
+          outline: 3px solid rgba(7, 22, 41, .88);
+          outline-offset: 5px;
+          border-radius: 42% 48% 46% 44%;
         }
 
-        .newton-apple:hover::before,
-        .newton-apple:focus-visible::before {
-          opacity: 1;
-          transform: scale(1);
-        }
-
-        .newton-leaf {
-          position: absolute;
-          left: 48%;
-          top: 10%;
-          width: 8px;
-          height: 5px;
-          border-radius: 80% 0 80% 0;
-          background: rgba(124, 145, 51, .92);
-          opacity: 0;
+        .newton-apple:disabled {
+          cursor: default;
         }
 
         .newton-apple.is-falling {
           pointer-events: none;
-          animation: appleFall 2.05s cubic-bezier(.16, .72, .18, 1) forwards;
+          will-change: transform, opacity;
+          animation: newtonAppleFall 4.3s linear forwards;
         }
 
-        .newton-apple.is-falling .newton-leaf {
-          animation: leafFall 1.3s ease-out forwards;
-        }
-
-        .newton-apple.is-falling .newton-leaf:nth-child(3) {
-          animation-delay: 120ms;
-          transform: rotate(24deg);
-        }
-
-        .newton-apple.is-falling .newton-leaf:nth-child(4) {
-          animation-delay: 210ms;
-          transform: rotate(-18deg);
+        .newton-apple.is-restoring {
+          animation: newtonAppleRestore 180ms ease-out both;
         }
 
         .newton-impact {
@@ -806,7 +902,17 @@ const NewtonGravityExperience = () => {
         }
 
         .newton-impact.is-active {
-          animation: impactRipple 1.15s ease-out 1.18s forwards;
+          animation: impactRipple 920ms ease-out 1.38s forwards;
+        }
+
+        .newton-debug {
+          position: absolute;
+          inset: 0;
+          z-index: 9;
+          width: 100%;
+          height: 100%;
+          overflow: visible;
+          pointer-events: none;
         }
 
         .newton-fact {
@@ -816,88 +922,157 @@ const NewtonGravityExperience = () => {
           z-index: 7;
           pointer-events: auto;
           display: grid;
-          grid-template-columns: 62px 1fr 24px;
-          gap: 18px;
+          grid-template-columns: 42px minmax(0, 1fr) 38px;
+          gap: 20px;
           align-items: start;
-          width: clamp(460px, 31vw, 520px);
+          isolation: isolate;
+          width: clamp(500px, 36vw, 610px);
           max-width: calc(100% - 240px);
-          padding: clamp(22px, 2vw, 28px);
-          border: 1px solid rgba(255, 255, 255, .12);
-          border-radius: 28px;
-          background: linear-gradient(145deg, rgba(7, 22, 41, .96), rgba(3, 16, 32, .92));
-          box-shadow: 0 34px 80px rgba(7, 22, 41, .38);
-          backdrop-filter: blur(20px);
+          padding: clamp(28px, 2.3vw, 36px) clamp(28px, 2.7vw, 42px);
+          border: 0;
+          color: #142b47;
+          background: #f3dfb3;
+          clip-path: polygon(1.2% 3%, 5% 1.2%, 10% 2.2%, 16% .8%, 22% 1.8%, 30% .6%, 38% 1.7%, 47% .5%, 55% 1.6%, 64% .8%, 72% 1.8%, 81% .5%, 90% 1.4%, 96% .8%, 99% 4%, 98.2% 10%, 99.3% 18%, 98.4% 28%, 99.4% 38%, 98.3% 48%, 99.2% 58%, 98.1% 68%, 99.1% 78%, 98.4% 88%, 99% 96%, 96% 99%, 89% 98.4%, 81% 99.2%, 73% 98.1%, 65% 99.3%, 56% 98.4%, 48% 99.2%, 39% 98.2%, 31% 99.4%, 23% 98.3%, 15% 99.1%, 8% 98.1%, 1.5% 96%, 2.2% 88%, .8% 79%, 1.8% 69%, .7% 59%, 1.7% 48%, .6% 37%, 1.6% 27%, .7% 17%);
+          filter: drop-shadow(0 18px 22px rgba(58, 37, 12, .26));
+        }
+
+        .newton-fact::before {
+          content: "";
+          position: absolute;
+          inset: 0;
+          z-index: -1;
+          pointer-events: none;
+          background:
+            radial-gradient(ellipse at 14% 18%, rgba(255, 251, 224, .58), transparent 28%),
+            radial-gradient(ellipse at 78% 70%, rgba(122, 84, 31, .07), transparent 34%),
+            repeating-linear-gradient(8deg, transparent 0 7px, rgba(94, 63, 24, .022) 8px, transparent 9px 16px),
+            repeating-linear-gradient(96deg, transparent 0 13px, rgba(255, 252, 229, .035) 14px, transparent 15px 23px),
+            linear-gradient(103deg, rgba(255, 250, 222, .78), rgba(231, 203, 145, .28) 46%, rgba(255, 246, 208, .7));
+          box-shadow: inset 0 0 38px rgba(116, 74, 22, .13);
+        }
+
+        .newton-fact > * {
+          position: relative;
+          z-index: 1;
+        }
+
+        .newton-fact__catalogue {
+          align-self: stretch;
+          min-height: 100%;
+          padding: 2px 14px 0 0;
+          border-right: 1px solid rgba(20, 43, 71, .56);
+          color: #a6750b;
+          font-family: Georgia, 'Times New Roman', serif;
+          font-size: 1.05rem;
+          font-variant-numeric: lining-nums tabular-nums;
+          line-height: 1.2;
         }
 
         .newton-fact__label {
-          margin: 0 0 7px;
-          font-size: .68rem;
-          font-weight: 900;
-          letter-spacing: .14em;
+          margin: 0 0 12px;
+          padding-bottom: 9px;
+          border-bottom: 1px solid rgba(20, 43, 71, .42);
+          font-family: Georgia, 'Times New Roman', serif;
+          font-size: .72rem;
+          font-weight: 700;
+          letter-spacing: .2em;
           text-transform: uppercase;
-          color: #f1df9a;
+          color: #142b47;
         }
 
         .newton-fact__text {
           margin: 0;
-          font-size: .94rem;
-          line-height: 1.58;
-          color: rgba(255, 255, 255, .9);
+          font-size: .93rem;
+          line-height: 1.62;
+          color: rgba(20, 43, 71, .86);
         }
 
         .newton-fact__title {
-          margin: 0 0 8px;
-          font-size: 1rem;
-          font-weight: 750;
-          line-height: 1.42;
-          color: rgba(255, 255, 255, .96);
+          margin: 0 0 12px;
+          font-family: Georgia, 'Times New Roman', serif;
+          font-size: clamp(1.16rem, 1.35vw, 1.42rem);
+          font-weight: 600;
+          line-height: 1.32;
+          letter-spacing: -.018em;
+          color: #142b47;
         }
 
         .newton-fact__body {
           margin: 0;
-          color: rgba(255, 255, 255, .72);
+          color: rgba(20, 43, 71, .82);
         }
 
         .newton-fact__close {
           align-self: start;
           justify-self: end;
+          display: grid;
+          place-items: center;
+          width: 38px;
+          height: 38px;
+          margin: -10px -12px 0 0;
+          padding: 0;
           border: 0;
           background: transparent;
-          color: rgba(255, 255, 255, .7);
+          color: rgba(20, 43, 71, .72);
           cursor: pointer;
-          font-size: 1.5rem;
+          font-family: Georgia, 'Times New Roman', serif;
+          font-size: 1.6rem;
           line-height: 1;
         }
 
         .newton-fact__close:hover {
-          color: #fff;
+          color: #142b47;
         }
 
-        @keyframes appleFall {
+        .newton-fact__close:focus-visible {
+          outline: 2px solid #142b47;
+          outline-offset: 2px;
+          border-radius: 3px;
+          color: #142b47;
+        }
+
+        @keyframes newtonAppleDiscoveryCue {
+          0%, 67%, 100% { transform: translate3d(-50%, -50%, 0) rotate(0deg); }
+          73% { transform: translate3d(-50%, -50%, 0) rotate(-2.5deg); }
+          79% { transform: translate3d(-50%, -50%, 0) rotate(2deg); }
+          85% { transform: translate3d(-50%, -50%, 0) rotate(-1.2deg); }
+          91% { transform: translate3d(-50%, -50%, 0) rotate(.6deg); }
+          96% { transform: translate3d(-50%, -50%, 0) rotate(0deg); }
+        }
+
+        @keyframes newtonAppleFall {
           0% {
             transform: translate3d(-50%, -50%, 0) rotate(0deg) scale(1);
+            opacity: 1;
           }
-          8% {
-            transform: translate3d(-50%, -50%, 0) rotate(0deg) scale(1);
+          3.25% {
+            transform: translate3d(calc(-50% + 1px), calc(-50% - 4px), 0) rotate(-3deg) scale(1.01);
+            animation-timing-function: cubic-bezier(.45, 0, .75, .4);
           }
-          12% {
-            transform: translate3d(calc(-50% + 2px), calc(-50% - 7px), 0) rotate(-4deg) scale(1.01);
+          26% {
+            transform: translate3d(calc(-50% + var(--fall-x) * .62), calc(-50% + var(--fall-y) * .48), 0) rotate(calc(var(--fall-rotation) * .42)) scale(1);
+            animation-timing-function: cubic-bezier(.4, 0, .9, .64);
           }
-          78% {
-            transform: translate3d(calc(-50% + var(--fall-x) * .86), calc(-50% + var(--fall-y) * .9), 0) rotate(102deg) scale(1);
+          32.3% {
+            transform: translate3d(calc(-50% + var(--fall-x)), calc(-50% + var(--fall-y)), 0) rotate(var(--fall-rotation)) scale(1);
+            animation-timing-function: cubic-bezier(.16, 1, .3, 1);
           }
-          88% {
-            transform: translate3d(calc(-50% + var(--fall-x)), calc(-50% + var(--fall-y)), 0) rotate(132deg) scale(1.08, .84);
+          34.4% {
+            transform: translate3d(calc(-50% + var(--fall-x)), calc(-50% + var(--fall-y) + 2px), 0) rotate(var(--fall-rotation)) scaleX(1.08) scaleY(.88);
+          }
+          37%, 91% {
+            transform: translate3d(calc(-50% + var(--fall-x)), calc(-50% + var(--fall-y) - 3px), 0) rotate(var(--fall-rotation)) scale(1);
+            opacity: 1;
           }
           100% {
-            transform: translate3d(calc(-50% + var(--fall-x)), calc(-50% + var(--fall-y) - 9px), 0) rotate(140deg) scale(.98, 1.02);
+            transform: translate3d(calc(-50% + var(--fall-x)), calc(-50% + var(--fall-y) - 3px), 0) rotate(var(--fall-rotation)) scale(.96);
+            opacity: 0;
           }
         }
 
-        @keyframes leafFall {
-          0% { opacity: 0; transform: translate3d(0, 0, 0) rotate(0deg); }
-          18% { opacity: .9; }
-          100% { opacity: 0; transform: translate3d(18px, 76px, 0) rotate(180deg); }
+        @keyframes newtonAppleRestore {
+          from { opacity: 0; transform: translate3d(-50%, -50%, 0) scale(.96); }
+          to { opacity: 1; transform: translate3d(-50%, -50%, 0) scale(1); }
         }
 
         @keyframes impactRipple {
@@ -926,6 +1101,11 @@ const NewtonGravityExperience = () => {
             bottom: 0;
           }
 
+          .newton-click-note {
+            left: clamp(32px, 6vw, 64px);
+            top: 44%;
+          }
+
           .newton-fact {
             right: clamp(88px, 8vw, 120px);
             bottom: 104px;
@@ -937,7 +1117,7 @@ const NewtonGravityExperience = () => {
         @media (max-width: 680px) {
           .newton-gravity__inner {
             padding-top: 72px;
-            padding-bottom: 72px;
+            padding-bottom: 0;
           }
 
           .newton-gravity__title {
@@ -949,51 +1129,78 @@ const NewtonGravityExperience = () => {
           }
 
           .newton-click-note {
-            left: 18%;
-            top: 45%;
+            left: 18px;
+            top: 80px;
             font-size: 1.08rem;
             width: 160px;
           }
 
+          .newton-click-note svg {
+            margin: 6px 0 0 65px;
+            transform: rotate(-35deg);
+            transform-origin: 52% 44%;
+          }
+
           .newton-scene {
             --tree-width: 1040px;
-            min-height: 520px;
-            margin-inline: -22px;
+            position: relative;
+            inset: auto;
+            min-height: 460px;
+            margin: 34px -18px 0;
+          }
+
+          .newton-scene.has-active-fact {
+            min-height: 700px;
+          }
+
+          .newton-scene.has-active-fact .newton-fact {
+            top: 230px;
+            bottom: auto;
           }
 
           .newton-tree-wrap {
-            inset: -16% -30% 0 -30%;
+            inset: 0 -18px;
             -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 9%, #000 96%, transparent 100%);
             mask-image: linear-gradient(90deg, transparent 0%, #000 9%, #000 96%, transparent 100%);
           }
 
           .newton-tree-layer {
-            right: -24%;
-            bottom: 0;
+            right: -10%;
+            top: 0;
+            bottom: auto;
           }
 
           .newton-fact {
             position: absolute;
             left: 16px;
             right: 16px;
-            bottom: 148px;
+            bottom: 16px;
             width: auto;
             max-width: calc(100vw - 32px);
             margin: 0;
-            grid-template-columns: 52px 1fr 24px;
-            gap: 14px;
-            padding: 18px;
-            border-radius: 22px;
+            grid-template-columns: 32px minmax(0, 1fr) 34px;
+            gap: 12px;
+            padding: 22px 20px 24px;
           }
 
-          .newton-fact__icon {
-            width: 52px;
-            height: 52px;
+          .newton-fact__catalogue {
+            padding-right: 9px;
+            font-size: .82rem;
           }
 
           .newton-fact__text {
-            font-size: .88rem;
-            line-height: 1.55;
+            font-size: .84rem;
+            line-height: 1.52;
+          }
+
+          .newton-fact__title {
+            font-size: 1.08rem;
+          }
+
+          .newton-fact__close {
+            width: 34px;
+            height: 34px;
+            margin: -8px -8px 0 0;
           }
         }
 
@@ -1001,11 +1208,15 @@ const NewtonGravityExperience = () => {
           .newton-tree,
           .newton-tree-layer,
           .newton-apple,
+          .newton-apple__image,
           .newton-apple.is-falling,
+          .newton-apple.is-restoring,
+          .newton-apple.is-discovery-cue,
           .newton-impact.is-active,
-          .newton-leaf {
+          .newton-scene:hover .newton-tree-layer {
             animation: none !important;
             transition: none !important;
+            transform: none !important;
           }
         }
       `}</style>
@@ -1013,7 +1224,7 @@ const NewtonGravityExperience = () => {
       <div className="newton-gravity__inner">
         <motion.div
           className="newton-gravity__content"
-          initial={{ opacity: 0, y: 24 }}
+          initial={reducedMotion ? false : { opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-100px' }}
           transition={{ duration: .65, ease: [0.16, 1, 0.3, 1] }}
@@ -1047,8 +1258,9 @@ const NewtonGravityExperience = () => {
         </motion.div>
 
         <motion.div
-          className="newton-scene"
-          initial={{ opacity: 0, scale: .985 }}
+          ref={sceneRef}
+          className={`newton-scene${activeFact ? ' has-active-fact' : ''}`}
+          initial={reducedMotion ? false : { opacity: 0, scale: .985 }}
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true, margin: '-100px' }}
           transition={{ duration: .8, delay: .08, ease: [0.16, 1, 0.3, 1] }}
@@ -1075,63 +1287,109 @@ const NewtonGravityExperience = () => {
               />
             </svg>
           </div>
-          <div className="newton-tree-wrap">
+          <div ref={treeWrapRef} className="newton-tree-wrap">
             <div className="newton-tree-layer">
-              <img className="newton-tree" src="/images/apple-tree-background.png" alt="" loading="eager" decoding="async" />
+              <img
+                className="newton-tree"
+                src="/images/apple-tree-background-clean.png"
+                alt=""
+                width={NEWTON_ARTWORK_WIDTH}
+                height={NEWTON_ARTWORK_HEIGHT}
+                loading="eager"
+                decoding="async"
+              />
 
-              {NEWTON_APPLES.map((apple) => (
-                <span
-                  key={`cover-${apple.id}`}
-                  className={`newton-apple-cover ${fallingApple === apple.id ? 'is-active' : ''}`}
-                  aria-hidden="true"
-                  style={{
-                    ['--apple-x' as string]: `${(apple.sourceX / NEWTON_ARTWORK_WIDTH) * 100}%`,
-                    ['--apple-y' as string]: `${(apple.sourceY / NEWTON_ARTWORK_HEIGHT) * 100}%`,
-                    ['--apple-size' as string]: `clamp(36px, calc(${apple.sourceSize / NEWTON_ARTWORK_WIDTH} * var(--tree-width)), 84px)`,
-                  }}
-                />
-              ))}
-
-              {NEWTON_APPLES.map((apple) => {
+              {NEWTON_APPLES.map((apple, index) => {
                 const isFalling = fallingApple === apple.id;
+                const isRestoring = restoringApple === apple.id;
+                const hiddenForViewport = (isMobile && !apple.mobileVisible)
+                  || (isSmallMobile && !apple.smallMobileVisible);
+                const isInteractive = !hiddenForViewport && visibleAppleIds.has(apple.id);
+                const fallY = isMobile ? Math.min(apple.fallY, 650 - apple.sourceY) : apple.fallY;
                 return (
                   <button
+                    ref={(button) => {
+                      if (button) appleButtonRefs.current.set(apple.id, button);
+                      else appleButtonRefs.current.delete(apple.id);
+                    }}
                     key={apple.id}
                     type="button"
-                    className={`newton-apple ${isFalling ? 'is-falling' : ''}`}
-                    aria-label="Open a science fun fact"
+                    className={`newton-apple ${isFalling ? 'is-falling' : ''} ${isRestoring ? 'is-restoring' : ''} ${!hasInteracted && apple.id === 'right-lower-red' ? 'is-discovery-cue' : ''}`}
+                    aria-label={`Drop apple ${index + 1} and reveal a science fact`}
+                    aria-hidden={!isInteractive}
+                    tabIndex={isInteractive ? 0 : -1}
+                    disabled={Boolean(fallingApple)}
+                    hidden={hiddenForViewport}
                     onClick={() => handleAppleClick(apple.id)}
                     style={{
                       ['--apple-x' as string]: `${(apple.sourceX / NEWTON_ARTWORK_WIDTH) * 100}%`,
                       ['--apple-y' as string]: `${(apple.sourceY / NEWTON_ARTWORK_HEIGHT) * 100}%`,
-                      ['--apple-size' as string]: `clamp(36px, calc(${apple.sourceSize / NEWTON_ARTWORK_WIDTH} * var(--tree-width)), 84px)`,
-                      ['--sprite-x' as string]: `calc(${apple.sourceX / NEWTON_ARTWORK_WIDTH} * var(--tree-width))`,
-                      ['--sprite-y' as string]: `calc(${apple.sourceY / NEWTON_ARTWORK_WIDTH} * var(--tree-width))`,
+                      ['--apple-size' as string]: `clamp(38px, calc(${apple.sourceSize / NEWTON_ARTWORK_WIDTH} * var(--tree-width)), 92px)`,
+                      ['--apple-scale' as string]: apple.scale,
+                      ['--apple-mirror' as string]: apple.mirror ? -1 : 1,
+                      ['--apple-rotation' as string]: `${apple.rotation}deg`,
+                      ['--apple-hover-rotation' as string]: `${apple.rotation + (apple.rotation > 0 ? -3 : 3)}deg`,
+                      ['--fall-rotation' as string]: `${apple.fallRotation}deg`,
                       ['--fall-x' as string]: `calc(${apple.fallX / NEWTON_ARTWORK_WIDTH} * var(--tree-width))`,
-                      ['--fall-y' as string]: `calc(${apple.fallY / NEWTON_ARTWORK_WIDTH} * var(--tree-width))`,
+                      ['--fall-y' as string]: `calc(${fallY / NEWTON_ARTWORK_WIDTH} * var(--tree-width))`,
                     }}
                   >
-                    <span className="newton-apple__sprite" aria-hidden="true" />
-                    <span className="newton-leaf" aria-hidden="true" />
-                    <span className="newton-leaf" aria-hidden="true" />
-                    <span className="newton-leaf" aria-hidden="true" />
+                    <img
+                      className="newton-apple__image"
+                      src={NEWTON_APPLE_ASSETS[apple.asset]}
+                      alt=""
+                      width="384"
+                      height="384"
+                      draggable="false"
+                      decoding="async"
+                      aria-hidden="true"
+                    />
                   </button>
                 );
               })}
 
-              {NEWTON_APPLES.map((apple) => (
-                <span
-                  key={`impact-${apple.id}`}
-                  className={`newton-impact ${fallingApple === apple.id ? 'is-active' : ''}`}
-                  aria-hidden="true"
-                  style={{
-                    ['--apple-x' as string]: `${(apple.sourceX / NEWTON_ARTWORK_WIDTH) * 100}%`,
-                    ['--apple-y' as string]: `${(apple.sourceY / NEWTON_ARTWORK_HEIGHT) * 100}%`,
-                    ['--fall-x' as string]: `calc(${apple.fallX / NEWTON_ARTWORK_WIDTH} * var(--tree-width))`,
-                    ['--fall-y' as string]: `calc(${apple.fallY / NEWTON_ARTWORK_WIDTH} * var(--tree-width))`,
-                  }}
-                />
-              ))}
+              {NEWTON_APPLES.map((apple) => {
+                const fallY = isMobile ? Math.min(apple.fallY, 650 - apple.sourceY) : apple.fallY;
+                return (
+                  <span
+                    key={`impact-${apple.id}`}
+                    className={`newton-impact ${fallingApple === apple.id ? 'is-active' : ''}`}
+                    aria-hidden="true"
+                    style={{
+                      ['--apple-x' as string]: `${(apple.sourceX / NEWTON_ARTWORK_WIDTH) * 100}%`,
+                      ['--apple-y' as string]: `${(apple.sourceY / NEWTON_ARTWORK_HEIGHT) * 100}%`,
+                      ['--fall-x' as string]: `calc(${apple.fallX / NEWTON_ARTWORK_WIDTH} * var(--tree-width))`,
+                      ['--fall-y' as string]: `calc(${fallY / NEWTON_ARTWORK_WIDTH} * var(--tree-width))`,
+                    }}
+                  />
+                );
+              })}
+
+              {debugMode && (
+                <svg className="newton-debug" viewBox={`0 0 ${NEWTON_ARTWORK_WIDTH} ${NEWTON_ARTWORK_HEIGHT}`} aria-hidden="true">
+                  <rect x="2" y="2" width={NEWTON_ARTWORK_WIDTH - 4} height={NEWTON_ARTWORK_HEIGHT - 4} fill="none" stroke="#00e5ff" strokeWidth="4" />
+                  {NEWTON_APPLES.map((apple) => (
+                    <g key={`debug-${apple.id}`}>
+                      <line
+                        x1={apple.sourceX}
+                        y1={apple.sourceY}
+                        x2={apple.sourceX + apple.fallX}
+                        y2={apple.sourceY + apple.fallY}
+                        stroke="#00e5ff"
+                        strokeWidth="3"
+                        strokeDasharray="10 8"
+                        vectorEffect="non-scaling-stroke"
+                      />
+                      <rect x={apple.sourceX - 22} y={apple.sourceY - 22} width="44" height="44" fill="rgba(0, 229, 255, .14)" stroke="#00e5ff" strokeWidth="2" />
+                      <circle cx={apple.sourceX} cy={apple.sourceY} r="5" fill="#ff2d55" />
+                      <circle cx={apple.sourceX + apple.fallX} cy={apple.sourceY + apple.fallY} r="8" fill="none" stroke="#ffe66d" strokeWidth="4" />
+                      <text x={apple.sourceX + 12} y={apple.sourceY - 12} fill="#071629" stroke="#fff" strokeWidth="5" paintOrder="stroke" fontSize="22" fontWeight="800">
+                        {apple.id} → ({apple.sourceX + apple.fallX}, {apple.sourceY + apple.fallY})
+                      </text>
+                    </g>
+                  ))}
+                </svg>
+              )}
             </div>
           </div>
 
@@ -1140,22 +1398,24 @@ const NewtonGravityExperience = () => {
               <motion.div
                 className="newton-fact"
                 role="status"
-                initial={{ opacity: 0, y: 18, scale: .96 }}
+                aria-live="polite"
+                aria-atomic="true"
+                initial={reducedMotion ? { opacity: 0 } : { opacity: 0, y: 18, scale: .96 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: 10, scale: .98 }}
-                transition={{ duration: .32, ease: [0.16, 1, 0.3, 1] }}
+                exit={reducedMotion ? { opacity: 0 } : { opacity: 0, y: 10, scale: .98 }}
+                transition={{ duration: reducedMotion ? .12 : .32, ease: [0.16, 1, 0.3, 1] }}
               >
-                <div className="newton-fact__icon" aria-hidden="true">
-                  <Lightbulb className="h-5 w-5" />
+                <div className="newton-fact__catalogue" aria-hidden="true">
+                  {factCatalogueNumber(activeFact)}
                 </div>
                 <div>
                   <p className="newton-fact__label">Fun Fact</p>
                   <div className="newton-fact__text">
-                    <p className="newton-fact__title">{activeFact.title}</p>
+                    <p className="newton-fact__title">{formatFactTitle(activeFact.title)}</p>
                     <p className="newton-fact__body">{activeFact.body}</p>
                   </div>
                 </div>
-                <button className="newton-fact__close" type="button" onClick={() => setActiveFact(null)} aria-label="Close fun fact">
+                <button className="newton-fact__close" type="button" onClick={handleFactClose} aria-label="Close fun fact">
                   ×
                 </button>
               </motion.div>
@@ -1843,95 +2103,7 @@ const Science = () => {
           </div>
         </section>
 
-        {/* ── Science Programs ── */}
-        <section id="science-pathways" className="bg-[#fffdf8] px-5 py-20 lg:px-8">
-          <div className="mx-auto max-w-7xl">
-            <ScienceSectionHeader
-              eyebrow="Science Programs"
-              title="From Year 7 Science foundations to specialised HSC subjects."
-              text="Whether your child is building core scientific thinking in high school or preparing for HSC subject exams, DA has a structured program to match."
-            />
-
-            {/* ── Years 7–10 — primary editorial panel ── */}
-            <motion.article
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-80px' }}
-              transition={{ duration: 0.55 }}
-              className="group relative overflow-hidden rounded-[2rem] border border-[#1d4ed8]/12 bg-gradient-to-br from-[#f0f7ff] to-[#dbeafe]"
-            >
-              <div className="flex flex-col lg:flex-row">
-                {/* Left: editorial content */}
-                <div className="flex flex-1 flex-col p-8 lg:p-12">
-                  <p className="mb-6 text-[8.5px] font-black uppercase tracking-[0.34em] text-[#1d4ed8]/60">
-                    Foundation Program · Years 7–10
-                  </p>
-
-                  <h2 className="font-serif text-4xl font-medium tracking-[-0.045em] text-[#071629] lg:text-[3.25rem] lg:leading-[1.06]">
-                    Junior Science
-                  </h2>
-
-                  <p className="mt-4 max-w-lg text-[14.5px] italic leading-[1.85] text-[#3d4f6a]">
-                    Build strong foundations across Biology, Chemistry and Physics while developing scientific thinking, practical skills and exam confidence.
-                  </p>
-
-                  {/* Three subject lines — minimal, spaced */}
-                  <div className="mt-8 space-y-3 border-t border-[#1d4ed8]/10 pt-8">
-                    {[
-                      { name: 'Biology', sub: 'Cells, ecosystems, living systems', color: '#16a34a' },
-                      { name: 'Chemistry', sub: 'Particles, reactions, energy', color: '#c9a227' },
-                      { name: 'Physics', sub: 'Forces, waves, energy transfer', color: '#2563eb' },
-                    ].map(({ name, sub, color }) => (
-                      <div key={name} className="flex items-center gap-4">
-                        <span
-                          className="shrink-0 h-1 w-4 rounded-full"
-                          style={{ background: color }}
-                        />
-                        <span className="font-serif text-[15px] font-medium text-[#071629]">{name}</span>
-                        <span className="text-[12px] text-[#61708a]">— {sub}</span>
-                      </div>
-                    ))}
-                  </div>
-
-                  <Link
-                    to="/book-interview"
-                    className="mt-8 inline-flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.16em] text-[#1d4ed8] transition"
-                  >
-                    Explore the program
-                    <ArrowRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-1" />
-                  </Link>
-                </div>
-
-                {/* Right: typographic accent — desktop only */}
-                <div className="hidden shrink-0 items-end justify-end p-12 pb-10 lg:flex">
-                  <div className="text-right">
-                    <p
-                      className="font-serif font-medium leading-none tracking-[-0.05em] text-[#1d4ed8]/12"
-                      style={{ fontSize: 'clamp(5rem, 10vw, 8rem)' }}
-                    >
-                      Yr<br />7–10
-                    </p>
-                    <p className="mt-3 text-[10px] font-black uppercase tracking-[0.28em] text-[#1d4ed8]/30">
-                      Foundation Science
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </motion.article>
-
-            {/* ── HSC Subjects — editorial rows ── */}
-            <div className="mt-14">
-              <p className="mb-6 text-[8px] font-black uppercase tracking-[0.34em] text-[#071629]/30">
-                HSC Subjects
-              </p>
-              <div className="border-t border-[#071629]/10">
-                {HSC_SUBJECTS.map((s, i) => (
-                  <HscSubjectRow key={s.label} s={s} index={i} />
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
+        <SciencePrograms />
 
         {/* ── How DA Turns Understanding Into Results ── */}
         <DAMethodSection />

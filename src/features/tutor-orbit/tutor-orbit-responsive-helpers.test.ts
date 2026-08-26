@@ -9,6 +9,7 @@ import {
   trackNavigatorSwipe,
   supportingTutorIds,
   parallaxLimitsForBand,
+  shouldRunOrbitClocks,
 } from './tutor-orbit-responsive-helpers.ts';
 import { swapFacultyTutor } from './tutor-orbit-config.ts';
 
@@ -76,4 +77,15 @@ test('uses reduced tablet parallax while leaving mobile static', () => {
   assert.deepEqual(parallaxLimitsForBand('desktop'), { field: 5, halo: 8, geometry: 3 });
   assert.deepEqual(parallaxLimitsForBand('tablet'), { field: 2.5, halo: 4, geometry: 1.5 });
   assert.deepEqual(parallaxLimitsForBand('mobile'), { field: 0, halo: 0, geometry: 0 });
+});
+
+test('stops shared orbit clocks whenever the mobile stage is active', () => {
+  assert.equal(shouldRunOrbitClocks('desktop', false, false), true);
+  assert.equal(shouldRunOrbitClocks('desktop', true, false), false);
+  assert.equal(shouldRunOrbitClocks('desktop', false, true), false);
+  assert.equal(shouldRunOrbitClocks('mobile', false, false), false);
+});
+
+test('describes the wrapped final fifteen-person roster page without a repeated range', () => {
+  assert.equal(navigatorRosterStatus(15, 3, 4), 'Educators 13–15 and 1 of 15');
 });

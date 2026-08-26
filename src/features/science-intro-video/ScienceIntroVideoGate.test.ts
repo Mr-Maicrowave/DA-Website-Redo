@@ -11,11 +11,10 @@ test('defines the full-screen Science video gate', () => {
 
   const source = readFileSync(componentUrl, 'utf8');
 
-  assert.match(source, /src="\/science_intro_video\.mp4"/);
-  assert.match(source, /object-cover/);
-  assert.match(source, /transition-opacity duration-500/);
-  assert.match(source, /setTimeout\(\(\) => setIsOpen\(false\), 500\)/);
-  assert.match(source, />\s*Skip intro\s*</);
+  assert.match(source, /VideoArrivalGate/);
+  assert.match(source, /videoSrc="\/science_intro_video\.mp4"/);
+  assert.match(source, /posterSrc="\/images\/intro-posters\/science-intro\.jpg"/);
+  assert.match(source, /subject="Science"/);
 });
 
 test('mounts the Science intro gate on the Science page', () => {
@@ -27,4 +26,9 @@ test('mounts the Science intro gate on the Science page', () => {
 
 test('ships the supplied Science intro video as a public asset', () => {
   assert.equal(existsSync(videoUrl), true, 'public/science_intro_video.mp4 must be available to the Science gate');
+});
+
+test('ships an immediate Science poster for the video prelude', () => {
+  const posterUrl = new URL('../../../public/images/intro-posters/science-intro.jpg', import.meta.url);
+  assert.equal(existsSync(posterUrl), true, 'the video gate must have a real first-paint image');
 });

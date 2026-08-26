@@ -6,7 +6,7 @@
 
 import React, { useRef, useEffect, useState, useCallback, useLayoutEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { ArrowRight, ChartNoAxesCombined, ChevronDown, Maximize2, ShieldCheck, UsersRound, Volume2, VolumeX, X } from 'lucide-react';
+import { ArrowRight, ChartNoAxesCombined, ChevronDown, Maximize2, Minimize2, Pause, Play, ShieldCheck, UsersRound, Volume2, VolumeX, X } from 'lucide-react';
 import { motion, AnimatePresence, useInView, useScroll, useTransform, useSpring, useMotionValueEvent, useReducedMotion, type MotionValue } from 'framer-motion';
 import NavigationNew from '@/components/NavigationNew';
 import HomeFooterTrial from '@/components/HomeFooterTrial';
@@ -1257,20 +1257,20 @@ const OurAwardTransition = ({ sectionRef }: { sectionRef: React.RefObject<HTMLDi
   return (
     <section ref={sectionRef} className="our-award-bridge" aria-labelledby="our-award-title">
       <style>{`
-        .our-award-bridge{position:relative;z-index:30;display:grid;min-height:clamp(220px,32svh,360px);place-items:center;overflow:hidden;background:#F5F0E8;color:${C.navy};isolation:isolate}
+        .our-award-bridge{position:relative;z-index:30;display:grid;min-height:clamp(190px,25svh,260px);place-items:center;overflow:hidden;background:#F5F0E8;color:${C.navy};isolation:isolate}
         .our-award-bridge:before{position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,${C.navy} 0 2px,transparent 2px);content:''}
         .oa-bridge-copy{width:min(calc(100% - 48px),760px);text-align:center}
         .oa-bridge-rule{display:flex;align-items:center;justify-content:center;gap:10px;width:118px;margin:0 auto 18px;color:#b8872f}.oa-bridge-rule:before,.oa-bridge-rule:after{content:'';height:1px;flex:1;background:currentColor;opacity:.65}.oa-bridge-rule span{font-size:.55rem}
         .oa-bridge-label{margin:0 0 9px;color:#ad7d29;font:700 clamp(.58rem,.8vw,.72rem)/1.4 ${sans};letter-spacing:.16em;text-transform:uppercase}
         .oa-bridge-title{margin:0;color:${C.navy};font:400 clamp(1.8rem,3.6vw,3.6rem)/1.08 ${serif};letter-spacing:-.025em;text-wrap:balance}
         .oa-bridge-proof{margin:12px auto 0;max-width:52ch;color:rgba(10,27,52,.66);font:500 clamp(.72rem,1vw,.9rem)/1.65 ${sans};text-wrap:pretty}
-        @media(max-width:600px){.our-award-bridge{min-height:230px}.oa-bridge-copy{width:min(calc(100% - 36px),520px)}.oa-bridge-proof{max-width:36ch}}
+        @media(max-width:600px){.our-award-bridge{min-height:210px}.oa-bridge-copy{width:min(calc(100% - 36px),520px)}.oa-bridge-proof{max-width:36ch}}
       `}</style>
       <div className="oa-bridge-copy">
         <div className="oa-bridge-rule" aria-hidden="true"><span>◆</span></div>
         <p className="oa-bridge-label">Recognition</p>
         <h2 id="our-award-title" className="oa-bridge-title">Outstanding Education Service</h2>
-        <p className="oa-bridge-proof">2025 Fairfield City Local Business Awards winner — recognition earned through the work families see every day.</p>
+        <p className="oa-bridge-proof">2025 Fairfield City Local Business Awards winner and 2026 Fairfield City Local Business Awards finalist — recognition earned through the work families see every day.</p>
       </div>
     </section>
   );
@@ -1519,7 +1519,7 @@ const ImpactRecognitionSection = () => {
           .ir-old-rule { display: none; }
           .ir-shell { position: relative !important; z-index: 3; max-width: 1280px !important; min-height:clamp(700px,102svh,1060px); display:flex; flex-direction:column; padding: clamp(40px,5vh,72px) clamp(24px,5vw,76px) clamp(170px,12vw,220px) !important; }
           .ir-header { max-width: 920px !important; margin: 0 auto clamp(42px,5vh,64px) !important; text-align: center; }
-          .ir-header-logo{display:block;width:104px;height:104px;object-fit:contain;margin:0 auto 18px;}
+          .ir-header-logo{display:block;width:140px;height:140px;object-fit:contain;margin:0 auto 18px;}
           .ir-eyebrow { margin-bottom: 20px !important; font-size: clamp(.8rem,.9vw,.9rem) !important; letter-spacing:.22em !important; }
           .ir-heading { font-size: clamp(2.8rem,4.2vw,4.8rem) !important; line-height: 1.04 !important; max-width:900px; margin-inline:auto!important; text-wrap: balance; }
           .ir-header-divider { margin: 0 auto 22px !important; transform-origin: center !important; }
@@ -1534,6 +1534,14 @@ const ImpactRecognitionSection = () => {
           .ir-award-caption { margin-top: 21px !important; padding: 0 !important; }
           .ir-award-caption-title { font-family:${sans}!important;font-size:clamp(1.15rem,1.5vw,1.5rem)!important;font-weight:600!important;letter-spacing:.1em!important;text-transform:uppercase;color:${C.gold}!important; }
           .ir-award-caption p:last-child { font-size:clamp(.9rem,1vw,1.05rem)!important;color:rgba(10,27,52,.72)!important; }
+          .ir-award-badges { display:flex;align-items:flex-start;justify-content:center;gap:clamp(14px,2vw,24px); }
+          .ir-award-badge { min-width:0; }
+          .ir-award-badge--winner { width:clamp(128px,14vw,152px); }
+          .ir-award-badge--finalist { width:clamp(120px,13vw,144px); }
+          .ir-award-badge .ir-award-frame { width:100%; }
+          .ir-award-badge .ir-award-inner { width:100%; }
+          .ir-award-badge--finalist .ir-award-inner { aspect-ratio:407 / 600; }
+          .ir-award-badge--finalist .ir-award-caption-title { color:rgba(10,27,52,.76)!important; }
           .ir-video-feature { min-width: 0; display: flex; justify-content: center; }
           .ir-thumb-overlay { background: linear-gradient(to top,rgba(3,6,14,.30),transparent 54%); }
           .ir-thumb-caption-wrap { text-align: center; margin-top: 21px; }
@@ -1544,7 +1552,7 @@ const ImpactRecognitionSection = () => {
             .ir-section { min-height:clamp(700px,102svh,1060px); }
             .ir-shell { min-height:clamp(700px,102svh,1060px);display:flex;flex-direction:column;justify-content:flex-start;padding:clamp(40px,5vh,72px) clamp(32px,4vw,72px) clamp(170px,12vw,220px)!important; }
             .ir-header { width:100%;margin:0 auto clamp(42px,5vh,64px)!important;max-width:920px!important; }
-            .ir-header-logo { width:104px;height:104px;margin-bottom:18px; }
+            .ir-header-logo { width:140px;height:140px;margin-bottom:18px; }
             .ir-heading { margin-bottom:18px!important; }
             .ir-header-divider { margin-bottom:20px!important; }
             .ir-cols { display:grid!important;width:100%; }
@@ -1556,7 +1564,7 @@ const ImpactRecognitionSection = () => {
           @media (min-width:1101px) and (max-height:920px) {
             .ir-shell { padding-top:32px!important;padding-bottom:150px!important; }
             .ir-header { margin-bottom:22px!important; }
-            .ir-header-logo { width:68px;height:68px;margin-bottom:12px; }
+            .ir-header-logo { width:88px;height:88px;margin-bottom:12px; }
             .ir-eyebrow { margin-bottom:10px!important; }
             .ir-heading { font-size:clamp(2.3rem,3.1vw,3.25rem)!important;margin-bottom:10px!important; }
             .ir-header-divider { margin-bottom:10px!important; }
@@ -1575,7 +1583,9 @@ const ImpactRecognitionSection = () => {
             .ir-heading { font-size:clamp(2.3rem,5vw,3.6rem)!important; }
             .ir-intro-copy { font-size:clamp(1rem,2vw,1.15rem)!important; }
             .ir-cols { grid-template-columns: minmax(210px,1fr) minmax(280px,1.25fr) !important; max-width: 820px; gap: clamp(40px,6vw,70px) !important; }
-            .ir-award-inner { width:clamp(210px,29vw,280px);height:auto; }
+            .ir-award-badge--winner { width:clamp(124px,18vw,148px); }
+            .ir-award-badge--finalist { width:clamp(116px,17vw,140px); }
+            .ir-award-inner { width:100%;height:auto; }
             .ir-award-inner .ir-award-medal{width:100%!important;height:100%!important}
             .ir-thumb-frame { width: clamp(280px,38vw,360px); }
             .ir-decor--coin,.ir-decor--navy-ribbon { transform:scale(.78); }
@@ -1589,7 +1599,10 @@ const ImpactRecognitionSection = () => {
             .ir-intro-copy { font-size: 1rem !important; line-height: 1.68 !important; }
             .ir-thumb-frame { width: clamp(230px,72vw,320px); }
             .ir-cols { grid-template-columns:1fr !important;max-width:520px;gap:48px!important; }
-            .ir-award-inner { width:min(72vw,280px); }
+            .ir-award-badges { gap:16px; }
+            .ir-award-badge--winner { width:min(41vw,148px); }
+            .ir-award-badge--finalist { width:min(38vw,140px); }
+            .ir-award-inner { width:100%; }
             .ir-award-caption-title,.ir-thumb-caption-title { font-size:1.15rem!important; }
             .ir-award-caption p:last-child,.ir-thumb-caption-sub { font-size:.95rem!important; }
             .ir-thumb-caption-wrap { max-width:200px; }
@@ -1705,58 +1718,44 @@ const ImpactRecognitionSection = () => {
             }}
           >
 
-            {/* ── Award image ───────────────────────────────────────────── */}
+            {/* ── Award badges ──────────────────────────────────────────── */}
             <motion.div className="ir-award-proof" style={{ scale: awardClosingScale, y: awardClosingY }}>
-              <div
-                className="ir-award-frame"
-                style={{
-                  padding: '16px',
-                  background: '#FDFAF5',
-                  border: '1px solid rgba(212,175,55,.52)',
-                  borderRadius: '14px',
-                  boxShadow: [
-                    '0 2px 6px rgba(212,175,55,.10)',
-                    '0 16px 48px rgba(10,27,52,.12)',
-                    '0 40px 80px rgba(10,27,52,.07)',
-                    'inset 0 1px 0 rgba(255,255,255,.90)',
-                  ].join(', '),
-                }}
-              >
-                <div
-                  className="ir-award-inner"
-                  style={{ border: '1px solid rgba(212,175,55,.22)' }}
-                >
-                  <img
-                    className="ir-award-medal"
-                    src="/Photos and Videos/2025_FAIR_WINNER_LBA.jpg"
-                    alt="Fairfield City Local Business Awards — Outstanding Education Service, Winner 2025"
-                  />
+              <div className="ir-award-badges">
+                <div className="ir-award-badge ir-award-badge--winner">
+                  <div className="ir-award-frame">
+                    <div className="ir-award-inner">
+                      <img
+                        className="ir-award-medal"
+                        src="/Photos and Videos/2025_FAIR_WINNER_LBA.jpg"
+                        alt="Fairfield City Local Business Awards — Outstanding Education Service, Winner 2025"
+                      />
+                    </div>
+                  </div>
+                  <motion.div className="ir-award-caption" style={{ opacity: captionOpacity, y: captionY }}>
+                    <p className="ir-award-caption-title">2025 Winner</p>
+                    <p style={{ fontFamily: sans, fontWeight: 500, fontSize: '.78rem', lineHeight: 1.5, letterSpacing: '.10em', textTransform: 'uppercase', color: C.gold, margin: 0 }}>
+                      Education Services
+                    </p>
+                  </motion.div>
+                </div>
+                <div className="ir-award-badge ir-award-badge--finalist">
+                  <div className="ir-award-frame">
+                    <div className="ir-award-inner">
+                      <img
+                        className="ir-award-medal"
+                        src="/images/awards/2026-fairfield-finalist.png"
+                        alt="Fairfield City Local Business Awards finalist 2026"
+                      />
+                    </div>
+                  </div>
+                  <motion.div className="ir-award-caption" style={{ opacity: captionOpacity, y: captionY }}>
+                    <p className="ir-award-caption-title">2026 Finalist</p>
+                    <p style={{ fontFamily: sans, fontWeight: 500, fontSize: '.78rem', lineHeight: 1.5, letterSpacing: '.10em', textTransform: 'uppercase', color: C.gold, margin: 0 }}>
+                      Fairfield City
+                    </p>
+                  </motion.div>
                 </div>
               </div>
-
-              {/* Award caption */}
-              <motion.div className="ir-award-caption" style={{ marginTop: '20px', paddingLeft: '2px', opacity: captionOpacity, y: captionY }}>
-                <p
-                  className="ir-award-caption-title"
-                  style={{
-                    fontFamily: serif, fontWeight: 400,
-                    fontSize: '1.15rem', lineHeight: 1.45,
-                    color: 'rgba(10,27,52,.72)', margin: '0 0 6px',
-                  }}
-                >
-                  2025 Winner
-                </p>
-                <p
-                  style={{
-                    fontFamily: sans, fontWeight: 500,
-                    fontSize: '.78rem', lineHeight: 1.5,
-                    letterSpacing: '.10em', textTransform: 'uppercase',
-                    color: C.gold, margin: 0,
-                  }}
-                >
-                  Education Services
-                </p>
-              </motion.div>
             </motion.div>
 
             {/* ── Ceremony photo ───────────────────────────────────────── */}
@@ -1792,10 +1791,11 @@ const ImpactRecognitionSection = () => {
 // ══════════════════════════════════════════════════════════════
 
 const ACH_STATS = [
-  { target: 20,    decimals: 0, suffix: '+', label: 'Years',          caption: 'TWO DECADES OF GUIDANCE', x: 5,  y: 32 },
-  { target: 10000, decimals: 0, suffix: '+', label: 'Students',       caption: 'STUDENTS SUPPORTED',      x: 31, y: 47 },
-  { target: 5,     decimals: 1, suffix: '',  label: 'Rating',         caption: 'TRUSTED BY FAMILIES',     x: 48, y: 62 },
-  { target: 450,   decimals: 0, suffix: '+', label: 'Google Reviews', caption: 'FIVE-STAR STORIES',       x: 68, y: 70 },
+  { target: 20,    decimals: 0, suffix: '+', label: 'Years',          caption: 'TWO DECADES OF GUIDANCE',    x: 5,  y: 70 },
+  { target: 10000, decimals: 0, suffix: '+', label: 'Students',       caption: 'STUDENTS SUPPORTED',        x: 30, y: 56 },
+  { target: 5,     decimals: 1, suffix: '',  label: 'Rating',         caption: 'TRUSTED BY FAMILIES',       x: 48, y: 43 },
+  { target: 450,   decimals: 0, suffix: '+', label: 'Google Reviews', caption: 'FIVE-STAR STORIES',         x: 62, y: 24 },
+  { target: 125,   decimals: 0, suffix: '+', label: 'Schools',        caption: 'STUDENTS FROM 125+ SCHOOLS', x: 75, y: 7  },
 ];
 
 const ACH_PATH = 'M 30 172 C 122 232 214 260 318 305 C 444 360 470 404 604 432 C 710 454 706 506 814 512 C 902 518 948 560 1018 590 C 1070 612 1110 636 1150 666';
@@ -2026,9 +2026,9 @@ const AchievementsSection = () => {
 
         .ach-heading {
           position: absolute;
-          top: 18%;
-          right: 8%;
-          max-width: 420px;
+          top: 14%;
+          left: 8%;
+          max-width: 390px;
           text-align: left;
           opacity: 0;
           transform: translateY(24px);
@@ -2226,10 +2226,10 @@ const AchievementsSection = () => {
 
         .ach-brand-ghost {
           position: absolute;
-          left: clamp(30px, 8vw, 126px);
-          top: 47%;
+          right: clamp(30px, 8vw, 126px);
+          bottom: 9%;
           z-index: 1;
-          transform: translateY(-50%);
+          transform: none;
           font-family: ${serif};
           font-size: clamp(7rem, 16vw, 16rem);
           line-height: .72;
@@ -2280,6 +2280,7 @@ const AchievementsSection = () => {
             position: relative;
             top: auto;
             right: auto;
+            left: auto;
             max-width: 620px;
             margin-left: auto;
             margin-bottom: 56px;
@@ -2301,7 +2302,7 @@ const AchievementsSection = () => {
             min-height: auto;
           }
           .ach-content {
-            padding: 86px 24px 94px;
+            padding: 158px 24px 116px;
           }
           .ach-stage {
             position: relative;
@@ -2313,15 +2314,7 @@ const AchievementsSection = () => {
             padding-left: 26px;
           }
           .ach-stage::before {
-            content: "";
-            position: absolute;
-            left: 7px;
-            top: 12px;
-            bottom: 18px;
-            width: 1px;
-            background: linear-gradient(180deg, rgba(240,200,106,.72), rgba(240,200,106,.18), rgba(240,200,106,.46));
-            box-shadow: 0 0 18px rgba(240,200,106,.20);
-            opacity: .72;
+            display: none;
           }
           .ach-path-svg {
             display: none;
@@ -2351,7 +2344,14 @@ const AchievementsSection = () => {
             font-size: clamp(4.2rem, 20vw, 6.8rem);
           }
           .ach-brand-ghost {
-            display: none;
+            display: block;
+            right: 24px;
+            top: 18px;
+            bottom: auto;
+            left: auto;
+            transform: none;
+            font-size: clamp(4.8rem, 24vw, 6.5rem);
+            opacity: .86;
           }
         }
 
@@ -2422,13 +2422,15 @@ const AchievementsSection = () => {
                 </feMerge>
               </filter>
             </defs>
-            <path d={ACH_PATH} fill="none" stroke="rgba(212,175,55,.18)" strokeWidth=".9" />
-            <path className="ach-gold-path" d={ACH_PATH} fill="none" stroke="rgba(240,200,106,.42)" strokeWidth="1.15" strokeLinecap="round" />
-            <path className="ach-shimmer-path" d={ACH_PATH} fill="none" stroke="rgba(255,241,194,.82)" strokeWidth="1.4" strokeLinecap="round" />
-            <path className="ach-trail" d={ACH_PATH} fill="none" stroke="rgba(240,200,106,.42)" strokeWidth="1.2" strokeLinecap="round" strokeDasharray="3 18" />
-            <circle className="ach-traveller" r="5.2" fill="#F0C86A">
-              <animateMotion dur="6.4s" repeatCount="indefinite" rotate="auto" path={ACH_PATH} />
-            </circle>
+            <g transform="translate(0 760) scale(1 -1)">
+              <path d={ACH_PATH} fill="none" stroke="rgba(212,175,55,.18)" strokeWidth=".9" />
+              <path className="ach-gold-path" d={ACH_PATH} fill="none" stroke="rgba(240,200,106,.42)" strokeWidth="1.15" strokeLinecap="round" />
+              <path className="ach-shimmer-path" d={ACH_PATH} fill="none" stroke="rgba(255,241,194,.82)" strokeWidth="1.4" strokeLinecap="round" />
+              <path className="ach-trail" d={ACH_PATH} fill="none" stroke="rgba(240,200,106,.42)" strokeWidth="1.2" strokeLinecap="round" strokeDasharray="3 18" />
+              <circle className="ach-traveller" r="5.2" fill="#F0C86A">
+                <animateMotion dur="6.4s" repeatCount="indefinite" rotate="auto" path={ACH_PATH} />
+              </circle>
+            </g>
             {ACH_STATS.map((stat, index) => (
               <g key={stat.label} filter="url(#ach-node-glow)">
                 <circle
@@ -3117,8 +3119,8 @@ const WellbeingSection = () => {
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.65, delay: 0.42, ease: [0.22, 1, 0.36, 1] }}
             >
-              <a className="wb-btn" href="#environment">
-                Discover Our Environment
+              <a className="wb-btn" href="#closing-cta">
+                Book a Consultation
                 <span className="wb-arrow">→</span>
               </a>
             </motion.div>
@@ -3293,16 +3295,70 @@ const WellbeingSection = () => {
 //  DA ENVIRONMENT — scroll-driven media section
 // ══════════════════════════════════════════════════════════════
 
+const formatVideoTime = (seconds: number) => {
+  if (!Number.isFinite(seconds) || seconds < 0) return '0:00';
+  const wholeSeconds = Math.floor(seconds);
+  return `${Math.floor(wholeSeconds / 60)}:${String(wholeSeconds % 60).padStart(2, '0')}`;
+};
+
+const VideoTransportControls = ({
+  isPlaying,
+  currentTime,
+  duration,
+  onTogglePlayback,
+  onSeek,
+  isVisible,
+}: {
+  isPlaying: boolean;
+  currentTime: number;
+  duration: number;
+  onTogglePlayback: () => void;
+  onSeek: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  isVisible: boolean;
+}) => {
+  if (!isVisible) return null;
+
+  return (
+  <div className="da-video-controls">
+    <button className="da-video-play-toggle" type="button" onClick={onTogglePlayback} aria-label={isPlaying ? 'Pause video' : 'Play video'}>
+      {isPlaying ? <Pause size={16} aria-hidden="true" /> : <Play size={16} aria-hidden="true" />}
+    </button>
+    <input
+      className="da-video-progress"
+      type="range"
+      min="0"
+      max={duration || 0}
+      step="0.1"
+      value={Math.min(currentTime, duration || 0)}
+      onChange={onSeek}
+      aria-label="Video progress"
+      disabled={!duration}
+    />
+    <span className="da-video-time" aria-hidden="true">{formatVideoTime(currentTime)} / {formatVideoTime(duration)}</span>
+  </div>
+  );
+};
+
 const DAEnvironmentSection = () => {
   const outerRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const dismissedRef = useRef(false);
   const resumeAfterVisibilityRef = useRef(false);
   const resumeAfterDismissRef = useRef(false);
+  const manuallyPausedRef = useRef(false);
+  const expandedRef = useRef(false);
+  const floatingDragRef = useRef<{ pointerId: number; startX: number; startY: number; left: number; top: number } | null>(null);
   const [isSimple, setIsSimple] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
   const [isFloating, setIsFloating] = useState(false);
   const [floatingDismissed, setFloatingDismissed] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [isDraggingFloating, setIsDraggingFloating] = useState(false);
+  const [floatingPosition, setFloatingPosition] = useState<{ left: number; top: number } | null>(null);
+  const [isPlaying, setIsPlaying] = useState(true);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const [isVideoFullyInFrame, setIsVideoFullyInFrame] = useState(false);
   const reducedMotion = Boolean(useReducedMotion());
 
   const toggleVideoAudio = () => {
@@ -3312,6 +3368,52 @@ const DAEnvironmentSection = () => {
       videoRef.current.muted = nextMuted;
       if (!nextMuted) videoRef.current.play().catch(() => {});
     }
+  };
+
+  const toggleVideoPlayback = () => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    if (video.paused) {
+      manuallyPausedRef.current = false;
+      setIsPlaying(true);
+      video.play().catch(() => {});
+    } else {
+      manuallyPausedRef.current = true;
+      setIsPlaying(false);
+      video.pause();
+    }
+  };
+
+  const handleVideoPlay = () => {
+    // Some browsers retry muted autoplay while the section is moving into its
+    // floating state. Honour an explicit visitor pause instead of restarting.
+    if (manuallyPausedRef.current) {
+      videoRef.current?.pause();
+      return;
+    }
+    setIsPlaying(true);
+  };
+
+  const handleVideoPause = () => setIsPlaying(false);
+
+  const seekVideo = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const video = videoRef.current;
+    const nextTime = Number(event.target.value);
+    if (!video || !Number.isFinite(nextTime)) return;
+
+    video.currentTime = nextTime;
+    setCurrentTime(nextTime);
+  };
+
+  const syncVideoMetadata = () => {
+    const video = videoRef.current;
+    if (video) setDuration(video.duration);
+  };
+
+  const syncVideoProgress = () => {
+    const video = videoRef.current;
+    if (video) setCurrentTime(video.currentTime);
   };
 
   useEffect(() => {
@@ -3327,6 +3429,10 @@ const DAEnvironmentSection = () => {
     const obs = new IntersectionObserver(
       ([e]) => {
         if (!videoRef.current) return;
+        if (expandedRef.current) {
+          setIsFloating(false);
+          return;
+        }
         const passedSection = !e.isIntersecting && e.boundingClientRect.bottom <= 0;
         const enableFloating = passedSection && window.innerWidth >= 380 && !dismissedRef.current;
 
@@ -3334,7 +3440,7 @@ const DAEnvironmentSection = () => {
           dismissedRef.current = false;
           setFloatingDismissed(false);
           setIsFloating(false);
-          if (resumeAfterDismissRef.current || videoRef.current.paused) {
+          if (resumeAfterDismissRef.current && !manuallyPausedRef.current) {
             videoRef.current.play().catch(() => {});
           }
           resumeAfterDismissRef.current = false;
@@ -3377,65 +3483,73 @@ const DAEnvironmentSection = () => {
     const video = videoRef.current;
     resumeAfterDismissRef.current = Boolean(video && !video.paused);
     video?.pause();
+    expandedRef.current = false;
+    setIsExpanded(false);
     dismissedRef.current = true;
     setFloatingDismissed(true);
     setIsFloating(false);
   };
 
   const returnToFullVideo = () => {
+    expandedRef.current = true;
     setIsFloating(false);
-    outerRef.current?.scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth', block: 'start' });
+    setIsExpanded(true);
   };
 
-  // ── Scroll tracking ──────────────────────────────────────────
-  // 190vh outer = 90vh of sticky travel. The video now reaches its foreground
-  // state within a single deliberate scroll, rather than holding the visitor in
-  // the transition for roughly 1.6 viewport-heights.
-  // NOTE: sticky works because the outer Index div uses overflow:clip
-  // (not overflow:hidden) — hidden creates a scroll container which
-  // breaks position:sticky. clip clips without creating a scroller.
-  //
-  // Timeline:
-  //  0%  text visible; video card small + faint at bottom-centre
-  // 20%  text starts rising/fading; card becomes more visible
-  // 40%  text gone; card clear and centred
-  // 60%  card large
-  // 80%  card very large
-  //100%  card fills full viewport, borderRadius → 0
+  const minimiseExpandedVideo = () => {
+    expandedRef.current = false;
+    setIsExpanded(false);
+    setIsFloating(true);
+  };
+
+  const handleFloatingPointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (!isFloating || isExpanded || (event.target as HTMLElement).closest('button,input,a')) return;
+    const rect = event.currentTarget.getBoundingClientRect();
+    floatingDragRef.current = { pointerId: event.pointerId, startX: event.clientX, startY: event.clientY, left: rect.left, top: rect.top };
+    event.currentTarget.setPointerCapture(event.pointerId);
+    setIsDraggingFloating(true);
+  };
+
+  const handleFloatingPointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
+    const drag = floatingDragRef.current;
+    if (!drag || drag.pointerId !== event.pointerId) return;
+    const rect = event.currentTarget.getBoundingClientRect();
+    const left = Math.min(Math.max(12, drag.left + event.clientX - drag.startX), window.innerWidth - rect.width - 12);
+    const top = Math.min(Math.max(12, drag.top + event.clientY - drag.startY), window.innerHeight - rect.height - 12);
+    setFloatingPosition({ left, top });
+  };
+
+  const handleFloatingPointerEnd = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (floatingDragRef.current?.pointerId !== event.pointerId) return;
+    floatingDragRef.current = null;
+    setIsDraggingFloating(false);
+  };
+
+  // The first beat is a visual introduction: copy fades away, the video grows
+  // from the lower centre, then the corner snapshots appear briefly before it
+  // becomes the full environment film.
   const { scrollYProgress } = useScroll({
     target: outerRef,
     offset: ['start start', 'end end'],
   });
   const s = scrollYProgress;
 
-  // ── TEXT ──────────────────────────────────────────────────────
   const textOp = useTransform(s, [0, 0.20, 0.40], [1, 1, 0]);
-  const textY  = useTransform(s, [0.20, 0.40], [0, -90]);
-
-  // ── MAIN VIDEO CARD ───────────────────────────────────────────
-  // Strategy: card is position:absolute; inset:0 (always 100vw × 100vh).
-  // We animate ONLY pure geometry values — scale, opacity and radius — so the
-  // live video stays on the inexpensive compositing path while it grows.
-  //
-  // transformOrigin:'center 82%' means the scale pivot is near the bottom.
-  // This makes the card appear to grow outward from the lower-centre area.
-  //
-  // Geometry at s=0, scale=0.40:
-  //   Pivot at (50vw, 82vh). Card visual extent (from pivot):
-  //   top    = 82vh − 82vh×0.40 = 82 − 32.8 = 49.2vh  ✓ visible
-  //   bottom = 82vh + 18vh×0.40 = 82 +  7.2 = 89.2vh  ✓ visible
-  //   → card appears as a ~40vh-tall block in the lower half of screen
+  const textY = useTransform(s, [0.20, 0.40], [0, -90]);
   const cardScale = useTransform(s, [0, 0.40, 0.65, 1.0], [0.40, 0.68, 0.88, 1.0]);
-  const cardOp    = useTransform(s, [0, 0.20, 0.55], [0.35, 0.60, 1.0]);
-  const cardRadV  = useTransform(s, [0.75, 0.98], [22, 0]);
-  const cardRadS  = useTransform(cardRadV, (r: number) => `${Math.max(0, r)}px`);
+  const cardOp = useTransform(s, [0, 0.20, 0.55], [0.35, 0.60, 1.0]);
+  const cardRadV = useTransform(s, [0.75, 0.98], [22, 0]);
+  const cardRadS = useTransform(cardRadV, (radius: number) => `${Math.max(0, radius)}px`);
   const overlayOp = useTransform(s, [0.35, 0.65], [0, 0.28]);
-
-  // ── SUPPORT CARDS ─────────────────────────────────────────────
-  // Absolute corners; appear at 35–55%; fade out as video fills frame.
-  // No y-translation — they're always at their corner positions, just hidden.
-  const sOp  = useTransform(s, [0.35, 0.55, 0.82], [0, 0.80, 0]);
+  const sOp = useTransform(s, [0.30, 0.48, 0.70, 0.88], [0, 1, 1, 0]);
   const sScl = useTransform(s, [0.35, 0.55], [0.80, 1.0]);
+
+  useMotionValueEvent(s, 'change', (progress) => {
+    setIsVideoFullyInFrame((current) => {
+      const next = progress >= 0.98;
+      return current === next ? current : next;
+    });
+  });
 
   const SCARDS = [
     { id: 'tg', src: '/media/threegirls.jpg', alt: 'DA students together',  ratio: '3/4' as const,  w: 'clamp(86px,7.8vw,126px)',  pos: { top: '8%',    left: '2%'  } as React.CSSProperties, rotate: -3  },
@@ -3458,8 +3572,14 @@ const DAEnvironmentSection = () => {
       transition:background 220ms ease,border-color 220ms ease,transform 220ms cubic-bezier(.22,1,.36,1); }
     .da-audio-toggle:hover { background:rgba(6,17,31,.9);border-color:rgba(212,175,55,.8);transform:translateY(-2px); }
     .da-audio-toggle:focus-visible { outline:3px solid rgba(240,200,106,.72);outline-offset:3px; }
+    .da-video-controls{position:absolute;left:clamp(14px,2vw,28px);right:clamp(126px,13vw,174px);bottom:clamp(14px,2vw,28px);z-index:24;display:flex;align-items:center;gap:10px;min-height:42px;padding:7px 11px 7px 7px;border:1px solid rgba(255,255,255,.34);border-radius:999px;background:rgba(6,17,31,.72);color:#fff;backdrop-filter:blur(10px)}
+    .da-video-play-toggle{width:30px;height:30px;display:grid;place-items:center;flex:0 0 auto;padding:0;border:0;border-radius:50%;background:${C.gold};color:${C.navy};cursor:pointer}.da-video-play-toggle:hover{background:${C.goldL}}.da-video-play-toggle:focus-visible{outline:3px solid rgba(240,200,106,.72);outline-offset:3px}
+    .da-video-progress{width:100%;min-width:0;accent-color:${C.gold};cursor:pointer}.da-video-progress:disabled{cursor:not-allowed;opacity:.55}
+    .da-video-time{flex:0 0 auto;font:600 .62rem/1 ${sans};letter-spacing:.02em;white-space:nowrap;color:rgba(255,255,255,.88)}
     .da-video-wrapper{will-change:transform,border-radius;isolation:isolate}
-    .da-video-wrapper.is-floating{position:fixed!important;inset:auto clamp(28px,2.2vw,32px) clamp(164px,12vw,172px) auto!important;width:clamp(320px,27vw,380px)!important;height:auto!important;aspect-ratio:16/9;z-index:65!important;border-radius:16px!important;border:1px solid rgba(240,200,106,.42);background:#06111f;box-shadow:0 12px 28px rgba(2,12,27,.28)!important;filter:none!important;opacity:1!important;transform-origin:center!important}
+    .da-video-wrapper.is-floating{position:fixed!important;top:var(--da-video-top,auto)!important;right:var(--da-video-right,clamp(28px,2.2vw,32px))!important;bottom:var(--da-video-bottom,clamp(164px,12vw,172px))!important;left:var(--da-video-left,auto)!important;width:clamp(320px,27vw,380px)!important;height:auto!important;aspect-ratio:16/9;z-index:1000!important;border-radius:16px!important;border:0!important;background:#06111f;box-shadow:0 14px 32px rgba(2,12,27,.22)!important;filter:none!important;opacity:1!important;transform-origin:center!important;cursor:grab}
+    .da-video-wrapper.is-floating.is-dragging{cursor:grabbing;user-select:none}
+    .da-video-wrapper.is-expanded{position:fixed!important;inset:0!important;width:100vw!important;height:100svh!important;aspect-ratio:auto!important;z-index:1100!important;border:0!important;border-radius:0!important;background:#06111f;box-shadow:none!important;filter:none!important;opacity:1!important;transform:none!important}
     .da-floating-header{position:absolute;z-index:20;inset:0 0 auto;height:48px;display:flex;align-items:center;justify-content:space-between;padding:8px 9px 13px 14px;background:linear-gradient(180deg,rgba(4,14,29,.88),rgba(4,14,29,.52) 64%,transparent);opacity:0;transition:opacity .25s ease;pointer-events:none}
     .da-video-wrapper.is-floating:hover .da-floating-header,.da-video-wrapper.is-floating:focus-within .da-floating-header{opacity:1}
     .da-floating-label{font:700 .58rem/1 ${sans};letter-spacing:.16em;text-transform:uppercase;color:rgba(255,250,240,.86)}
@@ -3468,9 +3588,11 @@ const DAEnvironmentSection = () => {
     .da-floating-control:hover{background:rgba(6,17,31,.94);border-color:rgba(240,200,106,.7);transform:translateY(-1px)}
     .da-floating-control:focus-visible{outline:3px solid rgba(240,200,106,.65);outline-offset:2px}
     .da-video-wrapper.is-floating .da-audio-toggle{display:none}
+    .da-video-wrapper.is-floating .da-video-controls{left:10px;right:10px;bottom:10px;min-height:34px;padding:5px 8px 5px 5px;gap:7px}.da-video-wrapper.is-floating .da-video-play-toggle{width:26px;height:26px}.da-video-wrapper.is-floating .da-video-time{font-size:.53rem}
     .da-video-wrapper.is-floating .da-video-overlay{opacity:.08!important}
+    .da-video-wrapper.is-expanded .da-floating-header{opacity:1;pointer-events:auto;height:64px;padding:14px 18px 20px}.da-video-wrapper.is-expanded .da-floating-label{font-size:.7rem}.da-video-wrapper.is-expanded .da-video-controls{left:clamp(16px,3vw,42px);right:clamp(140px,14vw,210px);bottom:clamp(18px,3vw,42px);min-height:46px}.da-video-wrapper.is-expanded .da-audio-toggle{display:inline-flex;right:clamp(16px,3vw,42px);bottom:clamp(18px,3vw,42px)}
     .da-video-wrapper.is-dismissed{visibility:hidden;pointer-events:none}
-    @media(max-width:767px){.da-video-wrapper.is-floating{right:16px!important;bottom:calc(176px + env(safe-area-inset-bottom))!important;width:min(82vw,320px)!important}.da-floating-header{opacity:.92}}
+    @media(max-width:767px){.da-video-wrapper.is-floating{right:16px!important;bottom:calc(176px + env(safe-area-inset-bottom))!important;width:min(82vw,320px)!important}.da-floating-header{opacity:.92}.da-video-controls{right:116px}.da-video-time{display:none}}
     @media(max-width:379px){.da-video-wrapper.is-floating{display:none!important}}
     @media(prefers-reduced-motion:reduce){.da-audio-toggle,.da-floating-header,.da-floating-control{transition:none}.da-audio-toggle:hover,.da-floating-control:hover{transform:none}}
   `;
@@ -3496,21 +3618,29 @@ const DAEnvironmentSection = () => {
         <div style={{ position: 'relative', aspectRatio: '16/9', overflow: 'visible' }}>
           <motion.div
             layout
-            className={`da-video-wrapper${isFloating ? ' is-floating' : ''}${floatingDismissed ? ' is-dismissed' : ''}`}
+            className={`da-video-wrapper${isFloating ? ' is-floating' : ''}${isExpanded ? ' is-expanded' : ''}${isDraggingFloating ? ' is-dragging' : ''}${floatingDismissed ? ' is-dismissed' : ''}`}
             transition={{ layout: { duration: reducedMotion ? 0 : 0.55, ease: [0.22, 1, 0.36, 1] } }}
-            style={isFloating ? undefined : { position: 'absolute', inset: 0, overflow: 'hidden' }}
+            onPointerDown={handleFloatingPointerDown}
+            onPointerMove={handleFloatingPointerMove}
+            onPointerUp={handleFloatingPointerEnd}
+            onPointerCancel={handleFloatingPointerEnd}
+            style={isExpanded ? undefined : isFloating ? (floatingPosition ? {
+              '--da-video-left': `${floatingPosition.left}px`, '--da-video-top': `${floatingPosition.top}px`, '--da-video-right': 'auto', '--da-video-bottom': 'auto',
+            } as React.CSSProperties : undefined) : { position: 'absolute', inset: 0, overflow: 'hidden' }}
           >
             <video ref={videoRef} autoPlay muted={isMuted} loop playsInline src="/images/homepage/homepage-cream/0706.mp4"
+              onPlay={handleVideoPlay} onPause={handleVideoPause} onLoadedMetadata={syncVideoMetadata} onTimeUpdate={syncVideoProgress}
               style={{ width: '100%', height: '100%', display: 'block', objectFit: 'cover' }} />
             <div className="da-video-overlay" style={{ position: 'absolute', inset: 0, background: 'rgba(4,10,24,0.28)', pointerEvents: 'none' }} />
             <div className="da-floating-header">
               <span className="da-floating-label">DA Story</span>
               <span className="da-floating-actions">
                 <button className="da-floating-control" type="button" onClick={toggleVideoAudio} aria-label={isMuted ? 'Unmute floating video' : 'Mute floating video'}>{isMuted ? <VolumeX size={15} aria-hidden="true" /> : <Volume2 size={15} aria-hidden="true" />}</button>
-                <button className="da-floating-control" type="button" onClick={returnToFullVideo} aria-label="Return to full video"><Maximize2 size={15} aria-hidden="true" /></button>
+                <button className="da-floating-control" type="button" onClick={isExpanded ? minimiseExpandedVideo : returnToFullVideo} aria-label={isExpanded ? 'Minimise full video' : 'Expand video'}>{isExpanded ? <Minimize2 size={15} aria-hidden="true" /> : <Maximize2 size={15} aria-hidden="true" />}</button>
                 <button className="da-floating-control" type="button" onClick={closeFloatingVideo} aria-label="Close floating video"><X size={15} aria-hidden="true" /></button>
               </span>
             </div>
+            <VideoTransportControls isPlaying={isPlaying} currentTime={currentTime} duration={duration} onTogglePlayback={toggleVideoPlayback} onSeek={seekVideo} isVisible={isSimple || isFloating || isExpanded || isVideoFullyInFrame} />
             <button className="da-audio-toggle" type="button" onClick={toggleVideoAudio} aria-pressed={!isMuted} aria-label={isMuted ? 'Turn video sound on' : 'Mute video'}>
               {isMuted ? <VolumeX size={18} aria-hidden="true" /> : <Volume2 size={18} aria-hidden="true" />}
               <span>{isMuted ? 'Sound on' : 'Mute'}</span>
@@ -3523,12 +3653,12 @@ const DAEnvironmentSection = () => {
 
   // ── DESKTOP: scroll-driven ────────────────────────────────────
   return (
-    <div id="environment" ref={outerRef} style={{ height: '190vh', position: 'relative', background: '#06111F' }}>
+    <div id="environment" ref={outerRef} style={{ height: '190vh', position: 'relative', zIndex: 20, background: '#06111F' }}>
       <style>{envCSS}</style>
 
-      {/* Sticky panel — position:relative so absolute children anchor to it */}
+      {/* Sticky panel holds the entrance sequence while the video grows. */}
       <div style={{
-        position: 'sticky' as const, top: 0, height: '100vh',
+        position: 'sticky' as const, top: 0, height: '100vh', zIndex: 1,
         background: '#06111F',
       }}>
 
@@ -3547,9 +3677,15 @@ const DAEnvironmentSection = () => {
         {/* means it expands upward from lower-centre of screen         */}
         <motion.div
           layout
-          className={`da-video-wrapper${isFloating ? ' is-floating' : ''}${floatingDismissed ? ' is-dismissed' : ''}`}
+          className={`da-video-wrapper${isFloating ? ' is-floating' : ''}${isExpanded ? ' is-expanded' : ''}${isDraggingFloating ? ' is-dragging' : ''}${floatingDismissed ? ' is-dismissed' : ''}`}
           transition={{ layout: { duration: reducedMotion ? 0 : 0.55, ease: [0.22, 1, 0.36, 1] } }}
-          style={isFloating ? undefined : {
+          onPointerDown={handleFloatingPointerDown}
+          onPointerMove={handleFloatingPointerMove}
+          onPointerUp={handleFloatingPointerEnd}
+          onPointerCancel={handleFloatingPointerEnd}
+          style={isExpanded ? undefined : isFloating ? (floatingPosition ? {
+            '--da-video-left': `${floatingPosition.left}px`, '--da-video-top': `${floatingPosition.top}px`, '--da-video-right': 'auto', '--da-video-bottom': 'auto',
+          } as React.CSSProperties : undefined) : {
             position: 'absolute', inset: 0,
             scale: cardScale,
             opacity: cardOp,
@@ -3560,6 +3696,7 @@ const DAEnvironmentSection = () => {
             boxShadow: '0 24px 72px rgba(0,0,0,0.55)',
           }}>
           <video ref={videoRef} autoPlay muted={isMuted} loop playsInline src="/images/homepage/homepage-cream/0706.mp4"
+            onPlay={handleVideoPlay} onPause={handleVideoPause} onLoadedMetadata={syncVideoMetadata} onTimeUpdate={syncVideoProgress}
             style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
           <motion.div className="da-video-overlay" style={{
             position: 'absolute', inset: 0,
@@ -3570,10 +3707,11 @@ const DAEnvironmentSection = () => {
             <span className="da-floating-label">DA Story</span>
             <span className="da-floating-actions">
               <button className="da-floating-control" type="button" onClick={toggleVideoAudio} aria-label={isMuted ? 'Unmute floating video' : 'Mute floating video'}>{isMuted ? <VolumeX size={15} aria-hidden="true" /> : <Volume2 size={15} aria-hidden="true" />}</button>
-              <button className="da-floating-control" type="button" onClick={returnToFullVideo} aria-label="Return to full video"><Maximize2 size={15} aria-hidden="true" /></button>
+              <button className="da-floating-control" type="button" onClick={isExpanded ? minimiseExpandedVideo : returnToFullVideo} aria-label={isExpanded ? 'Minimise full video' : 'Expand video'}>{isExpanded ? <Minimize2 size={15} aria-hidden="true" /> : <Maximize2 size={15} aria-hidden="true" />}</button>
               <button className="da-floating-control" type="button" onClick={closeFloatingVideo} aria-label="Close floating video"><X size={15} aria-hidden="true" /></button>
             </span>
           </div>
+          <VideoTransportControls isPlaying={isPlaying} currentTime={currentTime} duration={duration} onTogglePlayback={toggleVideoPlayback} onSeek={seekVideo} isVisible={isSimple || isFloating || isExpanded || isVideoFullyInFrame} />
           <button className="da-audio-toggle" type="button" onClick={toggleVideoAudio} aria-pressed={!isMuted} aria-label={isMuted ? 'Turn video sound on' : 'Mute video'}>
             {isMuted ? <VolumeX size={18} aria-hidden="true" /> : <Volume2 size={18} aria-hidden="true" />}
             <span>{isMuted ? 'Sound on' : 'Mute'}</span>
@@ -6190,39 +6328,6 @@ const WhatWeTeachSection = () => {
         <div className="teach-highlight"><span className="teach-highlight-icon" aria-hidden="true">🏆</span><div><strong>Proven Results</strong><span>Academic excellence through personalised learning</span></div></div>
       </div>
 
-      {/* ── Cream → Navy gradient transition ── */}
-      <div style={{
-        marginTop: 'clamp(56px, 6vw, 88px)',
-        height: '160px',
-        background: `linear-gradient(180deg, ${C.cream} 0%, ${C.navy} 100%)`,
-        position: 'relative',
-        overflow: 'hidden',
-      }}>
-        {/* Gold light streaks */}
-        {[0, 1, 2, 3, 4].map(i => (
-          <div key={i} style={{
-            position: 'absolute',
-            width: '1px',
-            height: `${28 + i * 12}px`,
-            background: `linear-gradient(180deg, transparent, ${C.gold}55, transparent)`,
-            left: `${12 + i * 19}%`,
-            top: '15%',
-            opacity: 0.5,
-          }} />
-        ))}
-        {/* Small dots at midpoint */}
-        {[0, 1, 2].map(i => (
-          <div key={i} style={{
-            position: 'absolute',
-            width: '3px', height: '3px',
-            borderRadius: '50%',
-            background: C.gold,
-            opacity: 0.25,
-            left: `${25 + i * 25}%`,
-            top: '42%',
-          }} />
-        ))}
-      </div>
     </section>
   );
 };
@@ -6512,7 +6617,7 @@ const ClosingCTASection = () => {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-60px' });
   return (
-    <section ref={ref} style={{ background: '#0A1B34', padding: '120px 24px', textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
+    <section id="closing-cta" ref={ref} style={{ background: '#0A1B34', padding: '120px 24px', textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
       <div style={{ position: 'absolute', top: 0, left: '24px', right: '24px', height: '1px', background: 'linear-gradient(90deg, transparent, rgba(212,175,55,.25) 20%, rgba(212,175,55,.25) 80%, transparent)' }} />
       <motion.div variants={stagger} initial="hidden" animate={inView ? 'visible' : 'hidden'} style={{ maxWidth: '680px', margin: '0 auto' }}>
         <motion.div variants={fadeUp} style={{ fontFamily: sans, fontSize: '.68rem', fontWeight: 700, letterSpacing: '.18em', textTransform: 'uppercase' as const, color: C.gold, marginBottom: '20px' }}>
@@ -6604,14 +6709,13 @@ const Index = () => {
       </div>
       <AchievementsSection />
       <ProgramsSection />
-      <QuoteSection />
-      <WellbeingSection />
       <DAEnvironmentSection />
-      <CinematicQuoteSection />
-      <WhatWeTeachSection />
       <ReviewsSection />
-
       <TeachersSection />
+      <QuoteSection />
+      <WhatWeTeachSection />
+      <WellbeingSection />
+      <CinematicQuoteSection />
       <ClosingCTASection />
     </main>
     <HomeFooterTrial />

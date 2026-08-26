@@ -1,63 +1,37 @@
-import {
-  LayoutGroup,
-  motion,
-  useReducedMotion,
-} from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
-import { Link } from 'react-router-dom';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import {
-  TUTORS,
-  type CatalogueTutor,
-} from '@/data/teacherCatalogue';
-import {
-  DEFAULT_FEATURED_TUTOR_ID,
-  INNER_ORBIT_TUTOR_IDS,
-  OUTER_ORBIT_TUTOR_IDS,
-  selectionSequenceFor,
-  swapFacultyTutor,
-  type OrbitTier,
-  type SelectionPhase,
-} from './tutor-orbit-config';
-import { TutorOrbitProfile } from './TutorOrbitProfile';
-import { TutorOrbitMobileNavigator } from './TutorOrbitMobileNavigator';
-import { TutorOrbitStage } from './TutorOrbitStage';
-import { supportingTutorIds } from './tutor-orbit-responsive-helpers';
-import {
-  canBeginSelection,
-  transitionSelectionLock,
-} from './tutor-orbit-stage-helpers';
+import { TUTORS, type CatalogueTutor } from '@/data/teacherCatalogue';
+import { DEFAULT_FEATURED_TUTOR_ID, FACULTY_ROSTER_IDS } from './tutor-orbit-config';
+import { TutorProcessionStage } from './TutorProcessionStage';
+import { canBeginSelection, transitionSelectionLock } from './tutor-orbit-stage-helpers';
 import './tutor-orbit.css';
+import './tutor-procession.css';
 
 const tutorById = (id: string) => TUTORS.find((tutor) => tutor.id === id);
 
-export function TutorOrbitHero() {
+/** Phase one: the centre swaps on a short beat. The travelling exchange lands next. */
+const EXCHANGE_MS = 520;
+const REDUCED_EXCHANGE_MS = 180;
+
+export function TutorOrbitHero({ onExplore }: { onExplore?: () => void }) {
   const reduced = Boolean(useReducedMotion());
   const [activeId, setActiveId] = useState(DEFAULT_FEATURED_TUTOR_ID);
-  const [innerIds, setInnerIds] = useState<string[]>(() => [...INNER_ORBIT_TUTOR_IDS]);
-  const [outerIds, setOuterIds] = useState<string[]>(() => [...OUTER_ORBIT_TUTOR_IDS]);
-  const [selection, setSelection] = useState<{ phase: SelectionPhase; selectedId: string | null; originTier: OrbitTier | null }>({
-    phase: 'idle',
-    selectedId: null,
-    originTier: null,
-  });
+  const [exchanging, setExchanging] = useState(false);
   const timers = useRef<number[]>([]);
   const selectionLock = useRef({ locked: false });
+  const featuredActionRef = useRef<HTMLAnchorElement>(null);
+  const pendingCentreFocusId = useRef<string | null>(null);
 
-  const active = useMemo(() => tutorById(activeId) ?? tutorById(DEFAULT_FEATURED_TUTOR_ID), [activeId]);
-  const innerTutors = useMemo(
-    () => innerIds.map(tutorById).filter((tutor): tutor is CatalogueTutor => Boolean(tutor)),
-    [innerIds],
+  const active = useMemo(
+    () => tutorById(activeId) ?? tutorById(DEFAULT_FEATURED_TUTOR_ID),
+    [activeId],
   );
-  const outerTutors = useMemo(
-    () => outerIds.map(tutorById).filter((tutor): tutor is CatalogueTutor => Boolean(tutor)),
-    [outerIds],
-  );
-  const supportingTutors = useMemo(
-    () => supportingTutorIds(activeId, innerIds, outerIds)
+  const roster = useMemo(
+    () => FACULTY_ROSTER_IDS
       .map(tutorById)
       .filter((tutor): tutor is CatalogueTutor => Boolean(tutor)),
-    [activeId, innerIds, outerIds],
+    [],
   );
 
   const clearSelectionTimers = useCallback(() => {
@@ -70,39 +44,35 @@ export function TutorOrbitHero() {
     selectionLock.current = transitionSelectionLock(selectionLock.current, 'cleanup');
   }, [clearSelectionTimers]);
 
+  useEffect(() => {
+    if (exchanging || pendingCentreFocusId.current !== activeId) return;
+    featuredActionRef.current?.focus({ preventScroll: true });
+    pendingCentreFocusId.current = null;
+  }, [activeId, exchanging]);
+
   if (!active) return null;
 
-  const selectTutor = (selectedId: string) => {
-    if (selection.phase !== 'idle' || !canBeginSelection(selectionLock.current)) return false;
-    const originTier: OrbitTier = innerIds.includes(selectedId) ? 'inner' : 'outer';
-    const result = swapFacultyTutor(activeId, innerIds, outerIds, selectedId);
-    if (result.selectedSlot === -1) return false;
+  const selectTutor = (selectedId: string, options?: { focusCentre?: boolean }) => {
+    if (exchanging || selectedId === activeId) return false;
+    if (!canBeginSelection(selectionLock.current)) return false;
 
+    pendingCentreFocusId.current = options?.focusCentre ? selectedId : null;
     selectionLock.current = transitionSelectionLock(selectionLock.current, 'select');
     clearSelectionTimers();
-    for (const step of selectionSequenceFor(originTier, reduced)) {
-      timers.current.push(window.setTimeout(() => {
-        setSelection({
-          phase: step.phase,
-          selectedId: step.phase === 'idle' ? null : selectedId,
-          originTier: step.phase === 'idle' ? null : originTier,
-        });
-        if (step.phase === 'exchanging') {
-          setActiveId(result.activeId);
-          setInnerIds(result.innerIds);
-          setOuterIds(result.outerIds);
-        }
-        if (step.phase === 'idle') {
-          timers.current = [];
-          selectionLock.current = transitionSelectionLock(selectionLock.current, 'idle');
-        }
-      }, step.at));
-    }
+    setExchanging(true);
+    setActiveId(selectedId);
+
+    timers.current.push(window.setTimeout(() => {
+      setExchanging(false);
+      timers.current = [];
+      selectionLock.current = transitionSelectionLock(selectionLock.current, 'idle');
+    }, reduced ? REDUCED_EXCHANGE_MS : EXCHANGE_MS));
+
     return true;
   };
 
   return (
-    <section className="tutor-orbit" aria-labelledby="tutor-orbit-title">
+    <section className="tutor-orbit tutor-orbit--procession" aria-labelledby="tutor-orbit-title">
       <div className="tutor-orbit__ambient" aria-hidden="true" />
 
       <motion.div
@@ -118,29 +88,21 @@ export function TutorOrbitHero() {
           Great teaching is more than knowledge. It&apos;s the belief, encouragement and people who
           keep showing up for their students.
         </p>
-        <Link className="tutor-orbit__directory-link" to="/find-teacher">
-          Explore the whole team <ArrowRight aria-hidden="true" />
-        </Link>
+        {onExplore ? (
+          <button type="button" className="tutor-orbit__directory-link" onClick={onExplore}>
+            Explore the whole team <ArrowRight aria-hidden="true" />
+          </button>
+        ) : null}
       </motion.div>
 
-      <LayoutGroup id="tutor-faculty-orbit">
-        <TutorOrbitStage
-          active={active}
-          innerTutors={innerTutors}
-          outerTutors={outerTutors}
-          phase={selection.phase}
-          selectedId={selection.selectedId}
-          originTier={selection.originTier}
-          reduced={reduced}
-          onSelect={selectTutor}
-        />
-        <TutorOrbitMobileNavigator
-          tutors={supportingTutors}
-          reduced={reduced}
-          onSelect={selectTutor}
-        />
-        <TutorOrbitProfile tutor={active} reduced={reduced} changing={selection.phase !== 'idle'} />
-      </LayoutGroup>
+      <TutorProcessionStage
+        active={active}
+        roster={roster}
+        reduced={reduced}
+        exchanging={exchanging}
+        onSelect={selectTutor}
+        featuredActionRef={featuredActionRef}
+      />
     </section>
   );
 }

@@ -16,12 +16,14 @@ import {
 
 interface TutorOrbitMobileNavigatorProps {
   tutors: readonly CatalogueTutor[];
+  activeId: string;
   reduced: boolean;
-  onSelect: (id: string) => boolean;
+  onSelect: (id: string, options?: { focusCentre?: boolean }) => boolean;
 }
 
 export function TutorOrbitMobileNavigator({
   tutors,
+  activeId,
   reduced,
   onSelect,
 }: TutorOrbitMobileNavigatorProps) {
@@ -96,14 +98,20 @@ export function TutorOrbitMobileNavigator({
           exit={{ opacity: 0, scale: 0.98 }}
           transition={{ duration: reduced ? 0.12 : 0.16, ease: [0.22, 1, 0.36, 1] }}
         >
-          {visibleTutors.map((tutor) => (
-            <button
-              key={tutor.id}
-              type="button"
-              className="tutor-orbit__navigator-tutor"
-              aria-label={`View ${tutor.name}`}
-              onClick={() => onSelect(tutor.id)}
-            >
+          {visibleTutors.map((tutor) => {
+            const isActive = tutor.id === activeId;
+            return (
+              <button
+                key={tutor.id}
+                type="button"
+                className="tutor-orbit__navigator-tutor"
+                aria-label={isActive ? `${tutor.name}, current featured educator` : `View ${tutor.name}`}
+                aria-current={isActive ? 'true' : undefined}
+                aria-disabled={isActive ? 'true' : undefined}
+                onClick={(event) => {
+                  if (!isActive) onSelect(tutor.id, { focusCentre: event.detail === 0 });
+                }}
+              >
               <span
                 className="tutor-orbit__navigator-portrait"
                 data-orbit-portrait=""
@@ -113,8 +121,9 @@ export function TutorOrbitMobileNavigator({
                 <img src={getPhotoUrl(tutor)} alt="" style={getPhotoStyle(tutor)} />
               </span>
               <span data-orbit-label="" data-tutor-id={tutor.id}>{tutor.name}</span>
-            </button>
-          ))}
+              </button>
+            );
+          })}
         </motion.div>
       </AnimatePresence>
     </nav>

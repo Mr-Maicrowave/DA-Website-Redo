@@ -12,15 +12,10 @@ test('locks the document until an immediate skip, completion, or playback failur
   const source = readFileSync(componentUrl, 'utf8');
 
   assert.match(source, /shouldShowMathsIntroOnThisAppLoad/);
-  assert.match(source, /useState\(shouldShowMathsIntroOnThisAppLoad\)/);
-  assert.match(source, /createPortal/);
-  assert.match(source, /z-\[10000\]/);
-  assert.match(source, /document\.body\.style\.overflow = 'hidden'/);
-  assert.match(source, /\r?\n\s*muted\r?\n/);
-  assert.match(source, /onEnded=\{dismiss\}/);
-  assert.match(source, /onError=\{dismiss\}/);
-  assert.match(source, />\s*Skip intro\s*</);
-  assert.match(source, /if \(event\.key === 'Escape'\) dismiss\(\);/);
+  assert.match(source, /VideoArrivalGate/);
+  assert.match(source, /videoSrc="\/math_intro_video\.mp4"/);
+  assert.match(source, /posterSrc="\/images\/intro-posters\/maths-intro\.jpg"/);
+  assert.match(source, /subject="Mathematics"/);
 });
 
 test('shows once per app load, then stays dismissed across client-side route returns', async () => {
@@ -44,13 +39,10 @@ test('persists dismissal beyond the in-memory flag and skips for reduced-motion,
   assert.match(source, /prefers-reduced-motion/, 'must not autoplay for users who have asked for reduced motion');
 });
 
-test('fills the viewport and fades away instead of disappearing abruptly', () => {
+test('delegates the full-screen fade and loading experience to the shared gate', () => {
   const source = readFileSync(componentUrl, 'utf8');
 
-  assert.match(source, /object-cover/);
-  assert.match(source, /const \[isClosing, setIsClosing\] = useState\(false\)/);
-  assert.match(source, /transition-opacity duration-500/);
-  assert.match(source, /setTimeout\(\(\) => setIsOpen\(false\), 500\)/);
+  assert.match(source, /<VideoArrivalGate/);
 });
 
 test('mounts the intro gate only from the Mathematics page', () => {
@@ -64,4 +56,9 @@ test('ships the supplied Mathematics intro video as a public asset', () => {
   const videoUrl = new URL('../../../public/math_intro_video.mp4', import.meta.url);
 
   assert.equal(existsSync(videoUrl), true, 'public/math_intro_video.mp4 must be available to the video gate');
+});
+
+test('ships an immediate Mathematics poster for the video prelude', () => {
+  const posterUrl = new URL('../../../public/images/intro-posters/maths-intro.jpg', import.meta.url);
+  assert.equal(existsSync(posterUrl), true, 'the video gate must have a real first-paint image');
 });
