@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import NavigationNew from '@/components/NavigationNew';
 import FooterNew from '@/components/FooterNew';
 import SubjectHero from '@/components/subjects/SubjectHero';
@@ -6,6 +6,8 @@ import SubjectTypedBanner from '@/components/subjects/SubjectTypedBanner';
 import TrustedSchoolsStrip from '@/components/subjects/TrustedSchoolsStrip';
 import LegalSyllabusQuiz from '@/components/subjects/LegalSyllabusQuiz';
 import LegalTransformationSteps from '@/components/subjects/LegalTransformationSteps';
+import LegalCareerPathways from '@/components/subjects/LegalCareerPathways';
+import { LegalStudiesIntroVideoGate } from '@/features/legal-intro-video/LegalStudiesIntroVideoGate';
 import { Button } from '@/components/ui/button';
 import {
   Scale,
@@ -35,6 +37,13 @@ const legalTrustedSchools = [
   { name: 'Bonnyrigg High School', logoSrc: '/images/schools/bonnyrigg-high-school.png' },
   { name: 'Mary MacKillop Catholic College', logoSrc: '/images/schools/mary-mackillop-catholic-college.png' },
   { name: 'Al-Faisal College', logoSrc: '/images/schools/al-faisal-college.png' },
+  { name: 'Sefton High School', logoSrc: '/images/schools/sefton-high-school.png' },
+  { name: 'Prairiewood High School', logoSrc: '/images/schools/prairiewood-high-school.png' },
+  { name: 'Trinity Catholic College', logoSrc: '/images/schools/trinity-catholic-college.png' },
+  { name: 'Macquarie Fields High School', logoSrc: '/images/schools/macquarie-fields-high-school.png' },
+  { name: 'Fairvale High School', logoSrc: '/images/schools/fairvale-high-school.png' },
+  { name: 'Amity College', logoSrc: '/images/schools/amity-college.png' },
+  { name: 'Good Samaritan Catholic College', logoSrc: '/images/schools/good-samaritan-catholic-college.png' },
 ];
 
 const lcmidMethod = [
@@ -195,6 +204,609 @@ const legalJourneySteps = [
     description: 'Receive precise feedback on what moves the response higher.',
   },
 ];
+
+type LegalAuthorityItem = {
+  id: number;
+  topic: 'Crime' | 'Human Rights';
+  title: string;
+  citation?: string;
+  provision?: string;
+  syllabusDotPoint: string;
+  summary: string;
+  outcome?: string;
+  significance?: string;
+  evaluationTerm: string;
+  evaluationCriterion: string;
+  evaluation: string;
+};
+
+type LegalAuthorityMode = 'cases' | 'legislation';
+
+const legalCases: LegalAuthorityItem[] = [
+  {
+    id: 1,
+    topic: 'Crime',
+    title: 'Woolmington v DPP',
+    citation: '[1935] AC 462',
+    syllabusDotPoint: 'The criminal trial process — presumption of innocence and burden of proof',
+    summary: 'Woolmington was convicted of murdering his wife, but the appeal focused on who had to prove intention and guilt. The House of Lords used the case to confirm a core criminal law principle.',
+    outcome: 'The conviction was quashed, and the court reaffirmed the "golden thread" that the prosecution bears the burden of proving guilt.',
+    evaluationTerm: 'Highly effective',
+    evaluationCriterion: 'Protection of individual rights',
+    evaluation: 'as Woolmington entrenches the presumption of innocence and places the burden of proving guilt on the prosecution, reducing the risk of wrongful conviction.',
+  },
+  {
+    id: 2,
+    topic: 'Crime',
+    title: 'Dietrich v The Queen',
+    citation: '[1992] 177 CLR 292',
+    syllabusDotPoint: 'The criminal trial process — legal representation and the right to a fair trial',
+    summary: 'Dietrich, who was charged with serious drug offences, was unrepresented because he could not afford counsel. The High Court used the case to consider when an accused person can receive a fair trial without legal representation.',
+    outcome: 'The High Court held that, in serious criminal matters, a trial should generally be adjourned or stayed if an indigent accused is left without representation through no fault of their own.',
+    evaluationTerm: 'Effective',
+    evaluationCriterion: 'Accessibility',
+    evaluation: 'because the decision strengthens procedural fairness, although access to justice still depends on the practical availability of legal aid.',
+  },
+  {
+    id: 3,
+    topic: 'Crime',
+    title: 'R v Loveridge',
+    citation: '[2014] NSWCCA 120',
+    syllabusDotPoint: 'Sentencing and punishment — purposes of punishment and law reform in sentencing',
+    summary: 'Loveridge fatally assaulted Thomas Kelly and seriously injured another victim in unprovoked alcohol-fuelled attacks. The appeal became a major example of how sentencing responds to public concern about one-punch violence.',
+    outcome: 'The NSW Court of Criminal Appeal increased Loveridge’s aggregate sentence and reinforced denunciation and deterrence as key sentencing considerations in such offences.',
+    evaluationTerm: 'Moderately effective',
+    evaluationCriterion: "Meeting society's needs",
+    evaluation: 'as the case highlights how sentencing can reflect community expectations, although it also shows how criminal law reform is often reactive after high-profile tragedies.',
+  },
+  {
+    id: 4,
+    topic: 'Crime',
+    title: 'Bugmy v The Queen',
+    citation: '[2013] HCA 37',
+    syllabusDotPoint: 'Sentencing and punishment — judicial discretion, mitigating factors and achieving justice',
+    summary: 'Bugmy, an Aboriginal man from a background of extreme deprivation, was sentenced for assaulting a correctional officer. The High Court considered how social disadvantage should be treated during sentencing.',
+    outcome: 'The High Court held that the effects of profound deprivation do not diminish over time and remain relevant to moral culpability, even though no separate sentencing principle applies only to Aboriginal offenders.',
+    evaluationTerm: 'Partly effective',
+    evaluationCriterion: 'Justice has been achieved',
+    evaluation: 'because the case promotes more individualised justice in sentencing, but it does not remove the broader systemic inequalities that continue to shape criminal offending and punishment.',
+  },
+  {
+    id: 5,
+    topic: 'Crime',
+    title: 'R v Tang',
+    citation: '[2008] HCA 39',
+    syllabusDotPoint: 'International crime — slavery, trafficking and the effectiveness of domestic criminal law',
+    summary: 'Wei Tang, a Melbourne brothel owner, was prosecuted for possessing and using women as slaves. The case tested the meaning of slavery under Commonwealth criminal law in a modern context.',
+    outcome: 'The High Court upheld Tang’s convictions and confirmed that the offence of slavery could apply to exploitative control even without formal ownership in the historical sense.',
+    evaluationTerm: 'Effective',
+    evaluationCriterion: 'Enforceability',
+    evaluation: 'because Australian courts can respond to serious international crimes domestically, but the small number of prosecutions suggests enforcement remains limited.',
+  },
+  {
+    id: 6,
+    topic: 'Human Rights',
+    title: 'Mabo v Queensland (No 2)',
+    citation: '(1992) 175 CLR 1',
+    syllabusDotPoint: 'The nature and development of human rights — recognition of Indigenous rights and equality before the law',
+    summary: 'Eddie Mabo and other Meriam people challenged the doctrine of terra nullius and sought recognition of their traditional land rights. The case became a defining example of rights development within Australian law.',
+    outcome: 'The High Court rejected terra nullius and recognised native title, prompting major legal reform including the Native Title Act 1993 (Cth).',
+    evaluationTerm: 'Highly effective',
+    evaluationCriterion: 'Responsiveness',
+    evaluation: 'as the decision marked a landmark step toward justice for Indigenous peoples, although the practical protection of land rights remains uneven and contested.',
+  },
+  {
+    id: 7,
+    topic: 'Human Rights',
+    title: 'Toonen v Australia',
+    citation: 'UNHRC (1994)',
+    syllabusDotPoint: 'Promoting and enforcing human rights — the role of the UN and the ICCPR in protecting privacy and non-discrimination',
+    summary: 'Nicholas Toonen challenged Tasmanian laws criminalising consensual homosexual conduct. The complaint was brought before the UN Human Rights Committee under the ICCPR.',
+    outcome: 'The UN Human Rights Committee found Australia in breach of the ICCPR, and the case helped drive federal intervention and the later repeal of the Tasmanian laws.',
+    evaluationTerm: 'Effective',
+    evaluationCriterion: 'Protection of individual rights',
+    evaluation: 'because international human rights mechanisms can influence domestic reform, though they still depend on political willingness and state compliance.',
+  },
+  {
+    id: 8,
+    topic: 'Human Rights',
+    title: 'Minister for Immigration and Ethnic Affairs v Teoh',
+    citation: '[1995] 183 CLR 273',
+    syllabusDotPoint: 'Promoting and enforcing human rights — the role of treaties and the Convention on the Rights of the Child',
+    summary: 'Teoh faced deportation despite having young children in Australia. The High Court examined whether Australia’s ratification of the Convention on the Rights of the Child should influence administrative decision-making.',
+    outcome: 'The High Court held that ratification of the treaty could create a legitimate expectation that decision-makers would act consistently with it unless they clearly indicated otherwise.',
+    evaluationTerm: 'Moderately effective',
+    evaluationCriterion: 'Application of the rule of law',
+    evaluation: 'because the case strengthened the domestic influence of international treaties, but its long-term effect has been uncertain because governments have tried to limit its reach.',
+  },
+  {
+    id: 9,
+    topic: 'Human Rights',
+    title: 'A v Australia',
+    citation: 'UNHRC (1997)',
+    syllabusDotPoint: 'Promoting and enforcing human rights — UN review of arbitrary detention and state compliance',
+    summary: 'A Cambodian asylum seeker was held in prolonged immigration detention in Australia without a clear end point. The complaint was brought before the UN Human Rights Committee as a challenge to arbitrary detention.',
+    outcome: 'The UN Human Rights Committee found that Australia had breached the ICCPR because the detention was arbitrary, but Australia did not fully implement the Committee’s view.',
+    evaluationTerm: 'Limited',
+    evaluationCriterion: 'Enforceability',
+    evaluation: 'because the case reveals the value of international scrutiny, yet it also exposes the weakness of enforcement when states choose not to comply fully.',
+  },
+  {
+    id: 10,
+    topic: 'Human Rights',
+    title: 'Al-Kateb v Godwin',
+    citation: '[2004] 219 CLR 562',
+    syllabusDotPoint: 'Contemporary issue in human rights — refugee rights, detention and the limits of domestic protection',
+    summary: 'Al-Kateb, a stateless asylum seeker, could not be removed from Australia but remained in immigration detention. The High Court considered whether the Migration Act allowed indefinite detention in those circumstances.',
+    outcome: 'By majority, the High Court held that the Migration Act did permit indefinite detention of a stateless person who could not be deported.',
+    evaluationTerm: 'Ineffective',
+    evaluationCriterion: 'Protection of individual rights',
+    evaluation: 'as the case illustrates how human rights can be vulnerable in Australia when there is no entrenched national bill of rights.',
+  },
+];
+
+const legalLegislation: LegalAuthorityItem[] = [
+  {
+    id: 1,
+    topic: 'Crime',
+    title: 'Crimes Act 1900 (NSW)',
+    provision: 's 18 — Murder',
+    syllabusDotPoint: 'Criminal law — elements of major indictable offences and criminal liability',
+    summary: 'The Crimes Act 1900 (NSW) is the central source of many serious criminal offences in New South Wales, including murder, manslaughter and assault.',
+    significance: 'It gives prosecutors clear statutory foundations for serious offences and helps students connect offence elements to criminal responsibility.',
+    evaluationTerm: 'Effective',
+    evaluationCriterion: 'Enforceability',
+    evaluation: 'because clear statutory offences assist investigation and prosecution, although outcomes still depend on evidence, resources and court process.',
+  },
+  {
+    id: 2,
+    topic: 'Crime',
+    title: 'Bail Act 2013 (NSW)',
+    provision: 'Unacceptable risk test',
+    syllabusDotPoint: 'Criminal trial process — bail, remand and balancing community safety with individual rights',
+    summary: 'The Bail Act 2013 (NSW) structures how courts decide whether an accused person should be released before trial.',
+    significance: 'It requires decision-makers to weigh risks such as failing to appear, endangering victims or interfering with witnesses.',
+    evaluationTerm: 'Partly effective',
+    evaluationCriterion: 'Protection of individual rights',
+    evaluation: 'because the Act recognises liberty before conviction, but strict bail settings can still increase remand and pressure vulnerable accused people.',
+  },
+  {
+    id: 3,
+    topic: 'Crime',
+    title: 'Law Enforcement (Powers and Responsibilities) Act 2002 (NSW)',
+    provision: 'Police powers',
+    syllabusDotPoint: 'Investigation process — police powers, rights of suspects and safeguards',
+    summary: 'LEPRA gives police powers to search, arrest, detain and question suspects while setting legal limits on how those powers may be used.',
+    significance: 'It is a key statute for evaluating whether criminal investigations balance public protection with civil liberties.',
+    evaluationTerm: 'Moderately effective',
+    evaluationCriterion: 'Application of the rule of law',
+    evaluation: 'because police powers are placed in legislation and reviewable by courts, although practical safeguards can be difficult for suspects to access.',
+  },
+  {
+    id: 4,
+    topic: 'Crime',
+    title: 'Crimes (Sentencing Procedure) Act 1999 (NSW)',
+    provision: 'Purposes of sentencing',
+    syllabusDotPoint: 'Sentencing and punishment — purposes, discretion and achieving justice',
+    summary: 'This Act sets out the purposes and principles courts consider when sentencing offenders in New South Wales.',
+    significance: 'It helps explain denunciation, deterrence, rehabilitation, retribution and community protection in sentencing responses.',
+    evaluationTerm: 'Effective',
+    evaluationCriterion: "Meeting society's needs",
+    evaluation: 'because it gives courts a structured sentencing framework, although public confidence can fluctuate when sentences appear too lenient or severe.',
+  },
+  {
+    id: 5,
+    topic: 'Crime',
+    title: 'Criminal Code Act 1995 (Cth)',
+    provision: 'Divisions 270–271',
+    syllabusDotPoint: 'International crime — slavery, trafficking and domestic implementation',
+    summary: 'The Commonwealth Criminal Code criminalises slavery, servitude and trafficking, allowing Australia to prosecute serious international crimes domestically.',
+    significance: 'It connects international obligations to enforceable Australian offences, including offences considered in R v Tang.',
+    evaluationTerm: 'Effective',
+    evaluationCriterion: 'Responsiveness',
+    evaluation: 'because domestic law has adapted to modern forms of exploitation, but prosecution numbers remain limited by detection and evidentiary barriers.',
+  },
+  {
+    id: 6,
+    topic: 'Human Rights',
+    title: 'Racial Discrimination Act 1975 (Cth)',
+    provision: 'Race discrimination protections',
+    syllabusDotPoint: 'The nature and development of human rights — anti-discrimination and equality before the law',
+    summary: 'The Racial Discrimination Act 1975 (Cth) makes racial discrimination unlawful and gives domestic effect to Australia’s international commitments.',
+    significance: 'It is a key example of how human rights can be protected through ordinary legislation rather than a constitutional bill of rights.',
+    evaluationTerm: 'Effective',
+    evaluationCriterion: 'Protection of individual rights',
+    evaluation: 'because it creates enforceable equality protections, although complaints processes can still be slow, stressful and resource-intensive.',
+  },
+  {
+    id: 7,
+    topic: 'Human Rights',
+    title: 'Native Title Act 1993 (Cth)',
+    provision: 'Recognition of native title',
+    syllabusDotPoint: 'The nature and development of human rights — Indigenous rights and recognition',
+    summary: 'The Native Title Act 1993 (Cth) was enacted after Mabo to recognise and regulate native title claims in Australia.',
+    significance: 'It provides a legal process for recognising traditional land rights but also imposes complex evidentiary requirements.',
+    evaluationTerm: 'Partly effective',
+    evaluationCriterion: 'Accessibility',
+    evaluation: 'because it creates a pathway for recognition, but the process is expensive, lengthy and difficult for many communities to navigate.',
+  },
+  {
+    id: 8,
+    topic: 'Human Rights',
+    title: 'Migration Act 1958 (Cth)',
+    provision: 'Immigration detention',
+    syllabusDotPoint: 'Contemporary issue in human rights — asylum seekers, detention and domestic protection',
+    summary: 'The Migration Act 1958 (Cth) regulates entry, visas, removal and immigration detention, including provisions considered in Al-Kateb v Godwin.',
+    significance: 'It is central to debates about refugee rights, executive power and the limits of human rights protection in Australia.',
+    evaluationTerm: 'Limited',
+    evaluationCriterion: 'Protection of individual rights',
+    evaluation: 'because the Act can prioritise border control over liberty, especially where detention becomes prolonged or indefinite.',
+  },
+  {
+    id: 9,
+    topic: 'Human Rights',
+    title: 'Human Rights (Sexual Conduct) Act 1994 (Cth)',
+    provision: 'Privacy protections',
+    syllabusDotPoint: 'Promoting and enforcing human rights — domestic response to international human rights findings',
+    summary: 'This Act was passed after Toonen v Australia and prevented arbitrary interference with adult consensual sexual conduct in private.',
+    significance: 'It shows how international human rights scrutiny can trigger domestic law reform.',
+    evaluationTerm: 'Highly effective',
+    evaluationCriterion: 'Responsiveness',
+    evaluation: 'because Parliament responded directly to a human rights breach and strengthened privacy and non-discrimination protections.',
+  },
+  {
+    id: 10,
+    topic: 'Human Rights',
+    title: 'International Covenant on Civil and Political Rights',
+    provision: 'ICCPR',
+    syllabusDotPoint: 'Promoting and enforcing human rights — international law and state accountability',
+    summary: 'The ICCPR protects civil and political rights and underpins several human rights complaints involving Australia.',
+    significance: 'It provides international standards for rights such as liberty, privacy, equality and freedom from arbitrary detention.',
+    evaluationTerm: 'Moderately effective',
+    evaluationCriterion: 'Enforceability',
+    evaluation: 'because it enables international scrutiny, but UN views depend heavily on state cooperation and are not directly enforceable like domestic court orders.',
+  },
+];
+
+const legalAuthorityCollections: Record<LegalAuthorityMode, LegalAuthorityItem[]> = {
+  cases: legalCases,
+  legislation: legalLegislation,
+};
+
+const getAdjacentIndex = (index: number, direction: -1 | 1, total: number) =>
+  (index + direction + total) % total;
+
+const getTopicIntro = (mode: LegalAuthorityMode, topic: LegalAuthorityItem['topic']) => {
+  const area = topic === 'Crime' ? 'criminal law' : 'human rights law';
+  return `Authorities that help students understand, apply and evaluate ${area}.`;
+};
+
+const LegalAuthorityCarousel = () => {
+  const [mode, setMode] = useState<LegalAuthorityMode>('cases');
+  const [activeByMode, setActiveByMode] = useState<Record<LegalAuthorityMode, number>>({
+    cases: 0,
+    legislation: 0,
+  });
+  const [direction, setDirection] = useState<'previous' | 'next' | null>(null);
+  const [isPointerDown, setIsPointerDown] = useState(false);
+  const [dragOffset, setDragOffset] = useState(0);
+  const hoverTimerRef = useRef<number | null>(null);
+  const startPointRef = useRef<{ x: number; y: number } | null>(null);
+  const dragIntentRef = useRef(false);
+
+  const items = legalAuthorityCollections[mode];
+  const activeIndex = activeByMode[mode];
+  const activeItem = items[activeIndex];
+  const previousItem = items[getAdjacentIndex(activeIndex, -1, items.length)];
+  const nextItem = items[getAdjacentIndex(activeIndex, 1, items.length)];
+  const modeLabel = mode === 'cases' ? 'Cases' : 'Legislation';
+  const heading = mode === 'cases' ? 'Key Cases' : 'Key Legislation';
+
+  const clearHoverTimer = useCallback(() => {
+    if (hoverTimerRef.current !== null) {
+      window.clearTimeout(hoverTimerRef.current);
+      hoverTimerRef.current = null;
+    }
+  }, []);
+
+  const navigate = useCallback((step: -1 | 1) => {
+    clearHoverTimer();
+    setDirection(step > 0 ? 'next' : 'previous');
+    setActiveByMode((current) => ({
+      ...current,
+      [mode]: getAdjacentIndex(current[mode], step, legalAuthorityCollections[mode].length),
+    }));
+    window.setTimeout(() => setDirection(null), 560);
+  }, [clearHoverTimer, mode]);
+
+  const scheduleHoverAdvance = (step: -1 | 1) => {
+    clearHoverTimer();
+    hoverTimerRef.current = window.setTimeout(() => {
+      navigate(step);
+      hoverTimerRef.current = null;
+    }, 350);
+  };
+
+  const updateMode = (nextMode: LegalAuthorityMode) => {
+    if (nextMode === mode) return;
+    clearHoverTimer();
+    setDirection(null);
+    setDragOffset(0);
+    setIsPointerDown(false);
+    setMode(nextMode);
+  };
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLElement>) => {
+    if (event.key === 'ArrowLeft') {
+      event.preventDefault();
+      navigate(-1);
+    } else if (event.key === 'ArrowRight') {
+      event.preventDefault();
+      navigate(1);
+    }
+  };
+
+  const handlePointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (event.pointerType === 'mouse' && event.button !== 0) return;
+    const target = event.target as HTMLElement;
+    if (target.closest('button, a')) return;
+    clearHoverTimer();
+    startPointRef.current = { x: event.clientX, y: event.clientY };
+    dragIntentRef.current = false;
+    setIsPointerDown(true);
+    setDragOffset(0);
+    event.currentTarget.setPointerCapture(event.pointerId);
+  };
+
+  const handlePointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
+    const startPoint = startPointRef.current;
+    if (!isPointerDown || !startPoint) return;
+
+    const deltaX = event.clientX - startPoint.x;
+    const deltaY = event.clientY - startPoint.y;
+
+    if (!dragIntentRef.current) {
+      if (Math.abs(deltaY) > Math.abs(deltaX) && Math.abs(deltaY) > 12) {
+        return;
+      }
+      if (Math.abs(deltaX) > 10) {
+        dragIntentRef.current = true;
+      }
+    }
+
+    if (dragIntentRef.current) {
+      event.preventDefault();
+      setDragOffset(Math.max(-92, Math.min(92, deltaX)));
+    }
+  };
+
+  const finishDrag = (event: React.PointerEvent<HTMLDivElement>) => {
+    const offset = dragOffset;
+    startPointRef.current = null;
+    dragIntentRef.current = false;
+    setIsPointerDown(false);
+    setDragOffset(0);
+
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    }
+
+    if (Math.abs(offset) < 52) return;
+    navigate(offset < 0 ? 1 : -1);
+  };
+
+  return (
+    <section
+      id="legal-authority-carousel"
+      className="legal-authority-section"
+      aria-labelledby="legal-authority-title"
+      onKeyDown={handleKeyDown}
+      tabIndex={0}
+    >
+      <div className="legal-authority-tabs" role="tablist" aria-label="Cases and legislation">
+        {(['cases', 'legislation'] as LegalAuthorityMode[]).map((tabMode) => (
+          <button
+            key={tabMode}
+            type="button"
+            role="tab"
+            aria-selected={mode === tabMode}
+            className={`legal-authority-tab ${mode === tabMode ? 'is-active' : ''}`}
+            onMouseUp={(event) => {
+              event.stopPropagation();
+              updateMode(tabMode);
+            }}
+            onClick={(event) => {
+              if (event.detail === 0) updateMode(tabMode);
+            }}
+          >
+            {tabMode === 'cases' ? 'Cases' : 'Legislation'}
+          </button>
+        ))}
+      </div>
+
+      <div className="legal-authority-layout" data-mode={mode}>
+        <aside key={`${mode}-${activeItem.topic}`} className="legal-authority-intro" aria-live="polite">
+          <span className="legal-authority-topic">{activeItem.topic.toUpperCase()} TOPIC</span>
+          <h2 id="legal-authority-title">{heading}</h2>
+          <span className="legal-authority-rule" aria-hidden="true" />
+          <p>{getTopicIntro(mode, activeItem.topic)}</p>
+        </aside>
+
+        <div
+          className={[
+            'legal-authority-carousel',
+            direction ? `is-moving-${direction}` : '',
+            isPointerDown ? 'is-dragging' : '',
+          ].filter(Boolean).join(' ')}
+          style={{ '--legal-drag-offset': `${dragOffset}px` } as React.CSSProperties}
+          aria-label={`${modeLabel} carousel`}
+          onPointerDown={handlePointerDown}
+          onPointerMove={handlePointerMove}
+          onPointerUp={finishDrag}
+          onPointerCancel={finishDrag}
+        >
+          <button
+            type="button"
+            className="legal-authority-arrow legal-authority-arrow--previous"
+            onMouseUp={(event) => {
+              event.stopPropagation();
+              navigate(-1);
+            }}
+            onClick={(event) => {
+              if (event.detail === 0) navigate(-1);
+            }}
+            aria-label={`Show previous ${modeLabel.toLowerCase()} card`}
+          >
+            <ChevronLeft aria-hidden="true" />
+          </button>
+
+          <LegalAuthorityPreviewCard
+            item={previousItem}
+            label="Previous"
+            onHoverStart={() => scheduleHoverAdvance(-1)}
+            onHoverEnd={clearHoverTimer}
+            onSelect={() => navigate(-1)}
+          />
+
+          <LegalAuthorityActiveCard
+            item={activeItem}
+            index={activeIndex}
+            mode={mode}
+          />
+
+          <LegalAuthorityPreviewCard
+            item={nextItem}
+            label="Next"
+            onHoverStart={() => scheduleHoverAdvance(1)}
+            onHoverEnd={clearHoverTimer}
+            onSelect={() => navigate(1)}
+          />
+
+          <button
+            type="button"
+            className="legal-authority-arrow legal-authority-arrow--next"
+            onMouseUp={(event) => {
+              event.stopPropagation();
+              navigate(1);
+            }}
+            onClick={(event) => {
+              if (event.detail === 0) navigate(1);
+            }}
+            aria-label={`Show next ${modeLabel.toLowerCase()} card`}
+          >
+            <ChevronRight aria-hidden="true" />
+          </button>
+        </div>
+
+        <div className="legal-authority-pagination" aria-label={`${modeLabel} pagination`}>
+          {items.map((item, index) => (
+            <button
+              key={item.id}
+              type="button"
+              className={index === activeIndex ? 'is-active' : ''}
+              onClick={() => {
+                if (index === activeIndex) return;
+                setDirection(index > activeIndex ? 'next' : 'previous');
+                setActiveByMode((current) => ({ ...current, [mode]: index }));
+                window.setTimeout(() => setDirection(null), 560);
+              }}
+              aria-label={`Show ${modeLabel.toLowerCase()} ${index + 1} of ${items.length}`}
+              aria-current={index === activeIndex ? 'true' : undefined}
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
+
+const LegalAuthorityActiveCard = ({
+  item,
+  index,
+  mode,
+}: {
+  item: LegalAuthorityItem;
+  index: number;
+  mode: LegalAuthorityMode;
+}) => {
+  const contentWeight = [
+    item.title,
+    item.citation ?? item.provision ?? '',
+    item.syllabusDotPoint,
+    item.summary,
+    item.outcome ?? item.significance ?? '',
+    item.evaluation,
+  ].join(' ').length;
+  const densityClass = contentWeight > 640 || item.title.length > 48 ? ' legal-authority-card--dense' : '';
+
+  return (
+    <article className={`legal-authority-card legal-authority-card--active${densityClass}`} aria-live="polite">
+      <div className="legal-authority-spine" aria-hidden="true">
+        <strong>{String(index + 1).padStart(2, '0')}</strong>
+      </div>
+      <div className="legal-authority-card-body">
+        <span className="legal-authority-card-topic">{item.topic.toUpperCase()}</span>
+        <h3>{item.title}</h3>
+        <p className="legal-authority-citation">{item.citation ?? item.provision}</p>
+
+        <LegalAuthoritySection title="Syllabus Dot Point" content={item.syllabusDotPoint} bullet />
+        <LegalAuthoritySection title={mode === 'cases' ? 'Case Summary' : 'Legislation Summary'} content={item.summary} />
+        <LegalAuthoritySection title={mode === 'cases' ? 'Outcome' : 'Significance'} content={item.outcome ?? item.significance ?? ''} />
+
+        <div className="legal-authority-card-section">
+          <h4>Evaluation</h4>
+          <p>
+            <strong>{item.evaluationTerm} in {item.evaluationCriterion.toLowerCase()}</strong>, {item.evaluation}
+          </p>
+        </div>
+      </div>
+    </article>
+  );
+};
+
+const LegalAuthoritySection = ({ title, content, bullet = false }: { title: string; content: string; bullet?: boolean }) => (
+  <div className="legal-authority-card-section">
+    <h4>{title}</h4>
+    <p className={bullet ? 'legal-authority-bullet' : undefined}>{content}</p>
+  </div>
+);
+
+const LegalAuthorityPreviewCard = ({
+  item,
+  label,
+  onHoverStart,
+  onHoverEnd,
+  onSelect,
+}: {
+  item: LegalAuthorityItem;
+  label: 'Previous' | 'Next';
+  onHoverStart: () => void;
+  onHoverEnd: () => void;
+  onSelect: () => void;
+}) => (
+  <button
+    type="button"
+    className={`legal-authority-preview legal-authority-preview--${label.toLowerCase()}`}
+    onMouseUp={(event) => {
+      event.stopPropagation();
+      onSelect();
+    }}
+    onClick={(event) => {
+      if (event.detail === 0) onSelect();
+    }}
+    onPointerEnter={(event) => {
+      if (event.pointerType !== 'touch') onHoverStart();
+    }}
+    onPointerLeave={onHoverEnd}
+    onFocus={onHoverEnd}
+    aria-label={`${label} card: ${item.title}`}
+  >
+    <span className="legal-authority-preview-topic">{item.topic.toUpperCase()}</span>
+    <strong>{item.title}</strong>
+    <span>{item.citation ?? item.provision}</span>
+    <i aria-hidden="true" />
+  </button>
+);
 
 const LegalStudies = () => {
   const [isSampleOpen, setIsSampleOpen] = useState(false);
@@ -392,6 +1004,7 @@ const LegalStudies = () => {
 
   return (
     <div className="min-h-screen bg-white">
+      <LegalStudiesIntroVideoGate />
       <SEO
         title="HSC Legal Studies Tutoring"
         description="Master the Australian legal system through case analysis and critical evaluation at DA Tuition."
@@ -598,6 +1211,8 @@ const LegalStudies = () => {
         </div>
       </section>
 
+      <LegalAuthorityCarousel />
+
       <LegalSyllabusQuiz />
 
       <LegalTransformationSteps />
@@ -672,6 +1287,8 @@ const LegalStudies = () => {
           <p className="legal-journey-reassurance">You don't have to know everything before you walk through the door.</p>
         </div>
       </section>
+
+      <LegalCareerPathways />
 
       {/* CTA Section */}
       <section className="py-16 bg-brand-navy text-white relative overflow-hidden">

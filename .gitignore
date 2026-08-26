@@ -37,3 +37,6 @@ git_merge_to_master.bat
 git_resolve_conflicts.bat
 git_push_master.bat
 git_fix*.bat
+
+# Isolated local worktrees
+.worktrees/

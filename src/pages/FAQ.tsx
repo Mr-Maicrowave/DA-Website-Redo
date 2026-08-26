@@ -12,6 +12,7 @@ import {
   BookOpen,
   CheckCircle2,
   Clock,
+  DoorOpen,
   DollarSign,
   HelpCircle,
   MapPin,
@@ -19,7 +20,9 @@ import {
   School,
   Search,
   Shield,
+  TrendingUp,
   Users,
+  WalletCards,
 } from 'lucide-react';
 import { siteStats } from '@/data/site-stats';
 import { faqPageSchema } from '@/lib/seo/schema';
@@ -166,13 +169,13 @@ const faqs: FAQItem[] = [
   {
     category: 'classes',
     question: 'How big are the classes?',
-    schemaAnswer: `DA Tuition keeps groups small. Small groups are typically around ${siteStats.studentsPerGroup} students so students can receive attention while still learning around peers.`,
+    schemaAnswer: 'DA Tuition keeps groups intentionally small so students can ask questions, receive meaningful feedback, and still benefit from learning alongside peers.',
     keywords: ['class size', 'small group', 'one on one', '1 on 1', 'students'],
     popular: true,
     links: [{ label: 'Learning formats', href: '/learning-formats' }],
     answer: (
       <p>
-        Groups are intentionally small, usually around {siteStats.studentsPerGroup} students. That gives students room to ask questions while still benefiting from peer discussion. See <Link to="/learning-formats" className={inlineLink}>learning formats</Link> for how the classes are structured.
+        Groups are intentionally kept small so students have room to ask questions and receive meaningful feedback while still benefiting from peer discussion. See <Link to="/learning-formats" className={inlineLink}>learning formats</Link> for how the classes are structured.
       </p>
     ),
   },
@@ -300,11 +303,35 @@ const heroConcerns = [
   { label: 'Will the class suit my child?', question: 'How big are the classes?' },
   { label: 'Can I trust the results?', question: 'What results do DA students achieve?' },
 ];
+const parentPathways: Array<{
+  title: string;
+  description: string;
+  category: CategoryId;
+  icon: React.ElementType;
+}> = [
+  { title: 'How to begin', description: 'Interview, placement and joining', category: 'start', icon: DoorOpen },
+  { title: 'The investment', description: 'Fees, inclusions and payments', category: 'fees', icon: WalletCards },
+  { title: 'The classroom', description: 'Class size, timing and teachers', category: 'classes', icon: Users },
+  { title: 'The outcomes', description: 'Progress, results and support', category: 'results', icon: TrendingUp },
+];
+
+const starterSearches = [
+  { label: 'Fees & payments', question: 'How much does tutoring cost?' },
+  { label: 'Class sizes', question: 'How big are the classes?' },
+  { label: 'Getting started', question: 'What is the best way to get started at DA Tuition?' },
+  { label: 'Year levels', question: 'Which year levels do you teach?' },
+  { label: 'Subjects', question: 'What subjects are available?' },
+  { label: 'Class times', question: 'When are classes held?' },
+  { label: 'Meet the tutors', question: 'Who teaches the classes?' },
+  { label: 'Student progress', question: 'How do parents know if their child is improving?' },
+];
 
 const FAQ = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<CategoryId>('all');
   const [openQuestion, setOpenQuestion] = useState<string>();
+  const [showAllQuestions, setShowAllQuestions] = useState(false);
+  const showLegacyFaq = window.location.hash === '#legacy-faq';
 
   const filteredFAQs = useMemo(() => {
     const query = searchTerm.trim().toLowerCase();
@@ -323,13 +350,25 @@ const FAQ = () => {
     });
   }, [searchTerm, selectedCategory]);
 
+  const quickAnswer = searchTerm.trim() ? filteredFAQs[0] : undefined;
+  const visibleFAQs = searchTerm || selectedCategory !== 'all' || showAllQuestions ? filteredFAQs : filteredFAQs.slice(0, 5);
   const selectedCategoryLabel = categoryById.get(selectedCategory)?.label ?? 'All questions';
   const activeAccordionValue = openQuestion ?? (filteredFAQs.length === 1 ? filteredFAQs[0].question : undefined);
   const openAnswer = (faq: FAQItem) => {
     setSelectedCategory(faq.category);
     setSearchTerm('');
     setOpenQuestion(faq.question);
-    window.setTimeout(() => document.getElementById('faq-answers')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 0);
+    window.setTimeout(() => {
+      const popularQuestions = document.getElementById('popular-questions');
+      if (!popularQuestions) return;
+      const pagePosition = window.scrollY + popularQuestions.getBoundingClientRect().top;
+      const visibleOffset = Math.min(160, Math.round(window.innerHeight * 0.16));
+      window.scrollTo({ top: Math.max(0, pagePosition - visibleOffset), behavior: 'smooth' });
+    }, 0);
+  };
+
+  const revealQuickAnswer = () => {
+    window.setTimeout(() => document.getElementById('quick-answer')?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 0);
   };
 
   return (
@@ -342,7 +381,7 @@ const FAQ = () => {
       />
       <NavigationNew />
 
-      <main>
+      {showLegacyFaq && <main>
         <section className="relative overflow-hidden bg-[#071629] pt-36 lg:pt-40">
           <div className="absolute inset-0">
             <img
@@ -634,6 +673,101 @@ const FAQ = () => {
             </div>
           </div>
         </section>
+      </main>}
+
+      <main>
+        <section className="relative flex min-h-screen items-center overflow-hidden bg-[#071629] px-5 py-28 text-white lg:px-8">
+          <div className="absolute inset-0">
+            <img src="/images/faq/faq-hero-tutor-student-brow-touchup.png" alt="A DA Tuition tutor and student smiling gently while they work through mathematics together" className="h-full w-full object-cover object-[54%_42%] lg:object-[54%_38%]" />
+            {/* subject-hero-style overlay */}
+            <div className="absolute inset-0" style={{ background: 'linear-gradient(90deg, rgba(4,11,23,.9) 0%, rgba(4,11,23,.7) 46%, rgba(4,11,23,.22) 100%)' }} />
+          </div>
+          <div className="relative z-10 mx-auto w-full max-w-7xl">
+            <motion.div initial={{ opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, ease: easeOut }} className="max-w-3xl">
+              <div className="mb-5 inline-flex items-center gap-2.5 text-xs font-black uppercase tracking-[0.18em] text-[#f1df9a]">
+                <span className="h-[2px] w-7 bg-[#c9a227]" />
+                DA Answer Desk
+              </div>
+              <h1 className="text-balance text-white" style={{ fontFamily: '"Playfair Display", Georgia, serif', fontSize: 'clamp(3rem, 6.5vw, 6.6rem)', lineHeight: 0.96, letterSpacing: '-0.01em', margin: 0 }}>
+                Start with what’s
+                <span className="block text-[#c9a227]">on your mind.</span>
+              </h1>
+              <p className="mt-7 max-w-[54ch] text-lg leading-[1.75] text-white/85">Clear answers before you commit: classes, fees, teachers, progress and getting started.</p>
+              <div className="mt-8">
+                <button type="button" onClick={() => document.getElementById('faq-answers')?.scrollIntoView({ behavior: 'smooth', block: 'start' })} className="inline-flex h-12 items-center rounded-full bg-[#c9a227] px-7 font-black text-[#101521] shadow-xl shadow-[#c9a227]/25 transition hover:bg-[#e0bd4b]">
+                  Explore answers <ArrowRight className="ml-2 h-4 w-4" />
+                </button>
+              </div>
+              <div className="mt-9 flex flex-wrap gap-x-5 gap-y-2 text-[13px] font-black uppercase tracking-[0.06em] text-white">
+                <span className="border-l-2 border-[#c9a227] pl-3">Clear fees</span>
+                <span className="border-l-2 border-[#c9a227] pl-3">Right class fit</span>
+                <span className="border-l-2 border-[#c9a227] pl-3">Real progress</span>
+              </div>
+            </motion.div>
+          </div>
+        </section>
+
+        <section className={`bg-[#fbf6ea] px-4 pb-6 pt-10 sm:px-6 sm:pt-12 lg:px-8 ${searchTerm ? 'lg:pb-20' : 'lg:pb-8'}`}>
+          <div className="mx-auto max-w-7xl">
+            <label className="relative flex items-center rounded-2xl bg-white px-5 shadow-lg shadow-[#071629]/10 sm:px-7">
+              <Search className="h-5 w-5 shrink-0 text-brand-gold" aria-hidden="true" />
+              <span className="sr-only">Search frequently asked questions</span>
+              <input type="search" placeholder="Search in your own words. Try “class size”" value={searchTerm} onChange={(event) => { const value = event.target.value; const isStartingSearch = value.trim().length > 0 && searchTerm.trim().length === 0; setSearchTerm(value); setSelectedCategory('all'); setOpenQuestion(undefined); setShowAllQuestions(false); if (isStartingSearch) revealQuickAnswer(); }} className="h-16 min-w-0 flex-1 bg-transparent px-4 text-base font-medium text-brand-navy outline-none placeholder:text-brand-navy/55 sm:h-[72px] sm:text-lg" />
+              {searchTerm && <button type="button" onClick={() => { setSearchTerm(''); setOpenQuestion(undefined); setShowAllQuestions(false); }} className="shrink-0 text-sm font-bold text-brand-navy/65 hover:text-brand-gold">Clear</button>}
+            </label>
+            <div id="popular-questions" className="mt-4"><p className="mb-2 px-1 text-xs font-bold uppercase tracking-[0.14em] text-[#8a6810]">Popular questions</p><div className="flex flex-wrap gap-2">{starterSearches.map((suggestion) => { const faq = faqByQuestion.get(suggestion.question); return <button key={suggestion.question} type="button" onClick={() => { if (faq) openAnswer(faq); }} className="rounded-full border border-white/35 bg-[#071629] px-3.5 py-2 text-sm font-semibold text-white shadow-sm transition hover:border-brand-gold hover:bg-brand-gold hover:text-brand-navy">{suggestion.label}</button>; })}</div></div>
+            {searchTerm && <div id="quick-answer" className="mb-12 scroll-mt-24 rounded-2xl border border-brand-gold/30 bg-[#fffdf8] p-5 shadow-lg shadow-[#071629]/10 sm:p-6" aria-live="polite">
+              {quickAnswer ? <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between"><div className="max-w-3xl"><p className="text-sm font-bold text-[#8a6810]">Quick answer</p><h2 className="mt-1 font-serif text-2xl font-medium tracking-[-0.025em] text-brand-navy">{quickAnswer.question}</h2><p className="mt-2 text-sm leading-6 text-brand-navy/75 sm:text-base">{quickAnswer.schemaAnswer}</p></div><button type="button" onClick={() => openAnswer(quickAnswer)} className="inline-flex shrink-0 items-center self-start rounded-full bg-brand-navy px-4 py-2.5 text-sm font-bold text-white transition hover:bg-brand-gold hover:text-brand-navy sm:self-auto">Read full answer <ArrowRight className="ml-1.5 h-4 w-4" /></button></div> : <div><p className="text-sm font-bold text-[#8a6810]">No close match yet</p><p className="mt-1 text-brand-navy/75">Try “fees”, “HSC”, “teachers” or “class size”, or ask our team directly.</p></div>}
+            </div>}
+            {!searchTerm && <div className="text-center"><p className="mb-2 text-sm font-bold text-[#8a6810]">Choose your concern</p><h2 className="font-serif text-3xl font-medium tracking-[-0.03em] text-brand-navy sm:text-4xl">Where would a little more clarity help?</h2></div>}
+          </div>
+        </section>
+
+        <section id="faq-answers" className="scroll-mt-24 bg-[#fbf6ea] px-4 pb-20 sm:px-6 lg:px-8 lg:pb-28">
+          <div className="mx-auto grid max-w-7xl overflow-hidden rounded-2xl bg-[#fffdf8] shadow-lg shadow-[#071629]/10 lg:grid-cols-[250px_1fr]">
+            <aside className="border-b border-brand-navy/12 p-5 lg:border-b-0 lg:border-r lg:p-7" aria-label="FAQ topics">
+              <p className="mb-4 font-serif text-xl font-medium text-brand-navy">Browse all topics</p>
+              <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-2 lg:mx-0 lg:block lg:overflow-visible lg:px-0 lg:pb-0">
+                {categories.map((category) => {
+                  const Icon = category.icon;
+                  const active = selectedCategory === category.id;
+                  return <button key={category.id} type="button" onClick={() => { setSelectedCategory(category.id); setSearchTerm(''); setOpenQuestion(undefined); setShowAllQuestions(false); }} className={`flex shrink-0 items-center gap-2 border-b px-3 py-3 text-left text-sm transition lg:w-full lg:justify-between lg:px-1 ${active ? 'border-brand-gold font-bold text-brand-navy' : 'border-brand-navy/10 text-brand-navy/65 hover:text-brand-navy'}`} aria-pressed={active}>
+                    <span className="flex items-center gap-2"><Icon className={`h-4 w-4 ${active ? 'text-brand-gold' : 'text-brand-navy/40'}`} />{category.shortLabel}</span>
+                  </button>;
+                })}
+              </div>
+            </aside>
+            <div className="min-w-0 p-5 sm:p-8 lg:p-10">
+            <div className="min-w-0">
+              <div className="mb-7 flex flex-col gap-2 border-b border-brand-navy/15 pb-5 sm:flex-row sm:items-end sm:justify-between">
+                <div><p className="mb-1 text-sm font-bold text-brand-gold">{searchTerm ? `Results for “${searchTerm}”` : selectedCategoryLabel}</p><h2 className="font-serif text-3xl font-medium tracking-[-0.03em] text-brand-navy sm:text-4xl">Questions and answers</h2></div>
+                {(searchTerm || selectedCategory !== 'all') && <button type="button" onClick={() => { setSearchTerm(''); setSelectedCategory('all'); setOpenQuestion(undefined); setShowAllQuestions(false); }} className="self-start text-sm font-bold text-brand-navy/60 hover:text-brand-gold sm:self-auto">View all questions</button>}
+              </div>
+              {filteredFAQs.length > 0 ? <Accordion type="single" collapsible value={activeAccordionValue} onValueChange={setOpenQuestion}>
+                {visibleFAQs.map((faq) => <AccordionItem key={`${faq.category}-${faq.question}`} value={faq.question} className="border-b border-brand-navy/15">
+                  <AccordionTrigger className="gap-5 py-5 text-left hover:no-underline sm:py-6"><span className="pr-4 text-base font-bold leading-7 text-brand-navy sm:text-lg">{faq.question}</span></AccordionTrigger>
+                  <AccordionContent className="pb-6 text-brand-navy/76"><div className="max-w-3xl space-y-4 text-base leading-8">{faq.answer}{faq.links && <div className="flex flex-wrap gap-2 pt-1">{faq.links.map((link) => <Link key={link.href} to={link.href} className="inline-flex items-center rounded-full bg-brand-gold/15 px-4 py-2 text-sm font-bold text-brand-navy transition hover:bg-brand-gold">{link.label}<ArrowRight className="ml-1.5 h-3.5 w-3.5" /></Link>)}</div>}</div></AccordionContent>
+                </AccordionItem>)}
+              </Accordion> : <div className="py-12 text-center"><HelpCircle className="mx-auto mb-4 h-8 w-8 text-brand-gold" /><h3 className="font-serif text-2xl font-medium text-brand-navy">We could not find that question.</h3><p className="mx-auto mt-3 max-w-xl leading-7 text-brand-navy/68">Try a simpler phrase such as “fees”, “HSC”, “teachers” or “class size”. You can also ask our team directly.</p><Button variant="outline" onClick={() => { setSearchTerm(''); setSelectedCategory('all'); setShowAllQuestions(false); }} className="mt-6 rounded-full border-brand-gold/45">Clear search</Button></div>}
+              {!searchTerm && selectedCategory === 'all' && filteredFAQs.length > 5 && <div className="pt-7 text-center"><button type="button" onClick={() => { if (showAllQuestions) { setShowAllQuestions(false); window.setTimeout(() => document.getElementById('faq-answer-desk')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 0); } else { setShowAllQuestions(true); } }} className="inline-flex items-center rounded-full bg-brand-navy px-5 py-3 text-sm font-bold text-white transition hover:bg-brand-gold hover:text-brand-navy">{showAllQuestions ? 'Show fewer questions' : 'See more questions'} <ArrowRight className={`ml-2 h-4 w-4 transition-transform ${showAllQuestions ? '-rotate-90' : ''}`} /></button></div>}
+            </div>
+          </div>
+          </div>
+        </section>
+
+        <section className="mx-4 grid overflow-hidden rounded-2xl bg-brand-navy text-white sm:mx-6 lg:mx-8 lg:grid-cols-[0.85fr_1.15fr]">
+          <div className="min-h-[320px] overflow-hidden lg:min-h-[420px]"><img src="/images/faq/faq-human-answer-focus-with-tables.png" alt="A DA Tuition tutor and student smiling while working together at a laptop" className="h-full w-full object-cover" /></div>
+          <div className="flex flex-col justify-center px-6 py-14 sm:px-10 lg:px-[clamp(3rem,8vw,8rem)] lg:py-20">
+            <p className="text-sm font-bold text-brand-lightGold">The human answer desk</p>
+            <h2 className="mt-4 max-w-2xl text-balance font-serif text-4xl font-medium leading-tight tracking-[-0.035em] sm:text-5xl">Some questions are easier to talk through.</h2>
+            <p className="mt-5 max-w-2xl text-base leading-8 text-white/72">Every child starts from a different place. Tell us what is on your mind and we’ll help you work out the most useful next step.</p>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <Link to="/book-interview" className="inline-flex items-center rounded-full bg-brand-gold px-5 py-3 text-sm font-bold text-brand-navy hover:bg-brand-lightGold">Book an Interview<ArrowRight className="ml-2 h-4 w-4" /></Link>
+              <a href="tel:0401940207" className="inline-flex items-center rounded-full border border-white/25 px-5 py-3 text-sm font-bold text-white hover:bg-white/10"><Phone className="mr-2 h-4 w-4 text-brand-lightGold" />Call 0401 940 207</a>
+              <Link to="/tutoring-canley-heights" className="inline-flex items-center px-2 py-3 text-sm font-bold text-white/78 hover:text-brand-lightGold"><MapPin className="mr-2 h-4 w-4" />Visit Canley Heights</Link>
+            </div>
+          </div>
+        </section>
       </main>
 
       <FooterNew />
@@ -641,5 +775,4 @@ const FAQ = () => {
   );
 };
 
-// eslint-disable-next-line react-refresh/only-export-components
 export default FAQ;

@@ -36,6 +36,8 @@ interface SubjectHeroProps {
   backgroundScale?: number;
   /** English trial: place the copy low in the mobile hero to preserve the photo's focal subject. */
   mobileContentPosition?: 'center' | 'bottom';
+  /** Optional page-specific nudge for the copy block, without changing the shared hero layout. */
+  copyOffsetClassName?: string;
 }
 
 /**
@@ -62,6 +64,7 @@ const SubjectHero = ({
   backgroundFit = 'cover',
   backgroundScale,
   mobileContentPosition = 'center',
+  copyOffsetClassName,
 }: SubjectHeroProps) => {
   const scrollToExplore = () => {
     document.getElementById(exploreTargetId)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -77,7 +80,7 @@ const SubjectHero = ({
             className="subject-hero-image h-full w-full object-cover"
             style={{
               objectFit: backgroundFit,
-              ...(backgroundPosition ? { objectPosition: backgroundPosition } : {}),
+              ...(backgroundPosition ? { '--subject-hero-desktop-position': backgroundPosition } : {}),
               ...(mobileBackgroundPosition ? { '--subject-hero-mobile-position': mobileBackgroundPosition } : {}),
               ...(backgroundScale ? { transform: `scale(${backgroundScale})`, transformOrigin: backgroundPosition ?? 'center center' } : {}),
             } as CSSProperties}
@@ -115,7 +118,7 @@ const SubjectHero = ({
           initial={{ opacity: 0, y: 28 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, ease: 'easeOut' }}
-          className="subject-hero-copy max-w-3xl"
+          className={`subject-hero-copy max-w-3xl ${copyOffsetClassName ?? ''}`}
         >
           <div className="mb-5 inline-flex items-center gap-2.5 text-xs font-black uppercase tracking-[0.18em] text-[#f1df9a]">
             <span className="h-[2px] w-7 bg-[#c9a227]" />
@@ -162,10 +165,14 @@ const SubjectHero = ({
           ) : null}
         </motion.div>
       </div>
-      {(mobileBackgroundPosition || mobileContentPosition === 'bottom') && (
-        <style>{`
+      <style>{`
+          .subject-hero-image {
+            object-position: var(--subject-hero-desktop-position, center center);
+          }
           @media (max-width: 767px) {
-            .subject-hero-image { object-position: var(--subject-hero-mobile-position); }
+            .subject-hero-image {
+              object-position: var(--subject-hero-mobile-position, var(--subject-hero-desktop-position, center center));
+            }
             .subject-hero--mobile-bottom-copy {
               min-height: 44rem;
               justify-content: flex-end;
@@ -188,7 +195,6 @@ const SubjectHero = ({
             }
           }
         `}</style>
-      )}
     </section>
   );
 };

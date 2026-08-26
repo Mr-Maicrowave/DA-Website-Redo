@@ -7,7 +7,7 @@
 @tailwind utilities;
 
 /* Stable homepage chapter anchors: clear the fixed navigation on arrival. */
-:where(#welcome, #philosophy, #journey, #programs, #subjects, #environment, #guides, #stories, #contact) {
+:where(#welcome, #philosophy, #journey, #programs, #programs-catalogue, #subjects, #environment, #guides, #stories, #contact) {
   scroll-margin-top: 72px;
 }
 
@@ -156,9 +156,9 @@
     mix-blend-mode: overlay;
   }
 
-  /* Youthful display font for special articles */
+  /* Keep special-article text within the shared reading system. */
   .font-fun {
-    font-family: 'Baloo 2', system-ui, -apple-system, Segoe UI, Roboto, Inter, 'Helvetica Neue', Arial, 'Noto Sans', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', sans-serif;
+    font-family: 'Cabin', system-ui, -apple-system, Segoe UI, Arial, 'Noto Sans', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', sans-serif;
   }
 
   html {
@@ -232,6 +232,11 @@
   }
 
   body[data-da-intro-active="true"] .site-sticky-book-button {
+    display: none !important;
+  }
+
+  /* The floating conversion CTA obscures graph controls on small screens. */
+  body[data-da-graph-lab-active="true"] .site-sticky-book-button {
     display: none !important;
   }
 
@@ -496,7 +501,25 @@
 }
 
 .trusted-schools-track {
-  animation: trusted-schools-scroll 11.2s linear infinite;
+  width: max-content;
+  max-width: none;
+  animation: trusted-schools-scroll var(--trusted-schools-duration, 11.2s) linear infinite;
+}
+
+.trusted-schools-set {
+  width: max-content;
+  max-width: none;
+  flex: 0 0 auto;
+}
+
+.trusted-schools-item,
+.trusted-schools-set > div {
+  max-width: none;
+  flex: 0 0 auto;
+}
+
+.trusted-schools-item {
+  width: max-content;
 }
 
 .trusted-schools-strip:hover .trusted-schools-track {
@@ -522,7 +545,7 @@
   }
 
   to {
-    transform: translateX(calc(-50% - 1.25rem));
+    transform: translateX(calc(-1 * var(--trusted-schools-distance, 50%)));
   }
 }
 
@@ -533,7 +556,7 @@
     }
 
     to {
-      transform: translateX(calc(-50% - 1.75rem));
+      transform: translateX(calc(-1 * var(--trusted-schools-distance, 50%)));
     }
   }
 }

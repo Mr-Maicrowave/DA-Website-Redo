@@ -36,7 +36,7 @@ const ScrollToTop = () => {
     }
 
     return (
-        <div className="site-scroll-to-top fixed bottom-[5.5rem] right-6 z-[100] animate-fade-in">
+        <div className="site-scroll-to-top hidden fixed bottom-[5.5rem] right-6 z-[100] animate-fade-in min-[1800px]:block">
             <Button
                 onClick={scrollToTop}
                 size="icon"

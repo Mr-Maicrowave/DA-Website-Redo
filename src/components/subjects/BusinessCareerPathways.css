@@ -26,6 +26,18 @@
   margin-bottom: clamp(0.85rem, 1.2vw, 1.05rem);
 }
 
+.legal-pathways-eyebrow {
+  display: block;
+  margin: 0 0 0.6rem;
+  color: var(--bp-gold);
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: clamp(0.84rem, 1vw, 1rem);
+  font-weight: 700;
+  letter-spacing: 0.34em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
 .biz-pathways-head h2 {
   margin: 0 0 0.85rem;
   color: var(--bp-navy);
@@ -626,6 +638,163 @@ body.biz-pathways-modal-open {
   filter: saturate(1.04) contrast(1.03);
 }
 
+.legal-pathway-detail__image-panel {
+  right: 0;
+  left: 0;
+  width: auto;
+  background: #082049;
+}
+
+.legal-pathway-detail__image-panel img {
+  object-fit: cover;
+  object-position: center center;
+}
+
+@media (min-width: 1280px) {
+  .legal-pathway-detail {
+    overflow: hidden;
+  }
+
+  .legal-pathway-detail .biz-pathway-detail__left {
+    padding: clamp(0.8rem, 1vw, 1.12rem) clamp(1.55rem, 3vw, 3.3rem) 1rem;
+  }
+
+  .legal-pathway-detail .biz-pathway-detail__back {
+    min-height: 40px;
+    padding: 0.42rem 1rem;
+    font-size: 1rem;
+  }
+
+  .legal-pathway-detail .biz-pathway-detail__back svg {
+    width: 1.04rem;
+    height: 1.04rem;
+  }
+
+  .legal-pathway-detail .biz-pathway-detail__title-row {
+    grid-template-columns: 104px minmax(0, 1fr);
+    gap: clamp(1.05rem, 1.65vw, 1.75rem);
+    margin-top: clamp(0.7rem, 1vw, 1rem);
+  }
+
+  .legal-pathway-detail .biz-pathway-detail__hero-icon {
+    width: 92px;
+    height: 92px;
+  }
+
+  .legal-pathway-detail .biz-pathway-detail__hero-icon svg {
+    width: 53px;
+    height: 53px;
+  }
+
+  .legal-pathway-detail h3 {
+    font-size: clamp(2.25rem, 3.35vw, 3.8rem);
+    line-height: 0.94;
+  }
+
+  .legal-pathway-detail .biz-pathway-detail__rule {
+    margin-top: 0.72rem;
+  }
+
+  .legal-pathway-detail .biz-pathway-detail__intro {
+    max-width: 860px;
+    margin-top: clamp(0.7rem, 1vw, 1rem);
+    font-size: clamp(0.92rem, 1.02vw, 1.08rem);
+    line-height: 1.42;
+  }
+
+  .legal-pathway-detail .biz-pathway-detail__cards {
+    gap: 0.72rem;
+    margin-top: clamp(0.72rem, 1vw, 1rem);
+    max-width: 860px;
+  }
+
+  .legal-pathway-detail .biz-pathway-detail__info-card {
+    min-height: 162px;
+    padding: 0.92rem 1rem 0.86rem 5.1rem;
+    border-radius: 16px;
+  }
+
+  .legal-pathway-detail .biz-pathway-detail__info-card > svg {
+    top: 0.92rem;
+    left: 1rem;
+    width: 50px;
+    height: 50px;
+    padding: 11px;
+  }
+
+  .legal-pathway-detail .biz-pathway-detail__info-card h4 {
+    margin-bottom: 0.62rem;
+    font-size: clamp(1.18rem, 1.4vw, 1.52rem);
+    line-height: 1;
+  }
+
+  .legal-pathway-detail .biz-pathway-detail__info-card h4::after {
+    width: 34px;
+    margin-top: 0.4rem;
+  }
+
+  .legal-pathway-detail .biz-pathway-detail__info-card ul {
+    padding-left: 1rem;
+    font-size: 0.82rem;
+    line-height: 1.3;
+  }
+
+  .legal-pathway-detail .biz-pathway-detail__info-card p {
+    font-size: 0.82rem;
+    line-height: 1.38;
+  }
+
+  .legal-pathway-detail .biz-pathway-detail__right {
+    padding: clamp(15.8rem, 30vh, 18.2rem) clamp(1.55rem, 3vw, 3.4rem) 1rem;
+    overflow: hidden;
+  }
+
+  .legal-pathway-detail .biz-pathway-detail__image-panel {
+    height: min(29vh, 302px);
+  }
+
+  .legal-pathway-detail .biz-pathway-detail__right h4 {
+    font-size: clamp(1.44rem, 1.72vw, 1.85rem);
+  }
+
+  .legal-pathway-detail .biz-pathway-detail__gold-rule {
+    margin-top: 0.62rem;
+  }
+
+  .legal-pathway-detail .biz-pathway-detail__opportunities {
+    gap: 0.52rem;
+    margin-top: 0.78rem;
+    max-width: 560px;
+  }
+
+  .legal-pathway-detail .biz-pathway-detail__opportunity {
+    grid-template-columns: 54px minmax(0, 1fr);
+    gap: 0.68rem;
+    padding-bottom: 0.5rem;
+  }
+
+  .legal-pathway-detail .biz-pathway-detail__opportunity span {
+    width: 48px;
+    height: 48px;
+  }
+
+  .legal-pathway-detail .biz-pathway-detail__opportunity svg {
+    width: 25px;
+    height: 25px;
+  }
+
+  .legal-pathway-detail .biz-pathway-detail__opportunity h5 {
+    margin-bottom: 0.18rem;
+    font-size: clamp(1.08rem, 1.3vw, 1.36rem);
+    line-height: 1.02;
+  }
+
+  .legal-pathway-detail .biz-pathway-detail__opportunity p {
+    font-size: clamp(0.74rem, 0.86vw, 0.86rem);
+    line-height: 1.26;
+  }
+}
+
 .biz-pathway-detail__right h4 {
   margin: 0;
   color: var(--bp-gold);
@@ -831,6 +1000,7 @@ body.biz-pathways-modal-open {
     left: 0;
     height: min(34vh, 320px);
   }
+
 }
 
 @media (max-width: 980px) {

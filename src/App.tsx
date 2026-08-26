@@ -10,11 +10,11 @@ import PageTransition from "@/components/animations/PageTransition";
 import ScrollProgress from "@/components/animations/ScrollProgress";
 import StickyBookButton from "@/components/StickyBookButton";
 import Index from "./pages/Index";
-import EnglishSample from "./pages/EnglishSample";
 import BookInterview from "./pages/BookInterview";
 import Reviews from "./pages/Reviews";
 import NotFound from "./pages/NotFound";
 import FindTeacher from "./pages/FindTeacher";
+import Tutors from "./pages/Tutors";
 import Articles from "./pages/Articles";
 import ArticleView from "./pages/ArticleView";
 import AppreciationAdvice from "./pages/AppreciationAdvice";
@@ -29,6 +29,7 @@ import Smithfield from "./pages/locations/Smithfield";
 import Lansvale from "./pages/locations/Lansvale";
 import SuccessStories from "./pages/SuccessStories";
 import FAQ from "./pages/FAQ";
+import ContactUs from "./pages/ContactUs";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import WhyChooseDA from "./pages/WhyChooseDA";
 import PrincipalReflections from "./pages/PrincipalReflections";
@@ -40,6 +41,7 @@ import Year34 from "./pages/programs/Year34";
 import Year56 from "./pages/programs/Year56";
 // Subject pages
 import Mathematics from "./pages/subjects/Mathematics";
+import MathsGraphLab from "./pages/MathsGraphLab";
 import English from "./pages/subjects/English";
 import Science from "./pages/subjects/Science";
 import BusinessStudies from "./pages/subjects/BusinessStudies";
@@ -59,8 +61,6 @@ const AnimatedRoutes = () => {
     <AnimatePresence mode="wait">
       <Routes location={location} key={location.pathname}>
         <Route path="/" element={<PageTransition><Index /></PageTransition>} />
-        {/* Do NOT change this to <Index />. See src/pages/EnglishSample.tsx header comment. */}
-        <Route path="/english-sample" element={<PageTransition><EnglishSample /></PageTransition>} />
         <Route
           path="/book-intro-calibration"
           element={import.meta.env.DEV ? <BookIntroCalibration /> : <Navigate to="/" replace />}
@@ -70,6 +70,7 @@ const AnimatedRoutes = () => {
         <Route path="/book-interview" element={<PageTransition><BookInterview /></PageTransition>} />
         <Route path="/reviews" element={<Navigate to="/success-stories" replace />} />
         <Route path="/find-teacher" element={<PageTransition><FindTeacher /></PageTransition>} />
+        <Route path="/tutors" element={<PageTransition><Tutors /></PageTransition>} />
         <Route path="/teachers" element={<Navigate to="/find-teacher" replace />} />
         <Route path="/articles" element={<PageTransition><Articles /></PageTransition>} />
         <Route path="/articles/:slug" element={<PageTransition><ArticleView /></PageTransition>} />
@@ -85,6 +86,7 @@ const AnimatedRoutes = () => {
         <Route path="/tutoring-lansvale" element={<PageTransition><Lansvale /></PageTransition>} />
         <Route path="/success-stories" element={<PageTransition><SuccessStories /></PageTransition>} />
         <Route path="/faq" element={<PageTransition><FAQ /></PageTransition>} />
+        <Route path="/contact" element={<PageTransition><ContactUs /></PageTransition>} />
         <Route path="/privacy-policy" element={<PageTransition><PrivacyPolicy /></PageTransition>} />
         <Route path="/our-approach" element={<PageTransition><WhyChooseDA /></PageTransition>} />
         <Route path="/why-choose-da" element={<PageTransition><WhyChooseDA /></PageTransition>} />
@@ -102,6 +104,7 @@ const AnimatedRoutes = () => {
 
         {/* Subject Routes */}
         <Route path="/subjects/mathematics" element={<PageTransition><Mathematics /></PageTransition>} />
+        <Route path="/maths-graph-lab" element={<PageTransition><MathsGraphLab /></PageTransition>} />
         <Route path="/subjects/english" element={<PageTransition><English /></PageTransition>} />
         <Route path="/subjects/science" element={<PageTransition><Science /></PageTransition>} />
         <Route path="/subjects/business-studies" element={<PageTransition><BusinessStudies /></PageTransition>} />
@@ -122,7 +125,6 @@ const App = () => (
   <HelmetProvider>
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <ScrollToTop />
         <Toaster />
         <Sonner />
         <BrowserRouter>

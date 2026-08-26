@@ -4,8 +4,11 @@ import SEO from '@/components/SEO';
 import NavigationNew from '@/components/NavigationNew';
 import { Button } from '@/components/ui/button';
 import SubjectHero from '@/components/subjects/SubjectHero';
-import { AnimatePresence, motion, useReducedMotion, useScroll, useTransform } from 'framer-motion';
-import { ArrowRight, ArrowUpRight, Check, ChevronLeft, ChevronRight, GraduationCap, Star } from 'lucide-react';
+import HighSchoolCinematicScene from '@/components/programs/HighSchoolCinematicScene';
+import { highSchoolJourneyAssets } from '@/data/highSchoolJourneyAssets';
+import { highSchoolJourneyStages } from '@/data/highSchoolJourneyScenes';
+import { AnimatePresence, motion, useMotionValueEvent, useReducedMotion, useScroll, useTransform } from 'framer-motion';
+import { ArrowRight, ArrowUpRight, ChevronLeft, ChevronRight, GraduationCap, Star } from 'lucide-react';
 
 /* ============================================================================
    CONTENT — every field below is preserved verbatim from the previous build
@@ -13,31 +16,6 @@ import { ArrowRight, ArrowUpRight, Check, ChevronLeft, ChevronRight, GraduationC
    presentation has changed. New copy (the Year 7-10 journey stages and the
    "Find Your Voice" moment) is additive and clearly separated below.
 ============================================================================ */
-
-// Year 7-10 colour system, used subtly throughout (marker strokes, numerals,
-// underlines, small washes) rather than as full-bleed colour blocks.
-const YEARS = [
-  {
-    n: '07', year: 'Year 7', word: 'Explore.', color: '#2563EB', wash: 'rgba(37,99,235,0.10)',
-    text: 'Everything is new: new subjects, new teachers, new expectations. We help students settle in fast, build steady habits, and start high school with confidence instead of catch-up.',
-    Sketch: SketchPlane,
-  },
-  {
-    n: '08', year: 'Year 8', word: 'Question.', color: '#5B8266', wash: 'rgba(91,130,102,0.12)',
-    text: 'Content gets more abstract and students start asking why, not just how. We build the algebra, essay and reasoning foundations that make Years 9 and 10 easier.',
-    Sketch: SketchMagnifier,
-  },
-  {
-    n: '09', year: 'Year 9', word: 'Discover.', color: '#8574C4', wash: 'rgba(133,116,196,0.12)',
-    text: 'Strengths and interests start to surface, and subject-selection decisions loom. We help students discover what they are genuinely good at, so those choices feel informed, not guessed.',
-    Sketch: SketchStar,
-  },
-  {
-    n: '10', year: 'Year 10', word: 'Direction.', color: '#D97D3D', wash: 'rgba(217,125,61,0.13)',
-    text: 'Every session now points toward Year 11. We close gaps, sharpen exam technique, and build the study habits that carry straight into the HSC with confidence.',
-    Sketch: SketchTarget,
-  },
-] as const;
 
 const focusRows = [
   { area: 'English and Essay Writing', build: 'Analytical writing, close reading, text response', skills: 'Thesis construction, evidence integration, language techniques', Icon: SketchPen },
@@ -47,12 +25,19 @@ const focusRows = [
   { area: 'Exam and Study Skills', build: 'Organisation, note-taking, revision strategies', skills: 'Time management, past-paper practice, reducing exam anxiety', Icon: SketchClock },
 ];
 
-const stakesCards = [
-  { title: 'The Curriculum Gets Serious', color: '#2563EB', text: 'Year 7 introduces abstract concepts: algebra, essay writing, scientific reasoning. These compound year on year. Students who build strong foundations early keep more options open all the way to the HSC.' },
-  { title: 'Habits Form Now or Not at All', color: '#5B8266', text: 'The study habits a student develops in Years 7-8 determine how they handle the pressure of Years 11-12. We teach method, not just content.' },
-  { title: 'Selective and Scholarship Pressure', color: '#8574C4', text: 'Many families are managing Year 9-10 class selection or scholarship applications at the same time. Our tutors know what selective and private schools are looking for.' },
-  { title: 'Confidence Decides Outcomes', color: '#D97D3D', text: 'A teenager who believes they can do hard things will attempt hard things. We build that belief deliberately, through visible progress every session.' },
-];
+const stakesCards = highSchoolJourneyStages.map((stage, index) => ({
+  title: stage.heading,
+  color: stage.colour,
+  text: stage.body,
+  icon: ['book', 'sprout', 'route', 'summit'][index],
+  asset: highSchoolJourneyAssetsForStage(stage.sceneId),
+}));
+
+function highSchoolJourneyAssetsForStage(sceneId: (typeof highSchoolJourneyStages)[number]['sceneId']) {
+  const asset = highSchoolJourneyAssets[sceneId].largeWash;
+  if (!asset.src) throw new Error(`Missing large watercolour wash for ${sceneId}`);
+  return asset.src;
+}
 
 const approachCards = [
   { title: 'We Diagnose Before We Teach', text: "We identify exactly where each student's gaps are and why. Then we fix the root cause, not just the symptom.", color: '#2563EB' },
@@ -85,38 +70,6 @@ const premiumEase = [0.22, 1, 0.36, 1] as const;
    the reference without needing new image assets.
 ============================================================================ */
 
-function SketchPlane({ className = '', color = 'currentColor' }: { className?: string; color?: string }) {
-  return (
-    <svg viewBox="0 0 40 40" fill="none" stroke={color} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true">
-      <path d="M4 22 L34 8 L22 36 L18 24 L4 22 Z" />
-      <path d="M18 24 L34 8" />
-    </svg>
-  );
-}
-function SketchMagnifier({ className = '', color = 'currentColor' }: { className?: string; color?: string }) {
-  return (
-    <svg viewBox="0 0 40 40" fill="none" stroke={color} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true">
-      <circle cx="17" cy="17" r="11" />
-      <path d="M25.5 25.5 L35 35" />
-    </svg>
-  );
-}
-function SketchStar({ className = '', color = 'currentColor' }: { className?: string; color?: string }) {
-  return (
-    <svg viewBox="0 0 40 40" fill="none" stroke={color} strokeWidth="1.4" strokeLinejoin="round" className={className} aria-hidden="true">
-      <path d="M20 4 L24 16 L36 16 L26 23 L30 35 L20 27 L10 35 L14 23 L4 16 L16 16 Z" />
-    </svg>
-  );
-}
-function SketchTarget({ className = '', color = 'currentColor' }: { className?: string; color?: string }) {
-  return (
-    <svg viewBox="0 0 40 40" fill="none" stroke={color} strokeWidth="1.4" className={className} aria-hidden="true">
-      <circle cx="20" cy="20" r="15" />
-      <circle cx="20" cy="20" r="9" />
-      <circle cx="20" cy="20" r="2.4" fill={color} stroke="none" />
-    </svg>
-  );
-}
 function SketchPen({ className = '', color = 'currentColor' }: { className?: string; color?: string }) {
   return (
     <svg viewBox="0 0 40 40" fill="none" stroke={color} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true">
@@ -204,7 +157,7 @@ function MarkerUnderline({ color, className = '', delay = 0 }: { color: string; 
 function HandNote({ children, color = '#0A1B34', className = '', rotate = -2 }: { children: React.ReactNode; color?: string; className?: string; rotate?: number }) {
   const style = { color, '--hs-rotate': `${rotate}deg` } as React.CSSProperties;
   return (
-    <span className={`hs-hand ${className}`} style={style}>
+    <span className={`hs-hand inline-block ${className}`} style={style}>
       {children}
     </span>
   );
@@ -251,293 +204,229 @@ function TopBar() {
 }
 
 /* ============================================================================
-   HERO
-============================================================================ */
-
-function Hero() {
-  const reduceMotion = useReducedMotion();
-  const entrance = (delay: number, y = 22) => ({
-    initial: reduceMotion ? false : { opacity: 0, y },
-    animate: { opacity: 1, y: 0 },
-    transition: { duration: reduceMotion ? 0 : 0.8, delay, ease: premiumEase },
-  });
-
-  return (
-    <section className="hs-hero relative overflow-hidden bg-[#FBF6EA] px-5 pb-16 pt-14 lg:px-8 lg:pb-24 lg:pt-16">
-      <div className="mx-auto grid max-w-7xl items-center gap-14 lg:grid-cols-[1.05fr_0.95fr] lg:gap-10">
-        {/* ── Copy ── */}
-        <div className="relative z-10">
-          <motion.p {...entrance(0)} className="mb-5 text-xs font-black uppercase tracking-[0.2em] text-[#B98A22]">
-            High School Tuition · Years 7-10
-          </motion.p>
-
-          <h1 className="hs-hero-h1">
-            <motion.span {...entrance(0.08)} className="block text-[#0A1B34]">Find Your</motion.span>
-            <motion.span {...entrance(0.16)} className="hs-hero-h1__voice block">Voice.</motion.span>
-            <motion.span {...entrance(0.24)} className="block text-[#0A1B34]">Find Your</motion.span>
-            <motion.span {...entrance(0.32)} className="hs-hero-h1__direction block">Direction.</motion.span>
-          </h1>
-
-          <motion.p {...entrance(0.42)} className="mt-7 max-w-lg font-serif text-xl italic leading-snug text-[#0A1B34]/80">
-            The years that shape everything.
-          </motion.p>
-
-          <motion.p {...entrance(0.5)} className="mt-4 max-w-lg text-base leading-8 text-[#4b5768]">
-            Years 7-10 are where academic trajectories lock in. Our small-group tutoring builds the skills, habits, and confidence your child needs to perform well in senior school and beyond.
-          </motion.p>
-
-          <motion.div {...entrance(0.58)} className="mt-9 flex flex-wrap items-center gap-3.5">
-            <Link to="/book-interview">
-              <Button size="lg" className="h-12 rounded-full bg-[#D4AF37] px-7 font-black text-[#0A1B34] shadow-lg shadow-[#D4AF37]/25 hover:bg-[#E0BD4B]">
-                Book a Free Trial Lesson
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </Link>
-            <a href="#programs">
-              <Button size="lg" variant="outline" className="h-12 rounded-full border-[#0A1B34]/25 bg-transparent px-7 font-bold text-[#0A1B34] hover:bg-[#0A1B34]/5">
-                See Our Programs
-              </Button>
-            </a>
-          </motion.div>
-
-          <motion.div {...entrance(0.66)} className="mt-8 inline-flex items-start gap-3 border-l-2 border-[#D4AF37] pl-4">
-            <div>
-              <p className="text-sm font-bold text-[#0A1B34]">Selective School and HSC Preparation</p>
-              <p className="text-xs text-[#61708a]">Built into every session from Year 7</p>
-            </div>
-          </motion.div>
-        </div>
-
-        {/* ── Photo + iPad visual ── */}
-        <div className="relative mx-auto w-full max-w-md lg:max-w-none">
-          <motion.div
-            initial={reduceMotion ? false : { opacity: 0, scale: 0.96 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: reduceMotion ? 0 : 0.9, delay: 0.2, ease: premiumEase }}
-            className="hs-hero-photo relative mx-auto w-[78%] sm:w-[68%] lg:w-[74%]"
-          >
-            <MarkerStroke color="#2563EB" className="absolute -left-10 top-10 h-16 w-40 -rotate-6 opacity-70" opacity={0.5} />
-            <MarkerStroke color="#D97D3D" className="absolute -right-6 bottom-12 h-14 w-36 rotate-3 opacity-70" opacity={0.5} />
-            <div className="hs-hero-photo__frame">
-              <img src="/highschool-girl.png" alt="A DA Tuition high school student focused on her written work" className="h-full w-full object-cover" />
-            </div>
-            <HandNote color="#5B8266" rotate={-4} className="absolute -left-4 -top-8 hidden text-lg sm:block lg:-left-10">
-              the questions get<br />better from here.
-            </HandNote>
-          </motion.div>
-
-          <motion.div
-            initial={reduceMotion ? false : { opacity: 0, y: 24, rotate: -6 }}
-            animate={{ opacity: 1, y: 0, rotate: -3 }}
-            transition={{ duration: reduceMotion ? 0 : 0.9, delay: 0.5, ease: premiumEase }}
-            className="hs-ipad"
-            aria-hidden="true"
-          >
-            <div className="hs-ipad__cam" />
-            <div className="hs-ipad__screen">
-              <p className="hs-ipad__title">Today&rsquo;s Plan</p>
-              <ul className="hs-ipad__list">
-                <li><Check /> Be curious</li>
-                <li><Check /> Ask questions</li>
-                <li><Check /> Try new things</li>
-                <li><Check /> Challenge myself</li>
-                <li><Check /> Find my direction</li>
-              </ul>
-              <div className="hs-ipad__venn">
-                <span className="hs-ipad__circle hs-ipad__circle--a">Interests</span>
-                <span className="hs-ipad__circle hs-ipad__circle--b">Strengths</span>
-                <span className="hs-ipad__circle hs-ipad__circle--c">Values</span>
-              </div>
-              <p className="hs-ipad__result">→ My Direction</p>
-            </div>
-            <div className="hs-ipad__pencil" />
-          </motion.div>
-
-          <HandNote color="#8574C4" rotate={2} className="absolute -bottom-6 right-0 hidden text-base sm:block lg:right-4">
-            every step shapes what&rsquo;s next.
-          </HandNote>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ============================================================================
-   YEAR 7-10 JOURNEY — the signature scroll animation. One coloured line
-   travels through Explore → Question → Discover → Direction → What's Next,
-   changing colour as it goes. Light and spacious, per the page rhythm.
+   YEAR 7-10 JOURNEY — an editorial split composition pairing the student
+   portrait with the supplied watercolour milestone artwork.
 ============================================================================ */
 
 function YearJourney() {
   const reduceMotion = useReducedMotion();
-  const ref = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start 78%', 'end 45%'] });
-
-  const seg1 = useTransform(scrollYProgress, [0.04, 0.28], [0, 1]);
-  const seg2 = useTransform(scrollYProgress, [0.27, 0.51], [0, 1]);
-  const seg3 = useTransform(scrollYProgress, [0.5, 0.74], [0, 1]);
-  const seg4 = useTransform(scrollYProgress, [0.73, 0.93], [0, 1]);
-  const arrowOpacity = useTransform(scrollYProgress, [0.85, 0.97], [0, 1]);
-
-  const pl1 = reduceMotion ? 1 : seg1;
-  const pl2 = reduceMotion ? 1 : seg2;
-  const pl3 = reduceMotion ? 1 : seg3;
-  const pl4 = reduceMotion ? 1 : seg4;
-  const arrowOp = reduceMotion ? 1 : arrowOpacity;
-
-  const activation = { once: false, margin: '-42% 0px -42% 0px' } as const;
+  const reveal = (delay: number, y = 18) => ({
+    initial: reduceMotion ? false : { opacity: 0, y },
+    whileInView: { opacity: 1, y: 0 },
+    viewport: { once: true, amount: 0.25 },
+    transition: { duration: reduceMotion ? 0 : 0.75, delay, ease: premiumEase },
+  });
 
   return (
-    <section ref={ref} className="relative overflow-hidden bg-[#FFFDF8] px-5 py-24 lg:px-8 lg:py-32">
-      <div className="mx-auto max-w-7xl">
-        <div className="mb-16 text-center lg:mb-20">
-          <p className="mb-3 text-xs font-black uppercase tracking-[0.2em] text-[#B98A22]">Years 7-10</p>
-          <h2 className="hs-h2">
-            The Four Years That<br className="hidden sm:block" /> Change <span className="hs-underline-wrap">Everything<MarkerUnderline color="#8574C4" className="hs-underline hs-underline--wide" /></span>
-          </h2>
+    <section data-testid="highschool-year-journey" className="relative overflow-hidden bg-[#FFFDF8] px-5 py-16 sm:py-20 lg:px-8 lg:py-0">
+      <div className="mx-auto grid max-w-[98rem] items-center lg:min-h-[min(900px,100svh)] lg:grid-cols-[44%_56%] lg:grid-rows-[auto_1fr]">
+        <div className="order-1 lg:col-start-2 lg:row-start-1 lg:pb-4 lg:pl-8 lg:pt-20 xl:pl-12">
+          <motion.p {...reveal(0.12)} className="mb-3 text-xs font-black uppercase tracking-[0.22em] text-[#A7791D]">
+            Years 7–10
+          </motion.p>
+          <motion.h2 {...reveal(0.2)} className="hs-year-journey-title text-[clamp(2.6rem,3.9vw,4rem)] font-normal leading-[0.94] tracking-[-0.035em] text-[#0A1B34] [text-wrap:balance]">
+            <span className="block lg:whitespace-nowrap">The Four Years</span>
+            <span className="block lg:whitespace-nowrap">That Change <span className="hs-underline-wrap">Everything.<MarkerUnderline color="#C79A2B" className="hs-underline hs-underline--wide" delay={0.48} /></span></span>
+          </motion.h2>
         </div>
 
-        {/* Desktop / tablet: horizontal line */}
-        <div className="relative hidden lg:block">
-          <svg viewBox="0 0 1220 170" fill="none" className="absolute inset-x-0 top-[38px] h-[110px] w-full" preserveAspectRatio="none" aria-hidden="true">
-            <motion.path d="M70 92 C 150 40, 220 140, 330 88" stroke={YEARS[0].color} strokeWidth="3" strokeLinecap="round" fill="none" style={{ pathLength: pl1 }} />
-            <motion.path d="M330 88 C 420 42, 500 132, 605 84" stroke={YEARS[1].color} strokeWidth="3" strokeLinecap="round" fill="none" style={{ pathLength: pl2 }} />
-            <motion.path d="M605 84 C 690 40, 770 130, 880 86" stroke={YEARS[2].color} strokeWidth="3" strokeLinecap="round" fill="none" style={{ pathLength: pl3 }} />
-            <motion.path d="M880 86 C 950 46, 1010 60, 1080 60" stroke={YEARS[3].color} strokeWidth="3" strokeLinecap="round" fill="none" style={{ pathLength: pl4 }} />
-            <motion.path d="M1075 52 L 1100 60 L 1074 70" stroke={YEARS[3].color} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" fill="none" style={{ opacity: arrowOp }} />
-          </svg>
+        <motion.div
+          {...reveal(0.05, 24)}
+          className="order-2 mx-auto mt-8 w-full max-w-[34rem] self-end lg:col-start-1 lg:row-span-2 lg:row-start-1 lg:mt-0 lg:max-w-none lg:pr-3"
+        >
+          <img
+            src="/images/programs/highschool-hero-student.png"
+            alt="DA Tuition student holding her study books"
+            className="block h-auto w-full object-contain object-bottom"
+          />
+        </motion.div>
 
-          <div className="relative grid grid-cols-4 gap-6 pt-2">
-            {YEARS.map((y) => (
-              <motion.div
-                key={y.n}
-                initial={reduceMotion ? false : { opacity: 0.4 }}
-                whileInView={{ opacity: 1 }}
-                viewport={activation}
-                transition={{ duration: 0.5, ease: premiumEase }}
-                className="hs-year-stage"
-              >
-                <motion.span
-                  aria-hidden="true"
-                  className="hs-year-wash"
-                  initial={reduceMotion ? false : { opacity: 0, scale: 0.85 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={activation}
-                  transition={{ duration: 0.6, ease: premiumEase }}
-                  style={{ background: y.wash }}
-                />
-                <div className="relative">
-                  <div className="flex items-center gap-3">
-                    <span className="hs-year-num" style={{ color: y.color }}>{y.n}</span>
-                    <y.Sketch className="h-6 w-6" color={y.color} />
-                  </div>
-                  <p className="mt-1 text-xs font-black uppercase tracking-[0.16em] text-[#61708a]">{y.year}</p>
-                  <p className="hs-h3 mt-1" style={{ color: y.color }}>{y.word}</p>
-                  <p className="mt-3 text-sm leading-7 text-[#4b5768]">{y.text}</p>
-                </div>
-              </motion.div>
-            ))}
-            <motion.div
-              initial={reduceMotion ? false : { opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: false, amount: 0.8 }}
-              transition={{ duration: 0.5, ease: premiumEase }}
-              className="absolute -right-3 top-[6px] text-right"
-            >
-              <p className="whitespace-nowrap font-serif text-lg italic text-[#0A1B34]/70">What&rsquo;s<br />Next?</p>
-            </motion.div>
-          </div>
-        </div>
-
-        {/* Mobile / small tablet: vertical line */}
-        <div className="relative lg:hidden">
-          <svg viewBox="0 0 40 900" fill="none" className="absolute left-[18px] top-0 h-full w-10" preserveAspectRatio="none" aria-hidden="true">
-            <motion.path d="M20 40 C 40 90, 0 150, 20 220" stroke={YEARS[0].color} strokeWidth="3" strokeLinecap="round" fill="none" style={{ pathLength: pl1 }} />
-            <motion.path d="M20 220 C 40 270, 0 330, 20 400" stroke={YEARS[1].color} strokeWidth="3" strokeLinecap="round" fill="none" style={{ pathLength: pl2 }} />
-            <motion.path d="M20 400 C 40 450, 0 510, 20 580" stroke={YEARS[2].color} strokeWidth="3" strokeLinecap="round" fill="none" style={{ pathLength: pl3 }} />
-            <motion.path d="M20 580 C 40 630, 0 670, 20 720" stroke={YEARS[3].color} strokeWidth="3" strokeLinecap="round" fill="none" style={{ pathLength: pl4 }} />
-            <motion.path d="M12 712 L 20 736 L 28 712" stroke={YEARS[3].color} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" fill="none" style={{ opacity: arrowOp }} />
-          </svg>
-          <div className="flex flex-col gap-14 pl-14">
-            {YEARS.map((y) => (
-              <motion.div
-                key={y.n}
-                initial={reduceMotion ? false : { opacity: 0.4 }}
-                whileInView={{ opacity: 1 }}
-                viewport={activation}
-                transition={{ duration: 0.5, ease: premiumEase }}
-                className="hs-year-stage"
-              >
-                <motion.span
-                  aria-hidden="true"
-                  className="hs-year-wash"
-                  initial={reduceMotion ? false : { opacity: 0, scale: 0.85 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={activation}
-                  transition={{ duration: 0.6, ease: premiumEase }}
-                  style={{ background: y.wash }}
-                />
-                <div className="relative">
-                  <div className="flex items-center gap-3">
-                    <span className="hs-year-num" style={{ color: y.color }}>{y.n}</span>
-                    <y.Sketch className="h-6 w-6" color={y.color} />
-                  </div>
-                  <p className="mt-1 text-xs font-black uppercase tracking-[0.16em] text-[#61708a]">{y.year}</p>
-                  <p className="hs-h3 mt-1" style={{ color: y.color }}>{y.word}</p>
-                  <p className="mt-3 max-w-sm text-sm leading-7 text-[#4b5768]">{y.text}</p>
-                </div>
-              </motion.div>
-            ))}
-            <p className="pl-1 font-serif text-lg italic text-[#0A1B34]/70">What&rsquo;s next?</p>
-          </div>
+        <div className="order-3 relative mt-8 pb-4 lg:col-start-2 lg:row-start-2 lg:mt-0 lg:self-start lg:pl-2 lg:pr-2 xl:pl-6">
+          <motion.div
+            {...reveal(0.34, 14)}
+            whileHover={reduceMotion ? undefined : { scale: 1.015, y: -2 }}
+            transition={{ duration: reduceMotion ? 0 : 0.45, ease: premiumEase }}
+            className="relative mx-auto w-full origin-center"
+          >
+            <img
+              src="/images/programs/highschool-year-journey-diagonal.png"
+              alt="Year 7 to Year 10 journey: Explore, Question, Discover and Direction"
+              className="block h-auto w-full object-contain"
+            />
+          </motion.div>
         </div>
       </div>
     </section>
   );
 }
 
+function StakesDoodle({ type, color, active }: { type: string; color: string; active: boolean }) {
+  const path = {
+    book: 'M5 11 Q12 7 20 11 V31 Q12 27 5 31 Z M35 11 Q28 7 20 11 V31 Q28 27 35 31 Z',
+    sprout: 'M20 34 Q19 25 20 15 M20 23 Q11 23 9 16 Q17 14 20 20 M20 18 Q27 18 31 11 Q22 9 20 15',
+    route: 'M6 31 Q11 19 20 24 Q29 29 34 9 M27 11 L34 7 L36 15 M10 12 L12 15 L16 16 L13 19 L14 23 L10 21 L6 23 L7 19 L4 16 L8 15 Z',
+    summit: 'M5 33 Q15 29 20 19 Q25 10 35 6 M28 10 L36 6 L34 15 M20 19 L27 20 L24 14',
+  }[type];
+
+  return (
+    <motion.svg viewBox="0 0 40 40" className="h-11 w-11" fill="none" stroke={color} strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <motion.path
+        d={path}
+        initial={false}
+        animate={{ pathLength: active ? 1 : 0, opacity: active ? 1 : 0.25 }}
+        transition={{ duration: 0.75, ease: premiumEase }}
+      />
+      {type === 'summit' && (
+        <motion.g initial={{ opacity: 0 }} animate={{ opacity: active ? [0, 1, 0.45] : 0 }} transition={{ duration: 1, delay: 0.45 }}>
+          <path d="M31 2 V5 M38 9 H35 M35 3 L33 6" />
+        </motion.g>
+      )}
+    </motion.svg>
+  );
+}
+
 /* ============================================================================
-   WHAT MAKES YEARS 7-10 SO IMPORTANT — all four original items and their
-   full explanatory paragraphs, kept intact. Sticky heading on desktop with
-   01-04 activating as they cross the centre of the viewport.
+   WHAT MAKES YEARS 7-10 SO IMPORTANT — a scroll-built editorial progression.
 ============================================================================ */
 
 function WhyItMatters() {
   const reduceMotion = useReducedMotion();
-  const activation = { once: false, margin: '-45% 0px -45% 0px' } as const;
+  const sectionRef = useRef<HTMLElement>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [isDesktop, setIsDesktop] = useState(false);
+  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ['start start', 'end end'] });
+
+  useEffect(() => {
+    const media = window.matchMedia('(min-width: 1024px)');
+    const sync = () => setIsDesktop(media.matches);
+    sync();
+    media.addEventListener('change', sync);
+    return () => media.removeEventListener('change', sync);
+  }, []);
+
+  useMotionValueEvent(scrollYProgress, 'change', (value) => {
+    if (reduceMotion) return;
+    const next = value < 0.3 ? 0 : value < 0.45 ? 1 : value < 0.6 ? 2 : 3;
+    setActiveIndex(next);
+  });
+
+  const paintY1 = useTransform(scrollYProgress, [0.12, 0.22, 0.245], [620, -8, 0]);
+  const paintY2 = useTransform(scrollYProgress, [0.28, 0.38, 0.405], [620, -8, 0]);
+  const paintY3 = useTransform(scrollYProgress, [0.44, 0.54, 0.565], [620, -8, 0]);
+  const paintY4 = useTransform(scrollYProgress, [0.6, 0.7, 0.725], [620, -8, 0]);
+  const paintScale1 = useTransform(scrollYProgress, [0.12, 0.22, 0.245], [0.94, 1.055, 1]);
+  const paintScale2 = useTransform(scrollYProgress, [0.28, 0.38, 0.405], [0.94, 1.055, 1]);
+  const paintScale3 = useTransform(scrollYProgress, [0.44, 0.54, 0.565], [0.94, 1.055, 1]);
+  const paintScale4 = useTransform(scrollYProgress, [0.6, 0.7, 0.725], [0.94, 1.055, 1]);
+  const paintOpacity1 = useTransform(scrollYProgress, [0.12, 0.17], [0, 0.92]);
+  const paintOpacity2 = useTransform(scrollYProgress, [0.28, 0.33], [0, 0.92]);
+  const paintOpacity3 = useTransform(scrollYProgress, [0.44, 0.49], [0, 0.92]);
+  const paintOpacity4 = useTransform(scrollYProgress, [0.6, 0.65], [0, 0.92]);
+  const textOpacity1 = useTransform(scrollYProgress, [0.18, 0.25], [0.2, 1]);
+  const textOpacity2 = useTransform(scrollYProgress, [0.34, 0.41], [0.2, 1]);
+  const textOpacity3 = useTransform(scrollYProgress, [0.5, 0.57], [0.2, 1]);
+  const textOpacity4 = useTransform(scrollYProgress, [0.66, 0.73], [0.2, 1]);
+  const textY1 = useTransform(scrollYProgress, [0.19, 0.25], [14, 0]);
+  const textY2 = useTransform(scrollYProgress, [0.35, 0.41], [14, 0]);
+  const textY3 = useTransform(scrollYProgress, [0.51, 0.57], [14, 0]);
+  const textY4 = useTransform(scrollYProgress, [0.67, 0.73], [14, 0]);
+  const trailLength = useTransform(scrollYProgress, [0.75, 0.97], [0, 1]);
+  const planeDistance = useTransform(scrollYProgress, [0.75, 0.97], ['0%', '100%']);
+  const planeOpacity = useTransform(scrollYProgress, [0, 0.74, 0.77, 0.96, 0.99], [0.52, 0.52, 1, 1, 0.52]);
+  const paintStyles = [
+    { y: paintY1, scale: paintScale1, opacity: paintOpacity1 },
+    { y: paintY2, scale: paintScale2, opacity: paintOpacity2 },
+    { y: paintY3, scale: paintScale3, opacity: paintOpacity3 },
+    { y: paintY4, scale: paintScale4, opacity: paintOpacity4 },
+  ];
+  const textStyles = [
+    { opacity: textOpacity1, y: textY1 },
+    { opacity: textOpacity2, y: textY2 },
+    { opacity: textOpacity3, y: textY3 },
+    { opacity: textOpacity4, y: textY4 },
+  ];
+  const planePath = isDesktop
+    ? 'path("M 15 610 C 165 560 95 430 260 435 C 450 440 275 275 480 275 C 610 275 545 105 760 35")'
+    : 'path("M 18 690 C 145 650 70 540 250 520 C 350 505 225 375 330 340 C 400 315 310 180 390 105")';
 
   return (
-    <section id="programs" className="bg-[#FBF6EA] px-5 py-24 lg:px-8 lg:py-32">
-      <div className="mx-auto max-w-7xl lg:grid lg:grid-cols-[0.85fr_1.15fr] lg:gap-16">
-        <div className="lg:sticky lg:top-32 lg:self-start">
-          <p className="mb-3 text-xs font-black uppercase tracking-[0.2em] text-[#B98A22]">Why This Stage Is Critical</p>
-          <h2 className="hs-h2">What Makes Years 7-10<br />So Important</h2>
-          <p className="mt-5 max-w-md text-base leading-8 text-[#4b5768]">
-            The move from primary to secondary school is the most significant academic shift a child faces. Here is what is at stake.
+    <section ref={sectionRef} id="programs" data-testid="why-it-matters-progress" className="relative overflow-clip bg-[#FBF6EA] lg:h-[300vh]">
+      <div className="hs-stakes-shell mx-auto flex min-h-screen max-w-[1500px] flex-col justify-center px-5 py-20 sm:px-10 lg:sticky lg:top-0 lg:grid lg:h-screen lg:min-h-0 lg:grid-cols-[36%_64%] lg:items-center lg:gap-8 lg:overflow-hidden lg:px-16 lg:py-0 xl:grid-cols-[40%_60%] xl:gap-12 xl:px-20">
+        <div className="relative z-20 shrink-0 lg:pr-4 xl:pr-8">
+          <motion.p initial={reduceMotion ? false : { opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mb-4 text-xs font-black uppercase tracking-[0.2em] text-[#A7791D]">
+            Why This Stage Is Critical
+          </motion.p>
+          <motion.h2 initial={reduceMotion ? false : { opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.65, ease: premiumEase }} className="hs-stakes-title">
+            What Makes<br />Years 7–10<br />So Important<span className="text-[#B98A22]">.</span>
+          </motion.h2>
+          <p className="hs-hand mt-7 max-w-sm origin-left text-[clamp(1.35rem,2.2vw,1.9rem)] text-[#B77D10]">
+            Small foundations become<br className="hidden sm:block" /> big possibilities.
           </p>
+          <span className="mt-2 block h-[3px] w-20 -rotate-3 rounded-full bg-[#B77D10]" aria-hidden="true" />
         </div>
 
-        <div className="mt-14 lg:mt-0">
-          {stakesCards.map((card, i) => (
-            <motion.div
-              key={card.title}
-              initial={reduceMotion ? false : { opacity: 0.35, y: 12 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={activation}
-              transition={{ duration: 0.5, ease: premiumEase }}
-              className="hs-stakes-item"
-            >
-              <span className="hs-stakes-num" style={{ color: card.color }}>0{i + 1}</span>
-              <div className="min-w-0">
-                <h3 className="hs-h3-sm relative inline-block text-[#0A1B34]">
-                  {card.title}
-                  <MarkerUnderline color={card.color} className="hs-underline hs-underline--tight" delay={0.1} />
-                </h3>
-                <p className="mt-3 max-w-xl text-[15px] leading-[1.75] text-[#4b5768]">{card.text}</p>
-              </div>
-            </motion.div>
-          ))}
+        <div className="hs-stakes-list relative z-10 mt-16 flex flex-col gap-16 lg:mt-0 lg:h-[76vh] lg:max-h-[760px] lg:min-h-[570px] lg:justify-between lg:gap-0">
+          {stakesCards.map((card, i) => {
+            const active = reduceMotion || activeIndex >= i;
+            return (
+              <motion.article
+                key={card.title}
+                id={`milestone-0${i + 1}`}
+                style={!reduceMotion && isDesktop ? textStyles[i] : undefined}
+                className="hs-stakes-milestone group"
+              >
+                <div className="hs-stakes-row relative grid grid-cols-[130px_minmax(0,1fr)] items-center gap-5 sm:grid-cols-[160px_minmax(0,1fr)] sm:gap-9 lg:grid-cols-[clamp(160px,15vw,190px)_minmax(0,1fr)] lg:gap-9 xl:gap-12">
+                  <div className="hs-stakes-visual relative flex h-[145px] w-[130px] shrink-0 items-center justify-center sm:h-[160px] sm:w-[160px] lg:h-[170px] lg:w-full">
+                    <motion.div
+                      className="pointer-events-none absolute inset-0 z-[1] flex items-center justify-center"
+                      style={!reduceMotion && isDesktop ? paintStyles[i] : { opacity: 0.92 }}
+                      aria-hidden="true"
+                    >
+                      <img
+                        src={card.asset}
+                        alt=""
+                        className="w-[150px] max-w-none select-none sm:w-[165px] lg:w-[clamp(165px,14vw,185px)]"
+                      />
+                    </motion.div>
+                    <span className="hs-stakes-num relative z-[2]" style={{ color: card.color }}>0{i + 1}</span>
+                    <div className="absolute bottom-[8%] right-[5%] z-[2] lg:right-[3%]">
+                      <StakesDoodle type={card.icon} color={card.color} active={active} />
+                    </div>
+                  </div>
+                  <div className="hs-stakes-content relative z-[3] min-w-0 lg:max-w-[560px]">
+                    <h3 className="hs-stakes-heading text-[#0A1B34]">
+                      {i === 2 ? <>Selective &amp; Scholarship Pressure</> : card.title}
+                    </h3>
+                    <motion.span className="mt-2 block h-[2px] w-24 origin-left rounded-full" style={{ backgroundColor: card.color }} animate={{ scaleX: active ? 1 : 0.15 }} transition={{ duration: 0.55, ease: premiumEase }} />
+                    <p className="mt-3 max-w-[35rem] text-[clamp(0.95rem,1.2vw,1.08rem)] leading-[1.6] text-[#46536A]">{i === 3 ? <>When students believe in themselves, they&rsquo;re willing to take on bigger challenges.</> : card.text}</p>
+                  </div>
+                </div>
+              </motion.article>
+            );
+          })}
         </div>
+
+        <svg viewBox="0 0 780 650" preserveAspectRatio="none" className="pointer-events-none absolute inset-y-0 right-16 z-20 hidden h-full w-[60%] lg:block xl:right-20" fill="none" aria-hidden="true">
+          <defs>
+            <mask id="stakes-flight-mask-desktop">
+              <motion.path d="M15 610 C165 560 95 430 260 435 C450 440 275 275 480 275 C610 275 545 105 760 35" stroke="white" strokeWidth="8" fill="none" style={{ pathLength: reduceMotion ? 1 : trailLength }} />
+            </mask>
+          </defs>
+          <path d="M15 610 C165 560 95 430 260 435 C450 440 275 275 480 275 C610 275 545 105 760 35" stroke="#123D76" strokeWidth="1.5" strokeDasharray="7 10" strokeLinecap="round" opacity="0.16" />
+          <path data-testid="stakes-flight-trail" d="M15 610 C165 560 95 430 260 435 C450 440 275 275 480 275 C610 275 545 105 760 35" stroke="#123D76" strokeWidth="2" strokeDasharray="7 10" strokeLinecap="round" mask="url(#stakes-flight-mask-desktop)" />
+        </svg>
+        <motion.div
+          data-testid="stakes-paper-plane"
+          className="pointer-events-none absolute left-0 top-0 z-30 hidden h-12 w-12 text-[#123D76] lg:left-[38%] lg:block lg:h-16 lg:w-16"
+          style={{ offsetPath: planePath, offsetDistance: reduceMotion ? '0%' : planeDistance, offsetRotate: 'auto 12deg', opacity: reduceMotion ? 0.52 : planeOpacity }}
+          aria-hidden="true"
+        >
+          <svg viewBox="0 0 64 54" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round" className="h-full w-full">
+            <path d="M4 24 L58 4 L43 48 L30 32 L18 43 L20 28 Z" />
+            <path d="M20 28 L58 4 L30 32" />
+            <path d="M18 43 L27 34" opacity=".7" />
+          </svg>
+        </motion.div>
       </div>
     </section>
   );
@@ -659,7 +548,7 @@ function Curriculum() {
 function FindYourVoice() {
   const reduceMotion = useReducedMotion();
   const ref = useRef<HTMLDivElement>(null);
-  const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start start', 'end end'] });
+  const { scrollYProgress: p } = useScroll({ target: reduceMotion ? undefined : ref, offset: ['start start', 'end end'] });
 
   const useFadeRange = (a: number, b: number, c: number, d: number) => useTransform(p, [a, b, c, d], [0, 1, 1, 0]);
   const useRiseInRange = (a: number, b: number) => useTransform(p, [a, b], [0, 1]);
@@ -1022,17 +911,11 @@ const HighSchool = () => {
 
       <div id="highschool-page-content">
         <main>
-          <Hero />
-          <YearJourney />
-          <WhyItMatters />
+          <HighSchoolCinematicScene />
           <TeacherBeside />
           <Curriculum />
-          <FindYourVoice />
           <HowWeTeach />
-          <RealResults />
-          <PhotoDuo />
           <PerfectIf />
-          <HSCTransition />
         </main>
 
         <footer className="flex flex-wrap items-center justify-between gap-3.5 border-t border-white/10 bg-[#0A1B34] px-5 py-7 lg:px-8">
@@ -1048,7 +931,7 @@ const HighSchool = () => {
         .hs-page { overflow-x: clip; }
         .hs-page h1, .hs-page h2, .hs-page h3 { font-family: 'Outfit', 'Inter', system-ui, sans-serif; }
 
-        .hs-hand { font-family: 'Caveat', cursive; display: inline-block; line-height: 1.15; transform: rotate(var(--hs-rotate, -2deg)); }
+        .hs-hand { font-family: 'Caveat', cursive; line-height: 1.15; transform: rotate(var(--hs-rotate, -2deg)); }
 
         .hs-hero-h1 { font-weight: 800; letter-spacing: -0.03em; line-height: 0.92; font-size: clamp(2.9rem, 7vw, 5.4rem); }
         .hs-hero-h1__voice { color: #8574C4; }
@@ -1057,6 +940,7 @@ const HighSchool = () => {
         .hs-h2 { font-weight: 700; letter-spacing: -0.03em; line-height: 1.04; font-size: clamp(2.1rem, 3.6vw, 3.1rem); color: #0A1B34; }
         .hs-h3 { font-weight: 700; letter-spacing: -0.02em; line-height: 1.1; font-size: clamp(1.5rem, 2vw, 1.85rem); }
         .hs-h3-sm { font-weight: 700; letter-spacing: -0.015em; line-height: 1.25; font-size: 1.2rem; }
+        .hs-year-journey-title { font-family: 'Libre Baskerville', Georgia, serif !important; }
 
         .hs-underline-wrap { position: relative; display: inline-block; }
         .hs-underline { position: absolute; left: -2%; bottom: -0.14em; width: 104%; height: 0.5em; pointer-events: none; }
@@ -1088,14 +972,11 @@ const HighSchool = () => {
         .hs-bleed-photo--results { clip-path: polygon(0% 4%, 96% 0%, 100% 92%, 6% 100%); }
         .hs-bleed-photo--duo { border-radius: 0.75rem 3rem 0.75rem 0.75rem; }
 
-        /* Year journey */
-        .hs-year-stage { position: relative; padding: 1.5rem 1.1rem 1.25rem; }
-        .hs-year-wash { position: absolute; inset: -0.4rem -0.6rem; border-radius: 1.4rem; z-index: 0; }
-        .hs-year-num { position: relative; z-index: 1; font-weight: 800; font-size: 2rem; line-height: 1; letter-spacing: -0.02em; }
-
         /* Why it matters */
-        .hs-stakes-item { display: flex; gap: 1.5rem; align-items: flex-start; padding: 1.75rem 0; }
-        .hs-stakes-num { font-weight: 800; font-size: 1.6rem; line-height: 1; letter-spacing: -0.01em; min-width: 3rem; }
+        .hs-stakes-title { font-family: 'Libre Baskerville', Georgia, serif !important; font-weight: 700; letter-spacing: -0.035em; line-height: 1.04; font-size: clamp(2.45rem, 4.6vw, 4.75rem); color: #0A1B34; }
+        .hs-stakes-milestone { position: relative; min-height: 0; }
+        .hs-stakes-num { font-family: 'Libre Baskerville', Georgia, serif; font-weight: 700; font-size: clamp(3.4rem, 5vw, 5.375rem); line-height: 0.9; letter-spacing: -0.065em; }
+        .hs-stakes-heading { font-family: 'Libre Baskerville', Georgia, serif !important; font-weight: 700; font-size: clamp(1.25rem, 1.55vw, 1.625rem); line-height: 1.2; letter-spacing: -0.025em; }
 
         /* How we teach */
         .hs-teach-item { position: relative; display: flex; gap: 1.25rem; align-items: flex-start; padding: 1.9rem 0 1.9rem 1.1rem; }
@@ -1127,7 +1008,10 @@ const HighSchool = () => {
         }
         @media (max-width: 640px) {
           .hs-hero-photo { width: 88%; }
-          .hs-stakes-item, .hs-teach-item { gap: 1rem; }
+          .hs-teach-item { gap: 1rem; }
+          .hs-stakes-title { font-size: clamp(2rem, 10vw, 2.65rem); }
+          .hs-stakes-num { font-size: clamp(3.2rem, 15vw, 4rem); }
+          .hs-stakes-heading { font-size: clamp(1.05rem, 4.7vw, 1.25rem); }
         }
         @media (prefers-reduced-motion: reduce) {
           .hs-page * { scroll-behavior: auto !important; }

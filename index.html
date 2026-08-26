@@ -27,6 +27,7 @@
     -->
 
     <link rel="icon" href="/lovable-uploads/7692e107-bde1-4906-b047-2458fe6a81ca.png" type="image/png">
+    <link rel="preload" as="image" href="/images/da-logo.png" fetchpriority="high" />
     <link
       rel="preload"
       as="image"
@@ -34,7 +35,6 @@
       type="image/webp"
       fetchpriority="high"
     />
-    <link rel="preload" as="video" href="/intro.mp4" type="video/mp4" />
 
     <meta property="og:title" content="DA Tuition - Beyond Academic Excellence" />
     <meta property="og:description" content="Personalized K-12 tutoring that builds confidence and supports the whole child. Join the DA Family." />
@@ -51,11 +51,55 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@300;400;500;600;700;800&family=Baloo+2:wght@400;600;700&family=Libre+Baskerville:wght@400;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Cabin:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+
+    <style>
+      /* Static first-paint loader — pure CSS, no JS dependency, so it
+         appears instantly and is automatically wiped the moment React
+         mounts and calls render() on #root. */
+      #initial-loader {
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 16px;
+        background: #0f172a;
+      }
+      #initial-loader img {
+        width: 72px;
+        height: 72px;
+        object-fit: contain;
+        animation: initial-loader-pulse 1.6s ease-in-out infinite;
+      }
+      #initial-loader p {
+        margin: 0;
+        font-family: Georgia, 'Times New Roman', serif;
+        font-size: 13px;
+        font-weight: 500;
+        letter-spacing: 0.32em;
+        text-transform: uppercase;
+        color: rgba(212, 175, 55, 0.85);
+      }
+      @keyframes initial-loader-pulse {
+        0%, 100% { opacity: 0.55; transform: scale(0.97); }
+        50% { opacity: 1; transform: scale(1); }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        #initial-loader img { animation: none; }
+      }
+    </style>
   </head>
 
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <div id="initial-loader" role="status" aria-live="polite">
+        <img src="/images/da-logo.png" alt="" width="72" height="72" fetchpriority="high" />
+        <p>Loading…</p>
+      </div>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

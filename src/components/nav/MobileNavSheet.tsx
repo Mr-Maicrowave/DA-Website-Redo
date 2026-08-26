@@ -123,7 +123,7 @@ const MobileNavSheet = ({
         <div className="flex items-center justify-between px-4 py-4 border-b border-brand-gold/20">
           <span
             className="text-[1.08rem] font-bold text-brand-navy"
-            style={{ fontFamily: "'Libre Baskerville', Georgia, serif" }}
+            style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
           >
             DA <span className="text-brand-gold italic">Tuition</span>
           </span>

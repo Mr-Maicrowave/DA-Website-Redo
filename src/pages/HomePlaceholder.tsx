@@ -33,7 +33,7 @@ const HomePlaceholder = () => {
             A New DA Tuition Experience Is Coming
           </h1>
           <p className="mx-auto mt-7 max-w-2xl text-lg leading-8 text-[#38475b] sm:text-xl">
-            We’re preparing a refreshed website experience for DA Tuition. You can still book a consultation or view the English Sample concept while the new site is being prepared.
+            We’re preparing a refreshed website experience for DA Tuition. You can still book a consultation while the new site is being prepared.
           </p>
           <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
             <Link
@@ -41,12 +41,6 @@ const HomePlaceholder = () => {
               className="inline-flex min-h-12 items-center justify-center rounded-md bg-[#0a1b34] px-7 text-sm font-bold uppercase tracking-[0.12em] text-[#fff3d6] shadow-lg shadow-[#0a1b34]/15 transition hover:-translate-y-0.5 hover:bg-[#102d52] focus:outline-none focus:ring-2 focus:ring-[#c89534] focus:ring-offset-4 focus:ring-offset-[#f7f0e3]"
             >
               Book Consultation
-            </Link>
-            <Link
-              to="/english-sample"
-              className="inline-flex min-h-12 items-center justify-center rounded-md border border-[#c89534]/55 bg-white/45 px-7 text-sm font-bold uppercase tracking-[0.12em] text-[#0a1b34] transition hover:-translate-y-0.5 hover:bg-white/70 focus:outline-none focus:ring-2 focus:ring-[#c89534] focus:ring-offset-4 focus:ring-offset-[#f7f0e3]"
-            >
-              View English Sample
             </Link>
           </div>
         </section>

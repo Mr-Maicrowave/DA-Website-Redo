@@ -337,7 +337,7 @@
     overflow:hidden;
     margin-top:-1px;
     padding:clamp(86px,8vw,124px) 32px clamp(94px,8vw,132px);
-    background:#F8F3EA;
+    background:#F8F4EC;
   }
   .parents-faq .section-inner{width:min(1600px,100%)}
   .parents-faq .section-head{
@@ -429,7 +429,7 @@
     height:10px;
     border:2px solid #C99A20;
     border-radius:50%;
-    background:#F8F3EA;
+    background:#F8F4EC;
     transition:background .3s ease,box-shadow .3s ease,transform .3s ease;
   }
   .parent-q-node::after{
@@ -1282,9 +1282,7 @@
   .classes{
     --c-navy:#061A34;--c-navy2:#061A34;--c-gold:#D3A62C;--c-cream:#FFF9EF;--c-soft:#F8F4EC;
     position:relative;overflow:hidden;color:var(--c-cream);
-    background:
-      radial-gradient(ellipse 900px 520px at 50% 0%,rgba(211,166,44,.09),transparent 62%),
-      var(--c-navy);
+    background:var(--c-navy);
   }
   .classes::before,.classes::after{content:"";position:absolute;border-radius:50%;border:1px solid rgba(211,166,44,.32);pointer-events:none}
   .classes::before{top:-150px;left:-150px;width:340px;height:340px}
@@ -1452,6 +1450,72 @@
     .diff-row-copy p{font-size:10px;line-height:1.3}
     .diff-quote-banner{padding:64px 20px;min-height:520px}
     .diff-quote-text{height:360px}
+  }
+
+  .classes{
+    --c-navy:#061A34;--c-ink:#071B35;--c-gold:#D3A62C;--c-gold-soft:#F4D181;--c-cream:#FFF9EF;
+    position:relative;overflow:hidden;color:var(--c-cream);
+    background:var(--c-navy);
+    padding:clamp(65px,6.5vw,97px) 25px;
+  }
+  .classes::before,.classes::after{content:"";position:absolute;border-radius:50%;border:1px solid rgba(211,166,44,.27);pointer-events:none}
+  .classes::before{top:-170px;left:-170px;width:390px;height:390px}
+  .classes::after{bottom:-210px;right:-190px;width:430px;height:430px}
+  .classes .section-inner{width:min(1215px,90%);position:relative;z-index:1}
+  .class-showcase-shell{display:grid;grid-template-columns:minmax(260px,365px) minmax(0,1fr);gap:clamp(27px,3.6vw,59px);align-items:center}
+  .class-showcase-kicker{display:flex;align-items:center;gap:10px;margin:0 0 18px;color:var(--c-gold);font-size:11px;font-weight:900;letter-spacing:.24em;text-transform:uppercase}
+  .class-showcase-kicker::before{content:"✦";font-size:13px;line-height:1}
+  .class-showcase-heading{font-family:"Playfair Display",Georgia,serif;font-size:clamp(2.52rem,4.7vw,4.5rem);line-height:1.02;margin:0 0 25px;color:#fffaf0}
+  .class-showcase-heading span{color:var(--c-gold-soft)}
+  .class-choice-list{display:grid;gap:6px}
+  .class-choice{
+    appearance:none;width:100%;border:1px solid rgba(7,27,53,.16);border-radius:11px;
+    background:rgba(255,249,239,.98);color:var(--c-ink);padding:11px 13px;
+    display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:14px;text-align:left;cursor:pointer;
+    box-shadow:0 16px 36px rgba(0,0,0,.18);
+    transition:transform .24s cubic-bezier(.22,1,.36,1),box-shadow .24s ease,border-color .24s ease;
+  }
+  .class-choice:hover,.class-choice:focus-visible,.class-choice.is-active{
+    outline:none;transform:translateY(-1px);border-color:var(--c-gold);
+    box-shadow:0 22px 48px rgba(0,0,0,.25),inset 0 0 0 1px rgba(211,166,44,.28);
+  }
+  .class-choice-icon{width:47px;height:47px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--tone-soft);color:var(--tone)}
+  .class-choice-icon svg{width:23px;height:23px;display:block;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+  .class-choice-title{display:block;font-family:"Playfair Display",Georgia,serif;font-size:clamp(1.08rem,1.33vw,1.4rem);font-weight:700;line-height:1.05;margin-bottom:4px}
+  .class-choice-short{display:block;color:rgba(7,27,53,.86);font-size:12px;line-height:1.35}
+  .class-choice-arrow{font-size:24px;line-height:1;color:var(--c-ink)}
+  .class-detail-card{
+    border:1px solid rgba(211,166,44,.44);border-radius:22px;background:linear-gradient(135deg,#FFF9EF 0%,#fffdf8 55%,#F7ECD9 100%);
+    padding:clamp(14px,1.6vw,21px);box-shadow:0 30px 78px rgba(0,0,0,.28);color:var(--c-ink);min-height:616px;
+  }
+  .class-detail-media{height:clamp(198px,16.2vw,267px);border-radius:12px;overflow:hidden;background:#102b4b}
+  .class-detail-media img{width:100%;height:100%;object-fit:cover;transition:opacity .24s ease,transform .42s cubic-bezier(.22,1,.36,1)}
+  .class-detail-copy{padding:clamp(18px,2vw,27px) clamp(5px,.8vw,12px) 0;min-height:256px}
+  .class-detail-card.is-changing .class-detail-media img,.class-detail-card.is-changing .class-detail-copy{opacity:.45}
+  .class-detail-title{font-family:"Playfair Display",Georgia,serif;font-size:clamp(2.43rem,3.9vw,4.05rem);font-weight:700;line-height:.98;margin:0;color:#071B35}
+  .class-detail-rule{width:39px;height:1px;background:var(--active-tone,var(--c-gold));margin:14px 0 14px}
+  .class-detail-text{font-size:clamp(.82rem,.88vw,.94rem);line-height:1.68;color:rgba(7,27,53,.92);margin:0}
+  .class-detail-stats{display:grid;grid-template-columns:repeat(4,1fr);margin-top:22px;padding-top:18px;border-top:1px solid rgba(7,27,53,.14)}
+  .class-detail-stat{min-height:75px;text-align:center;padding:0 14px;border-left:1px solid rgba(211,166,44,.36)}
+  .class-detail-stat:first-child{border-left:0}
+  .class-detail-stat strong{display:block;margin-bottom:7px;color:#9B690D;font-size:10px;font-weight:900;letter-spacing:.16em;text-transform:uppercase}
+  .class-detail-stat span{display:block;font-family:"Playfair Display",Georgia,serif;color:var(--c-ink);font-size:clamp(.82rem,.94vw,.98rem);line-height:1.34}
+  @media (prefers-reduced-motion:reduce){
+    .class-choice,.class-detail-media img{transition:none}
+  }
+  @media (max-width:1080px){
+    .class-showcase-shell{grid-template-columns:1fr}
+    .class-choice-list{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .class-detail-card{min-height:0}
+  }
+  @media (max-width:720px){
+    .classes{padding:78px 20px}
+    .class-choice-list,.class-detail-stats{grid-template-columns:1fr}
+    .class-detail-media{height:260px}
+    .class-detail-card{padding:14px;border-radius:18px}
+    .class-detail-title{font-size:clamp(2.5rem,13vw,3.55rem)}
+    .class-detail-stat{border-left:0;border-top:1px solid rgba(211,166,44,.32);padding:15px 0;min-height:0}
+    .class-detail-stat:first-child{border-top:0}
   }
 </style>
 </head>
@@ -1721,90 +1785,58 @@
     </div>
   </section>
 
-  <section class="classes">
+  <section class="classes" id="english-classes">
     <span class="classes-dots classes-dots--tl" aria-hidden="true"></span>
     <span class="classes-dots classes-dots--br" aria-hidden="true"></span>
     <span class="classes-star classes-star--1" aria-hidden="true">&#10022;</span>
     <span class="classes-star classes-star--2" aria-hidden="true">&#10022;</span>
-    <div class="section-inner">
-      <div class="section-head">
-        <div class="classes-divider" aria-hidden="true"><span></span><i>&#10022;</i><span></span></div>
-        <h2 class="serif">Choose the class style<br>that fits the student</h2>
-      </div>
-      <div class="class-grid">
-        <article class="class-card class-card--lavender">
-          <div class="class-photo"><img src="images/subjects/english/class-private.png" alt="Tutor and student working one-to-one on laptops in a private DA Tuition class"></div>
-          <div class="class-body">
-            <span class="class-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.4"></circle><path d="M5 20c0-3.9 3.1-7 7-7s7 3.1 7 7"></path><path d="M18 3.2l.6 1.4 1.4.6-1.4.6-.6 1.4-.6-1.4-1.4-.6 1.4-.6Z"></path></svg></span>
-            <h3>Private Classes</h3>
-            <span class="class-divider" aria-hidden="true"><span></span><i></i><span></span></span>
-            <p>One-to-one support for students who need individual attention, targeted feedback, or a personalised pace.</p>
-          </div>
-        </article>
-        <article class="class-card class-card--mint">
-          <div class="class-photo"><img src="images/subjects/english/class-gat.png" alt="Students working through extension-style GAT class material at DA Tuition"></div>
-          <div class="class-body">
-            <span class="class-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 19V13"></path><path d="M10 19V9"></path><path d="M16 19v-7"></path><path d="M20 19V5"></path><path d="M4 9l6-4 6 3 4-4"></path></svg></span>
-            <h3>GAT Class</h3>
-            <span class="class-divider" aria-hidden="true"><span></span><i></i><span></span></span>
-            <p>Extension-style learning for high-performing students who need challenge, depth, and sharper analytical thinking.</p>
-          </div>
-        </article>
-        <article class="class-card class-card--peach">
-          <div class="class-photo"><img src="images/subjects/english/class-bullet.png" alt="Students in a fast-paced Bullet Class exam-technique session at DA Tuition"></div>
-          <div class="class-body">
-            <span class="class-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M13 3 6 14h5l-1 7 8-12h-5l1-6Z"></path></svg></span>
-            <h3>Bullet Class</h3>
-            <span class="class-divider" aria-hidden="true"><span></span><i></i><span></span></span>
-            <p>Fast, focused lessons built around exam techniques, key skills, and high-impact revision.</p>
-          </div>
-        </article>
-        <article class="class-card class-card--blue">
-          <div class="class-photo"><img src="images/subjects/english/class-creative.png" alt="Students collaborating in a Creative Writing workshop at DA Tuition"></div>
-          <div class="class-body">
-            <span class="class-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M18 4c-3.5 0-7.5 2.4-9 6.6-.8 2-.9 3.8-.9 5 0 .2.1.4.3.5.2.1.4.1.5 0C10.6 14.8 12.6 13.7 14.6 13c4-1.4 4-6.6 4-9Z"></path><path d="M4 20l5.5-5.5"></path></svg></span>
-            <h3>Creative Writing</h3>
-            <span class="class-divider" aria-hidden="true"><span></span><i></i><span></span></span>
-            <p>Dedicated writing workshops for voice, structure, imagery, narrative control, and originality.</p>
-          </div>
-        </article>
-        <article class="class-card class-card--pink">
-          <div class="class-photo class-photo--focus"><img class="class-photo-img--focus" src="images/subjects/english/class-focus-school-group.png" alt="Focus Class students learning together at DA Tuition"></div>
-          <div class="class-body">
-            <span class="class-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="9" cy="9" r="2.6"></circle><circle cx="17" cy="10.2" r="2.1"></circle><path d="M4 19c0-3 2.2-5.4 5-5.4s5 2.4 5 5.4"></path><path d="M14.5 19c.2-2.2 1.7-4 3.7-4"></path></svg></span>
-            <h3>Focus Class</h3>
-            <span class="class-divider" aria-hidden="true"><span></span><i></i><span></span></span>
-            <p>Learn alongside students from your school, with lessons tailored to the same texts, assessments and classroom content.</p>
-          </div>
-        </article>
-      </div>
-      <div class="classes-benefits">
-        <div class="classes-benefit">
-          <span class="classes-benefit-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M2 8l10-4 10 4-10 4Z"></path><path d="M6 10.5V16c0 1.3 2.7 3 6 3s6-1.7 6-3v-5.5"></path><path d="M22 8v6"></path></svg></span>
-          <div class="classes-benefit-copy"><strong>Expert Teachers</strong><span>Highly qualified and passionate educators</span></div>
-        </div>
-        <span class="classes-benefit-sep" aria-hidden="true"></span>
-        <div class="classes-benefit">
-          <span class="classes-benefit-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 18l6-6 4 4 8-9"></path><path d="M15 7h6v6"></path></svg></span>
-          <div class="classes-benefit-copy"><strong>Proven Results</strong><span>A track record of stronger confidence and outcomes</span></div>
-        </div>
-        <span class="classes-benefit-sep" aria-hidden="true"></span>
-        <div class="classes-benefit">
-          <span class="classes-benefit-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.6"></circle><path d="M5 20c0-3.9 3.1-7 7-7s7 3.1 7 7"></path></svg></span>
-          <div class="classes-benefit-copy"><strong>Personalised Support</strong><span>Tailored guidance to help every student succeed</span></div>
-        </div>
-        <span class="classes-benefit-sep" aria-hidden="true"></span>
-        <div class="classes-benefit">
-          <span class="classes-benefit-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3l7 3v6c0 4.4-3 7.6-7 9-4-1.4-7-4.6-7-9V6Z"></path><path d="M9 12l2 2 4-4"></path></svg></span>
-          <div class="classes-benefit-copy"><strong>Premium Learning</strong><span>High-quality resources and structured programs</span></div>
-        </div>
-        <span class="classes-benefit-sep" aria-hidden="true"></span>
-        <div class="classes-benefit">
-          <span class="classes-benefit-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-9.6C5 7 7 5 9.5 5c1.4 0 2.6.7 3.3 1.8C13.4 5.7 14.6 5 16 5c2.5 0 4.5 2 4.5 5.4C20.5 15.6 12 20 12 20Z"></path></svg></span>
-          <div class="classes-benefit-copy"><strong>Student-Centred</strong><span>A supportive environment where students thrive</span></div>
+    <div class="section-inner class-showcase-shell">
+      <div class="class-showcase-menu">
+        <p class="class-showcase-kicker">Our Classes</p>
+        <h2 class="class-showcase-heading">Find the right class<br>for <span>your goals</span></h2>
+        <div class="class-choice-list" role="tablist" aria-label="English class styles">
+          <button class="class-choice is-active" type="button" role="tab" aria-selected="true" aria-controls="class-detail-card" data-class-index="0" style="--tone:#A98BEC;--tone-soft:#EEE8FF">
+            <span class="class-choice-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"></circle><circle cx="17" cy="9.2" r="2.6"></circle><path d="M3.8 20c0-3.7 2.4-6.4 5.2-6.4s5.2 2.7 5.2 6.4"></path><path d="M14.8 19.8c.2-2.6 1.9-4.5 4.4-4.8"></path></svg></span>
+            <span><span class="class-choice-title">Private Classes</span><span class="class-choice-short">Personalised support at your pace.</span></span>
+            <span class="class-choice-arrow" aria-hidden="true">&rsaquo;</span>
+          </button>
+          <button class="class-choice" type="button" role="tab" aria-selected="false" aria-controls="class-detail-card" data-class-index="1" style="--tone:#7ECDA7;--tone-soft:#E8F7EF">
+            <span class="class-choice-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 19V13"></path><path d="M10 19V9"></path><path d="M16 19v-7"></path><path d="M20 19V5"></path><path d="M4 9l6-4 6 3 4-4"></path></svg></span>
+            <span><span class="class-choice-title">GAT Classes</span><span class="class-choice-short">Advanced learning for ambitious students.</span></span>
+            <span class="class-choice-arrow" aria-hidden="true">&rsaquo;</span>
+          </button>
+          <button class="class-choice" type="button" role="tab" aria-selected="false" aria-controls="class-detail-card" data-class-index="2" style="--tone:#F2A764;--tone-soft:#FFF0E2">
+            <span class="class-choice-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M13 3 6 14h5l-1 7 8-12h-5l1-6Z"></path></svg></span>
+            <span><span class="class-choice-title">Bullet Classes</span><span class="class-choice-short">Fast-paced training for top performance.</span></span>
+            <span class="class-choice-arrow" aria-hidden="true">&rsaquo;</span>
+          </button>
+          <button class="class-choice" type="button" role="tab" aria-selected="false" aria-controls="class-detail-card" data-class-index="3" style="--tone:#83C4F2;--tone-soft:#E7F4FF">
+            <span class="class-choice-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M18 4c-3.5 0-7.5 2.4-9 6.6-.8 2-.9 3.8-.9 5 0 .2.1.4.3.5.2.1.4.1.5 0C10.6 14.8 12.6 13.7 14.6 13c4-1.4 4-6.6 4-9Z"></path><path d="M4 20l5.5-5.5"></path></svg></span>
+            <span><span class="class-choice-title">Creative Writing Classes</span><span class="class-choice-short">Build the skills to write anything with confidence.</span></span>
+            <span class="class-choice-arrow" aria-hidden="true">&rsaquo;</span>
+          </button>
+          <button class="class-choice" type="button" role="tab" aria-selected="false" aria-controls="class-detail-card" data-class-index="4" style="--tone:#E99BC3;--tone-soft:#FCEAF3">
+            <span class="class-choice-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7"></circle><circle cx="12" cy="12" r="3.2"></circle><path d="M12 5V3"></path><path d="M12 21v-2"></path><path d="M5 12H3"></path><path d="M21 12h-2"></path></svg></span>
+            <span><span class="class-choice-title">Focus Classes</span><span class="class-choice-short">Learn alongside students from your school.</span></span>
+            <span class="class-choice-arrow" aria-hidden="true">&rsaquo;</span>
+          </button>
         </div>
       </div>
-      <div class="classes-divider classes-divider--bottom" aria-hidden="true"><span></span><i>&#10022;</i><span></span></div>
+
+      <article class="class-detail-card" id="class-detail-card" role="tabpanel" aria-live="polite" style="--active-tone:#A98BEC">
+        <div class="class-detail-media"><img id="class-detail-image" src="images/subjects/english/class-private.png" alt="Tutor and student working in a Private Classes session at DA Tuition"></div>
+        <div class="class-detail-copy">
+          <h3 class="class-detail-title" id="class-detail-title">Private Classes</h3>
+          <div class="class-detail-rule" aria-hidden="true"></div>
+          <p class="class-detail-text" id="class-detail-text">Personalised learning in a smaller-group environment, allowing tutors to focus closely on each student’s individual strengths, areas for improvement and academic goals. Students receive targeted support with assessments, skill development and challenging concepts, with lessons adapted to their pace and learning needs. Ideal for students who benefit from more explanation, greater individual attention and a supportive environment where they can build confidence at their own pace.</p>
+          <div class="class-detail-stats">
+            <div class="class-detail-stat"><strong>Best For</strong><span id="class-stat-best">Students who benefit from individualised support, greater explanation and confidence.</span></div>
+            <div class="class-detail-stat"><strong>Class Size</strong><span id="class-stat-size">Smaller-group learning</span></div>
+            <div class="class-detail-stat"><strong>Pace</strong><span id="class-stat-pace">Adapted to the student’s pace</span></div>
+            <div class="class-detail-stat"><strong>Style</strong><span id="class-stat-style">Personalised, supportive and assessment-focused</span></div>
+          </div>
+        </div>
+      </article>
     </div>
   </section>
 
@@ -2688,6 +2720,125 @@
           const active = buttons.find((btn) => btn.dataset.q === selected);
           if(active) drawConnector(active);
         }, 180);
+      });
+    })();
+
+    (function(){
+      const classStyles = [
+        {
+          title: "Private Classes",
+          text: "Personalised learning in a smaller-group environment, allowing tutors to focus closely on each student’s individual strengths, areas for improvement and academic goals. Students receive targeted support with assessments, skill development and challenging concepts, with lessons adapted to their pace and learning needs. Ideal for students who benefit from more explanation, greater individual attention and a supportive environment where they can build confidence at their own pace.",
+          image: "images/subjects/english/class-private.png",
+          alt: "Tutor and student working in a Private Classes session at DA Tuition",
+          tone: "#A98BEC",
+          best: "Students who benefit from individualised support, greater explanation and confidence.",
+          size: "Smaller-group learning",
+          pace: "Adapted to the student’s pace",
+          style: "Personalised, supportive and assessment-focused"
+        },
+        {
+          title: "GAT Classes",
+          text: "Designed for ambitious, independent students who enjoy being challenged. GAT Classes provide a more advanced and competitive learning environment where students explore concepts in greater depth, strengthen higher-order thinking and work towards clear personal academic goals. Ideal for students who thrive when surrounded by other motivated learners and want to continually push themselves further.",
+          image: "images/subjects/english/class-gat.png",
+          alt: "Students working through advanced GAT Classes material at DA Tuition",
+          tone: "#7ECDA7",
+          best: "Ambitious, independent students who enjoy being challenged.",
+          size: "Advanced class setting",
+          pace: "Deeper, higher-order learning",
+          style: "Competitive, motivated and goal-driven"
+        },
+        {
+          title: "Bullet Classes",
+          text: "Fast-paced, high-energy classes designed for students who want to sharpen their speed, accuracy and critical thinking. Students are challenged through demanding questions, efficient problem-solving and high academic expectations, creating an environment that encourages them to perform at their very best. Ideal for highly driven students aiming for exceptional results and the confidence to compete at the top of their cohort.",
+          image: "images/subjects/english/class-bullet.png",
+          alt: "Students in a fast-paced Bullet Classes session at DA Tuition",
+          tone: "#F2A764",
+          best: "Highly driven students aiming for exceptional results.",
+          size: "High-energy class",
+          pace: "Fast, demanding and precise",
+          style: "Speed, accuracy and critical thinking"
+        },
+        {
+          title: "Creative Writing Classes",
+          text: "Writing becomes a skill students can learn, practise and master. Creative Writing Classes build strong foundations in sentence construction, structure, language techniques and different text types, while teaching students how to adapt their writing to a wide range of prompts and purposes. Ideal for students who currently find writing difficult or frustrating, as well as confident writers who want to develop greater sophistication, creativity and control. The goal is to create adaptable writers who feel capable of writing almost anything they are given.",
+          image: "images/subjects/english/class-creative.png",
+          alt: "Students developing writing skills in Creative Writing Classes at DA Tuition",
+          tone: "#83C4F2",
+          best: "Students who want stronger, more adaptable writing.",
+          size: "Dedicated writing workshops",
+          pace: "Skill-by-skill development",
+          style: "Creative, structured and expressive"
+        },
+        {
+          title: "Focus Classes",
+          text: "Focus Classes bring together students from the same school so lessons can align directly with the texts, assessments and classroom content they are working through. This creates a familiar, highly relevant learning environment where students can strengthen understanding, refine classwork and prepare for school-based tasks with greater confidence. Ideal for students who want targeted support that matches what they are learning at school, while benefiting from collaboration with peers in the same cohort.",
+          image: "images/subjects/english/class-focus-school-group.png",
+          alt: "Focus Classes students from the same school learning together at DA Tuition",
+          tone: "#E99BC3",
+          best: "Students wanting support matched to their school content.",
+          size: "Same-school cohort",
+          pace: "Aligned to school tasks",
+          style: "Targeted, familiar and collaborative"
+        }
+      ];
+
+      const buttons = Array.from(document.querySelectorAll("[data-class-index]"));
+      const card = document.getElementById("class-detail-card");
+      const image = document.getElementById("class-detail-image");
+      const title = document.getElementById("class-detail-title");
+      const text = document.getElementById("class-detail-text");
+      const best = document.getElementById("class-stat-best");
+      const size = document.getElementById("class-stat-size");
+      const pace = document.getElementById("class-stat-pace");
+      const style = document.getElementById("class-stat-style");
+      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      let active = 0;
+
+      function renderClass(index){
+        const next = classStyles[index];
+        if(!next || !card || !image || !title || !text || !best || !size || !pace || !style) return;
+        active = index;
+
+        buttons.forEach((button, buttonIndex) => {
+          const isActive = buttonIndex === index;
+          button.classList.toggle("is-active", isActive);
+          button.setAttribute("aria-selected", isActive ? "true" : "false");
+        });
+
+        const update = () => {
+          card.style.setProperty("--active-tone", next.tone);
+          image.src = next.image;
+          image.alt = next.alt;
+          title.textContent = next.title;
+          text.textContent = next.text;
+          best.textContent = next.best;
+          size.textContent = next.size;
+          pace.textContent = next.pace;
+          style.textContent = next.style;
+        };
+
+        if(reduceMotion){
+          update();
+          return;
+        }
+
+        card.classList.add("is-changing");
+        window.setTimeout(() => {
+          update();
+          requestAnimationFrame(() => card.classList.remove("is-changing"));
+        }, 150);
+      }
+
+      buttons.forEach((button, index) => {
+        button.addEventListener("click", () => renderClass(index));
+        button.addEventListener("keydown", (event) => {
+          if(event.key !== "ArrowDown" && event.key !== "ArrowUp" && event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+          event.preventDefault();
+          const direction = event.key === "ArrowUp" || event.key === "ArrowLeft" ? -1 : 1;
+          const nextIndex = (active + direction + buttons.length) % buttons.length;
+          buttons[nextIndex].focus();
+          renderClass(nextIndex);
+        });
       });
     })();
 

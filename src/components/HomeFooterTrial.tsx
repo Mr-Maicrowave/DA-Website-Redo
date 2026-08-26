@@ -32,7 +32,7 @@ const subjectLinks = [
 
 const exploreLinks = [
   { label: 'Our Approach', to: '/our-approach' },
-  { label: 'Our Teachers', to: '/our-teachers' },
+  { label: 'Our Teachers', to: '/find-teacher' },
   { label: 'Success Stories', to: '/success-stories' },
   { label: 'Articles & Guides', to: '/articles' },
   { label: 'FAQ', to: '/faq' },

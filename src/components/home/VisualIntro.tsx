@@ -99,6 +99,7 @@ type VisualIntroProps = {
 
 const VisualIntro = ({ children }: VisualIntroProps) => {
   const sectionRef = useRef<HTMLElement>(null);
+  const heroUnderlayRef = useRef<HTMLDivElement>(null);
   const prefersReducedMotion = useReducedMotion();
   const [activePairIndex, setActivePairIndex] = useState(0);
   const [rotationPaused, setRotationPaused] = useState(false);
@@ -108,13 +109,18 @@ const VisualIntro = ({ children }: VisualIntroProps) => {
   );
 
   const { scrollYProgress } = useScroll({
-    target: sectionRef,
+    target: prefersReducedMotion ? undefined : sectionRef,
     offset: ['start start', 'end end'],
   });
 
-  // The first 47.6% of the sticky travel remains the existing curtain sequence.
-  // The remaining distance holds the completed hero while Philosophy rises over it.
-  const curtainProgress = useTransform(scrollYProgress, [0, 0.476], [0, 1], { clamp: true });
+  // The curtain sequence now resolves within the first 22% of the sticky travel
+  // (was 47.6% — roughly 1.5 viewport-heights of scroll before the headline/CTA
+  // became visible or interactive at all, flagged by the website-page-audit skill's
+  // homepage audit as delaying access to content). Internal proportions below are
+  // unchanged, just compressed into a shorter physical scroll distance, so the same
+  // curtain motion still plays — it just finishes sooner. The remaining distance
+  // still holds the completed hero while Philosophy rises over it.
+  const curtainProgress = useTransform(scrollYProgress, [0, 0.22], [0, 1], { clamp: true });
   const leftX = useTransform(curtainProgress, [0, 0.2, 0.95, 1], ['0%', '0%', '-110%', '-112%']);
   const rightX = useTransform(curtainProgress, [0, 0.2, 0.95, 1], ['0%', '0%', '110%', '112%']);
   const heroY = useTransform(curtainProgress, [0, 0.38, 0.95, 1], [isNarrow ? 88 : 120, isNarrow ? 88 : 120, 0, 0]);
@@ -128,10 +134,21 @@ const VisualIntro = ({ children }: VisualIntroProps) => {
       if (current && progress <= 0.001) return false;
       return current;
     });
-    // Philosophy is opaque and above the hero by this point; remove covered
+    // Lower bound scaled down to match the compressed curtainProgress envelope
+    // above (0.371 was calibrated against the old 0.476 window: 0.371 * 0.22/0.476
+    // ≈ 0.17). Philosophy is opaque and above the hero by 0.79; remove covered
     // hero controls from pointer and keyboard interaction until scrolling back.
-    setHeroInteractive(progress >= 0.371 && progress < 0.79);
+    setHeroInteractive(progress >= 0.17 && progress < 0.79);
   });
+
+  // `aria-hidden` alone doesn't stop a focusable descendant (the hero's
+  // /book-interview Link) from still receiving Tab focus while hidden from the
+  // accessibility tree — a WCAG 4.1.2 anti-pattern. `inert` closes that gap; same
+  // ref.current?.toggleAttribute('inert', bool) pattern NavigationNew already uses
+  // for its own layer-swap.
+  useEffect(() => {
+    heroUnderlayRef.current?.toggleAttribute('inert', !heroInteractive);
+  }, [heroInteractive]);
 
   useEffect(() => {
     imagePairs.flatMap((pair) => [pair.left, pair.right]).forEach((src) => {
@@ -199,6 +216,7 @@ const VisualIntro = ({ children }: VisualIntroProps) => {
     <section ref={sectionRef} className="visual-intro" aria-label="DA Tuition learning community">
       <div className="visual-intro__stage">
         <motion.div
+          ref={heroUnderlayRef}
           className="visual-intro__hero-underlay"
           style={{
             y: heroY,
@@ -283,7 +301,16 @@ const VisualIntroStyles = () => (
           min-width: 0;
           height: 100%;
           overflow: hidden;
-          background: #0A1B34;
+          /* Shimmer plays behind the <img> while its src is still downloading;
+             the moment the photo paints in (opaque, z-index 1) it fully covers
+             this, so a slow connection sees motion instead of a flat block. */
+          background: linear-gradient(100deg, #0A1B34 40%, #16305a 50%, #0A1B34 60%);
+          background-size: 250% 100%;
+          animation: visualIntroShimmer 2.2s ease-in-out infinite;
+        }
+        @keyframes visualIntroShimmer {
+          0% { background-position: 200% 0; }
+          100% { background-position: -100% 0; }
         }
         .visual-intro__panel img {
           position: absolute;
@@ -335,6 +362,7 @@ const VisualIntroStyles = () => (
           }
           .visual-intro__reduced-hero { min-height: 100svh; }
           .visual-intro__panel img { will-change: auto; }
+          .visual-intro__panel { animation: none; background: #0A1B34; }
         }
       `}</style>
 );

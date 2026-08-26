@@ -1,11 +1,11 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import NavigationNew from '@/components/NavigationNew';
 import FooterNew from '@/components/FooterNew';
 import SubjectHero from '@/components/subjects/SubjectHero';
 import { Button } from '@/components/ui/button';
 import {
   ArrowRight,
-  BookOpen,
+  ArrowUpRight,
   Brain,
   Calculator,
   CheckCircle,
@@ -16,12 +16,26 @@ import {
   Sparkles,
   Target,
   TrendingUp,
+  UserRound,
+  UsersRound,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, useInView, useReducedMotion } from 'framer-motion';
 import SEO from '@/components/SEO';
 import katex from 'katex';
 import 'katex/dist/katex.min.css';
+import { createShieldTrace } from '@/features/graph-lab/fourier-shield';
+import {
+  DerivativeAmbientMoment,
+  NetworkAmbientMoment,
+  VectorAmbientMoment,
+} from '@/features/maths-ambient-motion/MathsAmbientMotion';
+import { ConfidenceJourney } from '@/features/maths-confidence-journey/ConfidenceJourney';
+import { MathsGraphLabInvitation, MathsTeachingProof } from '@/features/maths-teaching-proof/MathsTeachingProof';
+import { MathsIntroVideoGate } from '@/features/maths-intro-video/MathsIntroVideoGate';
+import { HscMathsPathway } from '@/features/hsc-maths-pathway/HscMathsPathway';
+import { MathsSyllabusScrollStory } from '@/features/maths-syllabus-scroll-story/MathsSyllabusScrollStory';
+import { MathsTopicNetwork } from '@/features/maths-topic-network/MathsTopicNetwork';
 
 interface StepRow {
   label: string;
@@ -40,6 +54,45 @@ interface ErrorTab {
   label: string;
   examples: ErrorExample[];
 }
+
+const MATHS_CLASS_OPTIONS = [
+  {
+    title: 'Private Maths Tuition',
+    description: 'One-to-one lessons for students who need targeted explanations, tailored practice, and a pace built around their own goals.',
+    image: '/english-page/images/subjects/english/class-private.png',
+    alt: 'A tutor working one-to-one with a student',
+    icon: UserRound,
+    accent: '#b9a6e8',
+    tint: '#f0edff',
+  },
+  {
+    title: 'Small-Group Maths Classes',
+    description: 'A consistent weekly class that builds strong foundations, gives students room to ask questions, and keeps them moving forward.',
+    image: '/english-page/images/subjects/english/class-gat.png',
+    alt: 'Students working together in a DA Tuition class',
+    icon: UsersRound,
+    accent: '#8ecfb2',
+    tint: '#e7f6ee',
+  },
+  {
+    title: 'School Focus Classes',
+    description: 'Students from the same school learn in step with their classroom program, reinforcing the exact concepts and assessments they are facing.',
+    image: '/english-page/images/subjects/english/class-focus.png',
+    alt: 'A small group of students learning with a tutor',
+    icon: Target,
+    accent: '#82bceb',
+    tint: '#e8f4ff',
+  },
+  {
+    title: 'Selective & Trial Preparation',
+    description: 'Purpose-built preparation for selective-school and school trial exams, with timed practice, problem-solving strategies, and clear feedback.',
+    image: '/english-page/images/subjects/english/class-bullet.png',
+    alt: 'Students completing focused classroom work',
+    icon: TrendingUp,
+    accent: '#f0b06d',
+    tint: '#fff0df',
+  },
+] as const;
 
 const ERROR_TABS: ErrorTab[] = [
   {
@@ -183,241 +236,6 @@ const MixedMath = ({ text }: { text: string }) => {
     </>
   );
 };
-
-// ── Curiosity card SVG illustrations ──────────────────────────────────────
-const IlluParabola = ({ isOpen }: { isOpen: boolean }) => (
-  <svg viewBox="0 0 120 76" className="h-full w-full" aria-hidden="true">
-    <line x1="6" y1="72" x2="114" y2="72" stroke="#071629" strokeWidth="1" strokeOpacity="0.12" strokeLinecap="round" />
-    <path
-      d="M 8,71 Q 60,6 112,71"
-      fill="none" stroke="#c9a227" strokeWidth="2.5" strokeLinecap="round"
-      strokeDasharray="250"
-      style={{
-        strokeDashoffset: isOpen ? 0 : 250,
-        transition: isOpen ? 'stroke-dashoffset 0.7s cubic-bezier(0.4,0,0.2,1)' : 'none',
-      }}
-    />
-    <circle
-      cx="60" cy="6" r="6" fill="#c9a227"
-      style={{
-        opacity: isOpen ? 1 : 0.28,
-        transform: isOpen ? 'scale(1)' : 'scale(0.55)',
-        transformBox: 'fill-box',
-        transformOrigin: 'center',
-        transition: isOpen ? 'opacity 0.35s ease 0.5s, transform 0.35s ease 0.5s' : 'none',
-      }}
-    />
-  </svg>
-);
-
-const IlluPhone = ({ isOpen: _ }: { isOpen: boolean }) => (
-  <svg viewBox="0 0 120 76" className="h-full w-full" aria-hidden="true">
-    <g style={{ transformBox: 'fill-box', transformOrigin: 'center', animation: 'maths-phoneRock 2.4s ease-in-out infinite' }}>
-      <rect x="42" y="5" width="36" height="58" rx="6" fill="#071629" fillOpacity="0.12" />
-      <rect x="44" y="10" width="32" height="42" rx="3" fill="#071629" fillOpacity="0.08" />
-      <circle cx="60" cy="59" r="2.5" fill="#071629" fillOpacity="0.22" />
-    </g>
-    <line x1="16" y1="66" x2="16" y2="46" stroke="#c9a227" strokeWidth="1.5" strokeLinecap="round" />
-    <polygon points="13,49 16,43 19,49" fill="#c9a227" />
-    <line x1="16" y1="66" x2="36" y2="66" stroke="#071629" strokeWidth="1.5" strokeLinecap="round" strokeOpacity="0.3" />
-    <polygon points="33,63 39,66 33,69" fill="#071629" fillOpacity="0.3" />
-  </svg>
-);
-
-const IlluNormalDist = ({ isOpen }: { isOpen: boolean }) => (
-  <svg viewBox="0 0 120 76" className="h-full w-full" aria-hidden="true">
-    <line x1="6" y1="70" x2="114" y2="70" stroke="#071629" strokeWidth="1" strokeOpacity="0.12" strokeLinecap="round" />
-    <line
-      x1="60" y1="70" x2="60" y2="10" stroke="#071629" strokeWidth="1" strokeDasharray="3 3"
-      strokeOpacity={isOpen ? 0.25 : 0}
-      style={{ transition: 'stroke-opacity 0.3s 0.5s' }}
-    />
-    <path
-      d="M 6,70 C 22,70 30,68 40,52 C 48,40 52,10 60,10 C 68,10 72,40 80,52 C 90,68 98,70 114,70"
-      fill="none" stroke="#c9a227" strokeWidth="2.5" strokeLinecap="round"
-      strokeDasharray="220"
-      style={{
-        strokeDashoffset: isOpen ? 0 : 220,
-        transition: isOpen ? 'stroke-dashoffset 0.75s cubic-bezier(0.4,0,0.2,1)' : 'none',
-      }}
-    />
-    <circle
-      cx="60" cy="10" r="4" fill="#c9a227"
-      style={{
-        opacity: isOpen ? 1 : 0,
-        transition: isOpen ? 'opacity 0.3s ease 0.6s' : 'none',
-      }}
-    />
-  </svg>
-);
-
-const IlluNetflix = ({ isOpen }: { isOpen: boolean }) => (
-  <svg viewBox="0 0 120 76" className="h-full w-full" aria-hidden="true">
-    <rect x="10" y="8" width="100" height="58" rx="7" fill="none" stroke="#071629" strokeWidth="1.5" strokeOpacity="0.18" />
-    <line x1="60" y1="66" x2="60" y2="73" stroke="#071629" strokeWidth="2" strokeOpacity="0.14" />
-    <line x1="48" y1="73" x2="72" y2="73" stroke="#071629" strokeWidth="1.5" strokeOpacity="0.14" />
-    {isOpen && (
-      <>
-        <circle cx="60" cy="36" r="18" fill="none" stroke="#c9a227" strokeWidth="1.5"
-          style={{ transformBox: 'fill-box', transformOrigin: 'center', animation: 'maths-ripple 0.8s ease-out 0.05s forwards', opacity: 0 }} />
-        <circle cx="60" cy="36" r="18" fill="none" stroke="#c9a227" strokeWidth="1"
-          style={{ transformBox: 'fill-box', transformOrigin: 'center', animation: 'maths-ripple 0.8s ease-out 0.3s forwards', opacity: 0 }} />
-      </>
-    )}
-    <polygon points="50,24 50,50 76,37" fill="#c9a227" fillOpacity="0.9" />
-  </svg>
-);
-
-const IlluGPS = ({ isOpen }: { isOpen: boolean }) => (
-  <svg viewBox="0 0 120 76" className="h-full w-full" aria-hidden="true">
-    {/* Grid lines */}
-    {[20, 40, 60, 80, 100].map(x => (
-      <line key={`v${x}`} x1={x} y1="0" x2={x} y2="76" stroke="#071629" strokeWidth="0.5" strokeOpacity="0.07" />
-    ))}
-    {[18, 36, 54, 70].map(y => (
-      <line key={`h${y}`} x1="0" y1={y} x2="120" y2={y} stroke="#071629" strokeWidth="0.5" strokeOpacity="0.07" />
-    ))}
-    {/* Crosshairs */}
-    <line x1="60" y1="2" x2="60" y2="74" stroke="#c9a227" strokeWidth="1" strokeLinecap="round"
-      strokeOpacity={isOpen ? 0.45 : 0.15}
-      style={{ transition: 'stroke-opacity 0.35s' }}
-    />
-    <line x1="2" y1="38" x2="118" y2="38" stroke="#c9a227" strokeWidth="1" strokeLinecap="round"
-      strokeOpacity={isOpen ? 0.45 : 0.15}
-      style={{ transition: 'stroke-opacity 0.35s' }}
-    />
-    {/* Outer ring */}
-    <circle cx="60" cy="38" r="16" fill="none" stroke="#c9a227" strokeWidth="1"
-      strokeOpacity={isOpen ? 0.3 : 0}
-      style={{ transition: 'stroke-opacity 0.4s 0.15s' }}
-    />
-    {/* Centre dot */}
-    <circle cx="60" cy="38" r="6" fill="#c9a227"
-      style={{ opacity: isOpen ? 1 : 0.25, transition: 'opacity 0.3s' }}
-    />
-    <circle cx="60" cy="38" r="2.5" fill="white"
-      style={{ opacity: isOpen ? 1 : 0.25, transition: 'opacity 0.3s' }}
-    />
-  </svg>
-);
-
-const IlluF1 = ({ isOpen }: { isOpen: boolean }) => (
-  <svg viewBox="0 0 120 76" className="h-full w-full" aria-hidden="true">
-    {/* Speedometer background arc */}
-    <path d="M 18,68 A 42,42 0 0 1 102,68"
-      fill="none" stroke="#071629" strokeWidth="3" strokeOpacity="0.1" strokeLinecap="round"
-    />
-    {/* Speedometer fill arc */}
-    <path d="M 18,68 A 42,42 0 0 1 102,68"
-      fill="none" stroke="#c9a227" strokeWidth="3" strokeLinecap="round"
-      strokeDasharray="132"
-      style={{
-        strokeDashoffset: isOpen ? 0 : 132,
-        transition: isOpen ? 'stroke-dashoffset 0.75s cubic-bezier(0.4,0,0.2,1)' : 'none',
-      }}
-    />
-    {/* Speed ticks */}
-    {[0, 1, 2, 3, 4, 5, 6].map(i => {
-      const angle = Math.PI * (1 + i / 6);
-      const r1 = 36, r2 = 42, cx = 60, cy = 68;
-      return (
-        <line key={i}
-          x1={cx + r1 * Math.cos(angle)} y1={cy + r1 * Math.sin(angle)}
-          x2={cx + r2 * Math.cos(angle)} y2={cy + r2 * Math.sin(angle)}
-          stroke="#071629" strokeWidth="1" strokeOpacity="0.18" strokeLinecap="round"
-        />
-      );
-    })}
-    {/* Needle — rotates from left (-90°) to high-speed (70°) */}
-    <g style={{
-      transform: `translate(60px, 68px) rotate(${isOpen ? 70 : -90}deg)`,
-      transition: isOpen ? 'transform 0.75s cubic-bezier(0.4,0,0.2,1)' : 'none',
-    }}>
-      <line x1="0" y1="0" x2="0" y2="-36" stroke="#c9a227" strokeWidth="2.5" strokeLinecap="round" />
-    </g>
-    <circle cx="60" cy="68" r="4" fill="#071629" fillOpacity="0.18" />
-    <circle cx="60" cy="68" r="2" fill="#c9a227" />
-  </svg>
-);
-
-// ── Card data ──────────────────────────────────────────────────────────────
-const CURIOSITY_CARDS = [
-  {
-    topic: 'Parabolas',
-    hook: 'The path of a ball',
-    year: 'Years 9–10',
-    fact: (
-      <>
-        Every time a basketball leaves someone&apos;s hands, it traces a <strong>parabola</strong>. Engineers
-        use the exact same equation to design <strong>satellite dishes</strong> and{' '}
-        <strong>suspension bridges</strong>.
-      </>
-    ),
-    Illustration: IlluParabola,
-  },
-  {
-    topic: 'Trigonometry',
-    hook: 'How your phone knows which way is up',
-    year: 'Years 9–10',
-    fact: (
-      <>
-        Your phone knows which way is up because of trig. The <strong>accelerometer</strong> converts
-        angles into <strong>sine and cosine</strong> values thousands of times per second.
-      </>
-    ),
-    Illustration: IlluPhone,
-  },
-  {
-    topic: 'Statistics',
-    hook: 'Why most things cluster near average',
-    year: 'Years 9–10',
-    fact: (
-      <>
-        Heights, test scores, reaction times — most real-world data forms a <strong>bell curve</strong>.
-        Statisticians use the <strong>normal distribution</strong> to work out how likely any result is,
-        from exam marks to manufacturing tolerances.
-      </>
-    ),
-    Illustration: IlluNormalDist,
-  },
-  {
-    topic: 'Calculus',
-    hook: 'How Netflix picks your next show',
-    year: 'Years 11–12',
-    fact: (
-      <>
-        Netflix uses calculus (<strong>gradient descent</strong>) to decide what to recommend next. Every
-        time you press play, a <strong>derivative</strong> is being solved in the background.
-      </>
-    ),
-    Illustration: IlluNetflix,
-  },
-  {
-    topic: 'Vectors',
-    hook: 'How GPS knows exactly where you are',
-    year: 'Years 11–12',
-    fact: (
-      <>
-        GPS works by measuring your distance from multiple satellites using <strong>vectors</strong>. Your
-        phone solves a system of equations in real time to pinpoint your position to within{' '}
-        <strong>a few metres</strong>.
-      </>
-    ),
-    Illustration: IlluGPS,
-  },
-  {
-    topic: 'Speed & Distance',
-    hook: 'How F1 teams decide when to pit',
-    year: 'Years 7–8',
-    fact: (
-      <>
-        F1 strategists use <strong>speed, distance, and time</strong> calculations to decide the exact lap
-        to call a driver in. A one-second error in timing can cost a race position.
-      </>
-    ),
-    Illustration: IlluF1,
-  },
-];
 
 const WALKTHROUGH_VERSIONS = [
   {
@@ -929,54 +747,478 @@ const BasketballCalculusJourney = () => {
   );
 };
 
+const FOURIER_TERMS = [1, 3, 5, 7, 9, 11, 13];
+
+const fourierWave = (x: number, terms: number) => {
+  let value = 0;
+  for (let i = 0; i < terms; i += 1) {
+    const harmonic = FOURIER_TERMS[i];
+    value += (4 / Math.PI) * Math.sin(harmonic * x) / harmonic;
+  }
+  return value;
+};
+
+const fourierPath = (mode: 'square' | 'sum' | number, terms: number, width = 360, height = 142) => {
+  const points = 180;
+  const path = Array.from({ length: points }, (_, index) => {
+    const x = -Math.PI * 2 + (index / (points - 1)) * Math.PI * 4;
+    const value = mode === 'square'
+      ? (Math.sin(x) >= 0 ? 1 : -1)
+      : mode === 'sum'
+        ? fourierWave(x, terms)
+        : (4 / Math.PI) * Math.sin(mode * x) / mode;
+    const px = (index / (points - 1)) * width;
+    const py = height / 2 - value * (height * 0.34);
+    return `${index === 0 ? 'M' : 'L'}${px.toFixed(2)},${py.toFixed(2)}`;
+  });
+  return path.join(' ');
+};
+
+const FourierGraph = ({
+  title,
+  path,
+  color,
+  subtitle,
+}: {
+  title: string;
+  path: string;
+  color: string;
+  subtitle: string;
+}) => (
+  <div className="rounded-2xl border border-[#071629]/10 bg-[#fffdf8] p-3 sm:p-4">
+    <div className="mb-2 flex items-baseline justify-between gap-3">
+      <p className="text-sm font-black text-[#071629]">{title}</p>
+      <p className="text-[11px] font-semibold text-[#7d8798]">{subtitle}</p>
+    </div>
+    <svg viewBox="0 0 360 142" className="h-auto w-full" role="img" aria-label={title}>
+      {[26, 61, 96, 131].map((y) => <line key={y} x1="0" y1={y} x2="360" y2={y} stroke="#071629" strokeOpacity="0.08" />)}
+      {[45, 135, 225, 315].map((x) => <line key={x} x1={x} y1="0" x2={x} y2="142" stroke="#071629" strokeOpacity="0.08" />)}
+      <line x1="0" y1="71" x2="360" y2="71" stroke="#071629" strokeOpacity="0.24" />
+      <path d={path} fill="none" stroke={color} strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  </div>
+);
+
+const FourierDecomposition = () => {
+  const [terms, setTerms] = useState(3);
+  const activeHarmonics = FOURIER_TERMS.slice(0, terms);
+  const equation = activeHarmonics
+    .map((harmonic, index) => `${index === 0 ? '' : ' + '}\\frac{4}{${harmonic}\\pi}\\sin(${harmonic}x)`)
+    .join('');
+
+  return (
+    <section id="fourier-waves" className="overflow-hidden bg-[#f3f7fb] px-5 py-20 lg:px-8" aria-labelledby="fourier-heading">
+      <div className="mx-auto max-w-7xl">
+        <div className="grid gap-10 lg:grid-cols-[.78fr_1.22fr] lg:items-end">
+          <div>
+            <p className="mb-3 text-xs font-black uppercase tracking-[0.16em] text-[#b174bd]">Now take it apart</p>
+            <h2 id="fourier-heading" className="font-serif text-4xl font-medium leading-[1.04] tracking-[-0.045em] text-[#071629] sm:text-5xl">
+              One picture.<br />Many simple waves.
+            </h2>
+            <p className="mt-5 max-w-[44ch] text-base leading-8 text-[#536077]">
+              The rotating arrows above are built from the same idea: a complicated pattern can be analysed as a combination of simple sinusoidal waves.
+            </p>
+            <div className="mt-7 rounded-2xl border border-[#071629]/10 bg-white p-5">
+              <div className="flex items-center justify-between gap-4">
+                <label htmlFor="fourier-terms" className="text-sm font-black text-[#071629]">Add harmonics</label>
+                <span className="rounded-full bg-[#071629] px-3 py-1 text-xs font-black text-[#f1df9a]">{terms} terms</span>
+              </div>
+              <input
+                id="fourier-terms"
+                type="range"
+                min="1"
+                max={FOURIER_TERMS.length}
+                value={terms}
+                onChange={(event) => setTerms(Number(event.target.value))}
+                className="mt-5 h-2 w-full cursor-pointer accent-[#b174bd]"
+                aria-describedby="fourier-terms-help"
+              />
+              <p id="fourier-terms-help" className="mt-3 text-sm leading-6 text-[#536077]">More terms make the approximation look more like the original square wave.</p>
+            </div>
+          </div>
+
+          <div className="relative flex flex-col rounded-[1.75rem] border border-[#071629]/10 bg-white p-4 shadow-[0_18px_45px_rgba(7,22,41,0.08)] sm:p-6 lg:h-[520px] lg:min-h-0">
+            <div className="pointer-events-none absolute inset-x-12 top-1/2 hidden h-px bg-[#b174bd]/20 lg:block" />
+            <div className="grid min-h-0 flex-1 gap-3 md:grid-cols-[1fr_1.08fr] md:items-center">
+              <FourierGraph title="Original waveform" subtitle="time" path={fourierPath('square', terms)} color="#c51f3a" />
+              <div className="grid min-w-0 gap-2 md:grid-cols-2">
+                {FOURIER_TERMS.slice(0, 4).map((harmonic, index) => activeHarmonics.includes(harmonic) ? (
+                  <FourierGraph
+                    key={harmonic}
+                    title={`Harmonic ${harmonic}`}
+                    subtitle={`1 / ${harmonic}`}
+                    path={fourierPath(harmonic, terms)}
+                    color={['#5d568e', '#8e4d8c', '#b174bd', '#d18ab8'][index]}
+                  />
+                ) : <div key={harmonic} className="invisible" aria-hidden="true"><FourierGraph title={`Harmonic ${harmonic}`} subtitle={`1 / ${harmonic}`} path={fourierPath(harmonic, terms)} color="#5d568e" /></div>)}
+                {terms > 4 && <p className="px-2 text-center text-xs font-bold text-[#7d8798]">+ {terms - 4} more sinusoidal component{terms - 4 === 1 ? '' : 's'}</p>}
+              </div>
+            </div>
+            <div className="mt-4 min-w-0 shrink-0 overflow-hidden rounded-xl bg-[#071629] px-4 py-4 text-center text-[#f5e8bc] sm:px-6">
+              <p className="mb-2 text-[10px] font-black uppercase tracking-[0.15em] text-[#b174bd]">Current approximation</p>
+              <div className="min-w-0 overflow-x-auto text-sm sm:text-base [&_.katex-display]:my-0 [&_.katex-display]:whitespace-nowrap" dangerouslySetInnerHTML={{ __html: katex.renderToString(`f(x) \\approx ${equation}`, { throwOnError: false, displayMode: true }) }} />
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-8 grid gap-4 md:grid-cols-[1.1fr_.9fr]">
+          <div className="rounded-2xl border border-[#071629]/10 bg-white p-4 sm:p-5">
+            <div className="mb-2 flex items-baseline justify-between gap-3">
+              <p className="text-sm font-black text-[#071629]">Reconstructed signal</p>
+              <p className="text-[11px] font-semibold text-[#7d8798]">time → amplitude</p>
+            </div>
+            <svg viewBox="0 0 720 158" className="h-auto w-full" role="img" aria-label="Fourier series approximation of the original waveform">
+              {[28, 67, 106, 145].map((y) => <line key={y} x1="0" y1={y} x2="720" y2={y} stroke="#071629" strokeOpacity="0.08" />)}
+              <line x1="0" y1="79" x2="720" y2="79" stroke="#071629" strokeOpacity="0.24" />
+              <path d={fourierPath('square', terms, 720, 158)} fill="none" stroke="#c51f3a" strokeOpacity="0.22" strokeWidth="2" strokeDasharray="5 6" />
+              <path d={fourierPath('sum', terms, 720, 158)} fill="none" stroke="#b174bd" strokeWidth="3.2" strokeLinecap="round" />
+            </svg>
+            <div className="mt-3 flex flex-wrap gap-4 text-xs font-bold text-[#536077]"><span><i className="mr-2 inline-block h-2 w-2 rounded-full bg-[#b174bd]" />sum of terms</span><span><i className="mr-2 inline-block h-2 w-2 rounded-full bg-[#c51f3a]/30" />original waveform</span></div>
+          </div>
+          <div className="rounded-2xl border border-[#071629]/10 bg-[#fffaf0] p-5">
+            <p className="text-xs font-black uppercase tracking-[0.14em] text-[#8a6812]">Frequency view</p>
+            <p className="mt-2 text-sm leading-6 text-[#536077]">The tall peaks reveal which frequencies are present in the original signal.</p>
+            <svg viewBox="0 0 360 116" className="mt-4 h-auto w-full" role="img" aria-label="Frequency spectrum with peaks at odd harmonics">
+              <line x1="12" y1="96" x2="348" y2="96" stroke="#071629" strokeOpacity="0.25" />
+              {activeHarmonics.map((harmonic) => {
+                const x = 28 + (harmonic / 13) * 300;
+                const barHeight = 68 / harmonic;
+                return <g key={harmonic}><line x1={x} y1={96 - barHeight} x2={x} y2="96" stroke="#b174bd" strokeWidth="7" strokeLinecap="round" /><text x={x} y="111" textAnchor="middle" fill="#536077" fontSize="10">{harmonic}ω</text></g>;
+              })}
+            </svg>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+interface FourierPoint {
+  x: number;
+  y: number;
+}
+
+interface FourierCoefficient extends FourierPoint {
+  frequency: number;
+  amplitude: number;
+  phase: number;
+}
+
+type DrawingPreset = 'da-logo' | 'fourier' | 'heart';
+
+const DRAWING_PRESETS: Array<{ id: DrawingPreset; label: string; description: string; imageSrc?: string; imageAlt?: string }> = [
+  { id: 'da-logo', label: 'DA Tuition', description: 'Traced from the DA mark', imageSrc: '/images/da-logo.png', imageAlt: 'DA Tuition logo' },
+  { id: 'fourier', label: 'Joseph Fourier', description: 'Traced from a public-domain portrait', imageSrc: '/fourier-joseph-portrait.jpg', imageAlt: 'Engraved portrait of Joseph Fourier' },
+  { id: 'heart', label: 'Heart', description: 'A simple control shape' },
+];
+
+const drawingPoints = (preset: DrawingPreset, count = 240): FourierPoint[] => {
+  if (preset === 'da-logo') return createShieldTrace(count);
+  return Array.from({ length: count }, (_, index) => {
+  const t = (index / count) * Math.PI * 2;
+  if (preset === 'fourier') {
+    // A stylised, continuous bust/profile line for Joseph Fourier.
+    const points = [
+      { x: -18, y: -96 }, { x: 20, y: -90 }, { x: 38, y: -70 },
+      { x: 31, y: -49 }, { x: 48, y: -33 }, { x: 30, y: -25 },
+      { x: 27, y: -5 }, { x: 49, y: 24 }, { x: 66, y: 72 },
+      { x: 34, y: 88 }, { x: -44, y: 84 }, { x: -65, y: 36 },
+      { x: -43, y: -8 }, { x: -48, y: -46 }, { x: -18, y: -96 },
+    ];
+    const u = (index / (count - 1)) * (points.length - 1);
+    const segment = Math.min(points.length - 2, Math.floor(u));
+    const local = u - segment;
+    const start = points[segment];
+    const end = points[segment + 1];
+    return { x: start.x + (end.x - start.x) * local, y: start.y + (end.y - start.y) * local };
+  }
+  if (preset === 'heart') {
+    return {
+      x: 4.8 * (16 * Math.sin(t) ** 3),
+      y: -4.8 * (13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t)),
+    };
+  }
+  if (preset === 'star') {
+    const radius = index % 2 === 0 ? 92 : 42;
+    return { x: radius * Math.cos(t - Math.PI / 2), y: radius * Math.sin(t - Math.PI / 2) };
+  }
+  return { x: 92 * Math.sin(3 * t), y: 72 * Math.sin(2 * t + Math.PI / 4) };
+  });
+};
+
+const calculateFourierCoefficients = (points: FourierPoint[], count: number): FourierCoefficient[] => {
+  const frequencies = Array.from({ length: count * 2 + 1 }, (_, index) => index - count);
+  return frequencies
+    .map((frequency) => {
+      const coefficient = points.reduce((sum, point, index) => {
+        const t = (index / points.length) * Math.PI * 2;
+        const angle = frequency * t;
+        return {
+          x: sum.x + (point.x * Math.cos(angle) + point.y * Math.sin(angle)) / points.length,
+          y: sum.y + (point.y * Math.cos(angle) - point.x * Math.sin(angle)) / points.length,
+        };
+      }, { x: 0, y: 0 });
+      return {
+        frequency,
+        x: coefficient.x,
+        y: coefficient.y,
+        amplitude: Math.hypot(coefficient.x, coefficient.y),
+        phase: Math.atan2(coefficient.y, coefficient.x),
+      };
+    })
+    .sort((a, b) => b.amplitude - a.amplitude);
+};
+
+const epicycleState = (coefficients: FourierCoefficient[], progress: number) => {
+  let point = { x: 0, y: 0 };
+  const centres: FourierPoint[] = [];
+  coefficients.forEach((coefficient) => {
+    centres.push({ ...point });
+    const angle = coefficient.phase + coefficient.frequency * progress * Math.PI * 2;
+    point = {
+      x: point.x + coefficient.amplitude * Math.cos(angle),
+      y: point.y + coefficient.amplitude * Math.sin(angle),
+    };
+  });
+  return { centres, tip: point };
+};
+
+const pathFromPoints = (points: FourierPoint[], offsetX = 180, offsetY = 130) => points
+  .map((point, index) => `${index === 0 ? 'M' : 'L'}${(point.x + offsetX).toFixed(2)},${(point.y + offsetY).toFixed(2)}`)
+  .join(' ');
+
+const FourierDrawing = () => {
+  const [preset, setPreset] = useState<DrawingPreset>('da-logo');
+  const [vectors, setVectors] = useState(31);
+  const [progress, setProgress] = useState(0);
+  const [trace, setTrace] = useState<FourierPoint[]>([]);
+  const [sourcePoints, setSourcePoints] = useState<FourierPoint[]>([]);
+  const prefersReducedMotion = useReducedMotion();
+  const sectionRef = useRef<HTMLElement>(null);
+  // Only the drawing itself should gate the loop, not the whole two-column section —
+  // a generous margin keeps it running while the SVG is merely near the viewport.
+  const isInView = useInView(sectionRef, { margin: '200px 0px 200px 0px' });
+  const selectedPreset = DRAWING_PRESETS.find((option) => option.id === preset)!;
+  const points = useMemo(() => preset === 'da-logo' ? drawingPoints(preset) : (sourcePoints.length > 0 ? sourcePoints : drawingPoints(preset)), [preset, sourcePoints]);
+  const coefficients = useMemo(() => calculateFourierCoefficients(points, 60).slice(0, vectors), [points, vectors]);
+  const { centres, tip } = epicycleState(coefficients, progress);
+
+  useEffect(() => {
+    if (selectedPreset.id === 'da-logo') {
+      setSourcePoints([]);
+      return undefined;
+    }
+    if (!selectedPreset.imageSrc) {
+      setSourcePoints([]);
+      return undefined;
+    }
+    const image = new Image();
+    image.src = selectedPreset.imageSrc;
+    image.onload = () => {
+      const size = 240;
+      const canvas = document.createElement('canvas');
+      canvas.width = size;
+      canvas.height = size;
+      const context = canvas.getContext('2d', { willReadFrequently: true });
+      if (!context) return;
+      context.clearRect(0, 0, size, size);
+      const scale = Math.min(size / image.naturalWidth, size / image.naturalHeight);
+      const width = image.naturalWidth * scale;
+      const height = image.naturalHeight * scale;
+      context.drawImage(image, (size - width) / 2, (size - height) / 2, width, height);
+      const pixels = context.getImageData(0, 0, size, size).data;
+      const foreground = new Uint8Array(size * size);
+      for (let index = 0; index < size * size; index += 1) {
+        const pixel = index * 4;
+        const alpha = pixels[pixel + 3];
+        const luminance = (pixels[pixel] + pixels[pixel + 1] + pixels[pixel + 2]) / 3;
+        foreground[index] = selectedPreset.id === 'da-logo' ? (alpha > 32 ? 1 : 0) : (luminance < 200 ? 1 : 0);
+      }
+      // Thicken the engraving strokes so the portrait becomes one connected silhouette.
+      for (let pass = 0; pass < 4; pass += 1) {
+        const expanded = foreground.slice();
+        for (let y = 1; y < size - 1; y += 1) {
+          for (let x = 1; x < size - 1; x += 1) {
+            const index = y * size + x;
+            if (foreground[index] || foreground[index - 1] || foreground[index + 1] || foreground[index - size] || foreground[index + size]) expanded[index] = 1;
+          }
+        }
+        foreground.set(expanded);
+      }
+      const visited = new Uint8Array(size * size);
+      let largestComponent: number[] = [];
+      for (let start = 0; start < foreground.length; start += 1) {
+        if (!foreground[start] || visited[start]) continue;
+        const queue = [start];
+        const component: number[] = [];
+        visited[start] = 1;
+        while (queue.length > 0) {
+          const current = queue.pop()!;
+          component.push(current);
+          const x = current % size;
+          const y = Math.floor(current / size);
+          for (const neighbour of [current - 1, current + 1, current - size, current + size]) {
+            const neighbourX = neighbour % size;
+            if (neighbour >= 0 && neighbour < foreground.length && Math.abs(neighbourX - x) <= 1 && foreground[neighbour] && !visited[neighbour]) {
+              visited[neighbour] = 1;
+              queue.push(neighbour);
+            }
+          }
+        }
+        if (component.length > largestComponent.length) largestComponent = component;
+      }
+      const componentSet = new Set(largestComponent);
+      const boundary: FourierPoint[] = [];
+      let totalX = 0;
+      let totalY = 0;
+      largestComponent.forEach((index) => {
+        const x = index % size;
+        const y = Math.floor(index / size);
+        if (!componentSet.has(index - 1) || !componentSet.has(index + 1) || !componentSet.has(index - size) || !componentSet.has(index + size)) {
+          boundary.push({ x, y });
+          totalX += x;
+          totalY += y;
+        }
+      });
+      const centreX = totalX / Math.max(1, boundary.length);
+      const centreY = totalY / Math.max(1, boundary.length);
+      boundary.sort((a, b) => Math.atan2(a.y - centreY, a.x - centreX) - Math.atan2(b.y - centreY, b.x - centreX));
+      const minX = Math.min(...boundary.map((point) => point.x));
+      const maxX = Math.max(...boundary.map((point) => point.x));
+      const minY = Math.min(...boundary.map((point) => point.y));
+      const maxY = Math.max(...boundary.map((point) => point.y));
+      const widthScale = Math.max(1, maxX - minX);
+      const heightScale = Math.max(1, maxY - minY);
+      const extracted = Array.from({ length: 240 }, (_, index) => {
+        const point = boundary[Math.floor((index / 240) * boundary.length)] ?? { x: centreX, y: centreY };
+        return { x: ((point.x - minX) / widthScale - 0.5) * 190, y: ((point.y - minY) / heightScale - 0.5) * 210 };
+      });
+      setSourcePoints(extracted);
+    };
+    return () => { image.onload = null; };
+  }, [selectedPreset]);
+
+  useEffect(() => {
+    setProgress(0);
+    setTrace([]);
+    // Pausing off-screen stops a 60fps setState loop from running (and re-rendering
+    // up to 61 SVG vectors) indefinitely while the visitor is nowhere near this section.
+    if (prefersReducedMotion || !isInView) return undefined;
+    let animationFrame = 0;
+    const startedAt = performance.now();
+    const animate = (now: number) => {
+      const nextProgress = ((now - startedAt) / 8500) % 1;
+      const nextTip = epicycleState(coefficients, nextProgress).tip;
+      setProgress(nextProgress);
+      setTrace((current) => [...current.slice(-220), nextTip]);
+      animationFrame = requestAnimationFrame(animate);
+    };
+    animationFrame = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(animationFrame);
+  }, [coefficients, prefersReducedMotion, isInView]);
+
+  const originalPath = pathFromPoints(points);
+  const tracePath = pathFromPoints(trace);
+  const equationLabel = coefficients.slice(0, 3).map((coefficient) => `${coefficient.frequency >= 0 ? '+' : '−'} ${Math.abs(coefficient.frequency)}ω`).join(' ');
+
+  return (
+    <section ref={sectionRef} id="fourier-drawing" className="scroll-mt-24 bg-[#fffdf8] px-5 py-20 lg:px-8" aria-labelledby="fourier-drawing-heading">
+      <div className="mx-auto max-w-7xl">
+        <div className="mb-10 grid gap-6 lg:grid-cols-[.8fr_1.2fr] lg:items-end">
+          <div>
+            <p className="mb-3 text-xs font-black uppercase tracking-[0.16em] text-[#8a6812]">Optional enrichment · beyond the NSW syllabus</p>
+            <h2 id="fourier-drawing-heading" className="font-serif text-4xl font-medium leading-[1.04] tracking-[-0.045em] text-[#071629] sm:text-5xl">How can simple rotations draw a picture?</h2>
+          </div>
+          <p className="max-w-2xl text-base leading-8 text-[#536077]">Fourier series are not a required Mathematics Advanced topic. This spectacle uses assessable ideas about sine waves and transformations to show where those concepts can lead.</p>
+        </div>
+
+        <div className="grid overflow-hidden rounded-[1.75rem] border border-[#071629]/10 bg-[#071629] lg:grid-cols-[minmax(220px,.7fr)_minmax(0,1.3fr)]">
+          <div className="p-6 text-white sm:p-8">
+            <p className="text-xs font-black uppercase tracking-[0.15em] text-[#f1df9a]">Choose a path</p>
+            <div className="mt-5 grid gap-2" role="tablist" aria-label="Fourier drawing presets">
+              {DRAWING_PRESETS.map((option) => (
+                <button
+                  key={option.id}
+                  type="button"
+                  role="tab"
+                  aria-selected={preset === option.id}
+                  onClick={() => setPreset(option.id)}
+                  className={`rounded-xl px-4 py-3 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f1df9a] ${preset === option.id ? 'bg-white/12 text-[#f1df9a]' : 'text-white/65 hover:bg-white/6 hover:text-white'}`}
+                >
+                  <span className="block text-sm font-black">{option.label}</span>
+                  <span className="mt-1 block text-xs text-current/65">{option.description}</span>
+                </button>
+              ))}
+            </div>
+            <label htmlFor="fourier-vectors" className="mt-8 block text-sm font-black text-white">Number of rotating vectors <span className="float-right rounded-full bg-[#f1df9a] px-2.5 py-1 text-xs text-[#071629]">{vectors}</span></label>
+            <input id="fourier-vectors" type="range" min="5" max="61" step="2" value={vectors} onChange={(event) => setVectors(Number(event.target.value))} className="mt-5 h-2 w-full cursor-pointer accent-[#f1df9a]" />
+            <div className="mt-2 flex justify-between text-[11px] font-bold text-white/45"><span>5 · broad shape</span><span>61 · finer detail</span></div>
+            <p className="mt-3 text-sm leading-6 text-white/60">More vectors capture finer detail, especially around the shield edges and portrait profile.</p>
+            <div className="mt-8 border-t border-white/15 pt-5">
+              <p className="text-xs font-black uppercase tracking-[0.14em] text-[#b174bd]">Assessable foundations</p>
+              <p className="mt-3 text-sm leading-6 text-white/72">Functions, graph transformations and trigonometric graphs lead into this construction. Fourier series themselves are optional enrichment.</p>
+              <span className="mt-4 inline-flex rounded-full border border-[#b174bd]/45 px-3 py-1.5 text-xs font-bold text-[#e0b8e7]">Not required for HSC Mathematics Advanced</span>
+            </div>
+          </div>
+
+          <div className="bg-[#f3f7fb] p-4 sm:p-7">
+            <div className="grid gap-4 md:grid-cols-[1.25fr_.75fr] md:items-center">
+              <div className="rounded-2xl border border-[#071629]/10 bg-white p-3 sm:p-4">
+                <svg viewBox="0 0 360 260" className="h-auto w-full" role="img" aria-label={`${selectedPreset.label} traced by rotating Fourier vectors`}>
+                  {selectedPreset.imageSrc && <image href={selectedPreset.imageSrc} x="72" y="8" width="216" height="244" preserveAspectRatio="xMidYMid meet" opacity="0.12" aria-hidden="true" />}
+                  <path d={originalPath} fill="none" stroke="#c51f3a" strokeOpacity="0.18" strokeWidth="2" strokeDasharray="4 5" />
+                  {centres.map((centre, index) => {
+                    const coefficient = coefficients[index];
+                    return <g key={`${coefficient.frequency}-${index}`}><circle cx={centre.x + 180} cy={centre.y + 130} r={coefficient.amplitude} fill="none" stroke="#8e4d8c" strokeOpacity="0.22" /><line x1={centre.x + 180} y1={centre.y + 130} x2={centres[index].x + 180 + coefficient.amplitude * Math.cos(coefficient.phase + coefficient.frequency * progress * Math.PI * 2)} y2={centres[index].y + 130 + coefficient.amplitude * Math.sin(coefficient.phase + coefficient.frequency * progress * Math.PI * 2)} stroke="#8e4d8c" strokeWidth="1.5" strokeOpacity="0.75" /></g>;
+                  })}
+                  <path d={tracePath} fill="none" stroke="#b174bd" strokeWidth="2.5" strokeLinecap="round" />
+                  <circle cx={tip.x + 180} cy={tip.y + 130} r="4" fill="#c9a227" />
+                </svg>
+                <div className="mt-2 flex flex-wrap gap-4 text-xs font-bold text-[#536077]"><span><i className="mr-2 inline-block h-2 w-2 rounded-full bg-[#b174bd]" />traced path</span><span><i className="mr-2 inline-block h-2 w-2 rounded-full bg-[#c51f3a]/30" />target shape</span></div>
+              </div>
+              <div>
+                <p className="text-xs font-black uppercase tracking-[0.14em] text-[#8a6812]">What the computer is adding</p>
+                <p className="mt-3 text-sm leading-7 text-[#536077]">Each vector contributes a rotating sinusoidal component. Together, their endpoint follows the original curve.</p>
+                <div className="mt-5 rounded-xl bg-[#071629] p-4 text-center text-[#f5e8bc]">
+                  <p className="text-[10px] font-black uppercase tracking-[0.14em] text-[#b174bd]">Active frequencies</p>
+                  <p className="mt-2 font-mono text-sm">{equationLabel || '0ω'}</p>
+                </div>
+                <p className="mt-4 text-xs leading-5 text-[#7d8798]">Optional enrichment: enjoy the construction without treating it as assessable course content.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  );
+};
+
+const SHOW_LEGACY_MATHS_INTERACTIONS = false;
+
 const Mathematics = () => {
+  const prefersReducedMotion = useReducedMotion();
   const courseLevels = [
-    {
-      label: 'Primary School',
-      years: 'Years K-6',
-      tone: 'from-[#f7fbff] to-[#e8f2ff]',
-      icon: BookOpen,
-      description: 'Build number confidence, mental maths, times tables, and problem-solving habits before gaps become stressful.',
-      subjects: ['K-6 Mathematics', 'Problem Solving', 'Mental Maths', 'Times Tables Mastery'],
-    },
     {
       label: 'High School',
       years: 'Years 7-10',
       tone: 'from-[#fbfff8] to-[#eaf8ef]',
       icon: Brain,
-      description: 'Strengthen algebra, geometry, trigonometry, and exam routines while school expectations increase.',
-      subjects: ['Core Mathematics', 'Advanced Mathematics', 'Mathematical Methods', 'Problem Solving & Enrichment'],
+      description: 'As maths becomes more connected, students learn to move between algebra, diagrams, graphs and written reasoning without losing the method. We close earlier gaps, then rehearse how to choose an approach, set out working clearly and check it under assessment conditions.',
+      // "Core" and "Path" are the NSW Mathematics K-10 Syllabus's own content bands within
+      // the single K-10 Mathematics course — there is no separately-named "Advanced
+      // Mathematics" or "Mathematical Methods" course at this stage (Mathematical Methods
+      // is a Victorian VCE subject, not an NSW one). Naming these DA-branded course names
+      // would misrepresent them as official school subjects.
+      subjects: ['Core Mathematics', 'Path Mathematics (extension content)', 'Problem Solving & Enrichment'],
     },
     {
       label: 'HSC Mathematics',
       years: 'Years 11-12',
       tone: 'from-[#fffdf7] to-[#fff1cd]',
       icon: TrendingUp,
-      description: 'Prepare for Standard, Advanced, Extension 1, and Extension 2 with structured syllabus and exam support.',
+      description: 'HSC preparation is not just more questions. We teach students to read the command word, identify the syllabus idea being tested, build a complete chain of working and make strategic checking decisions before time runs out — across Standard, Advanced and Extension pathways.',
       subjects: ['Mathematics Standard 1 & 2', 'Mathematics Advanced', 'Mathematics Extension 1', 'Mathematics Extension 2'],
-    },
-  ];
-
-  const hscStreams = [
-    {
-      name: 'Standard',
-      badge: 'Confidence and marks',
-      topics: ['Algebra & equations', 'Measurement & geometry', 'Statistics & probability', 'Financial mathematics', 'Networks & paths'],
-    },
-    {
-      name: 'Advanced',
-      badge: 'Most common HSC path',
-      topics: ['Functions & relations', 'Trigonometry', 'Calculus', 'Statistical analysis', 'Financial modelling'],
-    },
-    {
-      name: 'Extension 1',
-      badge: 'High scaling',
-      topics: ['Further calculus', 'Polynomials', 'Combinatorics', 'Proof by induction', 'Vectors'],
-    },
-    {
-      name: 'Extension 2',
-      badge: 'Elite level',
-      topics: ['Complex numbers', 'Further integration', 'Mechanics', 'Statistical inference', 'Advanced proof'],
     },
   ];
 
@@ -1053,8 +1295,6 @@ const Mathematics = () => {
     document.getElementById('math-pathways')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
-  const [activeCard, setActiveCard] = useState<string | null>(null);
-  const [activeStream, setActiveStream] = useState<number>(0);
   const [teachStep, setTeachStep] = useState<number>(0);
   const [activeTab, setActiveTab] = useState<string>('yr910');
   const [exampleIdx, setExampleIdx] = useState<number>(0);
@@ -1069,9 +1309,10 @@ const Mathematics = () => {
 
   return (
     <div className="min-h-screen bg-[#fffdf8] text-[#172033]">
+      <MathsIntroVideoGate />
       <SEO
-        title="Mathematics Tutoring (K-12 & HSC)"
-        description="From foundational numeracy to advanced HSC mathematics, we build confidence through expert guidance and proven teaching methods at DA Tuition."
+        title="Mathematics Tutoring (Years 7-12 & HSC)"
+        description="From Year 7 foundations to advanced HSC mathematics, we build confidence through expert guidance and proven teaching methods at DA Tuition."
         canonicalUrl="/subjects/mathematics"
       />
       <NavigationNew />
@@ -1088,291 +1329,181 @@ const Mathematics = () => {
           exploreTargetId="math-pathways"
           placeholderLabel="Mathematics classroom"
           showPlaceholderBadge={false}
-          backgroundImageSrc="/math-tutor-whiteboard-ultrawide-v3.png"
+          backgroundImageSrc="/math-tutor-ogive-hero.jpg"
           backgroundImageAlt="DA Tuition mathematics tutor working through problems on a whiteboard"
           backgroundPosition="100% center"
-          mobileBackgroundPosition="100% center"
+          mobileBackgroundPosition="70% center"
+          copyOffsetClassName="lg:-translate-y-10"
         />
 
-        <BasketballCalculusJourney />
+        {SHOW_LEGACY_MATHS_INTERACTIONS ? <BasketballCalculusJourney /> : null}
+
+        {SHOW_LEGACY_MATHS_INTERACTIONS ? <FourierDecomposition /> : null}
 
         {/* Anchor navigation */}
-        <section className="px-5 pt-10 lg:px-8">
-          <div className="relative z-10 mx-auto grid max-w-7xl gap-3 rounded-3xl border border-[#c9a227]/20 bg-[#fffdf8] p-3 shadow-2xl shadow-[#071629]/10 md:grid-cols-4">
+        <nav aria-label="Mathematics page sections" className="border-y border-[#071629]/12 bg-[#fffdf8] px-5 lg:px-8">
+          <div className="mx-auto flex max-w-7xl gap-6 overflow-x-auto snap-x md:grid md:grid-cols-5 md:gap-8">
             {[
-              ['Year levels', '#math-pathways'],
-              ['HSC streams', '#hsc-maths'],
-              ['How we teach', '#math-method'],
-              ['See it in action', '#maths-interactive'],
-            ].map(([label, href]) => (
-              <a key={href} href={href} className="rounded-2xl px-4 py-3 text-center text-sm font-black text-[#10233f] transition hover:bg-[#f5ecd9]">
+              { label: 'Where they are now', href: '#math-pathways' },
+              { label: 'Their right class', href: '#maths-class-options' },
+              { label: 'HSC direction', href: '#hsc-maths' },
+              { label: 'How progress is built', href: '#math-teaching-proof' },
+              { label: 'Optional exploration', href: '/maths-graph-lab', opensPage: true },
+            ].map(({ label, href, opensPage }) => (
+              <a
+                key={href}
+                href={href}
+                aria-label={opensPage ? `${label}, opens a separate page` : undefined}
+                className="relative flex min-h-14 min-w-[9.75rem] shrink-0 snap-start items-center justify-center gap-1.5 px-1 py-4 text-center text-sm font-black text-[#10233f] outline-none after:absolute after:inset-x-1 after:bottom-0 after:h-0.5 after:origin-left after:scale-x-0 after:bg-[#a6760e] after:transition-transform after:duration-200 hover:after:scale-x-100 focus-visible:after:scale-x-100 md:min-w-0"
+              >
                 {label}
+                {opensPage ? <ArrowUpRight className="h-3.5 w-3.5 shrink-0" aria-hidden="true" /> : null}
               </a>
             ))}
           </div>
+        </nav>
+
+        <NetworkAmbientMoment passive />
+
+        <ConfidenceJourney concerns={parentConcerns} levels={courseLevels} />
+
+        {/* Mid-page CTA — the only other booking action on the page is at the very
+            bottom, after class options, HSC streams and teaching proof. A parent
+            already convinced by the concerns above shouldn't have to scroll the
+            rest of the page to find a way to act on it. */}
+        <section className="border-y border-[#071629]/10 bg-[#fffdf8] px-5 py-14 lg:px-8">
+          <div className="mx-auto flex max-w-6xl flex-col items-center gap-5 text-center sm:flex-row sm:justify-between sm:text-left">
+            <p className="max-w-xl text-lg font-medium leading-7 text-[#10233f]">
+              Recognise your child in one of these? Book an interview and we'll help you work out the right starting point.
+            </p>
+            <Link to="/book-interview" className="shrink-0">
+              <Button size="lg" className="h-12 w-full rounded-full bg-[#c9a227] px-7 font-black text-[#101521] hover:bg-[#e0bd4b] sm:w-auto">
+                Book an Interview
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </Link>
+          </div>
         </section>
 
-        {/* Curiosity grid — Where does this maths actually show up? */}
-        <section id="where-used" className="bg-[#fffdf8] px-5 py-20 lg:px-8">
-          <style>{`
-            @keyframes maths-phoneRock {
-              0%   { transform: rotate(8deg);  }
-              50%  { transform: rotate(-5deg); }
-              100% { transform: rotate(8deg);  }
-            }
-            @keyframes maths-ripple {
-              from { transform: scale(1);   opacity: 0.55; }
-              to   { transform: scale(2.8); opacity: 0;    }
-            }
-          `}</style>
-
-          <div className="mx-auto max-w-7xl">
-            <div className="mb-10">
-              <h2 className="font-serif text-4xl font-medium leading-tight tracking-[-0.045em] text-[#071629] lg:text-5xl">
-                Where does this maths actually show up?
+        {/* Maths class options */}
+        <section id="maths-class-options" className="relative isolate overflow-hidden bg-[linear-gradient(160deg,#071629_0%,#0b294d_100%)] px-5 py-24 lg:px-8 lg:py-28">
+          <div className="pointer-events-none absolute -left-36 -top-36 h-80 w-80 rounded-full border border-[#c9a227]/35" aria-hidden="true" />
+          <div className="pointer-events-none absolute -bottom-44 -right-44 h-96 w-96 rounded-full border border-[#c9a227]/30" aria-hidden="true" />
+          <div
+            className="pointer-events-none absolute left-7 top-7 h-32 w-32 opacity-50"
+            style={{ backgroundImage: 'radial-gradient(rgba(255,255,255,.2) 1px, transparent 1.5px)', backgroundSize: '14px 14px' }}
+            aria-hidden="true"
+          />
+          <div
+            className="pointer-events-none absolute bottom-7 right-7 h-32 w-32 opacity-35"
+            style={{ backgroundImage: 'radial-gradient(rgba(255,255,255,.2) 1px, transparent 1.5px)', backgroundSize: '14px 14px' }}
+            aria-hidden="true"
+          />
+          <div className="relative z-10 mx-auto max-w-[1480px]">
+            <motion.div
+              className="mx-auto mb-14 max-w-5xl text-center"
+              initial={prefersReducedMotion ? false : { opacity: 0, y: 22, filter: 'blur(4px)' }}
+              whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+              viewport={{ once: true, amount: 0.35 }}
+              transition={{ duration: 0.68, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <span className="inline-flex items-center gap-3 text-xs font-black uppercase tracking-[0.16em] text-[#f1df9a] before:h-px before:w-16 before:bg-gradient-to-r before:from-transparent before:to-[#c9a227]/80 after:h-px after:w-16 after:bg-gradient-to-l after:from-transparent after:to-[#c9a227]/80">
+                Maths class options
+              </span>
+              <h2 className="mt-6 font-serif text-5xl font-medium leading-[1.25] tracking-[-0.035em] text-[#fff9ef] md:text-6xl xl:text-[4.25rem]">
+                Choose the maths pathway that fits your child.
               </h2>
-              <p className="mt-3 font-serif text-base italic text-[#9b8a6a]">Tap a card to find out.</p>
-            </div>
+              <p className="mx-auto mt-6 max-w-2xl text-base leading-8 text-[#c7d4e5]">
+                From personalised support to school-aligned learning and exam preparation, we will help you choose the right starting point.
+              </p>
+            </motion.div>
 
-            <div className="grid grid-cols-1 gap-5 min-[480px]:grid-cols-2 md:grid-cols-3">
-              {CURIOSITY_CARDS.map((card) => {
-                const isOpen = activeCard === card.topic;
+            <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
+              {MATHS_CLASS_OPTIONS.map((option, index) => {
+                const Icon = option.icon;
                 return (
-                  <button
-                    key={card.topic}
-                    type="button"
-                    onClick={() => setActiveCard(isOpen ? null : card.topic)}
-                    aria-expanded={isOpen}
-                    className="group relative flex flex-col overflow-hidden rounded-[2rem] border text-left shadow-[0_2px_12px_rgba(7,22,41,0.07)] transition duration-150 hover:scale-[1.02] hover:shadow-[0_8px_28px_rgba(7,22,41,0.12)] active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9a227] focus-visible:ring-offset-2"
-                    style={{
-                      borderColor: isOpen ? 'rgba(201,162,39,0.35)' : 'rgba(7,22,41,0.08)',
-                      background: isOpen ? '#fdf8ec' : 'white',
-                    }}
+                  <motion.article
+                    key={option.title}
+                    className="group flex min-h-full flex-col overflow-hidden rounded-2xl border bg-[#fff9ef] transition-colors duration-200 motion-reduce:transition-none"
+                    style={{ borderColor: option.accent }}
+                    initial={prefersReducedMotion ? false : { opacity: 0, y: 28 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    whileHover={prefersReducedMotion ? undefined : { y: -6, transition: { duration: 0.18, delay: 0, ease: [0.16, 1, 0.3, 1] } }}
+                    viewport={{ once: true, amount: 0.2 }}
+                    transition={{ duration: 0.62, delay: index * 0.1, ease: [0.16, 1, 0.3, 1] }}
                   >
-                    {/* Gold top accent */}
-                    <div
-                      className="absolute inset-x-0 top-0 h-[3px] transition-opacity duration-300"
-                      style={{ background: '#c9a227', opacity: isOpen ? 1 : 0 }}
-                    />
-
-                    {/* Topic badge — top-right corner */}
-                    <span className="absolute right-4 top-4 z-10 rounded-full bg-[#071629]/5 px-2.5 py-0.5 text-[10px] font-black uppercase tracking-[0.1em] text-[#9b8a6a]">
-                      {card.topic}
-                    </span>
-
-                    {/* Illustration — shrinks when open */}
-                    <div
-                      className="mx-5 mt-8 overflow-hidden transition-[height] duration-200 ease-out"
-                      style={{ height: isOpen ? '3.5rem' : '7rem' }}
-                    >
-                      <card.Illustration isOpen={isOpen} />
+                    <div className="relative aspect-[4/3] overflow-hidden bg-[#10233f]">
+                      <img
+                        src={option.image}
+                        alt={option.alt}
+                        className="h-full w-full object-cover transition-transform duration-500 motion-reduce:transition-none group-hover:scale-[1.03]"
+                        loading="lazy"
+                      />
+                      <span className="absolute inset-x-0 bottom-0 h-1.5" style={{ backgroundColor: option.accent }} aria-hidden="true" />
                     </div>
-
-                    {/* Text area */}
-                    <div className="px-6 pb-5 pt-3">
-                      {/* Hook title */}
-                      <p
-                        className="font-serif font-medium leading-snug transition-all duration-200"
-                        style={{
-                          fontSize: isOpen ? '0.95rem' : '1.18rem',
-                          color: isOpen ? '#7a5c0a' : '#071629',
-                        }}
-                      >
-                        {card.hook}
-                      </p>
-
-                      {/* Fact — expands via grid-template-rows */}
-                      <div
-                        className="grid transition-[grid-template-rows] duration-300 ease-in-out"
-                        style={{ gridTemplateRows: isOpen ? '1fr' : '0fr' }}
-                      >
-                        <div className="min-h-0 overflow-hidden">
-                          <p
-                            className="mt-3 text-[13.5px] leading-[1.8] text-[#5c4a1e] transition-opacity duration-200"
-                            style={{ opacity: isOpen ? 1 : 0 }}
-                          >
-                            {card.fact}
-                          </p>
-                        </div>
+                    <div className="relative flex flex-1 flex-col px-6 pb-7 pt-11 text-center">
+                      <div className="pointer-events-none absolute inset-x-0 -top-9 flex justify-center">
+                        <motion.span
+                          className="grid h-[4.5rem] w-[4.5rem] place-items-center rounded-full border bg-[#fff9ef]"
+                          style={{
+                            borderColor: option.accent,
+                            color: option.accent,
+                            backgroundColor: option.tint,
+                          }}
+                          initial={prefersReducedMotion ? false : { opacity: 0, scale: 0.78 }}
+                          whileInView={{ opacity: 1, scale: 1 }}
+                          viewport={{ once: true, amount: 0.2 }}
+                          transition={{ duration: 0.44, delay: index * 0.1 + 0.16, ease: [0.16, 1, 0.3, 1] }}
+                          aria-hidden="true"
+                        >
+                          <Icon className="block h-7 w-7" strokeWidth={1.6} />
+                        </motion.span>
                       </div>
-
-                      {/* Year badge */}
-                      <span className="mt-3 inline-block rounded-full bg-[#071629]/6 px-2.5 py-0.5 text-[10px] font-black uppercase tracking-[0.1em] text-[#9b8a6a]">
-                        {card.year}
+                      <h3 className="flex min-h-[4.75rem] items-center justify-center text-balance font-serif text-3xl font-semibold leading-tight tracking-[-0.03em] text-[#071629]">
+                        {option.title}
+                      </h3>
+                      <span className="mx-auto flex h-8 items-center gap-2" aria-hidden="true">
+                        <i className="h-px w-7 shrink-0" style={{ backgroundColor: option.accent }} />
+                        <i className="h-1.5 w-1.5 shrink-0 rotate-45" style={{ backgroundColor: '#c9a227' }} />
+                        <i className="h-px w-7 shrink-0" style={{ backgroundColor: option.accent }} />
                       </span>
+                      <p className="mt-2 text-[15px] leading-7 text-[#40516b]">{option.description}</p>
                     </div>
-                  </button>
+                  </motion.article>
                 );
               })}
             </div>
           </div>
         </section>
 
-        {/* Parent concerns */}
-        <section id="parent-concerns" className="bg-[#fff6e7] px-5 py-20 lg:px-8">
+        <VectorAmbientMoment passive />
+
+        <MathsSyllabusScrollStory />
+
+        <HscMathsPathway />
+
+        <section className="bg-[#071629] px-5 py-20 lg:px-8" aria-labelledby="maths-topic-network-heading">
           <div className="mx-auto max-w-7xl">
-            <SectionHeader
-              eyebrow="For parents"
-              title="Maths problems usually show up as confidence problems first."
-              text="Whether your child freezes in tests, avoids homework, or needs to push further ahead, these are the situations we work with every day."
-            />
-
-            <div className="grid gap-5 lg:grid-cols-3">
-              {parentConcerns.map((concern, index) => (
-                <motion.article
-                  key={concern.title}
-                  initial={{ opacity: 0, y: 24 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: '-80px' }}
-                  transition={{ duration: 0.55, delay: index * 0.08 }}
-                  className="rounded-3xl border border-[#071629]/10 bg-white p-6 shadow-lg shadow-[#071629]/5 transition duration-300 hover:-translate-y-1 hover:shadow-xl"
-                >
-                  <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#e8f2ff] text-[#10233f]">
-                    <concern.icon className="h-6 w-6" />
-                  </div>
-                  <h2 className="text-xl font-black leading-snug tracking-[-0.02em] text-[#10233f]">{concern.title}</h2>
-                  <p className="mt-4 text-sm leading-7 text-[#61708a]">{concern.detail}</p>
-                </motion.article>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Year level pathways */}
-        <section
-          id="math-pathways"
-          className="px-5 py-20 lg:px-8"
-          style={{ background: 'linear-gradient(180deg, #fff6e7 0%, #fffaf1 22%, #fffdf8 52%)' }}
-        >
-          <div className="mx-auto max-w-7xl">
-            <SectionHeader
-              eyebrow="Pathways"
-              title="Choose by school stage, not by guesswork."
-              text="Not sure which level fits your child? The interview will help. These cards give you a starting point to compare before you call."
-            />
-
-            <div className="grid gap-6 lg:grid-cols-3">
-              {courseLevels.map((level, index) => (
-                <motion.article
-                  key={level.label}
-                  initial={{ opacity: 0, y: 24 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: '-80px' }}
-                  transition={{ duration: 0.55, delay: index * 0.08 }}
-                  className={`group flex min-h-[430px] flex-col justify-between rounded-[2rem] border border-[#071629]/10 bg-gradient-to-b ${level.tone} p-7 shadow-lg shadow-[#071629]/5 transition duration-300 hover:-translate-y-1 hover:shadow-2xl`}
-                >
-                  <div>
-                    <div className="flex items-center justify-between gap-4">
-                      <span className="rounded-full bg-white/80 px-3 py-1 text-xs font-black uppercase tracking-[0.12em] text-[#10233f]">{level.years}</span>
-                      <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#10233f] text-[#f1df9a]">
-                        <level.icon className="h-5 w-5" />
-                      </div>
-                    </div>
-                    <h2 className="mt-12 font-serif text-3xl font-medium tracking-[-0.04em] text-[#071629]">{level.label}</h2>
-                    <p className="mt-4 text-sm leading-7 text-[#61708a]">{level.description}</p>
-                    <ul className="mt-6 space-y-3">
-                      {level.subjects.map((subject) => (
-                        <li key={subject} className="flex items-start gap-3 text-sm font-semibold text-[#24324a]">
-                          <CheckCircle className="mt-0.5 h-4 w-4 shrink-0 text-[#c9a227]" />
-                          {subject}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                  <Link to="/book-interview" className="mt-8 inline-flex items-center text-sm font-black text-[#10233f]">
-                    Ask which level fits
-                    <ArrowRight className="ml-2 h-4 w-4 transition group-hover:translate-x-1" />
-                  </Link>
-                </motion.article>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* HSC streams */}
-        <section
-          id="hsc-maths"
-          className="px-5 pb-20 pt-52 text-white lg:px-8"
-          style={{
-            background: `linear-gradient(
-              180deg,
-              #fffdf8 0px,
-              #f5f2eb 16px,
-              #e7e4dd 32px,
-              #d7d8d4 48px,
-              #c1c7c9 64px,
-              #a7b1b9 80px,
-              #8b99a6 96px,
-              #6e7f90 112px,
-              #506579 128px,
-              #31495f 144px,
-              #172c43 160px,
-              #071629 176px
-            )`,
-          }}
-        >
-          <div className="mx-auto max-w-7xl">
-            <div className="grid gap-10 lg:grid-cols-[.75fr_1.25fr] lg:items-end">
-              <div>
-                <p className="mb-3 text-xs font-black uppercase tracking-[0.16em] text-[#f1df9a]">HSC focus</p>
-                <h2 className="font-serif text-4xl font-medium leading-tight tracking-[-0.045em] text-white lg:text-5xl">
-                  Clear pathways for Standard, Advanced, and Extension maths.
-                </h2>
-              </div>
-              <p className="text-base leading-8 text-white/64">
-                We support all four HSC mathematics streams. You do not need to decode the syllabus — just tell us which subject your child is enrolled in and we will match them to the right class and teacher.
-              </p>
-            </div>
-
-            {/* Segmented stream selector — same swap-a-pane pattern as "How we teach" below */}
-            <div className="mt-10 flex flex-wrap gap-2" role="tablist" aria-label="HSC mathematics stream">
-              {hscStreams.map((stream, index) => (
-                <button
-                  key={stream.name}
-                  role="tab"
-                  aria-selected={activeStream === index}
-                  onClick={() => setActiveStream(index)}
-                  className={`rounded-full px-5 py-2.5 text-sm font-black transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9a227] focus-visible:ring-offset-2 focus-visible:ring-offset-[#071629] ${
-                    activeStream === index ? 'bg-[#c9a227] text-[#071629]' : 'border border-white/15 bg-white/[0.06] text-white/70 hover:bg-white/10 hover:text-white'
-                  }`}
-                >
-                  {stream.name}
-                </button>
-              ))}
-            </div>
-
-            <div className="mt-6 rounded-3xl border border-white/12 bg-white/[0.06] p-8 shadow-2xl shadow-black/10 backdrop-blur md:p-10">
-              <div className="grid gap-8 md:grid-cols-[.9fr_1.1fr] md:items-start">
-                <div>
-                  <span className="rounded-full bg-[#c9a227]/18 px-3 py-1 text-xs font-black uppercase tracking-[0.1em] text-[#f1df9a]">
-                    {hscStreams[activeStream].badge}
-                  </span>
-                  <h3 className="mt-5 text-3xl font-black tracking-[-0.02em]">{hscStreams[activeStream].name}</h3>
-                  <Link to="/hsc-excellence" className="mt-6 inline-flex">
-                    <Button variant="outline" className="rounded-full border-white/30 bg-transparent font-bold text-white hover:bg-white/10 hover:text-white">
-                      Explore HSC Program
-                      <ArrowRight className="ml-2 h-4 w-4" />
-                    </Button>
-                  </Link>
-                </div>
-                <ul className="grid gap-3 sm:grid-cols-2">
-                  {hscStreams[activeStream].topics.map((topic) => (
-                    <li key={topic} className="flex items-start gap-3 rounded-2xl bg-white/[0.05] px-4 py-3 text-sm leading-6 text-white/80">
-                      <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[#f1df9a]" />
-                      {topic}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-
-            <p className="mt-6 max-w-3xl text-sm leading-7 text-white/70">
-              Mathematics teachers include high-achieving subject specialists who help students move from knowing content to showing clear working under exam conditions.
+            <p className="mb-3 text-xs font-black uppercase tracking-[0.16em] text-[#c9a227]">The whole picture</p>
+            <h2 id="maths-topic-network-heading" className="font-serif text-4xl font-medium leading-[1.03] tracking-[-0.04em] text-white sm:text-5xl">
+              Every topic connects to another.
+            </h2>
+            <p className="mt-5 max-w-[52ch] text-base leading-8 text-[#b9c4d6]">
+              Scroll to watch how Years 7–12 maths builds outward from a handful of fundamentals — click any topic to see what it depends on.
             </p>
+            <div className="mt-10">
+              <MathsTopicNetwork />
+            </div>
           </div>
         </section>
 
-        {/* How we teach — sticky rail, since the 4 steps are genuinely sequential */}
+        <MathsTeachingProof />
+
+        <MathsGraphLabInvitation />
+
+        {SHOW_LEGACY_MATHS_INTERACTIONS ? (
+          <>
+        {/* How we teach — retained temporarily for reversible visual review */}
         <section id="math-method" className="bg-[#fff6e7] px-5 py-20 lg:px-8">
           <div className="mx-auto max-w-7xl">
             <SectionHeader
@@ -1633,17 +1764,32 @@ const Mathematics = () => {
             </div>
           </div>
         </section>
+          </>
+        ) : null}
 
-        {/* Testimonial */}
-        <section className="bg-[#fffdf8] px-5 pb-20 lg:px-8">
-          <div className="mx-auto max-w-5xl rounded-[2rem] border border-[#071629]/10 bg-white p-8 shadow-2xl shadow-[#071629]/8 md:p-12">
-            <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-3xl bg-[#10233f] text-[#f1df9a]">
-              <Quote className="h-8 w-8" />
+        <DerivativeAmbientMoment passive />
+
+        {/* Real Google review — review-078 in src/data/reviews.json (subject: Mathematics).
+            Quoted verbatim from the "she broke it down into steps..." sentence; only the
+            surrounding scene-setting was trimmed for length, no wording changed. */}
+        <section className="border-y border-[#071629]/10 bg-[#fffdf8] px-5 py-20 lg:px-8 lg:py-24">
+          <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[0.62fr_1fr] lg:items-start lg:gap-20">
+            <div>
+              <p className="text-sm font-black text-[#8a6110]">In their own words</p>
+              <h2 className="mt-4 text-balance font-serif text-4xl font-medium leading-[1.08] tracking-[-0.035em] text-[#071629] sm:text-5xl">
+                What changes when the method clicks.
+              </h2>
+              <p className="mt-5 max-w-md text-base leading-8 text-[#40516b]">
+                A verified DA Tuition Google review from a maths student.
+              </p>
             </div>
-            <blockquote className="mx-auto max-w-3xl text-center font-serif text-2xl leading-snug tracking-[-0.03em] text-[#10233f] md:text-3xl">
-              "The biggest change was not just marks. My child stopped saying, 'I'm bad at maths,' and started showing us how they solved the question."
-            </blockquote>
-            <p className="mt-6 text-center text-sm font-black uppercase tracking-[0.12em] text-[#c9a227]">Parent feedback</p>
+            <div className="border-t-2 border-[#c9a227] pt-8 lg:pt-10">
+              <Quote className="h-9 w-9 text-[#8a6110]" aria-hidden="true" />
+              <blockquote className="mt-6 max-w-[30ch] text-balance font-serif text-3xl leading-[1.25] tracking-[-0.03em] text-[#10233f] sm:text-4xl">
+                “Even when I was certain I couldn't solve a question, she broke it down into steps in the easiest method which made it seem so simple — I understood it immediately and could apply it to other challenging questions.”
+              </blockquote>
+              <p className="mt-7 text-sm font-bold text-[#40516b]">— Christina Lee, Year 10</p>
+            </div>
           </div>
         </section>
 
