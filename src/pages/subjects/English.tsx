@@ -7,23 +7,34 @@ import { EnglishIntroVideoGate } from '@/features/english-intro-video/EnglishInt
 
 const English = () => {
   const iframeRef = useRef<HTMLIFrameElement>(null);
+  const iframeResizeObserverRef = useRef<ResizeObserver | null>(null);
   const [iframeHeight, setIframeHeight] = useState('100svh');
 
-  const handleIframeLoad = () => {
+  const updateIframeHeight = () => {
     const doc = iframeRef.current?.contentDocument;
     if (doc?.documentElement) {
       setIframeHeight(`${doc.documentElement.scrollHeight}px`);
     }
   };
 
-  useEffect(() => {
-    const updateHeight = () => {
-      const doc = iframeRef.current?.contentDocument;
-      if (doc?.documentElement) setIframeHeight(`${doc.documentElement.scrollHeight}px`);
-    };
+  const handleIframeLoad = () => {
+    const doc = iframeRef.current?.contentDocument;
+    updateIframeHeight();
 
-    window.addEventListener('resize', updateHeight);
-    return () => window.removeEventListener('resize', updateHeight);
+    iframeResizeObserverRef.current?.disconnect();
+    if (doc?.documentElement && 'ResizeObserver' in window) {
+      iframeResizeObserverRef.current = new ResizeObserver(updateIframeHeight);
+      iframeResizeObserverRef.current.observe(doc.documentElement);
+      if (doc.body) iframeResizeObserverRef.current.observe(doc.body);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('resize', updateIframeHeight);
+    return () => {
+      window.removeEventListener('resize', updateIframeHeight);
+      iframeResizeObserverRef.current?.disconnect();
+    };
   }, []);
 
   return (

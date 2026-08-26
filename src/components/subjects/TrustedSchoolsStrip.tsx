@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 interface TrustedSchoolsStripProps {
   schools: TrustedSchool[];
@@ -53,17 +53,38 @@ const TrustedSchoolsStrip = ({
   eyebrow = 'Trusted by students from',
   className = '',
 }: TrustedSchoolsStripProps) => {
-  const repeatedSchools = [...schools, ...schools];
+  const schoolSets = [0, 1];
+  const scrollDurationSeconds = Math.max(32, (schools.length * 2.6 * 8) / 3);
+  const firstSetRef = useRef<HTMLDivElement | null>(null);
+  const [scrollDistance, setScrollDistance] = useState(0);
 
-  const renderSchool = (school: TrustedSchool, index: number) => {
+  useEffect(() => {
+    const measureScrollDistance = () => {
+      setScrollDistance(firstSetRef.current?.scrollWidth ?? 0);
+    };
+
+    measureScrollDistance();
+
+    const resizeObserver = new ResizeObserver(measureScrollDistance);
+    if (firstSetRef.current) {
+      resizeObserver.observe(firstSetRef.current);
+    }
+    window.addEventListener('resize', measureScrollDistance);
+
+    return () => {
+      resizeObserver.disconnect();
+      window.removeEventListener('resize', measureScrollDistance);
+    };
+  }, [schools]);
+
+  const renderSchool = (school: TrustedSchool, index: number, setIndex: number) => {
     const tone = crestTones[index % crestTones.length];
-    const isDuplicate = index >= schools.length;
 
     return (
       <div
-        key={`${school.name}-${index}`}
-        className="flex min-w-[282px] shrink-0 items-center gap-4 sm:min-w-[330px]"
-        aria-hidden={isDuplicate ? 'true' : undefined}
+        key={`${school.name}-${setIndex}-${index}`}
+        className="trusted-schools-item flex shrink-0 items-center gap-4 whitespace-nowrap"
+        aria-hidden={setIndex > 0 ? 'true' : undefined}
       >
         {school.logoSrc ? (
           <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-white p-1.5 shadow-sm">
@@ -83,7 +104,7 @@ const TrustedSchoolsStrip = ({
             </span>
           </span>
         )}
-        <span className="text-base font-semibold leading-tight text-brand-midnight sm:text-lg">
+        <span className="whitespace-nowrap text-base font-semibold leading-tight text-brand-midnight sm:text-lg">
           {school.name}
         </span>
       </div>
@@ -94,6 +115,10 @@ const TrustedSchoolsStrip = ({
     <section
       className={`trusted-schools-strip border-y border-slate-200 bg-white ${className}`}
       aria-label={eyebrow}
+      style={{
+        '--trusted-schools-distance': `${scrollDistance}px`,
+        '--trusted-schools-duration': `${scrollDurationSeconds}s`,
+      } as React.CSSProperties}
     >
       <div className="mx-auto max-w-7xl px-5 py-7 sm:px-6 lg:px-8">
         <div className="mb-5 flex items-center gap-4">
@@ -104,8 +129,17 @@ const TrustedSchoolsStrip = ({
         </div>
 
         <div className="-mx-5 overflow-hidden sm:-mx-6 lg:-mx-8 trusted-schools-marquee">
-          <div className="flex w-max gap-10 px-5 will-change-transform trusted-schools-track sm:gap-14 sm:px-6 lg:px-8">
-            {repeatedSchools.map(renderSchool)}
+          <div className="flex w-max will-change-transform trusted-schools-track">
+            {schoolSets.map((setIndex) => (
+              <div
+                key={setIndex}
+                ref={setIndex === 0 ? firstSetRef : undefined}
+                className="flex w-max shrink-0 gap-10 px-5 sm:gap-14 sm:px-6 lg:px-8 trusted-schools-set"
+                style={scrollDistance ? { width: `${scrollDistance}px` } : undefined}
+              >
+                {schools.map((school, index) => renderSchool(school, index, setIndex))}
+              </div>
+            ))}
           </div>
         </div>
       </div>

@@ -501,7 +501,25 @@
 }
 
 .trusted-schools-track {
-  animation: trusted-schools-scroll 11.2s linear infinite;
+  width: max-content;
+  max-width: none;
+  animation: trusted-schools-scroll var(--trusted-schools-duration, 11.2s) linear infinite;
+}
+
+.trusted-schools-set {
+  width: max-content;
+  max-width: none;
+  flex: 0 0 auto;
+}
+
+.trusted-schools-item,
+.trusted-schools-set > div {
+  max-width: none;
+  flex: 0 0 auto;
+}
+
+.trusted-schools-item {
+  width: max-content;
 }
 
 .trusted-schools-strip:hover .trusted-schools-track {
@@ -527,7 +545,7 @@
   }
 
   to {
-    transform: translateX(calc(-50% - 1.25rem));
+    transform: translateX(calc(-1 * var(--trusted-schools-distance, 50%)));
   }
 }
 
@@ -538,7 +556,7 @@
     }
 
     to {
-      transform: translateX(calc(-50% - 1.75rem));
+      transform: translateX(calc(-1 * var(--trusted-schools-distance, 50%)));
     }
   }
 }
