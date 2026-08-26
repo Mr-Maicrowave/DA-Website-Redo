@@ -1,0 +1,570 @@
+{
+  "targetUrl": "http://127.0.0.1:56394/tutors",
+  "generatedAt": "2026-08-25T12:51:34.896Z",
+  "motionCapture": "artifacts/tutor-orbit/tutor-orbit-motion.webm",
+  "motionCaptureError": null,
+  "interactions": {
+    "movement": {
+      "before": "matrix(1.03771, 0, 0, 1.03771, -200.658, -146.319)",
+      "after": "matrix(1.03853, 0, 0, 1.03853, -201.489, -146.189)",
+      "confirmed": true
+    },
+    "hoverPause": {
+      "start": "matrix(1.03861, 0, 0, 1.03861, -201.581, -146.176)",
+      "end": "matrix(1.03861, 0, 0, 1.03861, -201.581, -146.176)",
+      "exact": true
+    },
+    "regularPointerSelection": {
+      "selectedId": "T001",
+      "selectedName": "Ms Kassandra B.",
+      "selectedSlot": "0",
+      "previousCentreId": "T003",
+      "phaseLog": [
+        "idle",
+        "promoting",
+        "exchanging",
+        "idle"
+      ],
+      "finalPhase": "idle",
+      "centreId": "T001",
+      "replacementId": "T003",
+      "profileName": "Ms Kassandra B."
+    },
+    "reducedMotionKeyboardSelection": {
+      "selectedId": "T001",
+      "selectedName": "Ms Kassandra B.",
+      "selectedSlot": "0",
+      "previousCentreId": "T003",
+      "phaseLog": [
+        "idle",
+        "exchanging",
+        "idle"
+      ],
+      "finalPhase": "idle",
+      "centreId": "T001",
+      "replacementId": "T003",
+      "profileName": "Ms Kassandra B."
+    },
+    "consoleErrors": [],
+    "sameOriginResourceErrors": [],
+    "externalResourceNoise": [
+      "net::ERR_NETWORK_ACCESS_DENIED: https://fonts.googleapis.com/css2?family=Anton&family=Cabin:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Playfair+Display:wght@600;700&display=swap",
+      "Failed to load resource: net::ERR_NETWORK_ACCESS_DENIED (https://fonts.googleapis.com/css2?family=Anton&family=Cabin:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Playfair+Display:wght@600;700&display=swap)",
+      "net::ERR_NETWORK_ACCESS_DENIED: https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&display=swap",
+      "Failed to load resource: net::ERR_NETWORK_ACCESS_DENIED (https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&display=swap)"
+    ],
+    "failures": []
+  },
+  "responsiveRosters": [
+    {
+      "viewport": "1024x768",
+      "total": 14,
+      "pageCount": 4,
+      "pages": [
+        {
+          "ids": [
+            "T011",
+            "T005",
+            "T010",
+            "T012"
+          ],
+          "visiblePortraits": 4,
+          "visibleLabels": 4,
+          "failures": []
+        },
+        {
+          "ids": [
+            "T015",
+            "T001",
+            "T002",
+            "T009"
+          ],
+          "visiblePortraits": 4,
+          "visibleLabels": 4,
+          "failures": []
+        },
+        {
+          "ids": [
+            "T004",
+            "T006",
+            "T007",
+            "T008"
+          ],
+          "visiblePortraits": 4,
+          "visibleLabels": 4,
+          "failures": []
+        },
+        {
+          "ids": [
+            "T013",
+            "T014",
+            "T011",
+            "T005"
+          ],
+          "visiblePortraits": 4,
+          "visibleLabels": 4,
+          "failures": []
+        }
+      ],
+      "wrappedIds": [
+        "T011",
+        "T005",
+        "T010",
+        "T012"
+      ],
+      "previousIds": [
+        "T013",
+        "T014",
+        "T011",
+        "T005"
+      ],
+      "restoredIds": [
+        "T011",
+        "T005",
+        "T010",
+        "T012"
+      ],
+      "coverageIds": [
+        "T001",
+        "T002",
+        "T004",
+        "T005",
+        "T006",
+        "T007",
+        "T008",
+        "T009",
+        "T010",
+        "T011",
+        "T012",
+        "T013",
+        "T014",
+        "T015"
+      ],
+      "failures": []
+    },
+    {
+      "viewport": "390x844",
+      "total": 14,
+      "pageCount": 4,
+      "pages": [
+        {
+          "ids": [
+            "T011",
+            "T005",
+            "T010",
+            "T012"
+          ],
+          "visiblePortraits": 4,
+          "visibleLabels": 4,
+          "failures": []
+        },
+        {
+          "ids": [
+            "T015",
+            "T001",
+            "T002",
+            "T009"
+          ],
+          "visiblePortraits": 4,
+          "visibleLabels": 4,
+          "failures": []
+        },
+        {
+          "ids": [
+            "T004",
+            "T006",
+            "T007",
+            "T008"
+          ],
+          "visiblePortraits": 4,
+          "visibleLabels": 4,
+          "failures": []
+        },
+        {
+          "ids": [
+            "T013",
+            "T014",
+            "T011",
+            "T005"
+          ],
+          "visiblePortraits": 4,
+          "visibleLabels": 4,
+          "failures": []
+        }
+      ],
+      "wrappedIds": [
+        "T011",
+        "T005",
+        "T010",
+        "T012"
+      ],
+      "previousIds": [
+        "T013",
+        "T014",
+        "T011",
+        "T005"
+      ],
+      "restoredIds": [
+        "T011",
+        "T005",
+        "T010",
+        "T012"
+      ],
+      "coverageIds": [
+        "T001",
+        "T002",
+        "T004",
+        "T005",
+        "T006",
+        "T007",
+        "T008",
+        "T009",
+        "T010",
+        "T011",
+        "T012",
+        "T013",
+        "T014",
+        "T015"
+      ],
+      "failures": []
+    }
+  ],
+  "results": [
+    {
+      "viewport": "1920x1080",
+      "representedPortraitIds": [
+        "T011",
+        "T005",
+        "T010",
+        "T012",
+        "T015",
+        "T001",
+        "T002",
+        "T009",
+        "T004",
+        "T006",
+        "T007",
+        "T008",
+        "T013",
+        "T014"
+      ],
+      "visiblePortraits": 14,
+      "visibleInnerPortraits": 5,
+      "visibleOuterPortraits": 9,
+      "collisions": [],
+      "horizontalOverflow": false,
+      "scrollWidth": 1920,
+      "consoleErrors": [],
+      "sameOriginResourceErrors": [],
+      "externalResourceNoise": [
+        "net::ERR_NETWORK_ACCESS_DENIED: https://fonts.googleapis.com/css2?family=Anton&family=Cabin:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Playfair+Display:wght@600;700&display=swap",
+        "Failed to load resource: net::ERR_NETWORK_ACCESS_DENIED (https://fonts.googleapis.com/css2?family=Anton&family=Cabin:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Playfair+Display:wght@600;700&display=swap)",
+        "net::ERR_NETWORK_ACCESS_DENIED: https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&display=swap",
+        "Failed to load resource: net::ERR_NETWORK_ACCESS_DENIED (https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&display=swap)"
+      ],
+      "responsiveRoster": null,
+      "screenshot": "artifacts/tutor-orbit/tutors-1920x1080.png"
+    },
+    {
+      "viewport": "1440x900",
+      "representedPortraitIds": [
+        "T011",
+        "T005",
+        "T010",
+        "T012",
+        "T015",
+        "T001",
+        "T002",
+        "T009",
+        "T004",
+        "T006",
+        "T007",
+        "T008",
+        "T013",
+        "T014"
+      ],
+      "visiblePortraits": 14,
+      "visibleInnerPortraits": 5,
+      "visibleOuterPortraits": 9,
+      "collisions": [],
+      "horizontalOverflow": false,
+      "scrollWidth": 1440,
+      "consoleErrors": [],
+      "sameOriginResourceErrors": [],
+      "externalResourceNoise": [
+        "net::ERR_NETWORK_ACCESS_DENIED: https://fonts.googleapis.com/css2?family=Anton&family=Cabin:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Playfair+Display:wght@600;700&display=swap",
+        "Failed to load resource: net::ERR_NETWORK_ACCESS_DENIED (https://fonts.googleapis.com/css2?family=Anton&family=Cabin:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Playfair+Display:wght@600;700&display=swap)",
+        "net::ERR_NETWORK_ACCESS_DENIED: https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&display=swap",
+        "Failed to load resource: net::ERR_NETWORK_ACCESS_DENIED (https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&display=swap)"
+      ],
+      "responsiveRoster": null,
+      "screenshot": "artifacts/tutor-orbit/tutors-1440x900.png"
+    },
+    {
+      "viewport": "1366x768",
+      "representedPortraitIds": [
+        "T011",
+        "T005",
+        "T010",
+        "T012",
+        "T015",
+        "T001",
+        "T002",
+        "T009",
+        "T004",
+        "T006",
+        "T007",
+        "T008",
+        "T013",
+        "T014"
+      ],
+      "visiblePortraits": 12,
+      "visibleInnerPortraits": 5,
+      "visibleOuterPortraits": 9,
+      "collisions": [],
+      "horizontalOverflow": false,
+      "scrollWidth": 1366,
+      "consoleErrors": [],
+      "sameOriginResourceErrors": [],
+      "externalResourceNoise": [
+        "net::ERR_NETWORK_ACCESS_DENIED: https://fonts.googleapis.com/css2?family=Anton&family=Cabin:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Playfair+Display:wght@600;700&display=swap",
+        "Failed to load resource: net::ERR_NETWORK_ACCESS_DENIED (https://fonts.googleapis.com/css2?family=Anton&family=Cabin:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Playfair+Display:wght@600;700&display=swap)",
+        "net::ERR_NETWORK_ACCESS_DENIED: https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&display=swap",
+        "Failed to load resource: net::ERR_NETWORK_ACCESS_DENIED (https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&display=swap)"
+      ],
+      "responsiveRoster": null,
+      "screenshot": "artifacts/tutor-orbit/tutors-1366x768.png"
+    },
+    {
+      "viewport": "1024x768",
+      "representedPortraitIds": [
+        "T011",
+        "T005",
+        "T010",
+        "T012",
+        "T015",
+        "T001",
+        "T002",
+        "T009",
+        "T004",
+        "T006",
+        "T007",
+        "T011",
+        "T005",
+        "T010",
+        "T012"
+      ],
+      "visiblePortraits": 7,
+      "visibleInnerPortraits": 2,
+      "visibleOuterPortraits": 1,
+      "collisions": [],
+      "horizontalOverflow": false,
+      "scrollWidth": 1024,
+      "consoleErrors": [],
+      "sameOriginResourceErrors": [],
+      "externalResourceNoise": [
+        "net::ERR_NETWORK_ACCESS_DENIED: https://fonts.googleapis.com/css2?family=Anton&family=Cabin:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Playfair+Display:wght@600;700&display=swap",
+        "Failed to load resource: net::ERR_NETWORK_ACCESS_DENIED (https://fonts.googleapis.com/css2?family=Anton&family=Cabin:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Playfair+Display:wght@600;700&display=swap)",
+        "net::ERR_NETWORK_ACCESS_DENIED: https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&display=swap",
+        "Failed to load resource: net::ERR_NETWORK_ACCESS_DENIED (https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&display=swap)"
+      ],
+      "responsiveRoster": {
+        "viewport": "1024x768",
+        "total": 14,
+        "pageCount": 4,
+        "pages": [
+          {
+            "ids": [
+              "T011",
+              "T005",
+              "T010",
+              "T012"
+            ],
+            "visiblePortraits": 4,
+            "visibleLabels": 4,
+            "failures": []
+          },
+          {
+            "ids": [
+              "T015",
+              "T001",
+              "T002",
+              "T009"
+            ],
+            "visiblePortraits": 4,
+            "visibleLabels": 4,
+            "failures": []
+          },
+          {
+            "ids": [
+              "T004",
+              "T006",
+              "T007",
+              "T008"
+            ],
+            "visiblePortraits": 4,
+            "visibleLabels": 4,
+            "failures": []
+          },
+          {
+            "ids": [
+              "T013",
+              "T014",
+              "T011",
+              "T005"
+            ],
+            "visiblePortraits": 4,
+            "visibleLabels": 4,
+            "failures": []
+          }
+        ],
+        "wrappedIds": [
+          "T011",
+          "T005",
+          "T010",
+          "T012"
+        ],
+        "previousIds": [
+          "T013",
+          "T014",
+          "T011",
+          "T005"
+        ],
+        "restoredIds": [
+          "T011",
+          "T005",
+          "T010",
+          "T012"
+        ],
+        "coverageIds": [
+          "T001",
+          "T002",
+          "T004",
+          "T005",
+          "T006",
+          "T007",
+          "T008",
+          "T009",
+          "T010",
+          "T011",
+          "T012",
+          "T013",
+          "T014",
+          "T015"
+        ],
+        "failures": []
+      },
+      "screenshot": "artifacts/tutor-orbit/tutors-1024x768.png"
+    },
+    {
+      "viewport": "390x844",
+      "representedPortraitIds": [
+        "T011",
+        "T005",
+        "T010",
+        "T012"
+      ],
+      "visiblePortraits": 4,
+      "visibleInnerPortraits": 0,
+      "visibleOuterPortraits": 0,
+      "collisions": [],
+      "horizontalOverflow": false,
+      "scrollWidth": 390,
+      "consoleErrors": [],
+      "sameOriginResourceErrors": [],
+      "externalResourceNoise": [
+        "net::ERR_NETWORK_ACCESS_DENIED: https://fonts.googleapis.com/css2?family=Anton&family=Cabin:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Playfair+Display:wght@600;700&display=swap",
+        "Failed to load resource: net::ERR_NETWORK_ACCESS_DENIED (https://fonts.googleapis.com/css2?family=Anton&family=Cabin:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Playfair+Display:wght@600;700&display=swap)",
+        "net::ERR_NETWORK_ACCESS_DENIED: https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&display=swap",
+        "Failed to load resource: net::ERR_NETWORK_ACCESS_DENIED (https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&display=swap)"
+      ],
+      "responsiveRoster": {
+        "viewport": "390x844",
+        "total": 14,
+        "pageCount": 4,
+        "pages": [
+          {
+            "ids": [
+              "T011",
+              "T005",
+              "T010",
+              "T012"
+            ],
+            "visiblePortraits": 4,
+            "visibleLabels": 4,
+            "failures": []
+          },
+          {
+            "ids": [
+              "T015",
+              "T001",
+              "T002",
+              "T009"
+            ],
+            "visiblePortraits": 4,
+            "visibleLabels": 4,
+            "failures": []
+          },
+          {
+            "ids": [
+              "T004",
+              "T006",
+              "T007",
+              "T008"
+            ],
+            "visiblePortraits": 4,
+            "visibleLabels": 4,
+            "failures": []
+          },
+          {
+            "ids": [
+              "T013",
+              "T014",
+              "T011",
+              "T005"
+            ],
+            "visiblePortraits": 4,
+            "visibleLabels": 4,
+            "failures": []
+          }
+        ],
+        "wrappedIds": [
+          "T011",
+          "T005",
+          "T010",
+          "T012"
+        ],
+        "previousIds": [
+          "T013",
+          "T014",
+          "T011",
+          "T005"
+        ],
+        "restoredIds": [
+          "T011",
+          "T005",
+          "T010",
+          "T012"
+        ],
+        "coverageIds": [
+          "T001",
+          "T002",
+          "T004",
+          "T005",
+          "T006",
+          "T007",
+          "T008",
+          "T009",
+          "T010",
+          "T011",
+          "T012",
+          "T013",
+          "T014",
+          "T015"
+        ],
+        "failures": []
+      },
+      "screenshot": "artifacts/tutor-orbit/tutors-390x844.png"
+    }
+  ]
+}

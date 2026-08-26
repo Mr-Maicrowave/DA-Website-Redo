@@ -1,69 +1,146 @@
-import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import {
+  LayoutGroup,
+  motion,
+  useReducedMotion,
+} from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useMemo, useState } from 'react';
-import { TUTORS, getPhotoStyle, getPhotoUrl, type CatalogueTutor } from '@/data/teacherCatalogue';
-import { FEATURED_TUTOR_IDS, TUTOR_ORBIT_LAYOUT, orbitMotionFor, orbitPositionFor } from './tutor-orbit-config';
+import { Link } from 'react-router-dom';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  TUTORS,
+  type CatalogueTutor,
+} from '@/data/teacherCatalogue';
+import {
+  DEFAULT_FEATURED_TUTOR_ID,
+  INNER_ORBIT_TUTOR_IDS,
+  OUTER_ORBIT_TUTOR_IDS,
+  selectionSequenceFor,
+  swapFacultyTutor,
+  type OrbitTier,
+  type SelectionPhase,
+} from './tutor-orbit-config';
+import { TutorOrbitProfile } from './TutorOrbitProfile';
+import { TutorOrbitMobileNavigator } from './TutorOrbitMobileNavigator';
+import { TutorOrbitStage } from './TutorOrbitStage';
+import { supportingTutorIds } from './tutor-orbit-responsive-helpers';
+import {
+  canBeginSelection,
+  transitionSelectionLock,
+} from './tutor-orbit-stage-helpers';
 import './tutor-orbit.css';
 
-const featured = FEATURED_TUTOR_IDS.map(id => TUTORS.find(t => t.id === id)).filter((t): t is CatalogueTutor => Boolean(t));
-
-const subject = (tutor: CatalogueTutor) => tutor.primarySubject === 'math' ? 'Mathematics' : tutor.primarySubject === 'both' ? 'English & Mathematics' : tutor.primarySubject[0].toUpperCase() + tutor.primarySubject.slice(1);
-
-const tutorYearRange = (tutor: CatalogueTutor) => tutor.hasPrimary ? 'Primary to Year 12' : 'Years 7–12';
-
-const subjectTone = (tutor: CatalogueTutor) => ({
-  math: 'tutor-orbit__match-signal--subject--math',
-  english: 'tutor-orbit__match-signal--subject--english',
-  science: 'tutor-orbit__match-signal--subject--science',
-  both: 'tutor-orbit__match-signal--subject--both',
-}[tutor.primarySubject]);
+const tutorById = (id: string) => TUTORS.find((tutor) => tutor.id === id);
 
 export function TutorOrbitHero() {
-  const reduced = useReducedMotion();
-  const navigate = useNavigate();
-  const [activeId, setActiveId] = useState(FEATURED_TUTOR_IDS[5]);
-  const active = useMemo(() => featured.find(t => t.id === activeId) ?? featured[0], [activeId]);
-  if (!active) return null;
-  const choose = (id: string) => { setActiveId(id as typeof activeId); };
-  const profileHref = `/find-teacher?tutor=${active.id}`;
+  const reduced = Boolean(useReducedMotion());
+  const [activeId, setActiveId] = useState(DEFAULT_FEATURED_TUTOR_ID);
+  const [innerIds, setInnerIds] = useState<string[]>(() => [...INNER_ORBIT_TUTOR_IDS]);
+  const [outerIds, setOuterIds] = useState<string[]>(() => [...OUTER_ORBIT_TUTOR_IDS]);
+  const [selection, setSelection] = useState<{ phase: SelectionPhase; selectedId: string | null; originTier: OrbitTier | null }>({
+    phase: 'idle',
+    selectedId: null,
+    originTier: null,
+  });
+  const timers = useRef<number[]>([]);
+  const selectionLock = useRef({ locked: false });
 
-  return <section className={`tutor-orbit tutor-orbit--${TUTOR_ORBIT_LAYOUT}`} aria-labelledby="tutor-orbit-title">
-    <div className="tutor-orbit__glow" aria-hidden="true" />
-    <div className="tutor-orbit__vignette" aria-hidden="true" />
-    <div className="tutor-orbit__heading">
-      <p>Meet the people behind the progress</p>
-      <h1 id="tutor-orbit-title">Find the teacher your child will remember.</h1>
-      <div className="tutor-orbit__intro"><span>A great match is more than a subject. Explore the mentors who bring clarity, momentum and belief to every lesson.</span><Link to="/find-teacher">Meet the whole team <ArrowRight /></Link></div>
-    </div>
-    <div className="tutor-orbit__stage">
-      <div className="tutor-orbit__ring" aria-hidden="true" />
-      {featured.map((tutor, index) => {
-        const drift = orbitMotionFor(tutor.id);
-        const isActive = tutor.id === active.id;
-        return <motion.button key={tutor.id} type="button" className={`tutor-orbit__satellite tutor-orbit__satellite--${orbitPositionFor(tutor.id)}${isActive ? ' is-active' : ''}`} onMouseEnter={() => choose(tutor.id)} onFocus={() => choose(tutor.id)} onClick={() => navigate(`/find-teacher?tutor=${tutor.id}`)} animate={reduced ? { scale: isActive ? 1.1 : .84, opacity: isActive ? 1 : .72 } : { x: drift.x, y: drift.y, scale: isActive ? 1.1 : .84, opacity: isActive ? 1 : .72 }} transition={{ x: { duration: drift.duration, delay: index * .36, repeat: Infinity, ease: 'easeInOut' }, y: { duration: drift.duration, delay: index * .36, repeat: Infinity, ease: 'easeInOut' }, scale: { duration: .36, ease: [0.16, 1, 0.3, 1] }, opacity: { duration: .3, ease: 'easeOut' } }} aria-label={`Open ${tutor.name}'s full profile`}>
-          <img src={getPhotoUrl(tutor)} alt="" style={getPhotoStyle(tutor)} />
-        </motion.button>;
-      })}
-      <div className="tutor-orbit__centre-wrap">
-        <Link className="tutor-orbit__centre-profile" to={profileHref} aria-label={`Open ${active.name}'s full profile`}>
-          <div className="tutor-orbit__centre">
-            <AnimatePresence mode="sync"><motion.img key={active.id} src={getPhotoUrl(active)} alt={`${active.name}, DA Tuition educator`} style={getPhotoStyle(active)} initial={reduced ? false : { opacity: 0, scale: 1.02, filter: 'blur(2px)' }} animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }} exit={reduced ? undefined : { opacity: 0, scale: .99, filter: 'blur(2px)' }} transition={{ duration: .24, ease: [0.16, 1, 0.3, 1] }} /></AnimatePresence>
-          </div>
+  const active = useMemo(() => tutorById(activeId) ?? tutorById(DEFAULT_FEATURED_TUTOR_ID), [activeId]);
+  const innerTutors = useMemo(
+    () => innerIds.map(tutorById).filter((tutor): tutor is CatalogueTutor => Boolean(tutor)),
+    [innerIds],
+  );
+  const outerTutors = useMemo(
+    () => outerIds.map(tutorById).filter((tutor): tutor is CatalogueTutor => Boolean(tutor)),
+    [outerIds],
+  );
+  const supportingTutors = useMemo(
+    () => supportingTutorIds(activeId, innerIds, outerIds)
+      .map(tutorById)
+      .filter((tutor): tutor is CatalogueTutor => Boolean(tutor)),
+    [activeId, innerIds, outerIds],
+  );
+
+  const clearSelectionTimers = useCallback(() => {
+    timers.current.forEach((timer) => window.clearTimeout(timer));
+    timers.current = [];
+  }, []);
+
+  useEffect(() => () => {
+    clearSelectionTimers();
+    selectionLock.current = transitionSelectionLock(selectionLock.current, 'cleanup');
+  }, [clearSelectionTimers]);
+
+  if (!active) return null;
+
+  const selectTutor = (selectedId: string) => {
+    if (selection.phase !== 'idle' || !canBeginSelection(selectionLock.current)) return false;
+    const originTier: OrbitTier = innerIds.includes(selectedId) ? 'inner' : 'outer';
+    const result = swapFacultyTutor(activeId, innerIds, outerIds, selectedId);
+    if (result.selectedSlot === -1) return false;
+
+    selectionLock.current = transitionSelectionLock(selectionLock.current, 'select');
+    clearSelectionTimers();
+    for (const step of selectionSequenceFor(originTier, reduced)) {
+      timers.current.push(window.setTimeout(() => {
+        setSelection({
+          phase: step.phase,
+          selectedId: step.phase === 'idle' ? null : selectedId,
+          originTier: step.phase === 'idle' ? null : originTier,
+        });
+        if (step.phase === 'exchanging') {
+          setActiveId(result.activeId);
+          setInnerIds(result.innerIds);
+          setOuterIds(result.outerIds);
+        }
+        if (step.phase === 'idle') {
+          timers.current = [];
+          selectionLock.current = transitionSelectionLock(selectionLock.current, 'idle');
+        }
+      }, step.at));
+    }
+    return true;
+  };
+
+  return (
+    <section className="tutor-orbit" aria-labelledby="tutor-orbit-title">
+      <div className="tutor-orbit__ambient" aria-hidden="true" />
+
+      <motion.div
+        className="tutor-orbit__editorial"
+        initial={reduced ? false : { opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: reduced ? 0 : 0.12, duration: reduced ? 0 : 0.5 }}
+      >
+        <p className="tutor-orbit__eyebrow">Meet the people behind the progress</p>
+        <h1 id="tutor-orbit-title">Meet the educators students <em>remember.</em></h1>
+        <div className="tutor-orbit__rule" aria-hidden="true"><span /></div>
+        <p className="tutor-orbit__lede">
+          Great teaching is more than knowledge. It&apos;s the belief, encouragement and people who
+          keep showing up for their students.
+        </p>
+        <Link className="tutor-orbit__directory-link" to="/find-teacher">
+          Explore the whole team <ArrowRight aria-hidden="true" />
         </Link>
-        <div className="tutor-orbit__centre-ring" aria-hidden="true" />
-      </div>
-    </div>
-    <motion.aside className="tutor-orbit__card" initial={reduced ? false : { opacity: 0, x: 22 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: .32 }}>
-      <h2>{active.name}</h2>
-      <em>{active.designation}</em>
-      <dl className="tutor-orbit__match-signals">
-        <div><dt>Year levels</dt><dd>{tutorYearRange(active)}</dd></div>
-        <div className={`tutor-orbit__match-signal--subject ${subjectTone(active)}`}><dt>Subjects</dt><dd>{subject(active)}</dd></div>
-        <div><dt>How they teach</dt><dd>{active.tagline}</dd></div>
-      </dl>
-      <div className="tutor-orbit__card-tags">{(active.profile?.tags ?? [subject(active), 'Warm, clear support', 'Confidence-building']).slice(0, 3).map(tag => <span key={tag}>{tag}</span>)}</div>
-      <Link to={profileHref}>Open full profile <ArrowRight /></Link>
-    </motion.aside>
-  </section>;
+      </motion.div>
+
+      <LayoutGroup id="tutor-faculty-orbit">
+        <TutorOrbitStage
+          active={active}
+          innerTutors={innerTutors}
+          outerTutors={outerTutors}
+          phase={selection.phase}
+          selectedId={selection.selectedId}
+          originTier={selection.originTier}
+          reduced={reduced}
+          onSelect={selectTutor}
+        />
+        <TutorOrbitMobileNavigator
+          tutors={supportingTutors}
+          reduced={reduced}
+          onSelect={selectTutor}
+        />
+        <TutorOrbitProfile tutor={active} reduced={reduced} changing={selection.phase !== 'idle'} />
+      </LayoutGroup>
+    </section>
+  );
 }
