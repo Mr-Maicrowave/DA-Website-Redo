@@ -146,6 +146,222 @@
     .diff-quote-text,.diff-quote-author{transition:none}
   }
 
+  /* English reviews carousel */
+  .english-reviews{
+    --review-navy:#06182C;
+    --review-navy-light:#0B2744;
+    --review-card:#0D2A49;
+    --review-gold:#D6A83E;
+    --review-gold-light:#E6BE62;
+    --review-ivory:#F7F5EF;
+    --review-muted:#6E87A5;
+    position:relative;
+    left:50%;right:50%;margin-left:-50vw;margin-right:-50vw;width:100vw;
+    padding:clamp(74px,6.5vw,104px) 0 clamp(68px,6vw,96px);
+    color:var(--review-ivory);
+    background:
+      radial-gradient(circle at 50% 31%,rgba(230,190,98,.085),transparent 26%),
+      linear-gradient(180deg,#041326 0%,var(--review-navy) 42%,#041326 100%);
+    overflow:hidden;
+  }
+  .english-reviews::before,.english-reviews::after{
+    content:"";position:absolute;left:50%;width:1px;height:86px;background:linear-gradient(180deg,transparent,var(--review-gold),transparent);opacity:.38
+  }
+  .english-reviews::before{top:0}
+  .english-reviews::after{bottom:0}
+  .english-reviews__inner{position:relative;z-index:1;width:min(1500px,100%);margin:0 auto}
+  .english-reviews__heading{
+    display:grid;gap:.02em;margin:0 auto clamp(36px,4.1vw,50px);
+    font-family:"Playfair Display",Georgia,serif;font-size:clamp(44px,5vw,76px);font-weight:400;line-height:1.08;
+    text-align:center;color:var(--review-ivory);letter-spacing:0
+  }
+  .english-reviews__heading span{display:block;white-space:nowrap}
+  .english-reviews__heading em{color:var(--review-gold);font-style:italic}
+  .english-reviews__viewport{
+    position:relative;height:clamp(650px,44vw,700px);outline:none;touch-action:pan-y;user-select:none
+  }
+  .english-reviews__viewport:focus-visible{outline:none}
+  .english-review-card{
+    position:absolute;left:50%;top:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;
+    width:min(860px,60vw);height:clamp(610px,41vw,660px);padding:50px clamp(44px,4.7vw,74px) 62px;
+    border-radius:18px;background:linear-gradient(180deg,rgba(13,42,73,.98),rgba(8,28,52,.98));
+    border:1px solid rgba(214,168,62,.96);box-shadow:0 20px 60px rgba(0,0,0,.18),0 -2px 16px rgba(214,168,62,.08),0 2px 16px rgba(214,168,62,.08);
+    opacity:0;transform:translateX(-50%) scale(.84);transition:transform 600ms cubic-bezier(.22,.8,.25,1),opacity 600ms cubic-bezier(.22,.8,.25,1),filter 600ms cubic-bezier(.22,.8,.25,1),border-color 220ms ease,box-shadow 220ms ease;
+    pointer-events:none;overflow:hidden
+  }
+  .english-review-card::before{
+    content:"";position:absolute;inset:12px;border:1px solid rgba(230,190,98,.92);border-radius:13px;pointer-events:none
+  }
+  .english-review-card::after{
+    content:"";position:absolute;left:22%;right:22%;top:-1px;height:1px;background:linear-gradient(90deg,transparent,rgba(247,245,239,.55),rgba(230,190,98,.8),transparent);opacity:.75;pointer-events:none
+  }
+  .english-review-card.is-active{z-index:4;opacity:1;transform:translateX(-50%) scale(1);pointer-events:auto}
+  .english-reviews__viewport.is-reading .english-review-card.is-active{
+    width:min(980px,86vw);height:clamp(610px,64vh,760px);padding:0;background:#fff;color:#111827;
+    border-color:rgba(214,168,62,.9);box-shadow:0 26px 80px rgba(0,0,0,.34);
+    cursor:default;overflow:hidden
+  }
+  .english-reviews__viewport.is-reading .english-review-card.is-active::before{
+    inset:12px;border-color:rgba(214,168,62,.55)
+  }
+  .english-reviews__viewport.is-reading .english-review-card.is-active::after{display:none}
+  .english-reviews__viewport.is-reading .english-reviews__arrow{display:none}
+  .english-review-card.is-prev{
+    z-index:2;width:min(390px,28vw);height:520px;padding:48px 34px 48px;
+    transform:translateX(calc(-50% - min(650px,45vw))) scale(.88) rotate(-3deg);
+    opacity:.35;filter:brightness(.78);border-color:rgba(214,168,62,.28)
+  }
+  .english-review-card.is-next{
+    z-index:2;width:min(390px,28vw);height:520px;padding:48px 34px 48px;
+    transform:translateX(calc(-50% + min(650px,45vw))) scale(.88) rotate(3deg);
+    opacity:.35;filter:brightness(.78);border-color:rgba(214,168,62,.28)
+  }
+  .english-review-card.is-prev::before,.english-review-card.is-next::before{opacity:0}
+  .english-review-card.is-off-left{transform:translateX(calc(-50% - min(1050px,76vw))) scale(.82) rotate(-5deg);opacity:0}
+  .english-review-card.is-off-right{transform:translateX(calc(-50% + min(1050px,76vw))) scale(.82) rotate(5deg);opacity:0}
+  .english-review-card__ornament{display:flex;align-items:center;justify-content:center;gap:20px;margin:0 0 20px;color:var(--review-gold)}
+  .english-review-card__ornament::before,.english-review-card__ornament::after{content:"";width:44px;height:1px;background:linear-gradient(90deg,transparent,var(--review-gold))}
+  .english-review-card__ornament::after{background:linear-gradient(90deg,var(--review-gold),transparent)}
+  .english-review-card__quote-mark{font-family:"Playfair Display",Georgia,serif;font-size:56px;line-height:.7;color:var(--review-gold);transition:color 220ms ease}
+  .english-review-card__text{
+    max-width:690px;margin:0 auto;font-family:"Playfair Display",Georgia,serif;font-size:clamp(24px,1.9vw,32px);
+    line-height:1.36;font-style:italic;text-align:center;color:var(--review-ivory)
+  }
+  .english-review-card__full{
+    margin:22px 0 0;padding:0;border:0;background:transparent;color:var(--review-gold);
+    font:800 14px/1 Inter,system-ui,sans-serif;letter-spacing:.08em;text-transform:uppercase;cursor:pointer
+  }
+  .english-review-card__meta{margin-top:auto;display:flex;flex-direction:column;align-items:center;flex-shrink:0}
+  .english-review-card__divider{display:block;width:52px;height:1px;background:var(--review-gold);margin:24px auto 18px}
+  .english-review-card__name{
+    margin:0;font:800 18px/1.35 Inter,system-ui,sans-serif;letter-spacing:.10em;text-transform:uppercase;
+    color:var(--review-gold);text-align:center
+  }
+  .english-review-card__rating{display:flex;align-items:center;justify-content:center;gap:12px;margin:14px 0 0;font:700 18px/1 Inter,system-ui,sans-serif;color:var(--review-ivory)}
+  .english-review-card__stars{color:var(--review-gold);letter-spacing:.08em}
+  .english-review-card__source{display:none}
+  .english-review-card__expanded{
+    position:absolute;inset:0;z-index:2;display:none;flex-direction:column;padding:34px clamp(28px,4vw,54px);
+    color:#111827;background:#fff;text-align:left
+  }
+  .english-review-card__expanded-top{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:18px}
+  .english-review-card__expanded-label{
+    margin:0;color:#8A641A;font:800 12px/1 Inter,system-ui,sans-serif;letter-spacing:.16em;text-transform:uppercase
+  }
+  .english-review-card__expanded-close{
+    display:grid;place-items:center;width:42px;height:42px;border-radius:50%;border:1px solid rgba(138,100,26,.35);
+    background:#fff;color:#111827;font-size:24px;line-height:1;cursor:pointer
+  }
+  .english-review-card__expanded-text{
+    margin:0;flex:1;overflow:auto;padding:0 8px 0 0;color:#111827;
+    font:500 clamp(15px,1.3vw,18px)/1.6 Inter,system-ui,sans-serif;letter-spacing:0;white-space:pre-wrap
+  }
+  .english-review-card__expanded-text::-webkit-scrollbar{width:8px}
+  .english-review-card__expanded-text::-webkit-scrollbar-thumb{background:rgba(17,24,39,.22);border-radius:999px}
+  .english-review-card__expanded-footer{
+    display:flex;align-items:center;justify-content:space-between;gap:18px;margin-top:22px;padding-top:18px;
+    border-top:1px solid rgba(214,168,62,.34)
+  }
+  .english-review-card__expanded-name{
+    margin:0;color:#8A641A;font:800 15px/1.35 Inter,system-ui,sans-serif;letter-spacing:.10em;text-transform:uppercase
+  }
+  .english-review-card__expanded-rating{display:flex;gap:10px;align-items:center;color:#111827;font:800 15px/1 Inter,system-ui,sans-serif}
+  .english-review-card__expanded-stars{color:#D6A83E;letter-spacing:.06em}
+  .english-review-card.is-expanded .english-review-card__ornament,
+  .english-review-card.is-expanded .english-review-card__text,
+  .english-review-card.is-expanded .english-review-card__full,
+  .english-review-card.is-expanded .english-review-card__meta{display:none}
+  .english-review-card.is-expanded .english-review-card__expanded{display:flex}
+  .english-review-card.is-prev .english-review-card__text,.english-review-card.is-next .english-review-card__text{font-size:25px;line-height:1.48}
+  .english-review-card.is-prev .english-review-card__name,.english-review-card.is-next .english-review-card__name{font-size:14px}
+  .english-review-card.is-prev .english-review-card__source,.english-review-card.is-next .english-review-card__source{display:none}
+  .english-reviews__arrow{
+    position:absolute;top:50%;z-index:6;display:grid;place-items:center;width:64px;height:64px;border-radius:50%;
+    background:var(--review-navy);border:1px solid var(--review-gold);color:var(--review-gold);font-size:44px;line-height:1;
+    cursor:pointer;transform:translateY(-50%);pointer-events:auto;touch-action:manipulation;
+    transition:transform 180ms ease,border-color 180ms ease,color 180ms ease,box-shadow 180ms ease
+  }
+  .english-reviews__arrow--prev{left:calc(50% - min(430px,30vw) - 32px)}
+  .english-reviews__arrow--next{right:calc(50% - min(430px,30vw) - 32px)}
+  .english-reviews__arrow:hover{transform:translateY(-50%) scale(1.04);border-color:var(--review-gold-light);color:var(--review-gold-light);box-shadow:0 0 18px rgba(214,168,62,.14)}
+  .english-reviews__arrow:focus-visible,.english-reviews__dot:focus-visible,.english-review-modal__close:focus-visible,.english-review-card__full:focus-visible{
+    outline:2px solid var(--review-gold-light);outline-offset:4px
+  }
+  .english-reviews__pagination{display:none}
+  .english-reviews__dot{width:9px;height:9px;border:0;border-radius:999px;background:rgba(110,135,165,.62);padding:0;cursor:pointer;transition:width 220ms ease,height 220ms ease,background 220ms ease}
+  .english-reviews__dot.is-active{width:24px;height:11px;background:var(--review-gold)}
+  .english-review-modal{
+    position:fixed;inset:0;z-index:5000;display:none;align-items:center;justify-content:center;padding:24px;
+    background:rgba(3,13,27,.88)
+  }
+  .english-review-modal.is-open{display:flex}
+  .english-review-modal__panel{
+    position:relative;width:min(760px,100%);max-height:min(82vh,780px);overflow:auto;border:1px solid var(--review-gold);
+    border-radius:18px;background:#071D35;color:var(--review-ivory);padding:42px clamp(26px,4vw,54px);
+    box-shadow:0 28px 84px rgba(0,0,0,.5)
+  }
+  .english-review-modal__close{
+    position:absolute;top:16px;right:16px;display:grid;place-items:center;width:42px;height:42px;border-radius:50%;
+    border:1px solid rgba(214,168,62,.58);background:rgba(6,24,44,.86);color:var(--review-gold);font-size:22px;cursor:pointer
+  }
+  .english-review-modal__eyebrow{margin:0 0 22px;color:var(--review-gold);font:800 12px/1 Inter,system-ui,sans-serif;letter-spacing:.18em;text-transform:uppercase}
+  .english-review-modal__mark{display:block;font-family:"Playfair Display",Georgia,serif;font-size:56px;line-height:.8;color:var(--review-gold);text-align:center}
+  .english-review-modal__quote{margin:18px 0 30px;font-family:"Playfair Display",Georgia,serif;font-size:clamp(21px,2.2vw,28px);line-height:1.55;color:var(--review-ivory);white-space:pre-wrap}
+  .english-review-modal__divider{display:block;width:52px;height:1px;background:var(--review-gold);margin:0 0 20px}
+  .english-review-modal__name{margin:0 0 12px;color:var(--review-gold);font:800 15px/1.4 Inter,system-ui,sans-serif;letter-spacing:.10em;text-transform:uppercase}
+  .english-review-modal__rating{display:flex;gap:12px;align-items:center;margin:0 0 8px;font:700 16px/1 Inter,system-ui,sans-serif}
+  .english-review-modal__stars{color:var(--review-gold);letter-spacing:.08em}
+  .english-review-modal__source{margin:0;color:rgba(110,135,165,.9);font:800 11px/1 Inter,system-ui,sans-serif;letter-spacing:.16em;text-transform:uppercase}
+  body.english-review-modal-open{overflow:hidden}
+  @media (hover:hover) and (pointer:fine){
+    .english-review-card.is-active:hover{
+      transform:translateX(-50%) translateY(-3px) scale(1);border-color:var(--review-gold-light);
+      box-shadow:0 24px 68px rgba(0,0,0,.2),0 -2px 18px rgba(214,168,62,.12),0 2px 18px rgba(214,168,62,.12)
+    }
+    .english-review-card.is-active:hover .english-review-card__quote-mark,
+    .english-review-card.is-active:hover .english-review-card__full{color:var(--review-gold-light)}
+    .english-review-card.is-active[data-condensed="true"]{cursor:pointer}
+  }
+  @media (max-width:900px){
+    .english-reviews{padding:82px 0 82px}
+    .english-reviews__heading{font-size:clamp(40px,8vw,62px);margin-bottom:36px}
+    .english-reviews__viewport{height:630px}
+    .english-review-card{width:min(760px,76vw);height:610px;padding:46px 42px 58px}
+    .english-review-card.is-prev{width:min(340px,34vw);transform:translateX(calc(-50% - min(500px,52vw))) scale(.88) rotate(-3deg)}
+    .english-review-card.is-next{width:min(340px,34vw);transform:translateX(calc(-50% + min(500px,52vw))) scale(.88) rotate(3deg)}
+    .english-reviews__arrow--prev{left:calc(50% - min(380px,38vw) - 25px)}
+    .english-reviews__arrow--next{right:calc(50% - min(380px,38vw) - 25px)}
+  }
+  @media (max-width:640px){
+    .english-reviews{padding:58px 0 62px}
+    .english-reviews__heading{font-size:clamp(24px,7.25vw,34px);line-height:1.12;margin-bottom:28px}
+    .english-reviews__viewport{height:620px}
+    .english-review-card{width:90vw;height:600px;padding:36px 24px 58px;border-radius:16px}
+    .english-reviews__viewport.is-reading .english-review-card.is-active{width:92vw;height:610px}
+    .english-review-card__expanded{padding:30px 24px}
+    .english-review-card__expanded-text{font-size:14px;line-height:1.55}
+    .english-review-card__expanded-footer{display:block}
+    .english-review-card__expanded-rating{margin-top:12px}
+    .english-review-card::before{inset:9px;border-radius:12px}
+    .english-review-card.is-prev{width:90vw;transform:translateX(calc(-50% - 85vw)) scale(.9) rotate(-2deg);opacity:.22}
+    .english-review-card.is-next{width:90vw;transform:translateX(calc(-50% + 85vw)) scale(.9) rotate(2deg);opacity:.22}
+    .english-review-card__ornament{gap:12px;margin-bottom:14px}
+    .english-review-card__ornament::before,.english-review-card__ornament::after{width:30px}
+    .english-review-card__quote-mark{font-size:46px}
+    .english-review-card__text{font-size:clamp(20px,5.45vw,22px);line-height:1.34}
+    .english-review-card__name{font-size:14px;letter-spacing:.08em}
+    .english-review-card__rating{font-size:16px}
+    .english-reviews__arrow{width:48px;height:48px;font-size:34px}
+    .english-reviews__arrow--prev{left:0}
+    .english-reviews__arrow--next{right:0}
+    .english-review-modal{padding:16px}
+    .english-review-modal__panel{width:calc(100% - 32px);max-height:calc(100vh - 48px);padding:38px 24px 30px}
+    .english-review-modal__quote{font-size:20px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .english-review-card,.english-reviews__arrow,.english-reviews__dot{transition:opacity 180ms ease,transform 180ms ease}
+  }
+
   .editorial{background:#fff}
   .editorial-grid{display:grid;grid-template-columns:.95fr 1.05fr;gap:58px;align-items:center}
   .editorial-copy h2{font-size:clamp(2.2rem,4vw,4rem);line-height:1;margin:0 0 22px}
@@ -1164,7 +1380,7 @@
   }
   .resources-shelf::before{
     content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
-    background:url("images/english-resources-books-background.png") center top/cover no-repeat;
+    background:url("images/english-resources-books-student-work-background.png") center top/cover no-repeat;
     filter:blur(18px) saturate(.9);
     transform:scale(1.04);
     opacity:.6;
@@ -1236,7 +1452,7 @@
     line-height:1;
     white-space:nowrap;
   }
-  .resources-overlay-label--fairy{left:25.5%}
+  .resources-overlay-label--vietglish{left:25.5%}
   .resources-overlay-label--romanticism{left:51.2%}
   .resources-overlay-label--feedback{left:76.6%}
   .resources-overlay-label i{
@@ -1265,7 +1481,7 @@
     outline-offset:4px;
     background:rgba(255,255,255,.08);
   }
-  .resources-hotspot--fairy{left:12.4%;top:29.8%;width:25%;height:63%}
+  .resources-hotspot--vietglish{left:12.4%;top:29.8%;width:25%;height:63%}
   .resources-hotspot--romanticism{left:38.6%;top:29.8%;width:25%;height:63%}
   .resources-hotspot--feedback{left:65.6%;top:29.8%;width:25%;height:63%}
   @media (hover:hover){
@@ -1486,10 +1702,24 @@
   .class-choice-arrow{font-size:24px;line-height:1;color:var(--c-ink)}
   .class-detail-card{
     border:1px solid rgba(211,166,44,.44);border-radius:22px;background:linear-gradient(135deg,#FFF9EF 0%,#fffdf8 55%,#F7ECD9 100%);
-    padding:clamp(14px,1.6vw,21px);box-shadow:0 30px 78px rgba(0,0,0,.28);color:var(--c-ink);min-height:616px;
+    padding:clamp(14px,1.6vw,21px);box-shadow:0 30px 78px rgba(0,0,0,.28);color:var(--c-ink);min-height:735px;
   }
-  .class-detail-media{height:clamp(198px,16.2vw,267px);border-radius:12px;overflow:hidden;background:#102b4b}
-  .class-detail-media img{width:100%;height:100%;object-fit:cover;transition:opacity .24s ease,transform .42s cubic-bezier(.22,1,.36,1)}
+  .class-detail-media{
+    position:relative;height:clamp(340px,28vw,460px);border-radius:12px;overflow:hidden;background:#102b4b;
+    display:grid;place-items:center;
+  }
+  .class-detail-media::before{
+    content:"";position:absolute;inset:-18px;background:var(--active-image) center/cover no-repeat;
+    filter:blur(18px) saturate(.86);opacity:.42;transform:scale(1.04);
+  }
+  .class-detail-media::after{
+    content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(6,26,52,.05),rgba(6,26,52,.12));
+    pointer-events:none;
+  }
+  .class-detail-media img{
+    position:absolute;inset:0;z-index:1;display:block;width:100%;height:100%;object-fit:contain;
+    transition:opacity .24s ease,transform .42s cubic-bezier(.22,1,.36,1)
+  }
   .class-detail-copy{padding:clamp(18px,2vw,27px) clamp(5px,.8vw,12px) 0;min-height:256px}
   .class-detail-card.is-changing .class-detail-media img,.class-detail-card.is-changing .class-detail-copy{opacity:.45}
   .class-detail-title{font-family:"Playfair Display",Georgia,serif;font-size:clamp(2.43rem,3.9vw,4.05rem);font-weight:700;line-height:.98;margin:0;color:#071B35}
@@ -1511,7 +1741,7 @@
   @media (max-width:720px){
     .classes{padding:78px 20px}
     .class-choice-list,.class-detail-stats{grid-template-columns:1fr}
-    .class-detail-media{height:260px}
+    .class-detail-media{height:clamp(310px,88vw,420px)}
     .class-detail-card{padding:14px;border-radius:18px}
     .class-detail-title{font-size:clamp(2.5rem,13vw,3.55rem)}
     .class-detail-stat{border-left:0;border-top:1px solid rgba(211,166,44,.32);padding:15px 0;min-height:0}
@@ -1764,15 +1994,15 @@
       </div>
       <div class="resources-shelf" id="resources-shelf">
         <div class="resources-preview">
-          <img src="images/english-resources-books-background.png" alt="Preview Our English Resources: Fairy Tales, Romanticism, and Marked Feedback Sample booklets">
+          <img src="images/english-resources-books-student-work-background.png" alt="Preview Our English Resources: Sydney Morning Herald shortlist student work, Romanticism, and Marked Feedback Sample booklets">
           <div class="resources-overlay" aria-hidden="true">
             <span class="resources-overlay-eyebrow">Inside the classroom</span>
             <span class="resources-overlay-title">Preview Our English Resources</span>
-            <span class="resources-overlay-label resources-overlay-label--fairy">Open sample booklet <i>&rarr;</i></span>
+            <span class="resources-overlay-label resources-overlay-label--vietglish">Open a Student Work Sample <i>&rarr;</i></span>
             <span class="resources-overlay-label resources-overlay-label--romanticism">Open sample booklet <i>&rarr;</i></span>
             <span class="resources-overlay-label resources-overlay-label--feedback">View sample Feedback <i>&rarr;</i></span>
           </div>
-          <button class="resources-hotspot resources-hotspot--fairy" type="button" data-resource-id="fairy-tales" aria-label="Open Year 7 Fairy Tales sample booklet"></button>
+          <button class="resources-hotspot resources-hotspot--vietglish" type="button" data-resource-id="vietglish" aria-label="Open Vietglish student work sample"></button>
           <button class="resources-hotspot resources-hotspot--romanticism" type="button" data-resource-id="romanticism" aria-label="Open Romanticism sample booklet"></button>
           <button class="resources-hotspot resources-hotspot--feedback" type="button" data-resource-id="feedback-sample" aria-label="Open marked feedback sample"></button>
         </div>
@@ -1823,7 +2053,7 @@
         </div>
       </div>
 
-      <article class="class-detail-card" id="class-detail-card" role="tabpanel" aria-live="polite" style="--active-tone:#A98BEC">
+      <article class="class-detail-card" id="class-detail-card" role="tabpanel" aria-live="polite" style="--active-tone:#A98BEC;--active-image:url('images/subjects/english/class-private.png')">
         <div class="class-detail-media"><img id="class-detail-image" src="images/subjects/english/class-private.png" alt="Tutor and student working in a Private Classes session at DA Tuition"></div>
         <div class="class-detail-copy">
           <h3 class="class-detail-title" id="class-detail-title">Private Classes</h3>
@@ -1995,16 +2225,35 @@
     </div>
   </section>
 
-  <div class="diff-quote-banner">
-      <span class="diff-quote-line diff-quote-line--top" aria-hidden="true"></span>
-      <div class="diff-quote-inner">
-        <span class="diff-quote-glyph" aria-hidden="true">&#10078;</span>
-        <p class="diff-quote-text" id="diffQuoteText"></p>
-        <span class="diff-quote-rule" aria-hidden="true"></span>
-        <p class="diff-quote-author" id="diffQuoteAuthor"></p>
+  <section class="english-reviews" aria-labelledby="english-reviews-heading">
+    <div class="english-reviews__inner">
+      <h2 class="english-reviews__heading" id="english-reviews-heading">
+        <span>Progress you can <em>see.</em></span>
+        <span>Confidence you can <em>feel.</em></span>
+      </h2>
+
+      <div class="english-reviews__viewport" id="englishReviewsCarousel" aria-label="English student reviews" tabindex="0">
+        <div id="englishReviewsTrack"></div>
+        <button class="english-reviews__arrow english-reviews__arrow--prev" type="button" aria-label="Previous student review" data-review-direction="-1">&lsaquo;</button>
+        <button class="english-reviews__arrow english-reviews__arrow--next" type="button" aria-label="Next student review" data-review-direction="1">&rsaquo;</button>
       </div>
-      <span class="diff-quote-line diff-quote-line--bottom" aria-hidden="true"></span>
+
+      <div class="english-reviews__pagination" id="englishReviewsPagination" aria-label="Select an English student review"></div>
     </div>
+  </section>
+
+  <div class="english-review-modal" id="englishReviewModal" aria-hidden="true">
+    <div class="english-review-modal__panel" role="dialog" aria-modal="true" aria-labelledby="englishReviewModalTitle" tabindex="-1">
+      <button class="english-review-modal__close" type="button" aria-label="Close full student review">&times;</button>
+      <p class="english-review-modal__eyebrow" id="englishReviewModalTitle">Full student review</p>
+      <span class="english-review-modal__mark" aria-hidden="true">&#10078;</span>
+      <p class="english-review-modal__quote" id="englishReviewModalQuote"></p>
+      <span class="english-review-modal__divider" aria-hidden="true"></span>
+      <p class="english-review-modal__name" id="englishReviewModalName"></p>
+      <p class="english-review-modal__rating"><span class="english-review-modal__stars" id="englishReviewModalStars"></span><span id="englishReviewModalRating"></span></p>
+      <p class="english-review-modal__source" id="englishReviewModalSource"></p>
+    </div>
+  </div>
 
   <div class="preview-modal" aria-hidden="true">
     <div class="preview-shell" role="dialog" aria-modal="true" aria-label="Booklet preview">
@@ -2067,15 +2316,11 @@
           "samples/essay_page_2.png"
         ]
       },
-      "fairy-tales": {
-        title: "Fairy Tales booklet preview",
+      vietglish: {
+        title: "Vietglish student work sample",
         pages: [
-          "previews/fairy-01.png",
-          "previews/fairy-02.png",
-          "previews/fairy-03.png",
-          "previews/fairy-04.png",
-          "previews/fairy-05.png",
-          { kind: "cta" }
+          "previews/vietglish-01.jpg",
+          "previews/vietglish-02.jpg"
         ]
       },
       romanticism: {
@@ -2427,17 +2672,17 @@
     // ---- English resources: sample booklets + feedback (shelf above "Choose the class style") ----
     const ENGLISH_RESOURCES = [
       {
-        id: "fairy-tales",
+        id: "vietglish",
         kind: "booklet",
         position: "left",
-        accent: "terracotta",
+        accent: "paper",
         motif: "leaf",
-        tag: "Year 7 &middot; Term 3, Week 5",
-        title: "Fairy Tales,<br>Reimagined",
-        subtitle: "Narrative &amp; creative<br>writing booklet",
-        buttonLabel: "Open sample booklet",
-        previewGroup: "fairy-tales",
-        alt: "Sample Year 7 Fairy Tales, Reimagined booklet"
+        tag: "Student Work",
+        title: "Vietglish<br>Student Work",
+        subtitle: "Sydney Morning Herald<br>shortlist sample",
+        buttonLabel: "Open sample",
+        previewGroup: "vietglish",
+        alt: "Vietglish student work sample booklet"
       },
       {
         id: "romanticism",
@@ -2807,6 +3052,7 @@
 
         const update = () => {
           card.style.setProperty("--active-tone", next.tone);
+          card.style.setProperty("--active-image", `url("${next.image}")`);
           image.src = next.image;
           image.alt = next.alt;
           title.textContent = next.title;
@@ -2842,70 +3088,685 @@
       });
     })();
 
-    // Real DA Tuition Google reviews about English tutors, trimmed for a rotating pull-quote.
-    const diffQuotes = [
-      {
-        text: "My English tutor, Ms Lai, has tremendously helped me throughout my whole year 12. I was able to achieve a mark of 97 for my HSC and got 2nd in the state, boosting my ATAR to 99.85.",
-        author: "Ruby Nguyen — Year 12 Student, Google Review, 5 Stars"
-      },
-      {
-        text: "My tutor Ms Jenny has been exceptionally patient, kind and knowledgeable. I had a drastic improvement, moving from 15th to 6th in my final HSC assessment.",
-        author: "Katelin Trinh — Year 12 Student, Google Review, 5 Stars"
-      },
-      {
-        text: "Miss Kassandra is the best English tutor I have ever had. After having her for the past year, she has had a real impact on my marks — I achieved 90% on my Extension English task.",
-        author: "Sasha Cio — Year 11 Student, Google Review, 5 Stars"
-      },
-      {
-        text: "Once I met Miss Christina as my tutor, I was so happy to see my first ever A in an English assessment task. I never achieved under an A again — going on to achieve 1st in Year 11 and 3rd in Year 12, being 1 of 5 people to achieve a band 6 in my school.",
-        author: "Jimmy Sieu — Google Review, 5 Stars"
-      },
-      {
-        text: "Miss Kathleen is the best English tutor I have ever had. Before her I was averaging a low B — now I'm achieving a high A, and reached 1st place ranking in Year 11.",
-        author: "Jasmine Nguyen — Year 11 Student, Google Review, 5 Stars"
-      },
-      {
-        text: "Mr Danny has transformed my attitude toward English, a subject I used to dislike. Thanks to his engaging lessons, I've developed a real passion for English and am now scoring in the 90% range.",
-        author: "Yvan Nguyen — Google Review, 5 Stars"
-      },
-      {
-        text: "This place is amazing, this is my first term here at DA. My teacher Miss Amy is incredible and amazing. I find that DA is very dedicated and supportive to their students and their learning. At DA it really shows results even in seven weeks.",
-        author: "Joshua Dong — Google Review, 5 Stars"
-      }
+    // EnglishReviewsCarousel: filtered from DA-Tuition-Google-Reviews.xlsx.
+    const englishReviews =     [
+              {
+                        "id": "review-216",
+                        "previewQuote": "Ms Jenny helped Katelin rebuild confidence in senior English, moving her final HSC assessment rank from 15th to 6th. She also received Band 5-6 results across her English assignments and developed a genuine passion for the subject.",
+                        "fullQuote": "I am so grateful for DA Tuition for helping me improve my English results and boosting my confidence in the subject. My tutor Ms Jenny has been exceptionally patient, kind, knowledgeable and always willing to go above and beyond for her students to succeed. Her commitment to my learning has played a significant role in my academic journey. At the beginning of my senior studies I found that English became a challenge and I didn't achieve the results I had hoped for. With her help and encouragement, she motivated me to push myself further. Thanks to her, I had a drastic improvement for my assessment rank, moving from 15th to 6th in my final HSC assessment. Furthermore, I have received band 5-6 across all my English assignments. Beyond academics, Ms Jenny also inspired me to develop a genuine passion and interest in English, which I am truly grateful for. I cannot thank Ms Jenny enough for her dedication and positivity. The staff are incredibly friendly and supportive. The learning environment is excellent and allowed me to feel comfortable asking questions and make mistakes to improve. Highly recommend DA Tuition to anyone looking to excel in their studies. It has been such a great and rewarding experience!!",
+                        "name": "Katelin Trinh",
+                        "year": "Student",
+                        "rating": 5,
+                        "source": "Google Review"
+              },
+              {
+                        "id": "review-316",
+                        "previewQuote": "Ruby began Year 12 English struggling with a 16/20 assignment. With Ms Lai’s support, she achieved maximum scores for every assignment, a 97 HSC mark, 2nd in the state and a 99.85 ATAR.",
+                        "fullQuote": "In the first term of year 12, I was struggling a lot for English and only received 16/20 for my assignment. After researching about different tutoring places, I was very impressed by DA's excellent reputation especially in private classes. Therefore, I decided to join and have never regretted my decision. DA was truly a supportive environment for any students who want to strive harder and harder. The class size was small, so it was easy to study and to get a lot of individual help from the teachers. My English tutor, Ms Lai, has tremendously helped me throughout my whole year 12. Not only did miss spark my interest in English by introducing me into the insights of texts and pictures, miss Lai always checked up on me and comforted me whenever I felt stressed or insecure about my capabilities. At the end, I was able to achieve the maximum score for every single assignment. Even more surprisingly, I was able to achieve a mark of 97 for my HSC and got 2nd in the state, boosting my ATAR up to 99.85. I am always grateful of ms. Lai as well as DA for allowing me to achieve such amazing results. Therefore, I would strongly recommend DA for any students who want to improve and challenge themselves more.",
+                        "name": "Ruby Nguyen",
+                        "year": "Year 12 Student",
+                        "rating": 5,
+                        "source": "Google Review"
+              },
+              {
+                        "id": "review-133",
+                        "previewQuote": "Miss Lai has also been a great tutor in helping me with my marks and giving me good feedback for my assignments. Miss Kass and Miss Lai have been the best English tutors I’ve ever had. Last year, I was receiving 80% and less, but now, I am consistently achieving over 90%...",
+                        "fullQuote": "Over the past term, Miss Kass has taught me so much about English, helping me with my English at school and at DA Tuition. Last year, I was receiving 80% and less, but now, I am consistently achieving over 90% in my English assessments and getting good grades. She is very consistent with helping me with my drafts when I need it, and gives me good feedback and advice regarding how to achieve the best results for my assessments. She makes sure she goes through my school topics with me thoroughly and makes sure I understand it fully. Miss Lai has also been a great tutor in helping me with my marks and giving me good feedback for my assignments. She always teaches me new things about English and provides new insight into the topics I learn at school. Miss Kass and Miss Lai have been the best English tutors I’ve ever had. They are extremely helpful, resourceful and motivating.",
+                        "name": "Gus Karaki",
+                        "year": "Student",
+                        "rating": 5,
+                        "source": "Google Review"
+              },
+              {
+                        "id": "review-jimmy-sieu",
+                        "previewQuote": "Jimmy’s English marks used to average 50-60%, which made the subject feel beyond him. With Miss Christina’s support, he achieved his first A, never achieved under an A again, ranked 1st in Year 11 and 3rd in Year 12, achieved a Band 6, and received a 98.95 ATAR.",
+                        "fullQuote": "The subject in which I achieved the greatest change was English. Honestly, receiving back results after being confident after taking an exam, only to get back an average of 50-60% in English for basically all of my assessment tasks, was extremely disheartening to me. I never thought I'd ever be decent at the subject, and the concept of being good was beyond me. Being slow in my first few years of English, even at DA, I was still pushed and received aid in every assessment task, no matter what, and my grades had improved to B's just by the end of my first year. However, once I met Miss Christina as my tutor, I was so happy to see my first ever A in just an English assessment task. Starting from the end of year 9, I continued to work hard on my English essays with Miss Christina, and it's safe to say that I never achieved under an A again. Miss Christina was always available for last-minute feedback on my essays (and she always responded at 3-4 AM when I felt motivated to do them), and honestly always gave out genuine advice for exams, like memorising tips, but also to not rely on a skeleton essay and to mould specifically to the question. With this, I honestly did not believe I was able to even choose English Advanced as my course, and went on to achieve 1st in Year 11, and 3rd in Year 12, being 1 of 5 people to achieve a band 6 in my school.\n\nHonestly, I never thought it would be possible to have gotten the ATAR that I received of 98.95. Thank you, DA!",
+                        "name": "Jimmy Sieu",
+                        "year": "Student",
+                        "rating": 5,
+                        "source": "Google Review"
+              },
+              {
+                        "id": "review-161",
+                        "previewQuote": "Miss Kathleen is the best English tutor Jasmine has ever had. Before tutoring, she was averaging a low B; with Miss Kathleen's patient guidance, clear communication and supportive lessons, she began achieving a high A (80% and above) and reached 1st place ranking in Year 11.",
+                        "fullQuote": "I have attended DA tuition for almost a 2 years now and I can say without doubt Miss Kathleen is the best English tutor I have ever had. From the very first lesson, she made a strong impression with her well-prepared materials and her clear, effective communication of knowledge. Every lesson with Miss Kathleen is a productive blend of learning new content and building connections. She is very patient with my learning abilities and nurtures me well, ensuring the content she teaches is conveyed in a clear and concise manner. She is not only highly trained in the subject English but also has great social skills. When I have classes with Miss Kathleen, she creates a safe and welcoming environment where I feel comfortable and free from judgment about my English skills. Before have sessions with her, I would averaging a low B, but now I’m achieving a high A (80% and above). Thanks to her support, I reached a 1st place ranking in Year 11. I have attended multiple tutoring center and had multiple tutor however none compares to Miss Kathleen. I am incredibly grateful for the constant support and encouragement she has given me, guiding me every step of the way as I excel in my academic journey. I look forward to working with her in my last year of high school to achieve my academic goals!",
+                        "name": "Jasmine Nguyen",
+                        "year": "Year 11 Student",
+                        "rating": 5,
+                        "source": "Google Review"
+              },
+              {
+                        "id": "review-079",
+                        "previewQuote": "Christina initially felt overwhelmed in Miss Lai’s GAT English class and used to receive marks around 70%. With Miss Lai’s guidance, she built confidence analysing challenging texts, worked up toward 80%, and received her first 90% in Year 9.",
+                        "fullQuote": "After finishing my selective program I was offered a place in Miss Lai' s GAT English class and it was overwhelming as I didn't think I excelled in English. When I joined i realised I would be learning alongside others in a grade above and it was daunting, I didn't believe I was good enough and others would judge me. However as time progressed, Miss Lai was able to confidently shine a new light upon me and made me realise I was capable of analysing challenging texts, reading articles and creating solid responses. She consistently works hard with a smile to motivate and support her students and bring out creativity and optimism in everyone. When entering high school, I saw reading books as boring and useless but she always reminded us how important it was and introduced her students to fascinating books and broadened our perception of reading through articles, poems and short stories. I have now learnt to appreciate reading shorter novels and listening to speech poetry. I used to receive average marks around 70% but with Miss Lai' s repetitive reminder to be on top of my work, edit and proof-read, I worked my way up towards 80% and received my first 90% in year 9. Some lessons she came in with stacks of vocabulary, unexpected memory quizzes, speed writing paragraphs and i never knew how much it would help me. I was able to memorise my 900 word essay in 2 nights and executed writing it all in 40 minutes without skipping a beat. I remember complaining about her challenging us to write faster or think outside the box but now I look forward to her little tests as I know she thinks ahead and only prepares her students for later adversities which we'll then find easy. Even when deadlines became a blur she made sure I wouldn't get lost and pulled me aside for a small chat which always stuck with me and made me realise there was no point agonising and dwelling over things when I could learn from my mistakes, lift my head up and achieve greater heights. After studying under Miss Lai for 4 years she has brought out my love for English and has inspired me to stay determined and passionate towards my work. Her charismatic personality in class encourages a fun, bright and collaborative environment and i will forever appreciate her being my teacher and look forward to going through senior years under her guidance. Christina Lee - Sefton High School - Year 10",
+                        "name": "Christina Lee",
+                        "year": "Year 10 Student",
+                        "rating": 5,
+                        "source": "Google Review"
+              },
+              {
+                        "id": "review-077",
+                        "previewQuote": "Miss Lai prioritises each and every single one of her students (according to their assessment deadline) and seeks to help all of us despite her busy schedule.",
+                        "fullQuote": "Where to begin? It has been no doubt, 5 challenging years of high school, and as I slowly reach the end of this journey, I've reflected upon what a roller coaster of a ride it has been. Looking back, I've realised what a huge role DA has played in my high school life. Specifically, what a huge role Miss Lai has played. Always dedicated to her work and more than that, her students. She's the super sweet and bubbly teacher that always has a smile on her face. You couldn't possibly miss her. I will be forever grateful for all the hours that Miss Lai has put into helping me achieve the best possible result that I can, even if it means staying up super late to help me edit my work. Miss Lai prioritises each and every single one of her students (according to their assessment deadline) and seeks to help all of us despite her busy schedule. Throughout the years, she has helped me grow to love English even when it becomes too difficult for my liking. She's really taught me to accept critical feedback and setbacks, and to bounce back from them in order to maximise my marks for the next assessment task. She really pushes me to not give up and to not let my previous marks affect my chances of obtaining better results the next time round. Miss Lai, thank you for who you are and all that you do, we really appreciate you! Christina Le - Bonnyrigg High School - Year 11",
+                        "name": "Christina Le",
+                        "year": "Year 11 Student",
+                        "rating": 5,
+                        "source": "Google Review"
+              },
+              {
+                        "id": "review-004",
+                        "previewQuote": "For English advanced I had Miss Lai, and she is the most supportive, hardworking and dedicated teacher you will find, helping me thrive during assignments and exams which boosted my ranks by 10 places between semester 1 and 2, and topping my class for the trial exams.",
+                        "fullQuote": "I’ve been at DA for 9 years now, and can say that the teachers are by far the best, helping me achieve new heights I wouldn’t have without their constant support and investment in my learning. Not only are they extremely caring, the teachers put an immense amount of hard work and dedication into helping us achieve exemplary results, which has created a comfortable learning environment for students. I began in private classes in year 3 which helped build the foundation of my learning in the lead up to years 5 and 6, where I had Mr Danny, and without him and his constant support I would not have achieved excellent results in the selective exams. Following this I had Miss Linda and Miss Jenny, and I owe them a large debt of gratitude in helping me excel in my junior years of high school, putting in an immeasurable amount of effort into making sure I’m prepared for exam conditions and submitting assignments on time and at a high standard. From the lead up to my senior years of high school, I had Mr King and Miss Amanda as my maths teachers, and they are undoubtedly the best math tutors you will find. Having their constant support through ensuring students understand concepts thoroughly whilst exposing us to the toughest questions to prepare for exam conditions constituted my success, and not to mention their unique connection with students which help them understand our areas of improvement to help us excel. For English advanced I had Miss Lai, and she is the most supportive, hardworking and dedicated teacher you will find, helping me thrive during assignments and exams which boosted my ranks by 10 places between semester 1 and 2, and topping my class for the trial exams. I’ve enjoyed every moment here and highly recommend for anyone looking for a fantastic tutor :)",
+                        "name": "Adrian Dang",
+                        "year": "Year 3 Student",
+                        "rating": 5,
+                        "source": "Google Review"
+              },
+              {
+                        "id": "review-370",
+                        "previewQuote": "Miss Jenny's attention to detail and personalised essay feedback significantly improved Tyson's writing. Her encouragement and patience created a supportive environment, helping him move from English Standard in Year 11 to achieving a Band 6 in English Advanced.",
+                        "fullQuote": "I am thrilled to reflect on my remarkable six-year journey at DA Tuition, where Mr Bunsea, Miss Anna and Miss Jenny have been instrumental in shaping my academic success. Mr Bunsea’s expertise in 3U maths was truly remarkable. His ability to simplify complex mathematical concepts and provide real world applications made the subject more accessible. Mr Bunsea's enthusiasm for the subject was contagious, and his dedication to ensuring that I grasped each topic thoroughly was evident in every lesson. Thanks to his guidance, I not only improved my understanding of 3U Maths but also developed a newfound appreciation for the subject, ultimately securing a B6. Miss Anna's guidance in 2U Maths was equally exceptional. Her systematic and clear explanations helped me navigate through challenging topics with confidence. Miss Anna's use of visual aids (her notes🤩) and practical examples added a valuable dimension to the learning experience. She was always approachable and willing to go the extra mile to ensure that I mastered the mathematical concepts required for success, ultimately contributing significantly to my achievement of a B6 in the subject. Finally, Miss Jenny's approach to teaching English was nothing short of brilliant. Her passion for literature and language translated into engaging lessons that made the subject come alive. Miss Jenny's attention to detail and personalised feedback on my essay writing significantly improved my skills. Her encouragement and patience created a supportive environment where I felt comfortable asking questions and seeking clarification. This transformative journey propelled me from my humble beginnings as an English Standard student in Year 11 to the pinnacle of academic achievement—a remarkable B6 in English Advanced. I am genuinely grateful to the DA Tuition team, particularly to Mr. Bunsea and Miss Anna and Miss Jenny for their unwavering dedication to my academic growth. Their collective impact was instrumental in my journey towards becoming an HSC all-rounder. I wholeheartedly recommend DA Tuition to anyone seeking top-notch tutoring services that go beyond just grades and foster a comprehensive understanding of the subjects :)",
+                        "name": "Tyson Pham",
+                        "year": "Year 11 Student",
+                        "rating": 5,
+                        "source": "Google Review"
+              },
+              {
+                        "id": "review-047",
+                        "previewQuote": "Miss Jenny made English one of Brendan's most enjoyable subjects. Her essay feedback and early preparation helped him rank 1st in Year 11, 2nd in Year 12, and score 98 in trials.",
+                        "fullQuote": "DA Tuition has been such an amazing tutoring centre and has treated me well over the last 6-7 years. Although I did not start off as a top student with the highest marks, all the teachers treated me fairly and welcomed me. I have great appreciation for Miss Linda for teaching me discipline and allowing me to set goals and achieve them from a young age. Ever since, as I was transferred to high school tutors Mr King and Miss Amanda, I have been able to thrive. Mr King has been an incredible tutor, and has always supported me through thick and thin, whether or not I had achieved good or bad marks. In the end, his unwavering support and dedication towards tutoring me has allowed me to achieve B6 in both 2U and 3U Math! It would be an understatement to say that Miss Jenny has been an amazing tutor for English. She taught me the skills I needed from a very young age to succeed in senior years. Her dedication towards checking my essays and helping me prepare them early has allowed me to Rank 1st in Year 11 and 2nd in Year 12 with a mark of 98 in trials. Miss Jenny’s teaching style has made English one of my most enjoyable subjects throughout high school! Last but not least, Mr Danny is the funniest tutor of all time, and his insane knowledge in biology has allowed me to achieve a Band 6 in the end. Mr Danny is the most unique tutor that I have ever come across. His style of teaching was very enjoyable and made biology my favourite subject to study. He cares about his students and provides lots of life advice and words of wisdom which makes his lessons much more valuable! All in all my academic success stemmed from my connection with my tutors and my longing to make themselves and I proud, and so DA is definitely the place to go!",
+                        "name": "Brendan Nguyen",
+                        "year": "Year 12 Student",
+                        "rating": 5,
+                        "source": "Google Review"
+              },
+              {
+                        "id": "review-109",
+                        "previewQuote": "In Year 12, I was in the top 10 in the grade for English, and this wouldn’t have happened if Miss Lai didn’t push me to my limits. Ms Lai broadened my perspective of writing in different styles, and enhanced my ability to quickly answer questions in the HSC format.",
+                        "fullQuote": "Ms Lai was an amazing teacher who encouraged me to do the best I can. I gained better skills and vocabulary over time, which lead me to improve my writing. From being a C student in Year 7, I was eventually able to keep a constant A from Year 8. In Year 12, I was in the top 10 in the grade for English, and this wouldn’t have happened if Miss Lai didn’t push me to my limits. She helped me to think about the way I’ve been writing and assisted me in dropping bad habits, cultivating good ones. Ms Lai broadened my perspective of writing in different styles, and enhanced my ability to quickly answer questions in the HSC format. I finished my HSC English with amazing results and I cannot recommend Ms Lai enough. Diana Pham - Mary Mackillop Catholic College, Year 12",
+                        "name": "Diana Pham",
+                        "year": "Year 12 Student",
+                        "rating": 5,
+                        "source": "Google Review"
+              },
+              {
+                        "id": "review-137",
+                        "previewQuote": "Harrison’s English marks dropped so much that he began losing motivation across his subjects. With Miss Lai’s support, his marks and rank improved, his motivation returned, and he rediscovered his ambition and enjoyment for English.",
+                        "fullQuote": "English has always been a subject I have enjoyed and I was pretty good at it. As the years went on and things got harder I started to enjoy the subject less and less and as a result, my marks dropped drastically. Every time I saw a low mark I received for English I would always become so frustrated to the point I practically gave up and allowing my marks to drop further. This had such an effect on me that this mindset basically rolled onto all my other subjects causing me to lose faith in myself and others. With the help of Miss Lai however, I was able to regain motivation and willingness to succeed in not just English but in all my subjects. In the most difficult of times, she was there for me and encouraged me to persist through all my challenges big and small even when I thought they were impossible. There are a million things I could tell you about how Miss Lai has helped me but let me tell you the result instead. Firstly, I am improving in English both in marks and rank, secondly, due to the increased improvement I have become more motivated and thirdly, most importantly my burning ambition and passion for English and the enjoyment of the subject has been restored. Overall making me happier. Therefore, I am eternally grateful to Miss Lai for everything she has done for me and more. P.S. Just ‘IBIS’ your problems! I - (I) B - (Believe) I - (In) S - (School) Harrison Neal - Thomas Hassall Catholic College - Year 11",
+                        "name": "Harrison Neal",
+                        "year": "Year 11 Student",
+                        "rating": 5,
+                        "source": "Google Review"
+              },
+              {
+                        "id": "review-203",
+                        "previewQuote": "Miss Linda and Miss Lai have helped me excel in the past 3 years in my transition from primary to high school. Miss Lai has helped me improve my writing skills by introducing me to a bigger selection of vocabulary and help me achieve higher marks.",
+                        "fullQuote": "Miss Linda and Miss Lai have helped me excel in the past 3 years in my transition from primary to high school. They have allowed me to achieve high marks and encouraged me to do the best that I can. Miss Linda has helped me improve on my skills in maths, focusing on strengthening my weak skills and teaching me how to improve my way of thought to be more efficient and save time to check through my work. Miss Lai has helped me improve my writing skills by introducing me to a bigger selection of vocabulary and help me achieve higher marks. With the help of both Miss Linda and Miss Lai. they have helped me see a bigger picture for my future, showing me that I have potential to reach any goal. As well as the help of Mr Danny and Mr King who have led me to achieve a spot in selective. Mr Danny is an inspiring teacher who has helped me improve my writing when I was in selective training and now helps me improve in science to an extent where I am able to get all A’s and high marks. Mr King has been a motivating teacher when I was in selective training, who always finds ways to include humour in his teaching, he has helped me to recognise maths as a fun subject rather than a subject I should dislike.",
+                        "name": "Julia Diep",
+                        "year": "Student",
+                        "rating": 5,
+                        "source": "Google Review"
+              },
+              {
+                        "id": "review-239",
+                        "previewQuote": "I am very glad that Miss Lai abandoned me. 10/10 would be a student again -Miss Lai: Miss Lai is a combination both Miss Linda and Stephanie (they're pretty much the three musket tiers together).",
+                        "fullQuote": "After being a Student here for three years I can definitely say that I am glad my parents enrolled me into this facility. DA tuition is a non like any other tutor facilities ive been enrolled to, the teachers here are very supportive and put in a lot of hard work into helping their students achieve the best results possible. TEACHER REVIEW: - Miss Linda: Miss Linda may seem intimidating at first but is actually nice and supportive and really cares about her students and strives to encourage her students to get the best results they can. Although she can be intimidating and a p(icky)erfectionist, she also has softer sides that make easy to tease, bribe and banter with, however when things get serious she can be VERY VERY SCARY... that said she is probably one of favourite mentors who I've had the honour of being her student in math. 10/10 would banter again - Miss Stephanie: Miss Stephanie is the opposite, as in she is very nice and has a more approachable vibe. She's the kind of person that you'd feel bad for making them angry and is the angel's advocate. Above all else she like many other tutors in the facility is very encouraging and motivational when it comes to teaching her students. I am very glad that Miss Lai abandoned me. 10/10 would be a student again -Miss Lai: Miss Lai is a combination both Miss Linda and Stephanie (they're pretty much the three musket tiers together). Although she abandoned me (which was understandable), my time with her was nothing but short and sweet. She is very knowledgeable and wise, puts in a lot of effort into helping her students. One of my best English tutors I've had the pleasure of being a student of. -10/10 for abandoning me :(( -Mr Danny: The devil himself El diablo. Mr Danny is a man that is not to be fooled by his looks although he may seem like a normal man with a contagious charisma. He is an unhinged man driven by the success and discipline of his students, as his way of supporting and motivating his students can be seen as degrading compared to other tutors. That said he is one of best tutors I've had his wackiness mixed with his sarcasm and occasional banter with his students make for an entertaining and insightful lesson as he does his best to ensure that his students understand the topics he is teaching by installing \"discipline\" into them. Overall best mentor 10/10 would recommend if you plan on selling your soul to the devil \"100 or be disowned\"-Mr Danny -Mr King: Don't let the cool teacher facade fool ya, under that is a mischievous teacher who preys on the suffering of his students in order for them to succeed, and by suffering I mean giving more work to his students than he needs to (which is what basically almost all the teachers do). A man who goes by \"every man for himself\" code. However pass all that he is a chill teacher who is very supportive and motivational in his own ways and much like the others can provide very insightful thoughts and life lessons all for the best interest of his students. 10/10 very chill and very cool",
+                        "name": "Lachlan Nguyen",
+                        "year": "Student",
+                        "rating": 5,
+                        "source": "Google Review"
+              },
+              {
+                        "id": "review-241",
+                        "previewQuote": "for english 2U and 3U, I had Miss Lai from late year 10 to the end of year 12. Miss Lai is incredibly prepared and efficient when it drafting essays and assignment/exam prep. Transforming a 12/20 for a year 10 creative writing task to achieving full marks in Mod c and Rank...",
+                        "fullQuote": "2023 graduate here! I've been at DA for 10 years and its safe to say DA differentiates from the other tutoring centres! for english 2U and 3U, I had Miss Lai from late year 10 to the end of year 12. Miss Lai is incredibly prepared and efficient when it drafting essays and assignment/exam prep. Transforming a 12/20 for a year 10 creative writing task to achieving full marks in Mod c and Rank 1st in 2U and 2nd in 3U, Miss Lai makes the impossible, possible! anyone struggling with creative writing or pushing essays to a band 6 level, Miss Lai is perfect! for math 2U and 3U, Mr King and Miss Amanda were truly life changing regarding learning difficult math concepts, improving work ethic/mentality and constantly challenging myself to always push for band 6 results! (even from constantly receiving low 80s in my math exams). i would strongly recommend Mr King and Miss Amanda as a propellor for not only drilling extremely difficult past HSC/BOS questions but also for loving math :) anyone (incl primary, year 11/12 students) looking to build and grasp math/english/science concepts efficiently and rapidly, gain access to valuable materials and transform school results, DA is the place to go!",
+                        "name": "Lauren Pham",
+                        "year": "Year 11 Student",
+                        "rating": 5,
+                        "source": "Google Review"
+              },
+              {
+                        "id": "review-067",
+                        "previewQuote": "Cherissa’s English marks used to be very bad as an international student. With Miss Lai’s help, she improved her understanding and writing skills, gained motivation for exams, and jumped from 50th to 6th.",
+                        "fullQuote": "My English marks used to be very bad because I am an international student, but since I joined DA Tuition, Miss Lai, who is my English tutoring teacher, has helped me a lot with my work and improved my understanding so as to improve my writing skills in English. I love her sweet personality and well coming atmosphere during class. I really appreciate that! Thank you, Miss and DA Tuition, for helping me to archive my goals and giving me more motivation to continue working hard on exams! Jumped from 50th to 6th!!!!!!!",
+                        "name": "Cherissa Nguyen",
+                        "year": "Student",
+                        "rating": 5,
+                        "source": "Google Review"
+              },
+              {
+                        "id": "review-267",
+                        "previewQuote": "Now, I can definitely write essays with much more confidence in my techniques and structure. English was never an easy subject and I’m sure everyone would agree, but my time here at DA and with my English teachers have taught me the value of English.",
+                        "fullQuote": "English was never an easy subject and I’m sure everyone would agree, but my time here at DA and with my English teachers have taught me the value of English. My journey began with Ms Angie teaching me throughout my junior years, learning different concepts each time with a fun spelling bee session in the final ten minutes. Although the work can be hard and challenging, I discovered the joy and excitement in coming to class to meet my teacher and do English. It was as simple as that. I just wanted to learn. I had a few transfers after Ms Angie and it was quite upsetting, but English continued the same with my new teachers (Ms Phuong and Ms Michelle). Then when my senior years hit, I was worried about my progress in English. Whether I was competent or not, I felt like English wasn’t for me anymore. I lost the motivation and joy I once had and it was really regretful. However, I met my current teacher Ms Lai who was a mother to me. She supported me and helped me push through the work I had. She gave me new words - new ideas that inspired me to work harder and do better. It has reached a point where in the future, I’d like to apply English into my future careers if possible. Now, I can definitely write essays with much more confidence in my techniques and structure. I can develop my own personal ideas and expand on it through different writing forms (imaginative, discursive, transcript). I can have the confidence to do well in assessments without having to compare marks to other people and feel discouraged about it. Instead, I focus on myself and improve on my mistakes. With DA teachers, this can really be achievable as long as you put in the effort to do the work. The more effort you put in, the more it pays off in the future. Thank you DA :) Michelle Dam - Fairvale High School, Year 12",
+                        "name": "Michelle Dam",
+                        "year": "Year 12 Student",
+                        "rating": 5,
+                        "source": "Google Review"
+              },
+              {
+                        "id": "review-051",
+                        "previewQuote": "Bryant credits DA with building his confidence, foundations and love of learning over 8 years. With support including Ms Lai’s English guidance, he achieved five Band 6s in the HSC and an ATAR that made his parents proud.",
+                        "fullQuote": "Being a student at DA for the last 8 years has been an absolute life changer and I believe it can be for you too. Throughout my entire life, DA has guided and supported me to achieve academic excellence. Initially, it was through the selective program which helped me enter a selective school despite being an “average student” at the time. The tutors at DA are what has made the tuition such a special place. Despite having confidence issues in my academic abilities, these tutors were able to draw out my best ability and motivate me to strive for success in school. On top of this, they helped and guided me to build strong fundamental skills needed for my education such as developing an extensive vocabulary and sharpening my skills in all the important topics that were needed to excel in the maths exam. Furthermore, the tuition has also cultivated their students to truly love the subject they are studying. Ms Amanda’s passion for mathematics was infectious and it made me more hungry to be faster and accurate in the subject. Ms Lai always encouraged us to really connect with the texts and peek behind the literary curtains in order to understand their messages on a higher level. Overall, through the lessons from DA I was able to achieve five of BAND 6’s in the hsc exam and achieved my desirable ATAR that made my parents proud. I truly believe that I can carry on the skills I have learnt into the future. If you’re looking for a place to develop a strong foundation for academics and studying and achieve your maximum potential then DA is the place for you as they make it happen!",
+                        "name": "Bryant Lam",
+                        "year": "Student",
+                        "rating": 5,
+                        "source": "Google Review"
+              },
+              {
+                        "id": "review-195",
+                        "previewQuote": "Joie joined DA in Year 12 and reached results she never imagined. With Ms Kassandra’s English support, her writing improved, she scored 97% for Mod C, wrote Band 5-6 essays under timed conditions, and ranked 8th in Standard English.",
+                        "fullQuote": "I enrolled into DA tuition at the start of 2024 in my second term of year 12. I can confidently say that having a tutor was one of the best academic decisions I’ve ever made! This was made possible by the amazing teachers at DA, who gave me the resources I needed to reach my full potential in high school math and english. I’d also like to give a special thanks to my teachers Ms Kassandra and Mr Bunsea for ultimately helping me throughout year 12. Mr Bunsea was my Maths Standard 2 tutor. He is an incredible teacher who is extremely patient and committed to his students growth and success. He teaches concepts in memorable, easy to understand ways and gave thorough answers to all of my questions, even if I asked him a question every 5 minutes he would never fail to give a detailed response. Additionally, he offered new problem-solving techniques that made challenging questions simpler to approach and faster to solve. Moreover, DA also has a ton of resources for maths such as flash cards, past trial papers and HSC questions (sorted by topics) and trial classes in preparation for assessments, trials and hsc. Providing me with the necessary practice with non-routine questions to build confidence in exams. With all of these resources and Mr. Bunsea's immense help I was able achieve truly incredible feats that I could never have imagined. After I joined DA I got 100% in both assessments 2 and 3. And in my math trials I got the highest score which was 97%. My rank had gone from a 13 in semester 1 to ranking 1st overall in my school’s maths standard course at the end of year 12. My English Standard tutor was Ms. Kassandra. She is an incredibly sweet and caring person who is passionate about her students’ success and self-confidence in their English skills. English was definitely my weakest subject. To completely prepare for trials and HSC, Ms. Kass broke down the syllabus into topics that were easier to understand and significantly improved my writing abilities. Also giving us extremely helpful advice on how to get the maximum marks possible. Additionally, Ms. Kass shows a great deal of concern for her students' work because she consistently gives thorough feedback on all of my writing, something she does for all of her students, even if they were all turned in at the same time. The intense amount of practice on timed essay writings and feedback before trials and hsc made me the most prepared I had ever been for any of my exams. Since joining DA, my writing has significantly improved. I got a 97% for my Mod C assignment, and I am able to write full Band 5-6 essays in timed conditions. I ranked an overall 8th in my schools Standard English course. Overall DA has given me the best chance of success in high school. With the incredible teachers and positive learning environment I was able to reach unimaginable heights.",
+                        "name": "Joie Lim",
+                        "year": "Year 12 Student",
+                        "rating": 5,
+                        "source": "Google Review"
+              },
+              {
+                        "id": "review-333",
+                        "previewQuote": "Sasha maintained a 90+ average in 4U English under Ms Kassandra’s guidance. Across DA, she also improved from 80% in preliminary Business Studies to 94% in her last HSC task, while continuing to strengthen her overall results.",
+                        "fullQuote": "I’ve been at DA for 3 years now, and during this time, I’ve received endless support from all my tutors, leading to a dramatic improvement in my overall grades. Since I started at DA, I’ve had Ms. Kassandra for English, and I couldn’t be more grateful. She is the kindest and most understanding tutor I have ever had, always supporting my English endeavors. Under her guidance, I’ve maintained a 90+ average in 4U English. She consistently takes the time to help me understand the texts I’m studying and further improve my writing through her unwavering support. At the beginning of Year 12, I started math tutoring with Mr. Bunsea. His passion for math has helped me find a new found appreciation for the subject, drastically improving my overall performance. Thanks to his endless patience and effective teaching methods, I’ve been able to thoroughly understand all my topics and scored 97% on my latest exam. Mr. Danny has been an outstanding tutor for business studies. His engaging approach to teaching has helped me thoroughly understand the business syllabus and aim high for my results. From averaging 80% in my preliminary exams, Mr. Danny has helped me raise my score to 94% in my last HSC task. Some other remarkable tutors I’ve had the privilege of learning from include Ms. Anna in Year 10, and Mr. King and Miss Amanda in Year 11. Their efficient teaching methods helped build a strong foundation for my future academic performance. Overall, DA has been instrumental in helping me pursue my goals and enhance my academic performance. I wholeheartedly recommend DA Tuition to students seeking tutors who go above and beyond to improve their education.",
+                        "name": "Sasha Cio",
+                        "year": "Year 11 Student",
+                        "rating": 5,
+                        "source": "Google Review"
+              },
+              {
+                        "id": "review-252",
+                        "previewQuote": "Madison started DA with weak English marks and low confidence. Ms Kassandra helped improve her writing, essay and short-answer performance, while her maths support also helped her move from 40% in exams to a Band 6 in Advanced Maths.",
+                        "fullQuote": "Despite starting at DA towards the end of my time in highschool, I was able to significantly improve my marks and my outlook on academics. Before I started at DA, English marks were not very good and I lacked a lot of confidence in English exams. However, my marks and understanding about different themes and concepts in the syllabus improved significantly with the help of Ms Kassandra. She helped build my confidence with writing, and my ability to write essays and short answer questions in exam conditions. Her knowledge and understanding about how to efficiently complete exams (specifically paper 1),from her past experience helped me improve my performance in exams and helped me better understand the best way to tackle an English essay/ exam paper. Her support, dedication and teaching did wonders and I’m forever thankful for her! Maths was one of my worst subjects at the beginning of year 11, but by the hsc, maths was my best subject. Mr King and Ms Amanda were amazing tutors who helped me go from 40% in my exams to a band 6 in advanced maths! Mr King helped me improve my confidence and understanding about topics, especially ones that I struggled to do. He also changed my perspective on studying and how hard work really pays off! Without him, I would have never done well in maths!! Additionally, Ms Amanda was able to break down the most difficult questions and topics which made it much easier for me to understand, thus making more simple questions easier to do. They both helped push me to excel in my exams by teaching me how to efficiently study and complete questions at record speed! Overall my experience at DA was amazing and I believe the amazing tutors tremendously helped me in school with their teaching and support. DA become like a second home to me, and I definitely recommend DA to anyone who is looking for a tutor who will help them excel in their studies!",
+                        "name": "Madison Eung",
+                        "year": "Year 11 Student",
+                        "rating": 5,
+                        "source": "Google Review"
+              },
+              {
+                        "id": "review-382",
+                        "previewQuote": "I've spent time with a couple of tutors throughout my high school years, from Ms Angie to Ms Michelle to Ms Phuong to Ms Lai's arms, and all of them were great. From an English student who'd do school assessments just because I was required to, I became a student who enjoyed...",
+                        "fullQuote": "From an English student who'd do school assessments just because I was required to, I became a student who enjoyed to concept I was taught. To be honest, I never liked reading and disliked how difficult it was to understand what an author or poet was conveying. However, over the years of studying, especially tutoring at DA, I realised the deeper aspects of texts in English and became fond to it. I love the way ordinary people like myself, are able to express or even challenge views that resonate in our society. English for me, was definitely harder than a lot of subjects because it isn't something that has a right or wrong answer. During the years, DA has helped and encouraged me to embrace English, where I've actually began to enjoy attending tutor and learning for once. I've spent time with a couple of tutors throughout my high school years, from Ms Angie to Ms Michelle to Ms Phuong to Ms Lai's arms, and all of them were great. They made me feel better when I wasn't at my greatest, they supported me like a real family, giving advices for even the simplest everyday life things. I'm currently with Ms Lai, she dedicates a lot of time on her student's work where she'd often lose sleep. Not exaggerating but when receiving great results, Ms Lai would react even happier than my parents would and this is what makes students feel the need to achieve the best. It's encouraging! When receiving results that aren't ideal, Ms Lai does not turn against us but gives us extra support in adjusting our mistakes. I've recently received A in my English discursive writing that has only been taught to me this year with the help of Ms Lai, who made me love writing and English overall. Vivian Zhang - Cabramatta High School - Year 12",
+                        "name": "Vivian Zhang",
+                        "year": "Year 12 Student",
+                        "rating": 5,
+                        "source": "Google Review"
+              },
+              {
+                        "id": "review-377",
+                        "previewQuote": "I've had Miss Jenny as my English tutor for the last few years and she has guided me in the right direction with my writing, helping me achieve 18/20 in my last assessment task in Term 2.",
+                        "fullQuote": "Studying at DA Tuition for the last few years of my life has significantly improved my academic performance and potential at school. I've had Miss Jenny as my English tutor for the last few years and she has guided me in the right direction with my writing, helping me achieve 18/20 in my last assessment task in Term 2. The teachers there are all highly supportive and have motivated me to strive for my best in all my work, allowing me to enjoy learning at school whilst performing exceedingly well. I highly recommend DA for any students looking for assistance in school.",
+                        "name": "Vincent Nguyen",
+                        "year": "Student",
+                        "rating": 5,
+                        "source": "Google Review"
+              },
+              {
+                        "id": "review-325",
+                        "previewQuote": "Big thank you to Miss Lai for her constant encouragement and disregarded the negative feedback I received from my school teachers; being a hopeless case if I chose to remain in Advanced. Advanced English, although was once my worst performing subject, became one of the subjects that consistently earned high marks.",
+                        "fullQuote": "Taking the first step in applying for DA, has been one of my better decisions I have made for myself and for my academics during the HSC. If there is one thing I regret, it would be not joining DA at an earlier period during my schooling years. Instead, I joined at a time I thought I really needed some guidance and support for my learning in Advanced English; a subject I was advised to drop before I entered year 12 by my school's English department. Big thank you to Miss Lai for her constant encouragement and disregarded the negative feedback I received from my school teachers; being a hopeless case if I chose to remain in Advanced. Her unbelievable patience and unwavering support shaped the confident writer I was during HSC, and even today. Advanced English, although was once my worst performing subject, became one of the subjects that consistently earned high marks. I will be forever grateful for all that you have done for me in year 12 that has obviously shaped the person I am today with my academic achievements. I will forever be puzzled at how you were able to see my potential when others, including myself, have lost hope in me. Not only were you my English tutor, but a close mentor that helped me find peace with the subject instead of it being an ongoing war I often retreated from. Unlike any tutor you will ever come across, the staff at DA are academic tutors as much as a friend who truly wants the best for you. Sami Ho - Mary Mackillop Catholic College - Year 12",
+                        "name": "Sami Ho",
+                        "year": "Year 12 Student",
+                        "rating": 5,
+                        "source": "Google Review"
+              },
+              {
+                        "id": "review-283",
+                        "previewQuote": "But then everything changed when I had Miss Jenny, I was still lacking grades at year 7 when I first had her, I am year 9 now and I still don’t do her homework, however I do get Bs and As for English.",
+                        "fullQuote": "When I was in year 4-5 I was forced to join DA, due to lack of motivation my grades were nowhere to even passing, all my reports were a constant D or C (mainly C’s). Even at my newest journey at DA I was still a slack, uncompleted homework and work, I even had so many corrections. But then everything changed when I had Miss Jenny, I was still lacking grades at year 7 when I first had her, I am year 9 now and I still don’t do her homework, however I do get Bs and As for English. Miss Jenny 10 out of 10 good teacher.",
+                        "name": "Natalie Nguyen",
+                        "year": "Year 9 Student",
+                        "rating": 5,
+                        "source": "Google Review"
+              },
+              {
+                        "id": "review-043",
+                        "previewQuote": "Before tutoring, this student felt insecure and unconfident in English. With Miss Lai’s support through Years 9 and 10, they improved their skills and understanding, moving from below top 3 to achieving 1st place.",
+                        "fullQuote": "I've always been insecure and unconfident about my English skills. However, since beginning tutoring with Miss Lai, I have drastically improved with both my skills and understanding. I used to only rank below top 3, but because of tutoring, I have achieved the goal of becoming first place. Miss Lai has helped and supported me throughout years 9 and 10, allowing me to further enhance my knowledge and appreciation for the subject at English.",
+                        "name": "boogie woogie man",
+                        "year": "Student",
+                        "rating": 5,
+                        "source": "Google Review"
+              },
+              {
+                        "id": "review-250",
+                        "previewQuote": "Miss Kassandra has taught me for English where she has thoroughly assisted me in my work, giving encouraging yet helpful feedback for my writing to improve.",
+                        "fullQuote": "As a year 10 student, 3 weeks ago when I joined DA Tuition, I have found classes to be a very welcoming and comfortable environment. DA Tuition is an extremely flexible environment and they highly encourage the progress and improvement of their students at school. Miss Kassandra has taught me for English where she has thoroughly assisted me in my work, giving encouraging yet helpful feedback for my writing to improve. Her sweet personality yet, effective teaching has made me feel more confident in my writing and I have felt very welcomed by her in my first few weeks at DA. Mr Danny teaches me for Biology and I have found classes to be most enjoyable. For the past year, science has not been a strength of mine but Mr Danny has been patient and encouraging in my learning. His effective and humorous teaching has made me feel more confident and prepared for year 11 Biology. It is evident that DA Tuition has put their commitment and efforts into every student’s learning. It is a safe, encouraging environment for students to learn and I highly suggest for anyone who wishes to see improvement in their academic confidence to attend DA Tuition.",
+                        "name": "Lynn Le",
+                        "year": "Year 11 Student",
+                        "rating": 5,
+                        "source": "Google Review"
+              },
+              {
+                        "id": "review-220",
+                        "previewQuote": "My teacher is Miss Christina for English, she have helped me in improving my learning and knowledge in english. DA Tuition is a great place for improving in all subjects and is able to help pulling those grades up.",
+                        "fullQuote": "DA Tuition is a great place for improving in all subjects and is able to help pulling those grades up. This is my first year in entering this tuition and I have enjoyed it very much . I was going ok in my last year but even since I have joined DA it have increased my knowledge and grades up which makes myself proud. My teacher is Miss Christina for English, she have helped me in improving my learning and knowledge in english. She is a fun and understandable teacher that helps me and my fellow classmates. Miss Christina have taught me many new things that I have seen or have heard before and explains it depth for me to understand which I really appreciate for. Overall DA Tuition is a great place for me to improve and understand better. I would recommend this Tuition with its fun and friendly environment.",
+                        "name": "Kathi Nguyen",
+                        "year": "Student",
+                        "rating": 5,
+                        "source": "Google Review"
+              },
+              {
+                        "id": "review-108",
+                        "previewQuote": "Diana says DA helps students move from a C to an A. After starting with Mr Bunsea, her maths rose from a C to a B, then to 94% and 1st in class; she also enjoyed Miss Christina’s clear English explanations.",
+                        "fullQuote": "DA Tuition provides a fun, and friendly environment, as well as encouraging teachers that will help you improve your grades from a C to an A. As for me, before going to DA, I was a C average student in maths. However, after going to DA and having Mr Bunsea as my maths tutor, he made the concepts so much easier to understand. Even the hardest concepts, Mr Bunsea could help me understand within 2 hours. In the first term of having him, he could already pull me up from a C grade, to a B grade. I continued to have him for maths. As a result, I finally achieved an A with a mark of 94% on my latest maths exam, and came first in my class. I really appreciate his help!! Furthermore, it's only my first term having Miss Christina Lee as my English tutor and I already enjoyed her lessons and having class with her. She is extremely good at explaining, whenever I don't understand any poems or words. Overall, DA Tuition is an amazing place to improve your grades and understand the subjects better. The teachers here are extremely hardworking and also willing to teach and explain and going out of their ways to help their students, all because of their caring nature. I believe this is a catalyst that motivates students to learn and get better.",
+                        "name": "Diana Nguyen",
+                        "year": "Student",
+                        "rating": 5,
+                        "source": "Google Review"
+              },
+              {
+                        "id": "review-039",
+                        "previewQuote": "Aryan says Miss Kassandra helped when English was not his strength, explaining difficult concepts quickly and supporting him outside her schedule. His English marks went from 5/20 to 18/20, with major improvements even under trial pressure.",
+                        "fullQuote": "I don’t know how to express these feelings but I will try my best. My maths tutor Mr Bunsea he is such a wonderful and loving soul the way he explains maths is so funny and easy. He breaks down every single question in a way that is nothing’ Even I would give up but he is the pushing me forward and encouraging me saying-‘Aryan you got this’ ‘you can do it’. This only lead to my improvement and betterment in maths where i went from dropping Maths Advanced as a subject to regretting why I didn’t choose extension! Secondly My Biology and Chemistry tutor Mr Danny omg he is so interesting and intelligent person. He was a missing character in my life who encouraged me all through out my year 12. I was very nervous first few lessons but everything changed after those lessons. He not only gives us knowledge about biology and chemistry but also gives us lessons about life. His approach to study is different and that makes him the most interesting person at Da tution. He even educated us about our carrier paths and told us those pro’s and con’s of those fields which lead me decide my future carrier’. The improvement in my results were immaculate and I am so grateful for him and his help!! In our term three we were accompanied by Mr Adam he’s so genuine and his approach made me feel like home. Where his friendly nature and young age made me feel like i am learning from my friend. I have only experienced this at Da tution. Thirdly and not lastly Miss Kassandra my English was not so great but she made me felt i can do it !Her help through out this year was needed and she have been a great listener and helped me going out of her schedule. Tbh no one does that but at Da this us possible. Miss have explained me the easiest and hardest concepts in a matter of moments and my marks west from 5/20 to 18/20. Even in trials there were massive improvements under time pressure as well. DA have been my second home and i am grateful because of these mentioned names and some other present there. Thank-you DA family for all the love and help. I wish i could add more stars to this review!!",
+                        "name": "Aryan Sharma",
+                        "year": "Year 12 Student",
+                        "rating": 5,
+                        "source": "Google Review"
+              },
+              {
+                        "id": "review-107",
+                        "previewQuote": "Diana stayed ranked top 3 in Advanced English with Ms Lai’s help while growing her love for the subject. She also describes maths improving from an average of 50 in Year 11 to 70 with Mr Bunsea’s dedication.",
+                        "fullQuote": "I just want to start off by saying that DA tuition is certainly one of a kind. The friendships I've made and the laughs I've had will truly never be forgotten. The tutors welcomed me with open arms and have guided me to success. Collectively, they've supported me and helped me through my senior years and I wouldn't have made it without them. In particular, I'd like to acknowledge Mr Danny, Ms Lai and Mr Bunsea for their tremendous hard work and effort in everything they do. Mr Danny was my super duper funny biology tutor who had the loudest voice that anyone could hear from a mile away. He really knew how to make the class laugh. Even though we complained soooooo much, he got through every lesson and made sure we were up to date with our work while still making the class enjoyable with stories and drama. He supported us and encouraged us to do our best. He always saw potential in us and never ever gave up on us. I always had problems with Biology, as science wasn't really my thing but he always knew when I was confused about something, and wouldn't hesitate to ask if I understood the concept. He always went out of his way to answer emails and a million questions super late at night. He gives the best advice about life and he's always genuinely interested in what we want to do with our lives. Overall, he nurtured my curiosity and helped me see the beauty in every cell, organism, and ecosystem. He is definitely the best biology tutor I've ever had with a big heart who always put his students first. I had Ms Lai for Advanced English and she has the most beautiful soul I've ever seen in a person. Her passion for English is truly incredible. She can analyse any type of photograph or text in an instant and it still suprises me to this day. Her writing abilities are like none I've ever seen before, and she has done an amazing job at teaching me how to be a good writer like her. Throughout my senior years, I stayed ranked top 3 with her help, and she made sure it didn't move. My love for English continued to prosper every time I worked with her and our late nights editing 6 page essays will never be forgotten. She put in so much effort to check all my answers and drafts, no matter what day or time it was. Every time she saw me, she never forgot to ask how I was feeling or how everything was going. Overall, she was my guiding light on my literary journey and her sweet personality is rare to find in a person. She definitely has a gift for changing kids lives. Last but not least, the amazing Mr Bunsea, my Standard Maths tutor. He definitely had so much patience dealing with all my complaining about how much I hate maths. He always told me that by the end of my schooling years, I would like Maths better than English, but its good to see his persistence and resilience to try even though English is obviously a way better subject. In all seriousness, he had so much dedication in helping me improve because I was sitting at an average of 50 in year 11 and now I'm sitting at a 70. I always thought I would fail in this subject, but he always had faith that I'd do really well. That belief in me from him was the only thing that kept me going. When no one else believed I could do it, he did. He would always let me come in for extra hours, sometimes for the whole entire day just to do maths. The way he explains certain concepts was really well done. He slowly goes through it and makes sure I fully understand before going on to the next thing. When I made silly mistakes, I wouldn't only feel disappointed, but he would feel it too. Overall, his passion for numbers and dedication to teaching made math feel like a breeze. He made the world of equations and formulas so much more enjoyable. I REALLY RECOMMEND COMING TO DA TUITION. These tutors treat you like their own children. I'm so thankful and grateful for them all, and couldn't have asked for better tutors. Its been a hectic journey with them all, and I'm so honoured to have experienced this journey with them :)",
+                        "name": "Diana El Safadi",
+                        "year": "Year 11 Student",
+                        "rating": 5,
+                        "source": "Google Review"
+              },
+              {
+                        "id": "review-117",
+                        "previewQuote": "Only with Miss Lai’s support and guidance was I able to achieve first rank in English and 100% in trials. I came here for 8 years and can confidently say that DA tuition is the best.",
+                        "fullQuote": "I came here for 8 years and can confidently say that DA tuition is the best. All the tutors go above and beyond, investing so much time and effort into our learning. They are all caring and supportive as they encourage students into achieving exceptional results. DA has created an inviting and comfortable environment that makes you look forward to learning. There are no words to describe how amazing Miss Lai is. I am overwhelmed by the amount of hard work and dedication she put into helping us, inside and outside of lessons. Only with Miss Lai’s support and guidance was I able to achieve first rank in English and 100% in trials. Miss Amanda, Mr King and Mr Bunsea are the best maths tutors you will find. From taking the extra time to ensure every student extensively understands each concept to motivating us with inspirational talks, their genuine passion for teaching is incredible. Miss Amanda, Mr King and Mr Bunsea have immensely made a difference in my learning, helping me achieve band 6 for Maths Advanced and Extension 1. I have loved coming here, would 100% recommend !",
+                        "name": "Ellie Dang",
+                        "year": "Student",
+                        "rating": 5,
+                        "source": "Google Review"
+              }
     ];
 
-    const diffQuoteText = document.getElementById("diffQuoteText");
-    const diffQuoteAuthor = document.getElementById("diffQuoteAuthor");
+    (function EnglishReviewsCarousel(){
+      const viewport = document.getElementById("englishReviewsCarousel");
+      const track = document.getElementById("englishReviewsTrack");
+      const pagination = document.getElementById("englishReviewsPagination");
+      const reviewModal = document.getElementById("englishReviewModal");
+      const modalPanel = reviewModal?.querySelector(".english-review-modal__panel");
+      const modalClose = reviewModal?.querySelector(".english-review-modal__close");
+      const modalQuote = document.getElementById("englishReviewModalQuote");
+      const modalName = document.getElementById("englishReviewModalName");
+      const modalStars = document.getElementById("englishReviewModalStars");
+      const modalRating = document.getElementById("englishReviewModalRating");
+      const modalSource = document.getElementById("englishReviewModalSource");
+      const arrows = document.querySelectorAll("[data-review-direction]");
+      if(!viewport || !track || !pagination || !reviewModal || !modalPanel || !modalClose || !modalQuote || !modalName || !modalStars || !modalRating || !modalSource) return;
 
-    if(diffQuoteText && diffQuoteAuthor){
+      let activeIndex = 0;
+      let lastModalTrigger = null;
+      let expandedIndex = null;
+      let lastExpandedTrigger = null;
+      let autoScrollTimer = null;
       const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      let diffQuoteIndex = 0;
+      const autoScrollDelay = 5200;
 
-      function renderDiffQuote(){
-        const q = diffQuotes[diffQuoteIndex];
-        diffQuoteText.classList.toggle("diff-quote-text--medium", q.text.length > 210 && q.text.length <= 300);
-        diffQuoteText.classList.toggle("diff-quote-text--long", q.text.length > 300);
-        diffQuoteText.textContent = "“" + q.text + "”";
-        diffQuoteAuthor.textContent = q.author;
+      const normalize = (index) => (index + englishReviews.length) % englishReviews.length;
+      const isCondensed = (review) => review.previewQuote.trim() !== review.fullQuote.trim();
+
+      function stopAutoScroll(){
+        if(autoScrollTimer) window.clearTimeout(autoScrollTimer);
+        autoScrollTimer = null;
       }
 
-      renderDiffQuote();
+      function startAutoScroll(){
+        stopAutoScroll();
+        if(prefersReducedMotion || expandedIndex !== null || reviewModal.classList.contains("is-open")) return;
+        autoScrollTimer = window.setTimeout(() => move(1), autoScrollDelay);
+      }
 
-      setInterval(() => {
-        diffQuoteIndex = (diffQuoteIndex + 1) % diffQuotes.length;
-        if(prefersReducedMotion){
-          renderDiffQuote();
-          return;
+      function positionFor(index){
+        if(index === activeIndex) return "is-active";
+        if(index === normalize(activeIndex - 1)) return "is-prev";
+        if(index === normalize(activeIndex + 1)) return "is-next";
+        const forward = (index - activeIndex + englishReviews.length) % englishReviews.length;
+        return forward > 0 && forward < englishReviews.length / 2 ? "is-off-right" : "is-off-left";
+      }
+
+      function createCard(review, index){
+        const card = document.createElement("article");
+        card.className = "english-review-card";
+        card.dataset.index = String(index);
+        card.setAttribute("aria-label", `${review.name}, Google review`);
+
+        const ornament = document.createElement("div");
+        ornament.className = "english-review-card__ornament";
+        const mark = document.createElement("span");
+        mark.className = "english-review-card__quote-mark";
+        mark.setAttribute("aria-hidden", "true");
+        mark.textContent = "“";
+        ornament.append(mark);
+
+        const quote = document.createElement("p");
+        quote.className = "english-review-card__text";
+        quote.textContent = `“${review.previewQuote}”`;
+
+        const fullButton = document.createElement("button");
+        fullButton.className = "english-review-card__full";
+        fullButton.type = "button";
+        fullButton.textContent = "Read full review →";
+        fullButton.addEventListener("click", (event) => {
+          event.stopPropagation();
+          openFullReview(index, fullButton);
+        });
+
+        const divider = document.createElement("span");
+        divider.className = "english-review-card__divider";
+        divider.setAttribute("aria-hidden", "true");
+
+        const name = document.createElement("p");
+        name.className = "english-review-card__name";
+        name.textContent = review.name;
+
+        const rating = document.createElement("p");
+        rating.className = "english-review-card__rating";
+        const stars = document.createElement("span");
+        stars.className = "english-review-card__stars";
+        stars.setAttribute("aria-hidden", "true");
+        stars.textContent = "★★★★★";
+        const ratingValue = document.createElement("span");
+        ratingValue.textContent = review.rating.toFixed(1);
+        rating.append(stars, ratingValue);
+
+        const source = document.createElement("p");
+        source.className = "english-review-card__source";
+        source.textContent = review.source;
+
+        const meta = document.createElement("div");
+        meta.className = "english-review-card__meta";
+        meta.append(divider, name, rating, source);
+
+        const expanded = document.createElement("div");
+        expanded.className = "english-review-card__expanded";
+        const expandedTop = document.createElement("div");
+        expandedTop.className = "english-review-card__expanded-top";
+        const expandedLabel = document.createElement("p");
+        expandedLabel.className = "english-review-card__expanded-label";
+        expandedLabel.textContent = "Full Google Review";
+        const expandedClose = document.createElement("button");
+        expandedClose.className = "english-review-card__expanded-close";
+        expandedClose.type = "button";
+        expandedClose.setAttribute("aria-label", "Back to reviews");
+        expandedClose.textContent = "×";
+        expandedClose.addEventListener("click", (event) => {
+          event.stopPropagation();
+          closeFullReview();
+        });
+        expandedTop.append(expandedLabel, expandedClose);
+
+        const expandedText = document.createElement("p");
+        expandedText.className = "english-review-card__expanded-text";
+        expandedText.textContent = review.fullQuote;
+
+        const expandedFooter = document.createElement("div");
+        expandedFooter.className = "english-review-card__expanded-footer";
+        const expandedName = document.createElement("p");
+        expandedName.className = "english-review-card__expanded-name";
+        expandedName.textContent = review.name;
+        const expandedRating = document.createElement("div");
+        expandedRating.className = "english-review-card__expanded-rating";
+        const expandedStars = document.createElement("span");
+        expandedStars.className = "english-review-card__expanded-stars";
+        expandedStars.setAttribute("aria-hidden", "true");
+        expandedStars.textContent = "★★★★★";
+        const expandedRatingValue = document.createElement("span");
+        expandedRatingValue.textContent = review.rating.toFixed(1);
+        expandedRating.append(expandedStars, expandedRatingValue);
+        expandedFooter.append(expandedName, expandedRating);
+        expanded.append(expandedTop, expandedText, expandedFooter);
+
+        card.append(ornament, quote);
+        if(isCondensed(review)) card.append(fullButton);
+        card.append(meta, expanded);
+
+        card.addEventListener("click", (event) => {
+          if(index !== activeIndex || event.target.closest("button")) return;
+          if(expandedIndex === index) return;
+          openFullReview(index, card);
+        });
+        card.addEventListener("keydown", (event) => {
+          if(index !== activeIndex) return;
+          if(event.key === "Enter" || event.key === " "){
+            event.preventDefault();
+            if(expandedIndex === index) closeFullReview();
+            else openFullReview(index, card);
+          }
+        });
+
+        return card;
+      }
+
+      function renderPagination(){
+        pagination.innerHTML = "";
+        englishReviews.forEach((review, index) => {
+          const dot = document.createElement("button");
+          dot.className = "english-reviews__dot";
+          dot.type = "button";
+          dot.setAttribute("aria-label", `Show ${review.name}'s review`);
+          dot.addEventListener("click", () => setActive(index));
+          pagination.append(dot);
+        });
+      }
+
+      function updateCards(){
+        Array.from(track.children).forEach((card) => {
+          const index = Number(card.dataset.index);
+          const review = englishReviews[index];
+          const condensed = isCondensed(review);
+          const position = positionFor(index);
+          card.className = `english-review-card ${position}${expandedIndex === index ? " is-expanded" : ""}`;
+          card.dataset.condensed = condensed ? "true" : "false";
+          card.setAttribute("aria-hidden", position === "is-active" ? "false" : "true");
+          if(position === "is-active"){
+            card.setAttribute("role", "button");
+            card.tabIndex = 0;
+          } else {
+            card.removeAttribute("role");
+            card.tabIndex = -1;
+          }
+        });
+
+        Array.from(pagination.children).forEach((dot, index) => {
+          dot.classList.toggle("is-active", index === activeIndex);
+          dot.setAttribute("aria-current", index === activeIndex ? "true" : "false");
+        });
+        viewport.classList.toggle("is-reading", expandedIndex !== null);
+      }
+
+      function setActive(index){
+        if(expandedIndex !== null) closeFullReview({ restoreFocus: false, restart: false });
+        activeIndex = normalize(index);
+        updateCards();
+        startAutoScroll();
+      }
+
+      function move(direction){
+        setActive(activeIndex + direction);
+      }
+
+      function openFullReview(index, trigger){
+        stopAutoScroll();
+        activeIndex = normalize(index);
+        expandedIndex = activeIndex;
+        lastExpandedTrigger = trigger;
+        updateCards();
+        const activeCard = track.querySelector(".english-review-card.is-active");
+        window.setTimeout(() => activeCard?.focus(), 0);
+      }
+
+      function closeFullReview(options = {}){
+        const { restoreFocus = true, restart = true } = options;
+        expandedIndex = null;
+        updateCards();
+        if(restoreFocus && lastExpandedTrigger && typeof lastExpandedTrigger.focus === "function") lastExpandedTrigger.focus();
+        if(restart) startAutoScroll();
+      }
+
+      function openModal(review, trigger){
+        stopAutoScroll();
+        lastModalTrigger = trigger;
+        modalQuote.textContent = review.fullQuote;
+        modalName.textContent = review.name;
+        modalStars.textContent = "★★★★★";
+        modalRating.textContent = `${review.rating.toFixed(1)}`;
+        modalSource.textContent = review.source;
+        reviewModal.classList.add("is-open");
+        reviewModal.setAttribute("aria-hidden", "false");
+        document.body.classList.add("english-review-modal-open");
+        window.setTimeout(() => modalPanel.focus(), 0);
+      }
+
+      function closeModal(){
+        reviewModal.classList.remove("is-open");
+        reviewModal.setAttribute("aria-hidden", "true");
+        document.body.classList.remove("english-review-modal-open");
+        if(lastModalTrigger && typeof lastModalTrigger.focus === "function") lastModalTrigger.focus();
+        startAutoScroll();
+      }
+
+      function trapFocus(event){
+        if(event.key !== "Tab" || !reviewModal.classList.contains("is-open")) return;
+        const focusable = reviewModal.querySelectorAll("button,[href],input,select,textarea,[tabindex]:not([tabindex='-1'])");
+        if(!focusable.length) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if(event.shiftKey && document.activeElement === first){
+          event.preventDefault();
+          last.focus();
+        } else if(!event.shiftKey && document.activeElement === last){
+          event.preventDefault();
+          first.focus();
         }
-        diffQuoteText.classList.add("diff-quote-fade");
-        diffQuoteAuthor.classList.add("diff-quote-fade");
-        setTimeout(() => {
-          renderDiffQuote();
-          diffQuoteText.classList.remove("diff-quote-fade");
-          diffQuoteAuthor.classList.remove("diff-quote-fade");
-        }, 500);
-      }, 6500);
-    }
+      }
+
+      englishReviews.forEach((review, index) => track.append(createCard(review, index)));
+      renderPagination();
+      updateCards();
+      startAutoScroll();
+
+      function activateArrow(button, event){
+        event?.preventDefault();
+        event?.stopPropagation();
+        const direction = Number(button.dataset.reviewDirection);
+        if(Number.isFinite(direction)) move(direction);
+      }
+
+      arrows.forEach((button) => {
+        button.addEventListener("pointerdown", (event) => event.stopPropagation());
+        button.addEventListener("click", (event) => activateArrow(button, event));
+      });
+
+      document.addEventListener("click", (event) => {
+        const button = event.target.closest?.("[data-review-direction]");
+        if(button) activateArrow(button, event);
+      }, true);
+
+      document.addEventListener("click", (event) => {
+        if(expandedIndex === null) return;
+        if(event.target.closest?.(".english-review-card.is-expanded")) return;
+        closeFullReview();
+      });
+
+      viewport.addEventListener("click", (event) => {
+        if(expandedIndex === null) return;
+        if(event.target.closest?.(".english-review-card.is-expanded")) return;
+        closeFullReview();
+      });
+
+      viewport.addEventListener("keydown", (event) => {
+        if(event.key === "ArrowLeft"){
+          event.preventDefault();
+          move(-1);
+        } else if(event.key === "ArrowRight"){
+          event.preventDefault();
+          move(1);
+        }
+      });
+      viewport.addEventListener("mouseenter", stopAutoScroll);
+      viewport.addEventListener("mouseleave", startAutoScroll);
+      viewport.addEventListener("focusin", stopAutoScroll);
+      viewport.addEventListener("focusout", startAutoScroll);
+
+      let pointerStartX = 0;
+      let pointerStartY = 0;
+      let isPointerDown = false;
+      viewport.addEventListener("pointerdown", (event) => {
+        if(event.target.closest?.("[data-review-direction]")) return;
+        stopAutoScroll();
+        isPointerDown = true;
+        pointerStartX = event.clientX;
+        pointerStartY = event.clientY;
+      });
+      viewport.addEventListener("pointerup", (event) => {
+        if(!isPointerDown) return;
+        isPointerDown = false;
+        const deltaX = event.clientX - pointerStartX;
+        const deltaY = event.clientY - pointerStartY;
+        if(Math.abs(deltaX) > 45 && Math.abs(deltaX) > Math.abs(deltaY) * 1.15){
+          move(deltaX < 0 ? 1 : -1);
+        }
+        startAutoScroll();
+      });
+      viewport.addEventListener("pointercancel", () => { isPointerDown = false; startAutoScroll(); });
+
+      let touchStartX = 0;
+      let touchStartY = 0;
+      let touchLocked = false;
+      viewport.addEventListener("touchstart", (event) => {
+        if(event.target.closest?.("[data-review-direction]")) return;
+        if(event.touches.length !== 1) return;
+        stopAutoScroll();
+        touchStartX = event.touches[0].clientX;
+        touchStartY = event.touches[0].clientY;
+        touchLocked = false;
+      }, { passive: true });
+      viewport.addEventListener("touchmove", (event) => {
+        if(event.touches.length !== 1) return;
+        const deltaX = event.touches[0].clientX - touchStartX;
+        const deltaY = event.touches[0].clientY - touchStartY;
+        if(Math.abs(deltaX) > 12 && Math.abs(deltaX) > Math.abs(deltaY) + 8){
+          touchLocked = true;
+          document.body.classList.add("english-reviews-dragging");
+          event.stopPropagation();
+          if(event.cancelable) event.preventDefault();
+        }
+      }, { passive: false });
+      viewport.addEventListener("touchend", (event) => {
+        if(touchLocked){
+          const changed = event.changedTouches[0];
+          const deltaX = changed.clientX - touchStartX;
+          if(Math.abs(deltaX) > 45) move(deltaX < 0 ? 1 : -1);
+        }
+        touchLocked = false;
+        document.body.classList.remove("english-reviews-dragging");
+        startAutoScroll();
+      }, { passive: true });
+      viewport.addEventListener("touchcancel", () => {
+        touchLocked = false;
+        document.body.classList.remove("english-reviews-dragging");
+        startAutoScroll();
+      }, { passive: true });
+
+      modalClose.addEventListener("click", closeModal);
+      reviewModal.addEventListener("click", (event) => {
+        if(event.target === reviewModal) closeModal();
+      });
+      document.addEventListener("keydown", (event) => {
+        if(expandedIndex !== null && event.key === "Escape"){
+          closeFullReview();
+        } else if(reviewModal.classList.contains("is-open") && event.key === "Escape"){
+          closeModal();
+        } else {
+          trapFocus(event);
+        }
+      });
+      document.addEventListener("visibilitychange", () => {
+        if(document.hidden) stopAutoScroll();
+        else startAutoScroll();
+      });
+    })();
 
     const yearMapSection = document.querySelector(".year-map");
     if(yearMapSection){
@@ -2995,7 +3856,10 @@
     // taps on cards and previews.
     if(window.parent !== window && window.matchMedia("(max-width: 767px)").matches){
       let lastTouchY = null;
-      const canForwardTouch = () => !modal.classList.contains("is-open");
+      const canForwardTouch = () =>
+        !modal.classList.contains("is-open") &&
+        !document.body.classList.contains("english-review-modal-open") &&
+        !document.body.classList.contains("english-reviews-dragging");
 
       document.addEventListener("touchstart", (event) => {
         if(event.touches.length === 1 && canForwardTouch()){

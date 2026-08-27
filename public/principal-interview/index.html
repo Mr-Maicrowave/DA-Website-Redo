@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>The Principal's Interview — DA Tuition</title>
+<title>Principal's Reflection — DA Tuition</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -32,22 +32,34 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--paper);color:var(
 }
 .hero-fold{display:block;width:100%;height:clamp(38px,5.5vh,56px);margin-top:clamp(2px,1vh,10px);position:relative}
 .hero-fold-spark{position:absolute;left:50%;top:38%;transform:translate(-50%,-50%);color:var(--gold-soft);font-size:13px;line-height:1;text-shadow:0 0 8px rgba(201,162,39,.75)}
-.hero-inner{max-width:min(1180px,74%);margin:0 auto;padding:0 24px;display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;width:100%}
+.hero-inner{max-width:min(1240px,78%);margin:0 auto;padding:0 24px;display:grid;grid-template-columns:minmax(0,1.18fr) minmax(260px,.82fr);gap:52px;align-items:center;width:100%}
 .hero-text{margin-left:clamp(16px,5vw,64px)}
 
-.hero-eyebrow{font-size:10.5px;font-weight:800;letter-spacing:.26em;text-transform:uppercase;color:var(--gold);margin-bottom:12px}
-.hero-eyebrow-rule{width:88px;height:1px;background:var(--gold);position:relative;margin:0 0 22px}
+.hero-eyebrow{font-size:clamp(0.72rem,1vw,0.95rem);font-weight:800;letter-spacing:.34em;text-transform:uppercase;color:var(--gold);margin-bottom:18px}
+.hero-eyebrow-rule{width:min(360px,100%);height:1px;background:linear-gradient(to right,rgba(201,162,39,.78),rgba(201,162,39,.35));position:relative;margin:0 0 28px}
 .hero-eyebrow-rule span{position:absolute;left:50%;top:50%;width:6px;height:6px;background:var(--gold);transform:translate(-50%,-50%) rotate(45deg)}
-.hero-h1{font-family:'Playfair Display',Georgia,serif;font-size:clamp(2.3rem,4.2vw,3.9rem);font-weight:700;line-height:1.04;color:var(--ink);margin-bottom:22px}
+.hero-h1{font-family:'Playfair Display',Georgia,serif;font-size:clamp(2.6rem,4vw,4.35rem);font-weight:700;line-height:1.1;color:var(--ink);margin-bottom:24px;letter-spacing:.01em}
 .hero-h1 span,.hero-h1 em{display:block}
 .hero-h1 em{color:var(--gold);font-style:normal}
-.hero-sub{font-size:15px;line-height:1.6;color:var(--ink);max-width:44ch;margin-bottom:22px}
+.hero-title-line{min-height:1.1em}
+.hero-title-final{display:flex;align-items:baseline;gap:.18em;min-height:1.1em}
+.rotating-word{display:inline-block;min-width:3.8em;color:var(--gold);position:relative;overflow:hidden;vertical-align:baseline;visibility:hidden}
+.rotating-word.is-visible{visibility:visible}
+.rotating-word span{display:inline-block;animation:word-swipe-up .42s cubic-bezier(.22,.61,.36,1)}
+@keyframes word-swipe-up{from{opacity:0;transform:translateY(80%)}to{opacity:1;transform:translateY(0)}}
+.hero-h1 .typing-cursor{display:none}
+.typing-cursor.done{animation:none;opacity:0}
+.hero-sub{font-size:clamp(1rem,1.3vw,1.28rem);line-height:1.55;color:var(--ink);max-width:48ch;margin-bottom:26px;font-style:italic}
 .hero-sub p{margin:0 0 12px}
 .hero-sub p:last-child{margin-bottom:0}
 .hero-sub-strong{font-weight:700}
 .byline{display:flex;align-items:flex-start}
-.byline-name{font-family:'Great Vibes','Brush Script MT',cursive;font-size:26px;font-weight:400;line-height:1;color:var(--gold)}
-.byline-role{font-size:12px;color:var(--ink);margin-top:5px}
+.byline-name{font-family:'Great Vibes','Brush Script MT',cursive;font-size:39px;font-weight:400;line-height:1;color:var(--gold)}
+.byline-role{font-size:18px;color:var(--ink);margin-top:8px}
+.reflection-cta{display:inline-flex;align-items:center;gap:18px;margin-top:32px;font-size:clamp(0.78rem,1vw,0.98rem);font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:var(--ink);text-decoration:none}
+.reflection-cta span:first-child{border-bottom:2px solid var(--gold);padding-bottom:7px}
+.reflection-cta span:last-child{font-size:1.7em;line-height:1;color:var(--gold);transform:translateY(-1px);transition:transform .22s ease}
+.reflection-cta:hover span:last-child,.reflection-cta:focus-visible span:last-child{transform:translate(5px,-1px)}
 
 /* ─── SIDE BADGES ─── */
 .hero-side{position:absolute;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;align-items:center;gap:20px;z-index:2;width:112px;pointer-events:none}
@@ -63,7 +75,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--paper);color:var(
 .book-visual{
   appearance:none;border:none;background:none;padding:0;
   cursor:pointer;display:block;
-  width:clamp(247px,31vw,390px);
+  width:clamp(296px,37.2vw,468px);
   max-width:100%;
   transition:transform .45s cubic-bezier(.22,.61,.36,1),filter .45s cubic-bezier(.22,.61,.36,1);
   filter:drop-shadow(12px 18px 20px rgba(7,27,53,.18));
@@ -82,6 +94,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--paper);color:var(
 @media (prefers-reduced-motion: reduce){
   .book-visual{transition:filter .3s ease}
   .book-visual:hover,.book-visual:focus-visible,.book-visual.opened{transform:none}
+  .rotating-word span{animation:none}
 }
 
 /* ─── HERO QUOTE ─── */
@@ -331,7 +344,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--paper);color:var(
   .hero-eyebrow-rule{margin-bottom:16px}
   .hero-sub{font-size:14px;line-height:1.5;max-width:42ch;margin-bottom:18px}
   .hero-sub p{margin-bottom:10px}
-  .book-visual{width:clamp(208px,34vw,312px)}
+  .book-visual{width:clamp(250px,40.8vw,374px)}
   .hero-quote{max-width:80%}
   .iv-index{padding:12px 14px;border-radius:22px}
   .iv-index-head{padding:16px 10px;gap:10px}
@@ -344,10 +357,12 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--paper);color:var(
   .hero-fold{height:32px}
   .hero-inner{max-width:92%;grid-template-columns:1fr;text-align:center;gap:36px}
   .hero-h1{font-size:clamp(2.1rem,9vw,2.7rem)}
+  .hero-title-final{justify-content:center;flex-wrap:wrap}
+  .rotating-word{min-width:3.6em}
   .hero-eyebrow-rule{margin-left:auto;margin-right:auto}
   .hero-sub{margin-left:auto;margin-right:auto}
   .byline{justify-content:center}
-  .book-visual{width:clamp(240px,72vw,380px)}
+  .book-visual{width:clamp(288px,86.4vw,456px)}
   .hero-quote{max-width:90%}
   .iv-index{padding:10px 10px;border-radius:18px;max-width:94%}
   .iv-index-head{padding:14px 8px;gap:8px;font-size:clamp(11px,3.4vw,13px)}
@@ -380,25 +395,33 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--paper);color:var(
 
   <div class="hero-inner">
     <div class="hero-text">
-      <div class="hero-eyebrow">In Conversation</div>
+      <div class="hero-eyebrow" id="reflection-kicker" data-text="Principal's Reflection"></div>
       <div class="hero-eyebrow-rule" aria-hidden="true"><span></span></div>
-      <h1 class="hero-h1 serif"><span>Principal</span><span>Reflections</span><em>&amp; Interview</em></h1>
-      <div class="hero-sub">
-        <p>Go beyond the classroom and discover the heart behind DA Tuition. In this interview, Miss Amanda shares the mission, values and teaching philosophy that shape every lesson, helping students feel supported, challenged and confident enough to achieve more than they thought possible.</p>
-        <p class="hero-sub-strong">Built for families who want more than tutoring.</p>
-      </div>
+      <h1 class="hero-h1 serif" aria-label="A child's starting point should never define their future.">
+        <span class="hero-title-line" id="reflection-line-1" data-text="A Child's Starting"></span>
+        <span class="hero-title-line" id="reflection-line-2" data-text="Point Should Never"></span>
+        <span class="hero-title-line" id="reflection-line-3" data-text="Define Their"></span>
+        <span class="hero-title-final">
+          <span class="rotating-word" id="reflection-word" aria-hidden="true"><span>Past.</span></span>
+          <span class="typing-cursor" id="reflection-cursor" aria-hidden="true"></span>
+        </span>
+      </h1>
       <div class="byline">
         <div>
           <div class="byline-name">Miss Amanda</div>
           <div class="byline-role">DA Tuition Principal &amp; Founder</div>
         </div>
       </div>
+      <a class="reflection-cta" href="/principal-interview-paper" target="_parent" aria-label="Read the principal reflection">
+        <span>Read the Reflection</span>
+        <span aria-hidden="true">&rarr;</span>
+      </a>
     </div>
 
     <div class="book-stage">
-      <button type="button" class="book-visual" id="book" onclick="openBook()">
-        <img src="images/principals-voice-book-pedestal.png" alt="Principal&rsquo;s Voice interview book displayed on a gold pedestal">
-      </button>
+      <a class="book-visual" id="book" href="/principal-interview-paper" target="_parent" aria-label="Open the principal interview paper">
+        <img src="images/principals-voice-book-pedestal.png" alt="Principal&rsquo;s Voice reflection book displayed on a gold pedestal">
+      </a>
     </div>
   </div>
 
@@ -418,547 +441,78 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--paper);color:var(
   </div>
 </section>
 
-<!-- INTERVIEW -->
 
-<section class="interview" id="interview">
-  <div class="hero-fold-reflection" aria-hidden="true">
-    <blockquote>&ldquo;Every student is unique. Every plan is tailored. Every future is within reach.&rdquo;</blockquote>
-  </div>
-  <div class="section-inner">
-    <div class="iv-header" id="iv-header">
-      <div class="iv-eyebrow">The Conversation</div>
-      <h2 class="iv-h2 serif" id="iv-heading" data-text="Exclusive Interview" aria-label="Exclusive Interview">
-        <span id="iv-heading-text" aria-hidden="true"></span><span class="iv-cursor" id="iv-heading-cursor" aria-hidden="true"></span>
-      </h2>
-    </div>
-
-    <nav class="iv-index" id="iv-index" aria-label="Jump to a question">
-      <div class="iv-index-group open" data-group="1">
-        <button type="button" class="iv-index-head" onclick="ivToggleGroup(this)">
-          <span class="iv-chevron-circle" aria-hidden="true"><span class="iv-chevron">&#9656;</span></span>
-          <span class="iv-head-divider" aria-hidden="true"><span class="iv-head-dot"></span></span>
-          <span class="iv-head-label">Vision &amp; philosophy</span>
-        </button>
-        <div class="iv-index-list">
-          <div class="iv-group-rule" aria-hidden="true"><span></span></div>
-          <button type="button" class="iv-index-item" onclick="ivJumpTo('q1')">
-            <span class="iv-idx-num">01</span>
-            <span class="iv-idx-divider" aria-hidden="true"><span class="iv-idx-dot"></span></span>
-            <span class="iv-idx-text">Why did you start DA Tuition?</span>
-            <span class="iv-idx-chevron" aria-hidden="true">&#8250;</span>
-          </button>
-          <button type="button" class="iv-index-item" onclick="ivJumpTo('q2')">
-            <span class="iv-idx-num">02</span>
-            <span class="iv-idx-divider" aria-hidden="true"><span class="iv-idx-dot"></span></span>
-            <span class="iv-idx-text">What makes DA different?</span>
-            <span class="iv-idx-chevron" aria-hidden="true">&#8250;</span>
-          </button>
-          <button type="button" class="iv-index-item" onclick="ivJumpTo('q5')">
-            <span class="iv-idx-num">05</span>
-            <span class="iv-idx-divider" aria-hidden="true"><span class="iv-idx-dot"></span></span>
-            <span class="iv-idx-text">What legacy do you hope DA leaves behind?</span>
-            <span class="iv-idx-chevron" aria-hidden="true">&#8250;</span>
-          </button>
-          <button type="button" class="iv-index-item" onclick="ivJumpTo('q14')">
-            <span class="iv-idx-num">14</span>
-            <span class="iv-idx-divider" aria-hidden="true"><span class="iv-idx-dot"></span></span>
-            <span class="iv-idx-text">What are your long-term goals for DA Tuition?</span>
-            <span class="iv-idx-chevron" aria-hidden="true">&#8250;</span>
-          </button>
-        </div>
-      </div>
-      <div class="iv-index-group" data-group="2">
-        <button type="button" class="iv-index-head" onclick="ivToggleGroup(this)">
-          <span class="iv-chevron-circle" aria-hidden="true"><span class="iv-chevron">&#9656;</span></span>
-          <span class="iv-head-divider" aria-hidden="true"><span class="iv-head-dot"></span></span>
-          <span class="iv-head-label">Teaching approach</span>
-        </button>
-        <div class="iv-index-list">
-          <div class="iv-group-rule" aria-hidden="true"><span></span></div>
-          <button type="button" class="iv-index-item" onclick="ivJumpTo('q3')">
-            <span class="iv-idx-num">03</span>
-            <span class="iv-idx-divider" aria-hidden="true"><span class="iv-idx-dot"></span></span>
-            <span class="iv-idx-text">How do you decide what is right for a child?</span>
-            <span class="iv-idx-chevron" aria-hidden="true">&#8250;</span>
-          </button>
-          <button type="button" class="iv-index-item" onclick="ivJumpTo('q4')">
-            <span class="iv-idx-num">04</span>
-            <span class="iv-idx-divider" aria-hidden="true"><span class="iv-idx-dot"></span></span>
-            <span class="iv-idx-text">What do students need most to succeed today?</span>
-            <span class="iv-idx-chevron" aria-hidden="true">&#8250;</span>
-          </button>
-          <button type="button" class="iv-index-item" onclick="ivJumpTo('q6')">
-            <span class="iv-idx-num">06</span>
-            <span class="iv-idx-divider" aria-hidden="true"><span class="iv-idx-dot"></span></span>
-            <span class="iv-idx-text">How do you ensure the quality of teaching at DA?</span>
-            <span class="iv-idx-chevron" aria-hidden="true">&#8250;</span>
-          </button>
-          <button type="button" class="iv-index-item" onclick="ivJumpTo('q11')">
-            <span class="iv-idx-num">11</span>
-            <span class="iv-idx-divider" aria-hidden="true"><span class="iv-idx-dot"></span></span>
-            <span class="iv-idx-text">What role do empathy and encouragement play in how you teach?</span>
-            <span class="iv-idx-chevron" aria-hidden="true">&#8250;</span>
-          </button>
-        </div>
-      </div>
-      <div class="iv-index-group" data-group="3">
-        <button type="button" class="iv-index-head" onclick="ivToggleGroup(this)">
-          <span class="iv-chevron-circle" aria-hidden="true"><span class="iv-chevron">&#9656;</span></span>
-          <span class="iv-head-divider" aria-hidden="true"><span class="iv-head-dot"></span></span>
-          <span class="iv-head-label">Students &amp; wellbeing</span>
-        </button>
-        <div class="iv-index-list">
-          <div class="iv-group-rule" aria-hidden="true"><span></span></div>
-          <button type="button" class="iv-index-item" onclick="ivJumpTo('q7')">
-            <span class="iv-idx-num">07</span>
-            <span class="iv-idx-divider" aria-hidden="true"><span class="iv-idx-dot"></span></span>
-            <span class="iv-idx-text">How does DA help students manage academic pressure?</span>
-            <span class="iv-idx-chevron" aria-hidden="true">&#8250;</span>
-          </button>
-          <button type="button" class="iv-index-item" onclick="ivJumpTo('q8')">
-            <span class="iv-idx-num">08</span>
-            <span class="iv-idx-divider" aria-hidden="true"><span class="iv-idx-dot"></span></span>
-            <span class="iv-idx-text">What does a typical student journey look like at DA?</span>
-            <span class="iv-idx-chevron" aria-hidden="true">&#8250;</span>
-          </button>
-          <button type="button" class="iv-index-item" onclick="ivJumpTo('q10')">
-            <span class="iv-idx-num">10</span>
-            <span class="iv-idx-divider" aria-hidden="true"><span class="iv-idx-dot"></span></span>
-            <span class="iv-idx-text">What does it take to be a successful student in 2026?</span>
-            <span class="iv-idx-chevron" aria-hidden="true">&#8250;</span>
-          </button>
-          <button type="button" class="iv-index-item" onclick="ivJumpTo('q16')">
-            <span class="iv-idx-num">16</span>
-            <span class="iv-idx-divider" aria-hidden="true"><span class="iv-idx-dot"></span></span>
-            <span class="iv-idx-text">Can you share a story of a student whose life changed at DA?</span>
-            <span class="iv-idx-chevron" aria-hidden="true">&#8250;</span>
-          </button>
-        </div>
-      </div>
-      <div class="iv-index-group" data-group="4">
-        <button type="button" class="iv-index-head" onclick="ivToggleGroup(this)">
-          <span class="iv-chevron-circle" aria-hidden="true"><span class="iv-chevron">&#9656;</span></span>
-          <span class="iv-head-divider" aria-hidden="true"><span class="iv-head-dot"></span></span>
-          <span class="iv-head-label">Families &amp; community</span>
-        </button>
-        <div class="iv-index-list">
-          <div class="iv-group-rule" aria-hidden="true"><span></span></div>
-          <button type="button" class="iv-index-item" onclick="ivJumpTo('q9')">
-            <span class="iv-idx-num">09</span>
-            <span class="iv-idx-divider" aria-hidden="true"><span class="iv-idx-dot"></span></span>
-            <span class="iv-idx-text">DA has received an extraordinary number of heartfelt reviews. What resonates most with families?</span>
-            <span class="iv-idx-chevron" aria-hidden="true">&#8250;</span>
-          </button>
-          <button type="button" class="iv-index-item" onclick="ivJumpTo('q12')">
-            <span class="iv-idx-num">12</span>
-            <span class="iv-idx-divider" aria-hidden="true"><span class="iv-idx-dot"></span></span>
-            <span class="iv-idx-text">How does feedback from families guide the way DA works?</span>
-            <span class="iv-idx-chevron" aria-hidden="true">&#8250;</span>
-          </button>
-          <button type="button" class="iv-index-item" onclick="ivJumpTo('q13')">
-            <span class="iv-idx-num">13</span>
-            <span class="iv-idx-divider" aria-hidden="true"><span class="iv-idx-dot"></span></span>
-            <span class="iv-idx-text">How can parents and teachers work together to achieve the best outcomes?</span>
-            <span class="iv-idx-chevron" aria-hidden="true">&#8250;</span>
-          </button>
-          <button type="button" class="iv-index-item" onclick="ivJumpTo('q15')">
-            <span class="iv-idx-num">15</span>
-            <span class="iv-idx-divider" aria-hidden="true"><span class="iv-idx-dot"></span></span>
-            <span class="iv-idx-text">What do you find most rewarding about leading DA?</span>
-            <span class="iv-idx-chevron" aria-hidden="true">&#8250;</span>
-          </button>
-        </div>
-      </div>
-    </nav>
-  </div>
-
-  <div class="iv-qa-new">
-    <!-- Q01 -->
-    <div class="qa-new" id="q1">
-      <div class="qa-photo-strip">
-        <img src="0X1A7602.JPG" class="qa-strip-img" alt="">
-        <div class="qa-strip-overlay"></div>
-        <div class="qa-strip-content">
-          <span class="qa-strip-num">Question 01</span>
-          <h3 class="qa-strip-q">Why did you start DA Tuition?</h3>
-        </div>
-      </div>
-      <div class="qa-response">
-        <p class="qa-resp-p">From the very beginning, my vision has always been to create a sanctuary where every child feels seen, valued, and capable of achieving their fullest potential. Witnessing so many children lose confidence due to feeling unsupported or overwhelmed inspired me to establish a school that goes beyond academics.</p>
-        <p class="qa-resp-p">I dreamed of a nurturing environment where students could rediscover their voice, believe in themselves, and transform impossibilities into achievements. Through love, care and devotion, we strive to show that with the right emotional guidance, every goal is attainable.</p>
-        <p class="qa-resp-p">Our mission has always been to walk alongside students on their journey, helping them overcome challenges while knowing they are never alone.</p>
-        <div class="qa-resp-quote">Every child deserves to feel seen, valued, and capable of achieving their fullest potential.</div>
-      </div>
-    </div>
-
-    <!-- Q02 -->
-    <div class="qa-new" id="q2">
-      <div class="qa-photo-strip">
-        <img src="0X1A7568.JPG" class="qa-strip-img" alt="">
-        <div class="qa-strip-overlay"></div>
-        <div class="qa-strip-content">
-          <span class="qa-strip-num">Question 02</span>
-          <h3 class="qa-strip-q">What makes DA different?</h3>
-        </div>
-      </div>
-      <div class="qa-response">
-        <p class="qa-resp-p">What makes our tutoring school truly special is the heart behind everything we do. We have incredible teachers and genuine care we pour into every single child's journey.</p>
-        <p class="qa-resp-p">With over 20 years of teaching experience, I've learnt that every child is unique. We meet them where they are, celebrate their wins, guide them through challenges, and remind them every day that they're capable of extraordinary things.</p>
-        <p class="qa-resp-p">There are no entrance exams here, no barriers about who can or can't learn with us.</p>
-        <p class="qa-resp-p">If a child wants to grow, succeed, and needs support, they are always welcome. This commitment means we take on challenges and help those who have lost hope or feel like giving up. It's a responsibility we embrace, and it fills me with pride to see the dedication of our team.</p>
-        <p class="qa-resp-p">Our tutors work tirelessly, and their talent shines through in every success, whether it's a perfect HSC score, a state ranking, or a child discovering a newfound confidence they never thought possible.</p>
-        <p class="qa-resp-p">We don't believe in one-size-fits-all methods because every child's journey is different. Instead, we personalise every class to address their specific needs, helping them build a strong foundation and lasting confidence. Each lesson is crafted with care, ensuring it's not only useful but also inspiring and engaging. And when it comes to school assessments, it's a partnership between teacher and student that leads to outstanding results.</p>
-        <div class="qa-resp-quote">We meet them where they are, celebrate their wins, and guide them through challenges.</div>
-      </div>
-    </div>
-
-    <!-- Q03 -->
-    <div class="qa-new" id="q3">
-      <div class="qa-photo-strip">
-        <img src="IMG_2392.JPG" class="qa-strip-img" alt="">
-        <div class="qa-strip-overlay"></div>
-        <div class="qa-strip-content">
-          <span class="qa-strip-num">Question 03</span>
-          <h3 class="qa-strip-q">How do you decide what is right for a child?</h3>
-        </div>
-      </div>
-      <div class="qa-response">
-        <p class="qa-resp-p">When a student joins DA, we take the time to really get to know them — their strengths, their challenges, their goals, and the ways they learn best. It is never just about academics. We want them to feel confident, curious, and genuinely excited to be in the room.</p>
-        <p class="qa-resp-p">The placement is never fixed. If a student has outgrown their group, or if a different environment would serve them better, we say so. We do not wait to be asked.</p>
-        <div class="qa-resp-quote">The placement is never fixed. We adapt as students grow.</div>
-      </div>
-    </div>
-
-    <!-- Q04 -->
-    <div class="qa-new" id="q4">
-      <div class="qa-photo-strip">
-        <img src="0X1A7511.JPG" class="qa-strip-img" alt="">
-        <div class="qa-strip-overlay"></div>
-        <div class="qa-strip-content">
-          <span class="qa-strip-num">Question 04</span>
-          <h3 class="qa-strip-q">What do students need most to succeed today?</h3>
-        </div>
-      </div>
-      <div class="qa-response">
-        <p class="qa-resp-p">Today's students face immense pressure — high expectations, constant comparison, and a world that moves faster than ever. Many struggle with self-doubt, fear of failure, and the quiet exhaustion of trying to keep up with everything at once.</p>
-        <p class="qa-resp-p">To succeed in this environment, students need more than content knowledge. They need to be emotionally and mentally steady. Knowing someone genuinely believes in you — that is often the difference between a student who pushes through and one who quietly gives up.</p>
-        <div class="qa-resp-quote">Knowing someone genuinely believes in you — that is often the difference.</div>
-      </div>
-    </div>
-
-    <!-- Q05 -->
-    <div class="qa-new" id="q5">
-      <div class="qa-photo-strip">
-        <img src="IMG_1942.jpeg" class="qa-strip-img" alt="">
-        <div class="qa-strip-overlay"></div>
-        <div class="qa-strip-content">
-          <span class="qa-strip-num">Question 05</span>
-          <h3 class="qa-strip-q">What legacy do you hope DA leaves behind?</h3>
-        </div>
-      </div>
-      <div class="qa-response">
-        <p class="qa-resp-p">I don't expect anyone to remember me personally. What I hope they'll remember is the heart of this place — the team of teachers who came together with a shared belief: that every child deserves someone who truly believes in them.</p>
-        <p class="qa-resp-p">Fifty years from now, I dream that the children we've helped will go out into the world as compassionate, capable individuals — carrying with them the values we tried to instil.</p>
-        <div class="qa-resp-quote">What I hope they'll remember is the heart of this place.</div>
-      </div>
-    </div>
-
-    <!-- Q06 -->
-    <div class="qa-new" id="q6">
-      <div class="qa-photo-strip">
-        <img src="0X1A3898.jpeg" class="qa-strip-img" alt="">
-        <div class="qa-strip-overlay"></div>
-        <div class="qa-strip-content">
-          <span class="qa-strip-num">Question 06</span>
-          <h3 class="qa-strip-q">How do you ensure the quality of teaching at DA?</h3>
-        </div>
-      </div>
-      <div class="qa-response">
-        <p class="qa-resp-p">I make sure that we all hold ourselves to the highest standards. Our teachers are the backbone of our school, and they undergo an extensive screening and training process before joining us. But beyond their qualifications, it's their heart and dedication that shine. They go above and beyond to ensure each child feels supported and challenged in the right way. We also provide continuous professional development and encourage collaboration among our staff to keep our methods fresh and effective.</p>
-        <div class="qa-resp-quote">Beyond qualifications, it's their heart and dedication that shine.</div>
-      </div>
-    </div>
-
-    <!-- Q07 -->
-    <div class="qa-new" id="q7">
-      <div class="qa-photo-strip">
-        <img src="0X1A7491.JPG" class="qa-strip-img" alt="">
-        <div class="qa-strip-overlay"></div>
-        <div class="qa-strip-content">
-          <span class="qa-strip-num">Question 07</span>
-          <h3 class="qa-strip-q">How does DA help students manage academic pressure?</h3>
-        </div>
-      </div>
-      <div class="qa-response">
-        <p class="qa-resp-p">We know how heavy academic pressure can feel, and that's why we work hard to make our school a haven for students. We teach them strategies to manage their workload, break tasks into achievable steps, and focus on progress rather than perfection. But more than that, we listen. Through classes, extra help outside of class, or simply being there for any student who needs to talk, we ensure they know they're never alone in this journey. Sometimes, all a child needs is someone to remind them that they're enough just as they are. Sometimes, just knowing someone believes in them is enough to lighten the load.</p>
-        <div class="qa-resp-quote">Sometimes, all a child needs is someone to remind them that they're enough just as they are.</div>
-      </div>
-    </div>
-
-    <!-- Q08 -->
-    <div class="qa-new" id="q8">
-      <div class="qa-photo-strip">
-        <img src="0X1A7489.JPG" class="qa-strip-img" alt="">
-        <div class="qa-strip-overlay"></div>
-        <div class="qa-strip-content">
-          <span class="qa-strip-num">Question 08</span>
-          <h3 class="qa-strip-q">What does a typical student journey look like at DA?</h3>
-        </div>
-      </div>
-      <div class="qa-response">
-        <p class="qa-resp-p">When a student joins our school, we take the time to really get to know them, in terms of their strengths, challenges, and goals. It's not just about academics; we want them to feel confident, curious, and excited to learn. Together, we set realistic milestones and work towards them step by step.</p>
-        <p class="qa-resp-p">As students grow, we adapt to their needs, making sure they stay on track and continue to succeed. By the time students leave, they're not only better learners but also more confident and motivated individuals, ready to tackle whatever comes next.</p>
-        <div class="qa-resp-quote">We want them to feel confident, curious, and excited to learn.</div>
-      </div>
-    </div>
-
-    <!-- Q09 -->
-    <div class="qa-new" id="q9">
-      <div class="qa-photo-strip">
-        <img src="IMG_2749.JPG" class="qa-strip-img" alt="">
-        <div class="qa-strip-overlay"></div>
-        <div class="qa-strip-content">
-          <span class="qa-strip-num">Question 09</span>
-          <h3 class="qa-strip-q">DA has received an extraordinary number of heartfelt reviews. What resonates most with families?</h3>
-        </div>
-      </div>
-      <div class="qa-response">
-        <p class="qa-resp-p">Honestly, it's deeply humbling and joyous to read the heartfelt words of gratitude from our students and their families. Seeing how much they appreciate the dedication and sacrifices of their tutors is a profound reminder of why we do what we do. It fills me with pride to witness the difference our team makes. For us, these students are never just numbers or grades. They are individuals with dreams, fears, and limitless potential. Helping them unlock that potential is a privilege and an honour.</p>
-        <p class="qa-resp-p">Parents often share how their children have become happier, more motivated, and more confident since joining us, and knowing we've had such a positive impact on their lives is the most meaningful reward we could ever ask for.</p>
-        <div class="qa-resp-quote">These students are never just numbers or grades. They are individuals with dreams, fears, and limitless potential.</div>
-      </div>
-    </div>
-
-    <!-- Q10 -->
-    <div class="qa-new" id="q10">
-      <div class="qa-photo-strip">
-        <img src="IMG_2314.jpeg" class="qa-strip-img" alt="">
-        <div class="qa-strip-overlay"></div>
-        <div class="qa-strip-content">
-          <span class="qa-strip-num">Question 10</span>
-          <h3 class="qa-strip-q">What does it take to be a successful student in 2026?</h3>
-        </div>
-      </div>
-      <div class="qa-response">
-        <p class="qa-resp-p">To be successful in 2026, I believe students need to be adaptable and think critically, but above all, they need to be emotionally and mentally strong. It's not easy to juggle everything that comes their way such as pressure from studies, friends and family concerns, but being able to stay steady through it all makes a huge difference.</p>
-        <p class="qa-resp-p">We know that emotions can sometimes take over and affect focus and motivation. That's why we make it a point in every lesson to help our students build the confidence and resilience they need to tackle challenges head-on and ultimately be successful and proud of themselves.</p>
-        <div class="qa-resp-quote">Above all, they need to be emotionally and mentally strong.</div>
-      </div>
-    </div>
-
-    <!-- Q11 -->
-    <div class="qa-new" id="q11">
-      <div class="qa-photo-strip">
-        <img src="IMG_3070.JPG" class="qa-strip-img" alt="">
-        <div class="qa-strip-overlay"></div>
-        <div class="qa-strip-content">
-          <span class="qa-strip-num">Question 11</span>
-          <h3 class="qa-strip-q">What role do empathy and encouragement play in how you teach?</h3>
-        </div>
-      </div>
-      <div class="qa-response">
-        <p class="qa-resp-p">Empathy is at the heart of everything we do. We recognise that academic challenges can be overwhelming, and students need a safe space to express their worries. Encouragement helps them see that mistakes are part of growth, building resilience and self-belief.</p>
-        <p class="qa-resp-p">We often remind our students that stumbling is okay, rather it's about how you rise afterward. By focusing on their strengths and helping them tackle weaknesses with patience, we instil confidence and optimism that extend far beyond the classroom.</p>
-        <div class="qa-resp-quote">Empathy is at the heart of everything we do.</div>
-      </div>
-    </div>
-
-    <!-- Q12 -->
-    <div class="qa-new" id="q12">
-      <div class="qa-photo-strip">
-        <img src="IMG_2900.JPG" class="qa-strip-img" alt="">
-        <div class="qa-strip-overlay"></div>
-        <div class="qa-strip-content">
-          <span class="qa-strip-num">Question 12</span>
-          <h3 class="qa-strip-q">How does feedback from families guide the way DA works?</h3>
-        </div>
-      </div>
-      <div class="qa-response">
-        <p class="qa-resp-p">I hold feedback in the highest regard. It's how we grow. We are truly fortunate to receive such open and honest insights from both parents and students. To us, feedback is our promise to continuously create the best possible learning environment for every child. While we initially relied on handwritten forms, I often worried some feedback might be overlooked or that students might feel hesitant to share openly. To address this, we introduced a seamless digital system where students can scan a QR code and share their thoughts directly with me - promptly and confidentially.</p>
-        <p class="qa-resp-p">Parents often share how their children have become more confident, focused and happy. Students share heartfelt experiences, offering insights or suggestions for adjustments that align with their learning styles. Knowing that they feel truly cared for and understood is the greatest compliment we could ever receive. Each piece of feedback guides us to refine our methods and explore innovative ways to serve our students better.</p>
-        <div class="qa-resp-quote">Knowing that they feel truly cared for and understood is the greatest compliment we could ever receive.</div>
-      </div>
-    </div>
-
-    <!-- Q13 -->
-    <div class="qa-new" id="q13">
-      <div class="qa-photo-strip">
-        <img src="principal-interview-parent-meeting.png" class="qa-strip-img" alt="">
-        <div class="qa-strip-overlay"></div>
-        <div class="qa-strip-content">
-          <span class="qa-strip-num">Question 13</span>
-          <h3 class="qa-strip-q">How can parents and teachers work together to achieve the best outcomes?</h3>
-        </div>
-      </div>
-      <div class="qa-response">
-        <p class="qa-resp-p">Education works best when parents, teachers, and students collaborate as a team. Regular parent-teacher meetings and honest communication helps everyone stay aligned on goals and strategies, creating a strong foundation for success. Whether it's tackling academic struggles or celebrating progress, this shared effort creates a clear path forward.</p>
-        <p class="qa-resp-p">By sharing insights and celebrating progress together, we ensure students feel supported and encouraged to reach their full potential. Our focus is always on what's best for the child, and this teamwork makes all the difference.</p>
-        <div class="qa-resp-quote">Education works best when parents, teachers, and students collaborate as a team.</div>
-      </div>
-    </div>
-
-    <!-- Q14 -->
-    <div class="qa-new" id="q14">
-      <div class="qa-photo-strip">
-        <img src="IMG_2605.JPG" class="qa-strip-img" alt="">
-        <div class="qa-strip-overlay"></div>
-        <div class="qa-strip-content">
-          <span class="qa-strip-num">Question 14</span>
-          <h3 class="qa-strip-q">What are your long-term goals for DA Tuition?</h3>
-        </div>
-      </div>
-      <div class="qa-response">
-        <p class="qa-resp-p">Our long-term goal is to grow without losing the personal touch that makes our school special. We aim to reach more students, expand programs, and stay adaptable to the evolving needs of education. But above all, our goal remains the same: to make a lasting difference in the lives of every child who walks through our doors.</p>
-        <div class="qa-resp-quote">To make a lasting difference in the lives of every child who walks through our doors.</div>
-      </div>
-    </div>
-
-    <!-- Q15 -->
-    <div class="qa-new" id="q15">
-      <div class="qa-photo-strip">
-        <img src="IMG_2671.JPG" class="qa-strip-img" alt="">
-        <div class="qa-strip-overlay"></div>
-        <div class="qa-strip-content">
-          <span class="qa-strip-num">Question 15</span>
-          <h3 class="qa-strip-q">What do you find most rewarding about leading DA?</h3>
-        </div>
-      </div>
-      <div class="qa-response">
-        <p class="qa-resp-p">If you ask our teachers, they will all say the same thing: the most rewarding part of our work is witnessing the transformation in a child's eyes when they realise they are capable, valued and supported. Watching students grow, overcome their fears, and achieve their dreams fills my heart with profound gratitude. Knowing that we've been even a small part of their journey, and that the lessons they've learned will guide them for a lifetime, is a privilege we cherish deeply.</p>
-        <p class="qa-resp-p">There are moments when I hear about our staff staying up late into the night, tirelessly helping a student prepare for an assessment. While I gently remind them to focus on teaching time management, their willingness to go the extra mile fills me with immense pride. It's not uncommon for them to set aside their own work to prioritise their students' needs. These selfless acts reflect the extraordinary love they have for their students and the genuine joy they find in making a difference.</p>
-        <p class="qa-resp-p">It's moments like these that remind me why I treasure this team so much and why this work holds such profound meaning and fulfilment for all of us.</p>
-        <div class="qa-resp-quote">The most rewarding part is witnessing the transformation in a child's eyes when they realise they are capable.</div>
-      </div>
-    </div>
-
-    <!-- Q16 -->
-    <div class="qa-new" id="q16">
-      <div class="qa-photo-strip">
-        <img src="IMG_2711.JPG" class="qa-strip-img" alt="">
-        <div class="qa-strip-overlay"></div>
-        <div class="qa-strip-content">
-          <span class="qa-strip-num">Question 16</span>
-          <h3 class="qa-strip-q">Can you share a story of a student whose life changed at DA?</h3>
-        </div>
-      </div>
-      <div class="qa-response">
-        <p class="qa-resp-p">One story that still brings me to tears is a student who came to us struggling with self-doubt and low grades. He felt defeated, like he couldn't measure up to his peers. Through consistent guidance, encouragement, and a lot of heart-to-heart conversations, we began to see a transformation. That student not only improved academically but also blossomed into a confident, motivated individual. Today, he's a specialist doctor, and his parents still write to us, thanking our team for believing in their child when it mattered most. Stories like these remind us why we do what we do.</p>
-        <div class="qa-resp-quote">Stories like these remind us why we do what we do.</div>
-      </div>
-    </div>
-
-  </div>
-</section>
-
-<footer class="foot">
-  <div class="foot-inner">
-    <span>DA Tuition</span>
-    <span>Sydney, NSW</span>
-  </div>
-</footer>
 
 <script>
-function openBook(){
-  var book=document.getElementById('book');
-  function scrollToFirstQuestion(delay){
-    setTimeout(function(){
-      var firstQuestion=document.querySelector('.qa-new');
-      if(firstQuestion){
-        firstQuestion.scrollIntoView({behavior:'smooth',block:'start'});
-      }
-    },delay);
-  }
-  if(book.classList.contains('opened')){
-    scrollToFirstQuestion(0);
-    return;
-  }
-  book.classList.add('opened');
-  scrollToFirstQuestion(900);
-}
-
 (function(){
-  var header = document.getElementById('iv-header');
-  var heading = document.getElementById('iv-heading');
-  var textEl = document.getElementById('iv-heading-text');
-  var cursorEl = document.getElementById('iv-heading-cursor');
-  if (!header || !heading || !textEl || !cursorEl) return;
-
-  var fullText = heading.getAttribute('data-text') || '';
   var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var cursor = document.getElementById('reflection-cursor');
+  var word = document.getElementById('reflection-word');
+  var targets = [
+    document.getElementById('reflection-kicker'),
+    document.getElementById('reflection-line-1'),
+    document.getElementById('reflection-line-2'),
+    document.getElementById('reflection-line-3'),
+    document.getElementById('reflection-subtext')
+  ].filter(Boolean);
 
-  function typeHeading(){
-    header.classList.add('iv-play');
+  function setWord(value){
+    if (!word) return;
+    word.classList.add('is-visible');
+    word.innerHTML = '<span>' + value + '</span>';
+  }
 
+  function typeText(el, speed){
+    return new Promise(function(resolve){
+      var text = el.getAttribute('data-text') || '';
+      if (reduceMotion){
+        el.textContent = text;
+        resolve();
+        return;
+      }
+      var i = 0;
+      function tick(){
+        el.textContent = text.slice(0, i);
+        if (i >= text.length){
+          resolve();
+          return;
+        }
+        i += 1;
+        setTimeout(tick, speed);
+      }
+      tick();
+    });
+  }
+
+  function wait(ms){
+    return new Promise(function(resolve){ setTimeout(resolve, ms); });
+  }
+
+  async function run(){
     if (reduceMotion){
-      textEl.textContent = fullText;
-      cursorEl.classList.add('iv-done');
+      targets.forEach(function(el){ el.textContent = el.getAttribute('data-text') || ''; });
+      setWord('Future.');
+      cursor?.classList.add('done');
       return;
     }
 
-    var i = 0;
-    function tick(){
-      if (i <= fullText.length){
-        textEl.textContent = fullText.slice(0, i);
-        i++;
-        setTimeout(tick, 45 + Math.random() * 55);
-      } else {
-        setTimeout(function(){ cursorEl.classList.add('iv-done'); }, 700);
-      }
-    }
-    setTimeout(tick, 450);
+    await typeText(targets[0], 48);
+    await wait(180);
+    await typeText(targets[1], 42);
+    await typeText(targets[2], 42);
+    await typeText(targets[3], 42);
+    await wait(240);
+    setWord('Past.');
+    await wait(620);
+    setWord('Present.');
+    await wait(620);
+    setWord('Future.');
+    await wait(240);
+    if (targets[4]) await typeText(targets[4], 24);
+    cursor?.classList.add('done');
   }
 
-  if ('IntersectionObserver' in window){
-    var io = new IntersectionObserver(function(entries){
-      entries.forEach(function(entry){
-        if (entry.isIntersecting){
-          typeHeading();
-          io.unobserve(heading);
-        }
-      });
-    }, { threshold: 0.4 });
-    io.observe(heading);
-  } else {
-    typeHeading();
-  }
-})();
-
-function ivToggleGroup(head){
-  var group = head.parentElement;
-  var wasOpen = group.classList.contains('open');
-  document.querySelectorAll('.iv-index-group').forEach(function(g){ g.classList.remove('open'); });
-  if (!wasOpen) group.classList.add('open');
-}
-
-function ivJumpTo(id){
-  var target = document.getElementById(id);
-  if (!target) return;
-  target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  var strip = target.querySelector('.qa-photo-strip');
-  if (strip){
-    strip.classList.add('qa-found');
-    setTimeout(function(){ strip.classList.remove('qa-found'); }, 1400);
-  }
-}
-
-(function(){
-  var strips = document.querySelectorAll('.qa-photo-strip');
-  if (!strips.length) return;
-  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (reduceMotion || !('IntersectionObserver' in window)) return;
-
-  strips.forEach(function(el){ el.classList.add('qa-blur-pending'); });
-
-  var io2 = new IntersectionObserver(function(entries){
-    entries.forEach(function(entry){
-      if (entry.isIntersecting){
-        entry.target.classList.add('qa-in-view');
-        io2.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.2, rootMargin: '0px 0px -60px 0px' });
-
-  strips.forEach(function(el){ io2.observe(el); });
+  run();
 })();
 </script>
 </body>

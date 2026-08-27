@@ -25,7 +25,7 @@ const programs: Program[] = [
       "Build strong foundations in literacy, numeracy and independent learning through encouraging, structured lessons.",
     outcome:
       "Designed to develop confidence, curiosity and the learning habits students will carry into high school.",
-    image: "/primary-boy.png",
+    image: "/images/homepage/program-cards/primary-school-student.jpg",
     imageAlt:
       "Primary school student smiling while writing during a DA Tuition lesson.",
     imagePosition: "50% 58%",
@@ -41,7 +41,7 @@ const programs: Program[] = [
       "Strengthen subject knowledge, study habits and analytical thinking as academic expectations become more demanding.",
     outcome:
       "Students learn how to approach complex work, study effectively and take greater ownership of their progress.",
-    image: "/highschool-girl.png",
+    image: "/images/homepage/program-cards/high-school-student.jpg",
     imageAlt:
       "High school student writing notes during a DA Tuition lesson.",
     imagePosition: "50% 50%",
@@ -57,7 +57,7 @@ const programs: Program[] = [
       "Receive focused subject guidance, examination strategy and disciplined preparation for senior assessments and the HSC.",
     outcome:
       "A structured pathway for students pursuing stronger results, confidence and ambitious post-school goals.",
-    image: "/hsc-student.jpeg",
+    image: "/images/homepage/program-cards/hsc-excellence-student.jpg",
     imageAlt:
       "HSC student smiling in a DA Tuition learning space.",
     imagePosition: "50% 48%",

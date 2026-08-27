@@ -32,7 +32,7 @@ const STATIC_ROUTES = [
     { path: '/tutoring-canley-vale', priority: 0.9, changefreq: 'monthly' },
     { path: '/tutoring-smithfield', priority: 0.9, changefreq: 'monthly' },
     { path: '/tutoring-lansvale', priority: 0.9, changefreq: 'monthly' },
-    { path: '/interview', priority: 0.9, changefreq: 'monthly' },
+    { path: '/principal-interview-paper', priority: 0.9, changefreq: 'monthly' },
     { path: '/success-stories', priority: 0.9, changefreq: 'weekly' },
     { path: '/why-choose-da', priority: 0.85, changefreq: 'monthly' },
     { path: '/our-approach', priority: 0.85, changefreq: 'monthly' },

@@ -33,6 +33,7 @@ import ContactUs from "./pages/ContactUs";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import WhyChooseDA from "./pages/WhyChooseDA";
 import PrincipalReflections from "./pages/PrincipalReflections";
+import PrincipalInterview from "./pages/PrincipalInterview";
 // Program pages
 import PrimarySchool from "./pages/programs/PrimarySchool";
 import HighSchool from "./pages/programs/HighSchool";
@@ -65,7 +66,7 @@ const AnimatedRoutes = () => {
           path="/book-intro-calibration"
           element={import.meta.env.DEV ? <BookIntroCalibration /> : <Navigate to="/" replace />}
         />
-        <Route path="/interview" element={<Navigate to="/principal-reflections" replace />} />
+        <Route path="/interview" element={<Navigate to="/principal-interview-paper" replace />} />
         <Route path="/book-interview" element={<PageTransition><BookInterview /></PageTransition>} />
         <Route path="/reviews" element={<Navigate to="/success-stories" replace />} />
         <Route path="/find-teacher" element={<PageTransition><FindTeacher /></PageTransition>} />
@@ -90,6 +91,7 @@ const AnimatedRoutes = () => {
         <Route path="/our-approach" element={<PageTransition><WhyChooseDA /></PageTransition>} />
         <Route path="/why-choose-da" element={<PageTransition><WhyChooseDA /></PageTransition>} />
         <Route path="/principal-reflections" element={<PageTransition><PrincipalReflections /></PageTransition>} />
+        <Route path="/principal-interview-paper" element={<PageTransition><PrincipalInterview /></PageTransition>} />
         {/* "All Subjects" hub page retired — content removed from src/pages/Subjects.tsx (still on disk, unused). Redirects to the flagship subject page. */}
         <Route path="/subjects" element={<Navigate to="/subjects/english" replace />} />
 

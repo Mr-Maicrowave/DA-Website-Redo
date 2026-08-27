@@ -177,6 +177,11 @@ const NavigationNew = () => {
       description: "Philosophy, values, and vision"
     },
     {
+      title: "Principal's Interview",
+      href: "/principal-interview-paper",
+      description: "Questions, answers, and the story behind DA"
+    },
+    {
       title: "Learning Formats",
       href: "/learning-formats",
       description: "Small groups and classes explained"
@@ -384,7 +389,7 @@ const NavigationNew = () => {
 
                     <HoverCard openDelay={120} closeDelay={180} onOpenChange={(open) => handleDropdownChange('about', open)}>
                       <HoverCardTrigger asChild>
-                        <button type="button" className={`${navLinkClass(['/why-choose-da', '/find-teacher', '/tutors', '/principal-reflections', '/learning-formats'].includes(location.pathname))} inline-flex items-center gap-0.5`}>
+                        <button type="button" className={`${navLinkClass(['/why-choose-da', '/find-teacher', '/tutors', '/principal-reflections', '/principal-interview-paper', '/learning-formats'].includes(location.pathname))} inline-flex items-center gap-0.5`}>
                           About <ChevronDown className="h-3.5 w-3.5" />
                         </button>
                       </HoverCardTrigger>

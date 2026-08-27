@@ -49,6 +49,10 @@ const footerColumns: FooterColumn[] = [
         label: "Principal's Reflection",
         href: "/principal-reflections",
       },
+      {
+        label: "Principal's Interview",
+        href: "/principal-interview-paper",
+      },
     ],
   },
   {

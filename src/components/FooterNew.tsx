@@ -80,6 +80,11 @@ const FooterNew = () => {
                   Principal's Reflection
                 </Link>
               </li>
+              <li>
+                <Link to="/principal-interview-paper" className="hover:text-[#c9a227] transition-colors">
+                  Principal's Interview
+                </Link>
+              </li>
             </ul>
           </div>
 

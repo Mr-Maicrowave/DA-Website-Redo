@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Principal's Interview — DA Tuition</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+:root{
+  --ink:#071629;--gold:#c9a227;--gold-soft:#ead8a2;
+  --paper:#fbf3e6;--paper-2:#f6ead8;
+  --navy:#071629;--navy-2:#0a1d36;
+  --copy-navy:#0a2342;
+  --muted:#5a6477;
+}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--paper);color:var(--ink);-webkit-font-smoothing:antialiased}
+.serif{font-family:'Playfair Display',Georgia,serif}
+
+/* ─── NAV ─── */
+/* ─── HERO ─── */
+.hero{
+  background-image:url("images/hero-frame-bg.jpg");
+  background-size:cover;
+  background-position:center;
+  background-repeat:no-repeat;
+  min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:clamp(18px,3.6vh,36px);
+  position:relative;overflow:hidden;
+  padding:130px 0 clamp(24px,5vh,48px);
+}
+.hero-fold{display:block;width:100%;height:clamp(38px,5.5vh,56px);margin-top:clamp(2px,1vh,10px);position:relative}
+.hero-fold-spark{position:absolute;left:50%;top:38%;transform:translate(-50%,-50%);color:var(--gold-soft);font-size:13px;line-height:1;text-shadow:0 0 8px rgba(201,162,39,.75)}
+.hero-inner{max-width:min(1180px,74%);margin:0 auto;padding:0 24px;display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;width:100%}
+.hero-text{margin-left:clamp(16px,5vw,64px)}
+
+.hero-eyebrow{font-size:10.5px;font-weight:800;letter-spacing:.26em;text-transform:uppercase;color:var(--gold);margin-bottom:12px}
+.hero-eyebrow-rule{width:88px;height:1px;background:var(--gold);position:relative;margin:0 0 22px}
+.hero-eyebrow-rule span{position:absolute;left:50%;top:50%;width:6px;height:6px;background:var(--gold);transform:translate(-50%,-50%) rotate(45deg)}
+.hero-h1{font-family:'Playfair Display',Georgia,serif;font-size:clamp(2.3rem,4.2vw,3.9rem);font-weight:700;line-height:1.04;color:var(--ink);margin-bottom:22px}
+.hero-h1 span,.hero-h1 em{display:block}
+.hero-h1 em{color:var(--gold);font-style:normal}
+.hero-sub{font-size:15px;line-height:1.6;color:var(--ink);max-width:44ch;margin-bottom:22px}
+.hero-sub p{margin:0 0 12px}
+.hero-sub p:last-child{margin-bottom:0}
+.hero-sub-strong{font-weight:700}
+.byline{display:flex;align-items:flex-start}
+.byline-name{font-family:'Great Vibes','Brush Script MT',cursive;font-size:26px;font-weight:400;line-height:1;color:var(--gold)}
+.byline-role{font-size:12px;color:var(--ink);margin-top:5px}
+
+/* ─── SIDE BADGES ─── */
+.hero-side{position:absolute;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;align-items:center;gap:20px;z-index:2;width:112px;pointer-events:none}
+.hero-side-left{left:clamp(0px,0.4vw,8px)}
+.hero-side-right{right:clamp(0px,0.4vw,8px)}
+.hero-side-label{width:100%;font-size:9.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--gold-soft);text-align:center;line-height:1.5;white-space:nowrap;text-shadow:0 1px 3px rgba(7,22,41,.85),0 0 8px rgba(7,22,41,.6)}
+.hero-side-rule{width:32px;height:1px;background:var(--gold);position:relative}
+.hero-side-rule span{position:absolute;left:50%;top:50%;width:5px;height:5px;background:var(--gold);transform:translate(-50%,-50%) rotate(45deg)}
+@media (max-width:1180px){.hero-side{display:none}}
+
+/* ─── PRINCIPAL'S VOICE BOOK (transparent PNG — book + pedestal + badge) ─── */
+.book-stage{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:0}
+.book-visual{
+  appearance:none;border:none;background:none;padding:0;
+  cursor:pointer;display:block;
+  width:clamp(247px,31vw,390px);
+  max-width:100%;
+  transition:transform .45s cubic-bezier(.22,.61,.36,1),filter .45s cubic-bezier(.22,.61,.36,1);
+  filter:drop-shadow(12px 18px 20px rgba(7,27,53,.18));
+}
+.book-visual img{width:100%;height:auto;display:block;pointer-events:none}
+.book-visual:hover,.book-visual:focus-visible{
+  transform:translateY(-5px) scale(1.015);
+  filter:drop-shadow(12px 18px 20px rgba(7,27,53,.18)) drop-shadow(0 0 14px rgba(201,162,39,.3));
+}
+.book-visual:focus-visible{outline:3px solid var(--gold-soft);outline-offset:8px}
+.book-visual.opened{
+  transform:translateY(-3px) scale(1.02);
+  filter:drop-shadow(12px 18px 20px rgba(7,27,53,.18)) drop-shadow(0 0 18px rgba(201,162,39,.38));
+}
+
+@media (prefers-reduced-motion: reduce){
+  .book-visual{transition:filter .3s ease}
+  .book-visual:hover,.book-visual:focus-visible,.book-visual.opened{transform:none}
+}
+
+/* ─── HERO QUOTE ─── */
+.hero-quote{width:100%;max-width:min(760px,58%);margin:0 auto;text-align:center;padding:0 24px}
+.hero-quote-rule{width:56px;height:1px;background:var(--gold);margin:0 auto 16px}
+.hero-quote blockquote{
+  font-family:'Playfair Display',Georgia,serif;font-style:italic;
+  font-size:clamp(0.95rem,1.5vw,1.2rem);color:var(--ink);line-height:1.5;margin:0;
+}
+.hero-quote-mark{color:var(--gold);font-size:1.3em;vertical-align:-.1em}
+
+/* ─── INTERVIEW SECTION ─── */
+.interview{background:var(--paper);padding:100px 0;}
+.interview-page{padding-top:80px;min-height:100vh;}
+.interview.visible{display:block}
+.hero-fold-reflection{margin-top:-64px;margin-bottom:0;text-align:center;transform:scaleY(-1);opacity:.12;-webkit-mask-image:linear-gradient(to bottom,rgba(0,0,0,1),rgba(0,0,0,0) 80%);mask-image:linear-gradient(to bottom,rgba(0,0,0,1),rgba(0,0,0,0) 80%);pointer-events:none}
+.hero-fold-reflection blockquote{font-family:'Playfair Display',Georgia,serif;font-style:italic;font-size:clamp(0.85rem,1.3vw,1.05rem);color:var(--ink);line-height:1.5;margin:0;padding:0 12%}
+.section-inner{max-width:1280px;margin:0 auto;padding:0 56px}
+
+/* ─── INTERVIEW HERO ─── */
+.interview-hero{
+  min-height:calc(100svh - 56px);
+  position:relative;
+  display:flex;
+  align-items:center;
+  overflow:hidden;
+  background:
+    linear-gradient(90deg,rgba(251,243,230,.98) 0%,rgba(251,243,230,.84) 26%,rgba(251,243,230,.24) 46%,rgba(251,243,230,0) 68%),
+    url("images/principal-interview-hero-room.png");
+  background-size:cover;
+  background-position:center;
+}
+.interview-hero::after{
+  content:'';
+  position:absolute;
+  inset:auto 0 0;
+  height:18%;
+  background:linear-gradient(to bottom,rgba(251,243,230,0),var(--paper));
+  pointer-events:none;
+}
+.interview-hero-inner{width:100%;max-width:1440px;margin:0 auto;padding:clamp(96px,12vh,132px) clamp(42px,5vw,72px) clamp(72px,9vh,108px);position:relative;z-index:1}
+.interview-hero-copy{width:min(760px,52vw)}
+.interview-hero-kicker{
+  font-family:'Playfair Display',Georgia,serif;
+  font-size:clamp(1.2rem,1.65vw,1.7rem);
+  font-weight:600;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  color:#b99048;
+  margin-bottom:42px;
+  min-height:1.2em;
+  display:inline-block;
+  position:relative;
+}
+.interview-hero-kicker::after{
+  content:'';
+  display:block;
+  width:100%;
+  max-width:310px;
+  height:1px;
+  margin-top:13px;
+  background:linear-gradient(to right,#b99048,rgba(185,144,72,.25));
+  transform:scaleX(0);
+  transform-origin:left;
+  transition:transform .55s cubic-bezier(.22,.61,.36,1);
+}
+.interview-hero-kicker.underline-ready::after{transform:scaleX(1)}
+.interview-hero-cursor{display:inline-block;width:.045em;height:.78em;background:#b99048;margin-left:.05em;vertical-align:-.05em;animation:iv-blink 1s step-end infinite;transition:opacity .4s ease}
+.interview-hero-cursor.iv-done{animation:none;opacity:0}
+.interview-hero-title{
+  font-family:'Playfair Display',Georgia,serif;
+  font-size:clamp(2.35rem,3.55vw,3.95rem);
+  font-weight:500;
+  line-height:1.11;
+  color:var(--copy-navy);
+  margin-bottom:30px;
+}
+.interview-hero-title > span{display:block;white-space:nowrap}
+.interview-hero-title > span:empty{min-height:1.11em}
+.interview-hero-title .type-part{display:inline;white-space:inherit}
+.interview-hero-title .hero-highlight{color:var(--gold);font-weight:700}
+.interview-hero-title .purpose-underline{
+  color:#000;
+  font-weight:500;
+  text-decoration-line:underline;
+  text-decoration-color:#000;
+  text-decoration-thickness:.055em;
+  text-underline-offset:.08em;
+}
+.interview-hero-sub{
+  max-width:34ch;
+  font-size:clamp(1.02rem,1.35vw,1.22rem);
+  line-height:1.62;
+  color:var(--copy-navy);
+  text-shadow:0 1px 0 rgba(255,255,255,.55);
+  min-height:3.24em;
+}
+.interview-hero-cta{display:inline-flex;align-items:center;gap:18px;margin-top:34px;font-family:'Playfair Display',Georgia,serif;font-size:clamp(0.95rem,1.25vw,1.15rem);font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:#b99048;text-decoration:none;min-height:2.1em;visibility:hidden}
+.interview-hero-cta.is-visible{visibility:visible}
+.interview-hero-cta span:first-child{border-bottom:1px solid currentColor;padding-bottom:8px}
+.interview-hero-cta span:last-child{font-size:1.45em;line-height:1;transform:translateY(-1px);transition:transform .22s ease}
+.interview-hero-cta:hover span:last-child,.interview-hero-cta:focus-visible span:last-child{transform:translate(5px,-1px)}
+
+.iv-header{text-align:center;margin-bottom:72px}
+.iv-eyebrow{font-size:10px;font-weight:800;letter-spacing:.26em;text-transform:uppercase;color:var(--gold);margin-bottom:14px;opacity:0;transform:translateY(8px);transition:opacity .4s ease,transform .4s ease}
+.iv-header.iv-play .iv-eyebrow{opacity:1;transform:translateY(0)}
+.iv-h2{font-family:'Playfair Display',serif;font-size:clamp(3.3rem,5.25vw,4.8rem);font-weight:700;color:var(--ink);line-height:1.08;margin-bottom:0}
+.iv-cursor{display:inline-block;width:.05em;height:.82em;background:var(--gold);margin-left:.06em;vertical-align:-0.06em;animation:iv-blink 1s step-end infinite;transition:opacity .4s ease}
+.iv-cursor.iv-done{animation:none;opacity:0}
+@keyframes iv-blink{0%,100%{opacity:1}50%{opacity:0}}
+@media (prefers-reduced-motion: reduce){
+  .iv-eyebrow{opacity:1;transform:none;transition:none}
+  .iv-cursor,.interview-hero-cursor{display:none}
+}
+.iv-lede{font-size:16px;color:var(--muted);max-width:50ch;margin:0 auto}
+
+.qa-list{max-width:900px;margin:0 auto}
+.qa{padding:60px 0;border-top:1px solid rgba(7,22,41,.12)}
+.qa:first-child{border-top:none}
+.qa-head{display:flex;align-items:flex-start;gap:22px;margin-bottom:20px}
+.qa-num{font-family:'Playfair Display',serif;font-size:36px;color:var(--gold);line-height:1;flex:none;width:52px;font-weight:400}
+.qa-q{font-family:'Playfair Display',serif;font-size:clamp(1.3rem,2.2vw,1.75rem);line-height:1.3;color:var(--ink);font-weight:600;padding-top:4px}
+.qa-attr{margin:0 0 20px 74px;padding-bottom:20px;border-bottom:1px solid rgba(201,162,39,.2)}
+.qa-attr-name{font-size:13px;font-weight:700;color:var(--ink)}
+.qa-attr-role{font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--gold);margin-top:2px}
+.qa-body{padding-left:74px}
+.qa-p{font-size:16.5px;line-height:1.8;color:#3a4455;margin-bottom:18px;font-family:Georgia,'Times New Roman',serif}
+.qa-quote{
+  margin:28px 0 0;padding:10px 0 10px 26px;
+  border-left:3px solid var(--gold);
+  font-family:'Playfair Display',serif;font-style:italic;
+  font-size:clamp(1.1rem,1.8vw,1.35rem);line-height:1.55;
+  color:var(--ink);
+}
+
+/* ─── CTA ─── */
+.cta{background:linear-gradient(150deg,#061224 0%,#0a1d36 52%,#071629 100%);padding:100px 0;text-align:center;}
+.cta.visible{display:block}
+.cta-inner{max-width:640px;margin:0 auto;padding:0 56px}
+.cta-eyebrow{font-size:10px;font-weight:800;letter-spacing:.26em;text-transform:uppercase;color:var(--gold);margin-bottom:16px}
+.cta-h2{font-family:'Playfair Display',serif;font-size:clamp(2rem,3.5vw,3rem);font-weight:600;color:#fff;line-height:1.15;margin-bottom:18px}
+.cta-p{font-size:16px;color:rgba(255,255,255,.5);line-height:1.7;margin-bottom:36px}
+.cta-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+.btn-gold{display:inline-flex;align-items:center;gap:8px;background:var(--gold);color:var(--ink);border:none;border-radius:999px;padding:0 32px;height:52px;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 4px 24px rgba(201,162,39,.35);transition:all .18s;text-decoration:none}
+.btn-gold:hover{background:#b8911f;transform:translateY(-1px)}
+.btn-outline-light{display:inline-flex;align-items:center;gap:8px;background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,.35);border-radius:999px;padding:0 30px;height:52px;font-size:14px;font-weight:600;cursor:pointer;transition:background .18s;text-decoration:none}
+.btn-outline-light:hover{background:rgba(255,255,255,.08)}
+
+/* ─── FOOTER ─── */
+.foot{background:#050d1c;border-top:1px solid rgba(255,255,255,.07);padding:28px 0;}
+.foot.visible{display:block}
+.foot-inner{max-width:1280px;margin:0 auto;padding:0 56px;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:rgba(255,255,255,.35);flex-wrap:wrap;gap:8px}
+
+
+
+/* ─── PHOTO DIVIDER Q&A LAYOUT ─── */
+.iv-qa-new{max-width:1100px;margin:0 auto;padding:0 56px}
+
+.qa-new{margin-bottom:0}
+
+/* Full-width photo strip with question overlaid */
+.qa-photo-strip{
+  position:relative;width:100%;height:540px;
+  overflow:hidden;border-radius:14px;
+  margin-bottom:0;
+}
+.qa-strip-img{
+  width:100%;height:100%;object-fit:cover;display:block;
+}
+.qa-strip-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(
+    to bottom,
+    rgba(6,14,28,.0) 0%,
+    rgba(6,14,28,.18) 40%,
+    rgba(6,14,28,.62) 72%,
+    rgba(6,14,28,.82) 100%
+  );
+}
+.qa-strip-content{
+  position:absolute;bottom:0;left:0;right:0;
+  z-index:1;
+  padding:36px 48px;width:100%;
+}
+.qa-strip-num{
+  font-family:'Playfair Display',Georgia,serif;
+  font-size:13px;font-weight:400;font-style:italic;
+  color:var(--gold);letter-spacing:.08em;
+  margin-bottom:10px;display:block;opacity:.9;
+}
+.qa-strip-q{
+  font-family:'Playfair Display',Georgia,serif;
+  font-size:clamp(1.8rem,3vw,2.6rem);
+  font-weight:600;line-height:1.25;color:#fff;
+  max-width:700px;
+}
+
+.qa-strip-img{transition:filter .9s ease,opacity .9s ease,transform .9s ease}
+.qa-photo-strip.qa-blur-pending .qa-strip-img{filter:blur(18px);opacity:0;transform:scale(1.06)}
+.qa-photo-strip.qa-blur-pending.qa-in-view .qa-strip-img{filter:blur(0);opacity:1;transform:scale(1)}
+.qa-photo-strip.qa-found{box-shadow:0 0 0 3px var(--gold)}
+@media (prefers-reduced-motion: reduce){
+  .qa-photo-strip.qa-blur-pending .qa-strip-img{filter:none;opacity:1;transform:none}
+}
+
+/* ─── PREMIUM INDEX CARD ─── */
+.iv-index{
+  max-width:900px;margin:0 auto 64px;
+  background:#fdf9f0;
+  border:1px solid rgba(201,162,39,.32);
+  border-radius:26px;
+  box-shadow:0 24px 48px rgba(7,27,53,.10),inset 0 1px 0 rgba(255,255,255,.7);
+  padding:14px 22px;
+  text-align:left;
+}
+.iv-index-group{border-top:1px solid rgba(201,162,39,.16)}
+.iv-index-group:first-child{border-top:none}
+
+/* Category header row */
+.iv-index-head{
+  display:flex;align-items:center;gap:14px;
+  padding:18px 14px;
+  cursor:pointer;
+  font-size:13px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--ink);
+  background:transparent;
+  border:1px solid transparent;
+  border-radius:14px;
+  width:100%;text-align:left;
+  font-family:'Playfair Display',Georgia,serif;
+  transition:background .3s ease,border-color .3s ease,box-shadow .3s ease,transform .3s cubic-bezier(.22,.61,.36,1);
+}
+.iv-chevron-circle{
+  flex:none;width:26px;height:26px;border-radius:50%;
+  border:1px solid rgba(201,162,39,.55);
+  display:flex;align-items:center;justify-content:center;
+  transition:border-color .3s ease,background .3s ease;
+}
+.iv-index-head .iv-chevron{transition:transform .3s cubic-bezier(.22,.61,.36,1);color:var(--gold);font-size:11px;line-height:1;display:inline-block}
+.iv-index-group.open .iv-chevron{transform:rotate(90deg)}
+.iv-head-divider{flex:none;position:relative;width:1px;height:20px;background:rgba(201,162,39,.4)}
+.iv-head-dot{position:absolute;left:50%;top:50%;width:5px;height:5px;background:var(--gold);transform:translate(-50%,-50%) rotate(45deg)}
+.iv-head-label{flex:1}
+
+.iv-index-head:hover,.iv-index-head:focus-visible{
+  background:rgba(201,162,39,.08);
+  border-color:rgba(201,162,39,.55);
+  box-shadow:0 0 0 1px rgba(201,162,39,.4),0 10px 22px rgba(201,162,39,.16),0 6px 14px rgba(7,27,53,.06);
+  transform:translateY(-2px);
+  outline:none;
+}
+.iv-index-head:hover .iv-chevron-circle,.iv-index-head:focus-visible .iv-chevron-circle{border-color:var(--gold);background:rgba(201,162,39,.14)}
+.iv-index-head:hover .iv-head-dot,.iv-index-head:focus-visible .iv-head-dot{background:#e0b93a}
+.iv-index-group.open .iv-index-head{background:#fffdf7;border-color:rgba(201,162,39,.4)}
+
+/* Expanded panel */
+.iv-index-list{max-height:0;overflow:hidden;transition:max-height .45s cubic-bezier(.22,.61,.36,1)}
+.iv-index-group.open .iv-index-list{max-height:900px}
+.iv-group-rule{padding:2px 14px 16px;display:flex;justify-content:center}
+.iv-group-rule span{position:relative;width:100%;max-width:220px;height:1px;background:linear-gradient(to right,transparent,rgba(201,162,39,.55),transparent)}
+.iv-group-rule span::after{content:'';position:absolute;left:50%;top:50%;width:5px;height:5px;background:var(--gold);transform:translate(-50%,-50%) rotate(45deg)}
+
+/* Question rows */
+.iv-index-item{
+  display:flex;align-items:center;gap:12px;
+  padding:15px 14px;
+  font-size:14.5px;color:var(--ink);
+  cursor:pointer;
+  border-radius:12px;
+  background:transparent;
+  border:1px solid transparent;
+  border-top:1px solid rgba(201,162,39,.14);
+  width:100%;text-align:left;
+  font-family:'Inter',system-ui,sans-serif;
+  min-height:44px;
+  transition:background .28s ease,border-color .28s ease,box-shadow .28s ease;
+}
+.iv-index-item:first-of-type{border-top:none}
+.iv-idx-num{font-family:'Playfair Display',Georgia,serif;color:var(--gold);font-size:14px;flex:none;width:24px;transition:color .28s ease}
+.iv-idx-divider{flex:none;position:relative;width:1px;height:18px;background:rgba(201,162,39,.35)}
+.iv-idx-dot{position:absolute;left:50%;top:50%;width:4px;height:4px;background:var(--gold);transform:translate(-50%,-50%) rotate(45deg)}
+.iv-idx-text{flex:1;color:var(--ink)}
+.iv-idx-chevron{flex:none;color:rgba(201,162,39,.6);font-size:16px;transition:transform .28s ease,color .28s ease}
+
+.iv-index-item:hover,.iv-index-item:focus-visible{
+  background:linear-gradient(to right,rgba(201,162,39,.1),rgba(201,162,39,.03));
+  border-color:rgba(201,162,39,.5);
+  box-shadow:0 0 0 1px rgba(201,162,39,.35),inset 0 0 14px rgba(201,162,39,.08);
+  outline:none;
+}
+.iv-index-item:hover .iv-idx-chevron,.iv-index-item:focus-visible .iv-idx-chevron{transform:translateX(3px);color:var(--gold)}
+.iv-index-item:hover .iv-idx-num,.iv-index-item:focus-visible .iv-idx-num{color:#e0b93a}
+
+@media (prefers-reduced-motion: reduce){
+  .iv-index-head,.iv-index-item{transition:background .15s ease,border-color .15s ease,box-shadow .15s ease}
+  .iv-index-head:hover,.iv-index-head:focus-visible{transform:none}
+  .iv-index-list{transition:none}
+}
+
+/* Response area below the photo strip */
+.qa-response{
+  background:#fff;
+  border:1px solid rgba(7,22,41,.08);
+  border-top:none;
+  border-radius:0 0 14px 14px;
+  padding:40px 48px 48px;
+  margin-bottom:52px;
+}
+.qa-resp-attr{
+  display:flex;align-items:center;gap:12px;
+  padding-bottom:24px;margin-bottom:28px;
+  border-bottom:1px solid rgba(201,162,39,.18);
+}
+.qa-resp-dot{width:8px;height:8px;border-radius:50%;background:var(--gold);flex-shrink:0}
+.qa-resp-name{font-size:12px;font-weight:700;color:var(--ink);letter-spacing:.04em}
+.qa-resp-role{font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:.1em;margin-left:4px}
+.qa-resp-p{
+  font-family:Georgia,'Times New Roman',serif;
+  font-size:17px;line-height:1.85;color:#2e3a4e;margin-bottom:20px;
+}
+.qa-resp-quote{
+  border-left:3px solid var(--gold);
+  padding:2px 0 2px 24px;
+  font-family:'Playfair Display',serif;font-style:italic;
+  font-size:clamp(1.05rem,1.6vw,1.25rem);line-height:1.6;
+  color:var(--ink);margin-top:28px;
+}
+
+@media (max-width:960px){
+  .hero-inner{max-width:88%;padding:0 24px;gap:28px;grid-template-columns:minmax(0,1.08fr) minmax(180px,.92fr)}
+  .hero-h1{font-size:clamp(2rem,5vw,2.6rem);line-height:1.02;margin-bottom:16px}
+  .hero-eyebrow-rule{margin-bottom:16px}
+  .hero-sub{font-size:14px;line-height:1.5;max-width:42ch;margin-bottom:18px}
+  .hero-sub p{margin-bottom:10px}
+  .book-visual{width:clamp(208px,34vw,312px)}
+  .hero-quote{max-width:80%}
+  .iv-index{padding:12px 14px;border-radius:22px}
+  .iv-index-head{padding:16px 10px;gap:10px}
+  .iv-index-item{padding:14px 10px;gap:10px}
+  .iv-idx-text{padding-right:4px}
+  .interview-hero{
+    min-height:auto;
+    background-position:center right 36%;
+  }
+  .interview-hero-inner{padding:104px 32px 520px}
+  .interview-hero-copy{width:min(560px,72vw)}
+  .interview-hero-kicker{font-size:clamp(1.05rem,3.1vw,1.35rem);margin-bottom:28px}
+  .interview-hero-title{font-size:clamp(2.55rem,7vw,3.65rem)}
+  .interview-hero-title > span{white-space:normal}
+  .interview-hero-sub{font-size:1rem;line-height:1.58}
+}
+
+@media (max-width:680px){
+  .hero{min-height:auto;padding:112px 0 48px}
+  .hero-fold{height:32px}
+  .hero-inner{max-width:92%;grid-template-columns:1fr;text-align:center;gap:36px}
+  .hero-h1{font-size:clamp(2.1rem,9vw,2.7rem)}
+  .hero-eyebrow-rule{margin-left:auto;margin-right:auto}
+  .hero-sub{margin-left:auto;margin-right:auto}
+  .byline{justify-content:center}
+  .book-visual{width:clamp(240px,72vw,380px)}
+  .hero-quote{max-width:90%}
+  .iv-index{padding:10px 10px;border-radius:18px;max-width:94%}
+  .iv-index-head{padding:14px 8px;gap:8px;font-size:clamp(11px,3.4vw,13px)}
+  .iv-chevron-circle{width:22px;height:22px}
+  .iv-head-divider{height:16px}
+  .iv-index-item{padding:14px 8px;gap:8px;font-size:clamp(13px,3.6vw,14.5px)}
+  .iv-idx-num{width:20px;font-size:13px}
+  .iv-idx-divider{height:14px}
+  .iv-idx-chevron{font-size:14px}
+  .interview-hero{
+    background:
+      linear-gradient(180deg,rgba(251,243,230,.98) 0%,rgba(251,243,230,.86) 45%,rgba(251,243,230,.2) 68%,rgba(251,243,230,0) 100%),
+      url("images/principal-interview-hero-room.png");
+    background-size:cover;
+    background-position:center bottom;
+  }
+  .interview-hero-inner{padding:96px 24px 360px}
+  .interview-hero-copy{width:100%}
+  .interview-hero-kicker{font-size:clamp(0.98rem,5vw,1.25rem);margin-bottom:22px}
+  .interview-hero-title{font-size:clamp(2rem,10vw,3rem);margin-bottom:22px}
+  .interview-hero-sub{max-width:34ch}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+
+
+<!-- HERO -->
+<section class="interview-hero" aria-labelledby="iv-heading">
+  <div class="interview-hero-inner">
+    <div class="interview-hero-copy" id="iv-header">
+      <div class="interview-hero-kicker" id="iv-heading" data-text="Exclusive Interview" aria-label="Exclusive Interview">
+        <span id="iv-heading-text" aria-hidden="true"></span><span class="interview-hero-cursor" id="iv-heading-cursor" aria-hidden="true"></span>
+      </div>
+      <h1 class="interview-hero-title">
+        <span><span class="type-part" id="interview-line-1" data-text="Behind every classroom,"></span></span>
+        <span><span class="type-part hero-highlight" id="interview-line-2a" data-text="every decision"></span><span class="type-part" id="interview-line-2b" data-text=" and"></span></span>
+        <span><span class="type-part hero-highlight" id="interview-line-3a" data-text="every student"></span><span class="type-part" id="interview-line-3b" data-text=" journey"></span></span>
+        <span><span class="type-part" id="interview-line-4a" data-text="is a clear sense of "></span><span class="type-part purpose-underline" id="interview-line-4b" data-text="purpose."></span></span>
+      </h1>
+      <p class="interview-hero-sub" id="interview-subtext" data-text="A closer look at the values, leadership and vision shaping DA Tuition."></p>
+      <a class="interview-hero-cta" href="#interview" aria-label="Read the principal interview">
+        <span id="interview-cta-text" data-text="Read the Interview"></span>
+        <span aria-hidden="true">&rarr;</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- INTERVIEW -->
+
+<section class="interview interview-page" id="interview">
+  <div class="section-inner">
+    <nav class="iv-index" id="iv-index" aria-label="Jump to a question">
+      <div class="iv-index-group open" data-group="1">
+        <button type="button" class="iv-index-head" onclick="ivToggleGroup(this)">
+          <span class="iv-chevron-circle" aria-hidden="true"><span class="iv-chevron">&#9656;</span></span>
+          <span class="iv-head-divider" aria-hidden="true"><span class="iv-head-dot"></span></span>
+          <span class="iv-head-label">Vision &amp; philosophy</span>
+        </button>
+        <div class="iv-index-list">
+          <div class="iv-group-rule" aria-hidden="true"><span></span></div>
+          <button type="button" class="iv-index-item" onclick="ivJumpTo('q1')">
+            <span class="iv-idx-num">01</span>
+            <span class="iv-idx-divider" aria-hidden="true"><span class="iv-idx-dot"></span></span>
+            <span class="iv-idx-text">Why did you start DA Tuition?</span>
+            <span class="iv-idx-chevron" aria-hidden="true">&#8250;</span>
+          </button>
+          <button type="button" class="iv-index-item" onclick="ivJumpTo('q2')">
+            <span class="iv-idx-num">02</span>
+            <span class="iv-idx-divider" aria-hidden="true"><span class="iv-idx-dot"></span></span>
+            <span class="iv-idx-text">What makes DA different?</span>
+            <span class="iv-idx-chevron" aria-hidden="true">&#8250;</span>
+          </button>
+          <button type="button" class="iv-index-item" onclick="ivJumpTo('q5')">
+            <span class="iv-idx-num">05</span>
+            <span class="iv-idx-divider" aria-hidden="true"><span class="iv-idx-dot"></span></span>
+            <span class="iv-idx-text">What legacy do you hope DA leaves behind?</span>
+            <span class="iv-idx-chevron" aria-hidden="true">&#8250;</span>
+          </button>
+          <button type="button" class="iv-index-item" onclick="ivJumpTo('q14')">
+            <span class="iv-idx-num">14</span>
+            <span class="iv-idx-divider" aria-hidden="true"><span class="iv-idx-dot"></span></span>
+            <span class="iv-idx-text">What are your long-term goals for DA Tuition?</span>
+            <span class="iv-idx-chevron" aria-hidden="true">&#8250;</span>
+          </button>
+        </div>
+      </div>
+      <div class="iv-index-group" data-group="2">
+        <button type="button" class="iv-index-head" onclick="ivToggleGroup(this)">
+          <span class="iv-chevron-circle" aria-hidden="true"><span class="iv-chevron">&#9656;</span></span>
+          <span class="iv-head-divider" aria-hidden="true"><span class="iv-head-dot"></span></span>
+          <span class="iv-head-label">Teaching approach</span>
+        </button>
+        <div class="iv-index-list">
+          <div class="iv-group-rule" aria-hidden="true"><span></span></div>
+          <button type="button" class="iv-index-item" onclick="ivJumpTo('q3')">
+            <span class="iv-idx-num">03</span>
+            <span class="iv-idx-divider" aria-hidden="true"><span class="iv-idx-dot"></span></span>
+            <span class="iv-idx-text">How do you decide what is right for a child?</span>
+            <span class="iv-idx-chevron" aria-hidden="true">&#8250;</span>
+          </button>
+          <button type="button" class="iv-index-item" onclick="ivJumpTo('q4')">
+            <span class="iv-idx-num">04</span>
+            <span class="iv-idx-divider" aria-hidden="true"><span class="iv-idx-dot"></span></span>
+            <span class="iv-idx-text">What do students need most to succeed today?</span>
+            <span class="iv-idx-chevron" aria-hidden="true">&#8250;</span>
+          </button>
+          <button type="button" class="iv-index-item" onclick="ivJumpTo('q6')">
+            <span class="iv-idx-num">06</span>
+            <span class="iv-idx-divider" aria-hidden="true"><span class="iv-idx-dot"></span></span>
+            <span class="iv-idx-text">How do you ensure the quality of teaching at DA?</span>
+            <span class="iv-idx-chevron" aria-hidden="true">&#8250;</span>
+          </button>
+          <button type="button" class="iv-index-item" onclick="ivJumpTo('q11')">
+            <span class="iv-idx-num">11</span>
+            <span class="iv-idx-divider" aria-hidden="true"><span class="iv-idx-dot"></span></span>
+            <span class="iv-idx-text">What role do empathy and encouragement play in how you teach?</span>
+            <span class="iv-idx-chevron" aria-hidden="true">&#8250;</span>
+          </button>
+        </div>
+      </div>
+      <div class="iv-index-group" data-group="3">
+        <button type="button" class="iv-index-head" onclick="ivToggleGroup(this)">
+          <span class="iv-chevron-circle" aria-hidden="true"><span class="iv-chevron">&#9656;</span></span>
+          <span class="iv-head-divider" aria-hidden="true"><span class="iv-head-dot"></span></span>
+          <span class="iv-head-label">Students &amp; wellbeing</span>
+        </button>
+        <div class="iv-index-list">
+          <div class="iv-group-rule" aria-hidden="true"><span></span></div>
+          <button type="button" class="iv-index-item" onclick="ivJumpTo('q7')">
+            <span class="iv-idx-num">07</span>
+            <span class="iv-idx-divider" aria-hidden="true"><span class="iv-idx-dot"></span></span>
+            <span class="iv-idx-text">How does DA help students manage academic pressure?</span>
+            <span class="iv-idx-chevron" aria-hidden="true">&#8250;</span>
+          </button>
+          <button type="button" class="iv-index-item" onclick="ivJumpTo('q8')">
+            <span class="iv-idx-num">08</span>
+            <span class="iv-idx-divider" aria-hidden="true"><span class="iv-idx-dot"></span></span>
+            <span class="iv-idx-text">What does a typical student journey look like at DA?</span>
+            <span class="iv-idx-chevron" aria-hidden="true">&#8250;</span>
+          </button>
+          <button type="button" class="iv-index-item" onclick="ivJumpTo('q10')">
+            <span class="iv-idx-num">10</span>
+            <span class="iv-idx-divider" aria-hidden="true"><span class="iv-idx-dot"></span></span>
+            <span class="iv-idx-text">What does it take to be a successful student in 2026?</span>
+            <span class="iv-idx-chevron" aria-hidden="true">&#8250;</span>
+          </button>
+          <button type="button" class="iv-index-item" onclick="ivJumpTo('q16')">
+            <span class="iv-idx-num">16</span>
+            <span class="iv-idx-divider" aria-hidden="true"><span class="iv-idx-dot"></span></span>
+            <span class="iv-idx-text">Can you share a story of a student whose life changed at DA?</span>
+            <span class="iv-idx-chevron" aria-hidden="true">&#8250;</span>
+          </button>
+        </div>
+      </div>
+      <div class="iv-index-group" data-group="4">
+        <button type="button" class="iv-index-head" onclick="ivToggleGroup(this)">
+          <span class="iv-chevron-circle" aria-hidden="true"><span class="iv-chevron">&#9656;</span></span>
+          <span class="iv-head-divider" aria-hidden="true"><span class="iv-head-dot"></span></span>
+          <span class="iv-head-label">Families &amp; community</span>
+        </button>
+        <div class="iv-index-list">
+          <div class="iv-group-rule" aria-hidden="true"><span></span></div>
+          <button type="button" class="iv-index-item" onclick="ivJumpTo('q9')">
+            <span class="iv-idx-num">09</span>
+            <span class="iv-idx-divider" aria-hidden="true"><span class="iv-idx-dot"></span></span>
+            <span class="iv-idx-text">DA has received an extraordinary number of heartfelt reviews. What resonates most with families?</span>
+            <span class="iv-idx-chevron" aria-hidden="true">&#8250;</span>
+          </button>
+          <button type="button" class="iv-index-item" onclick="ivJumpTo('q12')">
+            <span class="iv-idx-num">12</span>
+            <span class="iv-idx-divider" aria-hidden="true"><span class="iv-idx-dot"></span></span>
+            <span class="iv-idx-text">How does feedback from families guide the way DA works?</span>
+            <span class="iv-idx-chevron" aria-hidden="true">&#8250;</span>
+          </button>
+          <button type="button" class="iv-index-item" onclick="ivJumpTo('q13')">
+            <span class="iv-idx-num">13</span>
+            <span class="iv-idx-divider" aria-hidden="true"><span class="iv-idx-dot"></span></span>
+            <span class="iv-idx-text">How can parents and teachers work together to achieve the best outcomes?</span>
+            <span class="iv-idx-chevron" aria-hidden="true">&#8250;</span>
+          </button>
+          <button type="button" class="iv-index-item" onclick="ivJumpTo('q15')">
+            <span class="iv-idx-num">15</span>
+            <span class="iv-idx-divider" aria-hidden="true"><span class="iv-idx-dot"></span></span>
+            <span class="iv-idx-text">What do you find most rewarding about leading DA?</span>
+            <span class="iv-idx-chevron" aria-hidden="true">&#8250;</span>
+          </button>
+        </div>
+      </div>
+    </nav>
+  </div>
+
+  <div class="iv-qa-new">
+    <!-- Q01 -->
+    <div class="qa-new" id="q1">
+      <div class="qa-photo-strip">
+        <img src="0X1A7602.JPG" class="qa-strip-img" alt="">
+        <div class="qa-strip-overlay"></div>
+        <div class="qa-strip-content">
+          <span class="qa-strip-num">Question 01</span>
+          <h3 class="qa-strip-q">Why did you start DA Tuition?</h3>
+        </div>
+      </div>
+      <div class="qa-response">
+        <p class="qa-resp-p">From the very beginning, my vision has always been to create a sanctuary where every child feels seen, valued, and capable of achieving their fullest potential. Witnessing so many children lose confidence due to feeling unsupported or overwhelmed inspired me to establish a school that goes beyond academics.</p>
+        <p class="qa-resp-p">I dreamed of a nurturing environment where students could rediscover their voice, believe in themselves, and transform impossibilities into achievements. Through love, care and devotion, we strive to show that with the right emotional guidance, every goal is attainable.</p>
+        <p class="qa-resp-p">Our mission has always been to walk alongside students on their journey, helping them overcome challenges while knowing they are never alone.</p>
+        <div class="qa-resp-quote">Every child deserves to feel seen, valued, and capable of achieving their fullest potential.</div>
+      </div>
+    </div>
+
+    <!-- Q02 -->
+    <div class="qa-new" id="q2">
+      <div class="qa-photo-strip">
+        <img src="0X1A7568.JPG" class="qa-strip-img" alt="">
+        <div class="qa-strip-overlay"></div>
+        <div class="qa-strip-content">
+          <span class="qa-strip-num">Question 02</span>
+          <h3 class="qa-strip-q">What makes DA different?</h3>
+        </div>
+      </div>
+      <div class="qa-response">
+        <p class="qa-resp-p">What makes our tutoring school truly special is the heart behind everything we do. We have incredible teachers and genuine care we pour into every single child's journey.</p>
+        <p class="qa-resp-p">With over 20 years of teaching experience, I've learnt that every child is unique. We meet them where they are, celebrate their wins, guide them through challenges, and remind them every day that they're capable of extraordinary things.</p>
+        <p class="qa-resp-p">There are no entrance exams here, no barriers about who can or can't learn with us.</p>
+        <p class="qa-resp-p">If a child wants to grow, succeed, and needs support, they are always welcome. This commitment means we take on challenges and help those who have lost hope or feel like giving up. It's a responsibility we embrace, and it fills me with pride to see the dedication of our team.</p>
+        <p class="qa-resp-p">Our tutors work tirelessly, and their talent shines through in every success, whether it's a perfect HSC score, a state ranking, or a child discovering a newfound confidence they never thought possible.</p>
+        <p class="qa-resp-p">We don't believe in one-size-fits-all methods because every child's journey is different. Instead, we personalise every class to address their specific needs, helping them build a strong foundation and lasting confidence. Each lesson is crafted with care, ensuring it's not only useful but also inspiring and engaging. And when it comes to school assessments, it's a partnership between teacher and student that leads to outstanding results.</p>
+        <div class="qa-resp-quote">We meet them where they are, celebrate their wins, and guide them through challenges.</div>
+      </div>
+    </div>
+
+    <!-- Q03 -->
+    <div class="qa-new" id="q3">
+      <div class="qa-photo-strip">
+        <img src="IMG_2392.JPG" class="qa-strip-img" alt="">
+        <div class="qa-strip-overlay"></div>
+        <div class="qa-strip-content">
+          <span class="qa-strip-num">Question 03</span>
+          <h3 class="qa-strip-q">How do you decide what is right for a child?</h3>
+        </div>
+      </div>
+      <div class="qa-response">
+        <p class="qa-resp-p">When a student joins DA, we take the time to really get to know them — their strengths, their challenges, their goals, and the ways they learn best. It is never just about academics. We want them to feel confident, curious, and genuinely excited to be in the room.</p>
+        <p class="qa-resp-p">The placement is never fixed. If a student has outgrown their group, or if a different environment would serve them better, we say so. We do not wait to be asked.</p>
+        <div class="qa-resp-quote">The placement is never fixed. We adapt as students grow.</div>
+      </div>
+    </div>
+
+    <!-- Q04 -->
+    <div class="qa-new" id="q4">
+      <div class="qa-photo-strip">
+        <img src="0X1A7511.JPG" class="qa-strip-img" alt="">
+        <div class="qa-strip-overlay"></div>
+        <div class="qa-strip-content">
+          <span class="qa-strip-num">Question 04</span>
+          <h3 class="qa-strip-q">What do students need most to succeed today?</h3>
+        </div>
+      </div>
+      <div class="qa-response">
+        <p class="qa-resp-p">Today's students face immense pressure — high expectations, constant comparison, and a world that moves faster than ever. Many struggle with self-doubt, fear of failure, and the quiet exhaustion of trying to keep up with everything at once.</p>
+        <p class="qa-resp-p">To succeed in this environment, students need more than content knowledge. They need to be emotionally and mentally steady. Knowing someone genuinely believes in you — that is often the difference between a student who pushes through and one who quietly gives up.</p>
+        <div class="qa-resp-quote">Knowing someone genuinely believes in you — that is often the difference.</div>
+      </div>
+    </div>
+
+    <!-- Q05 -->
+    <div class="qa-new" id="q5">
+      <div class="qa-photo-strip">
+        <img src="IMG_1942.jpeg" class="qa-strip-img" alt="">
+        <div class="qa-strip-overlay"></div>
+        <div class="qa-strip-content">
+          <span class="qa-strip-num">Question 05</span>
+          <h3 class="qa-strip-q">What legacy do you hope DA leaves behind?</h3>
+        </div>
+      </div>
+      <div class="qa-response">
+        <p class="qa-resp-p">I don't expect anyone to remember me personally. What I hope they'll remember is the heart of this place — the team of teachers who came together with a shared belief: that every child deserves someone who truly believes in them.</p>
+        <p class="qa-resp-p">Fifty years from now, I dream that the children we've helped will go out into the world as compassionate, capable individuals — carrying with them the values we tried to instil.</p>
+        <div class="qa-resp-quote">What I hope they'll remember is the heart of this place.</div>
+      </div>
+    </div>
+
+    <!-- Q06 -->
+    <div class="qa-new" id="q6">
+      <div class="qa-photo-strip">
+        <img src="0X1A3898.jpeg" class="qa-strip-img" alt="">
+        <div class="qa-strip-overlay"></div>
+        <div class="qa-strip-content">
+          <span class="qa-strip-num">Question 06</span>
+          <h3 class="qa-strip-q">How do you ensure the quality of teaching at DA?</h3>
+        </div>
+      </div>
+      <div class="qa-response">
+        <p class="qa-resp-p">I make sure that we all hold ourselves to the highest standards. Our teachers are the backbone of our school, and they undergo an extensive screening and training process before joining us. But beyond their qualifications, it's their heart and dedication that shine. They go above and beyond to ensure each child feels supported and challenged in the right way. We also provide continuous professional development and encourage collaboration among our staff to keep our methods fresh and effective.</p>
+        <div class="qa-resp-quote">Beyond qualifications, it's their heart and dedication that shine.</div>
+      </div>
+    </div>
+
+    <!-- Q07 -->
+    <div class="qa-new" id="q7">
+      <div class="qa-photo-strip">
+        <img src="0X1A7491.JPG" class="qa-strip-img" alt="">
+        <div class="qa-strip-overlay"></div>
+        <div class="qa-strip-content">
+          <span class="qa-strip-num">Question 07</span>
+          <h3 class="qa-strip-q">How does DA help students manage academic pressure?</h3>
+        </div>
+      </div>
+      <div class="qa-response">
+        <p class="qa-resp-p">We know how heavy academic pressure can feel, and that's why we work hard to make our school a haven for students. We teach them strategies to manage their workload, break tasks into achievable steps, and focus on progress rather than perfection. But more than that, we listen. Through classes, extra help outside of class, or simply being there for any student who needs to talk, we ensure they know they're never alone in this journey. Sometimes, all a child needs is someone to remind them that they're enough just as they are. Sometimes, just knowing someone believes in them is enough to lighten the load.</p>
+        <div class="qa-resp-quote">Sometimes, all a child needs is someone to remind them that they're enough just as they are.</div>
+      </div>
+    </div>
+
+    <!-- Q08 -->
+    <div class="qa-new" id="q8">
+      <div class="qa-photo-strip">
+        <img src="0X1A7489.JPG" class="qa-strip-img" alt="">
+        <div class="qa-strip-overlay"></div>
+        <div class="qa-strip-content">
+          <span class="qa-strip-num">Question 08</span>
+          <h3 class="qa-strip-q">What does a typical student journey look like at DA?</h3>
+        </div>
+      </div>
+      <div class="qa-response">
+        <p class="qa-resp-p">When a student joins our school, we take the time to really get to know them, in terms of their strengths, challenges, and goals. It's not just about academics; we want them to feel confident, curious, and excited to learn. Together, we set realistic milestones and work towards them step by step.</p>
+        <p class="qa-resp-p">As students grow, we adapt to their needs, making sure they stay on track and continue to succeed. By the time students leave, they're not only better learners but also more confident and motivated individuals, ready to tackle whatever comes next.</p>
+        <div class="qa-resp-quote">We want them to feel confident, curious, and excited to learn.</div>
+      </div>
+    </div>
+
+    <!-- Q09 -->
+    <div class="qa-new" id="q9">
+      <div class="qa-photo-strip">
+        <img src="IMG_2749.JPG" class="qa-strip-img" alt="">
+        <div class="qa-strip-overlay"></div>
+        <div class="qa-strip-content">
+          <span class="qa-strip-num">Question 09</span>
+          <h3 class="qa-strip-q">DA has received an extraordinary number of heartfelt reviews. What resonates most with families?</h3>
+        </div>
+      </div>
+      <div class="qa-response">
+        <p class="qa-resp-p">Honestly, it's deeply humbling and joyous to read the heartfelt words of gratitude from our students and their families. Seeing how much they appreciate the dedication and sacrifices of their tutors is a profound reminder of why we do what we do. It fills me with pride to witness the difference our team makes. For us, these students are never just numbers or grades. They are individuals with dreams, fears, and limitless potential. Helping them unlock that potential is a privilege and an honour.</p>
+        <p class="qa-resp-p">Parents often share how their children have become happier, more motivated, and more confident since joining us, and knowing we've had such a positive impact on their lives is the most meaningful reward we could ever ask for.</p>
+        <div class="qa-resp-quote">These students are never just numbers or grades. They are individuals with dreams, fears, and limitless potential.</div>
+      </div>
+    </div>
+
+    <!-- Q10 -->
+    <div class="qa-new" id="q10">
+      <div class="qa-photo-strip">
+        <img src="IMG_2314.jpeg" class="qa-strip-img" alt="">
+        <div class="qa-strip-overlay"></div>
+        <div class="qa-strip-content">
+          <span class="qa-strip-num">Question 10</span>
+          <h3 class="qa-strip-q">What does it take to be a successful student in 2026?</h3>
+        </div>
+      </div>
+      <div class="qa-response">
+        <p class="qa-resp-p">To be successful in 2026, I believe students need to be adaptable and think critically, but above all, they need to be emotionally and mentally strong. It's not easy to juggle everything that comes their way such as pressure from studies, friends and family concerns, but being able to stay steady through it all makes a huge difference.</p>
+        <p class="qa-resp-p">We know that emotions can sometimes take over and affect focus and motivation. That's why we make it a point in every lesson to help our students build the confidence and resilience they need to tackle challenges head-on and ultimately be successful and proud of themselves.</p>
+        <div class="qa-resp-quote">Above all, they need to be emotionally and mentally strong.</div>
+      </div>
+    </div>
+
+    <!-- Q11 -->
+    <div class="qa-new" id="q11">
+      <div class="qa-photo-strip">
+        <img src="IMG_3070.JPG" class="qa-strip-img" alt="">
+        <div class="qa-strip-overlay"></div>
+        <div class="qa-strip-content">
+          <span class="qa-strip-num">Question 11</span>
+          <h3 class="qa-strip-q">What role do empathy and encouragement play in how you teach?</h3>
+        </div>
+      </div>
+      <div class="qa-response">
+        <p class="qa-resp-p">Empathy is at the heart of everything we do. We recognise that academic challenges can be overwhelming, and students need a safe space to express their worries. Encouragement helps them see that mistakes are part of growth, building resilience and self-belief.</p>
+        <p class="qa-resp-p">We often remind our students that stumbling is okay, rather it's about how you rise afterward. By focusing on their strengths and helping them tackle weaknesses with patience, we instil confidence and optimism that extend far beyond the classroom.</p>
+        <div class="qa-resp-quote">Empathy is at the heart of everything we do.</div>
+      </div>
+    </div>
+
+    <!-- Q12 -->
+    <div class="qa-new" id="q12">
+      <div class="qa-photo-strip">
+        <img src="IMG_2900.JPG" class="qa-strip-img" alt="">
+        <div class="qa-strip-overlay"></div>
+        <div class="qa-strip-content">
+          <span class="qa-strip-num">Question 12</span>
+          <h3 class="qa-strip-q">How does feedback from families guide the way DA works?</h3>
+        </div>
+      </div>
+      <div class="qa-response">
+        <p class="qa-resp-p">I hold feedback in the highest regard. It's how we grow. We are truly fortunate to receive such open and honest insights from both parents and students. To us, feedback is our promise to continuously create the best possible learning environment for every child. While we initially relied on handwritten forms, I often worried some feedback might be overlooked or that students might feel hesitant to share openly. To address this, we introduced a seamless digital system where students can scan a QR code and share their thoughts directly with me - promptly and confidentially.</p>
+        <p class="qa-resp-p">Parents often share how their children have become more confident, focused and happy. Students share heartfelt experiences, offering insights or suggestions for adjustments that align with their learning styles. Knowing that they feel truly cared for and understood is the greatest compliment we could ever receive. Each piece of feedback guides us to refine our methods and explore innovative ways to serve our students better.</p>
+        <div class="qa-resp-quote">Knowing that they feel truly cared for and understood is the greatest compliment we could ever receive.</div>
+      </div>
+    </div>
+
+    <!-- Q13 -->
+    <div class="qa-new" id="q13">
+      <div class="qa-photo-strip">
+        <img src="principal-interview-parent-meeting.png" class="qa-strip-img" alt="">
+        <div class="qa-strip-overlay"></div>
+        <div class="qa-strip-content">
+          <span class="qa-strip-num">Question 13</span>
+          <h3 class="qa-strip-q">How can parents and teachers work together to achieve the best outcomes?</h3>
+        </div>
+      </div>
+      <div class="qa-response">
+        <p class="qa-resp-p">Education works best when parents, teachers, and students collaborate as a team. Regular parent-teacher meetings and honest communication helps everyone stay aligned on goals and strategies, creating a strong foundation for success. Whether it's tackling academic struggles or celebrating progress, this shared effort creates a clear path forward.</p>
+        <p class="qa-resp-p">By sharing insights and celebrating progress together, we ensure students feel supported and encouraged to reach their full potential. Our focus is always on what's best for the child, and this teamwork makes all the difference.</p>
+        <div class="qa-resp-quote">Education works best when parents, teachers, and students collaborate as a team.</div>
+      </div>
+    </div>
+
+    <!-- Q14 -->
+    <div class="qa-new" id="q14">
+      <div class="qa-photo-strip">
+        <img src="IMG_2605.JPG" class="qa-strip-img" alt="">
+        <div class="qa-strip-overlay"></div>
+        <div class="qa-strip-content">
+          <span class="qa-strip-num">Question 14</span>
+          <h3 class="qa-strip-q">What are your long-term goals for DA Tuition?</h3>
+        </div>
+      </div>
+      <div class="qa-response">
+        <p class="qa-resp-p">Our long-term goal is to grow without losing the personal touch that makes our school special. We aim to reach more students, expand programs, and stay adaptable to the evolving needs of education. But above all, our goal remains the same: to make a lasting difference in the lives of every child who walks through our doors.</p>
+        <div class="qa-resp-quote">To make a lasting difference in the lives of every child who walks through our doors.</div>
+      </div>
+    </div>
+
+    <!-- Q15 -->
+    <div class="qa-new" id="q15">
+      <div class="qa-photo-strip">
+        <img src="IMG_2671.JPG" class="qa-strip-img" alt="">
+        <div class="qa-strip-overlay"></div>
+        <div class="qa-strip-content">
+          <span class="qa-strip-num">Question 15</span>
+          <h3 class="qa-strip-q">What do you find most rewarding about leading DA?</h3>
+        </div>
+      </div>
+      <div class="qa-response">
+        <p class="qa-resp-p">If you ask our teachers, they will all say the same thing: the most rewarding part of our work is witnessing the transformation in a child's eyes when they realise they are capable, valued and supported. Watching students grow, overcome their fears, and achieve their dreams fills my heart with profound gratitude. Knowing that we've been even a small part of their journey, and that the lessons they've learned will guide them for a lifetime, is a privilege we cherish deeply.</p>
+        <p class="qa-resp-p">There are moments when I hear about our staff staying up late into the night, tirelessly helping a student prepare for an assessment. While I gently remind them to focus on teaching time management, their willingness to go the extra mile fills me with immense pride. It's not uncommon for them to set aside their own work to prioritise their students' needs. These selfless acts reflect the extraordinary love they have for their students and the genuine joy they find in making a difference.</p>
+        <p class="qa-resp-p">It's moments like these that remind me why I treasure this team so much and why this work holds such profound meaning and fulfilment for all of us.</p>
+        <div class="qa-resp-quote">The most rewarding part is witnessing the transformation in a child's eyes when they realise they are capable.</div>
+      </div>
+    </div>
+
+    <!-- Q16 -->
+    <div class="qa-new" id="q16">
+      <div class="qa-photo-strip">
+        <img src="IMG_2711.JPG" class="qa-strip-img" alt="">
+        <div class="qa-strip-overlay"></div>
+        <div class="qa-strip-content">
+          <span class="qa-strip-num">Question 16</span>
+          <h3 class="qa-strip-q">Can you share a story of a student whose life changed at DA?</h3>
+        </div>
+      </div>
+      <div class="qa-response">
+        <p class="qa-resp-p">One story that still brings me to tears is a student who came to us struggling with self-doubt and low grades. He felt defeated, like he couldn't measure up to his peers. Through consistent guidance, encouragement, and a lot of heart-to-heart conversations, we began to see a transformation. That student not only improved academically but also blossomed into a confident, motivated individual. Today, he's a specialist doctor, and his parents still write to us, thanking our team for believing in their child when it mattered most. Stories like these remind us why we do what we do.</p>
+        <div class="qa-resp-quote">Stories like these remind us why we do what we do.</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<footer class="foot">
+  <div class="foot-inner">
+    <span>DA Tuition</span>
+    <span>Sydney, NSW</span>
+  </div>
+</footer>
+
+<script>
+function openBook(){
+  var book=document.getElementById('book');
+  function scrollToFirstQuestion(delay){
+    setTimeout(function(){
+      var firstQuestion=document.querySelector('.qa-new');
+      if(firstQuestion){
+        firstQuestion.scrollIntoView({behavior:'smooth',block:'start'});
+      }
+    },delay);
+  }
+  if(book.classList.contains('opened')){
+    scrollToFirstQuestion(0);
+    return;
+  }
+  book.classList.add('opened');
+  scrollToFirstQuestion(900);
+}
+
+(function(){
+  var header = document.getElementById('iv-header');
+  var heading = document.getElementById('iv-heading');
+  var textEl = document.getElementById('iv-heading-text');
+  var cursorEl = document.getElementById('iv-heading-cursor');
+  if (!header || !heading || !textEl || !cursorEl) return;
+
+  var sequence = [
+    { el: textEl, text: heading.getAttribute('data-text') || '', speed: 48, after: function(){ heading.classList.add('underline-ready'); } },
+    { el: document.getElementById('interview-line-1'), speed: 26 },
+    { el: document.getElementById('interview-line-2a'), speed: 26 },
+    { el: document.getElementById('interview-line-2b'), speed: 26 },
+    { el: document.getElementById('interview-line-3a'), speed: 26 },
+    { el: document.getElementById('interview-line-3b'), speed: 26 },
+    { el: document.getElementById('interview-line-4a'), speed: 26 },
+    { el: document.getElementById('interview-line-4b'), speed: 26 },
+    { el: document.getElementById('interview-subtext'), speed: 22 },
+    { el: document.getElementById('interview-cta-text'), speed: 42, before: function(){
+      var cta = document.querySelector('.interview-hero-cta');
+      if (cta) cta.classList.add('is-visible');
+    } }
+  ].filter(function(item){ return item.el; });
+  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function wait(ms){
+    return new Promise(function(resolve){ setTimeout(resolve, ms); });
+  }
+
+  function typeItem(item){
+    return new Promise(function(resolve){
+      var text = item.text || item.el.getAttribute('data-text') || '';
+      if (item.before) item.before();
+      if (reduceMotion){
+        item.el.textContent = text;
+        if (item.after) item.after();
+        resolve();
+        return;
+      }
+      var i = 0;
+      function tick(){
+        item.el.textContent = text.slice(0, i);
+        if (i >= text.length){
+          if (item.after) item.after();
+          resolve();
+          return;
+        }
+        i += 1;
+        setTimeout(tick, item.speed);
+      }
+      tick();
+    });
+  }
+
+  async function typeHeading(){
+    header.classList.add('iv-play');
+
+    if (reduceMotion){
+      sequence.forEach(function(item){
+        item.el.textContent = item.text || item.el.getAttribute('data-text') || '';
+        if (item.before) item.before();
+        if (item.after) item.after();
+      });
+      cursorEl.classList.add('iv-done');
+      return;
+    }
+
+    for (var i = 0; i < sequence.length; i += 1){
+      await typeItem(sequence[i]);
+      await wait(i === 0 ? 360 : 90);
+    }
+    setTimeout(function(){ cursorEl.classList.add('iv-done'); }, 500);
+  }
+
+  if ('IntersectionObserver' in window){
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if (entry.isIntersecting){
+          typeHeading();
+          io.unobserve(heading);
+        }
+      });
+    }, { threshold: 0.4 });
+    io.observe(heading);
+  } else {
+    typeHeading();
+  }
+})();
+
+function ivToggleGroup(head){
+  var group = head.parentElement;
+  var wasOpen = group.classList.contains('open');
+  document.querySelectorAll('.iv-index-group').forEach(function(g){ g.classList.remove('open'); });
+  if (!wasOpen) group.classList.add('open');
+}
+
+function ivJumpTo(id){
+  var target = document.getElementById(id);
+  if (!target) return;
+  target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  var strip = target.querySelector('.qa-photo-strip');
+  if (strip){
+    strip.classList.add('qa-found');
+    setTimeout(function(){ strip.classList.remove('qa-found'); }, 1400);
+  }
+}
+
+(function(){
+  var strips = document.querySelectorAll('.qa-photo-strip');
+  if (!strips.length) return;
+  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduceMotion || !('IntersectionObserver' in window)) return;
+
+  strips.forEach(function(el){ el.classList.add('qa-blur-pending'); });
+
+  var io2 = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if (entry.isIntersecting){
+        entry.target.classList.add('qa-in-view');
+        io2.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.2, rootMargin: '0px 0px -60px 0px' });
+
+  strips.forEach(function(el){ io2.observe(el); });
+})();
+</script>
+</body>
+</html>
