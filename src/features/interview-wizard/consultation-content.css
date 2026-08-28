@@ -1,0 +1,35 @@
+.interview-consultation-content{position:relative;width:min(1240px,92vw);margin:0 auto;padding:56px 0 92px;color:#102a4c}
+.consultation-card{position:relative;overflow:hidden;border:1px solid rgba(202,145,61,.25);border-radius:18px;background:rgba(255,252,246,.95);box-shadow:0 7px 24px rgba(35,50,65,.08),inset 0 1px 0 rgba(255,255,255,.9)}
+.consultation-card h2{font-family:Georgia,'Times New Roman',serif;color:#112d4f;letter-spacing:-.025em}
+.consultation-card h3{color:#173250}.consultation-card p{color:#4d6178}
+.consultation-how-card{padding:34px 46px 40px;background:linear-gradient(135deg,rgba(255,253,249,.98),rgba(252,246,236,.93))}
+.consultation-how-card>h2{font-size:clamp(1.9rem,3vw,2.65rem);line-height:1.08}.consultation-how-card>h2 span{color:#ca7d16}
+.consultation-how-steps{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));margin-top:26px}
+.consultation-how-step-wrap,.consultation-after-step-wrap{position:relative;display:grid;grid-template-columns:minmax(0,1fr) 32px;align-items:start}
+.consultation-how-step-wrap:last-child,.consultation-after-step-wrap:last-child{grid-template-columns:1fr}.consultation-how-step{text-align:center}
+.consultation-icon-shell{display:grid;place-items:center;margin-inline:auto;border-radius:999px;background:rgba(255,255,255,.76);box-shadow:0 4px 15px rgba(36,54,72,.08),inset 0 0 0 1px rgba(180,143,79,.13)}
+.consultation-icon-shell--gold{width:92px;height:92px}.consultation-icon-shell img{width:68%;height:68%;object-fit:contain}
+.consultation-number{margin-top:10px!important;color:#c7831e!important;font-size:.76rem;font-weight:800}
+.consultation-how-step h3,.consultation-after-step-wrap h3{margin-top:5px;font-size:.82rem;font-weight:900;text-transform:uppercase;letter-spacing:.02em}
+.consultation-how-step>p:last-child{max-width:175px;margin:8px auto 0;font-size:.78rem;line-height:1.55}
+.consultation-arrow{align-self:start;margin-top:43px;color:#d58c22;font-family:Georgia,serif;font-size:1.6rem;line-height:1;text-align:center}
+.consultation-lower-grid{display:grid;grid-template-columns:minmax(330px,.72fr) minmax(0,1.35fr);gap:22px;margin-top:22px}
+.consultation-during-card{min-height:590px;padding:32px 32px 30px 52px;border-color:rgba(117,139,74,.22);background:linear-gradient(145deg,#fcfdf6,#f6f8ed)}
+.consultation-during-card>h2,.consultation-after-card>h2{max-width:310px;font-size:clamp(1.65rem,2.4vw,2.2rem);line-height:1.08}
+.consultation-during-card>h2 strong,.consultation-after-card>h2 strong{display:block;color:#7c9143;font-size:1.08em;font-weight:500}
+.consultation-during-steps{position:relative;z-index:2;display:grid;gap:8px;margin-top:24px}.consultation-during-steps article{position:relative;display:grid;grid-template-columns:62px 1fr;gap:14px;min-height:82px}
+.consultation-timeline-icon{position:relative;z-index:2;display:grid;width:54px;height:54px;place-items:center;border-radius:50%;background:#fff;box-shadow:0 3px 12px rgba(77,98,46,.1),inset 0 0 0 1px rgba(111,133,64,.12)}
+.consultation-timeline-icon img{width:34px;height:34px;object-fit:contain}.consultation-during-steps h3{font-size:.88rem;line-height:1.25}.consultation-during-steps p{margin-top:4px;font-size:.76rem;line-height:1.45}
+.consultation-arrow--vertical{position:absolute;top:48px;left:13px;width:28px;margin:0;transform:rotate(90deg);color:#84964b;font-size:1.4rem}
+.consultation-botanical{position:absolute;bottom:-88px;left:-105px;width:250px;height:250px;object-fit:contain;opacity:.85;pointer-events:none}
+.consultation-after-card{padding:32px 34px 24px;border-color:rgba(61,105,145,.2);background:linear-gradient(145deg,#fbfdff,#f3f8fc)}
+.consultation-after-card>h2 strong{color:#2f6798}.consultation-after-steps{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));margin-top:20px}
+.consultation-after-step-wrap article{text-align:center}.consultation-icon-shell--blue{width:72px;height:72px;border-color:rgba(47,103,152,.12)}
+.consultation-after-step-wrap .consultation-arrow{margin-top:31px;color:#6f9ab9;font-size:1.3rem}.consultation-after-step-wrap p{max-width:128px;margin:7px auto 0;font-size:.72rem;line-height:1.45}
+.consultation-reassurance{margin-top:24px;padding:18px 22px;border-radius:13px;background:linear-gradient(135deg,rgba(232,242,250,.95),rgba(243,248,252,.9));box-shadow:inset 0 1px 0 rgba(255,255,255,.9)}
+.consultation-reassurance h3{font-family:'Comic Sans MS','Bradley Hand',cursive;color:#285f91;font-size:1.18rem;font-weight:500}.consultation-reassurance h3 span{margin-right:8px;font-size:1.7rem;vertical-align:-3px}
+.consultation-reassurance ul{display:grid;gap:7px;margin-top:12px;padding:0;list-style:none}.consultation-reassurance li{position:relative;padding-left:28px;color:#435a71;font-size:.76rem;line-height:1.45}
+.consultation-reassurance li::before{content:'✓';position:absolute;left:3px;color:#2f6798;font-size:1rem;font-weight:900}
+.consultation-hand-note{margin:10px 0 0 4px!important;color:#c77b1a!important;font-family:'Comic Sans MS','Bradley Hand',cursive;font-size:1.08rem;transform:rotate(-1deg)}
+@media(max-width:980px){.consultation-how-card{padding-inline:28px}.consultation-how-steps,.consultation-after-steps{grid-template-columns:repeat(2,minmax(0,1fr));gap:24px}.consultation-how-step-wrap,.consultation-after-step-wrap{grid-template-columns:1fr}.consultation-how-step-wrap .consultation-arrow,.consultation-after-step-wrap .consultation-arrow{display:none}.consultation-lower-grid{grid-template-columns:1fr}.consultation-during-card{min-height:auto}.consultation-during-card>h2,.consultation-after-card>h2{max-width:none}}
+@media(max-width:620px){.interview-consultation-content{width:min(92vw,520px);padding:34px 0 60px}.consultation-card{border-radius:14px}.consultation-how-card,.consultation-during-card,.consultation-after-card{padding:26px 20px}.consultation-how-steps,.consultation-after-steps{grid-template-columns:1fr}.consultation-how-step-wrap,.consultation-after-step-wrap{padding-bottom:18px;border-bottom:1px dashed rgba(32,63,89,.13)}.consultation-how-step-wrap:last-child,.consultation-after-step-wrap:last-child{border-bottom:0}.consultation-how-step>p:last-child,.consultation-after-step-wrap p{max-width:280px}.consultation-during-card{padding-left:24px}.consultation-botanical{opacity:.45}.consultation-reassurance{padding:17px}}
