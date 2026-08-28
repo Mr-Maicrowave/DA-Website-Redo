@@ -3,8 +3,9 @@ import assert from 'node:assert/strict';
 import { createInitialInterviewData } from './model.ts';
 import { buildInterviewPayload } from './payload.ts';
 import { buildInterviewSummary } from './summary.ts';
+import type { InterviewFormData } from './types.ts';
 
-const yearEightData = {
+const yearEightData: InterviewFormData = {
   ...createInitialInterviewData('2026-08-28T00:00:00.000Z'),
   parentTitle: 'Ms',
   parentFirstName: 'Sarah',
@@ -28,7 +29,7 @@ const yearEightData = {
   parentConcerns: ['capable-of-more', 'needs-better-study-habits'],
   goals: ['higher-school-marks', 'more-confidence', 'greater-independence'],
   learningChallenges: ['rushes', 'difficulty-applying-knowledge-in-tests'],
-  preferredFormats: ['not-sure'] as const,
+  preferredFormats: ['not-sure'],
   tutorPreferences: ['calm-and-structured', 'strong-at-organisation'],
   parentConcernNotes: 'Emma understands the work at home but loses marks in exams.',
 };
