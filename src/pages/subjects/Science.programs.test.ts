@@ -67,3 +67,13 @@ test('pushes each specimen through its own focal point between scale stages', ()
   assert.match(source, /\[1, 1\.03, 2\.35\]/);
   assert.match(source, /\[\.48, 1, 1\.03, 2\.35\]/);
 });
+
+test('keeps the desktop scale-story introduction and specimen readout in one centred left rail', () => {
+  const source = readFileSync(pageUrl, 'utf8');
+
+  assert.match(source, /science-scale-story__intro/);
+  assert.match(source, /science-scale-story__readout/);
+  assert.match(source, /xl:left-\[calc\(50%-38\.5rem\)\][^\"]*xl:w-64/);
+  assert.doesNotMatch(source, /science-scale-story__intro[^\n]*xl:-translate-x-/);
+  assert.match(source, /xl:top-\[calc\(50%\+12rem\)\]/);
+});
