@@ -22,6 +22,15 @@ test('provides play pause and seek controls for the homepage video', () => {
   assert.match(source, /type="range"/);
 });
 
+test('starts the homepage video with sound available by default and lets visitors mute it', () => {
+  const source = readFileSync(indexUrl, 'utf8');
+
+  assert.match(source, /const \[isMuted, setIsMuted\] = useState\(false\)/);
+  assert.match(source, /video\.muted = false;[\s\S]*video\.play\(\)\.catch\(\(\) => \{[\s\S]*video\.muted = true;[\s\S]*setIsMuted\(true\);/);
+  assert.match(source, /aria-label=\{isMuted \? 'Turn video sound on' : 'Mute video'\}/);
+  assert.match(source, /<span>\{isMuted \? 'Sound on' : 'Mute'\}<\/span>/);
+});
+
 test('holds supporting portraits at full strength through the navy scene and withholds scrub controls until the video fills its frame', () => {
   const source = readFileSync(indexUrl, 'utf8');
 

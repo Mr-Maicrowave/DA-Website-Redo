@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import SEO from '@/components/SEO';
@@ -29,7 +29,7 @@ import {
 } from 'lucide-react';
 import { siteStats } from '@/data/site-stats';
 import { faqPageSchema } from '@/lib/seo/schema';
-import { filterFaqItems } from './faq-content';
+import { filterFaqItems, paginateFaqItems } from './faq-content';
 
 type CategoryId = 'all' | 'start' | 'programs' | 'fees' | 'classes' | 'teachers' | 'results' | 'safety';
 
@@ -329,11 +329,49 @@ const starterSearches = [
   { label: 'Student progress', question: 'How do parents know if their child is improving?' },
 ];
 
+const FAQAccordionList = ({ items, value, onValueChange }: {
+  items: FAQItem[];
+  value?: string;
+  onValueChange: (value: string) => void;
+}) => (
+  <Accordion type="single" collapsible value={value} onValueChange={onValueChange} className="overflow-hidden rounded-2xl border border-[#b78a3a]/25 bg-white">
+    {items.map((faq) => (
+      <AccordionItem key={`${faq.category}-${faq.question}`} value={faq.question} className="border-[#0b203a]/10 px-4 last:border-b-0 sm:px-5">
+        <AccordionTrigger className="group gap-4 py-4 text-left hover:no-underline sm:py-5">
+          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[#b78a3a]/45 text-[#b78a3a]">
+            <Plus className="h-4 w-4 group-data-[state=open]:hidden" />
+            <Minus className="hidden h-4 w-4 group-data-[state=open]:block" />
+          </span>
+          <span className="pr-2 font-serif text-lg font-medium leading-7 text-[#0b203a] sm:text-xl">{faq.question}</span>
+        </AccordionTrigger>
+        <AccordionContent className="pb-6 pl-12 text-[#0b203a]/76">
+          <div className="max-w-2xl space-y-4 text-base leading-8">
+            {faq.answer}
+            {faq.links && (
+              <div className="flex flex-wrap gap-2 pt-1">
+                {faq.links.map((link) => (
+                  <Link key={link.href} to={link.href} className="inline-flex items-center gap-1.5 rounded-full bg-[#f3eadb] px-3 py-2 text-sm font-bold text-[#0b203a] transition hover:bg-[#e7d2a4] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#b78a3a]">
+                    {link.label}<ArrowRight className="h-3.5 w-3.5" />
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
+        </AccordionContent>
+      </AccordionItem>
+    ))}
+  </Accordion>
+);
+
 const FAQ = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<CategoryId>('all');
+  const [mostAskedQuestion, setMostAskedQuestion] = useState<string | undefined>(popularFAQs[0]?.question);
+  const [allQuestionsQuestion, setAllQuestionsQuestion] = useState<string>();
+  const [currentPage, setCurrentPage] = useState(1);
   const [openQuestion, setOpenQuestion] = useState<string>();
   const [showAllQuestions, setShowAllQuestions] = useState(false);
+  const allQuestionsRef = useRef<HTMLElement>(null);
   const showLegacyFaq = window.location.hash === '#legacy-faq';
 
   const filteredFAQs = useMemo(
@@ -341,21 +379,41 @@ const FAQ = () => {
     [searchTerm, selectedCategory],
   );
 
+  const selectedCategoryLabel = categoryById.get(selectedCategory)?.label ?? 'All questions';
   const quickAnswer = searchTerm.trim() ? filteredFAQs[0] : undefined;
   const visibleFAQs = searchTerm || selectedCategory !== 'all' || showAllQuestions ? filteredFAQs : filteredFAQs.slice(0, 5);
-  const selectedCategoryLabel = categoryById.get(selectedCategory)?.label ?? 'All questions';
   const activeAccordionValue = openQuestion ?? filteredFAQs[0]?.question;
+  const mostAsked = (selectedCategory === 'all' ? popularFAQs : popularFAQs.filter((faq) => faq.category === selectedCategory)).slice(0, 4);
+  const paginatedFAQs = paginateFaqItems(filteredFAQs, currentPage, 10);
+  const paginationItems: Array<number | 'ellipsis-left' | 'ellipsis-right'> = paginatedFAQs.pageCount <= 7
+    ? Array.from({ length: paginatedFAQs.pageCount }, (_, index) => index + 1)
+    : paginatedFAQs.currentPage <= 4
+      ? [1, 2, 3, 4, 'ellipsis-right', paginatedFAQs.pageCount]
+      : paginatedFAQs.currentPage >= paginatedFAQs.pageCount - 3
+        ? [1, 'ellipsis-left', paginatedFAQs.pageCount - 3, paginatedFAQs.pageCount - 2, paginatedFAQs.pageCount - 1, paginatedFAQs.pageCount]
+        : [1, 'ellipsis-left', paginatedFAQs.currentPage - 1, paginatedFAQs.currentPage, paginatedFAQs.currentPage + 1, 'ellipsis-right', paginatedFAQs.pageCount];
+
+  const selectCategory = (category: CategoryId) => {
+    setSelectedCategory(category);
+    setSearchTerm('');
+    setMostAskedQuestion(category === 'all' ? popularFAQs[0]?.question : undefined);
+    setAllQuestionsQuestion(undefined);
+    setCurrentPage(1);
+  };
+
+  const changePage = (page: number) => {
+    setCurrentPage(page);
+    setAllQuestionsQuestion(undefined);
+    window.setTimeout(() => {
+      allQuestionsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      allQuestionsRef.current?.focus({ preventScroll: true });
+    }, 0);
+  };
+
   const openAnswer = (faq: FAQItem) => {
     setSelectedCategory(faq.category);
     setSearchTerm('');
     setOpenQuestion(faq.question);
-    window.setTimeout(() => {
-      const popularQuestions = document.getElementById('popular-questions');
-      if (!popularQuestions) return;
-      const pagePosition = window.scrollY + popularQuestions.getBoundingClientRect().top;
-      const visibleOffset = Math.min(160, Math.round(window.innerHeight * 0.16));
-      window.scrollTo({ top: Math.max(0, pagePosition - visibleOffset), behavior: 'smooth' });
-    }, 0);
   };
 
   const revealQuickAnswer = () => {
@@ -372,133 +430,73 @@ const FAQ = () => {
       />
       <NavigationNew />
 
-      <main>
-        <section className="relative overflow-hidden border-b border-[#b78a3a]/15 bg-[#f8f3eb]">
-          <div className="absolute -left-16 bottom-3 h-px w-64 rotate-[10deg] bg-[#b78a3a]/45" aria-hidden="true" />
-          <div className="absolute -left-12 bottom-8 h-px w-56 rotate-[-3deg] bg-[#b78a3a]/25" aria-hidden="true" />
-          <div className="mx-auto grid max-w-7xl lg:grid-cols-[minmax(0,.9fr)_minmax(0,1.1fr)] lg:items-stretch">
-            <div className="order-2 flex items-center px-5 pb-14 pt-10 sm:px-8 lg:order-1 lg:px-10 lg:py-20 xl:px-14">
-              <div className="max-w-xl">
-                <h1 className="font-serif text-[clamp(3.25rem,6.7vw,6.6rem)] font-medium leading-[.9] tracking-[-0.04em] text-[#0b203a]">
-                  You ask.<span className="block text-[#b78a3a]">We answer.</span>
-                </h1>
-                <p className="mt-7 max-w-md text-base leading-7 text-[#0b203a]/75 sm:text-lg sm:leading-8">
-                  Clear, honest answers about classes, fees, teachers, progress and finding the right place to begin.
-                </p>
-                <label className="mt-8 flex h-14 max-w-xl items-center rounded-full bg-white px-5 shadow-[0_12px_32px_rgba(11,32,58,.10)] ring-1 ring-[#b78a3a]/15 transition focus-within:ring-2 focus-within:ring-[#b78a3a]">
-                  <Search className="h-5 w-5 shrink-0 text-[#0b203a]" aria-hidden="true" />
-                  <span className="sr-only">Search frequently asked questions</span>
-                  <input
-                    type="search"
-                    placeholder="Search any question..."
-                    value={searchTerm}
-                    onChange={(event) => {
-                      setSearchTerm(event.target.value);
-                      setSelectedCategory('all');
-                      setOpenQuestion(undefined);
-                    }}
-                    className="min-w-0 flex-1 bg-transparent px-4 text-base text-[#0b203a] outline-none placeholder:text-[#0b203a]/45"
-                  />
-                  {searchTerm ? (
-                    <button type="button" onClick={() => setSearchTerm('')} className="text-sm font-semibold text-[#0b203a]/65 hover:text-[#0b203a]">Clear</button>
-                  ) : (
-                    <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#c3994b] text-[#0b203a]" aria-hidden="true"><ArrowRight className="h-4 w-4" /></span>
-                  )}
-                </label>
-              </div>
+      <main className="bg-[#f8f3eb] px-4 py-8 sm:px-6 sm:py-12 lg:px-8 lg:py-16">
+        <div className="mx-auto grid max-w-[1600px] gap-6 lg:grid-cols-[300px_minmax(0,1fr)_340px] lg:items-start">
+          <aside className="rounded-[1.5rem] bg-white p-5 shadow-[0_14px_38px_rgba(11,32,58,.07)] ring-1 ring-[#b78a3a]/10 lg:sticky lg:top-24 lg:p-7" aria-label="FAQ topics">
+            <h2 className="font-serif text-[1.8rem] font-medium text-[#0b203a]">Browse topics</h2>
+            <div className="mt-4 -mx-1 flex gap-2 overflow-x-auto px-1 pb-2 lg:mx-0 lg:block lg:space-y-1 lg:overflow-visible lg:px-0 lg:pb-0">
+              {categories.map((category) => {
+                const Icon = category.icon;
+                const active = selectedCategory === category.id;
+                return <button key={category.id} type="button" aria-current={active ? 'page' : undefined} onClick={() => selectCategory(category.id)} className={`flex shrink-0 items-center gap-3 rounded-xl px-3 py-3 text-left text-sm transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#b78a3a] lg:w-full ${active ? 'bg-[#f3eadb] font-bold text-[#0b203a]' : 'text-[#0b203a]/72 hover:bg-[#f8f3eb] hover:text-[#0b203a]'}`}>
+                  <Icon className="h-[19px] w-[19px] shrink-0 text-[#b78a3a]" aria-hidden="true" />
+                  <span className="whitespace-nowrap lg:whitespace-normal">{category.label}</span>
+                  <span className="ml-auto text-xs font-medium text-[#0b203a]/55">{categoryCounts[category.id]}</span>
+                </button>;
+              })}
             </div>
-
-            <div className="order-1 min-h-[300px] sm:min-h-[390px] lg:order-2 lg:min-h-[500px]">
-              <img
-                src="/images/faq/faq-tutor-hero-placeholder.png"
-                alt="Temporary placeholder showing a tutor listening to a student"
-                className="h-full w-full object-cover object-center"
-              />
+            <div className="mt-6 border-t border-[#0b203a]/10 pt-5">
+              <p className="font-serif text-lg text-[#0b203a]">Need help finding the right answer?</p>
+              <p className="mt-2 text-sm leading-6 text-[#0b203a]/65">Start with the most asked questions or choose a topic.</p>
             </div>
-          </div>
-        </section>
+          </aside>
 
-        <section id="faq-questions" className="scroll-mt-24 px-4 py-8 sm:px-6 lg:px-8 lg:py-12">
-          <div className="mx-auto grid max-w-7xl gap-5 lg:grid-cols-[245px_minmax(0,1fr)_310px] lg:items-start">
-            <aside className="rounded-2xl bg-white p-5 shadow-[0_12px_32px_rgba(11,32,58,.07)] ring-1 ring-[#b78a3a]/10 lg:sticky lg:top-24" aria-label="FAQ topics">
-              <h2 className="font-serif text-xl font-medium text-[#0b203a]">Browse categories</h2>
-              <div className="mt-4 -mx-1 flex gap-2 overflow-x-auto px-1 pb-2 lg:mx-0 lg:block lg:space-y-1 lg:overflow-visible lg:px-0 lg:pb-0">
-                {categories.map((category) => {
-                  const Icon = category.icon;
-                  const active = selectedCategory === category.id;
-                  return (
-                    <button
-                      key={category.id}
-                      type="button"
-                      aria-pressed={active}
-                      onClick={() => { setSelectedCategory(category.id); setSearchTerm(''); setOpenQuestion(undefined); }}
-                      className={`flex shrink-0 items-center gap-3 rounded-xl px-3 py-3 text-left text-sm transition lg:w-full ${active ? 'bg-[#f3eadb] font-bold text-[#0b203a]' : 'text-[#0b203a]/72 hover:bg-[#f8f3eb] hover:text-[#0b203a]'}`}
-                    >
-                      <Icon className="h-[18px] w-[18px] shrink-0 text-[#b78a3a]" />
-                      <span className="whitespace-nowrap lg:whitespace-normal">{category.label}</span>
-                      <span className="ml-auto text-xs font-medium text-[#0b203a]/55">{categoryCounts[category.id]}</span>
-                    </button>
-                  );
-                })}
-              </div>
-              <div className="mt-5 border-t border-[#0b203a]/10 pt-5">
-                <p className="text-sm font-semibold text-[#0b203a]">Still have a question?</p>
-                <p className="mt-1 text-sm leading-6 text-[#0b203a]/65">Our team is here to help.</p>
-                <Link to="/contact" className="mt-4 inline-flex items-center gap-2 rounded-full border border-[#b78a3a]/45 px-4 py-2.5 text-sm font-bold text-[#0b203a] transition hover:bg-[#f3eadb]">
-                  Contact our team <ArrowRight className="h-4 w-4" />
-                </Link>
-              </div>
-            </aside>
-
-            <section className="rounded-2xl bg-white p-5 shadow-[0_12px_32px_rgba(11,32,58,.07)] ring-1 ring-[#b78a3a]/10 sm:p-7">
-              <div className="mb-5 flex items-end justify-between gap-4">
+          <section className="min-w-0 rounded-[1.5rem] bg-white p-5 shadow-[0_14px_38px_rgba(11,32,58,.07)] ring-1 ring-[#b78a3a]/10 sm:p-8 lg:p-10">
+            <header className="border-b border-[#0b203a]/12 pb-6">
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
                 <div>
-                  <p className="text-sm font-semibold text-[#b78a3a]">{searchTerm ? `Results for “${searchTerm}”` : selectedCategoryLabel}</p>
-                  <h2 className="mt-1 font-serif text-3xl font-medium tracking-[-0.03em] text-[#0b203a]">Questions and answers</h2>
+                  <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#b78a3a]">{searchTerm ? `Results for “${searchTerm}”` : selectedCategoryLabel}</p>
+                  <h1 className="mt-2 font-serif text-[clamp(2.3rem,4vw,3.8rem)] font-medium leading-[.96] tracking-[-0.04em] text-[#0b203a]">Questions and answers</h1>
                 </div>
-                <span className="shrink-0 text-xs font-semibold uppercase tracking-[0.12em] text-[#0b203a]/48">{filteredFAQs.length} questions</span>
+                <span className="shrink-0 text-sm font-semibold text-[#0b203a]/80">Browse {filteredFAQs.length} answer{filteredFAQs.length === 1 ? '' : 's'}</span>
               </div>
+              <p className="mt-4 max-w-2xl text-sm leading-6 text-[#0b203a]/68 sm:text-base">Start with the most common questions or browse the full library.</p>
+              <label className="mt-6 flex h-12 items-center rounded-xl border border-[#0b203a]/12 bg-[#fffdf8] px-4 focus-within:ring-2 focus-within:ring-[#b78a3a]">
+                <Search className="h-4 w-4 shrink-0 text-[#b78a3a]" aria-hidden="true" />
+                <span className="sr-only">Search frequently asked questions</span>
+                <input type="search" placeholder="Search answers, for example “class size”" value={searchTerm} onChange={(event) => { setSearchTerm(event.target.value); setSelectedCategory('all'); setCurrentPage(1); setMostAskedQuestion(undefined); setAllQuestionsQuestion(undefined); }} className="min-w-0 flex-1 bg-transparent px-3 text-sm text-[#0b203a] outline-none placeholder:text-[#0b203a]/45 sm:text-base" />
+                {searchTerm && <button type="button" onClick={() => { setSearchTerm(''); setCurrentPage(1); }} className="text-sm font-bold text-[#0b203a]/65 hover:text-[#b78a3a]">Clear</button>}
+              </label>
+            </header>
 
-              {filteredFAQs.length ? (
-                <Accordion type="single" collapsible value={activeAccordionValue} onValueChange={setOpenQuestion} className="border-t border-[#0b203a]/10">
-                  {filteredFAQs.map((faq) => (
-                    <AccordionItem key={`${faq.category}-${faq.question}`} value={faq.question} className="border-[#0b203a]/10">
-                      <AccordionTrigger className="group gap-4 py-5 text-left hover:no-underline">
-                        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[#b78a3a]/45 text-[#b78a3a]">
-                          <Plus className="h-4 w-4 group-data-[state=open]:hidden" />
-                          <Minus className="hidden h-4 w-4 group-data-[state=open]:block" />
-                        </span>
-                        <span className="pr-2 font-serif text-lg font-medium leading-7 text-[#0b203a] sm:text-xl">{faq.question}</span>
-                      </AccordionTrigger>
-                      <AccordionContent className="pb-6 pl-12 text-[#0b203a]/76">
-                        <div className="max-w-2xl space-y-4 text-base leading-8">
-                          {faq.answer}
-                          {faq.links && <div className="flex flex-wrap gap-2 pt-1">{faq.links.map((link) => <Link key={link.href} to={link.href} className="inline-flex items-center gap-1.5 rounded-full bg-[#f3eadb] px-3 py-2 text-sm font-bold text-[#0b203a] transition hover:bg-[#e7d2a4]">{link.label}<ArrowRight className="h-3.5 w-3.5" /></Link>)}</div>}
-                        </div>
-                      </AccordionContent>
-                    </AccordionItem>
-                  ))}
-                </Accordion>
-              ) : (
-                <div className="border-t border-[#0b203a]/10 py-12 text-center">
-                  <HelpCircle className="mx-auto h-8 w-8 text-[#b78a3a]" />
-                  <h3 className="mt-4 font-serif text-2xl text-[#0b203a]">We could not find that question.</h3>
-                  <p className="mx-auto mt-2 max-w-md leading-7 text-[#0b203a]/65">Try “fees”, “HSC”, “teachers” or “class size”, or contact our team directly.</p>
-                  <button type="button" onClick={() => { setSearchTerm(''); setSelectedCategory('all'); }} className="mt-5 font-bold text-[#b78a3a] hover:text-[#0b203a]">Clear search</button>
-                </div>
-              )}
+            {!searchTerm && mostAsked.length > 0 && <section className="mt-7" aria-labelledby="most-asked-heading">
+              <h2 id="most-asked-heading" className="font-serif text-2xl font-medium text-[#0b203a]">Most asked</h2>
+              <div className="mt-3"><FAQAccordionList items={mostAsked} value={mostAskedQuestion} onValueChange={setMostAskedQuestion} /></div>
+            </section>}
+
+            <section ref={allQuestionsRef} tabIndex={-1} className="mt-9 scroll-mt-28 outline-none" aria-labelledby="all-questions-heading">
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+                <div><h2 id="all-questions-heading" className="font-serif text-2xl font-medium text-[#0b203a]">All questions</h2><p className="mt-1 text-sm text-[#0b203a]/62">{filteredFAQs.length ? `Showing ${paginatedFAQs.start}–${paginatedFAQs.end} of ${filteredFAQs.length} questions` : 'No matching questions'}</p></div>
+                {selectedCategory !== 'all' && <button type="button" onClick={() => selectCategory('all')} className="self-start text-sm font-bold text-[#b78a3a] hover:text-[#0b203a] sm:self-auto">View all topics</button>}
+              </div>
+              <div className="mt-4">
+                {filteredFAQs.length ? <FAQAccordionList items={paginatedFAQs.items} value={allQuestionsQuestion} onValueChange={setAllQuestionsQuestion} /> : <div className="rounded-2xl border border-dashed border-[#b78a3a]/35 bg-[#fffdf8] px-6 py-10 text-center"><HelpCircle className="mx-auto h-8 w-8 text-[#b78a3a]" /><h3 className="mt-4 font-serif text-2xl text-[#0b203a]">We could not find that question.</h3><p className="mx-auto mt-2 max-w-md text-sm leading-6 text-[#0b203a]/65">Try “fees”, “HSC”, “teachers” or “class size”.</p><button type="button" onClick={() => { setSearchTerm(''); setSelectedCategory('all'); setCurrentPage(1); }} className="mt-5 text-sm font-bold text-[#b78a3a] hover:text-[#0b203a]">Clear search</button></div>}
+              </div>
+              {paginatedFAQs.pageCount > 1 && <nav className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-[#0b203a]/10 pt-5" aria-label="FAQ pagination">
+                <button type="button" disabled={paginatedFAQs.currentPage === 1} onClick={() => changePage(paginatedFAQs.currentPage - 1)} className="text-sm font-bold text-[#0b203a] disabled:cursor-not-allowed disabled:opacity-35 hover:text-[#b78a3a]">← Previous</button>
+                <div className="hidden items-center gap-1 sm:flex">{paginationItems.map((item) => typeof item === 'number' ? <button key={item} type="button" aria-current={item === paginatedFAQs.currentPage ? 'page' : undefined} onClick={() => changePage(item)} className={`h-9 min-w-9 rounded-lg px-2 text-sm font-bold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#b78a3a] ${item === paginatedFAQs.currentPage ? 'bg-[#0b203a] text-white' : 'text-[#0b203a]/65 hover:bg-[#f3eadb] hover:text-[#0b203a]'}`}>{item}</button> : <span key={item} className="px-1 text-sm text-[#0b203a]/45" aria-hidden="true">…</span>)}</div>
+                <span className="text-sm font-semibold text-[#0b203a]/60 sm:hidden">Page {paginatedFAQs.currentPage} of {paginatedFAQs.pageCount}</span>
+                <button type="button" disabled={paginatedFAQs.currentPage === paginatedFAQs.pageCount} onClick={() => changePage(paginatedFAQs.currentPage + 1)} className="text-sm font-bold text-[#0b203a] disabled:cursor-not-allowed disabled:opacity-35 hover:text-[#b78a3a]">Next →</button>
+              </nav>}
+              {paginatedFAQs.pageCount > 1 && <p className="mt-4 text-center text-xs font-medium text-[#0b203a]/50">Page {paginatedFAQs.currentPage} of {paginatedFAQs.pageCount} · {filteredFAQs.length} questions</p>}
             </section>
+          </section>
 
-            <aside className="overflow-hidden rounded-2xl bg-white shadow-[0_12px_32px_rgba(11,32,58,.07)] ring-1 ring-[#b78a3a]/10 lg:sticky lg:top-24">
-              <img src="/images/faq/faq-human-answer-focus-with-tables.png" alt="A DA Tuition tutor and student working together" className="h-48 w-full object-cover" />
-              <div className="p-6">
-                <h2 className="font-serif text-3xl font-medium leading-[1.05] tracking-[-0.035em] text-[#0b203a]">Still have a question?<span className="block text-[#b78a3a]">We’re here to help.</span></h2>
-                <p className="mt-4 text-sm leading-6 text-[#0b203a]/72">Sometimes it is easier to talk. Tell us what is on your mind and we will help you find the right next step.</p>
-                <Link to="/contact" className="mt-6 flex items-center justify-between rounded-full bg-[#0b203a] px-5 py-3 text-sm font-bold text-white transition hover:bg-[#b78a3a] hover:text-[#0b203a]">Contact us <ChevronRight className="h-4 w-4" /></Link>
-              </div>
-            </aside>
-          </div>
-        </section>
+          <aside className="overflow-hidden rounded-[1.5rem] bg-white shadow-[0_14px_38px_rgba(11,32,58,.07)] ring-1 ring-[#b78a3a]/10 lg:sticky lg:top-24">
+            <img src="/images/faq/faq-human-answer-focus-with-tables.png" alt="A DA Tuition tutor and student working together" className="h-52 w-full object-cover" />
+            <div className="p-6 lg:p-7"><h2 className="font-serif text-[2.1rem] font-medium leading-[1.02] tracking-[-0.04em] text-[#0b203a]">Still have a question?<span className="mt-1 block text-[#b78a3a]">We’re here to help.</span></h2><p className="mt-5 text-sm leading-7 text-[#0b203a]/72">Sometimes it is easier to talk. Tell us what is on your mind and we will help you find the right next step.</p><Link to="/contact" className="mt-6 flex items-center justify-between rounded-full bg-[#0b203a] px-5 py-3.5 text-sm font-bold text-white transition hover:bg-[#b78a3a] hover:text-[#0b203a] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#b78a3a]">Contact us <ChevronRight className="h-4 w-4" /></Link><div className="mt-7 space-y-4 border-t border-[#0b203a]/10 pt-5 text-sm"><p className="flex gap-3"><HelpCircle className="h-5 w-5 shrink-0 text-[#b78a3a]" aria-hidden="true" /><span><strong className="block text-[#0b203a]">Quick responses</strong><span className="text-[#0b203a]/62">We aim to reply within one business day.</span></span></p><p className="flex gap-3"><Users className="h-5 w-5 shrink-0 text-[#b78a3a]" aria-hidden="true" /><span><strong className="block text-[#0b203a]">Real people, real help</strong><span className="text-[#0b203a]/62">Speak with our friendly team.</span></span></p><p className="flex gap-3"><Shield className="h-5 w-5 shrink-0 text-[#b78a3a]" aria-hidden="true" /><span><strong className="block text-[#0b203a]">Your information is safe</strong><span className="text-[#0b203a]/62">We respect your privacy.</span></span></p></div></div>
+          </aside>
+        </div>
       </main>
       <FooterNew />
     </div>
