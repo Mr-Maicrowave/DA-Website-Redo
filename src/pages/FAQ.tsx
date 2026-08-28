@@ -12,11 +12,14 @@ import {
   BookOpen,
   CheckCircle2,
   Clock,
+  ChevronRight,
   DoorOpen,
   DollarSign,
   HelpCircle,
   MapPin,
+  Minus,
   Phone,
+  Plus,
   School,
   Search,
   Shield,
@@ -26,6 +29,7 @@ import {
 } from 'lucide-react';
 import { siteStats } from '@/data/site-stats';
 import { faqPageSchema } from '@/lib/seo/schema';
+import { filterFaqItems } from './faq-content';
 
 type CategoryId = 'all' | 'start' | 'programs' | 'fees' | 'classes' | 'teachers' | 'results' | 'safety';
 
@@ -41,7 +45,6 @@ type FAQItem = {
 
 const inlineLink = 'font-semibold text-brand-navy underline decoration-brand-gold/60 underline-offset-4 hover:text-brand-gold';
 const easeOut = [0.16, 1, 0.3, 1] as const;
-
 const categories: Array<{ id: CategoryId; label: string; shortLabel: string; icon: React.ElementType }> = [
   { id: 'all', label: 'All questions', shortLabel: 'All', icon: HelpCircle },
   { id: 'start', label: 'Starting at DA', shortLabel: 'Start', icon: School },
@@ -333,27 +336,15 @@ const FAQ = () => {
   const [showAllQuestions, setShowAllQuestions] = useState(false);
   const showLegacyFaq = window.location.hash === '#legacy-faq';
 
-  const filteredFAQs = useMemo(() => {
-    const query = searchTerm.trim().toLowerCase();
-
-    return faqs.filter((faq) => {
-      const category = categoryById.get(faq.category);
-      const matchesCategory = selectedCategory === 'all' || faq.category === selectedCategory;
-      const haystack = [
-        faq.question,
-        faq.schemaAnswer,
-        category?.label,
-        ...faq.keywords,
-      ].join(' ').toLowerCase();
-
-      return matchesCategory && (!query || haystack.includes(query));
-    });
-  }, [searchTerm, selectedCategory]);
+  const filteredFAQs = useMemo(
+    () => filterFaqItems(faqs, selectedCategory, searchTerm),
+    [searchTerm, selectedCategory],
+  );
 
   const quickAnswer = searchTerm.trim() ? filteredFAQs[0] : undefined;
   const visibleFAQs = searchTerm || selectedCategory !== 'all' || showAllQuestions ? filteredFAQs : filteredFAQs.slice(0, 5);
   const selectedCategoryLabel = categoryById.get(selectedCategory)?.label ?? 'All questions';
-  const activeAccordionValue = openQuestion ?? (filteredFAQs.length === 1 ? filteredFAQs[0].question : undefined);
+  const activeAccordionValue = openQuestion ?? filteredFAQs[0]?.question;
   const openAnswer = (faq: FAQItem) => {
     setSelectedCategory(faq.category);
     setSearchTerm('');
@@ -370,6 +361,148 @@ const FAQ = () => {
   const revealQuickAnswer = () => {
     window.setTimeout(() => document.getElementById('quick-answer')?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 0);
   };
+
+  return (
+    <div className="min-h-screen bg-[#f8f3eb] text-[#0b203a]">
+      <SEO
+        title="Frequently Asked Questions"
+        description="Clear answers about DA Tuition programs, fees, class sizes, teachers, results, safety, and how to book an interview."
+        canonicalUrl="/faq"
+        jsonLd={faqPageSchema(faqs.map(({ question, schemaAnswer }) => ({ question, answer: schemaAnswer })))}
+      />
+      <NavigationNew />
+
+      <main>
+        <section className="relative overflow-hidden border-b border-[#b78a3a]/15 bg-[#f8f3eb]">
+          <div className="absolute -left-16 bottom-3 h-px w-64 rotate-[10deg] bg-[#b78a3a]/45" aria-hidden="true" />
+          <div className="absolute -left-12 bottom-8 h-px w-56 rotate-[-3deg] bg-[#b78a3a]/25" aria-hidden="true" />
+          <div className="mx-auto grid max-w-7xl lg:grid-cols-[minmax(0,.9fr)_minmax(0,1.1fr)] lg:items-stretch">
+            <div className="order-2 flex items-center px-5 pb-14 pt-10 sm:px-8 lg:order-1 lg:px-10 lg:py-20 xl:px-14">
+              <div className="max-w-xl">
+                <h1 className="font-serif text-[clamp(3.25rem,6.7vw,6.6rem)] font-medium leading-[.9] tracking-[-0.04em] text-[#0b203a]">
+                  You ask.<span className="block text-[#b78a3a]">We answer.</span>
+                </h1>
+                <p className="mt-7 max-w-md text-base leading-7 text-[#0b203a]/75 sm:text-lg sm:leading-8">
+                  Clear, honest answers about classes, fees, teachers, progress and finding the right place to begin.
+                </p>
+                <label className="mt-8 flex h-14 max-w-xl items-center rounded-full bg-white px-5 shadow-[0_12px_32px_rgba(11,32,58,.10)] ring-1 ring-[#b78a3a]/15 transition focus-within:ring-2 focus-within:ring-[#b78a3a]">
+                  <Search className="h-5 w-5 shrink-0 text-[#0b203a]" aria-hidden="true" />
+                  <span className="sr-only">Search frequently asked questions</span>
+                  <input
+                    type="search"
+                    placeholder="Search any question..."
+                    value={searchTerm}
+                    onChange={(event) => {
+                      setSearchTerm(event.target.value);
+                      setSelectedCategory('all');
+                      setOpenQuestion(undefined);
+                    }}
+                    className="min-w-0 flex-1 bg-transparent px-4 text-base text-[#0b203a] outline-none placeholder:text-[#0b203a]/45"
+                  />
+                  {searchTerm ? (
+                    <button type="button" onClick={() => setSearchTerm('')} className="text-sm font-semibold text-[#0b203a]/65 hover:text-[#0b203a]">Clear</button>
+                  ) : (
+                    <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#c3994b] text-[#0b203a]" aria-hidden="true"><ArrowRight className="h-4 w-4" /></span>
+                  )}
+                </label>
+              </div>
+            </div>
+
+            <div className="order-1 min-h-[300px] sm:min-h-[390px] lg:order-2 lg:min-h-[500px]">
+              <img
+                src="/images/faq/faq-tutor-hero-placeholder.png"
+                alt="Temporary placeholder showing a tutor listening to a student"
+                className="h-full w-full object-cover object-center"
+              />
+            </div>
+          </div>
+        </section>
+
+        <section id="faq-questions" className="scroll-mt-24 px-4 py-8 sm:px-6 lg:px-8 lg:py-12">
+          <div className="mx-auto grid max-w-7xl gap-5 lg:grid-cols-[245px_minmax(0,1fr)_310px] lg:items-start">
+            <aside className="rounded-2xl bg-white p-5 shadow-[0_12px_32px_rgba(11,32,58,.07)] ring-1 ring-[#b78a3a]/10 lg:sticky lg:top-24" aria-label="FAQ topics">
+              <h2 className="font-serif text-xl font-medium text-[#0b203a]">Browse categories</h2>
+              <div className="mt-4 -mx-1 flex gap-2 overflow-x-auto px-1 pb-2 lg:mx-0 lg:block lg:space-y-1 lg:overflow-visible lg:px-0 lg:pb-0">
+                {categories.map((category) => {
+                  const Icon = category.icon;
+                  const active = selectedCategory === category.id;
+                  return (
+                    <button
+                      key={category.id}
+                      type="button"
+                      aria-pressed={active}
+                      onClick={() => { setSelectedCategory(category.id); setSearchTerm(''); setOpenQuestion(undefined); }}
+                      className={`flex shrink-0 items-center gap-3 rounded-xl px-3 py-3 text-left text-sm transition lg:w-full ${active ? 'bg-[#f3eadb] font-bold text-[#0b203a]' : 'text-[#0b203a]/72 hover:bg-[#f8f3eb] hover:text-[#0b203a]'}`}
+                    >
+                      <Icon className="h-[18px] w-[18px] shrink-0 text-[#b78a3a]" />
+                      <span className="whitespace-nowrap lg:whitespace-normal">{category.label}</span>
+                      <span className="ml-auto text-xs font-medium text-[#0b203a]/55">{categoryCounts[category.id]}</span>
+                    </button>
+                  );
+                })}
+              </div>
+              <div className="mt-5 border-t border-[#0b203a]/10 pt-5">
+                <p className="text-sm font-semibold text-[#0b203a]">Still have a question?</p>
+                <p className="mt-1 text-sm leading-6 text-[#0b203a]/65">Our team is here to help.</p>
+                <Link to="/contact" className="mt-4 inline-flex items-center gap-2 rounded-full border border-[#b78a3a]/45 px-4 py-2.5 text-sm font-bold text-[#0b203a] transition hover:bg-[#f3eadb]">
+                  Contact our team <ArrowRight className="h-4 w-4" />
+                </Link>
+              </div>
+            </aside>
+
+            <section className="rounded-2xl bg-white p-5 shadow-[0_12px_32px_rgba(11,32,58,.07)] ring-1 ring-[#b78a3a]/10 sm:p-7">
+              <div className="mb-5 flex items-end justify-between gap-4">
+                <div>
+                  <p className="text-sm font-semibold text-[#b78a3a]">{searchTerm ? `Results for “${searchTerm}”` : selectedCategoryLabel}</p>
+                  <h2 className="mt-1 font-serif text-3xl font-medium tracking-[-0.03em] text-[#0b203a]">Questions and answers</h2>
+                </div>
+                <span className="shrink-0 text-xs font-semibold uppercase tracking-[0.12em] text-[#0b203a]/48">{filteredFAQs.length} questions</span>
+              </div>
+
+              {filteredFAQs.length ? (
+                <Accordion type="single" collapsible value={activeAccordionValue} onValueChange={setOpenQuestion} className="border-t border-[#0b203a]/10">
+                  {filteredFAQs.map((faq) => (
+                    <AccordionItem key={`${faq.category}-${faq.question}`} value={faq.question} className="border-[#0b203a]/10">
+                      <AccordionTrigger className="group gap-4 py-5 text-left hover:no-underline">
+                        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[#b78a3a]/45 text-[#b78a3a]">
+                          <Plus className="h-4 w-4 group-data-[state=open]:hidden" />
+                          <Minus className="hidden h-4 w-4 group-data-[state=open]:block" />
+                        </span>
+                        <span className="pr-2 font-serif text-lg font-medium leading-7 text-[#0b203a] sm:text-xl">{faq.question}</span>
+                      </AccordionTrigger>
+                      <AccordionContent className="pb-6 pl-12 text-[#0b203a]/76">
+                        <div className="max-w-2xl space-y-4 text-base leading-8">
+                          {faq.answer}
+                          {faq.links && <div className="flex flex-wrap gap-2 pt-1">{faq.links.map((link) => <Link key={link.href} to={link.href} className="inline-flex items-center gap-1.5 rounded-full bg-[#f3eadb] px-3 py-2 text-sm font-bold text-[#0b203a] transition hover:bg-[#e7d2a4]">{link.label}<ArrowRight className="h-3.5 w-3.5" /></Link>)}</div>}
+                        </div>
+                      </AccordionContent>
+                    </AccordionItem>
+                  ))}
+                </Accordion>
+              ) : (
+                <div className="border-t border-[#0b203a]/10 py-12 text-center">
+                  <HelpCircle className="mx-auto h-8 w-8 text-[#b78a3a]" />
+                  <h3 className="mt-4 font-serif text-2xl text-[#0b203a]">We could not find that question.</h3>
+                  <p className="mx-auto mt-2 max-w-md leading-7 text-[#0b203a]/65">Try “fees”, “HSC”, “teachers” or “class size”, or contact our team directly.</p>
+                  <button type="button" onClick={() => { setSearchTerm(''); setSelectedCategory('all'); }} className="mt-5 font-bold text-[#b78a3a] hover:text-[#0b203a]">Clear search</button>
+                </div>
+              )}
+            </section>
+
+            <aside className="overflow-hidden rounded-2xl bg-white shadow-[0_12px_32px_rgba(11,32,58,.07)] ring-1 ring-[#b78a3a]/10 lg:sticky lg:top-24">
+              <img src="/images/faq/faq-human-answer-focus-with-tables.png" alt="A DA Tuition tutor and student working together" className="h-48 w-full object-cover" />
+              <div className="p-6">
+                <h2 className="font-serif text-3xl font-medium leading-[1.05] tracking-[-0.035em] text-[#0b203a]">Still have a question?<span className="block text-[#b78a3a]">We’re here to help.</span></h2>
+                <p className="mt-4 text-sm leading-6 text-[#0b203a]/72">Sometimes it is easier to talk. Tell us what is on your mind and we will help you find the right next step.</p>
+                <Link to="/contact" className="mt-6 flex items-center justify-between rounded-full bg-[#0b203a] px-5 py-3 text-sm font-bold text-white transition hover:bg-[#b78a3a] hover:text-[#0b203a]">Contact us <ChevronRight className="h-4 w-4" /></Link>
+              </div>
+            </aside>
+          </div>
+        </section>
+      </main>
+      <FooterNew />
+    </div>
+  );
 
   return (
     <div className="min-h-screen bg-[#fbf6ea] text-brand-navy">
