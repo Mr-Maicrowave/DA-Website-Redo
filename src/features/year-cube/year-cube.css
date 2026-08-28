@@ -1,0 +1,37 @@
+.year-cube {
+  --cube-size: clamp(13.75rem, 25vw, 20rem);
+  overflow: hidden;
+  background: #071629;
+  color: #fdf9ee;
+  padding: clamp(4.5rem, 8vw, 7.5rem) 1.25rem;
+}
+
+.year-cube__inner { display: grid; gap: 3.5rem; max-width: 76rem; margin: 0 auto; }
+.year-cube__intro { max-width: 34rem; }
+.year-cube__eyebrow, .year-cube__detail > p:first-child { color: #d6ae4d; font-size: .72rem; font-weight: 800; letter-spacing: .16em; margin: 0; text-transform: uppercase; }
+.year-cube h2 { font-family: Georgia, 'Times New Roman', serif; font-size: clamp(3rem, 5vw, 5.2rem); font-weight: 500; letter-spacing: -.055em; line-height: .92; margin: .8rem 0 1.4rem; }
+.year-cube__lede { color: #b9c4d6; font-size: 1rem; line-height: 1.8; margin: 0; max-width: 31rem; }
+.year-cube__picker { display: grid; gap: .55rem; grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: 2rem; max-width: 27rem; }
+.year-cube__picker button, .year-cube__drift { border: 1px solid rgba(214, 174, 77, .35); background: rgba(255, 255, 255, .03); color: #fdf9ee; cursor: pointer; font: inherit; font-size: .84rem; min-height: 2.7rem; padding: .5rem .75rem; transition: background-color 180ms ease, border-color 180ms ease, color 180ms ease; }
+.year-cube__picker button[aria-pressed='true'], .year-cube__picker button:hover, .year-cube__picker button:focus-visible { background: #d6ae4d; border-color: #d6ae4d; color: #071629; outline: none; }
+.year-cube__hint { color: #8ea0ba; font-size: .82rem; line-height: 1.5; margin: 1.15rem 0 .7rem; }
+.year-cube__drift { border-color: transparent; color: #d6ae4d; min-height: 0; padding: .25rem 0; text-decoration: underline; text-underline-offset: .3em; }
+.year-cube__drift:hover, .year-cube__drift:focus-visible { color: #fff3cf; outline: none; }
+.year-cube__stage { align-items: center; display: grid; gap: 2.5rem; }
+.year-cube__grab-area { cursor: grab; min-height: calc(var(--cube-size) + 4rem); touch-action: none; user-select: none; }
+.year-cube__grab-area:active { cursor: grabbing; }
+.year-cube__scene { align-items: center; display: flex; height: 100%; justify-content: center; min-height: inherit; perspective: 62rem; }
+.year-cube__solid { height: var(--cube-size); position: relative; transform: rotateX(-22deg) rotateY(32deg); transform-style: preserve-3d; width: var(--cube-size); }
+.year-cube__face { align-items: flex-start; backface-visibility: visible; background: linear-gradient(145deg, #183454, #0b1e36 66%, #071629); border: 1px solid rgba(255,255,255,.28); box-shadow: inset 0 0 3rem rgba(214,174,77,.08); box-sizing: border-box; display: flex; flex-direction: column; height: var(--cube-size); justify-content: space-between; padding: clamp(1rem, 2.3vw, 1.8rem); position: absolute; width: var(--cube-size); }
+.year-cube__face:nth-child(2n) { background: linear-gradient(145deg, #28507a, #102944 68%, #071629); }
+.year-cube__face span { color: #e3bc59; font-size: .7rem; font-weight: 800; letter-spacing: .15em; text-transform: uppercase; }
+.year-cube__face strong { font-family: Georgia, 'Times New Roman', serif; font-size: clamp(1.1rem, 2vw, 1.55rem); font-weight: 500; letter-spacing: -.035em; line-height: 1.04; max-width: 11ch; }
+.year-cube__detail { border-left: 1px solid rgba(214,174,77,.55); max-width: 33rem; padding: .35rem 0 .35rem 1.35rem; }
+.year-cube__detail h3 { font-family: Georgia, 'Times New Roman', serif; font-size: clamp(1.8rem, 3vw, 2.7rem); font-weight: 500; letter-spacing: -.045em; line-height: 1.02; margin: .8rem 0 1rem; }
+.year-cube__detail > span { background: #d6ae4d; display: block; height: 1px; width: 3rem; }
+.year-cube__summary { color: #d4dce8; line-height: 1.7; margin: 1.1rem 0 .8rem; }
+.year-cube__detail ul { color: #9fb0c7; line-height: 1.65; margin: 0; padding-left: 1.1rem; }
+.year-cube__detail li::marker { color: #d6ae4d; }
+
+@media (min-width: 900px) { .year-cube__inner { align-items: center; grid-template-columns: minmax(0, .87fr) minmax(28rem, 1.13fr); } .year-cube__stage { grid-template-columns: minmax(20rem, 1fr) minmax(17rem, .72fr); } .year-cube__picker { grid-template-columns: repeat(6, 1fr); max-width: none; } .year-cube__picker button { font-size: .76rem; padding: .5rem; } }
+@media (prefers-reduced-motion: reduce) { .year-cube *, .year-cube *::before, .year-cube *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; } }

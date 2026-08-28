@@ -8,15 +8,13 @@ const componentUrl = new URL('./MathsSyllabusScrollStory.tsx', import.meta.url);
 const stylesUrl = new URL('./maths-syllabus-scroll-story.css', import.meta.url);
 const mathematicsUrl = new URL('../../pages/subjects/Mathematics.tsx', import.meta.url);
 
-test('cinematic story precedes the practical HSC pathway map', () => {
+test('cinematic story source remains available but is no longer mounted on the Mathematics page', () => {
   const source = readFileSync(mathematicsUrl, 'utf8');
-  const storyIndex = source.indexOf('<MathsSyllabusScrollStory />');
   const pathwayIndex = source.indexOf('<HscMathsPathway />');
 
-  assert.match(source, /import \{ MathsSyllabusScrollStory \} from '@\/features\/maths-syllabus-scroll-story\/MathsSyllabusScrollStory'/);
-  assert.notEqual(storyIndex, -1, 'MathsSyllabusScrollStory is not mounted');
+  assert.doesNotMatch(source, /import \{ MathsSyllabusScrollStory \} from '@\/features\/maths-syllabus-scroll-story\/MathsSyllabusScrollStory'/);
+  assert.doesNotMatch(source, /<MathsSyllabusScrollStory\s*\/>/);
   assert.notEqual(pathwayIndex, -1, 'HscMathsPathway is not mounted');
-  assert.ok(storyIndex < pathwayIndex);
 });
 
 test('every beat has an optimised public art plate', () => {

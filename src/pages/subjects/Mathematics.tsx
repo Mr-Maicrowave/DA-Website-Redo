@@ -34,8 +34,8 @@ import { ConfidenceJourney } from '@/features/maths-confidence-journey/Confidenc
 import { MathsGraphLabInvitation, MathsTeachingProof } from '@/features/maths-teaching-proof/MathsTeachingProof';
 import { MathsIntroVideoGate } from '@/features/maths-intro-video/MathsIntroVideoGate';
 import { HscMathsPathway } from '@/features/hsc-maths-pathway/HscMathsPathway';
-import { MathsSyllabusScrollStory } from '@/features/maths-syllabus-scroll-story/MathsSyllabusScrollStory';
 import { MathsTopicNetwork } from '@/features/maths-topic-network/MathsTopicNetwork';
+import { YearCube } from '@/features/year-cube/YearCube';
 
 interface StepRow {
   label: string;
@@ -1479,7 +1479,7 @@ const Mathematics = () => {
 
         <VectorAmbientMoment passive />
 
-        <MathsSyllabusScrollStory />
+        <YearCube />
 
         <HscMathsPathway />
 
