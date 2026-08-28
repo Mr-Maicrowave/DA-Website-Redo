@@ -1,0 +1,147 @@
+.learning-habits-scene {
+  position: absolute;
+  z-index: 5;
+  top: clamp(4.2rem, 8vh, 5.6rem);
+  left: 82%;
+  width: min(55rem, 76vw);
+  color: var(--journey-navy);
+}
+
+.learning-habits-scene::before {
+  position: absolute;
+  z-index: -2;
+  inset: -2rem -3.5rem -1.5rem;
+  background: radial-gradient(ellipse at 48% 44%, color-mix(in srgb, var(--journey-ivory) 96%, transparent) 0 43%, transparent 76%);
+  content: "";
+  pointer-events: none;
+}
+
+.learning-habits-study {
+  position: absolute;
+  z-index: -1;
+  inset: 2rem -1rem auto 58%;
+  height: clamp(13rem, 29vh, 18rem);
+  color: color-mix(in srgb, var(--journey-navy) 48%, var(--journey-dusty-blue));
+  opacity: 0.43;
+  pointer-events: none;
+}
+
+.learning-habits-study__shelf {
+  position: absolute;
+  top: 0;
+  right: 5rem;
+  width: 10rem;
+  height: 5.5rem;
+  border-bottom: 2px solid currentColor;
+}
+.learning-habits-study__shelf img { position: absolute; right: 0.8rem; bottom: 0.2rem; width: 4.3rem; }
+.learning-habits-study__shelf i { position: absolute; bottom: 0.2rem; width: 1rem; height: 3.2rem; border: 1px solid currentColor; }
+.learning-habits-study__shelf i:first-of-type { left: 1rem; transform: rotate(-4deg); }
+.learning-habits-study__shelf i:last-of-type { left: 2.2rem; height: 2.7rem; }
+.learning-habits-study__lamp { position: absolute; right: -0.5rem; bottom: 0; width: 5.4rem; opacity: 0.75; }
+
+.learning-habits-study__plant {
+  position: absolute;
+  right: 16rem;
+  bottom: 0;
+  width: 2.2rem;
+  height: 4.5rem;
+  border-bottom: 1.5rem solid color-mix(in srgb, var(--journey-gold) 28%, var(--journey-sage));
+}
+.learning-habits-study__plant i { position: absolute; bottom: 1rem; left: 1rem; width: 1.5rem; height: 2.6rem; border-radius: 100% 0; background: var(--journey-sage); transform-origin: 0 100%; }
+.learning-habits-study__plant i:nth-child(1) { transform: rotate(-44deg); }
+.learning-habits-study__plant i:nth-child(2) { transform: rotate(-5deg) scale(.9); }
+.learning-habits-study__plant i:nth-child(3) { transform: rotate(38deg) scale(.8); }
+
+.learning-habits-study__support-point {
+  position: absolute;
+  right: 2rem;
+  bottom: -1.6rem;
+  color: var(--journey-text-gold);
+  font-size: .58rem;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.learning-habits-scene .assessment-encounter__header { width: min(43rem, 82%); }
+.learning-habits-scene .assessment-encounter__header h2 { max-width: 23ch; font-size: clamp(1.9rem, 2.15vw, 2.9rem); }
+.learning-habits-scene .assessment-encounter__choices { gap: clamp(.75rem, 1.15vw, 1.2rem); }
+
+.learning-habit-vignette { position: absolute; inset: 0; overflow: hidden; }
+.learning-habit-desk {
+  position: absolute;
+  z-index: 3;
+  right: 1%;
+  bottom: .2rem;
+  width: 78%;
+  height: 2.8rem;
+  border-top: .55rem solid #aa8b65;
+  background: linear-gradient(90deg, transparent 7%, #78634b 8% 11%, transparent 12% 88%, #78634b 89% 92%, transparent 93%);
+  opacity: .9;
+}
+
+.learning-habit-student { position: absolute; z-index: 2; right: 13%; bottom: 0; width: clamp(6.5rem, 7.5vw, 8.3rem); transform-origin: 50% 100%; transition: transform 220ms cubic-bezier(.22,1,.36,1); }
+.learning-habit-page { position: absolute; top: -1.35rem; right: 18%; width: 4rem; height: 1.8rem; border: 1px solid #b3a486; background: #f6efdd; transform: skewX(-9deg) rotate(-2deg); transition: box-shadow 180ms ease, transform 220ms cubic-bezier(.22,1,.36,1); }
+.learning-habit-page i { position: absolute; right: .45rem; left: .45rem; height: 1px; background: color-mix(in srgb, var(--journey-navy) 32%, transparent); }
+.learning-habit-page i:first-child { top: .52rem; }
+.learning-habit-page i:last-child { top: .9rem; }
+.learning-habit-pencil { position: absolute; z-index: 2; top: -.86rem; right: 16%; width: 2.9rem; height: .16rem; background: var(--journey-gold); transform: rotate(-18deg); transform-origin: 80% 50%; transition: transform 220ms cubic-bezier(.22,1,.36,1); }
+.learning-habit-gold-line { position: absolute; top: .18rem; right: 23%; width: 0; height: 1px; background: var(--journey-gold); transition: width 220ms ease; }
+
+.learning-habit-tutor { position: absolute; z-index: 2; bottom: .25rem; left: 3%; width: 2.5rem; height: 6.7rem; border-radius: 46% 46% 10% 10%; background: color-mix(in srgb, var(--journey-navy) 72%, var(--journey-dusty-blue)); transform-origin: 50% 100%; transition: transform 220ms cubic-bezier(.22,1,.36,1); }
+.learning-habit-tutor::before { position: absolute; top: -1.15rem; left: .65rem; width: 1.25rem; height: 1.35rem; border-radius: 50%; background: #d7b89a; content: ""; }
+.learning-habit-tutor i:first-child { position: absolute; top: 1.35rem; right: -2rem; width: 2.5rem; height: .42rem; border-radius: .3rem; background: inherit; content: ""; transform: rotate(17deg); transform-origin: 0 50%; }
+.learning-habit-tutor--distant { left: 0; bottom: 1.2rem; height: 5.2rem; opacity: .58; transform: scale(.76); }
+
+.learning-habit-checklist { position: absolute; z-index: 4; top: 12%; left: 22%; width: 2.6rem; height: 3.4rem; border: 1px solid #b9aa8b; background: #f4ecd9; transform: rotate(-3deg); }
+.learning-habit-checklist i { display: block; width: 1.5rem; height: .5rem; margin: .42rem .55rem 0; border-bottom: 1px solid color-mix(in srgb, var(--journey-navy) 28%, transparent); }
+.learning-habit-checklist i:first-child::before { color: var(--journey-gold); content: "✓"; opacity: 0; transition: opacity 180ms ease; }
+
+.learning-habit-help-glow { position: absolute; left: 8%; bottom: 2.5rem; width: 3.5rem; height: 3.5rem; border-radius: 50%; background: color-mix(in srgb, var(--journey-gold) 18%, transparent); filter: blur(.7rem); opacity: 0; transition: opacity 220ms ease; }
+.learning-habit-vignette--check-in::after { position: absolute; left: 21%; bottom: 4.2rem; width: 0; border-top: 1px solid var(--journey-gold); content: ""; opacity: 0; transition: width 220ms ease, opacity 180ms ease; }
+
+.learning-habit-page-stack { position: absolute; top: -1.1rem; right: 54%; width: 3.2rem; height: 1.35rem; opacity: .72; transition: transform 220ms cubic-bezier(.22,1,.36,1); }
+.learning-habit-page-stack i { position: absolute; inset: 0; border: 1px solid #b8aa8c; background: #f4edda; transform: rotate(-2deg); }
+.learning-habit-page-stack i:last-child { transform: translate(.25rem,-.2rem) rotate(2deg); }
+.learning-habit-forward-accent { position: absolute; right: 5%; bottom: 4.1rem; width: 2.8rem; border-top: 1px solid var(--journey-gold); opacity: .55; transition: transform 220ms cubic-bezier(.22,1,.36,1); }
+
+.assessment-choice:hover .learning-habit-vignette--guided .learning-habit-tutor,
+.assessment-choice:focus-within .learning-habit-vignette--guided .learning-habit-tutor { transform: rotate(2deg) translateX(.12rem); }
+.assessment-choice:hover .learning-habit-vignette--guided .learning-habit-checklist i:first-child::before,
+.assessment-choice:focus-within .learning-habit-vignette--guided .learning-habit-checklist i:first-child::before { opacity: 1; }
+.assessment-choice:hover .learning-habit-vignette--guided .learning-habit-pencil,
+.assessment-choice:focus-within .learning-habit-vignette--guided .learning-habit-pencil { transform: rotate(-10deg) translateX(.18rem); }
+.assessment-choice:hover .learning-habit-vignette--guided .learning-habit-gold-line,
+.assessment-choice:focus-within .learning-habit-vignette--guided .learning-habit-gold-line { width: 2.8rem; }
+
+.assessment-choice:hover .learning-habit-vignette--check-in .learning-habit-student,
+.assessment-choice:focus-within .learning-habit-vignette--check-in .learning-habit-student { transform: translateX(-.12rem) rotate(-.5deg); }
+.assessment-choice:hover .learning-habit-help-glow,
+.assessment-choice:focus-within .learning-habit-help-glow { opacity: 1; }
+.assessment-choice:hover .learning-habit-vignette--check-in::after,
+.assessment-choice:focus-within .learning-habit-vignette--check-in::after { width: 3.2rem; opacity: .8; }
+
+.assessment-choice:hover .learning-habit-vignette--independent .learning-habit-page,
+.assessment-choice:focus-within .learning-habit-vignette--independent .learning-habit-page { transform: skewX(-9deg) rotate(3deg) translateY(-.08rem); }
+.assessment-choice:hover .learning-habit-vignette--independent .learning-habit-page-stack,
+.assessment-choice:focus-within .learning-habit-vignette--independent .learning-habit-page-stack { transform: translateX(.28rem); }
+.assessment-choice:hover .learning-habit-forward-accent,
+.assessment-choice:focus-within .learning-habit-forward-accent { transform: translateX(.45rem); }
+
+@media (max-width: 52rem) {
+  .learning-habits-scene { left: 81%; width: min(48rem, 76vw); }
+  .learning-habits-study { opacity: .28; }
+}
+
+@media (max-width: 30rem) {
+  .learning-habits-scene { top: 3.6rem; left: 82%; width: calc(100vw - 3.5rem); }
+  .learning-habits-scene .assessment-encounter__header { width: 100%; }
+  .learning-habits-scene .assessment-encounter__header h2 { font-size: 1.75rem; }
+  .learning-habits-study { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .learning-habits-scene { position: static; width: 100%; padding: 3rem 1.25rem 4rem; }
+  .learning-habits-scene *, .learning-habit-vignette * { animation: none !important; transition: none !important; }
+}

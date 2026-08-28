@@ -62,21 +62,20 @@ const PrimaryLandscapeJourney = () => {
           gsap.set(sparkleNodes, { opacity: 0, scale: 0.45, transformOrigin: 'center' });
           gsap.set(doorGlow, { opacity: 0.15, scale: 0.96 });
 
-          const cameraScale = conditions.desktop ? 1.035 : conditions.tablet ? 1.018 : 1.01;
-          gsap.fromTo(image, { scale: 1.03 }, { scale: 1, duration: 1.15, ease: 'power3.out' });
+          gsap.fromTo(image, { opacity: 0.94 }, { opacity: 1, duration: 1.15, ease: 'power3.out' });
 
           const timeline = gsap.timeline({
             scrollTrigger: {
               trigger: section,
-              start: 'top top',
-              end: 'bottom bottom',
+              start: 'top 78%',
+              end: 'bottom 22%',
               scrub: 0.7,
               onUpdate: ({ progress }) => setActiveStage(getLandscapeJourneyStage(progress)),
             },
           });
 
           timeline
-            .to(image, { scale: cameraScale, transformOrigin: '72% 55%', duration: 1, ease: 'none' }, 0)
+            .to(image, { opacity: 1, duration: 1, ease: 'none' }, 0)
             .to(path, { strokeDashoffset: 0, duration: LANDSCAPE_PATH_TIMING.duration, ease: 'none' }, LANDSCAPE_PATH_TIMING.start)
             .to(sparkleNodes[0], { opacity: 1, scale: 1, duration: 0.07 }, 0.25)
             .to(sparkleNodes[1], { opacity: 1, scale: 1, duration: 0.07 }, 0.55)
@@ -118,7 +117,7 @@ const PrimaryLandscapeJourney = () => {
         <svg
           className="primary-landscape-journey__overlay"
           viewBox="0 0 1672 941"
-          preserveAspectRatio="xMaxYMin slice"
+          preserveAspectRatio="xMidYMin meet"
           aria-hidden="true"
         >
           <path

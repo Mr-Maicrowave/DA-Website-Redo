@@ -21,16 +21,6 @@ import './MethodTeachingDeck.css';
 
 gsap.registerPlugin(Flip);
 
-const TUTOR_PHOTOGRAPH =
-  '/images/programs/high-school-method-transition/how-we-teach-tutor-student-v1.png';
-const TUTOR_PHOTOGRAPH_AVIF_SMALL =
-  '/images/programs/high-school-method-transition/how-we-teach-tutor-student-v1-768w.avif';
-const TUTOR_PHOTOGRAPH_AVIF_LARGE =
-  '/images/programs/high-school-method-transition/how-we-teach-tutor-student-v1-1536w.avif';
-const TUTOR_PHOTOGRAPH_WEBP_SMALL =
-  '/images/programs/high-school-method-transition/how-we-teach-tutor-student-v1-768w.webp';
-const TUTOR_PHOTOGRAPH_WEBP_LARGE =
-  '/images/programs/high-school-method-transition/how-we-teach-tutor-student-v1-1536w.webp';
 const BOTANICAL_ATMOSPHERE =
   '/images/programs/high-school-method-transition/how-we-teach-watercolor-botanical-v1.png';
 const BOTANICAL_ATMOSPHERE_AVIF_SMALL =
@@ -496,28 +486,6 @@ export function MethodTeachingDeck({ ready }: { ready: boolean }) {
             Five steps. One continuous learning process.
           </p>
 
-          <figure className="hsm-deck__photograph">
-            <picture>
-              <source
-                type="image/avif"
-                srcSet={`${TUTOR_PHOTOGRAPH_AVIF_SMALL} 768w, ${TUTOR_PHOTOGRAPH_AVIF_LARGE} 1536w`}
-                sizes="(max-width: 767px) calc(100vw - 28px), min(48vw, 620px)"
-              />
-              <source
-                type="image/webp"
-                srcSet={`${TUTOR_PHOTOGRAPH_WEBP_SMALL} 768w, ${TUTOR_PHOTOGRAPH_WEBP_LARGE} 1536w`}
-                sizes="(max-width: 767px) calc(100vw - 28px), min(48vw, 620px)"
-              />
-              <img
-                src={TUTOR_PHOTOGRAPH}
-                alt="A tutor and high-school student working through a workbook together"
-                width={1536}
-                height={1024}
-                loading="lazy"
-                decoding="async"
-              />
-            </picture>
-          </figure>
         </div>
 
         {expanded ? <MethodDetail method={activeMethod} /> : null}

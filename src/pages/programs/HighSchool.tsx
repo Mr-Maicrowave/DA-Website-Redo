@@ -3,13 +3,12 @@ import { Link } from 'react-router-dom';
 import SEO from '@/components/SEO';
 import NavigationNew from '@/components/NavigationNew';
 import { Button } from '@/components/ui/button';
-import SubjectHero from '@/components/subjects/SubjectHero';
 import HighSchoolCinematicScene from '@/components/programs/HighSchoolCinematicScene';
 import HighSchoolProfessionalJourney from '@/components/programs/high-school-professional/HighSchoolProfessionalJourney';
 import { highSchoolJourneyAssets } from '@/data/highSchoolJourneyAssets';
 import { highSchoolJourneyStages } from '@/data/highSchoolJourneyScenes';
 import { AnimatePresence, motion, useMotionValueEvent, useReducedMotion, useScroll, useTransform } from 'framer-motion';
-import { ArrowRight, ArrowUpRight, ChevronLeft, ChevronRight, GraduationCap, Star } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, ChevronDown, ChevronLeft, ChevronRight, Star } from 'lucide-react';
 
 /* ============================================================================
    CONTENT — every field below is preserved verbatim from the previous build
@@ -887,6 +886,42 @@ function HSCTransition() {
    PAGE
 ============================================================================ */
 
+function HighSchoolEditorialHero() {
+  return (
+    <section data-testid="highschool-editorial-hero" className="hs-editorial-hero" aria-labelledby="highschool-hero-title">
+      <img
+        className="hs-editorial-hero__watercolor"
+        src="/images/programs/highschool-hero-watercolor-v1.png"
+        alt=""
+        aria-hidden="true"
+      />
+
+      <div className="hs-editorial-hero__layout">
+        <div className="hs-editorial-hero__copy">
+          <p className="hs-editorial-hero__eyebrow">HIGH SCHOOL · YEARS 7–10</p>
+          <h1 id="highschool-hero-title" className="hs-editorial-hero__title">
+            <span>FIND YOUR</span>
+            <span className="hs-editorial-hero__gold">WAY</span>
+            <span>FORWARD.</span>
+          </h1>
+          <div className="hs-editorial-hero__rule" aria-hidden="true"><span /></div>
+          <p className="hs-editorial-hero__summary">
+            Four years of exploring, challenging yourself,<br className="hidden sm:block" />{' '}
+            growing and preparing for what comes next.
+          </p>
+        </div>
+
+        <div className="hs-editorial-hero__student-space" aria-hidden="true" />
+      </div>
+
+      <a className="hs-editorial-hero__scroll" href="#highschool-page-content" aria-label="Scroll to begin exploring the High School program">
+        <span>SCROLL TO BEGIN</span>
+        <ChevronDown aria-hidden="true" />
+      </a>
+    </section>
+  );
+}
+
 const HighSchool = () => {
   return (
     <div className="hs-page min-h-screen bg-[#FFFDF8] text-[#172033]">
@@ -897,18 +932,7 @@ const HighSchool = () => {
       />
       <NavigationNew />
 
-      <SubjectHero
-        eyebrow="High School Tuition · Years 7-10"
-        icon={GraduationCap}
-        headlineWhite="Find your voice."
-        headlineGold="Find your direction."
-        subtext="Years 7-10 are where academic trajectories lock in. Our small-group tutoring builds the skills, habits, and confidence your child needs to perform well in senior school and beyond."
-        proofPills={['Small groups, capped at 5', 'Selective school prep', 'Written progress updates']}
-        exploreTargetId="highschool-page-content"
-        placeholderLabel="High school classroom"
-        backgroundImageSrc="/highschool-girl.png"
-        backgroundImageAlt="A DA Tuition high school student focused on her written work"
-      />
+      <HighSchoolEditorialHero />
 
       <div id="highschool-page-content">
         <main>
@@ -924,10 +948,40 @@ const HighSchool = () => {
       </div>
 
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Caveat:wght@500;600;700&family=Merriweather:ital,wght@0,400;1,400&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Caveat:wght@500;600;700&family=Libre+Baskerville:wght@400&family=Merriweather:ital,wght@0,400;1,400&display=swap');
 
         .hs-page { overflow-x: clip; }
         .hs-page h1, .hs-page h2, .hs-page h3 { font-family: 'Outfit', 'Inter', system-ui, sans-serif; }
+
+        .hs-editorial-hero { position: relative; min-height: 100svh; overflow: hidden; isolation: isolate; background: #fffaf1; }
+        .hs-editorial-hero__watercolor { position: absolute; inset: 0; z-index: -2; width: 100%; height: 100%; object-fit: cover; object-position: center bottom; }
+        .hs-editorial-hero::after { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none; background: linear-gradient(90deg, rgba(255,250,241,.22) 0%, rgba(255,250,241,.05) 48%, transparent 72%); }
+        .hs-editorial-hero__layout { width: min(100% - 2.5rem, 91rem); min-height: 100svh; margin-inline: auto; display: grid; grid-template-columns: minmax(0, .85fr) minmax(20rem, 1.15fr); align-items: center; }
+        .hs-editorial-hero__copy { align-self: center; max-width: 42rem; padding: 4rem 0 7rem; }
+        .hs-editorial-hero__eyebrow { margin-bottom: 1.2rem; color: #a76f17; font: 600 clamp(.7rem, .8vw, .92rem)/1.3 'Outfit', sans-serif; letter-spacing: .23em; }
+        .hs-editorial-hero__title { display: flex; flex-direction: column; margin: 0; color: #071a32; font-family: 'Libre Baskerville', Georgia, serif !important; font-size: clamp(4rem, 6.7vw, 7.1rem); font-weight: 400; line-height: .87; letter-spacing: -.055em; }
+        .hs-editorial-hero__gold { color: #a96e13; }
+        .hs-editorial-hero__rule { display: flex; align-items: center; width: min(100%, 34rem); margin: 2.3rem 0 1.55rem; border-top: 1px solid rgba(176,119,28,.7); }
+        .hs-editorial-hero__rule span { width: .45rem; height: .45rem; margin-top: -.26rem; transform: rotate(45deg); background: #bd8429; }
+        .hs-editorial-hero__summary { color: #15243a; font: 500 clamp(.92rem, 1.15vw, 1.15rem)/1.65 'Outfit', sans-serif; }
+        .hs-editorial-hero__student-space { min-height: 70vh; }
+        .hs-editorial-hero__scroll { position: absolute; left: 50%; bottom: 1.4rem; display: flex; transform: translateX(-50%); flex-direction: column; align-items: center; gap: .4rem; color: #a76f17; font: 600 .72rem/1 'Outfit', sans-serif; letter-spacing: .22em; transition: color .2s ease, transform .2s ease; }
+        .hs-editorial-hero__scroll svg { width: 1.35rem; height: 1.35rem; stroke-width: 1.4; }
+        .hs-editorial-hero__scroll:hover { color: #071a32; transform: translateX(-50%) translateY(.2rem); }
+
+        @media (max-width: 767px) {
+          .hs-editorial-hero { min-height: 100svh; }
+          .hs-editorial-hero__watercolor { object-position: 56% bottom; }
+          .hs-editorial-hero::after { background: linear-gradient(180deg, rgba(255,250,241,.12), rgba(255,250,241,0) 60%); }
+          .hs-editorial-hero__layout { width: min(100% - 2rem, 36rem); min-height: 100svh; grid-template-columns: 1fr; align-items: start; }
+          .hs-editorial-hero__copy { max-width: 30rem; padding: clamp(3.5rem, 10vh, 6rem) 0 12rem; }
+          .hs-editorial-hero__eyebrow { margin-bottom: 1rem; font-size: .66rem; letter-spacing: .19em; }
+          .hs-editorial-hero__title { font-size: clamp(3.25rem, 16vw, 5rem); line-height: .9; }
+          .hs-editorial-hero__rule { margin: 1.8rem 0 1.2rem; }
+          .hs-editorial-hero__summary { max-width: 22rem; font-size: .9rem; line-height: 1.55; }
+          .hs-editorial-hero__student-space { display: none; }
+          .hs-editorial-hero__scroll { bottom: 1rem; white-space: nowrap; font-size: .62rem; }
+        }
 
         .hs-hand { font-family: 'Caveat', cursive; line-height: 1.15; transform: rotate(var(--hs-rotate, -2deg)); }
 

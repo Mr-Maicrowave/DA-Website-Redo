@@ -4,6 +4,25 @@ import test from 'node:test';
 
 const source = await readFile(new URL('./HighSchool.tsx', import.meta.url), 'utf8');
 
+test('renders the approved editorial High School hero without a student image', () => {
+  assert.match(source, /data-testid="highschool-editorial-hero"/);
+  assert.match(source, /HIGH SCHOOL · YEARS 7–10/);
+  assert.match(source, /FIND YOUR/);
+  assert.match(source, /hs-editorial-hero__gold">WAY</);
+  assert.match(source, /FORWARD\./);
+  assert.match(source, /Four years of exploring, challenging yourself,/);
+  assert.match(source, /growing and preparing for what comes next\./);
+  assert.match(source, /SCROLL TO BEGIN/);
+  assert.match(source, /highschool-hero-watercolor-v1\.png/);
+  assert.doesNotMatch(source, /<SubjectHero[\s\S]*?backgroundImageSrc="\/highschool-girl\.png"/);
+});
+
+test('the editorial hero fills one complete viewport at every breakpoint', () => {
+  assert.match(source, /\.hs-editorial-hero \{[^}]*min-height: 100svh;/);
+  assert.match(source, /\.hs-editorial-hero__layout \{[^}]*min-height: 100svh;/);
+  assert.doesNotMatch(source, /min-height: calc\(100svh -/);
+});
+
 test('keeps the existing Years 7–10 journey section', () => {
   assert.match(source, /data-testid="highschool-year-journey"/);
   assert.match(source, /highschool-year-journey-diagonal\.png/);

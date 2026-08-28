@@ -215,44 +215,6 @@
   text-align: center;
 }
 
-.hsm-deck__photograph {
-  position: relative;
-  width: min(48vw, 620px);
-  margin: clamp(38px, 5vw, 72px) auto 0 0;
-}
-
-.hsm-deck__photograph::after {
-  position: absolute;
-  inset: -10% -12% -14%;
-  z-index: -1;
-  background-image: image-set(
-    url('/images/programs/high-school-method-transition/how-we-teach-watercolor-botanical-v1-1536w.avif') type('image/avif'),
-    url('/images/programs/high-school-method-transition/how-we-teach-watercolor-botanical-v1-1536w.webp') type('image/webp'),
-    url('/images/programs/high-school-method-transition/how-we-teach-watercolor-botanical-v1.png') type('image/png')
-  );
-  background-position: center;
-  background-size: cover;
-  background-repeat: no-repeat;
-  content: '';
-  opacity: 0.16;
-  pointer-events: none;
-}
-
-.hsm-deck__photograph picture {
-  display: block;
-}
-
-.hsm-deck__photograph img {
-  display: block;
-  width: 100%;
-  height: clamp(240px, 29vw, 410px);
-  object-fit: cover;
-  object-position: 47% center;
-  filter: saturate(0.84) contrast(0.96);
-  mask-image: linear-gradient(108deg, transparent 0, #000 8%, #000 77%, transparent 100%), linear-gradient(0deg, transparent 0, #000 15%, #000 92%, transparent 100%);
-  mask-composite: intersect;
-}
-
 .hsm-deck[data-expanded='true'] .hsm-deck__heading {
   margin-bottom: clamp(46px, 5vw, 72px);
 }
@@ -315,15 +277,6 @@
 .hsm-deck[data-expanded='true'] .hsm-deck__process-note {
   margin-top: 25px;
   text-align: left;
-}
-
-.hsm-deck[data-expanded='true'] .hsm-deck__photograph {
-  width: min(100%, 500px);
-  margin-top: 34px;
-}
-
-.hsm-deck[data-expanded='true'] .hsm-deck__photograph img {
-  height: clamp(220px, 24vw, 340px);
 }
 
 .hsm-deck__detail {
@@ -604,17 +557,6 @@
     margin-top: 22px;
     font-size: 1.12rem;
     text-align: left;
-  }
-
-  .hsm-deck__photograph,
-  .hsm-deck[data-expanded='true'] .hsm-deck__photograph {
-    width: calc(100% + 8px);
-    margin: 30px 0 0 -4px;
-  }
-
-  .hsm-deck__photograph img,
-  .hsm-deck[data-expanded='true'] .hsm-deck__photograph img {
-    height: clamp(220px, 67vw, 310px);
   }
 
   .hsm-deck__detail {

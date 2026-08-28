@@ -1,0 +1,36 @@
+.journey-completion {
+  position: absolute;
+  z-index: 8;
+  inset: 0 auto auto 0;
+  width: 100vw;
+  height: max(44rem, 100svh);
+  color: var(--journey-navy);
+  background: color-mix(in srgb, var(--journey-ivory) 97%, transparent);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.journey-completion[data-complete="true"] { pointer-events: auto; }
+.journey-completion__memory { position: absolute; top: 28%; left: 50%; display: flex; align-items: center; gap: clamp(2.5rem, 6vw, 6rem); transform: translateX(-50%); }
+.journey-completion__memory > b { position: absolute; z-index: -1; top: 50%; right: 0; left: 0; border-top: 1px solid color-mix(in srgb, var(--journey-gold) 64%, transparent); transform: scaleX(0); transform-origin: 0 50%; }
+.journey-completion__memory > span { position: relative; width: .72rem; height: .72rem; border: 1px solid var(--journey-gold); border-radius: 50%; background: var(--journey-ivory); opacity: 0; }
+.journey-completion__memory > span::before { position: absolute; top: -1.8rem; left: 50%; color: var(--journey-text-gold); content: attr(data-memory-marker); font-size: .65rem; transform: translateX(-50%); }
+.journey-completion__memory > span i { position: absolute; inset: .16rem; border-radius: 50%; background: var(--journey-gold); }
+.journey-completion__forward-light { position: absolute; top: 32%; left: 50%; width: min(34rem, 70vw); height: 8rem; border-radius: 50%; background: color-mix(in srgb, var(--journey-gold) 14%, transparent); filter: blur(1.3rem); opacity: 0; transform: translateX(-50%); }
+.journey-completion__message { position: absolute; top: 48%; left: 50%; width: min(34rem, calc(100vw - 3rem)); text-align: center; opacity: 0; transform: translate(-50%, 1rem); }
+.journey-completion__message p { margin: 0; color: var(--journey-text-gold); font-size: clamp(.75rem, .85vw, .9rem); font-weight: 700; letter-spacing: .16em; }
+.journey-completion__message > span { display: block; margin-top: .8rem; font-family: var(--journey-font-heading); font-size: clamp(1.8rem, 2.6vw, 3rem); }
+.journey-completion__message button { margin-top: 1.5rem; padding: .8rem 1.25rem; border: 0; border-bottom: 1px solid var(--journey-gold); color: var(--journey-navy); background: transparent; font: 700 .78rem/1 var(--journey-font-body); letter-spacing: .12em; cursor: pointer; }
+.journey-completion__message button:focus-visible { outline: 3px solid var(--journey-text-gold); outline-offset: 5px; }
+.journey-completion__placeholder { position: absolute; inset: 0; display: grid; place-content: center; padding: 2rem; text-align: center; background: var(--journey-ivory); }
+.journey-completion__placeholder p { margin: 0; font-family: var(--journey-font-heading); font-size: clamp(2.2rem, 4vw, 4.5rem); }
+.journey-completion__placeholder span { margin-top: .65rem; color: color-mix(in srgb, var(--journey-navy) 65%, var(--journey-dusty-blue)); }
+
+@media (prefers-reduced-motion: reduce) {
+  .journey-completion { position: relative; height: min(34rem, 72svh); opacity: 1; visibility: visible; }
+  .journey-completion[data-complete="false"] { display: none; }
+  .journey-completion__memory > b { transform: scaleX(1); }
+  .journey-completion__memory > span, .journey-completion__forward-light, .journey-completion__message { opacity: 1; }
+  .journey-completion__message { transform: translate(-50%, 0); }
+}

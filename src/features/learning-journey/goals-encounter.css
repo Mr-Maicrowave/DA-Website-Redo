@@ -1,0 +1,145 @@
+.goals-scene {
+  position: absolute;
+  z-index: 7;
+  top: clamp(3.5rem, 6vh, 4.5rem);
+  left: 96%;
+  width: min(58rem, 70vw);
+  color: var(--journey-navy);
+}
+
+.goals-scene::before {
+  position: absolute;
+  z-index: -2;
+  inset: -2rem -5rem -2rem;
+  background: radial-gradient(ellipse at 50% 50%, color-mix(in srgb, var(--journey-ivory) 97%, transparent) 0 52%, transparent 82%);
+  content: "";
+  pointer-events: none;
+}
+
+.goals-scene .assessment-encounter__header { width: min(43rem, 72%); }
+.goals-scene .assessment-encounter__header h2 { max-width: 20ch; font-size: clamp(2rem, 2.4vw, 3.2rem); }
+.goals-scene .assessment-encounter__choices { display: block; margin-top: clamp(1rem, 2vh, 1.8rem); }
+.goals-scene .assessment-encounter__confirmation { display: none; }
+
+.telescope-selector {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(.9rem, 1.8vw, 1.8rem);
+  padding-top: clamp(5.5rem, 10vh, 7.5rem);
+}
+
+.telescope-selector .assessment-choice { min-height: clamp(11rem, 21vh, 14rem); opacity: .58; transition: opacity 240ms ease, filter 240ms ease; }
+.telescope-selector .assessment-choice:hover,
+.telescope-selector .assessment-choice:focus-within,
+.telescope-selector .assessment-choice[data-selected="true"] { opacity: 1; }
+.telescope-selector .assessment-choice[data-dimmed="true"] { opacity: .28; }
+.telescope-selector .assessment-choice__illustration { height: clamp(6.7rem, 12vh, 8.6rem); }
+.telescope-selector .assessment-choice__copy { opacity: .6; transition: opacity 220ms ease; }
+.telescope-selector .assessment-choice:hover .assessment-choice__copy,
+.telescope-selector .assessment-choice:focus-within .assessment-choice__copy,
+.telescope-selector .assessment-choice[data-selected="true"] .assessment-choice__copy { opacity: 1; }
+
+.telescope-lookout {
+  position: absolute;
+  z-index: 4;
+  top: 0;
+  left: 50%;
+  width: 14rem;
+  height: 7rem;
+  color: color-mix(in srgb, var(--journey-navy) 72%, var(--journey-dusty-blue));
+  pointer-events: none;
+  transform: translateX(-50%);
+}
+
+.telescope-lookout__scope { position: absolute; right: 4.2rem; bottom: 1.4rem; width: 5.4rem; height: .72rem; border-radius: .5rem; background: currentColor; transform: rotate(-5deg); transform-origin: 80% 50%; transition: transform 360ms cubic-bezier(.22,1,.36,1); }
+.telescope-lookout__scope::before { position: absolute; top: -.2rem; left: -.55rem; width: 1rem; height: 1.1rem; border-radius: 45%; background: var(--journey-gold); content: ""; }
+.telescope-lookout__scope i { position: absolute; top: .55rem; right: 1rem; height: 3rem; border-left: 2px solid currentColor; transform: rotate(18deg); transform-origin: 50% 0; }
+.telescope-lookout__scope b { position: absolute; top: .55rem; right: 1rem; height: 3rem; border-left: 2px solid currentColor; transform: rotate(-18deg); transform-origin: 50% 0; }
+.telescope-lookout__glint { position: absolute; top: 1.6rem; left: 3.5rem; color: var(--journey-gold); opacity: .35; transition: opacity 220ms ease, transform 320ms cubic-bezier(.22,1,.36,1); }
+.telescope-lookout__bench { position: absolute; right: .4rem; bottom: .8rem; width: 3.4rem; height: 1.25rem; border-top: .35rem solid #927758; border-bottom: .25rem solid #927758; }
+.telescope-lookout__tree { position: absolute; bottom: .4rem; left: .5rem; width: 1.2rem; height: 4.8rem; border-left: .28rem solid #80694f; }
+.telescope-lookout__tree i { position: absolute; left: -.8rem; width: 2.5rem; height: 2.5rem; border-radius: 50%; background: color-mix(in srgb, var(--journey-sage) 82%, transparent); }
+.telescope-lookout__tree i:nth-child(1) { top: -.4rem; }
+.telescope-lookout__tree i:nth-child(2) { top: .8rem; left: -1.3rem; transform: scale(.8); }
+.telescope-lookout__tree i:nth-child(3) { top: 1rem; left: .2rem; transform: scale(.72); }
+
+.telescope-selector:has([data-encounter-choice="confidence-foundations"]:hover) .telescope-lookout__scope,
+.telescope-selector:has([data-encounter-choice="confidence-foundations"]:focus-within) .telescope-lookout__scope,
+.telescope-selector[data-selected-goal="confidence-foundations"] .telescope-lookout__scope { transform: rotate(-10deg); }
+.telescope-selector:has([data-encounter-choice="steady-progress"]:hover) .telescope-lookout__scope,
+.telescope-selector:has([data-encounter-choice="steady-progress"]:focus-within) .telescope-lookout__scope,
+.telescope-selector[data-selected-goal="steady-progress"] .telescope-lookout__scope { transform: rotate(-3deg); }
+.telescope-selector:has([data-encounter-choice="extension"]:hover) .telescope-lookout__scope,
+.telescope-selector:has([data-encounter-choice="extension"]:focus-within) .telescope-lookout__scope,
+.telescope-selector[data-selected-goal="extension"] .telescope-lookout__scope { transform: rotate(4deg); }
+.telescope-selector:has(.assessment-choice:hover) .telescope-lookout__glint,
+.telescope-selector:has(.assessment-choice:focus-within) .telescope-lookout__glint { opacity: .9; transform: scale(1.1); }
+
+.goals-future { position: absolute; inset: 0; overflow: hidden; filter: saturate(.7); transition: filter 260ms ease; }
+.assessment-choice:hover .goals-future,
+.assessment-choice:focus-within .goals-future,
+.assessment-choice[data-selected="true"] .goals-future { filter: saturate(1.06); }
+.goals-future__horizon { position: absolute; right: 2%; bottom: .45rem; left: 2%; border-top: 1px solid color-mix(in srgb, var(--journey-dusty-blue) 62%, transparent); }
+
+.goals-future__bridge { position: absolute; right: 24%; bottom: .45rem; width: 6rem; height: 2.5rem; border-top: .45rem solid #9d8160; }
+.goals-future__bridge i { position: absolute; top: -.1rem; width: 1.55rem; height: 1.4rem; border: 1px solid #9d8160; border-top: 0; border-radius: 0 0 50% 50%; }
+.goals-future__bridge i:nth-child(1) { left: .3rem; }
+.goals-future__bridge i:nth-child(2) { left: 2.2rem; }
+.goals-future__bridge i:nth-child(3) { left: 4.1rem; }
+.goals-future__lamp { position: absolute; bottom: .7rem; left: 16%; width: .2rem; height: 4.2rem; background: var(--journey-navy); }
+.goals-future__lamp::before { position: absolute; top: -.5rem; left: -.55rem; width: 1.25rem; height: 1.25rem; border-radius: 50%; background: color-mix(in srgb, var(--journey-gold) 40%, #f6e5ae); box-shadow: 0 0 .45rem color-mix(in srgb, var(--journey-gold) 45%, transparent); content: ""; opacity: .55; transition: opacity 240ms ease; }
+.goals-future__plant { position: absolute; right: 8%; bottom: .5rem; height: 3.2rem; border-left: 2px solid var(--journey-sage); transform-origin: 50% 100%; transition: transform 320ms cubic-bezier(.22,1,.36,1); }
+.goals-future__plant i { position: absolute; top: .8rem; width: 1rem; height: .6rem; border-radius: 100% 0; background: var(--journey-sage); }
+.goals-future__plant i:first-child { right: 0; transform: rotate(-25deg); }
+.goals-future__plant i:last-child { left: 0; transform: scaleX(-1) rotate(-25deg); }
+.assessment-choice:hover .goals-future__lamp::before,
+.assessment-choice:focus-within .goals-future__lamp::before { opacity: 1; }
+.assessment-choice:hover .goals-future__plant,
+.assessment-choice:focus-within .goals-future__plant { transform: scaleY(1.12); }
+
+.goals-future__path { position: absolute; right: 12%; bottom: .45rem; left: 12%; height: 4.8rem; border-right: 1px solid #b29669; border-left: 1px solid #b29669; clip-path: polygon(42% 0, 58% 0, 100% 100%, 0 100%); background: color-mix(in srgb, var(--journey-peach) 25%, transparent); }
+.goals-future__milestones i { position: absolute; bottom: .65rem; width: .35rem; border-radius: 50%; background: var(--journey-gold); opacity: .25; transition: opacity 180ms ease, transform 220ms cubic-bezier(.22,1,.36,1); }
+.goals-future__milestones i:nth-child(1) { left: 29%; height: .35rem; }
+.goals-future__milestones i:nth-child(2) { left: 49%; bottom: 1.7rem; height: .35rem; transition-delay: 130ms; }
+.goals-future__milestones i:nth-child(3) { right: 29%; bottom: 3rem; height: .35rem; transition-delay: 260ms; }
+.goals-future__sun { position: absolute; top: 1.2rem; left: 50%; width: 1.8rem; height: 1.8rem; border-radius: 50%; background: color-mix(in srgb, var(--journey-gold) 38%, transparent); opacity: .45; transform: translateX(-50%); transition: opacity 240ms ease; }
+.assessment-choice:hover .goals-future__milestones i,
+.assessment-choice:focus-within .goals-future__milestones i { opacity: .9; transform: scale(1.15); }
+.assessment-choice:hover .goals-future__sun,
+.assessment-choice:focus-within .goals-future__sun { opacity: .8; }
+
+.goals-future__observatory { position: absolute; right: 20%; bottom: .5rem; width: 6.5rem; height: 3.6rem; border: 1px solid color-mix(in srgb, var(--journey-navy) 55%, transparent); background: color-mix(in srgb, var(--journey-dusty-blue) 18%, var(--journey-ivory)); }
+.goals-future__observatory::before { position: absolute; right: -.2rem; bottom: 100%; left: -.2rem; height: 2.4rem; border: 1px solid color-mix(in srgb, var(--journey-navy) 55%, transparent); border-radius: 5rem 5rem 0 0; background: color-mix(in srgb, var(--journey-lavender) 20%, var(--journey-ivory)); content: ""; }
+.goals-future__observatory i { position: absolute; top: -2rem; right: .2rem; width: 3.4rem; height: .45rem; background: var(--journey-navy); transform: rotate(-12deg); transition: transform 260ms cubic-bezier(.22,1,.36,1); }
+.goals-future__constellation { position: absolute; top: .45rem; left: 8%; width: 5rem; height: 3rem; opacity: .25; transition: opacity 260ms ease; }
+.goals-future__constellation::before { position: absolute; top: 1rem; left: .5rem; width: 3.7rem; border-top: 1px solid var(--journey-gold); content: ""; transform: rotate(16deg) scaleX(.2); transform-origin: 0 50%; transition: transform 420ms cubic-bezier(.22,1,.36,1); }
+.goals-future__constellation i { position: absolute; width: .25rem; height: .25rem; border-radius: 50%; background: var(--journey-gold); }
+.goals-future__constellation i:nth-child(1) { top: .7rem; left: .4rem; }
+.goals-future__constellation i:nth-child(2) { top: 1.6rem; left: 2.4rem; }
+.goals-future__constellation i:nth-child(3) { top: 1.2rem; right: .3rem; }
+.goals-future__star { position: absolute; top: .1rem; right: 7%; color: var(--journey-gold); opacity: .25; transition: opacity 240ms ease, transform 280ms cubic-bezier(.22,1,.36,1); }
+.assessment-choice:hover .goals-future__observatory i,
+.assessment-choice:focus-within .goals-future__observatory i { transform: rotate(-7deg); }
+.assessment-choice:hover .goals-future__constellation,
+.assessment-choice:focus-within .goals-future__constellation { opacity: .85; }
+.assessment-choice:hover .goals-future__constellation::before,
+.assessment-choice:focus-within .goals-future__constellation::before { transform: rotate(16deg) scaleX(1); }
+.assessment-choice:hover .goals-future__star,
+.assessment-choice:focus-within .goals-future__star { opacity: .9; transform: scale(1.12); }
+
+@media (max-width: 52rem) {
+  .goals-scene { left: 95%; width: min(50rem, 80vw); }
+}
+
+@media (max-width: 40rem) {
+  .goals-scene { top: 3rem; left: 95%; width: calc(100vw - 3rem); }
+  .goals-scene .assessment-encounter__header { width: 100%; }
+  .telescope-selector { grid-template-columns: 1fr; padding-top: 5rem; }
+  .telescope-selector .assessment-choice { min-height: 10rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .goals-scene { position: static; box-sizing: border-box; width: 100%; padding: 3rem 1.25rem 4rem; }
+  .goals-scene *, .telescope-selector * { animation: none !important; transition: none !important; }
+}

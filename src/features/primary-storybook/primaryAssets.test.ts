@@ -81,3 +81,99 @@ test('upper-primary classroom photos have width-described WebP variants', async 
     }
   }
 });
+
+test('How We Teach uses four standalone transparent teaching composites', async () => {
+  const frameAssets = [
+    'teaching-composite-explain.png',
+    'teaching-composite-practise.png',
+    'teaching-composite-independent.png',
+    'teaching-composite-celebrate.png',
+  ] as const;
+
+  for (const filename of frameAssets) {
+    const path = join(publicDir, '/primary-reference/teaching', filename);
+    assert.equal(existsSync(path), true, `${filename} must exist`);
+
+    const image = sharp(path);
+    const metadata = await image.metadata();
+    assert.equal(metadata.format, 'png');
+    assert.equal(metadata.hasAlpha, true, `${filename} must preserve transparency`);
+    assert.ok((metadata.width ?? 0) > 1000, `${filename} must retain its supplied resolution`);
+
+    const transparentCorner = await image
+      .extract({
+        left: 0,
+        top: 0,
+        width: 1,
+        height: 1,
+      })
+      .raw()
+      .toBuffer();
+    assert.equal(transparentCorner[3], 0, `${filename} must preserve its transparent outer canvas`);
+  }
+});
+
+test('support journey ships eight standalone transparent illustrations', async () => {
+  const assets = [
+    'before-da-child.png',
+    'right-support-tutor.png',
+    'after-da-child.png',
+    'pathway-seedling.png',
+    'pathway-plant.png',
+    'pathway-tree.png',
+    'pathway-mountain.png',
+    'support-heart-sparkle.png',
+  ] as const;
+
+  for (const filename of assets) {
+    const path = join(publicDir, '/primary-reference/support-journey', filename);
+    assert.equal(existsSync(path), true, `${filename} must exist`);
+    const metadata = await sharp(path).metadata();
+    assert.equal(metadata.format, 'png');
+    assert.equal(metadata.hasAlpha, true, `${filename} must preserve transparency`);
+  }
+});
+
+test('Years 3–4 reference rebuild ships its generated photo and transparent illustration pack', async () => {
+  const generatedAssets = [
+    ['years-3-4-learning-scene.png', false],
+    ['years-3-4-outcome-atlas.png', true],
+    ['years-3-4-curriculum-atlas.png', true],
+    ['years-3-4-garden-strip.png', true],
+    ['years-3-4-decor-atlas.png', true],
+  ] as const;
+
+  for (const [filename, expectedAlpha] of generatedAssets) {
+    const path = join(publicDir, '/primary-reference/growth', filename);
+    assert.equal(existsSync(path), true, `${filename} must exist`);
+    const metadata = await sharp(path).metadata();
+    assert.equal(metadata.format, 'png');
+    assert.equal(metadata.hasAlpha, expectedAlpha, `${filename} compositing mode must match`);
+  }
+});
+
+test('Years 5–6 reference rebuild ships every illustration as a separate transparent PNG', async () => {
+  const generatedAssets = [
+    'mastery-star-icon.png',
+    'mastery-brain-icon.png',
+    'mastery-collaboration-icon.png',
+    'mastery-graduation-icon.png',
+    'mastery-photo-tape.png',
+    'mastery-photo-plane.png',
+    'mastery-photo-star.png',
+    'mastery-photo-note.png',
+    'mastery-writing-books.png',
+    'mastery-reasoning-sheet.png',
+    'mastery-year-seven-books.png',
+    'mastery-meadow-strip.png',
+    'mastery-signpost.png',
+  ] as const;
+
+  for (const filename of generatedAssets) {
+    const path = join(publicDir, '/primary-reference/mastery', filename);
+    assert.equal(existsSync(path), true, `${filename} must exist`);
+    const metadata = await sharp(path).metadata();
+    assert.equal(metadata.format, 'png');
+    assert.equal(metadata.hasAlpha, true, `${filename} must preserve transparency`);
+  }
+});

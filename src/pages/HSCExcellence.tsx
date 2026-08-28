@@ -1,11 +1,10 @@
 import { useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Award } from 'lucide-react';
 import { motion, useMotionValueEvent, useReducedMotion, useScroll, useTransform } from 'framer-motion';
 import SEO from '@/components/SEO';
 import NavigationNew from '@/components/NavigationNew';
 import FooterNew from '@/components/FooterNew';
-import SubjectHero from '@/components/subjects/SubjectHero';
+import HSCHero from '@/components/hsc/HSCHero';
 import HSCJourneyFilm from '@/components/hsc-journey/HSCJourneyFilm';
 import HSCWhyYearsMatter from '@/components/hsc/HSCWhyYearsMatter';
 
@@ -438,18 +437,7 @@ const HSCExcellence = () => {
 
       <NavigationNew />
 
-      <SubjectHero
-        eyebrow="HSC Excellence · Years 11-12"
-        icon={Award}
-        headlineWhite="The HSC Is"
-        headlineGold="Two Years of Decisions."
-        subtext="Every subject choice, every assessment mark, every study hour counts toward the ATAR. DA Tuition's HSC Excellence program is built for students who want to walk out with their best possible result."
-        proofPills={['100+ Band 6 results', 'Subject-specialist tutors', 'Written progress updates']}
-        exploreTargetId="hsc-excellence-page-content"
-        placeholderLabel="HSC Excellence classroom"
-        backgroundImageSrc="/images/programs/hsc-maths.jpg"
-        backgroundImageAlt="HSC Mathematics tutor working through a calculus problem with a Year 12 student"
-      />
+      <HSCHero />
 
       <div id="hsc-excellence-page-content" className="hsc-landscape-shell hsc-video-only">
         <div className="hsc-landscape-background" aria-hidden="true">

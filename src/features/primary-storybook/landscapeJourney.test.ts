@@ -27,16 +27,16 @@ test('the crayon path finishes with the final staircase milestone', () => {
   assert.equal(LANDSCAPE_PATH_TIMING.start + LANDSCAPE_PATH_TIMING.duration, 1);
 });
 
-test('landscape journey is additive between the existing hero and story', () => {
+test('the Primary page moves directly from its hero into the reference story', () => {
   assert.equal(existsSync(sceneUrl), true, 'PrimaryLandscapeJourney must exist');
 
   const source = readFileSync(pageUrl, 'utf8');
   const heroIndex = source.indexOf('<div className="ps-opening">');
-  const sceneIndex = source.indexOf('<PrimaryLandscapeJourney');
   const storyIndex = source.indexOf('<PrimaryReferenceStory');
 
   assert.ok(heroIndex >= 0, 'the existing hero must remain');
-  assert.ok(sceneIndex > heroIndex, 'the landscape must follow the hero');
-  assert.ok(storyIndex > sceneIndex, 'the existing Primary story must follow the landscape');
-  assert.match(source, /<SubjectHero/);
+  assert.ok(storyIndex > heroIndex, 'the existing Primary story must follow the hero');
+  assert.doesNotMatch(source, /<PrimaryLandscapeJourney/);
+  assert.doesNotMatch(source, /<PrimaryWorldTransition/);
+  assert.match(source, /<PrimaryHero/);
 });

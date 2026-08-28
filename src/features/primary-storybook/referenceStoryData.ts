@@ -29,10 +29,13 @@ type TeachingStep = {
 };
 
 type ProgramChoice = {
-  id: 'small-group' | 'private-tuition' | 'creative-writing';
+  id: 'private-tuition' | 'small-group' | 'classes' | 'creative-writing' | 'advanced-enrichment';
   title: string;
+  shortTitle: string;
   description: string;
-  asset: string;
+  bestFor: string;
+  photo: CommunityPhotoPath;
+  alt: string;
 };
 
 type FamilyReason = {
@@ -191,24 +194,51 @@ export const teachingSteps = [
 
 export const programChoices = [
   {
-    id: 'small-group',
-    title: 'Small Group Tuition',
-    description: 'A focused small-group environment where students learn alongside peers and receive individual guidance.',
-    asset: primaryAssetManifest.smallGroup,
-  },
-  {
     id: 'private-tuition',
     title: 'Private Tuition',
-    description: 'One-to-one support shaped around your child’s goals, pace and learning needs.',
-    asset: primaryAssetManifest.privateTuition,
+    shortTitle: 'Private Tuition',
+    description: 'One-to-one learning tailored around your child’s current level, pace and goals.',
+    bestFor: 'Rebuilding foundations, specific difficulties, confidence and highly individualised support.',
+    photo: '/images/community/tutor_one_on_one.jpg',
+    alt: 'A DA tutor supporting a primary student one-to-one at her desk',
+  },
+  {
+    id: 'small-group',
+    title: 'Small Group Tuition',
+    shortTitle: 'Small Group',
+    description: 'A focused small-group environment where students learn alongside peers and receive individual guidance.',
+    bestFor: 'Students who benefit from close tutor attention, peer energy and a steady collaborative rhythm.',
+    photo: '/images/community/tutor_mentor_girls.jpg',
+    alt: 'A DA tutor guiding primary students together around their worksheets',
+  },
+  {
+    id: 'classes',
+    title: 'Classes',
+    shortTitle: 'Classes',
+    description: 'Purposeful classroom learning with clear teaching, structured practice and opportunities to contribute.',
+    bestFor: 'Building curriculum confidence, classroom habits and motivation through learning with others.',
+    photo: '/images/community/primary_colorful_class.jpg',
+    alt: 'DA primary students learning together in a colourful classroom',
   },
   {
     id: 'creative-writing',
     title: 'Creative Writing',
+    shortTitle: 'Creative Writing',
     description: 'A dedicated space to develop voice, imagination and confident written expression.',
-    asset: primaryAssetManifest.creativeWriting,
+    bestFor: 'Young writers who love stories, need help shaping ideas or want to strengthen written expression.',
+    photo: '/images/community/subject_english.jpg',
+    alt: 'A DA English tutor leading a writing lesson with students',
   },
-] as const satisfies readonly [ProgramChoice, ProgramChoice, ProgramChoice];
+  {
+    id: 'advanced-enrichment',
+    title: 'Advanced / Enrichment',
+    shortTitle: 'Advanced / Enrichment',
+    description: 'Deeper challenge for capable learners ready to extend their thinking beyond the expected level.',
+    bestFor: 'High-potential students seeking advanced content, richer problems and sustained intellectual challenge.',
+    photo: '/images/community/student_attentive.jpg',
+    alt: 'A focused DA student engaged in advanced classroom learning',
+  },
+] as const satisfies readonly [ProgramChoice, ProgramChoice, ProgramChoice, ProgramChoice, ProgramChoice];
 
 export const programNeeds = [
   'More individual support',

@@ -47,7 +47,6 @@ const CARD_BASES = [
   'method-card-review-gold-v1',
 ];
 const SUPPORT_BASES = [
-  'how-we-teach-tutor-student-v1',
   'how-we-teach-watercolor-botanical-v1',
 ];
 const optimizedAssetNames = [
@@ -584,6 +583,12 @@ test('uses optimized handoff art without original card delivery and crops Apply 
     transitionStyles,
     /\.hsm-transition__companion-card--apply\s*\{[\s\S]*--hsm-card-art-scale:\s*1\.2[3-9]/,
   );
+});
+
+test('ends the method deck without duplicating the following tutoring story', () => {
+  assert.doesNotMatch(deckSource, /TUTOR_PHOTOGRAPH/);
+  assert.doesNotMatch(deckSource, /hsm-deck__photograph/);
+  assert.doesNotMatch(deckStyles, /\.hsm-deck__photograph/);
 });
 
 test('moves the card deck with the approved Flip choreography', () => {
