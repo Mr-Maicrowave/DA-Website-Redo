@@ -312,9 +312,11 @@ if errorlevel 1 (
 
 :CONFIRM_TARGET_PUSH
 echo.
-echo About to push the following commits to !TARGET!:
+for /f %%N in ('git rev-list --count origin/!TARGET!..!TARGET!') do set "PUSH_COUNT=%%N"
+echo About to push !PUSH_COUNT! commit^(s^) to !TARGET!.
+echo Most recent commit:
 echo ------------------------------------------------------------
-git log origin/!TARGET!..!TARGET! --oneline
+git log -1 --oneline
 echo ------------------------------------------------------------
 echo.
 set /p CONFIRM2="Type YES to push to !TARGET!: "
