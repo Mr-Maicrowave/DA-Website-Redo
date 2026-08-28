@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { existsSync, readFileSync } from "node:fs";
-import { dirname, resolve } from "node:path";
+import { dirname, isAbsolute, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import test from "node:test";
 
@@ -52,10 +52,8 @@ test("every journey manifest URL resolves to a generated public asset", () => {
     );
 
     const assetPath = resolve(publicDirectory, url.slice(1));
-    assert.ok(
-      assetPath.startsWith(`${publicDirectory}/`),
-      `${url} must resolve inside public/`,
-    );
+    const pathInsidePublic = relative(publicDirectory, assetPath);
+    assert.ok(!isAbsolute(pathInsidePublic) && !pathInsidePublic.startsWith(".."), `${url} must resolve inside public/`);
     assert.ok(existsSync(assetPath), `${url} must exist under public/`);
   }
 });

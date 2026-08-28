@@ -35,9 +35,9 @@ test('the hero handoff has no straight horizontal band', () => {
   assert.equal(transition.get('background'), 'transparent');
 });
 
-test('the aquarium uses a tighter immersive composition instead of a full-screen rectangle', () => {
+test('the aquarium uses a natural responsive composition instead of a full-screen rectangle', () => {
   const aquarium = declarationsFor(`${storybookCss}\n${referenceCss}`, '.primary-aquarium');
-  assert.equal(aquarium.get('height'), 'clamp(40.625rem, 76svh, 48.75rem)');
+  assert.equal(aquarium.get('height'), 'auto');
   assert.equal(aquarium.get('min-height'), '0');
-  assert.equal(aquarium.get('border-radius'), undefined);
+  assert.equal(aquarium.get('aspect-ratio'), '3 / 2');
 });
