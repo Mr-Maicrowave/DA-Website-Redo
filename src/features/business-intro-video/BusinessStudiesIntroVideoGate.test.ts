@@ -11,11 +11,10 @@ test('defines the full-screen Business Studies video gate', () => {
 
   const source = readFileSync(componentUrl, 'utf8');
 
-  assert.match(source, /src="\/business_intro_video\.mp4"/);
-  assert.match(source, /object-cover/);
-  assert.match(source, /transition-opacity duration-500/);
-  assert.match(source, /setTimeout\(\(\) => setIsOpen\(false\), 500\)/);
-  assert.match(source, />\s*Skip intro\s*</);
+  assert.match(source, /VideoArrivalGate/);
+  assert.match(source, /videoSrc="\/business_intro_video\.mp4"/);
+  assert.match(source, /posterSrc="\/images\/intro-posters\/business-intro\.jpg"/);
+  assert.match(source, /subject="Business Studies"/);
 });
 
 test('mounts the Business Studies intro gate on the Business Studies page', () => {
@@ -27,4 +26,9 @@ test('mounts the Business Studies intro gate on the Business Studies page', () =
 
 test('ships the supplied Business Studies intro video as a public asset', () => {
   assert.equal(existsSync(videoUrl), true, 'public/business_intro_video.mp4 must be available to the Business Studies gate');
+});
+
+test('ships an immediate Business Studies poster for the video prelude', () => {
+  const posterUrl = new URL('../../../public/images/intro-posters/business-intro.jpg', import.meta.url);
+  assert.equal(existsSync(posterUrl), true, 'the video gate must have a real first-paint image');
 });
