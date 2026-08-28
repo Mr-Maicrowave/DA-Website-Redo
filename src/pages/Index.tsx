@@ -3349,7 +3349,7 @@ const DAEnvironmentSection = () => {
   const expandedRef = useRef(false);
   const floatingDragRef = useRef<{ pointerId: number; startX: number; startY: number; left: number; top: number } | null>(null);
   const [isSimple, setIsSimple] = useState(false);
-  const [isMuted, setIsMuted] = useState(true);
+  const [isMuted, setIsMuted] = useState(false);
   const [isFloating, setIsFloating] = useState(false);
   const [floatingDismissed, setFloatingDismissed] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
@@ -3424,6 +3424,20 @@ const DAEnvironmentSection = () => {
     window.addEventListener('resize', check);
     return () => window.removeEventListener('resize', check);
   }, []);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    // Try the requested sound-on start first. Browsers that block audible
+    // autoplay still get the moving video, with the Sound on control visible.
+    video.muted = false;
+    video.play().catch(() => {
+      video.muted = true;
+      setIsMuted(true);
+      video.play().catch(() => {});
+    });
+  }, [isSimple]);
 
   useEffect(() => {
     const obs = new IntersectionObserver(
