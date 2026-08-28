@@ -56,7 +56,13 @@ React state changes only at interaction boundaries. `useFrame` updates camera/bo
 
 The design supports the final lifecycle now:
 
-`ROOM_IDLE → ROOM_TURNING → BOOK_HOVER_INTENT → BOOK_EXTRACTING → BOOK_PREVIEW → BOOK_OPENING → BOOK_READING → PAGE_DRAGGING/PAGE_TURNING → BOOK_CLOSING → BOOK_RETURNING → ROOM_IDLE`
+Subject movement and book interaction are separate legal paths:
+
+`ROOM_IDLE → ROOM_TURNING → ROOM_IDLE`
+
+`ROOM_IDLE → BOOK_HOVER_INTENT → BOOK_EXTRACTING → BOOK_PREVIEW → BOOK_OPENING → BOOK_READING → PAGE_DRAGGING/PAGE_TURNING → BOOK_CLOSING → BOOK_RETURNING → ROOM_IDLE`
+
+`BOOK_HOVER_INTENT` is accepted only from a settled `ROOM_IDLE`; it is never an automatic continuation of `ROOM_TURNING`.
 
 Initial production milestones fully implement room turn, hover/extraction, preview, opening/closing, and exact return. Page dragging/curved sheets are introduced after those visual gates pass, but the book already owns its page-sheet container. Transitions use named deterministic timelines with exact start/end poses. Reparenting, if needed, copies world matrix before and after movement so no object jumps.
 
@@ -64,7 +70,7 @@ Initial production milestones fully implement room turn, hover/extraction, previ
 
 Camera targets are calculated from wall angle and a fixed natural field of view (start at 45°; tune only after browser inspection). A turn lasts about 1.0–1.2 seconds, accelerates into the middle, then controlledly settles. The previous wall, corner, and target wall are simultaneously rendered during the turn; near shelf edges, book depth, floor, ceiling, and the practical light produce visible parallax.
 
-Directional motion blur is a restrained, performance-gated camera-turn-only effect. It follows angular velocity and returns to zero before settle. No opacity, crossfade, flat slide, or content substitution is a core part of turning.
+Directional motion blur is a restrained, performance-gated camera-turn-only effect added only after perspective, geometry movement, and parallax pass browser review. It follows angular velocity and returns to zero before settle; it is omitted if it harms frame time. No opacity, crossfade, flat slide, or content substitution is a core part of turning.
 
 ## Book continuity and craft gate
 
@@ -76,11 +82,11 @@ Opening moves the same closed book into its reading pose, rotates the front boar
 
 ## Page system (later production phase, not optional)
 
-Tutor content maps to several spreads only where source fields exist: cover; approach/strengths; why DA; goals/what students remember. No fields are invented. The active sheet uses segmented geometry with a bend/twist curve, moving shadow, and deterministic settle, following Complete Shelf's interaction principles without copying its code/assets. Buttons/keyboard provide page movement in addition to pointer/touch drag.
+Tutor content maps to several spreads only where source fields exist: cover; approach/strengths; why DA; goals/what students remember. No fields are invented. Each visible cover and spread is generated once into a DPR-aware, cached `CanvasTexture` when its tutor/spread content changes, then mapped directly onto the physical board or segmented page geometry. Text, portrait, rules, and artwork deform with the sheet; no visual DOM overlay tracks a curved page. A separate semantic DOM representation exposes equivalent reading content and controls to assistive technology. The active sheet uses a segmented chain with progressive local rotations, bow/twist curve, moving shadow, forward/backward turns, and deterministic settle, following Complete Shelf's interaction principles without copying its code/assets. Buttons/keyboard provide page movement in addition to pointer/touch drag.
 
 ## Search, filters, routing, and mobile
 
-The library has a persistent semantic search and subject selector. Search finds name, designation, tagline, subjects, and supplied profile tags; subject selection rotates through the scene's actual shortest wall path. Search results focus matching editions and announce count; it does not duplicate tutor records.
+The room is the primary interface. It has compact subject navigation and an optional, visually subordinate “Find a tutor” affordance; it does not reproduce FindTeacher's permanent filter toolbar. If invoked, library search finds name, designation, tagline, subjects, and supplied profile tags; subject selection rotates through the scene's actual shortest wall path. Search results focus matching editions and announce count; it does not duplicate tutor records.
 
 `/find-teacher?tutor=<id>` remains valid. Selecting a profile action from the open book navigates there. The existing `FindTeacher` remains the accessible conventional fallback, preserving pagination and enquiry.
 

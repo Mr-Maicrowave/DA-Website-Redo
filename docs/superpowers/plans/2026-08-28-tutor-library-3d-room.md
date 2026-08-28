@@ -30,6 +30,7 @@
 - `src/features/tutor-library/tutor-library-state.ts`: reducer, legal events, and transition guards.
 - `src/features/tutor-library/tutor-library-timeline.ts`: deterministic easing/sampling and exact pose interpolation.
 - `src/features/tutor-library/tutor-library-geometry.ts`: shelf slot transforms, rotunda wall transforms, page-bend vertices.
+- `src/features/tutor-library/tutor-page-textures.ts`: cached DPR-aware CanvasTexture generation for covers and profile spreads.
 - `src/features/tutor-library/TutorLibrary.tsx`: route-facing canvas shell and semantic controls.
 - `src/features/tutor-library/TutorLibraryScene.tsx`: camera, room, lighting, selection lifecycle.
 - `src/features/tutor-library/RoomRotunda.tsx`: connected wall/corner/floor/ceiling mesh assembly.
@@ -77,7 +78,7 @@ import { TutorLibrary } from '@/features/tutor-library/TutorLibrary';
 
 - [ ] **Step 4: Re-run the focused test and typecheck**
 
-Run: `node --test --experimental-strip-types src/features/tutor-library/tutor-library-route.test.ts; npm.cmd run typecheck`
+Run: `node --test --experimental-strip-types src/features/tutor-library/tutor-library-route.test.ts; npm run typecheck`
 
 Expected: PASS and no TypeScript errors.
 
@@ -153,6 +154,8 @@ Run: `git add src/features/tutor-library/tutor-library-data.* && git commit -m "
 
 ```ts
 assert.equal(libraryReducer(idle, { type: 'TURN', wallId: 'english' }).phase, 'ROOM_TURNING');
+assert.equal(libraryReducer(turning, { type: 'TURN_COMPLETE' }).phase, 'ROOM_IDLE');
+assert.equal(libraryReducer(idle, { type: 'HOVER', editionId: 'T003:english' }).phase, 'BOOK_HOVER_INTENT');
 assert.equal(libraryReducer(turning, { type: 'OPEN' }), turning);
 assert.deepEqual(sampleTimeline(0, from, to), from);
 assert.deepEqual(sampleTimeline(1, from, to), to);
@@ -169,13 +172,15 @@ Expected: FAIL because reducer/timeline do not exist.
 ```ts
 export type LibraryPhase = 'ROOM_IDLE' | 'ROOM_TURNING' | 'BOOK_HOVER_INTENT' | 'BOOK_EXTRACTING' | 'BOOK_PREVIEW' | 'BOOK_OPENING' | 'BOOK_READING' | 'PAGE_DRAGGING' | 'PAGE_TURNING' | 'BOOK_CLOSING' | 'BOOK_RETURNING';
 export const sampleTimeline = (progress: number, from: Pose, to: Pose): Pose => interpolatePose(from, to, clamp01(progress));
+
+// TURN_COMPLETE is the only ROOM_TURNING exit; HOVER is accepted only from ROOM_IDLE.
 ```
 
 - [ ] **Step 4: Re-run focused tests**
 
 Run: `node --test --experimental-strip-types src/features/tutor-library/tutor-library-state.test.ts src/features/tutor-library/tutor-library-timeline.test.ts`
 
-Expected: PASS; illegal rapid events are no-ops and endpoints are exact.
+Expected: PASS; `ROOM_TURNING → ROOM_IDLE` completes before hover can begin, illegal rapid events are no-ops, and endpoints are exact.
 
 - [ ] **Step 5: Commit**
 
@@ -221,7 +226,7 @@ Use connected wall returns, corner trim, continuous floor/ceiling, shelf recesse
 
 - [ ] **Step 4: Run test, typecheck, and capture Checkpoint A**
 
-Run: `node --test --experimental-strip-types src/features/tutor-library/room-rotunda.test.ts; npm.cmd run typecheck`
+Run: `node --test --experimental-strip-types src/features/tutor-library/room-rotunda.test.ts; npm run typecheck`
 
 Capture: desktop frontal Primary wall, visible adjacent walls, and mobile composition.
 
@@ -267,7 +272,7 @@ Use a 900–1300ms acceleration/middle-speed/deceleration curve. Do not rotate t
 
 - [ ] **Step 4: Run test and capture Checkpoint B**
 
-Run: `node --test --experimental-strip-types src/features/tutor-library/room-camera.test.ts; npm.cmd run typecheck`
+Run: `node --test --experimental-strip-types src/features/tutor-library/room-camera.test.ts; npm run typecheck`
 
 Capture: frontal wall, 50% turn with both walls and corner visible, settled next wall. Test repeated left/right and hidden-tab resume.
 
@@ -318,7 +323,7 @@ Use cloth roughness, gold rules, shallow board/page thickness, readable spine te
 
 - [ ] **Step 4: Re-run tests and inspect resting books**
 
-Run: `node --test --experimental-strip-types src/features/tutor-library/tutor-book-geometry.test.ts; npm.cmd run typecheck`
+Run: `node --test --experimental-strip-types src/features/tutor-library/tutor-book-geometry.test.ts; npm run typecheck`
 
 Capture: shelf close-up showing depth, readable spine, recess, and contact shadow.
 
@@ -364,7 +369,7 @@ Keep adjacent books stable but allow a 1–2° local neighbour response. Render 
 
 - [ ] **Step 4: Re-run test and capture Checkpoint C**
 
-Run: `node --test --experimental-strip-types src/features/tutor-library/tutor-book-motion.test.ts; npm.cmd run typecheck`
+Run: `node --test --experimental-strip-types src/features/tutor-library/tutor-book-motion.test.ts; npm run typecheck`
 
 Capture: shelf rest, partial extraction, front-cover preview. Rapidly hover A then B and click during extraction.
 
@@ -387,10 +392,17 @@ Run: `git add src/features/tutor-library && git commit -m "feat: animate tutor b
 - [ ] **Step 1: Write failing mid-turn geometry tests**
 
 ```ts
-const points = samplePageCurve(0.5, 'forward');
-assert.notEqual(points.outerEdge.z, points.bindingEdge.z);
-assert.equal(samplePageCurve(0, 'forward').outerEdge.rotation, 0);
-assert.equal(samplePageCurve(1, 'forward').outerEdge.rotation, Math.PI);
+for (const progress of [0, .25, .5, .75, 1]) {
+  const sheet = sampleSegmentedPage(progress, 'forward');
+  assert.ok(sheet.vertices.every(Number.isFinite));
+  assert.ok(sheet.width > 0);
+}
+const half = sampleSegmentedPage(.5, 'forward');
+assert.deepEqual(half.bindingEdge.position, hingePosition);
+assert.ok(half.outerEdge.arcDistance > 0);
+assert.ok(half.segmentRotations.some((rotation, index, all) => index > 0 && rotation !== all[0]));
+assert.deepEqual(sampleSegmentedPage(0, 'forward').pose, sourceStackPose);
+assert.deepEqual(sampleSegmentedPage(1, 'forward').pose, destinationStackPose);
 ```
 
 - [ ] **Step 2: Run and verify failure**
@@ -402,18 +414,20 @@ Expected: FAIL because curved sheet helpers do not exist.
 - [ ] **Step 3: Implement segmented sheet deformation on the actual TutorBook**
 
 ```ts
-const bend = Math.sin(progress * Math.PI) * bendAmount;
-vertex.z = bend * Math.sin(u * Math.PI);
-vertex.x = hingeX + width * u * Math.cos(progress * Math.PI);
+const segmentAngle = progress * Math.PI * easeOutCubic(segmentU);
+const localBow = Math.sin(progress * Math.PI) * bowAmount * Math.sin(segmentU * Math.PI);
+segment.quaternion.setFromAxisAngle(turnAxis, direction * segmentAngle);
+segment.position.copy(bindingPosition).addScaledVector(pageAxis, segmentU * pageWidth);
+segment.position.addScaledVector(normalAxis, localBow);
 ```
 
-Use binding-side constraint, greater outer-edge arc, front/back directions, moving directional shadow, and a deterministic final pose. Ensure the sheet clears boards and page stack at all sampled progress values.
+Construct the sheet as a hinge-anchored chain of segments: the first segment remains on the binding, later segments progressively rotate around their own local origin, and the outer edge traces the largest arc without collapsing page width. Apply restrained mid-turn bow/twist, support `forward` and `backward`, and set source/destination stack transforms exactly at 0 and 1. Sample collision bounds against boards and page stacks at 0%, 25%, 50%, 75%, and 100%.
 
 - [ ] **Step 4: Run geometry tests and inspect the technical prototype**
 
-Run: `node --test --experimental-strip-types src/features/tutor-library/page-sheet-geometry.test.ts; npm.cmd run typecheck`
+Run: `node --test --experimental-strip-types src/features/tutor-library/page-sheet-geometry.test.ts; npm run typecheck`
 
-Capture: 0%, 50%, and 100% turn; inspect no board/page intersections.
+Capture: 0%, 25%, 50%, 75%, and 100% turn; at 50% inspect fixed binding, non-zero width, curved intermediate segments, outer-edge arc, moving shadow, and no board/page intersections.
 
 - [ ] **Step 5: Commit**
 
@@ -455,7 +469,7 @@ Keep the origin wall/shelf/light visible; darken only ambient room response. The
 
 - [ ] **Step 4: Re-run test and capture Checkpoint D**
 
-Run: `node --test --experimental-strip-types src/features/tutor-library/tutor-book-reader.test.ts; npm.cmd run typecheck`
+Run: `node --test --experimental-strip-types src/features/tutor-library/tutor-book-reader.test.ts; npm run typecheck`
 
 Capture: closed preview, half-open hinge, fully open book inside the room. Press Escape halfway through opening.
 
@@ -468,11 +482,13 @@ Run: `git add src/features/tutor-library && git commit -m "feat: open tutor book
 **Files:**
 - Create: `src/features/tutor-library/tutor-profile-spreads.ts`
 - Create: `src/features/tutor-library/tutor-profile-spreads.test.ts`
+- Create: `src/features/tutor-library/tutor-page-textures.ts`
+- Create: `src/features/tutor-library/tutor-page-textures.test.ts`
 - Modify: `TutorBookReader.tsx`, `TutorBookCover.tsx`
 
 **Interfaces:**
 - Consumes: `CatalogueTutor.profile`, name, designation, subjects, existing `profileContentFor` helpers.
-- Produces: `createTutorSpreads(tutor): TutorSpread[]` with no empty/filler spread.
+- Produces: `createTutorSpreads(tutor): TutorSpread[]` with no empty/filler spread and `getTutorPageTexture(key, spread): CanvasTexture`.
 
 - [ ] **Step 1: Write failing content tests**
 
@@ -481,11 +497,12 @@ const spreads = createTutorSpreads(getTutor('T003')!);
 assert.ok(spreads.length >= 1);
 assert.ok(spreads.every(spread => spread.blocks.length > 0));
 assert.equal(createTutorSpreads({ ...tutor, profile: undefined }).length, 1);
+assert.equal(getTutorPageTexture(key, spread), getTutorPageTexture(key, spread));
 ```
 
 - [ ] **Step 2: Run and verify failure**
 
-Run: `node --test --experimental-strip-types src/features/tutor-library/tutor-profile-spreads.test.ts`
+Run: `node --test --experimental-strip-types src/features/tutor-library/tutor-profile-spreads.test.ts src/features/tutor-library/tutor-page-textures.test.ts`
 
 Expected: FAIL because spread derivation does not exist.
 
@@ -495,11 +512,11 @@ Expected: FAIL because spread derivation does not exist.
 const blocks = [profile?.whyDA && { label: 'Why at DA', body: profile.whyDA }, profile?.goals && { label: 'Teaching goals', body: profile.goals }, profile?.remembered && { label: 'What students remember', body: profile.remembered }].filter(Boolean);
 ```
 
-Render page text as a high-resolution cover/page texture or synchronized DOM layer parented to page world pose. The text transform must update from the same page matrix that deforms the visible sheet.
+Generate each cover/spread into one cached DPR-aware `CanvasTexture` when `(tutor.id, spread.id, layoutSize, devicePixelRatio)` changes. Map that texture directly to its front board or segmented page mesh; never redraw it in `useFrame`. Keep a separate semantic DOM reading representation for screen readers and controls only, not a visual page overlay.
 
 - [ ] **Step 4: Re-run tests and inspect profile density**
 
-Run: `node --test --experimental-strip-types src/features/tutor-library/tutor-profile-spreads.test.ts; npm.cmd run typecheck`
+Run: `node --test --experimental-strip-types src/features/tutor-library/tutor-profile-spreads.test.ts src/features/tutor-library/tutor-page-textures.test.ts; npm run typecheck`
 
 Verify short profiles use one complete spread; rich profiles use multiple real spreads; no invented headings/content.
 
@@ -543,7 +560,7 @@ Use pointer drag threshold plus Previous/Next controls; settle partial drags det
 
 - [ ] **Step 4: Re-run tests and capture Checkpoints E/F**
 
-Run: `node --test --experimental-strip-types src/features/tutor-library/tutor-library-return.test.ts; npm.cmd run typecheck`
+Run: `node --test --experimental-strip-types src/features/tutor-library/tutor-library-return.test.ts; npm run typecheck`
 
 Capture: page rest, 50% curved turn, settled page; closing; return transit; exact shelf restore. Run ten complete cycles plus rapid hostile sequences from the approved specification.
 
@@ -588,7 +605,7 @@ Map ArrowLeft/ArrowRight to context-sensitive wall/page movement, Enter/Space to
 
 - [ ] **Step 4: Run tests, build, and perform responsive matrix**
 
-Run: `node --test --experimental-strip-types src/features/tutor-library/tutor-library-a11y.test.ts; npm.cmd run typecheck; npm.cmd run build`
+Run: `node --test --experimental-strip-types src/features/tutor-library/tutor-library-a11y.test.ts; npm run typecheck; npm run build`
 
 Test: 1920×1080, 1440×900, 1366×768, tablet, 390px mobile; pointer, keyboard, touch, reduced motion; `/find-teacher?tutor=T003`.
 
@@ -632,7 +649,7 @@ Keep `TutorOrbitHero` source untouched and document it as a separate cleanup can
 
 - [ ] **Step 4: Run final verification and save evidence**
 
-Run: `node --test --experimental-strip-types src/features/tutor-library/*.test.ts; npm.cmd run typecheck; npm.cmd run build; git diff --check`
+Run: `node --test --experimental-strip-types src/features/tutor-library/*.test.ts; npm run typecheck; npm run build; git diff --check`
 
 Capture all required A–F states, inspect browser console, record performance/DPR behavior, test hostile interaction sequences, and confirm no visual core transition uses opacity substitution.
 
