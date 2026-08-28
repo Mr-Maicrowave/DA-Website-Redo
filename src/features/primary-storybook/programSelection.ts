@@ -1,4 +1,4 @@
-export type ProgramId = 'small-group' | 'private-tuition' | 'creative-writing';
+export type ProgramId = 'private-tuition' | 'small-group' | 'classes' | 'creative-writing' | 'advanced-enrichment';
 
 export const selectProgram = (currentId: ProgramId, nextId: ProgramId): ProgramId => (
   currentId === nextId ? currentId : nextId

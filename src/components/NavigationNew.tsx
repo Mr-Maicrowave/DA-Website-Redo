@@ -340,6 +340,12 @@ const NavigationNew = () => {
                 <div className="flex items-center flex-1 justify-center">
                   <div className="flex gap-0.5 items-center">
                     <Link to="/" className={navLinkClass(isHomepage)}>Home</Link>
+                    <Link
+                      to="/why-choose-da"
+                      className={navLinkClass(location.pathname === '/why-choose-da')}
+                    >
+                      Why DA
+                    </Link>
 
                     <HoverCard openDelay={120} closeDelay={180} onOpenChange={(open) => handleDropdownChange('programs', open)}>
                       <HoverCardTrigger asChild>

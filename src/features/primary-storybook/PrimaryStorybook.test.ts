@@ -8,6 +8,7 @@ const referenceStoryDataUrl = new URL('./referenceStoryData.ts', import.meta.url
 const foundationUrl = new URL('./FoundationSection.tsx', import.meta.url);
 const foundationCurriculumUrl = new URL('./FoundationCurriculum.tsx', import.meta.url);
 const howWeTeachUrl = new URL('./HowWeTeach.tsx', import.meta.url);
+const supportJourneyUrl = new URL('./SupportJourney.tsx', import.meta.url);
 const growthUrl = new URL('./GrowthSection.tsx', import.meta.url);
 const growthCurriculumUrl = new URL('./GrowthCurriculum.tsx', import.meta.url);
 const masteryUrl = new URL('./MasterySection.tsx', import.meta.url);
@@ -23,7 +24,7 @@ const referenceMotionUrl = new URL('./usePrimaryReferenceMotion.ts', import.meta
 const storyConnectorsUrl = new URL('./StoryConnectors.tsx', import.meta.url);
 const primaryReferenceCssUrl = new URL('./primary-reference.css', import.meta.url);
 
-test('Primary reference story keeps the approved ten-section sequence after the preserved hero', () => {
+test('Primary reference story keeps all year-group chapters together before enrichment sections', () => {
   assert.equal(existsSync(referenceStoryUrl), true, 'PrimaryReferenceStory must exist');
   assert.equal(existsSync(referenceStoryDataUrl), true, 'reference story data must exist');
 
@@ -32,11 +33,12 @@ test('Primary reference story keeps the approved ten-section sequence after the 
   const ordered = [
     '<FoundationSection',
     '<FoundationCurriculum',
-    '<HowWeTeach',
     '<GrowthSection',
     '<GrowthCurriculum',
     '<MasterySection',
     '<MasteryCurriculum',
+    '<PrimaryAquarium',
+    '<HowWeTeach',
     '<ProgramBag',
     '<FamilyReasons',
     '<PrimaryJourneyOutro',
@@ -48,8 +50,8 @@ test('Primary reference story keeps the approved ten-section sequence after the 
     return next;
   }, -1);
 
-  assert.match(pageSource, /<SubjectHero[\s\S]*<PrimaryReferenceStory/);
-  assert.match(pageSource, /exploreTargetId="pathway"/);
+  assert.match(pageSource, /<PrimaryHero[\s\S]*<PrimaryReferenceStory/);
+  assert.match(pageSource, /href="#primary-page-content"/);
   assert.doesNotMatch(pageSource, /Primary(?:Aquarium|JourneyLayer|JourneyOutro)/);
   assert.match(readFileSync(referenceStoryDataUrl, 'utf8'), /as const satisfies/);
 });
@@ -89,7 +91,7 @@ test('Years 1–2 foundations present all four outcomes without turning them int
   assert.doesNotMatch(source, /Card/);
 });
 
-test('Years 1–2 curriculum preserves the complete interactive aquarium', () => {
+test('Years 1–2 curriculum is followed by Years 3–4 and Years 5–6 before the aquarium', () => {
   assert.equal(existsSync(foundationCurriculumUrl), true, 'FoundationCurriculum must exist');
   assert.equal(existsSync(aquariumUrl), true, 'PrimaryAquarium must exist');
   assert.equal(existsSync(aquariumDataUrl), true, 'aquarium data must exist');
@@ -99,14 +101,32 @@ test('Years 1–2 curriculum preserves the complete interactive aquarium', () =>
   const aquarium = readFileSync(aquariumUrl, 'utf8');
   const aquariumData = readFileSync(aquariumDataUrl, 'utf8');
   const engine = readFileSync(aquariumEngineUrl, 'utf8');
+  const styles = readFileSync(primaryReferenceCssUrl, 'utf8');
+  const story = readFileSync(referenceStoryUrl, 'utf8');
 
-  assert.match(curriculum, /<PrimaryAquarium/);
+  assert.doesNotMatch(curriculum, /<PrimaryAquarium/);
+  assert.match(story, /<FoundationCurriculum\s*\/>[\s\S]*?<GrowthSection\s*\/>\s*<GrowthCurriculum\s*\/>\s*<MasterySection\s*\/>\s*<MasteryCurriculum\s*\/>\s*<PrimaryAquarium\s*\/>\s*<SupportJourney\s*\/>\s*<HowWeTeach/);
+  assert.match(curriculum, /years-1-2-school-scene\.png/);
+  assert.match(curriculum, /years-1-2-curriculum-atlas\.png/);
+  assert.match(curriculum, /Discover the journey/);
+  assert.match(curriculum, /primary-reference-curriculum__row/);
+  assert.match(curriculum, /curriculum\.items\.map\(\(item, index\)/);
+  assert.match(curriculum, /aria-label={`Explore \$\{item\.title\}`}/);
   assert.equal((aquariumData.match(/id: '/g) ?? []).length, 7);
+  assert.match(aquariumData, /aquariumFish:[\s\S]*?\[([\s\S]*?)\];/);
+  assert.match(aquariumData, /aquariumBackgroundFish/);
+  assert.match(aquarium, /Discover them all/);
+  assert.match(aquarium, /discovered\.length === 5/);
+  assert.match(aquarium, /window\.setTimeout/);
+  assert.match(aquarium, /onDismiss/);
   assert.match(aquarium, /aquariumFish\.map/);
   assert.match(aquarium, /<button/);
   assert.match(aquarium, /aria-label=\{`Show fun fact about \$\{fish\.label\}`\}/);
   assert.match(aquarium, /primary-aquarium__progress/);
-  assert.match(aquarium, /\/primary-reference\/aquarium\/water-background\.png/);
+  assert.match(aquarium, /\/primary-reference\/aquarium\/reference-tank-background\.png/);
+  assert.match(aquarium, /primary-aquarium__moving-waves/);
+  assert.match(styles, /@keyframes primary-aquarium-wave-drift/);
+  assert.match(styles, /primary-aquarium__moving-waves/);
   assert.match(aquariumData, /\/primary-reference\/aquarium\/fish\/clownfish\.png/);
   assert.match(engine, /pointermove/);
   assert.match(engine, /ripplesRef/);
@@ -117,16 +137,86 @@ test('Years 1–2 curriculum preserves the complete interactive aquarium', () =>
   assert.match(engine, /app\.ticker\.start\(\)/);
 });
 
-test('How We Teach renders four authentic DA photo moments from typed story data', () => {
+test('How We Teach renders the four supplied transparent teaching composites in order', () => {
   assert.equal(existsSync(howWeTeachUrl), true, 'HowWeTeach must exist');
   const source = readFileSync(howWeTeachUrl, 'utf8');
   const storyData = readFileSync(referenceStoryDataUrl, 'utf8');
 
   assert.match(source, /teachingSteps\.map/);
   assert.match(source, /<figure/);
-  assert.match(source, /src=\{step\.photo\.src\}/);
-  assert.match(source, /alt=\{step\.photo\.alt\}/);
+  assert.match(source, /data-photo-slot/);
+  [
+    'teaching-composite-explain.png',
+    'teaching-composite-practise.png',
+    'teaching-composite-independent.png',
+    'teaching-composite-celebrate.png',
+  ].forEach((filename) => assert.ok(source.includes(filename), `${filename} must render in its ordered teaching slot`));
+  assert.match(source, /<img[\s\S]*?src=\{TEACHING_COMPOSITE_IMAGES\[index\]\}/);
+  assert.match(source, /alt=\{step\.title\}/);
+  assert.doesNotMatch(source, /teaching-frame-atlas\.png/);
+  assert.match(source, /\/primary-reference\/teaching\/teaching-decor-atlas\.png/);
+  assert.match(
+    readFileSync(primaryReferenceCssUrl, 'utf8'),
+    /\.primary-reference-teaching__photo\s*>\s*img\s*\{[\s\S]*?object-fit:\s*contain/,
+    'transparent teaching composites must fit without cropping or stretching',
+  );
+  assert.match(source, /That’s the DA difference/);
+  assert.match(source, /Every child\. Every lesson\. Every step forward/);
   assert.equal((storyData.match(/number: '0[1-4]'/g) ?? []).length >= 8, true);
+});
+
+test('the support journey follows the aquarium with both reference-matched sections', () => {
+  assert.equal(existsSync(supportJourneyUrl), true, 'SupportJourney must exist');
+
+  const story = readFileSync(referenceStoryUrl, 'utf8');
+  const source = readFileSync(supportJourneyUrl, 'utf8');
+
+  assert.match(story, /<PrimaryAquarium\s*\/>\s*<SupportJourney\s*\/>\s*<HowWeTeach\s*\/>/);
+  [
+    'We help every child find their place.',
+    'Before DA',
+    'We find the right support',
+    'After DA',
+    'Every child starts somewhere. We meet them there.',
+    'Behind → Foundations',
+    'On track → Consolidate',
+    'Ahead → Extension',
+    'Highly capable → Advanced pathway',
+  ].forEach((copy) => assert.ok(source.includes(copy), `support journey must include ${copy}`));
+  [
+    'before-da-child.png',
+    'right-support-tutor.png',
+    'after-da-child.png',
+    'pathway-seedling.png',
+    'pathway-plant.png',
+    'pathway-tree.png',
+    'pathway-mountain.png',
+    'support-heart-sparkle.png',
+  ].forEach((asset) => assert.ok(source.includes(asset), `${asset} must render as a separate asset`));
+  assert.equal((source.match(/<section/g) ?? []).length, 2);
+  assert.match(source, /aria-labelledby="support-journey-title"/);
+  assert.match(source, /aria-labelledby="support-pathways-title"/);
+  assert.match(source, /aria-hidden="true"/);
+});
+
+test('How We Teach preserves square decor atlas cells in its compact reference header', () => {
+  const styles = readFileSync(primaryReferenceCssUrl, 'utf8');
+  const referenceMatchedStyles = styles.slice(styles.indexOf('/* Reference-matched How We Teach chapter'));
+
+  assert.match(
+    referenceMatchedStyles,
+    /\.primary-reference-teaching__plane\s*\{[\s\S]*?aspect-ratio:\s*1\s*\/\s*1/,
+    'the paper-plane atlas cell must not be stretched',
+  );
+  assert.match(
+    referenceMatchedStyles,
+    /\.primary-reference-teaching__school\s*\{[\s\S]*?aspect-ratio:\s*1\s*\/\s*1/,
+    'the school atlas cell must not be stretched',
+  );
+  assert.match(referenceMatchedStyles, /\.primary-reference-teaching__header\s*\{[\s\S]*?margin:\s*0 auto clamp\(1\.75rem,\s*3vw,\s*2\.75rem\)/);
+  assert.match(referenceMatchedStyles, /\.primary-reference-teaching__header h2\s*\{[\s\S]*?font-size:\s*clamp\(3rem,\s*5vw,\s*5rem\)/);
+  assert.match(referenceMatchedStyles, /@media \(max-width:\s*560px\)[\s\S]*?\.primary-reference-teaching__plane\s*\{[^}]*width:\s*7rem[^}]*opacity:\s*\.18/);
+  assert.match(referenceMatchedStyles, /@media \(max-width:\s*560px\)[\s\S]*?\.primary-reference-teaching__school\s*\{[^}]*width:\s*8rem[^}]*opacity:\s*\.18/);
 });
 
 test('the post-hero story exposes static connector markers and three teaching segments', () => {
@@ -142,7 +232,7 @@ test('the post-hero story exposes static connector markers and three teaching se
 
   assert.match(curriculum, /<CurriculumToAquariumConnector/);
   assert.match(aquarium, /<AquariumExitConnector/);
-  assert.match(story, /<HowWeTeach\s*\/>[\s\S]*<GrowthBridgeConnector\s*\/>[\s\S]*<GrowthSection\s*\/>/);
+  assert.match(story, /<FoundationCurriculum\s*\/>[\s\S]*<GrowthBridgeConnector\s*\/>[\s\S]*<GrowthSection\s*\/>/);
   assert.match(connectors, /data-story-connector="curriculum-to-aquarium"/);
   assert.match(connectors, /data-story-connector="aquarium-exit"/);
   assert.match(connectors, /data-story-connector="aquarium-to-growth"/);
@@ -160,17 +250,29 @@ test('Years 3–4 renders the complete growth story from typed outcomes and an a
   const growth = readFileSync(growthUrl, 'utf8');
   const curriculum = readFileSync(growthCurriculumUrl, 'utf8');
   const data = readFileSync(referenceStoryDataUrl, 'utf8');
+  const styles = readFileSync(primaryReferenceCssUrl, 'utf8');
   const source = `${growth}\n${curriculum}\n${data}`;
 
   assert.match(story, /import GrowthSection from '\.\/GrowthSection'/);
   assert.match(story, /import GrowthCurriculum from '\.\/GrowthCurriculum'/);
   assert.match(growth, /growthOutcomes\.map/);
-  assert.match(growth, /stagePhotos\.growth/);
+  assert.match(growth, /GROWTH_PHOTO/);
   assert.match(growth, /<figure/);
   assert.match(growth, /loading="lazy"/);
   assert.match(growth, /decoding="async"/);
   assert.match(curriculum, /curriculumBands\.growth/);
   assert.match(curriculum, /curriculum\.items\.map/);
+  assert.match(growth, /years-3-4-learning-scene\.png/);
+  assert.match(growth, /years-3-4-outcome-atlas\.png/);
+  assert.match(growth, /years-3-4-decor-atlas\.png/);
+  assert.match(growth, /primary-reference-growth__small-steps/);
+  assert.match(growth, /Small steps today/);
+  assert.match(curriculum, /years-3-4-curriculum-atlas\.png/);
+  assert.match(curriculum, /years-3-4-garden-strip\.png/);
+  assert.match(curriculum, /primary-reference-stage-curriculum__art/);
+  assert.match(styles, /primary-reference-stage-curriculum--growth[^}]*isolation:\s*isolate/);
+  assert.match(styles, /primary-reference-stage-curriculum__garden[^}]*z-index:\s*3/);
+  assert.doesNotMatch(growth, /primary-reference-growth__flight/);
   [
     'Growing skills. Building independence.',
     'Independence and responsibility',
@@ -180,13 +282,12 @@ test('Years 3–4 renders the complete growth story from typed outcomes and an a
     'Reading to learn through comprehension and inference',
     'Narrative and informative writing with language conventions',
     'NAPLAN-aligned numeracy, data and multi-step problem solving',
-    '/images/community/tutor_mentor_girls.jpg',
-    '/primary-reference/decor/growth-crayon-set.png',
+    '/primary-reference/growth/years-3-4-learning-scene.png',
   ].forEach((copy) => assert.ok(source.includes(copy), `growth story must include ${copy}`));
   assert.doesNotMatch(source, /Card/);
 });
 
-test('Years 5–6 remains complete at every breakpoint with four outcomes, curriculum and classroom photography', () => {
+test('Years 5–6 matches the illustrated reference with separate transparent artwork and classroom photography', () => {
   assert.equal(existsSync(masteryUrl), true, 'MasterySection must exist');
   assert.equal(existsSync(masteryCurriculumUrl), true, 'MasteryCurriculum must exist');
 
@@ -205,6 +306,23 @@ test('Years 5–6 remains complete at every breakpoint with four outcomes, curri
   assert.match(mastery, /loading="lazy"/);
   assert.match(mastery, /decoding="async"/);
   assert.match(curriculum, /curriculumBands\.mastery/);
+  [
+    'mastery-star-icon.png',
+    'mastery-brain-icon.png',
+    'mastery-collaboration-icon.png',
+    'mastery-graduation-icon.png',
+    'mastery-photo-decor.png',
+  ].forEach((asset) => assert.ok(mastery.includes(asset), `mastery chapter must use ${asset}`));
+  [
+    'mastery-writing-books.png',
+    'mastery-reasoning-sheet.png',
+    'mastery-year-seven-books.png',
+    'mastery-meadow-strip.png',
+    'mastery-signpost.png',
+  ].forEach((asset) => assert.ok(curriculum.includes(asset), `mastery curriculum must use ${asset}`));
+  assert.match(mastery, /primary-reference-mastery__outcome-icon/);
+  assert.match(curriculum, /primary-reference-stage-curriculum__art/);
+  assert.match(curriculum, /primary-reference-stage-curriculum__meadow/);
   assert.match(curriculum, /curriculum\.items\.map/);
   [
     'Ready for what comes next.',
@@ -235,11 +353,14 @@ test('aquarium initialization is single-flight and cancellation-safe across asyn
 
 test('aquarium resize keeps cover layers, fish sprites, and hit targets aligned', () => {
   const engine = readFileSync(aquariumEngineUrl, 'utf8');
+  const styles = readFileSync(primaryReferenceCssUrl, 'utf8');
 
   assert.match(engine, /ResizeObserver/);
   assert.match(engine, /resizeFishMotion/);
-  assert.match(engine, /coverSprite/);
+  assert.match(engine, /fitAquariumPlate/);
   assert.match(engine, /updateFishButton/);
+  assert.match(styles, /\.primary-aquarium\s*\{[^}]*height:\s*auto[^}]*aspect-ratio:\s*3\s*\/\s*2/s);
+  assert.match(styles, /\.primary-aquarium__canvas img,[\s\S]*object-fit:\s*contain/);
 });
 
 test('reduced-motion displacement reset uses the supported Pixi filter scale fields', () => {
@@ -254,8 +375,8 @@ test('aquarium fallbacks load below-fold and stop compositor work after Pixi tak
   const aquarium = readFileSync(aquariumUrl, 'utf8');
   const styles = readFileSync(primaryReferenceCssUrl, 'utf8');
 
-  assert.ok((aquarium.match(/loading="lazy"/g) ?? []).length >= 6);
-  assert.ok((aquarium.match(/decoding="async"/g) ?? []).length >= 6);
+  assert.ok((aquarium.match(/loading="lazy"/g) ?? []).length >= 3);
+  assert.ok((aquarium.match(/decoding="async"/g) ?? []).length >= 3);
   assert.match(styles, /\.primary-aquarium\.is-pixi-ready \.primary-aquarium__bubbles[\s\S]*animation:\s*none/);
   assert.match(styles, /\.primary-aquarium\.is-pixi-ready \.primary-aquarium__sprite[\s\S]*animation:\s*none/);
   assert.match(styles, /visibility:\s*hidden/);
@@ -264,12 +385,14 @@ test('aquarium fallbacks load below-fold and stop compositor work after Pixi tak
 test('reduced-motion fact transitions are immediate on entrance and exit', () => {
   const source = readFileSync(aquariumFactCardUrl, 'utf8');
 
+  assert.match(source, /src=\{fish\.src\}/);
+  assert.match(source, /primary-aquarium__fact-fish/);
   assert.match(source, /exit=\{reducedMotion \? \{ opacity: 0 \}/);
   assert.match(source, /transition=\{\{ duration: reducedMotion \? 0/);
   assert.doesNotMatch(source, /exit=\{\{ opacity: 0, y: 8 \}\}/);
 });
 
-test('program bag exposes three native pressed-state controls around a stationary branded bag', () => {
+test('learning environment presents one real DA photograph and five selectable formats', () => {
   assert.equal(existsSync(programBagUrl), true, 'ProgramBag must exist');
 
   const story = readFileSync(referenceStoryUrl, 'utf8');
@@ -286,36 +409,34 @@ test('program bag exposes three native pressed-state controls around a stationar
   assert.match(programBag, /programChoices\.map/);
   assert.match(programBag, /<button/);
   assert.match(programBag, /aria-pressed=\{isSelected\}/);
-  assert.match(programBag, /role="group"/);
-  assert.match(programBag, /src="\/images\/da-logo\.png"/);
-  assert.match(programBag, /primaryAssetManifest\.schoolbag/);
-  assert.equal((programData.match(/id: '(?:small-group|private-tuition|creative-writing)'/g) ?? []).length, 3);
-  assert.doesNotMatch(programBag, /\/primary-reference\/programs\/[^'"}]*logo/i);
-  assert.match(styles, /translate3d\(0,\s*-14px,\s*0\)/);
+  assert.match(programBag, /role="tablist"/);
+  assert.match(programBag, /AnimatePresence/);
+  assert.match(programBag, /layoutId="primary-program-active-indicator"/);
+  assert.match(programBag, /useReducedMotion/);
+  assert.match(programBag, /program\.photo/);
+  assert.match(programBag, /program\.bestFor/);
+  assert.doesNotMatch(programBag, /primaryAssetManifest\.schoolbag/);
+  assert.equal((programData.match(/id: '(?:private-tuition|small-group|classes|creative-writing|advanced-enrichment)'/g) ?? []).length, 5);
+  assert.equal((programData.match(/photo: '\/images\/community\//g) ?? []).length, 5);
+  assert.match(styles, /grid-template-columns:\s*minmax\(0,\s*21fr\)\s+minmax\(0,\s*50fr\)\s+minmax\(0,\s*27fr\)/);
+  assert.match(styles, /overflow-x:\s*auto/);
   assert.match(styles, /\.primary-program-bag__control:focus-visible/);
   assert.match(styles, /min-(?:width|height):\s*44px/);
 });
 
-test('program helper uses the five need prompts and icon atlas without duplicating programs', () => {
+test('learning environment uses the approved editorial copy without the former helper grid', () => {
   const programBag = readFileSync(programBagUrl, 'utf8');
   const data = readFileSync(referenceStoryDataUrl, 'utf8');
   const styles = readFileSync(primaryReferenceCssUrl, 'utf8');
   const source = `${programBag}\n${data}`;
 
-  [
-    'More individual support',
-    'Learns well with others',
-    'Loves stories & imagination',
-    'Needs stronger foundations',
-    'Help with something specific',
-  ].forEach((prompt) => assert.ok(source.includes(prompt), `program helper must include ${prompt}`));
+  ['FIND THEIR RIGHT FIT', 'The right learning environment changes everything.', 'One goal — helping your child thrive.', 'BEST FOR', 'Learn more', 'Not sure which one?']
+    .forEach((copy) => assert.ok(source.includes(copy), `learning environment must include ${copy}`));
 
-  assert.match(programBag, /programNeeds\.map/);
-  assert.match(programBag, /primary-program-bag__need-icon/);
-  assert.match(styles, /program-helper-icons\.png/);
-  assert.match(styles, /background-size:\s*500% auto/);
-  assert.doesNotMatch(programBag, /programNumbers/);
-  assert.doesNotMatch(programBag, /data-selected=/);
+  assert.doesNotMatch(programBag, /programNeeds\.map/);
+  assert.doesNotMatch(programBag, /primary-program-bag__need-icon/);
+  assert.doesNotMatch(programBag, /primary-program-bag__bag/);
+  assert.match(styles, /prefers-reduced-motion:\s*reduce/);
 });
 
 test('family reasons form a four-column unboxed editorial strip with the reviewed icon artwork', () => {

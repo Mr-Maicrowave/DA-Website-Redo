@@ -22,23 +22,38 @@ test('uses one reversible pinned master timeline', () => {
   assert.match(source, /--method-transition-scroll/);
 });
 
-test('renders one decorative green card and a reduced-motion branch', () => {
+test('preserves the decorative handoff stage and reduced-motion fallback', () => {
   assert.match(source, /cardRef/);
   assert.match(source, /className="hsm-transition__card"/);
   assert.match(source, /aria-hidden="true"/);
   assert.match(source, /prefers-reduced-motion/);
-  assert.doesNotMatch(source, /<h[1-6]/);
-  assert.doesNotMatch(source, /methodItems\.map/);
-  assert.doesNotMatch(source, /role="toolbar"/);
   assert.match(
     styles,
     /@media \(prefers-reduced-motion: reduce\)[\s\S]*\.hsm-transition__center-bloom[\s\S]*display:\s*none/,
   );
 });
 
-test('keeps the cards decorative with no controls or text', () => {
-  assert.doesNotMatch(source, /<button/);
-  assert.doesNotMatch(source, /<p|<h[1-6]|<span/);
+test('mounts the interactive teaching deck after the pinned runway', () => {
+  assert.match(source, /import \{ MethodTeachingDeck \} from ['"]\.\/MethodTeachingDeck['"]/);
+  assert.match(source, /const \[deckReady, setDeckReady\] = useState\(false\)/);
+  assert.match(source, /className="hsm-transition__runway"[\s\S]*className="hsm-transition__interaction"/);
+  assert.match(source, /<MethodTeachingDeck ready=\{deckReady\}\s*\/>/);
+  assert.match(styles, /\.hsm-transition__interaction\s*\{/);
+});
+
+test('makes deck readiness reversible at the completed companion handoff', () => {
+  assert.match(
+    source,
+    /progress\s*>=\s*METHOD_TRANSITION_TIMING\.companionsEnd/,
+  );
+  assert.match(source, /setDeckReady\(/);
+  assert.match(
+    source,
+    /conditions\.reduce[\s\S]*setDeckReady\(true\)/,
+  );
+});
+
+test('keeps the pinned artwork cards decorative', () => {
   assert.equal((source.match(/className="hsm-transition__card"/g) ?? []).length, 1);
   assert.match(source, /className="hsm-transition__card-row"/);
   assert.match(source, /methodItems\.slice\(1\)\.map/);
@@ -91,10 +106,20 @@ test('keeps the transition stage sticky and reaches a viewport-dominant early pe
   assert.doesNotMatch(source, /zoomTargets\.portal/);
 });
 
-test('uses a shorter 230vh runway without hidden interactive controls', () => {
+test('uses a 230vh pinned runway followed by intrinsic normal-flow interaction', () => {
   assert.match(styles, /--method-transition-scroll:\s*230vh/);
-  assert.match(styles, /min-height:\s*230svh/);
-  assert.doesNotMatch(source, /methodsAvailable/);
+  assert.doesNotMatch(
+    source,
+    /style=\{\{\s*['"]--method-transition-scroll['"]:/,
+  );
+  assert.match(
+    styles,
+    /\.hsm-transition__runway\s*\{[^}]*height:\s*var\(--method-transition-scroll\)[^}]*min-height:\s*230svh/s,
+  );
+  assert.doesNotMatch(
+    styles,
+    /\.hsm-transition__interaction\s*\{[^}]*(?:position:\s*(?:sticky|fixed)|height:\s*var\(--method-transition-scroll\))/s,
+  );
 });
 
 test('coordinates a downward glass with an upward card inside one master timeline', () => {

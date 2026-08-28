@@ -1,6 +1,14 @@
 import { teachingSteps } from './referenceStoryData';
 import { TeachingPathSegment } from './StoryConnectors';
 
+const TEACHING_DECOR_ATLAS = '/primary-reference/teaching/teaching-decor-atlas.png';
+const TEACHING_COMPOSITE_IMAGES = [
+  '/primary-reference/teaching/teaching-composite-explain.png',
+  '/primary-reference/teaching/teaching-composite-practise.png',
+  '/primary-reference/teaching/teaching-composite-independent.png',
+  '/primary-reference/teaching/teaching-composite-celebrate.png',
+] as const;
+
 const HowWeTeach = () => (
   <section
     id="pathway"
@@ -8,6 +16,8 @@ const HowWeTeach = () => (
     aria-labelledby="pathway-title"
     data-primary-reference-section="pathway"
   >
+    <div className="primary-reference-teaching__plane primary-reference-teaching__decor" style={{ backgroundImage: `url(${TEACHING_DECOR_ATLAS})` }} aria-hidden="true" />
+    <div className="primary-reference-teaching__school primary-reference-teaching__decor" style={{ backgroundImage: `url(${TEACHING_DECOR_ATLAS})` }} aria-hidden="true" />
     <header className="primary-reference-teaching__header">
       <p>One clear step at a time</p>
       <h2 id="pathway-title">How we teach</h2>
@@ -21,11 +31,14 @@ const HowWeTeach = () => (
         ))}
       </div>
       <ol>
-        {teachingSteps.map((step) => (
+        {teachingSteps.map((step, index) => (
           <li key={step.number}>
             <figure>
-              <div className="primary-reference-teaching__photo">
-                <img src={step.photo.src} alt={step.photo.alt} loading="lazy" decoding="async" />
+              <div
+                className={`primary-reference-teaching__photo primary-reference-teaching__photo--${index + 1}`}
+                data-photo-slot={`teaching-step-${step.number}`}
+              >
+                <img src={TEACHING_COMPOSITE_IMAGES[index]} alt={step.title} loading="lazy" decoding="async" />
               </div>
               <figcaption>
                 <span aria-hidden="true">{step.number}</span>
@@ -37,6 +50,14 @@ const HowWeTeach = () => (
         ))}
       </ol>
     </div>
+    <aside className="primary-reference-teaching__difference">
+      <span className="primary-reference-teaching__books primary-reference-teaching__decor" style={{ backgroundImage: `url(${TEACHING_DECOR_ATLAS})` }} aria-hidden="true" />
+      <div>
+        <strong>Every child. Every lesson. Every step forward.</strong>
+        <em>That’s the DA difference.</em>
+      </div>
+      <span className="primary-reference-teaching__trophy primary-reference-teaching__decor" style={{ backgroundImage: `url(${TEACHING_DECOR_ATLAS})` }} aria-hidden="true" />
+    </aside>
   </section>
 );
 

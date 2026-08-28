@@ -6,7 +6,7 @@ const source = readFileSync(new URL("./HSCExcellence.tsx", import.meta.url), "ut
 
 test("uses one shared living-landscape video below the hero", () => {
   assert.equal((source.match(/<video/g) ?? []).length, 1);
-  assert.match(source, /<SubjectHero[\s\S]*<div id="hsc-excellence-page-content"/);
+  assert.match(source, /<HSCHero \/>[\s\S]*<div id="hsc-excellence-page-content"/);
   assert.match(source, /className="hsc-landscape-video"/);
   assert.match(source, /autoPlay/);
   assert.match(source, /muted/);

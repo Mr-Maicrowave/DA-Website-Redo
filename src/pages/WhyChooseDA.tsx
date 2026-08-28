@@ -1,290 +1,339 @@
-import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Heart, Play } from 'lucide-react';
+import {
+  AlarmClock, ArrowRight, BarChart3, BookOpen, Brain, CheckCircle2, Eye, Flag,
+  Gauge, Globe2, Heart, Lightbulb, MessageCircle, NotebookTabs, PencilLine,
+  RotateCcw, Settings, ShieldCheck, Sigma, Sparkles, Star, Target, Trophy,
+  UserRound, UserRoundCheck, UsersRound,
+} from 'lucide-react';
 import NavigationNew from '@/components/NavigationNew';
-import FooterNew from '@/components/FooterNew';
 import SEO from '@/components/SEO';
-import SubjectHero from '@/components/subjects/SubjectHero';
-import { featuredStudentStory, hasFeaturedVideo, startingPoints } from '@/data/why-da';
+import { useWhyDAMotion } from './useWhyDAMotion';
+import './WhyChooseDA.css';
 
-const STUDENT_GAINS = [
-  {
-    title: 'A voice of their own',
-    body: 'They learn to ask a question, explain a method and contribute when an idea is still taking shape.',
-  },
-  {
-    title: 'Habits that travel',
-    body: 'Preparation, follow-through and a calmer way to approach difficult work become part of how they learn everywhere.',
-  },
-  {
-    title: 'The courage to persist',
-    body: 'Students discover that challenge is not a verdict on their ability. It is where capability is built.',
-  },
-  {
-    title: 'People in their corner',
-    body: 'Friendships and trusted tutors make it easier to take healthy risks, recover from a setback and keep aiming higher.',
-  },
+const studentSignals = [
+  { label: 'Strong in maths', Icon: Sigma, className: 'why-da-signal--maths' },
+  { label: 'Quiet in class', Icon: UserRoundCheck, className: 'why-da-signal--quiet' },
+  { label: 'Losing confidence in English', Icon: BookOpen, className: 'why-da-signal--english' },
+  { label: 'Rushes tests', Icon: AlarmClock, className: 'why-da-signal--tests' },
+  { label: 'Needs a challenge', Icon: Star, className: 'why-da-signal--challenge' },
+  { label: 'Wants a Band 6', Icon: Trophy, className: 'why-da-signal--band' },
 ] as const;
 
-const LIFE_AT_DA = [
-  {
-    moment: 'Arrive',
-    title: 'Walk into a familiar room.',
-    body: 'The welcome is real. Faces are familiar, names are remembered and students can settle before the work begins.',
-    image: '/images/community/hallway_group.jpg',
-    alt: 'Students arriving together at DA Tuition',
-  },
-  {
-    moment: 'Feel known',
-    title: 'Be seen as a whole person.',
-    body: 'Tutors notice confidence as well as content, and understand the goals and pressures a student brings from school.',
-    image: '/images/community/teacher_kids_warmth.jpg',
-    alt: 'A DA tutor sharing a warm moment with students',
-  },
-  {
-    moment: 'Be challenged',
-    title: 'Do work worth being proud of.',
-    body: 'Thoughtful teaching gives students enough support to start, and enough room to think for themselves.',
-    image: '/images/community/class_induction.jpg',
-    alt: 'Students working through a DA lesson together',
-  },
-  {
-    moment: 'Grow',
-    title: 'Notice what they can now do.',
-    body: 'A clearer method, a raised hand, a better question: progress becomes visible in the way students carry themselves.',
-    image: '/images/community/student_raising_hand.jpg',
-    alt: 'A student raising their hand during a DA lesson',
-  },
-  {
-    moment: 'Belong',
-    title: 'Leave with more than a finished worksheet.',
-    body: 'They leave with direction, encouragement and a community that expects good things from them.',
-    image: '/images/community/teen_friends.jpg',
-    alt: 'DA students spending time together between lessons',
-  },
+const discoveryPoints = [
+  { label: 'Starting point', Icon: Target },
+  { label: 'Strengths & weaknesses', Icon: BarChart3 },
+  { label: 'Confidence', Icon: Heart },
+  { label: 'Goals', Icon: Flag },
+  { label: 'Learning style', Icon: UserRound },
+  { label: 'Parent concerns', Icon: MessageCircle },
+] as const;
+
+const personalPathLeft = [
+  { title: 'Level', body: 'Right level of challenge', Icon: Gauge },
+  { title: 'Pace', body: 'Right pace for progress', Icon: AlarmClock },
+  { title: 'Materials', body: 'Right content for their level', Icon: BookOpen },
+  { title: 'Learning plan', body: 'Structured yet flexible', Icon: NotebookTabs },
+] as const;
+
+const personalPathRight = [
+  { title: 'Class format', body: 'Private / Small Group / Class / Advanced', Icon: UsersRound },
+  { title: 'Tutor', body: 'Matched to their learning needs', Icon: UserRoundCheck },
+  { title: 'Goals', body: 'Catch up / Improve / Excel', Icon: Settings },
+  { title: 'Foundation → extension', body: 'From building basics to pushing potential', Icon: Sparkles },
+] as const;
+
+const proofPoints = [
+  { value: '1500+', label: 'Students supported', Icon: UserRoundCheck, countTo: 1500, suffix: '+' },
+  { value: '50+', label: 'Expert tutors', Icon: Globe2, countTo: 50, suffix: '+' },
+  { value: 'Years 1–12', label: 'All subjects', Icon: Star, countTo: null, suffix: '' },
+  { value: 'Personalised', label: 'For every learner', Icon: AlarmClock, countTo: null, suffix: '' },
+] as const;
+
+const proofPhotoLabels = ['Private support', 'Small-group learning', 'Working at the right level', 'Tutor connection'] as const;
+
+const teachingCycle = [
+  { title: 'UNDERSTAND', body: 'We explain clearly.', Icon: Lightbulb },
+  { title: 'SEE IT', body: 'We work through examples.', Icon: Eye },
+  { title: 'TRY IT', body: 'You have a go.', Icon: PencilLine },
+  { title: 'TEST IT', body: 'We check understanding.', Icon: NotebookTabs },
+  { title: 'CORRECT IT', body: 'We fix mistakes and fill gaps.', Icon: RotateCcw },
+  { title: 'MASTER IT', body: 'You do it with confidence.', Icon: Star },
+] as const;
+
+const careValues = [
+  { title: 'FEEL KNOWN', body: 'We build real relationships.', Icon: Heart },
+  { title: 'FEEL SAFE', body: 'It’s okay to ask. We’re here to help.', Icon: ShieldCheck },
+  { title: 'FEEL SUPPORTED', body: 'We notice, we guide, we never give up.', Icon: UsersRound },
+  { title: 'FEEL CHALLENGED', body: 'For those ready to go further.', Icon: Sparkles },
+  { title: 'FEEL PROUD', body: 'Progress is recognised and celebrated.', Icon: Trophy },
+] as const;
+
+const growthMilestones = [
+  { year: 'YEAR 2', thought: 'I didn’t know how.' },
+  { year: 'YEAR 4', thought: 'I’ll keep trying.' },
+  { year: 'YEAR 7', thought: 'I think I understand.' },
+  { year: 'YEAR 9', thought: 'I’m getting better.' },
+  { year: 'YEAR 12', thought: 'I’ve got this.' },
+] as const;
+
+const growthQualities = [
+  { label: 'Confidence', Icon: Sparkles }, { label: 'Curiosity', Icon: Brain },
+  { label: 'Study habits', Icon: NotebookTabs }, { label: 'Independence', Icon: Flag },
+  { label: 'Resilience', Icon: Heart }, { label: 'Tutor connection', Icon: UserRoundCheck },
+] as const;
+
+const achievementResults = [
+  { title: 'CATCH UP SUCCESS', body: 'From falling behind to back on track.', result: '48% → 71%' },
+  { title: 'IMPROVEMENT', body: 'Meaningful gains and stronger habits.', result: '67% → 84%' },
+  { title: 'HIGH ACHIEVEMENT', body: 'Reaching goals and beyond.', result: 'Band 6' },
+  { title: 'EXTENSION', body: 'Pushing potential further.', result: 'Top band', note: 'Advanced pathway' },
+] as const;
+
+const testimonials = [
+  { quote: 'DA changed the way my daughter thinks about learning.', source: 'Parent' },
+  { quote: 'More than a tutor. A mentor and a friend.', source: 'Year 12 Parent' },
+  { quote: 'My confidence has grown so much since joining DA.', source: 'Year 10 Student' },
+  { quote: 'The tutors explain things so clearly. I finally get it.', source: 'Year 8 Student' },
+  { quote: '20+ years of helping students from Year 2 to Year 12 achieve their potential.', source: 'DA Tuition' },
 ] as const;
 
 export default function WhyChooseDA() {
-  const [selectedStartingPointId, setSelectedStartingPointId] = useState(startingPoints[0].id);
-  const selectedStartingPoint = startingPoints.find((point) => point.id === selectedStartingPointId) ?? startingPoints[0];
+  const pageRef = useWhyDAMotion();
 
   return (
     <>
       <SEO
-        title="The DA Difference | Teaching, Belonging and Confidence"
-        description="Discover how DA Tuition combines careful small-group teaching, genuine tutor relationships and a welcoming environment to help students grow in confidence and results."
+        title="Why DA? | Personalised Tutoring for Every Student"
+        description="Discover how DA Tuition gets to know every learner and builds a personalised pathway around their strengths, needs and goals."
         canonicalUrl="/why-choose-da"
       />
       <NavigationNew />
 
-      <main className="overflow-hidden bg-[#f8f7f3]">
-        <SubjectHero
-          eyebrow="The DA Difference"
-          icon={Heart}
-          headlineWhite="More than tutoring."
-          headlineGold="A place they belong."
-          subtext="Students learn best when they feel known, supported and capable. At DA, thoughtful teaching and a genuinely welcoming environment work together to build confidence that reaches far beyond the classroom."
-          proofPills={['Small-group learning', 'Tutors who know them', 'Confidence that lasts']}
-          exploreTargetId="why-students-thrive"
-          placeholderLabel="DA Tuition classroom community"
-          backgroundImageSrc="/images/community/class_hands_raised.jpg"
-          backgroundImageAlt="DA Tuition students learning together in class"
-          mobileBackgroundPosition="58% center"
-        />
-
-        <section id="why-students-thrive" className="relative bg-[#fbf8ef] px-5 py-20 sm:py-24 lg:px-8 lg:py-28">
-          <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:items-end lg:gap-20">
-            <div>
-              <p className="text-sm font-black text-[#a88314]">The DA Difference</p>
-              <h2 className="mt-5 max-w-3xl font-serif text-4xl font-medium leading-[1.06] tracking-[-0.03em] text-[#071629] [text-wrap:balance] sm:text-5xl lg:text-6xl">
-                A learning community where students are known, challenged and believed in.
-              </h2>
-              <p className="mt-6 max-w-xl text-base leading-8 text-[#30445e] [text-wrap:pretty] sm:text-lg">
-                DA is not simply somewhere to get through homework. It is a place for young people to build the confidence, habits and ambition that let academic growth mean something lasting.
-              </p>
-            </div>
-            <div className="border-t border-[#c9a227]/70 pt-7 lg:pb-2">
-              <p className="font-serif text-xl leading-8 text-[#19324d] sm:text-2xl sm:leading-9">
-                Students learn to communicate, take responsibility, recover from a hard question, make friends and discover what they are capable of.
-              </p>
-            </div>
+      <main ref={pageRef} className="why-da-page">
+        <section className="why-da-hero" data-testid="why-da-hero" aria-labelledby="why-da-title">
+          <div className="why-da-hero__copy" data-motion="hero-copy">
+            <div className="why-da-hero__meta" data-motion="hero-meta" aria-hidden="true"><span>WHY DA?</span><span>01 / 07</span></div>
+            <h1 id="why-da-title">
+              <span className="why-da-text-mask"><span data-motion="hero-line">EVERY</span></span>
+              <span className="why-da-text-mask"><span data-motion="hero-line">STUDENT IS</span></span>
+              <span className="why-da-text-mask"><span data-motion="hero-line">DIFFERENT.</span></span>
+              <em>
+                <span className="why-da-text-mask"><span data-motion="hero-line">Their tuition</span></span>
+                <span className="why-da-text-mask"><span data-motion="hero-line">should be too.</span></span>
+              </em>
+            </h1>
+            <p data-motion="hero-support">At DA, we don&apos;t believe in one-size-fits-all programs. We get to know your child deeply, then build a learning experience that&apos;s personalised for them.</p>
+            <Link to="#why-da-know-you" className="why-da-button" data-motion="hero-cta">Discover the DA difference <ArrowRight aria-hidden="true" /></Link>
           </div>
 
-          <div className="mx-auto mt-12 grid max-w-7xl gap-5 sm:grid-cols-[1.08fr_0.92fr] lg:mt-16 lg:grid-cols-[1.32fr_0.68fr]">
-            <figure className="overflow-hidden rounded-2xl bg-[#dce2df] shadow-[0_12px_28px_rgba(7,22,41,0.08)]">
-              <img src="/images/community/tutor_one_on_one.jpg" alt="A DA tutor working closely with a student" className="h-[300px] w-full object-cover sm:h-[420px]" />
-            </figure>
-            <div className="grid gap-6 sm:grid-rows-[0.8fr_1.2fr]">
-              <figure className="overflow-hidden rounded-2xl bg-[#dce2df] shadow-[0_12px_28px_rgba(7,22,41,0.08)]">
-                <img src="/images/community/student_laptop_smile.jpg" alt="A student smiling while learning at DA" className="h-48 w-full object-cover sm:h-full" loading="lazy" />
-              </figure>
-              <p className="flex items-end rounded-2xl bg-[#e7dcc0] p-6 font-serif text-xl leading-8 text-[#19324d] sm:p-8 sm:text-2xl sm:leading-9">
-                High expectations feel different when someone knows how to help you reach them.
-              </p>
+          <div className="why-da-hero__visual">
+            <picture data-motion="hero-student">
+              <source srcSet="/images/why-da-reference/why-da-hero-student-v1.avif" type="image/avif" />
+              <source srcSet="/images/why-da-reference/why-da-hero-student-v1.webp" type="image/webp" />
+              <img data-motion="hero-student-image" src="/images/why-da-reference/why-da-hero-student-v1.png" alt="Student writing in a workbook and looking ahead with confidence" />
+            </picture>
+            <div className="why-da-signal-orbit" aria-hidden="true" />
+            <svg className="why-da-signal-lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+              <path data-motion="signal-line" d="M65 52 C48 42 38 18 18 14" />
+              <path data-motion="signal-line" d="M67 48 C80 31 88 19 96 17" />
+              <path data-motion="signal-line" d="M62 54 C43 52 30 36 13 35" />
+              <path data-motion="signal-line" d="M70 53 C82 48 90 39 98 39" />
+              <path data-motion="signal-line" d="M61 59 C44 64 33 66 15 61" />
+              <path data-motion="signal-line" d="M71 58 C83 61 91 67 98 64" />
+            </svg>
+            {studentSignals.map(({ label, Icon, className }, index) => (
+              <div className={`why-da-signal ${className}`} data-motion="observation" data-signal-index={index} key={label}><Icon aria-hidden="true" /><span>{label}</span></div>
+            ))}
+          </div>
+        </section>
+
+        <section id="why-da-know-you" className="why-da-know" data-testid="why-da-know-you">
+          <div className="why-da-section-copy">
+            <div className="why-da-section-heading"><span className="why-da-number-mask"><span data-motion="know-number">01</span></span><h2 data-motion="know-title">WE KNOW YOU</h2></div>
+            <p data-motion="know-copy">We listen. We observe. We understand who your child is today and what they want to achieve.</p>
+          </div>
+          <figure className="why-da-know__photo" data-motion="evidence-photo">
+            <picture data-motion="evidence-image">
+              <source srcSet="/images/why-da-reference/why-da-know-you-v1.avif" type="image/avif" />
+              <source srcSet="/images/why-da-reference/why-da-know-you-v1.webp" type="image/webp" />
+              <img src="/images/why-da-reference/why-da-know-you-v1.png" alt="Tutor helping a young student with an open workbook" loading="lazy" />
+            </picture>
+            <figcaption>Understanding comes first.</figcaption>
+          </figure>
+          <div className="why-da-discovery" aria-label="What we learn about each student">
+            {discoveryPoints.map(({ label, Icon }) => (
+              <div className="why-da-discovery__item" data-motion="discovery-item" key={label}><Icon aria-hidden="true" /><span>{label}</span></div>
+            ))}
+          </div>
+        </section>
+
+        <section className="why-da-personalise" data-testid="why-da-personalise" aria-labelledby="why-da-personalise-title">
+          <div className="why-da-journey-thread" aria-hidden="true">
+            <svg viewBox="0 0 1000 560" preserveAspectRatio="none">
+              <path data-motion="journey-path" d="M90 0 C100 180 350 170 500 330" />
+              <path data-motion="journey-path" d="M250 0 C260 190 390 205 500 330" />
+              <path data-motion="journey-path" d="M410 0 C415 175 455 230 500 330" />
+              <path data-motion="journey-path" d="M590 0 C585 175 545 230 500 330" />
+              <path data-motion="journey-path" d="M750 0 C740 190 610 205 500 330" />
+              <path data-motion="journey-path" d="M910 0 C900 180 650 170 500 330" />
+            </svg>
+          </div>
+          <div className="why-da-personalise__intro">
+            <div className="why-da-section-heading"><span>02</span><h2 id="why-da-personalise-title">WE PERSONALISE</h2></div>
+            <p>We design a learning path that fits your child — not the other way around.</p>
+          </div>
+          <div className="why-da-path">
+            <div className="why-da-path__list why-da-path__list--left">
+              {personalPathLeft.map(({ title, body, Icon }) => (
+                <article data-motion="path-item" data-path-title={title.toUpperCase()} key={title}><Icon aria-hidden="true" /><div><h3>{title}</h3><p>{body}</p></div></article>
+              ))}
+            </div>
+            <div className="why-da-path__core">
+              <div className="why-da-path__rings" data-motion="path-ring" aria-hidden="true" />
+              <div className="why-da-path__disc" data-motion="path-centre"><Brain aria-hidden="true" /><span>YOUR CHILD&apos;S<br />PERSONALISED<br />PATH</span></div>
+              {[1, 2, 3, 4, 5, 6].map((dot) => <i className={`why-da-path__dot why-da-path__dot--${dot}`} data-motion="path-node" aria-hidden="true" key={dot} />)}
+            </div>
+            <div className="why-da-path__list why-da-path__list--right">
+              {personalPathRight.map(({ title, body, Icon }) => (
+                <article data-motion="path-item" data-path-title={title.toUpperCase()} key={title}><Icon aria-hidden="true" /><div><h3>{title}</h3><p>{body}</p></div></article>
+              ))}
             </div>
           </div>
         </section>
 
-        <section className="bg-[#eee3c8] px-5 py-20 sm:py-24 lg:px-8 lg:py-28">
-          <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[0.72fr_1.28fr] lg:gap-16">
-            <div>
-              <p className="text-sm font-black text-[#a88314]">Start where they are</p>
-              <h2 className="mt-4 max-w-md font-serif text-4xl font-medium leading-[1.06] tracking-[-0.03em] text-[#071629] [text-wrap:balance] sm:text-5xl">What would help most right now?</h2>
-              <p className="mt-5 max-w-md text-base leading-8 text-[#30445e]">Choose the thought that feels most familiar. There is no diagnosis here—just a glimpse of how DA could meet a student where they are.</p>
-
-              <div className="mt-8 space-y-3" aria-label="Choose a starting point">
-                {startingPoints.map((point) => {
-                  const isSelected = point.id === selectedStartingPointId;
-                  return (
-                    <button
-                      key={point.id}
-                      type="button"
-                      aria-pressed={isSelected}
-                      onClick={() => setSelectedStartingPointId(point.id)}
-                      className={`w-full rounded-xl px-5 py-4 text-left text-sm font-bold leading-6 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#a88314] ${isSelected ? 'bg-[#173552] text-white' : 'bg-white/75 text-[#19324d] hover:bg-white'}`}
-                    >
-                      {point.title}
-                    </button>
-                  );
-                })}
-              </div>
+        <figure className="why-da-photo-strip" aria-label="Personalised tutoring in practice">
+          {proofPhotoLabels.map((label, index) => (
+            <div className={`why-da-photo-strip__panel why-da-photo-strip__panel--${index + 1}`} data-motion="proof-photo" key={label}>
+              <picture>
+                <source srcSet="/images/why-da-reference/why-da-tutoring-strip-v1.avif" type="image/avif" />
+                <source srcSet="/images/why-da-reference/why-da-tutoring-strip-v1.webp" type="image/webp" />
+                <img src="/images/why-da-reference/why-da-tutoring-strip-v1.png" alt="" loading="lazy" />
+              </picture>
+              <span>{label}</span>
             </div>
+          ))}
+        </figure>
 
-            <article className="overflow-hidden rounded-2xl bg-white shadow-[0_12px_28px_rgba(7,22,41,0.08)] sm:grid sm:grid-cols-[0.9fr_1.1fr]">
-              <figure className="bg-[#dce2df]">
-                <img src={selectedStartingPoint.image} alt={selectedStartingPoint.alt} className="h-64 w-full object-cover sm:h-full" />
-              </figure>
-              <div className="p-7 sm:p-9">
-                <p className="text-sm font-black text-[#a88314]">How DA responds</p>
-                <h3 className="mt-4 font-serif text-3xl leading-tight text-[#071629]">{selectedStartingPoint.responseHeading}</h3>
-                <p className="mt-5 text-[15px] leading-7 text-[#40536a]">{selectedStartingPoint.response}</p>
-                <Link to="/book-interview" className="mt-7 inline-flex items-center gap-2 border-b border-[#a88314] pb-2 text-sm font-black text-[#a88314] transition-colors hover:text-[#071629]">
-                  Talk through this with us <ArrowRight className="h-4 w-4" />
-                </Link>
-              </div>
+        <section className="why-da-proof" data-testid="why-da-proof-band" aria-label="DA Tuition at a glance">
+          {proofPoints.map(({ value, label, Icon, countTo, suffix }) => (
+            <div className="why-da-proof__item" key={value}><Icon data-motion="proof-icon" aria-hidden="true" /><strong data-motion="proof-value" data-count-to={countTo ?? undefined} data-count-suffix={suffix}>{value}</strong><span>{label}</span></div>
+          ))}
+          <span className="why-da-continuation-thread" data-motion="continuation-thread" aria-hidden="true" />
+        </section>
+
+        <section className="why-da-teach" data-testid="why-da-teach" aria-labelledby="why-da-teach-title">
+          <header className="why-da-chapter-heading" data-motion="chapter-heading">
+            <div className="why-da-section-heading"><span>03</span><h2 id="why-da-teach-title">WE TEACH</h2></div>
+            <p>A proven learning cycle that turns understanding into mastery.</p>
+          </header>
+          <ol className="why-da-cycle" aria-label="DA teaching cycle">
+            {teachingCycle.map(({ title, body, Icon }, index) => (
+              <li data-motion="teach-step" key={title}>
+                <div className="why-da-cycle__icon"><Icon aria-hidden="true" /></div>
+                <strong>{title}</strong><span>{body}</span>
+                {index < teachingCycle.length - 1 && <ArrowRight className="why-da-cycle__arrow" aria-hidden="true" />}
+              </li>
+            ))}
+          </ol>
+          <div className="why-da-teach__practice">
+            <figure data-motion="teach-photo"><img src="/images/why-da-reference/why-da-teach-classroom-v1.jpg" alt="Students applying what they have learned in a focused tutoring class" loading="lazy" decoding="async" /></figure>
+            <article className="why-da-lesson-board" data-motion="lesson-board" aria-label="Example from a maths lesson">
+              <span>Example from a lesson</span><p>Solve for x:</p>
+              <div className="why-da-equation"><span>3x + 7 = 22</span><span>3x = 15</span><span>x = <strong>5</strong></span></div>
+              <footer>MASTERED <CheckCircle2 aria-hidden="true" /></footer>
             </article>
           </div>
         </section>
 
-        <section className="bg-[#102b47] px-5 py-20 text-white sm:py-24 lg:px-8 lg:py-28">
-          <div className="mx-auto max-w-7xl">
-            <div className="max-w-2xl">
-              <p className="text-sm font-black text-[#e4c76c]">Featured student film</p>
-              <h2 className="mt-4 font-serif text-4xl font-medium leading-[1.06] tracking-[-0.03em] [text-wrap:balance] sm:text-5xl">
-                The people who live DA explain it best.
-              </h2>
-              <p className="mt-5 text-base leading-7 text-[#ccd6e1]">Students describe the support, friendships and confidence that make DA feel different from a tutoring service.</p>
-            </div>
+        <section className="why-da-care" data-testid="why-da-care" aria-labelledby="why-da-care-title">
+          <img className="why-da-care__image" src="/images/why-da-reference/why-da-care-v1.jpg" alt="A student feeling supported by two DA tutors" loading="lazy" decoding="async" />
+          <div className="why-da-care__veil" aria-hidden="true" />
+          <header className="why-da-care__heading" data-motion="chapter-heading">
+            <div className="why-da-section-heading"><span>04</span><h2 id="why-da-care-title">WE CARE</h2></div>
+            <p>Because students learn best when they feel safe, supported and encouraged.</p>
+          </header>
+          <div className="why-da-care__values">
+            {careValues.map(({ title, body, Icon }) => <article data-motion="care-value" key={title}><Icon aria-hidden="true" /><strong>{title}</strong><p>{body}</p></article>)}
+          </div>
+          <p className="why-da-care__promise"><Heart aria-hidden="true" /> Great teaching matters. So does wanting to come back next week.</p>
+        </section>
 
-            <div className="mt-10 overflow-hidden rounded-2xl bg-[#173a5a] shadow-[0_16px_34px_rgba(4,15,29,0.2)] lg:mt-12">
-              {hasFeaturedVideo(featuredStudentStory) ? (
-                <video controls className="aspect-video w-full" aria-label={featuredStudentStory.title}>
-                  <source src={featuredStudentStory.src} />
-                  Your browser does not support the video tag.
-                </video>
-              ) : (
-                <div className="flex aspect-video flex-col items-center justify-center px-6 text-center sm:px-12">
-                  <span className="flex h-16 w-16 items-center justify-center rounded-full border border-[#e4c76c] text-[#e4c76c]" aria-hidden="true"><Play className="ml-0.5 h-6 w-6" fill="currentColor" /></span>
-                  <p className="mt-6 font-serif text-2xl text-white sm:text-4xl">Featured student story coming soon.</p>
-                  <p className="mt-4 max-w-xl text-base leading-7 text-[#c5cfdb]">The film will be added here when the selected student story is ready to share.</p>
-                </div>
-              )}
-            </div>
+        <section className="why-da-connected" data-testid="why-da-connected" aria-labelledby="why-da-connected-title">
+          <header className="why-da-chapter-heading" data-motion="chapter-heading">
+            <div className="why-da-section-heading"><span>05</span><h2 id="why-da-connected-title">WE STAY CONNECTED</h2></div>
+            <p>You’ll always know how your child is progressing.</p>
+          </header>
+          <div className="why-da-connected__dashboard">
+            <article data-motion="connection-panel" className="why-da-report">
+              <small>LESSON REPORT · 14 May</small><h3>Fractions &amp; Percentages</h3><strong>8 / 10</strong>
+              <ul><li>Percentage increase</li><li>Fraction conversion</li></ul>
+              <h4>WORKING ON</h4><p>Accuracy under time pressure.</p><h4>NEXT LESSON</h4><p>Re-test converting and moving forward.</p>
+            </article>
+            <article data-motion="connection-panel" className="why-da-progress">
+              <small>PROGRESS OVER TIME</small>
+              <div className="why-da-chart" aria-label="Progress increased from 62 to 84 percent"><svg viewBox="0 0 320 140" role="img"><title>Student progress from February to June</title><path d="M18 112 L82 96 L145 77 L210 58 L286 31" /><g><circle cx="18" cy="112" r="5"/><circle cx="82" cy="96" r="5"/><circle cx="145" cy="77" r="5"/><circle cx="210" cy="58" r="5"/><circle cx="286" cy="31" r="5"/></g></svg><div><span>62%</span><span>67%</span><span>71%</span><span>78%</span><span>84%</span></div></div>
+              <dl><div><dt>Confidence</dt><dd>↑</dd></div><div><dt>Mistakes</dt><dd>↓</dd></div><div><dt>Independence</dt><dd>↑</dd></div></dl>
+            </article>
+            <article data-motion="connection-panel" className="why-da-messages">
+              <small>PARENT COMMUNICATION</small>
+              <div><span>Parent <time>10:24 am</time></span><p>She’s still struggling with algebra at school.</p></div>
+              <div><span>DA <time>10:30 am</time></span><p>Thanks for letting us know. We’ll adjust next week’s lesson and focus on algebra basics.</p><Heart aria-hidden="true" /></div>
+            </article>
+          </div>
+          <div className="why-da-connected__features" aria-label="How DA keeps families connected">
+            <span><NotebookTabs aria-hidden="true" />Lesson reports<br />every session</span><span><BarChart3 aria-hidden="true" />Real-time<br />progress tracking</span><span><Target aria-hidden="true" />Strengths &amp; gaps<br />clearly identified</span><span><MessageCircle aria-hidden="true" />Responsive support<br />when it matters</span>
+          </div>
+        </section>
 
-            <div className="mt-8 flex flex-col gap-5 border-t border-white/20 pt-6 sm:flex-row sm:items-start sm:justify-between">
-              <p className="max-w-2xl text-sm leading-7 text-[#b9c6d4]">{featuredStudentStory.summary}</p>
-              {featuredStudentStory.moreStudentStoriesUrl ? (
-                <a href={featuredStudentStory.moreStudentStoriesUrl} className="inline-flex shrink-0 items-center gap-2 text-sm font-black text-[#e4c76c] hover:text-white">
-                  More student stories <ArrowRight className="h-4 w-4" />
-                </a>
-              ) : null}
+        <section className="why-da-grow" data-testid="why-da-grow" aria-labelledby="why-da-grow-title">
+          <header className="why-da-chapter-heading" data-motion="chapter-heading">
+            <div className="why-da-section-heading"><span>06</span><h2 id="why-da-grow-title">WE GROW</h2></div>
+            <p>We build more than marks. We build skills for life.</p>
+          </header>
+          <div className="why-da-growth-line" aria-hidden="true"><span /></div>
+          <div className="why-da-growth-milestones">
+            {growthMilestones.map(({ year, thought }, index) => (
+              <article data-motion="growth-milestone" key={year}>
+                <strong>{year}</strong><i aria-hidden="true" />
+                <div className={`why-da-growth-photo why-da-growth-photo--${index + 1}`}><img src="/images/why-da-reference/why-da-growth-v1.jpg" alt="" loading="lazy" decoding="async" /></div>
+                <p>{thought}</p>
+              </article>
+            ))}
+          </div>
+          <div className="why-da-growth-qualities" aria-label="Skills students build at DA">
+            {growthQualities.map(({ label, Icon }) => <span data-motion="growth-quality" key={label}><Icon aria-hidden="true" />{label}</span>)}
+          </div>
+        </section>
+
+        <section className="why-da-achieve" data-testid="why-da-achieve" aria-labelledby="why-da-achieve-title">
+          <div className="why-da-achieve__glow" aria-hidden="true" />
+          <header className="why-da-achieve__heading" data-motion="chapter-heading">
+            <div className="why-da-section-heading"><span>07</span><h2 id="why-da-achieve-title">WE ACHIEVE</h2></div>
+            <p>Success looks different for every student.</p>
+          </header>
+          <div className="why-da-results">
+            {achievementResults.map((achievement) => <article data-motion="result-card" key={achievement.title}><small>{achievement.title}</small><p>{achievement.body}</p><strong>{achievement.result}</strong>{'note' in achievement && <span>{achievement.note}</span>}</article>)}
+          </div>
+          <div className="why-da-transformations">
+            <h3>Real transformations. Real impact.</h3>
+            <div className="why-da-testimonials">
+              {testimonials.map(({ quote, source }, index) => <blockquote data-motion="testimonial" className={index < 2 ? 'why-da-testimonial--large' : ''} key={quote}><div aria-label="5 out of 5 stars">★★★★★</div><p>“{quote}”</p><cite>— {source}</cite></blockquote>)}
             </div>
           </div>
         </section>
 
-        <section className="bg-[#f5f1e7] px-5 py-20 sm:py-24 lg:px-8 lg:py-28">
-          <div className="mx-auto max-w-7xl">
-            <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:items-end lg:gap-24">
-              <h2 className="max-w-xl font-serif text-4xl font-medium leading-[1.06] tracking-[-0.03em] text-[#071629] [text-wrap:balance] sm:text-5xl">What students gain here does not stop at the syllabus.</h2>
-              <p className="max-w-xl text-base leading-8 text-[#30445e] sm:justify-self-end">It shows up in a student who can explain their thinking, plan their next move, face a setback with perspective and walk into the room knowing they belong there.</p>
-            </div>
-
-            <div className="mt-12 grid gap-6 lg:mt-16 lg:grid-cols-[1.05fr_0.95fr] lg:items-stretch">
-              <figure className="overflow-hidden rounded-2xl bg-[#dce2df] shadow-[0_12px_28px_rgba(7,22,41,0.08)]">
-                <img src="/images/community/class_smiling_camera.jpg" alt="Students enjoying a lesson at DA Tuition" className="h-[330px] w-full object-cover sm:h-[440px] lg:h-full" loading="lazy" />
-              </figure>
-              <div className="grid gap-5 sm:grid-cols-2 lg:content-center">
-                {STUDENT_GAINS.map((gain, index) => (
-                  <article key={gain.title} className={`rounded-2xl p-6 ${index === 1 ? 'bg-[#e4d39e]' : index === 2 ? 'bg-[#dfe8e1]' : 'bg-white shadow-[0_8px_20px_rgba(7,22,41,0.06)]'}`}>
-                    <h3 className="font-serif text-2xl leading-tight text-[#071629]">{gain.title}</h3>
-                    <p className="mt-4 text-[15px] leading-7 text-[#30445e]">{gain.body}</p>
-                  </article>
-                ))}
-                <figure className="overflow-hidden rounded-2xl bg-[#dce2df] sm:col-span-2">
-                  <img src="/images/community/teen_girls_session.jpg" alt="Students collaborating during a DA session" className="h-40 w-full object-cover" loading="lazy" />
-                </figure>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section className="bg-[#f8f7f3] px-5 py-20 sm:py-24 lg:px-8 lg:py-28">
-          <div className="mx-auto max-w-7xl">
-            <div className="max-w-3xl">
-              <p className="text-sm font-black text-[#a88314]">Life at DA</p>
-              <h2 className="mt-4 font-serif text-4xl font-medium leading-[1.06] tracking-[-0.03em] text-[#071629] [text-wrap:balance] sm:text-5xl">A weekly rhythm that changes how students see themselves.</h2>
-            </div>
-            <ol className="mt-12 grid gap-8 sm:mt-14 sm:grid-cols-2 lg:grid-cols-5 lg:gap-6">
-              {LIFE_AT_DA.map((chapter, index) => (
-                <li key={chapter.moment} className="group">
-                  <figure className="overflow-hidden rounded-2xl bg-[#dce2df] shadow-[0_10px_22px_rgba(7,22,41,0.07)]">
-                    <img src={chapter.image} alt={chapter.alt} className="h-52 w-full object-cover transition-transform duration-500 motion-safe:group-hover:scale-105 lg:h-56" loading="lazy" />
-                  </figure>
-                  <div className="mt-5 px-1">
-                    <p className="text-sm font-black text-[#a88314]">{index + 1}. {chapter.moment}</p>
-                    <h3 className="mt-2 font-serif text-xl leading-7 text-[#071629]">{chapter.title}</h3>
-                    <p className="mt-3 text-[15px] leading-7 text-[#40536a]">{chapter.body}</p>
-                  </div>
-                </li>
-              ))}
-            </ol>
-          </div>
-        </section>
-
-        <section className="bg-[#eef1ec] px-5 py-20 sm:py-24 lg:px-8 lg:py-28">
-          <div className="mx-auto max-w-7xl">
-            <div className="grid gap-10 border-b border-[#071629]/15 pb-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-end">
-              <h2 className="max-w-3xl font-serif text-4xl font-medium leading-[1.06] tracking-[-0.03em] text-[#071629] [text-wrap:balance] sm:text-5xl">The proof is in the way students talk about their time here.</h2>
-              <p className="max-w-lg text-base leading-8 text-[#40536a] lg:justify-self-end">Long after a lesson, students remember the people who made them feel capable enough to keep trying.</p>
-            </div>
-            <div className="grid gap-5 py-14 lg:grid-cols-12 lg:py-20">
-              <blockquote className="rounded-2xl bg-[#173552] p-7 text-white shadow-[0_14px_30px_rgba(7,22,41,0.16)] sm:p-8 lg:col-span-7">
-                <p className="font-serif text-2xl leading-[1.35] [text-wrap:pretty] sm:text-3xl lg:text-4xl">&ldquo;DA has created an inviting and comfortable environment that makes you look forward to learning.&rdquo;</p>
-                <footer className="mt-9 border-t border-white/20 pt-5"><p className="font-black text-[#e4c76c]">Ellie Dang</p><p className="mt-1 text-sm text-[#c5cfdb]">DA student for eight years</p></footer>
-              </blockquote>
-              <figure className="overflow-hidden rounded-2xl lg:col-span-5"><img src="/images/community/tutor_mentor_girls.jpg" alt="A tutor mentoring students at DA" className="h-[330px] w-full object-cover lg:h-full" loading="lazy" /></figure>
-              <blockquote className="rounded-2xl bg-white p-8 lg:col-span-5">
-                <p className="font-serif text-2xl leading-[1.45] text-[#19324d] sm:text-3xl">&ldquo;He had both a calm and encouraging attitude that made me feel very comfortable.&rdquo;</p>
-                <footer className="mt-7"><p className="font-black text-[#a88314]">Emma Thomas</p><p className="mt-1 text-sm text-[#52657b]">DA Mathematics student</p></footer>
-              </blockquote>
-              <div className="flex items-end lg:col-span-7 lg:justify-end"><Link to="/success-stories" className="inline-flex items-center gap-2 border-b border-[#a88314] pb-2 text-sm font-black text-[#a88314] transition-colors hover:text-[#071629]">Read more written stories <ArrowRight className="h-4 w-4" /></Link></div>
-            </div>
-          </div>
-        </section>
-
-        <section className="relative isolate overflow-hidden bg-[#071629]">
-          <img src="/images/community/primary_colorful_class.jpg" alt="Students learning together at DA Tuition" className="absolute inset-0 h-full w-full object-cover" loading="lazy" />
-          <div className="absolute inset-0 bg-[#071629]/72" />
-          <div className="relative mx-auto flex min-h-[460px] max-w-3xl flex-col items-center justify-center px-5 py-20 text-center text-white sm:min-h-[520px]">
-            <p className="text-sm font-black text-[#e4c76c]">A conversation about your child</p>
-            <h2 className="mt-5 font-serif text-4xl font-medium leading-[1.06] tracking-[-0.03em] [text-wrap:balance] sm:text-5xl lg:text-6xl">Let&apos;s talk about where they are now, and where they could grow.</h2>
-            <p className="mt-7 max-w-2xl text-base leading-8 text-[#d4dce5] sm:text-lg">Bring your questions, concerns and hopes for your child. We will listen first, share how DA works, and help you decide whether it feels like the right fit. No pressure.</p>
-            <Link to="/book-interview" className="mt-10 inline-flex items-center gap-2 rounded-full bg-[#c9a227] px-8 py-4 text-sm font-black text-[#071629] transition-colors hover:bg-[#e0bd4b]">Book a conversation <ArrowRight className="h-4 w-4" /></Link>
+        <section className="why-da-closing" data-testid="why-da-closing-cta" aria-labelledby="why-da-closing-title">
+          <img src="/images/why-da-reference/why-da-reception-v1.jpg" alt="The welcoming DA Tuition reception" loading="lazy" decoding="async" />
+          <div className="why-da-closing__veil" aria-hidden="true" />
+          <div className="why-da-closing__content" data-motion="closing-cta">
+            <h2 id="why-da-closing-title">Whatever your child’s<br />starting point,</h2>
+            <p>let’s work out what comes next.</p>
+            <Link to="/book-interview">BOOK A CONSULTATION <ArrowRight aria-hidden="true" /></Link>
+            <Link to="/programs" className="why-da-closing__secondary">EXPLORE LEARNING OPTIONS <ArrowRight aria-hidden="true" /></Link>
+            <small>We’re here to help.</small>
           </div>
         </section>
       </main>
-
-      <FooterNew />
     </>
   );
 }

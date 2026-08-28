@@ -1,0 +1,354 @@
+.confidence-scene {
+  position: absolute;
+  z-index: 5;
+  top: clamp(4.4rem, 9vh, 6rem);
+  left: 68%;
+  width: min(52rem, 76vw);
+  color: var(--journey-navy);
+}
+
+.confidence-scene::before {
+  position: absolute;
+  z-index: -2;
+  inset: -2.5rem -3rem -1.5rem;
+  background: radial-gradient(
+    ellipse at 46% 45%,
+    color-mix(in srgb, var(--journey-ivory) 94%, transparent) 0 40%,
+    color-mix(in srgb, var(--journey-ivory) 65%, transparent) 59%,
+    transparent 77%
+  );
+  content: "";
+  filter: blur(0.35rem);
+  pointer-events: none;
+}
+
+.confidence-classroom {
+  position: absolute;
+  z-index: -1;
+  inset: 1.6rem 0 auto 41%;
+  height: clamp(15rem, 34vh, 22rem);
+  color: color-mix(in srgb, var(--journey-navy) 52%, var(--journey-dusty-blue));
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.confidence-classroom__doorway {
+  position: absolute;
+  right: 2%;
+  bottom: 0;
+  width: 9rem;
+  height: 14rem;
+  border: 2px solid currentColor;
+  border-bottom: 0;
+  border-radius: 5rem 5rem 0 0;
+}
+
+.confidence-classroom__doorway i {
+  position: absolute;
+  right: 0.55rem;
+  bottom: 5.2rem;
+  width: 0.42rem;
+  height: 0.42rem;
+  border-radius: 50%;
+  background: var(--journey-gold);
+}
+
+.confidence-classroom__window {
+  position: absolute;
+  right: 11.2rem;
+  bottom: 5.4rem;
+  width: 7.8rem;
+  height: 6.4rem;
+  border: 1px solid currentColor;
+  background: color-mix(in srgb, var(--journey-dusty-blue) 16%, transparent);
+}
+
+.confidence-classroom__window::before,
+.confidence-classroom__window::after {
+  position: absolute;
+  background: currentColor;
+  content: "";
+  opacity: 0.7;
+}
+.confidence-classroom__window::before { top: 50%; right: 0; left: 0; height: 1px; }
+.confidence-classroom__window::after { top: 0; bottom: 0; left: 50%; width: 1px; }
+
+.confidence-classroom__board {
+  position: absolute;
+  right: 20.2rem;
+  bottom: 6.6rem;
+  width: 6.5rem;
+  height: 4.2rem;
+  border: 1px solid color-mix(in srgb, var(--journey-gold) 54%, currentColor);
+  background: color-mix(in srgb, var(--journey-navy) 11%, transparent);
+}
+
+.confidence-classroom__shelf {
+  position: absolute;
+  right: 20.6rem;
+  bottom: 1.3rem;
+  width: 5rem;
+  border-bottom: 2px solid color-mix(in srgb, var(--journey-gold) 55%, currentColor);
+}
+.confidence-classroom__shelf img { display: block; width: 3.7rem; margin: 0 auto 0.2rem; }
+
+.confidence-classroom__lamp {
+  position: absolute;
+  right: -2.5rem;
+  bottom: -1rem;
+  width: 5.8rem;
+  opacity: 0.62;
+}
+
+.confidence-scene .assessment-encounter__header {
+  width: min(37rem, 72%);
+}
+
+.confidence-scene .assessment-encounter__header h2 {
+  max-width: 18ch;
+  font-size: clamp(1.95rem, 2.35vw, 3.2rem);
+}
+
+.confidence-scene .assessment-encounter__choices {
+  gap: clamp(0.75rem, 1.1vw, 1.15rem);
+}
+
+.confidence-vignette {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.confidence-student {
+  position: absolute;
+  z-index: 2;
+  right: 14%;
+  bottom: -0.25rem;
+  width: clamp(7rem, 8.2vw, 9rem);
+  max-width: 64%;
+  transform-origin: 50% 100%;
+  transition: transform 260ms cubic-bezier(0.22, 1, 0.36, 1), filter 220ms ease;
+}
+
+.confidence-desk {
+  position: absolute;
+  z-index: 3;
+  right: 1%;
+  bottom: 0.15rem;
+  width: 70%;
+  height: 2.7rem;
+  border-top: 0.55rem solid #a78962;
+  background: linear-gradient(90deg, transparent 8%, #7f694f 9% 12%, transparent 13% 85%, #7f694f 86% 89%, transparent 90%);
+  opacity: 0.88;
+}
+
+.confidence-page {
+  position: absolute;
+  top: -1.25rem;
+  right: 22%;
+  width: 3.7rem;
+  height: 1.8rem;
+  border: 1px solid #b6a98a;
+  background: #f4eddb;
+  transform: skewX(-10deg) rotate(-2deg);
+  transition: background 220ms ease, box-shadow 220ms ease;
+}
+
+.confidence-page::after {
+  position: absolute;
+  inset: 0.45rem 0.55rem auto;
+  height: 1px;
+  background: color-mix(in srgb, var(--journey-navy) 38%, transparent);
+  box-shadow: 0 0.35rem 0 color-mix(in srgb, var(--journey-navy) 26%, transparent);
+  content: "";
+}
+
+.confidence-pencil {
+  position: absolute;
+  z-index: 2;
+  top: -0.82rem;
+  right: 19%;
+  width: 2.9rem;
+  height: 0.16rem;
+  background: var(--journey-gold);
+  transform: rotate(-18deg);
+  transform-origin: 80% 50%;
+  transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.confidence-tutor {
+  position: absolute;
+  z-index: 2;
+  bottom: 0.2rem;
+  left: 5%;
+  width: 2.8rem;
+  height: 7.1rem;
+  border-radius: 45% 45% 12% 12%;
+  background: color-mix(in srgb, var(--journey-navy) 72%, var(--journey-dusty-blue));
+  transform-origin: 50% 100%;
+  transition: transform 240ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.confidence-tutor::before {
+  position: absolute;
+  top: -1.3rem;
+  left: 0.75rem;
+  width: 1.35rem;
+  height: 1.45rem;
+  border-radius: 50%;
+  background: #d9b99b;
+  content: "";
+}
+
+.confidence-tutor i:first-child {
+  position: absolute;
+  top: 1.4rem;
+  right: -2.2rem;
+  width: 2.8rem;
+  height: 0.45rem;
+  border-radius: 0.3rem;
+  background: inherit;
+  transform: rotate(18deg);
+  transform-origin: 0 50%;
+}
+
+.confidence-speech {
+  position: absolute;
+  z-index: 4;
+  top: 28%;
+  left: 34%;
+  width: 2.6rem;
+  height: 1.2rem;
+  border-top: 1px solid var(--journey-gold);
+  border-radius: 50%;
+  opacity: 0;
+  transform: scaleX(0.55);
+  transform-origin: 0 50%;
+  transition: opacity 180ms ease, transform 220ms ease;
+}
+
+.confidence-hand {
+  position: absolute;
+  z-index: 5;
+  right: 23%;
+  bottom: 6.4rem;
+  width: 0.68rem;
+  height: 4.8rem;
+  border-radius: 0.6rem;
+  background: #d8b899;
+  transform: rotate(4deg);
+  transform-origin: 50% 100%;
+  transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.confidence-hand i {
+  position: absolute;
+  top: -0.34rem;
+  left: -0.12rem;
+  width: 0.9rem;
+  height: 0.9rem;
+  border-radius: 50% 50% 42% 42%;
+  background: inherit;
+}
+
+.confidence-glint {
+  position: absolute;
+  z-index: 6;
+  right: 16%;
+  bottom: 10.8rem;
+  width: 0.7rem;
+  height: 0.7rem;
+  opacity: 0;
+  transform: rotate(45deg) scale(0.35);
+  transition: opacity 180ms ease, transform 240ms ease;
+}
+.confidence-glint::before,
+.confidence-glint::after {
+  position: absolute;
+  background: var(--journey-gold);
+  content: "";
+}
+.confidence-glint::before { top: 0; bottom: 0; left: 45%; width: 1px; }
+.confidence-glint::after { top: 45%; right: 0; left: 0; height: 1px; }
+
+.confidence-floor-detail {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 1px;
+  background: color-mix(in srgb, var(--journey-sage) 58%, transparent);
+}
+
+.assessment-choice:hover .confidence-pencil,
+.assessment-choice:focus-within .confidence-pencil {
+  transform: rotate(-13deg) translate(-0.18rem, -0.08rem);
+}
+.assessment-choice:hover .confidence-page,
+.assessment-choice:focus-within .confidence-page,
+.assessment-choice[data-selected="true"] .confidence-page {
+  background: color-mix(in srgb, #f4eddb 78%, var(--journey-gold));
+  box-shadow: inset 0 -0.18rem 0 color-mix(in srgb, var(--journey-gold) 30%, transparent);
+}
+.assessment-choice:hover .confidence-vignette--quiet .confidence-student,
+.assessment-choice:focus-within .confidence-vignette--quiet .confidence-student {
+  transform: translate(0.1rem, -0.1rem) rotate(-0.5deg);
+}
+.assessment-choice:hover .confidence-tutor,
+.assessment-choice:focus-within .confidence-tutor {
+  transform: rotate(1.8deg) translateX(0.12rem);
+}
+.assessment-choice:hover .confidence-speech,
+.assessment-choice:focus-within .confidence-speech {
+  opacity: 0.85;
+  transform: scaleX(1);
+}
+.assessment-choice:hover .confidence-vignette--encouraged .confidence-student,
+.assessment-choice:focus-within .confidence-vignette--encouraged .confidence-student {
+  transform: translateX(0.18rem) rotate(0.7deg);
+}
+.assessment-choice:hover .confidence-hand,
+.assessment-choice:focus-within .confidence-hand {
+  transform: translateY(-0.28rem) rotate(2deg);
+}
+.assessment-choice:hover .confidence-glint,
+.assessment-choice:focus-within .confidence-glint {
+  opacity: 1;
+  transform: rotate(45deg) scale(1);
+}
+.assessment-choice:hover .confidence-vignette--confident .confidence-student,
+.assessment-choice:focus-within .confidence-vignette--confident .confidence-student {
+  filter: brightness(1.04) saturate(1.05);
+}
+
+@media (max-width: 52rem) {
+  .confidence-scene {
+    left: 67%;
+    width: min(46rem, 27.5%);
+  }
+  .confidence-classroom { opacity: 0.34; }
+}
+
+@media (max-width: 30rem) {
+  .confidence-scene {
+    top: 3.8rem;
+    left: 86%;
+    width: calc(100vw - 3.5rem);
+  }
+  .confidence-scene .assessment-encounter__header { width: 100%; }
+  .confidence-scene .assessment-encounter__header h2 { font-size: 1.85rem; }
+  .confidence-classroom { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .confidence-scene {
+    position: static;
+    width: 100%;
+    padding: 3rem 1.25rem 4rem;
+  }
+  .confidence-scene *,
+  .confidence-vignette * {
+    animation: none !important;
+    transition: none !important;
+  }
+}

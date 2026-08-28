@@ -8,3 +8,7 @@
 .primary-aquarium__instruction--touch{display:none!important}.primary-aquarium__sprite--1{top:54%;left:12%}@media(max-width:800px){.primary-aquarium__instruction--desktop{display:none!important}.primary-aquarium__instruction--touch{display:block!important}.primary-aquarium__sprite--1{top:46%;left:12%}.primary-aquarium__sprite--2{top:34%;left:62%}.primary-aquarium__sprite--6{top:42%;left:43%}}
 .primary-journey-route{stroke:transparent;filter:none}
 .primary-aquarium__canvas{touch-action:pan-y}.primary-aquarium__controls{pointer-events:none}.primary-aquarium__fish-button{pointer-events:auto}.primary-aquarium.is-pixi-ready .primary-aquarium__canvas>img,.primary-aquarium.is-pixi-ready .primary-aquarium__sprite-fallbacks{opacity:0}.primary-aquarium__canvas>img,.primary-aquarium__sprite-fallbacks{transition:opacity .35s ease}
+
+/* The aquarium is one complete visual chapter: exactly one viewport at every breakpoint. */
+.primary-aquarium{height:100svh;min-height:0}
+@media(max-width:800px){.primary-aquarium{height:100svh;min-height:0}}
