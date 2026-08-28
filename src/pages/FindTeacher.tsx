@@ -300,7 +300,12 @@ function FullProfile({
   );
 }
 
-const FindTeacher = () => {
+export interface FindTeacherProps {
+  embedded?: boolean;
+  onBackToHero?: () => void;
+}
+
+const FindTeacher = ({ embedded = false, onBackToHero }: FindTeacherProps) => {
   const [searchParams] = useSearchParams();
   const [filter, setFilter] = useState<FilterKey>('all');
   const [search, setSearch] = useState('');
@@ -364,17 +369,18 @@ const FindTeacher = () => {
 
   return (
     <div className="faculty-page">
-      <SEO
+      {!embedded && <SEO
         title="Meet Our Educators"
         description="Browse DA Tuition educators across Primary, English, Mathematics and Science for Years 3–12."
         canonicalUrl="/find-teacher"
-      />
-      <NavigationNew />
+      />}
+      {!embedded && <NavigationNew />}
 
       <main className="faculty-workspace">
         <div className="faculty-catalogue">
           <header className="faculty-catalogue__masthead">
             <div>
+              {embedded && onBackToHero && <button type="button" className="faculty-catalogue__back" onClick={onBackToHero}><ArrowLeft /> Meet our educators</button>}
               <p>DA Tuition faculty</p>
               <h1>Meet our educators</h1>
               <blockquote>Every child learns differently. Meet the people who know how to notice—and respond to—the difference.</blockquote>
@@ -440,12 +446,12 @@ const FindTeacher = () => {
         </aside>
       </main>
 
-      <section className="faculty-mobile-guidance">
+      {!embedded && <section className="faculty-mobile-guidance">
         <p>Unsure which educator may suit your child?</p>
         <h2>We know the person behind every portrait.</h2>
         <a href="/book-interview">Talk to our education team <ArrowRight /></a>
-      </section>
-      <FooterNew />
+      </section>}
+      {!embedded && <FooterNew />}
 
       <AnimatePresence>
         {selected && (
