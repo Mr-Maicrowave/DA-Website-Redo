@@ -17,6 +17,10 @@ test('replaces the maths scroll story with an accessible Years 7–12 cube', () 
   assert.match(source, /const YEARS = \[7, 8, 9, 10, 11, 12\]/);
   assert.match(source, /onPointerDown/);
   assert.match(source, /onKeyDown/);
+  assert.match(source, /onClick=\{\(event\) => \{ event\.stopPropagation\(\); chooseYear\(year\); \}\}/);
+  assert.match(source, /aria-label=\{`Show Year \$\{year\} details`\}/);
+  assert.match(source, /data-year=\{year\}/);
+  assert.match(source, /faceMotionKey/);
   assert.match(mathematicsPage, /import \{ YearCube \} from '@\/features\/year-cube\/YearCube'/);
   assert.match(mathematicsPage, /<YearCube\s*\/>/);
   assert.doesNotMatch(mathematicsPage, /<MathsSyllabusScrollStory\s*\/>/);

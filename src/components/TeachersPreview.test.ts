@@ -17,6 +17,17 @@ test('keeps carousel rotation inside the tutor rail', () => {
   assert.match(source, /selector\.scrollTo\(\{\s*left: targetLeft,/);
 });
 
+test('starts each tutors-section visit on King before automatic rotation begins', () => {
+  const source = readFileSync(componentUrl, 'utf8');
+
+  assert.match(source, /const sectionRef = useRef<HTMLElement>\(null\);/);
+  assert.match(source, /const isSectionVisible = useInView\(sectionRef, \{ amount: 0\.25 \}\);/);
+  assert.match(source, /if \(!isSectionVisible\) \{\s*wasSectionVisible\.current = false;/);
+  assert.match(source, /setActiveIndex\(0\);/);
+  assert.match(source, /!isSectionVisible \|\| tutorCount < 2/);
+  assert.match(source, /<section ref=\{sectionRef\} id="teachers"/);
+});
+
 test('preserves spaces when the tutor heading becomes one line', () => {
   const source = readFileSync(componentUrl, 'utf8');
 

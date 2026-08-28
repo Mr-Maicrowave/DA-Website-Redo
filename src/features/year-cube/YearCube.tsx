@@ -65,11 +65,13 @@ export function YearCube() {
   const dragRef = useRef<{ pointerId: number; x: number; y: number } | null>(null);
   const driftFrame = useRef<number | null>(null);
   const [selectedYear, setSelectedYear] = useState<(typeof YEARS)[number]>(7);
+  const [faceMotionKey, setFaceMotionKey] = useState(0);
   const [driftPaused, setDriftPaused] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
 
   const chooseYear = (year: (typeof YEARS)[number], animate = true) => {
     setSelectedYear(year);
+    setFaceMotionKey((key) => key + 1);
     rotationRef.current = { ...YEAR_DETAILS[year].rotation };
     renderRotation(cubeRef.current, rotationRef.current, animate);
   };
@@ -166,13 +168,23 @@ export function YearCube() {
             onPointerUp={endDrag}
             onPointerCancel={endDrag}
           >
-            <div className="year-cube__scene" aria-hidden="true">
+            <div className="year-cube__scene">
               <div className="year-cube__solid" ref={cubeRef}>
                 {YEARS.map((year) => (
-                  <div className="year-cube__face" key={year} style={{ transform: FACE_TRANSFORMS[year] }}>
-                    <span>Year {year}</span>
-                    <strong>{YEAR_DETAILS[year].title}</strong>
-                  </div>
+                  <button
+                    aria-label={`Show Year ${year} details`}
+                    className="year-cube__face"
+                    data-selected={year === selectedYear}
+                    data-year={year}
+                    key={year}
+                    onClick={(event) => { event.stopPropagation(); chooseYear(year); }}
+                    onPointerDown={(event) => event.stopPropagation()}
+                    style={{ transform: FACE_TRANSFORMS[year] }}
+                    type="button"
+                  >
+                    <span className="year-cube__face-label">Year {year}</span>
+                    <strong key={`${year}-${faceMotionKey}`} className="year-cube__face-title">{YEAR_DETAILS[year].title}</strong>
+                  </button>
                 ))}
               </div>
             </div>

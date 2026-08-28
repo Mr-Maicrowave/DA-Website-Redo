@@ -388,18 +388,7 @@ const SciencePrograms = () => {
           </div>
         </div>
 
-        <div className="mt-12 max-w-3xl lg:mt-20">
-          <p className="text-[10px] font-black uppercase tracking-[.28em] text-[#c9a227]">Science Programs</p>
-          <h2 className="mt-5 font-serif text-4xl font-medium leading-[1.03] tracking-[-.045em] text-[#071629] md:text-5xl lg:text-6xl">Start broad.<br />Then go deeper.</h2>
-          <p className="mt-5 max-w-2xl text-[15px] leading-7 text-[#43556e] lg:text-base">Years 7–10 Science builds understanding across Biology, Chemistry and Physics. In the HSC years, students can deepen that understanding through specialised subjects.</p>
-        </div>
-
-        <article className="grid border-y border-[#071629]/20 bg-[#fff6e7] lg:grid-cols-[.9fr_1.1fr]">
-          <div className="p-8 lg:p-11"><p className="text-[9px] font-black uppercase tracking-[.26em] text-[#c9a227]">Foundation Program · Years 7–10</p><h3 className="mt-5 font-serif text-4xl font-medium tracking-[-.04em] text-[#071629]">Junior Science</h3><p className="mt-4 max-w-lg text-[15px] leading-7 text-[#43556e]">Build strong foundations across Biology, Chemistry and Physics while developing scientific thinking, practical skills and exam confidence.</p><Link to="/book-interview" className="mt-7 inline-flex items-center gap-2 border-b border-[#c9a227] pb-1.5 text-[10px] font-black uppercase tracking-[.16em] text-[#071629] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#071629]">Explore the program <ArrowRight className="h-3.5 w-3.5" /></Link></div>
-          <div className="grid grid-cols-3 border-t border-[#071629]/15 lg:border-l lg:border-t-0">{[['Biology', 'Cells'], ['Chemistry', 'Molecules'], ['Physics', 'Fields']].map(([subject, scale]) => <div key={subject} className="p-5 text-center lg:p-8"><p className="font-serif text-xl text-[#071629]">{subject}</p><p className="mt-2 text-[9px] font-black uppercase tracking-[.16em] text-[#657084]">{scale}</p></div>)}</div>
-        </article>
-
-        <div className="mt-16 border-l border-[#c9a227] pl-6"><p className="text-[10px] font-black uppercase tracking-[.24em] text-[#c9a227]">HSC SPECIALISATION</p><p className="mt-3 max-w-lg text-sm leading-6 text-[#52647a]">Follow the scale that most interests you, then study it in depth.</p></div>
+        <div className="mt-12 border-l border-[#c9a227] pl-6 lg:mt-20"><p className="text-[10px] font-black uppercase tracking-[.24em] text-[#c9a227]">HSC SPECIALISATION</p><p className="mt-3 max-w-lg text-sm leading-6 text-[#52647a]">Follow the scale that most interests you, then study it in depth.</p></div>
         <section className="science-programs__hsc mt-8 grid border-t border-[#071629]/20 lg:grid-cols-3" aria-label="HSC science specialisations">
           {SCIENCE_LENSES.map((subject) => (
             <article key={subject.label} className="group relative border-b border-[#071629]/20 p-7 transition-colors duration-200 hover:bg-[#fff6e7] focus-within:bg-[#fff6e7] lg:min-h-[465px] lg:border-b-0 lg:p-9 lg:not-first:border-l">

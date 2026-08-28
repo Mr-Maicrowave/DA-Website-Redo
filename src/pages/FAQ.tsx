@@ -373,48 +373,19 @@ const FAQ = () => {
       <NavigationNew />
 
       <main>
-        <section className="relative overflow-hidden border-b border-[#b78a3a]/15 bg-[#f8f3eb]">
-          <div className="absolute -left-16 bottom-3 h-px w-64 rotate-[10deg] bg-[#b78a3a]/45" aria-hidden="true" />
-          <div className="absolute -left-12 bottom-8 h-px w-56 rotate-[-3deg] bg-[#b78a3a]/25" aria-hidden="true" />
-          <div className="mx-auto grid max-w-7xl lg:grid-cols-[minmax(0,.9fr)_minmax(0,1.1fr)] lg:items-stretch">
-            <div className="order-2 flex items-center px-5 pb-14 pt-10 sm:px-8 lg:order-1 lg:px-10 lg:py-20 xl:px-14">
-              <div className="max-w-xl">
-                <h1 className="font-serif text-[clamp(3.25rem,6.7vw,6.6rem)] font-medium leading-[.9] tracking-[-0.04em] text-[#0b203a]">
-                  You ask.<span className="block text-[#b78a3a]">We answer.</span>
-                </h1>
-                <p className="mt-7 max-w-md text-base leading-7 text-[#0b203a]/75 sm:text-lg sm:leading-8">
-                  Clear, honest answers about classes, fees, teachers, progress and finding the right place to begin.
-                </p>
-                <label className="mt-8 flex h-14 max-w-xl items-center rounded-full bg-white px-5 shadow-[0_12px_32px_rgba(11,32,58,.10)] ring-1 ring-[#b78a3a]/15 transition focus-within:ring-2 focus-within:ring-[#b78a3a]">
-                  <Search className="h-5 w-5 shrink-0 text-[#0b203a]" aria-hidden="true" />
-                  <span className="sr-only">Search frequently asked questions</span>
-                  <input
-                    type="search"
-                    placeholder="Search any question..."
-                    value={searchTerm}
-                    onChange={(event) => {
-                      setSearchTerm(event.target.value);
-                      setSelectedCategory('all');
-                      setOpenQuestion(undefined);
-                    }}
-                    className="min-w-0 flex-1 bg-transparent px-4 text-base text-[#0b203a] outline-none placeholder:text-[#0b203a]/45"
-                  />
-                  {searchTerm ? (
-                    <button type="button" onClick={() => setSearchTerm('')} className="text-sm font-semibold text-[#0b203a]/65 hover:text-[#0b203a]">Clear</button>
-                  ) : (
-                    <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#c3994b] text-[#0b203a]" aria-hidden="true"><ArrowRight className="h-4 w-4" /></span>
-                  )}
-                </label>
-              </div>
-            </div>
-
-            <div className="order-1 min-h-[300px] sm:min-h-[390px] lg:order-2 lg:min-h-[500px]">
-              <img
-                src="/images/faq/faq-tutor-hero-placeholder.png"
-                alt="Temporary placeholder showing a tutor listening to a student"
-                className="h-full w-full object-cover object-center"
-              />
-            </div>
+        <section className="relative flex min-h-screen items-center overflow-hidden bg-[#071629] px-5 py-28 text-white lg:px-8">
+          <div className="absolute inset-0">
+            <img src="/images/faq/faq-hero-tutor-student-brow-touchup.png" alt="A DA Tuition tutor and student smiling gently while they work through mathematics together" className="h-full w-full object-cover object-[54%_42%] lg:object-[54%_38%]" />
+            <div className="absolute inset-0" style={{ background: 'linear-gradient(90deg, rgba(4,11,23,.9) 0%, rgba(4,11,23,.7) 46%, rgba(4,11,23,.22) 100%)' }} />
+          </div>
+          <div className="relative z-10 mx-auto w-full max-w-7xl">
+            <motion.div initial={{ opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, ease: easeOut }} className="max-w-3xl">
+              <div className="mb-5 inline-flex items-center gap-2.5 text-xs font-black uppercase tracking-[0.18em] text-[#f1df9a]"><span className="h-[2px] w-7 bg-[#c9a227]" />DA Answer Desk</div>
+              <h1 className="text-balance text-white" style={{ fontFamily: '"Playfair Display", Georgia, serif', fontSize: 'clamp(3rem, 6.5vw, 6.6rem)', lineHeight: 0.96, letterSpacing: '-0.01em', margin: 0 }}>Start with what’s<span className="block text-[#c9a227]">on your mind.</span></h1>
+              <p className="mt-7 max-w-[54ch] text-lg leading-[1.75] text-white/85">Clear answers before you commit: classes, fees, teachers, progress and getting started.</p>
+              <button type="button" onClick={() => document.getElementById('faq-questions')?.scrollIntoView({ behavior: 'smooth', block: 'start' })} className="mt-8 inline-flex h-12 items-center rounded-full bg-[#c9a227] px-7 font-black text-[#101521] shadow-xl shadow-[#c9a227]/25 transition hover:bg-[#e0bd4b]">Explore answers <ArrowRight className="ml-2 h-4 w-4" /></button>
+              <div className="mt-9 flex flex-wrap gap-x-5 gap-y-2 text-[13px] font-black uppercase tracking-[0.06em] text-white"><span className="border-l-2 border-[#c9a227] pl-3">Clear fees</span><span className="border-l-2 border-[#c9a227] pl-3">Right class fit</span><span className="border-l-2 border-[#c9a227] pl-3">Real progress</span></div>
+            </motion.div>
           </div>
         </section>
 
