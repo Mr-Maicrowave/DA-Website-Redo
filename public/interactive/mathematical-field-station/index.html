@@ -1,0 +1,360 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>The Sightings — Mathematical Field Station</title>
+  <link rel="stylesheet" href="vendor/katex/katex.min.css">
+  <style>
+    :root{
+      --ink:#fff6e2;            /* warm luminous construction ink */
+      --gold:#f4cd72;           /* primary sightline / first vantage */
+      --gold-bright:#ffe6a0;
+      --teal:#8fe3cf;           /* second vantage confirmation */
+      --violet:#c9b7ff;         /* far-mark triangulation */
+      --navy:#0b2230;
+      --navy-deep:#071722;
+      --shadow:rgba(6,20,28,.55);
+    }
+    *{box-sizing:border-box}
+    html{background:#06141c}
+    body{margin:0;background:#06141c;overflow-x:clip}   /* clip, NOT hidden — hidden breaks position:sticky */
+    body{
+      font-family:"Iowan Old Style","Palatino Linotype",Georgia,"Times New Roman",serif;
+      color:var(--ink);-webkit-font-smoothing:antialiased;
+    }
+    body,body *{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+
+    /* ---- STATION : tall scroll track; the scene pins inside it -------- */
+    .station{position:relative;min-height:100svh}
+    .station.unlocked{min-height:520svh}          /* scroll room appears once you lock the top */
+    /* ---- STAGE : the pinned environment ------------------------------ */
+    .stage{position:sticky;top:0;height:100svh;overflow:hidden;background:#06141c;
+      cursor:default}
+    /* only the instrument handle disables touch-scroll (so aiming works);
+       everywhere else the page scrolls to drive the story */
+    .instrument-grab{touch-action:none}
+    /* the photo lives INSIDE the SVG (see #plate) so photo + geometry + instrument
+       share one coordinate space and reframe together on any viewport */
+    .atmos,.scene{position:absolute;inset:0;width:100%;height:100%}
+    .scene{z-index:2}
+    #plate{transition:filter 220ms linear}
+    /* golden-hour warmth driven by the sun; set via CSS var on .stage */
+    .atmos{z-index:3;pointer-events:none;mix-blend-mode:soft-light;
+      opacity:var(--atmos-strength,.5);
+      background:
+        radial-gradient(120% 90% at var(--sun-x,30%) var(--sun-y,22%),
+          rgba(255,214,140,.9), rgba(255,180,110,.28) 34%, transparent 62%);
+      transition:opacity 200ms linear}
+    .atmos.cool{mix-blend-mode:multiply;opacity:var(--dusk-strength,0);
+      background:linear-gradient(180deg,rgba(20,40,66,.0) 30%,rgba(14,28,50,.55) 100%);}
+    .vignette{position:absolute;inset:0;z-index:4;pointer-events:none;
+      background:radial-gradient(130% 120% at 50% 38%,transparent 52%,rgba(6,16,24,.42) 100%);
+      opacity:var(--vignette,.5);transition:opacity 200ms linear}
+
+    .scene{z-index:4}
+    .scene svg{display:block;width:100%;height:100%}
+
+    /* ---- minimal chrome --------------------------------------------- */
+    .wordmark{position:absolute;left:clamp(16px,3vw,40px);top:clamp(14px,2.4vw,26px);
+      z-index:20;display:flex;align-items:center;gap:11px;pointer-events:none;
+      font-size:clamp(.62rem,1vw,.74rem);letter-spacing:.34em;text-transform:uppercase;
+      font-family:Inter,ui-sans-serif,system-ui,sans-serif;font-weight:600;
+      color:rgba(255,246,226,.82);text-shadow:0 1px 10px rgba(6,18,26,.7);
+      transition:opacity 600ms ease}
+    .wordmark .rune{display:grid;place-items:center;width:26px;height:26px;border-radius:50%;
+      border:1px solid rgba(244,205,114,.6);color:var(--gold);font-size:.8rem;letter-spacing:0}
+    .stage.exploring .wordmark{opacity:.34}
+
+    /* opening invitation — fades out on first real interaction */
+    .invite{position:absolute;z-index:18;left:0;right:0;top:clamp(74px,12vh,150px);
+      text-align:center;pointer-events:none;padding:0 24px;
+      transition:opacity 700ms ease,transform 700ms ease}
+    .invite h1{margin:0 auto;max-width:15ch;font-weight:500;line-height:1.02;
+      font-size:clamp(2.1rem,5.4vw,4.2rem);letter-spacing:-.02em;
+      text-shadow:0 2px 30px rgba(6,18,26,.6)}
+    .invite h1 em{font-style:italic;color:var(--gold-bright)}
+    .invite p{margin:.9em auto 0;max-width:34ch;font-size:clamp(.9rem,1.5vw,1.06rem);
+      color:rgba(255,246,226,.82);font-family:Inter,ui-sans-serif,system-ui,sans-serif;
+      font-weight:400;letter-spacing:.01em;text-shadow:0 1px 14px rgba(6,18,26,.7)}
+    .stage.exploring .invite{opacity:0;transform:translateY(-14px)}
+
+    /* the "grab me" tag that rides near the instrument until first grab */
+    .grab-hint{position:absolute;z-index:17;transform:translate(-50%,-50%);
+      pointer-events:none;font-family:Inter,system-ui,sans-serif;font-weight:600;
+      font-size:.72rem;letter-spacing:.02em;color:var(--navy-deep);
+      background:rgba(255,240,206,.94);padding:6px 12px 6px 11px;border-radius:999px;
+      box-shadow:0 8px 22px rgba(6,18,26,.4);white-space:nowrap;
+      display:flex;align-items:center;gap:7px;
+      animation:bob 2.6s ease-in-out infinite;transition:opacity 400ms ease}
+    .grab-hint svg{width:15px;height:15px}
+    .stage.grabbed .grab-hint{opacity:0}
+    @keyframes bob{0%,100%{transform:translate(-50%,calc(-50% - 4px))}
+      50%{transform:translate(-50%,calc(-50% + 4px))}}
+
+    /* ---- field notebook : accumulating record, right margin --------- */
+    .notebook{position:absolute;z-index:19;left:clamp(16px,3vw,40px);
+      top:clamp(74px,12vh,120px);
+      width:min(340px,34vw);max-height:74vh;overflow-y:auto;overflow-x:hidden;
+      padding:22px 22px 18px;border-radius:18px;
+      background:linear-gradient(180deg,rgba(10,26,36,.66),rgba(8,20,30,.76));
+      border:1px solid rgba(244,205,114,.22);
+      box-shadow:0 24px 60px rgba(4,12,18,.5);backdrop-filter:blur(14px) saturate(1.1);
+      opacity:0;pointer-events:none;transition:opacity 600ms ease,transform 600ms ease;
+      transform:translateX(-18px)}
+    .notebook.show{opacity:1;pointer-events:auto;transform:translateX(0)}
+    .notebook::-webkit-scrollbar{width:6px}
+    .notebook::-webkit-scrollbar-thumb{background:rgba(244,205,114,.3);border-radius:3px}
+    .notebook h2{margin:0 0 4px;font-size:.72rem;letter-spacing:.28em;text-transform:uppercase;
+      font-family:Inter,system-ui,sans-serif;font-weight:700;color:var(--gold)}
+    .notebook .sub{margin:0 0 14px;font-size:.78rem;color:rgba(255,246,226,.55);
+      font-family:Inter,system-ui,sans-serif}
+    .ledger{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:11px}
+    .ledger li{opacity:0;transform:translateY(8px);animation:inkIn .6s ease forwards}
+    @keyframes inkIn{to{opacity:1;transform:none}}
+    .ledger .tag{font-family:Inter,system-ui,sans-serif;font-size:.62rem;font-weight:700;
+      letter-spacing:.16em;text-transform:uppercase}
+    .ledger .tag.gold{color:var(--gold)} .ledger .tag.teal{color:var(--teal)}
+    .ledger .tag.violet{color:var(--violet)}
+    .ledger .line{margin:2px 0 0;font-size:1rem;line-height:1.4;color:var(--ink)}
+    .ledger .line b{font-weight:600;color:var(--gold-bright)}
+    .ledger .line .katex{font-size:1.08em;color:var(--gold-bright)}
+    .ledger .tag .katex{font-size:1.08em;color:inherit}
+    .ledger .working{margin-top:6px;font-size:.92rem;color:rgba(255,246,226,.9);
+      border-left:2px solid rgba(244,205,114,.4);padding-left:10px;
+      max-height:0;overflow:hidden;transition:max-height .4s ease,margin .4s ease}
+    .ledger .working.open{max-height:260px}
+    .work-toggle{margin-top:7px;background:none;border:0;cursor:pointer;padding:0;
+      font-family:Inter,system-ui,sans-serif;font-size:.68rem;font-weight:600;
+      letter-spacing:.12em;text-transform:uppercase;color:rgba(244,205,114,.85)}
+    .work-toggle:hover{color:var(--gold-bright)}
+
+    /* chapter caption — a quiet lower band that names the current survey step */
+    .caption{position:absolute;z-index:19;left:clamp(24px,4vw,72px);bottom:clamp(26px,5vh,54px);
+      transform:translateY(10px);width:min(620px,42vw);text-align:left;
+      opacity:0;transition:opacity 500ms ease,transform 500ms ease;pointer-events:none}
+    .caption.show{opacity:1;transform:translateY(0)}
+    .caption .eyebrow{margin:0 0 6px;font-family:Inter,system-ui,sans-serif;font-weight:700;
+      font-size:.66rem;letter-spacing:.28em;text-transform:uppercase;color:var(--gold)}
+    .caption .eyebrow.teal{color:var(--teal)} .caption .eyebrow.violet{color:var(--violet)}
+    /* the brief, restrained "result captured" beat during a chapter dwell —
+       a text-shadow pulse on the eyebrow, no modal, no layout shift */
+    .caption.captured .eyebrow{animation:capturedPulse 900ms ease}
+    @keyframes capturedPulse{0%{text-shadow:0 0 0 rgba(244,205,114,0)}
+      30%{text-shadow:0 0 14px rgba(244,205,114,.9)}100%{text-shadow:0 0 0 rgba(244,205,114,0)}}
+    .caption h2{margin:0;font-weight:500;font-size:clamp(1.3rem,2.6vw,2rem);line-height:1.1;
+      letter-spacing:-.01em;text-shadow:0 2px 24px rgba(6,18,26,.7)}
+    .caption p{margin:.5em 0 0;max-width:52ch;font-family:Inter,system-ui,sans-serif;
+      font-weight:400;font-size:clamp(.86rem,1.3vw,.98rem);line-height:1.5;
+      color:rgba(255,246,226,.86);text-shadow:0 1px 14px rgba(6,18,26,.7)}
+    .caption .katex{display:inline-block;font-size:clamp(1.55em,2vw,1.8em);
+      color:var(--gold-bright);padding:.3em .5em;border-radius:10px;
+      border:1px solid rgba(244,205,114,.22);background:rgba(7,23,34,.48);
+      box-shadow:0 8px 26px rgba(4,12,18,.2);backdrop-filter:blur(8px)}
+
+    /* "release to lock" prompt + "scroll to survey" cue */
+    .cue{position:absolute;z-index:19;left:50%;transform:translateX(-50%);
+      font-family:Inter,system-ui,sans-serif;font-weight:600;letter-spacing:.04em;
+      color:rgba(255,246,226,.9);text-shadow:0 1px 12px rgba(6,18,26,.8);
+      opacity:0;transition:opacity 400ms ease;pointer-events:none;text-align:center}
+    .cue.show{opacity:1}
+    .cue.lockcue{left:auto;right:clamp(18px,4vw,64px);top:clamp(66px,10vh,108px);
+      transform:none;padding:7px 12px;border:1px solid rgba(244,205,114,.28);
+      border-radius:999px;background:rgba(7,23,34,.58);backdrop-filter:blur(8px);
+      white-space:nowrap;font-size:.9rem;color:var(--gold-bright)}
+    .cue.scrollcue{bottom:clamp(16px,3vh,30px);font-size:.78rem;display:flex;
+      flex-direction:column;align-items:center;gap:6px}
+    .cue.scrollcue .chev{width:22px;height:22px;animation:nudge 1.8s ease-in-out infinite}
+    @keyframes nudge{0%,100%{transform:translateY(0);opacity:.6}50%{transform:translateY(6px);opacity:1}}
+
+    /* lock confirmation ring (injected in SVG) */
+    .lock-ring{fill:none;stroke:var(--gold-bright);stroke-width:3;
+      transform-box:fill-box;transform-origin:center}
+    @keyframes lockPulse{from{r:6px;opacity:.95;stroke-width:5}to{r:80px;opacity:0;stroke-width:1}}
+    .lock-flash{animation:lockFlash .7s ease-out}
+    @keyframes lockFlash{0%{filter:brightness(2.2)}100%{filter:brightness(1)}}
+
+    /* live region for screen readers */
+    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+      clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+    /* SVG element styling ------------------------------------------- */
+    .hit{fill:transparent}
+    .instrument-grab{cursor:grab}
+    .stage.grabbed .instrument-grab{cursor:grabbing}
+    .sightline{stroke:var(--gold);stroke-width:3;stroke-linecap:round;
+      filter:drop-shadow(0 0 6px rgba(244,205,114,.85));opacity:.9}
+    .sightline.dim{opacity:.4}
+    .baseline{stroke:var(--ink);stroke-width:2.5;stroke-linecap:round;opacity:.9;
+      stroke-dasharray:2 10;filter:drop-shadow(0 0 3px rgba(255,246,226,.5))}
+    .riser{stroke:var(--ink);stroke-width:2.5;stroke-linecap:round;opacity:.9;
+      filter:drop-shadow(0 0 4px rgba(255,246,226,.55))}
+    .hyp{stroke:var(--gold-bright);stroke-width:3.5;stroke-linecap:round;
+      filter:drop-shadow(0 0 7px rgba(255,214,140,.9))}
+    .arc{fill:none;stroke:var(--gold-bright);stroke-width:3}
+    .tri-fill{fill:rgba(244,205,114,.10)}
+    .tick{stroke:var(--ink);stroke-width:2;opacity:.8}
+    .glyph{font-family:Inter,system-ui,sans-serif;font-weight:700;fill:var(--ink);
+      paint-order:stroke;stroke:rgba(6,18,26,.55);stroke-width:3px}
+    .glyph.gold{fill:var(--gold-bright)}
+    .glyph.violet{fill:var(--violet)}
+    .glyph.small{font-size:20px} .glyph.mid{font-size:26px} .glyph.big{font-size:34px}
+    .mark-ring{fill:none;stroke:var(--ink);stroke-width:2;opacity:.0}
+    .mark-core{fill:var(--gold-bright);opacity:.0;
+      filter:drop-shadow(0 0 8px rgba(255,214,140,.9))}
+    .triangulation-target{fill:var(--violet);stroke:var(--ink);stroke-width:2;
+      filter:drop-shadow(0 0 10px rgba(201,183,255,.95))}
+    .triangulation-leader{stroke:var(--violet);stroke-width:2;opacity:.8}
+    .triangulation-target-label,.triangulation-target-distance{font-size:18px}
+    .survey-baseline{stroke:var(--violet);stroke-width:2;stroke-dasharray:7 8;
+      filter:drop-shadow(0 0 4px rgba(201,183,255,.65))}
+    .survey-station{fill:rgba(7,23,34,.86);stroke:var(--violet);stroke-width:3;
+      filter:drop-shadow(0 0 8px rgba(201,183,255,.9))}
+    .survey-station-label,.survey-baseline-label{font-size:17px}
+
+    /* teal (second vantage) + violet (far mark) recolour helpers */
+    .v2 .sightline,.v2 .hyp{stroke:var(--teal);filter:drop-shadow(0 0 7px rgba(143,227,207,.9))}
+    .v2 .arc{stroke:var(--teal)} .v2 .glyph.gold{fill:var(--teal)}
+    .v2 .tri-fill{fill:rgba(143,227,207,.10)}
+
+    /* sun disc */
+    .sun{cursor:grab;filter:drop-shadow(0 0 26px rgba(255,214,140,.95))}
+    .stage.dragging-sun .sun{cursor:grabbing}
+    .sun-core{fill:url(#sunGrad)}
+    .shadow-ray{stroke:rgba(30,26,20,.0);stroke-width:0}
+    .gnomon{stroke:var(--ink);stroke-width:3;stroke-linecap:round;
+      filter:drop-shadow(0 0 5px rgba(255,246,226,.6))}
+    .sun-shadow{stroke:rgba(80,60,30,.55);stroke-linecap:round;
+      filter:blur(1px)}
+    .sun-shadow.tower{stroke-width:12} .sun-shadow.gnomon{stroke-width:5}
+    .sun-shadow.constr{stroke:var(--violet);stroke-width:2.5;stroke-dasharray:1 8;
+      filter:drop-shadow(0 0 5px rgba(201,183,255,.8));opacity:.9}
+    .sun-guide{stroke:var(--violet);stroke-width:1.8;stroke-dasharray:2 10;
+      filter:drop-shadow(0 0 5px rgba(201,183,255,.65))}
+
+    @media (prefers-reduced-motion:reduce){
+      *{animation-duration:.001ms!important;transition-duration:.001ms!important}
+    }
+
+    /* mobile: notebook docks to the top-left compactly; caption sits above the cue */
+    @media (max-width:760px){
+      .notebook{left:8px;right:auto;top:56px;width:min(210px,58vw);max-height:44vh;
+        padding:14px 14px 12px}
+      .notebook h2{font-size:.64rem} .notebook .sub{font-size:.68rem;margin-bottom:10px}
+      .ledger .line{font-size:.9rem}
+      .invite{top:60px} .invite h1{font-size:2rem}
+      .caption{left:16px;right:16px;bottom:70px;transform:translateY(10px);
+        width:auto;text-align:left}
+      .caption.show{transform:translateY(0)}
+      .caption p{margin:.5em 0 0;font-size:.84rem}
+      .stage.exploring .invite{transform:translateY(-10px)}
+    }
+    @media (max-width:480px){
+      .caption .katex{font-size:1.08em;padding:.28em .36em}
+    }
+  </style>
+</head>
+<body>
+  <div class="station" id="station">
+  <div class="stage" id="stage" aria-label="Interactive survey terrace. Aim the instrument up to the tower top, lock it, then scroll to survey deeper.">
+    <div class="atmos" id="atmos"></div>
+    <div class="atmos cool" id="atmosCool"></div>
+    <div class="vignette" id="vignette"></div>
+
+    <div class="scene">
+      <svg id="svg" viewBox="0 0 1672 941" preserveAspectRatio="xMidYMid slice"
+           role="application" aria-describedby="svg-desc">
+        <desc id="svg-desc">A brass sighting instrument on the terrace. Drag it to sweep a glowing sightline across the valley and lock onto survey marks; the geometry of each measurement is drawn in light on the tower and ground.</desc>
+        <defs>
+          <radialGradient id="sunGrad" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#fff6da"/>
+            <stop offset="45%" stop-color="#ffdf9c"/>
+            <stop offset="100%" stop-color="#ffb35e" stop-opacity="0"/>
+          </radialGradient>
+          <filter id="soft" x="-40%" y="-40%" width="180%" height="180%">
+            <feGaussianBlur stdDeviation="2"/>
+          </filter>
+        </defs>
+
+        <!-- The photographic plate, in scene space so geometry stays glued to it -->
+        <image id="plate" href="assets/terrace-plate.png" x="0" y="0" width="1672" height="941"
+               preserveAspectRatio="xMidYMid slice"
+               role="img" aria-label="A golden-hour survey terrace of pale limestone on a valley rim, with a stone tower on the right and a river valley beyond."/>
+
+        <!-- Sun (its height is driven by the scroll story) -->
+        <g id="sunGroup" aria-hidden="true">
+          <circle class="sun-core" id="sunCore" cx="470" cy="250" r="46"/>
+        </g>
+
+        <!-- Sun-driven shadows / similar-triangle construction -->
+        <g id="sunShadows" aria-hidden="true"></g>
+
+        <!-- Committed sightings (blooms) get injected here, behind the live layer -->
+        <g id="committed" aria-hidden="true"></g>
+
+        <!-- Live geometry for the current aim -->
+        <g id="live" aria-hidden="true"></g>
+
+        <!-- Survey marks (glow when the sightline is on them) -->
+        <g id="marks" aria-hidden="true"></g>
+
+        <!-- The instrument: tripod + rotating barrel, glued to the plate -->
+        <image id="tripod" href="assets/instrument-tripod.png"
+               x="807.5" y="655" width="165" height="149.3" preserveAspectRatio="xMidYMid meet"/>
+        <g id="barrelArm">
+          <image id="barrel" href="assets/instrument-barrel.png"
+                 x="878" y="650" width="230" height="39.5" preserveAspectRatio="xMidYMid meet"/>
+        </g>
+        <!-- lock-confirmation effect (pulse rings) injected here -->
+        <g id="lockfx" aria-hidden="true"></g>
+
+        <!-- generous grab handle over the instrument -->
+        <circle id="instrHit" class="hit instrument-grab" cx="890" cy="672" r="150"
+                tabindex="0" role="slider"
+                aria-label="Sighting instrument. Drag up and down, or use arrow keys, to raise the sightline until it meets the tower top, then release to lock."
+                aria-valuemin="0" aria-valuemax="90" aria-valuenow="40"/>
+      </svg>
+    </div>
+
+    <div class="wordmark"><span class="rune">∠</span> Mathematical Field Station</div>
+
+    <div class="invite" id="invite">
+      <h1>Raise the sightline to the <em>tower's top.</em></h1>
+      <p>Drag the instrument up until the beam meets the highest stone — then let go to lock the angle.</p>
+    </div>
+
+    <div class="grab-hint" id="grabHint">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+           stroke-linecap="round" stroke-linejoin="round"><path d="M9 11V6a2 2 0 0 1 4 0v5"/><path d="M13 8a2 2 0 0 1 4 0v3"/><path d="M17 9a2 2 0 0 1 4 0v6a6 6 0 0 1-6 6h-2a7 7 0 0 1-5-3l-3-4a2 2 0 0 1 3-2l2 2"/></svg>
+      Drag to aim
+    </div>
+
+    <div class="cue lockcue" id="lockCue">Release to lock the sightline</div>
+
+    <div class="caption" id="caption" aria-live="polite">
+      <p class="eyebrow" id="captionEyebrow"></p>
+      <h2 id="captionTitle"></h2>
+      <p id="captionBody"></p>
+    </div>
+
+    <div class="cue scrollcue" id="scrollCue">
+      <span>Scroll to survey deeper</span>
+      <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"
+           stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+    </div>
+
+    <aside class="notebook" id="notebook" aria-hidden="true">
+      <h2>Field Notebook</h2>
+      <p class="sub" id="notebookSub">Your survey, recorded as you go.</p>
+      <ul class="ledger" id="ledger"></ul>
+    </aside>
+
+    <p class="sr-only" id="live-region" aria-live="polite"></p>
+  </div>
+  </div>
+
+  <script src="assets/field-station-model.js"></script>
+  <script defer src="vendor/katex/katex.min.js"></script>
+  <script defer src="engine.js"></script>
+</body>
+</html>

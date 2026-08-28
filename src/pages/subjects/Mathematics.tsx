@@ -35,6 +35,7 @@ import { MathsGraphLabInvitation, MathsTeachingProof } from '@/features/maths-te
 import { MathsIntroVideoGate } from '@/features/maths-intro-video/MathsIntroVideoGate';
 import { HscMathsPathway } from '@/features/hsc-maths-pathway/HscMathsPathway';
 import { MathsTopicNetwork } from '@/features/maths-topic-network/MathsTopicNetwork';
+import { MathematicalFieldStation } from '@/features/mathematical-field-station/MathematicalFieldStation';
 import { YearCube } from '@/features/year-cube/YearCube';
 
 interface StepRow {
@@ -1482,6 +1483,8 @@ const Mathematics = () => {
         <YearCube />
 
         <HscMathsPathway />
+
+        <MathematicalFieldStation />
 
         <section className="bg-[#071629] px-5 py-20 lg:px-8" aria-labelledby="maths-topic-network-heading">
           <div className="mx-auto max-w-7xl">
