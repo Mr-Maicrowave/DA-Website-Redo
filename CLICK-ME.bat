@@ -319,15 +319,7 @@ echo ------------------------------------------------------------
 git log -1 --oneline
 echo ------------------------------------------------------------
 echo.
-set /p CONFIRM2="Type YES to push to !TARGET!: "
-if /i not "!CONFIRM2!"=="YES" (
-    echo Cancelled - !TARGET! was updated locally but NOT pushed.
-    echo Your changes are safely committed locally.
-    git checkout !CURRENT_BRANCH! >nul 2>&1
-    pause
-    goto MAIN_MENU
-)
-
+echo Pushing to !TARGET!...
 git push origin !TARGET!
 if errorlevel 1 (
     echo.
