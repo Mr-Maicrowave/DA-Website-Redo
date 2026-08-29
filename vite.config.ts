@@ -7,8 +7,15 @@ const completeShelfReferenceRoute = (): Plugin => {
   const rewriteReferenceRoute = () => (request: IncomingMessage, _response: ServerResponse, next: () => void) => {
     if (request.url) {
       const [pathname, search] = request.url.split("?", 2);
-      if (pathname === "/dev/complete-shelf-reference" || pathname === "/dev/complete-shelf-reference/") {
-        request.url = `/dev/complete-shelf-reference/index.html${search ? `?${search}` : ""}`;
+      const internalRoutes: Record<string, string> = {
+        "/dev/complete-shelf-reference": "/dev/complete-shelf-reference/index.html",
+        "/dev/complete-shelf-reference/": "/dev/complete-shelf-reference/index.html",
+        "/dev/complete-shelf-rig": "/dev/complete-shelf-rig/index.html",
+        "/dev/complete-shelf-rig/": "/dev/complete-shelf-rig/index.html",
+      };
+      const target = internalRoutes[pathname];
+      if (target) {
+        request.url = `${target}${search ? `?${search}` : ""}`;
       }
     }
     next();

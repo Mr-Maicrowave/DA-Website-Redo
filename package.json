@@ -12,6 +12,7 @@
     "test:graph-lab": "node --test --experimental-strip-types src/features/graph-lab/*.test.ts",
     "test:maths-motion": "node --test --experimental-strip-types src/features/maths-ambient-motion/*.test.ts",
     "test:complete-shelf-reference": "node scripts/verify-complete-shelf-reference.mjs",
+    "test:complete-shelf-rig": "node scripts/verify-complete-shelf-rig.mjs",
     "lint": "eslint .",
     "preview": "vite preview",
     "video:preview": "remotion preview remotion/Root.tsx",
