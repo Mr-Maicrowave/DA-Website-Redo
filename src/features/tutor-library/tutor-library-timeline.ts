@@ -25,9 +25,16 @@ const stable = (value: number) => {
   return Math.abs(rounded) < 1e-10 ? 0 : rounded;
 };
 
-export function createRoomTurnPose(fromWallIndex: number, toWallIndex: number, progress: number, cameraRadius: number, targetRadius: number): RoomCameraPose {
+export function createRoomTurnPose(
+  fromWallIndex: number,
+  toWallIndex: number,
+  progress: number,
+  cameraRadius: number,
+  targetRadius: number,
+  wallCount: number,
+): RoomCameraPose {
+  if (!Number.isInteger(wallCount) || wallCount < 3) throw new Error('wallCount must be an integer of at least 3');
   const t = clamp01(progress);
-  const wallCount = 4;
   let delta = toWallIndex - fromWallIndex;
   if (delta > wallCount / 2) delta -= wallCount;
   if (delta < -wallCount / 2) delta += wallCount;

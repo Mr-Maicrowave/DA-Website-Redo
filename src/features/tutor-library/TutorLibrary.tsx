@@ -48,15 +48,15 @@ export function TutorLibrary() {
       const rawProgress = Math.min(1, (now - startedAt) / TURN_DURATION_MS);
       setTurnProgress(easeInOutQuart(rawProgress));
       if (rawProgress < 1) frameId = requestAnimationFrame(tick);
-      else dispatch({ type: 'TURN_COMPLETE' });
+      else dispatch({ type: 'TURN_COMPLETE', generation: library.transitionGeneration });
     };
     frameId = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(frameId);
-  }, [isTurning]);
+  }, [isTurning, library.transitionGeneration]);
 
   useEffect(() => {
     if (library.phase === 'BOOK_HOVER_INTENT') {
-      const timeoutId = window.setTimeout(() => dispatch({ type: 'EXTRACT' }), BOOK_INTENT_DELAY_MS);
+      const timeoutId = window.setTimeout(() => dispatch({ type: 'EXTRACT', generation: library.transitionGeneration }), BOOK_INTENT_DELAY_MS);
       return () => window.clearTimeout(timeoutId);
     }
     if (library.phase === 'BOOK_RETURNING') {
@@ -66,7 +66,7 @@ export function TutorLibrary() {
         const rawProgress = Math.min(1, (now - startedAt) / BOOK_RETURN_DURATION_MS);
         setBookMotionProgress(rawProgress * rawProgress * (3 - 2 * rawProgress));
         if (rawProgress < 1) frameId = requestAnimationFrame(tick);
-        else dispatch({ type: 'RETURN_COMPLETE' });
+        else dispatch({ type: 'RETURN_COMPLETE', generation: library.transitionGeneration });
       };
       frameId = requestAnimationFrame(tick);
       return () => cancelAnimationFrame(frameId);
@@ -81,11 +81,11 @@ export function TutorLibrary() {
       const rawProgress = Math.min(1, (now - startedAt) / BOOK_EXTRACTION_DURATION_MS);
       setBookMotionProgress(1 - (1 - rawProgress) ** 3);
       if (rawProgress < 1) frameId = requestAnimationFrame(tick);
-      else dispatch({ type: 'PREVIEW_READY' });
+      else dispatch({ type: 'PREVIEW_READY', generation: library.transitionGeneration });
     };
     frameId = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(frameId);
-  }, [library.phase]);
+  }, [library.phase, library.transitionGeneration]);
 
   const activeWall = SUBJECT_WALLS[activeWallIndex];
   const targetWall = SUBJECT_WALLS[targetWallIndex];

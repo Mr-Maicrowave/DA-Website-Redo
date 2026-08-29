@@ -4,6 +4,7 @@ import { Color, PerspectiveCamera } from 'three';
 import { RoomRotunda } from './RoomRotunda';
 import { createRoomTurnPose } from './tutor-library-timeline';
 import type { LibraryPhase } from './tutor-library-state';
+import { SUBJECT_WALLS } from './tutor-library-data';
 
 const REVIEW_CAMERA_POSES = {
   'resting-book': { position: [.15, 2.42, -4.35], target: [.15, 2.42, -7.55], fov: 38 },
@@ -19,7 +20,7 @@ function CameraFrame({ fromWallIndex, toWallIndex, turnProgress, reviewView }: {
 
   const frameCamera = () => {
     const reviewPose = reviewView ? REVIEW_CAMERA_POSES[reviewView as keyof typeof REVIEW_CAMERA_POSES] : undefined;
-    const pose = reviewPose ?? createRoomTurnPose(fromWallIndex, toWallIndex, turnProgress, 4.1, 7.75);
+    const pose = reviewPose ?? createRoomTurnPose(fromWallIndex, toWallIndex, turnProgress, 4.1, 7.75, SUBJECT_WALLS.length);
     camera.position.set(pose.position[0], pose.position[1], pose.position[2]);
     camera.lookAt(pose.target[0], pose.target[1], pose.target[2]);
     camera.fov = reviewPose?.fov ?? 52;
