@@ -31,18 +31,46 @@ for (const route of [routeBase, `${routeBase}/`]) {
   assert.match(html, /narrow-390-safe/);
   assert.match(html, /data-action-state/);
   assert.match(html, /setActiveState/);
-  assert.match(html, /setActiveState\('fully-open'\)/);
-  assert.match(html, /setActiveState\('closed-three-quarter'\)/);
-  assert.match(html, /setActiveState\(isOpen \? 'settled-page' : activeState\)/);
-  assert.match(html, /setActiveState\('reset'\)/);
+  assert.match(html, /runStateContract/);
+  assert.match(html, /rig\.controller\.open\(\); settle\(\);/);
+  assert.match(html, /rig\.controller\.close\(\); settle\(\);/);
+  assert.match(html, /applied = rig\.controller\.settlePage\(\)/);
 }
 
 const runtimeResponse = await fetch(`${routeBase}/vendor/three.module.js`);
 assert.equal(runtimeResponse.status, 200, 'The isolated host must serve its local Three.js runtime');
+const runtimeSource = await runtimeResponse.text();
 assert.match(
-  await runtimeResponse.text(),
+  runtimeSource,
   /const REVISION = '165'/,
   'The isolated host must use the source-compatible Three.js r165 runtime',
 );
+
+const moduleResponse = await fetch(`${routeBase}/complete-shelf-book-rig.js`);
+assert.equal(moduleResponse.status, 200, 'The isolated host must serve its dedicated rig module');
+assert.match(moduleResponse.headers.get('content-type') ?? '', /javascript/);
+const moduleSource = await moduleResponse.text();
+assert.match(moduleSource, /export function createCompleteShelfBookRig/);
+assert.match(moduleSource, /smoothstep/);
+assert.match(moduleSource, /dragCurveBoost/);
+assert.match(moduleSource, /flexTwistTarget/);
+assert.match(moduleSource, /0\.032/);
+assert.match(moduleSource, /pageDrag\.progressVelocity/);
+assert.match(moduleSource, /Math\.abs\(targetCurve - nextCurve\) < 0\.00002/);
+assert.doesNotMatch(moduleSource, /config\.book/);
+
+for (const [file, exportName] of [['vendor/RoundedBoxGeometry.js', 'RoundedBoxGeometry'], ['vendor/RoomEnvironment.js', 'RoomEnvironment']]) {
+  const response = await fetch(`${routeBase}/${file}`);
+  assert.equal(response.status, 200, `The isolated host must serve ${file}`);
+  assert.match(response.headers.get('content-type') ?? '', /javascript/);
+  assert.match(await response.text(), new RegExp(exportName));
+}
+
+const hostResponse = await fetch(`${routeBase}/`);
+const hostSource = await hostResponse.text();
+assert.match(hostSource, /__completeShelfRigProbe/);
+assert.match(hostSource, /closed-again/);
+assert.match(hostSource, /rig\.controller\.close\(\); settle\(\);/);
+assert.match(hostSource, /environmentTarget\.dispose\(\)/);
 
 console.log(`Complete Shelf Codex rig route passed: ${routeBase}`);

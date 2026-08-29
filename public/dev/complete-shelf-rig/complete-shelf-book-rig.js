@@ -22,6 +22,7 @@ const FLEXIBLE_PAGE_VERTICAL_SEGMENTS = 8;
 const PAGINATED_LEAF_COUNT = 4;
 const clamp = (value, minimum, maximum) => Math.max(minimum, Math.min(maximum, value));
 const lerp = (from, to, progress) => from + (to - from) * progress;
+const smoothstep = (value) => value * value * (3 - 2 * value);
 
 function damp(current, target, smoothing, delta) {
   return THREE.MathUtils.damp(current, target, smoothing, Math.min(delta, 0.1));
@@ -243,14 +244,24 @@ function addTurnIns(pivot, book, side, width, height, insideZ, material, boxGeom
 }
 
 function updateFlexiblePage(pagePivot, targetCurve, delta, immediate = false, targetTwist = 0) {
-  const flex = pagePivot.userData.flex; if (!flex) return; const step = Math.min(delta, 0.033); let nextCurve = targetCurve; let nextTwist = targetTwist;
-  if (immediate) { flex.curveVelocity = 0; flex.twistVelocity = 0; } else { flex.curveVelocity = clamp(flex.curveVelocity + ((targetCurve - flex.curve) * 178 - flex.curveVelocity * 19) * step, -1.8, 1.8); flex.twistVelocity = clamp(flex.twistVelocity + ((targetTwist - flex.twist) * 210 - flex.twistVelocity * 21) * step, -1.6, 1.6); nextCurve = clamp(flex.curve + flex.curveVelocity * step, -0.025, 0.19); nextTwist = clamp(flex.twist + flex.twistVelocity * step, -0.12, 0.12); }
+  const flex = pagePivot.userData.flex; if (!flex) return; const settleImmediately = immediate; const step = Math.min(delta, 0.033); let nextCurve = targetCurve; let nextTwist = targetTwist;
+  if (settleImmediately) { flex.curveVelocity = 0; flex.twistVelocity = 0; } else {
+    const curveAcceleration = (targetCurve - flex.curve) * 178 - flex.curveVelocity * 19;
+    const twistAcceleration = (targetTwist - flex.twist) * 210 - flex.twistVelocity * 21;
+    flex.curveVelocity = clamp(flex.curveVelocity + curveAcceleration * step, -1.8, 1.8);
+    flex.twistVelocity = clamp(flex.twistVelocity + twistAcceleration * step, -1.6, 1.6);
+    nextCurve = clamp(flex.curve + flex.curveVelocity * step, -0.025, 0.19);
+    nextTwist = clamp(flex.twist + flex.twistVelocity * step, -0.12, 0.12);
+    if (Math.abs(targetCurve - nextCurve) < 0.00002 && Math.abs(flex.curveVelocity) < 0.0008) { nextCurve = targetCurve; flex.curveVelocity = 0; }
+    if (Math.abs(targetTwist - nextTwist) < 0.00002 && Math.abs(flex.twistVelocity) < 0.0008) { nextTwist = targetTwist; flex.twistVelocity = 0; }
+  }
+  if (!settleImmediately && Math.abs(nextCurve - flex.curve) < 0.00001 && Math.abs(targetCurve - nextCurve) < 0.00001 && Math.abs(nextTwist - flex.twist) < 0.00001 && Math.abs(targetTwist - nextTwist) < 0.00001) return;
   flex.curve = nextCurve; flex.twist = nextTwist;
   flex.surfaces.forEach(({ position, base, direction, geometry }) => { for (let vertex = 0; vertex < position.count; vertex += 1) { const offset = vertex * 3; const x = base[offset]; const y = base[offset + 1]; const mappedU = direction > 0 ? x + 0.5 : 1 - (x + 0.5); const arch = Math.sin(Math.PI * mappedU); const freeEdgeLift = mappedU * mappedU * 0.16; const diagonalTwist = nextTwist * y * Math.pow(mappedU, 1.35); const softRipple = nextTwist * Math.sin(mappedU * Math.PI * 2) * (1 - Math.min(1, Math.abs(y) * 1.65)) * 0.09; position.setXYZ(vertex, x, y, (nextCurve * (arch * 0.84 + freeEdgeLift) * (1 + y * 0.14) + diagonalTwist + softRipple) * direction); } position.needsUpdate = true; geometry.computeVertexNormals(); });
 }
 
 export function createCompleteShelfBookRig(config = {}) {
-  const book = { ...CODEX, ...config.book, palette: { ...CODEX.palette, ...config.book?.palette } };
+  const book = CODEX;
   const renderer = config.renderer; const root = new THREE.Group(); root.name = 'complete-shelf-codex-rig'; root.userData.source = 'Complete Shelf Codex book rig';
   const motion = new THREE.Group(); motion.name = 'codex-motion'; root.add(motion);
   const { width, height, depth } = book; const board = 0.032; const coverRadius = 0.0045; const pageRadius = 0.0025; const spineRadius = 0.0015; const spineBoardThickness = 0.014; const spineWidth = 0.082; const pageWidth = width - 0.074; const pageHeight = height - 0.068; const pageDepth = depth - 0.026;
@@ -304,19 +315,78 @@ export function createCompleteShelfBookRig(config = {}) {
   [-1, 1].forEach((direction) => { const edge = createMesh(planeGeometry, headTailEdgeMaterial, `codex-${direction > 0 ? 'head' : 'tail'}-edge`, false, true); edge.scale.set(pageWidth - 0.035, pageDepth * 0.94, 1); edge.rotation.x = direction > 0 ? -Math.PI * 0.5 : Math.PI * 0.5; edge.position.set(0.018, direction * (pageHeight * 0.5 + 0.002), 0); motion.add(edge); });
   root.userData.construction = { board, coverRadius, pageRadius, spineRadius, spineBoardThickness, spineProfile: 'flat', spineFoilLayered: true, backSurfaceLayered: true, clothPbrMaps: true, foilEmbossed: true, interiorPageDesigns: interiorPageTextures.length, turnInStrips: 8, hingeGrooves: 2, spineLining: true, pageSignatures: pageGeometry.userData.pageSignatures, flexiblePageSegments: FLEXIBLE_PAGE_SEGMENTS, flexiblePageVerticalSegments: FLEXIBLE_PAGE_VERTICAL_SEGMENTS, pagePivots: pagePivots.length, pageStackOffsets: pagePivots.map((pivot) => pivot.userData.restZ) };
   root.userData.applyCoverAtlas = applyCoverAtlas;
-  const state = { open: 0, openTarget: 0, turn: 0, turnTarget: 0, settledPages: 0 };
+  const state = {
+    open: 0,
+    openTarget: 0,
+    settledPages: 0,
+    pageDrag: { active: false, progress: 0, progressVelocity: 0, verticalBias: 0, direction: 0 },
+  };
+  const resetNeutralPageDrag = () => {
+    state.pageDrag.active = false;
+    state.pageDrag.progress = 0;
+    state.pageDrag.progressVelocity = 0;
+    state.pageDrag.verticalBias = 0;
+    state.pageDrag.direction = 0;
+  };
   const updatePaginatedBook = (delta) => {
-    const amount = clamp(state.open, 0, 1); const speed = 10.5; frontPivot.rotation.y = damp(frontPivot.rotation.y, (-Math.PI + 0.055) * amount, speed, delta);
-    pagePivots.forEach((pivot, pageIndex) => { const leafOrder = pagePivots.length - 1 - pageIndex; let target = 0; let positionTarget = pivot.userData.restZ; let twist = 0; if (leafOrder < PAGINATED_LEAF_COUNT) { const isSettled = leafOrder < state.settledPages; const unturnedTarget = -0.038 + leafOrder * 0.008; const turnedTarget = -Math.PI + 0.085 + leafOrder * 0.014; if (leafOrder === state.settledPages && state.turn > 0) { target = lerp(unturnedTarget, turnedTarget, state.turn); positionTarget = lerp(pivot.userData.restZ, pivot.userData.turnedZ, state.turn); const envelope = Math.sin(Math.PI * state.turn); twist = envelope * 0.014; } else { target = isSettled ? turnedTarget : unturnedTarget; positionTarget = isSettled ? pivot.userData.turnedZ : pivot.userData.restZ; } pivot.position.z = damp(pivot.position.z, pivot.userData.restZ + (positionTarget - pivot.userData.restZ) * amount, speed, delta); } else { target = -0.006 + (leafOrder - PAGINATED_LEAF_COUNT) * 0.003; pivot.position.z = damp(pivot.position.z, pivot.userData.restZ, speed, delta); } pivot.rotation.y = damp(pivot.rotation.y, target * amount, speed, delta); pivot.rotation.z = damp(pivot.rotation.z, twist * amount, speed, delta); const progress = clamp(Math.abs(pivot.rotation.y) / Math.PI, 0, 1); updateFlexiblePage(pivot, amount > 0 ? amount * (0.004 + Math.sin(Math.PI * progress) * 0.082) : 0, delta, delta === 0, twist * amount); });
+    const amount = clamp(state.open, 0, 1); const speed = 10.5; const { pageDrag } = state;
+    frontPivot.rotation.y = damp(frontPivot.rotation.y, (-Math.PI + 0.055) * amount, speed, delta);
+    pagePivots.forEach((pivot, pageIndex) => {
+      const leafOrder = pagePivots.length - 1 - pageIndex;
+      let pageTarget = 0; let positionTarget = pivot.userData.restZ; let pageTwistTarget = 0; let dragCurveBoost = 0; let flexTwistTarget = 0;
+      if (leafOrder < PAGINATED_LEAF_COUNT) {
+        const isTurned = leafOrder < state.settledPages;
+        const unturnedTarget = -0.038 + leafOrder * 0.008;
+        const turnedTarget = -Math.PI + 0.085 + leafOrder * 0.014;
+        pageTarget = isTurned ? turnedTarget : unturnedTarget;
+        positionTarget = isTurned ? pivot.userData.turnedZ : pivot.userData.restZ;
+        if (pageDrag.active && pageDrag.direction !== 0) {
+          const dragLeafOrder = pageDrag.direction > 0 ? state.settledPages : state.settledPages - 1;
+          if (leafOrder === dragLeafOrder) {
+            const dragProgress = smoothstep(pageDrag.progress);
+            const dragEnvelope = Math.sin(Math.PI * dragProgress);
+            const speedResponse = clamp(Math.abs(pageDrag.progressVelocity) / 5.5, 0, 1);
+            const signedSpeed = clamp(pageDrag.progressVelocity / 5.5, -1, 1);
+            pageTarget = pageDrag.direction > 0 ? lerp(unturnedTarget, turnedTarget, dragProgress) : lerp(turnedTarget, unturnedTarget, dragProgress);
+            positionTarget = pageDrag.direction > 0 ? lerp(pivot.userData.restZ, pivot.userData.turnedZ, dragProgress) : lerp(pivot.userData.turnedZ, pivot.userData.restZ, dragProgress);
+            pageTwistTarget = pageDrag.direction * dragEnvelope * (0.014 + pageDrag.verticalBias * 0.026);
+            dragCurveBoost = dragEnvelope * (0.032 + speedResponse * 0.064);
+            flexTwistTarget = dragEnvelope * (pageDrag.verticalBias * 0.08 + signedSpeed * pageDrag.direction * 0.03);
+          }
+        }
+        pivot.position.z = damp(pivot.position.z, pivot.userData.restZ + (positionTarget - pivot.userData.restZ) * amount, speed, delta);
+      } else {
+        pageTarget = -0.006 + (leafOrder - PAGINATED_LEAF_COUNT) * 0.003;
+        pivot.position.z = damp(pivot.position.z, pivot.userData.restZ, speed, delta);
+      }
+      pivot.rotation.y = damp(pivot.rotation.y, pageTarget * amount, speed, delta);
+      pivot.rotation.z = damp(pivot.rotation.z, pageTwistTarget * amount, speed, delta);
+      const turnProgress = clamp(Math.abs(pivot.rotation.y) / Math.PI, 0, 1);
+      const curveTarget = amount > 0 ? amount * (0.004 + Math.sin(Math.PI * turnProgress) * 0.082 + dragCurveBoost) : 0;
+      updateFlexiblePage(pivot, curveTarget, delta, false, flexTwistTarget * amount);
+    });
   };
   const controller = {
-    open() { state.openTarget = 1; }, close() { state.openTarget = 0; state.turnTarget = 0; state.settledPages = 0; },
-    setOpenProgress(progress) { state.open = state.openTarget = clamp(progress, 0, 1); },
-    setPageTurnProgress(progress) { state.turn = state.turnTarget = clamp(progress, 0, 1); },
-    settlePage() { state.turn = state.turnTarget = 0; state.settledPages = Math.min(PAGINATED_LEAF_COUNT, state.settledPages + 1); },
-    reset() { state.open = state.openTarget = 0; state.turn = state.turnTarget = 0; state.settledPages = 0; frontPivot.rotation.y = 0; pagePivots.forEach((pivot) => { pivot.rotation.set(0, 0, 0); pivot.position.z = pivot.userData.restZ; updateFlexiblePage(pivot, 0, 0, true); }); },
-    update(delta = 0) { state.open = damp(state.open, state.openTarget, 10.5, delta); state.turn = damp(state.turn, state.turnTarget, 12, delta); updatePaginatedBook(delta); },
-    getSnapshot() { return { rootUuid: root.uuid, rootName: root.name, openProgress: state.open, pageTurnProgress: state.turn, settledPages: state.settledPages, pagePivotCount: pagePivots.length, flexiblePageSegments: FLEXIBLE_PAGE_SEGMENTS, flexiblePageVerticalSegments: FLEXIBLE_PAGE_VERTICAL_SEGMENTS }; },
+    open() { state.openTarget = 1; state.settledPages = 0; resetNeutralPageDrag(); return true; },
+    close() { state.openTarget = 0; state.settledPages = 0; resetNeutralPageDrag(); return true; },
+    setOpenProgress(progress) { state.open = state.openTarget = clamp(progress, 0, 1); if (state.openTarget === 0) { state.settledPages = 0; resetNeutralPageDrag(); } return true; },
+    setPageTurnProgress(progress) {
+      const nextProgress = clamp(progress, 0, 1);
+      if (state.openTarget < 0.999) { resetNeutralPageDrag(); return false; }
+      state.pageDrag.active = nextProgress > 0;
+      state.pageDrag.progress = nextProgress;
+      state.pageDrag.progressVelocity = 0;
+      state.pageDrag.verticalBias = 0;
+      state.pageDrag.direction = nextProgress > 0 ? 1 : 0;
+      return true;
+    },
+    settlePage() { if (state.openTarget < 0.999) return false; resetNeutralPageDrag(); state.settledPages = Math.min(PAGINATED_LEAF_COUNT, state.settledPages + 1); return true; },
+    reset() { state.open = state.openTarget = 0; state.settledPages = 0; resetNeutralPageDrag(); frontPivot.rotation.y = 0; pagePivots.forEach((pivot) => { pivot.rotation.set(0, 0, 0); pivot.position.z = pivot.userData.restZ; updateFlexiblePage(pivot, 0, 0, true); }); return true; },
+    update(delta = 0) { state.open = damp(state.open, state.openTarget, 10.5, delta); updatePaginatedBook(delta); },
+    getSnapshot() {
+      const flexiblePages = pagePivots.map((pivot) => ({ curve: pivot.userData.flex.curve, twist: pivot.userData.flex.twist, curveVelocity: pivot.userData.flex.curveVelocity, twistVelocity: pivot.userData.flex.twistVelocity }));
+      return { rootUuid: root.uuid, rootName: root.name, openProgress: state.open, pageTurnProgress: state.pageDrag.active ? state.pageDrag.progress : 0, settledPages: state.settledPages, pagePivotCount: pagePivots.length, flexiblePageSegments: FLEXIBLE_PAGE_SEGMENTS, flexiblePageVerticalSegments: FLEXIBLE_PAGE_VERTICAL_SEGMENTS, flexiblePages, deformationReset: flexiblePages.every(({ curve, twist, curveVelocity, twistVelocity }) => Math.abs(curve) < 0.00001 && Math.abs(twist) < 0.00001 && Math.abs(curveVelocity) < 0.00001 && Math.abs(twistVelocity) < 0.00001) };
+    },
   };
   controller.reset();
   const dispose = () => { const geometries = new Set(); const materials = new Set(); const textures = new Set(trackedTextures); root.traverse((object) => { if (object.geometry) geometries.add(object.geometry); const source = object.material; (Array.isArray(source) ? source : [source]).forEach((material) => { if (!material) return; materials.add(material); Object.values(material).forEach((value) => { if (value?.isTexture) textures.add(value); }); }); }); geometries.forEach((geometry) => geometry.dispose()); materials.forEach((material) => material.dispose()); textures.forEach((texture) => texture.dispose()); };
