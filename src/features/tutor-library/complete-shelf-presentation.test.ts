@@ -81,7 +81,7 @@ function createRecordingDocument() {
   };
 }
 
-test("selects canonical Jenny fields and uses Jenny for an absent presentation query", () => {
+test("selects canonical Jenny fields through the adapter's internal default selector", () => {
   const selected = selectCompleteShelfPresentationTutor(null);
   const explicit = selectCompleteShelfPresentationTutor("jenny");
 

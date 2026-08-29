@@ -6,6 +6,7 @@ import {
   getCompleteShelfCameraPose,
   type CompleteShelfRigController,
 } from "./complete-shelf-r3f-state.ts";
+import { selectCompleteShelfR3FBridgePresentation } from "./complete-shelf-r3f-presentation.ts";
 
 function createControllerRecorder() {
   const calls: string[] = [];
@@ -64,4 +65,13 @@ test("camera framing matches the standalone host at desktop and narrow widths", 
   assert.deepEqual(getCompleteShelfCameraPose("closed-three-quarter", true), [1.9, 1.5, 6.9]);
   assert.deepEqual(getCompleteShelfCameraPose("fully-open", true), [0, 2.3, 8.8]);
   assert.deepEqual(getCompleteShelfCameraPose("closed-reset", true), [1.9, 1.5, 6.9]);
+});
+
+test("R3F URL query selects canonical Jenny presentation for the imperative bridge", () => {
+  const jenny = selectCompleteShelfR3FBridgePresentation("?state=fully-open&presentation=jenny");
+
+  assert.equal(jenny?.tutorId, "T003");
+  assert.equal(typeof jenny?.createCanvasSources, "function");
+  assert.equal(selectCompleteShelfR3FBridgePresentation("?presentation=unknown"), undefined);
+  assert.equal(selectCompleteShelfR3FBridgePresentation("?state=fully-open"), undefined);
 });

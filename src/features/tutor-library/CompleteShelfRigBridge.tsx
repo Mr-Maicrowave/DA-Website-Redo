@@ -2,7 +2,7 @@ import { useFrame, useThree } from "@react-three/fiber";
 import { useEffect, useRef, useState } from "react";
 import { Object3D } from "three";
 
-import { createCompleteShelfPresentationForQuery } from "./complete-shelf-presentation";
+import type { CompleteShelfPresentation } from "./complete-shelf-presentation";
 import type { CompleteShelfRigController } from "./complete-shelf-r3f-state";
 
 interface CompleteShelfRig {
@@ -45,14 +45,14 @@ async function loadReferenceAtlas() {
 
 export function CompleteShelfRigBridge({
   stateKey,
-  presentationQuery,
+  presentation,
   applyState,
   onSnapshot,
   onArtworkStatus,
   onError,
 }: {
   stateKey: string;
-  presentationQuery: string | null;
+  presentation: CompleteShelfPresentation | undefined;
   applyState(controller: CompleteShelfRigController): void;
   onSnapshot?(snapshot: RigSnapshot): void;
   onArtworkStatus?(status: "applied" | "failed"): void;
@@ -74,7 +74,6 @@ export function CompleteShelfRigBridge({
     void importPublicModule(RIG_MODULE_URL)
       .then((module) => {
         if (cancelled) return undefined;
-        const presentation = createCompleteShelfPresentationForQuery(presentationQuery);
         createdRig = module.createCompleteShelfBookRig(presentation ? {
           renderer: gl,
           presentation: { tutorId: presentation.tutorId, colours: presentation.colours, sources: presentation.createCanvasSources() },
@@ -104,7 +103,7 @@ export function CompleteShelfRigBridge({
       rigRef.current = null;
       createdRig?.dispose();
     };
-  }, [gl, presentationQuery]);
+  }, [gl, presentation]);
 
   useEffect(() => {
     if (!rig) return;

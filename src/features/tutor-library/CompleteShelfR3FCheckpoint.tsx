@@ -19,8 +19,8 @@ import {
   getCompleteShelfCameraPose,
   type CompleteShelfEvidenceState,
 } from "./complete-shelf-r3f-state";
-import { getCompleteShelfPresentationQuery } from "./complete-shelf-presentation";
 import { CompleteShelfRigBridge, type RigSnapshot } from "./CompleteShelfRigBridge";
+import { selectCompleteShelfR3FBridgePresentation } from "./complete-shelf-r3f-presentation";
 const CAMERA_TARGET = new Vector3(0, 0, 0);
 
 function isEvidenceState(value: string | null): value is CompleteShelfEvidenceState {
@@ -95,13 +95,13 @@ function initialEvidenceState() {
   return isEvidenceState(requested) ? requested : "closed-three-quarter";
 }
 
-function initialPresentationQuery() {
-  return getCompleteShelfPresentationQuery(window.location.search);
+function initialBridgePresentation() {
+  return selectCompleteShelfR3FBridgePresentation(window.location.search);
 }
 
 export default function CompleteShelfR3FCheckpoint() {
   const [state, setState] = useState<CompleteShelfEvidenceState>(initialEvidenceState);
-  const [presentationQuery] = useState(initialPresentationQuery);
+  const [presentation] = useState(initialBridgePresentation);
   const [snapshot, setSnapshot] = useState<RigSnapshot | null>(null);
   const [artworkStatus, setArtworkStatus] = useState<"pending" | "applied" | "failed">("pending");
   const [error, setError] = useState("");
@@ -127,7 +127,7 @@ export default function CompleteShelfR3FCheckpoint() {
       data-host="r3f"
       data-bridge="primitive"
       data-state={state}
-      data-presentation={presentationQuery === "jenny" ? "jenny" : "reference"}
+      data-presentation={presentation ? "jenny" : "reference"}
       data-root-uuid={snapshot?.rootUuid ?? "pending"}
       data-persistent-root={String(persistentRoot)}
       data-page-pivots={snapshot?.pagePivotCount ?? "pending"}
@@ -179,7 +179,7 @@ export default function CompleteShelfR3FCheckpoint() {
         <CameraBridge state={state} />
         <CompleteShelfRigBridge
           stateKey={state}
-          presentationQuery={presentationQuery}
+          presentation={presentation}
           applyState={(controller) => applyCompleteShelfEvidenceState(controller, state)}
           onSnapshot={setSnapshot}
           onArtworkStatus={setArtworkStatus}
@@ -208,7 +208,7 @@ export default function CompleteShelfR3FCheckpoint() {
           ))}
         </select>
         <p className="complete-shelf-r3f-status" style={{ color: artworkStatus === "failed" ? "#ffae95" : undefined }} aria-live="polite">
-          {error || (artworkStatus === "applied" ? presentationQuery === "jenny" ? "Canonical Jenny presentation applied to the persistent rig" : "Pinned Codex cover artwork applied to the persistent rig" : presentationQuery === "jenny" ? "Loading canonical Jenny presentation…" : "Loading immutable Codex cover artwork…")}
+          {error || (artworkStatus === "applied" ? presentation ? "Canonical Jenny presentation applied to the persistent rig" : "Pinned Codex cover artwork applied to the persistent rig" : presentation ? "Loading canonical Jenny presentation…" : "Loading immutable Codex cover artwork…")}
         </p>
         <p className="complete-shelf-r3f-status" aria-live="polite">
           {`${state.replace(/-/g, " ")} · ${narrow ? "narrow-390-safe" : "desktop"} · persistent rig ${persistentRoot ? "verified" : "changed"} · ${snapshot?.pagePivotCount ?? "…"} page pivots`}

@@ -8,7 +8,7 @@ import { TutorBook } from './TutorBook';
 import { useBookMaterialMaps } from './TutorBookCover';
 import { CompleteShelfTutorBook, type CompleteShelfBookState } from './CompleteShelfTutorBook';
 import { COMPLETE_SHELF_STUDIO_SHELF_TOP_Y } from './complete-shelf-book-prototype';
-import { getCompleteShelfPresentationQuery } from './complete-shelf-presentation';
+import { createCompleteShelfPresentationForQuery, getCompleteShelfPresentationQuery } from './complete-shelf-presentation';
 import { CompleteShelfRigBridge } from './CompleteShelfRigBridge';
 import { applyCompleteShelfStudioState, getCompleteShelfStudioEngine } from './complete-shelf-studio-state';
 
@@ -44,7 +44,8 @@ function StudioCamera({ view, engineState, engineCamera = 'default' }: { view: S
 }
 
 function CompleteShelfPrototype({ state, collisionDebug, presentationQuery }: { state: CompleteShelfBookState; collisionDebug: boolean; presentationQuery: string | null }) {
-  if (presentationQuery === 'jenny') return <CompleteShelfRigBridge stateKey={state} presentationQuery={presentationQuery} applyState={controller => applyCompleteShelfStudioState(controller, state)} />;
+  const presentation = useMemo(() => createCompleteShelfPresentationForQuery(presentationQuery), [presentationQuery]);
+  if (presentation) return <CompleteShelfRigBridge stateKey={state} presentation={presentation} applyState={controller => applyCompleteShelfStudioState(controller, state)} />;
   const edition = createTutorBookEditions(TUTORS).find(candidate => candidate.wallId === 'primary')!;
   const tutor = TUTORS.find(candidate => candidate.id === edition.tutorId)!;
   return <CompleteShelfTutorBook tutor={tutor} edition={edition} state={state} collisionDebug={collisionDebug} shelfPose={{ position: [0, .1, 0], rotation: [0, Math.PI / 2, 0], width: .6, height: .92, depth: .31 }} />;
