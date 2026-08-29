@@ -6,7 +6,7 @@ import { createCabinetBlueprint } from './room-architecture';
 import { createTutorBookEditions } from './tutor-library-data';
 import { TUTORS } from '../../data/teacherCatalogue';
 import { TutorShelf } from './TutorShelf';
-import type { LibraryPhase } from './tutor-library-state';
+import type { LibraryEvent, LibraryPhase } from './tutor-library-state';
 import type { CompleteShelfBookPool } from './complete-shelf-book-pool';
 import type { CompleteShelfTutorRig } from './CompleteShelfTutorBookBridge';
 
@@ -20,6 +20,15 @@ const WALL_COLOURS: Record<SubjectWall['palette'], { label: string; accent: stri
 };
 const TUTOR_BY_ID = new Map(TUTORS.map(tutor => [tutor.id, tutor]));
 const BOOK_EDITIONS = createTutorBookEditions(TUTORS);
+
+type RoomBookInteractionProps = {
+  generation: number;
+  reducedMotion: boolean;
+  onActivate: (editionId: string, rootUuid: string) => void;
+  onRigReady: (editionId: string, rootUuid: string) => void;
+  onLifecycleComplete: (event: LibraryEvent) => void;
+  onError: (message: string) => void;
+};
 
 const WALNUT_GRAIN = (() => {
   const size = 32;
@@ -77,7 +86,7 @@ function ShelfFrontProfile({ width, y, depth, nosingDepth }: { width: number; y:
   </group>;
 }
 
-function WallShelves({ wall, angle, width, showWallLabel, pool, rigIntentEditionId, onRigIntent, phase, selectedEditionId, motionProgress, onHover }: { wall: SubjectWall; angle: number; width: number; showWallLabel: boolean; pool: CompleteShelfBookPool<CompleteShelfTutorRig>; rigIntentEditionId?: string; onRigIntent: (editionId?: string) => void; phase: LibraryPhase; selectedEditionId?: string; motionProgress: number; onHover: (editionId: string, rootUuid: string) => void }) {
+function WallShelves({ wall, angle, width, showWallLabel, pool, rigIntentEditionId, onRigIntent, phase, generation, reducedMotion, selectedEditionId, motionProgress, onHover, onActivate, onRigReady, onLifecycleComplete, onError }: { wall: SubjectWall; angle: number; width: number; showWallLabel: boolean; pool: CompleteShelfBookPool<CompleteShelfTutorRig>; rigIntentEditionId?: string; onRigIntent: (editionId?: string) => void; phase: LibraryPhase; selectedEditionId?: string; motionProgress: number; onHover: (editionId: string, rootUuid: string) => void } & RoomBookInteractionProps) {
   const palette = WALL_COLOURS[wall.palette];
   const cabinet = useMemo(() => createCabinetBlueprint(width, ROOM_HEIGHT), [width]);
   const interiorHeight = ROOM_HEIGHT - .82;
@@ -97,7 +106,7 @@ function WallShelves({ wall, angle, width, showWallLabel, pool, rigIntentEdition
       <CabinetBox size={[shelfWidth, cabinet.shelfThickness, cabinet.shelfDepth]} position={[0, y, .34]} color="#4b2a1a" roughness={.54} radius={.03} />
       <ShelfFrontProfile width={shelfWidth} y={y} depth={cabinet.shelfDepth} nosingDepth={cabinet.nosingDepth} />
     </group>)}
-    <TutorShelf editions={BOOK_EDITIONS.filter(edition => edition.wallId === wall.id)} tutors={TUTOR_BY_ID} pool={pool} rigIntentEditionId={rigIntentEditionId} onRigIntent={onRigIntent} phase={phase} selectedEditionId={selectedEditionId} motionProgress={motionProgress} onHover={onHover} />
+    <TutorShelf editions={BOOK_EDITIONS.filter(edition => edition.wallId === wall.id)} tutors={TUTOR_BY_ID} pool={pool} rigIntentEditionId={rigIntentEditionId} onRigIntent={onRigIntent} phase={phase} generation={generation} reducedMotion={reducedMotion} selectedEditionId={selectedEditionId} motionProgress={motionProgress} onHover={onHover} onActivate={onActivate} onRigReady={onRigReady} onLifecycleComplete={onLifecycleComplete} onError={onError} />
     <CabinetBox size={[width, cabinet.plinthHeight, 1.04]} position={[0, -ROOM_HEIGHT / 2 + cabinet.plinthHeight / 2, .45]} color="#351a10" roughness={.54} radius={.04} />
     <CabinetMoulding width={width + .16} y={-ROOM_HEIGHT / 2 + .12} z={.45} color="#654028" depth={1.13} />
     <CabinetBox size={[width, .38, 1.06]} position={[0, ROOM_HEIGHT / 2 - .22, .45]} color="#3b1e12" roughness={.52} radius={.04} />
@@ -139,7 +148,7 @@ function RoomShell() {
   </group>;
 }
 
-export function RoomRotunda({ showWallLabels = true, pool, rigIntentEditionId, onRigIntent, phase, selectedEditionId, motionProgress, onHover }: { showWallLabels?: boolean; pool: CompleteShelfBookPool<CompleteShelfTutorRig>; rigIntentEditionId?: string; onRigIntent: (editionId?: string) => void; phase: LibraryPhase; selectedEditionId?: string; motionProgress: number; onHover: (editionId: string, rootUuid: string) => void }) {
+export function RoomRotunda({ showWallLabels = true, pool, rigIntentEditionId, onRigIntent, phase, generation, reducedMotion, selectedEditionId, motionProgress, onHover, onActivate, onRigReady, onLifecycleComplete, onError }: { showWallLabels?: boolean; pool: CompleteShelfBookPool<CompleteShelfTutorRig>; rigIntentEditionId?: string; onRigIntent: (editionId?: string) => void; phase: LibraryPhase; selectedEditionId?: string; motionProgress: number; onHover: (editionId: string, rootUuid: string) => void } & RoomBookInteractionProps) {
   const wallWidth = useMemo(() => 2 * ROOM_RADIUS * Math.tan(Math.PI / SUBJECT_WALLS.length) + .45, []);
-  return <group><RoomShell />{SUBJECT_WALLS.map((wall, index) => <WallShelves key={wall.id} wall={wall} angle={getWallAngle(index, SUBJECT_WALLS.length)} width={wallWidth} showWallLabel={showWallLabels} pool={pool} rigIntentEditionId={rigIntentEditionId} onRigIntent={onRigIntent} phase={phase} selectedEditionId={selectedEditionId} motionProgress={motionProgress} onHover={onHover} />)}</group>;
+  return <group><RoomShell />{SUBJECT_WALLS.map((wall, index) => <WallShelves key={wall.id} wall={wall} angle={getWallAngle(index, SUBJECT_WALLS.length)} width={wallWidth} showWallLabel={showWallLabels} pool={pool} rigIntentEditionId={rigIntentEditionId} onRigIntent={onRigIntent} phase={phase} generation={generation} reducedMotion={reducedMotion} selectedEditionId={selectedEditionId} motionProgress={motionProgress} onHover={onHover} onActivate={onActivate} onRigReady={onRigReady} onLifecycleComplete={onLifecycleComplete} onError={onError} />)}</group>;
 }

@@ -17,7 +17,7 @@ import type { TutorBookEdition } from './tutor-library-data';
 import { createBookParts, getBookVisualProfile, getShelfPose } from './tutor-book-geometry';
 import { createBookMotionPoses, interpolateBookMotion } from './tutor-book-motion';
 import { TutorBookCover, TutorBookFoil, type SpineTreatment, useBookMaterialMaps } from './TutorBookCover';
-import type { LibraryPhase } from './tutor-library-state';
+import type { LibraryEvent, LibraryPhase } from './tutor-library-state';
 
 const COVER_COLOURS = ['#203a57', '#6a3035', '#63462c', '#25465a'];
 const PAPER = ['#eadbb9', '#e4d2aa', '#f0dfbd'];
@@ -90,6 +90,12 @@ type TutorBookProps = {
   motionProgress: number;
   neighbourResponse?: number;
   onHover: (editionId: string, rootUuid: string) => void;
+  onActivate?: (editionId: string, rootUuid: string) => void;
+  onRigReady?: (editionId: string, rootUuid: string) => void;
+  onLifecycleComplete?: (event: LibraryEvent) => void;
+  onError?: (message: string) => void;
+  generation?: number;
+  reducedMotion?: boolean;
   pool?: CompleteShelfBookPool<CompleteShelfTutorRig>;
   rigIntent?: boolean;
   onRigIntent?: (editionId?: string) => void;
@@ -110,9 +116,10 @@ function DormantCompleteShelfProxy({ tutor, edition }: { tutor: CatalogueTutor; 
   </group>;
 }
 
-function RoomTutorBook({ edition, tutor, phase, selected, motionProgress, neighbourResponse = 0, onHover, pool, rigIntent = false, onRigIntent }: TutorBookProps & { pool: CompleteShelfBookPool<CompleteShelfTutorRig> }) {
+function RoomTutorBook({ edition, tutor, phase, selected, motionProgress, neighbourResponse = 0, onHover, onActivate, onRigReady, onLifecycleComplete, onError, generation = 0, reducedMotion = false, pool, rigIntent = false, onRigIntent }: TutorBookProps & { pool: CompleteShelfBookPool<CompleteShelfTutorRig> }) {
   const [rigReady, setRigReady] = useState(false);
   const hovering = useRef(false);
+  const rootUuid = useRef<string>();
   const motionState = useRef(createCompleteShelfOuterMotionState(edition));
   const nextMotionState = advanceCompleteShelfOuterMotion(
     motionState.current,
@@ -146,6 +153,11 @@ function RoomTutorBook({ edition, tutor, phase, selected, motionProgress, neighb
       hovering.current = false;
       if (!selected && rigIntent) onRigIntent?.();
     }}
+    onClick={(event) => {
+      event.stopPropagation();
+      if (rootUuid.current) onActivate?.(edition.id, rootUuid.current);
+      else if (phase === 'ROOM_IDLE') onRigIntent?.(edition.id);
+    }}
   >
     <group visible={!rigRequested || !rigReady}><DormantCompleteShelfProxy tutor={tutor} edition={edition} /></group>
     {rigRequested ? <CompleteShelfTutorBookBridge
@@ -154,13 +166,19 @@ function RoomTutorBook({ edition, tutor, phase, selected, motionProgress, neighb
       pool={pool}
       phase={phase}
       active={selected}
-      onReady={(rootUuid) => {
+      generation={generation}
+      reducedMotion={reducedMotion}
+      onReady={(readyRootUuid) => {
+        rootUuid.current = readyRootUuid;
         setRigReady(true);
-        if (hovering.current) onHover(edition.id, rootUuid);
+        onRigReady?.(edition.id, readyRootUuid);
+        if (hovering.current) onHover(edition.id, readyRootUuid);
       }}
-      onError={() => {
+      onLifecycleComplete={event => onLifecycleComplete?.(event)}
+      onError={(message) => {
         if (!selected) onRigIntent?.();
         setRigReady(false);
+        onError?.(message);
       }}
     /> : null}
     {selected ? <pointLight position={[-.3, .6, 1.1]} intensity={2.4} distance={3.2} color="#ffe8b1" /> : null}

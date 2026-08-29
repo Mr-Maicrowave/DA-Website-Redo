@@ -11,7 +11,7 @@ import { isCompleteShelfControllerOpeningAllowed } from './complete-shelf-book-p
 import { createCompleteShelfPresentation } from './complete-shelf-presentation';
 import type { CompleteShelfRigController } from './complete-shelf-r3f-state';
 import type { TutorBookEdition } from './tutor-library-data';
-import type { LibraryPhase } from './tutor-library-state';
+import { getControllerCompletionEvent, type LibraryEvent, type LibraryPhase } from './tutor-library-state';
 
 export interface CompleteShelfTutorRig extends CompleteShelfPoolRig {
   root: Object3D;
@@ -31,7 +31,10 @@ export function CompleteShelfTutorBookBridge({
   pool,
   phase,
   active,
+  generation,
+  reducedMotion,
   onReady,
+  onLifecycleComplete,
   onError,
 }: {
   edition: TutorBookEdition;
@@ -39,18 +42,22 @@ export function CompleteShelfTutorBookBridge({
   pool: CompleteShelfBookPool<CompleteShelfTutorRig>;
   phase: LibraryPhase;
   active: boolean;
+  generation: number;
+  reducedMotion: boolean;
   onReady(rootUuid: string, controller: CompleteShelfRigController): void;
+  onLifecycleComplete(event: LibraryEvent): void;
   onError?(message: string): void;
 }) {
   const { gl } = useThree();
   const presentation = useMemo(() => createCompleteShelfPresentation(tutor), [tutor]);
   const [rig, setRig] = useState<CompleteShelfTutorRig | null>(() => pool.peek(edition.id) ?? null);
-  const callbacks = useRef({ onReady, onError });
+  const callbacks = useRef({ onReady, onLifecycleComplete, onError });
   const appliedCommand = useRef('');
+  const emittedCompletion = useRef('');
 
   useEffect(() => {
-    callbacks.current = { onReady, onError };
-  }, [onError, onReady]);
+    callbacks.current = { onReady, onLifecycleComplete, onError };
+  }, [onError, onLifecycleComplete, onReady]);
 
   useEffect(() => {
     let cancelled = false;
@@ -88,17 +95,30 @@ export function CompleteShelfTutorBookBridge({
 
   useEffect(() => {
     if (!rig || !active) return;
-    const command = `${rig.root.uuid}:${phase}`;
+    const command = `${rig.root.uuid}:${phase}:${generation}`;
     if (appliedCommand.current === command) return;
     appliedCommand.current = command;
 
-    if (phase === 'BOOK_OPENING' && isCompleteShelfControllerOpeningAllowed(phase)) rig.controller.open();
+    if (phase === 'BOOK_OPENING' && isCompleteShelfControllerOpeningAllowed(phase)) {
+      if (reducedMotion) rig.controller.setOpenProgress(1);
+      else rig.controller.open();
+    }
+    else if (phase === 'PAGE_TURNING') rig.controller.setPageTurnProgress(1);
     else if (phase === 'BOOK_CLOSING') rig.controller.close();
     else if (phase === 'BOOK_RESETTING') rig.controller.reset();
-  }, [active, phase, rig]);
+  }, [active, generation, phase, reducedMotion, rig]);
 
   useFrame((_, delta) => {
-    if (active) rig?.controller.update(delta);
+    if (!active || !rig) return;
+    rig.controller.update(delta);
+    const snapshot = rig.controller.getSnapshot();
+    const completion = getControllerCompletionEvent(phase, generation, snapshot);
+    if (!completion) return;
+    const key = `${rig.root.uuid}:${phase}:${generation}:${completion.type}`;
+    if (emittedCompletion.current === key) return;
+    emittedCompletion.current = key;
+    if (completion.type === 'PAGE_TURN_COMPLETE') rig.controller.settlePage();
+    callbacks.current.onLifecycleComplete(completion);
   });
 
   return rig ? <primitive object={rig.root} dispose={null} /> : null;

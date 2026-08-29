@@ -31,6 +31,24 @@ export interface LibraryState {
   openRequested?: boolean;
 }
 
+export type BookInteractionInput = 'pointer-preview' | 'touch-activate' | 'keyboard-activate';
+
+export interface LibraryControlAvailability {
+  canOpen: boolean;
+  canTurnPage: boolean;
+  canClose: boolean;
+  canTurnRoom: boolean;
+}
+
+export interface ControllerRuntimeSnapshot {
+  rootUuid: string;
+  openProgress: number;
+  pageTurnProgress: number;
+  settledPages: number;
+  pagePivotCount: number;
+  deformationReset: boolean;
+}
+
 type Completion = { generation: number };
 
 export type LibraryEvent =
@@ -61,6 +79,120 @@ export const createLibraryState = (activeWallId: string): LibraryState => ({
   activeWallId,
   transitionGeneration: 0,
 });
+
+export function getBookInteractionEvents(
+  state: LibraryState,
+  input: BookInteractionInput,
+  editionId: string,
+  rootUuid: string,
+): LibraryEvent[] {
+  if (!editionId.trim() || !rootUuid.trim()) return [];
+  const maySelect = state.phase === 'ROOM_IDLE' || state.phase === 'BOOK_HOVER_INTENT';
+  const isCurrent = state.selectedEditionId === editionId && state.expectedRootUuid === rootUuid;
+  const mayActivateCurrent = isCurrent && (
+    state.phase === 'BOOK_HOVER_INTENT'
+    || state.phase === 'BOOK_EXTRACTING'
+    || state.phase === 'BOOK_PREVIEW'
+  );
+
+  if (input === 'pointer-preview') {
+    return maySelect && !isCurrent ? [{ type: 'HOVER', editionId, rootUuid }] : [];
+  }
+  if (!maySelect && !mayActivateCurrent) return [];
+
+  const events: LibraryEvent[] = [];
+  if (!isCurrent) events.push({ type: 'HOVER', editionId, rootUuid });
+  events.push({ type: 'OPEN' });
+  return events;
+}
+
+export const isBookControlDisabled = (state: LibraryState, editionId: string) => {
+  if (state.phase === 'ROOM_IDLE' || state.phase === 'BOOK_HOVER_INTENT') return false;
+  if (state.selectedEditionId !== editionId) return true;
+  return state.phase !== 'BOOK_EXTRACTING' && state.phase !== 'BOOK_PREVIEW';
+};
+
+export function getLibraryControlAvailability(state: LibraryState): LibraryControlAvailability {
+  return {
+    canOpen: state.phase === 'BOOK_HOVER_INTENT' || state.phase === 'BOOK_EXTRACTING' || state.phase === 'BOOK_PREVIEW',
+    canTurnPage: state.phase === 'BOOK_READING' || state.phase === 'PAGE_SETTLED',
+    canClose: state.phase === 'BOOK_HOVER_INTENT'
+      || state.phase === 'BOOK_EXTRACTING'
+      || state.phase === 'BOOK_PREVIEW'
+      || state.phase === 'BOOK_TO_READING'
+      || state.phase === 'BOOK_OPENING'
+      || state.phase === 'BOOK_READING'
+      || state.phase === 'PAGE_DRAGGING'
+      || state.phase === 'PAGE_TURNING'
+      || state.phase === 'PAGE_SETTLED',
+    canTurnRoom: state.phase === 'ROOM_IDLE',
+  };
+}
+
+export const getFocusReturnEditionId = (previous: LibraryState, current: LibraryState) =>
+  previous.phase === 'BOOK_RETURNING' && current.phase === 'ROOM_IDLE'
+    ? previous.selectedEditionId
+    : undefined;
+
+export const shouldPreviewBookOnFocus = (restoringFocus: boolean) => !restoringFocus;
+
+export function getLibraryLiveStatus(state: LibraryState, tutorName: string | undefined, wallLabel: string) {
+  const name = tutorName ?? 'Tutor book';
+  switch (state.phase) {
+    case 'ROOM_TURNING': return `Turning toward ${wallLabel}.`;
+    case 'BOOK_HOVER_INTENT': return `Preparing ${name}'s tutor book.`;
+    case 'BOOK_EXTRACTING': return `Bringing ${name}'s tutor book forward.`;
+    case 'BOOK_PREVIEW': return `${name}'s tutor book is ready to open.`;
+    case 'BOOK_TO_READING': return `Positioning ${name}'s tutor book for reading.`;
+    case 'BOOK_OPENING': return `Opening ${name}'s tutor book.`;
+    case 'BOOK_READING': return `${name}'s tutor book is open for reading.`;
+    case 'PAGE_DRAGGING': return `Turning a page in ${name}'s tutor book.`;
+    case 'PAGE_TURNING': return `Turning a page in ${name}'s tutor book.`;
+    case 'PAGE_SETTLED': return `Page turned in ${name}'s tutor book.`;
+    case 'BOOK_CLOSING': return `Closing ${name}'s tutor book.`;
+    case 'BOOK_RESETTING': return `Resetting ${name}'s tutor book.`;
+    case 'BOOK_RETURNING': return `Returning ${name}'s tutor book to the ${wallLabel} shelf.`;
+    default: return `The ${wallLabel} shelf is ready. Choose a tutor book.`;
+  }
+}
+
+export function getControllerCompletionEvent(
+  phase: LibraryPhase,
+  generation: number,
+  snapshot: ControllerRuntimeSnapshot,
+): LibraryEvent | undefined {
+  if (phase === 'BOOK_OPENING' && snapshot.openProgress >= .995) {
+    return { type: 'OPEN_COMPLETE', generation };
+  }
+  if (phase === 'PAGE_TURNING' && snapshot.pageTurnProgress >= .995) {
+    return { type: 'PAGE_TURN_COMPLETE', generation };
+  }
+  if (phase === 'BOOK_CLOSING' && snapshot.openProgress <= .005) {
+    return { type: 'CLOSE_COMPLETE', generation };
+  }
+  if (
+    phase === 'BOOK_RESETTING'
+    && snapshot.openProgress === 0
+    && snapshot.pageTurnProgress === 0
+    && snapshot.settledPages === 0
+    && snapshot.deformationReset
+  ) {
+    return {
+      type: 'RESET_COMPLETE',
+      generation,
+      controller: {
+        rootUuid: snapshot.rootUuid,
+        closeComplete: true,
+        resetComplete: true,
+        openProgress: snapshot.openProgress,
+        pageTurnProgress: snapshot.pageTurnProgress,
+        settledPages: snapshot.settledPages,
+        deformationReset: snapshot.deformationReset,
+      },
+    };
+  }
+  return undefined;
+}
 
 const advance = (
   state: LibraryState,
