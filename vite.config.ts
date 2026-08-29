@@ -1,6 +1,29 @@
-import { defineConfig } from "vite";
+import { defineConfig, type Plugin } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
+import type { IncomingMessage, ServerResponse } from "node:http";
+
+const completeShelfReferenceRoute = (): Plugin => {
+  const rewriteReferenceRoute = () => (request: IncomingMessage, _response: ServerResponse, next: () => void) => {
+    if (request.url) {
+      const [pathname, search] = request.url.split("?", 2);
+      if (pathname === "/dev/complete-shelf-reference" || pathname === "/dev/complete-shelf-reference/") {
+        request.url = `/dev/complete-shelf-reference/index.html${search ? `?${search}` : ""}`;
+      }
+    }
+    next();
+  };
+
+  return {
+    name: "complete-shelf-reference-route",
+    configureServer(server) {
+      server.middlewares.use(rewriteReferenceRoute());
+    },
+    configurePreviewServer(server) {
+      server.middlewares.use(rewriteReferenceRoute());
+    },
+  };
+};
 
 // https://vitejs.dev/config/
 export default defineConfig(() => ({
@@ -9,6 +32,7 @@ export default defineConfig(() => ({
     port: 8080,
   },
   plugins: [
+    completeShelfReferenceRoute(),
     react(),
   ],
   resolve: {
