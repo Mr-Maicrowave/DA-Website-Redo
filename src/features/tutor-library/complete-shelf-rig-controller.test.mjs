@@ -45,26 +45,33 @@ const settleGeometry = controller => {
   for (let frame = 0; frame < 240; frame += 1) controller.update(1 / 60);
 };
 
-test('turns all six existing leaves forward and backward, then resets every leaf before return', () => {
+test('keeps the original four-leaf pagination boundary while all six physical leaves reset before return', () => {
   const rig = createCompleteShelfBookRig({ renderer });
   const { controller } = rig;
 
   controller.setOpenProgress(1);
   assert.equal(controller.setPageTurnProgress(1, 1), true);
   assert.equal(controller.settlePage(1), true);
+  assert.equal(controller.getSnapshot().pageSettled, false, 'command completion is not physical settling');
+  assert.equal(controller.setPageTurnProgress(0, 1), false, 'zero progress cannot clear an in-flight physical settle');
+  assert.equal(controller.setPageTurnProgress(.5, 1), false, 'another turn is rejected while geometry is still settling');
   settleGeometry(controller);
-  assert.equal(controller.getSnapshot().settledPages, 1, 'a settled page stays settled between explicit actions');
+  assert.equal(controller.getSnapshot().pageSettled, true, 'the target pivot and deformation settle within epsilon');
+  assert.equal(controller.getSnapshot().settledPages, 1, 'a physically settled page stays settled between explicit actions');
 
   assert.equal(controller.setPageTurnProgress(1, -1), true);
   assert.equal(controller.settlePage(-1), true);
   assert.equal(controller.getSnapshot().settledPages, 0, 'Previous reverses the settled leaf');
 
-  for (let page = 0; page < 6; page += 1) {
+  settleGeometry(controller);
+  for (let page = 0; page < 4; page += 1) {
     assert.equal(controller.setPageTurnProgress(1, 1), true, `page ${page + 1} begins`);
     assert.equal(controller.settlePage(1), true, `page ${page + 1} settles`);
+    settleGeometry(controller);
   }
-  assert.equal(controller.getSnapshot().settledPages, 6);
-  assert.equal(controller.setPageTurnProgress(1, 1), false, 'a seventh overlapping/out-of-range turn is rejected');
+  assert.equal(controller.getSnapshot().settledPages, 4);
+  assert.equal(controller.getSnapshot().paginatedLeafCount, 4);
+  assert.equal(controller.setPageTurnProgress(1, 1), false, 'a fifth out-of-range turn is rejected');
 
   controller.close();
   settleGeometry(controller);

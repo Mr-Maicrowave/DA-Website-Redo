@@ -85,6 +85,7 @@ export interface ControllerRuntimeSnapshot {
   pageTurnProgress: number;
   settledPages: number;
   pagePivotCount: number;
+  pageSettled: boolean;
   deformationReset: boolean;
 }
 
@@ -203,7 +204,7 @@ export function getControllerCompletionEvent(
   if (phase === 'BOOK_OPENING' && snapshot.openProgress >= .995) {
     return { type: 'OPEN_COMPLETE', generation };
   }
-  if (phase === 'PAGE_TURNING' && snapshot.pageTurnProgress >= .995) {
+  if (phase === 'PAGE_TURNING' && snapshot.pageTurnProgress === 0 && snapshot.pageSettled) {
     return { type: 'PAGE_TURN_COMPLETE', generation };
   }
   if (phase === 'BOOK_CLOSING' && snapshot.openProgress <= .005) {

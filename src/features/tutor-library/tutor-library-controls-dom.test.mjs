@@ -53,7 +53,10 @@ try {
   assert.deepEqual((await page.evaluate(() => window.tutorLibraryFixture.events)).filter(event => event.startsWith('page:')), [
     'page:1', 'page:1', 'page:1', 'page:-1', 'page:-1', 'page:1',
   ]);
-  assert.match(await page.$eval('.tutor-library__page-status', element => element.textContent ?? ''), /Page 3 of 6/i);
+  assert.match(await page.$eval('.tutor-library__page-status', element => element.textContent ?? ''), /Page 3 of 5/i);
+  await page.evaluate(() => window.tutorLibraryFixture.setPage(4));
+  assert.equal(await page.$eval(nextPage, element => element.disabled), true);
+  assert.match(await page.$eval('.tutor-library__page-status', element => element.textContent ?? ''), /Page 5 of 5/i);
 
   const disabledBook = '[data-edition-id="T009:primary"]';
   assert.equal(await page.$eval(disabledBook, element => element.disabled), true);

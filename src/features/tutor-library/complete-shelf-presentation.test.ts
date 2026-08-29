@@ -15,7 +15,7 @@ const jenny = TUTORS.find((tutor) => tutor.id === "T003")!;
 class RecordingCanvas extends EventTarget {
   width = 0;
   height = 0;
-  readonly commands: Array<{ name: string; args: unknown[] }> = [];
+  readonly commands: Array<{ name: string; args: unknown[]; font?: string }> = [];
   readonly context = {
     fillStyle: "",
     strokeStyle: "",
@@ -25,7 +25,7 @@ class RecordingCanvas extends EventTarget {
     globalAlpha: 1,
     fillRect: (...args: unknown[]) => this.commands.push({ name: "fillRect", args }),
     strokeRect: (...args: unknown[]) => this.commands.push({ name: "strokeRect", args }),
-    fillText: (...args: unknown[]) => this.commands.push({ name: "fillText", args }),
+    fillText: (...args: unknown[]) => this.commands.push({ name: "fillText", args, font: this.context.font }),
     drawImage: (...args: unknown[]) => this.commands.push({ name: "drawImage", args }),
     beginPath: () => this.commands.push({ name: "beginPath", args: [] }),
     rect: (...args: unknown[]) => this.commands.push({ name: "rect", args }),
@@ -38,12 +38,23 @@ class RecordingCanvas extends EventTarget {
     translate: (...args: unknown[]) => this.commands.push({ name: "translate", args }),
     rotate: (...args: unknown[]) => this.commands.push({ name: "rotate", args }),
     clearRect: (...args: unknown[]) => this.commands.push({ name: "clearRect", args }),
-    measureText: (value: string) => ({ width: value.length * 12 }),
+    measureText: (value: string) => ({ width: realisticTextWidth(value, this.context.font) }),
   };
 
   getContext() {
     return this.context;
   }
+}
+
+function realisticTextWidth(value: string, font: string) {
+  const fontSize = Number(/(\d+(?:\.\d+)?)px/.exec(font)?.[1] ?? 16);
+  return [...value].reduce((width, character) => {
+    if (/\s/.test(character)) return width + fontSize * .25;
+    if (/[ilI1.,'’]/.test(character)) return width + fontSize * .28;
+    if (/[mwMW@%]/.test(character)) return width + fontSize * .82;
+    if (/[A-Z0-9]/.test(character)) return width + fontSize * .62;
+    return width + fontSize * .5;
+  }, 0);
 }
 
 class RecordingImage {
@@ -179,6 +190,21 @@ test("prints every canonical Jenny page within the high-resolution safe area", (
         && y >= canvas.height * .06 && y <= canvas.height * .94;
     }), `${canonicalPages[index].id} stays within print-safe margins`);
   });
+});
+
+test("fits Jenny's complete canonical whyDA text using realistic Georgia metrics without truncation", () => {
+  const { document } = createRecordingDocument();
+  const sources = createCompleteShelfPresentation(jenny).createCanvasSources(document as unknown as Document);
+  const canvas = sources.interiors[2] as unknown as RecordingCanvas;
+  const bodyCommands = canvas.commands.filter(command => command.name === "fillText" && Number(command.args[2]) >= canvas.height * .2);
+  const printed = bodyCommands.map(command => String(command.args[0])).join(" ").replace(/\s+/g, " ").trim();
+  const canonical = jenny.profile!.whyDA.replace(/\s+/g, " ").trim();
+
+  assert.equal(printed, canonical, "every canonical word is printed in order");
+  assert.ok(bodyCommands.every(command => Number(command.args[2]) <= canvas.height * .92), "every baseline stays inside the bottom print-safe bound");
+  assert.ok(bodyCommands.every(command => Number(/(\d+(?:\.\d+)?)px/.exec(command.font ?? "")?.[1] ?? 0) >= 32), "the deterministic fit never drops below the legible 32px floor");
+  assert.ok(bodyCommands.every(command => realisticTextWidth(String(command.args[0]), command.font ?? "") <= canvas.width * .82), "every measured line stays within the body width");
+  assert.ok(bodyCommands.length > 15, "the regression exercises the long-form page, not a short fixture");
 });
 
 test("rejects attempts to override the factory's physical dimensions or physics", () => {

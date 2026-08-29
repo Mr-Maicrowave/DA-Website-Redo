@@ -82,25 +82,44 @@ function drawRule(context: CanvasRenderingContext2D, canvas: HTMLCanvasElement, 
 }
 
 function drawWrappedText(context: CanvasRenderingContext2D, text: string, x: number, y: number, maxWidth: number, lineHeight: number, maxLines: number) {
-  const words = text.split(/\s+/);
+  const lines = wrapMeasuredText(context, text, maxWidth);
+  lines.slice(0, maxLines).forEach((line, lineIndex) => context.fillText(line, x, y + lineIndex * lineHeight));
+  return Math.min(lines.length, maxLines);
+}
+
+function wrapMeasuredText(context: CanvasRenderingContext2D, text: string, maxWidth: number) {
+  const words = text.trim().split(/\s+/);
+  const lines: string[] = [];
   let line = "";
-  let lineIndex = 0;
   for (const word of words) {
     const next = line ? `${line} ${word}` : word;
     if (context.measureText(next).width > maxWidth && line) {
-      context.fillText(line, x, y + lineIndex * lineHeight);
+      lines.push(line);
       line = word;
-      lineIndex += 1;
-      if (lineIndex >= maxLines) return lineIndex;
     } else {
       line = next;
     }
   }
-  if (line && lineIndex < maxLines) {
-    context.fillText(line, x, y + lineIndex * lineHeight);
-    lineIndex += 1;
+  if (line) lines.push(line);
+  return lines;
+}
+
+function drawFittedCanonicalText(
+  context: CanvasRenderingContext2D,
+  text: string,
+  options: { x: number; firstBaseline: number; maxBaseline: number; maxWidth: number; initialFontSize: number; minimumFontSize: number },
+) {
+  for (let fontSize = options.initialFontSize; fontSize >= options.minimumFontSize; fontSize -= 1) {
+    context.font = `${fontSize}px Georgia, serif`;
+    const lineHeight = Math.round(fontSize * 1.42);
+    const lines = wrapMeasuredText(context, text, options.maxWidth);
+    const lastBaseline = options.firstBaseline + Math.max(0, lines.length - 1) * lineHeight;
+    if (lastBaseline <= options.maxBaseline) {
+      lines.forEach((line, lineIndex) => context.fillText(line, options.x, options.firstBaseline + lineIndex * lineHeight));
+      return;
+    }
   }
-  return lineIndex;
+  throw new Error("Canonical tutor profile text cannot fit within the approved print-safe page at the legible font floor");
 }
 
 function drawPortrait(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D, portrait: { url: string; fallbackUrl: string }, colours: CompleteShelfPresentation["colours"]) {
@@ -282,8 +301,14 @@ function drawInterior(canvas: HTMLCanvasElement, page: TutorBookPage, colours: C
     return;
   }
 
-  context.font = `${Math.round(canvas.width * .028)}px Georgia, serif`;
-  drawWrappedText(context, primary, marginX, canvas.height * .25, bodyWidth, canvas.height * .042, 21);
+  drawFittedCanonicalText(context, primary, {
+    x: marginX,
+    firstBaseline: canvas.height * .25,
+    maxBaseline: canvas.height * .92,
+    maxWidth: bodyWidth,
+    initialFontSize: Math.round(canvas.width * .028),
+    minimumFontSize: 32,
+  });
 }
 
 function drawTransparentFoil(canvas: HTMLCanvasElement) {

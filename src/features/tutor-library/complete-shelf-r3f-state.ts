@@ -23,6 +23,8 @@ export interface CompleteShelfRigController {
     pageTurnProgress: number;
     settledPages: number;
     pagePivotCount: number;
+    paginatedLeafCount: number;
+    pageSettled: boolean;
     deformationReset: boolean;
   };
 }

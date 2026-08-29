@@ -2,6 +2,8 @@ import type { CatalogueTutor } from '../../data/teacherCatalogue.ts';
 import { profileContentFor } from '../../pages/profileContent.ts';
 
 export const TUTOR_BOOK_PAGE_COUNT = 6 as const;
+export const TUTOR_BOOK_PAGINATED_LEAF_COUNT = 4 as const;
+export const TUTOR_BOOK_READING_STATE_COUNT = TUTOR_BOOK_PAGINATED_LEAF_COUNT + 1;
 
 export type TutorBookPageId = 'identity' | 'approach' | 'why-da' | 'goals' | 'remembered' | 'subjects';
 export type TutorBookPageTurnDirection = -1 | 1;
@@ -84,11 +86,11 @@ export function getPageTurnDirectionForSwipe(deltaX: number, deltaY: number): Tu
 export function getTutorBookPageTarget(
   settledPages: number,
   direction: TutorBookPageTurnDirection,
-  pageCount: number = TUTOR_BOOK_PAGE_COUNT,
+  maximumSettledPages: number = TUTOR_BOOK_PAGINATED_LEAF_COUNT,
 ): number | undefined {
-  const current = Math.max(0, Math.min(pageCount, Math.trunc(settledPages)));
+  const current = Math.max(0, Math.min(maximumSettledPages, Math.trunc(settledPages)));
   const target = current + direction;
-  return target >= 0 && target <= pageCount ? target : undefined;
+  return target >= 0 && target <= maximumSettledPages ? target : undefined;
 }
 
 export function advanceTutorBookPageTurn(current: number, deltaSeconds: number, durationMs: number) {

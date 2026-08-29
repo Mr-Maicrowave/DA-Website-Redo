@@ -22,7 +22,7 @@ import {
 import { TutorLibraryScene } from './TutorLibraryScene';
 import { TutorLibraryControlSurface } from './TutorLibraryControls';
 import {
-  TUTOR_BOOK_PAGE_COUNT,
+  TUTOR_BOOK_READING_STATE_COUNT,
   getTutorBookPageTarget,
   type TutorBookPageTurnDirection,
 } from './tutor-book-pages';
@@ -199,6 +199,6 @@ export function TutorLibrary() {
       </Canvas>}
     </CanvasBoundary></div>
 
-    <TutorLibraryControlSurface library={library} activeWall={activeWall} visibleEditions={visibleEditions} tutors={TUTOR_BY_ID} selectedTutor={selectedTutor} fallbackTutor={fallbackTutor} availability={availability} status={status} sceneError={sceneError} focusReturnEditionId={focusReturnEditionId} settledPages={settledPages} pageCount={TUTOR_BOOK_PAGE_COUNT} showControls={!isDebugTurn} onTurn={wallId => dispatch({ type: 'TURN', wallId })} onBookInteraction={interactWithBook} onCancelPending={cancelPendingIntent} onEscape={() => dispatch({ type: 'ESCAPE' })} onOpen={() => dispatch({ type: 'OPEN' })} onPageTurn={handlePageTurn} onClose={() => dispatch({ type: 'CLOSE' })} />
+    <TutorLibraryControlSurface library={library} activeWall={activeWall} visibleEditions={visibleEditions} tutors={TUTOR_BY_ID} selectedTutor={selectedTutor} fallbackTutor={fallbackTutor} availability={availability} status={status} sceneError={sceneError} focusReturnEditionId={focusReturnEditionId} settledPages={settledPages} pageCount={TUTOR_BOOK_READING_STATE_COUNT} showControls={!isDebugTurn} onTurn={wallId => dispatch({ type: 'TURN', wallId })} onBookInteraction={interactWithBook} onCancelPending={cancelPendingIntent} onEscape={() => dispatch({ type: 'ESCAPE' })} onOpen={() => dispatch({ type: 'OPEN' })} onPageTurn={handlePageTurn} onClose={() => dispatch({ type: 'CLOSE' })} />
   </section>;
 }

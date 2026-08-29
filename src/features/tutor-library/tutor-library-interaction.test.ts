@@ -131,11 +131,11 @@ test('exposes readable live status and controls for every stable reader checkpoi
 test('binds controller completions to the active reducer generation and physical root', () => {
   const opening = getControllerCompletionEvent('BOOK_OPENING', 12, {
     rootUuid: 'root-jenny', openProgress: 0.9999, pageTurnProgress: 0,
-    settledPages: 0, pagePivotCount: 6, deformationReset: true,
+    settledPages: 0, pagePivotCount: 6, deformationReset: true, pageSettled: false,
   });
   const resetting = getControllerCompletionEvent('BOOK_RESETTING', 18, {
     rootUuid: 'root-jenny', openProgress: 0, pageTurnProgress: 0,
-    settledPages: 0, pagePivotCount: 6, deformationReset: true,
+    settledPages: 0, pagePivotCount: 6, deformationReset: true, pageSettled: false,
   });
 
   assert.deepEqual(opening, { type: 'OPEN_COMPLETE', generation: 12 });
@@ -154,8 +154,25 @@ test('binds controller completions to the active reducer generation and physical
   });
   assert.equal(getControllerCompletionEvent('BOOK_OPENING', 12, {
     rootUuid: 'root-jenny', openProgress: 0.4, pageTurnProgress: 0,
-    settledPages: 0, pagePivotCount: 6, deformationReset: true,
+    settledPages: 0, pagePivotCount: 6, deformationReset: true, pageSettled: false,
   }), undefined);
+});
+
+test('waits for physical page settling instead of treating command progress as completion', () => {
+  const snapshot = {
+    rootUuid: 'root-jenny', openProgress: 1, settledPages: 1,
+    pagePivotCount: 6, deformationReset: false,
+  };
+
+  assert.equal(getControllerCompletionEvent('PAGE_TURNING', 21, {
+    ...snapshot, pageTurnProgress: 1, pageSettled: false,
+  }), undefined, 'command progress alone cannot complete the reducer phase');
+  assert.equal(getControllerCompletionEvent('PAGE_TURNING', 21, {
+    ...snapshot, pageTurnProgress: 0, pageSettled: false,
+  }), undefined, 'settlePage alone cannot complete before the pivot converges');
+  assert.deepEqual(getControllerCompletionEvent('PAGE_TURNING', 21, {
+    ...snapshot, pageTurnProgress: 0, pageSettled: true,
+  }), { type: 'PAGE_TURN_COMPLETE', generation: 21 });
 });
 
 test('invalidates delayed rig readiness after pointer leave, blur, or Escape', () => {

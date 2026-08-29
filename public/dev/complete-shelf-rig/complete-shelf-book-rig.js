@@ -20,7 +20,8 @@ const CODEX = {
 const COVER_CROPS = [[0, 0, 512, 768], [512, 0, 512, 768], [1024, 0, 512, 768], [1536, 0, 512, 768], [2048, 0, 512, 768], [2560, 0, 512, 768], [3072, 0, 512, 768]];
 const FLEXIBLE_PAGE_SEGMENTS = 18;
 const FLEXIBLE_PAGE_VERTICAL_SEGMENTS = 8;
-const PAGINATED_LEAF_COUNT = 6;
+const PAGINATED_LEAF_COUNT = 4;
+const PAGE_SETTLE_EPSILON = 0.001;
 const clamp = (value, minimum, maximum) => Math.max(minimum, Math.min(maximum, value));
 const lerp = (from, to, progress) => from + (to - from) * progress;
 const smoothstep = (value) => value * value * (3 - 2 * value);
@@ -333,6 +334,7 @@ export function createCompleteShelfBookRig(config = {}) {
     open: 0,
     openTarget: 0,
     settledPages: 0,
+    pageTurnCommitted: false,
     pageDrag: { active: false, progress: 0, progressVelocity: 0, verticalBias: 0, direction: 0 },
   };
   const resetNeutralPageDrag = () => {
@@ -380,13 +382,39 @@ export function createCompleteShelfBookRig(config = {}) {
       updateFlexiblePage(pivot, curveTarget, delta, false, flexTwistTarget * amount);
     });
   };
+  const isPageGeometrySettled = () => {
+    const amount = clamp(state.open, 0, 1);
+    return pagePivots.every((pivot, pageIndex) => {
+      const leafOrder = pagePivots.length - 1 - pageIndex;
+      const paginated = leafOrder < PAGINATED_LEAF_COUNT;
+      const turned = paginated && leafOrder < state.settledPages;
+      const pageTarget = paginated
+        ? turned ? -Math.PI + 0.085 + leafOrder * 0.014 : -0.038 + leafOrder * 0.008
+        : -0.006 + (leafOrder - PAGINATED_LEAF_COUNT) * 0.003;
+      const positionTarget = turned ? pivot.userData.turnedZ : pivot.userData.restZ;
+      const expectedRotation = pageTarget * amount;
+      const expectedPosition = pivot.userData.restZ + (positionTarget - pivot.userData.restZ) * amount;
+      const turnProgress = clamp(Math.abs(expectedRotation) / Math.PI, 0, 1);
+      const expectedCurve = amount > 0 ? amount * (0.004 + Math.sin(Math.PI * turnProgress) * 0.082) : 0;
+      const flex = pivot.userData.flex;
+      return Math.abs(pivot.rotation.y - expectedRotation) <= PAGE_SETTLE_EPSILON
+        && Math.abs(pivot.rotation.z) <= PAGE_SETTLE_EPSILON
+        && Math.abs(pivot.position.z - expectedPosition) <= PAGE_SETTLE_EPSILON
+        && Math.abs(flex.curve - expectedCurve) <= PAGE_SETTLE_EPSILON
+        && Math.abs(flex.twist) <= PAGE_SETTLE_EPSILON
+        && Math.abs(flex.curveVelocity) <= PAGE_SETTLE_EPSILON
+        && Math.abs(flex.twistVelocity) <= PAGE_SETTLE_EPSILON;
+    });
+  };
   const controller = {
-    open() { state.openTarget = 1; state.settledPages = 0; resetNeutralPageDrag(); return true; },
-    close() { state.openTarget = 0; state.settledPages = 0; resetNeutralPageDrag(); return true; },
-    setOpenProgress(progress) { state.open = state.openTarget = clamp(progress, 0, 1); if (state.openTarget === 0) { state.settledPages = 0; resetNeutralPageDrag(); } return true; },
+    open() { state.openTarget = 1; state.settledPages = 0; state.pageTurnCommitted = false; resetNeutralPageDrag(); return true; },
+    close() { state.openTarget = 0; state.settledPages = 0; state.pageTurnCommitted = false; resetNeutralPageDrag(); return true; },
+    setOpenProgress(progress) { state.open = state.openTarget = clamp(progress, 0, 1); if (state.openTarget === 0) { state.settledPages = 0; state.pageTurnCommitted = false; resetNeutralPageDrag(); } return true; },
     setPageTurnProgress(progress, direction = 1) {
       const nextProgress = clamp(progress, 0, 1);
       if (state.openTarget < 0.999) { resetNeutralPageDrag(); return false; }
+      if (state.pageTurnCommitted && !isPageGeometrySettled()) return false;
+      if (nextProgress === 0) { state.pageTurnCommitted = false; resetNeutralPageDrag(); return true; }
       const normalizedDirection = direction < 0 ? -1 : 1;
       const atBoundary = normalizedDirection > 0
         ? state.settledPages >= PAGINATED_LEAF_COUNT
@@ -397,14 +425,15 @@ export function createCompleteShelfBookRig(config = {}) {
       state.pageDrag.progressVelocity = 0;
       state.pageDrag.verticalBias = 0;
       state.pageDrag.direction = nextProgress > 0 ? normalizedDirection : 0;
+      state.pageTurnCommitted = false;
       return true;
     },
-    settlePage(direction = state.pageDrag.direction || 1) { if (state.openTarget < 0.999) return false; const normalizedDirection = direction < 0 ? -1 : 1; const nextSettledPages = clamp(state.settledPages + normalizedDirection, 0, PAGINATED_LEAF_COUNT); resetNeutralPageDrag(); if (nextSettledPages === state.settledPages) return false; state.settledPages = nextSettledPages; return true; },
-    reset() { state.open = state.openTarget = 0; state.settledPages = 0; resetNeutralPageDrag(); frontPivot.rotation.y = 0; pagePivots.forEach((pivot) => { pivot.rotation.set(0, 0, 0); pivot.position.z = pivot.userData.restZ; updateFlexiblePage(pivot, 0, 0, true); }); return true; },
+    settlePage(direction = state.pageDrag.direction || 1) { if (state.openTarget < 0.999) return false; const normalizedDirection = direction < 0 ? -1 : 1; const nextSettledPages = clamp(state.settledPages + normalizedDirection, 0, PAGINATED_LEAF_COUNT); resetNeutralPageDrag(); if (nextSettledPages === state.settledPages) return false; state.settledPages = nextSettledPages; state.pageTurnCommitted = true; return true; },
+    reset() { state.open = state.openTarget = 0; state.settledPages = 0; state.pageTurnCommitted = false; resetNeutralPageDrag(); frontPivot.rotation.y = 0; pagePivots.forEach((pivot) => { pivot.rotation.set(0, 0, 0); pivot.position.z = pivot.userData.restZ; updateFlexiblePage(pivot, 0, 0, true); }); return true; },
     update(delta = 0) { state.open = damp(state.open, state.openTarget, 10.5, delta); updatePaginatedBook(delta); },
     getSnapshot() {
       const flexiblePages = pagePivots.map((pivot) => ({ curve: pivot.userData.flex.curve, twist: pivot.userData.flex.twist, curveVelocity: pivot.userData.flex.curveVelocity, twistVelocity: pivot.userData.flex.twistVelocity }));
-      return { rootUuid: root.uuid, rootName: root.name, openProgress: state.open, pageTurnProgress: state.pageDrag.active ? state.pageDrag.progress : 0, settledPages: state.settledPages, pagePivotCount: pagePivots.length, flexiblePageSegments: FLEXIBLE_PAGE_SEGMENTS, flexiblePageVerticalSegments: FLEXIBLE_PAGE_VERTICAL_SEGMENTS, flexiblePages, deformationReset: flexiblePages.every(({ curve, twist, curveVelocity, twistVelocity }) => Math.abs(curve) < 0.00001 && Math.abs(twist) < 0.00001 && Math.abs(curveVelocity) < 0.00001 && Math.abs(twistVelocity) < 0.00001) };
+      return { rootUuid: root.uuid, rootName: root.name, openProgress: state.open, pageTurnProgress: state.pageDrag.active ? state.pageDrag.progress : 0, settledPages: state.settledPages, pagePivotCount: pagePivots.length, paginatedLeafCount: PAGINATED_LEAF_COUNT, pageSettled: state.pageTurnCommitted && isPageGeometrySettled(), flexiblePageSegments: FLEXIBLE_PAGE_SEGMENTS, flexiblePageVerticalSegments: FLEXIBLE_PAGE_VERTICAL_SEGMENTS, flexiblePages, deformationReset: flexiblePages.every(({ curve, twist, curveVelocity, twistVelocity }) => Math.abs(curve) < 0.00001 && Math.abs(twist) < 0.00001 && Math.abs(curveVelocity) < 0.00001 && Math.abs(twistVelocity) < 0.00001) };
     },
   };
   controller.reset();

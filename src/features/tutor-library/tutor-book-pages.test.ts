@@ -93,7 +93,8 @@ test('maps keyboard and reliable horizontal swipe gestures to bounded page targe
   assert.equal(getTutorBookPageTarget(0, -1), undefined);
   assert.equal(getTutorBookPageTarget(0, 1), 1);
   assert.equal(getTutorBookPageTarget(3, -1), 2);
-  assert.equal(getTutorBookPageTarget(6, 1), undefined);
+  assert.equal(getTutorBookPageTarget(3, 1), 4);
+  assert.equal(getTutorBookPageTarget(4, 1), undefined, 'four approved turns expose five reachable reading states');
 });
 
 test('advances real controller page progress over the existing timing window and clamps once complete', () => {

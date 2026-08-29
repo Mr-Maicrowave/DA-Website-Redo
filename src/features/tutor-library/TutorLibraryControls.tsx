@@ -54,7 +54,7 @@ export function TutorLibraryControlSurface({ library, activeWall, visibleEdition
   const pointerStart = useRef<{ x: number; y: number; id: number }>();
   const pages = selectedTutor ? createTutorBookPages(selectedTutor) : [];
   const canTurn = (direction: TutorBookPageTurnDirection) => availability.canTurnPage
-    && getTutorBookPageTarget(settledPages, direction, pageCount) !== undefined;
+    && getTutorBookPageTarget(settledPages, direction) !== undefined;
   const requestPageTurn = (direction: TutorBookPageTurnDirection) => {
     if (canTurn(direction)) onPageTurn(direction);
   };

@@ -63,6 +63,8 @@ export function CompleteShelfTutorBookBridge({
   const appliedCommand = useRef('');
   const emittedCompletion = useRef('');
   const pageTurnProgress = useRef(0);
+  const pageTurnCommitted = useRef(false);
+  const pageTurnCommand = useRef('');
   const pageTurnDurationMs = createBookMotionTimingPolicy(reducedMotion).pageTurnMs;
 
   useEffect(() => {
@@ -119,7 +121,9 @@ export function CompleteShelfTutorBookBridge({
       else rig.controller.open();
     }
     else if (phase === 'PAGE_TURNING') {
+      pageTurnCommand.current = command;
       pageTurnProgress.current = 0;
+      pageTurnCommitted.current = false;
       rig.controller.setPageTurnProgress(0, pageTurnDirection);
     }
     else if (phase === 'BOOK_CLOSING') rig.controller.close();
@@ -128,21 +132,29 @@ export function CompleteShelfTutorBookBridge({
 
   useFrame((_, delta) => {
     if (!active || !rig) return;
-    if (phase === 'PAGE_TURNING') {
+    const command = `${rig.root.uuid}:${phase}:${generation}`;
+    if (phase === 'PAGE_TURNING' && pageTurnCommand.current !== command) {
+      pageTurnCommand.current = command;
+      pageTurnProgress.current = 0;
+      pageTurnCommitted.current = false;
+      rig.controller.setPageTurnProgress(0, pageTurnDirection);
+    }
+    if (phase === 'PAGE_TURNING' && !pageTurnCommitted.current) {
       pageTurnProgress.current = advanceTutorBookPageTurn(pageTurnProgress.current, delta, pageTurnDurationMs);
       rig.controller.setPageTurnProgress(pageTurnProgress.current, pageTurnDirection);
     }
     rig.controller.update(delta);
+    if (phase === 'PAGE_TURNING' && !pageTurnCommitted.current && pageTurnProgress.current >= 1) {
+      if (!rig.controller.settlePage(pageTurnDirection)) return;
+      pageTurnCommitted.current = true;
+    }
     const snapshot = rig.controller.getSnapshot();
     const completion = getControllerCompletionEvent(phase, generation, snapshot);
     if (!completion) return;
     const key = `${rig.root.uuid}:${phase}:${generation}:${completion.type}`;
     if (emittedCompletion.current === key) return;
     emittedCompletion.current = key;
-    if (completion.type === 'PAGE_TURN_COMPLETE') {
-      if (!rig.controller.settlePage(pageTurnDirection)) return;
-      callbacks.current.onPageSettled(rig.controller.getSnapshot().settledPages);
-    }
+    if (completion.type === 'PAGE_TURN_COMPLETE') callbacks.current.onPageSettled(snapshot.settledPages);
     callbacks.current.onLifecycleComplete(completion);
   });
 
