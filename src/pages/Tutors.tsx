@@ -6,7 +6,8 @@ import { useSearchParams } from 'react-router-dom';
 import FindTeacher from './FindTeacher';
 import { TutorOrbitHero } from '@/features/tutor-orbit/TutorOrbitHero';
 import { TutorLibrary } from '@/features/tutor-library/TutorLibrary';
-import { TutorBookStudio } from '@/features/tutor-library/TutorBookStudio';
+import { TutorBookStudio, type CompleteShelfEngineCamera } from '@/features/tutor-library/TutorBookStudio';
+import type { CompleteShelfBookState } from '@/features/tutor-library/CompleteShelfTutorBook';
 
 const libraryEnabled = (search: URLSearchParams) => search.get('library-preview') === '1';
 
@@ -21,7 +22,11 @@ const Tutors = () => {
   if (searchParams.get('tutor-book-studio') === '1') {
     const requested = searchParams.get('studioView');
     const view = requested === 'rear' || requested === 'top' || requested === 'fore' || requested === 'spine' || requested === 'cover' || requested === 'shelf' || requested === 'typography' || requested === 'typography-close' || requested === 'geometry-debug' || requested === 'geometry-debug-rear' || requested === 'geometry-debug-top' || requested === 'geometry-debug-spine' || requested === 'geometry-debug-fore' || requested === 'material-debug' || requested === 'foil-debug' || requested === 'foil-metal-debug' ? requested : 'front';
-    return <TutorBookStudio view={view} />;
+    const requestedEngineState = searchParams.get('bookEngineState');
+    const engineStates: readonly CompleteShelfBookState[] = ['closed-front', 'closed-spine', 'shelf', 'extracting', 'preview', 'half-open', 'open', 'page-turn-25', 'page-turning', 'page-turn-75', 'page-settled', 'closed-returned'];
+    const requestedEngineCamera = searchParams.get('bookEngineCamera');
+    const engineCamera: CompleteShelfEngineCamera = requestedEngineCamera === 'open-top-oblique' || requestedEngineCamera === 'turn-side-oblique' || requestedEngineCamera === 'turn-top-oblique' || requestedEngineCamera === 'turn-close' ? requestedEngineCamera : 'default';
+    return <TutorBookStudio view={view} engineState={engineStates.includes(requestedEngineState as CompleteShelfBookState) ? requestedEngineState as CompleteShelfBookState : undefined} engineCamera={engineCamera} collisionDebug={searchParams.get('bookCollisionDebug') === '1'} />;
   }
 
   return (
