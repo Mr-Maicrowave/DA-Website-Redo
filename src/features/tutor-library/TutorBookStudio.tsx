@@ -8,6 +8,7 @@ import { TutorBook } from './TutorBook';
 import { useBookMaterialMaps } from './TutorBookCover';
 import { CompleteShelfTutorBook, type CompleteShelfBookState } from './CompleteShelfTutorBook';
 import { COMPLETE_SHELF_STUDIO_SHELF_TOP_Y } from './complete-shelf-book-prototype';
+import { createCompleteShelfPresentationForQuery } from './complete-shelf-presentation';
 
 export type CompleteShelfEngineCamera = 'default' | 'open-top-oblique' | 'turn-side-oblique' | 'turn-top-oblique' | 'turn-close';
 
@@ -40,9 +41,10 @@ function StudioCamera({ view, engineState, engineCamera = 'default' }: { view: S
   return null;
 }
 
-function CompleteShelfPrototype({ state, collisionDebug }: { state: CompleteShelfBookState; collisionDebug: boolean }) {
-  const edition = createTutorBookEditions(TUTORS).find(candidate => candidate.wallId === 'primary')!;
-  const tutor = TUTORS.find(candidate => candidate.id === edition.tutorId)!;
+function CompleteShelfPrototype({ state, collisionDebug, presentationQuery }: { state: CompleteShelfBookState; collisionDebug: boolean; presentationQuery: string | null }) {
+  const presentation = createCompleteShelfPresentationForQuery(presentationQuery);
+  const edition = createTutorBookEditions(TUTORS).find(candidate => candidate.tutorId === presentation?.tutorId && candidate.wallId === 'primary') ?? createTutorBookEditions(TUTORS).find(candidate => candidate.wallId === 'primary')!;
+  const tutor = TUTORS.find(candidate => candidate.id === presentation?.tutorId) ?? TUTORS.find(candidate => candidate.id === edition.tutorId)!;
   return <CompleteShelfTutorBook tutor={tutor} edition={edition} state={state} collisionDebug={collisionDebug} shelfPose={{ position: [0, .1, 0], rotation: [0, Math.PI / 2, 0], width: .6, height: .92, depth: .31 }} />;
 }
 
@@ -73,6 +75,7 @@ function FoilMetalDebug() {
 
 export function TutorBookStudio({ view = 'front', engineState, engineCamera = 'default', collisionDebug = false }: { view?: StudioView; engineState?: CompleteShelfBookState; engineCamera?: CompleteShelfEngineCamera; collisionDebug?: boolean }) {
   const diagnostic = view.includes('debug');
+  const presentationQuery = typeof window === 'undefined' ? null : new URLSearchParams(window.location.search).get('presentation');
   const [interactiveEngineState, setInteractiveEngineState] = useState<CompleteShelfBookState | undefined>(engineState);
   const activeEngineState = engineState ? interactiveEngineState ?? engineState : undefined;
   return <main style={{ height: '100vh', background: diagnostic ? '#a7a39b' : '#22170f', position: 'relative' }}><Canvas shadows dpr={2} camera={{ fov: 32, position: [1.35, .82, 2.45] }} gl={{ antialias: true, powerPreference: 'high-performance' }}>
@@ -86,6 +89,6 @@ export function TutorBookStudio({ view = 'front', engineState, engineCamera = 'd
     {view === 'foil-debug' && <spotLight position={[0, 1.5, 3.2]} intensity={48} angle={.28} penumbra={.35} color="#ffffff" />}
     <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -.52, 0]} receiveShadow><planeGeometry args={[7, 7]} /><meshStandardMaterial color={diagnostic ? '#85868a' : '#6a4227'} roughness={.72} /></mesh>
     {!diagnostic && <mesh position={[0, COMPLETE_SHELF_STUDIO_SHELF_TOP_Y - .06, 0]} receiveShadow><boxGeometry args={[4.8, .12, 1.15]} /><meshStandardMaterial color="#3b2113" roughness={.58} /></mesh>}
-    <StudioCamera view={view} engineState={activeEngineState} engineCamera={engineCamera} />{activeEngineState ? <CompleteShelfPrototype state={activeEngineState} collisionDebug={collisionDebug} /> : view === 'material-debug' ? <MaterialDebug /> : view === 'foil-debug' ? <FoilDebug /> : view === 'foil-metal-debug' ? <FoilMetalDebug /> : <StudioBooks view={view} />}
+    <StudioCamera view={view} engineState={activeEngineState} engineCamera={engineCamera} />{activeEngineState ? <CompleteShelfPrototype state={activeEngineState} collisionDebug={collisionDebug} presentationQuery={presentationQuery} /> : view === 'material-debug' ? <MaterialDebug /> : view === 'foil-debug' ? <FoilDebug /> : view === 'foil-metal-debug' ? <FoilMetalDebug /> : <StudioBooks view={view} />}
   </Canvas>{activeEngineState && <nav aria-label="TutorBook prototype states" style={{ position: 'absolute', right: 20, bottom: 20, display: 'flex', maxWidth: 540, flexWrap: 'wrap', justifyContent: 'flex-end', gap: 6 }}>{ENGINE_STATES.map(state => <button key={state} type="button" onClick={() => setInteractiveEngineState(state)} aria-pressed={state === activeEngineState} style={{ border: '1px solid #b89757', background: state === activeEngineState ? '#d2aa5b' : '#1b273b', color: state === activeEngineState ? '#18120a' : '#f7e7c2', padding: '7px 9px', fontSize: 11, textTransform: 'uppercase', letterSpacing: '.08em', cursor: 'pointer' }}>{state.replace(/-/g, ' ')}</button>)}</nav>}</main>;
 }

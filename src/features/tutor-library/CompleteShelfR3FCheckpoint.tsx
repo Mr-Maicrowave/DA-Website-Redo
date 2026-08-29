@@ -20,6 +20,7 @@ import {
   type CompleteShelfEvidenceState,
   type CompleteShelfRigController,
 } from "./complete-shelf-r3f-state";
+import { createCompleteShelfPresentationForQuery } from "./complete-shelf-presentation";
 
 interface CompleteShelfRig {
   root: Object3D & {
@@ -32,7 +33,7 @@ interface CompleteShelfRig {
 }
 
 interface CompleteShelfRigModule {
-  createCompleteShelfBookRig(config: { renderer: unknown }): CompleteShelfRig;
+  createCompleteShelfBookRig(config: { renderer: unknown; presentation?: unknown }): CompleteShelfRig;
 }
 
 interface RigSnapshot {
@@ -135,11 +136,13 @@ function CameraBridge({ state }: { state: CompleteShelfEvidenceState }) {
 
 function ImperativeRigBridge({
   state,
+  presentationQuery,
   onSnapshot,
   onArtworkStatus,
   onError,
 }: {
   state: CompleteShelfEvidenceState;
+  presentationQuery: string | null;
   onSnapshot(snapshot: RigSnapshot): void;
   onArtworkStatus(status: "applied" | "failed"): void;
   onError(message: string): void;
@@ -155,9 +158,21 @@ function ImperativeRigBridge({
     void importPublicModule(RIG_MODULE_URL)
       .then((module: CompleteShelfRigModule) => {
         if (cancelled) return;
-        createdRig = module.createCompleteShelfBookRig({ renderer: gl });
+        const presentation = createCompleteShelfPresentationForQuery(presentationQuery);
+        createdRig = module.createCompleteShelfBookRig(presentation ? {
+          renderer: gl,
+          presentation: {
+            tutorId: presentation.tutorId,
+            colours: presentation.colours,
+            sources: presentation.createCanvasSources(),
+          },
+        } : { renderer: gl });
         rigRef.current = createdRig;
         setRig(createdRig);
+        if (presentation) {
+          onArtworkStatus("applied");
+          return undefined;
+        }
         return loadReferenceAtlas();
       })
       .then((atlas) => {
@@ -179,7 +194,7 @@ function ImperativeRigBridge({
       rigRef.current = null;
       createdRig?.dispose();
     };
-  }, [gl, onArtworkStatus, onError]);
+  }, [gl, onArtworkStatus, onError, presentationQuery]);
 
   useEffect(() => {
     if (!rig) return;
@@ -201,8 +216,13 @@ function initialEvidenceState() {
   return isEvidenceState(requested) ? requested : "closed-three-quarter";
 }
 
+function initialPresentationQuery() {
+  return new URLSearchParams(window.location.search).get("presentation");
+}
+
 export default function CompleteShelfR3FCheckpoint() {
   const [state, setState] = useState<CompleteShelfEvidenceState>(initialEvidenceState);
+  const [presentationQuery] = useState(initialPresentationQuery);
   const [snapshot, setSnapshot] = useState<RigSnapshot | null>(null);
   const [artworkStatus, setArtworkStatus] = useState<"pending" | "applied" | "failed">("pending");
   const [error, setError] = useState("");
@@ -228,6 +248,7 @@ export default function CompleteShelfR3FCheckpoint() {
       data-host="r3f"
       data-bridge="primitive"
       data-state={state}
+      data-presentation={presentationQuery === "jenny" ? "jenny" : "reference"}
       data-root-uuid={snapshot?.rootUuid ?? "pending"}
       data-persistent-root={String(persistentRoot)}
       data-page-pivots={snapshot?.pagePivotCount ?? "pending"}
@@ -279,6 +300,7 @@ export default function CompleteShelfR3FCheckpoint() {
         <CameraBridge state={state} />
         <ImperativeRigBridge
           state={state}
+          presentationQuery={presentationQuery}
           onSnapshot={setSnapshot}
           onArtworkStatus={setArtworkStatus}
           onError={setError}
@@ -306,7 +328,7 @@ export default function CompleteShelfR3FCheckpoint() {
           ))}
         </select>
         <p className="complete-shelf-r3f-status" style={{ color: artworkStatus === "failed" ? "#ffae95" : undefined }} aria-live="polite">
-          {error || (artworkStatus === "applied" ? "Pinned Codex cover artwork applied to the persistent rig" : "Loading immutable Codex cover artwork…")}
+          {error || (artworkStatus === "applied" ? presentationQuery === "jenny" ? "Canonical Jenny presentation applied to the persistent rig" : "Pinned Codex cover artwork applied to the persistent rig" : presentationQuery === "jenny" ? "Loading canonical Jenny presentation…" : "Loading immutable Codex cover artwork…")}
         </p>
         <p className="complete-shelf-r3f-status" aria-live="polite">
           {`${state.replace(/-/g, " ")} · ${narrow ? "narrow-390-safe" : "desktop"} · persistent rig ${persistentRoot ? "verified" : "changed"} · ${snapshot?.pagePivotCount ?? "…"} page pivots`}

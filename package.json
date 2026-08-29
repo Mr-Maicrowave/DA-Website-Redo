@@ -13,6 +13,7 @@
     "test:maths-motion": "node --test --experimental-strip-types src/features/maths-ambient-motion/*.test.ts",
     "test:complete-shelf-reference": "node scripts/verify-complete-shelf-reference.mjs",
     "test:complete-shelf-rig": "node scripts/verify-complete-shelf-rig.mjs",
+    "test:complete-shelf-presentation": "node --test --experimental-strip-types src/features/tutor-library/complete-shelf-presentation.test.ts",
     "test:complete-shelf-r3f": "node --test --experimental-strip-types src/features/tutor-library/complete-shelf-r3f-state.test.ts",
     "lint": "eslint .",
     "preview": "vite preview",
