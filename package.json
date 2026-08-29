@@ -17,6 +17,8 @@
     "test:complete-shelf-presentation-seam": "node --test src/features/tutor-library/complete-shelf-presentation-seam.test.mjs",
     "test:complete-shelf-studio": "node --test --experimental-strip-types src/features/tutor-library/complete-shelf-studio-state.test.ts",
     "test:complete-shelf-r3f": "node --test --experimental-strip-types src/features/tutor-library/complete-shelf-r3f-state.test.ts",
+    "test:tutor-library-dom": "node src/features/tutor-library/tutor-library-controls-dom.test.mjs",
+    "test:tutor-library": "node --test --experimental-strip-types src/features/tutor-library/*.test.ts src/features/tutor-library/complete-shelf-presentation-seam.test.mjs && npm run test:tutor-library-dom",
     "lint": "eslint .",
     "preview": "vite preview",
     "video:preview": "remotion preview remotion/Root.tsx",

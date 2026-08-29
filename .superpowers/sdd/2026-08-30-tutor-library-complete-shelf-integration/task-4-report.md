@@ -81,3 +81,27 @@ Local Task 4 commit in `codex/tutor-library-3d`; see the adjacent git history en
 ### Remaining concern
 
 - The requested real React DOM interaction automation is not green: the isolated headless-browser attempt did not advance the semantic click beyond `ROOM_IDLE`. Helper/reducer/pool coverage is green, but this browser-level activation path requires follow-up before claiming the Important DOM-test finding fully closed.
+
+## Fix round 2
+
+### RED evidence
+
+- `npm.cmd run test:tutor-library-dom` failed waiting for `[data-edition-id="T003:primary"]` because the focused fixture imported the not-yet-created `TutorLibraryControlSurface` module. This established that no renderable semantic-control seam existed.
+
+### GREEN evidence
+
+- `npm.cmd run test:tutor-library-dom`: pass (`Tutor Library semantic DOM controls: PASS`).
+- Focused interaction/state tests: 28/28 pass.
+- `npm.cmd run typecheck`: exit 0.
+- New aggregate `npm.cmd run test:tutor-library`: 94/94 Tutor Library/Complete Shelf tests pass, followed by the green DOM control test.
+
+### DOM interaction coverage
+
+- Extracted the production semantic markup into `TutorLibraryControlSurface`; the full Canvas/WebGL scene is not imported or rendered by the fixture.
+- ReactDOM `createRoot` and React `act` render the real component inside a small Vite browser fixture.
+- Real DOM activation covers click, native Enter and Space button activation, wall-button dispatch, blur cancellation, Escape cancellation/dispatch, disabled-button non-dispatch, programmatic focus return without reopening, and the Canvas-failure `inert`/`aria-disabled`/disabled-button/fallback-link contract.
+- The test is committed through `test:tutor-library-dom` and is included by the aggregate `test:tutor-library` package script.
+
+### Concerns
+
+- The DOM test launches headless Chrome and therefore requires browser-process permission in the managed local sandbox. It remains isolated from WebGL and completed successfully once that permission was granted.

@@ -1,7 +1,7 @@
 import { Canvas } from '@react-three/fiber';
 import { Component, useEffect, useMemo, useReducer, useRef, useState, type ErrorInfo, type ReactNode } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
-import { getPhotoStyle, getPhotoUrl, TUTORS } from '../../data/teacherCatalogue';
+import { useSearchParams } from 'react-router-dom';
+import { TUTORS } from '../../data/teacherCatalogue';
 import { createMountedRigRootRegistry, selectVisibleShelfEditions } from './complete-shelf-book-pool';
 import { createBookMotionTimingPolicy } from './tutor-book-motion';
 import { parseDebugTurnProgress } from './tutor-library-debug';
@@ -13,15 +13,14 @@ import {
   getFocusReturnEditionId,
   getLibraryControlAvailability,
   getLibraryLiveStatus,
-  isBookControlDisabled,
   libraryReducer,
-  shouldPreviewBookOnFocus,
   type BookInteractionInput,
   type LibraryEvent,
   type LibraryState,
   type PendingRigIntent,
 } from './tutor-library-state';
 import { TutorLibraryScene } from './TutorLibraryScene';
+import { TutorLibraryControlSurface } from './TutorLibraryControls';
 import './tutor-library.css';
 
 const BOOK_EDITIONS = createTutorBookEditions(TUTORS);
@@ -52,14 +51,6 @@ function useReducedMotionPreference() {
   return reducedMotion;
 }
 
-function Portrait({ tutor }: { tutor: typeof FALLBACK_TUTOR }) {
-  const [failed, setFailed] = useState(false);
-  useEffect(() => setFailed(false), [tutor.id]);
-  return failed
-    ? <span className="tutor-library__portrait-fallback" aria-hidden="true">{tutor.name.replace(/^(Mr|Ms|Mrs)\s+/i, '').slice(0, 1)}</span>
-    : <img src={getPhotoUrl(tutor)} alt={`Portrait of ${tutor.name}`} style={getPhotoStyle(tutor)} onError={() => setFailed(true)} />;
-}
-
 export function TutorLibrary() {
   const [searchParams] = useSearchParams();
   const [library, dispatch] = useReducer(libraryReducer, 'primary', createLibraryState);
@@ -72,8 +63,6 @@ export function TutorLibrary() {
   const mountedRoots = useRef(createMountedRigRootRegistry());
   const pendingIntent = useRef(createPendingRigIntentTracker());
   const previousLibrary = useRef(library);
-  const restoringFocus = useRef(false);
-  const bookButtons = useRef(new Map<string, HTMLButtonElement>());
   const debugTurnProgress = parseDebugTurnProgress(searchParams.get('libraryTurnProgress'));
   const debugBookProgress = parseDebugTurnProgress(searchParams.get('libraryBookProgress'));
   const isDebugTurn = debugTurnProgress !== undefined;
@@ -96,6 +85,7 @@ export function TutorLibrary() {
   const selectedTutor = selectedEdition ? TUTOR_BY_ID.get(selectedEdition.tutorId) : undefined;
   const visibleEditions = selectVisibleShelfEditions(BOOK_EDITIONS.filter(edition => edition.wallId === activeWall.id), library.selectedEditionId);
   const availability = getLibraryControlAvailability(library);
+  const focusReturnEditionId = getFocusReturnEditionId(previousLibrary.current, library);
 
   const dispatchEvents = (events: readonly LibraryEvent[]) => events.forEach(dispatch);
   const cancelPendingIntent = (editionId?: string) => {
@@ -115,30 +105,16 @@ export function TutorLibrary() {
   };
 
   useEffect(() => {
-    const previous = previousLibrary.current;
-    const focusEditionId = getFocusReturnEditionId(previous, library);
-    if (focusEditionId) {
-      restoringFocus.current = true;
-      bookButtons.current.get(focusEditionId)?.focus();
-      restoringFocus.current = false;
-    }
     previousLibrary.current = library;
     if (library.phase === 'ROOM_IDLE' && !library.selectedEditionId && !pendingIntent.current.current()) setRigIntent(undefined);
   }, [library]);
 
   useEffect(() => {
-    const escape = (event: KeyboardEvent) => {
-      if (event.key !== 'Escape') return;
-      cancelPendingIntent();
-      dispatch({ type: 'ESCAPE' });
-    };
     const resize = () => dispatch({ type: 'RESIZE' });
     const visibility = () => { if (document.visibilityState === 'visible') dispatch({ type: 'VISIBILITY_RESUME' }); };
-    window.addEventListener('keydown', escape);
     window.addEventListener('resize', resize);
     document.addEventListener('visibilitychange', visibility);
     return () => {
-      window.removeEventListener('keydown', escape);
       window.removeEventListener('resize', resize);
       document.removeEventListener('visibilitychange', visibility);
     };
@@ -203,22 +179,6 @@ export function TutorLibrary() {
       </Canvas>}
     </CanvasBoundary></div>
 
-    {!isDebugTurn ? <div className="tutor-library__controls" aria-disabled={sceneError ? 'true' : undefined} {...(sceneError ? { inert: '' } as Record<string, string> : {})}>
-      <nav className="tutor-library__wall-nav" aria-label="Turn toward a subject wall">{SUBJECT_WALLS.map(wall => <button key={wall.id} type="button" disabled={Boolean(sceneError) || !availability.canTurnRoom || wall.id === activeWall.id} aria-pressed={wall.id === activeWall.id} onClick={() => dispatch({ type: 'TURN', wallId: wall.id })}>{wall.label}</button>)}</nav>
-      <div className="tutor-library__book-controls" role="group" aria-label={`${activeWall.label} tutor books`}>{visibleEditions.map(edition => {
-        const tutor = TUTOR_BY_ID.get(edition.tutorId); if (!tutor) return null;
-        const selected = edition.id === library.selectedEditionId;
-        return <button key={edition.id} ref={node => { if (node) bookButtons.current.set(edition.id, node); else bookButtons.current.delete(edition.id); }} type="button" className="tutor-library__book-control" data-edition-id={edition.id} disabled={Boolean(sceneError) || isBookControlDisabled(library, edition.id)} aria-pressed={selected} aria-label={`${selected ? 'Open' : 'Preview'} ${tutor.name}'s tutor book`} onPointerEnter={event => { if (event.pointerType !== 'touch') interactWithBook(edition.id, 'pointer-preview'); }} onPointerLeave={() => cancelPendingIntent(edition.id)} onFocus={() => { if (shouldPreviewBookOnFocus(restoringFocus.current)) interactWithBook(edition.id, 'pointer-preview'); }} onBlur={() => cancelPendingIntent(edition.id)} onClick={() => interactWithBook(edition.id, 'keyboard-activate')}><span>{tutor.name.replace(/^(Mr|Ms|Mrs)\s+/i, '')}</span><small>{tutor.designation}</small></button>;
-      })}</div>
-    </div> : null}
-
-    {selectedTutor && !sceneError ? <aside className="tutor-library__reader" aria-label={`${selectedTutor.name} tutor book controls`}>
-      <div className="tutor-library__reader-profile"><Portrait tutor={selectedTutor} /><div><p>{selectedTutor.name}</p><span>{selectedTutor.designation}</span></div></div>
-      <p className="tutor-library__reader-summary">{selectedTutor.tagline}</p>
-      <div className="tutor-library__reader-actions"><button type="button" disabled={!availability.canOpen} onClick={() => dispatch({ type: 'OPEN' })}>Open book</button><button type="button" disabled={!availability.canTurnPage} onClick={() => dispatch({ type: 'PAGE_TURN' })}>Turn next page</button><button type="button" disabled={!availability.canClose} onClick={() => dispatch({ type: 'CLOSE' })}>Close and return book</button><Link to={`/find-teacher?tutor=${selectedTutor.id}`}>View full tutor profile</Link></div>
-    </aside> : null}
-
-    {sceneError ? <div className="tutor-library__fallback" role="alert"><p>The interactive library could not be displayed.</p><span>{sceneError}</span><Link to={`/find-teacher?tutor=${fallbackTutor.id}`}>Browse {fallbackTutor.name}'s searchable profile</Link></div> : null}
-    {!isDebugTurn ? <p className="tutor-library__status" role="status" aria-live="polite" aria-atomic="true">{status}</p> : null}
+    <TutorLibraryControlSurface library={library} activeWall={activeWall} visibleEditions={visibleEditions} tutors={TUTOR_BY_ID} selectedTutor={selectedTutor} fallbackTutor={fallbackTutor} availability={availability} status={status} sceneError={sceneError} focusReturnEditionId={focusReturnEditionId} showControls={!isDebugTurn} onTurn={wallId => dispatch({ type: 'TURN', wallId })} onBookInteraction={interactWithBook} onCancelPending={cancelPendingIntent} onEscape={() => dispatch({ type: 'ESCAPE' })} onOpen={() => dispatch({ type: 'OPEN' })} onPageTurn={() => dispatch({ type: 'PAGE_TURN' })} onClose={() => dispatch({ type: 'CLOSE' })} />
   </section>;
 }
