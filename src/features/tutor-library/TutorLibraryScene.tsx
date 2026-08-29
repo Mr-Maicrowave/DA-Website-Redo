@@ -1,10 +1,12 @@
-import { useLayoutEffect } from 'react';
+import { useEffect, useLayoutEffect, useMemo } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import { Color, PerspectiveCamera } from 'three';
 import { RoomRotunda } from './RoomRotunda';
 import { createRoomTurnPose } from './tutor-library-timeline';
 import type { LibraryPhase } from './tutor-library-state';
 import { SUBJECT_WALLS } from './tutor-library-data';
+import { createCompleteShelfBookPool } from './complete-shelf-book-pool';
+import type { CompleteShelfTutorRig } from './CompleteShelfTutorBookBridge';
 
 const REVIEW_CAMERA_POSES = {
   'resting-book': { position: [.15, 2.42, -4.35], target: [.15, 2.42, -7.55], fov: 38 },
@@ -33,7 +35,10 @@ function CameraFrame({ fromWallIndex, toWallIndex, turnProgress, reviewView }: {
   return null;
 }
 
-export function TutorLibraryScene({ fromWallIndex, toWallIndex, turnProgress, reviewView, showWallLabels = true, phase, selectedEditionId, bookMotionProgress, onHover }: { fromWallIndex: number; toWallIndex: number; turnProgress: number; reviewView?: string | null; showWallLabels?: boolean; phase: LibraryPhase; selectedEditionId?: string; bookMotionProgress: number; onHover: (editionId: string) => void }) {
+export function TutorLibraryScene({ fromWallIndex, toWallIndex, turnProgress, reviewView, showWallLabels = true, phase, selectedEditionId, bookMotionProgress, onHover }: { fromWallIndex: number; toWallIndex: number; turnProgress: number; reviewView?: string | null; showWallLabels?: boolean; phase: LibraryPhase; selectedEditionId?: string; bookMotionProgress: number; onHover: (editionId: string, rootUuid: string) => void }) {
+  const bookPool = useMemo(() => createCompleteShelfBookPool<CompleteShelfTutorRig>({ maxDormantRigs: 3 }), []);
+  useEffect(() => () => bookPool.disposeAll(), [bookPool]);
+
   return (
     <>
       <CameraFrame fromWallIndex={fromWallIndex} toWallIndex={toWallIndex} turnProgress={turnProgress} reviewView={reviewView} />
@@ -44,7 +49,7 @@ export function TutorLibraryScene({ fromWallIndex, toWallIndex, turnProgress, re
       <pointLight castShadow position={[0, 4.25, -4.5]} intensity={20} distance={11.5} decay={2} color="#fff1cf" shadow-mapSize={[1024, 1024]} />
       <pointLight position={[-6.2, 3.4, -4.6]} intensity={12} distance={8.8} decay={2} color="#f0e4cb" />
       <pointLight position={[6.2, 3.4, -4.6]} intensity={12} distance={8.8} decay={2} color="#f0e4cb" />
-      <RoomRotunda showWallLabels={showWallLabels} phase={phase} selectedEditionId={selectedEditionId} motionProgress={bookMotionProgress} onHover={onHover} />
+      <RoomRotunda showWallLabels={showWallLabels} pool={bookPool} phase={phase} selectedEditionId={selectedEditionId} motionProgress={bookMotionProgress} onHover={onHover} />
     </>
   );
 }

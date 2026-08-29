@@ -7,6 +7,8 @@ import { createTutorBookEditions } from './tutor-library-data';
 import { TUTORS } from '../../data/teacherCatalogue';
 import { TutorShelf } from './TutorShelf';
 import type { LibraryPhase } from './tutor-library-state';
+import type { CompleteShelfBookPool } from './complete-shelf-book-pool';
+import type { CompleteShelfTutorRig } from './CompleteShelfTutorBookBridge';
 
 const ROOM_RADIUS = 8;
 const ROOM_HEIGHT = 5.8;
@@ -75,7 +77,7 @@ function ShelfFrontProfile({ width, y, depth, nosingDepth }: { width: number; y:
   </group>;
 }
 
-function WallShelves({ wall, angle, width, showWallLabel, phase, selectedEditionId, motionProgress, onHover }: { wall: SubjectWall; angle: number; width: number; showWallLabel: boolean; phase: LibraryPhase; selectedEditionId?: string; motionProgress: number; onHover: (editionId: string) => void }) {
+function WallShelves({ wall, angle, width, showWallLabel, pool, phase, selectedEditionId, motionProgress, onHover }: { wall: SubjectWall; angle: number; width: number; showWallLabel: boolean; pool: CompleteShelfBookPool<CompleteShelfTutorRig>; phase: LibraryPhase; selectedEditionId?: string; motionProgress: number; onHover: (editionId: string, rootUuid: string) => void }) {
   const palette = WALL_COLOURS[wall.palette];
   const cabinet = useMemo(() => createCabinetBlueprint(width, ROOM_HEIGHT), [width]);
   const interiorHeight = ROOM_HEIGHT - .82;
@@ -95,7 +97,7 @@ function WallShelves({ wall, angle, width, showWallLabel, phase, selectedEdition
       <CabinetBox size={[shelfWidth, cabinet.shelfThickness, cabinet.shelfDepth]} position={[0, y, .34]} color="#4b2a1a" roughness={.54} radius={.03} />
       <ShelfFrontProfile width={shelfWidth} y={y} depth={cabinet.shelfDepth} nosingDepth={cabinet.nosingDepth} />
     </group>)}
-    <TutorShelf editions={BOOK_EDITIONS.filter(edition => edition.wallId === wall.id)} tutors={TUTOR_BY_ID} phase={phase} selectedEditionId={selectedEditionId} motionProgress={motionProgress} onHover={onHover} />
+    <TutorShelf editions={BOOK_EDITIONS.filter(edition => edition.wallId === wall.id)} tutors={TUTOR_BY_ID} pool={pool} phase={phase} selectedEditionId={selectedEditionId} motionProgress={motionProgress} onHover={onHover} />
     <CabinetBox size={[width, cabinet.plinthHeight, 1.04]} position={[0, -ROOM_HEIGHT / 2 + cabinet.plinthHeight / 2, .45]} color="#351a10" roughness={.54} radius={.04} />
     <CabinetMoulding width={width + .16} y={-ROOM_HEIGHT / 2 + .12} z={.45} color="#654028" depth={1.13} />
     <CabinetBox size={[width, .38, 1.06]} position={[0, ROOM_HEIGHT / 2 - .22, .45]} color="#3b1e12" roughness={.52} radius={.04} />
@@ -137,7 +139,7 @@ function RoomShell() {
   </group>;
 }
 
-export function RoomRotunda({ showWallLabels = true, phase, selectedEditionId, motionProgress, onHover }: { showWallLabels?: boolean; phase: LibraryPhase; selectedEditionId?: string; motionProgress: number; onHover: (editionId: string) => void }) {
+export function RoomRotunda({ showWallLabels = true, pool, phase, selectedEditionId, motionProgress, onHover }: { showWallLabels?: boolean; pool: CompleteShelfBookPool<CompleteShelfTutorRig>; phase: LibraryPhase; selectedEditionId?: string; motionProgress: number; onHover: (editionId: string, rootUuid: string) => void }) {
   const wallWidth = useMemo(() => 2 * ROOM_RADIUS * Math.tan(Math.PI / SUBJECT_WALLS.length) + .45, []);
-  return <group><RoomShell />{SUBJECT_WALLS.map((wall, index) => <WallShelves key={wall.id} wall={wall} angle={getWallAngle(index, SUBJECT_WALLS.length)} width={wallWidth} showWallLabel={showWallLabels} phase={phase} selectedEditionId={selectedEditionId} motionProgress={motionProgress} onHover={onHover} />)}</group>;
+  return <group><RoomShell />{SUBJECT_WALLS.map((wall, index) => <WallShelves key={wall.id} wall={wall} angle={getWallAngle(index, SUBJECT_WALLS.length)} width={wallWidth} showWallLabel={showWallLabels} pool={pool} phase={phase} selectedEditionId={selectedEditionId} motionProgress={motionProgress} onHover={onHover} />)}</group>;
 }

@@ -1,7 +1,15 @@
 import { RoundedBox } from '@react-three/drei';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Vector2 } from 'three';
 import type { CatalogueTutor } from '../../data/teacherCatalogue';
+import {
+  getCompleteShelfOuterMotionPose,
+  type CompleteShelfBookPool,
+} from './complete-shelf-book-pool';
+import {
+  CompleteShelfTutorBookBridge,
+  type CompleteShelfTutorRig,
+} from './CompleteShelfTutorBookBridge';
 import type { TutorBookEdition } from './tutor-library-data';
 import { createBookParts, getBookVisualProfile, getShelfPose } from './tutor-book-geometry';
 import { createBookMotionPoses, interpolateBookMotion } from './tutor-book-motion';
@@ -11,7 +19,7 @@ import type { LibraryPhase } from './tutor-library-state';
 const COVER_COLOURS = ['#203a57', '#6a3035', '#63462c', '#25465a'];
 const PAPER = ['#eadbb9', '#e4d2aa', '#f0dfbd'];
 
-export function TutorBook({ edition, tutor, phase, selected, motionProgress, neighbourResponse = 0, onHover, poseOverride, studio = false, spineTreatment, geometryDebug = false }: { edition: TutorBookEdition; tutor: CatalogueTutor; phase: LibraryPhase; selected: boolean; motionProgress: number; neighbourResponse?: number; onHover: (editionId: string) => void; poseOverride?: ReturnType<typeof getShelfPose>; studio?: boolean; spineTreatment?: SpineTreatment; geometryDebug?: boolean }) {
+function LegacyTutorBook({ edition, tutor, phase, selected, motionProgress, neighbourResponse = 0, onHover, poseOverride, studio = false, spineTreatment, geometryDebug = false }: { edition: TutorBookEdition; tutor: CatalogueTutor; phase: LibraryPhase; selected: boolean; motionProgress: number; neighbourResponse?: number; onHover: (editionId: string) => void; poseOverride?: ReturnType<typeof getShelfPose>; studio?: boolean; spineTreatment?: SpineTreatment; geometryDebug?: boolean }) {
   const shelfPose = useMemo(() => getShelfPose(edition), [edition]);
   const pose = poseOverride ?? shelfPose;
   const profile = useMemo(() => getBookVisualProfile(edition), [edition]);
@@ -64,4 +72,97 @@ export function TutorBook({ edition, tutor, phase, selected, motionProgress, nei
     <group name="front-cover-art"><TutorBookCover tutor={tutor} edition={edition} mode="cover" width={parts.frontBoard.width - .025} height={parts.frontBoard.height - .03} z={pose.depth / 2 + parts.frontBoard.depth / 2 + .001} visible={showCover} /><TutorBookFoil tutor={tutor} edition={edition} mode="cover" width={parts.frontBoard.width - .025} height={parts.frontBoard.height - .03} z={pose.depth / 2 + parts.frontBoard.depth / 2 + .002} visible={showCover} /></group>
     {selected && <pointLight position={[-.3, .6, 1.1]} intensity={2.4} distance={3.2} color="#ffe8b1" />}
   </group>;
+}
+
+const COMPLETE_SHELF_WIDTH = 1.02;
+const COMPLETE_SHELF_HEIGHT = 1.58;
+const COMPLETE_SHELF_CLOSED_DEPTH = .324;
+const COMPLETE_SHELF_SPINE_X = -COMPLETE_SHELF_WIDTH / 2 - .008;
+
+type TutorBookProps = {
+  edition: TutorBookEdition;
+  tutor: CatalogueTutor;
+  phase: LibraryPhase;
+  selected: boolean;
+  motionProgress: number;
+  neighbourResponse?: number;
+  onHover: (editionId: string, rootUuid: string) => void;
+  pool?: CompleteShelfBookPool<CompleteShelfTutorRig>;
+  poseOverride?: ReturnType<typeof getShelfPose>;
+  studio?: boolean;
+  spineTreatment?: SpineTreatment;
+  geometryDebug?: boolean;
+};
+
+function DormantCompleteShelfProxy({ tutor, edition }: { tutor: CatalogueTutor; edition: TutorBookEdition }) {
+  const cover = COVER_COLOURS[edition.materialVariant % COVER_COLOURS.length];
+  return <group name={`dormant-complete-shelf-proxy-${edition.id}`}>
+    <RoundedBox args={[COMPLETE_SHELF_WIDTH, COMPLETE_SHELF_HEIGHT, COMPLETE_SHELF_CLOSED_DEPTH]} radius={.0045} smoothness={2} castShadow receiveShadow>
+      <meshPhysicalMaterial color={cover} roughness={.94} metalness={.02} sheen={.28} sheenRoughness={.78} />
+    </RoundedBox>
+    <TutorBookCover tutor={tutor} edition={edition} mode="spine" width={COMPLETE_SHELF_CLOSED_DEPTH - .018} height={COMPLETE_SHELF_HEIGHT - .075} position={[COMPLETE_SHELF_SPINE_X, 0, 0]} rotation={[0, -Math.PI / 2, 0]} visible />
+    <TutorBookFoil tutor={tutor} edition={edition} mode="spine" width={COMPLETE_SHELF_CLOSED_DEPTH - .014} height={COMPLETE_SHELF_HEIGHT - .04} position={[COMPLETE_SHELF_SPINE_X - .001, 0, 0]} rotation={[0, -Math.PI / 2, 0]} visible />
+  </group>;
+}
+
+function RoomTutorBook({ edition, tutor, phase, selected, motionProgress, neighbourResponse = 0, onHover, pool }: TutorBookProps & { pool: CompleteShelfBookPool<CompleteShelfTutorRig> }) {
+  const [rigRequested, setRigRequested] = useState(selected);
+  const [rigReady, setRigReady] = useState(false);
+  const hovering = useRef(false);
+  const pose = getCompleteShelfOuterMotionPose(edition, selected ? phase : 'ROOM_IDLE', motionProgress);
+  const rotation: [number, number, number] = [pose.rotation[0], pose.rotation[1], pose.rotation[2] + neighbourResponse];
+
+  useEffect(() => {
+    if (selected) setRigRequested(true);
+    else if (phase === 'ROOM_IDLE') {
+      setRigRequested(false);
+      setRigReady(false);
+    }
+  }, [phase, selected]);
+
+  return <group
+    name={`tutor-book-${edition.id}`}
+    position={pose.position}
+    rotation={rotation}
+    scale={pose.scale}
+    castShadow
+    onPointerEnter={(event) => {
+      event.stopPropagation();
+      hovering.current = true;
+      setRigRequested(true);
+    }}
+    onPointerLeave={() => {
+      hovering.current = false;
+      if (!selected && phase === 'ROOM_IDLE') {
+        setRigRequested(false);
+        setRigReady(false);
+      }
+    }}
+  >
+    <group visible={!rigReady}><DormantCompleteShelfProxy tutor={tutor} edition={edition} /></group>
+    {rigRequested ? <CompleteShelfTutorBookBridge
+      edition={edition}
+      tutor={tutor}
+      pool={pool}
+      phase={phase}
+      active={selected}
+      onReady={(rootUuid) => {
+        setRigReady(true);
+        if (hovering.current) onHover(edition.id, rootUuid);
+      }}
+      onError={() => {
+        if (!selected) setRigRequested(false);
+        setRigReady(false);
+      }}
+    /> : null}
+    {selected ? <pointLight position={[-.3, .6, 1.1]} intensity={2.4} distance={3.2} color="#ffe8b1" /> : null}
+  </group>;
+}
+
+export function TutorBook(props: TutorBookProps) {
+  if (props.studio) {
+    return <LegacyTutorBook {...props} onHover={(editionId) => props.onHover(editionId, '')} />;
+  }
+  if (!props.pool) throw new Error('Tutor Library room books require a Complete Shelf rig pool');
+  return <RoomTutorBook {...props} pool={props.pool} />;
 }

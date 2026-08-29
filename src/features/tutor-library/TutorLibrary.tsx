@@ -14,7 +14,6 @@ const BOOK_INTENT_DELAY_MS = 90;
 const BOOK_EXTRACTION_DURATION_MS = 720;
 const BOOK_RETURN_DURATION_MS = 560;
 const easeInOutQuart = (progress: number) => progress < .5 ? 8 * progress ** 4 : 1 - (-2 * progress + 2) ** 4 / 2;
-const getLogicalBookRootUuid = (editionId: string) => `logical:tutor-book:${editionId}`;
 
 export function TutorLibrary() {
   const [searchParams] = useSearchParams();
@@ -100,7 +99,7 @@ export function TutorLibrary() {
       </header>
       <div className="tutor-library__canvas">
         <Canvas shadows camera={{ position: [0, 1.9, .2], fov: 52, near: .1, far: 60 }} dpr={[1, 1.5]} gl={{ antialias: true, alpha: false, powerPreference: 'high-performance' }} onPointerLeave={() => dispatch({ type: 'LEAVE' })}>
-          <TutorLibraryScene fromWallIndex={activeWallIndex} toWallIndex={targetWallIndex} turnProgress={sceneProgress} reviewView={reviewView} showWallLabels={!isDebugTurn && !isDebugBook} phase={sceneBookPhase} selectedEditionId={sceneSelectedEditionId} bookMotionProgress={sceneBookMotionProgress} onHover={editionId => dispatch({ type: 'HOVER', editionId, rootUuid: getLogicalBookRootUuid(editionId) })} />
+          <TutorLibraryScene fromWallIndex={activeWallIndex} toWallIndex={targetWallIndex} turnProgress={sceneProgress} reviewView={reviewView} showWallLabels={!isDebugTurn && !isDebugBook} phase={sceneBookPhase} selectedEditionId={sceneSelectedEditionId} bookMotionProgress={sceneBookMotionProgress} onHover={(editionId, rootUuid) => dispatch({ type: 'HOVER', editionId, rootUuid })} />
         </Canvas>
       </div>
       {!isDebugTurn && <nav className="tutor-library__wall-nav" aria-label="Turn toward a subject wall">
