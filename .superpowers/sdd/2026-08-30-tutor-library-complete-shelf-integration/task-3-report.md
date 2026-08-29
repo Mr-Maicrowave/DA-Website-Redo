@@ -121,3 +121,64 @@ Result: exit 0.
 - Task 3 supplies controller commands and real root identity, but Task 4 still owns the complete room controls/accessibility wiring and semantic completion callbacks for open, page turn, close, reset, and return.
 - No new screenshot/browser acceptance gate was requested for this milestone. The production build and route contracts pass; rendered responsive, touch, keyboard, reduced-motion, resize, and console evidence remains explicitly assigned to Tasks 6–7.
 - The existing Vite large-chunk advisory is unchanged.
+
+---
+
+## Fix round 1 — sampled cancellation pose and bounded intent ownership
+
+### Changes
+
+- Replaced phase-only production pose selection with `CompleteShelfOuterMotionState`, which samples the last committed outer pose, holds it through `BOOK_CLOSING` and `BOOK_RESETTING`, and uses Task 2's `createBookReturnMotion`/`interpolateBookMotion` contract to return from that exact sample.
+- Added production-path cancellation coverage for close, leave, and Escape from hover, preview, reading transit, and extraction progress `.17`, `.49`, and `.83`. Return progress zero is the interruption sample and progress one is the exact closed shelf transform.
+- Moved rig intent ownership from per-book local state to one scene-wide `rigIntentEditionId`. A superseding hover causes the prior bridge to unmount and release immediately; inactive books reject pointer acquisition outside `ROOM_IDLE`; the selected edition remains the sole leased owner during non-idle phases.
+- Added pool snapshots and a hostile 20-book sweep test. With three dormant entries configured, retained rigs never exceed four while one intent is leased, leased rigs never exceed one, and release immediately restores the dormant bound of three.
+- Supplemented the synthetic handoff assertion with the actual production outer-motion initial state, proving it uses the same closed pose and constants as the proxy/rig handoff.
+
+### RED evidence
+
+```text
+node --test --experimental-strip-types src/features/tutor-library/complete-shelf-book-pool.test.ts
+Result: 8 passed, 4 failed.
+Failures:
+- hostile sweep snapshot exceeded the configured bound;
+- reset teleported from reading `[0, .48, 4.96]` to preview `[.12, .08, 4.82]`;
+- hover/extraction cancellation teleported to preview instead of holding its sample;
+- no single global rig-intent owner was enforced.
+```
+
+### GREEN evidence
+
+```text
+node --test --experimental-strip-types \
+  src/features/tutor-library/complete-shelf-book-pool.test.ts \
+  src/features/tutor-library/tutor-book-lifecycle.test.ts \
+  src/features/tutor-library/tutor-library-state.test.ts
+Result: 38 passed, 0 failed.
+
+node --test --experimental-strip-types <all Tutor Library .test.ts/.test.mjs files>
+Result: 82 passed, 0 failed.
+
+npm.cmd run test:complete-shelf-reference
+Result: passed.
+
+npm.cmd run test:complete-shelf-rig
+Result: passed.
+
+npm.cmd run typecheck
+Result: exit 0.
+
+npm.cmd exec -- eslint <all touched fix-round source/test files>
+Result: exit 0, no findings.
+
+npm.cmd run build
+Result: exit 0; encoding passed for 1120 text files, 80 sitemap URLs generated, TypeScript passed, and Vite transformed 3980 modules.
+```
+
+The build emitted only the existing large-chunk advisory. `public/sitemap.xml` was restored to `HEAD` after verification.
+
+### Self-review / concerns
+
+- The outer-motion ref is updated only after a committed React render, so a discarded concurrent render cannot replace the sampled visible pose.
+- Candidate ownership is global to the scene rather than one local flag per book; no non-idle pointer event can start an inactive bridge lease.
+- No UI controls, accessibility surface, factory mechanics, or route behavior were expanded in this fix round.
+- Rendered seam evidence remains assigned to the later browser-QA task as previously documented.

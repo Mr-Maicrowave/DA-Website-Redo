@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useMemo } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import { Color, PerspectiveCamera } from 'three';
 import { RoomRotunda } from './RoomRotunda';
@@ -37,7 +37,11 @@ function CameraFrame({ fromWallIndex, toWallIndex, turnProgress, reviewView }: {
 
 export function TutorLibraryScene({ fromWallIndex, toWallIndex, turnProgress, reviewView, showWallLabels = true, phase, selectedEditionId, bookMotionProgress, onHover }: { fromWallIndex: number; toWallIndex: number; turnProgress: number; reviewView?: string | null; showWallLabels?: boolean; phase: LibraryPhase; selectedEditionId?: string; bookMotionProgress: number; onHover: (editionId: string, rootUuid: string) => void }) {
   const bookPool = useMemo(() => createCompleteShelfBookPool<CompleteShelfTutorRig>({ maxDormantRigs: 3 }), []);
+  const [rigIntentEditionId, setRigIntentEditionId] = useState<string>();
   useEffect(() => () => bookPool.disposeAll(), [bookPool]);
+  useEffect(() => {
+    if (phase === 'ROOM_IDLE' && !selectedEditionId) setRigIntentEditionId(undefined);
+  }, [phase, selectedEditionId]);
 
   return (
     <>
@@ -49,7 +53,7 @@ export function TutorLibraryScene({ fromWallIndex, toWallIndex, turnProgress, re
       <pointLight castShadow position={[0, 4.25, -4.5]} intensity={20} distance={11.5} decay={2} color="#fff1cf" shadow-mapSize={[1024, 1024]} />
       <pointLight position={[-6.2, 3.4, -4.6]} intensity={12} distance={8.8} decay={2} color="#f0e4cb" />
       <pointLight position={[6.2, 3.4, -4.6]} intensity={12} distance={8.8} decay={2} color="#f0e4cb" />
-      <RoomRotunda showWallLabels={showWallLabels} pool={bookPool} phase={phase} selectedEditionId={selectedEditionId} motionProgress={bookMotionProgress} onHover={onHover} />
+      <RoomRotunda showWallLabels={showWallLabels} pool={bookPool} rigIntentEditionId={rigIntentEditionId} onRigIntent={setRigIntentEditionId} phase={phase} selectedEditionId={selectedEditionId} motionProgress={bookMotionProgress} onHover={onHover} />
     </>
   );
 }

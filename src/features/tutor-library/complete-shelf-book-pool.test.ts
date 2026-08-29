@@ -4,11 +4,14 @@ import test from 'node:test';
 import { TUTORS } from '../../data/teacherCatalogue.ts';
 import {
   COMPLETE_SHELF_VISIBLE_ROWS,
+  advanceCompleteShelfOuterMotion,
   createCompleteShelfBookPool,
   createCompleteShelfClosedHandoff,
+  createCompleteShelfOuterMotionState,
   getCompleteShelfOuterMotionPose,
   isCompleteShelfControllerOpeningAllowed,
   selectVisibleShelfEditions,
+  shouldAcquireCompleteShelfRig,
 } from './complete-shelf-book-pool.ts';
 import { createTutorBookEditions } from './tutor-library-data.ts';
 
@@ -63,6 +66,27 @@ test('never evicts a leased active root and deterministically bounds dormant rig
   active.release();
 });
 
+test('keeps retained and leased rigs bounded under hostile pointer sweeps', async () => {
+  const disposed: string[] = [];
+  const pool = createCompleteShelfBookPool<FakeRig>({ maxDormantRigs: 3 });
+  for (let index = 0; index < 20; index += 1) {
+    const editionId = `sweep-${index}`;
+    const lease = pool.acquire(editionId, async () => ({
+      root: { uuid: `root:${editionId}` },
+      dispose: () => disposed.push(editionId),
+    }));
+    await lease.rig;
+    const leasedSnapshot = pool.getSnapshot();
+    assert.ok(leasedSnapshot.retainedRigs <= 4, 'three dormant rigs plus one intent lease is the hard maximum');
+    assert.equal(leasedSnapshot.leasedRigs, 1);
+    lease.release();
+    const snapshot = pool.getSnapshot();
+    assert.ok(snapshot.retainedRigs <= 3);
+    assert.equal(snapshot.leasedRigs, 0);
+  }
+  assert.equal(disposed.length, 17);
+});
+
 test('disposes a pending dormant rig exactly once when it resolves after eviction', async () => {
   let resolveRig!: (rig: FakeRig) => void;
   let disposeCount = 0;
@@ -109,8 +133,10 @@ test('selected overflow edition replaces only its collided proxy slot', () => {
 test('proxy and imperative rig share the exact closed outer transform', () => {
   const jenny = createTutorBookEditions(TUTORS).find((edition) => edition.id === 'T003:primary')!;
   const handoff = createCompleteShelfClosedHandoff(jenny);
+  const productionState = createCompleteShelfOuterMotionState(jenny);
 
   assert.deepEqual(handoff.proxy, handoff.rig);
+  assert.deepEqual(productionState.pose, handoff.rig);
   assert.notEqual(handoff.proxy, handoff.rig);
   assert.equal(handoff.rig.rotation[1], Math.PI / 2, 'closed shelf book is spine-out at the DA-owned outer root');
 });
@@ -134,4 +160,62 @@ test('drives only the outer pose and returns to the exact closed handoff', () =>
   assert.ok(clearing.position[2] > shelf.position[2] + 1, 'whole closed book clears forward before opening');
   assert.ok(reading.position[2] > clearing.position[2]);
   assert.deepEqual(returned, shelf);
+});
+
+test('holds the sampled outer pose through close and reset before returning', () => {
+  const jenny = createTutorBookEditions(TUTORS).find((edition) => edition.id === 'T003:primary')!;
+  let motion = createCompleteShelfOuterMotionState(jenny);
+  motion = advanceCompleteShelfOuterMotion(motion, 'BOOK_OPENING', 0);
+  const interrupted = motion.pose;
+  motion = advanceCompleteShelfOuterMotion(motion, 'BOOK_CLOSING', 0);
+  assert.deepEqual(motion.pose, interrupted, 'close holds the exact current reading pose');
+  motion = advanceCompleteShelfOuterMotion(motion, 'BOOK_RESETTING', 0);
+  assert.deepEqual(motion.pose, interrupted, 'reset cannot teleport from reading to preview');
+  motion = advanceCompleteShelfOuterMotion(motion, 'BOOK_RETURNING', 0);
+  assert.deepEqual(motion.pose, interrupted);
+  motion = advanceCompleteShelfOuterMotion(motion, 'BOOK_RETURNING', 1);
+  assert.deepEqual(motion.pose, createCompleteShelfClosedHandoff(jenny).rig);
+});
+
+test('holds exact hover/extraction samples for leave and Escape at several progress points', () => {
+  const jenny = createTutorBookEditions(TUTORS).find((edition) => edition.id === 'T003:primary')!;
+  const cases = [
+    { reason: 'leave-hover', phase: 'BOOK_HOVER_INTENT' as const, progress: 0 },
+    { reason: 'escape-early', phase: 'BOOK_EXTRACTING' as const, progress: .17 },
+    { reason: 'leave-mid', phase: 'BOOK_EXTRACTING' as const, progress: .49 },
+    { reason: 'escape-late', phase: 'BOOK_EXTRACTING' as const, progress: .83 },
+    { reason: 'close-preview', phase: 'BOOK_PREVIEW' as const, progress: 1 },
+    { reason: 'close-reading-transit', phase: 'BOOK_TO_READING' as const, progress: .37 },
+  ];
+
+  for (const entry of cases) {
+    let motion = createCompleteShelfOuterMotionState(jenny);
+    motion = advanceCompleteShelfOuterMotion(motion, entry.phase, entry.progress);
+    const interrupted = motion.pose;
+    motion = advanceCompleteShelfOuterMotion(motion, 'BOOK_RESETTING', 0);
+    assert.deepEqual(motion.pose, interrupted, entry.reason);
+    motion = advanceCompleteShelfOuterMotion(motion, 'BOOK_RETURNING', 0);
+    assert.deepEqual(motion.pose, interrupted, `${entry.reason} return origin`);
+  }
+});
+
+test('allows exactly one global intent/selected rig and blocks non-idle pointer sweeps', () => {
+  const editionIds = Array.from({ length: 76 }, (_, index) => `book-${index}`);
+  for (const intentEditionId of editionIds) {
+    const roomIdleOwners = editionIds.filter((editionId) => shouldAcquireCompleteShelfRig({
+      phase: 'ROOM_IDLE',
+      editionId,
+      intentEditionId,
+    }));
+    assert.deepEqual(roomIdleOwners, [intentEditionId]);
+  }
+
+  const selectedEditionId = 'book-3';
+  const hostileOwners = editionIds.filter((editionId) => shouldAcquireCompleteShelfRig({
+    phase: 'BOOK_EXTRACTING',
+    editionId,
+    intentEditionId: 'book-70',
+    selectedEditionId,
+  }));
+  assert.deepEqual(hostileOwners, [selectedEditionId]);
 });

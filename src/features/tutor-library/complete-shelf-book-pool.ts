@@ -5,6 +5,7 @@ import {
   type CompleteShelfBookPose,
 } from './complete-shelf-book-prototype.ts';
 import { getShelfPose } from './tutor-book-geometry.ts';
+import { createBookReturnMotion, interpolateBookMotion } from './tutor-book-motion.ts';
 import type { LibraryPhase } from './tutor-library-state.ts';
 
 export const COMPLETE_SHELF_VISIBLE_ROWS = 3;
@@ -22,6 +23,7 @@ export interface CompleteShelfRigLease<TRig extends CompleteShelfPoolRig> {
 export interface CompleteShelfBookPool<TRig extends CompleteShelfPoolRig> {
   acquire(editionId: string, createRig: () => Promise<TRig>): CompleteShelfRigLease<TRig>;
   peek(editionId: string): TRig | undefined;
+  getSnapshot(): { retainedRigs: number; leasedRigs: number };
   disposeAll(): void;
 }
 
@@ -94,6 +96,13 @@ export function createCompleteShelfBookPool<TRig extends CompleteShelfPoolRig>(o
     peek(editionId: string): TRig | undefined {
       return entries.get(editionId)?.rig;
     },
+    getSnapshot() {
+      const retained = [...entries.values()];
+      return {
+        retainedRigs: retained.length,
+        leasedRigs: retained.filter((entry) => entry.leases > 0).length,
+      };
+    },
     disposeAll() {
       [...entries.values()].forEach(disposeEntry);
     },
@@ -165,4 +174,48 @@ export function getCompleteShelfOuterMotionPose(edition: TutorBookEdition, phase
   if (phase === 'BOOK_RESETTING') return plan.preview;
   if (phase === 'BOOK_RETURNING') return sampleCompleteShelfPrototypePose(plan, progress, 'returning');
   return plan.shelf;
+}
+
+export interface CompleteShelfOuterMotionState {
+  readonly edition: TutorBookEdition;
+  readonly phase: LibraryPhase;
+  readonly pose: CompleteShelfBookPose;
+  readonly returnFrom?: CompleteShelfBookPose;
+}
+
+export function createCompleteShelfOuterMotionState(edition: TutorBookEdition): CompleteShelfOuterMotionState {
+  return { edition, phase: 'ROOM_IDLE', pose: getCompleteShelfOuterMotionPose(edition, 'ROOM_IDLE', 0) };
+}
+
+export function advanceCompleteShelfOuterMotion(state: CompleteShelfOuterMotionState, phase: LibraryPhase, progress: number): CompleteShelfOuterMotionState {
+  if (phase === 'BOOK_CLOSING' || phase === 'BOOK_RESETTING') {
+    const returnFrom = state.returnFrom ?? state.pose;
+    return { ...state, phase, pose: returnFrom, returnFrom };
+  }
+  if (phase === 'BOOK_RETURNING') {
+    const returnFrom = state.returnFrom ?? state.pose;
+    const shelf = getCompleteShelfOuterMotionPose(state.edition, 'ROOM_IDLE', 0);
+    const returnMotion = createBookReturnMotion(returnFrom, shelf);
+    return {
+      ...state,
+      phase,
+      pose: interpolateBookMotion(returnMotion.from, returnMotion.to, progress),
+      returnFrom,
+    };
+  }
+  return {
+    edition: state.edition,
+    phase,
+    pose: getCompleteShelfOuterMotionPose(state.edition, phase, progress),
+  };
+}
+
+export function shouldAcquireCompleteShelfRig(input: {
+  phase: LibraryPhase;
+  editionId: string;
+  intentEditionId?: string;
+  selectedEditionId?: string;
+}) {
+  if (input.selectedEditionId) return input.editionId === input.selectedEditionId;
+  return input.phase === 'ROOM_IDLE' && input.editionId === input.intentEditionId;
 }

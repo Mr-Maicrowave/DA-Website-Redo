@@ -1,9 +1,12 @@
 import { RoundedBox } from '@react-three/drei';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { Vector2 } from 'three';
 import type { CatalogueTutor } from '../../data/teacherCatalogue';
 import {
   getCompleteShelfOuterMotionPose,
+  advanceCompleteShelfOuterMotion,
+  createCompleteShelfOuterMotionState,
+  shouldAcquireCompleteShelfRig,
   type CompleteShelfBookPool,
 } from './complete-shelf-book-pool';
 import {
@@ -88,6 +91,8 @@ type TutorBookProps = {
   neighbourResponse?: number;
   onHover: (editionId: string, rootUuid: string) => void;
   pool?: CompleteShelfBookPool<CompleteShelfTutorRig>;
+  rigIntent?: boolean;
+  onRigIntent?: (editionId?: string) => void;
   poseOverride?: ReturnType<typeof getShelfPose>;
   studio?: boolean;
   spineTreatment?: SpineTreatment;
@@ -105,20 +110,24 @@ function DormantCompleteShelfProxy({ tutor, edition }: { tutor: CatalogueTutor; 
   </group>;
 }
 
-function RoomTutorBook({ edition, tutor, phase, selected, motionProgress, neighbourResponse = 0, onHover, pool }: TutorBookProps & { pool: CompleteShelfBookPool<CompleteShelfTutorRig> }) {
-  const [rigRequested, setRigRequested] = useState(selected);
+function RoomTutorBook({ edition, tutor, phase, selected, motionProgress, neighbourResponse = 0, onHover, pool, rigIntent = false, onRigIntent }: TutorBookProps & { pool: CompleteShelfBookPool<CompleteShelfTutorRig> }) {
   const [rigReady, setRigReady] = useState(false);
   const hovering = useRef(false);
-  const pose = getCompleteShelfOuterMotionPose(edition, selected ? phase : 'ROOM_IDLE', motionProgress);
+  const motionState = useRef(createCompleteShelfOuterMotionState(edition));
+  const nextMotionState = advanceCompleteShelfOuterMotion(
+    motionState.current,
+    selected ? phase : 'ROOM_IDLE',
+    motionProgress,
+  );
+  useLayoutEffect(() => { motionState.current = nextMotionState; }, [nextMotionState]);
+  const pose = nextMotionState.pose;
+  const rigRequested = shouldAcquireCompleteShelfRig({
+    phase,
+    editionId: edition.id,
+    intentEditionId: rigIntent ? edition.id : undefined,
+    selectedEditionId: selected ? edition.id : undefined,
+  });
   const rotation: [number, number, number] = [pose.rotation[0], pose.rotation[1], pose.rotation[2] + neighbourResponse];
-
-  useEffect(() => {
-    if (selected) setRigRequested(true);
-    else if (phase === 'ROOM_IDLE') {
-      setRigRequested(false);
-      setRigReady(false);
-    }
-  }, [phase, selected]);
 
   return <group
     name={`tutor-book-${edition.id}`}
@@ -128,18 +137,17 @@ function RoomTutorBook({ edition, tutor, phase, selected, motionProgress, neighb
     castShadow
     onPointerEnter={(event) => {
       event.stopPropagation();
+      if (phase !== 'ROOM_IDLE' || selected) return;
       hovering.current = true;
-      setRigRequested(true);
+      setRigReady(false);
+      onRigIntent?.(edition.id);
     }}
     onPointerLeave={() => {
       hovering.current = false;
-      if (!selected && phase === 'ROOM_IDLE') {
-        setRigRequested(false);
-        setRigReady(false);
-      }
+      if (!selected && rigIntent) onRigIntent?.();
     }}
   >
-    <group visible={!rigReady}><DormantCompleteShelfProxy tutor={tutor} edition={edition} /></group>
+    <group visible={!rigRequested || !rigReady}><DormantCompleteShelfProxy tutor={tutor} edition={edition} /></group>
     {rigRequested ? <CompleteShelfTutorBookBridge
       edition={edition}
       tutor={tutor}
@@ -151,7 +159,7 @@ function RoomTutorBook({ edition, tutor, phase, selected, motionProgress, neighb
         if (hovering.current) onHover(edition.id, rootUuid);
       }}
       onError={() => {
-        if (!selected) setRigRequested(false);
+        if (!selected) onRigIntent?.();
         setRigReady(false);
       }}
     /> : null}
