@@ -8,7 +8,9 @@ import { TutorBook } from './TutorBook';
 import { useBookMaterialMaps } from './TutorBookCover';
 import { CompleteShelfTutorBook, type CompleteShelfBookState } from './CompleteShelfTutorBook';
 import { COMPLETE_SHELF_STUDIO_SHELF_TOP_Y } from './complete-shelf-book-prototype';
-import { createCompleteShelfPresentationForQuery } from './complete-shelf-presentation';
+import { getCompleteShelfPresentationQuery } from './complete-shelf-presentation';
+import { CompleteShelfRigBridge } from './CompleteShelfRigBridge';
+import { applyCompleteShelfStudioState, getCompleteShelfStudioEngine } from './complete-shelf-studio-state';
 
 export type CompleteShelfEngineCamera = 'default' | 'open-top-oblique' | 'turn-side-oblique' | 'turn-top-oblique' | 'turn-close';
 
@@ -42,9 +44,9 @@ function StudioCamera({ view, engineState, engineCamera = 'default' }: { view: S
 }
 
 function CompleteShelfPrototype({ state, collisionDebug, presentationQuery }: { state: CompleteShelfBookState; collisionDebug: boolean; presentationQuery: string | null }) {
-  const presentation = createCompleteShelfPresentationForQuery(presentationQuery);
-  const edition = createTutorBookEditions(TUTORS).find(candidate => candidate.tutorId === presentation?.tutorId && candidate.wallId === 'primary') ?? createTutorBookEditions(TUTORS).find(candidate => candidate.wallId === 'primary')!;
-  const tutor = TUTORS.find(candidate => candidate.id === presentation?.tutorId) ?? TUTORS.find(candidate => candidate.id === edition.tutorId)!;
+  if (presentationQuery === 'jenny') return <CompleteShelfRigBridge stateKey={state} presentationQuery={presentationQuery} applyState={controller => applyCompleteShelfStudioState(controller, state)} />;
+  const edition = createTutorBookEditions(TUTORS).find(candidate => candidate.wallId === 'primary')!;
+  const tutor = TUTORS.find(candidate => candidate.id === edition.tutorId)!;
   return <CompleteShelfTutorBook tutor={tutor} edition={edition} state={state} collisionDebug={collisionDebug} shelfPose={{ position: [0, .1, 0], rotation: [0, Math.PI / 2, 0], width: .6, height: .92, depth: .31 }} />;
 }
 
@@ -75,10 +77,12 @@ function FoilMetalDebug() {
 
 export function TutorBookStudio({ view = 'front', engineState, engineCamera = 'default', collisionDebug = false }: { view?: StudioView; engineState?: CompleteShelfBookState; engineCamera?: CompleteShelfEngineCamera; collisionDebug?: boolean }) {
   const diagnostic = view.includes('debug');
-  const presentationQuery = typeof window === 'undefined' ? null : new URLSearchParams(window.location.search).get('presentation');
+  const presentationSearch = typeof window === 'undefined' ? '' : window.location.search;
+  const presentationQuery = getCompleteShelfPresentationQuery(presentationSearch);
   const [interactiveEngineState, setInteractiveEngineState] = useState<CompleteShelfBookState | undefined>(engineState);
   const activeEngineState = engineState ? interactiveEngineState ?? engineState : undefined;
-  return <main style={{ height: '100vh', background: diagnostic ? '#a7a39b' : '#22170f', position: 'relative' }}><Canvas shadows dpr={2} camera={{ fov: 32, position: [1.35, .82, 2.45] }} gl={{ antialias: true, powerPreference: 'high-performance' }}>
+  const completeShelfEngine = getCompleteShelfStudioEngine(presentationSearch, activeEngineState);
+  return <main data-complete-shelf-engine={completeShelfEngine} data-presentation={presentationQuery ?? 'reference'} style={{ height: '100vh', background: diagnostic ? '#a7a39b' : '#22170f', position: 'relative' }}><Canvas shadows dpr={2} camera={{ fov: 32, position: [1.35, .82, 2.45] }} gl={{ antialias: true, powerPreference: 'high-performance' }}>
     <color attach="background" args={[new Color(diagnostic ? '#a7a39b' : '#281b12')]} />
     <ambientLight intensity={diagnostic ? .9 : .72} color={diagnostic ? '#ffffff' : '#f2dfbe'} /><hemisphereLight intensity={diagnostic ? .65 : .66} color={diagnostic ? '#ffffff' : '#ffe7c7'} groundColor={diagnostic ? '#66666a' : '#3b2719'} />
     <spotLight castShadow position={[2.15, 2.9, 3.4]} intensity={28} angle={.5} penumbra={.76} color="#ffe8bd" shadow-mapSize={[1024, 1024]} />

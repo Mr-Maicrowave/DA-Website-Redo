@@ -1,5 +1,6 @@
 import * as THREE from '/dev/complete-shelf-rig/vendor/three.module.js';
 import { RoundedBoxGeometry } from '/dev/complete-shelf-rig/vendor/RoundedBoxGeometry.js';
+import { applyCompleteShelfPresentation } from '/dev/complete-shelf-rig/complete-shelf-presentation-seam.js';
 
 // Extracted from public/dev/complete-shelf-reference/index.html at b0b5324.
 // The factory intentionally owns only one physical Codex volume; the host owns its scene.
@@ -293,35 +294,16 @@ export function createCompleteShelfBookRig(config = {}) {
   const makeLeafMaterial = (texture) => new THREE.MeshPhysicalMaterial({ color: 0xeee6d7, map: texture, bumpMap: paperFaceTexture, bumpScale: 0.0012, roughness: 0.96, metalness: 0, sheen: 0.02, sheenRoughness: 1, side: THREE.FrontSide, transparent: true }); const interiorPageMaterials = interiorPageTextures.map(makeLeafMaterial); const blankPageMaterial = makeLeafMaterial(paperFaceTexture);
   const headbandMaterial = new THREE.MeshPhysicalMaterial({ color: 0xc6a66d, roughness: 0.58, metalness: 0.16, sheen: 0.14, sheenRoughness: 0.76, transparent: true }); const signatureMaterial = new THREE.MeshPhysicalMaterial({ color: new THREE.Color(0x8d816f).lerp(new THREE.Color(book.palette.paperPale), 0.34), roughness: 0.98, metalness: 0, transparent: true }); const ribbonMaterial = new THREE.MeshPhysicalMaterial({ color: new THREE.Color(book.foil).lerp(new THREE.Color(book.color), 0.28), roughness: 0.62, metalness: 0.08, sheen: 0.36, sheenRoughness: 0.68, side: THREE.DoubleSide, transparent: true });
   const presentationSourceListeners = [];
-  const applyPresentationTexture = (texture, source) => {
-    if (!source) return;
-    texture.image = source;
-    texture.needsUpdate = true;
-    if (typeof source.addEventListener === 'function') {
-      const refresh = () => { texture.needsUpdate = true; };
-      source.addEventListener('complete-shelf-presentation-update', refresh);
-      presentationSourceListeners.push(() => source.removeEventListener('complete-shelf-presentation-update', refresh));
-    }
-  };
-  const applyPresentation = () => {
-    if (!presentation) return false;
-    const { sources = {}, colours = {} } = presentation;
-    applyPresentationTexture(coverTexture, sources.cover);
-    applyPresentationTexture(foilTexture, sources.coverFoil);
-    applyPresentationTexture(spineTexture, sources.spine);
-    applyPresentationTexture(spineFoilTexture, sources.spineFoil);
-    applyPresentationTexture(backCoverTexture, sources.back);
-    applyPresentationTexture(backFoilTexture, sources.backFoil);
-    applyPresentationTexture(endpaperTexture, sources.endpaper);
-    (sources.interiors ?? []).slice(0, interiorPageTextures.length).forEach((source, index) => applyPresentationTexture(interiorPageTextures[index], source));
-    if (colours.cloth) { cloth.color.set(colours.cloth); grooveMaterial.color.set(new THREE.Color(colours.cloth).multiplyScalar(0.42)); ribbonMaterial.color.set(new THREE.Color(book.foil).lerp(new THREE.Color(colours.cloth), 0.28)); }
-    if (colours.foil) { foilArt.color.set(colours.foil); spineFoilArt.color.set(colours.foil); backFoilArt.color.set(colours.foil); headbandMaterial.color.set(colours.foil); }
-    if (colours.paper) { endpaperMaterial.color.set(colours.paper); pageMaterial.color.set(colours.paper); interiorPageMaterials.forEach((material) => material.color.set(colours.paper)); blankPageMaterial.color.set(colours.paper); }
-    if (colours.edge) { foreEdgeMaterial.color.set(colours.edge); headTailEdgeMaterial.color.set(colours.edge); }
+  const presentationApplied = applyCompleteShelfPresentation({
+    presentation,
+    textures: { cover: coverTexture, coverFoil: foilTexture, spine: spineTexture, spineFoil: spineFoilTexture, back: backCoverTexture, backFoil: backFoilTexture, endpaper: endpaperTexture, interiors: interiorPageTextures },
+    materials: { cloth: [cloth], foil: [foilArt, spineFoilArt, backFoilArt, headbandMaterial], paper: [endpaperMaterial, pageMaterial, ...interiorPageMaterials, blankPageMaterial], edge: [foreEdgeMaterial, headTailEdgeMaterial] },
+    onDispose: (removeListener) => presentationSourceListeners.push(removeListener),
+  });
+  if (presentationApplied) {
+    if (presentation.colours?.cloth) { grooveMaterial.color.set(new THREE.Color(presentation.colours.cloth).multiplyScalar(0.42)); ribbonMaterial.color.set(new THREE.Color(book.foil).lerp(new THREE.Color(presentation.colours.cloth), 0.28)); }
     root.userData.presentation = { tutorId: presentation.tutorId ?? null };
-    return true;
-  };
-  applyPresentation();
+  }
   const boxGeometry = new THREE.BoxGeometry(1, 1, 1); const planeGeometry = new THREE.PlaneGeometry(1, 1); const coverGeometry = new RoundedBoxGeometry(width, height, board, 2, coverRadius); const pageGeometry = createPageBlockGeometry(pageWidth, pageHeight, pageDepth, pageRadius); const coverSurfaceGeometry = createRoundedPlaneGeometry(width - 0.007, height - 0.007, 0.0035); const endpaperGeometry = createRoundedPlaneGeometry(width - 0.045, height - 0.045, 0.003);
   const pageBlock = createMesh(pageGeometry, pageMaterial, 'codex-page-block'); pageBlock.position.x = 0.018; motion.add(pageBlock);
   const backPivot = new THREE.Group(); backPivot.name = 'codex-back-cover-pivot'; backPivot.position.set(-width * 0.5, 0, -depth * 0.5 - board * 0.5); const backCover = createMesh(coverGeometry, cloth, 'codex-back-cover'); backCover.position.x = width * 0.5; backPivot.add(backCover); const backPlane = createMesh(coverSurfaceGeometry, backArt, 'codex-back-cover-art', false, false); backPlane.position.set(width * 0.5, 0, -board * 0.55); backPlane.rotation.y = Math.PI; backPivot.add(backPlane); const backFoilPlane = createMesh(coverSurfaceGeometry, backFoilArt, 'codex-back-foil-art', false, false); backFoilPlane.position.set(width * 0.5, 0, -board * 0.605); backFoilPlane.rotation.y = Math.PI; backPivot.add(backFoilPlane); const backEndpaper = createMesh(endpaperGeometry, endpaperMaterial, 'codex-back-endpaper', false, true); backEndpaper.position.set(width * 0.5, 0, board * 0.515); backPivot.add(backEndpaper); addTurnIns(backPivot, book, 'back', width, height, board * 0.53, cloth, boxGeometry); const backGroove = createMesh(planeGeometry, grooveMaterial, 'codex-back-hinge-groove', false, false); backGroove.scale.set(0.012, height * 0.94, 1); backGroove.position.set(0.038, 0, -board * 0.535); backGroove.rotation.y = Math.PI; backPivot.add(backGroove); motion.add(backPivot);

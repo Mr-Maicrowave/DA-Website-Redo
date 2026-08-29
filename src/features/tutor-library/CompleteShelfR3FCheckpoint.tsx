@@ -18,57 +18,13 @@ import {
   COMPLETE_SHELF_EVIDENCE_STATES,
   getCompleteShelfCameraPose,
   type CompleteShelfEvidenceState,
-  type CompleteShelfRigController,
 } from "./complete-shelf-r3f-state";
-import { createCompleteShelfPresentationForQuery } from "./complete-shelf-presentation";
-
-interface CompleteShelfRig {
-  root: Object3D & {
-    userData: {
-      applyCoverAtlas?: (image: HTMLImageElement) => boolean;
-    };
-  };
-  controller: CompleteShelfRigController;
-  dispose(): void;
-}
-
-interface CompleteShelfRigModule {
-  createCompleteShelfBookRig(config: { renderer: unknown; presentation?: unknown }): CompleteShelfRig;
-}
-
-interface RigSnapshot {
-  rootUuid: string;
-  openProgress: number;
-  pageTurnProgress: number;
-  settledPages: number;
-  pagePivotCount: number;
-  deformationReset: boolean;
-}
-
-const RIG_MODULE_URL = "/dev/complete-shelf-rig/complete-shelf-book-rig.js";
-const REFERENCE_URL = "/dev/complete-shelf-reference/index.html";
+import { getCompleteShelfPresentationQuery } from "./complete-shelf-presentation";
+import { CompleteShelfRigBridge, type RigSnapshot } from "./CompleteShelfRigBridge";
 const CAMERA_TARGET = new Vector3(0, 0, 0);
-const importPublicModule = new Function("url", "return import(url)") as (
-  url: string,
-) => Promise<CompleteShelfRigModule>;
 
 function isEvidenceState(value: string | null): value is CompleteShelfEvidenceState {
   return COMPLETE_SHELF_EVIDENCE_STATES.includes(value as CompleteShelfEvidenceState);
-}
-
-async function loadReferenceAtlas() {
-  const response = await fetch(REFERENCE_URL);
-  if (!response.ok) throw new Error(`Reference fetch failed (${response.status})`);
-  const source = await response.text();
-  const match = source.match(/const COVER_ATLAS_DATA = "([^"]+)"/);
-  if (!match) throw new Error("Pinned cover atlas data is unavailable");
-
-  const image = new Image();
-  image.decoding = "async";
-  image.src = match[1];
-  await image.decode();
-  if (!image.complete || image.naturalWidth === 0) throw new Error("Pinned cover atlas decode produced no image");
-  return image;
 }
 
 function disposeObjectHierarchy(root: Object3D) {
@@ -134,90 +90,13 @@ function CameraBridge({ state }: { state: CompleteShelfEvidenceState }) {
   return null;
 }
 
-function ImperativeRigBridge({
-  state,
-  presentationQuery,
-  onSnapshot,
-  onArtworkStatus,
-  onError,
-}: {
-  state: CompleteShelfEvidenceState;
-  presentationQuery: string | null;
-  onSnapshot(snapshot: RigSnapshot): void;
-  onArtworkStatus(status: "applied" | "failed"): void;
-  onError(message: string): void;
-}) {
-  const { gl } = useThree();
-  const rigRef = useRef<CompleteShelfRig | null>(null);
-  const [rig, setRig] = useState<CompleteShelfRig | null>(null);
-
-  useEffect(() => {
-    let cancelled = false;
-    let createdRig: CompleteShelfRig | null = null;
-
-    void importPublicModule(RIG_MODULE_URL)
-      .then((module: CompleteShelfRigModule) => {
-        if (cancelled) return;
-        const presentation = createCompleteShelfPresentationForQuery(presentationQuery);
-        createdRig = module.createCompleteShelfBookRig(presentation ? {
-          renderer: gl,
-          presentation: {
-            tutorId: presentation.tutorId,
-            colours: presentation.colours,
-            sources: presentation.createCanvasSources(),
-          },
-        } : { renderer: gl });
-        rigRef.current = createdRig;
-        setRig(createdRig);
-        if (presentation) {
-          onArtworkStatus("applied");
-          return undefined;
-        }
-        return loadReferenceAtlas();
-      })
-      .then((atlas) => {
-        if (!atlas || cancelled || !createdRig) return;
-        if (!createdRig.root.userData.applyCoverAtlas?.(atlas)) {
-          throw new Error("Pinned cover atlas could not be applied");
-        }
-        onArtworkStatus("applied");
-      })
-      .catch((error: unknown) => {
-        const message = error instanceof Error ? error.message : String(error);
-        console.error(error);
-        onArtworkStatus("failed");
-        onError(message);
-      });
-
-    return () => {
-      cancelled = true;
-      rigRef.current = null;
-      createdRig?.dispose();
-    };
-  }, [gl, onArtworkStatus, onError, presentationQuery]);
-
-  useEffect(() => {
-    if (!rig) return;
-    applyCompleteShelfEvidenceState(rig.controller, state);
-    onSnapshot(rig.controller.getSnapshot());
-  }, [rig, state, onSnapshot]);
-
-  useFrame((_, delta) => {
-    const currentRig = rigRef.current;
-    if (!currentRig) return;
-    currentRig.controller.update(delta);
-  });
-
-  return rig ? <primitive object={rig.root} dispose={null} /> : null;
-}
-
 function initialEvidenceState() {
   const requested = new URLSearchParams(window.location.search).get("state");
   return isEvidenceState(requested) ? requested : "closed-three-quarter";
 }
 
 function initialPresentationQuery() {
-  return new URLSearchParams(window.location.search).get("presentation");
+  return getCompleteShelfPresentationQuery(window.location.search);
 }
 
 export default function CompleteShelfR3FCheckpoint() {
@@ -298,9 +177,10 @@ export default function CompleteShelfR3FCheckpoint() {
       >
         <NeutralStudioEnvironment />
         <CameraBridge state={state} />
-        <ImperativeRigBridge
-          state={state}
+        <CompleteShelfRigBridge
+          stateKey={state}
           presentationQuery={presentationQuery}
+          applyState={(controller) => applyCompleteShelfEvidenceState(controller, state)}
           onSnapshot={setSnapshot}
           onArtworkStatus={setArtworkStatus}
           onError={setError}

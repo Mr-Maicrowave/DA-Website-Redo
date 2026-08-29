@@ -1,15 +1,85 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
 import test from "node:test";
 
 import { TUTORS } from "../../data/teacherCatalogue.ts";
 import {
   createCompleteShelfPresentationForQuery,
   createCompleteShelfPresentation,
+  getCompleteShelfPresentationQuery,
   selectCompleteShelfPresentationTutor,
 } from "./complete-shelf-presentation.ts";
 
 const jenny = TUTORS.find((tutor) => tutor.id === "T003")!;
+
+class RecordingCanvas extends EventTarget {
+  width = 0;
+  height = 0;
+  readonly commands: Array<{ name: string; args: unknown[] }> = [];
+  readonly context = {
+    fillStyle: "",
+    strokeStyle: "",
+    lineWidth: 0,
+    textAlign: "",
+    font: "",
+    globalAlpha: 1,
+    fillRect: (...args: unknown[]) => this.commands.push({ name: "fillRect", args }),
+    strokeRect: (...args: unknown[]) => this.commands.push({ name: "strokeRect", args }),
+    fillText: (...args: unknown[]) => this.commands.push({ name: "fillText", args }),
+    drawImage: (...args: unknown[]) => this.commands.push({ name: "drawImage", args }),
+    beginPath: () => this.commands.push({ name: "beginPath", args: [] }),
+    rect: (...args: unknown[]) => this.commands.push({ name: "rect", args }),
+    clip: () => this.commands.push({ name: "clip", args: [] }),
+    save: () => this.commands.push({ name: "save", args: [] }),
+    restore: () => this.commands.push({ name: "restore", args: [] }),
+    stroke: () => this.commands.push({ name: "stroke", args: [] }),
+    moveTo: (...args: unknown[]) => this.commands.push({ name: "moveTo", args }),
+    lineTo: (...args: unknown[]) => this.commands.push({ name: "lineTo", args }),
+    translate: (...args: unknown[]) => this.commands.push({ name: "translate", args }),
+    rotate: (...args: unknown[]) => this.commands.push({ name: "rotate", args }),
+    clearRect: (...args: unknown[]) => this.commands.push({ name: "clearRect", args }),
+    measureText: (value: string) => ({ width: value.length * 12 }),
+  };
+
+  getContext() {
+    return this.context;
+  }
+}
+
+class RecordingImage {
+  static instances: RecordingImage[] = [];
+  decoding = "";
+  naturalWidth = 800;
+  naturalHeight = 1200;
+  onload: (() => void) | null = null;
+  onerror: (() => void) | null = null;
+  private value = "";
+
+  constructor() {
+    RecordingImage.instances.push(this);
+  }
+
+  set src(value: string) {
+    this.value = value;
+  }
+
+  get src() {
+    return this.value;
+  }
+}
+
+function createRecordingDocument() {
+  const canvases: RecordingCanvas[] = [];
+  return {
+    canvases,
+    document: {
+      createElement: () => {
+        const canvas = new RecordingCanvas();
+        canvases.push(canvas);
+        return canvas;
+      },
+    },
+  };
+}
 
 test("selects canonical Jenny fields and uses Jenny for an absent presentation query", () => {
   const selected = selectCompleteShelfPresentationTutor(null);
@@ -42,7 +112,7 @@ test("derives Jenny's canonical portrait URL and a deterministic fallback", () =
   assert.equal(presentation.portrait.fallbackUrl, "/teachers/jenny.png");
 });
 
-test("provides deterministic high-resolution canvas metadata for every presentation surface", () => {
+test("defines deterministic high-resolution metadata for every presentation surface", () => {
   const presentation = createCompleteShelfPresentation(jenny);
 
   assert.deepEqual(presentation.canvasMetadata, {
@@ -53,6 +123,39 @@ test("provides deterministic high-resolution canvas metadata for every presentat
     interiors: { count: 8, width: 1024, height: 1536 },
   });
   assert.equal(typeof presentation.createCanvasSources, "function");
+});
+
+test("draws every Jenny presentation canvas and refreshes the cover after the portrait becomes ready", () => {
+  const originalImage = globalThis.Image;
+  Object.assign(globalThis, { Image: RecordingImage });
+  RecordingImage.instances.length = 0;
+
+  try {
+    const { canvases, document } = createRecordingDocument();
+    const presentation = createCompleteShelfPresentation(jenny);
+    const sources = presentation.createCanvasSources(document as unknown as Document);
+    const cover = sources.cover as unknown as RecordingCanvas;
+    const back = sources.back as unknown as RecordingCanvas;
+    let coverRefreshes = 0;
+    sources.cover.addEventListener("complete-shelf-presentation-update", () => { coverRefreshes += 1; });
+
+    assert.equal(canvases.length, 15, "cover, foil layers, endpaper, and eight interior pages are all canvas-backed");
+    assert.deepEqual([sources.cover.width, sources.cover.height], [1536, 2304]);
+    assert.deepEqual([sources.spine.width, sources.spine.height], [512, 2304]);
+    assert.deepEqual([sources.endpaper.width, sources.endpaper.height], [1024, 1536]);
+    assert.equal(sources.interiors.length, 8);
+    assert.ok(cover.commands.some(command => command.name === "fillText" && command.args[0] === "DA TUITION"));
+    assert.ok(back.commands.some(command => command.name === "fillText" && command.args[0] === "DA TUITION"));
+
+    const portrait = RecordingImage.instances.at(-1)!;
+    assert.equal(portrait.src, "/teachers/jenny.png");
+    portrait.onload?.();
+
+    assert.equal(coverRefreshes, 1);
+    assert.ok(cover.commands.some(command => command.name === "drawImage"));
+  } finally {
+    Object.assign(globalThis, { Image: originalImage });
+  }
 });
 
 test("rejects attempts to override the factory's physical dimensions or physics", () => {
@@ -66,19 +169,14 @@ test("rejects attempts to override the factory's physical dimensions or physics"
   );
 });
 
-test("exposes a presentation-only seam without accepting a replacement book model", () => {
-  const rigSource = readFileSync(
-    new URL("../../../public/dev/complete-shelf-rig/complete-shelf-book-rig.js", import.meta.url),
-    "utf8",
-  );
-
-  assert.match(rigSource, /const presentation = config\.presentation/);
-  assert.match(rigSource, /applyPresentation/);
-  assert.doesNotMatch(rigSource, /config\.book/);
-});
-
 test("only supplies DA presentation canvases for the canonical Jenny query", () => {
   assert.equal(createCompleteShelfPresentationForQuery(null), undefined);
   assert.equal(createCompleteShelfPresentationForQuery("unexpected"), undefined);
   assert.equal(createCompleteShelfPresentationForQuery("jenny")?.tutorId, "T003");
+});
+
+test("maps only the explicit Jenny query value to a DA presentation", () => {
+  assert.equal(getCompleteShelfPresentationQuery(""), null);
+  assert.equal(getCompleteShelfPresentationQuery("presentation=unknown"), null);
+  assert.equal(getCompleteShelfPresentationQuery("presentation=jenny"), "jenny");
 });

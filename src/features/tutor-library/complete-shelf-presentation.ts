@@ -277,4 +277,9 @@ export function createCompleteShelfPresentationForQuery(selection: string | null
   return createCompleteShelfPresentation(selectCompleteShelfPresentationTutor(selection));
 }
 
+export function getCompleteShelfPresentationQuery(search: string | URLSearchParams): CompleteShelfPresentationName | null {
+  const params = typeof search === "string" ? new URLSearchParams(search) : search;
+  return params.get("presentation") === "jenny" ? "jenny" : null;
+}
+
 export { PRESENTATION_UPDATE_EVENT };
