@@ -1,3 +1,8 @@
+import {
+  isControllerSnapshotReadyForReturn,
+  type CompleteShelfControllerSnapshot,
+} from './tutor-book-lifecycle.ts';
+
 export type LibraryPhase =
   | 'ROOM_IDLE'
   | 'ROOM_TURNING'
@@ -14,15 +19,7 @@ export type LibraryPhase =
   | 'BOOK_RESETTING'
   | 'BOOK_RETURNING';
 
-export interface ControllerResetSnapshot {
-  rootUuid: string;
-  closeComplete: boolean;
-  resetComplete: boolean;
-  openProgress: number;
-  pageTurnProgress: number;
-  settledPages: number;
-  deformationReset: boolean;
-}
+export type ControllerResetSnapshot = CompleteShelfControllerSnapshot;
 
 export interface LibraryState {
   phase: LibraryPhase;
@@ -30,6 +27,7 @@ export interface LibraryState {
   transitionGeneration: number;
   pendingWallId?: string;
   selectedEditionId?: string;
+  expectedRootUuid?: string;
   openRequested?: boolean;
 }
 
@@ -38,7 +36,7 @@ type Completion = { generation: number };
 export type LibraryEvent =
   | { type: 'TURN'; wallId: string }
   | ({ type: 'TURN_COMPLETE' } & Completion)
-  | { type: 'HOVER'; editionId: string }
+  | { type: 'HOVER'; editionId: string; rootUuid?: string }
   | ({ type: 'HOVER_INTENT_COMPLETE' } & Completion)
   | ({ type: 'EXTRACT' } & Completion)
   | ({ type: 'PREVIEW_READY' } & Completion)
@@ -78,13 +76,11 @@ const advance = (
 const isCurrentCompletion = (state: LibraryState, event: Completion) =>
   event.generation === state.transitionGeneration;
 
-export const isControllerResetForReturn = (controller: ControllerResetSnapshot) =>
-  controller.closeComplete
-  && controller.resetComplete
-  && controller.openProgress === 0
-  && controller.pageTurnProgress === 0
-  && controller.settledPages === 0
-  && controller.deformationReset;
+export const isControllerResetForReturn = (
+  expectedRootUuid: string | undefined,
+  controller: ControllerResetSnapshot,
+) => expectedRootUuid !== undefined
+  && isControllerSnapshotReadyForReturn(expectedRootUuid, controller);
 
 const RESET_DIRECTLY = new Set<LibraryPhase>([
   'BOOK_HOVER_INTENT',
@@ -139,7 +135,10 @@ export function libraryReducer(state: LibraryState, event: LibraryEvent): Librar
       return advance(state, 'ROOM_TURNING', { pendingWallId: event.wallId });
     }
     if (event.type === 'HOVER') {
-      return advance(state, 'BOOK_HOVER_INTENT', { selectedEditionId: event.editionId });
+      return advance(state, 'BOOK_HOVER_INTENT', {
+        selectedEditionId: event.editionId,
+        expectedRootUuid: event.rootUuid,
+      });
     }
     return state;
   }
@@ -160,8 +159,11 @@ export function libraryReducer(state: LibraryState, event: LibraryEvent): Librar
 
   if (state.phase === 'BOOK_HOVER_INTENT') {
     if (event.type === 'HOVER') {
-      if (event.editionId === state.selectedEditionId) return state;
-      return advance(state, 'BOOK_HOVER_INTENT', { selectedEditionId: event.editionId });
+      if (event.editionId === state.selectedEditionId && event.rootUuid === state.expectedRootUuid) return state;
+      return advance(state, 'BOOK_HOVER_INTENT', {
+        selectedEditionId: event.editionId,
+        expectedRootUuid: event.rootUuid,
+      });
     }
     if ((event.type === 'HOVER_INTENT_COMPLETE' || event.type === 'EXTRACT') && isCurrentCompletion(state, event)) {
       return advance(state, 'BOOK_EXTRACTING');
@@ -254,7 +256,7 @@ export function libraryReducer(state: LibraryState, event: LibraryEvent): Librar
     if (
       event.type === 'RESET_COMPLETE'
       && isCurrentCompletion(state, event)
-      && isControllerResetForReturn(event.controller)
+      && isControllerResetForReturn(state.expectedRootUuid, event.controller)
     ) {
       return advance(state, 'BOOK_RETURNING');
     }

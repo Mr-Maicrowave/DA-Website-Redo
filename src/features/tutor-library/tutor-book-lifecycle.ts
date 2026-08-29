@@ -1,9 +1,7 @@
 import {
-  cloneBookMotionPose,
   createBookReturnMotion,
   interpolateBookMotion,
   type BookMotionPose,
-  type BookMotionSegment,
 } from './tutor-book-motion.ts';
 
 export type MatrixTuple = readonly [
@@ -13,46 +11,75 @@ export type MatrixTuple = readonly [
   number, number, number, number,
 ];
 
+export interface ReadonlyBookMotionPose {
+  readonly position: readonly [number, number, number];
+  readonly rotation: readonly [number, number, number];
+  readonly scale: readonly [number, number, number];
+}
+
 export interface NeighbourPoseSnapshot {
-  editionId: string;
-  pose: BookMotionPose;
+  readonly editionId: string;
+  readonly pose: ReadonlyBookMotionPose;
+}
+
+interface ReadonlyBookMotionSegment {
+  readonly from: ReadonlyBookMotionPose;
+  readonly to: ReadonlyBookMotionPose;
 }
 
 export interface BookLifecycleCapture {
-  editionId: string;
-  rootUuid: string;
-  shelfPose: BookMotionPose;
-  shelfLocalMatrix: MatrixTuple;
-  shelfWorldMatrix: MatrixTuple;
-  neighbourPoses: readonly NeighbourPoseSnapshot[];
+  readonly editionId: string;
+  readonly rootUuid: string;
+  readonly shelfPose: ReadonlyBookMotionPose;
+  readonly shelfLocalMatrix: MatrixTuple;
+  readonly shelfWorldMatrix: MatrixTuple;
+  readonly neighbourPoses: readonly NeighbourPoseSnapshot[];
+}
+
+export interface BookLifecycleSample {
+  readonly pose: ReadonlyBookMotionPose;
+  readonly localMatrix: MatrixTuple;
+  readonly worldMatrix: MatrixTuple;
+  readonly neighbourPoses: readonly NeighbourPoseSnapshot[];
 }
 
 export interface CompleteShelfControllerSnapshot {
-  rootUuid: string;
-  closeComplete: boolean;
-  resetComplete: boolean;
-  openProgress: number;
-  pageTurnProgress: number;
-  settledPages: number;
-  deformationReset: boolean;
+  readonly rootUuid: string;
+  readonly closeComplete: boolean;
+  readonly resetComplete: boolean;
+  readonly openProgress: number;
+  readonly pageTurnProgress: number;
+  readonly settledPages: number;
+  readonly deformationReset: boolean;
 }
 
-export type BookLifecycleInterruption = 'escape' | 'selection-change' | 'resize' | 'visibility-resume';
+export type BookLifecycleInterruption = 'close' | 'escape' | 'selection-change' | 'resize' | 'visibility-resume';
 
 export interface BookLifecycleCoordinator extends BookLifecycleCapture {
-  transitionGeneration: number;
-  sampledPose: BookMotionPose;
-  transitionFromPose: BookMotionPose;
-  interruption?: BookLifecycleInterruption;
-  returnMotion?: BookMotionSegment;
+  readonly transitionGeneration: number;
+  readonly sampledPose: ReadonlyBookMotionPose;
+  readonly transitionFromPose: ReadonlyBookMotionPose;
+  readonly currentLocalMatrix: MatrixTuple;
+  readonly currentWorldMatrix: MatrixTuple;
+  readonly currentNeighbourPoses: readonly NeighbourPoseSnapshot[];
+  readonly interruption?: BookLifecycleInterruption;
+  readonly returnMotion?: ReadonlyBookMotionSegment;
 }
 
-export interface BeginShelfReturnResult {
-  accepted: boolean;
-  coordinator: BookLifecycleCoordinator;
+export interface BeginShelfReturnCompletion {
+  readonly generation: number;
+  readonly controller: CompleteShelfControllerSnapshot;
 }
 
-const cloneMatrix = (matrix: MatrixTuple): MatrixTuple => [...matrix] as unknown as MatrixTuple;
+export interface CompleteShelfReturnCompletion {
+  readonly generation: number;
+  readonly rootUuid: string;
+}
+
+export interface LifecycleCompletionResult {
+  readonly accepted: boolean;
+  readonly coordinator: BookLifecycleCoordinator;
+}
 
 const assertMatrix: (matrix: readonly number[], name: string) => asserts matrix is MatrixTuple = (matrix, name) => {
   if (matrix.length !== 16 || matrix.some(value => !Number.isFinite(value))) {
@@ -60,58 +87,95 @@ const assertMatrix: (matrix: readonly number[], name: string) => asserts matrix 
   }
 };
 
-const assertPose = (pose: BookMotionPose, name: string) => {
+const assertPose = (pose: ReadonlyBookMotionPose, name: string) => {
   const values = [...pose.position, ...pose.rotation, ...pose.scale];
   if (values.some(value => !Number.isFinite(value))) throw new Error(`${name} must contain finite numbers`);
 };
 
-const cloneNeighbours = (neighbours: readonly NeighbourPoseSnapshot[]): NeighbourPoseSnapshot[] =>
-  neighbours.map(neighbour => ({
+const assertNeighbours = (neighbours: readonly NeighbourPoseSnapshot[], name: string) => {
+  neighbours.forEach(neighbour => assertPose(neighbour.pose, `${name} ${neighbour.editionId}`));
+};
+
+const cloneMutablePose = (pose: ReadonlyBookMotionPose): BookMotionPose => ({
+  position: [...pose.position],
+  rotation: [...pose.rotation],
+  scale: [...pose.scale],
+});
+
+const freezePose = (pose: ReadonlyBookMotionPose): ReadonlyBookMotionPose => Object.freeze({
+  position: Object.freeze([...pose.position]) as readonly [number, number, number],
+  rotation: Object.freeze([...pose.rotation]) as readonly [number, number, number],
+  scale: Object.freeze([...pose.scale]) as readonly [number, number, number],
+});
+
+const freezeMatrix = (matrix: MatrixTuple): MatrixTuple =>
+  Object.freeze([...matrix]) as unknown as MatrixTuple;
+
+const freezeNeighbours = (neighbours: readonly NeighbourPoseSnapshot[]): readonly NeighbourPoseSnapshot[] =>
+  Object.freeze(neighbours.map(neighbour => Object.freeze({
     editionId: neighbour.editionId,
-    pose: cloneBookMotionPose(neighbour.pose),
-  }));
+    pose: freezePose(neighbour.pose),
+  })));
+
+const freezeSegment = (from: ReadonlyBookMotionPose, to: ReadonlyBookMotionPose): ReadonlyBookMotionSegment =>
+  Object.freeze({ from: freezePose(from), to: freezePose(to) });
+
+const freezeCoordinator = (coordinator: BookLifecycleCoordinator): BookLifecycleCoordinator =>
+  Object.freeze(coordinator);
 
 export function createBookLifecycleCoordinator(capture: BookLifecycleCapture): BookLifecycleCoordinator {
   assertMatrix(capture.shelfLocalMatrix, 'shelfLocalMatrix');
   assertMatrix(capture.shelfWorldMatrix, 'shelfWorldMatrix');
   assertPose(capture.shelfPose, 'shelfPose');
-  capture.neighbourPoses.forEach(neighbour => assertPose(neighbour.pose, `neighbour ${neighbour.editionId}`));
+  assertNeighbours(capture.neighbourPoses, 'neighbour');
 
-  const shelfPose = cloneBookMotionPose(capture.shelfPose);
-  return {
+  const shelfPose = freezePose(capture.shelfPose);
+  const shelfLocal = freezeMatrix(capture.shelfLocalMatrix);
+  const shelfWorld = freezeMatrix(capture.shelfWorldMatrix);
+  const neighbours = freezeNeighbours(capture.neighbourPoses);
+  return freezeCoordinator({
     editionId: capture.editionId,
     rootUuid: capture.rootUuid,
     shelfPose,
-    shelfLocalMatrix: cloneMatrix(capture.shelfLocalMatrix),
-    shelfWorldMatrix: cloneMatrix(capture.shelfWorldMatrix),
-    neighbourPoses: cloneNeighbours(capture.neighbourPoses),
+    shelfLocalMatrix: shelfLocal,
+    shelfWorldMatrix: shelfWorld,
+    neighbourPoses: neighbours,
     transitionGeneration: 0,
-    sampledPose: cloneBookMotionPose(shelfPose),
-    transitionFromPose: cloneBookMotionPose(shelfPose),
-  };
+    sampledPose: shelfPose,
+    transitionFromPose: shelfPose,
+    currentLocalMatrix: shelfLocal,
+    currentWorldMatrix: shelfWorld,
+    currentNeighbourPoses: neighbours,
+  });
 }
 
 export function interruptBookLifecycle(
   coordinator: BookLifecycleCoordinator,
-  sampledPose: BookMotionPose,
+  sample: BookLifecycleSample,
   interruption: BookLifecycleInterruption,
 ): BookLifecycleCoordinator {
-  assertPose(sampledPose, 'sampledPose');
-  const sampled = cloneBookMotionPose(sampledPose);
+  assertPose(sample.pose, 'sampledPose');
+  assertMatrix(sample.localMatrix, 'currentLocalMatrix');
+  assertMatrix(sample.worldMatrix, 'currentWorldMatrix');
+  assertNeighbours(sample.neighbourPoses, 'current neighbour');
+  const sampledPose = freezePose(sample.pose);
   const { returnMotion: _returnMotion, ...rest } = coordinator;
-  return {
+  return freezeCoordinator({
     ...rest,
     transitionGeneration: coordinator.transitionGeneration + 1,
-    sampledPose: sampled,
-    transitionFromPose: cloneBookMotionPose(sampled),
+    sampledPose,
+    transitionFromPose: sampledPose,
+    currentLocalMatrix: freezeMatrix(sample.localMatrix),
+    currentWorldMatrix: freezeMatrix(sample.worldMatrix),
+    currentNeighbourPoses: freezeNeighbours(sample.neighbourPoses),
     interruption,
-  };
+  });
 }
 
-export const isControllerReadyForShelfReturn = (
-  coordinator: BookLifecycleCoordinator,
+export const isControllerSnapshotReadyForReturn = (
+  expectedRootUuid: string,
   controller: CompleteShelfControllerSnapshot,
-) => controller.rootUuid === coordinator.rootUuid
+) => controller.rootUuid === expectedRootUuid
   && controller.closeComplete
   && controller.resetComplete
   && controller.openProgress === 0
@@ -121,45 +185,63 @@ export const isControllerReadyForShelfReturn = (
 
 export function beginShelfReturn(
   coordinator: BookLifecycleCoordinator,
-  controller: CompleteShelfControllerSnapshot,
-): BeginShelfReturnResult {
-  if (!isControllerReadyForShelfReturn(coordinator, controller)) {
-    return { accepted: false, coordinator };
+  completion: BeginShelfReturnCompletion,
+): LifecycleCompletionResult {
+  if (
+    completion.generation !== coordinator.transitionGeneration
+    || !isControllerSnapshotReadyForReturn(coordinator.rootUuid, completion.controller)
+  ) {
+    return Object.freeze({ accepted: false, coordinator });
   }
 
-  return {
+  const returnMotion = createBookReturnMotion(
+    cloneMutablePose(coordinator.sampledPose),
+    cloneMutablePose(coordinator.shelfPose),
+  );
+  return Object.freeze({
     accepted: true,
-    coordinator: {
+    coordinator: freezeCoordinator({
       ...coordinator,
       transitionGeneration: coordinator.transitionGeneration + 1,
-      returnMotion: createBookReturnMotion(coordinator.sampledPose, coordinator.shelfPose),
-    },
-  };
+      returnMotion: freezeSegment(returnMotion.from, returnMotion.to),
+    }),
+  });
 }
 
 export function sampleShelfReturn(coordinator: BookLifecycleCoordinator, progress: number): BookMotionPose {
   if (!coordinator.returnMotion) throw new Error('Shelf return has not begun');
-  return interpolateBookMotion(coordinator.returnMotion.from, coordinator.returnMotion.to, progress);
+  return interpolateBookMotion(
+    cloneMutablePose(coordinator.returnMotion.from),
+    cloneMutablePose(coordinator.returnMotion.to),
+    progress,
+  );
 }
 
 export function completeShelfReturn(
   coordinator: BookLifecycleCoordinator,
-  rootUuid: string,
-): BookLifecycleCoordinator {
-  if (rootUuid !== coordinator.rootUuid) throw new Error('Book root identity changed during shelf return');
-  if (!coordinator.returnMotion) throw new Error('Shelf return has not begun');
+  completion: CompleteShelfReturnCompletion,
+): LifecycleCompletionResult {
+  if (
+    !coordinator.returnMotion
+    || completion.rootUuid !== coordinator.rootUuid
+    || completion.generation !== coordinator.transitionGeneration
+  ) {
+    return Object.freeze({ accepted: false, coordinator });
+  }
 
   const { returnMotion: _returnMotion, interruption: _interruption, ...rest } = coordinator;
-  return {
-    ...rest,
-    shelfPose: cloneBookMotionPose(coordinator.shelfPose),
-    shelfLocalMatrix: cloneMatrix(coordinator.shelfLocalMatrix),
-    shelfWorldMatrix: cloneMatrix(coordinator.shelfWorldMatrix),
-    neighbourPoses: cloneNeighbours(coordinator.neighbourPoses),
-    transitionGeneration: coordinator.transitionGeneration + 1,
-    sampledPose: cloneBookMotionPose(coordinator.shelfPose),
-    transitionFromPose: cloneBookMotionPose(coordinator.shelfPose),
-  };
+  return Object.freeze({
+    accepted: true,
+    coordinator: freezeCoordinator({
+      ...rest,
+      transitionGeneration: coordinator.transitionGeneration + 1,
+      sampledPose: coordinator.shelfPose,
+      transitionFromPose: coordinator.shelfPose,
+      currentLocalMatrix: coordinator.shelfLocalMatrix,
+      currentWorldMatrix: coordinator.shelfWorldMatrix,
+      currentNeighbourPoses: coordinator.neighbourPoses,
+    }),
+  });
 }
 
 export function maxMatrixDelta(left: readonly number[], right: readonly number[]): number {

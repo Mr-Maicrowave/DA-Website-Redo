@@ -117,10 +117,10 @@ For transparency, the repository-wide `npm run lint` path still exits non-zero o
 ### Root lifecycle coordinator
 
 - Call `createBookLifecycleCoordinator` once from the captured shelf/root/neighbour state.
-- Feed current outer-root transform samples to `interruptBookLifecycle` on Escape, resize, visibility resume, or a supported selection interruption.
-- Call `beginShelfReturn` only after collecting the controller snapshot. A rejected result preserves the identical coordinator object.
+- Feed current outer-root pose/local/world matrix and neighbour samples to `interruptBookLifecycle` on close, Escape, resize, visibility resume, or a supported selection interruption.
+- Call `beginShelfReturn` only after collecting the controller snapshot, passing the exact current generation. A rejected result preserves the identical coordinator object.
 - Drive the outer root from `sampleShelfReturn`; progress zero is the exact sampled interruption and progress one is the exact stored shelf pose.
-- Call `completeShelfReturn` with the still-mounted physical root UUID. A replacement UUID throws, while a valid completion restores the stored matrices/poses exactly.
+- Call `completeShelfReturn` with the still-mounted physical root UUID and exact return generation. A stale generation or replacement UUID returns an identity-preserving rejection, while a valid completion restores the stored matrices/poses exactly.
 
 ## Files changed
 
@@ -150,3 +150,67 @@ For transparency, the repository-wide `npm run lint` path still exits non-zero o
 - The lifecycle is infrastructure only. Tasks 3–4 must connect actual outer-root samples and real controller completion snapshots before exposing these new phases in the room UI.
 - Full repository lint remains blocked by the unrelated pre-existing issues listed above; touched-file lint is clean.
 - The build's existing bundle-size advisory remains unchanged and belongs to the later performance task.
+
+## Fix round 1 — review closure
+
+Resolved the Critical same-root stale-callback defect and all four Important findings:
+
+- Both asynchronous coordinator completion APIs now require and validate an exact generation token.
+- Reducer and coordinator use one shared controller snapshot/reset predicate, including expected root UUID equality.
+- Stored shelf poses, matrices, neighbour targets, current samples, coordinator objects, and return segments are deeply frozen; inbound state is copied and sampled outbound poses are cloned.
+- Current local/world matrices and current neighbour poses are distinct from immutable restoration targets.
+- The ten-cycle test now runs ten complete hover/extract/preview/open/read/close/reset/return semantic cycles, perturbs current pose/matrices/neighbours each cycle, and verifies exact root/generation/restoration behavior within `1e-6`.
+- Reducer tests now enumerate legal transitions and illegal identity no-ops, including direct open, leave/close variants, drag cancellation, wrong-root reset, conditional duplicates, and stale completion rejection in every asynchronous phase.
+
+Exact focused verification command and output:
+
+```text
+> node --test --experimental-strip-types src/features/tutor-library/tutor-library-state.test.ts src/features/tutor-library/tutor-book-motion.test.ts src/features/tutor-library/tutor-book-lifecycle.test.ts src/features/tutor-library/tutor-library-timeline.test.ts
+✔ captures shelf matrices, root identity, neighbours, and current state by value (5.102ms)
+✔ deep-freezes restoration targets and clones inbound and outbound payloads (2.445ms)
+✔ resize and visibility resume restart from the exact sampled transform and matrices (0.5429ms)
+✔ refuses stale reset completion and controller residue before shelf transit (0.5061ms)
+✔ rejects an old same-root return callback after a newer return generation starts (0.5711ms)
+✔ samples return from the current interruption rather than the preview destination (0.5141ms)
+✔ restores exact matrices and neighbour poses with matching root and generation (0.5652ms)
+✔ restores perturbed pose, matrices, and neighbours through ten complete semantic cycles (1.6525ms)
+✔ rejects malformed matrices rather than accepting a non-restorable capture or sample (0.3536ms)
+✔ keeps extraction continuous from the exact stored shelf pose into preview (2.126ms)
+✔ returns from the exact sampled interruption pose instead of the preview endpoint (0.2564ms)
+✔ clamps invalid interpolation progress and never mutates either endpoint (0.2012ms)
+✔ reduced motion shortens movement while retaining every semantic lifecycle phase (0.1425ms)
+✔ runs every legal book lifecycle transition without frame-level state (2.3745ms)
+✔ returns the same state object for representative illegal transitions (0.1976ms)
+✔ enumerates every legal reducer transition, including direct-open and cancellation variants (0.3502ms)
+✔ enumerates illegal events as identity-preserving no-ops in every phase (0.6128ms)
+✔ rejects stale async completions after a newer transition generation starts (0.3485ms)
+✔ rejects stale completions in every asynchronous semantic phase (0.3988ms)
+✔ keeps conditional duplicates and wrong-root reset completions as identity no-ops (0.3073ms)
+✔ switches hover intent from A to B and invalidates A completion (0.8369ms)
+✔ remembers a click during extraction and proceeds through the safe reading pose (0.5722ms)
+✔ Escape recovers deterministically from every book transient and reading state (0.4862ms)
+✔ will not return until close/reset complete with zero controller residue (0.349ms)
+✔ blocks selection B while A returns and keeps A identity until restoration completes (0.1481ms)
+✔ rapid wall turns retarget the current turn and only the newest completion settles (0.3005ms)
+✔ restarts transient generations after resize and visibility resume but leaves stable states alone (0.1422ms)
+✔ supports repeated open/close cycles without retaining book state (0.1618ms)
+✔ keeps deterministic pose endpoints (0.7676ms)
+✔ moves the viewer through the corner when turning to the next wall (1.0505ms)
+✔ derives shortest-turn endpoints from each actual wall count from three through six (0.5058ms)
+ℹ tests 31
+ℹ suites 0
+ℹ pass 31
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 192.3702
+```
+
+Fix-round broader verification:
+
+- All Tutor Library tests: 16 files, 68 passed, 0 failed.
+- `npm.cmd run typecheck`: exit 0.
+- Touched-file ESLint: exit 0.
+- `npm.cmd run build`: exit 0; encoding passed for 1116 text files, sitemap generated 80 URLs, TypeScript passed, and Vite transformed 3978 modules. The generated sitemap date was restored afterward.
+- Build emitted only the existing large-chunk advisory.
