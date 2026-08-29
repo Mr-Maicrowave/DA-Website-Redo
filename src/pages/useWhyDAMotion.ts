@@ -91,35 +91,79 @@ export function useWhyDAMotion(): RefObject<HTMLElement> {
         knowTimeline
           .from('[data-motion="know-number"]', { yPercent: 110, duration: 0.68, ease: 'power3.out' })
           .from('[data-motion="know-title"]', { clipPath: 'inset(0 100% 0 0)', x: -18, duration: 0.72, ease: 'power3.out' }, 0.14)
-          .from('[data-motion="know-copy"]', { opacity: 0, y: 16, duration: 0.5 }, 0.34)
-          .from('[data-motion="evidence-photo"]', { clipPath: 'inset(0 0 100% 0 round 16px)', duration: 0.9, ease: 'power3.inOut' }, 0.16)
-          .from('[data-motion="evidence-image"]', { scale: 1.08, duration: 1.15, ease: 'power3.out' }, 0.16)
-          .from('[data-motion="discovery-item"]', {
-            opacity: 0,
-            y: 18,
-            scale: 0.96,
-            duration: 0.42,
-            stagger: 0.11,
-            ease: 'power3.out',
-          }, 0.72)
-          .to('[data-motion="discovery-item"]', {
-            '--discovery-pulse': 1,
-            scale: 1.05,
-            duration: 0.18,
-            stagger: 0.11,
-            yoyo: true,
-            repeat: 1,
-          }, 0.84);
+          .from('[data-motion="know-copy"]', { opacity: 0, y: 16, duration: 0.5 }, 0.34);
 
-        gsap.fromTo('[data-motion="evidence-image"]', { yPercent: -2 }, {
-          yPercent: 2,
-          ease: 'none',
-          scrollTrigger: {
-            trigger: '[data-motion="evidence-photo"]',
-            start: 'top bottom',
-            end: 'bottom top',
-            scrub: 0.7,
-          },
+        const gallery = root.querySelector<HTMLElement>('[data-testid="why-da-know-gallery"]');
+        const galleryStage = gallery?.querySelector<HTMLElement>('.why-da-gallery-stage');
+        const galleryTrack = gallery?.querySelector<HTMLElement>('[data-motion="gallery-track"]');
+        const galleryCards = gallery ? Array.from(gallery.querySelectorAll<HTMLElement>('[data-motion="gallery-card"]')) : [];
+        const galleryImages = gallery ? Array.from(gallery.querySelectorAll<HTMLElement>('[data-motion="gallery-image"]')) : [];
+        const galleryButtons = gallery ? Array.from(gallery.querySelectorAll<HTMLButtonElement>('[data-gallery-category]')) : [];
+        let galleryTrigger: ScrollTrigger | undefined;
+        let galleryResizeObserver: ResizeObserver | undefined;
+        const galleryCleanups: Array<() => void> = [];
+
+        const setActiveGallery = (index: number) => {
+          if (!gallery) return;
+          gallery.dataset.activeGallery = String(index);
+          galleryButtons.forEach((button, buttonIndex) => {
+            if (buttonIndex === index) button.setAttribute('aria-current', 'step');
+            else button.removeAttribute('aria-current');
+          });
+        };
+
+        if (gallery && galleryStage && galleryTrack && !isMobile) {
+          const distance = () => Math.max(0, galleryTrack.scrollWidth - galleryStage.clientWidth + window.innerWidth * 0.08);
+          const updateGallery = (progress: number) => {
+            const activeIndex = Math.min(galleryCards.length - 1, Math.max(0, Math.round(progress * (galleryCards.length - 1))));
+            setActiveGallery(activeIndex);
+            gsap.set('[data-motion="gallery-progress"]', { scaleX: progress });
+            gsap.set('[data-motion="gallery-node"]', { x: progress * 1000, y: Math.sin(progress * Math.PI * 3.5) * 14 });
+            galleryCards.forEach((card, index) => {
+              const bounds = card.getBoundingClientRect();
+              const offset = (bounds.left + bounds.width / 2 - window.innerWidth / 2) / window.innerWidth;
+              const proximity = Math.max(0, 1 - Math.abs(offset) * 1.65);
+              gsap.set(card, { scale: 0.95 + proximity * 0.05, y: -proximity * 12, opacity: 0.72 + proximity * 0.28 });
+              gsap.set(galleryImages[index], { xPercent: Math.max(-10, Math.min(10, offset * -10)) });
+              card.toggleAttribute('data-active', index === activeIndex);
+            });
+          };
+
+          const galleryTween = gsap.to(galleryTrack, {
+            x: () => -distance(), ease: 'none',
+            scrollTrigger: {
+              trigger: '[data-testid="why-da-know-gallery"]', start: 'top top', end: () => `+=${distance() * 1.15}`,
+              scrub: 1, pin: true, anticipatePin: 1, invalidateOnRefresh: true,
+              onUpdate: (self) => updateGallery(self.progress),
+            },
+          });
+          galleryTrigger = galleryTween.scrollTrigger;
+          galleryResizeObserver = new ResizeObserver(() => ScrollTrigger.refresh());
+          galleryResizeObserver.observe(galleryTrack);
+          galleryResizeObserver.observe(galleryStage);
+          galleryImages.forEach((image) => {
+            const onLoad = () => ScrollTrigger.refresh();
+            image.addEventListener('load', onLoad, { once: true });
+            galleryCleanups.push(() => image.removeEventListener('load', onLoad));
+          });
+          updateGallery(0);
+        }
+
+        galleryButtons.forEach((button, index) => {
+          const onClick = () => {
+            if (galleryTrigger && !isMobile) {
+              const progress = index / Math.max(1, galleryButtons.length - 1);
+              const effectiveEnd = Math.min(galleryTrigger.end, ScrollTrigger.maxScroll(window));
+              const targetScroll = galleryTrigger.start + (effectiveEnd - galleryTrigger.start) * progress;
+              gallery.dataset.galleryTarget = String(Math.round(targetScroll));
+              window.scrollTo(0, targetScroll);
+            } else {
+              galleryCards[index]?.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+              setActiveGallery(index);
+            }
+          };
+          button.addEventListener('click', onClick);
+          galleryCleanups.push(() => button.removeEventListener('click', onClick));
         });
 
         const pathItems = PATH_SEQUENCE
@@ -229,6 +273,11 @@ export function useWhyDAMotion(): RefObject<HTMLElement> {
           opacity: 0, x: -28, duration: 0.75, ease: 'power3.out', immediateRender: false,
           scrollTrigger: { trigger: '[data-testid="why-da-closing-cta"]', start: 'top 78%', once: true },
         });
+
+        return () => {
+          galleryResizeObserver?.disconnect();
+          galleryCleanups.forEach((cleanup) => cleanup());
+        };
       });
     }, root);
 

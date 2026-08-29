@@ -20,7 +20,7 @@ const FoundationCurriculum = () => {
           <p>{curriculum.years}</p>
           <h2 id="foundation-curriculum-title">Explore<br />what they’ll learn<span>.</span></h2>
           <strong>A joyful start to big discoveries.</strong>
-          <a href="#primary-aquarium">Discover the journey <ArrowRight aria-hidden="true" /></a>
+          <a href="#primary-seed-challenge">Discover the journey <ArrowRight aria-hidden="true" /></a>
         </header>
 
         <figure className="primary-reference-curriculum__school">
@@ -41,7 +41,7 @@ const FoundationCurriculum = () => {
                 <p>{item.detail}</p>
               </div>
               <span className={`primary-reference-curriculum__row-art primary-reference-curriculum__row-art--${index + 1}`} style={{ backgroundImage: `url(${CURRICULUM_ATLAS})` }} aria-hidden="true" />
-              <a href="#primary-aquarium" aria-label={`Explore ${item.title}`}><ArrowRight aria-hidden="true" /></a>
+              <a href="#primary-seed-challenge" aria-label={`Explore ${item.title}`}><ArrowRight aria-hidden="true" /></a>
             </li>
           ))}
         </ul>

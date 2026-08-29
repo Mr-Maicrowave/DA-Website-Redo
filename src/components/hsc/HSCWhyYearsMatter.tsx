@@ -2,6 +2,7 @@ import { motion, useReducedMotion } from 'framer-motion';
 import HSCLearningFormatsExplorer from './HSCLearningFormatsExplorer';
 import HSCCompleteStrategy from './HSCCompleteStrategy';
 import HSCMethodInAction from './HSCMethodInAction';
+import HSCSuccessStories from './HSCSuccessStories';
 import './HSCWhyYearsMatter.css';
 
 function EditorialExplanation({ lead, children }: { lead: string; children: React.ReactNode }) {
@@ -173,6 +174,7 @@ export default function HSCWhyYearsMatter() {
       <HSCLearningFormatsExplorer />
       <HSCCompleteStrategy />
       <HSCMethodInAction />
+      <HSCSuccessStories />
     </section>
   );
 }

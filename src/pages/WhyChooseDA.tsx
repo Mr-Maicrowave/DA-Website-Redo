@@ -20,12 +20,12 @@ const studentSignals = [
 ] as const;
 
 const discoveryPoints = [
-  { label: 'Starting point', Icon: Target },
-  { label: 'Strengths & weaknesses', Icon: BarChart3 },
-  { label: 'Confidence', Icon: Heart },
-  { label: 'Goals', Icon: Flag },
-  { label: 'Learning style', Icon: UserRound },
-  { label: 'Parent concerns', Icon: MessageCircle },
+  { label: 'Starting point', description: 'We meet your child where they are, academically and emotionally.', image: '/images/why-da-reference/know-you/starting-point.jpg', alt: 'Young student enthusiastically raising his hand during a DA learning session', Icon: Target },
+  { label: 'Strengths & weaknesses', description: 'We understand what comes naturally and where support is needed.', image: '/images/why-da-reference/know-you/strengths-weaknesses.jpg', alt: 'A group of students together inside the DA learning centre', Icon: BarChart3 },
+  { label: 'Confidence', description: 'We notice how they feel about learning, not just what they score.', image: '/images/why-da-reference/know-you/confidence.jpg', alt: 'Tutor and student smiling together while working on laptops', Icon: Heart },
+  { label: 'Goals', description: 'We understand what they and their family want to work towards.', image: '/images/why-da-reference/know-you/goals.jpg', alt: 'A large group of DA students gathered together in a classroom', Icon: Flag },
+  { label: 'Learning style', description: 'We pay attention to how they respond, process and engage.', image: '/images/why-da-reference/know-you/learning-style.jpg', alt: 'A diverse group of students standing together in a bright classroom', Icon: UserRound },
+  { label: 'Parent concerns', description: 'We listen to what you’re seeing outside the classroom too.', image: '/images/why-da-reference/know-you/parent-concerns.jpg', alt: 'A relaxed group of older students smiling together after class', Icon: MessageCircle },
 ] as const;
 
 const personalPathLeft = [
@@ -152,18 +152,26 @@ export default function WhyChooseDA() {
             <div className="why-da-section-heading"><span className="why-da-number-mask"><span data-motion="know-number">01</span></span><h2 data-motion="know-title">WE KNOW YOU</h2></div>
             <p data-motion="know-copy">We listen. We observe. We understand who your child is today and what they want to achieve.</p>
           </div>
-          <figure className="why-da-know__photo" data-motion="evidence-photo">
-            <picture data-motion="evidence-image">
-              <source srcSet="/images/why-da-reference/why-da-know-you-v1.avif" type="image/avif" />
-              <source srcSet="/images/why-da-reference/why-da-know-you-v1.webp" type="image/webp" />
-              <img src="/images/why-da-reference/why-da-know-you-v1.png" alt="Tutor helping a young student with an open workbook" loading="lazy" />
-            </picture>
-            <figcaption>Understanding comes first.</figcaption>
-          </figure>
-          <div className="why-da-discovery" aria-label="What we learn about each student">
-            {discoveryPoints.map(({ label, Icon }) => (
-              <div className="why-da-discovery__item" data-motion="discovery-item" key={label}><Icon aria-hidden="true" /><span>{label}</span></div>
-            ))}
+          <div className="why-da-know-gallery" data-testid="why-da-know-gallery" data-active-gallery="0">
+            <nav className="why-da-gallery-nav" aria-label="What we learn about each student">
+              {discoveryPoints.map(({ label, Icon }, index) => (
+                <button type="button" data-gallery-category={index} aria-current={index === 0 ? 'step' : undefined} key={label}><Icon aria-hidden="true" /><span>{label}</span><i aria-hidden="true" /></button>
+              ))}
+            </nav>
+            <div className="why-da-gallery-stage">
+              <div className="why-da-gallery-track" data-motion="gallery-track">
+                {discoveryPoints.map(({ label, description, image, alt }, index) => (
+                  <figure className={`why-da-gallery-card why-da-gallery-card--${index + 1}`} data-motion="gallery-card" data-gallery-index={index} key={label}>
+                    <div className="why-da-gallery-card__media"><img data-motion="gallery-image" src={image} alt={alt} loading={index < 2 ? 'eager' : 'lazy'} decoding="async" /></div>
+                    <figcaption><span>{String(index + 1).padStart(2, '0')}</span><strong>{label.toUpperCase()}</strong><p>{description}</p></figcaption>
+                  </figure>
+                ))}
+              </div>
+              <svg className="why-da-gallery-thread" viewBox="0 0 1000 90" preserveAspectRatio="none" aria-hidden="true"><path d="M0 56 C160 12 255 82 410 44 S710 18 1000 51" /><circle data-motion="gallery-node" cx="0" cy="56" r="4" /></svg>
+            </div>
+            <div className="why-da-gallery-progress" aria-hidden="true"><span data-motion="gallery-progress" /></div>
+            <p className="why-da-gallery-bridge">Once we understand the whole picture,<br /><strong>we can build the right path.</strong></p>
+            <span className="why-da-gallery-downline" aria-hidden="true" />
           </div>
         </section>
 
