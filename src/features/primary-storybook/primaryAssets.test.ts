@@ -134,6 +134,18 @@ test('support journey ships eight standalone transparent illustrations', async (
   }
 });
 
+test('seed challenge ships six individually generated transparent growth stages', async () => {
+  const assets = ['seed.png', 'germinating-seed.png', 'sprout.png', 'young-plant.png', 'sapling.png', 'mature-tree.png'] as const;
+
+  for (const filename of assets) {
+    const path = join(publicDir, '/primary-reference/seed-tree', filename);
+    assert.equal(existsSync(path), true, `${filename} must exist`);
+    const metadata = await sharp(path).metadata();
+    assert.equal(metadata.format, 'png');
+    assert.equal(metadata.hasAlpha, true, `${filename} must preserve true transparency`);
+  }
+});
+
 test('Years 3–4 reference rebuild ships its generated photo and transparent illustration pack', async () => {
   const generatedAssets = [
     ['years-3-4-learning-scene.png', false],

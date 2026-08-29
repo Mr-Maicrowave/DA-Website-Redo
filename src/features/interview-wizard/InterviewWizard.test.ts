@@ -26,5 +26,6 @@ test('guards duplicate submission and clears persistence only after success', ()
 
 test('includes the required reassurance before submission', () => {
   assert.match(source, /You don’t need to know which class to choose/);
-  assert.match(source, /You don’t need to arrive with the answer/);
+  assert.match(source, /That’s what the conversation is for/);
+  assert.match(source, /We’ll work it out together/);
 });

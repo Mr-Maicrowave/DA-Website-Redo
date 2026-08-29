@@ -33,6 +33,7 @@ gsap.registerPlugin(ScrollTrigger);
 const NO_MOTION_QUERY = "(prefers-reduced-motion: no-preference)";
 const REDUCED_MOTION_QUERY = "(prefers-reduced-motion: reduce)";
 const JOURNEY_DEPARTURE_PROGRESS = 0.12;
+const GATE_SETTLE_EPSILON = 0.002;
 const ACADEMIC_HOLD_PROGRESS = 0.32;
 const CONFIDENCE_HOLD_PROGRESS = 0.52;
 const LEARNING_HABITS_HOLD_PROGRESS = 0.72;
@@ -77,10 +78,9 @@ const LearningJourneyExperience = () => {
   const continueFromEncounter = (progress: number) => {
     const trigger = scrollTriggerRef.current;
     if (!trigger || window.matchMedia(REDUCED_MOTION_QUERY).matches) return;
-    const start = trigger.start + (trigger.end - trigger.start) * progress;
-    trigger.scroll(
-      Math.min(trigger.end, Math.max(window.scrollY, start) + window.innerHeight * 0.72),
-    );
+    const settledProgress = Math.min(1, progress + GATE_SETTLE_EPSILON);
+    const destination = trigger.start + (trigger.end - trigger.start) * settledProgress;
+    trigger.scroll(Math.min(trigger.end, Math.max(window.scrollY, destination)));
     ScrollTrigger.update();
   };
 
@@ -94,7 +94,7 @@ const LearningJourneyExperience = () => {
     onValueCommitted: (answer) => {
       answersRef.current.academicLevel = answer;
     },
-    onFirstComplete: () => continueFromEncounter(0.34),
+    onFirstComplete: () => continueFromEncounter(CONFIDENCE_HOLD_PROGRESS),
   });
 
   const confidenceSelection = useEncounterSelection({
@@ -107,7 +107,7 @@ const LearningJourneyExperience = () => {
     onValueCommitted: (answer) => {
       answersRef.current.confidence = answer;
     },
-    onFirstComplete: () => continueFromEncounter(0.54),
+    onFirstComplete: () => continueFromEncounter(LEARNING_HABITS_HOLD_PROGRESS),
   });
 
   const learningHabitsSelection = useEncounterSelection({
@@ -120,7 +120,7 @@ const LearningJourneyExperience = () => {
     onValueCommitted: (answer) => {
       answersRef.current.learningHabits = answer;
     },
-    onFirstComplete: () => continueFromEncounter(0.74),
+    onFirstComplete: () => continueFromEncounter(MOTIVATION_HOLD_PROGRESS),
   });
 
   const motivationSelection = useEncounterSelection({
@@ -141,7 +141,7 @@ const LearningJourneyExperience = () => {
         gsap.to(obstacle, { rotation: 3, x: 5, duration: 0.38, ease: "power3.out" });
         gsap.to(motivationScene, { autoAlpha: 0, duration: 0.32, delay: 0.28, ease: "power3.out" });
       }
-      continueFromEncounter(0.87);
+      continueFromEncounter(GOALS_HOLD_PROGRESS);
     },
   });
 

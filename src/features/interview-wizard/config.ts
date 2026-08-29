@@ -4,12 +4,12 @@ const options = (entries: readonly (readonly [string, string])[]): readonly Opti
   entries.map(([value, label]) => ({ value, label }));
 
 export const STEP_META = [
-  { step: 1, short: 'About You', title: 'Who are we getting to know?' },
-  { step: 2, short: 'Subjects', title: 'What would you like help with?' },
-  { step: 3, short: 'Right Now', title: 'What is happening right now?' },
-  { step: 4, short: 'Goals', title: 'What would you like to change?' },
-  { step: 5, short: 'Learning', title: 'How do they learn best?' },
-  { step: 6, short: 'Review', title: 'Does this look right?' },
+  { step: 1, short: 'YOU', title: 'Who are we getting to know?' },
+  { step: 2, short: 'SUBJECTS', title: 'What would you like help with?' },
+  { step: 3, short: 'RIGHT NOW', title: 'What is happening right now?' },
+  { step: 4, short: 'GOALS', title: 'What would you like to change?' },
+  { step: 5, short: 'LEARNING', title: 'How do they learn best?' },
+  { step: 6, short: 'REVIEW', title: 'Does this look right?' },
 ] as const;
 
 export const CONTACT_METHODS: readonly Option<ContactMethod>[] = [
@@ -71,7 +71,6 @@ export const CURRENT_SITUATIONS = options([
   ['needs-more-challenge', 'They need more challenge than school is giving them.'],
   ['performing-strongly-wants-more', 'They’re performing strongly and want to go further.'],
   ['results-have-dropped', 'Their results have recently dropped.'],
-  ['transitioning-school-or-stage', 'They are transitioning school or stage.'],
   ['important-assessment-coming', 'They have an important exam or assessment coming up.'],
   ['not-sure-what-problem-is', 'I’m not sure what the problem is yet.'],
 ]);
@@ -89,7 +88,7 @@ export const GOALS_BY_STAGE: Record<SchoolStage, readonly Option[]> = { primary:
 
 export const LEARNING_CHALLENGES = options([['gaps-from-earlier-years', 'Gaps from earlier years'], ['difficulty-concentrating', 'Difficulty concentrating'], ['works-slowly', 'Works slowly'], ['rushes', 'Rushes'], ['instructions-can-be-confusing', 'Instructions can be confusing'], ['difficulty-remembering-concepts', 'Difficulty remembering concepts'], ['difficulty-applying-knowledge-in-tests', 'Difficulty applying knowledge in tests'], ['written-responses-are-difficult', 'Written responses are difficult'], ['assessment-anxiety', 'Assessment anxiety'], ['needs-more-repetition', 'Needs more repetition'], ['gets-bored-when-work-too-easy', 'Gets bored when work is too easy'], ['inconsistent-past-support', 'Inconsistent past support'], ['nothing-specific', 'Nothing specific'], ['not-sure', 'Not sure'], ['other', 'Other']]);
 export const PREVIOUS_TUTORING_ISSUES = options([['class-too-big', 'Class was too big'], ['moved-too-quickly', 'Moved too quickly'], ['moved-too-slowly', 'Moved too slowly'], ['explanations-not-clear', 'Explanations were not clear'], ['student-did-not-connect-with-tutor', 'Student did not connect with the tutor'], ['too-much-homework', 'Too much homework'], ['not-enough-challenge', 'Not enough challenge'], ['work-not-aligned-with-school', 'Work was not aligned with school'], ['not-enough-feedback', 'Not enough feedback'], ['worked-well-changing-for-another-reason', 'It worked well; changing for another reason'], ['other', 'Other']]);
-export const FORMAT_PREFERENCES: readonly Option<LearningFormat>[] = [{ value: 'private', label: 'Private tuition' }, { value: 'small-group', label: 'Small group' }, { value: 'class', label: 'Class' }, { value: 'advanced', label: 'Advanced / extension' }, { value: 'not-sure', label: 'Not sure — please recommend what suits my child' }];
+export const FORMAT_PREFERENCES: readonly Option<LearningFormat>[] = [{ value: 'private', label: 'Private' }, { value: 'small-group', label: 'Small Group' }, { value: 'class', label: 'Class' }, { value: 'advanced', label: 'Advanced / specialised program' }, { value: 'not-sure', label: 'Not sure — please recommend what suits my child' }];
 export const TUTOR_PREFERENCES = options([['patient-and-reassuring', 'Patient and reassuring'], ['energetic-and-motivating', 'Energetic and motivating'], ['calm-and-structured', 'Calm and structured'], ['direct-and-accountable', 'Direct and accountable'], ['strong-at-rebuilding-confidence', 'Strong at rebuilding confidence'], ['strong-at-challenging-advanced-students', 'Strong at challenging advanced students'], ['explains-concepts-different-ways', 'Explains concepts in different ways'], ['strong-at-organisation', 'Strong at organisation'], ['no-preference', 'No preference']]);
 
 export const CONSULTATION_STEPS = [

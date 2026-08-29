@@ -23,10 +23,20 @@ test('choreographs discovery into understanding and personalisation', () => {
   assert.match(page, /data-motion="hero-line"/);
   assert.match(page, /data-motion="hero-student"/);
   assert.match(page, /data-motion="observation"/);
-  assert.match(page, /data-motion="discovery-item"/);
+  assert.match(page, /data-motion="gallery-card"/);
   assert.match(page, /data-motion="path-item"/);
   assert.match(page, /data-motion="proof-value"/);
   assert.match(page, /className="why-da-journey-thread"/);
+});
+
+test('pins and scrubs the desktop gallery while preserving mobile and reduced-motion paths', () => {
+  assert.match(motion, /data-testid="why-da-know-gallery"/);
+  assert.match(motion, /gallery-track/);
+  assert.match(motion, /pin:\s*true/);
+  assert.match(motion, /invalidateOnRefresh:\s*true/);
+  assert.match(motion, /gallery-image/);
+  assert.match(motion, /gallery-progress/);
+  assert.match(motion, /ResizeObserver/);
 });
 
 test('counts proof metrics once and uses the requested personalisation sequence', () => {

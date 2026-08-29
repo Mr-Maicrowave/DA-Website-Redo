@@ -1,0 +1,9 @@
+.interview-form-wrap{width:min(1320px,88vw)}
+.interview-form-padding{padding:clamp(38px,4.2vw,66px)}
+.interview-duration{display:flex;align-items:center;gap:11px;margin:0 0 28px;color:#c67d13;font-family:inherit;font-size:1rem;transform:none}
+.interview-duration svg{width:24px;height:24px;stroke-width:1.6}
+.interview-form-card input,.interview-form-card select{min-height:56px;border-radius:9px!important}
+.interview-side-note{display:none}
+@media(max-width:900px){.interview-form-wrap{width:92vw}}
+@media(max-width:640px){.interview-form-padding{padding:28px 20px}.interview-duration{font-size:.9rem}}
+.interview-confirmation-journey{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:10px;margin:30px auto 0;color:#fff}.interview-confirmation-journey b{font-size:.7rem;text-transform:uppercase;letter-spacing:.08em}.interview-confirmation-journey span{color:#d4af37}

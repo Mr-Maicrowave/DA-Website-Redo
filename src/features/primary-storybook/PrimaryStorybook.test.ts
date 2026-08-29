@@ -37,7 +37,7 @@ test('Primary reference story keeps all year-group chapters together before enri
     '<GrowthCurriculum',
     '<MasterySection',
     '<MasteryCurriculum',
-    '<PrimaryAquarium',
+    '<SeedTreeChallenge',
     '<HowWeTeach',
     '<ProgramBag',
     '<FamilyReasons',
@@ -91,7 +91,7 @@ test('Years 1–2 foundations present all four outcomes without turning them int
   assert.doesNotMatch(source, /Card/);
 });
 
-test('Years 1–2 curriculum is followed by Years 3–4 and Years 5–6 before the aquarium', () => {
+test('Years 1–2 curriculum is followed by Years 3–4, Years 5–6 and the seed challenge', () => {
   assert.equal(existsSync(foundationCurriculumUrl), true, 'FoundationCurriculum must exist');
   assert.equal(existsSync(aquariumUrl), true, 'PrimaryAquarium must exist');
   assert.equal(existsSync(aquariumDataUrl), true, 'aquarium data must exist');
@@ -105,7 +105,7 @@ test('Years 1–2 curriculum is followed by Years 3–4 and Years 5–6 before t
   const story = readFileSync(referenceStoryUrl, 'utf8');
 
   assert.doesNotMatch(curriculum, /<PrimaryAquarium/);
-  assert.match(story, /<FoundationCurriculum\s*\/>[\s\S]*?<GrowthSection\s*\/>\s*<GrowthCurriculum\s*\/>\s*<MasterySection\s*\/>\s*<MasteryCurriculum\s*\/>\s*<PrimaryAquarium\s*\/>\s*<SupportJourney\s*\/>\s*<HowWeTeach/);
+  assert.match(story, /<FoundationCurriculum\s*\/>[\s\S]*?<GrowthSection\s*\/>\s*<GrowthCurriculum\s*\/>\s*<MasterySection\s*\/>\s*<MasteryCurriculum\s*\/>\s*<SeedTreeChallenge\s*\/>\s*<SupportJourney\s*\/>\s*<HowWeTeach/);
   assert.match(curriculum, /years-1-2-school-scene\.png/);
   assert.match(curriculum, /years-1-2-curriculum-atlas\.png/);
   assert.match(curriculum, /Discover the journey/);
@@ -165,13 +165,13 @@ test('How We Teach renders the four supplied transparent teaching composites in 
   assert.equal((storyData.match(/number: '0[1-4]'/g) ?? []).length >= 8, true);
 });
 
-test('the support journey follows the aquarium with both reference-matched sections', () => {
+test('the support journey follows the seed challenge with both reference-matched sections', () => {
   assert.equal(existsSync(supportJourneyUrl), true, 'SupportJourney must exist');
 
   const story = readFileSync(referenceStoryUrl, 'utf8');
   const source = readFileSync(supportJourneyUrl, 'utf8');
 
-  assert.match(story, /<PrimaryAquarium\s*\/>\s*<SupportJourney\s*\/>\s*<HowWeTeach\s*\/>/);
+  assert.match(story, /<SeedTreeChallenge\s*\/>\s*<SupportJourney\s*\/>\s*<HowWeTeach\s*\/>/);
   [
     'We help every child find their place.',
     'Before DA',

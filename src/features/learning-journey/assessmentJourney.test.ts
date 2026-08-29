@@ -320,3 +320,12 @@ test("unanswered encounter gates continuation without blocking wheel or touch ev
   assert.match(world, /recommendationJourney/);
   assert.doesNotMatch(journey, /addEventListener\(["'](?:wheel|touchmove)/);
 });
+
+test("answer handoffs settle at the next encounter instead of between scenes", () => {
+  const source = readFileSync(resolve(featureDirectory, "LearningJourney.tsx"), "utf8");
+  assert.match(source, /continueFromEncounter\(CONFIDENCE_HOLD_PROGRESS\)/);
+  assert.match(source, /continueFromEncounter\(LEARNING_HABITS_HOLD_PROGRESS\)/);
+  assert.match(source, /continueFromEncounter\(MOTIVATION_HOLD_PROGRESS\)/);
+  assert.match(source, /continueFromEncounter\(GOALS_HOLD_PROGRESS\)/);
+  assert.match(source, /GATE_SETTLE_EPSILON/);
+});

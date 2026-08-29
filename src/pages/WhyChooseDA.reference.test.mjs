@@ -20,6 +20,16 @@ test('the hero fills exactly one viewport below the desktop navigation', () => {
   assert.match(styles, /@media\s*\(max-width:\s*1023px\)[\s\S]*?\.why-da-hero\s*\{[^}]*min-height:\s*calc\(100svh\s*-\s*56px\)/s);
 });
 
+test('the We Know You evidence is a six-part editorial gallery', () => {
+  assert.match(page, /data-testid="why-da-know-gallery"/);
+  assert.match(page, /data-gallery-category=\{index\}/);
+  assert.match(page, /data-gallery-index=\{index\}/);
+  assert.match(page, /Starting point[\s\S]*Strengths & weaknesses[\s\S]*Confidence[\s\S]*Goals[\s\S]*Learning style[\s\S]*Parent concerns/);
+  assert.match(page, /Once we understand the whole picture/);
+  assert.match(styles, /\.why-da-know-gallery/);
+  assert.match(styles, /scroll-snap-type/);
+});
+
 test('continues the Why DA story with teaching, care, and parent connection', () => {
   assert.match(page, /data-testid="why-da-teach"/);
   assert.match(page, /WE TEACH/);

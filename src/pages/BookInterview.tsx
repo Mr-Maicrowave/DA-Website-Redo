@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { CheckCircle, GraduationCap, HandHeart, Home, Phone, ShieldCheck, Smile, Star, Users } from 'lucide-react';
+import { CheckCircle, Clock3, GraduationCap, HandHeart, Home, Phone, ShieldCheck, Smile, Star, Users } from 'lucide-react';
 import { motion } from 'framer-motion';
 import SEO from '@/components/SEO';
 import NavigationNew from '@/components/NavigationNew';
@@ -10,6 +10,7 @@ import { InterviewWizard } from '@/features/interview-wizard/InterviewWizard';
 import { submitInterviewLocally } from '@/features/interview-wizard/submission';
 import type { InterviewFormData } from '@/features/interview-wizard/types';
 import './BookInterview.css';
+import './BookInterviewReference.css';
 
 const C = { navy: '#0A1B34', gold: '#D4AF37' } as const;
 const BENEFITS = [
@@ -19,14 +20,15 @@ const BENEFITS = [
   { icon: Star, text: 'Small Groups Big Impact' },
 ] as const;
 
-function InterviewConfirmation({ parentName }: { parentName: string }) {
+function InterviewConfirmation({ parentName, studentName }: { parentName: string; studentName: string }) {
   return <div className="py-4 text-center">
     <motion.div className="mx-auto mb-8 flex h-20 w-20 items-center justify-center rounded-full" style={{ background: C.gold }} initial={{ scale: .5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}>
       <CheckCircle className="h-9 w-9" style={{ color: C.navy }} aria-hidden="true" />
     </motion.div>
-    <p className="mb-3 text-xs font-black uppercase tracking-[.25em]" style={{ color: C.gold }}>Interview Request Submitted</p>
-    <h2 className="font-serif text-4xl text-white">Thank you{parentName ? `, ${parentName}` : ''}.</h2>
-    <p className="mx-auto mt-5 max-w-lg leading-7 text-white/70">We’ve received your consultation profile and will use it to understand the right subject, level and starting point for your child.</p>
+    <p className="mb-3 text-xs font-black uppercase tracking-[.25em]" style={{ color: C.gold }}>Details received</p>
+    <h2 className="font-serif text-4xl text-white">Thank you{parentName ? `, ${parentName}` : ''} — we’ll take it from here.</h2>
+    <p className="mx-auto mt-5 max-w-lg leading-7 text-white/70">We’ll review what you’ve shared before getting in touch, so the conversation can start with {studentName || 'your child'} rather than with paperwork.</p>
+    <div className="interview-confirmation-journey"><b>✓ Details received</b><span>→</span><b>DA reviews</b><span>→</span><b>We speak with you</b><span>→</span><b>Recommendation</b><span>→</span><b>Right starting point</b></div>
     <p className="mt-4 text-sm" style={{ color: C.gold }}>Most enquiries are contacted within 1 business day.</p>
     <div className="mt-9 flex flex-col justify-center gap-3 sm:flex-row">
       <Link to="/" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl px-6 font-bold" style={{ background: C.gold, color: C.navy }}><Home className="h-4 w-4" />Return Home</Link>
@@ -61,7 +63,7 @@ const BookInterview = () => {
         <div className="interview-form-card" style={{ background: completedData ? C.navy : 'linear-gradient(160deg, #FDFAF5 0%, #FFFFFF 55%)', border: '1px solid rgba(212,175,55,.2)', boxShadow: '0 6px 8px rgba(10,27,52,.08)' }}>
           {!completedData ? <div className="relative h-[2px] w-full" style={{ background: `linear-gradient(90deg, transparent, ${C.gold}, transparent)` }} /> : null}
           <div className="interview-form-padding">
-            {!completedData ? <><p className="interview-duration mb-6">Takes 2 minutes to begin</p><InterviewWizard submitInterview={submitInterviewLocally} onSuccess={data => setCompletedData(data)} /></> : <InterviewConfirmation parentName={completedData.parentFirstName} />}
+            {!completedData ? <><p className="interview-duration"><Clock3 aria-hidden="true" />Takes about 5 minutes</p><InterviewWizard submitInterview={submitInterviewLocally} onSuccess={data => setCompletedData(data)} /></> : <InterviewConfirmation parentName={completedData.parentFirstName} studentName={completedData.studentFirstName} />}
           </div>
         </div>
       </div>
