@@ -29,8 +29,12 @@ test('renders the Programs pathway as a macro-to-micro scroll story before HSC l
   assert.match(source, /HSC SPECIALISATION/);
   assert.match(source, /Scale readout/);
   assert.match(source, /Current specimen/);
-  assert.match(source, /1× visible world/);
-  assert.match(source, /10,000× field study/);
+  assert.match(source, /Macro · impact/);
+  assert.match(source, /Fields &amp; waves/);
+  assert.match(source, /science-focus-target/);
+  assert.doesNotMatch(source, /orchardHandoffOpacity|orchardHandoffFilter|science-handoff-orchard/);
+  assert.match(source, /Optical view/);
+  assert.match(source, /Physical model/);
   assert.match(source, /className="science-programs__hsc[^\"]*"/);
   assert.match(source, /prefers-reduced-motion: reduce/);
 });
@@ -54,9 +58,16 @@ test('grows the microscope aperture from the apple landing point before centring
   assert.match(source, /const lensBackdropOpacity = useTransform/);
   assert.match(source, /className=\s*"[^"]*science-lens-entry/);
   assert.match(source, /className="science-lens-backdrop/);
-  assert.match(source, /transformOrigin: '78% 72%'/);
-  assert.match(source, /\['6vw', '4vw', '0vw'\]/);
-  assert.match(source, /\['29vh', '10vh', '0vh'\]/);
+  assert.match(source, /document\.querySelector<HTMLElement>\('\.science-story-apple'\)/);
+  assert.match(source, /getBoundingClientRect\(\)/);
+  assert.match(source, /const \[handoffGeometry, setHandoffGeometry\]/);
+  assert.match(source, /transformOrigin: '50% 50%'/);
+  assert.match(source, /handoffGeometry\?\.x/);
+  assert.match(source, /handoffGeometry\?\.y/);
+  assert.doesNotMatch(source, /science-entry-bloom/);
+  assert.match(source, /lg:-mt-\[100svh\]/);
+  assert.doesNotMatch(source, /border-y border-\[#071629\]\/20/);
+  assert.match(source, /bg-\[radial-gradient\(circle_at_50%_42%/);
 });
 
 test('pushes each specimen through its own focal point between scale stages', () => {
@@ -64,16 +75,33 @@ test('pushes each specimen through its own focal point between scale stages', ()
 
   assert.match(source, /const appleY = useTransform/);
   assert.match(source, /const macroY = useTransform/);
-  assert.match(source, /\[1, 1\.03, 2\.35\]/);
-  assert.match(source, /\[\.48, 1, 1\.03, 2\.35\]/);
+  assert.match(source, /\[0, \.25, \.31\]/);
+  assert.match(source, /\[1, 1, 2\.35\]/);
+  assert.match(source, /\[1\.28, 1\.04, 1\.08, 2\.4\]/);
+  assert.match(source, /overflow-hidden rounded-full/);
 });
 
-test('keeps the desktop scale-story introduction and specimen readout in one centred left rail', () => {
+test('uses viewport coordinates for the full-bleed stage and its supporting rails', () => {
   const source = readFileSync(pageUrl, 'utf8');
 
   assert.match(source, /science-scale-story__intro/);
   assert.match(source, /science-scale-story__readout/);
-  assert.match(source, /xl:left-\[calc\(50%-38\.5rem\)\][^\"]*xl:w-64/);
-  assert.doesNotMatch(source, /science-scale-story__intro[^\n]*xl:-translate-x-/);
-  assert.match(source, /xl:top-\[calc\(50%\+12rem\)\]/);
+  assert.match(source, /left-1\/2 h-\[580vh\] w-screen -translate-x-1\/2/);
+  assert.doesNotMatch(source, /lg:-ml-8/);
+  assert.match(source, /left-\[clamp\(3rem,8vw,10rem\)\] top-\[calc\(50%-12rem\)\]/);
+  assert.match(source, /right-\[clamp\(3rem,8vw,10rem\)\]/);
+  assert.match(source, /w-\[min\(80rem,calc\(100vw-3rem\)\)\] -translate-x-1\/2/);
+  assert.match(source, /bottom-\[clamp\(1\.5rem,4vh,3rem\)\]/);
+  assert.match(source, /top-\[calc\(50%-12rem\)\]/);
+  assert.match(source, /science-scale-story__readout relative mt-10 h-32/);
+});
+
+test('keeps the course context editorial, staged, and specific to each programme', () => {
+  const source = readFileSync(pageUrl, 'utf8');
+
+  assert.match(source, /Foundation Science · Years 7–10/);
+  assert.match(source, /Investigation · Problem solving · Exam skills/);
+  assert.match(source, /Cellular processes · Genetics · Ecosystems/);
+  assert.match(source, /Structure &amp; bonding · Reactions · Quantitative chemistry/);
+  assert.match(source, /Motion &amp; forces · Waves &amp; energy · Fields/);
 });

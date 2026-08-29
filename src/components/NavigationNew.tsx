@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
-import { Menu, ChevronDown } from 'lucide-react';
+import { Menu, ChevronDown, Search } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { HoverCard, HoverCardTrigger, HoverCardContent } from "@/components/ui/hover-card";
 import { useAdaptiveNav } from '@/hooks/useAdaptiveNav';
 import MobileNavSheet from '@/components/nav/MobileNavSheet';
+import GlobalSearch from '@/components/nav/GlobalSearch';
 
 // Desktop shape morph, expressed as a clip-path wipe rather than an
 // animated width/margin/height. Those are layout properties — every frame
@@ -39,6 +40,7 @@ const NavigationNew = () => {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [reducedMotion, setReducedMotion] = useState(false);
   const [mobileHeaderHidden, setMobileHeaderHidden] = useState(false);
+  const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const location = useLocation();
   const isHomepage = location.pathname === '/';
   const isEnglishMobileTrial = location.pathname === '/subjects/english';
@@ -203,7 +205,7 @@ const NavigationNew = () => {
   return (
     <>
       {/* ── Mobile / touch header — persistent, deliberately not scroll-reactive ── */}
-      <div className={`fixed top-0 left-0 right-0 z-[60] transition-transform duration-300 ease-out lg:hidden ${isEnglishMobileTrial && mobileHeaderHidden && !sheetOpen ? '-translate-y-full' : 'translate-y-0'}`}>
+      <div className={`fixed top-0 left-0 right-0 z-[60] transition-transform duration-300 ease-out min-[1100px]:hidden ${isEnglishMobileTrial && mobileHeaderHidden && !sheetOpen ? '-translate-y-full' : 'translate-y-0'}`}>
         <nav
           className="w-full h-14 backdrop-blur-md backdrop-saturate-125 border-b"
           style={{ borderColor: 'rgba(169,120,37,0.42)', background: barBackground, boxShadow: barShadow }}
@@ -223,20 +225,35 @@ const NavigationNew = () => {
               </span>
             </Link>
 
-            <button
-              ref={hamburgerRef}
-              type="button"
-              onClick={() => {
-                setMobileHeaderHidden(false);
-                setSheetOpen(true);
-              }}
-              aria-label="Open menu"
-              aria-expanded={sheetOpen}
-              aria-controls="mobile-nav-sheet"
-              className={`flex h-11 w-11 items-center justify-center transition-colors -mr-1.5 ${hamburgerIconClass}`}
-            >
-              <Menu size={24} aria-hidden="true" />
-            </button>
+            <div className="flex items-center gap-0.5">
+              <button
+                type="button"
+                onClick={() => {
+                  setMobileHeaderHidden(false);
+                  setMobileSearchOpen(true);
+                  setSheetOpen(true);
+                }}
+                aria-label="Search DA Tuition"
+                className={`flex h-11 w-11 items-center justify-center transition-colors ${hamburgerIconClass}`}
+              >
+                <Search size={21} aria-hidden="true" />
+              </button>
+              <button
+                ref={hamburgerRef}
+                type="button"
+                onClick={() => {
+                  setMobileHeaderHidden(false);
+                  setMobileSearchOpen(false);
+                  setSheetOpen(true);
+                }}
+                aria-label="Open menu"
+                aria-expanded={sheetOpen}
+                aria-controls="mobile-nav-sheet"
+                className={`flex h-11 w-11 items-center justify-center transition-colors -mr-1.5 ${hamburgerIconClass}`}
+              >
+                <Menu size={24} aria-hidden="true" />
+              </button>
+            </div>
           </div>
         </nav>
       </div>
@@ -251,7 +268,7 @@ const NavigationNew = () => {
           aria-label="Open menu"
           aria-expanded={sheetOpen}
           aria-controls="mobile-nav-sheet"
-          className="fixed right-4 top-3 z-[61] flex h-11 w-11 items-center justify-center rounded-full border border-[#c9a227]/50 bg-[#071629] text-white shadow-lg shadow-[#071629]/30 transition-transform duration-300 ease-out lg:hidden"
+          className="fixed right-4 top-3 z-[61] flex h-11 w-11 items-center justify-center rounded-full border border-[#c9a227]/50 bg-[#071629] text-white shadow-lg shadow-[#071629]/30 transition-transform duration-300 ease-out min-[1100px]:hidden"
         >
           <Menu size={22} aria-hidden="true" />
         </button>
@@ -259,7 +276,8 @@ const NavigationNew = () => {
 
       <MobileNavSheet
         isOpen={sheetOpen}
-        onClose={() => setSheetOpen(false)}
+        onClose={() => { setSheetOpen(false); setMobileSearchOpen(false); }}
+        searchOpen={mobileSearchOpen}
         triggerRef={hamburgerRef}
         programsItems={programsItems}
         subjectsItems={subjectsItems}
@@ -267,10 +285,10 @@ const NavigationNew = () => {
       />
 
       {/* ── Desktop header — scroll-adaptive: collapses while reading, expands on deliberate scroll-up ── */}
-      <div className="fixed top-0 left-0 right-0 z-[60] hidden lg:block">
+      <div className="fixed top-0 left-0 right-0 z-[60] hidden min-[1100px]:block">
         <nav
           ref={desktopNavRef}
-          className="backdrop-blur-md backdrop-saturate-125 overflow-hidden"
+          className="backdrop-blur-md backdrop-saturate-125"
           style={{
             position: 'relative',
             width: '100%',
@@ -320,7 +338,7 @@ const NavigationNew = () => {
               pointerEvents: isCollapsed ? 'none' : 'auto',
             }}
           >
-              <div className="flex items-center justify-between py-2.5 gap-4">
+              <div className="grid grid-cols-[1fr_auto_1fr] items-center py-2.5 gap-4">
                 <div className="flex items-center shrink-0">
                   <Link to="/" className="flex items-center gap-2 group">
                     <img
@@ -337,7 +355,7 @@ const NavigationNew = () => {
                   </Link>
                 </div>
 
-                <div className="flex items-center flex-1 justify-center">
+                <div className="flex min-w-0 items-center justify-self-center">
                   <div className="flex gap-0.5 items-center">
                     <Link to="/" className={navLinkClass(isHomepage)} aria-current={isHomepage ? 'page' : undefined}>Home</Link>
                     <Link
@@ -458,10 +476,15 @@ const NavigationNew = () => {
                       </HoverCardContent>
                     </HoverCard>
 
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-5 justify-self-end">
+                    <GlobalSearch onOpenChange={pin} />
                     <Link
                       to="/book-interview"
                       aria-current={location.pathname === '/book-interview' ? 'page' : undefined}
-                      className="book-consultation-nav-card ml-1.5 inline-flex items-center rounded-md px-4 py-2 text-[0.8rem] font-semibold text-[#fff3d6] whitespace-nowrap transition-all duration-200 hover:-translate-y-px hover:brightness-110 active:translate-y-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2 focus-visible:ring-offset-[#f8f1e7]"
+                      className="book-consultation-nav-card inline-flex items-center rounded-md px-4 py-2 text-[0.8rem] font-semibold text-[#fff3d6] whitespace-nowrap transition-all duration-200 hover:-translate-y-px hover:brightness-110 active:translate-y-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2 focus-visible:ring-offset-[#f8f1e7]"
                       style={{ background: 'linear-gradient(135deg, #0A1B34 0%, #122b4d 100%)', border: '1px solid rgba(200,149,52,.76)', boxShadow: '0 2px 5px rgba(10,27,52,.16)' }}
                     >
                       Book Consultation
@@ -470,7 +493,6 @@ const NavigationNew = () => {
                 </div>
 
               </div>
-            </div>
         </nav>
       </div>
     </>

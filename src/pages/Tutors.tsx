@@ -1,12 +1,18 @@
 import FooterNew from '@/components/FooterNew';
 import NavigationNew from '@/components/NavigationNew';
 import SEO from '@/components/SEO';
-import { useState } from 'react';
-import { TutorNamefieldDirectory } from '@/features/tutor-directory/TutorNamefieldDirectory';
+import { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import FindTeacher from './FindTeacher';
 import { TutorOrbitHero } from '@/features/tutor-orbit/TutorOrbitHero';
 
 const Tutors = () => {
   const [view, setView] = useState<'hero' | 'directory'>('hero');
+  const [searchParams] = useSearchParams();
+
+  useEffect(() => {
+    if (searchParams.get('tutor')) setView('directory');
+  }, [searchParams]);
 
   return (
     <div className="tutors-page">
@@ -20,7 +26,7 @@ const Tutors = () => {
         {view === 'hero' ? (
           <TutorOrbitHero onExplore={() => setView('directory')} />
         ) : (
-          <TutorNamefieldDirectory onBackToHero={() => setView('hero')} />
+          <FindTeacher embedded onBackToHero={() => setView('hero')} />
         )}
       </main>
       <FooterNew />

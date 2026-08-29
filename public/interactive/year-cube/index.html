@@ -1,0 +1,1067 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>DA Tuition — Year Cube</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --navy: #06111f;
+      --navy-2: #0b1c30;
+      --ink: #f2ecdc;
+      --muted: #9fb0c2;
+      --gold: #c9a227;
+      --gold-soft: #f1df9a;
+      --cream: #fff6e7;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; }
+    body {
+      background: var(--navy);
+      color: var(--ink);
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+      overflow-x: hidden;
+    }
+    .experience {
+      min-height: 100svh;
+      position: relative;
+      isolation: isolate;
+      background:
+        radial-gradient(circle at 72% 45%, rgba(201,162,39,.10), transparent 40%),
+        radial-gradient(ellipse at 20% 80%, rgba(54,87,130,.16), transparent 55%),
+        var(--navy);
+      display: grid;
+      grid-template-columns: minmax(320px, 480px) 1fr;
+      align-items: center;
+      gap: clamp(24px, 4vw, 64px);
+      padding: clamp(28px, 6vh, 72px) clamp(20px, 6vw, 88px);
+    }
+    @media (max-width: 900px) {
+      .experience { grid-template-columns: 1fr; padding-top: 40px; }
+    }
+
+    /* ---- copy column ---- */
+    .copy { position: relative; z-index: 4; }
+    .eyebrow {
+      display: flex; align-items: center; gap: 10px;
+      color: var(--gold-soft); font-size: .7rem; font-weight: 800;
+      letter-spacing: .18em; text-transform: uppercase; margin: 0 0 20px;
+    }
+    .eyebrow::before { content: ""; width: 34px; height: 2px; background: var(--gold); display: block; }
+    h1 {
+      margin: 0 0 16px; font-family: Georgia, "Times New Roman", serif; font-weight: 700;
+      font-size: clamp(2.1rem, 3.4vw, 3.1rem); line-height: 1.06; letter-spacing: -.01em;
+      color: #fff;
+    }
+    h1 em { font-style: italic; color: var(--gold-soft); }
+    .lede {
+      max-width: 42ch; color: var(--muted); font-size: 1rem; line-height: 1.7; margin: 0 0 28px;
+    }
+
+    .year-picker {
+      display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px;
+    }
+    .year-picker button {
+      font: inherit; cursor: pointer; border: 1px solid rgba(242,236,220,.18);
+      background: rgba(255,255,255,.03); color: var(--muted);
+      width: 46px; height: 46px; border-radius: 12px;
+      font-weight: 800; font-size: .95rem; transition: all .2s ease;
+    }
+    .year-picker button:hover { border-color: rgba(201,162,39,.5); color: var(--ink); }
+    .year-picker button:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+    .year-picker button[aria-pressed="true"] {
+      background: var(--gold); border-color: var(--gold); color: #1a1206;
+      box-shadow: 0 6px 18px rgba(201,162,39,.35);
+    }
+    .year-picker button:disabled { opacity: .35; cursor: not-allowed; }
+
+    .controls-row { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+    .drag-hint {
+      display: flex; align-items: center; gap: 8px;
+      color: var(--muted); font-size: .82rem; margin: 0;
+    }
+    .drag-hint svg { flex: none; opacity: .8; }
+
+    .spin-toggle {
+      display: inline-flex; align-items: center; gap: 7px;
+      font: inherit; font-size: .78rem; font-weight: 700; color: var(--muted);
+      background: rgba(255,255,255,.03); border: 1px solid rgba(242,236,220,.18);
+      border-radius: 999px; padding: 7px 13px 7px 11px; cursor: pointer; transition: all .2s ease;
+    }
+    .spin-toggle:hover { color: var(--ink); border-color: rgba(201,162,39,.5); }
+    .spin-toggle:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+    .spin-toggle svg { flex: none; }
+
+    .sr-live { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+
+    /* ---- cube stage ---- */
+    .stage {
+      position: relative; z-index: 3;
+      display: flex; align-items: center; justify-content: center;
+      height: clamp(360px, 52vw, 560px);
+      perspective: 1600px;
+      touch-action: pan-y;
+    }
+    .cube-wrap { position: relative; width: clamp(230px, 27vw, 320px); height: clamp(230px, 27vw, 320px); transform-style: preserve-3d; }
+    .cube {
+      position: absolute; inset: 0; transform-style: preserve-3d;
+      cursor: grab;
+      user-select: none; -webkit-user-select: none; -moz-user-select: none;
+      -webkit-touch-callout: none;
+    }
+    .cube.grabbing { cursor: grabbing; }
+    .cube.exploring { cursor: default; }
+    .face {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column; justify-content: flex-end;
+      padding: clamp(20px, 2.6vw, 30px);
+      border-radius: 20px;
+      background: linear-gradient(160deg, var(--navy-2), #071322 65%);
+      border: 1px solid rgba(201,162,39,.28);
+      box-shadow: inset 0 0 60px rgba(0,0,0,.35);
+      user-select: none; -webkit-user-select: none; -moz-user-select: none;
+      transition: box-shadow .3s ease;
+      cursor: pointer;
+      backface-visibility: hidden; -webkit-backface-visibility: hidden;
+    }
+    .face.fx-active { box-shadow: inset 0 0 60px rgba(0,0,0,.35), 0 0 0 2px rgba(201,162,39,.55), 0 10px 40px rgba(201,162,39,.25); }
+    .face .num {
+      position: absolute; top: 18px; left: 22px;
+      font-family: Georgia, "Times New Roman", serif; font-weight: 700;
+      font-size: clamp(3.2rem, 6vw, 4.6rem); line-height: 1; color: rgba(241,223,154,.16);
+      transition: opacity .25s ease;
+    }
+    .face .label {
+      font-size: .72rem; font-weight: 800; letter-spacing: .14em; text-transform: uppercase;
+      color: var(--gold-soft); margin-bottom: 8px; transition: opacity .25s ease;
+    }
+    .face .hook {
+      font-size: .92rem; line-height: 1.5; color: #dfe6ee; margin: 0 0 14px;
+      max-width: 26ch; transition: opacity .25s ease;
+    }
+    .face .go {
+      align-self: flex-start; font-size: .8rem; font-weight: 700; color: var(--gold);
+      text-decoration: none; border-bottom: 1px solid rgba(201,162,39,.4); padding-bottom: 2px;
+      transition: opacity .25s ease;
+    }
+    .face .go:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+    .face.fx-dim .num, .face.fx-dim .label, .face.fx-dim .hook, .face.fx-dim .go { opacity: 0; pointer-events: none; }
+
+    /* six faces of the cube — half the cube edge, tuned per box size via CSS var */
+    .cube-wrap { --half: clamp(115px, 13.5vw, 160px); }
+    .face--front  { transform: translateZ(var(--half)); }
+    .face--right  { transform: rotateY(90deg) translateZ(var(--half)); }
+    .face--back   { transform: rotateY(180deg) translateZ(var(--half)); }
+    .face--left   { transform: rotateY(-90deg) translateZ(var(--half)); }
+    .face--top    { transform: rotateX(90deg) translateZ(var(--half)); }
+    .face--bottom { transform: rotateX(-90deg) translateZ(var(--half)); }
+
+    .stage-caption {
+      position: absolute; bottom: -6px; left: 50%; transform: translateX(-50%);
+      font-size: .74rem; color: var(--muted); white-space: nowrap;
+      transition: opacity .3s ease;
+    }
+
+    footer.note {
+      grid-column: 1 / -1; z-index: 4; margin-top: 30px;
+      font-size: .74rem; color: rgba(159,176,194,.7);
+    }
+
+    /* ---- dice pips (Year 10) ---- */
+    .pips {
+      display: none;
+      position: absolute; inset: clamp(20px, 2.6vw, 30px);
+      grid-template: repeat(3, 1fr) / repeat(3, 1fr);
+    }
+    .cube.dice-mode .pips { display: grid; }
+    /* Year 8 uses the real cube: rotating it exposes the third dimension. */
+    .cube.depth-mode .face {
+      background: linear-gradient(160deg, rgba(20, 49, 80, .95), rgba(7, 19, 34, .9) 65%);
+      border-color: rgba(241,223,154,.58);
+      box-shadow: inset 0 0 60px rgba(0,0,0,.25), 0 0 24px rgba(201,162,39,.14);
+    }
+    .cube.depth-mode .face.fx-active { box-shadow: inset 0 0 60px rgba(0,0,0,.2), 0 0 0 2px rgba(201,162,39,.8), 0 10px 40px rgba(201,162,39,.3); }
+    .cube.depth-mode .face--front { background: linear-gradient(160deg, rgba(13, 48, 82, .96), rgba(6, 24, 42, .94)); }
+    .cube.depth-mode .face--right { background: linear-gradient(160deg, rgba(38, 80, 112, .96), rgba(12, 38, 61, .94)); }
+    .cube.depth-mode .face--top { background: linear-gradient(160deg, rgba(81, 113, 142, .94), rgba(25, 55, 82, .94)); }
+    /* Year 9 keeps the cube's edges, but lets the through-line remain legible. */
+    .cube.space-diagonal-mode .face {
+      background: rgba(11, 28, 48, .24);
+      border-color: rgba(241,223,154,.46);
+      box-shadow: inset 0 0 38px rgba(0,0,0,.12), 0 0 18px rgba(201,162,39,.08);
+    }
+    .cube.space-diagonal-mode .face:not(.fx-active) .num,
+    .cube.space-diagonal-mode .face:not(.fx-active) .label,
+    .cube.space-diagonal-mode .face:not(.fx-active) .hook,
+    .cube.space-diagonal-mode .face:not(.fx-active) .go { opacity: .08; }
+    .space-diagonal-line {
+      position: absolute; left: 4%; top: 10%; height: 3px; width: 0; z-index: 4;
+      transform: translateZ(320px) rotate(43deg);
+      transform-origin: 0 50%; pointer-events: none;
+      background: var(--gold-soft); box-shadow: 0 0 12px rgba(241,223,154,.85);
+      transition: width 900ms cubic-bezier(.22,1,.36,1);
+    }
+    .space-diagonal-line::before, .space-diagonal-line::after {
+      content: ''; position: absolute; top: 50%; width: 8px; height: 8px; border-radius: 50%;
+      background: var(--gold-soft); box-shadow: 0 0 10px rgba(241,223,154,.9); transform: translate(-50%,-50%);
+    }
+    .space-diagonal-line::after { left: 100%; }
+    .cube.space-diagonal-mode .face .num, .cube.space-diagonal-mode .face .label,
+    .cube.space-diagonal-mode .face .hook, .cube.space-diagonal-mode .face .go { opacity: 0; }
+    .diagonal-wireframe { position:absolute; inset:0; z-index:8; pointer-events:none; opacity:0; transition:opacity .35s ease; }
+    .diagonal-wireframe.in { opacity:1; }
+    .diagonal-wireframe .edge { fill:rgba(11,28,48,.06); stroke:rgba(241,223,154,.48); stroke-width:1.3; }
+    .diagonal-wireframe .face-diagonal { stroke:rgba(159,176,194,.85); stroke-width:1.5; stroke-dasharray:4 3; }
+    .diagonal-wireframe .space-diagonal { stroke:var(--gold-soft); stroke-width:2.4; filter:drop-shadow(0 0 4px rgba(241,223,154,.9)); }
+    .hinged-net { position:absolute; inset:0; z-index:8; pointer-events:none; perspective:900px; transform-style:preserve-3d; }
+    .hinged-net__panel { position:absolute; width:24%; aspect-ratio:1; transform-style:preserve-3d; transition:transform 1000ms cubic-bezier(.22,1,.36,1); }
+    .hinged-net__panel[data-net="front"] { left:38%; top:38%; }
+    .hinged-net__panel[data-net="right"] { left:100%; top:0; transform-origin:left center; transform:rotateY(-90deg); }
+    .hinged-net__panel[data-net="left"] { right:100%; top:0; transform-origin:right center; transform:rotateY(90deg); }
+    .hinged-net__panel[data-net="top"] { left:0; bottom:100%; transform-origin:center bottom; transform:rotateX(90deg); }
+    .hinged-net__panel[data-net="bottom"] { left:0; top:100%; transform-origin:center top; transform:rotateX(-90deg); }
+    .hinged-net__panel[data-net="back"] { left:100%; top:0; transform-origin:left center; transform:rotateY(-90deg); }
+    .hinged-net.in .hinged-net__panel { transform:rotateX(0) rotateY(0); }
+    .hinged-net__panel .face { position:absolute; inset:0; transform:none !important; border-radius:10px; padding:14px; }
+    .pip {
+      width: 18%; aspect-ratio: 1; border-radius: 50%;
+      background: var(--gold-soft); align-self: center; justify-self: center;
+      box-shadow: 0 0 10px rgba(241,223,154,.5);
+    }
+
+    /* ---- generic fx layer used by the face explorations ---- */
+    .fx-layer { position: absolute; inset: 0; pointer-events: none; overflow: hidden; border-radius: inherit; }
+    .fx-layer.space-diagonal-layer { overflow: visible; }
+    .fx-line {
+      position: absolute; height: 2px; background: var(--gold);
+      transform-origin: 0 50%; opacity: 0; box-shadow: 0 0 8px rgba(201,162,39,.6);
+    }
+    .fx-chip {
+      position: absolute; font-size: .68rem; font-weight: 800; letter-spacing: .04em;
+      color: #0f1a10; background: var(--gold-soft); padding: 3px 8px; border-radius: 999px;
+      opacity: 0; transform: translateY(6px) scale(.85); transition: opacity .35s ease-out, transform .35s cubic-bezier(.22,1,.36,1);
+      white-space: nowrap;
+    }
+    .fx-chip.in { opacity: 1; transform: translateY(0) scale(1); }
+    .fx-sq {
+      position: absolute; border: 2px solid var(--gold); border-radius: 6px;
+      background: rgba(201,162,39,.08);
+    }
+    .probability-sample { position: absolute; inset: 15% 12% 31%; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .probability-outcome { display: grid; place-items: center; border: 1px solid rgba(241,223,154,.35); border-radius: 8px; color: var(--gold-soft); font-weight: 800; font-size: .86rem; opacity: 0; transform: scale(.65); transition: opacity .22s ease-out, transform .22s cubic-bezier(.22,1,.36,1), background .22s ease; }
+    .probability-outcome.in { opacity: 1; transform: scale(1); }
+    .probability-outcome.is-result { background: var(--gold); color: #1a1206; box-shadow: 0 0 16px rgba(201,162,39,.5); }
+    .probability-caption { position: absolute; left: 50%; bottom: 8%; transform: translate(-50%, 8px); opacity: 0; color: var(--gold-soft); font-size: .68rem; font-weight: 800; white-space: nowrap; transition: opacity .25s ease, transform .25s cubic-bezier(.22,1,.36,1); }
+    .probability-caption.in { opacity: 1; transform: translate(-50%, 0); }
+    .method-chain { position: absolute; inset: 14% 11% 33%; display: grid; align-content: center; gap: 8px; }
+    .method-step { display: flex; align-items: center; gap: 8px; color: #dfe6ee; font-size: .68rem; font-weight: 800; opacity: 0; transform: translateX(-16px); transition: opacity .28s ease-out, transform .28s cubic-bezier(.22,1,.36,1); }
+    .method-step::before { content: ''; width: 16px; height: 16px; border: 1px solid var(--gold); border-radius: 50%; flex: none; }
+    .method-step.in { opacity: 1; transform: translateX(0); }
+    .method-step.in::before { background: var(--gold); box-shadow: 0 0 10px rgba(201,162,39,.45); }
+    .method-link { height: 10px; width: 1px; background: rgba(201,162,39,.55); margin-left: 7px; transform: scaleY(0); transform-origin: top; transition: transform .22s ease-out; }
+    .method-link.in { transform: scaleY(1); }
+    .marking-lens { position: absolute; inset: 17% 13% 33%; display: grid; align-content: center; gap: 10px; }
+    .mark-line { height: 10px; border-radius: 999px; background: rgba(223,230,238,.15); position: relative; overflow: hidden; }
+    .mark-line::after { content: ''; position: absolute; inset: 0; transform: translateX(-101%); background: linear-gradient(90deg, var(--gold), var(--gold-soft)); transition: transform .38s cubic-bezier(.22,1,.36,1); }
+    .mark-line.in::after { transform: translateX(0); }
+    .mark-line:nth-child(2) { width: 82%; }.mark-line:nth-child(3) { width: 92%; }.mark-line:nth-child(4) { width: 68%; }
+    .marking-caption { color: var(--gold-soft); font-size: .68rem; font-weight: 800; opacity: 0; transform: translateY(8px); transition: opacity .25s ease, transform .25s cubic-bezier(.22,1,.36,1); }
+    .marking-caption.in { opacity: 1; transform: translateY(0); }
+    .scene-narration { position: absolute; left: 9%; right: 9%; bottom: 7%; padding: 9px 10px; border: 1px solid rgba(201,162,39,.32); border-radius: 8px; background: rgba(6,17,31,.92); color: #dfe6ee; opacity: 0; transform: translateY(8px); transition: opacity .26s ease, transform .26s cubic-bezier(.22,1,.36,1); }
+    .scene-narration.in { opacity: 1; transform: translateY(0); }
+    .scene-narration strong { display: block; color: var(--gold-soft); font-size: .7rem; line-height: 1.25; }
+    .scene-narration span { display: block; margin-top: 3px; font-size: .64rem; line-height: 1.35; }
+    .net-projection { position: absolute; width: 400%; height: 300%; left: -150%; top: -100%; transform: scale(.54); transform-origin: center; opacity: 0; transition: opacity .35s ease, transform .65s cubic-bezier(.22,1,.36,1); pointer-events: none; }
+    .net-projection.in { opacity: 1; transform: scale(.6); }
+    .net-projection__tile { position: absolute; width: 25%; height: 33.333%; display: grid; place-items: center; border: 2px solid rgba(201,162,39,.62); border-radius: 10px; background: #0b1c30; color: var(--gold-soft); font: 700 2rem Georgia, serif; opacity: 0; transform: scale(.8); transition: opacity .28s ease, transform .4s cubic-bezier(.22,1,.36,1); }
+    .net-projection__tile.in { opacity: 1; transform: scale(1); }
+    .cube.net-projecting { opacity: .12; transition: opacity .3s ease; }
+    .function-board, .worked-solution { position: absolute; inset: 13% 10% 34%; color: var(--ink); font-family: Georgia, serif; }
+    .function-board__equation, .worked-solution__line { opacity: 0; transform: translateY(10px); transition: opacity .35s ease, transform .35s cubic-bezier(.22,1,.36,1); }
+    .function-board__equation.in, .worked-solution__line.in { opacity: 1; transform: translateY(0); }
+    .function-board__equation { font-size: clamp(1rem, 2.5vw, 1.45rem); margin: 0 0 11px; }
+    .function-board__result { color: var(--gold-soft); font-size: .88rem; }
+    .function-board svg { width: 100%; height: 45%; margin-top: 8px; }
+    .function-board path { fill: none; stroke: var(--gold); stroke-width: 3; stroke-dasharray: 260; stroke-dashoffset: 260; transition: stroke-dashoffset .7s cubic-bezier(.22,1,.36,1); }
+    .function-board path.in { stroke-dashoffset: 0; }
+    .worked-solution { display: grid; align-content: center; gap: 9px; font-size: clamp(1rem, 2.5vw, 1.35rem); }
+    .worked-solution__line { display: flex; justify-content: space-between; align-items: center; }
+    .worked-solution__mark { color: var(--gold-soft); font: 800 .6rem ui-sans-serif, system-ui, sans-serif; letter-spacing: .06em; }
+    .worked-solution__answer { border: 1px solid var(--gold); padding: 6px 8px; color: var(--gold-soft); }
+    .algebra-block { position: absolute; inset: 16% 18% 36%; transform-style: preserve-3d; perspective: 700px; }
+    .algebra-block__solid { position: absolute; inset: 0; transform-style: preserve-3d; transform: rotateX(-18deg) rotateY(-30deg); transition: transform 1.1s cubic-bezier(.22,1,.36,1); }
+    .algebra-block.in .algebra-block__solid { transform: rotateX(-25deg) rotateY(32deg); }
+    .algebra-block__face { position: absolute; inset: 0; display: grid; place-items: center; border: 2px solid var(--gold); background: rgba(201,162,39,.09); color: var(--gold-soft); font: 700 1.35rem Georgia, serif; }
+    .algebra-block__top { transform: rotateX(90deg) translateZ(38px); transform-origin: top; background: rgba(241,223,154,.18); }
+    .algebra-block__side { transform: rotateY(90deg) translateZ(38px); transform-origin: right; background: rgba(201,162,39,.17); }
+
+    /* ---- explore content panel ---- */
+    .explore-panel {
+      position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none; transition: opacity .45s ease; z-index: 6;
+    }
+    .explore-panel.visible { opacity: 1; pointer-events: auto; }
+    .explore-card {
+      max-width: 360px; text-align: left; background: rgba(6,17,31,.82);
+      border: 1px solid rgba(201,162,39,.35); border-radius: 22px; padding: clamp(24px, 3vw, 34px);
+      backdrop-filter: blur(6px);
+      transform: translateY(10px); opacity: 0; transition: all .5s cubic-bezier(.2,.9,.3,1);
+    }
+    @media (max-width: 900px) {
+      .explore-card { background: #06111f; }
+    }
+    .explore-panel.visible .explore-card { transform: translateY(0); opacity: 1; transition-delay: .15s; }
+    .explore-card .num { font-family: Georgia, serif; font-size: 3.4rem; color: var(--gold-soft); line-height: 1; margin: 0 0 6px; }
+    .explore-card .label { font-size: .72rem; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: var(--gold-soft); margin: 0 0 14px; }
+    .explore-card p { font-size: .95rem; line-height: 1.6; color: #dfe6ee; margin: 0 0 22px; }
+    .back-btn {
+      font: inherit; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;
+      background: transparent; border: 1px solid rgba(242,236,220,.3); color: var(--ink);
+      padding: 10px 16px; border-radius: 999px; font-size: .82rem; font-weight: 700; transition: all .2s ease;
+    }
+    .back-btn:hover { border-color: var(--gold); color: var(--gold-soft); }
+    .back-btn:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+  </style>
+</head>
+<body>
+  <section class="experience">
+    <div class="copy">
+      <p class="eyebrow">Years 7&ndash;12 Mathematics</p>
+      <h1>Step inside <em>a year level.</em></h1>
+      <p class="lede">
+        Drag the cube to look around, or jump straight to a year &mdash; each
+        face is a snapshot of what that year actually covers and where
+        students usually lose marks.
+      </p>
+      <div class="year-picker" role="group" aria-label="Choose a year level">
+        <!-- JS fills these -->
+      </div>
+      <div class="controls-row">
+        <p class="drag-hint">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+            <path d="M8 9l-4 3 4 3M16 9l4 3-4 3M2 12h20" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Drag it, then let go &mdash; it keeps drifting on its own
+        </p>
+        <button type="button" class="spin-toggle" id="spinToggle" aria-pressed="true">
+          <svg id="spinIcon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="6" y="4" width="4" height="16" rx="1"></rect>
+            <rect x="14" y="4" width="4" height="16" rx="1"></rect>
+          </svg>
+          <span id="spinToggleLabel">Pause drift</span>
+        </button>
+      </div>
+      <div class="sr-live" role="status" aria-live="polite" id="srLive"></div>
+    </div>
+
+    <div class="stage">
+      <div class="cube-wrap">
+        <div class="cube" id="cube">
+          <div class="face face--front" data-face="front">
+            <div class="pips" data-count="1"></div>
+            <div class="fx-layer" data-fx="front"></div>
+            <span class="num">7</span>
+            <span class="label">Year 7</span>
+            <p class="hook">Order of operations, negatives and substitution &mdash; the habits that decide every year after this one.</p>
+            <a class="go" href="#" data-explore="7">Explore Year 7 &rarr;</a>
+          </div>
+          <div class="face face--right" data-face="right">
+            <div class="pips" data-count="2"></div>
+            <div class="fx-layer" data-fx="right"></div>
+            <span class="num">8</span>
+            <span class="label">Year 8</span>
+            <p class="hook">Algebraic foundations: expanding, factorising and index laws, before Stage 5 compounds on top.</p>
+            <a class="go" href="#" data-explore="8">Explore Year 8 &rarr;</a>
+          </div>
+          <div class="face face--back" data-face="back">
+            <div class="pips" data-count="6"></div>
+            <div class="fx-layer" data-fx="back"></div>
+            <span class="num">9</span>
+            <span class="label">Year 9</span>
+            <p class="hook">Stage 5 begins &mdash; trigonometry, quadratics, and the jump in abstraction that catches most students off guard.</p>
+            <a class="go" href="#" data-explore="9">Explore Year 9 &rarr;</a>
+          </div>
+          <div class="face face--left" data-face="left">
+            <div class="pips" data-count="5"></div>
+            <div class="fx-layer" data-fx="left"></div>
+            <span class="num">10</span>
+            <span class="label">Year 10</span>
+            <p class="hook">Consolidating Stage 5 and choosing a pathway &mdash; Standard, Advanced or Extension &mdash; before it locks in.</p>
+            <a class="go" href="#" data-explore="10">Explore Year 10 &rarr;</a>
+          </div>
+          <div class="face face--top" data-face="top">
+            <div class="pips" data-count="3"></div>
+            <div class="fx-layer" data-fx="top"></div>
+            <span class="num">11</span>
+            <span class="label">Year 11</span>
+            <p class="hook">Preliminary content the HSC exam assumes you already know cold &mdash; the year most marks are quietly lost.</p>
+            <a class="go" href="#" data-explore="11">Explore Year 11 &rarr;</a>
+          </div>
+          <div class="face face--bottom" data-face="bottom">
+            <div class="pips" data-count="4"></div>
+            <div class="fx-layer" data-fx="bottom"></div>
+            <span class="num">12</span>
+            <span class="label">Year 12</span>
+            <p class="hook">Past papers, exam technique, and marking to the same standard NESA does.</p>
+            <a class="go" href="#" data-explore="12">Explore Year 12 &rarr;</a>
+          </div>
+        </div>
+      </div>
+      <p class="stage-caption" id="stageCaption">Sample copy &mdash; swap in real syllabus hooks per year</p>
+
+      <div class="explore-panel" id="explorePanel">
+        <div class="explore-card">
+          <p class="num" id="ecNum">7</p>
+          <p class="label" id="ecLabel">Year 7</p>
+          <p id="ecHook">&nbsp;</p>
+          <button type="button" class="back-btn" id="backBtn">&larr; Back to the cube</button>
+        </div>
+      </div>
+    </div>
+
+    <footer class="note">Prototype for discussion &mdash; not wired into the live Mathematics page yet. Explore transitions are illustrative concepts, not final motion design.</footer>
+  </section>
+
+  <script>
+    const YEARS = [
+      { n: 7,  rotY: 0,    rotX: 0, face: 'front'  },
+      { n: 8,  rotY: -90,  rotX: 0, face: 'right'  },
+      { n: 9,  rotY: -180, rotX: 0, face: 'back'   },
+      { n: 10, rotY: 90,   rotX: 0, face: 'left'   },
+      { n: 11, rotY: 0,    rotX: -90, face: 'top'    },
+      { n: 12, rotY: 0,    rotX: 90,  face: 'bottom' },
+    ];
+    const YEAR_CONTENT = {
+      7:  'Order of operations, negatives and substitution — the habits that decide every year after this one.',
+      8:  'Algebraic foundations: expanding, factorising and index laws, before Stage 5 compounds on top.',
+      9:  'Stage 5 begins — trigonometry, quadratics, and the jump in abstraction that catches most students off guard.',
+      10: 'Consolidating Stage 5 and choosing a pathway — Standard, Advanced or Extension — before it locks in.',
+      11: 'Preliminary content the HSC exam assumes you already know cold — the year most marks are quietly lost.',
+      12: 'Past papers, exam technique, and marking to the same standard NESA does.',
+    };
+    const IDLE_DELAY_MS = 3000;
+    const SPIN_SPEED_DEG_PER_SEC = 9;
+    const TUMBLE_AMPLITUDE_DEG = 12;
+    const TUMBLE_PERIOD_MS = 5200;
+    const COAST_FRICTION = 0.06;
+    const COAST_STOP_THRESHOLD = 2;
+
+    const cube = document.getElementById('cube');
+    const cubeWrap = document.querySelector('.cube-wrap');
+    const picker = document.querySelector('.year-picker');
+    const srLive = document.getElementById('srLive');
+    const spinToggle = document.getElementById('spinToggle');
+    const spinToggleLabel = document.getElementById('spinToggleLabel');
+    const stageCaption = document.getElementById('stageCaption');
+    const explorePanel = document.getElementById('explorePanel');
+    const ecNum = document.getElementById('ecNum');
+    const ecLabel = document.getElementById('ecLabel');
+    const ecHook = document.getElementById('ecHook');
+    const backBtn = document.getElementById('backBtn');
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const faceEls = {};
+    document.querySelectorAll('.face').forEach(f => faceEls[f.dataset.face] = f);
+
+    let rotX = 0, rotY = 0;
+    let mode = 'still'; // 'still' | 'dragging' | 'coasting' | 'jumping' | 'free-spin'
+    let rafId = null;
+    let idleTimer = null;
+    let userPausedSpin = false;
+    let tumbleStart = 0;
+    let exploring = false;
+
+    picker.innerHTML = YEARS.map(y =>
+      `<button type="button" data-year="${y.n}" aria-pressed="false">${y.n}</button>`
+    ).join('');
+
+    function render() { cube.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg)`; }
+    function stopRAF() { if (rafId) cancelAnimationFrame(rafId); rafId = null; }
+    function clearIdleTimer() { if (idleTimer) clearTimeout(idleTimer); idleTimer = null; }
+    function clearPressed() { [...picker.children].forEach(b => b.setAttribute('aria-pressed', 'false')); }
+
+    function armIdleTimer() {
+      clearIdleTimer();
+      if (reduceMotion || userPausedSpin || exploring) return;
+      idleTimer = setTimeout(startFreeSpin, IDLE_DELAY_MS);
+    }
+
+    function startFreeSpin() {
+      if (exploring) return;
+      mode = 'free-spin';
+      clearPressed();
+      let last = performance.now();
+      tumbleStart = last;
+      stopRAF();
+      function tick(now) {
+        if (mode !== 'free-spin') return;
+        const dt = (now - last) / 1000; last = now;
+        rotY += SPIN_SPEED_DEG_PER_SEC * dt;
+        rotX = TUMBLE_AMPLITUDE_DEG * Math.sin((now - tumbleStart) / TUMBLE_PERIOD_MS * Math.PI * 2);
+        render();
+        rafId = requestAnimationFrame(tick);
+      }
+      rafId = requestAnimationFrame(tick);
+    }
+
+    function startCoast(velY, velX) {
+      mode = 'coasting';
+      let last = performance.now();
+      stopRAF();
+      function tick(now) {
+        if (mode !== 'coasting') return;
+        const dt = (now - last) / 1000; last = now;
+        rotY += velY * dt; rotX += velX * dt;
+        rotX = Math.max(-130, Math.min(130, rotX));
+        const decay = Math.pow(COAST_FRICTION, dt);
+        velY *= decay; velX *= decay;
+        render();
+        if (Math.abs(velY) < COAST_STOP_THRESHOLD && Math.abs(velX) < COAST_STOP_THRESHOLD) {
+          mode = 'still'; armIdleTimer(); return;
+        }
+        rafId = requestAnimationFrame(tick);
+      }
+      rafId = requestAnimationFrame(tick);
+    }
+
+    function nearestEquivalentAngle(current, target) {
+      const diff = (((target - current + 180) % 360) + 360) % 360 - 180;
+      return current + diff;
+    }
+
+    function jumpTo(targetY, targetX, duration) {
+      return new Promise(resolve => {
+        mode = 'jumping';
+        clearIdleTimer();
+        stopRAF();
+        const startY = rotY, startX = rotX;
+        const goalY = nearestEquivalentAngle(startY, targetY);
+        const goalX = nearestEquivalentAngle(startX, targetX);
+        const t0 = performance.now();
+        function tick(now) {
+          if (mode !== 'jumping') return;
+          const t = Math.min(1, (now - t0) / duration);
+          const eased = 1 - Math.pow(1 - t, 3);
+          rotY = startY + (goalY - startY) * eased;
+          rotX = startX + (goalX - startX) * eased;
+          render();
+          if (t < 1) { rafId = requestAnimationFrame(tick); }
+          else { mode = 'still'; resolve(); }
+        }
+        rafId = requestAnimationFrame(tick);
+      });
+    }
+
+    function jumpToYear(n, opts = {}) {
+      const face = YEARS.find(f => f.n === n);
+      if (!face) return Promise.resolve();
+      return jumpTo(face.rotY, face.rotX, opts.duration || 650).then(() => {
+        if (opts.select !== false) {
+          [...picker.children].forEach(b => b.setAttribute('aria-pressed', String(Number(b.dataset.year) === n)));
+          srLive.textContent = `Year ${n} selected`;
+          armIdleTimer();
+        }
+      });
+    }
+
+    picker.addEventListener('click', (e) => {
+      if (exploring) return;
+      const btn = e.target.closest('button[data-year]');
+      if (!btn) return;
+      jumpToYear(Number(btn.dataset.year));
+    });
+
+    // ---- drag-to-rotate ----
+    let startPX = 0, startPY = 0, startRotY = 0, startRotX = 0;
+    let faceClickSuppressed = false;
+    let history = [];
+
+    cube.addEventListener('pointerdown', (e) => {
+      if (exploring) return;
+      if (e.target.closest('a, button')) return; // let Explore links/buttons receive their own click, don't hijack via pointer capture
+      mode = 'dragging';
+      clearIdleTimer();
+      clearPressed();
+      stopRAF();
+      cube.classList.add('grabbing');
+      cube.setPointerCapture(e.pointerId);
+      startPX = e.clientX; startPY = e.clientY;
+      faceClickSuppressed = false;
+      startRotY = rotY; startRotX = rotX;
+      history = [{ t: performance.now(), rotY, rotX }];
+    });
+
+    cube.addEventListener('pointermove', (e) => {
+      if (mode !== 'dragging') return;
+      const dx = e.clientX - startPX, dy = e.clientY - startPY;
+      if (Math.abs(dx) > 6 || Math.abs(dy) > 6) faceClickSuppressed = true;
+      rotY = startRotY + dx * 0.35;
+      rotX = Math.max(-130, Math.min(130, startRotX - dy * 0.35));
+      render();
+      history.push({ t: performance.now(), rotY, rotX });
+      if (history.length > 6) history.shift();
+    });
+
+    function endDrag() {
+      if (mode !== 'dragging') return;
+      const now = performance.now();
+      const ref = history.find(s => now - s.t <= 120) || history[0];
+      const dt = Math.max(16, now - ref.t) / 1000;
+      let velY = (rotY - ref.rotY) / dt, velX = (rotX - ref.rotX) / dt;
+      cube.classList.remove('grabbing');
+      if (reduceMotion) { mode = 'still'; armIdleTimer(); return; }
+      if (Math.abs(velY) > 40 || Math.abs(velX) > 40) startCoast(velY, velX);
+      else { mode = 'still'; armIdleTimer(); }
+    }
+    cube.addEventListener('pointerup', endDrag);
+    cube.addEventListener('pointercancel', endDrag);
+
+    cube.setAttribute('tabindex', '0');
+    cube.setAttribute('role', 'group');
+    cube.setAttribute('aria-label', 'Year level cube, use arrow keys or the year buttons to rotate');
+    cube.addEventListener('keydown', (e) => {
+      if (exploring) return;
+      const order = [7, 8, 9, 10];
+      const currentFace = YEARS.find(f => Math.round(f.rotY) === Math.round(((rotY % 360) + 360) % 360 % 360)) || YEARS[0];
+      const idx = order.indexOf(currentFace.n) === -1 ? 0 : order.indexOf(currentFace.n);
+      if (e.key === 'ArrowRight') jumpToYear(order[(idx + 1) % order.length]);
+      else if (e.key === 'ArrowLeft') jumpToYear(order[(idx - 1 + order.length) % order.length]);
+      else if (e.key === 'ArrowUp') jumpToYear(11);
+      else if (e.key === 'ArrowDown') jumpToYear(12);
+      else return;
+      e.preventDefault();
+    });
+
+    function setSpinToggle(paused) {
+      userPausedSpin = paused;
+      spinToggle.setAttribute('aria-pressed', String(!paused));
+      spinToggleLabel.textContent = paused ? 'Resume drift' : 'Pause drift';
+      spinIcon.innerHTML = paused
+        ? '<path d="M6 4l14 8-14 8V4z"></path>'
+        : '<rect x="6" y="4" width="4" height="16" rx="1"></rect><rect x="14" y="4" width="4" height="16" rx="1"></rect>';
+      if (paused) { clearIdleTimer(); if (mode === 'free-spin' || mode === 'coasting') mode = 'still'; }
+      else armIdleTimer();
+    }
+    spinToggle.addEventListener('click', () => setSpinToggle(!userPausedSpin));
+
+    /* ============================================================
+       EXPLORE — one bespoke transition per year, all built out of
+       the cube's own faces/edges rather than a separate animation.
+       ============================================================ */
+
+    function wait(ms) { return new Promise(r => setTimeout(r, ms)); }
+    function ease3(t) { return 1 - Math.pow(1 - t, 3); }
+    function createSceneNarration(fx) {
+      const narration = document.createElement('div');
+      narration.className = 'scene-narration';
+      narration.innerHTML = '<strong></strong><span></span>';
+      fx.appendChild(narration);
+      return narration;
+    }
+    function showSceneNarration(narration, title, detail) {
+      narration.classList.remove('in');
+      narration.querySelector('strong').textContent = title;
+      narration.querySelector('span').textContent = detail;
+      requestAnimationFrame(() => narration.classList.add('in'));
+    }
+
+    function setPickerDisabled(disabled) {
+      [...picker.children].forEach(b => b.disabled = disabled);
+    }
+
+    function openPanel(n) {
+      ecNum.textContent = n;
+      ecLabel.textContent = `Year ${n}`;
+      ecHook.textContent = YEAR_CONTENT[n];
+      explorePanel.classList.add('visible');
+      stageCaption.style.opacity = '0';
+    }
+    function closePanel() {
+      explorePanel.classList.remove('visible');
+      stageCaption.style.opacity = '';
+    }
+
+    // ---- Year 7 : unfold into a net ----
+    const FACE_ORDER = ['front', 'right', 'back', 'left', 'top', 'bottom'];
+    const CUBE_ANGLES = {
+      front: { rx: 0, ry: 0 }, right: { rx: 0, ry: 90 }, back: { rx: 0, ry: 180 },
+      left: { rx: 0, ry: -90 }, top: { rx: 90, ry: 0 }, bottom: { rx: -90, ry: 0 },
+    };
+    function setFaceTransform(name, tx, ty, tz, rx, ry) {
+      faceEls[name].style.transform =
+        `translateX(${tx}px) translateY(${ty}px) rotateX(${rx}deg) rotateY(${ry}deg) translateZ(${tz}px)`;
+    }
+    function resetFaceTransforms() {
+      FACE_ORDER.forEach(name => { faceEls[name].style.transform = ''; });
+    }
+    function netOffsets(E) {
+      return {
+        front: { x: 0, y: 0 }, right: { x: E, y: 0 }, back: { x: 2 * E, y: 0 },
+        left: { x: -E, y: 0 }, top: { x: 0, y: -E }, bottom: { x: 0, y: E },
+      };
+    }
+    function foldAnimation(direction, duration) {
+      // direction: 1 = unfold (cube -> net), -1 = fold (net -> cube)
+      return new Promise(resolve => {
+        const E = cubeWrap.getBoundingClientRect().width;
+        const half = E / 2;
+        const net = netOffsets(E);
+        const stagger = { front: 0, right: 0, left: 90, top: 180, bottom: 180, back: 300 };
+        const t0 = performance.now();
+        function tick(now) {
+          let allDone = true;
+          FACE_ORDER.forEach(name => {
+            const delay = direction === 1 ? stagger[name] : (300 - stagger[name]);
+            let t = (now - t0 - delay) / duration;
+            t = Math.max(0, Math.min(1, t));
+            if (t < 1) allDone = false;
+            const e = ease3(direction === 1 ? t : t);
+            const cs = CUBE_ANGLES[name], ns = net[name];
+            const p = direction === 1 ? e : (1 - e); // 0 = cube, 1 = net
+            const tx = ns.x * p, ty = ns.y * p;
+            const tz = half + (0 - half) * p;
+            const rx = cs.rx + (0 - cs.rx) * p, ry = cs.ry + (0 - cs.ry) * p;
+            setFaceTransform(name, tx, ty, tz, rx, ry);
+          });
+          if (!allDone) requestAnimationFrame(tick); else resolve();
+        }
+        requestAnimationFrame(tick);
+      });
+    }
+    function projectNetAnimation() {
+      const projection = document.createElement('div');
+      projection.className = 'net-projection';
+      const positions = { front:[1,1], right:[2,1], back:[3,1], left:[0,1], top:[1,0], bottom:[1,2] };
+      FACE_ORDER.forEach((name, index) => {
+        const tile = document.createElement('div'); tile.className = 'net-projection__tile'; tile.textContent = FACE_EXPLORER_YEARS[name];
+        const [column, row] = positions[name]; tile.style.left = `${column * 25}%`; tile.style.top = `${row * 33.333}%`;
+        projection.appendChild(tile); setTimeout(() => tile.classList.add('in'), 90 * index);
+      });
+      cubeWrap.appendChild(projection); cube.classList.add('net-projecting');
+      requestAnimationFrame(() => projection.classList.add('in'));
+      return projection;
+    }
+    function buildHingedNet() {
+      const net = document.createElement('div'); net.className = 'hinged-net';
+      const panels = {};
+      FACE_ORDER.forEach(name => {
+        const panel = document.createElement('div'); panel.className = 'hinged-net__panel'; panel.dataset.net = name;
+        panel.appendChild(faceEls[name]); panels[name] = panel;
+      });
+      panels.front.append(panels.right, panels.left, panels.top, panels.bottom);
+      panels.right.appendChild(panels.back);
+      net.appendChild(panels.front);
+      cubeWrap.appendChild(net); requestAnimationFrame(() => net.classList.add('in'));
+      return net;
+    }
+    async function exploreYear7() {
+      buildHingedNet();
+      await wait(1500);
+      openPanel(7);
+    }
+    async function closeYear7() {
+      closePanel();
+      FACE_ORDER.forEach(name => cube.appendChild(faceEls[name]));
+      cubeWrap.querySelector('.hinged-net')?.remove();
+      resetFaceTransforms();
+    }
+
+    // ---- Year 8 : the actual cube gives x² a third dimension ----
+    async function exploreYear8() {
+      const face = faceEls.right;
+      const fx = face.querySelector('[data-fx="right"]');
+      face.classList.add('fx-dim', 'fx-active');
+      cube.classList.add('depth-mode');
+      const narration = createSceneNarration(fx);
+      showSceneNarration(narration, 'x² fills one face.', 'That is area: length × width.'); await wait(1050);
+      await jumpTo(-45, -18, 1250);
+      showSceneNarration(narration, 'The cube supplies the depth.', 'Now x × x × x becomes x³ — a volume.'); await wait(1600);
+      openPanel(8);
+    }
+    function closeYear8() {
+      const face = faceEls.right;
+      const fx = face.querySelector('[data-fx="right"]');
+      fx.innerHTML = '';
+      face.classList.remove('fx-dim', 'fx-active');
+      cube.classList.remove('depth-mode');
+      closePanel();
+    }
+
+    // ---- Year 9 : traces its own diagonal ----
+    function buildDiagonalWireframe() {
+      const diagram = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      diagram.setAttribute('viewBox', '0 0 100 100'); diagram.setAttribute('class', 'diagonal-wireframe');
+      diagram.innerHTML = '<path class="edge" d="M18 27 L68 16 L87 34 L37 46 Z M18 27 L18 76 L37 92 L37 46 M37 92 L87 78 L87 34 M68 16 L68 62 L87 78"/><line class="face-diagonal" x1="18" y1="27" x2="37" y2="92"/><line class="space-diagonal" x1="68" y1="16" x2="37" y2="92"/>';
+      cubeWrap.appendChild(diagram); requestAnimationFrame(() => diagram.classList.add('in')); return diagram;
+    }
+    async function exploreYear9() {
+      const face = faceEls.back;
+      const fx = face.querySelector('[data-fx="back"]');
+      face.classList.add('fx-dim', 'fx-active');
+      cube.classList.add('space-diagonal-mode');
+      fx.classList.add('space-diagonal-layer');
+      fx.style.overflow = 'visible';
+      const rect = face.getBoundingClientRect();
+      const w = rect.width, h = rect.height;
+      const len = Math.sqrt(w * w + h * h);
+      const angle = Math.atan2(h, w) * 180 / Math.PI;
+      const line = document.createElement('div');
+      line.className = 'fx-line';
+      Object.assign(line.style, {
+        left: '0px', top: '0px', width: '0px',
+        transform: `rotate(${angle}deg)`,
+      });
+      fx.appendChild(line);
+      const chipA = document.createElement('div');
+      chipA.className = 'fx-chip'; chipA.textContent = 'face diagonal — a² + b² = c²';
+      Object.assign(chipA.style, { left: '10%', top: '46%' });
+      fx.appendChild(chipA);
+      await wait(150);
+      line.style.transition = `width 700ms cubic-bezier(.2,.8,.3,1)`;
+      line.style.opacity = '1';
+      line.style.width = `${len}px`;
+      requestAnimationFrame(() => chipA.classList.add('in'));
+      await wait(1050);
+      chipA.classList.remove('in');
+      // Keep Year 9's face in view while opening the top and side planes.
+      await jumpTo(-150, -20, 900);
+      await wait(300);
+      // A single 3D segment joins two opposite vertices of the actual cube.
+      const wireframe = buildDiagonalWireframe();
+      const chipB = document.createElement('div');
+      chipB.className = 'fx-chip'; chipB.textContent = 'space diagonal — through the cube';
+      Object.assign(chipB.style, { right: '6%', bottom: '30%' });
+      fx.appendChild(chipB);
+      await wait(80);
+      requestAnimationFrame(() => chipB.classList.add('in'));
+      // Leave the complete line on screen long enough to inspect before the reading panel arrives.
+      await wait(2500);
+      openPanel(9);
+    }
+    function closeYear9() {
+      const face = faceEls.back;
+      const fx = face.querySelector('[data-fx="back"]');
+      fx.innerHTML = '';
+      fx.classList.remove('space-diagonal-layer');
+      fx.style.overflow = '';
+      cubeWrap.querySelector('.space-diagonal-line')?.remove();
+      cubeWrap.querySelector('.diagonal-wireframe')?.remove();
+      face.classList.remove('fx-dim', 'fx-active');
+      cube.classList.remove('space-diagonal-mode');
+      closePanel();
+    }
+
+    // ---- Year 10 : a dice toss becomes a visible sample space ----
+    const PIP_LAYOUTS = {
+      1: [[50, 50]],
+      2: [[25, 25], [75, 75]],
+      3: [[25, 25], [50, 50], [75, 75]],
+      4: [[25, 25], [75, 25], [25, 75], [75, 75]],
+      5: [[25, 25], [75, 25], [50, 50], [25, 75], [75, 75]],
+      6: [[25, 20], [75, 20], [25, 50], [75, 50], [25, 80], [75, 80]],
+    };
+    function buildPips() {
+      document.querySelectorAll('.pips').forEach(p => {
+        p.innerHTML = '';
+        const count = Number(p.dataset.count);
+        PIP_LAYOUTS[count].forEach(([lx, ly]) => {
+          const dot = document.createElement('div');
+          dot.className = 'pip';
+          dot.style.gridColumn = 'auto'; dot.style.gridRow = 'auto';
+          dot.style.position = 'absolute';
+          dot.style.left = `${lx}%`; dot.style.top = `${ly}%`;
+          dot.style.transform = 'translate(-50%, -50%)';
+          p.appendChild(dot);
+        });
+      });
+    }
+    function buildProbabilitySample(fx, result) {
+      const sample = document.createElement('div');
+      sample.className = 'probability-sample';
+      for (let outcome = 1; outcome <= 6; outcome++) {
+        const cell = document.createElement('span');
+        cell.className = 'probability-outcome';
+        cell.textContent = outcome;
+        if (outcome === result) cell.classList.add('is-result');
+        sample.appendChild(cell);
+        setTimeout(() => cell.classList.add('in'), 70 * outcome);
+      }
+      fx.appendChild(sample);
+    }
+    async function exploreYear10() {
+      buildPips();
+      cube.classList.add('dice-mode');
+      const fx = faceEls.left.querySelector('[data-fx="left"]');
+      const narration = createSceneNarration(fx);
+      showSceneNarration(narration, 'One roll is uncertain.', 'We cannot predict the next result before the die lands.');
+      await wait(1100);
+      const startY = rotY, startX = rotX;
+      const goalY = startY + 360 + 90;
+      const goalX = startX + 180 - 10;
+      await new Promise(resolve => {
+        const t0 = performance.now(), duration = 850;
+        function tick(now) {
+          const t = Math.min(1, (now - t0) / duration);
+          const e = 1 - Math.pow(1 - t, 4);
+          rotY = startY + (goalY - startY) * e;
+          rotX = startX + (goalX - startX) * e;
+          render();
+          if (t < 1) requestAnimationFrame(tick); else resolve();
+        }
+        requestAnimationFrame(tick);
+      });
+      await jumpTo(90, 0, 220); // settle precisely back onto Year 10's face
+      faceEls.left.classList.add('fx-active');
+      faceEls.left.classList.add('fx-dim');
+      showSceneNarration(narration, 'A fair die has six possible faces.', 'Turn it slowly: every numbered face is one equally likely outcome.');
+      await jumpTo(45, -15, 1500);
+      showSceneNarration(narration, 'P(4) = 1/6', 'The rolled face is one outcome from the six faces of the same die.');
+      await wait(1500);
+      await jumpTo(90, 0, 1100);
+      cube.classList.remove('dice-mode');
+      await wait(500);
+      openPanel(10);
+    }
+    function closeYear10() {
+      const fx = faceEls.left.querySelector('[data-fx="left"]');
+      fx.innerHTML = '';
+      faceEls.left.classList.remove('fx-active', 'fx-dim');
+      cube.classList.remove('dice-mode');
+      closePanel();
+    }
+
+    // ---- Year 11 : transform an equation into a graph feature ----
+    async function exploreYear11() {
+      const face = faceEls.top;
+      const fx = face.querySelector('[data-fx="top"]');
+      face.classList.add('fx-dim', 'fx-active');
+      const board = buildFunctionTransformation(); fx.appendChild(board);
+      const narration = createSceneNarration(fx);
+      const equations = [...board.querySelectorAll('.function-board__equation')];
+      showSceneNarration(narration, 'Start with the function.', 'The equation tells us the shape we are about to investigate.'); equations[0].classList.add('in'); await wait(1100);
+      showSceneNarration(narration, 'Rewrite to reveal the structure.', 'Completing the square makes the turning point visible.'); equations[1].classList.add('in'); await wait(1200);
+      showSceneNarration(narration, 'Read the mathematics from the graph.', 'The turning point is now a fact we can see and explain.'); equations[2].classList.add('in'); board.querySelector('path').classList.add('in'); await wait(1300);
+      openPanel(11);
+    }
+    function closeYear11() {
+      const fx = faceEls.top.querySelector('[data-fx="top"]');
+      fx.innerHTML = '';
+      faceEls.top.classList.remove('fx-dim', 'fx-active');
+      closePanel();
+    }
+
+    function buildFunctionTransformation() {
+      const board = document.createElement('div'); board.className = 'function-board';
+      board.innerHTML = '<p class="function-board__equation">f(x) = x² − 4x + 3</p><p class="function-board__equation">f(x) = (x − 2)² − 1</p><p class="function-board__equation function-board__result">turning point: (2, −1)</p><svg viewBox="0 0 200 90" aria-hidden="true"><path d="M12 78 Q100 8 188 78"></path></svg>';
+      return board;
+    }
+    function buildWorkedSolution() {
+      const solution = document.createElement('div'); solution.className = 'worked-solution';
+      solution.innerHTML = '<div class="worked-solution__line">A = πr² <span class="worked-solution__mark">METHOD</span></div><div class="worked-solution__line">A = π(4.5)² <span class="worked-solution__mark">SUBSTITUTE</span></div><div class="worked-solution__line">A ≈ 63.6 cm² <span class="worked-solution__mark">ACCURACY</span></div><div class="worked-solution__line worked-solution__answer">Area = 63.6 cm²</div>';
+      return solution;
+    }
+    // ---- Year 12 : a worked mathematical solution earns visible marks ----
+    async function exploreYear12() {
+      const face = faceEls.bottom;
+      const fx = face.querySelector('[data-fx="bottom"]');
+      face.classList.add('fx-dim', 'fx-active');
+      const solution = buildWorkedSolution(); fx.appendChild(solution);
+      const narration = createSceneNarration(fx);
+      const stages = [
+        ['Read the command word.', 'Students first identify what the question is asking them to do.'],
+        ['Set up a defensible method.', 'A correct approach needs to be visible before calculation begins.'],
+        ['Make each decision visible.', 'Working is evidence a marker can reward, not just rough notes.'],
+        ['Conclude clearly.', 'A final answer should answer the question and complete the argument.'],
+      ];
+      const lines = [...solution.querySelectorAll('.worked-solution__line')];
+      for (let index = 0; index < stages.length; index++) {
+        const [title, detail] = stages[index];
+        showSceneNarration(narration, title, detail);
+        lines[index].classList.add('in');
+        await wait(950);
+      }
+      openPanel(12);
+    }
+    function closeYear12() {
+      const fx = faceEls.bottom.querySelector('[data-fx="bottom"]');
+      fx.innerHTML = '';
+      faceEls.bottom.classList.remove('fx-active', 'fx-dim');
+      closePanel();
+    }
+
+    const EXPLORERS = {
+      7: { open: exploreYear7, close: closeYear7 },
+      8: { open: exploreYear8, close: closeYear8 },
+      9: { open: exploreYear9, close: closeYear9 },
+      10: { open: exploreYear10, close: closeYear10 },
+      11: { open: exploreYear11, close: closeYear11 },
+      12: { open: exploreYear12, close: closeYear12 },
+    };
+    let activeYear = null;
+
+    async function explore(n) {
+      if (exploring) return;
+      exploring = true;
+      cube.classList.add('exploring');
+      setPickerDisabled(true);
+      clearIdleTimer();
+      if (mode === 'free-spin' || mode === 'coasting') mode = 'still';
+      userPausedSpin = true; // hold drift while inside an explore sequence
+      spinToggle.setAttribute('aria-pressed', 'false');
+      spinToggleLabel.textContent = 'Resume drift';
+      if (n !== 10) await jumpTo(YEARS.find(f => f.n === n).rotY, YEARS.find(f => f.n === n).rotX, reduceMotion ? 0 : 500);
+      activeYear = n;
+      if (reduceMotion) {
+        openPanel(n);
+        return;
+      }
+      await EXPLORERS[n].open();
+    }
+
+    backBtn.addEventListener('click', async () => {
+      if (!activeYear) return;
+      const n = activeYear;
+      activeYear = null;
+      if (reduceMotion) closePanel();
+      else await EXPLORERS[n].close();
+      exploring = false;
+      cube.classList.remove('exploring');
+      setPickerDisabled(false);
+      userPausedSpin = reduceMotion; // reduced-motion users stay paused; everyone else resumes
+      if (!reduceMotion) {
+        spinToggle.setAttribute('aria-pressed', 'true');
+        spinToggleLabel.textContent = 'Pause drift';
+      }
+      [...picker.children].forEach(b => b.setAttribute('aria-pressed', String(Number(b.dataset.year) === n)));
+      armIdleTimer();
+    });
+
+    document.querySelectorAll('[data-explore]').forEach(a => {
+      a.addEventListener('click', (e) => {
+        e.preventDefault();
+        explore(Number(a.dataset.explore));
+      });
+    });
+
+    // A face is the invitation: clicking it runs that year's actual sequence.
+    // The small text link remains for keyboard and screen-reader discovery.
+    const FACE_EXPLORER_YEARS = {
+      front: 7, right: 8, back: 9, left: 10, top: 11, bottom: 12,
+    };
+    document.querySelectorAll('.face[data-face]').forEach(face => {
+      face.addEventListener('click', (e) => {
+        if (exploring || faceClickSuppressed || e.target.closest('a, button')) return;
+        const year = FACE_EXPLORER_YEARS[face.dataset.face];
+        if (year) explore(year);
+      });
+    });
+
+    // ---- init ----
+    rotY = 0; rotX = 0; render();
+    [...picker.children].forEach(b => b.setAttribute('aria-pressed', String(b.dataset.year === '7')));
+    if (reduceMotion) setSpinToggle(true);
+    else armIdleTimer();
+  </script>
+</body>
+</html>

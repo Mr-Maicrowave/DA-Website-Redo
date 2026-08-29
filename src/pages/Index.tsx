@@ -6,7 +6,7 @@
 
 import React, { useRef, useEffect, useState, useCallback, useLayoutEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { ArrowRight, ChartNoAxesCombined, ChevronDown, Maximize2, Minimize2, Pause, Play, ShieldCheck, UsersRound, Volume2, VolumeX, X } from 'lucide-react';
+import { ArrowRight, Maximize2, Minimize2, Pause, Play, Volume2, VolumeX, X } from 'lucide-react';
 import { motion, AnimatePresence, useInView, useScroll, useTransform, useSpring, useMotionValueEvent, useReducedMotion, type MotionValue } from 'framer-motion';
 import NavigationNew from '@/components/NavigationNew';
 import HomeFooterTrial from '@/components/HomeFooterTrial';
@@ -194,12 +194,43 @@ const MarqueeStrip = () => (
 //  HERO
 // ══════════════════════════════════════════════════════════════
 
-const HeroSection = ({ embedded = false }: { embedded?: boolean }) => {
+const HeroSection = ({ embedded = false, introProgress }: { embedded?: boolean; introProgress?: MotionValue<number> }) => {
   const sectionRef = useRef<HTMLElement>(null);
   const reducedMotion = useReducedMotion();
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ['start start', 'end start'] });
+  const revealProgress = introProgress ?? scrollYProgress;
+  const cinematicReveal = Boolean(introProgress) && !reducedMotion;
   const contentY = useTransform(scrollYProgress, [0, 1], ['0%', reducedMotion ? '0%' : '20%']);
   const contentOpacity = useTransform(scrollYProgress, [0, 0.72, 1], [1, 0.94, reducedMotion ? 1 : 0]);
+  const sideLeftY = useTransform(revealProgress, [0, 1], ['0%', '-1.2%']);
+  const sideRightY = useTransform(revealProgress, [0, 1], ['0%', '1.2%']);
+  const sideScale = useTransform(revealProgress, [0, 1], [1.012, 1]);
+  const sideOpacity = useTransform(revealProgress, [0.57, 0.69], [0, 1]);
+  const crestY = useTransform(revealProgress, [0.45, 0.57], [14, 0]);
+  const crestOpacity = useTransform(revealProgress, [0.45, 0.57], [0, 1]);
+  const crestScale = useTransform(revealProgress, [0.45, 0.57], [0.96, 1]);
+  const eyebrowY = useTransform(revealProgress, [0.51, 0.61], [10, 0]);
+  const eyebrowOpacity = useTransform(revealProgress, [0.51, 0.61], [0, 1]);
+  const threadScale = useTransform(revealProgress, [0.56, 0.7], [0, 1]);
+  const threadOpacity = useTransform(revealProgress, [0.56, 0.64], [0, 1]);
+  const titleOneY = useTransform(revealProgress, [0.56, 0.7], [130, 0]);
+  const titleOneOpacity = useTransform(revealProgress, [0.56, 0.64], [0, 1]);
+  const titleOneScale = useTransform(revealProgress, [0.56, 0.7], [0.985, 1]);
+  const titleTwoY = useTransform(revealProgress, [0.64, 0.78], [130, 0]);
+  const titleTwoOpacity = useTransform(revealProgress, [0.64, 0.76], [0.3, 1]);
+  const titleTwoScale = useTransform(revealProgress, [0.64, 0.78], [0.985, 1]);
+  const titleTwoTracking = useTransform(revealProgress, [0.64, 0.78], ['.01em', '0em']);
+  const trustY = useTransform(revealProgress, [0.73, 0.83], [12, 0]);
+  const trustOpacity = useTransform(revealProgress, [0.73, 0.83], [0, 1]);
+  const supportY = useTransform(revealProgress, [0.76, 0.86], [14, 0]);
+  const supportOpacity = useTransform(revealProgress, [0.76, 0.86], [0, 1]);
+  const actionsY = useTransform(revealProgress, [0.79, 0.89], [16, 0]);
+  const actionsOpacity = useTransform(revealProgress, [0.79, 0.89], [0, 1]);
+  const secondaryActionY = useTransform(revealProgress, [0.81, 0.91], [16, 0]);
+  const secondaryActionOpacity = useTransform(revealProgress, [0.81, 0.91], [0, 1]);
+  const valuesY = useTransform(revealProgress, [0.87, 0.97], [18, 0]);
+  const valuesOpacity = useTransform(revealProgress, [0.87, 0.97], [0, 1]);
+  const continuationScale = useTransform(revealProgress, [0.97, 1], [0, 1]);
 
   return (
     <motion.section
@@ -238,6 +269,8 @@ const HeroSection = ({ embedded = false }: { embedded?: boolean }) => {
         }
         .hero-side-image--left img { object-position: 31% center; }
         .hero-side-image--right img { object-position: 53% center; }
+        .hero-gold-thread { width: min(230px, 42vw); height: 1px; margin: clamp(2px, .55vh, 7px) 0 0; background: linear-gradient(90deg, transparent, #b8842f 12%, #b8842f 88%, transparent); transform-origin: center; }
+        .hero-title-mask { display: block; height: 1.05em; overflow: hidden; line-height: 1.05; }
         .hero-side-image::after {
           content: '';
           position: absolute;
@@ -335,10 +368,9 @@ const HeroSection = ({ embedded = false }: { embedded?: boolean }) => {
           margin-top: clamp(9px, 1.7vh, 20px);
           text-align: left;
         }
-        .hero-value { min-width: 0; display: grid; grid-template-columns: 40px 1fr; gap: 11px; align-items: start; }
-        .hero-value svg { width: 34px; height: 34px; color: #b8842f; stroke-width: 1.35; }
-        .hero-value strong { display: block; margin: 1px 0 5px; font-family: ${sans}; font-size: clamp(.72rem, .82vw, .84rem); color: ${C.navy}; }
-        .hero-value p { margin: 0; font-family: ${sans}; font-size: clamp(.66rem, .75vw, .77rem); line-height: 1.45; color: rgba(10,27,52,.72); }
+        .hero-value { min-width: 0; padding-top: 7px; border-top: 1px solid rgba(184,132,47,.48); }
+        .hero-value strong { display: block; margin: 0 0 4px; font-family: ${sans}; font-size: clamp(.68rem, .76vw, .78rem); letter-spacing: .12em; color: #9b681c; }
+        .hero-value p { margin: 0; font-family: ${sans}; font-size: clamp(.68rem, .78vw, .82rem); line-height: 1.38; color: rgba(10,27,52,.76); }
         .hero-trust {
           margin: clamp(1px, .35vh, 4px) 0 0;
           font-family: ${sans};
@@ -348,14 +380,11 @@ const HeroSection = ({ embedded = false }: { embedded?: boolean }) => {
           line-height: 1.4;
           color: rgba(10,27,52,.58);
         }
-        .hero-scroll { margin-top: clamp(2px, .7vh, 8px); color: #b8842f; animation: heroChevron 2.8s cubic-bezier(.22,1,.36,1) infinite; }
-        @keyframes heroChevron { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(4px); } }
+        .hero-continuation { position: absolute; bottom: clamp(16px, 2.1vh, 24px); left: 50%; width: 1px; height: 28px; background: linear-gradient(#b8842f, transparent); transform-origin: top; }
         @media (max-width: 1100px) {
           .hero-luxury { grid-template-columns: minmax(0, 15fr) minmax(0, 70fr) minmax(0, 15fr); }
           .hero-composition { width: 96%; padding-inline: 22px; }
           .hero-title { font-size: clamp(2.35rem, 4.7vw, 3.8rem); }
-          .hero-value { grid-template-columns: 31px 1fr; gap: 8px; }
-          .hero-value svg { width: 28px; height: 28px; }
         }
         @media (max-width: 767px) {
           .hero-luxury {
@@ -383,13 +412,13 @@ const HeroSection = ({ embedded = false }: { embedded?: boolean }) => {
           .hero-actions { width: 100%; gap: 8px; }
           .hero-cta { min-width: 0; flex: 1; min-height: 40px; padding: 9px 10px; font-size: .72rem; }
           .hero-values { grid-template-columns: 1fr 1fr; gap: 7px 13px; margin-top: 4px; max-width: 370px; }
-          .hero-value { grid-template-columns: 24px 1fr; gap: 6px; }
+          .hero-value { padding-top: 5px; }
           .hero-value:last-child { grid-column: 1 / -1; width: 54%; justify-self: center; }
-          .hero-value svg { width: 22px; height: 22px; }
-          .hero-value strong { font-size: .58rem; margin-bottom: 1px; }
-          .hero-value p { font-size: .52rem; line-height: 1.25; }
+          .hero-value strong { font-size: .53rem; margin-bottom: 1px; }
+          .hero-value p { font-size: .56rem; line-height: 1.25; }
           .hero-trust { margin-top: 0; font-size: .58rem; letter-spacing: .045em; }
-          .hero-scroll { margin-top: 0; }
+          .hero-gold-thread { width: min(170px, 52vw); }
+          .hero-continuation { height: 18px; bottom: 9px; }
         }
         @media (max-height: 760px) and (min-width: 768px) {
           .hero-composition { gap: 7px; padding-top: 10px; padding-bottom: 9px; }
@@ -399,57 +428,56 @@ const HeroSection = ({ embedded = false }: { embedded?: boolean }) => {
           .hero-trust { margin-top: 6px; }
         }
         @media (prefers-reduced-motion: reduce) {
-          .hero-scroll { animation: none; }
           .hero-cta { transition: none; }
         }
       `}</style>
 
-      <figure className="hero-side-image hero-side-image--left">
+      <motion.figure className="hero-side-image hero-side-image--left" style={cinematicReveal ? { y: sideLeftY, scale: sideScale, opacity: sideOpacity } : undefined}>
         <img src="/images/homepage/homepage-cream/ngoc and a girl-3.png" alt="DA Tuition tutor guiding a student through her work" />
-      </figure>
+      </motion.figure>
 
       <div className="hero-centre">
         <motion.div
           className="hero-composition"
           style={{ y: embedded ? 0 : contentY, opacity: embedded ? 1 : contentOpacity }}
         >
-          <img className="hero-crest" src="/images/da-logo.png" alt="DA Tuition" />
-          <div className="hero-eyebrow">Personalised Learning. Exceptional Results.</div>
+          <motion.img className="hero-crest" src="/images/da-logo.png" alt="DA Tuition" style={cinematicReveal ? { y: crestY, opacity: crestOpacity, scale: crestScale } : undefined} />
+          <motion.div className="hero-eyebrow" style={cinematicReveal ? { y: eyebrowY, opacity: eyebrowOpacity } : undefined}>Personalised Learning. Exceptional Results.</motion.div>
+          <motion.div className="hero-gold-thread" aria-hidden="true" style={cinematicReveal ? { scaleX: threadScale, opacity: threadOpacity } : undefined} />
           <h1 className="hero-title">
-            <span>Where Ambition Meets</span>
-            <em>Academic Excellence</em>
+            <span className="hero-title-mask"><motion.span style={cinematicReveal ? { y: titleOneY, opacity: titleOneOpacity, scale: titleOneScale } : undefined}>Where Ambition Meets</motion.span></span>
+            <span className="hero-title-mask"><motion.em style={cinematicReveal ? { y: titleTwoY, opacity: titleTwoOpacity, scale: titleTwoScale, letterSpacing: titleTwoTracking } : undefined}>Academic Excellence</motion.em></span>
           </h1>
-          <p className="hero-trust">Trusted by Families. Transforming Futures.</p>
-          <p className="hero-support">
+          <motion.p className="hero-trust" style={cinematicReveal ? { y: trustY, opacity: trustOpacity } : undefined}>Trusted by Families. Transforming Futures.</motion.p>
+          <motion.p className="hero-support" style={cinematicReveal ? { y: supportY, opacity: supportOpacity } : undefined}>
             Tailored academic support that builds confidence,<br className="hidden sm:block" /> strengthens understanding and delivers success.
-          </p>
+          </motion.p>
           <div className="hero-actions">
-            <a className="hero-cta hero-cta--primary" href="#programs-intro">
+            <motion.a className="hero-cta hero-cta--primary" href="#programs-intro" style={cinematicReveal ? { y: actionsY, opacity: actionsOpacity } : undefined}>
               Explore Programs <ArrowRight aria-hidden="true" size={18} strokeWidth={1.6} />
-            </a>
-            <Link className="hero-cta hero-cta--secondary" to="/book-interview">Book Consultation</Link>
+            </motion.a>
+            <motion.div style={cinematicReveal ? { y: secondaryActionY, opacity: secondaryActionOpacity } : undefined}>
+              <Link className="hero-cta hero-cta--secondary" to="/book-interview">Book Consultation</Link>
+            </motion.div>
           </div>
-          <div className="hero-values" aria-label="Why families choose DA Tuition">
+          <motion.div className="hero-values" aria-label="DA Tuition program highlights" style={cinematicReveal ? { y: valuesY, opacity: valuesOpacity } : undefined}>
             <div className="hero-value">
-              <UsersRound aria-hidden="true" />
-              <div><strong>Personalised Approach</strong><p>Every student is unique.<br />Every plan is tailored.</p></div>
+              <strong>20+ YEARS</strong><p>Established 2005</p>
             </div>
             <div className="hero-value">
-              <ChartNoAxesCombined aria-hidden="true" />
-              <div><strong>Expert Educators</strong><p>Experienced tutors who<br />inspire and empower.</p></div>
+              <strong>YEARS 7–12</strong><p>Focused academic support</p>
             </div>
             <div className="hero-value">
-              <ShieldCheck aria-hidden="true" />
-              <div><strong>Proven Results</strong><p>Stronger academic outcomes<br />and real long-term growth.</p></div>
+              <strong>MATHS · ENGLISH · SCIENCE</strong><p>Core academic programs</p>
             </div>
-          </div>
-          <ChevronDown className="hero-scroll" aria-hidden="true" size={25} strokeWidth={1.2} />
+          </motion.div>
+          <motion.span className="hero-continuation" aria-hidden="true" style={cinematicReveal ? { scaleY: continuationScale } : undefined} />
         </motion.div>
       </div>
 
-      <figure className="hero-side-image hero-side-image--right">
+      <motion.figure className="hero-side-image hero-side-image--right" style={cinematicReveal ? { y: sideRightY, scale: sideScale, opacity: sideOpacity } : undefined}>
         <img src="/images/homepage/homepage-cream/studying girl-4.png" alt="DA Tuition student concentrating on her studies" />
-      </figure>
+      </motion.figure>
     </motion.section>
   );
 };

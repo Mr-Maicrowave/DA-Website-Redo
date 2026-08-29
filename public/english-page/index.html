@@ -157,7 +157,7 @@
     --review-muted:#6E87A5;
     position:relative;
     left:50%;right:50%;margin-left:-50vw;margin-right:-50vw;width:100vw;
-    padding:clamp(74px,6.5vw,104px) 0 clamp(68px,6vw,96px);
+    padding:48px 0;
     color:var(--review-ivory);
     background:
       radial-gradient(circle at 50% 31%,rgba(230,190,98,.085),transparent 26%),
@@ -171,19 +171,19 @@
   .english-reviews::after{bottom:0}
   .english-reviews__inner{position:relative;z-index:1;width:min(1500px,100%);margin:0 auto}
   .english-reviews__heading{
-    display:grid;gap:.02em;margin:0 auto clamp(36px,4.1vw,50px);
+    display:grid;gap:.02em;margin:0 auto 24px;
     font-family:"Playfair Display",Georgia,serif;font-size:clamp(44px,5vw,76px);font-weight:400;line-height:1.08;
     text-align:center;color:var(--review-ivory);letter-spacing:0
   }
   .english-reviews__heading span{display:block;white-space:nowrap}
   .english-reviews__heading em{color:var(--review-gold);font-style:italic}
   .english-reviews__viewport{
-    position:relative;height:clamp(650px,44vw,700px);outline:none;touch-action:pan-y;user-select:none
+    position:relative;height:clamp(27rem,calc(var(--english-parent-viewport-height,100svh) - 20rem),37rem);outline:none;touch-action:pan-y;user-select:none
   }
   .english-reviews__viewport:focus-visible{outline:none}
   .english-review-card{
     position:absolute;left:50%;top:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;
-    width:min(860px,60vw);height:clamp(610px,41vw,660px);padding:50px clamp(44px,4.7vw,74px) 62px;
+    width:min(860px,60vw);height:clamp(27rem,calc(var(--english-parent-viewport-height,100svh) - 20rem),37rem);padding:clamp(34px,5svh,50px) clamp(44px,4.7vw,74px) clamp(44px,6svh,62px);
     border-radius:18px;background:linear-gradient(180deg,rgba(13,42,73,.98),rgba(8,28,52,.98));
     border:1px solid rgba(214,168,62,.96);box-shadow:0 20px 60px rgba(0,0,0,.18),0 -2px 16px rgba(214,168,62,.08),0 2px 16px rgba(214,168,62,.08);
     opacity:0;transform:translateX(-50%) scale(.84);transition:transform 600ms cubic-bezier(.22,.8,.25,1),opacity 600ms cubic-bezier(.22,.8,.25,1),filter 600ms cubic-bezier(.22,.8,.25,1),border-color 220ms ease,box-shadow 220ms ease;
@@ -325,7 +325,7 @@
   @media (max-width:900px){
     .english-reviews{padding:82px 0 82px}
     .english-reviews__heading{font-size:clamp(40px,8vw,62px);margin-bottom:36px}
-    .english-reviews__viewport{height:630px}
+    .english-reviews__viewport{height:clamp(32rem,calc(100svh - 14rem),40rem)}
     .english-review-card{width:min(760px,76vw);height:610px;padding:46px 42px 58px}
     .english-review-card.is-prev{width:min(340px,34vw);transform:translateX(calc(-50% - min(500px,52vw))) scale(.88) rotate(-3deg)}
     .english-review-card.is-next{width:min(340px,34vw);transform:translateX(calc(-50% + min(500px,52vw))) scale(.88) rotate(3deg)}
@@ -335,7 +335,7 @@
   @media (max-width:640px){
     .english-reviews{padding:58px 0 62px}
     .english-reviews__heading{font-size:clamp(24px,7.25vw,34px);line-height:1.12;margin-bottom:28px}
-    .english-reviews__viewport{height:620px}
+    .english-reviews__viewport{height:clamp(31rem,calc(100svh - 10rem),38rem)}
     .english-review-card{width:90vw;height:600px;padding:36px 24px 58px;border-radius:16px}
     .english-reviews__viewport.is-reading .english-review-card.is-active{width:92vw;height:610px}
     .english-review-card__expanded{padding:30px 24px}
@@ -2511,6 +2511,24 @@
         window.parent.addEventListener("resize", updatePreviewViewportIfOpen);
         window.parent.addEventListener("scroll", updatePreviewViewportIfOpen, { passive: true });
         window.parent.addEventListener("keydown", handlePreviewKeydown);
+      }
+    } catch(error){}
+
+    function syncEmbeddedViewportHeight(){
+      let viewportHeight = window.innerHeight || document.documentElement.clientHeight || 800;
+      try{
+        if(window.parent && window.parent !== window){
+          viewportHeight = window.parent.innerHeight || viewportHeight;
+        }
+      } catch(error){}
+      document.documentElement.style.setProperty("--english-parent-viewport-height", `${viewportHeight}px`);
+    }
+
+    syncEmbeddedViewportHeight();
+    window.addEventListener("resize", syncEmbeddedViewportHeight);
+    try{
+      if(window.parent && window.parent !== window){
+        window.parent.addEventListener("resize", syncEmbeddedViewportHeight);
       }
     } catch(error){}
 
