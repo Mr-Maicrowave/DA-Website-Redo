@@ -27,6 +27,8 @@ for (const route of [routeBase, `${routeBase}/`]) {
   assert.match(html, /data-artwork-source="immutable-reference"/);
   assert.match(html, /setArtworkStatus\('failed'/);
   assert.match(html, /Atlas failure forced for verification/);
+  assert.match(html, /data-framing/);
+  assert.match(html, /narrow-390-safe/);
 }
 
 const runtimeResponse = await fetch(`${routeBase}/vendor/three.module.js`);
