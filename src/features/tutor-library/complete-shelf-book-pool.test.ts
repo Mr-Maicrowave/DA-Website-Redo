@@ -6,6 +6,7 @@ import {
   COMPLETE_SHELF_VISIBLE_ROWS,
   advanceCompleteShelfOuterMotion,
   createCompleteShelfBookPool,
+  createMountedRigRootRegistry,
   createCompleteShelfClosedHandoff,
   createCompleteShelfOuterMotionState,
   getCompleteShelfOuterMotionPose,
@@ -14,6 +15,7 @@ import {
   shouldAcquireCompleteShelfRig,
 } from './complete-shelf-book-pool.ts';
 import { createTutorBookEditions } from './tutor-library-data.ts';
+import { createLibraryState, libraryReducer, type LibraryEvent, type LibraryState } from './tutor-library-state.ts';
 
 type FakeRig = {
   root: { uuid: string };
@@ -64,6 +66,58 @@ test('never evicts a leased active root and deterministically bounds dormant rig
   assert.equal(pool.peek('dormant-a'), undefined);
   assert.equal(pool.peek('dormant-b')?.root.uuid, 'root:dormant-b');
   active.release();
+});
+
+test('revisits an evicted tutor with only the newly mounted root through reset and return', async () => {
+  const pool = createCompleteShelfBookPool<FakeRig>({ maxDormantRigs: 3 });
+  const mountedRoots = createMountedRigRootRegistry();
+  const creationCount = new Map<string, number>();
+  const createRig = (editionId: string) => async () => {
+    const count = (creationCount.get(editionId) ?? 0) + 1;
+    creationCount.set(editionId, count);
+    return { root: { uuid: `${editionId}:root:${count}` }, dispose() {} };
+  };
+
+  for (const editionId of ['book-a', 'book-b', 'book-c', 'book-d']) {
+    const lease = pool.acquire(editionId, createRig(editionId));
+    const rig = await lease.rig;
+    mountedRoots.mount(editionId, rig.root.uuid);
+    assert.equal(mountedRoots.get(editionId), rig.root.uuid);
+    mountedRoots.unmount(editionId, rig.root.uuid);
+    lease.release();
+  }
+
+  assert.equal(pool.peek('book-a'), undefined, 'book A must be evicted after more than three dormant tutors');
+  assert.equal(mountedRoots.get('book-a'), undefined, 'an unmounted root can never remain an interaction identity');
+
+  const revisit = pool.acquire('book-a', createRig('book-a'));
+  const nextRig = await revisit.rig;
+  mountedRoots.mount('book-a', nextRig.root.uuid);
+  assert.equal(nextRig.root.uuid, 'book-a:root:2');
+  assert.equal(mountedRoots.get('book-a'), 'book-a:root:2');
+
+  const complete = (state: LibraryState, event: Omit<LibraryEvent, 'generation'>) =>
+    libraryReducer(state, { ...event, generation: state.transitionGeneration } as LibraryEvent);
+  let state = libraryReducer(createLibraryState('primary'), {
+    type: 'HOVER', editionId: 'book-a', rootUuid: mountedRoots.get('book-a')!,
+  });
+  state = complete(state, { type: 'EXTRACT' } as Omit<LibraryEvent, 'generation'>);
+  state = complete(state, { type: 'PREVIEW_READY' } as Omit<LibraryEvent, 'generation'>);
+  state = libraryReducer(state, { type: 'OPEN' });
+  state = complete(state, { type: 'READING_POSE_READY' } as Omit<LibraryEvent, 'generation'>);
+  state = complete(state, { type: 'OPEN_COMPLETE' } as Omit<LibraryEvent, 'generation'>);
+  state = libraryReducer(state, { type: 'CLOSE' });
+  state = complete(state, { type: 'CLOSE_COMPLETE' } as Omit<LibraryEvent, 'generation'>);
+  state = complete(state, {
+    type: 'RESET_COMPLETE',
+    controller: {
+      rootUuid: nextRig.root.uuid, closeComplete: true, resetComplete: true,
+      openProgress: 0, pageTurnProgress: 0, settledPages: 0, deformationReset: true,
+    },
+  } as Omit<LibraryEvent, 'generation'>);
+  state = complete(state, { type: 'RETURN_COMPLETE' } as Omit<LibraryEvent, 'generation'>);
+  assert.equal(state.phase, 'ROOM_IDLE');
+  revisit.release();
 });
 
 test('keeps retained and leased rigs bounded under hostile pointer sweeps', async () => {

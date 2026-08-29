@@ -7,3 +7,5 @@
 @media(max-width:700px){.tutor-library,.tutor-library__canvas{height:100svh;min-height:44rem}.tutor-library__copy{top:4.25rem}.tutor-library__controls{inset:auto .6rem .6rem}.tutor-library__controls .tutor-library__wall-nav{width:100%;justify-content:flex-start}.tutor-library__book-controls{grid-template-columns:repeat(2,minmax(0,1fr));max-height:8rem}.tutor-library__reader{top:auto;right:.6rem;bottom:10.8rem;left:.6rem;width:auto;transform:none}.tutor-library__reader-actions{grid-template-columns:1fr}.tutor-library__reader-actions a{grid-column:auto}.tutor-library__book-control,.tutor-library__reader-actions button,.tutor-library__reader-actions a{min-height:2.9rem}}
 
 @media(prefers-reduced-motion:reduce){.tutor-library__copy,.tutor-library__book-control{transition-duration:.01ms}.tutor-library[data-reduced-motion="true"] .tutor-library__status{position:absolute}}
+
+.tutor-library__wall-nav button{min-height:2.75rem}

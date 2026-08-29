@@ -34,6 +34,7 @@ export function CompleteShelfTutorBookBridge({
   generation,
   reducedMotion,
   onReady,
+  onRelease,
   onLifecycleComplete,
   onError,
 }: {
@@ -45,22 +46,24 @@ export function CompleteShelfTutorBookBridge({
   generation: number;
   reducedMotion: boolean;
   onReady(rootUuid: string, controller: CompleteShelfRigController): void;
+  onRelease(rootUuid: string): void;
   onLifecycleComplete(event: LibraryEvent): void;
   onError?(message: string): void;
 }) {
   const { gl } = useThree();
   const presentation = useMemo(() => createCompleteShelfPresentation(tutor), [tutor]);
   const [rig, setRig] = useState<CompleteShelfTutorRig | null>(() => pool.peek(edition.id) ?? null);
-  const callbacks = useRef({ onReady, onLifecycleComplete, onError });
+  const callbacks = useRef({ onReady, onRelease, onLifecycleComplete, onError });
   const appliedCommand = useRef('');
   const emittedCompletion = useRef('');
 
   useEffect(() => {
-    callbacks.current = { onReady, onLifecycleComplete, onError };
-  }, [onError, onLifecycleComplete, onReady]);
+    callbacks.current = { onReady, onRelease, onLifecycleComplete, onError };
+  }, [onError, onLifecycleComplete, onReady, onRelease]);
 
   useEffect(() => {
     let cancelled = false;
+    let mountedRootUuid: string | undefined;
     const lease = pool.acquire(edition.id, async () => {
       const module = await importPublicModule(RIG_MODULE_URL);
       return module.createCompleteShelfBookRig({
@@ -74,7 +77,10 @@ export function CompleteShelfTutorBookBridge({
     });
 
     void lease.rig.then((nextRig) => {
-      if (!cancelled) setRig(nextRig);
+      if (!cancelled) {
+        mountedRootUuid = nextRig.root.uuid;
+        setRig(nextRig);
+      }
     }).catch((error: unknown) => {
       if (cancelled) return;
       const message = error instanceof Error ? error.message : String(error);
@@ -84,6 +90,7 @@ export function CompleteShelfTutorBookBridge({
 
     return () => {
       cancelled = true;
+      if (mountedRootUuid) callbacks.current.onRelease(mountedRootUuid);
       lease.release();
     };
   }, [edition.id, gl, pool, presentation]);

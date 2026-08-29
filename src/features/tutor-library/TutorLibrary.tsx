@@ -2,12 +2,13 @@ import { Canvas } from '@react-three/fiber';
 import { Component, useEffect, useMemo, useReducer, useRef, useState, type ErrorInfo, type ReactNode } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { getPhotoStyle, getPhotoUrl, TUTORS } from '../../data/teacherCatalogue';
-import { selectVisibleShelfEditions } from './complete-shelf-book-pool';
+import { createMountedRigRootRegistry, selectVisibleShelfEditions } from './complete-shelf-book-pool';
 import { createBookMotionTimingPolicy } from './tutor-book-motion';
 import { parseDebugTurnProgress } from './tutor-library-debug';
 import { createTutorBookEditions, SUBJECT_WALLS } from './tutor-library-data';
 import {
   createLibraryState,
+  createPendingRigIntentTracker,
   getBookInteractionEvents,
   getFocusReturnEditionId,
   getLibraryControlAvailability,
@@ -18,6 +19,7 @@ import {
   type BookInteractionInput,
   type LibraryEvent,
   type LibraryState,
+  type PendingRigIntent,
 } from './tutor-library-state';
 import { TutorLibraryScene } from './TutorLibraryScene';
 import './tutor-library.css';
@@ -63,12 +65,12 @@ export function TutorLibrary() {
   const [library, dispatch] = useReducer(libraryReducer, 'primary', createLibraryState);
   const [turnProgress, setTurnProgress] = useState(0);
   const [bookMotionProgress, setBookMotionProgress] = useState(0);
-  const [rigIntentEditionId, setRigIntentEditionId] = useState<string>();
-  const [sceneError, setSceneError] = useState<string>();
+  const [rigIntent, setRigIntent] = useState<PendingRigIntent>();
+  const [sceneError, setSceneError] = useState<string | undefined>(() => searchParams.get('libraryForceCanvasError') === '1' ? 'Forced Tutor Library Canvas failure' : undefined);
   const reducedMotion = useReducedMotionPreference();
   const timing = useMemo(() => createBookMotionTimingPolicy(reducedMotion), [reducedMotion]);
-  const roots = useRef(new Map<string, string>());
-  const pendingInput = useRef<{ editionId: string; input: BookInteractionInput }>();
+  const mountedRoots = useRef(createMountedRigRootRegistry());
+  const pendingIntent = useRef(createPendingRigIntentTracker());
   const previousLibrary = useRef(library);
   const restoringFocus = useRef(false);
   const bookButtons = useRef(new Map<string, HTMLButtonElement>());
@@ -87,6 +89,7 @@ export function TutorLibrary() {
   const sceneBookMotionProgress = isDebugBook ? debugBookProgress : bookMotionProgress;
   const checkpointView = searchParams.get('checkpoint') === 'b';
   const reviewView = searchParams.get('libraryReviewView');
+  const forceCanvasFailure = searchParams.get('libraryForceCanvasError') === '1';
   const activeWall = SUBJECT_WALLS[activeWallIndex];
   const targetWall = SUBJECT_WALLS[targetWallIndex];
   const selectedEdition = BOOK_EDITIONS.find(edition => edition.id === library.selectedEditionId);
@@ -95,13 +98,20 @@ export function TutorLibrary() {
   const availability = getLibraryControlAvailability(library);
 
   const dispatchEvents = (events: readonly LibraryEvent[]) => events.forEach(dispatch);
+  const cancelPendingIntent = (editionId?: string) => {
+    const pending = pendingIntent.current.current();
+    pendingIntent.current.cancel(editionId);
+    if (pending && (editionId === undefined || pending.editionId === editionId)) setRigIntent(undefined);
+  };
   const interactWithBook = (editionId: string, input: BookInteractionInput) => {
-    const rootUuid = roots.current.get(editionId);
-    pendingInput.current = { editionId, input };
-    setRigIntentEditionId(editionId);
-    if (!rootUuid) return;
-    pendingInput.current = undefined;
-    dispatchEvents(getBookInteractionEvents(library, input, editionId, rootUuid));
+    const rootUuid = mountedRoots.current.get(editionId);
+    if (rootUuid) {
+      pendingIntent.current.cancel();
+      dispatchEvents(getBookInteractionEvents(library, input, editionId, rootUuid));
+      return;
+    }
+    const intent = pendingIntent.current.begin(editionId, input);
+    setRigIntent(intent);
   };
 
   useEffect(() => {
@@ -113,11 +123,15 @@ export function TutorLibrary() {
       restoringFocus.current = false;
     }
     previousLibrary.current = library;
-    if (library.phase === 'ROOM_IDLE' && !library.selectedEditionId) setRigIntentEditionId(undefined);
+    if (library.phase === 'ROOM_IDLE' && !library.selectedEditionId && !pendingIntent.current.current()) setRigIntent(undefined);
   }, [library]);
 
   useEffect(() => {
-    const escape = (event: KeyboardEvent) => { if (event.key === 'Escape') dispatch({ type: 'ESCAPE' }); };
+    const escape = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape') return;
+      cancelPendingIntent();
+      dispatch({ type: 'ESCAPE' });
+    };
     const resize = () => dispatch({ type: 'RESIZE' });
     const visibility = () => { if (document.visibilityState === 'visible') dispatch({ type: 'VISIBILITY_RESUME' }); };
     window.addEventListener('keydown', escape);
@@ -165,12 +179,15 @@ export function TutorLibrary() {
     return () => cancelAnimationFrame(frameId);
   }, [library.phase, library.transitionGeneration, timing.extractionMs, timing.hoverIntentMs, timing.returnMs, timing.toReadingMs]);
 
-  const handleRigReady = (editionId: string, rootUuid: string) => {
-    roots.current.set(editionId, rootUuid);
-    const pending = pendingInput.current;
-    if (!pending || pending.editionId !== editionId) return;
-    pendingInput.current = undefined;
+  const handleRigReady = (editionId: string, rootUuid: string, token: number) => {
+    mountedRoots.current.mount(editionId, rootUuid);
+    const pending = pendingIntent.current.consumeReady(editionId, token);
+    if (!pending) return;
     dispatchEvents(getBookInteractionEvents(library, pending.input, editionId, rootUuid));
+  };
+
+  const handleRigUnavailable = (editionId: string, rootUuid: string) => {
+    mountedRoots.current.unmount(editionId, rootUuid);
   };
 
   const fallbackTutor = selectedTutor ?? FALLBACK_TUTOR;
@@ -180,22 +197,22 @@ export function TutorLibrary() {
     <header className={`tutor-library__copy${checkpointView || isDebugTurn ? ' tutor-library__copy--checkpoint' : ''}`}>
       <p>DA Tuition faculty</p><h1 id="tutor-library-title">Find the person behind the teaching.</h1><span>Turn toward a subject and explore the educators who bring it to life.</span>
     </header>
-    <div className="tutor-library__canvas" aria-hidden="true"><CanvasBoundary onError={setSceneError}>
-      <Canvas shadows camera={{ position: [0, 1.9, .2], fov: 52, near: .1, far: 60 }} dpr={[1, 1.5]} gl={{ antialias: true, alpha: false, powerPreference: 'high-performance' }} onPointerLeave={() => dispatch({ type: 'LEAVE' })}>
-        <TutorLibraryScene fromWallIndex={activeWallIndex} toWallIndex={targetWallIndex} turnProgress={sceneProgress} reviewView={reviewView} showWallLabels={!isDebugTurn && !isDebugBook} phase={sceneBookPhase} generation={library.transitionGeneration} reducedMotion={reducedMotion} selectedEditionId={sceneSelectedEditionId} rigIntentEditionId={rigIntentEditionId} bookMotionProgress={sceneBookMotionProgress} onHover={(editionId, rootUuid) => dispatchEvents(getBookInteractionEvents(library, 'pointer-preview', editionId, rootUuid))} onActivate={(editionId, rootUuid) => dispatchEvents(getBookInteractionEvents(library, 'touch-activate', editionId, rootUuid))} onRigReady={handleRigReady} onLifecycleComplete={dispatch} onError={setSceneError} />
-      </Canvas>
+    <div className="tutor-library__canvas" aria-hidden="true"><CanvasBoundary onError={(message) => { cancelPendingIntent(); setSceneError(message); }}>
+      {forceCanvasFailure ? null : <Canvas shadows camera={{ position: [0, 1.9, .2], fov: 52, near: .1, far: 60 }} dpr={[1, 1.5]} gl={{ antialias: true, alpha: false, powerPreference: 'high-performance' }} onPointerLeave={() => { cancelPendingIntent(); dispatch({ type: 'LEAVE' }); }}>
+        <TutorLibraryScene fromWallIndex={activeWallIndex} toWallIndex={targetWallIndex} turnProgress={sceneProgress} reviewView={reviewView} showWallLabels={!isDebugTurn && !isDebugBook} phase={sceneBookPhase} generation={library.transitionGeneration} reducedMotion={reducedMotion} selectedEditionId={sceneSelectedEditionId} rigIntentEditionId={rigIntent?.editionId} rigIntentToken={rigIntent?.token ?? 0} bookMotionProgress={sceneBookMotionProgress} onHover={(editionId, rootUuid) => dispatchEvents(getBookInteractionEvents(library, 'pointer-preview', editionId, rootUuid))} onActivate={(editionId, rootUuid) => dispatchEvents(getBookInteractionEvents(library, 'touch-activate', editionId, rootUuid))} onRigReady={handleRigReady} onRigUnavailable={handleRigUnavailable} onLifecycleComplete={dispatch} onError={(message) => { cancelPendingIntent(); setSceneError(message); }} />
+      </Canvas>}
     </CanvasBoundary></div>
 
-    {!isDebugTurn ? <div className="tutor-library__controls">
-      <nav className="tutor-library__wall-nav" aria-label="Turn toward a subject wall">{SUBJECT_WALLS.map(wall => <button key={wall.id} type="button" disabled={!availability.canTurnRoom || wall.id === activeWall.id} aria-pressed={wall.id === activeWall.id} onClick={() => dispatch({ type: 'TURN', wallId: wall.id })}>{wall.label}</button>)}</nav>
+    {!isDebugTurn ? <div className="tutor-library__controls" aria-disabled={sceneError ? 'true' : undefined} {...(sceneError ? { inert: '' } as Record<string, string> : {})}>
+      <nav className="tutor-library__wall-nav" aria-label="Turn toward a subject wall">{SUBJECT_WALLS.map(wall => <button key={wall.id} type="button" disabled={Boolean(sceneError) || !availability.canTurnRoom || wall.id === activeWall.id} aria-pressed={wall.id === activeWall.id} onClick={() => dispatch({ type: 'TURN', wallId: wall.id })}>{wall.label}</button>)}</nav>
       <div className="tutor-library__book-controls" role="group" aria-label={`${activeWall.label} tutor books`}>{visibleEditions.map(edition => {
         const tutor = TUTOR_BY_ID.get(edition.tutorId); if (!tutor) return null;
         const selected = edition.id === library.selectedEditionId;
-        return <button key={edition.id} ref={node => { if (node) bookButtons.current.set(edition.id, node); else bookButtons.current.delete(edition.id); }} type="button" className="tutor-library__book-control" data-edition-id={edition.id} disabled={isBookControlDisabled(library, edition.id)} aria-pressed={selected} aria-label={`${selected ? 'Open' : 'Preview'} ${tutor.name}'s tutor book`} onPointerEnter={event => { if (event.pointerType !== 'touch') interactWithBook(edition.id, 'pointer-preview'); }} onFocus={() => { if (shouldPreviewBookOnFocus(restoringFocus.current)) interactWithBook(edition.id, 'pointer-preview'); }} onClick={() => interactWithBook(edition.id, 'keyboard-activate')}><span>{tutor.name.replace(/^(Mr|Ms|Mrs)\s+/i, '')}</span><small>{tutor.designation}</small></button>;
+        return <button key={edition.id} ref={node => { if (node) bookButtons.current.set(edition.id, node); else bookButtons.current.delete(edition.id); }} type="button" className="tutor-library__book-control" data-edition-id={edition.id} disabled={Boolean(sceneError) || isBookControlDisabled(library, edition.id)} aria-pressed={selected} aria-label={`${selected ? 'Open' : 'Preview'} ${tutor.name}'s tutor book`} onPointerEnter={event => { if (event.pointerType !== 'touch') interactWithBook(edition.id, 'pointer-preview'); }} onPointerLeave={() => cancelPendingIntent(edition.id)} onFocus={() => { if (shouldPreviewBookOnFocus(restoringFocus.current)) interactWithBook(edition.id, 'pointer-preview'); }} onBlur={() => cancelPendingIntent(edition.id)} onClick={() => interactWithBook(edition.id, 'keyboard-activate')}><span>{tutor.name.replace(/^(Mr|Ms|Mrs)\s+/i, '')}</span><small>{tutor.designation}</small></button>;
       })}</div>
     </div> : null}
 
-    {selectedTutor ? <aside className="tutor-library__reader" aria-label={`${selectedTutor.name} tutor book controls`}>
+    {selectedTutor && !sceneError ? <aside className="tutor-library__reader" aria-label={`${selectedTutor.name} tutor book controls`}>
       <div className="tutor-library__reader-profile"><Portrait tutor={selectedTutor} /><div><p>{selectedTutor.name}</p><span>{selectedTutor.designation}</span></div></div>
       <p className="tutor-library__reader-summary">{selectedTutor.tagline}</p>
       <div className="tutor-library__reader-actions"><button type="button" disabled={!availability.canOpen} onClick={() => dispatch({ type: 'OPEN' })}>Open book</button><button type="button" disabled={!availability.canTurnPage} onClick={() => dispatch({ type: 'PAGE_TURN' })}>Turn next page</button><button type="button" disabled={!availability.canClose} onClick={() => dispatch({ type: 'CLOSE' })}>Close and return book</button><Link to={`/find-teacher?tutor=${selectedTutor.id}`}>View full tutor profile</Link></div>

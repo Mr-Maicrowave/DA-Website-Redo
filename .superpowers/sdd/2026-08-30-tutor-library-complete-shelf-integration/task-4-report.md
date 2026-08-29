@@ -55,3 +55,29 @@ Implemented in the isolated `codex/tutor-library-3d` worktree. The `/tutors?libr
 ## Commit
 
 Local Task 4 commit in `codex/tutor-library-3d`; see the adjacent git history entry for the hash.
+
+## Fix round 1
+
+### RED evidence
+
+- The eviction/revisit regression test initially failed to load because no mounted-root ownership registry existed; the same test exercises four tutor rigs with a three-dormant-rig limit and rejects the evicted UUID.
+- Delayed-ready cancellation tests initially failed to load because pending intents had no cancellable generation/token tracker.
+- A headless-browser DOM verifier was attempted for real click, Enter/Space, Escape/focus return, disabled controls, and forced Canvas failure. Chrome required elevated launch permission; once launched, the scripted semantic book click remained at `ROOM_IDLE` rather than reaching `BOOK_READING`. Per the stop instruction, this was recorded and the experimental verifier was not committed.
+
+### GREEN evidence
+
+- Focused pool/interaction regression tests: 24/24 pass.
+- All Tutor Library/Complete Shelf tests: 94/94 pass.
+- `npm.cmd run typecheck`: exit 0.
+- `npm.cmd run build`: exit 0; encoding check passed, 3,980 modules transformed, and the generated sitemap was restored afterward.
+
+### Corrections
+
+- Mounted root identities now follow live bridge leases: ready/acquire refreshes the edition's UUID, release/error clears only the matching mounted UUID, and a token-keyed bridge remount prevents old intent callbacks from owning a new request.
+- Pending rig intent is generation-tokened. Leave, blur, Escape, and superseding selection invalidate older readiness callbacks, so late readiness cannot dispatch reducer events.
+- Canvas failure disables every wall/book button and marks the interaction surface inert and `aria-disabled`; only the conventional tutor fallback remains actionable.
+- Subject wall controls now meet the 44px minimum touch target.
+
+### Remaining concern
+
+- The requested real React DOM interaction automation is not green: the isolated headless-browser attempt did not advance the semantic click beyond `ROOM_IDLE`. Helper/reducer/pool coverage is green, but this browser-level activation path requires follow-up before claiming the Important DOM-test finding fully closed.

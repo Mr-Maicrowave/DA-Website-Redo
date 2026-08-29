@@ -20,6 +20,28 @@ export interface CompleteShelfRigLease<TRig extends CompleteShelfPoolRig> {
   release(): void;
 }
 
+export interface MountedRigRootRegistry {
+  mount(editionId: string, rootUuid: string): void;
+  unmount(editionId: string, rootUuid: string): void;
+  get(editionId: string): string | undefined;
+}
+
+export function createMountedRigRootRegistry(): MountedRigRootRegistry {
+  const mountedRoots = new Map<string, string>();
+  return {
+    mount(editionId, rootUuid) {
+      if (!editionId.trim() || !rootUuid.trim()) return;
+      mountedRoots.set(editionId, rootUuid);
+    },
+    unmount(editionId, rootUuid) {
+      if (mountedRoots.get(editionId) === rootUuid) mountedRoots.delete(editionId);
+    },
+    get(editionId) {
+      return mountedRoots.get(editionId);
+    },
+  };
+}
+
 export interface CompleteShelfBookPool<TRig extends CompleteShelfPoolRig> {
   acquire(editionId: string, createRig: () => Promise<TRig>): CompleteShelfRigLease<TRig>;
   peek(editionId: string): TRig | undefined;

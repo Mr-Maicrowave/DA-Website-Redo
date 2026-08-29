@@ -91,13 +91,15 @@ type TutorBookProps = {
   neighbourResponse?: number;
   onHover: (editionId: string, rootUuid: string) => void;
   onActivate?: (editionId: string, rootUuid: string) => void;
-  onRigReady?: (editionId: string, rootUuid: string) => void;
+  onRigReady?: (editionId: string, rootUuid: string, token: number) => void;
+  onRigUnavailable?: (editionId: string, rootUuid: string) => void;
   onLifecycleComplete?: (event: LibraryEvent) => void;
   onError?: (message: string) => void;
   generation?: number;
   reducedMotion?: boolean;
   pool?: CompleteShelfBookPool<CompleteShelfTutorRig>;
   rigIntent?: boolean;
+  rigIntentToken?: number;
   onRigIntent?: (editionId?: string) => void;
   poseOverride?: ReturnType<typeof getShelfPose>;
   studio?: boolean;
@@ -116,7 +118,7 @@ function DormantCompleteShelfProxy({ tutor, edition }: { tutor: CatalogueTutor; 
   </group>;
 }
 
-function RoomTutorBook({ edition, tutor, phase, selected, motionProgress, neighbourResponse = 0, onHover, onActivate, onRigReady, onLifecycleComplete, onError, generation = 0, reducedMotion = false, pool, rigIntent = false, onRigIntent }: TutorBookProps & { pool: CompleteShelfBookPool<CompleteShelfTutorRig> }) {
+function RoomTutorBook({ edition, tutor, phase, selected, motionProgress, neighbourResponse = 0, onHover, onActivate, onRigReady, onRigUnavailable, onLifecycleComplete, onError, generation = 0, reducedMotion = false, pool, rigIntent = false, rigIntentToken = 0, onRigIntent }: TutorBookProps & { pool: CompleteShelfBookPool<CompleteShelfTutorRig> }) {
   const [rigReady, setRigReady] = useState(false);
   const hovering = useRef(false);
   const rootUuid = useRef<string>();
@@ -161,6 +163,7 @@ function RoomTutorBook({ edition, tutor, phase, selected, motionProgress, neighb
   >
     <group visible={!rigRequested || !rigReady}><DormantCompleteShelfProxy tutor={tutor} edition={edition} /></group>
     {rigRequested ? <CompleteShelfTutorBookBridge
+      key={`${edition.id}:${rigIntentToken}`}
       edition={edition}
       tutor={tutor}
       pool={pool}
@@ -171,11 +174,20 @@ function RoomTutorBook({ edition, tutor, phase, selected, motionProgress, neighb
       onReady={(readyRootUuid) => {
         rootUuid.current = readyRootUuid;
         setRigReady(true);
-        onRigReady?.(edition.id, readyRootUuid);
+        onRigReady?.(edition.id, readyRootUuid, rigIntentToken);
         if (hovering.current) onHover(edition.id, readyRootUuid);
+      }}
+      onRelease={(releasedRootUuid) => {
+        if (rootUuid.current === releasedRootUuid) rootUuid.current = undefined;
+        setRigReady(false);
+        onRigUnavailable?.(edition.id, releasedRootUuid);
       }}
       onLifecycleComplete={event => onLifecycleComplete?.(event)}
       onError={(message) => {
+        if (rootUuid.current) {
+          onRigUnavailable?.(edition.id, rootUuid.current);
+          rootUuid.current = undefined;
+        }
         if (!selected) onRigIntent?.();
         setRigReady(false);
         onError?.(message);

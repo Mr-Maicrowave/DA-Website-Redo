@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import {
   createLibraryState,
+  createPendingRigIntentTracker,
   getBookInteractionEvents,
   getControllerCompletionEvent,
   getFocusReturnEditionId,
@@ -155,4 +156,25 @@ test('binds controller completions to the active reducer generation and physical
     rootUuid: 'root-jenny', openProgress: 0.4, pageTurnProgress: 0,
     settledPages: 0, pagePivotCount: 6, deformationReset: true,
   }), undefined);
+});
+
+test('invalidates delayed rig readiness after pointer leave, blur, or Escape', () => {
+  const pending = createPendingRigIntentTracker();
+  const pointer = pending.begin('T003:primary', 'pointer-preview');
+  pending.cancel('T003:primary');
+  assert.equal(pending.consumeReady('T003:primary', pointer.token), undefined);
+
+  const keyboard = pending.begin('T003:primary', 'keyboard-activate');
+  pending.cancel();
+  assert.equal(pending.consumeReady('T003:primary', keyboard.token), undefined);
+});
+
+test('only the latest selection intent can consume a late rig-ready callback', () => {
+  const pending = createPendingRigIntentTracker();
+  const first = pending.begin('T003:primary', 'pointer-preview');
+  const second = pending.begin('T009:primary', 'touch-activate');
+
+  assert.equal(pending.consumeReady('T003:primary', first.token), undefined);
+  assert.deepEqual(pending.consumeReady('T009:primary', second.token), second);
+  assert.equal(pending.consumeReady('T009:primary', second.token), undefined);
 });

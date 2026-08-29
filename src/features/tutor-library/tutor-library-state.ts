@@ -33,6 +33,45 @@ export interface LibraryState {
 
 export type BookInteractionInput = 'pointer-preview' | 'touch-activate' | 'keyboard-activate';
 
+export interface PendingRigIntent {
+  readonly editionId: string;
+  readonly input: BookInteractionInput;
+  readonly token: number;
+}
+
+export interface PendingRigIntentTracker {
+  begin(editionId: string, input: BookInteractionInput): PendingRigIntent;
+  cancel(editionId?: string): void;
+  consumeReady(editionId: string, token: number): PendingRigIntent | undefined;
+  current(): PendingRigIntent | undefined;
+}
+
+export function createPendingRigIntentTracker(): PendingRigIntentTracker {
+  let nextToken = 0;
+  let pending: PendingRigIntent | undefined;
+  return {
+    begin(editionId, input) {
+      pending = Object.freeze({ editionId, input, token: ++nextToken });
+      return pending;
+    },
+    cancel(editionId) {
+      if (editionId === undefined || pending?.editionId === editionId) {
+        nextToken += 1;
+        pending = undefined;
+      }
+    },
+    consumeReady(editionId, token) {
+      if (!pending || pending.editionId !== editionId || pending.token !== token) return undefined;
+      const accepted = pending;
+      pending = undefined;
+      return accepted;
+    },
+    current() {
+      return pending;
+    },
+  };
+}
+
 export interface LibraryControlAvailability {
   canOpen: boolean;
   canTurnPage: boolean;
