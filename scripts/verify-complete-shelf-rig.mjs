@@ -23,6 +23,18 @@ for (const route of [routeBase, `${routeBase}/`]) {
   const html = await response.text();
   assert.match(html, /Complete Shelf Codex book rig/);
   assert.match(html, /complete-shelf-book-rig\.js/);
+  assert.match(html, /data-artwork-status="pending"/);
+  assert.match(html, /data-artwork-source="immutable-reference"/);
+  assert.match(html, /setArtworkStatus\('failed'/);
+  assert.match(html, /Atlas failure forced for verification/);
 }
+
+const runtimeResponse = await fetch(`${routeBase}/vendor/three.module.js`);
+assert.equal(runtimeResponse.status, 200, 'The isolated host must serve its local Three.js runtime');
+assert.match(
+  await runtimeResponse.text(),
+  /const REVISION = '165'/,
+  'The isolated host must use the source-compatible Three.js r165 runtime',
+);
 
 console.log(`Complete Shelf Codex rig route passed: ${routeBase}`);
