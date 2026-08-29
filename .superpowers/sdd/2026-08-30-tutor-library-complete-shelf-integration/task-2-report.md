@@ -214,3 +214,57 @@ Fix-round broader verification:
 - Touched-file ESLint: exit 0.
 - `npm.cmd run build`: exit 0; encoding passed for 1116 text files, sitemap generated 80 URLs, TypeScript passed, and Vite transformed 3978 modules. The generated sitemap date was restored afterward.
 - Build emitted only the existing large-chunk advisory.
+
+## Fix round 2 — required root identity
+
+- `HOVER.rootUuid` is now required by `LibraryEvent`, so rootless selection events fail TypeScript compilation.
+- Reducer runtime validation rejects missing, empty, and whitespace-only root identifiers as identity-preserving no-ops.
+- The current room callback supplies `logical:tutor-book:<editionId>` as a stable temporary identity. Task 3 can supply the real physical root UUID through the same required field.
+- A complete hover/extract/preview/open/read/close/reset/return recovery test proves one stable required root reaches restored idle.
+
+Exact focused verification command and output:
+
+```text
+> node --test --experimental-strip-types src/features/tutor-library/tutor-library-state.test.ts src/features/tutor-library/tutor-book-motion.test.ts src/features/tutor-library/tutor-book-lifecycle.test.ts src/features/tutor-library/tutor-library-timeline.test.ts
+✔ captures shelf matrices, root identity, neighbours, and current state by value (1.5866ms)
+✔ deep-freezes restoration targets and clones inbound and outbound payloads (1.4843ms)
+✔ resize and visibility resume restart from the exact sampled transform and matrices (0.5778ms)
+✔ refuses stale reset completion and controller residue before shelf transit (0.5598ms)
+✔ rejects an old same-root return callback after a newer return generation starts (0.3435ms)
+✔ samples return from the current interruption rather than the preview destination (0.2447ms)
+✔ restores exact matrices and neighbour poses with matching root and generation (0.6959ms)
+✔ restores perturbed pose, matrices, and neighbours through ten complete semantic cycles (1.8293ms)
+✔ rejects malformed matrices rather than accepting a non-restorable capture or sample (0.9004ms)
+✔ keeps extraction continuous from the exact stored shelf pose into preview (1.9945ms)
+✔ returns from the exact sampled interruption pose instead of the preview endpoint (0.2458ms)
+✔ clamps invalid interpolation progress and never mutates either endpoint (0.1851ms)
+✔ reduced motion shortens movement while retaining every semantic lifecycle phase (0.1401ms)
+✔ runs every legal book lifecycle transition without frame-level state (3.3845ms)
+✔ returns the same state object for representative illegal transitions (0.2555ms)
+✔ enumerates every legal reducer transition, including direct-open and cancellation variants (0.3476ms)
+✔ enumerates illegal events as identity-preserving no-ops in every phase (0.251ms)
+✔ rejects stale async completions after a newer transition generation starts (0.1311ms)
+✔ rejects stale completions in every asynchronous semantic phase (0.1514ms)
+✔ keeps conditional duplicates and wrong-root reset completions as identity no-ops (0.1448ms)
+✔ rejects missing or blank root identifiers before hover selection begins (0.0775ms)
+✔ completes a full recovery cycle with one stable required root identifier (0.1289ms)
+✔ switches hover intent from A to B and invalidates A completion (0.1889ms)
+✔ remembers a click during extraction and proceeds through the safe reading pose (0.0854ms)
+✔ Escape recovers deterministically from every book transient and reading state (0.1365ms)
+✔ will not return until close/reset complete with zero controller residue (0.6153ms)
+✔ blocks selection B while A returns and keeps A identity until restoration completes (0.3225ms)
+✔ rapid wall turns retarget the current turn and only the newest completion settles (0.4961ms)
+✔ restarts transient generations after resize and visibility resume but leaves stable states alone (0.4885ms)
+✔ supports repeated open/close cycles without retaining book state (0.3652ms)
+✔ keeps deterministic pose endpoints (1.8213ms)
+✔ moves the viewer through the corner when turning to the next wall (2.6441ms)
+✔ derives shortest-turn endpoints from each actual wall count from three through six (0.6855ms)
+ℹ tests 33
+ℹ suites 0
+ℹ pass 33
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 171.431
+```

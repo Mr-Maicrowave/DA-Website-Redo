@@ -36,7 +36,7 @@ type Completion = { generation: number };
 export type LibraryEvent =
   | { type: 'TURN'; wallId: string }
   | ({ type: 'TURN_COMPLETE' } & Completion)
-  | { type: 'HOVER'; editionId: string; rootUuid?: string }
+  | { type: 'HOVER'; editionId: string; rootUuid: string }
   | ({ type: 'HOVER_INTENT_COMPLETE' } & Completion)
   | ({ type: 'EXTRACT' } & Completion)
   | ({ type: 'PREVIEW_READY' } & Completion)
@@ -76,6 +76,9 @@ const advance = (
 const isCurrentCompletion = (state: LibraryState, event: Completion) =>
   event.generation === state.transitionGeneration;
 
+const hasValidRootUuid = (event: { rootUuid?: unknown }) =>
+  typeof event.rootUuid === 'string' && event.rootUuid.trim().length > 0;
+
 export const isControllerResetForReturn = (
   expectedRootUuid: string | undefined,
   controller: ControllerResetSnapshot,
@@ -111,6 +114,8 @@ const RESTARTABLE_TRANSIENTS = new Set<LibraryPhase>([
 ]);
 
 export function libraryReducer(state: LibraryState, event: LibraryEvent): LibraryState {
+  if (event.type === 'HOVER' && !hasValidRootUuid(event)) return state;
+
   if (event.type === 'ESCAPE') {
     if (state.phase === 'ROOM_TURNING') {
       return advance(state, 'ROOM_IDLE', { pendingWallId: undefined });

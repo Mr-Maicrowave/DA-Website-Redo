@@ -96,7 +96,7 @@ test('returns the same state object for representative illegal transitions', () 
   const cases: Array<[LibraryState, LibraryEvent]> = [
     [idle, { type: 'TURN', wallId: 'primary' }],
     [idle, { type: 'OPEN' }],
-    [turning, { type: 'HOVER', editionId: 'book-a' }],
+    [turning, { type: 'HOVER', editionId: 'book-a', rootUuid: 'root-a' }],
     [preview, { type: 'PAGE_TURN' }],
     [reading, { type: 'TURN', wallId: 'english' }],
   ];
@@ -286,6 +286,41 @@ test('keeps conditional duplicates and wrong-root reset completions as identity 
   assert.equal(libraryReducer(extracting, { type: 'OPEN' }), extracting);
   const resetting: LibraryState = { ...hover, phase: 'BOOK_RESETTING' };
   assert.equal(complete(resetting, { type: 'RESET_COMPLETE', controller: { ...resetReady, rootUuid: 'wrong-root' } }), resetting);
+});
+
+test('rejects missing or blank root identifiers before hover selection begins', () => {
+  const idle = createLibraryState('primary');
+  const missingRoot = { type: 'HOVER', editionId: 'book-a' } as LibraryEvent;
+  const blankRoot = { type: 'HOVER', editionId: 'book-a', rootUuid: '   ' } as LibraryEvent;
+
+  assert.equal(libraryReducer(idle, missingRoot), idle);
+  assert.equal(libraryReducer(idle, blankRoot), idle);
+});
+
+test('completes a full recovery cycle with one stable required root identifier', () => {
+  let state = libraryReducer(createLibraryState('primary'), {
+    type: 'HOVER',
+    editionId: 'book-a',
+    rootUuid: 'logical:tutor-book:book-a',
+  });
+  state = complete(state, { type: 'HOVER_INTENT_COMPLETE' });
+  state = complete(state, { type: 'PREVIEW_READY' });
+  state = libraryReducer(state, { type: 'OPEN' });
+  state = complete(state, { type: 'READING_POSE_READY' });
+  state = complete(state, { type: 'OPEN_COMPLETE' });
+  state = libraryReducer(state, { type: 'CLOSE' });
+  state = complete(state, { type: 'CLOSE_COMPLETE' });
+  state = complete(state, {
+    type: 'RESET_COMPLETE',
+    controller: { ...resetReady, rootUuid: 'logical:tutor-book:book-a' },
+  });
+  state = complete(state, { type: 'RETURN_COMPLETE' });
+
+  assert.deepEqual(state, {
+    phase: 'ROOM_IDLE',
+    activeWallId: 'primary',
+    transitionGeneration: 10,
+  });
 });
 
 test('switches hover intent from A to B and invalidates A completion', () => {
