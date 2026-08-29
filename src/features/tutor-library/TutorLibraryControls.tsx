@@ -9,6 +9,13 @@ import {
   type LibraryControlAvailability,
   type LibraryState,
 } from './tutor-library-state';
+import {
+  createTutorBookPages,
+  getPageTurnDirectionForKey,
+  getPageTurnDirectionForSwipe,
+  getTutorBookPageTarget,
+  type TutorBookPageTurnDirection,
+} from './tutor-book-pages';
 
 function Portrait({ tutor }: { tutor: CatalogueTutor }) {
   const [failed, setFailed] = useState(false);
@@ -29,19 +36,28 @@ export interface TutorLibraryControlSurfaceProps {
   status: string;
   sceneError?: string;
   focusReturnEditionId?: string;
+  settledPages: number;
+  pageCount: number;
   showControls?: boolean;
   onTurn(wallId: string): void;
   onBookInteraction(editionId: string, input: BookInteractionInput): void;
   onCancelPending(editionId?: string): void;
   onEscape(): void;
   onOpen(): void;
-  onPageTurn(): void;
+  onPageTurn(direction: TutorBookPageTurnDirection): void;
   onClose(): void;
 }
 
-export function TutorLibraryControlSurface({ library, activeWall, visibleEditions, tutors, selectedTutor, fallbackTutor, availability, status, sceneError, focusReturnEditionId, showControls = true, onTurn, onBookInteraction, onCancelPending, onEscape, onOpen, onPageTurn, onClose }: TutorLibraryControlSurfaceProps) {
+export function TutorLibraryControlSurface({ library, activeWall, visibleEditions, tutors, selectedTutor, fallbackTutor, availability, status, sceneError, focusReturnEditionId, settledPages, pageCount, showControls = true, onTurn, onBookInteraction, onCancelPending, onEscape, onOpen, onPageTurn, onClose }: TutorLibraryControlSurfaceProps) {
   const restoringFocus = useRef(false);
   const bookButtons = useRef(new Map<string, HTMLButtonElement>());
+  const pointerStart = useRef<{ x: number; y: number; id: number }>();
+  const pages = selectedTutor ? createTutorBookPages(selectedTutor) : [];
+  const canTurn = (direction: TutorBookPageTurnDirection) => availability.canTurnPage
+    && getTutorBookPageTarget(settledPages, direction, pageCount) !== undefined;
+  const requestPageTurn = (direction: TutorBookPageTurnDirection) => {
+    if (canTurn(direction)) onPageTurn(direction);
+  };
 
   useEffect(() => {
     if (!focusReturnEditionId) return;
@@ -70,10 +86,30 @@ export function TutorLibraryControlSurface({ library, activeWall, visibleEdition
       })}</div>
     </div> : null}
 
-    {selectedTutor && !sceneError ? <aside className="tutor-library__reader" aria-label={`${selectedTutor.name} tutor book controls`}>
+    {selectedTutor && !sceneError ? <aside className="tutor-library__reader" aria-label={`${selectedTutor.name} tutor book controls`} tabIndex={0}
+      onKeyDown={event => {
+        const direction = getPageTurnDirectionForKey(event.key);
+        if (!direction || !canTurn(direction)) return;
+        event.preventDefault();
+        requestPageTurn(direction);
+      }}
+      onPointerDown={event => {
+        if (!availability.canTurnPage || !event.isPrimary) return;
+        pointerStart.current = { x: event.clientX, y: event.clientY, id: event.pointerId };
+      }}
+      onPointerUp={event => {
+        const start = pointerStart.current;
+        pointerStart.current = undefined;
+        if (!start || start.id !== event.pointerId) return;
+        const direction = getPageTurnDirectionForSwipe(event.clientX - start.x, event.clientY - start.y);
+        if (direction) requestPageTurn(direction);
+      }}
+      onPointerCancel={() => { pointerStart.current = undefined; }}>
       <div className="tutor-library__reader-profile"><Portrait tutor={selectedTutor} /><div><p>{selectedTutor.name}</p><span>{selectedTutor.designation}</span></div></div>
       <p className="tutor-library__reader-summary">{selectedTutor.tagline}</p>
-      <div className="tutor-library__reader-actions"><button type="button" disabled={!availability.canOpen} onClick={onOpen}>Open book</button><button type="button" disabled={!availability.canTurnPage} onClick={onPageTurn}>Turn next page</button><button type="button" disabled={!availability.canClose} onClick={onClose}>Close and return book</button><Link to={`/find-teacher?tutor=${selectedTutor.id}`}>View full tutor profile</Link></div>
+      <p className="tutor-library__page-status" aria-live="polite">Page {Math.min(pageCount, settledPages + 1)} of {pageCount}</p>
+      <div className="tutor-library__reader-actions"><button type="button" disabled={!availability.canOpen} onClick={onOpen}>Open book</button><button type="button" aria-label="Previous tutor profile page" disabled={!canTurn(-1)} onClick={() => requestPageTurn(-1)}>Previous page</button><button type="button" aria-label="Next tutor profile page" disabled={!canTurn(1)} onClick={() => requestPageTurn(1)}>Next page</button><button type="button" disabled={!availability.canClose} onClick={onClose}>Close and return book</button><Link to={`/find-teacher?tutor=${selectedTutor.id}`}>View full tutor profile</Link></div>
+      <div className="sr-only">{pages.map(page => <section key={page.id}><h2>{page.label}</h2>{page.sourceText.map((text, index) => <p key={`${page.id}-${index}`}>{text}</p>)}</section>)}</div>
     </aside> : null}
 
     {sceneError ? <div className="tutor-library__fallback" role="alert"><p>The interactive library could not be displayed.</p><span>{sceneError}</span><Link to={`/find-teacher?tutor=${fallbackTutor.id}`}>Browse {fallbackTutor.name}'s searchable profile</Link></div> : null}

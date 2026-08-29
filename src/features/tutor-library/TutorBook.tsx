@@ -18,6 +18,7 @@ import { createBookParts, getBookVisualProfile, getShelfPose } from './tutor-boo
 import { createBookMotionPoses, interpolateBookMotion } from './tutor-book-motion';
 import { TutorBookCover, TutorBookFoil, type SpineTreatment, useBookMaterialMaps } from './TutorBookCover';
 import type { LibraryEvent, LibraryPhase } from './tutor-library-state';
+import type { TutorBookPageTurnDirection } from './tutor-book-pages';
 
 const COVER_COLOURS = ['#203a57', '#6a3035', '#63462c', '#25465a'];
 const PAPER = ['#eadbb9', '#e4d2aa', '#f0dfbd'];
@@ -94,9 +95,11 @@ type TutorBookProps = {
   onRigReady?: (editionId: string, rootUuid: string, token: number) => void;
   onRigUnavailable?: (editionId: string, rootUuid: string) => void;
   onLifecycleComplete?: (event: LibraryEvent) => void;
+  onPageSettled?: (settledPages: number) => void;
   onError?: (message: string) => void;
   generation?: number;
   reducedMotion?: boolean;
+  pageTurnDirection?: TutorBookPageTurnDirection;
   pool?: CompleteShelfBookPool<CompleteShelfTutorRig>;
   rigIntent?: boolean;
   rigIntentToken?: number;
@@ -118,7 +121,7 @@ function DormantCompleteShelfProxy({ tutor, edition }: { tutor: CatalogueTutor; 
   </group>;
 }
 
-function RoomTutorBook({ edition, tutor, phase, selected, motionProgress, neighbourResponse = 0, onHover, onActivate, onRigReady, onRigUnavailable, onLifecycleComplete, onError, generation = 0, reducedMotion = false, pool, rigIntent = false, rigIntentToken = 0, onRigIntent }: TutorBookProps & { pool: CompleteShelfBookPool<CompleteShelfTutorRig> }) {
+function RoomTutorBook({ edition, tutor, phase, selected, motionProgress, neighbourResponse = 0, onHover, onActivate, onRigReady, onRigUnavailable, onLifecycleComplete, onPageSettled, onError, generation = 0, reducedMotion = false, pageTurnDirection = 1, pool, rigIntent = false, rigIntentToken = 0, onRigIntent }: TutorBookProps & { pool: CompleteShelfBookPool<CompleteShelfTutorRig> }) {
   const [rigReady, setRigReady] = useState(false);
   const hovering = useRef(false);
   const rootUuid = useRef<string>();
@@ -171,6 +174,7 @@ function RoomTutorBook({ edition, tutor, phase, selected, motionProgress, neighb
       active={selected}
       generation={generation}
       reducedMotion={reducedMotion}
+      pageTurnDirection={pageTurnDirection}
       onReady={(readyRootUuid) => {
         rootUuid.current = readyRootUuid;
         setRigReady(true);
@@ -183,6 +187,7 @@ function RoomTutorBook({ edition, tutor, phase, selected, motionProgress, neighb
         onRigUnavailable?.(edition.id, releasedRootUuid);
       }}
       onLifecycleComplete={event => onLifecycleComplete?.(event)}
+      onPageSettled={settledPages => onPageSettled?.(settledPages)}
       onError={(message) => {
         if (rootUuid.current) {
           onRigUnavailable?.(edition.id, rootUuid.current);

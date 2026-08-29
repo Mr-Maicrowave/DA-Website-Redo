@@ -6,6 +6,7 @@ import { selectVisibleShelfEditions } from './complete-shelf-book-pool';
 import { TutorLibraryControlSurface } from './TutorLibraryControls';
 import { createTutorBookEditions, SUBJECT_WALLS } from './tutor-library-data';
 import { createLibraryState, getLibraryControlAvailability, type LibraryPhase } from './tutor-library-state';
+import { getTutorBookPageTarget, type TutorBookPageTurnDirection } from './tutor-book-pages';
 
 declare global {
   interface Window {
@@ -14,6 +15,7 @@ declare global {
       setFailure(failed: boolean): Promise<void>;
       setFocusReturn(editionId?: string): Promise<void>;
       setPhase(phase: LibraryPhase): Promise<void>;
+      setPage(page: number): Promise<void>;
     };
     IS_REACT_ACT_ENVIRONMENT: boolean;
   }
@@ -28,14 +30,17 @@ const tutors = new Map(TUTORS.map(tutor => [tutor.id, tutor]));
 let setFailureState: (failed: boolean) => void;
 let setFocusReturnState: (editionId?: string) => void;
 let setPhaseState: (phase: LibraryPhase) => void;
+let setPageState: (page: number) => void;
 
 function Fixture() {
   const [sceneError, setSceneError] = useState<string>();
   const [focusReturnEditionId, setFocusReturnEditionId] = useState<string>();
   const [phase, setPhase] = useState<LibraryPhase>('ROOM_IDLE');
+  const [settledPages, setSettledPages] = useState(0);
   setFailureState = failed => setSceneError(failed ? 'Canvas unavailable' : undefined);
   setFocusReturnState = setFocusReturnEditionId;
   setPhaseState = setPhase;
+  setPageState = setSettledPages;
   const library = {
     ...createLibraryState(primaryWall.id),
     phase,
@@ -53,12 +58,19 @@ function Fixture() {
     status="Fixture status"
     sceneError={sceneError}
     focusReturnEditionId={focusReturnEditionId}
+    settledPages={settledPages}
+    pageCount={6}
     onTurn={wallId => events.push(`turn:${wallId}`)}
     onBookInteraction={(editionId, input) => events.push(`book:${editionId}:${input}`)}
     onCancelPending={editionId => events.push(`cancel:${editionId ?? 'all'}`)}
     onEscape={() => events.push('escape')}
     onOpen={() => events.push('open')}
-    onPageTurn={() => events.push('page')}
+    onPageTurn={(direction: TutorBookPageTurnDirection) => {
+      const target = getTutorBookPageTarget(settledPages, direction);
+      if (target === undefined) return;
+      events.push(`page:${direction}`);
+      setSettledPages(target);
+    }}
     onClose={() => events.push('close')}
   /></MemoryRouter>;
 }
@@ -69,4 +81,5 @@ window.tutorLibraryFixture = {
   async setFailure(failed) { await act(async () => setFailureState(failed)); },
   async setFocusReturn(editionId) { await act(async () => setFocusReturnState(editionId)); },
   async setPhase(nextPhase) { await act(async () => setPhaseState(nextPhase)); },
+  async setPage(page) { await act(async () => setPageState(page)); },
 };

@@ -7,6 +7,7 @@ import type { LibraryEvent, LibraryPhase } from './tutor-library-state';
 import { SUBJECT_WALLS } from './tutor-library-data';
 import { createCompleteShelfBookPool } from './complete-shelf-book-pool';
 import type { CompleteShelfTutorRig } from './CompleteShelfTutorBookBridge';
+import type { TutorBookPageTurnDirection } from './tutor-book-pages';
 
 const REVIEW_CAMERA_POSES = {
   'resting-book': { position: [.15, 2.42, -4.35], target: [.15, 2.42, -7.55], fov: 38 },
@@ -35,7 +36,7 @@ function CameraFrame({ fromWallIndex, toWallIndex, turnProgress, reviewView }: {
   return null;
 }
 
-export function TutorLibraryScene({ fromWallIndex, toWallIndex, turnProgress, reviewView, showWallLabels = true, phase, generation, reducedMotion, selectedEditionId, rigIntentEditionId: requestedRigIntentEditionId, rigIntentToken, bookMotionProgress, onHover, onActivate, onRigReady, onRigUnavailable, onLifecycleComplete, onError }: { fromWallIndex: number; toWallIndex: number; turnProgress: number; reviewView?: string | null; showWallLabels?: boolean; phase: LibraryPhase; generation: number; reducedMotion: boolean; selectedEditionId?: string; rigIntentEditionId?: string; rigIntentToken: number; bookMotionProgress: number; onHover: (editionId: string, rootUuid: string) => void; onActivate: (editionId: string, rootUuid: string) => void; onRigReady: (editionId: string, rootUuid: string, token: number) => void; onRigUnavailable: (editionId: string, rootUuid: string) => void; onLifecycleComplete: (event: LibraryEvent) => void; onError: (message: string) => void }) {
+export function TutorLibraryScene({ fromWallIndex, toWallIndex, turnProgress, reviewView, showWallLabels = true, phase, generation, reducedMotion, pageTurnDirection, selectedEditionId, rigIntentEditionId: requestedRigIntentEditionId, rigIntentToken, bookMotionProgress, onHover, onActivate, onRigReady, onRigUnavailable, onLifecycleComplete, onPageSettled, onError }: { fromWallIndex: number; toWallIndex: number; turnProgress: number; reviewView?: string | null; showWallLabels?: boolean; phase: LibraryPhase; generation: number; reducedMotion: boolean; pageTurnDirection: TutorBookPageTurnDirection; selectedEditionId?: string; rigIntentEditionId?: string; rigIntentToken: number; bookMotionProgress: number; onHover: (editionId: string, rootUuid: string) => void; onActivate: (editionId: string, rootUuid: string) => void; onRigReady: (editionId: string, rootUuid: string, token: number) => void; onRigUnavailable: (editionId: string, rootUuid: string) => void; onLifecycleComplete: (event: LibraryEvent) => void; onPageSettled: (settledPages: number) => void; onError: (message: string) => void }) {
   const bookPool = useMemo(() => createCompleteShelfBookPool<CompleteShelfTutorRig>({ maxDormantRigs: 3 }), []);
   const [pointerRigIntentEditionId, setPointerRigIntentEditionId] = useState<string>();
   const rigIntentEditionId = requestedRigIntentEditionId ?? pointerRigIntentEditionId;
@@ -54,7 +55,7 @@ export function TutorLibraryScene({ fromWallIndex, toWallIndex, turnProgress, re
       <pointLight castShadow position={[0, 4.25, -4.5]} intensity={20} distance={11.5} decay={2} color="#fff1cf" shadow-mapSize={[1024, 1024]} />
       <pointLight position={[-6.2, 3.4, -4.6]} intensity={12} distance={8.8} decay={2} color="#f0e4cb" />
       <pointLight position={[6.2, 3.4, -4.6]} intensity={12} distance={8.8} decay={2} color="#f0e4cb" />
-      <RoomRotunda showWallLabels={showWallLabels} pool={bookPool} rigIntentEditionId={rigIntentEditionId} rigIntentToken={rigIntentToken} onRigIntent={setPointerRigIntentEditionId} phase={phase} generation={generation} reducedMotion={reducedMotion} selectedEditionId={selectedEditionId} motionProgress={bookMotionProgress} onHover={onHover} onActivate={onActivate} onRigReady={onRigReady} onRigUnavailable={onRigUnavailable} onLifecycleComplete={onLifecycleComplete} onError={onError} />
+      <RoomRotunda showWallLabels={showWallLabels} pool={bookPool} rigIntentEditionId={rigIntentEditionId} rigIntentToken={rigIntentToken} onRigIntent={setPointerRigIntentEditionId} phase={phase} generation={generation} reducedMotion={reducedMotion} pageTurnDirection={pageTurnDirection} selectedEditionId={selectedEditionId} motionProgress={bookMotionProgress} onHover={onHover} onActivate={onActivate} onRigReady={onRigReady} onRigUnavailable={onRigUnavailable} onLifecycleComplete={onLifecycleComplete} onPageSettled={onPageSettled} onError={onError} />
     </>
   );
 }

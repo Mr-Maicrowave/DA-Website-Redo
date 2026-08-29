@@ -12,6 +12,8 @@ import { createCompleteShelfPresentation } from './complete-shelf-presentation';
 import type { CompleteShelfRigController } from './complete-shelf-r3f-state';
 import type { TutorBookEdition } from './tutor-library-data';
 import { getControllerCompletionEvent, type LibraryEvent, type LibraryPhase } from './tutor-library-state';
+import { createBookMotionTimingPolicy } from './tutor-book-motion';
+import { advanceTutorBookPageTurn, type TutorBookPageTurnDirection } from './tutor-book-pages';
 
 export interface CompleteShelfTutorRig extends CompleteShelfPoolRig {
   root: Object3D;
@@ -33,9 +35,11 @@ export function CompleteShelfTutorBookBridge({
   active,
   generation,
   reducedMotion,
+  pageTurnDirection,
   onReady,
   onRelease,
   onLifecycleComplete,
+  onPageSettled,
   onError,
 }: {
   edition: TutorBookEdition;
@@ -45,21 +49,25 @@ export function CompleteShelfTutorBookBridge({
   active: boolean;
   generation: number;
   reducedMotion: boolean;
+  pageTurnDirection: TutorBookPageTurnDirection;
   onReady(rootUuid: string, controller: CompleteShelfRigController): void;
   onRelease(rootUuid: string): void;
   onLifecycleComplete(event: LibraryEvent): void;
+  onPageSettled(settledPages: number): void;
   onError?(message: string): void;
 }) {
   const { gl } = useThree();
   const presentation = useMemo(() => createCompleteShelfPresentation(tutor), [tutor]);
   const [rig, setRig] = useState<CompleteShelfTutorRig | null>(() => pool.peek(edition.id) ?? null);
-  const callbacks = useRef({ onReady, onRelease, onLifecycleComplete, onError });
+  const callbacks = useRef({ onReady, onRelease, onLifecycleComplete, onPageSettled, onError });
   const appliedCommand = useRef('');
   const emittedCompletion = useRef('');
+  const pageTurnProgress = useRef(0);
+  const pageTurnDurationMs = createBookMotionTimingPolicy(reducedMotion).pageTurnMs;
 
   useEffect(() => {
-    callbacks.current = { onReady, onRelease, onLifecycleComplete, onError };
-  }, [onError, onLifecycleComplete, onReady, onRelease]);
+    callbacks.current = { onReady, onRelease, onLifecycleComplete, onPageSettled, onError };
+  }, [onError, onLifecycleComplete, onPageSettled, onReady, onRelease]);
 
   useEffect(() => {
     let cancelled = false;
@@ -110,13 +118,20 @@ export function CompleteShelfTutorBookBridge({
       if (reducedMotion) rig.controller.setOpenProgress(1);
       else rig.controller.open();
     }
-    else if (phase === 'PAGE_TURNING') rig.controller.setPageTurnProgress(1);
+    else if (phase === 'PAGE_TURNING') {
+      pageTurnProgress.current = 0;
+      rig.controller.setPageTurnProgress(0, pageTurnDirection);
+    }
     else if (phase === 'BOOK_CLOSING') rig.controller.close();
     else if (phase === 'BOOK_RESETTING') rig.controller.reset();
-  }, [active, generation, phase, reducedMotion, rig]);
+  }, [active, generation, pageTurnDirection, phase, reducedMotion, rig]);
 
   useFrame((_, delta) => {
     if (!active || !rig) return;
+    if (phase === 'PAGE_TURNING') {
+      pageTurnProgress.current = advanceTutorBookPageTurn(pageTurnProgress.current, delta, pageTurnDurationMs);
+      rig.controller.setPageTurnProgress(pageTurnProgress.current, pageTurnDirection);
+    }
     rig.controller.update(delta);
     const snapshot = rig.controller.getSnapshot();
     const completion = getControllerCompletionEvent(phase, generation, snapshot);
@@ -124,7 +139,10 @@ export function CompleteShelfTutorBookBridge({
     const key = `${rig.root.uuid}:${phase}:${generation}:${completion.type}`;
     if (emittedCompletion.current === key) return;
     emittedCompletion.current = key;
-    if (completion.type === 'PAGE_TURN_COMPLETE') rig.controller.settlePage();
+    if (completion.type === 'PAGE_TURN_COMPLETE') {
+      if (!rig.controller.settlePage(pageTurnDirection)) return;
+      callbacks.current.onPageSettled(rig.controller.getSnapshot().settledPages);
+    }
     callbacks.current.onLifecycleComplete(completion);
   });
 

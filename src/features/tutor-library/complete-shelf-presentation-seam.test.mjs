@@ -17,10 +17,10 @@ test("applies supplied presentation canvases and colours to existing material sl
     back: new EventTarget(),
     backFoil: new EventTarget(),
     endpaper: new EventTarget(),
-    interiors: [new EventTarget(), new EventTarget()],
+    interiors: Array.from({ length: 6 }, () => new EventTarget()),
   };
   const texture = () => ({ version: 0, set needsUpdate(value) { if (value) this.version += 1; } });
-  const textures = { cover: texture(), coverFoil: texture(), spine: texture(), spineFoil: texture(), back: texture(), backFoil: texture(), endpaper: texture(), interiors: [texture(), texture()] };
+  const textures = { cover: texture(), coverFoil: texture(), spine: texture(), spineFoil: texture(), back: texture(), backFoil: texture(), endpaper: texture(), interiors: Array.from({ length: 6 }, texture) };
   const materials = {
     cloth: [createColourMaterial()],
     foil: [createColourMaterial()],
@@ -36,7 +36,7 @@ test("applies supplied presentation canvases and colours to existing material sl
 
   assert.equal(applied, true);
   assert.equal(textures.cover.image, cover);
-  assert.equal(textures.interiors[1].image, sources.interiors[1]);
+  assert.equal(textures.interiors[5].image, sources.interiors[5]);
   assert.deepEqual(materials.cloth[0].color.values, ["#1b3858"]);
   assert.deepEqual(materials.foil[0].color.values, ["#d5b369"]);
   assert.deepEqual(materials.paper[0].color.values, ["#f2eadc"]);

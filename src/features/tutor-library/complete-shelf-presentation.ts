@@ -1,4 +1,5 @@
 import { getPhotoUrl, TUTORS, type CatalogueTutor } from "../../data/teacherCatalogue.ts";
+import { createTutorBookPages, type TutorBookPage } from "./tutor-book-pages.ts";
 
 export const COMPLETE_SHELF_PRESENTATION_NAMES = ["jenny"] as const;
 export type CompleteShelfPresentationName = typeof COMPLETE_SHELF_PRESENTATION_NAMES[number];
@@ -8,7 +9,7 @@ const CANVAS_METADATA = {
   spine: { width: 512, height: 2304 },
   back: { width: 1536, height: 2304 },
   endpaper: { width: 1024, height: 1536 },
-  interiors: { count: 8, width: 1024, height: 1536 },
+  interiors: { count: 6, width: 1536, height: 2048 },
 } as const;
 
 const JENNY_FALLBACK_PORTRAIT = "/teachers/jenny.png";
@@ -90,12 +91,16 @@ function drawWrappedText(context: CanvasRenderingContext2D, text: string, x: num
       context.fillText(line, x, y + lineIndex * lineHeight);
       line = word;
       lineIndex += 1;
-      if (lineIndex >= maxLines) return;
+      if (lineIndex >= maxLines) return lineIndex;
     } else {
       line = next;
     }
   }
-  if (line && lineIndex < maxLines) context.fillText(line, x, y + lineIndex * lineHeight);
+  if (line && lineIndex < maxLines) {
+    context.fillText(line, x, y + lineIndex * lineHeight);
+    lineIndex += 1;
+  }
+  return lineIndex;
 }
 
 function drawPortrait(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D, portrait: { url: string; fallbackUrl: string }, colours: CompleteShelfPresentation["colours"]) {
@@ -199,27 +204,86 @@ function drawEndpaper(canvas: HTMLCanvasElement, tutor: CatalogueTutor, colours:
   context.fillText(tutor.name, canvas.width / 2, canvas.height * 0.5);
 }
 
-function drawInterior(canvas: HTMLCanvasElement, tutor: CatalogueTutor, pageNumber: number, colours: CompleteShelfPresentation["colours"]) {
+function drawInteriorHeader(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D, page: TutorBookPage, colours: CompleteShelfPresentation["colours"]) {
+  const marginX = canvas.width * .09;
+  context.fillStyle = colours.ink;
+  context.textAlign = "left";
+  context.font = `600 ${Math.round(canvas.width * .019)}px Arial, sans-serif`;
+  context.fillText("DA TUITION / TUTOR PROFILE", marginX, canvas.height * .078);
+  context.textAlign = "right";
+  context.fillText(String(page.folio).padStart(2, "0"), canvas.width - marginX, canvas.height * .078);
+  context.strokeStyle = colours.foil;
+  context.lineWidth = Math.max(2, canvas.width * .0015);
+  context.beginPath();
+  context.moveTo(marginX, canvas.height * .1);
+  context.lineTo(canvas.width - marginX, canvas.height * .1);
+  context.stroke();
+  context.textAlign = "left";
+  context.fillStyle = colours.foil;
+  context.font = `700 ${Math.round(canvas.width * .021)}px Arial, sans-serif`;
+  context.fillText(page.label.toUpperCase(), marginX, canvas.height * .15);
+}
+
+function drawTags(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D, tags: readonly string[], y: number, colours: CompleteShelfPresentation["colours"]) {
+  if (tags.length === 0) return;
+  const marginX = canvas.width * .09;
+  context.textAlign = "left";
+  context.font = `600 ${Math.round(canvas.width * .023)}px Arial, sans-serif`;
+  tags.forEach((tag, index) => {
+    const tagY = y + index * canvas.height * .072;
+    context.fillStyle = colours.foil;
+    context.fillRect(marginX, tagY - canvas.height * .027, canvas.width * .012, canvas.height * .012);
+    context.fillStyle = colours.ink;
+    context.fillText(tag, marginX + canvas.width * .035, tagY);
+  });
+}
+
+function drawInterior(canvas: HTMLCanvasElement, page: TutorBookPage, colours: CompleteShelfPresentation["colours"]) {
   const context = contextFor(canvas);
   context.fillStyle = colours.paper;
   context.fillRect(0, 0, canvas.width, canvas.height);
+  drawInteriorHeader(canvas, context, page, colours);
+  const marginX = canvas.width * .09;
+  const bodyWidth = canvas.width * .82;
+  const [primary, ...rest] = page.sourceText;
   context.fillStyle = colours.ink;
   context.textAlign = "left";
-  context.font = `600 ${Math.round(canvas.width * 0.026)}px Arial, sans-serif`;
-  context.fillText("DA TUITION / TUTOR PROFILE", canvas.width * 0.09, canvas.height * 0.09);
-  context.textAlign = "right";
-  context.fillText(String(pageNumber + 1).padStart(2, "0"), canvas.width * 0.91, canvas.height * 0.09);
-  context.strokeStyle = colours.foil;
-  context.lineWidth = Math.max(2, canvas.width * 0.002);
-  context.beginPath();
-  context.moveTo(canvas.width * 0.09, canvas.height * 0.12);
-  context.lineTo(canvas.width * 0.91, canvas.height * 0.12);
-  context.stroke();
-  context.textAlign = "left";
-  context.font = `600 ${Math.round(canvas.width * 0.06)}px Georgia, serif`;
-  drawWrappedText(context, pageNumber === 0 ? tutor.name : tutor.designation, canvas.width * 0.09, canvas.height * 0.26, canvas.width * 0.8, canvas.width * 0.075, 3);
-  context.font = `${Math.round(canvas.width * 0.032)}px Georgia, serif`;
-  drawWrappedText(context, pageNumber % 2 === 0 ? tutor.tagline : tutor.motto, canvas.width * 0.09, canvas.height * 0.52, canvas.width * 0.8, canvas.width * 0.046, 6);
+
+  if (page.id === "identity") {
+    const [name, designation, tagline, subjects] = page.sourceText;
+    context.font = `600 ${Math.round(canvas.width * .06)}px Georgia, serif`;
+    const nameLines = drawWrappedText(context, name, marginX, canvas.height * .25, bodyWidth, canvas.height * .067, 2);
+    context.fillStyle = colours.foil;
+    context.font = `700 ${Math.round(canvas.width * .023)}px Arial, sans-serif`;
+    drawWrappedText(context, designation, marginX, canvas.height * (.29 + nameLines * .055), bodyWidth, canvas.height * .035, 2);
+    context.fillStyle = colours.ink;
+    context.font = `italic ${Math.round(canvas.width * .034)}px Georgia, serif`;
+    drawWrappedText(context, tagline, marginX, canvas.height * .49, bodyWidth, canvas.height * .045, 5);
+    context.fillStyle = colours.foil;
+    context.font = `700 ${Math.round(canvas.width * .019)}px Arial, sans-serif`;
+    context.fillText("SUBJECTS", marginX, canvas.height * .7);
+    context.fillStyle = colours.ink;
+    context.font = `${Math.round(canvas.width * .026)}px Georgia, serif`;
+    drawWrappedText(context, subjects, marginX, canvas.height * .76, bodyWidth, canvas.height * .038, 5);
+    return;
+  }
+
+  if (page.id === "approach") {
+    context.font = `italic ${Math.round(canvas.width * .041)}px Georgia, serif`;
+    drawWrappedText(context, primary, marginX, canvas.height * .28, bodyWidth, canvas.height * .056, 7);
+    drawTags(canvas, context, rest, canvas.height * .66, colours);
+    return;
+  }
+
+  if (page.id === "subjects") {
+    context.font = `${Math.round(canvas.width * .032)}px Georgia, serif`;
+    drawWrappedText(context, primary, marginX, canvas.height * .29, bodyWidth, canvas.height * .046, 8);
+    drawTags(canvas, context, rest, canvas.height * .64, colours);
+    return;
+  }
+
+  context.font = `${Math.round(canvas.width * .028)}px Georgia, serif`;
+  drawWrappedText(context, primary, marginX, canvas.height * .25, bodyWidth, canvas.height * .042, 21);
 }
 
 function drawTransparentFoil(canvas: HTMLCanvasElement) {
@@ -258,7 +322,8 @@ export function createCompleteShelfPresentation(tutor: CatalogueTutor): Complete
       const back = createCanvas(canvasDocument, CANVAS_METADATA.back);
       const backFoil = createCanvas(canvasDocument, CANVAS_METADATA.back);
       const endpaper = createCanvas(canvasDocument, CANVAS_METADATA.endpaper);
-      const interiors = Array.from({ length: CANVAS_METADATA.interiors.count }, (_, pageNumber) => createCanvas(canvasDocument, CANVAS_METADATA.interiors));
+      const pages = createTutorBookPages(tutor);
+      const interiors = pages.map(() => createCanvas(canvasDocument, CANVAS_METADATA.interiors));
       drawCover(cover, tutor, portrait, colours);
       drawTransparentFoil(coverFoil);
       drawSpine(spine, tutor, colours);
@@ -266,7 +331,7 @@ export function createCompleteShelfPresentation(tutor: CatalogueTutor): Complete
       drawBack(back, tutor, colours);
       drawTransparentFoil(backFoil);
       drawEndpaper(endpaper, tutor, colours);
-      interiors.forEach((canvas, pageNumber) => drawInterior(canvas, tutor, pageNumber, colours));
+      interiors.forEach((canvas, pageNumber) => drawInterior(canvas, pages[pageNumber], colours));
       return { cover, coverFoil, spine, spineFoil, back, backFoil, endpaper, interiors };
     },
   };

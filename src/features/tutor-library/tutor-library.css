@@ -9,3 +9,5 @@
 @media(prefers-reduced-motion:reduce){.tutor-library__copy,.tutor-library__book-control{transition-duration:.01ms}.tutor-library[data-reduced-motion="true"] .tutor-library__status{position:absolute}}
 
 .tutor-library__wall-nav button{min-height:2.75rem}
+
+.tutor-library__reader:focus-visible{outline:3px solid #f2cf76;outline-offset:3px}.tutor-library__page-status{margin:.75rem 0 0;color:#e3c77f;font-size:.68rem;letter-spacing:.08em;text-transform:uppercase}

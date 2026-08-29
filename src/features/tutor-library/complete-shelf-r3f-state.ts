@@ -14,8 +14,8 @@ export interface CompleteShelfRigController {
   open(): boolean;
   close(): boolean;
   setOpenProgress(value: number): boolean;
-  setPageTurnProgress(value: number): boolean;
-  settlePage(): boolean;
+  setPageTurnProgress(value: number, direction?: -1 | 1): boolean;
+  settlePage(direction?: -1 | 1): boolean;
   update(delta: number): void;
   getSnapshot(): {
     rootUuid: string;

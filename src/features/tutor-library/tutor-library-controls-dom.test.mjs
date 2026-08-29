@@ -10,6 +10,8 @@ try {
   assert.ok(address && typeof address !== 'string');
   browser = await puppeteer.launch({ headless: true });
   const page = await browser.newPage();
+  page.on('console', message => console.error(`Browser console: ${message.text()}`));
+  page.on('pageerror', error => console.error(`Browser page error: ${error.message}`));
   await page.setRequestInterception(true);
   page.on('request', request => request.url().includes('google') ? void request.abort() : void request.continue());
   await page.goto(`http://127.0.0.1:${address.port}/src/features/tutor-library/tutor-library-controls.fixture.html`, { waitUntil: 'domcontentloaded' });
@@ -33,6 +35,26 @@ try {
   assert.ok((await page.evaluate(() => window.tutorLibraryFixture.events)).includes('escape'));
 
   await page.evaluate(() => window.tutorLibraryFixture.setPhase('BOOK_READING'));
+  await page.evaluate(() => window.tutorLibraryFixture.setPage(0));
+  const previousPage = '[aria-label="Previous tutor profile page"]';
+  const nextPage = '[aria-label="Next tutor profile page"]';
+  assert.equal(await page.$eval(previousPage, element => element.disabled), true);
+  assert.equal(await page.$eval(nextPage, element => element.disabled), false);
+  await page.$eval(nextPage, element => element.click());
+  await page.focus('.tutor-library__reader');
+  await page.keyboard.press('ArrowRight');
+  await page.keyboard.press('PageDown');
+  await page.keyboard.press('ArrowLeft');
+  await page.keyboard.press('PageUp');
+  await page.$eval('.tutor-library__reader', element => {
+    element.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, clientX: 180, clientY: 120, pointerId: 4, isPrimary: true }));
+    element.dispatchEvent(new PointerEvent('pointerup', { bubbles: true, clientX: 100, clientY: 126, pointerId: 4, isPrimary: true }));
+  });
+  assert.deepEqual((await page.evaluate(() => window.tutorLibraryFixture.events)).filter(event => event.startsWith('page:')), [
+    'page:1', 'page:1', 'page:1', 'page:-1', 'page:-1', 'page:1',
+  ]);
+  assert.match(await page.$eval('.tutor-library__page-status', element => element.textContent ?? ''), /Page 3 of 6/i);
+
   const disabledBook = '[data-edition-id="T009:primary"]';
   assert.equal(await page.$eval(disabledBook, element => element.disabled), true);
   const eventCount = await page.evaluate(() => window.tutorLibraryFixture.events.length);

@@ -8,6 +8,7 @@ import {
   getCompleteShelfPresentationQuery,
   selectCompleteShelfPresentationTutor,
 } from "./complete-shelf-presentation.ts";
+import { createTutorBookPages } from "./tutor-book-pages.ts";
 
 const jenny = TUTORS.find((tutor) => tutor.id === "T003")!;
 
@@ -120,7 +121,7 @@ test("defines deterministic high-resolution metadata for every presentation surf
     spine: { width: 512, height: 2304 },
     back: { width: 1536, height: 2304 },
     endpaper: { width: 1024, height: 1536 },
-    interiors: { count: 8, width: 1024, height: 1536 },
+    interiors: { count: 6, width: 1536, height: 2048 },
   });
   assert.equal(typeof presentation.createCanvasSources, "function");
 });
@@ -139,11 +140,11 @@ test("draws every Jenny presentation canvas and refreshes the cover after the po
     let coverRefreshes = 0;
     sources.cover.addEventListener("complete-shelf-presentation-update", () => { coverRefreshes += 1; });
 
-    assert.equal(canvases.length, 15, "cover, foil layers, endpaper, and eight interior pages are all canvas-backed");
+    assert.equal(canvases.length, 13, "cover, foil layers, endpaper, and six physical profile pages are all canvas-backed");
     assert.deepEqual([sources.cover.width, sources.cover.height], [1536, 2304]);
     assert.deepEqual([sources.spine.width, sources.spine.height], [512, 2304]);
     assert.deepEqual([sources.endpaper.width, sources.endpaper.height], [1024, 1536]);
-    assert.equal(sources.interiors.length, 8);
+    assert.equal(sources.interiors.length, 6);
     assert.ok(cover.commands.some(command => command.name === "fillText" && command.args[0] === "DA TUITION"));
     assert.ok(back.commands.some(command => command.name === "fillText" && command.args[0] === "DA TUITION"));
 
@@ -156,6 +157,28 @@ test("draws every Jenny presentation canvas and refreshes the cover after the po
   } finally {
     Object.assign(globalThis, { Image: originalImage });
   }
+});
+
+test("prints every canonical Jenny page within the high-resolution safe area", () => {
+  const { document } = createRecordingDocument();
+  const sources = createCompleteShelfPresentation(jenny).createCanvasSources(document as unknown as Document);
+  const canonicalPages = createTutorBookPages(jenny);
+
+  sources.interiors.forEach((source, index) => {
+    const canvas = source as unknown as RecordingCanvas;
+    const textCommands = canvas.commands.filter(command => command.name === "fillText");
+    const printed = textCommands.map(command => String(command.args[0])).join(" ").replace(/\s+/g, " ");
+
+    for (const canonicalText of canonicalPages[index].sourceText) {
+      assert.ok(printed.includes(canonicalText.replace(/\s+/g, " ")), `${canonicalPages[index].id} prints canonical source text`);
+    }
+    assert.ok(textCommands.every(command => {
+      const x = Number(command.args[1]);
+      const y = Number(command.args[2]);
+      return x >= canvas.width * .08 && x <= canvas.width * .92
+        && y >= canvas.height * .06 && y <= canvas.height * .94;
+    }), `${canonicalPages[index].id} stays within print-safe margins`);
+  });
 });
 
 test("rejects attempts to override the factory's physical dimensions or physics", () => {

@@ -21,6 +21,11 @@ import {
 } from './tutor-library-state';
 import { TutorLibraryScene } from './TutorLibraryScene';
 import { TutorLibraryControlSurface } from './TutorLibraryControls';
+import {
+  TUTOR_BOOK_PAGE_COUNT,
+  getTutorBookPageTarget,
+  type TutorBookPageTurnDirection,
+} from './tutor-book-pages';
 import './tutor-library.css';
 
 const BOOK_EDITIONS = createTutorBookEditions(TUTORS);
@@ -56,6 +61,8 @@ export function TutorLibrary() {
   const [library, dispatch] = useReducer(libraryReducer, 'primary', createLibraryState);
   const [turnProgress, setTurnProgress] = useState(0);
   const [bookMotionProgress, setBookMotionProgress] = useState(0);
+  const [settledPages, setSettledPages] = useState(0);
+  const [pageTurnDirection, setPageTurnDirection] = useState<TutorBookPageTurnDirection>(1);
   const [rigIntent, setRigIntent] = useState<PendingRigIntent>();
   const [sceneError, setSceneError] = useState<string | undefined>(() => searchParams.get('libraryForceCanvasError') === '1' ? 'Forced Tutor Library Canvas failure' : undefined);
   const reducedMotion = useReducedMotionPreference();
@@ -108,6 +115,13 @@ export function TutorLibrary() {
     previousLibrary.current = library;
     if (library.phase === 'ROOM_IDLE' && !library.selectedEditionId && !pendingIntent.current.current()) setRigIntent(undefined);
   }, [library]);
+
+  useEffect(() => {
+    if (library.phase === 'ROOM_IDLE' || library.phase === 'BOOK_OPENING' || library.phase === 'BOOK_CLOSING' || library.phase === 'BOOK_RESETTING') {
+      setSettledPages(0);
+      setPageTurnDirection(1);
+    }
+  }, [library.phase]);
 
   useEffect(() => {
     const resize = () => dispatch({ type: 'RESIZE' });
@@ -166,6 +180,12 @@ export function TutorLibrary() {
     mountedRoots.current.unmount(editionId, rootUuid);
   };
 
+  const handlePageTurn = (direction: TutorBookPageTurnDirection) => {
+    if (!availability.canTurnPage || getTutorBookPageTarget(settledPages, direction) === undefined) return;
+    setPageTurnDirection(direction);
+    dispatch({ type: 'PAGE_TURN' });
+  };
+
   const fallbackTutor = selectedTutor ?? FALLBACK_TUTOR;
   const status = getLibraryLiveStatus(library, selectedTutor?.name, targetWall.label);
 
@@ -175,10 +195,10 @@ export function TutorLibrary() {
     </header>
     <div className="tutor-library__canvas" aria-hidden="true"><CanvasBoundary onError={(message) => { cancelPendingIntent(); setSceneError(message); }}>
       {forceCanvasFailure ? null : <Canvas shadows camera={{ position: [0, 1.9, .2], fov: 52, near: .1, far: 60 }} dpr={[1, 1.5]} gl={{ antialias: true, alpha: false, powerPreference: 'high-performance' }} onPointerLeave={() => { cancelPendingIntent(); dispatch({ type: 'LEAVE' }); }}>
-        <TutorLibraryScene fromWallIndex={activeWallIndex} toWallIndex={targetWallIndex} turnProgress={sceneProgress} reviewView={reviewView} showWallLabels={!isDebugTurn && !isDebugBook} phase={sceneBookPhase} generation={library.transitionGeneration} reducedMotion={reducedMotion} selectedEditionId={sceneSelectedEditionId} rigIntentEditionId={rigIntent?.editionId} rigIntentToken={rigIntent?.token ?? 0} bookMotionProgress={sceneBookMotionProgress} onHover={(editionId, rootUuid) => dispatchEvents(getBookInteractionEvents(library, 'pointer-preview', editionId, rootUuid))} onActivate={(editionId, rootUuid) => dispatchEvents(getBookInteractionEvents(library, 'touch-activate', editionId, rootUuid))} onRigReady={handleRigReady} onRigUnavailable={handleRigUnavailable} onLifecycleComplete={dispatch} onError={(message) => { cancelPendingIntent(); setSceneError(message); }} />
+        <TutorLibraryScene fromWallIndex={activeWallIndex} toWallIndex={targetWallIndex} turnProgress={sceneProgress} reviewView={reviewView} showWallLabels={!isDebugTurn && !isDebugBook} phase={sceneBookPhase} generation={library.transitionGeneration} reducedMotion={reducedMotion} pageTurnDirection={pageTurnDirection} selectedEditionId={sceneSelectedEditionId} rigIntentEditionId={rigIntent?.editionId} rigIntentToken={rigIntent?.token ?? 0} bookMotionProgress={sceneBookMotionProgress} onHover={(editionId, rootUuid) => dispatchEvents(getBookInteractionEvents(library, 'pointer-preview', editionId, rootUuid))} onActivate={(editionId, rootUuid) => dispatchEvents(getBookInteractionEvents(library, 'touch-activate', editionId, rootUuid))} onRigReady={handleRigReady} onRigUnavailable={handleRigUnavailable} onLifecycleComplete={dispatch} onPageSettled={setSettledPages} onError={(message) => { cancelPendingIntent(); setSceneError(message); }} />
       </Canvas>}
     </CanvasBoundary></div>
 
-    <TutorLibraryControlSurface library={library} activeWall={activeWall} visibleEditions={visibleEditions} tutors={TUTOR_BY_ID} selectedTutor={selectedTutor} fallbackTutor={fallbackTutor} availability={availability} status={status} sceneError={sceneError} focusReturnEditionId={focusReturnEditionId} showControls={!isDebugTurn} onTurn={wallId => dispatch({ type: 'TURN', wallId })} onBookInteraction={interactWithBook} onCancelPending={cancelPendingIntent} onEscape={() => dispatch({ type: 'ESCAPE' })} onOpen={() => dispatch({ type: 'OPEN' })} onPageTurn={() => dispatch({ type: 'PAGE_TURN' })} onClose={() => dispatch({ type: 'CLOSE' })} />
+    <TutorLibraryControlSurface library={library} activeWall={activeWall} visibleEditions={visibleEditions} tutors={TUTOR_BY_ID} selectedTutor={selectedTutor} fallbackTutor={fallbackTutor} availability={availability} status={status} sceneError={sceneError} focusReturnEditionId={focusReturnEditionId} settledPages={settledPages} pageCount={TUTOR_BOOK_PAGE_COUNT} showControls={!isDebugTurn} onTurn={wallId => dispatch({ type: 'TURN', wallId })} onBookInteraction={interactWithBook} onCancelPending={cancelPendingIntent} onEscape={() => dispatch({ type: 'ESCAPE' })} onOpen={() => dispatch({ type: 'OPEN' })} onPageTurn={handlePageTurn} onClose={() => dispatch({ type: 'CLOSE' })} />
   </section>;
 }

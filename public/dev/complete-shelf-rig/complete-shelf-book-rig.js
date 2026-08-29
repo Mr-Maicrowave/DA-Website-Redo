@@ -20,7 +20,7 @@ const CODEX = {
 const COVER_CROPS = [[0, 0, 512, 768], [512, 0, 512, 768], [1024, 0, 512, 768], [1536, 0, 512, 768], [2048, 0, 512, 768], [2560, 0, 512, 768], [3072, 0, 512, 768]];
 const FLEXIBLE_PAGE_SEGMENTS = 18;
 const FLEXIBLE_PAGE_VERTICAL_SEGMENTS = 8;
-const PAGINATED_LEAF_COUNT = 4;
+const PAGINATED_LEAF_COUNT = 6;
 const clamp = (value, minimum, maximum) => Math.max(minimum, Math.min(maximum, value));
 const lerp = (from, to, progress) => from + (to - from) * progress;
 const smoothstep = (value) => value * value * (3 - 2 * value);
@@ -312,7 +312,8 @@ export function createCompleteShelfBookRig(config = {}) {
   for (let pageIndex = 0; pageIndex < 6; pageIndex += 1) {
     const leafOrder = 5 - pageIndex; const pivot = new THREE.Group(); pivot.name = `codex-page-${pageIndex}`; pivot.position.set(-width * 0.5 + spineWidth * 0.65, 0, pageDepth * 0.5 + 0.0015 + pageIndex * 0.0015); pivot.userData.restZ = pivot.position.z; pivot.userData.turnedZ = depth * 0.5 + board + 0.004 + leafOrder * 0.0015;
     const frontGeometry = new THREE.PlaneGeometry(1, 1, FLEXIBLE_PAGE_SEGMENTS, FLEXIBLE_PAGE_VERTICAL_SEGMENTS); const backGeometry = new THREE.PlaneGeometry(1, 1, FLEXIBLE_PAGE_SEGMENTS, FLEXIBLE_PAGE_VERTICAL_SEGMENTS); const visiblePageWidth = pageWidth - spineWidth * 0.42;
-    const frontPageMaterial = leafOrder < 4 ? interiorPageMaterials[leafOrder * 2] : blankPageMaterial; const backPageMaterial = leafOrder < 4 ? interiorPageMaterials[leafOrder * 2 + 1] : blankPageMaterial;
+    const presentedLeafMaterial = presentationApplied && leafOrder < (presentation.sources?.interiors?.length ?? 0) ? interiorPageMaterials[leafOrder] : null;
+    const frontPageMaterial = presentedLeafMaterial ?? (leafOrder < 4 ? interiorPageMaterials[leafOrder * 2] : blankPageMaterial); const backPageMaterial = presentedLeafMaterial ?? (leafOrder < 4 ? interiorPageMaterials[leafOrder * 2 + 1] : blankPageMaterial);
     const front = createMesh(frontGeometry, frontPageMaterial, `codex-page-sheet-${pageIndex}-front`, false, true); front.scale.set(visiblePageWidth, pageHeight - 0.014, 1); front.position.set(visiblePageWidth * 0.5, 0, 0.00022); pivot.add(front);
     const back = createMesh(backGeometry, backPageMaterial, `codex-page-sheet-${pageIndex}-back`, false, true); back.scale.set(visiblePageWidth, pageHeight - 0.014, 1); back.position.set(visiblePageWidth * 0.5, 0, -0.00022); back.rotation.y = Math.PI; pivot.add(back);
     pivot.userData.flex = { curve: 0, curveVelocity: 0, twist: 0, twistVelocity: 0, surfaces: [{ geometry: frontGeometry, position: frontGeometry.attributes.position, base: Float32Array.from(frontGeometry.attributes.position.array), direction: 1 }, { geometry: backGeometry, position: backGeometry.attributes.position, base: Float32Array.from(backGeometry.attributes.position.array), direction: -1 }] };
@@ -383,17 +384,22 @@ export function createCompleteShelfBookRig(config = {}) {
     open() { state.openTarget = 1; state.settledPages = 0; resetNeutralPageDrag(); return true; },
     close() { state.openTarget = 0; state.settledPages = 0; resetNeutralPageDrag(); return true; },
     setOpenProgress(progress) { state.open = state.openTarget = clamp(progress, 0, 1); if (state.openTarget === 0) { state.settledPages = 0; resetNeutralPageDrag(); } return true; },
-    setPageTurnProgress(progress) {
+    setPageTurnProgress(progress, direction = 1) {
       const nextProgress = clamp(progress, 0, 1);
       if (state.openTarget < 0.999) { resetNeutralPageDrag(); return false; }
+      const normalizedDirection = direction < 0 ? -1 : 1;
+      const atBoundary = normalizedDirection > 0
+        ? state.settledPages >= PAGINATED_LEAF_COUNT
+        : state.settledPages <= 0;
+      if (nextProgress > 0 && atBoundary) { resetNeutralPageDrag(); return false; }
       state.pageDrag.active = nextProgress > 0;
       state.pageDrag.progress = nextProgress;
       state.pageDrag.progressVelocity = 0;
       state.pageDrag.verticalBias = 0;
-      state.pageDrag.direction = nextProgress > 0 ? 1 : 0;
+      state.pageDrag.direction = nextProgress > 0 ? normalizedDirection : 0;
       return true;
     },
-    settlePage() { if (state.openTarget < 0.999) return false; resetNeutralPageDrag(); state.settledPages = Math.min(PAGINATED_LEAF_COUNT, state.settledPages + 1); return true; },
+    settlePage(direction = state.pageDrag.direction || 1) { if (state.openTarget < 0.999) return false; const normalizedDirection = direction < 0 ? -1 : 1; const nextSettledPages = clamp(state.settledPages + normalizedDirection, 0, PAGINATED_LEAF_COUNT); resetNeutralPageDrag(); if (nextSettledPages === state.settledPages) return false; state.settledPages = nextSettledPages; return true; },
     reset() { state.open = state.openTarget = 0; state.settledPages = 0; resetNeutralPageDrag(); frontPivot.rotation.y = 0; pagePivots.forEach((pivot) => { pivot.rotation.set(0, 0, 0); pivot.position.z = pivot.userData.restZ; updateFlexiblePage(pivot, 0, 0, true); }); return true; },
     update(delta = 0) { state.open = damp(state.open, state.openTarget, 10.5, delta); updatePaginatedBook(delta); },
     getSnapshot() {
