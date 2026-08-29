@@ -29,6 +29,12 @@ for (const route of [routeBase, `${routeBase}/`]) {
   assert.match(html, /Atlas failure forced for verification/);
   assert.match(html, /data-framing/);
   assert.match(html, /narrow-390-safe/);
+  assert.match(html, /data-action-state/);
+  assert.match(html, /setActiveState/);
+  assert.match(html, /setActiveState\('fully-open'\)/);
+  assert.match(html, /setActiveState\('closed-three-quarter'\)/);
+  assert.match(html, /setActiveState\(isOpen \? 'settled-page' : activeState\)/);
+  assert.match(html, /setActiveState\('reset'\)/);
 }
 
 const runtimeResponse = await fetch(`${routeBase}/vendor/three.module.js`);
