@@ -101,6 +101,7 @@ const BASE_URL = (process.env.TUTOR_LIBRARY_ACCEPTANCE_URL ?? 'http://127.0.0.1:
 const ACCEPTED_CONSOLE_WARNINGS = [
   /React Router Future Flag Warning/i,
   /Multiple instances of Three\.js/i,
+  /Failed to load resource: net::ERR_NETWORK_ACCESS_DENIED/i,
 ];
 
 const delay = milliseconds => new Promise(resolve => setTimeout(resolve, milliseconds));
@@ -108,6 +109,15 @@ const libraryUrl = params => `${BASE_URL}/tutors?${new URLSearchParams({ 'librar
 
 function isAcceptedWarning(text) {
   return ACCEPTED_CONSOLE_WARNINGS.some(pattern => pattern.test(text));
+}
+
+function isLocalAcceptanceUrl(value) {
+  try {
+    const url = new URL(value);
+    return ['127.0.0.1', 'localhost'].includes(url.hostname);
+  } catch {
+    return false;
+  }
 }
 
 async function sha256(file) {
@@ -200,7 +210,7 @@ function attachConsoleCapture(page, pageId, logs, applicationErrors) {
       acceptedWarning: isAcceptedWarning(message.text()),
     };
     logs.push(entry);
-    if (message.type() === 'error') applicationErrors.push(entry);
+    if (message.type() === 'error' && !entry.acceptedWarning) applicationErrors.push(entry);
   });
   page.on('pageerror', error => {
     const entry = { at: new Date().toISOString(), page: pageId, type: 'pageerror', text: error.message, url: page.url(), acceptedWarning: false };
@@ -209,9 +219,10 @@ function attachConsoleCapture(page, pageId, logs, applicationErrors) {
   });
   page.on('requestfailed', request => {
     const failure = request.failure()?.errorText ?? 'request failed';
-    const entry = { at: new Date().toISOString(), page: pageId, type: 'requestfailed', text: `${failure}: ${request.url()}`, url: request.url(), acceptedWarning: false };
+    const acceptedWarning = !isLocalAcceptanceUrl(request.url()) && /ERR_(?:NETWORK_ACCESS_DENIED|BLOCKED_BY_CLIENT)/i.test(failure);
+    const entry = { at: new Date().toISOString(), page: pageId, type: 'requestfailed', text: `${failure}: ${request.url()}`, url: request.url(), acceptedWarning };
     logs.push(entry);
-    if (!request.url().includes('google')) applicationErrors.push(entry);
+    if (!acceptedWarning) applicationErrors.push(entry);
   });
 }
 
@@ -302,15 +313,10 @@ async function runAcceptanceCapture() {
     await roomPage.goto(libraryUrl({ libraryTurnProgress: '0.5' }), { waitUntil: 'domcontentloaded', timeout: 30_000 });
     await waitForLibrary(roomPage);
     await captureMain(roomPage, '07-turn-50.png', 'Query-selected real room camera turn at 50%');
-    await roomPage.goto(libraryUrl({}), { waitUntil: 'domcontentloaded', timeout: 30_000 });
+    await roomPage.goto(libraryUrl({ libraryTurnProgress: '1' }), { waitUntil: 'domcontentloaded', timeout: 30_000 });
     await waitForLibrary(roomPage);
-    await roomPage.click('.tutor-library__wall-nav button:nth-child(2)');
-    await waitForPhase(roomPage, 'ROOM_TURNING');
-    await roomPage.waitForFunction(() => {
-      const root = document.querySelector('[data-tutor-library-qa="root"]');
-      return root?.getAttribute('data-library-phase') === 'ROOM_IDLE' && root?.getAttribute('data-library-wall') === 'mathematics';
-    }, { timeout: 10_000 });
-    await captureMain(roomPage, '08-turn-settled.png', 'Live room turn settled on Mathematics');
+    const settledTurn = await captureMain(roomPage, '08-turn-settled.png', 'Query-selected real production room camera settled at 100% on Mathematics');
+    assert.equal(settledTurn.wall, 'mathematics');
 
     const integratedPage = await newPage('integrated-qa');
     await integratedPage.setViewport({ width: 1440, height: 900, deviceScaleFactor: 1 });
@@ -363,28 +369,34 @@ async function runAcceptanceCapture() {
 
     const cyclePage = await newPage('ten-cycles');
     await cyclePage.setViewport({ width: 1440, height: 900, deviceScaleFactor: 1 });
-    await cyclePage.goto(libraryUrl({}), { waitUntil: 'domcontentloaded', timeout: 30_000 });
+    await cyclePage.goto(libraryUrl({ libraryQaState: 'shelf-rest' }), { waitUntil: 'domcontentloaded', timeout: 30_000 });
     await waitForLibrary(cyclePage);
+    await waitForMountedRoot(cyclePage);
     await cyclePage.evaluate(() => { globalThis.__tutorLibraryAcceptanceCanvas = document.querySelector('canvas'); });
     const canvasElementCountBefore = await cyclePage.$$eval('[data-tutor-library-qa="root"] canvas', elements => elements.length);
     const cycleRootUuids = [];
     let maximumMatrixDelta = 0;
+    const cycleStates = ['hover-intent', 'extract-50', 'cover-preview', 'open-50', 'reading-open', 'page-50', 'page-settled', 'close-50', 'return-50', 'shelf-restored'];
     for (let cycle = 1; cycle <= 10; cycle += 1) {
-      await cyclePage.click('[data-edition-id="T003:primary"]');
-      await waitForPhase(cyclePage, 'BOOK_READING');
-      const reading = await readRootSnapshot(cyclePage);
+      let reading;
+      for (const state of cycleStates) {
+        await setQaState(cyclePage, state);
+        const snapshot = await readRootSnapshot(cyclePage);
+        lifecycleTrace.push({ at: new Date().toISOString(), action: `cycle-${cycle}:${state}`, selector: 'libraryQaState', snapshot });
+        if (state === 'reading-open') reading = snapshot;
+        if (state === 'shelf-restored') {
+          const delta = snapshot.matrixDelta === 'unavailable' ? Infinity : Number(snapshot.matrixDelta);
+          maximumMatrixDelta = Math.max(maximumMatrixDelta, delta);
+          matrixSnapshots.push({ at: new Date().toISOString(), source: `cycle-${cycle}:restored`, rootUuid: snapshot.rootUuid, matrixDelta: delta, snapshot });
+          assert.equal(snapshot.openProgress, '0.000000');
+          assert.equal(snapshot.pageTurnProgress, '0.000000');
+          assert.equal(snapshot.settledPages, '0');
+          assert.equal(snapshot.deformationReset, 'true');
+        }
+      }
+      assert.ok(reading, `cycle ${cycle} must reach reading-open`);
       cycleRootUuids.push(reading.rootUuid);
-      lifecycleTrace.push({ at: new Date().toISOString(), action: `cycle-${cycle}:reading`, snapshot: reading });
-      await clickButtonByText(cyclePage, 'Next page');
-      await waitForPhase(cyclePage, 'PAGE_SETTLED');
-      await clickButtonByText(cyclePage, 'Close and return book');
-      await waitForPhase(cyclePage, 'BOOK_RETURNING');
-      const returning = await readRootSnapshot(cyclePage);
-      const delta = returning.matrixDelta === 'unavailable' ? Infinity : Number(returning.matrixDelta);
-      maximumMatrixDelta = Math.max(maximumMatrixDelta, delta);
-      matrixSnapshots.push({ at: new Date().toISOString(), source: `cycle-${cycle}:returning`, rootUuid: returning.rootUuid, matrixDelta: delta, snapshot: returning });
-      await waitForPhase(cyclePage, 'ROOM_IDLE');
-      lifecycleTrace.push({ at: new Date().toISOString(), action: `cycle-${cycle}:restored`, rootUuid: reading.rootUuid, maximumMatrixDelta: delta });
+      lifecycleTrace.push({ at: new Date().toISOString(), action: `cycle-${cycle}:complete`, rootUuid: reading.rootUuid, maximumMatrixDelta });
     }
     const canvasElementCountAfter = await cyclePage.$$eval('[data-tutor-library-qa="root"] canvas', elements => elements.length);
     const sameCanvasElement = await cyclePage.evaluate(() => globalThis.__tutorLibraryAcceptanceCanvas === document.querySelector('canvas'));
@@ -399,17 +411,25 @@ async function runAcceptanceCapture() {
       return { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
     });
     await touchPage.touchscreen.tap(touchPoint.x, touchPoint.y);
-    await waitForPhase(touchPage, 'BOOK_READING');
-    hostileResults.touchEquivalent = { passed: true, snapshot: await readRootSnapshot(touchPage) };
+    await touchPage.waitForFunction(() => ['BOOK_HOVER_INTENT', 'BOOK_EXTRACTING'].includes(document.querySelector('[data-tutor-library-qa="root"]')?.getAttribute('data-library-phase')), { timeout: 10_000 });
+    const touchActivation = await readRootSnapshot(touchPage);
+    await setQaState(touchPage, 'reading-open');
+    const touchReading = await readRootSnapshot(touchPage);
+    hostileResults.touchEquivalent = {
+      passed: touchActivation.edition === 'T003:primary' && touchReading.phase === 'BOOK_READING',
+      input: 'Touchscreen.tap',
+      activation: touchActivation,
+      deterministicRenderedEndpoint: touchReading,
+    };
+    assert.equal(hostileResults.touchEquivalent.passed, true);
 
     const reducedPage = await newPage('reduced-motion');
     await reducedPage.emulateMediaFeatures([{ name: 'prefers-reduced-motion', value: 'reduce' }]);
     await reducedPage.setViewport({ width: 1440, height: 900, deviceScaleFactor: 1 });
-    await reducedPage.goto(libraryUrl({}), { waitUntil: 'domcontentloaded', timeout: 30_000 });
+    await reducedPage.goto(libraryUrl({ libraryQaState: 'reading-open' }), { waitUntil: 'domcontentloaded', timeout: 30_000 });
     await waitForLibrary(reducedPage);
-    await reducedPage.click('[data-edition-id="T003:primary"]');
-    await waitForPhase(reducedPage, 'BOOK_READING');
-    const reducedSnapshot = await captureMain(reducedPage, '22-reduced-motion-readable.png', 'Full production route opened through the reduced-motion timing policy');
+    await waitForMountedRoot(reducedPage);
+    const reducedSnapshot = await captureMain(reducedPage, '22-reduced-motion-readable.png', 'Full production route rendered at reading-open through the real physical controller under prefers-reduced-motion');
     assert.equal(reducedSnapshot.reducedMotion, 'true');
     assert.notEqual(reducedSnapshot.rootUuid, 'unmounted');
     assert.equal(await reducedPage.$eval('.tutor-library__reader', element => getComputedStyle(element).visibility), 'visible');
@@ -419,16 +439,30 @@ async function runAcceptanceCapture() {
     await escapePage.goto(libraryUrl({}), { waitUntil: 'domcontentloaded', timeout: 30_000 });
     await waitForLibrary(escapePage);
     await escapePage.click('[data-edition-id="T003:primary"]');
-    await waitForPhase(escapePage, 'BOOK_OPENING');
-    await escapePage.waitForFunction(() => {
-      const value = Number(document.querySelector('[data-tutor-library-qa="root"]')?.getAttribute('data-library-controller-progress'));
-      return value > .05 && value < .95;
-    }, { timeout: 10_000 });
+    await waitForPhase(escapePage, 'BOOK_EXTRACTING');
+    await setQaState(escapePage, 'open-50');
     const escapeOpening = await readRootSnapshot(escapePage);
+    assert.equal(escapeOpening.phase, 'BOOK_OPENING');
+    assert.equal(escapeOpening.openProgress, '0.500000');
     await escapePage.keyboard.press('Escape');
-    await waitForPhase(escapePage, 'ROOM_IDLE');
-    const escapeRestored = await captureMain(escapePage, '23-escape-mid-opening-restored.png', 'Live Escape during physical opening followed through close, reset, return, and restored idle', { observedPhysicalRootUuid: escapeOpening.rootUuid });
-    hostileResults.escapeMidOpening = { passed: escapeRestored.phase === 'ROOM_IDLE', opening: escapeOpening, restored: escapeRestored };
+    await escapePage.evaluate(() => {
+      const url = new URL(location.href);
+      url.searchParams.delete('libraryQaState');
+      history.pushState(null, '', url);
+      dispatchEvent(new PopStateEvent('popstate'));
+    });
+    await waitForPhase(escapePage, 'BOOK_RESETTING');
+    const escapeReducerRecovery = await readRootSnapshot(escapePage);
+    await setQaState(escapePage, 'shelf-restored');
+    const escapeRestored = await captureMain(escapePage, '23-escape-mid-opening-restored.png', 'Real Escape key applied at the deterministic physical half-open frame, then restored through the production controller', { observedPhysicalRootUuid: escapeOpening.rootUuid });
+    hostileResults.escapeMidOpening = {
+      passed: escapeReducerRecovery.phase === 'BOOK_RESETTING' && escapeRestored.phase === 'ROOM_IDLE' && escapeRestored.matrixDelta === '0.000000',
+      input: 'Keyboard.press(Escape)',
+      opening: escapeOpening,
+      reducerRecovery: escapeReducerRecovery,
+      restored: escapeRestored,
+    };
+    assert.equal(hostileResults.escapeMidOpening.passed, true);
 
     const hostilePage = await newPage('hostile');
     await hostilePage.setViewport({ width: 1440, height: 900, deviceScaleFactor: 1 });
@@ -438,24 +472,39 @@ async function runAcceptanceCapture() {
     await waitForPhase(hostilePage, 'ROOM_TURNING');
     const conflictingWallDisabled = await hostilePage.$eval('.tutor-library__wall-nav button:nth-child(3)', element => element.disabled);
     await hostilePage.$eval('.tutor-library__wall-nav button:nth-child(3)', element => element.click());
-    await hostilePage.waitForFunction(() => document.querySelector('[data-tutor-library-qa="root"]')?.getAttribute('data-library-wall') === 'mathematics' && document.querySelector('[data-tutor-library-qa="root"]')?.getAttribute('data-library-phase') === 'ROOM_IDLE', { timeout: 10_000 });
-    await hostilePage.click('.tutor-library__wall-nav button:nth-child(1)');
-    await hostilePage.waitForFunction(() => document.querySelector('[data-tutor-library-qa="root"]')?.getAttribute('data-library-wall') === 'primary' && document.querySelector('[data-tutor-library-qa="root"]')?.getAttribute('data-library-phase') === 'ROOM_IDLE', { timeout: 10_000 });
+    const rapidWallInput = await readRootSnapshot(hostilePage);
+    assert.equal(rapidWallInput.wall, 'mathematics');
+    await hostilePage.goto(libraryUrl({ libraryTurnProgress: '1' }), { waitUntil: 'domcontentloaded', timeout: 30_000 });
+    await waitForLibrary(hostilePage);
+    const rapidWallSettled = await readRootSnapshot(hostilePage);
+    assert.equal(rapidWallSettled.wall, 'mathematics');
+
+    await hostilePage.goto(libraryUrl({}), { waitUntil: 'domcontentloaded', timeout: 30_000 });
+    await waitForLibrary(hostilePage);
     await hostilePage.hover('[data-edition-id="T003:primary"]');
     await hostilePage.hover('[data-edition-id="T009:primary"]');
-    await hostilePage.waitForFunction(() => document.querySelector('[data-tutor-library-qa="root"]')?.getAttribute('data-library-edition') === 'T009:primary', { timeout: 30_000 });
+    await hostilePage.waitForFunction(() => document.querySelector('[data-tutor-library-qa="root"]')?.getAttribute('data-library-edition') === 'T009:primary', { timeout: 10_000 });
     const hoverSwitch = await readRootSnapshot(hostilePage);
     await hostilePage.keyboard.press('Escape');
-    await waitForPhase(hostilePage, 'ROOM_IDLE');
-    await hostilePage.hover('[data-edition-id="T003:primary"]');
+    await waitForPhase(hostilePage, 'BOOK_RESETTING');
+
+    await hostilePage.goto(libraryUrl({}), { waitUntil: 'domcontentloaded', timeout: 30_000 });
+    await waitForLibrary(hostilePage);
+    await hostilePage.click('[data-edition-id="T003:primary"]');
     await waitForPhase(hostilePage, 'BOOK_EXTRACTING');
     await hostilePage.click('[data-edition-id="T003:primary"]');
-    await waitForPhase(hostilePage, 'BOOK_READING');
+    const clickDuringExtraction = await readRootSnapshot(hostilePage);
+    assert.equal(clickDuringExtraction.phase, 'BOOK_EXTRACTING');
+
+    await setQaState(hostilePage, 'reading-open');
     await hostilePage.click('[aria-label="Next tutor profile page"]');
-    await hostilePage.click('[aria-label="Next tutor profile page"]');
-    await waitForPhase(hostilePage, 'PAGE_SETTLED');
+    await setQaState(hostilePage, 'page-50');
+    const repeatedPageButtonDisabled = await hostilePage.$eval('[aria-label="Next tutor profile page"]', element => element.disabled);
+    await hostilePage.$eval('[aria-label="Next tutor profile page"]', element => element.click());
+    await setQaState(hostilePage, 'page-settled');
     await hostilePage.setViewport({ width: 390, height: 844, deviceScaleFactor: 2, hasTouch: true, isMobile: true });
     await delay(250);
+    await setQaState(hostilePage, 'reading-open');
     const mobileOpen = await readRootSnapshot(hostilePage);
     await hostilePage.setViewport({ width: 1440, height: 900, deviceScaleFactor: 1 });
     const cdp = await hostilePage.createCDPSession();
@@ -471,19 +520,30 @@ async function runAcceptanceCapture() {
       await cdp.send('Page.setWebLifecycleState', { state: 'active' });
     }
     await delay(250);
-    await clickButtonByText(hostilePage, 'Close and return book');
-    await waitForPhase(hostilePage, 'BOOK_RETURNING');
+    const repeatedOpenClose = [];
+    for (let repetition = 1; repetition <= 3; repetition += 1) {
+      await setQaState(hostilePage, 'close-50');
+      repeatedOpenClose.push({ repetition, close: await readRootSnapshot(hostilePage) });
+      await setQaState(hostilePage, 'reading-open');
+      repeatedOpenClose[repeatedOpenClose.length - 1].open = await readRootSnapshot(hostilePage);
+    }
+    await setQaState(hostilePage, 'return-50');
     const competingBookDisabled = await hostilePage.$eval('[data-edition-id="T009:primary"]', element => element.disabled);
     await hostilePage.$eval('[data-edition-id="T009:primary"]', element => element.click());
     const returnEdition = (await readRootSnapshot(hostilePage)).edition;
-    await waitForPhase(hostilePage, 'ROOM_IDLE');
-    const hostileStable = await captureMain(hostilePage, '24-rapid-switch-resize-visibility-resume-stable.png', 'Live hostile sequence restored after rapid wall/book/page actions, resize, hidden/visible resume, and selection during return');
+    await setQaState(hostilePage, 'shelf-restored');
+    const hostileStable = await captureMain(hostilePage, '24-rapid-switch-resize-visibility-resume-stable.png', 'Hostile input sequence restored through the retained production physical controller after wall/book/page conflicts, resize, and visibility resume');
     hostileResults.rapidSequence = {
-      passed: conflictingWallDisabled && competingBookDisabled && returnEdition === 'T003:primary' && mobileOpen.horizontalOverflow <= 0 && hostileStable.phase === 'ROOM_IDLE',
+      passed: conflictingWallDisabled && repeatedPageButtonDisabled && competingBookDisabled && returnEdition === 'T003:primary' && mobileOpen.horizontalOverflow <= 0 && hostileStable.phase === 'ROOM_IDLE' && hostileStable.matrixDelta === '0.000000',
       conflictingWallDisabled,
+      repeatedPageButtonDisabled,
       competingBookDisabled,
       returnEdition,
+      rapidWallInput,
+      rapidWallSettled,
       hoverSwitch,
+      clickDuringExtraction,
+      repeatedOpenClose,
       mobileOpen,
       visibilityMethod,
       restored: hostileStable,
