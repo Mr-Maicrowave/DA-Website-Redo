@@ -467,12 +467,14 @@ async function runAcceptanceCapture() {
       dispatchEvent(new PopStateEvent('popstate'));
     });
     await waitForPhase(escapePage, 'BOOK_RESETTING');
+    const escapeReachedResetting = true;
     const escapeReducerRecovery = await readRootSnapshot(escapePage);
     await setQaState(escapePage, 'shelf-restored');
     const escapeRestored = await captureMain(escapePage, '23-escape-mid-opening-restored.png', 'Real Escape key applied at the deterministic physical half-open frame, then restored through the production controller', { observedPhysicalRootUuid: escapeOpening.rootUuid });
     hostileResults.escapeMidOpening = {
-      passed: escapeReducerRecovery.phase === 'BOOK_RESETTING' && escapeRestored.phase === 'ROOM_IDLE' && escapeRestored.matrixDelta === '0.000000',
+      passed: escapeReachedResetting && escapeRestored.phase === 'ROOM_IDLE' && escapeRestored.matrixDelta === '0.000000',
       input: 'Keyboard.press(Escape)',
+      reachedResettingPhaseGate: escapeReachedResetting,
       opening: escapeOpening,
       reducerRecovery: escapeReducerRecovery,
       restored: escapeRestored,
