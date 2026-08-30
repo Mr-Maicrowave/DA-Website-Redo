@@ -160,15 +160,17 @@ test("draws every Jenny presentation canvas and refreshes the cover after the po
     assert.ok(back.commands.some(command => command.name === "fillText" && command.args[0] === "DA TUITION"));
 
     const coverPortrait = RecordingImage.instances[0]!;
-    const profilePortrait = RecordingImage.instances[1]!;
+    const openingPagePortrait = RecordingImage.instances[1]!;
     assert.equal(coverPortrait.src, "/teachers/jenny.png");
-    assert.equal(profilePortrait.src, "/teachers/jenny.png");
+    assert.equal(openingPagePortrait.src, "/teachers/jenny.png");
     coverPortrait.onload?.();
-    profilePortrait.onload?.();
+    openingPagePortrait.onload?.();
 
     assert.equal(coverRefreshes, 1);
     assert.ok(cover.commands.some(command => command.name === "drawImage"));
-    assert.ok((sources.interiors[0] as unknown as RecordingCanvas).commands.some(command => command.name === "drawImage"));
+    const endpaper = sources.endpaper as unknown as RecordingCanvas;
+    assert.ok(endpaper.commands.some(command => command.name === "drawImage"), "the portrait appears on the opening left-hand page only");
+    assert.equal((sources.interiors[0] as unknown as RecordingCanvas).commands.some(command => command.name === "drawImage"), false);
   } finally {
     Object.assign(globalThis, { Image: originalImage });
   }

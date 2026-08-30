@@ -127,12 +127,14 @@ function drawFittedCanonicalText(
   throw new Error("Canonical tutor profile text cannot fit within the approved print-safe page at the legible font floor");
 }
 
+type PortraitFrame = { x: number; y: number; width: number; height: number; fit?: "cover" | "contain" };
+
 function drawPortrait(
   canvas: HTMLCanvasElement,
   context: CanvasRenderingContext2D,
   portrait: { url: string; fallbackUrl: string },
   colours: CompleteShelfPresentation["colours"],
-  frame = { x: .145, y: .18, width: .71, height: .39 },
+  frame: PortraitFrame = { x: .145, y: .18, width: .71, height: .39, fit: "cover" },
 ) {
   if (typeof Image === "undefined") return;
   const image = new Image();
@@ -143,7 +145,9 @@ function drawPortrait(
     const y = canvas.height * frame.y;
     const width = canvas.width * frame.width;
     const height = canvas.height * frame.height;
-    const scale = Math.max(width / image.naturalWidth, height / image.naturalHeight);
+    const scale = (frame.fit ?? "cover") === "contain"
+      ? Math.min(width / image.naturalWidth, height / image.naturalHeight)
+      : Math.max(width / image.naturalWidth, height / image.naturalHeight);
     const renderedWidth = image.naturalWidth * scale;
     const renderedHeight = image.naturalHeight * scale;
     context.save();
@@ -216,7 +220,12 @@ function drawBack(canvas: HTMLCanvasElement, tutor: CatalogueTutor, colours: Com
   context.fillText("DA TUITION", canvas.width / 2, canvas.height * 0.86);
 }
 
-function drawEndpaper(canvas: HTMLCanvasElement, tutor: CatalogueTutor, colours: CompleteShelfPresentation["colours"]) {
+function drawEndpaper(
+  canvas: HTMLCanvasElement,
+  tutor: CatalogueTutor,
+  portrait: CompleteShelfPresentation["portrait"],
+  colours: CompleteShelfPresentation["colours"],
+) {
   const context = contextFor(canvas);
   context.fillStyle = colours.paper;
   context.fillRect(0, 0, canvas.width, canvas.height);
@@ -228,10 +237,11 @@ function drawEndpaper(canvas: HTMLCanvasElement, tutor: CatalogueTutor, colours:
     context.strokeRect(inset, inset, canvas.width - inset * 2, canvas.height - inset * 2);
   }
   context.globalAlpha = 1;
+  drawPortrait(canvas, context, portrait, colours, { x: .14, y: .12, width: .72, height: .66, fit: "contain" });
   context.fillStyle = colours.ink;
   context.textAlign = "center";
-  context.font = `600 ${Math.round(canvas.width * 0.045)}px Arial, sans-serif`;
-  context.fillText(tutor.name, canvas.width / 2, canvas.height * 0.5);
+  context.font = `600 ${Math.round(canvas.width * .052)}px Georgia, serif`;
+  context.fillText(tutor.name, canvas.width / 2, canvas.height * .88);
 }
 
 function drawInteriorHeader(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D, page: TutorBookPage, colours: CompleteShelfPresentation["colours"]) {
@@ -293,21 +303,20 @@ function drawInterior(
 
   if (page.id === "identity") {
     const [name, designation, tagline, subjects, ...strengths] = page.sourceText;
-    drawPortrait(canvas, context, portrait, colours, { x: .19, y: .18, width: .62, height: .26 });
-    context.font = `600 ${Math.round(canvas.width * .065)}px Georgia, serif`;
-    const nameLines = drawWrappedText(context, name, marginX, canvas.height * .53, bodyWidth, canvas.height * .071, 2);
+    context.font = `600 ${Math.round(canvas.width * .079)}px Georgia, serif`;
+    const nameLines = drawWrappedText(context, name, marginX, canvas.height * .28, bodyWidth, canvas.height * .086, 2);
+    context.fillStyle = colours.foil;
+    context.font = `700 ${Math.round(canvas.width * .033)}px Arial, sans-serif`;
+    drawWrappedText(context, designation, marginX, canvas.height * (.36 + nameLines * .065), bodyWidth, canvas.height * .046, 2);
+    context.fillStyle = colours.ink;
+    context.font = `italic ${Math.round(canvas.width * .048)}px Georgia, serif`;
+    drawWrappedText(context, tagline, marginX, canvas.height * .5, bodyWidth, canvas.height * .062, 3);
     context.fillStyle = colours.foil;
     context.font = `700 ${Math.round(canvas.width * .026)}px Arial, sans-serif`;
-    drawWrappedText(context, designation, marginX, canvas.height * (.57 + nameLines * .055), bodyWidth, canvas.height * .038, 2);
+    context.fillText("SUBJECTS", marginX, canvas.height * .71);
     context.fillStyle = colours.ink;
-    context.font = `italic ${Math.round(canvas.width * .036)}px Georgia, serif`;
-    drawWrappedText(context, tagline, marginX, canvas.height * .67, bodyWidth, canvas.height * .048, 2);
-    context.fillStyle = colours.foil;
-    context.font = `700 ${Math.round(canvas.width * .021)}px Arial, sans-serif`;
-    context.fillText("SUBJECTS", marginX, canvas.height * .79);
-    context.fillStyle = colours.ink;
-    context.font = `${Math.round(canvas.width * .028)}px Georgia, serif`;
-    drawWrappedText(context, subjects, marginX, canvas.height * .835, bodyWidth, canvas.height * .039, 2);
+    context.font = `${Math.round(canvas.width * .035)}px Georgia, serif`;
+    drawWrappedText(context, subjects, marginX, canvas.height * .77, bodyWidth, canvas.height * .048, 2);
     drawTags(canvas, context, strengths, canvas.height * .9, colours, .018);
     return;
   }
@@ -380,7 +389,7 @@ export function createCompleteShelfPresentation(tutor: CatalogueTutor): Complete
       drawTransparentFoil(spineFoil);
       drawBack(back, tutor, colours);
       drawTransparentFoil(backFoil);
-      drawEndpaper(endpaper, tutor, colours);
+      drawEndpaper(endpaper, tutor, portrait, colours);
       interiors.forEach((canvas, pageNumber) => drawInterior(canvas, pages[pageNumber], portrait, colours));
       return { cover, coverFoil, spine, spineFoil, back, backFoil, endpaper, interiors };
     },
@@ -407,7 +416,7 @@ export function createCompleteShelfPresentation(tutor: CatalogueTutor): Complete
       drawTransparentFoil(spineFoil);
       drawBack(back, tutor, colours);
       drawTransparentFoil(backFoil);
-      drawEndpaper(endpaper, tutor, colours);
+      drawEndpaper(endpaper, tutor, portrait, colours);
       drawInteriorAt(0);
       return { cover, coverFoil, spine, spineFoil, back, backFoil, endpaper, interiors, drawInterior: drawInteriorAt };
     },
