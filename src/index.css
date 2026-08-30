@@ -407,6 +407,29 @@
   }
 }
 
+/* Search-active spacing buys room for the pill without removing a destination
+   from the centred desktop navigation. */
+.desktop-nav-link-slot {
+  display: inline-flex;
+  min-width: 0;
+  max-width: 10rem;
+  flex: 0 0 auto;
+  overflow: hidden;
+  transition: max-width 90ms ease-out, opacity 70ms ease-out, transform 90ms ease-out;
+}
+
+.desktop-nav-links__items--compact {
+  gap: 0;
+  transition: gap 180ms ease-out;
+}
+
+.desktop-nav-links__items--compact > a,
+.desktop-nav-links__items--compact > button,
+.desktop-nav-links__items--compact > .desktop-nav-link-slot > a,
+.desktop-nav-links__items--compact > .desktop-nav-link-slot > button {
+  padding-inline: 0.5rem;
+}
+
 /* Appreciation & Advice Animations */
 @keyframes fade-in {
   from {

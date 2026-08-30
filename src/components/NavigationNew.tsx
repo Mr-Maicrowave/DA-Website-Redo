@@ -41,6 +41,7 @@ const NavigationNew = () => {
   const [reducedMotion, setReducedMotion] = useState(false);
   const [mobileHeaderHidden, setMobileHeaderHidden] = useState(false);
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
+  const [desktopSearchOpen, setDesktopSearchOpen] = useState(false);
   const location = useLocation();
   const isHomepage = location.pathname === '/';
   const isEnglishMobileTrial = location.pathname === '/subjects/english';
@@ -355,8 +356,8 @@ const NavigationNew = () => {
                   </Link>
                 </div>
 
-                <div className="flex min-w-0 items-center justify-self-center">
-                  <div className="flex gap-0.5 items-center">
+                <div className={`desktop-nav-links flex min-w-0 items-center justify-self-center${desktopSearchOpen ? ' desktop-nav-links--search-open' : ''}`}>
+                  <div className={`desktop-nav-links__items flex items-center${desktopSearchOpen ? ' desktop-nav-links__items--compact' : ' gap-0.5'}`}>
                     <Link to="/" className={navLinkClass(isHomepage)} aria-current={isHomepage ? 'page' : undefined}>Home</Link>
                     <Link
                       to="/why-choose-da"
@@ -412,9 +413,10 @@ const NavigationNew = () => {
                       </HoverCardContent>
                     </HoverCard>
 
+                    <span className="desktop-nav-link-slot desktop-nav-link--about">
                     <HoverCard openDelay={120} closeDelay={180} onOpenChange={(open) => handleDropdownChange('about', open)}>
                       <HoverCardTrigger asChild>
-                        <button type="button" aria-current={['/why-choose-da', '/find-teacher', '/tutors', '/principal-reflections', '/principal-interview-paper', '/learning-formats'].includes(location.pathname) ? 'page' : undefined} className={`${navLinkClass(['/why-choose-da', '/find-teacher', '/tutors', '/principal-reflections', '/principal-interview-paper', '/learning-formats'].includes(location.pathname))} inline-flex items-center gap-0.5`}>
+                        <button type="button" aria-current={['/why-choose-da', '/find-teacher', '/tutors', '/principal-reflections', '/principal-interview-paper', '/learning-formats'].includes(location.pathname) ? 'page' : undefined} className={`${navLinkClass(['/why-choose-da', '/find-teacher', '/tutors', '/principal-reflections', '/principal-interview-paper', '/learning-formats'].includes(location.pathname))} desktop-nav-link--about inline-flex items-center gap-0.5`}>
                           About <ChevronDown className="h-3.5 w-3.5" />
                         </button>
                       </HoverCardTrigger>
@@ -434,12 +436,14 @@ const NavigationNew = () => {
                         </ul>
                       </HoverCardContent>
                     </HoverCard>
+                    </span>
 
-                    <Link to="/success-stories" className={navLinkClass(location.pathname === '/success-stories')} aria-current={location.pathname === '/success-stories' ? 'page' : undefined}>Success Stories</Link>
+                    <span className="desktop-nav-link-slot desktop-nav-link--success"><Link to="/success-stories" className={navLinkClass(location.pathname === '/success-stories')} aria-current={location.pathname === '/success-stories' ? 'page' : undefined}>Success Stories</Link></span>
 
+                    <span className="desktop-nav-link-slot desktop-nav-link--resources">
                     <HoverCard openDelay={120} closeDelay={180} onOpenChange={(open) => handleDropdownChange('resources', open)}>
                       <HoverCardTrigger asChild>
-                        <button type="button" aria-current={['/faq', '/tutoring-canley-heights', '/articles'].some((path) => location.pathname.startsWith(path)) ? 'page' : undefined} className={`${navLinkClass(['/faq', '/tutoring-canley-heights', '/articles'].some((path) => location.pathname.startsWith(path)))} inline-flex items-center gap-0.5`}>
+                        <button type="button" aria-current={['/faq', '/tutoring-canley-heights', '/articles'].some((path) => location.pathname.startsWith(path)) ? 'page' : undefined} className={`${navLinkClass(['/faq', '/tutoring-canley-heights', '/articles'].some((path) => location.pathname.startsWith(path)))} desktop-nav-link--resources inline-flex items-center gap-0.5`}>
                           Resources <ChevronDown className="h-3.5 w-3.5" />
                         </button>
                       </HoverCardTrigger>
@@ -475,12 +479,13 @@ const NavigationNew = () => {
                         </ul>
                       </HoverCardContent>
                     </HoverCard>
+                    </span>
 
                   </div>
                 </div>
 
-                <div className="flex items-center gap-5 justify-self-end">
-                    <GlobalSearch onOpenChange={pin} />
+                <div className={`flex items-center justify-self-end ${desktopSearchOpen ? 'gap-3' : 'gap-5'}`}>
+                    <GlobalSearch onOpenChange={(open) => { setDesktopSearchOpen(open); pin(open); }} />
                     <Link
                       to="/book-interview"
                       aria-current={location.pathname === '/book-interview' ? 'page' : undefined}

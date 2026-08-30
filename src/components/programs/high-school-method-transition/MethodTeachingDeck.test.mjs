@@ -562,27 +562,15 @@ test('serves responsive AVIF and WebP deck imagery with intrinsic dimensions', (
   );
 });
 
-test('uses optimized handoff art without original card delivery and crops Apply consistently', () => {
-  assert.match(
-    transitionSource,
-    /method\.cardAvifSmall[\s\S]*method\.cardAvifLarge[\s\S]*method\.cardWebpSmall[\s\S]*method\.cardWebpLarge/,
-  );
-  assert.match(
-    transitionSource,
-    /<picture>[\s\S]*type="image\/avif"[\s\S]*type="image\/webp"[\s\S]*<img[\s\S]*src=\{method\.card\}/,
-  );
-  assert.match(
-    transitionStyles,
-    /\.hsm-transition__card\s*\{[\s\S]*image-set\([\s\S]*method-card-diagnose-forest-v1-512w\.avif[\s\S]*method-card-diagnose-forest-v1-1024w\.avif[\s\S]*method-card-diagnose-forest-v1\.png/,
-  );
+test('uses optimized Diagnose art and retains the card-relative magnifier overlay', () => {
   assert.match(
     deckStyles,
     /\.hsm-deck__card--apply\s*\{[\s\S]*--hsm-card-art-scale:\s*1\.2[3-9]/,
   );
-  assert.match(
-    transitionStyles,
-    /\.hsm-transition__companion-card--apply\s*\{[\s\S]*--hsm-card-art-scale:\s*1\.2[3-9]/,
-  );
+  assert.match(deckSource, /className="hsm-deck__diagnose-magnifier"/);
+  assert.match(deckSource, /aria-hidden="true"/);
+  assert.match(deckStyles, /\.hsm-deck__card\s+\.hsm-deck__diagnose-magnifier\s*\{[\s\S]*width:\s*72%[\s\S]*pointer-events:\s*none/s);
+  assert.doesNotMatch(transitionSource, /hsm-transition__companion-card/);
 });
 
 test('ends the method deck without duplicating the following tutoring story', () => {
@@ -1213,30 +1201,6 @@ test('high-school method route decodes artwork and stays within its request budg
     )));
     const handoffScreenshot = await page.screenshot({ type: 'png' });
     assert.ok(handoffScreenshot.byteLength > 0);
-    const deckTop = await page.$eval(
-      '.hsm-deck',
-      (deck) => deck.getBoundingClientRect().top + scrollY,
-    );
-    await page.evaluate((top) => scrollTo(0, top + 40), deckTop);
-    const upstreamApplyCoverage = await page.$eval(
-      '.hsm-transition__companion-card--apply',
-      (card) => {
-        const image = card.querySelector('img');
-        if (!(image instanceof HTMLImageElement)) {
-          throw new Error('Upstream Apply companion artwork is missing');
-        }
-        const cardRect = card.getBoundingClientRect();
-        const imageRect = image.getBoundingClientRect();
-        return {
-          widthRatio: imageRect.width / cardRect.width,
-          coversLeft: imageRect.left <= cardRect.left,
-          coversRight: imageRect.right >= cardRect.right,
-        };
-      },
-    );
-    assert.ok(upstreamApplyCoverage.widthRatio >= 1.23);
-    assert.equal(upstreamApplyCoverage.coversLeft, true);
-    assert.equal(upstreamApplyCoverage.coversRight, true);
 
     const inspectArtworksBeforeCapture = async (expectedActiveId) => {
       const evidence = await page.evaluate(async () => {

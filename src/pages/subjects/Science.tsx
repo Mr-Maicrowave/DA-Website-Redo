@@ -599,6 +599,13 @@ const NewtonGravityExperience = () => {
   const storyAppleOpacity = useTransform(storyProgress, [0, .88, 1], [1, 1, 1]);
   const storyContentOpacity = useTransform(storyProgress, [0, .84, .91], [1, 1, 0]);
   const scrollCueOpacity = useTransform(storyProgress, [.55, .64, .79, .86], [0, 1, 1, 0]);
+  // The orchard and the fallen apple share this plane. Scaling it around the
+  // apple anchor turns the final fall into a camera approach, rather than
+  // asking an unrelated lens to do all of the narrative work.
+  const storyPushScale = useTransform(storyProgress, [0, .82, .96, 1], [1, 1, 1.46, 1.66]);
+  const storyPushX = useTransform(storyProgress, [0, .82, .96, 1], ['0vw', '0vw', '-15vw', '-20vw']);
+  const storyPushY = useTransform(storyProgress, [0, .82, .96, 1], ['0vh', '0vh', '-11vh', '-15vh']);
+  const storyFocusOpacity = useTransform(storyProgress, [.78, .90, .98, 1], [0, .12, .32, .42]);
 
   useEffect(() => {
     const media = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -941,6 +948,14 @@ const NewtonGravityExperience = () => {
           border-radius: 0;
           -webkit-mask-image: linear-gradient(90deg, transparent 0%, transparent 20%, rgba(0,0,0,.18) 27%, rgba(0,0,0,.82) 38%, #000 48%, #000 100%);
           mask-image: linear-gradient(90deg, transparent 0%, transparent 20%, rgba(0,0,0,.18) 27%, rgba(0,0,0,.82) 38%, #000 48%, #000 100%);
+        }
+
+        .newton-focus-falloff {
+          position: absolute;
+          inset: 0;
+          z-index: 2;
+          pointer-events: none;
+          background: radial-gradient(circle at 69.5% 65.8%, transparent 0%, transparent 13%, rgba(7,22,41,.04) 28%, rgba(255,248,235,.22) 68%, rgba(255,248,235,.42) 100%);
         }
 
         .newton-tree-layer {
@@ -1521,8 +1536,9 @@ const NewtonGravityExperience = () => {
             </svg>
           </motion.div>
           <motion.p style={reducedMotion ? { opacity: 1 } : { opacity: scrollCueOpacity }} className="newton-scroll-cue" aria-hidden="true">Scroll to follow the apple</motion.p>
+          <motion.div aria-hidden="true" style={reducedMotion ? { opacity: 0 } : { opacity: storyFocusOpacity }} className="newton-focus-falloff" />
           <div ref={treeWrapRef} className="newton-tree-wrap">
-            <div className="newton-tree-layer">
+            <motion.div className="newton-tree-layer" style={reducedMotion ? undefined : { x: storyPushX, y: storyPushY, scale: storyPushScale, transformOrigin: '69.5% 65.8%' }}>
               <img
                 className="newton-tree"
                 src="/images/apple-tree-background-clean.png"
@@ -1633,7 +1649,7 @@ const NewtonGravityExperience = () => {
                   ))}
                 </svg>
               )}
-            </div>
+            </motion.div>
           </div>
           <AnimatePresence>
             {activeFact && (

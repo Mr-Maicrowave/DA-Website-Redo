@@ -171,6 +171,68 @@
   inset: 0;
 }
 
+.hsm-deck[data-presentation='true'] {
+  overflow: visible;
+  background: transparent;
+  padding-top: clamp(24px, 4vw, 56px);
+  padding-bottom: clamp(24px, 4vw, 56px);
+  pointer-events: none;
+}
+
+.hsm-deck[data-presentation='true']::before,
+.hsm-deck[data-presentation='true']::after {
+  opacity: 0;
+}
+
+/*
+ * The heading and process note collapse to zero height while the scroll
+ * choreography owns the deck, so the five-card row sits inside the pinned
+ * viewport instead of being pushed below it. They pop back to their normal
+ * height the instant presentation ends, which lands in the same frame the
+ * pinned stage releases - one settle, not two.
+ */
+.hsm-deck[data-presentation='true'] .hsm-deck__heading,
+.hsm-deck[data-presentation='true'] .hsm-deck__process-note {
+  margin: 0;
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+}
+
+/*
+ * The magnifier overlay is centred independently for the portrait/idle card
+ * and the expanded landscape hero card, because object-fit: cover shifts
+ * which slice of the artwork - and therefore the artwork's own focal point -
+ * is visible as the card's aspect ratio changes. One fixed percentage can't
+ * stay centred through that reflow, so each shape gets its own geometry.
+ */
+.hsm-deck__card .hsm-deck__diagnose-magnifier {
+  position: absolute !important;
+  inset: auto !important;
+  z-index: 1;
+  top: 43% !important;
+  left: 50% !important;
+  width: 72% !important;
+  max-width: none !important;
+  height: auto !important;
+  object-fit: contain !important;
+  pointer-events: none;
+  scale: 1 !important;
+  transition: none !important;
+  transform: translate(-50%, -50%);
+}
+
+.hsm-deck[data-expanded='true'] .hsm-deck__card.is-active .hsm-deck__diagnose-magnifier {
+  top: 46% !important;
+  width: 40% !important;
+}
+
+/* Simplified per the cropped horizontal tab treatment: full-size overlay art
+   doesn't read at ~60px tall, so it steps aside for the other four tabs. */
+.hsm-deck[data-expanded='true'] .hsm-deck__card[data-method-id='diagnose']:not(.is-active) .hsm-deck__diagnose-magnifier {
+  display: none;
+}
+
 .hsm-deck__card::after {
   position: absolute;
   inset: 52% 0 0;

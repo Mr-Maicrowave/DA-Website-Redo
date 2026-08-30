@@ -24,5 +24,5 @@ test('centres the link cluster between equal outer grid tracks', () => {
   assert.doesNotMatch(source, /ml-\[clamp\(5rem,8vw,8\.5rem\)\]/);
   assert.match(source, /justify-self-center/);
   assert.match(source, /hidden min-\[1100px\]:block/);
-  assert.match(source, /items-center gap-5 justify-self-end[\s\S]*?<GlobalSearch[\s\S]*?Book Consultation/);
+  assert.match(source, /items-center justify-self-end[\s\S]*?<GlobalSearch[\s\S]*?Book Consultation/);
 });

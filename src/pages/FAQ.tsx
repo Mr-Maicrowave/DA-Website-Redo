@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import {
   ArrowLeft,
   ArrowRight,
@@ -261,6 +261,7 @@ const counts = faqs.reduce<Record<Category, number>>(
   },
 );
 export default function FAQPage() {
+  const location = useLocation();
   const [q, setQ] = useState("");
   const [cat, setCat] = useState<Category>("all");
   const [open, setOpen] = useState<string | null>(null);
@@ -296,7 +297,7 @@ export default function FAQPage() {
     if (categories.some((x) => x.id === h)) setCat(h as Category);
     const f = faqs.find((x) => id(x.question) === h);
     if (f) choose(f);
-  }, []);
+  }, [location.hash]);
   return (
     <div className="min-h-screen bg-[#f8f3e8] text-[#091a31]">
       <SEO
