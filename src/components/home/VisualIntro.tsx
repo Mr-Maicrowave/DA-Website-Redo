@@ -1,5 +1,5 @@
-import { type ReactNode, useEffect, useRef, useState } from 'react';
-import { motion, useMotionValueEvent, useReducedMotion, useScroll, useTransform } from 'framer-motion';
+import { cloneElement, type ReactElement, useEffect, useRef, useState } from 'react';
+import { motion, type MotionValue, useMotionValueEvent, useReducedMotion, useScroll, useTransform } from 'framer-motion';
 
 // PHOTO PAIR REPLACEMENT GUIDE
 // Replace only the `left` and `right` paths below when final DA photography is ready.
@@ -94,7 +94,7 @@ const ImagePanel = ({ src, pairIndex, side, reducedMotion }: ImagePanelProps) =>
 };
 
 type VisualIntroProps = {
-  children: ReactNode;
+  children: ReactElement<{ introProgress?: MotionValue<number> }>;
 };
 
 const VisualIntro = ({ children }: VisualIntroProps) => {
@@ -104,9 +104,6 @@ const VisualIntro = ({ children }: VisualIntroProps) => {
   const [activePairIndex, setActivePairIndex] = useState(0);
   const [rotationPaused, setRotationPaused] = useState(false);
   const [heroInteractive, setHeroInteractive] = useState(false);
-  const [isNarrow, setIsNarrow] = useState(
-    () => typeof window !== 'undefined' && window.matchMedia('(max-width: 767px)').matches
-  );
 
   const { scrollYProgress } = useScroll({
     target: prefersReducedMotion ? undefined : sectionRef,
@@ -121,12 +118,14 @@ const VisualIntro = ({ children }: VisualIntroProps) => {
   // curtain motion still plays — it just finishes sooner. The remaining distance
   // still holds the completed hero while Philosophy rises over it.
   const curtainProgress = useTransform(scrollYProgress, [0, 0.22], [0, 1], { clamp: true });
-  const leftX = useTransform(curtainProgress, [0, 0.2, 0.95, 1], ['0%', '0%', '-110%', '-112%']);
-  const rightX = useTransform(curtainProgress, [0, 0.2, 0.95, 1], ['0%', '0%', '110%', '112%']);
-  const heroY = useTransform(curtainProgress, [0, 0.38, 0.95, 1], [isNarrow ? 88 : 120, isNarrow ? 88 : 120, 0, 0]);
-  const heroOpacity = useTransform(curtainProgress, [0, 0.38, 0.62, 0.95, 1], [0, 0, 0.58, 1, 1]);
-  const heroScale = useTransform(curtainProgress, [0, 0.38, 0.95], [0.985, 0.985, 1]);
-  const heroBlur = useTransform(curtainProgress, [0, 0.38, 0.78], [isNarrow ? 'blur(2px)' : 'blur(4px)', isNarrow ? 'blur(2px)' : 'blur(4px)', 'blur(0px)']);
+  const leftX = useTransform(curtainProgress, [0, 0.35, 0.8, 1], ['0%', '0%', '-110%', '-112%']);
+  const rightX = useTransform(curtainProgress, [0, 0.35, 0.8, 1], ['0%', '0%', '110%', '112%']);
+  const leftRotateY = useTransform(curtainProgress, [0.25, 0.8, 1], [0, -2.2, -2.4]);
+  const rightRotateY = useTransform(curtainProgress, [0.25, 0.8, 1], [0, 2.2, 2.4]);
+  const curtainScale = useTransform(curtainProgress, [0, 1], [1, 0.985]);
+  const curtainOpacity = useTransform(curtainProgress, [0, 0.48, 0.61, 1], [1, 1, 0, 0]);
+  const heroY = useTransform(curtainProgress, [0, 1], [0, 0]);
+  const heroOpacity = useTransform(curtainProgress, [0, 1], [1, 1]);
 
   useMotionValueEvent(scrollYProgress, 'change', (progress) => {
     setRotationPaused((current) => {
@@ -155,13 +154,6 @@ const VisualIntro = ({ children }: VisualIntroProps) => {
       const image = new Image();
       image.src = src;
     });
-  }, []);
-
-  useEffect(() => {
-    const media = window.matchMedia('(max-width: 767px)');
-    const update = () => setIsNarrow(media.matches);
-    media.addEventListener('change', update);
-    return () => media.removeEventListener('change', update);
   }, []);
 
   useEffect(() => {
@@ -198,6 +190,7 @@ const VisualIntro = ({ children }: VisualIntroProps) => {
   }, [activePairIndex, prefersReducedMotion, rotationPaused]);
 
   const activePair = imagePairs[activePairIndex];
+  const cinematicHero = cloneElement(children, { introProgress: curtainProgress });
 
   if (prefersReducedMotion) {
     return (
@@ -221,24 +214,22 @@ const VisualIntro = ({ children }: VisualIntroProps) => {
           style={{
             y: heroY,
             opacity: heroOpacity,
-            scale: heroScale,
-            filter: heroBlur,
             pointerEvents: heroInteractive ? 'auto' : 'none',
           }}
           aria-hidden={!heroInteractive}
         >
-          {children}
+          {cinematicHero}
         </motion.div>
 
-        <div className="visual-intro__curtain-layer" aria-hidden="true">
-          <motion.div className="visual-intro__curtain" style={{ x: leftX }}>
+        <motion.div className="visual-intro__curtain-layer" style={{ opacity: curtainOpacity }} aria-hidden="true">
+          <motion.div className="visual-intro__curtain" style={{ x: leftX, rotateY: leftRotateY, scale: curtainScale, transformPerspective: 1400 }}>
             <ImagePanel src={activePair.left} pairIndex={activePairIndex} side="left" reducedMotion={false} />
           </motion.div>
-          <motion.div className="visual-intro__curtain" style={{ x: rightX }}>
+          <motion.div className="visual-intro__curtain" style={{ x: rightX, rotateY: rightRotateY, scale: curtainScale, transformPerspective: 1400 }}>
             <ImagePanel src={activePair.right} pairIndex={activePairIndex} side="right" reducedMotion={false} />
           </motion.div>
           <div className="visual-intro__vignette" />
-        </div>
+        </motion.div>
       </div>
 
       <VisualIntroStyles />

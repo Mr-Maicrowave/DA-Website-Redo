@@ -7,9 +7,9 @@ import GrowthSection from './GrowthSection';
 import HowWeTeach from './HowWeTeach';
 import MasteryCurriculum from './MasteryCurriculum';
 import MasterySection from './MasterySection';
-import PrimaryAquarium from './PrimaryAquarium';
 import PrimaryJourneyOutro from './PrimaryJourneyOutro';
 import ProgramBag from './ProgramBag';
+import SeedTreeChallenge from './SeedTreeChallenge';
 import SupportJourney from './SupportJourney';
 import { GrowthBridgeConnector } from './StoryConnectors';
 import usePrimaryReferenceMotion from './usePrimaryReferenceMotion';
@@ -33,7 +33,7 @@ const PrimaryReferenceStory = () => {
       <GrowthCurriculum />
       <MasterySection />
       <MasteryCurriculum />
-      <PrimaryAquarium />
+      <SeedTreeChallenge />
       <SupportJourney />
       <HowWeTeach />
       <ProgramBag />

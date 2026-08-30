@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import { AnimatePresence, motion, useInView, useReducedMotion } from 'framer-motion';
 import { ArrowRight, BookOpen, ChevronLeft, ChevronRight, GraduationCap, Quote, UsersRound } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import {
@@ -88,6 +88,8 @@ const CSS = `
 
 const TeachersPreview = () => {
   const reduceMotion = useReducedMotion();
+  const sectionRef = useRef<HTMLElement>(null);
+  const isSectionVisible = useInView(sectionRef, { amount: 0.25 });
   const [activeIndex, setActiveIndex] = useState(0);
   const [direction, setDirection] = useState(1);
   const [isHovered, setIsHovered] = useState(false);
@@ -96,6 +98,7 @@ const TeachersPreview = () => {
   const [pageVisible, setPageVisible] = useState(() => typeof document === 'undefined' || document.visibilityState === 'visible');
   const dragStartX = useRef<number | null>(null);
   const selectorRef = useRef<HTMLDivElement>(null);
+  const wasSectionVisible = useRef(false);
   const featured = CAROUSEL_TUTORS[activeIndex] ?? CAROUSEL_TUTORS[0] ?? TUTORS[0];
   const tutorCount = CAROUSEL_TUTORS.length;
   const ease = [0.22, 1, 0.36, 1] as const;
@@ -136,10 +139,22 @@ const TeachersPreview = () => {
   }, []);
 
   useEffect(() => {
-    if (reduceMotion || isHovered || isDragging || hasFocus || !pageVisible || tutorCount < 2) return;
+    if (!isSectionVisible) {
+      wasSectionVisible.current = false;
+      return;
+    }
+    if (wasSectionVisible.current) return;
+
+    wasSectionVisible.current = true;
+    setDirection(1);
+    setActiveIndex(0);
+  }, [isSectionVisible]);
+
+  useEffect(() => {
+    if (reduceMotion || isHovered || isDragging || hasFocus || !pageVisible || !isSectionVisible || tutorCount < 2) return;
     const timer = window.setTimeout(showNext, 6000);
     return () => window.clearTimeout(timer);
-  }, [activeIndex, hasFocus, isDragging, isHovered, pageVisible, reduceMotion, showNext, tutorCount]);
+  }, [activeIndex, hasFocus, isDragging, isHovered, isSectionVisible, pageVisible, reduceMotion, showNext, tutorCount]);
 
   const shortName = (teacher: CatalogueTutor) => {
     const parts = teacher.name.replace(/^(Mr|Mrs|Ms)\s+/, '').split(' ');
@@ -155,7 +170,7 @@ const TeachersPreview = () => {
   });
 
   return (
-    <section id="teachers" className="faculty-section" aria-labelledby="faculty-title">
+    <section ref={sectionRef} id="teachers" className="faculty-section" aria-labelledby="faculty-title">
       <style>{CSS}</style>
       <img className="faculty-watermark" src="/images/da-logo.png" alt="" aria-hidden="true" />
       <img className="faculty-laurel" src="/images/awards/gold-laurel-left.png" alt="" aria-hidden="true" />

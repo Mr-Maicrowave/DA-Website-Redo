@@ -5,20 +5,13 @@ import { useSearchParams } from 'react-router-dom';
 import NavigationNew from '@/components/NavigationNew';
 import FooterNew from '@/components/FooterNew';
 import SEO from '@/components/SEO';
-import {
-  TUTORS,
-  type CatalogueTutor,
-  getPhotoStyle,
-  getPhotoUrl,
-  teachesEnglish,
-  teachesMath,
-  teachesScience,
-} from '@/data/teacherCatalogue';
+import { TUTORS, type CatalogueTutor, getPhotoStyle, getPhotoUrl } from '@/data/teacherCatalogue';
 import { profileContentFor, profilePronounsFor, profileSubjectGroupsFor } from './profileContent';
 import { resetProfileScroll } from './profileNavigation';
+import { filterTutors, type TutorDirectoryFilter } from './tutorDirectoryModel';
 import './FindTeacher.css';
 
-type FilterKey = 'all' | 'english' | 'maths' | 'science' | 'primary';
+type FilterKey = TutorDirectoryFilter;
 
 const FILTERS: { key: FilterKey; label: string }[] = [
   { key: 'all', label: 'All educators' },
@@ -81,6 +74,7 @@ function Portrait({ teacher, eager = false }: { teacher: CatalogueTutor; eager?:
       src={getPhotoUrl(teacher)}
       alt={`Portrait of ${teacher.name}, DA Tuition educator`}
       loading={eager ? 'eager' : 'lazy'}
+      decoding="async"
       style={getPhotoStyle(teacher)}
     />
   );
@@ -140,6 +134,7 @@ function EducatorCard({
 }
 
 function ProfilePreview({ teacher, onOpen }: { teacher: CatalogueTutor; onOpen: () => void }) {
+  const content = profileContentFor(teacher);
   return (
     <AnimatePresence mode="wait">
       <motion.div
@@ -163,6 +158,12 @@ function ProfilePreview({ teacher, onOpen }: { teacher: CatalogueTutor; onOpen: 
           <h3>Meet {firstName(teacher.name)}</h3>
           <p>{shortBiography(teacher)}</p>
         </section>
+
+        <dl className="faculty-preview__facts">
+          <div><dt>Teaches</dt><dd>{subjectLabel(teacher)}</dd></div>
+          <div><dt>Teaching approach</dt><dd>{content.approach}</dd></div>
+          <div><dt>What students remember</dt><dd>{content.remembered}</dd></div>
+        </dl>
 
         <section>
           <h3>A good fit for</h3>
@@ -300,7 +301,12 @@ function FullProfile({
   );
 }
 
-const FindTeacher = () => {
+export interface FindTeacherProps {
+  embedded?: boolean;
+  onBackToHero?: () => void;
+}
+
+const FindTeacher = ({ embedded = false, onBackToHero }: FindTeacherProps) => {
   const [searchParams] = useSearchParams();
   const [filter, setFilter] = useState<FilterKey>('all');
   const [search, setSearch] = useState('');
@@ -314,16 +320,7 @@ const FindTeacher = () => {
     if (requestedTutor) setSelected(requestedTutor);
   }, [requestedTutor]);
 
-  const filtered = useMemo(() => {
-    let list = TUTORS;
-    if (filter === 'english') list = list.filter(teachesEnglish);
-    if (filter === 'maths') list = list.filter(teachesMath);
-    if (filter === 'science') list = list.filter(teachesScience);
-    if (filter === 'primary') list = list.filter(teacher => teacher.hasPrimary);
-    const query = search.trim().toLowerCase();
-    if (query) list = list.filter(teacher => [teacher.name, teacher.designation, teacher.tagline, teacher.subjects].some(value => value.toLowerCase().includes(query)));
-    return list;
-  }, [filter, search]);
+  const filtered = useMemo(() => filterTutors(TUTORS, filter, search), [filter, search]);
 
   const pageCount = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const pageTutors = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
@@ -359,22 +356,24 @@ const FindTeacher = () => {
 
   const changePage = (nextPage: number) => {
     setPage(nextPage);
-    document.querySelector('.faculty-catalogue__masthead')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    const behavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
+    document.querySelector('.faculty-catalogue__masthead')?.scrollIntoView({ behavior, block: 'start' });
   };
 
   return (
     <div className="faculty-page">
-      <SEO
+      {!embedded && <SEO
         title="Meet Our Educators"
         description="Browse DA Tuition educators across Primary, English, Mathematics and Science for Years 3–12."
         canonicalUrl="/find-teacher"
-      />
-      <NavigationNew />
+      />}
+      {!embedded && <NavigationNew />}
 
       <main className="faculty-workspace">
         <div className="faculty-catalogue">
           <header className="faculty-catalogue__masthead">
             <div>
+              {embedded && onBackToHero && <button type="button" className="faculty-catalogue__back" onClick={onBackToHero}><ArrowLeft /> Meet our educators</button>}
               <p>DA Tuition faculty</p>
               <h1>Meet our educators</h1>
               <blockquote>Every child learns differently. Meet the people who know how to notice—and respond to—the difference.</blockquote>
@@ -385,22 +384,27 @@ const FindTeacher = () => {
                 <input value={search} onChange={event => setSearch(event.target.value)} placeholder="Search by name or subject" aria-label="Search educators" />
               </label>
               <nav aria-label="Filter educators by subject">
-                {FILTERS.map(item => (
+                {FILTERS.map(item => {
+                  const count = item.key === 'all' ? TUTORS.length : filterTutors(TUTORS, item.key, '').length;
+                  return (
                   <button
                     key={item.key}
                     type="button"
                     className={filter === item.key ? 'is-active' : ''}
                     aria-pressed={filter === item.key}
                     onClick={() => setFilter(item.key)}
-                  >{item.label}</button>
-                ))}
+                  >{item.label} <span aria-hidden="true">— {count}</span></button>
+                  );
+                })}
               </nav>
+              <p className="faculty-results" aria-live="polite">{filtered.length} educator{filtered.length === 1 ? '' : 's'} shown</p>
             </div>
           </header>
 
           {pageTutors.length ? (
-            <div className="faculty-cards">
-              {pageTutors.map(teacher => (
+            <>
+              <div className="faculty-cards">
+                {pageTutors.map(teacher => (
                 <EducatorCard
                   key={teacher.id}
                   teacher={teacher}
@@ -408,8 +412,12 @@ const FindTeacher = () => {
                   onPreview={() => setPreview(teacher)}
                   onOpen={trigger => openProfile(teacher, trigger)}
                 />
-              ))}
-            </div>
+                ))}
+              </div>
+              <aside className="faculty-mobile-preview" aria-label={`Selected profile for ${preview.name}`}>
+                <ProfilePreview teacher={preview} onOpen={() => openProfile(preview)} />
+              </aside>
+            </>
           ) : (
             <div className="faculty-empty">
               <h2>No educators found</h2>
@@ -440,12 +448,12 @@ const FindTeacher = () => {
         </aside>
       </main>
 
-      <section className="faculty-mobile-guidance">
+      {!embedded && <section className="faculty-mobile-guidance">
         <p>Unsure which educator may suit your child?</p>
         <h2>We know the person behind every portrait.</h2>
         <a href="/book-interview">Talk to our education team <ArrowRight /></a>
-      </section>
-      <FooterNew />
+      </section>}
+      {!embedded && <FooterNew />}
 
       <AnimatePresence>
         {selected && (

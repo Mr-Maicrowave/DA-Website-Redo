@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Complete Shelf Codex book rig</title>
+    <style>
+      :root { color: #f3eee4; background: #17191d; font-family: Inter, ui-sans-serif, system-ui, sans-serif; }
+      * { box-sizing: border-box; } body { margin: 0; min-width: 320px; min-height: 100vh; } main { min-height: 100vh; display: grid; grid-template-rows: minmax(0, 1fr) auto; }
+      #stage { width: 100%; height: 100%; min-height: 62vh; display: block; outline: none; } #stage:focus-visible { outline: 3px solid #c87046; outline-offset: -5px; }
+      .panel { display: flex; align-items: center; gap: .6rem; flex-wrap: wrap; padding: .8rem clamp(1rem, 3vw, 2rem); background: #0d0f12; border-top: 1px solid #36393f; }
+      .label { margin-right: auto; font-size: .75rem; letter-spacing: .12em; text-transform: uppercase; color: #c6beb2; } button, select { color: inherit; background: #20242a; border: 1px solid #4b5059; border-radius: .35rem; min-height: 2.25rem; padding: .35rem .65rem; font: inherit; } button:hover, button:focus-visible, select:focus-visible { border-color: #c87046; outline: none; } .status { width: 100%; margin: 0; color: #c6beb2; font-size: .8rem; } .status[data-artwork-status="failed"] { color: #ffae95; }
+      @media (max-width: 560px) { .label { width: 100%; margin-right: 0; } .panel { gap: .45rem; } button { flex: 1 1 31%; } select { flex: 1 1 100%; } }
+    </style>
+  </head>
+  <body>
+    <main>
+      <canvas id="stage" data-framing="desktop" data-action-state="closed-three-quarter" tabindex="0" aria-label="Interactive Complete Shelf Codex book rig"></canvas>
+      <section class="panel" aria-label="Codex rig controls">
+        <span class="label">Complete Shelf Codex book rig</span>
+        <button type="button" data-action="open">Open</button><button type="button" data-action="close">Close</button><button type="button" data-action="settle">Settle page</button><button type="button" data-action="reset">Reset</button>
+        <select id="state" aria-label="Rig state"><option value="closed-front">Closed front</option><option value="closed-three-quarter">Closed three-quarter</option><option value="half-open">Half open</option><option value="fully-open">Fully open</option><option value="page-25">Page turn 25%</option><option value="page-50">Page turn 50%</option><option value="page-75">Page turn 75%</option><option value="settled-page">Settled page</option><option value="closed-again">Closed again</option><option value="reset">Reset</option></select>
+        <p id="status" class="status" data-artwork-status="pending" data-artwork-source="immutable-reference" aria-live="polite">Loading immutable Codex cover artwork…</p>
+        <p id="state-status" class="status" aria-live="polite"></p>
+      </section>
+    </main>
+    <script type="module">
+      const canvas = document.querySelector('#stage'); const status = document.querySelector('#status'); const stateStatus = document.querySelector('#state-status'); const stateSelect = document.querySelector('#state');
+      try {
+      const THREE = await import('/dev/complete-shelf-rig/vendor/three.module.js');
+      const { RoomEnvironment } = await import('/dev/complete-shelf-rig/vendor/RoomEnvironment.js');
+      const { createCompleteShelfBookRig } = await import('/dev/complete-shelf-rig/complete-shelf-book-rig.js');
+      const renderer = new THREE.WebGLRenderer({ canvas, antialias: true }); renderer.setPixelRatio(Math.min(devicePixelRatio, 2)); renderer.outputColorSpace = THREE.SRGBColorSpace; renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.08; renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+      const scene = new THREE.Scene(); scene.background = new THREE.Color(0x17191d); const camera = new THREE.PerspectiveCamera(32, 1, .1, 100); const target = new THREE.Vector3(0, 0, 0); camera.position.set(2.35, 1.48, 3.65); camera.lookAt(target);
+      const environment = new THREE.PMREMGenerator(renderer); const roomEnvironment = new RoomEnvironment(); const environmentTarget = environment.fromScene(roomEnvironment, .04); scene.environment = environmentTarget.texture; environment.dispose();
+      const floor = new THREE.Mesh(new THREE.PlaneGeometry(20, 20), new THREE.MeshStandardMaterial({ color: 0x25282d, roughness: .92, metalness: 0 })); floor.rotation.x = -Math.PI / 2; floor.position.y = -1.02; floor.receiveShadow = true; scene.add(floor);
+      const key = new THREE.DirectionalLight(0xf4d7b9, 3.1); key.position.set(2.8, 4.5, 3.4); key.castShadow = true; scene.add(key); const fill = new THREE.HemisphereLight(0x9fb3c9, 0x17191d, 1.35); scene.add(fill); const rim = new THREE.DirectionalLight(0xc87046, 1.1); rim.position.set(-3, 2, -2); scene.add(rim);
+      function setArtworkStatus(state, message, error = '') { status.dataset.artworkStatus = state; status.dataset.artworkSource = 'immutable-reference'; status.dataset.artworkError = error; status.textContent = message; publishProbe(); }
+      async function loadReferenceAtlas() { if (new URLSearchParams(location.search).get('atlas') === 'fail') throw new Error('Atlas failure forced for verification'); const response = await fetch('/dev/complete-shelf-reference/index.html'); if (!response.ok) throw new Error(`Reference fetch failed (${response.status})`); const source = await response.text(); const match = source.match(/const COVER_ATLAS_DATA = "([^"]+)"/); if (!match) throw new Error('Pinned cover atlas data is unavailable'); const image = new Image(); image.decoding = 'async'; image.src = match[1]; await image.decode(); if (!image.complete || image.naturalWidth === 0) throw new Error('Pinned cover atlas decode produced no image'); return image; }
+      const rig = createCompleteShelfBookRig({ renderer }); const persistentRootUuid = rig.root.uuid; scene.add(rig.root);
+      void loadReferenceAtlas().then((atlas) => { if (!rig.root.userData.applyCoverAtlas(atlas)) throw new Error('Pinned cover atlas could not be applied'); setArtworkStatus('applied', 'Pinned Codex cover artwork applied to the persistent rig'); }).catch((error) => { console.error(error); const message = error instanceof Error ? error.message : String(error); setArtworkStatus('failed', `Pinned Codex cover artwork failed: ${message}`, message); });
+      const desktopCameraPose = { front: [0, .15, 4.2], threeQuarter: [2.35, 1.48, 3.65], open: [0, 2.45, 3.55] }; const narrowCameraPose = { front: [0, .15, 5.85], threeQuarter: [1.9, 1.5, 6.9], open: [0, 2.3, 8.8] }; let activeState = 'closed-three-quarter'; let cameraTarget = desktopCameraPose.threeQuarter; let framingInitialized = false;
+      function usesNarrowFraming() { return innerWidth <= 560; }
+      function updateFramingSignal() { canvas.dataset.framing = usesNarrowFraming() ? 'narrow-390-safe' : 'desktop'; if (stateStatus.textContent) stateStatus.textContent = stateStatus.textContent.replace(/desktop|narrow-390-safe/, canvas.dataset.framing); }
+      function poseForState(name) { const pose = usesNarrowFraming() ? narrowCameraPose : desktopCameraPose; return name === 'closed-front' ? pose.front : (name === 'closed-three-quarter' || name === 'closed-again' || name === 'reset' ? pose.threeQuarter : pose.open); }
+      function setActiveState(name) { activeState = name; canvas.dataset.actionState = name; stateSelect.value = name; updateFramingSignal(); cameraTarget = poseForState(name); }
+      function settle(frames = 110) { for (let frame = 0; frame < frames; frame += 1) rig.controller.update(1 / 60); }
+      function probeSnapshot() { const snapshot = rig.controller.getSnapshot(); return Object.freeze({ ...snapshot, activeState, framing: canvas.dataset.framing, artworkStatus: status.dataset.artworkStatus, artworkSource: status.dataset.artworkSource, samePersistentRoot: snapshot.rootUuid === persistentRootUuid }); }
+      function publishProbe() { const snapshot = probeSnapshot(); canvas.dataset.rootUuid = snapshot.rootUuid; canvas.dataset.pagePivots = String(snapshot.pagePivotCount); canvas.dataset.openProgress = snapshot.openProgress.toFixed(4); canvas.dataset.pageTurnProgress = snapshot.pageTurnProgress.toFixed(4); canvas.dataset.settledPages = String(snapshot.settledPages); canvas.dataset.deformationReset = String(snapshot.deformationReset); return snapshot; }
+      function describeState(name, snapshot = publishProbe()) { stateStatus.textContent = `${name.replaceAll('-', ' ')} · ${canvas.dataset.framing} · persistent rig ${snapshot.samePersistentRoot ? 'verified' : 'changed'} · ${snapshot.pagePivotCount} page pivots`; }
+      function applyState(name) {
+        rig.controller.reset();
+        if (name === 'half-open') { rig.controller.setOpenProgress(.5); settle(); }
+        if (name === 'fully-open') { rig.controller.setOpenProgress(1); settle(); }
+        if (name.startsWith('page-')) { rig.controller.setOpenProgress(1); rig.controller.setPageTurnProgress(Number(name.slice(5)) / 100); settle(); }
+        if (name === 'settled-page') { rig.controller.setOpenProgress(1); rig.controller.settlePage(); settle(); }
+        if (name === 'closed-again') { rig.controller.open(); settle(); rig.controller.setPageTurnProgress(.5); settle(); rig.controller.close(); settle(); }
+        setActiveState(name);
+        const snapshot = publishProbe(); describeState(name, snapshot); return snapshot;
+      }
+      const requested = new URLSearchParams(location.search).get('state'); const allowed = [...stateSelect.options].map((option) => option.value); const initialState = allowed.includes(requested) ? requested : 'closed-three-quarter'; stateSelect.value = initialState; applyState(initialState);
+      function runStateContract() {
+        const restoreState = activeState; const states = Object.fromEntries(allowed.map((name) => [name, applyState(name)])); const rootUuids = new Set(Object.values(states).map(({ rootUuid }) => rootUuid)); const resetState = states.reset; const closedAgain = states['closed-again']; const pageTurns = ['page-25', 'page-50', 'page-75'].every((name) => states[name].openProgress > .999 && states[name].pageTurnProgress > 0); const result = Object.freeze({ rootUuid: persistentRootUuid, states: Object.freeze(states), allStatesUsePersistentRoot: rootUuids.size === 1 && rootUuids.has(persistentRootUuid), sixPivots: Object.values(states).every(({ pagePivotCount }) => pagePivotCount === 6), pageTurns, resetInvariant: resetState.openProgress === 0 && resetState.pageTurnProgress === 0 && resetState.settledPages === 0 && resetState.deformationReset, closedAgainInvariant: closedAgain.openProgress < .0001 && closedAgain.pageTurnProgress === 0 && closedAgain.settledPages === 0 && closedAgain.deformationReset, artworkStatus: status.dataset.artworkStatus }); applyState(restoreState); return result;
+      }
+      Object.defineProperty(window, '__completeShelfRigProbe', { value: Object.freeze({ snapshot: probeSnapshot, runStateContract }), writable: false, configurable: false });
+      const initialContract = runStateContract(); const closedAgainFlex = initialContract.states['closed-again'].flexiblePages.flatMap((page) => [Math.abs(page.curve), Math.abs(page.twist), Math.abs(page.curveVelocity), Math.abs(page.twistVelocity)]); canvas.dataset.contractStates = String(Object.keys(initialContract.states).length); canvas.dataset.contractRootUuid = initialContract.rootUuid; canvas.dataset.contractRoot = String(initialContract.allStatesUsePersistentRoot); canvas.dataset.contractPivots = String(initialContract.sixPivots); canvas.dataset.contractTurns = String(initialContract.pageTurns); canvas.dataset.contractReset = String(initialContract.resetInvariant); canvas.dataset.contractClosedAgain = String(initialContract.closedAgainInvariant); canvas.dataset.contractClosedAgainFlex = String(Math.max(...closedAgainFlex)); canvas.dataset.contractPassed = String(initialContract.allStatesUsePersistentRoot && initialContract.sixPivots && initialContract.pageTurns && initialContract.resetInvariant && initialContract.closedAgainInvariant);
+      stateSelect.addEventListener('change', () => { const params = new URLSearchParams(location.search); params.set('state', stateSelect.value); history.replaceState(null, '', `?${params}`); applyState(stateSelect.value); }); document.querySelectorAll('[data-action]').forEach((button) => button.addEventListener('click', () => { const action = button.dataset.action; let nextState = activeState; let applied = true; if (action === 'open') { rig.controller.open(); settle(); nextState = 'fully-open'; } if (action === 'close') { rig.controller.close(); settle(); nextState = 'closed-three-quarter'; } if (action === 'settle') { applied = rig.controller.settlePage(); if (applied) { settle(); nextState = 'settled-page'; } } if (action === 'reset') { rig.controller.reset(); nextState = 'reset'; } setActiveState(nextState); const snapshot = publishProbe(); stateStatus.textContent = `${action} ${applied ? 'applied' : 'ignored while closed'} · ${canvas.dataset.framing} · framing state ${canvas.dataset.actionState} · persistent rig ${snapshot.samePersistentRoot ? 'verified' : 'changed'}`; }));
+      addEventListener('resize', resize); function resize() { const { width, height } = canvas.getBoundingClientRect(); updateFramingSignal(); cameraTarget = poseForState(activeState); if (!framingInitialized) { camera.position.set(...cameraTarget); framingInitialized = true; } renderer.setSize(width, height, false); camera.aspect = width / height; camera.updateProjectionMatrix(); publishProbe(); } resize(); const clock = new THREE.Clock(); function render() { requestAnimationFrame(render); const delta = clock.getDelta(); rig.controller.update(delta); camera.position.lerp(new THREE.Vector3(...cameraTarget), 1 - Math.exp(-delta * 4)); camera.lookAt(target); renderer.render(scene, camera); } render();
+      function disposeRoomEnvironment() { const geometries = new Set(); const materials = new Set(); roomEnvironment.traverse((object) => { if (object.geometry) geometries.add(object.geometry); (Array.isArray(object.material) ? object.material : [object.material]).forEach((material) => { if (material) materials.add(material); }); }); geometries.forEach((geometry) => geometry.dispose()); materials.forEach((material) => material.dispose()); roomEnvironment.clear(); }
+      addEventListener('beforeunload', () => { rig.dispose(); floor.geometry.dispose(); floor.material.dispose(); scene.environment = null; environmentTarget.dispose(); disposeRoomEnvironment(); renderer.dispose(); });
+      } catch (error) {
+        console.error(error);
+        const message = error instanceof Error ? error.message : String(error);
+        status.dataset.artworkStatus = 'failed'; status.dataset.artworkSource = 'immutable-reference'; status.dataset.artworkError = message; status.textContent = `Rig module failed to load: ${message}`;
+      }
+    </script>
+  </body>
+</html>

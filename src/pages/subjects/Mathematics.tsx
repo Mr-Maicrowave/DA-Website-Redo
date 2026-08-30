@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import NavigationNew from '@/components/NavigationNew';
 import FooterNew from '@/components/FooterNew';
 import SubjectHero from '@/components/subjects/SubjectHero';
+import { SubjectReviewCarousel } from '@/components/subjects/SubjectReviewCarousel';
 import { Button } from '@/components/ui/button';
 import {
   ArrowRight,
@@ -34,8 +35,9 @@ import { ConfidenceJourney } from '@/features/maths-confidence-journey/Confidenc
 import { MathsGraphLabInvitation, MathsTeachingProof } from '@/features/maths-teaching-proof/MathsTeachingProof';
 import { MathsIntroVideoGate } from '@/features/maths-intro-video/MathsIntroVideoGate';
 import { HscMathsPathway } from '@/features/hsc-maths-pathway/HscMathsPathway';
-import { MathsSyllabusScrollStory } from '@/features/maths-syllabus-scroll-story/MathsSyllabusScrollStory';
 import { MathsTopicNetwork } from '@/features/maths-topic-network/MathsTopicNetwork';
+import { MathematicalFieldStation } from '@/features/mathematical-field-station/MathematicalFieldStation';
+import { YearCube } from '@/features/year-cube/YearCube';
 
 interface StepRow {
   label: string;
@@ -1479,9 +1481,11 @@ const Mathematics = () => {
 
         <VectorAmbientMoment passive />
 
-        <MathsSyllabusScrollStory />
+        <YearCube />
 
         <HscMathsPathway />
+
+        <MathematicalFieldStation />
 
         <section className="bg-[#071629] px-5 py-20 lg:px-8" aria-labelledby="maths-topic-network-heading">
           <div className="mx-auto max-w-7xl">
@@ -1770,29 +1774,7 @@ const Mathematics = () => {
 
         <DerivativeAmbientMoment passive />
 
-        {/* Real Google review — review-078 in src/data/reviews.json (subject: Mathematics).
-            Quoted verbatim from the "she broke it down into steps..." sentence; only the
-            surrounding scene-setting was trimmed for length, no wording changed. */}
-        <section className="border-y border-[#071629]/10 bg-[#fffdf8] px-5 py-20 lg:px-8 lg:py-24">
-          <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[0.62fr_1fr] lg:items-start lg:gap-20">
-            <div>
-              <p className="text-sm font-black text-[#8a6110]">In their own words</p>
-              <h2 className="mt-4 text-balance font-serif text-4xl font-medium leading-[1.08] tracking-[-0.035em] text-[#071629] sm:text-5xl">
-                What changes when the method clicks.
-              </h2>
-              <p className="mt-5 max-w-md text-base leading-8 text-[#40516b]">
-                A verified DA Tuition Google review from a maths student.
-              </p>
-            </div>
-            <div className="border-t-2 border-[#c9a227] pt-8 lg:pt-10">
-              <Quote className="h-9 w-9 text-[#8a6110]" aria-hidden="true" />
-              <blockquote className="mt-6 max-w-[30ch] text-balance font-serif text-3xl leading-[1.25] tracking-[-0.03em] text-[#10233f] sm:text-4xl">
-                “Even when I was certain I couldn't solve a question, she broke it down into steps in the easiest method which made it seem so simple — I understood it immediately and could apply it to other challenging questions.”
-              </blockquote>
-              <p className="mt-7 text-sm font-bold text-[#40516b]">— Christina Lee, Year 10</p>
-            </div>
-          </div>
-        </section>
+        <SubjectReviewCarousel subject="maths" />
 
         {/* Final CTA */}
         <section className="bg-[#071629] px-5 py-20 text-white lg:px-8">

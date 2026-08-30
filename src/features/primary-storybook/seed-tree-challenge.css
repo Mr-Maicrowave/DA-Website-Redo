@@ -1,0 +1,140 @@
+.seed-tree-challenge {
+  --garden-navy: #082743;
+  --garden-green: #537c3d;
+  --garden-gold: #c98d25;
+  position: relative;
+  display: grid;
+  width: min(calc(100% - 3rem), 96rem);
+  min-height: clamp(46rem, 90svh, 58rem);
+  margin: clamp(3rem, 7vw, 7rem) auto;
+  border: 1px solid rgba(124, 91, 34, .14);
+  border-radius: clamp(1.5rem, 3vw, 2.75rem);
+  padding: clamp(2rem, 4vw, 4.5rem);
+  overflow: hidden;
+  grid-template-columns: minmax(0, 45fr) minmax(0, 55fr);
+  gap: clamp(2rem, 5vw, 6rem);
+  background:
+    radial-gradient(circle at 16% 11%, rgba(255, 223, 133, .3), transparent 18rem),
+    linear-gradient(118deg, #f2f5e8 0 45%, #fffaf0 45% 100%);
+  box-shadow: 0 16px 45px rgba(73, 59, 31, .08);
+  color: var(--garden-navy);
+  isolation: isolate;
+}
+
+.seed-tree-challenge__sun { position:absolute; top:6%; left:15%; width:16rem; aspect-ratio:1; border-radius:50%; background:radial-gradient(circle,rgba(255,211,101,.24),transparent 68%); opacity:calc(.28 + var(--growth-stage) * .12); transition:opacity .8s ease; }
+.seed-tree-challenge__garden,.seed-tree-challenge__experience { position:relative; z-index:2; min-width:0; }
+.seed-tree-challenge__garden { display:flex; min-height:35rem; flex-direction:column; justify-content:flex-end; align-items:center; }
+.seed-tree-challenge__plant-stage { position:relative; z-index:3; width:100%; height:clamp(29rem,52vw,46rem); }
+.seed-tree-challenge__plant-stage img { position:absolute; bottom:3.2rem; left:50%; display:block; width:min(100%,42rem); max-height:calc(100% - 1rem); object-fit:contain; object-position:center bottom; opacity:0; transform:translateX(-50%) scale(.88) translateY(.6rem); transform-origin:50% 92%; transition:opacity .55s cubic-bezier(.22,1,.36,1),transform .75s cubic-bezier(.22,1,.36,1),clip-path .75s cubic-bezier(.22,1,.36,1); clip-path:inset(100% 0 0); filter:drop-shadow(0 12px 12px rgba(66,71,26,.12)); }
+.seed-tree-challenge__plant-stage img.is-current { opacity:1; transform:translateX(-50%) scale(1); clip-path:inset(0); }
+.seed-tree-challenge__plant-stage img.is-grown { opacity:0; transform:translateX(-50%) scale(1.035) translateY(-.25rem); clip-path:inset(0); }
+.seed-tree-challenge.is-growing .seed-tree-challenge__plant-stage img.is-current { animation:seed-tree-grow .82s cubic-bezier(.22,1,.36,1) both; }
+@keyframes seed-tree-grow { 0%{transform:translateX(-50%) scaleY(.96) scaleX(.985)} 55%{transform:translateX(-50%) scaleY(1.045) scaleX(.98)} 100%{transform:translateX(-50%) scale(1)} }
+.seed-tree-challenge__ground { position:absolute; z-index:1; right:-8%; bottom:2.8rem; left:-8%; height:7rem; border-radius:50%; background:radial-gradient(ellipse at center,#87a85c 0 23%,#aeca74 42%,rgba(174,202,116,0) 72%); opacity:calc(.38 + var(--growth-stage) * .1); transition:opacity .7s ease; }
+.seed-tree-challenge__ground::after { position:absolute; right:0; bottom:0; left:0; height:4rem; background:linear-gradient(0deg,rgba(87,127,54,.2),transparent); clip-path:polygon(0 100%,3% 62%,5% 100%,8% 48%,11% 100%,15% 68%,18% 100%,24% 52%,27% 100%,32% 65%,36% 100%,43% 49%,46% 100%,53% 60%,57% 100%,63% 47%,67% 100%,74% 62%,78% 100%,84% 51%,88% 100%,94% 65%,97% 100%); content:""; }
+.seed-tree-challenge__ground i { position:absolute; bottom:2rem; width:.65rem; height:1.8rem; border-radius:60% 40%; background:#fff4d9; opacity:0; transform:scale(.4); transition:.5s ease; }
+.seed-tree-challenge__ground i:nth-child(1){left:15%}.seed-tree-challenge__ground i:nth-child(2){left:28%;bottom:3rem}.seed-tree-challenge__ground i:nth-child(3){right:40%}.seed-tree-challenge__ground i:nth-child(4){right:24%;bottom:2.8rem}.seed-tree-challenge__ground i:nth-child(5){right:12%}
+.seed-tree-challenge--stage-3 .seed-tree-challenge__ground i,.seed-tree-challenge--stage-4 .seed-tree-challenge__ground i,.seed-tree-challenge--stage-5 .seed-tree-challenge__ground i{opacity:.9;transform:scale(1)}
+.seed-tree-challenge__garden-caption { position:relative; z-index:4; margin:0; color:#5d7d48; font-family:"Cormorant Garamond",Georgia,serif; font-size:clamp(1.15rem,1.7vw,1.5rem); font-style:italic; }
+.seed-tree-challenge__doodles { position:absolute; z-index:1; inset:12% 4% auto; display:flex; justify-content:space-between; color:rgba(40,116,148,.26); font-family:"Comic Sans MS",cursive; font-size:1.2rem; transform:rotate(-3deg); }
+.seed-tree-challenge__experience { display:flex; align-items:center; }
+.seed-tree-challenge__intro,.seed-tree-challenge__game,.seed-tree-challenge__complete { width:min(100%,43rem); margin:auto; animation:seed-tree-enter .55s cubic-bezier(.22,1,.36,1) both; }
+@keyframes seed-tree-enter { from{opacity:0;transform:translateY(.75rem)} to{opacity:1;transform:none} }
+.seed-tree-challenge__eyebrow { margin:0 0 .8rem; color:#a66c14; font-size:.74rem; font-weight:800; letter-spacing:.14em; text-transform:uppercase; }
+.seed-tree-challenge h2 { max-width:12ch; margin:0; font-family:"Cormorant Garamond",Georgia,serif; font-size:clamp(3.2rem,5.4vw,5.6rem); font-weight:600; letter-spacing:-.045em; line-height:.9; text-transform:none; }
+.seed-tree-challenge__lead { margin:1.35rem 0 .4rem; color:#456749; font-family:"Cormorant Garamond",Georgia,serif; font-size:clamp(1.35rem,2vw,1.75rem); font-weight:600; }
+.seed-tree-challenge__intro>p:last-of-type { max-width:34rem; margin:.4rem 0 2rem; color:#425d70; line-height:1.7; }
+.seed-tree-challenge fieldset { margin:0 0 1.5rem; border:0; padding:0; }
+.seed-tree-challenge legend { margin-bottom:.7rem; color:#8b641e; font-size:.72rem; font-weight:800; letter-spacing:.14em; text-transform:uppercase; }
+.seed-tree-challenge__choices { display:flex; flex-wrap:wrap; gap:.65rem; }
+.seed-tree-challenge button { min-height:44px; font:inherit; }
+.seed-tree-challenge__choices button { min-width:4rem; border:1px solid rgba(8,39,67,.18); border-radius:999px; padding:.65rem 1.15rem; background:rgba(255,252,244,.66); color:var(--garden-navy); cursor:pointer; font-weight:750; text-transform:capitalize; transition:background .25s ease,color .25s ease,transform .25s ease,box-shadow .25s ease; }
+.seed-tree-challenge__choices button[aria-pressed="true"] { border-color:var(--garden-navy); background:var(--garden-navy); box-shadow:0 7px 16px rgba(8,39,67,.16); color:#fffaf0; transform:translateY(-2px); }
+.seed-tree-challenge__choices--years button { min-width:3.25rem; padding-inline:.75rem; }
+.seed-tree-challenge__start { display:inline-flex; min-width:13rem; align-items:center; justify-content:center; gap:1rem; border:0; border-radius:999px; padding:.85rem 1.45rem; background:#dca933; box-shadow:0 8px 16px rgba(167,113,18,.16); color:#082743; cursor:pointer; font-weight:800; }
+.seed-tree-challenge__start:disabled { box-shadow:none; cursor:not-allowed; opacity:.42; }
+.seed-tree-challenge__meta { display:flex; justify-content:space-between; gap:1rem; color:#7c581c; font-size:.78rem; font-weight:850; letter-spacing:.1em; text-transform:uppercase; }
+.seed-tree-challenge__meta span { padding-inline:.35rem; color:#b68a42; }
+.seed-tree-challenge__progress { display:flex; gap:.55rem; margin:.8rem 0 1.8rem; }
+.seed-tree-challenge__progress i { width:.7rem; aspect-ratio:1; border:1px solid #809680; border-radius:50%; background:transparent; transition:.35s ease; }
+.seed-tree-challenge__progress i.is-complete { border-color:#628d4b; background:#628d4b; }
+.seed-tree-challenge__progress i.is-current { box-shadow:0 0 0 4px rgba(201,141,37,.15); background:#d7a12d; }
+.seed-tree-challenge__paper { position:relative; border:1px solid rgba(144,105,39,.14); border-radius:.75rem 1.25rem .9rem 1.4rem; padding:clamp(1.5rem,3vw,2.8rem); background:rgba(255,252,243,.72); box-shadow:0 12px 30px rgba(77,59,28,.09); }
+.seed-tree-challenge.is-teaching .seed-tree-challenge__paper { background:rgba(251,252,239,.94); }
+.seed-tree-challenge__paper::before { position:absolute; top:1rem; bottom:1rem; left:1.1rem; width:1px; background:rgba(218,128,128,.22); content:""; }
+.seed-tree-challenge__question { max-width:32rem; margin:0 0 1.7rem; white-space:pre-line; color:var(--garden-navy); font-family:"Cormorant Garamond",Georgia,serif; font-size:clamp(1.55rem,2.35vw,2.15rem); font-weight:600; line-height:1.2; }
+.seed-tree-challenge__question--compact { margin-bottom:1.1rem; font-size:clamp(1.2rem,1.8vw,1.55rem); opacity:.72; transform:translateY(-.2rem); transition:font-size .45s cubic-bezier(.22,1,.36,1),opacity .45s ease,transform .45s cubic-bezier(.22,1,.36,1); }
+.seed-tree-challenge__answers { display:grid; grid-template-columns:1fr 1fr; gap:.75rem; }
+.seed-tree-challenge__answers button { display:flex; align-items:center; justify-content:space-between; border:1px solid rgba(8,39,67,.15); border-radius:.7rem; padding:.8rem 1rem; background:rgba(255,255,255,.58); color:#183c55; cursor:pointer; font-weight:700; text-align:left; transition:.25s ease; }
+.seed-tree-challenge__answers button:hover { border-color:#b98a35; background:#fffdf8; transform:translateY(-1px); }
+.seed-tree-challenge__answers button.is-tried { border-color:#d0a866; background:#fff7e6; }
+.seed-tree-challenge__answers button.is-correct { border-color:#5f8c4c; background:#e7f1da; color:#315529; }
+.seed-tree-challenge__answers button:disabled { cursor:default; }
+.seed-tree-challenge__answers button b { display:grid; width:1.5rem; aspect-ratio:1; place-items:center; border-radius:50%; background:#5f8c4c; color:white; }
+.seed-tree-challenge__game.is-correct .seed-tree-challenge__paper { opacity:.76; transition:opacity .4s ease; }
+.seed-tree-challenge__feedback { min-height:4.5rem; padding-top:1rem; color:#496246; }
+.seed-tree-challenge__feedback strong { color:#4f7a3d; font-family:"Cormorant Garamond",Georgia,serif; font-size:1.4rem; }
+.seed-tree-challenge__feedback>span,.seed-tree-challenge__feedback p { color:#687a7e; font-size:.85rem; }
+.seed-tree-challenge__feedback p { margin:.45rem 0 0; line-height:1.5; }
+.seed-tree-challenge__teaching,.seed-tree-challenge__follow-up { animation:seed-tree-teaching-enter .48s cubic-bezier(.22,1,.36,1) both; }
+@keyframes seed-tree-teaching-enter { from{opacity:0;transform:translateY(.75rem)} to{opacity:1;transform:none} }
+.seed-tree-challenge__teaching-label { margin:0 0 .55rem; color:#497137; font-size:.76rem; font-weight:850; letter-spacing:.1em; text-transform:uppercase; }
+.seed-tree-challenge__acknowledgement,.seed-tree-challenge__support-note { margin:.25rem 0 1rem; color:#4b6472; font-size:.92rem; line-height:1.55; }
+.seed-tree-challenge__steps { display:grid; gap:.55rem; margin:0 0 1rem; padding:0; list-style:none; }
+.seed-tree-challenge__steps li { display:grid; grid-template-columns:2rem 1fr; align-items:start; gap:.55rem; margin:0; color:#294b5e; }
+.seed-tree-challenge__steps li>span { display:grid; width:1.75rem; aspect-ratio:1; place-items:center; border-radius:50%; background:#e7efd8; color:#4f753d; font-size:.65rem; font-weight:850; }
+.seed-tree-challenge__steps li p { margin:.14rem 0 0; line-height:1.45; }
+.seed-tree-challenge__steps li.is-new { animation:seed-tree-step-in .42s cubic-bezier(.22,1,.36,1) both; }
+@keyframes seed-tree-step-in { from{opacity:0;transform:translateY(.55rem)} to{opacity:1;transform:none} }
+.seed-tree-challenge__method { display:flex; min-height:3.2rem; align-items:center; justify-content:space-between; gap:1rem; margin:1rem 0; border-block:1px solid rgba(82,119,64,.18); padding:.7rem 0; }
+.seed-tree-challenge__method span { color:#7a6b47; font-size:.72rem; font-weight:800; letter-spacing:.08em; text-transform:uppercase; }
+.seed-tree-challenge__method strong { color:#3c6834; font-family:"Cormorant Garamond",Georgia,serif; font-size:1.35rem; text-align:right; }
+.seed-tree-challenge__continue { display:inline-flex; align-items:center; gap:.75rem; border:0; border-radius:999px; padding:.7rem 1.1rem; background:var(--garden-navy); color:#fffaf0; cursor:pointer; font-weight:750; }
+.seed-tree-challenge__follow-up-question { margin:.35rem 0 1.1rem; color:var(--garden-navy); font-family:"Cormorant Garamond",Georgia,serif; font-size:clamp(1.2rem,1.8vw,1.55rem); font-weight:600; line-height:1.25; }
+.seed-tree-challenge__support-note { border-radius:.65rem; padding:.75rem .9rem; background:#f0f4df; }
+.seed-tree-challenge__understood { border-radius:.8rem; padding:1rem; background:#e9f2dc; color:#355a2f; animation:seed-tree-teaching-enter .42s cubic-bezier(.22,1,.36,1) both; }
+.seed-tree-challenge__understood>strong { display:block; font-family:"Cormorant Garamond",Georgia,serif; font-size:1.55rem; }
+.seed-tree-challenge__understood>p:last-child { margin:.35rem 0 0; color:#506b58; line-height:1.5; }
+.seed-tree-challenge__complete { text-align:left; }
+.seed-tree-challenge__complete h2 { max-width:13ch; }
+.seed-tree-challenge__complete h2 strong { display:block; margin-top:1rem; color:#557c41; font-family:inherit; font-size:.45em; letter-spacing:.01em; line-height:1.05; text-transform:uppercase; }
+.seed-tree-challenge__complete>p { color:#476273; font-size:1.05rem; }
+.seed-tree-challenge__complete-actions { display:flex; flex-wrap:wrap; gap:.75rem; margin:1.7rem 0; }
+.seed-tree-challenge__complete-actions button { border:1px solid var(--garden-navy); border-radius:999px; padding:.75rem 1.2rem; background:var(--garden-navy); color:#fffaf0; cursor:pointer; font-weight:750; }
+.seed-tree-challenge__complete-actions button+button { background:transparent; color:var(--garden-navy); }
+.seed-tree-challenge__complete a { color:#9b6819; font-weight:750; text-decoration:none; }
+.seed-tree-challenge button:focus-visible,.seed-tree-challenge a:focus-visible { outline:3px solid #d6a231; outline-offset:4px; }
+
+@media (max-width:800px) {
+  .seed-tree-challenge { width:min(calc(100% - 1.25rem),45rem); min-height:0; padding:1.25rem; grid-template-columns:1fr; gap:.5rem; background:linear-gradient(180deg,#eff4e5 0 42%,#fffaf0 42%); }
+  .seed-tree-challenge__garden { min-height:22rem; order:0; }
+  .seed-tree-challenge__plant-stage { height:24rem; }
+  .seed-tree-challenge__plant-stage img { bottom:2.4rem; max-height:22rem; }
+  .seed-tree-challenge__ground { bottom:2rem; }
+  .seed-tree-challenge__garden-caption { font-size:1rem; }
+  .seed-tree-challenge__experience { order:1; padding:1rem .35rem 1.5rem; }
+  .seed-tree-challenge h2 { font-size:clamp(2.8rem,14vw,4.2rem); }
+  .seed-tree-challenge__answers { grid-template-columns:1fr; }
+  .seed-tree-challenge__meta { font-size:.68rem; }
+  .seed-tree-challenge__method { align-items:flex-start; flex-direction:column; gap:.3rem; }
+  .seed-tree-challenge__method strong { text-align:left; }
+}
+
+@media (prefers-reduced-motion:reduce) {
+  .seed-tree-challenge *,.seed-tree-challenge *::before,.seed-tree-challenge *::after { scroll-behavior:auto!important; animation-duration:.01ms!important; animation-iteration-count:1!important; transition-duration:.01ms!important; }
+  .seed-tree-challenge__plant-stage img { transform:translateX(-50%)!important; }
+}
+
+@media (min-width: 1100px) and (min-height: 700px) {
+  .seed-tree-challenge {
+    --seed-fold-space: clamp(.85rem, 2.2svh, 2rem);
+    height: auto;
+    min-height: 0;
+    margin-block: var(--seed-fold-space);
+    padding-block: clamp(1.5rem, 3.4svh, 3rem);
+  }
+  .seed-tree-challenge__garden { min-height: 0; }
+  .seed-tree-challenge__plant-stage { height: clamp(24rem, 62svh, 42rem); }
+  .seed-tree-challenge h2 { font-size: clamp(3rem, min(5vw, 7svh), 5.4rem); }
+  .seed-tree-challenge__paper { max-height: none; }
+}

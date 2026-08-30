@@ -36,13 +36,14 @@ test('includes the four benefit promises, reassurance, and trust statistics from
   }
 });
 
-test('keeps the existing parent fields and validation flow intact', () => {
+test('mounts the six-step wizard with the local adapter and existing confirmation', () => {
   const source = readFileSync(pageUrl, 'utf8');
 
-  for (const field of ['firstName', 'lastName', 'email', 'mobile', 'preferredContact', 'relationship', 'suburb']) {
-    assert.match(source, new RegExp(`errors\\.${field}`));
-  }
-  assert.match(source, /validateStep1\(parentForm\)/);
-  assert.match(source, /validateStep2\(students\)/);
-  assert.match(source, /Continue to Student Details/);
+  assert.match(source, /InterviewWizard/);
+  assert.match(source, /submitInterviewLocally/);
+  assert.match(source, /InterviewConfirmation/);
+  assert.match(source, /ConsultationContent/);
+  assert.doesNotMatch(source, /interface ParentForm/);
+  assert.doesNotMatch(source, /interface Student/);
+  assert.doesNotMatch(source, /validateStep1|validateStep2/);
 });

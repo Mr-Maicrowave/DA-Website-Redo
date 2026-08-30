@@ -8,7 +8,7 @@ import HighSchoolProfessionalJourney from '@/components/programs/high-school-pro
 import { highSchoolJourneyAssets } from '@/data/highSchoolJourneyAssets';
 import { highSchoolJourneyStages } from '@/data/highSchoolJourneyScenes';
 import { AnimatePresence, motion, useMotionValueEvent, useReducedMotion, useScroll, useTransform } from 'framer-motion';
-import { ArrowRight, ArrowUpRight, ChevronDown, ChevronLeft, ChevronRight, Star } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, ChevronLeft, ChevronRight, Star } from 'lucide-react';
 
 /* ============================================================================
    CONTENT — every field below is preserved verbatim from the previous build
@@ -887,37 +887,69 @@ function HSCTransition() {
 ============================================================================ */
 
 function HighSchoolEditorialHero() {
+  const heroRef = useRef<HTMLElement>(null);
+  const reduceMotion = useReducedMotion();
+  const { scrollYProgress } = useScroll({
+    target: heroRef,
+    offset: ['start start', 'end start'],
+  });
+  const contentY = useTransform(scrollYProgress, [0, 0.72], [0, reduceMotion ? 0 : -72]);
+  const contentOpacity = useTransform(scrollYProgress, [0, 0.58], [1, reduceMotion ? 1 : 0]);
+
+  const enter = (delay: number, distance = 18) => ({
+    initial: reduceMotion ? false : { opacity: 0, y: distance },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: reduceMotion ? 0 : 0.62, delay: reduceMotion ? 0 : delay, ease: premiumEase },
+  });
+
   return (
-    <section data-testid="highschool-editorial-hero" className="hs-editorial-hero" aria-labelledby="highschool-hero-title">
+    <section ref={heroRef} data-testid="highschool-editorial-hero" className="hs-editorial-hero" aria-labelledby="highschool-hero-title">
       <img
         className="hs-editorial-hero__watercolor"
-        src="/images/programs/highschool-hero-watercolor-v1.png"
+        src="/images/programs/highschool-hero-student-hallway-v2.png"
         alt=""
         aria-hidden="true"
       />
 
-      <div className="hs-editorial-hero__layout">
-        <div className="hs-editorial-hero__copy">
-          <p className="hs-editorial-hero__eyebrow">HIGH SCHOOL · YEARS 7–10</p>
-          <h1 id="highschool-hero-title" className="hs-editorial-hero__title">
-            <span>FIND YOUR</span>
-            <span className="hs-editorial-hero__gold">WAY</span>
-            <span>FORWARD.</span>
-          </h1>
-          <div className="hs-editorial-hero__rule" aria-hidden="true"><span /></div>
-          <p className="hs-editorial-hero__summary">
-            Four years of exploring, challenging yourself,<br className="hidden sm:block" />{' '}
-            growing and preparing for what comes next.
+      <motion.div className="hs-editorial-hero__content" style={{ y: contentY, opacity: contentOpacity }}>
+        <motion.p {...enter(0.08, 12)} className="hs-editorial-hero__eyebrow">
+          HIGH SCHOOL · YEARS 7–10
+        </motion.p>
+
+        <h1 id="highschool-hero-title" className="hs-editorial-hero__title">
+          <span className="hs-editorial-hero__line-mask">
+            <motion.span {...enter(0.2, 28)}>FIND YOUR</motion.span>
+          </span>
+          <span className="hs-editorial-hero__line-mask">
+            <motion.span {...enter(0.33, 28)}><em>WAY</em> FORWARD.</motion.span>
+          </span>
+        </h1>
+
+        <motion.span
+          className="hs-editorial-hero__rule"
+          aria-hidden="true"
+          initial={reduceMotion ? false : { scaleX: 0 }}
+          animate={{ scaleX: 1 }}
+          transition={{ duration: reduceMotion ? 0 : 0.48, delay: reduceMotion ? 0 : 0.62, ease: premiumEase }}
+        />
+
+        <motion.div {...enter(0.7, 16)} className="hs-editorial-hero__body">
+          <p>High school is where students begin to discover how they learn, what they&rsquo;re capable of, and where they want to go.</p>
+          <p>
+            At DA, we help them build the <strong>knowledge</strong>, <strong>confidence</strong> and <strong>independence</strong> to get there.
           </p>
-        </div>
+        </motion.div>
+      </motion.div>
 
-        <div className="hs-editorial-hero__student-space" aria-hidden="true" />
-      </div>
-
-      <a className="hs-editorial-hero__scroll" href="#highschool-page-content" aria-label="Scroll to begin exploring the High School program">
-        <span>SCROLL TO BEGIN</span>
-        <ChevronDown aria-hidden="true" />
-      </a>
+      <motion.a
+        {...enter(0.94, 10)}
+        className="hs-editorial-hero__scroll"
+        href="#highschool-page-content"
+        aria-label="Explore Years 7 to 10"
+      >
+        <span>EXPLORE YEARS 7–10</span>
+        <span className="hs-editorial-hero__scroll-arrow" aria-hidden="true">↓</span>
+      </motion.a>
     </section>
   );
 }
@@ -931,7 +963,6 @@ const HighSchool = () => {
         canonicalUrl="/programs/high-school"
       />
       <NavigationNew />
-
       <HighSchoolEditorialHero />
 
       <div id="highschool-page-content">
@@ -953,34 +984,49 @@ const HighSchool = () => {
         .hs-page { overflow-x: clip; }
         .hs-page h1, .hs-page h2, .hs-page h3 { font-family: 'Outfit', 'Inter', system-ui, sans-serif; }
 
-        .hs-editorial-hero { position: relative; min-height: 100svh; overflow: hidden; isolation: isolate; background: #fffaf1; }
-        .hs-editorial-hero__watercolor { position: absolute; inset: 0; z-index: -2; width: 100%; height: 100%; object-fit: cover; object-position: center bottom; }
-        .hs-editorial-hero::after { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none; background: linear-gradient(90deg, rgba(255,250,241,.22) 0%, rgba(255,250,241,.05) 48%, transparent 72%); }
-        .hs-editorial-hero__layout { width: min(100% - 2.5rem, 91rem); min-height: 100svh; margin-inline: auto; display: grid; grid-template-columns: minmax(0, .85fr) minmax(20rem, 1.15fr); align-items: center; }
-        .hs-editorial-hero__copy { align-self: center; max-width: 42rem; padding: 4rem 0 7rem; }
-        .hs-editorial-hero__eyebrow { margin-bottom: 1.2rem; color: #a76f17; font: 600 clamp(.7rem, .8vw, .92rem)/1.3 'Outfit', sans-serif; letter-spacing: .23em; }
-        .hs-editorial-hero__title { display: flex; flex-direction: column; margin: 0; color: #071a32; font-family: 'Libre Baskerville', Georgia, serif !important; font-size: clamp(4rem, 6.7vw, 7.1rem); font-weight: 400; line-height: .87; letter-spacing: -.055em; }
-        .hs-editorial-hero__gold { color: #a96e13; }
-        .hs-editorial-hero__rule { display: flex; align-items: center; width: min(100%, 34rem); margin: 2.3rem 0 1.55rem; border-top: 1px solid rgba(176,119,28,.7); }
-        .hs-editorial-hero__rule span { width: .45rem; height: .45rem; margin-top: -.26rem; transform: rotate(45deg); background: #bd8429; }
-        .hs-editorial-hero__summary { color: #15243a; font: 500 clamp(.92rem, 1.15vw, 1.15rem)/1.65 'Outfit', sans-serif; }
-        .hs-editorial-hero__student-space { min-height: 70vh; }
-        .hs-editorial-hero__scroll { position: absolute; left: 50%; bottom: 1.4rem; display: flex; transform: translateX(-50%); flex-direction: column; align-items: center; gap: .4rem; color: #a76f17; font: 600 .72rem/1 'Outfit', sans-serif; letter-spacing: .22em; transition: color .2s ease, transform .2s ease; }
-        .hs-editorial-hero__scroll svg { width: 1.35rem; height: 1.35rem; stroke-width: 1.4; }
-        .hs-editorial-hero__scroll:hover { color: #071a32; transform: translateX(-50%) translateY(.2rem); }
+        .hs-editorial-hero { position: relative; min-height: 100svh; overflow: hidden; background: #fffaf1; display: flex; align-items: center; }
+        .hs-editorial-hero__watercolor { position: absolute; inset: 0; z-index: 0; width: 100%; height: 100%; object-fit: fill; object-position: center center; }
+        .hs-editorial-hero__content { position: relative; z-index: 1; width: min(40vw, 42rem); margin-left: clamp(1.5rem, 8vw, 10rem); padding-top: clamp(2.5rem, 6vh, 5rem); color: #071a32; }
+        .hs-editorial-hero__eyebrow { margin: 0 0 clamp(1.75rem, 3vh, 2.25rem); font: 600 clamp(.75rem, .8vw, .875rem)/1.2 'Outfit', sans-serif; letter-spacing: .2em; }
+        .hs-editorial-hero__title { margin: 0; color: #071a32; font-family: 'Libre Baskerville', Georgia, serif !important; font-size: clamp(3.8rem, 4.7vw, 5rem); font-weight: 400; line-height: .9; letter-spacing: -.04em; text-wrap: balance; }
+        .hs-editorial-hero__line-mask { display: block; overflow: hidden; padding-bottom: .08em; }
+        .hs-editorial-hero__line-mask > span { display: block; }
+        .hs-editorial-hero__line-mask em { color: #a87727; font-style: normal; }
+        .hs-editorial-hero__rule { display: block; width: clamp(2.8rem, 3.5vw, 3.75rem); height: 1px; margin: clamp(1.6rem, 3vh, 2.3rem) 0 clamp(1.35rem, 2.4vh, 1.8rem); transform-origin: left center; background: #ad7c2c; }
+        .hs-editorial-hero__body { max-width: 33.5rem; color: #17263a; font: 400 clamp(.94rem, 1.08vw, 1.1rem)/1.62 'Outfit', sans-serif; text-wrap: pretty; }
+        .hs-editorial-hero__body p { margin: 0; }
+        .hs-editorial-hero__body p + p { margin-top: .82rem; }
+        .hs-editorial-hero__body p:first-child { font-weight: 500; }
+        .hs-editorial-hero__body strong { color: #8e651f; font-weight: 600; }
+        .hs-editorial-hero__scroll { position: absolute; z-index: 1; left: clamp(1.5rem, 8vw, 10rem); bottom: clamp(1.5rem, 4vh, 2.8rem); display: inline-flex; flex-direction: column; align-items: flex-start; gap: .35rem; color: #263750; font: 600 clamp(.65rem, .7vw, .75rem)/1.2 'Outfit', sans-serif; letter-spacing: .18em; }
+        .hs-editorial-hero__scroll-arrow { display: block; margin-left: .15rem; color: #a87727; font-size: 1.05rem; line-height: 1; animation: hs-scroll-breathe 3.2s ease-in-out infinite; }
+        @keyframes hs-scroll-breathe { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(8px); } }
 
         @media (max-width: 767px) {
-          .hs-editorial-hero { min-height: 100svh; }
-          .hs-editorial-hero__watercolor { object-position: 56% bottom; }
-          .hs-editorial-hero::after { background: linear-gradient(180deg, rgba(255,250,241,.12), rgba(255,250,241,0) 60%); }
-          .hs-editorial-hero__layout { width: min(100% - 2rem, 36rem); min-height: 100svh; grid-template-columns: 1fr; align-items: start; }
-          .hs-editorial-hero__copy { max-width: 30rem; padding: clamp(3.5rem, 10vh, 6rem) 0 12rem; }
-          .hs-editorial-hero__eyebrow { margin-bottom: 1rem; font-size: .66rem; letter-spacing: .19em; }
-          .hs-editorial-hero__title { font-size: clamp(3.25rem, 16vw, 5rem); line-height: .9; }
-          .hs-editorial-hero__rule { margin: 1.8rem 0 1.2rem; }
-          .hs-editorial-hero__summary { max-width: 22rem; font-size: .9rem; line-height: 1.55; }
-          .hs-editorial-hero__student-space { display: none; }
-          .hs-editorial-hero__scroll { bottom: 1rem; white-space: nowrap; font-size: .62rem; }
+          .hs-editorial-hero__watercolor { object-position: center center; }
+          .hs-editorial-hero { align-items: flex-start; }
+          .hs-editorial-hero__content { width: min(54vw, 22rem); margin-left: 1.15rem; padding-top: clamp(6.8rem, 16vh, 8.5rem); }
+          .hs-editorial-hero__eyebrow { max-width: 11rem; margin-bottom: 1.25rem; font-size: .62rem; line-height: 1.45; letter-spacing: .14em; }
+          .hs-editorial-hero__title { font-size: clamp(2rem, 8.25vw, 2.75rem); line-height: .92; letter-spacing: -.035em; }
+          .hs-editorial-hero__rule { margin: 1.2rem 0 1rem; }
+          .hs-editorial-hero__body { max-width: 16rem; font-size: clamp(.72rem, 3vw, .86rem); line-height: 1.48; }
+          .hs-editorial-hero__body p + p { margin-top: .6rem; }
+          .hs-editorial-hero__scroll { left: 1.15rem; bottom: 1.25rem; font-size: .58rem; letter-spacing: .14em; }
+        }
+
+        @media (min-width: 768px) and (max-width: 1100px) {
+          .hs-editorial-hero__content { width: 44vw; margin-left: 5vw; }
+          .hs-editorial-hero__title { font-size: clamp(3.7rem, 6.8vw, 5rem); }
+          .hs-editorial-hero__body { max-width: 29rem; }
+          .hs-editorial-hero__scroll { left: 5vw; }
+        }
+
+        @media (min-width: 768px) {
+          .hs-editorial-hero__line-mask:nth-child(2) > span { white-space: nowrap; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .hs-editorial-hero__scroll-arrow { animation: none; }
         }
 
         .hs-hand { font-family: 'Caveat', cursive; line-height: 1.15; transform: rotate(var(--hs-rotate, -2deg)); }

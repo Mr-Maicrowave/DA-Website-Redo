@@ -30,58 +30,62 @@ export function useWhyDAMotion(): RefObject<HTMLElement> {
       media.add(`(prefers-reduced-motion: no-preference)`, () => {
         const isMobile = matchMedia('(max-width: 767px)').matches;
         const heroLines = gsap.utils.toArray<HTMLElement>('[data-motion="hero-line"]', root);
-        const signals = gsap.utils.toArray<HTMLElement>('[data-motion="observation"]', root);
-        const signalLines = gsap.utils.toArray<SVGPathElement>('[data-motion="signal-line"]', root);
+        const heroLabels = gsap.utils.toArray<HTMLElement>('[data-motion="hero-label"]', root);
+        const heroSlices = gsap.utils.toArray<HTMLElement>('[data-motion="hero-background-slice"]', root);
+        const heroTop = root.querySelector<HTMLElement>('.why-da-hero__background-slice--top');
+        const heroBottom = root.querySelector<HTMLElement>('.why-da-hero__background-slice--bottom');
 
-        gsap.set(signalLines, { strokeDasharray: 160, strokeDashoffset: 160 });
         const heroEntrance = gsap.timeline({ defaults: { ease: 'power3.out' } });
         heroEntrance
-          .from('[data-motion="hero-meta"]', { opacity: 0, y: -8, duration: 0.45 })
-          .from(heroLines, { yPercent: 115, duration: isMobile ? 0.7 : 0.9, stagger: 0.13 }, 0.12)
-          .from('[data-motion="hero-support"]', { opacity: 0, y: 16, duration: 0.55 }, 0.72)
-          .from('[data-motion="hero-cta"]', { opacity: 0, y: 12, duration: 0.48 }, 0.84)
-          .from('[data-motion="hero-student"]', {
-            opacity: 0,
-            scale: 1.04,
-            y: 30,
-            filter: 'blur(7px)',
-            duration: 1.2,
-            clearProps: 'filter',
-          }, 0.18)
-          .from(signals, {
-            opacity: 0,
-            scale: 0.92,
-            x: (index) => (index % 2 === 0 ? 46 : -46),
-            y: 22,
-            duration: 0.5,
-            stagger: 0.13,
-          }, 0.9)
-          .to(signalLines, { strokeDashoffset: 0, duration: 0.52, stagger: 0.13, ease: 'power2.out' }, 1.02);
+          .from('[data-motion="hero-base"], [data-motion="hero-background-slice"]', { opacity: 0, filter: 'brightness(.68)', duration: 1.15, clearProps: 'filter' })
+          .from(heroTop, { x: isMobile ? -24 : -38, duration: 1.05, ease: 'power4.out' }, 0.12)
+          .from(heroBottom, { x: isMobile ? 26 : 42, duration: 1.05, ease: 'power4.out' }, 0.12)
+          .from('[data-motion="hero-meta"]', { opacity: 0, y: -8, duration: 0.48 }, 0.46)
+          .from(heroLines, { yPercent: 115, duration: isMobile ? 0.72 : 0.92, stagger: 0.14, ease: 'power4.out' }, 0.54)
+          .from('[data-motion="hero-support"]', { opacity: 0, y: 15, duration: 0.58 }, 1.02)
+          .from(heroLabels, { opacity: 0, x: -10, duration: 0.42, stagger: 0.12 }, 1.14)
+          .from('[data-motion="hero-scroll"]', { opacity: 0, duration: 0.42 }, 1.46)
+          .set('[data-motion="hero-statement"]', { opacity: 0 }, 0);
 
         if (!isMobile) {
-          gsap.to('[data-motion="hero-student-image"]', {
-            y: 4,
-            duration: 5.5,
+          gsap.to(heroTop, {
+            x: -13,
+            duration: 16,
             repeat: -1,
             yoyo: true,
             ease: 'sine.inOut',
-            delay: 1.35,
+            delay: 1.6,
+          });
+          gsap.to(heroBottom, {
+            x: 14,
+            duration: 18,
+            repeat: -1,
+            yoyo: true,
+            ease: 'sine.inOut',
+            delay: 1.7,
           });
         }
 
         heroEntrance.eventCallback('onComplete', () => {
-          gsap.timeline({
+          const heroAssembly = gsap.timeline({
             scrollTrigger: {
               trigger: '[data-testid="why-da-hero"]',
               start: 'top top',
-              end: 'bottom top',
-              scrub: isMobile ? 0.35 : 0.7,
+              end: () => `+=${window.innerHeight * (isMobile ? 0.85 : 1.5)}`,
+              pin: true,
+              scrub: isMobile ? 0.35 : 0.75,
+              invalidateOnRefresh: true,
             },
-          })
-            .fromTo('[data-motion="hero-copy"]', { y: 0 }, { y: isMobile ? -28 : -68, ease: 'none', immediateRender: false }, 0)
-            .fromTo('[data-motion="hero-support"], [data-motion="hero-cta"]', { opacity: 1, y: 0 }, { opacity: 0.22, y: -18, ease: 'none', immediateRender: false }, 0)
-            .fromTo('[data-motion="hero-student"]', { yPercent: 0 }, { yPercent: isMobile ? -3 : -7, ease: 'none', immediateRender: false }, 0)
-            .fromTo(signals, { y: 0, opacity: 1 }, { y: isMobile ? 32 : 92, opacity: 0.38, stagger: 0.015, ease: 'none', immediateRender: false }, 0);
+          });
+          heroAssembly
+            .to(heroTop, { x: 0, ease: 'none', duration: .4 }, 0)
+            .to(heroBottom, { x: 0, ease: 'none', duration: .4 }, 0)
+            .to(heroSlices, { scale: 1, ease: 'none', duration: .4 }, 0)
+            .to(heroSlices, { opacity: 0, ease: 'none', duration: .18 }, .67)
+            .to('[data-motion="hero-grade"]', { opacity: .78, ease: 'none', duration: .3 }, .67)
+            .to('[data-motion="hero-copy"]', { y: isMobile ? -26 : -54, ease: 'none', duration: .3 }, .7)
+            .to(heroLabels, { opacity: 0, ease: 'none', stagger: .015, duration: .22 }, .7)
+            .fromTo('[data-motion="hero-statement"]', { opacity: 0, y: 14 }, { opacity: 1, y: 0, ease: 'power3.out', duration: .2 }, .8);
           ScrollTrigger.refresh();
         });
 
@@ -89,38 +93,79 @@ export function useWhyDAMotion(): RefObject<HTMLElement> {
           scrollTrigger: { trigger: '[data-testid="why-da-know-you"]', start: 'top 76%', once: true },
         });
         knowTimeline
-          .from('[data-motion="know-number"]', { yPercent: 110, duration: 0.68, ease: 'power3.out' })
-          .from('[data-motion="know-title"]', { clipPath: 'inset(0 100% 0 0)', x: -18, duration: 0.72, ease: 'power3.out' }, 0.14)
-          .from('[data-motion="know-copy"]', { opacity: 0, y: 16, duration: 0.5 }, 0.34)
-          .from('[data-motion="evidence-photo"]', { clipPath: 'inset(0 0 100% 0 round 16px)', duration: 0.9, ease: 'power3.inOut' }, 0.16)
-          .from('[data-motion="evidence-image"]', { scale: 1.08, duration: 1.15, ease: 'power3.out' }, 0.16)
-          .from('[data-motion="discovery-item"]', {
-            opacity: 0,
-            y: 18,
-            scale: 0.96,
-            duration: 0.42,
-            stagger: 0.11,
-            ease: 'power3.out',
-          }, 0.72)
-          .to('[data-motion="discovery-item"]', {
-            '--discovery-pulse': 1,
-            scale: 1.05,
-            duration: 0.18,
-            stagger: 0.11,
-            yoyo: true,
-            repeat: 1,
-          }, 0.84);
+          .from('[data-motion="know-intro"]', { opacity: 0, y: 12, duration: .7, ease: 'power3.out' })
+          .from('[data-motion="know-number"]', { yPercent: 110, duration: .65, ease: 'power3.out' }, .08)
+          .from('[data-motion="know-title"]', { opacity: 0, y: 12, duration: .62, ease: 'power3.out' }, .12)
+          .from('[data-motion="know-headline"]', { yPercent: 108, duration: .82, ease: 'power4.out' }, .2)
+          .from('[data-motion="know-copy"]', { opacity: 0, y: 12, duration: .58, ease: 'power3.out' }, .32);
 
-        gsap.fromTo('[data-motion="evidence-image"]', { yPercent: -2 }, {
-          yPercent: 2,
-          ease: 'none',
-          scrollTrigger: {
-            trigger: '[data-motion="evidence-photo"]',
-            start: 'top bottom',
-            end: 'bottom top',
-            scrub: 0.7,
-          },
+        const observationRows = gsap.utils.toArray<HTMLElement>('[data-motion="know-observation"]', root);
+        const ambientShots: gsap.core.Tween[] = [];
+        const shotMovement = [
+          { x: 8, y: 0, scale: 1.05, duration: 12 },
+          { x: 0, y: -6, scale: 1.045, duration: 12 },
+          { x: 0, y: 0, scale: 1.055, duration: 15 },
+          { x: -8, y: 0, scale: 1.045, duration: 14 },
+        ];
+
+        observationRows.forEach((observation, index) => {
+          const photo = observation.querySelector<HTMLElement>('[data-motion="know-photo"]');
+          const image = observation.querySelector<HTMLElement>('[data-motion="know-image"]');
+          const copy = observation.querySelector<HTMLElement>('[data-motion="know-row-copy"]');
+          if (!photo || !image || !copy) return;
+
+          gsap.timeline({ scrollTrigger: { trigger: observation, start: 'top 88%', once: true } })
+            .from(photo, { clipPath: 'inset(0 3% 0 3%)', duration: .86, ease: 'power3.out', immediateRender: false })
+            .from(image, { scale: 1.07, filter: 'brightness(.82) contrast(1.025) saturate(.94)', opacity: .88, duration: .82, ease: 'power3.out', immediateRender: false }, 0)
+            .from(copy, { opacity: 0, y: 12, duration: .58, ease: 'power3.out', immediateRender: false }, .04);
+
+          const movement = shotMovement[index];
+          ambientShots.push(gsap.to(image, {
+            x: isMobile ? movement.x * .2 : movement.x,
+            y: isMobile ? movement.y * .2 : movement.y,
+            scale: isMobile ? 1.015 : movement.scale,
+            duration: movement.duration,
+            ease: 'sine.inOut',
+            repeat: -1,
+            yoyo: true,
+          }));
         });
+
+        const lightPass = gsap.to('[data-motion="know-film"] .why-da-observations__light', {
+          xPercent: 180, duration: 17, repeat: -1, repeatDelay: 5, ease: 'sine.inOut',
+        });
+        const timelinePoint = root.querySelector<HTMLElement>('[data-motion="know-timeline-point"]');
+        const timelineJourney = gsap.timeline({ repeat: -1, repeatDelay: 2.5, delay: .8 });
+        if (timelinePoint) {
+          timelineJourney.set(timelinePoint, { opacity: 0, y: 0 });
+          observationRows.forEach((observation) => {
+            const marker = observation.querySelector<HTMLElement>('.why-da-observation__journey i');
+            const image = observation.querySelector<HTMLElement>('[data-motion="know-image"]');
+            timelineJourney
+              .to(timelinePoint, { opacity: .9, y: () => observation.offsetTop + observation.offsetHeight / 2, duration: 2.1, ease: 'sine.inOut' })
+              .to(marker, { scale: 1.08, borderColor: 'rgba(155,115,50,1)', duration: .32, yoyo: true, repeat: 1 }, '<-.18')
+              .to(image, { filter: 'brightness(1.03) contrast(1.025) saturate(.94) sepia(.025)', duration: .4, yoyo: true, repeat: 1 }, '<');
+          });
+          timelineJourney.to(timelinePoint, { opacity: 0, duration: .5 });
+        }
+
+        const ambientFilm = [...ambientShots, lightPass, timelineJourney];
+        ScrollTrigger.create({
+          trigger: '[data-motion="know-parent"]',
+          start: 'top 72%',
+          onEnter: () => ambientFilm.forEach((animation) => animation.pause()),
+          onLeaveBack: () => ambientFilm.forEach((animation) => animation.resume()),
+        });
+
+        gsap.timeline({ scrollTrigger: { trigger: '[data-motion="know-parent"]', start: 'top 86%', once: true } })
+          .from('[data-motion="know-parent"] .why-da-parent__eyeline', { opacity: 0, y: 8, duration: .58, ease: 'power3.out', immediateRender: false })
+          .from('[data-motion="know-parent-title"]', { yPercent: 108, duration: .82, ease: 'power3.out', immediateRender: false }, .08)
+          .from('[data-motion="know-parent"] .why-da-parent__aside, [data-motion="know-parent"] .why-da-parent__copy > p:not(.why-da-parent__eyeline)', { opacity: 0, y: 8, duration: .68, ease: 'power3.out', stagger: .08, immediateRender: false }, .28);
+
+        gsap.timeline({ scrollTrigger: { trigger: '[data-motion="know-closing"]', start: 'top 90%', once: true } })
+          .from('[data-motion="know-closing"] h3', { opacity: 0, y: 10, duration: .58, ease: 'power3.out', immediateRender: false })
+          .from('[data-motion="know-listen-line"]', { scaleX: 0, duration: .72, ease: 'power3.out', immediateRender: false }, .14)
+          .from('[data-motion="know-closing"] p', { opacity: 0, y: 7, duration: .48, ease: 'power3.out', immediateRender: false }, .28);
 
         const pathItems = PATH_SEQUENCE
           .map((title) => root.querySelector<HTMLElement>(`[data-path-title="${title}"]`))
@@ -229,6 +274,7 @@ export function useWhyDAMotion(): RefObject<HTMLElement> {
           opacity: 0, x: -28, duration: 0.75, ease: 'power3.out', immediateRender: false,
           scrollTrigger: { trigger: '[data-testid="why-da-closing-cta"]', start: 'top 78%', once: true },
         });
+
       });
     }, root);
 
@@ -244,40 +290,23 @@ export function useWhyDAMotion(): RefObject<HTMLElement> {
     if (!root || matchMedia(REDUCED_MOTION).matches || !matchMedia(FINE_POINTER).matches) return;
 
     const hero = root.querySelector<HTMLElement>('[data-testid="why-da-hero"]');
-    const student = root.querySelector<HTMLElement>('[data-motion="hero-student-image"]');
-    const observationLayer = root.querySelector<HTMLElement>('.why-da-hero__visual');
-    const atmosphere = root.querySelector<HTMLElement>('.why-da-signal-orbit');
+    const heroTop = root.querySelector<HTMLElement>('.why-da-hero__slice--top');
+    const heroMiddle = root.querySelector<HTMLElement>('.why-da-hero__slice--middle');
+    const heroBottom = root.querySelector<HTMLElement>('.why-da-hero__slice--bottom');
     let frame = 0;
 
     const onHeroPointerMove = (event: PointerEvent) => {
-      if (!hero || !student || !observationLayer || !atmosphere) return;
+      if (!hero || !heroTop || !heroMiddle || !heroBottom) return;
       cancelAnimationFrame(frame);
       frame = requestAnimationFrame(() => {
         const bounds = hero.getBoundingClientRect();
         const x = (event.clientX - bounds.left) / bounds.width - 0.5;
         const y = (event.clientY - bounds.top) / bounds.height - 0.5;
-        gsap.to(atmosphere, { x: x * 5, y: y * 5, duration: 0.7, overwrite: 'auto' });
-        gsap.to(student, { x: x * 3, duration: 0.7, overwrite: 'auto' });
-        gsap.to(observationLayer, { '--observation-x': `${x * 8}px`, '--observation-y': `${y * 8}px`, duration: 0.7, overwrite: 'auto' });
+        gsap.to(heroTop, { x: -16 + x * 4, y: y * 2, duration: 0.8, overwrite: 'auto' });
+        gsap.to(heroMiddle, { x: x * 2, y: y, duration: 0.8, overwrite: 'auto' });
+        gsap.to(heroBottom, { x: 18 + x * 5, y: y * 2, duration: 0.8, overwrite: 'auto' });
       });
     };
-
-    const signalCleanups = Array.from(root.querySelectorAll<HTMLElement>('[data-motion="observation"]')).map((signal) => {
-      const onMove = (event: PointerEvent) => {
-        const bounds = signal.getBoundingClientRect();
-        const x = Math.max(-5, Math.min(5, (event.clientX - (bounds.left + bounds.width / 2)) * 0.08));
-        const y = Math.max(-5, Math.min(5, (event.clientY - (bounds.top + bounds.height / 2)) * 0.08));
-        gsap.to(signal, { x, y, scale: 1.02, duration: 0.24, overwrite: 'auto' });
-        signal.dataset.active = 'true';
-      };
-      const onLeave = () => {
-        gsap.to(signal, { x: 0, y: 0, scale: 1, duration: 0.38, ease: 'power3.out', overwrite: 'auto' });
-        delete signal.dataset.active;
-      };
-      signal.addEventListener('pointermove', onMove, { passive: true });
-      signal.addEventListener('pointerleave', onLeave);
-      return () => { signal.removeEventListener('pointermove', onMove); signal.removeEventListener('pointerleave', onLeave); };
-    });
 
     const pathCleanups = Array.from(root.querySelectorAll<HTMLElement>('[data-motion="path-item"]')).map((item) => {
       const enter = () => { root.dataset.activePath = item.dataset.pathTitle ?? ''; };
@@ -287,12 +316,35 @@ export function useWhyDAMotion(): RefObject<HTMLElement> {
       return () => { item.removeEventListener('pointerenter', enter); item.removeEventListener('pointerleave', leave); };
     });
 
+    const observationCleanups = Array.from(root.querySelectorAll<HTMLElement>('[data-motion="know-observation"]')).map((row) => {
+      const photo = row.querySelector<HTMLElement>('[data-motion="know-photo"]');
+      const copy = row.querySelector<HTMLElement>('[data-motion="know-row-copy"]');
+      if (!photo || !copy) return () => undefined;
+      const photoX = gsap.quickTo(photo, '--depth-x', { duration: .75, ease: 'power3.out' });
+      const photoY = gsap.quickTo(photo, '--depth-y', { duration: .75, ease: 'power3.out' });
+      const copyX = gsap.quickTo(copy, 'x', { duration: .75, ease: 'power3.out' });
+      const copyY = gsap.quickTo(copy, 'y', { duration: .75, ease: 'power3.out' });
+      const move = (event: PointerEvent) => {
+        const bounds = row.getBoundingClientRect();
+        const x = (event.clientX - bounds.left) / bounds.width - .5;
+        const y = (event.clientY - bounds.top) / bounds.height - .5;
+        photoX(x * 8); photoY(y * 6);
+        copyX(x * -2); copyY(y * -2);
+      };
+      const leave = () => {
+        photoX(0); photoY(0); copyX(0); copyY(0);
+      };
+      row.addEventListener('pointermove', move, { passive: true });
+      row.addEventListener('pointerleave', leave);
+      return () => { row.removeEventListener('pointermove', move); row.removeEventListener('pointerleave', leave); };
+    });
+
     hero?.addEventListener('pointermove', onHeroPointerMove, { passive: true });
     return () => {
       cancelAnimationFrame(frame);
       hero?.removeEventListener('pointermove', onHeroPointerMove);
-      signalCleanups.forEach((cleanup) => cleanup());
       pathCleanups.forEach((cleanup) => cleanup());
+      observationCleanups.forEach((cleanup) => cleanup());
     };
   }, []);
 

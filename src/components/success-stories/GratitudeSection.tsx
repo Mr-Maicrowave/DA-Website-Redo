@@ -1,86 +1,72 @@
+import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Heart, Mail, MessageCircle, Sprout, type LucideIcon } from 'lucide-react';
+import { gratitudeReviewNotes } from './gratitudeReviewNotes';
+import { getEnvelopeShellMotion } from './gratitudeMotion';
 import './GratitudeSection.css';
 
 type GratitudeSectionProps = { reduceMotion: boolean | null };
-type GratitudeItem = { icon: LucideIcon; lines: readonly [string, string, string]; highlight: string };
-
-const gratitudeItems: readonly GratitudeItem[] = [
-  { icon: MessageCircle, lines: ['Every review', 'you share', 'encourages us.'], highlight: 'review' },
-  { icon: Mail, lines: ['Every message', 'you send', 'inspires us.'], highlight: 'message' },
-  { icon: Heart, lines: ['Every kind word', 'means the', 'world to us.'], highlight: 'kind word' },
-  { icon: Sprout, lines: ['Every child’s journey', 'is why we do', 'what we do.'], highlight: 'journey' },
-];
-
-const HighlightedLine = ({ line, highlight }: { line: string; highlight: string }) => {
-  if (!line.includes(highlight)) return <>{line}</>;
-  const [before, after = ''] = line.split(highlight);
-  return <>{before}<em>{highlight}</em>{after}</>;
-};
+const ease = [0.22, 1, 0.36, 1] as const;
 
 const GratitudeSection = ({ reduceMotion }: GratitudeSectionProps) => {
-  const reveal = (delay: number, y = 15) => ({
-    initial: reduceMotion ? false : { opacity: 0, y },
-    whileInView: { opacity: 1, y: 0 },
-    viewport: { once: true, amount: 0.35 },
-    transition: reduceMotion ? { duration: 0 } : { duration: 0.72, delay, ease: [0.22, 1, 0.36, 1] as const },
-  });
+  const [isOpen, setIsOpen] = useState(false);
+  const duration = reduceMotion ? 0.12 : 0.72;
+  const shellMotion = getEnvelopeShellMotion(isOpen, reduceMotion);
 
   return (
     <section className="ss-gratitude" aria-labelledby="gratitude-heading">
-      <span className="ss-gratitude__script ss-gratitude__script--left" aria-hidden="true">Thank</span>
-      <span className="ss-gratitude__script ss-gratitude__script--right" aria-hidden="true">you</span>
-      <span className="ss-gratitude__spark ss-gratitude__spark--one" aria-hidden="true">✦</span>
-      <span className="ss-gratitude__spark ss-gratitude__spark--two" aria-hidden="true">✧</span>
-      <span className="ss-gratitude__spark ss-gratitude__spark--three" aria-hidden="true">✦</span>
+      <p className="ss-gratitude__eyebrow">A NOTE FROM DA <span aria-hidden="true">♥</span></p>
+      <ul className="ss-gratitude__notes" aria-label="Messages from DA Tuition families">
+        {gratitudeReviewNotes.map((note, index) => (
+          <motion.li key={note.author}
+            className={`ss-gratitude__note ss-gratitude__note--${index + 1}${note.mobile ? '' : ' ss-gratitude__note--desktop'}`}
+            data-tone={note.tone}
+            animate={{ opacity: isOpen ? 0.96 : 0.56, scale: isOpen ? 1 : 0.96 }}
+            transition={{ duration: reduceMotion ? 0.1 : 0.42, delay: reduceMotion ? 0 : index * 0.08, ease }}>
+            <span className="ss-gratitude__note-initial" aria-hidden="true">{note.initial}</span>
+            <q>{note.quote}</q>
+            <span className="ss-gratitude__note-heart" aria-hidden="true">♡</span>
+            <span className="sr-only">— {note.author}</span>
+          </motion.li>
+        ))}
+      </ul>
 
-      <div className="ss-gratitude__content">
-        <motion.div className="ss-gratitude__label-wrap" {...reveal(0.04, 10)}>
-          <span aria-hidden="true" />
-          <p className="ss-gratitude__label">A NOTE FROM DA</p>
-          <span aria-hidden="true" />
-        </motion.div>
-
-        <h2 id="gratitude-heading" className="ss-gratitude__heading">
-          <span className="ss-gratitude__heading-mask">
-            <motion.span className="ss-gratitude__heading-primary" {...reveal(0.16, 24)}>Thank you</motion.span>
-          </span>
-          <span className="ss-gratitude__heading-mask">
-            <motion.em className="ss-gratitude__heading-secondary" {...reveal(0.3, 24)}>for trusting us.</motion.em>
-          </span>
-        </h2>
-
-        <svg className="ss-gratitude__headline-stroke" viewBox="0 0 510 24" aria-hidden="true">
-          <motion.path d="M5 16 C82 3, 157 17, 236 11 S390 7, 505 13" fill="none" pathLength="1" stroke="currentColor" strokeDasharray="1"
-            initial={reduceMotion ? false : { strokeDashoffset: 1 }} whileInView={{ strokeDashoffset: 0 }} viewport={{ once: true, amount: 0.5 }}
-            transition={reduceMotion ? { duration: 0 } : { duration: 1, delay: 0.48, ease: [0.22, 1, 0.36, 1] }} />
-        </svg>
-
-        <div className="ss-gratitude__items" aria-label="Four ways our community encourages DA Tuition">
-          {gratitudeItems.map((item, index) => {
-            const Icon = item.icon;
-            return (
-              <motion.div key={item.highlight} className="ss-gratitude__item" {...reveal(0.62 + index * 0.1)}>
-                <Icon aria-hidden="true" />
-                <p>{item.lines.map((line) => <span key={line}><HighlightedLine line={line} highlight={item.highlight} /></span>)}</p>
-              </motion.div>
-            );
-          })}
-        </div>
-
-        <motion.p className="ss-gratitude__message" {...reveal(1.08, 12)}>
-          Thank you for allowing us to be part of your <em>child’s journey.</em>
-        </motion.p>
-
-        <motion.div className="ss-gratitude__closing" {...reveal(1.2, 18)}>
-          <img
-            src="/images/success-stories/grateful-to-grow-with-you.png"
-            alt="We’re grateful to grow with you."
-            width={2172}
-            height={724}
-            loading="lazy"
-            decoding="async"
-          />
+      <div className="ss-gratitude__stage" data-open={isOpen} data-reduce-motion={Boolean(reduceMotion)}>
+        <motion.div className="ss-gratitude__envelope"
+          animate={{ y: isOpen && !reduceMotion ? 96 : 0 }}
+          transition={{ duration, ease }}>
+          <motion.div className="ss-gratitude__shell-piece ss-gratitude__shell-piece--back" {...shellMotion}>
+            <img className="ss-gratitude__envelope-back" src="/images/success-stories/gratitude-envelope-back-v2.png" alt="" />
+          </motion.div>
+          <motion.article className="ss-gratitude__letter" aria-labelledby="gratitude-heading"
+            animate={reduceMotion
+              ? { opacity: isOpen ? 1 : 0, y: 0, scale: 1, visibility: isOpen ? 'visible' : 'hidden' }
+              : isOpen
+                ? { opacity: 1, y: -100, scale: 1, rotate: 0, visibility: 'visible' }
+                : { opacity: 1, y: 245, scale: 0.94, rotate: -1, visibility: 'visible', transitionEnd: { visibility: 'hidden' } }}
+            transition={{ duration: reduceMotion ? 0.12 : 0.86, delay: reduceMotion ? 0 : isOpen ? 0.28 : 0.3, ease }}>
+            <img className="ss-gratitude__letter-art" src="/images/success-stories/gratitude-letter-v2.png" alt="" />
+            <div className="ss-gratitude__letter-transcript sr-only">
+              <p>A NOTE FROM DA <span aria-hidden="true">♥</span></p>
+              <h2 id="gratitude-heading">These words mean <em>more than you know. ♡</em></h2>
+              <p>Thank you for trusting us with a small part of your child's journey.</p>
+              <p>Every message, every review and every story of progress reminds us that behind every lesson is a child finding a little more confidence, understanding and belief in themselves.</p>
+              <strong>We're grateful to grow with you. ♡</strong>
+            </div>
+            <button className="ss-gratitude__close" type="button" onClick={() => setIsOpen(false)}
+              aria-label="Close the thank-you note from DA Tuition">×</button>
+          </motion.article>
+          <motion.div className="ss-gratitude__shell-piece ss-gratitude__shell-piece--flap" {...shellMotion}>
+            <img className="ss-gratitude__flap" src="/images/success-stories/gratitude-envelope-flap-v2.png" alt="" />
+          </motion.div>
+          <motion.div className="ss-gratitude__shell-piece ss-gratitude__shell-piece--pocket" {...shellMotion}>
+            <img className="ss-gratitude__pocket" src="/images/success-stories/gratitude-envelope-pocket-v2.png" alt="" />
+          </motion.div>
+          <motion.div className="ss-gratitude__shell-piece ss-gratitude__shell-piece--seal" {...shellMotion}>
+            <img className="ss-gratitude__seal" src="/images/success-stories/gratitude-heart-seal-v2.png" alt="" />
+          </motion.div>
+          <button className="ss-gratitude__trigger" type="button" aria-expanded={isOpen}
+            aria-label={isOpen ? 'Close the thank-you note from DA Tuition' : 'Open a thank-you note from DA Tuition'}
+            onClick={() => setIsOpen((open) => !open)} />
         </motion.div>
       </div>
     </section>

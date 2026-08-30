@@ -2,31 +2,14 @@ import { Link } from 'react-router-dom';
 import {
   AlarmClock, ArrowRight, BarChart3, BookOpen, Brain, CheckCircle2, Eye, Flag,
   Gauge, Globe2, Heart, Lightbulb, MessageCircle, NotebookTabs, PencilLine,
-  RotateCcw, Settings, ShieldCheck, Sigma, Sparkles, Star, Target, Trophy,
+  RotateCcw, Settings, ShieldCheck, Sparkles, Star, Target, Trophy,
   UserRound, UserRoundCheck, UsersRound,
 } from 'lucide-react';
 import NavigationNew from '@/components/NavigationNew';
 import SEO from '@/components/SEO';
+import WeKnowYouSection from '@/components/why-da/WeKnowYouSection';
 import { useWhyDAMotion } from './useWhyDAMotion';
 import './WhyChooseDA.css';
-
-const studentSignals = [
-  { label: 'Strong in maths', Icon: Sigma, className: 'why-da-signal--maths' },
-  { label: 'Quiet in class', Icon: UserRoundCheck, className: 'why-da-signal--quiet' },
-  { label: 'Losing confidence in English', Icon: BookOpen, className: 'why-da-signal--english' },
-  { label: 'Rushes tests', Icon: AlarmClock, className: 'why-da-signal--tests' },
-  { label: 'Needs a challenge', Icon: Star, className: 'why-da-signal--challenge' },
-  { label: 'Wants a Band 6', Icon: Trophy, className: 'why-da-signal--band' },
-] as const;
-
-const discoveryPoints = [
-  { label: 'Starting point', Icon: Target },
-  { label: 'Strengths & weaknesses', Icon: BarChart3 },
-  { label: 'Confidence', Icon: Heart },
-  { label: 'Goals', Icon: Flag },
-  { label: 'Learning style', Icon: UserRound },
-  { label: 'Parent concerns', Icon: MessageCircle },
-] as const;
 
 const personalPathLeft = [
   { title: 'Level', body: 'Right level of challenge', Icon: Gauge },
@@ -107,67 +90,43 @@ export default function WhyChooseDA() {
         description="Discover how DA Tuition gets to know every learner and builds a personalised pathway around their strengths, needs and goals."
         canonicalUrl="/why-choose-da"
       />
-      <NavigationNew />
+      <NavigationNew heroMode />
 
       <main ref={pageRef} className="why-da-page">
         <section className="why-da-hero" data-testid="why-da-hero" aria-labelledby="why-da-title">
+          <div className="why-da-hero__base" data-motion="hero-base" aria-hidden="true">
+            <img src="/assets/why-da/hero-classroom.jpg" alt="" />
+          </div>
+          <div className="why-da-hero__background-slices" aria-hidden="true">
+            <div className="why-da-hero__background-slice why-da-hero__background-slice--top" data-motion="hero-background-slice"><img src="/assets/why-da/hero-classroom.jpg" alt="" /></div>
+            <div className="why-da-hero__background-slice why-da-hero__background-slice--middle" data-motion="hero-background-slice"><img src="/assets/why-da/hero-classroom.jpg" alt="" /></div>
+            <div className="why-da-hero__background-slice why-da-hero__background-slice--bottom" data-motion="hero-background-slice"><img src="/assets/why-da/hero-classroom.jpg" alt="" /></div>
+          </div>
+          <div className="why-da-hero__tutor" data-testid="why-da-tutor-layer" aria-hidden="true">
+            <img src="/assets/why-da/hero-classroom.jpg" alt="" />
+          </div>
+          <div className="why-da-hero__grade" data-motion="hero-grade" aria-hidden="true" />
+
           <div className="why-da-hero__copy" data-motion="hero-copy">
-            <div className="why-da-hero__meta" data-motion="hero-meta" aria-hidden="true"><span>WHY DA?</span><span>01 / 07</span></div>
+            <p className="why-da-hero__eyebrow" data-motion="hero-meta">WHY DA?</p>
             <h1 id="why-da-title">
-              <span className="why-da-text-mask"><span data-motion="hero-line">EVERY</span></span>
-              <span className="why-da-text-mask"><span data-motion="hero-line">STUDENT IS</span></span>
-              <span className="why-da-text-mask"><span data-motion="hero-line">DIFFERENT.</span></span>
-              <em>
-                <span className="why-da-text-mask"><span data-motion="hero-line">Their tuition</span></span>
-                <span className="why-da-text-mask"><span data-motion="hero-line">should be too.</span></span>
-              </em>
+              <span className="why-da-text-mask"><span data-motion="hero-line">NO TWO STUDENTS</span></span>
+              <span className="why-da-text-mask"><span data-motion="hero-line">LEARN THE SAME.</span></span>
             </h1>
-            <p data-motion="hero-support">At DA, we don&apos;t believe in one-size-fits-all programs. We get to know your child deeply, then build a learning experience that&apos;s personalised for them.</p>
-            <Link to="#why-da-know-you" className="why-da-button" data-motion="hero-cta">Discover the DA difference <ArrowRight aria-hidden="true" /></Link>
+            <p className="why-da-hero__subheading" data-motion="hero-support">So why should they be taught the same way?</p>
           </div>
 
-          <div className="why-da-hero__visual">
-            <picture data-motion="hero-student">
-              <source srcSet="/images/why-da-reference/why-da-hero-student-v1.avif" type="image/avif" />
-              <source srcSet="/images/why-da-reference/why-da-hero-student-v1.webp" type="image/webp" />
-              <img data-motion="hero-student-image" src="/images/why-da-reference/why-da-hero-student-v1.png" alt="Student writing in a workbook and looking ahead with confidence" />
-            </picture>
-            <div className="why-da-signal-orbit" aria-hidden="true" />
-            <svg className="why-da-signal-lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-              <path data-motion="signal-line" d="M65 52 C48 42 38 18 18 14" />
-              <path data-motion="signal-line" d="M67 48 C80 31 88 19 96 17" />
-              <path data-motion="signal-line" d="M62 54 C43 52 30 36 13 35" />
-              <path data-motion="signal-line" d="M70 53 C82 48 90 39 98 39" />
-              <path data-motion="signal-line" d="M61 59 C44 64 33 66 15 61" />
-              <path data-motion="signal-line" d="M71 58 C83 61 91 67 98 64" />
-            </svg>
-            {studentSignals.map(({ label, Icon, className }, index) => (
-              <div className={`why-da-signal ${className}`} data-motion="observation" data-signal-index={index} key={label}><Icon aria-hidden="true" /><span>{label}</span></div>
-            ))}
+          <div className="why-da-hero__labels" aria-hidden="true">
+            {['CONFIDENCE', 'PACE', 'ABILITY', 'GOALS'].map((label) => <span data-motion="hero-label" key={label}><i />{label}</span>)}
           </div>
+          <p className="why-da-hero__statement" data-motion="hero-statement"><span>BEFORE WE TEACH,</span><strong>WE UNDERSTAND.</strong></p>
+          <div className="why-da-hero__scroll" data-motion="hero-scroll" aria-hidden="true"><span>SCROLL TO UNDERSTAND</span><i /></div>
+          <span className="why-da-hero__gold-line" aria-hidden="true" />
         </section>
 
-        <section id="why-da-know-you" className="why-da-know" data-testid="why-da-know-you">
-          <div className="why-da-section-copy">
-            <div className="why-da-section-heading"><span className="why-da-number-mask"><span data-motion="know-number">01</span></span><h2 data-motion="know-title">WE KNOW YOU</h2></div>
-            <p data-motion="know-copy">We listen. We observe. We understand who your child is today and what they want to achieve.</p>
-          </div>
-          <figure className="why-da-know__photo" data-motion="evidence-photo">
-            <picture data-motion="evidence-image">
-              <source srcSet="/images/why-da-reference/why-da-know-you-v1.avif" type="image/avif" />
-              <source srcSet="/images/why-da-reference/why-da-know-you-v1.webp" type="image/webp" />
-              <img src="/images/why-da-reference/why-da-know-you-v1.png" alt="Tutor helping a young student with an open workbook" loading="lazy" />
-            </picture>
-            <figcaption>Understanding comes first.</figcaption>
-          </figure>
-          <div className="why-da-discovery" aria-label="What we learn about each student">
-            {discoveryPoints.map(({ label, Icon }) => (
-              <div className="why-da-discovery__item" data-motion="discovery-item" key={label}><Icon aria-hidden="true" /><span>{label}</span></div>
-            ))}
-          </div>
-        </section>
+        <WeKnowYouSection />
 
-        <section className="why-da-personalise" data-testid="why-da-personalise" aria-labelledby="why-da-personalise-title">
+        <section id="why-da-personalise" className="why-da-personalise" data-testid="why-da-personalise" aria-labelledby="why-da-personalise-title">
           <div className="why-da-journey-thread" aria-hidden="true">
             <svg viewBox="0 0 1000 560" preserveAspectRatio="none">
               <path data-motion="journey-path" d="M90 0 C100 180 350 170 500 330" />

@@ -13,11 +13,10 @@ test('defines the full-screen English video gate', () => {
   const source = readFileSync(componentUrl, 'utf8');
 
   assert.match(source, /shouldShowEnglishIntroOnThisAppLoad/);
-  assert.match(source, /src="\/english_intro_video\.mp4"/);
-  assert.match(source, /object-cover/);
-  assert.match(source, /transition-opacity duration-500/);
-  assert.match(source, /setTimeout\(\(\) => setIsOpen\(false\), 500\)/);
-  assert.match(source, />\s*Skip intro\s*</);
+  assert.match(source, /VideoArrivalGate/);
+  assert.match(source, /videoSrc="\/english_intro_video\.mp4"/);
+  assert.match(source, /posterSrc="\/images\/intro-posters\/english-intro\.jpg"/);
+  assert.match(source, /subject="English"/);
 });
 
 test('shows once per app load, then stays dismissed across client-side route returns', async () => {
@@ -39,4 +38,9 @@ test('mounts the English intro gate on the English page', () => {
 
 test('ships the supplied English intro video as a public asset', () => {
   assert.equal(existsSync(videoUrl), true, 'public/english_intro_video.mp4 must be available to the English gate');
+});
+
+test('ships an immediate English poster for the video prelude', () => {
+  const posterUrl = new URL('../../../public/images/intro-posters/english-intro.jpg', import.meta.url);
+  assert.equal(existsSync(posterUrl), true, 'the video gate must have a real first-paint image');
 });

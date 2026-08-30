@@ -26,8 +26,9 @@ test('renders the complete strategy and starting-point sequence', () => {
   ]) assert.match(source, new RegExp(phrase.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
 });
 
-test('uses all three generated transparent asset families', () => {
-  for (const asset of ['strategy-icons-sheet.png', 'process-icons-sheet.png', 'progress-landscapes-sheet.png']) {
+test('uses individually cropped generated assets without shrinking sprite sheets', () => {
+  for (const asset of ['syllabus-mastery.png', 'assessment-preparation.png', 'marking-criteria.png', 'struggling.png', 'band-6-target.png']) {
     assert.match(source, new RegExp(asset.replace('.', '\\.')));
   }
+  assert.doesNotMatch(source, /Sprite|icons-sheet|landscapes-sheet/);
 });

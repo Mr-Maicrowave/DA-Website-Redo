@@ -53,6 +53,7 @@ test('mounts the shared learning-formats explorer in place of the private-only p
   assert.match(source, /<HSCLearningFormatsExplorer \/>/);
   assert.match(source, /<HSCCompleteStrategy \/>/);
   assert.match(source, /<HSCMethodInAction \/>/);
+  assert.match(source, /<HSCSuccessStories \/>/);
   assert.doesNotMatch(source, /hsc-private-layout|private-tuition-best-for-paper|private-tuition-personalised-note/);
 });
 
@@ -66,6 +67,12 @@ test('places the DA method section after the complete strategy', () => {
   const strategyIndex = source.indexOf('<HSCCompleteStrategy />');
   const methodIndex = source.indexOf('<HSCMethodInAction />');
   assert.ok(strategyIndex >= 0 && methodIndex > strategyIndex);
+});
+
+test('places success stories after the DA method section', () => {
+  const methodIndex = source.indexOf('<HSCMethodInAction />');
+  const storiesIndex = source.indexOf('<HSCSuccessStories />');
+  assert.ok(methodIndex >= 0 && storiesIndex > methodIndex);
 });
 
 test('reveals all four editorial explanations without click controls', () => {

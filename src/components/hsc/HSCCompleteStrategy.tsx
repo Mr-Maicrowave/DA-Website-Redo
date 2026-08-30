@@ -1,41 +1,29 @@
 import { motion, useReducedMotion } from 'framer-motion';
 import './HSCCompleteStrategy.css';
 
-const strategyAsset = '/media/hsc/strategy/strategy-icons-sheet.png';
-const processAsset = '/media/hsc/strategy/process-icons-sheet.png';
-const progressAsset = '/media/hsc/strategy/progress-landscapes-sheet.png';
-
 const strategies = [
-  { title: 'SYLLABUS MASTERY', text: 'Deep understanding of every topic and syllabus requirement.' },
-  { title: 'ASSESSMENT PREPARATION', text: 'Tests, quizzes and exams that build confidence.' },
-  { title: 'EXAM TECHNIQUE', text: 'How to answer, structure and write for top marks.' },
-  { title: 'TIME MANAGEMENT', text: 'Work smarter under pressure. Finish strong in the exam.' },
-  { title: 'TRIAL PREPARATION', text: 'Targeted revision and exam simulations to be trial-ready.' },
-  { title: 'PAST-PAPER PRACTICE', text: 'Curated past papers. Practice with purpose and feedback.' },
+  { image: 'syllabus-mastery.png', title: 'SYLLABUS MASTERY', text: 'Deep understanding of every topic and syllabus requirement.' },
+  { image: 'assessment-preparation.png', title: 'ASSESSMENT PREPARATION', text: 'Tests, quizzes and exams that build confidence.' },
+  { image: 'exam-technique.png', title: 'EXAM TECHNIQUE', text: 'How to answer, structure and write for top marks.' },
+  { image: 'time-management.png', title: 'TIME MANAGEMENT', text: 'Work smarter under pressure. Finish strong in the exam.' },
+  { image: 'trial-preparation.png', title: 'TRIAL PREPARATION', text: 'Targeted revision and exam simulations to be trial-ready.' },
+  { image: 'past-paper-practice.png', title: 'PAST-PAPER PRACTICE', text: 'Curated past papers. Practice with purpose and feedback.' },
 ];
 
 const process = [
-  { title: 'MARKING CRITERIA', text: 'Learn what markers look for.' },
-  { title: 'TESTING', text: 'Regular testing to track understanding.' },
-  { title: 'CORRECTIONS', text: 'Every mistake is an opportunity.' },
-  { title: 'FEEDBACK LOOPS', text: 'Ongoing feedback that drives improvement.' },
-  { title: 'SUBJECT-SPECIFIC RESOURCES', text: 'Notes, summaries and worksheets.' },
+  { image: 'marking-criteria.png', title: 'MARKING CRITERIA', text: 'Learn what markers look for.' },
+  { image: 'testing.png', title: 'TESTING', text: 'Regular testing to track understanding.' },
+  { image: 'corrections.png', title: 'CORRECTIONS', text: 'Every mistake is an opportunity.' },
+  { image: 'feedback-loops.png', title: 'FEEDBACK LOOPS', text: 'Ongoing feedback that drives improvement.' },
+  { image: 'subject-resources.png', title: 'SUBJECT-SPECIFIC RESOURCES', text: 'Notes, summaries and worksheets.' },
 ];
 
 const startingPoints = [
-  { title: 'STRUGGLING', text: <>Rebuild foundations.<br />Build confidence.</> },
-  { title: 'MAINTAINING', text: <>Keep consistent.<br />Stay on track.</> },
-  { title: 'IMPROVING', text: <>Close gaps. Lift results.<br />Keep moving forward.</> },
-  { title: 'BAND 6 TARGET', text: <>Precision and strategy<br />to achieve Band 6.</> },
+  { image: 'struggling.png', title: 'STRUGGLING', text: <>Rebuild foundations.<br />Build confidence.</> },
+  { image: 'maintaining.png', title: 'MAINTAINING', text: <>Keep consistent.<br />Stay on track.</> },
+  { image: 'improving.png', title: 'IMPROVING', text: <>Close gaps. Lift results.<br />Keep moving forward.</> },
+  { image: 'band-6-target.png', title: 'BAND 6 TARGET', text: <>Precision and strategy<br />to achieve Band 6.</> },
 ];
-
-function Sprite({ src, index, count, className }: { src: string; index: number; count: number; className: string }) {
-  return (
-    <span className={`hsc-strategy-sprite ${className}`} aria-hidden="true">
-      <img src={src} alt="" style={{ width: `${count * 100}%`, left: `-${index * 100}%` }} />
-    </span>
-  );
-}
 
 export default function HSCCompleteStrategy() {
   const reduceMotion = useReducedMotion();
@@ -55,9 +43,9 @@ export default function HSCCompleteStrategy() {
         </header>
 
         <div className="hsc-complete-strategy__pillars">
-          {strategies.map((item, index) => (
+          {strategies.map((item) => (
             <article key={item.title}>
-              <Sprite src={strategyAsset} index={index} count={strategies.length} className="hsc-strategy-sprite--pillar" />
+              <img className="hsc-strategy-art hsc-strategy-art--pillar" src={`/media/hsc/strategy/${item.image}`} alt="" aria-hidden="true" />
               <h3>{item.title}</h3>
               <p>{item.text}</p>
             </article>
@@ -65,9 +53,9 @@ export default function HSCCompleteStrategy() {
         </div>
 
         <div className="hsc-complete-strategy__process">
-          {process.map((item, index) => (
+          {process.map((item) => (
             <article key={item.title}>
-              <Sprite src={processAsset} index={index} count={process.length} className="hsc-strategy-sprite--process" />
+              <img className="hsc-strategy-art hsc-strategy-art--process" src={`/media/hsc/strategy/${item.image}`} alt="" aria-hidden="true" />
               <div><h3>{item.title}</h3><p>{item.text}</p></div>
             </article>
           ))}
@@ -81,7 +69,7 @@ export default function HSCCompleteStrategy() {
         <div className="hsc-complete-strategy__starting-points">
           {startingPoints.map((item, index) => (
             <article key={item.title} className={index === 3 ? 'is-target' : undefined}>
-              <Sprite src={progressAsset} index={index} count={startingPoints.length} className="hsc-strategy-sprite--progress" />
+              <img className="hsc-strategy-art hsc-strategy-art--progress" src={`/media/hsc/strategy/${item.image}`} alt="" aria-hidden="true" />
               {index === 3 && <span className="hsc-complete-strategy__flag" aria-hidden="true">★</span>}
               <h3>{item.title}</h3>
               <p>{item.text}</p>

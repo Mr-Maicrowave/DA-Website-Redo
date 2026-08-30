@@ -157,7 +157,7 @@
     --review-muted:#6E87A5;
     position:relative;
     left:50%;right:50%;margin-left:-50vw;margin-right:-50vw;width:100vw;
-    padding:clamp(74px,6.5vw,104px) 0 clamp(68px,6vw,96px);
+    padding:48px 0;
     color:var(--review-ivory);
     background:
       radial-gradient(circle at 50% 31%,rgba(230,190,98,.085),transparent 26%),
@@ -171,19 +171,19 @@
   .english-reviews::after{bottom:0}
   .english-reviews__inner{position:relative;z-index:1;width:min(1500px,100%);margin:0 auto}
   .english-reviews__heading{
-    display:grid;gap:.02em;margin:0 auto clamp(36px,4.1vw,50px);
+    display:grid;gap:.02em;margin:0 auto 24px;
     font-family:"Playfair Display",Georgia,serif;font-size:clamp(44px,5vw,76px);font-weight:400;line-height:1.08;
     text-align:center;color:var(--review-ivory);letter-spacing:0
   }
   .english-reviews__heading span{display:block;white-space:nowrap}
   .english-reviews__heading em{color:var(--review-gold);font-style:italic}
   .english-reviews__viewport{
-    position:relative;height:clamp(650px,44vw,700px);outline:none;touch-action:pan-y;user-select:none
+    position:relative;height:clamp(27rem,calc(var(--english-parent-viewport-height,100svh) - 20rem),37rem);outline:none;touch-action:pan-y;user-select:none
   }
   .english-reviews__viewport:focus-visible{outline:none}
   .english-review-card{
     position:absolute;left:50%;top:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;
-    width:min(860px,60vw);height:clamp(610px,41vw,660px);padding:50px clamp(44px,4.7vw,74px) 62px;
+    width:min(860px,60vw);height:clamp(27rem,calc(var(--english-parent-viewport-height,100svh) - 20rem),37rem);padding:clamp(34px,5svh,50px) clamp(44px,4.7vw,74px) clamp(44px,6svh,62px);
     border-radius:18px;background:linear-gradient(180deg,rgba(13,42,73,.98),rgba(8,28,52,.98));
     border:1px solid rgba(214,168,62,.96);box-shadow:0 20px 60px rgba(0,0,0,.18),0 -2px 16px rgba(214,168,62,.08),0 2px 16px rgba(214,168,62,.08);
     opacity:0;transform:translateX(-50%) scale(.84);transition:transform 600ms cubic-bezier(.22,.8,.25,1),opacity 600ms cubic-bezier(.22,.8,.25,1),filter 600ms cubic-bezier(.22,.8,.25,1),border-color 220ms ease,box-shadow 220ms ease;
@@ -325,7 +325,7 @@
   @media (max-width:900px){
     .english-reviews{padding:82px 0 82px}
     .english-reviews__heading{font-size:clamp(40px,8vw,62px);margin-bottom:36px}
-    .english-reviews__viewport{height:630px}
+    .english-reviews__viewport{height:clamp(32rem,calc(100svh - 14rem),40rem)}
     .english-review-card{width:min(760px,76vw);height:610px;padding:46px 42px 58px}
     .english-review-card.is-prev{width:min(340px,34vw);transform:translateX(calc(-50% - min(500px,52vw))) scale(.88) rotate(-3deg)}
     .english-review-card.is-next{width:min(340px,34vw);transform:translateX(calc(-50% + min(500px,52vw))) scale(.88) rotate(3deg)}
@@ -335,7 +335,7 @@
   @media (max-width:640px){
     .english-reviews{padding:58px 0 62px}
     .english-reviews__heading{font-size:clamp(24px,7.25vw,34px);line-height:1.12;margin-bottom:28px}
-    .english-reviews__viewport{height:620px}
+    .english-reviews__viewport{height:clamp(31rem,calc(100svh - 10rem),38rem)}
     .english-review-card{width:90vw;height:600px;padding:36px 24px 58px;border-radius:16px}
     .english-reviews__viewport.is-reading .english-review-card.is-active{width:92vw;height:610px}
     .english-review-card__expanded{padding:30px 24px}
@@ -975,9 +975,9 @@
   .stage-photo img{width:100%;height:100%;object-fit:cover;transition:transform .5s cubic-bezier(.22,1,.36,1)}
   .stage-photo-img--year78{object-position:32% center}
   .stage-photo-img--year910{object-position:62% center}
-  .stage-photo-img--year1112{object-position:50% 42%;transform:translateX(-4%)}
+  .stage-photo-img--year1112{object-position:center center}
   .stage:nth-of-type(3) .stage-photo{background:#efefed}
-  .stage-photo-frame:hover .stage-photo img.stage-photo-img--year1112{transform:translateX(-4%) scale(1.018)}
+  .stage-photo-frame:hover .stage-photo img.stage-photo-img--year1112{transform:scale(1.018)}
   .stage:nth-of-type(1) .stage-photo{clip-path:url(#stage-wave-a)}
   .stage:nth-of-type(2) .stage-photo{clip-path:url(#stage-wave-b)}
   .stage:nth-of-type(3) .stage-photo{clip-path:url(#stage-wave-c)}
@@ -1815,7 +1815,7 @@
             <h3 class="serif">Strengthening analysis and assessment confidence</h3>
           </div>
           <div class="stage-photo-frame">
-            <div class="stage-photo"><img class="stage-photo-img--year910" src="images/subjects/english/year-9-10-analysis-confidence.jpeg" alt="DA Tuition English tutor and student working together at a laptop"></div>
+            <div class="stage-photo"><img class="stage-photo-img--year910" src="images/subjects/english/year-9-10-analysis-confidence.png" alt="DA Tuition English tutor and student working together at a laptop"></div>
             <svg class="stage-photo-outline" viewBox="0 0 1 1" preserveAspectRatio="none" aria-hidden="true">
               <path class="stage-photo-outline-halo" d="M0.52,0.02 C0.66,0.03 0.72,0.1 0.84,0.1 C0.96,0.1 1,0.22 0.96,0.35 C0.93,0.46 0.98,0.52 0.96,0.64 C0.94,0.78 0.86,0.83 0.75,0.9 C0.64,0.97 0.56,0.93 0.44,0.97 C0.32,1 0.2,0.93 0.12,0.84 C0.04,0.75 0.02,0.62 0.04,0.5 C0.06,0.4 0.01,0.34 0.03,0.22 C0.05,0.1 0.15,0.04 0.28,0.02 C0.36,0.005 0.43,0.01 0.52,0.02 Z"/>
               <path class="stage-photo-outline-gold" d="M0.52,0.02 C0.66,0.03 0.72,0.1 0.84,0.1 C0.96,0.1 1,0.22 0.96,0.35 C0.93,0.46 0.98,0.52 0.96,0.64 C0.94,0.78 0.86,0.83 0.75,0.9 C0.64,0.97 0.56,0.93 0.44,0.97 C0.32,1 0.2,0.93 0.12,0.84 C0.04,0.75 0.02,0.62 0.04,0.5 C0.06,0.4 0.01,0.34 0.03,0.22 C0.05,0.1 0.15,0.04 0.28,0.02 C0.36,0.005 0.43,0.01 0.52,0.02 Z"/>
@@ -1844,7 +1844,7 @@
             <h3 class="serif">Senior English and HSC Preparation</h3>
           </div>
           <div class="stage-photo-frame">
-            <div class="stage-photo"><img class="stage-photo-img--year1112" src="images/subjects/english/year-11-12-hsc-prep.png" alt="DA Tuition English tutor and senior student working through HSC preparation"></div>
+            <div class="stage-photo"><img class="stage-photo-img--year1112" src="images/subjects/english/year-11-12-hsc-tutor-laptop.png" alt="DA Tuition English tutor and senior student working through HSC preparation"></div>
             <svg class="stage-photo-outline" viewBox="0 0 1 1" preserveAspectRatio="none" aria-hidden="true">
               <path class="stage-photo-outline-halo" d="M0.46,0.03 C0.6,0 0.7,0.06 0.82,0.05 C0.95,0.04 1,0.16 0.94,0.29 C0.9,0.4 0.97,0.46 0.93,0.58 C0.9,0.72 0.94,0.8 0.82,0.89 C0.7,0.98 0.6,0.9 0.47,0.94 C0.35,0.98 0.22,0.96 0.13,0.86 C0.04,0.76 0.08,0.64 0.05,0.52 C0.02,0.4 0.06,0.32 0.1,0.2 C0.14,0.08 0.26,0.02 0.38,0.02 C0.41,0.02 0.43,0.025 0.46,0.03 Z"/>
               <path class="stage-photo-outline-gold" d="M0.46,0.03 C0.6,0 0.7,0.06 0.82,0.05 C0.95,0.04 1,0.16 0.94,0.29 C0.9,0.4 0.97,0.46 0.93,0.58 C0.9,0.72 0.94,0.8 0.82,0.89 C0.7,0.98 0.6,0.9 0.47,0.94 C0.35,0.98 0.22,0.96 0.13,0.86 C0.04,0.76 0.08,0.64 0.05,0.52 C0.02,0.4 0.06,0.32 0.1,0.2 C0.14,0.08 0.26,0.02 0.38,0.02 C0.41,0.02 0.43,0.025 0.46,0.03 Z"/>
@@ -1866,9 +1866,9 @@
         <p class="rubric-video-eyebrow">See our teaching in action</p>
         <h3 class="rubric-video-title" id="rubric-video-heading">How we deconstruct the HSC rubric</h3>
         <div class="rubric-video-grid">
-          <button class="process-video-button" type="button" data-process-video="/videos/english/rubric-annotated.mp4" aria-label="Play How we deconstruct the HSC rubric video">
+          <button class="process-video-button" type="button" data-process-video="/videos/english/maryam-rubric-demo.mp4" aria-label="Play How we deconstruct the HSC rubric video">
             <span class="process-media rubric-video-media">
-              <video src="/videos/english/rubric-annotated.mp4" muted preload="metadata" playsinline></video>
+              <video src="/videos/english/maryam-rubric-demo.mp4" muted preload="metadata" playsinline></video>
               <span class="process-play" aria-hidden="true"></span>
               <span class="process-bar" data-video-time data-time="0:00 / 0:37" aria-hidden="true"><span class="process-progress"></span></span>
             </span>
@@ -2331,8 +2331,7 @@
           "previews/romanticism-04.png",
           "previews/romanticism-05.png",
           "previews/romanticism-12.png",
-          "previews/romanticism-16.png",
-          { kind: "cta" }
+          "previews/romanticism-16.png"
         ]
       },
       "feedback-sample": {
@@ -2340,8 +2339,7 @@
         type: "feedback",
         pages: [
           "previews/feedback-1.png",
-          "previews/feedback-2.png",
-          { kind: "cta" }
+          "previews/feedback-2.png"
         ]
       }
     };
@@ -2402,6 +2400,11 @@
       if(locked) setPreviewViewport();
       document.documentElement.classList.toggle("preview-open", locked);
       document.body.classList.toggle("preview-open", locked);
+      try{
+        if(window.parent && window.parent !== window){
+          window.parent.postMessage({ type: "da-english-preview", open: locked }, window.location.origin);
+        }
+      } catch(error){}
       try{
         if(window.parent && window.parent !== window){
           const parentDoc = window.parent.document;
@@ -2483,7 +2486,14 @@
       previewImage.removeAttribute("src");
     }
 
-    document.querySelector(".preview-close").addEventListener("click", closePreviewModal);
+    const previewCloseButton = document.querySelector(".preview-close");
+    function handlePreviewCloseButton(event){
+      event.preventDefault();
+      event.stopPropagation();
+      closePreviewModal();
+    }
+    previewCloseButton.addEventListener("pointerdown", handlePreviewCloseButton);
+    previewCloseButton.addEventListener("click", handlePreviewCloseButton);
 
     function handlePreviewKeydown(event){
       if(!modal.classList.contains("is-open")) return;
@@ -2511,6 +2521,24 @@
         window.parent.addEventListener("resize", updatePreviewViewportIfOpen);
         window.parent.addEventListener("scroll", updatePreviewViewportIfOpen, { passive: true });
         window.parent.addEventListener("keydown", handlePreviewKeydown);
+      }
+    } catch(error){}
+
+    function syncEmbeddedViewportHeight(){
+      let viewportHeight = window.innerHeight || document.documentElement.clientHeight || 800;
+      try{
+        if(window.parent && window.parent !== window){
+          viewportHeight = window.parent.innerHeight || viewportHeight;
+        }
+      } catch(error){}
+      document.documentElement.style.setProperty("--english-parent-viewport-height", `${viewportHeight}px`);
+    }
+
+    syncEmbeddedViewportHeight();
+    window.addEventListener("resize", syncEmbeddedViewportHeight);
+    try{
+      if(window.parent && window.parent !== window){
+        window.parent.addEventListener("resize", syncEmbeddedViewportHeight);
       }
     } catch(error){}
 

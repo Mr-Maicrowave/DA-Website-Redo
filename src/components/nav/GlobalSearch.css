@@ -1,0 +1,114 @@
+.global-search--desktop {
+  --search-width: clamp(17.5rem, 21vw, 20rem);
+  position: relative;
+  width: 2.5rem;
+  transition: width 250ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.global-search--desktop[data-open='true'] {
+  width: var(--search-width);
+  transition-delay: 80ms;
+}
+
+.global-search__shell {
+  overflow: hidden;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: transparent;
+  box-shadow: none;
+  transition:
+    background-color 150ms ease-out 70ms,
+    border-color 150ms ease-out 70ms,
+    box-shadow 150ms ease-out 70ms;
+}
+
+.global-search--desktop[data-open='true'] .global-search__shell,
+.global-search--mobile .global-search__shell {
+  border-color: rgb(198 154 56 / 0.35);
+  background: #fffaf0;
+  box-shadow: 0 2px 5px rgb(10 27 52 / 0.1);
+}
+
+.global-search__trigger {
+  transition: color 150ms ease-out, background-color 150ms ease-out;
+}
+
+.global-search__trigger:hover {
+  background: rgb(198 154 56 / 0.15);
+}
+
+.global-search__fallback-trigger {
+  display: none;
+}
+
+.global-search--desktop[data-open='true'] .global-search__trigger {
+  pointer-events: none;
+  color: rgb(198 154 56);
+}
+
+.global-search__input,
+.global-search__close {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(4px);
+  transition: opacity 80ms ease-out, transform 120ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.global-search__close {
+  border-radius: 999px;
+}
+
+.global-search__input::-webkit-search-cancel-button,
+.global-search__input::-webkit-search-decoration {
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.global-search--desktop[data-open='true'] .global-search__input,
+.global-search--desktop[data-open='true'] .global-search__close,
+.global-search--mobile .global-search__input,
+.global-search--mobile .global-search__close {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(0);
+  transition-delay: 155ms;
+}
+
+.global-search--desktop:not([data-open='true']) .global-search__input {
+  visibility: hidden;
+}
+
+/* At intermediate desktop sizes, retain the trigger in the bar and reveal the
+   same shell directly beneath it. This avoids squeezing the centred nav. */
+@media (max-width: 1399px) {
+  .global-search--desktop[data-open='true'] {
+    width: 2.5rem;
+  }
+
+  .global-search--desktop[data-open='true'] .global-search__shell {
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    right: 0;
+    width: min(23rem, calc(100vw - 3rem));
+  }
+
+  .global-search--desktop[data-open='true'] .global-search__fallback-trigger {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    display: grid;
+    place-items: center;
+    color: rgb(198 154 56);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .global-search--desktop,
+  .global-search__shell,
+  .global-search__input,
+  .global-search__close,
+  .global-search__trigger {
+    transition-duration: 1ms;
+    transition-delay: 0ms;
+  }
+}

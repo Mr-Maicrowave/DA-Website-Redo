@@ -11,7 +11,7 @@ import { googleReviews, type GoogleReview } from '@/data/googleReviews';
 import { successStoryReviewCards } from '@/data/successStoryReviewCards';
 import { AnimatePresence, motion, useReducedMotion, useScroll, useTransform, type MotionValue } from 'framer-motion';
 import { CalendarCheck2, ChartNoAxesCombined, GraduationCap, Heart, Sparkles, Sprout, Star, Target } from 'lucide-react';
-import { useCallback, useEffect, useRef, useState, type CSSProperties, type KeyboardEvent, type PointerEvent } from 'react';
+import { Fragment, useCallback, useEffect, useRef, useState, type CSSProperties, type KeyboardEvent, type PointerEvent } from 'react';
 import { createPortal } from 'react-dom';
 import './SuccessStories.css';
 
@@ -536,6 +536,24 @@ const ribbonRows = [
   uniqueRibbonReviews.filter((_, index) => index % 2 === 1),
 ] as const;
 
+const ribbonAvatarColors = ['#d8ad56', '#8f79cf', '#58b6a6', '#e58e87', '#76aeda', '#df8653', '#6bad9b', '#d8b743', '#cc8fa2'] as const;
+
+const getRibbonAvatarColor = (name: string) => {
+  const hash = [...name].reduce((total, character) => total + character.charCodeAt(0), 0);
+  return ribbonAvatarColors[hash % ribbonAvatarColors.length];
+};
+
+const renderHighlightedExcerpt = (review: GoogleReview) => {
+  const phrases = [...review.highlights].sort((a, b) => b.length - a.length);
+  const pattern = new RegExp(`(${phrases.map((phrase) => phrase.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')})`, 'g');
+
+  return review.excerpt.split(pattern).map((part, index) => (
+    phrases.includes(part)
+      ? <mark key={`${part}-${index}`}>{part}</mark>
+      : <Fragment key={`${part}-${index}`}>{part}</Fragment>
+  ));
+};
+
 const ReviewRibbonCard = ({ review, index }: { review: GoogleReview; index: number }) => (
   <article
     className="ss-praise-ribbon__card"
@@ -545,15 +563,24 @@ const ReviewRibbonCard = ({ review, index }: { review: GoogleReview; index: numb
     } as CSSProperties}
     aria-label={`${review.rating} out of 5 star Google review from ${review.author}`}
   >
-    <GoogleReviewMark />
-    <p>{review.text}</p>
+    <header className="ss-praise-ribbon__identity">
+      <span
+        className="ss-praise-ribbon__avatar"
+        style={{ '--ribbon-avatar': getRibbonAvatarColor(review.author) } as CSSProperties}
+        aria-hidden="true"
+      >
+        {review.author.trim().charAt(0).toUpperCase()}
+      </span>
+      <strong>{review.author}</strong>
+      <span className="ss-praise-ribbon__quote-mark" aria-hidden="true">“</span>
+    </header>
+    <p className="ss-praise-ribbon__excerpt">{renderHighlightedExcerpt(review)}</p>
     <footer>
-      <span>— {review.author}</span>
+      <div className="ss-praise-ribbon__stars" aria-label={`${review.rating} out of 5 stars`}>
+        {'★'.repeat(review.rating)}
+      </div>
       <small>{review.date}</small>
     </footer>
-    <div className="ss-praise-ribbon__stars" aria-label={`${review.rating} out of 5 stars`}>
-      {'★'.repeat(review.rating)}
-    </div>
   </article>
 );
 
@@ -565,39 +592,56 @@ const ReviewRibbon = ({ reduceMotion }: { reduceMotion: boolean | null }) => (
     <span className="ss-praise-ribbon__loop" aria-hidden="true" />
     <span className="ss-praise-ribbon__spark ss-praise-ribbon__spark--one" aria-hidden="true">✦</span>
     <span className="ss-praise-ribbon__spark ss-praise-ribbon__spark--two" aria-hidden="true">✧</span>
-    <motion.h2
-      id="praise-ribbon-heading"
+    <motion.header
+      className="ss-praise-ribbon__header"
       initial={reduceMotion ? false : { opacity: 0, y: 12 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.7 }}
       transition={reduceMotion ? { duration: 0 } : { duration: 0.55, ease: easeOut }}
     >
-      <span aria-hidden="true" />
-      Their words. Our proudest moments.
-      <span aria-hidden="true" />
-    </motion.h2>
+      <p className="ss-praise-ribbon__eyebrow">
+        <span aria-hidden="true">✦</span>
+        Their words. Our proudest moments.
+        <span aria-hidden="true">✦</span>
+      </p>
+      <h2 id="praise-ribbon-heading">
+        <span>More than results.</span>
+        <em><b>Stories</b> we’re proud to be part of.</em>
+        <i aria-hidden="true">♡</i>
+      </h2>
+      <span className="ss-praise-ribbon__heading-rule" aria-hidden="true" />
+      <p className="ss-praise-ribbon__support">Real words from DA students and families.</p>
+    </motion.header>
 
     <div className="ss-praise-ribbon__rows">
       {ribbonRows.map((reviews, rowIndex) => (
-        <motion.div
-          key={`ribbon-row-${rowIndex + 1}`}
-          className={`ss-praise-ribbon__row ss-praise-ribbon__row--${rowIndex === 0 ? 'forward' : 'reverse'}`}
-          initial={reduceMotion ? false : { opacity: 0, x: rowIndex === 0 ? 20 : -20 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true, amount: 0.25 }}
-          transition={reduceMotion ? { duration: 0 } : { duration: 0.62, delay: 0.12 + rowIndex * 0.1, ease: easeOut }}
-        >
-          <div className="ss-praise-ribbon__track">
-            <div className="ss-praise-ribbon__group">
-              {reviews.map((review, index) => <ReviewRibbonCard key={`${review.author}-${index}`} review={review} index={index} />)}
+        <Fragment key={`ribbon-row-${rowIndex + 1}`}>
+          <motion.div
+            className={`ss-praise-ribbon__row ss-praise-ribbon__row--${rowIndex === 0 ? 'forward' : 'reverse'}`}
+            initial={reduceMotion ? false : { opacity: 0, x: rowIndex === 0 ? 20 : -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, amount: 0.25 }}
+            transition={reduceMotion ? { duration: 0 } : { duration: 0.62, delay: 0.12 + rowIndex * 0.1, ease: easeOut }}
+          >
+            <div className="ss-praise-ribbon__track">
+              <div className="ss-praise-ribbon__group">
+                {reviews.map((review, index) => <ReviewRibbonCard key={`${review.author}-${index}`} review={review} index={index} />)}
+              </div>
+              <div className="ss-praise-ribbon__group" aria-hidden="true">
+                {reviews.map((review, index) => <ReviewRibbonCard key={`loop-${review.author}-${index}`} review={review} index={index} />)}
+              </div>
             </div>
-            <div className="ss-praise-ribbon__group" aria-hidden="true">
-              {reviews.map((review, index) => <ReviewRibbonCard key={`loop-${review.author}-${index}`} review={review} index={index} />)}
+          </motion.div>
+          {rowIndex === 0 && (
+            <div className="ss-praise-ribbon__interlude" aria-hidden="true">
+              <span>♡</span>
+              <em>Real people. Real progress. Real impact.</em>
             </div>
-          </div>
-        </motion.div>
+          )}
+        </Fragment>
       ))}
     </div>
+    <p className="ss-praise-ribbon__closing"><span aria-hidden="true">▧</span> Hundreds of families trust DA. And their stories inspire us every day. <i aria-hidden="true">♡</i></p>
   </section>
 );
 
