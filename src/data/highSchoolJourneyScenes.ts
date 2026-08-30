@@ -19,18 +19,56 @@ export interface JourneyLayer {
 
 export interface HighSchoolJourneyStage {
   number: `0${1 | 2 | 3 | 4}`;
-  eyebrow: string;
+  label: string;
   heading: string;
-  body: string;
+  insight: string;
+  emphasis?: string;
+  responseLead?: string;
+  response: string;
   colour: string;
   sceneId: JourneySceneId;
 }
 
 export const highSchoolJourneyStages: readonly HighSchoolJourneyStage[] = [
-  { number: '01', eyebrow: 'Why This Stage Is Critical', heading: 'The Curriculum Gets Serious', body: 'Year 7 introduces more complex ideas that build the foundations for future success.', colour: '#3578C6', sceneId: 'blue' },
-  { number: '02', eyebrow: 'Why This Stage Is Critical', heading: 'Habits Form Now or Not at All', body: 'The habits developed in Years 7–8 shape how students handle pressure in Years 11–12.', colour: '#47775C', sceneId: 'green' },
-  { number: '03', eyebrow: 'Why This Stage Is Critical', heading: 'Selective & Scholarship Pressure', body: 'Year 9–10 decisions can shape opportunities. We help students stay prepared and confident.', colour: '#7553B7', sceneId: 'purple' },
-  { number: '04', eyebrow: 'Why This Stage Is Critical', heading: 'Confidence Decides Outcomes', body: 'When students believe in themselves, they’re willing to take on bigger challenges.', colour: '#CC642D', sceneId: 'orange' },
+  {
+    number: '01',
+    label: 'Knowledge',
+    heading: 'The gaps get harder to hide.',
+    insight: 'High school builds quickly.',
+    emphasis: 'A small gap in Year 7 can become a much bigger problem by Year 9.',
+    response: 'We identify what’s missing early, rebuild the foundations and make sure new learning has something solid to build on.',
+    colour: '#3578C6',
+    sceneId: 'blue',
+  },
+  {
+    number: '02',
+    label: 'Habits',
+    heading: 'Habits become harder to change.',
+    insight: 'Organisation. Study. Homework. Asking for help.',
+    emphasis: 'The routines students build now often follow them into Years 11–12.',
+    response: 'We don’t just help students finish this week’s work. We help them become organised, independent learners who can eventually manage without us.',
+    colour: '#47775C',
+    sceneId: 'green',
+  },
+  {
+    number: '03',
+    label: 'Direction',
+    heading: 'Their options start taking shape.',
+    insight: 'By Years 9–10, subject choices, academic foundations and confidence begin influencing what students can choose next.',
+    response: 'Whether they’re rebuilding, aiming higher, preparing for Selective or Scholarship opportunities, or thinking ahead to the HSC, we help them keep the right doors open.',
+    colour: '#7553B7',
+    sceneId: 'purple',
+  },
+  {
+    number: '04',
+    label: 'Belief',
+    heading: 'Confidence can disappear quietly.',
+    insight: 'A student can look like they’re doing “okay” while slowly deciding that they’re simply not good at Maths, English or Science.',
+    responseLead: 'We want to catch that moment before it becomes a belief.',
+    response: 'The right explanation, the right tutor and the right level of challenge can change how a student sees themselves.',
+    colour: '#CC642D',
+    sceneId: 'orange',
+  },
 ] as const;
 
 const layer = (id: string, depth: JourneyDepth, asset: JourneyAsset, zDepth: number, overrides: Partial<Omit<JourneyLayer, 'id' | 'depth' | 'asset' | 'zDepth'>> = {}): JourneyLayer => ({

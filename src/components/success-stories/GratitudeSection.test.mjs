@@ -54,6 +54,23 @@ test('uses the matched v2 stationery set without duplicate visible letter copy',
   assert.ok(component.includes('ss-gratitude__letter-transcript'));
 });
 
+test('opens into the eight-note polaroid wall with generated tactile assets', async () => {
+  const [component, notes] = await Promise.all([
+    readFile(componentPath, 'utf8'),
+    import('./gratitudeReviewNotes.ts'),
+  ]);
+
+  assert.equal(notes.gratitudeReviewNotes.length, 8);
+  for (const contract of [
+    'ss-gratitude__polaroid-wall',
+    'ss-gratitude__central-message',
+    'gratitude-clothesline-heart-v1.png',
+    'gratitude-clothespin-v1.png',
+    'gratitude-polaroid-frame-v1.png',
+    'gratitude-dried-flowers-v1.png',
+  ]) assert.ok(component.includes(contract), `component includes ${contract}`);
+});
+
 test('defines responsive layering and reduced-motion contracts', async () => {
   const styles = await readFile(stylesPath, 'utf8');
   for (const contract of ['perspective:1000px', 'rotateX(180deg)', '@media (max-width:860px)', '@media (prefers-reduced-motion:reduce)']) {

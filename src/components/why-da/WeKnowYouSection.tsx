@@ -1,112 +1,26 @@
-import { ArrowDownRight, Heart, MapPin, MessageCircle, Sparkles, Target } from 'lucide-react';
+import { useState } from 'react';
+import { ArrowRight, Heart, MapPin, MessageCircle, Sparkles, Target } from 'lucide-react';
 
-const observations = [
-  {
-    id: 'starting-point',
-    number: '01',
-    question: 'WHERE ARE THEY NOW?',
-    label: 'Starting point',
-    body: 'We identify their current level, academic gaps and learning habits to understand the real starting point.',
-    image: '/images/why-da-reference/observations/starting-point.png',
-    alt: 'An older DA Tuition student looking to the side while working through mathematics at her desk',
-    Icon: MapPin,
-  },
-  {
-    id: 'confidence',
-    number: '02',
-    question: 'DO THEY HAVE THE CONFIDENCE TO TRY?',
-    label: 'Confidence',
-    body: 'We notice how they respond when something feels difficult — whether they ask, attempt, hesitate or hold back.',
-    image: '/images/why-da-reference/observations/confidence.png',
-    alt: 'A young DA Tuition student raising her hand confidently during a classroom lesson',
-    Icon: Heart,
-  },
-  {
-    id: 'strengths-challenges',
-    number: '03',
-    question: "WHAT COMES NATURALLY — AND WHAT DOESN'T?",
-    label: 'Strengths + challenges',
-    body: 'We look for strengths to build on, gaps that may be holding them back, and the habits shaping how they learn.',
-    image: '/images/why-da-reference/observations/strengths-challenges.png',
-    alt: 'A DA Tuition student concentrating as he writes answers on his worksheet',
-    Icon: Sparkles,
-  },
-  {
-    id: 'goals',
-    number: '04',
-    question: 'WHAT ARE THEY WORKING TOWARDS?',
-    label: 'Goals',
-    body: 'Catch up. Build confidence. Improve. Move ahead. Aim higher. The destination helps shape the path.',
-    image: '/images/why-da-reference/observations/goals.png',
-    alt: 'Two DA Tuition students sitting together with their learning materials',
-    Icon: Target,
-  },
+const stories = [
+  { id: 'starting-point', number: '01', question: 'WHERE ARE THEY NOW?', label: 'Starting point', body: 'We identify their current level, academic gaps and learning habits to understand the real starting point.', image: '/images/why-da-reference/observations/starting-point.png', alt: 'An older DA Tuition student working through mathematics at her desk', Icon: MapPin },
+  { id: 'confidence', number: '02', question: 'DO THEY HAVE THE CONFIDENCE TO TRY?', label: 'Confidence', body: 'We notice how they respond when something feels difficult — whether they ask, attempt, hesitate or hold back.', image: '/images/why-da-reference/observations/confidence.png', alt: 'A young DA Tuition student raising her hand confidently during class', Icon: Heart },
+  { id: 'strengths-challenges', number: '03', question: "WHAT COMES NATURALLY — AND WHAT DOESN'T?", label: 'Strengths + challenges', body: 'We look for strengths to build on, gaps that may be holding them back, and the habits shaping how they learn.', image: '/images/why-da-reference/observations/strengths-challenges.png', alt: 'A DA Tuition student concentrating as he writes on his worksheet', Icon: Sparkles },
+  { id: 'goals', number: '04', question: 'WHAT ARE THEY WORKING TOWARDS?', label: 'Goals', body: 'We clarify their short-term goals and long-term aspirations to create a clear direction.', image: '/images/why-da-reference/observations/goals.png', alt: 'A DA Tuition student and tutor working together', Icon: Target },
 ] as const;
 
 export default function WeKnowYouSection() {
+  const [activeStory, setActiveStory] = useState(0);
   return (
     <section id="why-da-know-you" className="why-da-know" data-testid="why-da-know-you" aria-labelledby="why-da-know-title">
-      <header className="why-da-know__intro" data-motion="know-intro">
-        <div className="why-da-know__chapter">
-          <span className="why-da-number-mask"><span data-motion="know-number">01</span></span>
-          <span aria-hidden="true" />
-          <h2 id="why-da-know-title" data-motion="know-title">WE KNOW YOU</h2>
-        </div>
-        <div className="why-da-know__intro-grid">
-          <h3><span data-motion="know-headline">A STUDENT IS MORE<br />THAN THE MARK ON<br />THEIR PAPER.</span></h3>
-          <p data-motion="know-copy">Before we decide how to teach, we take the time to truly understand who your child is, where they are now, and where they want to go.</p>
-        </div>
-      </header>
-
-      <div className="why-da-observations" data-motion="know-film" aria-label="What DA Tuition learns about each student">
-        <span className="why-da-observations__line" aria-hidden="true" />
-        <span className="why-da-observations__pulse" data-motion="know-timeline-point" aria-hidden="true" />
-        <span className="why-da-observations__light" aria-hidden="true" />
-        {observations.map(({ id, number, question, label, body, image, alt, Icon }) => (
-          <article className={`why-da-observation why-da-observation--${id}`} data-motion="know-observation" key={id}>
-            <div className="why-da-observation__journey" aria-hidden="true">
-              <span>{number}</span>
-              <i><Icon /></i>
-            </div>
-            <div className="why-da-observation__copy" data-motion="know-row-copy">
-              <h3>{question}</h3>
-              <p className="why-da-observation__label">{label}</p>
-              <p>{body}</p>
-            </div>
-            <figure className="why-da-observation__photo" data-motion="know-photo">
-              <img data-motion="know-image" src={image} alt={alt} loading={number === '01' ? 'eager' : 'lazy'} decoding="async" />
-            </figure>
-          </article>
-        ))}
+      <div className="why-da-editorial" data-motion="know-film" data-active-story={activeStory} onPointerLeave={() => setActiveStory(0)}>
+        <nav className="why-da-rail" aria-label="Student understanding stories"><span className="why-da-rail__line" aria-hidden="true" /><span className="why-da-rail__playhead" data-motion="know-timeline-point" aria-hidden="true" />
+          {stories.map(({ number, question, Icon }, index) => <button className="why-da-rail__button" data-story-index={index} aria-label={`${number}: ${question}`} aria-current={activeStory === index ? 'step' : undefined} onPointerEnter={() => setActiveStory(index)} onFocus={() => setActiveStory(index)} onClick={() => setActiveStory(index)} key={number}><span>{number}</span><i><Icon aria-hidden="true" /></i></button>)}
+        </nav>
+        <header className="why-da-editorial__intro" data-motion="know-intro"><div className="why-da-know__chapter"><span className="why-da-number-mask"><span data-motion="know-number">01</span></span><span aria-hidden="true" /><h2 id="why-da-know-title" data-motion="know-title">WE KNOW YOU</h2></div><h3><span data-motion="know-headline">A student is more<br />than the mark on<br />their paper.</span></h3><span className="why-da-editorial__rule" aria-hidden="true" /><p data-motion="know-copy">Before we teach, we take the time to truly understand who your child is, where they are now, and where they want to go.</p></header>
+        {stories.map(({ id, number, question, label, body, image, alt }, index) => <article className={`why-da-story why-da-story--${id}`} data-story={id} data-story-index={index} data-motion="know-observation" onPointerEnter={() => setActiveStory(index)} onFocus={() => setActiveStory(index)} key={id}><div className="why-da-story__copy" data-motion="know-row-copy"><span className="why-da-story__number">{number} —</span><h3>{question}</h3><p className="why-da-story__label">{label}</p><span className="why-da-story__connector" aria-hidden="true" /><p className="why-da-story__body">{body}</p></div><figure className="why-da-story__photo" data-motion="know-photo">{id === 'confidence' && <span className="why-da-story__photo-fill" style={{ backgroundImage: `url(${image})` }} aria-hidden="true" />}<img data-motion="know-image" src={image} alt={alt} loading={index === 0 ? 'eager' : 'lazy'} decoding="async" /></figure></article>)}
       </div>
-
-      <div className="why-da-parent" data-motion="know-parent">
-        <div className="why-da-parent__quote">
-          <span>Illustrative parent concern</span>
-          <blockquote>“She’s capable, but she’s starting to lose confidence.”</blockquote>
-        </div>
-        <div className="why-da-parent__copy">
-          <div className="why-da-parent__icon" aria-hidden="true"><MessageCircle /></div>
-          <p className="why-da-parent__eyeline">AND WHAT ARE YOU SEEING</p>
-          <div className="why-da-parent__title-mask" data-motion="know-parent-title-mask"><h3 data-motion="know-parent-title">AT HOME?</h3></div>
-          <p className="why-da-parent__aside">Your perspective matters.</p>
-          <p>You know your child best. What you’re seeing at home gives us another part of the picture.</p>
-          <p>We listen to your concerns, understand what you’re noticing, and use that perspective when deciding what support comes next.</p>
-        </div>
-      </div>
-
-      <footer className="why-da-know__closing">
-        <div data-motion="know-closing">
-          <h3>WE LISTEN FIRST.</h3>
-          <span className="why-da-know__listen-line" data-motion="know-listen-line" aria-hidden="true" />
-          <p>Because understanding the student changes how we teach them.</p>
-        </div>
-        <a href="#why-da-personalise" aria-label="Continue to section 02, We Personalise">
-          <span><small>NEXT</small><strong>02</strong></span>
-          <span><b>WE PERSONALISE</b><small>Now that we know them,<br />we build around them.</small></span>
-          <i aria-hidden="true"><ArrowDownRight /></i>
-        </a>
-      </footer>
+      <div className="why-da-parent" data-motion="know-parent"><figure className="why-da-parent__photo"><img src="/images/why-da-reference/know-you/parent-concerns.jpg" alt="A parent speaking with a DA Tuition educator" loading="lazy" /></figure><div className="why-da-parent__copy"><p className="why-da-parent__eyeline">AND WHAT ARE YOU SEEING</p><div className="why-da-parent__title-mask" data-motion="know-parent-title-mask"><h3 data-motion="know-parent-title">AT HOME?</h3></div><p className="why-da-parent__aside">Parent perspective matters.</p><p>You know your child best. We want to hear what you’re seeing at home so we can support them in every way possible.</p></div><blockquote className="why-da-parent__note"><span aria-hidden="true">“</span><p>He shuts down when he&apos;s stuck.<br />He needs someone who can reach him.</p><cite>— Year 7 parent</cite></blockquote><div className="why-da-parent__listen" data-motion="know-closing"><MessageCircle aria-hidden="true" /><h3>WE LISTEN FIRST.</h3><span className="why-da-know__listen-line" data-motion="know-listen-line" aria-hidden="true" /><p>Because understanding the student changes how we teach them.</p></div></div>
+      <footer className="why-da-know__closing"><a href="#why-da-personalise" aria-label="Continue to section 02, We Personalise"><span><small>NEXT</small><strong>02</strong></span><span><b>WE PERSONALISE</b><small>Now that we know,<br />we build it around them.</small></span><i aria-hidden="true"><ArrowRight /></i><em aria-hidden="true" /></a></footer>
     </section>
   );
 }
