@@ -58,7 +58,7 @@ export function CompleteShelfTutorBookBridge({
   onError?(message: string): void;
 }) {
   const { gl } = useThree();
-  const presentation = useMemo(() => createCompleteShelfPresentation(tutor), [tutor]);
+  const presentation = useMemo(() => createCompleteShelfPresentation(tutor, edition), [edition, tutor]);
   const [rig, setRig] = useState<CompleteShelfTutorRig | null>(() => pool.peek(edition.id) ?? null);
   const callbacks = useRef({ onReady, onRelease, onLifecycleComplete, onPageSettled, onError });
   const appliedCommand = useRef('');

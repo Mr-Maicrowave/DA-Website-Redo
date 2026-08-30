@@ -12,6 +12,19 @@ import { createTutorBookPages } from "./tutor-book-pages.ts";
 
 const jenny = TUTORS.find((tutor) => tutor.id === "T003")!;
 
+test("keeps a tutor book's shelf cloth colour when its physical rig is mounted", () => {
+  const presentation = createCompleteShelfPresentation(jenny, {
+    id: "T003:primary",
+    tutorId: "T003",
+    wallId: "primary",
+    shelfIndex: 0,
+    slotIndex: 0,
+    materialVariant: 4,
+  });
+
+  assert.equal(presentation.colours.cloth, "#36533d");
+});
+
 class RecordingCanvas extends EventTarget {
   width = 0;
   height = 0;

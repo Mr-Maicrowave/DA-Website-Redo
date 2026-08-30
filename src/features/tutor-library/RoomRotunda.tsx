@@ -1,7 +1,7 @@
 import { RoundedBox, Text } from '@react-three/drei';
 import { useLayoutEffect, useMemo, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { DataTexture, DirectionalLight, DoubleSide, Group, InstancedMesh, MeshStandardMaterial, Object3D, RGBAFormat, RepeatWrapping, SRGBColorSpace, UnsignedByteType } from 'three';
+import { Color, DataTexture, DirectionalLight, DoubleSide, Group, InstancedMesh, MeshStandardMaterial, Object3D, RGBAFormat, RepeatWrapping, SRGBColorSpace, UnsignedByteType } from 'three';
 import { RectAreaLightUniformsLib } from 'three/examples/jsm/lights/RectAreaLightUniformsLib.js';
 import { SUBJECT_WALLS, getWallAngle, type SubjectWall } from './tutor-library-data';
 import { createCabinetBlueprint } from './room-architecture';
@@ -45,12 +45,19 @@ const FLOOR_BOARDS = Array.from({ length: 58 }, (_, index) => ({
 }));
 const DECORATIVE_BOOK_SLOTS = [
   { row: 0, bay: 0, x: .43, lean: -.12 },
+  { row: 0, bay: 1, x: -.42, lean: .08 },
   { row: 0, bay: 2, x: -.43, lean: .1 },
   { row: 1, bay: 0, x: .42, lean: .14 },
   { row: 1, bay: 1, x: -.42, lean: -.1 },
+  { row: 1, bay: 2, x: .44, lean: .09 },
+  { row: 2, bay: 0, x: .43, lean: -.11 },
   { row: 2, bay: 1, x: .43, lean: .12 },
   { row: 2, bay: 2, x: -.44, lean: -.14 },
+  { row: 3, bay: 0, x: .42, lean: .1 },
+  { row: 3, bay: 1, x: -.42, lean: -.1 },
+  { row: 3, bay: 2, x: .43, lean: .12 },
 ] as const;
+const DECORATIVE_BOOK_COLOURS = ['#596068', '#4b545d', '#656966'] as const;
 
 type RoomBookInteractionProps = {
   generation: number;
@@ -161,13 +168,40 @@ function DecorativeShelfBooks({ cabinet, wallId }: { cabinet: ReturnType<typeof 
       dummy.scale.set(...book.scale);
       dummy.updateMatrix();
       target.setMatrixAt(index, dummy.matrix);
+      target.setColorAt(index, new Color(DECORATIVE_BOOK_COLOURS[index % DECORATIVE_BOOK_COLOURS.length]));
     });
     target.instanceMatrix.needsUpdate = true;
+    if (target.instanceColor) target.instanceColor.needsUpdate = true;
   }, [books, dummy]);
 
   return <instancedMesh ref={mesh} args={[undefined, undefined, books.length]} castShadow receiveShadow>
     <boxGeometry args={[1, 1, 1]} />
-    <meshStandardMaterial color="#73513b" roughness={.86} metalness={.01} emissive="#1d1008" emissiveIntensity={.24} />
+    <meshStandardMaterial color="#ffffff" vertexColors roughness={.9} metalness={0} emissive="#0b0e11" emissiveIntensity={.12} />
+  </instancedMesh>;
+}
+
+function FloorBoards() {
+  const mesh = useRef<InstancedMesh>(null);
+  const dummy = useMemo(() => new Object3D(), []);
+
+  useLayoutEffect(() => {
+    const target = mesh.current;
+    if (!target) return;
+    FLOOR_BOARDS.forEach((board, index) => {
+      dummy.position.set(board.x, .02, board.offset);
+      dummy.rotation.set(0, 0, 0);
+      dummy.scale.set(board.width, 1, 1);
+      dummy.updateMatrix();
+      target.setMatrixAt(index, dummy.matrix);
+      target.setColorAt(index, new Color(board.tone));
+    });
+    target.instanceMatrix.needsUpdate = true;
+    if (target.instanceColor) target.instanceColor.needsUpdate = true;
+  }, [dummy]);
+
+  return <instancedMesh ref={mesh} args={[undefined, undefined, FLOOR_BOARDS.length]} receiveShadow>
+    <boxGeometry args={[1, .042, 16.9]} />
+    <meshStandardMaterial color="#ffffff" vertexColors roughness={.52} metalness={.02} />
   </instancedMesh>;
 }
 
@@ -206,7 +240,7 @@ function WallShelves({ visible, wall, angle, width, showWallLabel, pool, rigInte
 function RoomShell() {
   return <group>
     <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow><planeGeometry args={[17.2, 17.2]} /><meshStandardMaterial color="#160d0a" roughness={.64} metalness={.08} side={DoubleSide} /></mesh>
-    {FLOOR_BOARDS.map(board => <CabinetBox key={`floor-${board.x}`} size={[board.width, .042, 16.9]} position={[board.x, .02, board.offset]} color={board.tone} roughness={.52} metalness={.02} radius={.009} />)}
+    <FloorBoards />
     <CabinetBox size={[17.2, .16, 17.2]} position={[0, ROOM_HEIGHT, 0]} color="#0b1930" roughness={.86} radius={.035} grain={false} />
     <CabinetBox size={[15.75, .055, 15.75]} position={[0, ROOM_HEIGHT - .12, 0]} color="#10223b" roughness={.92} radius={.04} grain={false} />
     <CabinetBox size={[17.1, .16, .28]} position={[0, .18, -ROOM_RADIUS]} color="#3b2115" roughness={.5} />

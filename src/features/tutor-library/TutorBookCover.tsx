@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { CanvasTexture, DoubleSide, LinearFilter, LinearMipmapLinearFilter, NoColorSpace, RepeatWrapping, SRGBColorSpace } from 'three';
 import { getPhotoUrl, type CatalogueTutor } from '../../data/teacherCatalogue';
 import type { TutorBookEdition } from './tutor-library-data';
+import { getTutorBookClothColour } from './tutor-book-appearance';
 
 const COVER_TEXTURES = new Map<string, CanvasTexture>();
 const FOIL_TEXTURES = new Map<string, CanvasTexture>();
@@ -10,13 +11,11 @@ type CoverMode = 'spine' | 'cover';
 export type SpineTreatment = 'classic' | 'stacked' | 'surname';
 
 const SUBJECT_MARK: Record<string, string> = { primary: 'PRIMARY STUDIES', mathematics: 'MATHEMATICS', english: 'ENGLISH', 'science-social': 'SCIENCE & SOCIAL' };
-const COVER_CLOTH = ['#183653', '#63323b', '#5c412d', '#24475a', '#294a35', '#462d54', '#5c3b25', '#25494e', '#3c4654', '#673324'];
-
 function configureMaterialTexture(texture: CanvasTexture, repeat: [number, number], color = false) {
   texture.colorSpace = color ? SRGBColorSpace : NoColorSpace;
   texture.wrapS = RepeatWrapping; texture.wrapT = RepeatWrapping;
   texture.repeat.set(...repeat); texture.minFilter = LinearMipmapLinearFilter; texture.magFilter = LinearFilter;
-  texture.generateMipmaps = true; texture.anisotropy = 8; texture.needsUpdate = true;
+  texture.generateMipmaps = true; texture.anisotropy = 4; texture.needsUpdate = true;
   return texture;
 }
 
@@ -41,7 +40,7 @@ export function useBookMaterialMaps() {
 
 function drawFrame(context: CanvasRenderingContext2D, tutor: CatalogueTutor, edition: TutorBookEdition, mode: CoverMode) {
   const canvas = context.canvas;
-  const dark = COVER_CLOTH[edition.materialVariant % COVER_CLOTH.length];
+  const dark = getTutorBookClothColour(edition.materialVariant);
   context.fillStyle = dark;
   context.fillRect(0, 0, canvas.width, canvas.height);
   context.textAlign = 'center'; context.textBaseline = 'middle';
@@ -56,7 +55,7 @@ function drawFrame(context: CanvasRenderingContext2D, tutor: CatalogueTutor, edi
 
 function createTexture(tutor: CatalogueTutor, edition: TutorBookEdition, mode: CoverMode) {
   const canvas = document.createElement('canvas');
-  canvas.width = mode === 'spine' ? 384 : 1024;
+  canvas.width = mode === 'spine' ? 256 : 1024;
   canvas.height = 1536;
   const context = canvas.getContext('2d');
   if (!context) throw new Error('Canvas rendering is unavailable for tutor cover');
@@ -66,7 +65,7 @@ function createTexture(tutor: CatalogueTutor, edition: TutorBookEdition, mode: C
   texture.minFilter = LinearMipmapLinearFilter;
   texture.magFilter = LinearFilter;
   texture.generateMipmaps = true;
-  texture.anisotropy = 16;
+  texture.anisotropy = 4;
   texture.needsUpdate = true;
   if (mode === 'cover') {
     const portrait = new Image();
@@ -90,7 +89,7 @@ function createTexture(tutor: CatalogueTutor, edition: TutorBookEdition, mode: C
 
 function createFoilTexture(tutor: CatalogueTutor, edition: TutorBookEdition, mode: CoverMode, treatment: SpineTreatment) {
   const canvas = document.createElement('canvas');
-  canvas.width = mode === 'spine' ? 384 : 1024;
+  canvas.width = mode === 'spine' ? 256 : 1024;
   canvas.height = 1536;
   const context = canvas.getContext('2d');
   if (!context) throw new Error('Canvas rendering is unavailable for tutor foil');
@@ -115,7 +114,7 @@ function createFoilTexture(tutor: CatalogueTutor, edition: TutorBookEdition, mod
     context.font = '600 86px "Playfair Display", Georgia, serif'; context.fillText(tutor.name.replace(/^Mrs\s+/i, ''), canvas.width / 2, 1008, canvas.width - 150);
     context.font = '600 25px Cabin, Arial, sans-serif'; context.fillText(tutor.designation.toUpperCase(), canvas.width / 2, 1082, canvas.width - 180);
   }
-  const texture = new CanvasTexture(canvas); texture.colorSpace = SRGBColorSpace; texture.minFilter = LinearMipmapLinearFilter; texture.magFilter = LinearFilter; texture.generateMipmaps = true; texture.anisotropy = 16; texture.needsUpdate = true;
+  const texture = new CanvasTexture(canvas); texture.colorSpace = SRGBColorSpace; texture.minFilter = LinearMipmapLinearFilter; texture.magFilter = LinearFilter; texture.generateMipmaps = true; texture.anisotropy = 4; texture.needsUpdate = true;
   return texture;
 }
 

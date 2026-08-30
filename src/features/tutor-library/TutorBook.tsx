@@ -19,10 +19,10 @@ import type { TutorBookEdition } from './tutor-library-data';
 import { createBookParts, getBookVisualProfile, getShelfPose } from './tutor-book-geometry';
 import { createBookMotionPoses, interpolateBookMotion } from './tutor-book-motion';
 import { TutorBookCover, TutorBookFoil, type SpineTreatment, useBookMaterialMaps } from './TutorBookCover';
+import { getTutorBookClothColour } from './tutor-book-appearance';
 import type { LibraryEvent, LibraryPhase } from './tutor-library-state';
 import type { TutorBookPageTurnDirection } from './tutor-book-pages';
 
-const COVER_COLOURS = ['#203a57', '#6a3035', '#63462c', '#25465a', '#36533d', '#4f345c', '#6d4a2e', '#31535a', '#4d5663', '#743f2c'];
 const PAPER = ['#eadbb9', '#e4d2aa', '#f0dfbd'];
 
 function LegacyTutorBook({ edition, tutor, phase, selected, motionProgress, neighbourResponse = 0, onHover, poseOverride, studio = false, spineTreatment, geometryDebug = false }: { edition: TutorBookEdition; tutor: CatalogueTutor; phase: LibraryPhase; selected: boolean; motionProgress: number; neighbourResponse?: number; onHover: (editionId: string) => void; poseOverride?: ReturnType<typeof getShelfPose>; studio?: boolean; spineTreatment?: SpineTreatment; geometryDebug?: boolean }) {
@@ -32,7 +32,7 @@ function LegacyTutorBook({ edition, tutor, phase, selected, motionProgress, neig
   const materials = useBookMaterialMaps();
   const parts = useMemo(() => createBookParts(pose.width, pose.height, pose.depth), [pose.depth, pose.height, pose.width]);
   const motion = useMemo(() => createBookMotionPoses(pose), [pose]);
-  const cover = COVER_COLOURS[edition.materialVariant % COVER_COLOURS.length];
+  const cover = getTutorBookClothColour(edition.materialVariant);
   const activeMotion = !studio && selected && (phase === 'BOOK_HOVER_INTENT' || phase === 'BOOK_EXTRACTING' || phase === 'BOOK_PREVIEW' || phase === 'BOOK_RETURNING');
   const currentPose = !activeMotion ? motion.shelf
     : phase === 'BOOK_HOVER_INTENT' ? interpolateBookMotion(motion.shelf, motion.extraction.to, .08)
@@ -115,10 +115,13 @@ type TutorBookProps = {
 };
 
 function DormantCompleteShelfProxy({ tutor, edition }: { tutor: CatalogueTutor; edition: TutorBookEdition }) {
-  const cover = COVER_COLOURS[edition.materialVariant % COVER_COLOURS.length];
+  const cover = getTutorBookClothColour(edition.materialVariant);
   return <group name={`dormant-complete-shelf-proxy-${edition.id}`}>
     <RoundedBox args={[COMPLETE_SHELF_WIDTH, COMPLETE_SHELF_HEIGHT, COMPLETE_SHELF_CLOSED_DEPTH]} radius={.0045} smoothness={2} castShadow receiveShadow>
       <meshPhysicalMaterial color={cover} roughness={.94} metalness={.02} sheen={.28} sheenRoughness={.78} />
+    </RoundedBox>
+    <RoundedBox name="tutor-book-selection-marker" args={[.024, .18, .046]} position={[COMPLETE_SHELF_SPINE_X - .007, COMPLETE_SHELF_HEIGHT / 2 - .15, 0]} radius={.004} smoothness={2}>
+      <meshStandardMaterial color="#d5b369" roughness={.32} metalness={.72} />
     </RoundedBox>
     <TutorBookCover tutor={tutor} edition={edition} mode="spine" width={COMPLETE_SHELF_CLOSED_DEPTH - .018} height={COMPLETE_SHELF_HEIGHT - .075} position={[COMPLETE_SHELF_SPINE_X, 0, 0]} rotation={[0, -Math.PI / 2, 0]} visible />
     <TutorBookFoil tutor={tutor} edition={edition} mode="spine" width={COMPLETE_SHELF_CLOSED_DEPTH - .014} height={COMPLETE_SHELF_HEIGHT - .04} position={[COMPLETE_SHELF_SPINE_X - .001, 0, 0]} rotation={[0, -Math.PI / 2, 0]} visible />
@@ -171,14 +174,14 @@ function RoomTutorBook({ edition, tutor, phase, selected, motionProgress, motion
     rotation={rotation}
     scale={pose.scale}
     castShadow
-    onPointerEnter={(event) => {
+    onPointerOver={(event) => {
       event.stopPropagation();
       if (phase !== 'ROOM_IDLE' || selected) return;
       setHovered(true);
       onHoverChange?.(edition.id);
       document.body.style.cursor = 'pointer';
     }}
-    onPointerOut={(event) => {
+    onPointerLeave={(event) => {
       event.stopPropagation();
       setHovered(false);
       onHoverChange?.();
@@ -194,6 +197,10 @@ function RoomTutorBook({ edition, tutor, phase, selected, motionProgress, motion
       }
     }}
   >
+    <mesh name="tutor-book-hit-target">
+      <boxGeometry args={[1.34, 1.8, .6]} />
+      <meshBasicMaterial transparent opacity={0} depthWrite={false} colorWrite={false} />
+    </mesh>
     <group visible={!rigRequested || !rigReady}><DormantCompleteShelfProxy tutor={tutor} edition={edition} /></group>
     {rigRequested ? <CompleteShelfTutorBookBridge
       key={`${edition.id}:${rigIntentToken}`}

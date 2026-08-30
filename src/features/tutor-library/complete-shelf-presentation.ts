@@ -1,5 +1,7 @@
 import { getPhotoUrl, TUTORS, type CatalogueTutor } from "../../data/teacherCatalogue.ts";
 import { createTutorBookPages, type TutorBookPage } from "./tutor-book-pages.ts";
+import type { TutorBookEdition } from "./tutor-library-data.ts";
+import { getTutorBookClothColour } from "./tutor-book-appearance.ts";
 
 export const COMPLETE_SHELF_PRESENTATION_NAMES = ["jenny"] as const;
 export type CompleteShelfPresentationName = typeof COMPLETE_SHELF_PRESENTATION_NAMES[number];
@@ -357,11 +359,11 @@ export function selectCompleteShelfPresentationTutor(selection: string | null | 
   return getJennyTutor();
 }
 
-export function createCompleteShelfPresentation(tutor: CatalogueTutor): CompleteShelfPresentation {
+export function createCompleteShelfPresentation(tutor: CatalogueTutor, edition?: Pick<TutorBookEdition, "materialVariant">): CompleteShelfPresentation {
   assertPresentationOnlyInput(tutor);
   const portrait = getPortrait(tutor);
   const colours = {
-    cloth: "#1b3858",
+    cloth: edition ? getTutorBookClothColour(edition.materialVariant) : "#1b3858",
     foil: "#d5b369",
     paper: "#f2eadc",
     ink: "#1a314c",
