@@ -32,10 +32,11 @@ test('keeps continuous tutor-library motion inside the canvas rather than React 
   assert.match(scene, /useFrame/);
 });
 
-test('culls every wall except the current case and its turn destination', () => {
+test('keeps adjoining shelf corners while culling the wall opposite the viewer', () => {
   const room = readFileSync(roomPath, 'utf8');
 
   assert.match(room, /function isTutorLibraryWallVisible/);
+  assert.match(room, /distanceFromActive <= 1/);
   assert.match(room, /visible=\{isTutorLibraryWallVisible\(index, fromWallIndex, toWallIndex, phase\)\}/);
   assert.match(room, /<WallShelves key=\{wall\.id\} visible=/);
 });

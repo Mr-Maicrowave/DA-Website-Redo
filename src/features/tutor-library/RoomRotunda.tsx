@@ -222,7 +222,15 @@ function CaseLighting({ fromWallIndex, toWallIndex, motionProgressRef }: { fromW
 }
 
 export function isTutorLibraryWallVisible(index: number, activeWallIndex: number, pendingWallIndex: number, phase: LibraryPhase) {
-  return index === activeWallIndex || (phase === 'ROOM_TURNING' && index === pendingWallIndex);
+  const wallCount = SUBJECT_WALLS.length;
+  const distanceFromActive = Math.min(
+    (index - activeWallIndex + wallCount) % wallCount,
+    (activeWallIndex - index + wallCount) % wallCount,
+  );
+
+  // The adjoining cases remain at the edge of the camera composition. Cull only the wall
+  // opposite the viewer, rather than leaving the rotunda's corners visibly empty at rest.
+  return distanceFromActive <= 1 || (phase === 'ROOM_TURNING' && index === pendingWallIndex);
 }
 
 export function RoomRotunda({ fromWallIndex, toWallIndex, showWallLabels = true, pool, rigIntentEditionId, rigIntentToken, onRigIntent, phase, generation, reducedMotion, pageTurnDirection, selectedEditionId, motionProgress, motionProgressRef, onActivate, onRigReady, onRigUnavailable, onLifecycleComplete, onPageSettled, onError }: { fromWallIndex: number; toWallIndex: number; showWallLabels?: boolean; pool: CompleteShelfBookPool<CompleteShelfTutorRig>; rigIntentEditionId?: string; rigIntentToken: number; onRigIntent: (editionId?: string) => void; phase: LibraryPhase; selectedEditionId?: string; motionProgress: number; motionProgressRef: Readonly<{ current: { turn: number; book: number } }> } & RoomBookInteractionProps) {
