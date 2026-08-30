@@ -17,6 +17,12 @@ test('renders a data-driven Three.js room without fixed wall geometry', () => {
   assert.match(library, /<Canvas/);
 });
 
+test('does not treat leaving the canvas as leaving an active tutor book', () => {
+  const library = readFileSync(libraryPath, 'utf8');
+
+  assert.doesNotMatch(library, /<Canvas[^>]*onPointerLeave=/);
+});
+
 test('uses lightweight material variation and layered mouldings for architectural fidelity', () => {
   const source = readFileSync(new URL('./RoomRotunda.tsx', import.meta.url), 'utf8');
 
