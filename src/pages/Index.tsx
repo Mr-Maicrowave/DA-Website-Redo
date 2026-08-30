@@ -6,7 +6,7 @@
 
 import React, { useRef, useEffect, useState, useCallback, useLayoutEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { ArrowRight, Maximize2, Minimize2, Pause, Play, Volume2, VolumeX, X } from 'lucide-react';
+import { ArrowRight, BookOpen, BriefcaseBusiness, Calculator, ChartNoAxesCombined, ChevronDown, FlaskConical, Maximize2, Minimize2, Pause, Play, Scale, ShieldCheck, UsersRound, Volume2, VolumeX, X, type LucideIcon } from 'lucide-react';
 import { motion, AnimatePresence, useInView, useScroll, useTransform, useSpring, useMotionValueEvent, useReducedMotion, type MotionValue } from 'framer-motion';
 import NavigationNew from '@/components/NavigationNew';
 import HomeFooterTrial from '@/components/HomeFooterTrial';
@@ -194,43 +194,12 @@ const MarqueeStrip = () => (
 //  HERO
 // ══════════════════════════════════════════════════════════════
 
-const HeroSection = ({ embedded = false, introProgress }: { embedded?: boolean; introProgress?: MotionValue<number> }) => {
+const HeroSection = ({ embedded = false }: { embedded?: boolean }) => {
   const sectionRef = useRef<HTMLElement>(null);
   const reducedMotion = useReducedMotion();
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ['start start', 'end start'] });
-  const revealProgress = introProgress ?? scrollYProgress;
-  const cinematicReveal = Boolean(introProgress) && !reducedMotion;
   const contentY = useTransform(scrollYProgress, [0, 1], ['0%', reducedMotion ? '0%' : '20%']);
   const contentOpacity = useTransform(scrollYProgress, [0, 0.72, 1], [1, 0.94, reducedMotion ? 1 : 0]);
-  const sideLeftY = useTransform(revealProgress, [0, 1], ['0%', '-1.2%']);
-  const sideRightY = useTransform(revealProgress, [0, 1], ['0%', '1.2%']);
-  const sideScale = useTransform(revealProgress, [0, 1], [1.012, 1]);
-  const sideOpacity = useTransform(revealProgress, [0.57, 0.69], [0, 1]);
-  const crestY = useTransform(revealProgress, [0.45, 0.57], [14, 0]);
-  const crestOpacity = useTransform(revealProgress, [0.45, 0.57], [0, 1]);
-  const crestScale = useTransform(revealProgress, [0.45, 0.57], [0.96, 1]);
-  const eyebrowY = useTransform(revealProgress, [0.51, 0.61], [10, 0]);
-  const eyebrowOpacity = useTransform(revealProgress, [0.51, 0.61], [0, 1]);
-  const threadScale = useTransform(revealProgress, [0.56, 0.7], [0, 1]);
-  const threadOpacity = useTransform(revealProgress, [0.56, 0.64], [0, 1]);
-  const titleOneY = useTransform(revealProgress, [0.56, 0.7], [130, 0]);
-  const titleOneOpacity = useTransform(revealProgress, [0.56, 0.64], [0, 1]);
-  const titleOneScale = useTransform(revealProgress, [0.56, 0.7], [0.985, 1]);
-  const titleTwoY = useTransform(revealProgress, [0.64, 0.78], [130, 0]);
-  const titleTwoOpacity = useTransform(revealProgress, [0.64, 0.76], [0.3, 1]);
-  const titleTwoScale = useTransform(revealProgress, [0.64, 0.78], [0.985, 1]);
-  const titleTwoTracking = useTransform(revealProgress, [0.64, 0.78], ['.01em', '0em']);
-  const trustY = useTransform(revealProgress, [0.73, 0.83], [12, 0]);
-  const trustOpacity = useTransform(revealProgress, [0.73, 0.83], [0, 1]);
-  const supportY = useTransform(revealProgress, [0.76, 0.86], [14, 0]);
-  const supportOpacity = useTransform(revealProgress, [0.76, 0.86], [0, 1]);
-  const actionsY = useTransform(revealProgress, [0.79, 0.89], [16, 0]);
-  const actionsOpacity = useTransform(revealProgress, [0.79, 0.89], [0, 1]);
-  const secondaryActionY = useTransform(revealProgress, [0.81, 0.91], [16, 0]);
-  const secondaryActionOpacity = useTransform(revealProgress, [0.81, 0.91], [0, 1]);
-  const valuesY = useTransform(revealProgress, [0.87, 0.97], [18, 0]);
-  const valuesOpacity = useTransform(revealProgress, [0.87, 0.97], [0, 1]);
-  const continuationScale = useTransform(revealProgress, [0.97, 1], [0, 1]);
 
   return (
     <motion.section
@@ -269,8 +238,6 @@ const HeroSection = ({ embedded = false, introProgress }: { embedded?: boolean; 
         }
         .hero-side-image--left img { object-position: 31% center; }
         .hero-side-image--right img { object-position: 53% center; }
-        .hero-gold-thread { width: min(230px, 42vw); height: 1px; margin: clamp(2px, .55vh, 7px) 0 0; background: linear-gradient(90deg, transparent, #b8842f 12%, #b8842f 88%, transparent); transform-origin: center; }
-        .hero-title-mask { display: block; height: 1.05em; overflow: hidden; line-height: 1.05; }
         .hero-side-image::after {
           content: '';
           position: absolute;
@@ -368,9 +335,10 @@ const HeroSection = ({ embedded = false, introProgress }: { embedded?: boolean; 
           margin-top: clamp(9px, 1.7vh, 20px);
           text-align: left;
         }
-        .hero-value { min-width: 0; padding-top: 7px; border-top: 1px solid rgba(184,132,47,.48); }
-        .hero-value strong { display: block; margin: 0 0 4px; font-family: ${sans}; font-size: clamp(.68rem, .76vw, .78rem); letter-spacing: .12em; color: #9b681c; }
-        .hero-value p { margin: 0; font-family: ${sans}; font-size: clamp(.68rem, .78vw, .82rem); line-height: 1.38; color: rgba(10,27,52,.76); }
+        .hero-value { min-width: 0; display: grid; grid-template-columns: 40px 1fr; gap: 11px; align-items: start; }
+        .hero-value svg { width: 34px; height: 34px; color: #b8842f; stroke-width: 1.35; }
+        .hero-value strong { display: block; margin: 1px 0 5px; font-family: ${sans}; font-size: clamp(.72rem, .82vw, .84rem); color: ${C.navy}; }
+        .hero-value p { margin: 0; font-family: ${sans}; font-size: clamp(.66rem, .75vw, .77rem); line-height: 1.45; color: rgba(10,27,52,.72); }
         .hero-trust {
           margin: clamp(1px, .35vh, 4px) 0 0;
           font-family: ${sans};
@@ -380,11 +348,14 @@ const HeroSection = ({ embedded = false, introProgress }: { embedded?: boolean; 
           line-height: 1.4;
           color: rgba(10,27,52,.58);
         }
-        .hero-continuation { position: absolute; bottom: clamp(16px, 2.1vh, 24px); left: 50%; width: 1px; height: 28px; background: linear-gradient(#b8842f, transparent); transform-origin: top; }
+        .hero-scroll { margin-top: clamp(2px, .7vh, 8px); color: #b8842f; animation: heroChevron 2.8s cubic-bezier(.22,1,.36,1) infinite; }
+        @keyframes heroChevron { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(4px); } }
         @media (max-width: 1100px) {
           .hero-luxury { grid-template-columns: minmax(0, 15fr) minmax(0, 70fr) minmax(0, 15fr); }
           .hero-composition { width: 96%; padding-inline: 22px; }
           .hero-title { font-size: clamp(2.35rem, 4.7vw, 3.8rem); }
+          .hero-value { grid-template-columns: 31px 1fr; gap: 8px; }
+          .hero-value svg { width: 28px; height: 28px; }
         }
         @media (max-width: 767px) {
           .hero-luxury {
@@ -412,13 +383,13 @@ const HeroSection = ({ embedded = false, introProgress }: { embedded?: boolean; 
           .hero-actions { width: 100%; gap: 8px; }
           .hero-cta { min-width: 0; flex: 1; min-height: 40px; padding: 9px 10px; font-size: .72rem; }
           .hero-values { grid-template-columns: 1fr 1fr; gap: 7px 13px; margin-top: 4px; max-width: 370px; }
-          .hero-value { padding-top: 5px; }
+          .hero-value { grid-template-columns: 24px 1fr; gap: 6px; }
           .hero-value:last-child { grid-column: 1 / -1; width: 54%; justify-self: center; }
-          .hero-value strong { font-size: .53rem; margin-bottom: 1px; }
-          .hero-value p { font-size: .56rem; line-height: 1.25; }
+          .hero-value svg { width: 22px; height: 22px; }
+          .hero-value strong { font-size: .58rem; margin-bottom: 1px; }
+          .hero-value p { font-size: .52rem; line-height: 1.25; }
           .hero-trust { margin-top: 0; font-size: .58rem; letter-spacing: .045em; }
-          .hero-gold-thread { width: min(170px, 52vw); }
-          .hero-continuation { height: 18px; bottom: 9px; }
+          .hero-scroll { margin-top: 0; }
         }
         @media (max-height: 760px) and (min-width: 768px) {
           .hero-composition { gap: 7px; padding-top: 10px; padding-bottom: 9px; }
@@ -428,56 +399,57 @@ const HeroSection = ({ embedded = false, introProgress }: { embedded?: boolean; 
           .hero-trust { margin-top: 6px; }
         }
         @media (prefers-reduced-motion: reduce) {
+          .hero-scroll { animation: none; }
           .hero-cta { transition: none; }
         }
       `}</style>
 
-      <motion.figure className="hero-side-image hero-side-image--left" style={cinematicReveal ? { y: sideLeftY, scale: sideScale, opacity: sideOpacity } : undefined}>
+      <figure className="hero-side-image hero-side-image--left">
         <img src="/images/homepage/homepage-cream/ngoc and a girl-3.png" alt="DA Tuition tutor guiding a student through her work" />
-      </motion.figure>
+      </figure>
 
       <div className="hero-centre">
         <motion.div
           className="hero-composition"
           style={{ y: embedded ? 0 : contentY, opacity: embedded ? 1 : contentOpacity }}
         >
-          <motion.img className="hero-crest" src="/images/da-logo.png" alt="DA Tuition" style={cinematicReveal ? { y: crestY, opacity: crestOpacity, scale: crestScale } : undefined} />
-          <motion.div className="hero-eyebrow" style={cinematicReveal ? { y: eyebrowY, opacity: eyebrowOpacity } : undefined}>Personalised Learning. Exceptional Results.</motion.div>
-          <motion.div className="hero-gold-thread" aria-hidden="true" style={cinematicReveal ? { scaleX: threadScale, opacity: threadOpacity } : undefined} />
+          <img className="hero-crest" src="/images/da-logo.png" alt="DA Tuition" />
+          <div className="hero-eyebrow">Personalised Learning. Exceptional Results.</div>
           <h1 className="hero-title">
-            <span className="hero-title-mask"><motion.span style={cinematicReveal ? { y: titleOneY, opacity: titleOneOpacity, scale: titleOneScale } : undefined}>Where Ambition Meets</motion.span></span>
-            <span className="hero-title-mask"><motion.em style={cinematicReveal ? { y: titleTwoY, opacity: titleTwoOpacity, scale: titleTwoScale, letterSpacing: titleTwoTracking } : undefined}>Academic Excellence</motion.em></span>
+            <span>Where Ambition Meets</span>
+            <em>Academic Excellence</em>
           </h1>
-          <motion.p className="hero-trust" style={cinematicReveal ? { y: trustY, opacity: trustOpacity } : undefined}>Trusted by Families. Transforming Futures.</motion.p>
-          <motion.p className="hero-support" style={cinematicReveal ? { y: supportY, opacity: supportOpacity } : undefined}>
+          <p className="hero-trust">Trusted by Families. Transforming Futures.</p>
+          <p className="hero-support">
             Tailored academic support that builds confidence,<br className="hidden sm:block" /> strengthens understanding and delivers success.
-          </motion.p>
+          </p>
           <div className="hero-actions">
-            <motion.a className="hero-cta hero-cta--primary" href="#programs-intro" style={cinematicReveal ? { y: actionsY, opacity: actionsOpacity } : undefined}>
+            <a className="hero-cta hero-cta--primary" href="#programs-intro">
               Explore Programs <ArrowRight aria-hidden="true" size={18} strokeWidth={1.6} />
-            </motion.a>
-            <motion.div style={cinematicReveal ? { y: secondaryActionY, opacity: secondaryActionOpacity } : undefined}>
-              <Link className="hero-cta hero-cta--secondary" to="/book-interview">Book Consultation</Link>
-            </motion.div>
+            </a>
+            <Link className="hero-cta hero-cta--secondary" to="/book-interview">Book Consultation</Link>
           </div>
-          <motion.div className="hero-values" aria-label="DA Tuition program highlights" style={cinematicReveal ? { y: valuesY, opacity: valuesOpacity } : undefined}>
+          <div className="hero-values" aria-label="Why families choose DA Tuition">
             <div className="hero-value">
-              <strong>20+ YEARS</strong><p>Established 2005</p>
+              <UsersRound aria-hidden="true" />
+              <div><strong>Personalised Approach</strong><p>Every student is unique.<br />Every plan is tailored.</p></div>
             </div>
             <div className="hero-value">
-              <strong>YEARS 7–12</strong><p>Focused academic support</p>
+              <ChartNoAxesCombined aria-hidden="true" />
+              <div><strong>Expert Educators</strong><p>Experienced tutors who<br />inspire and empower.</p></div>
             </div>
             <div className="hero-value">
-              <strong>MATHS · ENGLISH · SCIENCE</strong><p>Core academic programs</p>
+              <ShieldCheck aria-hidden="true" />
+              <div><strong>Proven Results</strong><p>Stronger academic outcomes<br />and real long-term growth.</p></div>
             </div>
-          </motion.div>
-          <motion.span className="hero-continuation" aria-hidden="true" style={cinematicReveal ? { scaleY: continuationScale } : undefined} />
+          </div>
+          <ChevronDown className="hero-scroll" aria-hidden="true" size={25} strokeWidth={1.2} />
         </motion.div>
       </div>
 
-      <motion.figure className="hero-side-image hero-side-image--right" style={cinematicReveal ? { y: sideRightY, scale: sideScale, opacity: sideOpacity } : undefined}>
+      <figure className="hero-side-image hero-side-image--right">
         <img src="/images/homepage/homepage-cream/studying girl-4.png" alt="DA Tuition student concentrating on her studies" />
-      </motion.figure>
+      </figure>
     </motion.section>
   );
 };
@@ -1096,11 +1068,11 @@ const PhilosophyChapter = ({ index, exitOpacity, exitY, exitHidden = false }: {
   );
 };
 
-const PhilosophyEditorialSection = ({ nextSectionRef }: { nextSectionRef: React.RefObject<HTMLDivElement> }) => {
+const PhilosophyEditorialSection = ({ nextSectionRef }: { nextSectionRef: React.RefObject<HTMLElement> }) => {
   const sectionRef = useRef<HTMLElement>(null);
   const philosophyCardRef = useRef<HTMLDivElement>(null);
   const [headerHeight, setHeaderHeight] = useState(78);
-  const [safeCardWidth, setSafeCardWidth] = useState(360);
+  const [safeCardWidth, setSafeCardWidth] = useState(620);
   const [cardPhase, setCardPhase] = useState<'hidden' | 'prelude' | 'fixed' | 'released'>('hidden');
   const reducedMotion = useReducedMotion();
   const { scrollYProgress } = useScroll({ target: reducedMotion ? undefined : sectionRef, offset: ['start start', 'end end'] });
@@ -1140,7 +1112,7 @@ const PhilosophyEditorialSection = ({ nextSectionRef }: { nextSectionRef: React.
     const measure = () => {
       const navigationHeight = Math.ceil(document.querySelector('nav')?.getBoundingClientRect().height ?? 78);
       setHeaderHeight(navigationHeight);
-      setSafeCardWidth(Math.max(220, (window.innerHeight - navigationHeight - 100) * 0.8));
+      setSafeCardWidth(Math.max(220, (window.innerHeight - navigationHeight - 88) * 0.84));
     };
     measure();
     window.addEventListener('resize', measure);
@@ -1232,14 +1204,14 @@ const PhilosophyEditorialSection = ({ nextSectionRef }: { nextSectionRef: React.
         .phi-backdrop-title{position:absolute;inset:0;z-index:1;display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;margin:0;padding:clamp(18px,2.5vh,32px) 0 clamp(28px,4vh,48px);font-family:'Anton','Arial Narrow',sans-serif;font-weight:400;line-height:.72;letter-spacing:-.035em;text-align:center;text-transform:uppercase;white-space:nowrap;color:#f3eadb;user-select:none;will-change:opacity}
         .phi-backdrop-title span{display:block;width:max-content;will-change:transform}.phi-backdrop-title__our{font-size:clamp(11.25rem,25vw,26.25rem);line-height:.72}.phi-backdrop-title__main{margin-top:-.05em;font-size:clamp(9rem,21.2vw,25rem);line-height:.72}.phi-content-veil{position:absolute;inset:0;z-index:2;background:radial-gradient(circle at center,rgba(7,29,56,.3) 0%,rgba(7,29,56,.12) 42%,transparent 72%);pointer-events:none}
         .phi-story-outro{height:clamp(7rem,18svh,12rem)}
-        .phi-chapter{position:relative;z-index:5;min-height:calc(100svh - var(--header-height));padding-block:clamp(48px,7vh,96px);padding-inline:clamp(48px,5vw,88px);display:grid;grid-template-columns:minmax(280px,1fr) clamp(280px,24vw,360px) minmax(280px,1fr);align-items:center;column-gap:clamp(56px,7vw,120px);overflow:visible}
+        .phi-chapter{position:relative;z-index:5;min-height:calc(100svh - var(--header-height));padding-block:clamp(42px,5vh,76px);padding-inline:clamp(48px,4.2vw,86px);display:grid;grid-template-columns:minmax(390px,1fr) clamp(520px,36vw,760px) minmax(390px,1fr);align-items:center;column-gap:clamp(42px,4.2vw,76px);overflow:visible}
         .phi-chapter--growth{position:sticky;top:var(--header-height)}.phi-chapter--growth.is-growth-hidden{visibility:hidden;pointer-events:none}
         .phi-chapter-copy{grid-column:1}.phi-chapter-definition{grid-column:3}.phi-chapter-anchor{grid-column:2;width:100%;height:min(54svh,520px)}
         .phi-chapter-copy,.phi-chapter-definition{align-self:stretch;min-height:100%;display:flex;flex-direction:column;justify-content:center;margin:0;will-change:transform,opacity,filter}
-        .phi-copy-label{display:block;margin-bottom:18px;font:700 .72rem/1 ${sans};letter-spacing:.16em;text-transform:uppercase;color:${C.gold}}
-        .phi-chapter-copy h3{margin:0;max-width:10.5em;font:400 clamp(2.15rem,3.25vw,3.6rem)/1.08 ${serif};letter-spacing:-.025em;color:rgba(255,250,240,.97);text-wrap:balance}
-        .phi-copy-rule{width:42px;height:1px;margin:25px 0 0;background:${C.gold};opacity:.78}.phi-chapter-definition p{max-width:27em;margin:0;font:400 clamp(.92rem,1.12vw,1.12rem)/1.72 ${sans};color:rgba(247,242,232,.74);text-wrap:pretty}
-        .phi-card-viewport-anchor{z-index:6;left:50%;width:min(clamp(280px,24vw,360px),var(--phi-card-safe-width));pointer-events:none;opacity:0;visibility:hidden;transition:opacity .78s cubic-bezier(.22,1,.36,1),visibility 0s linear .78s}.phi-card-viewport-anchor.is-prelude,.phi-card-viewport-anchor.is-fixed{position:fixed;top:var(--phi-visual-centre);bottom:auto;transform:translate(-50%,-50%)}.phi-card-viewport-anchor.is-fixed,.phi-card-viewport-anchor.is-released{opacity:1;visibility:visible;pointer-events:auto;transition:opacity .78s cubic-bezier(.22,1,.36,1),visibility 0s linear 0s}.phi-card-viewport-anchor.is-released{position:absolute;top:auto;bottom:0;transform:translateX(-50%)}.phi-card-viewport-anchor.is-hidden{position:absolute;top:0;bottom:auto;transform:translateX(-50%)}.phi-travel-centre{width:100%;transform:translateY(50px) scale(.98);transform-origin:center center;transition:transform .78s cubic-bezier(.22,1,.36,1);will-change:transform}.phi-card-viewport-anchor.is-fixed .phi-travel-centre,.phi-card-viewport-anchor.is-released .phi-travel-centre{transform:translateY(0) scale(1)}
+        .phi-copy-label{display:block;margin-bottom:clamp(18px,1.8vh,26px);font:800 clamp(.74rem,.82vw,.92rem)/1 ${sans};letter-spacing:.18em;text-transform:uppercase;color:${C.gold}}
+        .phi-chapter-copy h3{margin:0;max-width:11em;font:400 clamp(3.15rem,4.35vw,5.35rem)/1.08 ${serif};letter-spacing:-.02em;color:rgba(255,250,240,.97);text-wrap:balance;word-break:normal;overflow-wrap:normal;hyphens:none}
+        .phi-copy-rule{width:58px;height:1px;margin:clamp(24px,2.6vh,36px) 0 0;background:${C.gold};opacity:.9}.phi-chapter-definition p{max-width:26em;margin:0;font:600 clamp(1.32rem,1.62vw,2.02rem)/1.45 ${sans};color:rgba(255,252,245,.94);text-wrap:pretty;word-break:normal;overflow-wrap:normal;hyphens:none}
+        .phi-card-viewport-anchor{z-index:6;left:50%;width:min(clamp(520px,36vw,760px),var(--phi-card-safe-width));pointer-events:none;opacity:0;visibility:hidden;transition:opacity .78s cubic-bezier(.22,1,.36,1),visibility 0s linear .78s}.phi-card-viewport-anchor.is-prelude,.phi-card-viewport-anchor.is-fixed{position:fixed;top:var(--phi-visual-centre);bottom:auto;transform:translate(-50%,-50%)}.phi-card-viewport-anchor.is-fixed,.phi-card-viewport-anchor.is-released{opacity:1;visibility:visible;pointer-events:auto;transition:opacity .78s cubic-bezier(.22,1,.36,1),visibility 0s linear 0s}.phi-card-viewport-anchor.is-released{position:absolute;top:auto;bottom:0;transform:translateX(-50%)}.phi-card-viewport-anchor.is-hidden{position:absolute;top:0;bottom:auto;transform:translateX(-50%)}.phi-travel-centre{width:100%;transform:translateY(50px) scale(.98);transform-origin:center center;transition:transform .78s cubic-bezier(.22,1,.36,1);will-change:transform}.phi-card-viewport-anchor.is-fixed .phi-travel-centre,.phi-card-viewport-anchor.is-released .phi-travel-centre{transform:translateY(0) scale(1)}
         .phi-growth-exit{width:100%;transform-origin:center center;will-change:transform,opacity}.phi-growth-exit.is-exit-hidden{visibility:hidden;pointer-events:none}.phi-flip-frame{position:relative;width:100%;aspect-ratio:4/5;overflow:visible;background:transparent;perspective:1500px;transform-origin:center center;transform-style:preserve-3d;will-change:transform}.phi-flip-frame img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:22px;box-shadow:0 20px 38px rgba(0,0,0,.26);backface-visibility:hidden;transform-origin:center center;will-change:transform,opacity;transform-style:preserve-3d}
         .phi-reduced{padding:110px clamp(20px,6vw,80px);background:${C.navy};color:${C.white}}.phi-reduced-intro{min-height:80svh;text-align:center}.phi-reduced-intro h2{margin:0;font:800 clamp(3rem,10vw,8rem)/.9 ${sans};text-transform:uppercase}.phi-reduced article{display:grid;grid-template-columns:minmax(220px,420px) minmax(0,560px);gap:clamp(28px,6vw,80px);align-items:center;margin:0 auto 80px;max-width:1100px}.phi-reduced article img{width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:16px}.phi-reduced article span{color:${C.gold};font:700 .72rem ${sans};letter-spacing:.14em;text-transform:uppercase}.phi-reduced article h3{font:400 clamp(2rem,4vw,3.5rem)/1.08 ${serif}}.phi-reduced article p{max-width:34em;color:rgba(247,242,232,.75);font:400 1rem/1.7 ${sans}}
         @media(min-width:769px) and (max-width:1100px){.phi-backdrop-title__our{font-size:clamp(8.5rem,24vw,16rem)}.phi-backdrop-title__main{font-size:clamp(7rem,21vw,14rem)}.phi-chapter{grid-template-columns:minmax(0,1fr) minmax(260px,340px);grid-template-rows:auto auto;padding-inline:clamp(28px,4vw,48px);column-gap:clamp(28px,4vw,52px);row-gap:24px}.phi-chapter-copy{grid-column:1;grid-row:1;min-height:0;justify-content:flex-end}.phi-chapter-definition{grid-column:1;grid-row:2;min-height:0;justify-content:flex-start}.phi-chapter-anchor{grid-column:2;grid-row:1/3}.phi-card-viewport-anchor{width:min(clamp(260px,31vw,340px),var(--phi-card-safe-width))}.phi-chapter-copy h3{font-size:clamp(1.8rem,3.6vw,2.8rem)}.phi-chapter-definition p{font-size:.88rem}}
@@ -1281,7 +1253,7 @@ const PhilosophyEditorialSection = ({ nextSectionRef }: { nextSectionRef: React.
 // ══════════════════════════════════════════════════════════════
 //  AWARD BRIDGE — a short hand-off from philosophy to recognition
 // ══════════════════════════════════════════════════════════════
-const OurAwardTransition = ({ sectionRef }: { sectionRef: React.RefObject<HTMLDivElement> }) => {
+const OurAwardTransition = ({ sectionRef }: { sectionRef: React.RefObject<HTMLElement> }) => {
   return (
     <section ref={sectionRef} className="our-award-bridge" aria-labelledby="our-award-title">
       <style>{`
@@ -1309,9 +1281,9 @@ const OurAwardTransition = ({ sectionRef }: { sectionRef: React.RefObject<HTMLDi
 //  Dark navy, premium school prospectus aesthetic.
 //  Left: award display + modal.  Right: 2×2 stats grid.
 // ══════════════════════════════════════════════════════════════
-const ImpactRecognitionSection = () => {
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const decorLayerRef = useRef<HTMLDivElement>(null);
+const ImpactRecognitionSection = ({ sectionRef: providedSectionRef }: { sectionRef?: React.RefObject<HTMLElement> } = {}) => {
+  const localSectionRef = useRef<HTMLElement>(null);
+  const sectionRef = providedSectionRef ?? localSectionRef;
   const reducedMotionPreference = useReducedMotion();
   const reducedMotion = Boolean(reducedMotionPreference);
   const { scrollYProgress: awardsEntryProgress } = useScroll({
@@ -1332,331 +1304,601 @@ const ImpactRecognitionSection = () => {
   const mediaY = useTransform(awardsEntryProgress, [0, 0.38, 0.62, 1], reducedMotion ? [0, 0, 0, 0] : [42, 42, 0, 0]);
   const captionOpacity = useTransform(awardsEntryProgress, [0, 0.48, 0.70, 1], reducedMotion ? [1, 1, 1, 1] : [0, 0, 1, 1]);
   const captionY = useTransform(awardsEntryProgress, [0, 0.48, 0.70, 1], reducedMotion ? [0, 0, 0, 0] : [24, 24, 0, 0]);
-  const decorOpacity = useTransform(awardsEntryProgress, [0, 0.32, 0.58, 1], reducedMotion ? [1, 1, 1, 1] : [0, 0, 1, 1]);
-  const decorY = useTransform(awardsEntryProgress, [0, 0.32, 0.58, 1], reducedMotion ? [0, 0, 0, 0] : [20, 20, 0, 0]);
   const closingHeaderOpacity = useTransform(recognitionProgress, [0.56, 0.78], reducedMotion ? [1, 1] : [1, 0.82]);
   const closingHeaderY = useTransform(recognitionProgress, [0.56, 0.78], reducedMotion ? [0, 0] : [0, -16]);
   const awardClosingScale = useTransform(recognitionProgress, [0.55, 0.80], reducedMotion ? [1, 1] : [1, 0.975]);
   const awardClosingY = useTransform(recognitionProgress, [0.55, 0.80], reducedMotion ? [0, 0] : [0, -8]);
+  const [streakVisible, setStreakVisible] = useState(false);
 
-  const handleAwardPointerMove = useCallback((event: React.PointerEvent<HTMLElement>) => {
-    if (reducedMotion || event.pointerType !== 'mouse' || !decorLayerRef.current) return;
-    const bounds = event.currentTarget.getBoundingClientRect();
-    decorLayerRef.current.style.setProperty('--ir-pointer-x', String((event.clientX - bounds.left) / bounds.width - 0.5));
-    decorLayerRef.current.style.setProperty('--ir-pointer-y', String((event.clientY - bounds.top) / bounds.height - 0.5));
-  }, [reducedMotion]);
+  useEffect(() => {
+    if (reducedMotion) {
+      setStreakVisible(true);
+      return;
+    }
 
-  const resetAwardPointer = useCallback(() => {
-    decorLayerRef.current?.style.setProperty('--ir-pointer-x', '0');
-    decorLayerRef.current?.style.setProperty('--ir-pointer-y', '0');
-  }, []);
+    const node = sectionRef.current;
+    if (!node || typeof IntersectionObserver === 'undefined') {
+      setStreakVisible(true);
+      return;
+    }
+
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting && entry.intersectionRatio >= 0.28) {
+        setStreakVisible(true);
+        observer.unobserve(entry.target);
+      }
+    }, { threshold: [0, 0.28, 0.35] });
+
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [reducedMotion, sectionRef]);
 
   return (
       <section
         ref={sectionRef}
         className="ir-section"
         aria-label="Impact and recognition"
-        onPointerMove={handleAwardPointerMove}
-        onPointerLeave={resetAwardPointer}
-        style={{ background: '#F5F0E8', position: 'relative', overflow: 'hidden' }}
+        style={{ background: '#FBF8F2', position: 'relative', overflow: 'hidden' }}
       >
         <style>{`
-          /* Responsive grid */
-          @media (max-width: 900px) {
-            .ir-cols { grid-template-columns: 1fr !important; }
+          /* ── Editorial recognition composition ─────────────────────── */
+          .ir-section {
+            isolation: isolate;
+            background:
+              radial-gradient(circle at 52% 70%, rgba(215,177,94,.045), transparent 32%),
+              radial-gradient(circle at 50% 50%, rgba(219,181,96,.03), transparent 46%),
+              #FBF8F2;
           }
-
-          /* ── Pillar cards (cream background) ────────────────────────── */
-          .wwwon-grid {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 1px;
-            background: rgba(10,27,52,.07); /* gap colour between cards */
+          .ir-section::before {
+            position: absolute;
+            top: 0;
+            left: clamp(24px, 6vw, 96px);
+            right: clamp(24px, 6vw, 96px);
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(190,139,43,.38), transparent);
+            content: '';
           }
-          @media (max-width: 1024px) { .wwwon-grid { grid-template-columns: repeat(3, 1fr); } }
-          @media (max-width: 600px)  { .wwwon-grid { grid-template-columns: 1fr 1fr; } }
-          @media (max-width: 380px)  { .wwwon-grid { grid-template-columns: 1fr; } }
-
-          .wwwon-card {
-            background: #F5F0E8;
-            padding: clamp(32px, 4vw, 48px) clamp(22px, 2.8vw, 36px);
-            cursor: default;
-            transition: background 360ms ease, transform 360ms cubic-bezier(0.22,1,0.36,1);
+          .ir-section::after {
+            position: absolute;
+            left: 50%;
+            top: clamp(600px, 49vw, 760px);
+            z-index: 0;
+            width: clamp(420px, 38vw, 620px);
+            aspect-ratio: 1;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(211,168,78,.10), rgba(211,168,78,.035) 36%, transparent 68%);
+            content: '';
+            pointer-events: none;
+            transform: translate(-50%, -50%);
           }
-          .wwwon-card:hover {
-            background: #EDE6D8;
-            transform: translateY(-4px);
+          .ir-old-rule { display: none; }
+          .ir-shell {
+            position: relative !important;
+            z-index: 3;
+            max-width: 1400px !important;
+            margin: 0 auto;
+            isolation: isolate;
+            padding: clamp(60px, 6vw, 78px) clamp(20px, 4vw, 56px) clamp(66px, 6vw, 86px) !important;
           }
-          .wwwon-num {
-            font-family: 'Cormorant Garamond', Georgia, serif;
-            font-size: .72rem; font-weight: 300; letter-spacing: .12em;
-            color: rgba(212,175,55,.50);
-            display: block; margin-bottom: 28px;
-            transition: color 360ms ease;
+          .ir-header {
+            position: relative;
+            z-index: 4;
+            max-width: 960px !important;
+            margin: 0 auto !important;
+            text-align: center;
           }
-          .wwwon-card:hover .wwwon-num { color: rgba(212,175,55,.80); }
-          .wwwon-line {
-            width: 28px; height: 1px; margin-bottom: 22px;
-            background: linear-gradient(90deg, rgba(212,175,55,.40), transparent);
-            transition: width 360ms cubic-bezier(0.22,1,0.36,1), opacity 360ms ease;
-          }
-          .wwwon-card:hover .wwwon-line { width: 42px; opacity: .90; }
-          .wwwon-title {
-            font-family: 'Cormorant Garamond', Georgia, serif;
-            font-size: clamp(.95rem, 1.3vw, 1.12rem);
-            font-weight: 400; line-height: 1.30; letter-spacing: -.012em;
-            color: rgba(10,27,52,.82);
-            margin: 0 0 14px;
-            transition: color 360ms ease;
-          }
-          .wwwon-card:hover .wwwon-title { color: rgba(10,27,52,.98); }
-          .wwwon-body {
-            font-family: ${sans};
-            font-size: .78rem; font-weight: 300; line-height: 1.82;
-            letter-spacing: .004em;
-            color: rgba(10,27,52,.45);
-            margin: 0;
-            transition: color 360ms ease;
-          }
-          .wwwon-card:hover .wwwon-body { color: rgba(10,27,52,.68); }
-          @media (prefers-reduced-motion: reduce) {
-            .wwwon-card { transition: none !important; }
-            .wwwon-card:hover { transform: none !important; }
-            .wwwon-num, .wwwon-line, .wwwon-title, .wwwon-body { transition: none !important; }
-          }
-
-          /* ── Award image inner container — matches video 4/3 frame ─── */
-          .ir-award-inner {
-            aspect-ratio: 4 / 3;
-            display: flex; align-items: center; justify-content: center;
-            background: #FDFAF5;
-            border-radius: 5px;
-            overflow: hidden;
-          }
-          .ir-award-inner img {
-            width: 100%; height: 100%;
+          .ir-header-logo {
+            display: none;
+            width: clamp(62px, 5.8vw, 78px);
+            height: clamp(62px, 5.8vw, 78px);
             object-fit: contain;
-            display: block;
+            margin: 0 auto 12px;
           }
-
-          /* ── Award frame ────────────────────────────────────────────── */
-          .ir-award-frame {
-            transition:
-              box-shadow 600ms cubic-bezier(0.25, 0.46, 0.45, 0.94),
-              transform 600ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
-          }
-          .ir-award-frame:hover {
-            transform: translateY(-3px);
-            box-shadow:
-              0 2px 6px rgba(212,175,55,.14),
-              0 22px 64px rgba(10,27,52,.15),
-              0 52px 90px rgba(10,27,52,.08),
-              inset 0 1px 0 rgba(255,255,255,.90),
-              inset 0 0 0 1px rgba(255,255,255,.50) !important;
-          }
-          @media (prefers-reduced-motion: reduce) {
-            .ir-award-frame { transition: none !important; }
-            .ir-award-frame:hover { transform: none !important; }
-          }
-
-          /* ── Recognition story lead ──────────────────────────────────── */
-          .ir-story-lead {
-            border-left: 2px solid rgba(212,175,55,.24);
-            padding-left: 20px;
-          }
-
-          /* ── Video thumbnail ─────────────────────────────────────────── */
-          .ir-thumb-wrap {
-            display: flex;
-            flex-direction: column;
+          .ir-eyebrow {
+            display: inline-flex;
             align-items: center;
+            justify-content: center;
+            gap: clamp(14px, 1.6vw, 22px);
+            margin: 0 0 clamp(20px, 2vw, 24px) !important;
+            font-size: clamp(.74rem, .8vw, .86rem) !important;
+            letter-spacing: .30em !important;
+            color: rgba(168,126,52,.92) !important;
+          }
+          .ir-eyebrow::before,
+          .ir-eyebrow::after {
+            width: clamp(44px, 4.8vw, 70px);
+            height: 1px;
+            background: rgba(207,165,74,.66);
+            content: '';
+          }
+          .ir-heading {
+            max-width: 980px;
+            margin: 0 auto 20px !important;
+            font-size: clamp(3.5rem, 5vw, 6.5rem) !important;
+            font-weight: 700 !important;
+            line-height: .97 !important;
+            letter-spacing: 0 !important;
+            text-wrap: balance;
+          }
+          .ir-header-divider {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 128px !important;
+            height: 13px !important;
+            margin: 0 auto 18px !important;
+            background: transparent !important;
+            transform-origin: center !important;
+          }
+          .ir-header-divider::before,
+          .ir-header-divider::after {
+            width: 42px;
+            height: 1px;
+            background: rgba(190,139,43,.48);
+            content: '';
+          }
+          .ir-header-divider::before { margin-right: 14px; }
+          .ir-header-divider::after { margin-left: 14px; }
+          .ir-header-divider span,
+          .ir-showcase-divider span {
+            width: 9px;
+            height: 9px;
+            flex: 0 0 auto;
+            border: 1px solid rgba(190,139,43,.58);
+            background: rgba(212,175,55,.52);
+            transform: rotate(45deg);
+          }
+          .ir-intro-copy {
+            max-width: 900px;
+            margin-inline: auto !important;
+            font-size: clamp(1rem, 1.08vw, 1.18rem) !important;
+            line-height: 1.55 !important;
+            color: rgba(10,27,52,.72) !important;
+          }
+          .ir-award-curves {
+            position: relative;
+            display: block;
+            left: 50%;
+            top: auto;
+            z-index: 1;
+            width: 112vw;
+            height: clamp(86px, 8vw, 116px);
+            margin: clamp(16px, 2vw, 24px) 0 clamp(16px, 2vw, 24px);
+            pointer-events: none;
+            transform: translateX(-50%);
+            overflow: visible;
+          }
+          .ir-streak {
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            stroke-dasharray: 1;
+            stroke-dashoffset: 1;
+            opacity: 0;
+            will-change: stroke-dashoffset;
+          }
+          .ir-streak-primary {
+            filter: drop-shadow(0 4px 8px rgba(115,74,12,.12));
+          }
+          .ir-award-curves.is-visible .ir-streak-primary {
+            opacity: 1;
+            animation: ir-streak-trace 2.25s cubic-bezier(.65,0,.35,1) forwards;
+          }
+          .ir-award-curves.is-visible .ir-streak-secondary {
+            opacity: 1;
+            animation: ir-streak-trace 2.3s cubic-bezier(.65,0,.35,1) 150ms forwards;
+          }
+          .ir-award-curves.is-visible .ir-streak-tertiary {
+            opacity: 1;
+            animation: ir-streak-trace 2.35s cubic-bezier(.65,0,.35,1) 280ms forwards;
+          }
+          .ir-streak-glint {
+            opacity: 0;
+            filter: drop-shadow(0 0 8px rgba(211,168,78,.30));
+            pointer-events: none;
+          }
+          @keyframes ir-streak-trace {
+            to { stroke-dashoffset: 0; }
+          }
+          .ir-showcase {
+            position: relative;
+            z-index: 3;
+            display: grid;
+            grid-template-columns: minmax(280px, .95fr) minmax(320px, 1.15fr) minmax(270px, .9fr);
+            align-items: start;
+            gap: clamp(42px, 4.8vw, 76px);
+            max-width: 1360px;
+            margin: 0 auto;
+            padding: 0;
+          }
+          .ir-showcase-divider { display: none; }
+          .ir-award-proof {
+            align-self: start;
+            text-align: center;
+          }
+          .ir-award-badges {
+            position: relative;
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: clamp(34px, 3.2vw, 52px);
+            align-items: start;
+          }
+          .ir-award-badges::before {
+            position: absolute;
+            top: 22px;
+            bottom: 16px;
+            left: 50%;
+            width: 1px;
+            background: linear-gradient(180deg, transparent, rgba(207,165,74,.58), transparent);
+            content: '';
+            transform: translateX(-50%);
+          }
+          .ir-award-badges::after {
+            position: absolute;
+            top: 58%;
+            left: 50%;
+            width: 12px;
+            height: 12px;
+            border: 1px solid rgba(207,165,74,.66);
+            background: #D3A84E;
+            box-shadow: 0 0 0 10px rgba(251,248,242,.82);
+            content: '';
+            transform: translate(-50%, -50%) rotate(45deg);
+          }
+          .ir-award-badge {
+            min-width: 0;
+            position: relative;
+            z-index: 4;
+            padding: 0;
+            transition:
+              transform 350ms cubic-bezier(.22,.61,.36,1),
+              filter 350ms cubic-bezier(.22,.61,.36,1),
+              opacity 350ms cubic-bezier(.22,.61,.36,1);
+          }
+          .ir-award-badge:hover {
+            transform: translateY(-5px);
+          }
+          .ir-award-frame {
             width: 100%;
+            padding: 0 !important;
+            border: 0 !important;
+            border-radius: 0 !important;
+            background: transparent !important;
+            box-shadow: none !important;
+            transition: transform 300ms ease;
+          }
+          .ir-award-badge:hover .ir-award-frame { transform: translateY(-2px); }
+          .ir-award-inner {
+            position: relative;
+            width: min(100%, 150px);
+            height: auto;
+            margin: 0 auto;
+            aspect-ratio: 407 / 600;
+            overflow: visible !important;
+            border: 0 !important;
+            border-radius: 0 !important;
+            background: transparent !important;
+          }
+          .ir-award-badge--finalist .ir-award-inner {
+            width: min(100%, 166px);
+            aspect-ratio: 1 / 1;
+          }
+          .ir-award-inner .ir-award-medal {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            z-index: 2;
+            width: 100% !important;
+            height: 100% !important;
+            max-width: none !important;
+            max-height: none !important;
+            object-fit: contain !important;
+            display: block;
+            filter:
+              drop-shadow(0 10px 18px rgba(38,31,20,.10))
+              drop-shadow(0 3px 8px rgba(38,31,20,.05));
+            transform: translate(-50%, -50%);
+            transition: filter 350ms cubic-bezier(.22,.61,.36,1);
+          }
+          .ir-award-badge:hover .ir-award-medal {
+            filter:
+              drop-shadow(0 16px 24px rgba(38,31,20,.14))
+              drop-shadow(0 5px 12px rgba(38,31,20,.07));
+          }
+          .ir-award-caption {
+            position: relative;
+            z-index: 5;
+            margin-top: clamp(14px, 1.6vw, 18px) !important;
+            padding: 0 !important;
+          }
+          .ir-award-year {
+            margin: 0 0 3px;
+            font: 500 clamp(1.7rem, 2.6vw, 2.35rem)/1 ${serif};
+            color: #B8872F;
+            letter-spacing: .02em;
+          }
+          .ir-award-caption-title {
+            margin: 0 0 8px;
+            font-family: ${serif} !important;
+            font-size: clamp(1.34rem, 1.85vw, 1.72rem) !important;
+            font-weight: 700 !important;
+            line-height: 1.05 !important;
+            letter-spacing: .09em !important;
+            text-transform: uppercase;
+            color: rgba(10,27,52,.92) !important;
+          }
+          .ir-award-caption p:last-child {
+            font-family: ${sans};
+            font-size: clamp(.72rem, .92vw, .86rem) !important;
+            font-weight: 700 !important;
+            line-height: 1.55 !important;
+            letter-spacing: .20em !important;
+            text-transform: uppercase;
+            color: rgba(10,27,52,.68) !important;
+            margin: 0;
+          }
+          .ir-video-feature {
+            min-width: 0;
+            display: flex;
+            justify-content: center;
+            align-self: start;
+          }
+          .ir-thumb-wrap {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+          }
+          .ir-thumb-wrap::before {
+            position: absolute;
+            z-index: 0;
+            width: clamp(360px, 34vw, 560px);
+            aspect-ratio: 1;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(210,166,76,.12), rgba(210,166,76,.045) 42%, transparent 72%);
+            content: '';
+            pointer-events: none;
           }
           .ir-thumb-frame {
             position: relative;
-            width: clamp(340px,27vw,500px);
+            z-index: 5;
+            width: clamp(320px, 29vw, 480px);
             max-width: 100%;
             aspect-ratio: 1 / 1;
             flex: 0 0 auto;
             border-radius: 50%;
             overflow: hidden;
-            border: 3px solid rgba(190,139,43,.78);
-            filter: drop-shadow(0 8px 8px rgba(10,27,52,.16)) drop-shadow(0 0 8px rgba(190,139,43,.15));
+            border: 2px solid rgba(207,165,74,.70);
+            outline: 1px solid rgba(207,165,74,.22);
+            outline-offset: 8px;
+            box-shadow:
+              0 20px 55px rgba(38,31,20,.10),
+              0 4px 12px rgba(38,31,20,.05),
+              0 5px 18px rgba(207,165,74,.10),
+              inset 0 0 0 1px rgba(255,255,255,.55);
           }
           .ir-thumb-photo {
-            width: 100%; height: 100%; display: block;
+            width: 100%;
+            height: 100%;
+            display: block;
             object-fit: cover;
             object-position: 50% 44%;
-            filter: saturate(0.94) brightness(0.96);
+            filter: saturate(.96) brightness(.98);
           }
           .ir-thumb-overlay {
-            position: absolute; inset: 0; pointer-events: none;
-            background: linear-gradient(
-              to top,
-              rgba(3,6,14,.30) 0%,
-              transparent 54%
-            );
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background: linear-gradient(to top, rgba(3,6,14,.18), transparent 48%);
           }
-          .ir-thumb-caption-wrap {
-            margin-top: 22px;
-            padding-left: 2px;
+          .ir-winner-details {
+            min-width: 0;
+            position: relative;
+            z-index: 5;
+            align-self: start;
+            text-align: center;
+            color: ${C.navy};
+          }
+          .ir-winner-trophy {
+            display: block;
+            width: clamp(148px, 13vw, 208px);
+            height: clamp(148px, 13vw, 208px);
+            object-fit: contain;
+            margin: 0 auto 10px;
+            filter:
+              drop-shadow(0 12px 18px rgba(57,40,16,.12))
+              drop-shadow(0 3px 8px rgba(57,40,16,.06));
+            transform: rotate(-24deg);
+            transform-origin: 50% 58%;
           }
           .ir-thumb-caption-title {
-            font-family: ${sans};
-            font-size: 1.20rem; font-weight: 500; letter-spacing: .006em;
-            color: rgba(10,27,52,.68);
-            margin: 0 0 10px; line-height: 1.4;
+            margin: 0 0 18px;
+            font-family: ${serif};
+            font-size: clamp(2.65rem, 4vw, 4.4rem);
+            font-weight: 500;
+            line-height: .9;
+            letter-spacing: .04em;
+            text-transform: uppercase;
+            color: rgba(10,27,52,.96);
+          }
+          .ir-winner-rule {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 182px;
+            height: 12px;
+            margin: 0 auto 20px;
+          }
+          .ir-winner-rule::before,
+          .ir-winner-rule::after {
+            width: 66px;
+            height: 1px;
+            background: rgba(190,139,43,.42);
+            content: '';
+          }
+          .ir-winner-rule::before { margin-right: 12px; }
+          .ir-winner-rule::after { margin-left: 12px; }
+          .ir-winner-rule span {
+            width: 8px;
+            height: 8px;
+            border: 1px solid rgba(190,139,43,.56);
+            background: rgba(212,175,55,.48);
+            transform: rotate(45deg);
           }
           .ir-thumb-caption-sub {
+            max-width: 34ch;
+            margin: 0 auto;
             font-family: ${sans};
-            font-size: .92rem; font-weight: 300; letter-spacing: .04em;
-            color: rgba(10,27,52,.40);
-            margin: 0 0 3px; line-height: 1.6;
+            font-size: clamp(.95rem, 1.05vw, 1.08rem);
+            font-weight: 400;
+            line-height: 1.62;
+            letter-spacing: .01em;
+            color: rgba(10,27,52,.68);
           }
-          .ir-thumb-caption-sub:last-child { margin-bottom: 0; }
-
-          /* ── Editorial recognition composition ─────────────────────── */
-          .ir-section { --ir-word-area: clamp(260px,34vw,500px); --ir-award-word-lift: clamp(100px,8vw,150px); min-height: clamp(980px,135svh,1380px); isolation: isolate; }
-          .ir-bg-type { position: absolute; top: 0; left: 0; right: 0; height: var(--ir-word-area); z-index: 0; overflow: hidden; pointer-events: none; user-select: none; }
-          .ir-bg-track { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; width: 100%; transform: translateY(calc(0px - var(--ir-award-word-lift))); }
-          .ir-bg-track span { display: block; white-space: nowrap; font: 300 clamp(13rem,28vw,34rem)/.78 ${serif}; letter-spacing: -.04em; color: rgba(168,126,52,.095); }
-          .ir-word-space { position: relative; z-index: 1; height: var(--ir-word-area); pointer-events: none; }
-          .ir-bg-marquee { position:absolute;inset:0;z-index:0;display:flex;align-items:center;overflow:hidden;pointer-events:none;user-select:none; }
-          .ir-marquee-track { display:flex;width:max-content;animation:irAwardsMarquee 34s linear infinite;animation-play-state:paused;will-change:transform; }
-          .ir-section.is-full-screen .ir-marquee-track { animation-play-state:running; }
-          .ir-marquee-group { flex:none;white-space:nowrap;padding-right:.28em;font:300 clamp(11rem,21vw,24rem)/.82 ${serif};letter-spacing:-.04em;color:rgba(168,126,52,.07); }
-          @keyframes irAwardsMarquee { from{transform:translate3d(0,0,0)} to{transform:translate3d(-50%,0,0)} }
-
-          .ir-decor-layer { --ir-pointer-x: 0; --ir-pointer-y: 0; position: absolute; inset: 0; z-index: 2; pointer-events: none; }
-          .ir-decor { position: absolute; transform: translate3d(calc(var(--ir-pointer-x) * var(--parallax-x, 12px)),calc(var(--ir-pointer-y) * var(--parallax-y, 12px)),0); transition: transform .65s cubic-bezier(.22,1,.36,1); filter: drop-shadow(0 16px 16px rgba(63,38,5,.14)); will-change: transform; }
-          .ir-decor > img { display:block;width:100%;height:100%;object-fit:contain;animation:irDecorFloat var(--float-duration,8s) ease-in-out infinite alternate;will-change:transform; }
-          .ir-decor--gold-ribbon { left:-9%; top:12%; width:clamp(150px,15vw,240px); height:clamp(110px,12vw,190px); --parallax-x:-18px;--parallax-y:-14px;--float-duration:9s; }
-          .ir-decor--laurel-left { left:1%; bottom:28px; width:clamp(140px,14vw,210px);height:clamp(114px,11.5vw,175px);--parallax-x:-12px;--parallax-y:18px;--float-duration:11s; }
-          .ir-decor--coin { right:2%;top:7%;width:clamp(120px,12vw,190px);height:clamp(120px,12vw,190px);--parallax-x:14px;--parallax-y:-12px;transform:rotate(18deg);--float-duration:14s; }
-          .ir-decor--coin img{animation-name:irCoinFloat;}
-          .ir-decor--navy-ribbon { right:-13%;top:24%;width:clamp(210px,21vw,340px);height:clamp(155px,18vw,285px);--parallax-x:20px;--parallax-y:12px;transform:rotate(-12deg);--float-duration:12s; }
-          .ir-decor--trophy { right:5%;bottom:24px;width:clamp(170px,16vw,260px);height:clamp(170px,16vw,260px);--parallax-x:18px;--parallax-y:16px;--float-duration:10s; }
-          .ir-decor--star { right:10%;top:44%;width:clamp(48px,5vw,76px);height:clamp(48px,5vw,76px);--float-duration:7s; }
-          .ir-confetti{position:absolute;width:var(--size,34px);height:var(--size,34px);opacity:var(--opacity,.65);transform:rotate(var(--rotation,0deg));filter:drop-shadow(0 6px 7px rgba(93,55,4,.12));}
-          .ir-confetti img{width:100%;height:100%;object-fit:contain;animation:irConfettiFloat var(--duration,9s) ease-in-out infinite alternate;}
-          .ir-confetti--1{left:3%;top:10%;--size:48px;--rotation:18deg;--duration:7s}.ir-confetti--2{left:12%;top:42%;--size:58px;--rotation:-31deg;--opacity:.38;--duration:11s}.ir-confetti--3{left:5%;bottom:13%;--size:46px;--rotation:62deg;--duration:8s}.ir-confetti--4{left:21%;top:19%;--size:38px;--rotation:105deg;--opacity:.34;--duration:13s}.ir-confetti--5{right:22%;top:12%;--size:44px;--rotation:-52deg;--duration:10s}.ir-confetti--6{right:13%;top:43%;--size:54px;--rotation:36deg;--opacity:.38;--duration:12s}.ir-confetti--7{right:5%;top:53%;--size:42px;--rotation:122deg;--duration:8s}.ir-confetti--8{right:22%;bottom:8%;--size:52px;--rotation:-18deg;--opacity:.34;--duration:14s}.ir-confetti--9{left:34%;bottom:3%;--size:40px;--rotation:78deg;--duration:9s}.ir-confetti--10{right:3%;bottom:35%;--size:36px;--rotation:11deg;--duration:6s}
-          @keyframes irDecorFloat { from { transform: translateY(-3px) rotate(-1deg); } to { transform: translateY(5px) rotate(2deg); } }
-          @keyframes irCoinFloat{from{transform:translateY(-4px) rotate(-2deg)}to{transform:translateY(7px) rotate(4deg)}}
-          @keyframes irConfettiFloat{from{transform:translateY(-3px) rotate(-2deg)}to{transform:translateY(6px) rotate(3deg)}}
-
-          .ir-old-rule { display: none; }
-          .ir-shell { position: relative !important; z-index: 3; max-width: 1280px !important; min-height:clamp(700px,102svh,1060px); display:flex; flex-direction:column; padding: clamp(40px,5vh,72px) clamp(24px,5vw,76px) clamp(170px,12vw,220px) !important; }
-          .ir-header { max-width: 920px !important; margin: 0 auto clamp(42px,5vh,64px) !important; text-align: center; }
-          .ir-header-logo{display:block;width:140px;height:140px;object-fit:contain;margin:0 auto 18px;}
-          .ir-eyebrow { margin-bottom: 20px !important; font-size: clamp(.8rem,.9vw,.9rem) !important; letter-spacing:.22em !important; }
-          .ir-heading { font-size: clamp(2.8rem,4.2vw,4.8rem) !important; line-height: 1.04 !important; max-width:900px; margin-inline:auto!important; text-wrap: balance; }
-          .ir-header-divider { margin: 0 auto 22px !important; transform-origin: center !important; }
-          .ir-intro-copy { max-width: 680px; margin-inline: auto !important; font-size:clamp(1.05rem,1.25vw,1.3rem)!important;line-height:1.62!important;color:rgba(10,27,52,.72)!important; }
-          .ir-cols { grid-template-columns: minmax(220px,300px) minmax(300px,400px) !important; justify-content:center; gap: clamp(70px,9vw,150px) !important; align-items: start !important; max-width: 980px; margin: 0 auto !important; }
-          .ir-award-proof { text-align: center; }
-          .ir-award-frame { padding: 0 !important; background: transparent !important; border: 0 !important; border-radius: 0 !important; box-shadow: none !important; animation: irAwardFloat 8s ease-in-out infinite alternate; }
-          .ir-award-frame:hover { transform: translateY(-2px); box-shadow: none !important; }
-          @keyframes irAwardFloat { from { transform: translateY(-2px); } to { transform: translateY(4px); } }
-          .ir-award-inner { position:relative;width:clamp(220px,18vw,300px);height:auto;aspect-ratio:1/1;margin-inline:auto;background:transparent !important;border:0 !important;border-radius:0 !important;overflow:visible !important; }
-          .ir-award-inner .ir-award-medal{position:absolute;left:50%;top:50%;z-index:2;width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;object-fit:contain!important;transform:translate(-50%,-50%);filter:drop-shadow(0 14px 12px rgba(50,30,4,.20));}
-          .ir-award-caption { margin-top: 21px !important; padding: 0 !important; }
-          .ir-award-caption-title { font-family:${sans}!important;font-size:clamp(1.15rem,1.5vw,1.5rem)!important;font-weight:600!important;letter-spacing:.1em!important;text-transform:uppercase;color:${C.gold}!important; }
-          .ir-award-caption p:last-child { font-size:clamp(.9rem,1vw,1.05rem)!important;color:rgba(10,27,52,.72)!important; }
-          .ir-award-badges { display:flex;align-items:flex-start;justify-content:center;gap:clamp(14px,2vw,24px); }
-          .ir-award-badge { min-width:0; }
-          .ir-award-badge--winner { width:clamp(128px,14vw,152px); }
-          .ir-award-badge--finalist { width:clamp(120px,13vw,144px); }
-          .ir-award-badge .ir-award-frame { width:100%; }
-          .ir-award-badge .ir-award-inner { width:100%; }
-          .ir-award-badge--finalist .ir-award-inner { aspect-ratio:407 / 600; }
-          .ir-award-badge--finalist .ir-award-caption-title { color:rgba(10,27,52,.76)!important; }
-          .ir-video-feature { min-width: 0; display: flex; justify-content: center; }
-          .ir-thumb-overlay { background: linear-gradient(to top,rgba(3,6,14,.30),transparent 54%); }
-          .ir-thumb-caption-wrap { text-align: center; margin-top: 21px; }
-          .ir-thumb-caption-title { font-size: clamp(1.15rem,1.5vw,1.5rem); line-height:1.35; letter-spacing: .1em; text-transform: uppercase; color: rgba(10,27,52,.88); }
-          .ir-thumb-caption-sub { font-size: clamp(.9rem,1vw,1.05rem); line-height:1.5; color:rgba(10,27,52,.68); }
-          @media (min-width: 1101px) {
-            .ir-word-space { display:none; }
-            .ir-section { min-height:clamp(700px,102svh,1060px); }
-            .ir-shell { min-height:clamp(700px,102svh,1060px);display:flex;flex-direction:column;justify-content:flex-start;padding:clamp(40px,5vh,72px) clamp(32px,4vw,72px) clamp(170px,12vw,220px)!important; }
-            .ir-header { width:100%;margin:0 auto clamp(42px,5vh,64px)!important;max-width:920px!important; }
-            .ir-header-logo { width:140px;height:140px;margin-bottom:18px; }
-            .ir-heading { margin-bottom:18px!important; }
-            .ir-header-divider { margin-bottom:20px!important; }
-            .ir-cols { display:grid!important;width:100%; }
-            .ir-award-caption { margin-top:18px!important; }
-            .ir-thumb-frame { width:clamp(300px,24vw,400px); }
-            .ir-thumb-caption-wrap { margin-top:18px;max-width:420px; }
-            .ir-thumb-caption-title { margin-bottom:7px; }
+          .ir-thumb-caption-sub em {
+            display: block;
+            margin-bottom: 7px;
+            font-family: ${serif};
+            font-size: clamp(1.08rem, 1.3vw, 1.28rem);
+            font-style: italic;
+            font-weight: 500;
+            line-height: 1.25;
+            color: rgba(10,27,52,.90);
           }
-          @media (min-width:1101px) and (max-height:920px) {
-            .ir-shell { padding-top:32px!important;padding-bottom:150px!important; }
-            .ir-header { margin-bottom:22px!important; }
-            .ir-header-logo { width:88px;height:88px;margin-bottom:12px; }
-            .ir-eyebrow { margin-bottom:10px!important; }
-            .ir-heading { font-size:clamp(2.3rem,3.1vw,3.25rem)!important;margin-bottom:10px!important; }
-            .ir-header-divider { margin-bottom:10px!important; }
-            .ir-intro-copy { font-size:1rem!important;line-height:1.5!important; }
-            .ir-award-inner { width:clamp(190px,16vw,235px); }
-            .ir-thumb-frame { width:min(255px,20vw); }
-            .ir-thumb-caption-wrap { margin-top:10px; }
-            .ir-thumb-caption-title { font-size:1rem; }
-            .ir-thumb-caption-sub { font-size:.95rem; }
+          @media (max-width: 1100px) {
+            .ir-showcase {
+              grid-template-columns: minmax(0, 1fr) minmax(270px, .95fr);
+              align-items: center;
+              row-gap: 38px;
+            }
+            .ir-video-feature {
+              grid-column: 2;
+              grid-row: 1;
+            }
+            .ir-winner-details {
+              grid-column: 1 / -1;
+              grid-row: 2;
+            }
+            .ir-thumb-frame { width: clamp(300px, 40vw, 400px); }
+            .ir-award-curves {
+              height: clamp(82px, 13vw, 116px);
+              margin: clamp(18px, 3vw, 28px) 0 clamp(18px, 3vw, 28px);
+            }
           }
-
-          @media (max-width: 900px) {
-            .ir-section { --ir-word-area: clamp(130px,18vw,165px); --ir-award-word-lift: clamp(25px,5vw,50px); min-height:clamp(760px,96svh,920px); }
-            .ir-shell { min-height:clamp(760px,96svh,920px);padding-top:clamp(40px,5vw,64px)!important;padding-bottom:clamp(140px,13vw,180px)!important; }
-            .ir-header { max-width:760px!important; }
-            .ir-heading { font-size:clamp(2.3rem,5vw,3.6rem)!important; }
-            .ir-intro-copy { font-size:clamp(1rem,2vw,1.15rem)!important; }
-            .ir-cols { grid-template-columns: minmax(210px,1fr) minmax(280px,1.25fr) !important; max-width: 820px; gap: clamp(40px,6vw,70px) !important; }
-            .ir-award-badge--winner { width:clamp(124px,18vw,148px); }
-            .ir-award-badge--finalist { width:clamp(116px,17vw,140px); }
-            .ir-award-inner { width:100%;height:auto; }
-            .ir-award-inner .ir-award-medal{width:100%!important;height:100%!important}
-            .ir-thumb-frame { width: clamp(280px,38vw,360px); }
-            .ir-decor--coin,.ir-decor--navy-ribbon { transform:scale(.78); }
+          @media (max-width: 760px) {
+            .ir-shell {
+              padding: clamp(92px, 22vw, 112px) clamp(18px, 5vw, 24px) clamp(52px, 10vw, 68px) !important;
+            }
+            .ir-header {
+              margin-bottom: 34px !important;
+            }
+            .ir-header-logo {
+              width: 76px;
+              height: 76px;
+              margin-bottom: 13px;
+            }
+            .ir-eyebrow {
+              font-size: .68rem !important;
+              letter-spacing: .20em !important;
+              margin-bottom: 14px !important;
+            }
+            .ir-heading {
+              font-size: clamp(2.35rem, 11vw, 3.25rem) !important;
+              line-height: 1.02 !important;
+              margin-bottom: 17px !important;
+            }
+            .ir-header-divider {
+              margin-bottom: 17px !important;
+            }
+            .ir-intro-copy {
+              font-size: .98rem !important;
+              line-height: 1.58 !important;
+            }
+            .ir-award-curves {
+              height: clamp(76px, 20vw, 104px);
+              margin: 20px 0 24px;
+              opacity: .72;
+            }
+            .ir-showcase {
+              display: flex;
+              flex-direction: column;
+              gap: 30px;
+              padding: 0;
+            }
+            .ir-award-badges {
+              width: 100%;
+              gap: 30px;
+            }
+            .ir-award-badge {
+              padding: 0;
+            }
+            .ir-award-inner {
+              width: min(100%, 116px);
+            }
+            .ir-award-badge--finalist .ir-award-inner {
+              width: min(100%, 132px);
+            }
+            .ir-award-year {
+              font-size: clamp(1.38rem, 7vw, 1.76rem);
+            }
+            .ir-award-caption-title {
+              font-size: clamp(1rem, 5vw, 1.22rem) !important;
+            }
+            .ir-award-caption p:last-child {
+              font-size: .62rem !important;
+              letter-spacing: .10em !important;
+            }
+            .ir-thumb-frame {
+              width: clamp(220px, 70vw, 310px);
+            }
+            .ir-winner-trophy {
+              width: clamp(120px, 34vw, 148px);
+              height: clamp(120px, 34vw, 148px);
+              margin-bottom: 8px;
+            }
+            .ir-thumb-caption-title {
+              font-size: clamp(1.85rem, 9vw, 2.35rem);
+              margin-bottom: 13px;
+            }
+            .ir-winner-rule {
+              margin-bottom: 15px;
+            }
+            .ir-thumb-caption-sub {
+              font-size: .95rem;
+              line-height: 1.54;
+            }
           }
-          @media (max-width: 600px) {
-            .ir-section { --ir-word-area: clamp(125px,35vw,185px); --ir-award-word-lift: clamp(28px,8vw,48px); min-height:auto; }
-            .ir-shell { min-height:auto;padding:clamp(28px,8vw,44px) 20px clamp(90px,18vw,130px)!important; }
-            .ir-bg-track span { font-size: clamp(6rem,31vw,10rem); }
-            .ir-header { margin-bottom: 42px !important; }
-            .ir-heading { font-size: clamp(2.25rem,11vw,3.25rem) !important; }
-            .ir-intro-copy { font-size: 1rem !important; line-height: 1.68 !important; }
-            .ir-thumb-frame { width: clamp(230px,72vw,320px); }
-            .ir-cols { grid-template-columns:1fr !important;max-width:520px;gap:48px!important; }
-            .ir-award-badges { gap:16px; }
-            .ir-award-badge--winner { width:min(41vw,148px); }
-            .ir-award-badge--finalist { width:min(38vw,140px); }
-            .ir-award-inner { width:100%; }
-            .ir-award-caption-title,.ir-thumb-caption-title { font-size:1.15rem!important; }
-            .ir-award-caption p:last-child,.ir-thumb-caption-sub { font-size:.95rem!important; }
-            .ir-thumb-caption-wrap { max-width:200px; }
-            .ir-video-feature { grid-row:2; }.ir-award-proof{grid-row:1}
-            .ir-decor--gold-ribbon,.ir-decor--coin{opacity:.28}.ir-decor--navy-ribbon{right:-28%;opacity:.26}.ir-decor--trophy,.ir-decor--star{display:none}
-            .ir-decor--laurel-left{opacity:.28;width:100px;height:82px;bottom:16px}
-            .ir-confetti:nth-of-type(even){display:none}
+          @media (max-width: 340px) {
+            .ir-award-badges {
+              grid-template-columns: 1fr;
+            }
+            .ir-award-badge {
+              max-width: 230px;
+              margin-inline: auto;
+            }
           }
           @media (prefers-reduced-motion: reduce) {
-            .ir-marquee-track { animation:none!important;transform:translate3d(-8%,0,0);will-change:auto; }
-            .ir-decor > img,.ir-confetti img,.ir-award-frame { animation: none !important; }
-            .ir-decor { transform: none !important; transition: none !important; }
+            .ir-streak {
+              animation: none !important;
+              opacity: 1 !important;
+              stroke-dashoffset: 0 !important;
+            }
+            .ir-streak-glint {
+              display: none !important;
+            }
+            .ir-award-badge,
+            .ir-award-frame {
+              transition: none !important;
+            }
+            .ir-award-badge:hover,
+            .ir-award-badge:hover .ir-award-frame {
+              transform: none !important;
+            }
           }
         `}</style>
-
-        <motion.div ref={decorLayerRef} className="ir-decor-layer" style={{ opacity: decorOpacity, y: decorY }} aria-hidden="true">
-          <div className="ir-decor ir-decor--gold-ribbon"><img src="/images/awards/gold-ribbon-left.png" alt="" /></div>
-          <div className="ir-decor ir-decor--laurel-left"><img src="/images/awards/gold-laurel-left.png" alt="" /></div>
-          <div className="ir-decor ir-decor--coin"><img src="/images/awards/award-medal.png" alt="" /></div>
-          <div className="ir-decor ir-decor--navy-ribbon"><img src="/images/awards/award-ribbon-navy.png" alt="" /></div>
-          <div className="ir-decor ir-decor--trophy"><img src="/images/awards/gold-trophy.png" alt="" /></div>
-          <div className="ir-decor ir-decor--star"><img src="/images/awards/gold-star.png" alt="" /></div>
-          {Array.from({ length: 6 }, (_, index) => (
-            <div key={index} className={`ir-confetti ir-confetti--${index + 1}`}><img src="/images/awards/gold-confetti.png" alt="" /></div>
-          ))}
-        </motion.div>
 
         {/* Top edge: very faint gold rule separating from previous section */}
         <div className="ir-old-rule" style={{
@@ -1695,7 +1937,7 @@ const ImpactRecognitionSection = () => {
               className="ir-heading"
               style={{
                 opacity: headingOpacity, y: headingY,
-                fontFamily: serif, fontWeight: 300,
+                fontFamily: serif, fontWeight: 700,
                 fontSize: 'clamp(2.4rem, 3.8vw, 4.4rem)',
                 lineHeight: 1.10, letterSpacing: '-.028em',
                 color: C.navy, margin: '0 0 20px',
@@ -1713,7 +1955,9 @@ const ImpactRecognitionSection = () => {
                 background: `linear-gradient(90deg, ${C.gold}, transparent)`,
                 transformOrigin: 'left',
               }}
-            />
+            >
+              <span aria-hidden="true" />
+            </motion.div>
 
             <motion.p
               className="ir-intro-copy"
@@ -1732,17 +1976,53 @@ const ImpactRecognitionSection = () => {
             </motion.p>
           </motion.div>
 
-          {/* ── MEDIA GRID: award image | video thumbnail ────────────────── */}
+          <svg
+            className={`ir-award-curves ${streakVisible ? 'is-visible' : ''}`}
+            viewBox="0 0 1600 140"
+            preserveAspectRatio="none"
+            aria-hidden="true"
+          >
+            <path
+              id="ir-streak-primary-path"
+              className="ir-streak ir-streak-primary"
+              pathLength="1"
+              d="M -80 58 C 150 86 350 84 548 56 C 704 34 850 36 1014 58 C 1200 86 1386 90 1680 42"
+              stroke="#CFA54A"
+              strokeWidth="2.35"
+              strokeOpacity=".80"
+            />
+            <path
+              className="ir-streak ir-streak-secondary"
+              pathLength="1"
+              d="M -80 76 C 152 102 354 100 552 74 C 710 52 850 54 1010 76 C 1198 104 1390 108 1680 60"
+              stroke="#D8B45F"
+              strokeWidth="1"
+              strokeOpacity=".28"
+            />
+            <path
+              className="ir-streak ir-streak-tertiary"
+              pathLength="1"
+              d="M -80 94 C 154 118 360 116 560 92 C 712 72 852 74 1008 94 C 1192 122 1390 126 1680 78"
+              stroke="#D8B45F"
+              strokeWidth="1"
+              strokeOpacity=".16"
+            />
+            {streakVisible && !reducedMotion && (
+              <circle className="ir-streak-glint" r="4.2" fill="#E4BC5A">
+                <animateMotion dur="2.25s" begin="0s" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines=".65 0 .35 1">
+                  <mpath href="#ir-streak-primary-path" />
+                </animateMotion>
+                <animate attributeName="opacity" values="0;.85;.75;0" keyTimes="0;.08;.82;1" dur="2.25s" begin="0s" fill="freeze" />
+              </circle>
+            )}
+          </svg>
+
+          {/* ── Awards showcase: achievement badges | recipient photo | winner details ── */}
           <motion.div
-            className="ir-cols"
+            className="ir-showcase"
             style={{
               opacity: mediaOpacity,
               y: mediaY,
-              display: 'grid',
-              gridTemplateColumns: '1fr 1fr',
-              gap: 'clamp(24px, 4vw, 48px)',
-              alignItems: 'start',
-              marginBottom: 'clamp(40px, 5vw, 64px)',
             }}
           >
 
@@ -1760,8 +2040,9 @@ const ImpactRecognitionSection = () => {
                     </div>
                   </div>
                   <motion.div className="ir-award-caption" style={{ opacity: captionOpacity, y: captionY }}>
-                    <p className="ir-award-caption-title">2025 Winner</p>
-                    <p style={{ fontFamily: sans, fontWeight: 500, fontSize: '.78rem', lineHeight: 1.5, letterSpacing: '.10em', textTransform: 'uppercase', color: C.gold, margin: 0 }}>
+                    <p className="ir-award-year">2025</p>
+                    <p className="ir-award-caption-title">Winner</p>
+                    <p>
                       Education Services
                     </p>
                   </motion.div>
@@ -1777,8 +2058,9 @@ const ImpactRecognitionSection = () => {
                     </div>
                   </div>
                   <motion.div className="ir-award-caption" style={{ opacity: captionOpacity, y: captionY }}>
-                    <p className="ir-award-caption-title">2026 Finalist</p>
-                    <p style={{ fontFamily: sans, fontWeight: 500, fontSize: '.78rem', lineHeight: 1.5, letterSpacing: '.10em', textTransform: 'uppercase', color: C.gold, margin: 0 }}>
+                    <p className="ir-award-year">2026</p>
+                    <p className="ir-award-caption-title">Finalist</p>
+                    <p>
                       Fairfield City
                     </p>
                   </motion.div>
@@ -1799,12 +2081,19 @@ const ImpactRecognitionSection = () => {
                   />
                   <div className="ir-thumb-overlay" aria-hidden="true" />
                 </div>
-                <motion.div className="ir-thumb-caption-wrap" style={{ opacity: captionOpacity, y: captionY }}>
-                  <p className="ir-thumb-caption-title">Award Winner</p>
-                  <p className="ir-thumb-caption-sub">Outstanding Education Service · Fairfield City Local Business Awards 2025</p>
-                </motion.div>
               </div>
             </div>
+
+            {/* ── Winner details ───────────────────────────────────────── */}
+            <motion.div className="ir-winner-details" style={{ opacity: captionOpacity, y: captionY }}>
+              <img className="ir-winner-trophy" src="/images/awards/gold-trophy.png" alt="" aria-hidden="true" />
+              <p className="ir-thumb-caption-title">Award<br />Winner</p>
+              <div className="ir-winner-rule" aria-hidden="true"><span /></div>
+              <p className="ir-thumb-caption-sub">
+                <em>Outstanding Education Service</em>
+                Fairfield City Local Business Awards 2025
+              </p>
+            </motion.div>
 
           </motion.div>
 
@@ -2788,6 +3077,476 @@ const ProgramsSection = () => {
   );
 };
 
+// ══════════════════════════════════════════════════════════════
+//  SUBJECT PEEK
+// ══════════════════════════════════════════════════════════════
+const SUBJECT_PEEK_CARDS: Array<{
+  name: string;
+  href: string;
+  image: string;
+  imageFit?: 'cover' | 'contain';
+  imagePosition?: string;
+  desc: string;
+  Icon: LucideIcon;
+}> = [
+  {
+    name: 'Mathematics',
+    href: '/subjects/mathematics',
+    image: '/images/homepage/subject-cards/maths-home-subject.png',
+    imageFit: 'contain',
+    imagePosition: 'center center',
+    desc: 'Build confidence through understanding, problem solving and logical thinking.',
+    Icon: Calculator,
+  },
+  {
+    name: 'English',
+    href: '/subjects/english',
+    image: '/images/homepage/subject-cards/english-home-subject.png',
+    imagePosition: 'center center',
+    desc: 'Develop confident readers, writers and communicators who love ideas.',
+    Icon: BookOpen,
+  },
+  {
+    name: 'Science',
+    href: '/subjects/science',
+    image: '/images/homepage/subject-cards/science-home-subject.png',
+    imagePosition: 'center center',
+    desc: 'Discover the world through curiosity, investigation and experimentation.',
+    Icon: FlaskConical,
+  },
+  {
+    name: 'Business',
+    href: '/subjects/business-studies',
+    image: '/images/homepage/subject-cards/business-home-subject.png',
+    imagePosition: 'center center',
+    desc: 'Think strategically about markets, people, operations and real-world decisions.',
+    Icon: BriefcaseBusiness,
+  },
+  {
+    name: 'Legal',
+    href: '/subjects/legal-studies',
+    image: '/images/homepage/subject-cards/legal-home-subject.png',
+    imagePosition: 'center center',
+    desc: 'Explore justice, rights and contemporary issues with precise, confident reasoning.',
+    Icon: Scale,
+  },
+];
+
+const SubjectPeekPanel = ({ subject, index }: { subject: typeof SUBJECT_PEEK_CARDS[number]; index: number }) => {
+  const Icon = subject.Icon;
+
+  return (
+    <motion.div className="subject-peek-card-wrap" variants={fadeUp} layout>
+      <Link to={subject.href} className="subject-peek-card" aria-label={`Explore ${subject.name}`}>
+        <img
+          className={`subject-peek-image${subject.imageFit === 'contain' ? ' subject-peek-image--contain' : ''}`}
+          src={subject.image}
+          alt=""
+          aria-hidden="true"
+          loading={index < 3 ? 'eager' : 'lazy'}
+          decoding="async"
+          sizes="(max-width: 760px) 82vw, 33vw"
+          style={{ objectPosition: subject.imagePosition }}
+        />
+        <div className="subject-peek-overlay" aria-hidden="true" />
+        <div className="subject-peek-badge">
+          <Icon size={16} strokeWidth={2.2} aria-hidden="true" />
+          <span>{subject.name}</span>
+        </div>
+        <div className="subject-peek-copy">
+          <p>{subject.desc}</p>
+          <span className="subject-peek-link">
+            Explore {subject.name}
+            <ArrowRight size={17} strokeWidth={2.3} aria-hidden="true" />
+          </span>
+        </div>
+      </Link>
+    </motion.div>
+  );
+};
+
+const SubjectPeekSection = () => {
+  const ref = useRef<HTMLElement>(null);
+  const inView = useInView(ref, { once: true, margin: '-70px' });
+  const [showAllSubjects, setShowAllSubjects] = useState(false);
+  const visibleSubjects = showAllSubjects ? SUBJECT_PEEK_CARDS : SUBJECT_PEEK_CARDS.slice(0, 3);
+
+  return (
+    <section ref={ref} aria-labelledby="subject-peek-heading" style={{ background: C.cream, padding: 'clamp(86px, 8vw, 124px) clamp(18px, 3vw, 48px)', position: 'relative', overflow: 'hidden' }}>
+      <style>{`
+        .subject-peek-shell {
+          position: relative;
+          max-width: 1480px;
+          margin: 0 auto;
+        }
+
+        .subject-peek-intro {
+          display: grid;
+          grid-template-columns: minmax(0, 1fr) auto;
+          gap: 24px;
+          align-items: end;
+          margin-bottom: clamp(32px, 4vw, 52px);
+        }
+
+        .subject-peek-kicker {
+          margin: 0 0 12px;
+          font-family: ${sans};
+          font-size: .7rem;
+          font-weight: 800;
+          letter-spacing: .17em;
+          line-height: 1;
+          text-transform: uppercase;
+          color: ${C.gold};
+        }
+
+        .subject-peek-title {
+          max-width: 780px;
+          margin: 0;
+          font-family: ${serif};
+          font-size: clamp(2.2rem, 4.4vw, 3.85rem);
+          font-weight: 600;
+          line-height: 1.06;
+          letter-spacing: -.02em;
+          color: ${C.navy};
+          text-wrap: balance;
+        }
+
+        .subject-peek-more {
+          display: inline-flex;
+          align-items: center;
+          gap: 10px;
+          justify-content: center;
+          min-height: 48px;
+          padding: 14px 20px;
+          border: 1px solid rgba(200, 155, 60, .52);
+          border-radius: 999px;
+          background: ${C.navy};
+          color: ${C.white};
+          font-family: ${sans};
+          font-size: .76rem;
+          font-weight: 800;
+          letter-spacing: .11em;
+          line-height: 1.2;
+          text-transform: uppercase;
+          white-space: nowrap;
+          cursor: pointer;
+          box-shadow: 0 14px 28px rgba(10, 27, 52, .16);
+          transition: transform 350ms cubic-bezier(.22, 1, .36, 1), box-shadow 350ms ease, background 350ms ease;
+        }
+
+        .subject-peek-more svg {
+          color: ${C.goldL};
+          transition: transform 350ms cubic-bezier(.22, 1, .36, 1);
+        }
+
+        .subject-peek-more:hover,
+        .subject-peek-more:focus-visible {
+          background: ${C.navy2};
+          transform: translateY(-2px);
+          box-shadow: 0 18px 34px rgba(10, 27, 52, .2);
+        }
+
+        .subject-peek-more:hover svg,
+        .subject-peek-more:focus-visible svg {
+          transform: translateX(4px);
+        }
+
+        .subject-peek-more:focus-visible {
+          outline: 3px solid rgba(212, 175, 55, .76);
+          outline-offset: 4px;
+        }
+
+        .subject-peek-frame {
+          --peek-gap: clamp(20px, 2.2vw, 36px);
+          position: relative;
+          overflow: visible;
+          padding: 2px 2px 32px;
+        }
+
+        .subject-peek-track {
+          display: grid;
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+          align-items: flex-start;
+          gap: var(--peek-gap);
+        }
+
+        .subject-peek-card-wrap {
+          min-width: 0;
+          padding-top: clamp(22px, 2.4vw, 42px);
+        }
+
+        .subject-peek-card-wrap:nth-child(2) {
+          padding-top: 0;
+        }
+
+        .subject-peek-card {
+          position: relative;
+          display: block;
+          height: clamp(470px, 39vw, 620px);
+          overflow: hidden;
+          isolation: isolate;
+          border: 1px solid rgba(200, 155, 60, .52);
+          border-radius: 30px;
+          background: ${C.navy};
+          color: #fff;
+          text-decoration: none;
+          box-shadow: 0 22px 45px rgba(10, 27, 52, .12);
+          transform: translateZ(0);
+          transition: transform 500ms cubic-bezier(.22, 1, .36, 1), box-shadow 500ms ease, border-color 500ms ease;
+        }
+
+        .subject-peek-card-wrap:nth-child(2) .subject-peek-card {
+          height: clamp(540px, 45vw, 710px);
+        }
+
+        .subject-peek-image {
+          position: absolute;
+          inset: 0;
+          z-index: 0;
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          filter: saturate(.98) brightness(1.04);
+          transition: transform 650ms cubic-bezier(.22, 1, .36, 1), filter 500ms ease;
+        }
+
+        .subject-peek-image--contain {
+          object-fit: contain;
+          background: linear-gradient(180deg, #f5ecdf 0%, #efe0cf 100%);
+        }
+
+        .subject-peek-overlay {
+          position: absolute;
+          inset: 0;
+          z-index: 1;
+          background:
+            linear-gradient(180deg, rgba(10, 27, 52, .04) 0%, rgba(10, 27, 52, .13) 43%, rgba(5, 18, 38, .88) 100%),
+            linear-gradient(90deg, rgba(8, 24, 50, .2) 0%, transparent 48%, rgba(8, 24, 50, .18) 100%);
+        }
+
+        .subject-peek-badge {
+          position: absolute;
+          top: clamp(18px, 2vw, 28px);
+          left: clamp(18px, 2vw, 28px);
+          z-index: 2;
+          display: inline-flex;
+          align-items: center;
+          gap: 10px;
+          max-width: calc(100% - 36px);
+          padding: 10px 17px;
+          border: 1px solid rgba(200, 155, 60, .44);
+          border-radius: 999px;
+          background: rgba(10, 27, 52, .9);
+          color: #fff;
+          box-shadow: 0 10px 20px rgba(4, 14, 30, .18);
+          font-family: ${sans};
+          font-size: .74rem;
+          font-weight: 800;
+          letter-spacing: .13em;
+          line-height: 1;
+          text-transform: uppercase;
+        }
+
+        .subject-peek-badge svg {
+          flex: 0 0 auto;
+          color: ${C.goldL};
+        }
+
+        .subject-peek-copy {
+          position: absolute;
+          left: clamp(24px, 2.5vw, 38px);
+          right: clamp(24px, 2.5vw, 38px);
+          bottom: clamp(28px, 3vw, 42px);
+          z-index: 2;
+        }
+
+        .subject-peek-copy p {
+          max-width: 34ch;
+          margin: 0 0 24px;
+          color: rgba(255, 255, 255, .9);
+          font-family: ${sans};
+          font-size: clamp(1rem, 1.25vw, 1.16rem);
+          font-weight: 600;
+          line-height: 1.55;
+          text-wrap: pretty;
+        }
+
+        .subject-peek-link {
+          display: inline-flex;
+          align-items: center;
+          gap: 12px;
+          color: ${C.goldL};
+          font-family: ${sans};
+          font-size: .78rem;
+          font-weight: 900;
+          letter-spacing: .1em;
+          line-height: 1.25;
+          text-transform: uppercase;
+        }
+
+        .subject-peek-link svg {
+          transition: transform 350ms cubic-bezier(.22, 1, .36, 1);
+        }
+
+        .subject-peek-card:hover,
+        .subject-peek-card:focus-visible {
+          transform: translateY(-8px);
+          border-color: rgba(212, 175, 55, .92);
+          box-shadow: 0 30px 60px rgba(10, 27, 52, .18);
+        }
+
+        .subject-peek-card:hover .subject-peek-image,
+        .subject-peek-card:focus-visible .subject-peek-image {
+          transform: scale(1.045);
+          filter: saturate(1.02) brightness(1.08);
+        }
+
+        .subject-peek-card:hover .subject-peek-link svg,
+        .subject-peek-card:focus-visible .subject-peek-link svg {
+          transform: translateX(7px);
+        }
+
+        .subject-peek-card:focus-visible {
+          outline: 3px solid rgba(212, 175, 55, .78);
+          outline-offset: 5px;
+        }
+
+        .subject-peek-sweep {
+          position: absolute;
+          left: 8%;
+          right: 8%;
+          bottom: -14px;
+          z-index: 0;
+          height: 70px;
+          border-bottom: 1px dashed rgba(200, 155, 60, .48);
+          border-radius: 0 0 50% 50%;
+          pointer-events: none;
+        }
+
+        .subject-peek-star {
+          position: absolute;
+          bottom: -9px;
+          width: 9px;
+          height: 9px;
+          background: ${C.gold};
+          transform: rotate(45deg);
+          box-shadow: 0 0 0 6px rgba(250, 247, 240, .78);
+        }
+
+        .subject-peek-star:nth-child(1) { left: 31%; }
+        .subject-peek-star:nth-child(2) { left: 50%; }
+        .subject-peek-star:nth-child(3) { left: 69%; }
+
+        @media (max-width: 980px) {
+          .subject-peek-intro {
+            grid-template-columns: 1fr;
+            align-items: start;
+          }
+
+          .subject-peek-more {
+            width: fit-content;
+          }
+
+          .subject-peek-frame {
+            padding-bottom: 0;
+          }
+
+          .subject-peek-track {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+          }
+
+          .subject-peek-card-wrap,
+          .subject-peek-card-wrap:nth-child(2) {
+            padding-top: 0;
+          }
+
+          .subject-peek-card,
+          .subject-peek-card-wrap:nth-child(2) .subject-peek-card {
+            height: clamp(440px, 96vw, 570px);
+          }
+
+          .subject-peek-sweep {
+            display: none;
+          }
+        }
+
+        @media (max-width: 560px) {
+          .subject-peek-track {
+            grid-template-columns: 1fr;
+          }
+
+          .subject-peek-card,
+          .subject-peek-card-wrap:nth-child(2) .subject-peek-card {
+            border-radius: 24px;
+          }
+
+          .subject-peek-copy p {
+            font-size: .98rem;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .subject-peek-track,
+          .subject-peek-card,
+          .subject-peek-image,
+          .subject-peek-link svg,
+          .subject-peek-more,
+          .subject-peek-more svg {
+            transition: none !important;
+          }
+
+          .subject-peek-more:hover,
+          .subject-peek-more:focus-visible,
+          .subject-peek-more:hover svg,
+          .subject-peek-more:focus-visible svg,
+          .subject-peek-card:hover,
+          .subject-peek-card:focus-visible,
+          .subject-peek-card:hover .subject-peek-image,
+          .subject-peek-card:focus-visible .subject-peek-image,
+          .subject-peek-card:hover .subject-peek-link svg,
+          .subject-peek-card:focus-visible .subject-peek-link svg {
+            transform: none;
+          }
+        }
+      `}</style>
+      <div className="subject-peek-shell">
+        <motion.div className="subject-peek-intro" variants={stagger} initial="hidden" animate={inView ? 'visible' : 'hidden'}>
+          <motion.div variants={fadeUp}>
+            <p className="subject-peek-kicker">Subject Pathways</p>
+            <h2 id="subject-peek-heading" className="subject-peek-title">Explore the subjects students grow through at DA.</h2>
+          </motion.div>
+          <motion.button
+            type="button"
+            className="subject-peek-more"
+            variants={fadeUp}
+            aria-expanded={showAllSubjects}
+            aria-controls="subject-peek-cards"
+            onClick={() => setShowAllSubjects((open) => !open)}
+          >
+            <span>{showAllSubjects ? 'Show fewer subjects' : 'See more subjects'}</span>
+            <ArrowRight size={16} strokeWidth={2.4} aria-hidden="true" />
+          </motion.button>
+        </motion.div>
+
+        <div className="subject-peek-frame" aria-label="Subject cards">
+          <motion.div id="subject-peek-cards" className="subject-peek-track" variants={stagger} initial="hidden" animate={inView ? 'visible' : 'hidden'} layout>
+            <AnimatePresence initial={false}>
+              {visibleSubjects.map((subject, index) => (
+                <SubjectPeekPanel key={subject.name} subject={subject} index={index} />
+              ))}
+            </AnimatePresence>
+          </motion.div>
+          <div className="subject-peek-sweep" aria-hidden="true">
+            <span className="subject-peek-star" />
+            <span className="subject-peek-star" />
+            <span className="subject-peek-star" />
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
 
 // ══════════════════════════════════════════════════════════════
 //  PULL QUOTE
@@ -3172,7 +3931,7 @@ const WellbeingSection = () => {
                 transition: 'box-shadow 0.5s cubic-bezier(0.22,1,0.36,1)',
               }}>
                 <img
-                  src="/maletutors.jpeg"
+                    src="/images/homepage/wellbeing-male-tutors.png"
                   alt="DA Tuition tutors in a warm collaborative session"
                   loading="lazy"
                   style={{
@@ -3212,8 +3971,8 @@ const WellbeingSection = () => {
                   transition: 'box-shadow 0.5s cubic-bezier(0.22,1,0.36,1)',
                 }}>
                   <img
-                    src="/Lindatwins.JPG"
-                    alt="Students with their DA Tuition teacher"
+                    src="/images/homepage/wellbeing-young-student.png"
+                    alt="DA Tuition student working confidently at a classroom table"
                     loading="lazy"
                     style={{
                       width: '100%', height: '100%',
@@ -3245,7 +4004,7 @@ const WellbeingSection = () => {
                   transition: 'box-shadow 0.5s cubic-bezier(0.22,1,0.36,1)',
                 }}>
                   <img
-                    src="/Freeman.png"
+                    src="/images/homepage/wellbeing-student-community.png"
                     alt="DA Tuition student community"
                     loading="lazy"
                     style={{
@@ -3377,7 +4136,7 @@ const DAEnvironmentSection = () => {
   const expandedRef = useRef(false);
   const floatingDragRef = useRef<{ pointerId: number; startX: number; startY: number; left: number; top: number } | null>(null);
   const [isSimple, setIsSimple] = useState(false);
-  const [isMuted, setIsMuted] = useState(false);
+  const [isMuted, setIsMuted] = useState(true);
   const [isFloating, setIsFloating] = useState(false);
   const [floatingDismissed, setFloatingDismissed] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
@@ -3452,20 +4211,6 @@ const DAEnvironmentSection = () => {
     window.addEventListener('resize', check);
     return () => window.removeEventListener('resize', check);
   }, []);
-
-  useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
-
-    // Try the requested sound-on start first. Browsers that block audible
-    // autoplay still get the moving video, with the Sound on control visible.
-    video.muted = false;
-    video.play().catch(() => {
-      video.muted = true;
-      setIsMuted(true);
-      video.play().catch(() => {});
-    });
-  }, [isSimple]);
 
   useEffect(() => {
     const obs = new IntersectionObserver(
@@ -3597,7 +4342,7 @@ const DAEnvironmentSection = () => {
     { id: 'tg', src: '/media/threegirls.jpg', alt: 'DA students together',  ratio: '3/4' as const,  w: 'clamp(86px,7.8vw,126px)',  pos: { top: '8%',    left: '2%'  } as React.CSSProperties, rotate: -3  },
     { id: 'hf', src: '/media/highfive.jpg',   alt: 'High five with tutor',  ratio: '4/3' as const,  w: 'clamp(106px,9.8vw,150px)', pos: { top: '6%',    right: '2%' } as React.CSSProperties, rotate: 2.5 },
     { id: 'tb', src: '/media/theboys.jpg',    alt: 'DA tutors',             ratio: '4/3' as const,  w: 'clamp(94px,8.8vw,138px)',  pos: { bottom: '8%', left: '2%'  } as React.CSSProperties, rotate: -2  },
-    { id: 'lc', src: '/media/laiclass.jpg',   alt: 'Classroom session',     ratio: '3/4' as const,  w: 'clamp(80px,7.2vw,116px)',  pos: { bottom: '6%', right: '2%' } as React.CSSProperties, rotate: 2   },
+    { id: 'lc', src: '/media/environment-young-student.png', alt: 'DA student working at a classroom table', ratio: '3/4' as const,  w: 'clamp(80px,7.2vw,116px)',  pos: { bottom: '6%', right: '2%' } as React.CSSProperties, rotate: 2   },
   ];
 
   const envCSS = `
@@ -6382,11 +7127,18 @@ const ReviewsSection = () => {
   const [selected,     setSelected]     = useState<ReviewRecord | null>(null);
   const [activeFilter, setActiveFilter] = useState<string>('All Reviews');
   const [fading,       setFading]       = useState(false);
+  const [reviewPage,   setReviewPage]   = useState(0);
 
   const easeOut = [0.22, 1, 0.36, 1] as const;
+  const reviewsPerPage = 4;
 
   const filteredReviews = CAROUSEL_REVIEWS.filter(r =>
     (FILTER_MAP[activeFilter] ?? []).includes(r.id)
+  );
+  const totalReviewPages = Math.max(1, Math.ceil(filteredReviews.length / reviewsPerPage));
+  const visibleReviews = filteredReviews.slice(
+    reviewPage * reviewsPerPage,
+    reviewPage * reviewsPerPage + reviewsPerPage
   );
 
   const handleFilterChange = (tag: string) => {
@@ -6394,6 +7146,15 @@ const ReviewsSection = () => {
     setFading(true);
     setTimeout(() => {
       setActiveFilter(tag);
+      setReviewPage(0);
+      setFading(false);
+    }, 180);
+  };
+
+  const handleReviewPageChange = (direction: 1 | -1) => {
+    setFading(true);
+    setTimeout(() => {
+      setReviewPage((page) => (page + direction + totalReviewPages) % totalReviewPages);
       setFading(false);
     }, 180);
   };
@@ -6455,13 +7216,13 @@ const ReviewsSection = () => {
               onClick={() => handleFilterChange(tag)}
               style={{
                 height: '34px',
-                padding: '0 16px',
+                padding: '0 18px',
                 borderRadius: '100px',
                 border: `1.5px solid ${isActive ? C.gold : 'rgba(10,27,52,0.16)'}`,
                 background: isActive ? C.gold : 'transparent',
                 color: isActive ? '#FFFFFF' : 'rgba(10,27,52,0.58)',
                 fontFamily: sans, fontWeight: 500,
-                fontSize: '.65rem', letterSpacing: '.12em',
+                fontSize: '.72rem', letterSpacing: '.12em',
                 textTransform: 'uppercase' as const,
                 cursor: 'pointer',
                 transition: 'all 0.22s cubic-bezier(0.22,1,0.36,1)',
@@ -6476,8 +7237,8 @@ const ReviewsSection = () => {
 
       {/* ── Card grid ── */}
       <style>{`
-        .rv-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
-        @media (max-width: 1100px) { .rv-grid { grid-template-columns: repeat(2, 1fr); } }
+        .rv-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(22px, 1.65vw, 30px); }
+        @media (max-width: 1180px) { .rv-grid { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 560px)  { .rv-grid { grid-template-columns: 1fr; } }
       `}</style>
       <motion.div
@@ -6486,7 +7247,7 @@ const ReviewsSection = () => {
         style={{ padding: '0 clamp(24px,6vw,80px)' }}
       >
         <div className="rv-grid">
-          {filteredReviews.map((r, i) => (
+          {visibleReviews.map((r, i) => (
             <motion.div
               key={r.id}
               layoutId={`review-card-${r.id}`}
@@ -6499,7 +7260,8 @@ const ReviewsSection = () => {
                 borderRadius: '14px',
                 border: '1px solid rgba(10,27,52,0.07)',
                 boxShadow: '0 1px 10px rgba(10,27,52,0.05)',
-                padding: '24px',
+                padding: 'clamp(26px,2vw,34px)',
+                minHeight: 'clamp(520px,34vw,620px)',
                 display: 'flex',
                 flexDirection: 'column' as const,
                 cursor: 'pointer',
@@ -6507,60 +7269,62 @@ const ReviewsSection = () => {
               }}
             >
               {/* Stars + Subject pill */}
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '18px' }}>
-                <span style={{ color: C.gold, fontSize: '11px', letterSpacing: '0.08em' }}>★★★★★</span>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', marginBottom: '24px' }}>
+                <span style={{ color: C.gold, fontSize: '13px', letterSpacing: '0.10em' }}>★★★★★</span>
                 <span style={{
-                  fontFamily: sans, fontSize: '8px', fontWeight: 700,
+                  fontFamily: sans, fontSize: '9.5px', fontWeight: 700,
                   letterSpacing: '0.14em', textTransform: 'uppercase' as const,
                   color: C.gold, background: 'rgba(212,175,55,0.09)',
                   border: '1px solid rgba(212,175,55,0.20)',
-                  borderRadius: '100px', padding: '3px 10px',
+                  borderRadius: '100px', padding: '5px 12px',
                 }}>{r.subject}</span>
               </div>
 
               {/* Name */}
-              <p style={{ fontFamily: serif, fontSize: '19px', fontWeight: 400, color: C.navy, lineHeight: 1.2, margin: '0 0 4px' }}>
+              <p style={{ fontFamily: serif, fontSize: 'clamp(24px,1.55vw,30px)', fontWeight: 400, color: C.navy, lineHeight: 1.15, margin: '0 0 7px' }}>
                 {r.author}
               </p>
 
               {/* Year · Category */}
-              <p style={{ fontFamily: sans, fontSize: '11px', color: 'rgba(10,27,52,0.42)', margin: '0 0 16px', letterSpacing: '0.03em' }}>
+              <p style={{ fontFamily: sans, fontSize: '13px', color: 'rgba(10,27,52,0.46)', margin: '0 0 22px', letterSpacing: '0.025em', lineHeight: 1.35 }}>
                 {r.yearLevel} · {r.category}
               </p>
 
               {/* Result box */}
               <div style={{
                 background: C.cream2,
-                borderRadius: '8px', padding: '12px 14px', marginBottom: '14px',
-                display: 'flex', alignItems: 'center', gap: '8px',
+                borderRadius: '8px', padding: '16px 18px', marginBottom: '18px',
+                display: 'flex', alignItems: 'center', gap: '10px',
+                flexWrap: 'wrap',
               }}>
-                <span style={{ fontFamily: sans, fontSize: '11px', color: 'rgba(10,27,52,0.38)', whiteSpace: 'nowrap' }}>{r.result.before}</span>
-                <span style={{ color: C.gold, fontWeight: 700, fontSize: '14px', flexShrink: 0 }}>→</span>
-                <span style={{ fontFamily: sans, fontSize: '13px', color: C.navy, fontWeight: 800, whiteSpace: 'nowrap' }}>{r.result.after}</span>
+                <span style={{ fontFamily: sans, fontSize: '13px', color: 'rgba(10,27,52,0.42)', whiteSpace: 'nowrap' }}>{r.result.before}</span>
+                <span style={{ color: C.gold, fontWeight: 700, fontSize: '15px', flexShrink: 0 }}>→</span>
+                <span style={{ fontFamily: sans, fontSize: '15px', color: C.navy, fontWeight: 800, minWidth: 0 }}>{r.result.after}</span>
               </div>
 
               {/* Outcomes */}
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px', marginBottom: '18px' }}>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '7px', marginBottom: '24px' }}>
                 {r.outcomes.map(o => (
                   <span key={o} style={{
-                    fontFamily: sans, fontSize: '10px', fontWeight: 600,
+                    fontFamily: sans, fontSize: '11.5px', fontWeight: 600,
                     color: 'rgba(10,27,52,0.62)', background: 'rgba(10,27,52,0.04)',
                     border: '1px solid rgba(10,27,52,0.06)', borderRadius: '4px',
-                    padding: '3px 8px', display: 'inline-flex', alignItems: 'center', gap: '4px',
+                    padding: '5px 9px', display: 'inline-flex', alignItems: 'center', gap: '5px',
+                    lineHeight: 1.2,
                   }}>
-                    <span style={{ color: C.gold, fontSize: '11px' }}>✓</span> {o}
+                    <span style={{ color: C.gold, fontSize: '12px' }}>✓</span> {o}
                   </span>
                 ))}
               </div>
 
               {/* Gold divider */}
-              <div style={{ height: '1px', background: `linear-gradient(90deg, ${C.gold}55, ${C.gold}08)`, marginBottom: '16px' }} />
+              <div style={{ height: '1px', background: `linear-gradient(90deg, ${C.gold}55, ${C.gold}08)`, marginBottom: '22px' }} />
 
               {/* Preview quote */}
               <p style={{
                 fontFamily: serif, fontWeight: 300, fontStyle: 'italic',
-                fontSize: '14.5px', lineHeight: 1.65, color: C.navy,
-                margin: '0 0 16px', flex: 1,
+                fontSize: 'clamp(17px,1.06vw,20px)', lineHeight: 1.7, color: C.navy,
+                margin: '0 0 22px', flex: 1,
                 display: '-webkit-box', WebkitLineClamp: 3,
                 WebkitBoxOrient: 'vertical' as const, overflow: 'hidden',
               } as React.CSSProperties}>
@@ -6571,7 +7335,7 @@ const ReviewsSection = () => {
               {/* Read Full Story */}
               <div style={{
                 fontFamily: sans, fontWeight: 600,
-                fontSize: '9.5px', letterSpacing: '0.16em',
+                fontSize: '11px', letterSpacing: '0.16em',
                 textTransform: 'uppercase' as const,
                 color: C.gold,
                 display: 'inline-flex', alignItems: 'center', gap: '6px',
@@ -6582,6 +7346,63 @@ const ReviewsSection = () => {
             </motion.div>
           ))}
         </div>
+        {totalReviewPages > 1 && (
+          <div style={{
+            marginTop: 'clamp(28px,3vw,42px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '18px',
+            flexWrap: 'wrap',
+          }}>
+            <button
+              type="button"
+              onClick={() => handleReviewPageChange(-1)}
+              style={{
+                width: '44px', height: '44px',
+                borderRadius: '999px',
+                border: `1px solid rgba(10,27,52,0.16)`,
+                background: '#FFFFFF',
+                color: C.navy,
+                fontFamily: sans,
+                fontSize: '18px',
+                fontWeight: 700,
+                cursor: 'pointer',
+              }}
+              aria-label="Show previous reviews"
+            >
+              ←
+            </button>
+            <span style={{
+              fontFamily: sans,
+              fontSize: '.78rem',
+              fontWeight: 700,
+              letterSpacing: '.14em',
+              textTransform: 'uppercase',
+              color: 'rgba(10,27,52,0.58)',
+            }}>
+              {reviewPage + 1} / {totalReviewPages}
+            </span>
+            <button
+              type="button"
+              onClick={() => handleReviewPageChange(1)}
+              style={{
+                width: '44px', height: '44px',
+                borderRadius: '999px',
+                border: `1px solid ${C.gold}`,
+                background: C.navy,
+                color: '#FFFFFF',
+                fontFamily: sans,
+                fontSize: '18px',
+                fontWeight: 700,
+                cursor: 'pointer',
+              }}
+              aria-label="Show next reviews"
+            >
+              →
+            </button>
+          </div>
+        )}
       </motion.div>
 
       {/* ── Modal ── */}
@@ -6698,7 +7519,7 @@ const ClosingCTASection = () => {
 //  PAGE
 // ══════════════════════════════════════════════════════════════
 const Index = () => {
-  const philosophyNextSectionRef = useRef<HTMLDivElement>(null);
+  const philosophyNextSectionRef = useRef<HTMLElement>(null);
 
   return (
   <div style={{ fontFamily: sans }}>
@@ -6746,16 +7567,15 @@ const Index = () => {
           <MarqueeStrip />
           <PhilosophyEditorialSection nextSectionRef={philosophyNextSectionRef} />
         </div>
-        <OurAwardTransition sectionRef={philosophyNextSectionRef} />
-        <ImpactRecognitionSection />
+        <ImpactRecognitionSection sectionRef={philosophyNextSectionRef} />
       </div>
       <AchievementsSection />
       <ProgramsSection />
+      <SubjectPeekSection />
       <DAEnvironmentSection />
       <ReviewsSection />
       <TeachersSection />
       <QuoteSection />
-      <WhatWeTeachSection />
       <WellbeingSection />
       <CinematicQuoteSection />
       <ClosingCTASection />
