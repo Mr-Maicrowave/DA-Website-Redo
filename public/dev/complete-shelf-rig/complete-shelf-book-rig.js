@@ -20,7 +20,8 @@ const CODEX = {
 const COVER_CROPS = [[0, 0, 512, 768], [512, 0, 512, 768], [1024, 0, 512, 768], [1536, 0, 512, 768], [2048, 0, 512, 768], [2560, 0, 512, 768], [3072, 0, 512, 768]];
 const FLEXIBLE_PAGE_SEGMENTS = 18;
 const FLEXIBLE_PAGE_VERTICAL_SEGMENTS = 8;
-const PAGINATED_LEAF_COUNT = 4;
+// Keep the six-leaf construction intact; only the first leaf is reader-turnable.
+const PAGINATED_LEAF_COUNT = 1;
 const PAGE_SETTLE_EPSILON = 0.001;
 const clamp = (value, minimum, maximum) => Math.max(minimum, Math.min(maximum, value));
 const lerp = (from, to, progress) => from + (to - from) * progress;

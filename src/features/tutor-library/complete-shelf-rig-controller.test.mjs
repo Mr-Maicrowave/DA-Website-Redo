@@ -45,7 +45,7 @@ const settleGeometry = controller => {
   for (let frame = 0; frame < 240; frame += 1) controller.update(1 / 60);
 };
 
-test('keeps the original four-leaf pagination boundary while all six physical leaves reset before return', () => {
+test('keeps a concise one-turn reader boundary while all six physical leaves reset before return', () => {
   const rig = createCompleteShelfBookRig({ renderer });
   const { controller } = rig;
 
@@ -64,14 +64,12 @@ test('keeps the original four-leaf pagination boundary while all six physical le
   assert.equal(controller.getSnapshot().settledPages, 0, 'Previous reverses the settled leaf');
 
   settleGeometry(controller);
-  for (let page = 0; page < 4; page += 1) {
-    assert.equal(controller.setPageTurnProgress(1, 1), true, `page ${page + 1} begins`);
-    assert.equal(controller.settlePage(1), true, `page ${page + 1} settles`);
-    settleGeometry(controller);
-  }
-  assert.equal(controller.getSnapshot().settledPages, 4);
-  assert.equal(controller.getSnapshot().paginatedLeafCount, 4);
-  assert.equal(controller.setPageTurnProgress(1, 1), false, 'a fifth out-of-range turn is rejected');
+  assert.equal(controller.setPageTurnProgress(1, 1), true, 'the only forward page begins');
+  assert.equal(controller.settlePage(1), true, 'the only forward page settles');
+  settleGeometry(controller);
+  assert.equal(controller.getSnapshot().settledPages, 1);
+  assert.equal(controller.getSnapshot().paginatedLeafCount, 1);
+  assert.equal(controller.setPageTurnProgress(1, 1), false, 'a second out-of-range turn is rejected');
 
   controller.close();
   settleGeometry(controller);

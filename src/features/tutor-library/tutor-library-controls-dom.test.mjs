@@ -55,15 +55,14 @@ try {
   await page.keyboard.press('ArrowRight');
   await page.keyboard.press('PageDown');
   await page.keyboard.press('ArrowLeft');
-  await page.keyboard.press('PageUp');
   await page.$eval('.tutor-library__reader', element => {
     element.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, clientX: 180, clientY: 120, pointerId: 4, isPrimary: true }));
     element.dispatchEvent(new PointerEvent('pointerup', { bubbles: true, clientX: 100, clientY: 126, pointerId: 4, isPrimary: true }));
   });
   assert.deepEqual((await page.evaluate(() => window.tutorLibraryFixture.events)).filter(event => event.startsWith('page:')), [
-    'page:1', 'page:1', 'page:1', 'page:1', 'page:-1', 'page:-1', 'page:1',
+    'page:1', 'page:-1', 'page:1',
   ]);
-  assert.match(await page.$eval('.tutor-library__page-status', element => element.textContent ?? ''), /Page 4 of 5/i);
+  assert.match(await page.$eval('.tutor-library__page-status', element => element.textContent ?? ''), /Page 2 of 2/i);
 
   await page.setViewport({ width: 390, height: 844, deviceScaleFactor: 2 });
   const mobileReadingLayout = await page.evaluate(() => {
@@ -91,9 +90,9 @@ try {
   assert.ok(mobileReadingLayout.minimumActionHeight >= 44, 'mobile action targets remain at least 44 CSS pixels');
   assert.ok(mobileReadingLayout.readerBottom >= 52, 'wall navigation remains separately reachable below the reader');
   assert.ok(mobileReadingLayout.horizontalOverflow <= 0, 'mobile controls cannot introduce horizontal scrolling');
-  await page.evaluate(() => window.tutorLibraryFixture.setPage(4));
+  await page.evaluate(() => window.tutorLibraryFixture.setPage(1));
   assert.equal(await page.$eval(nextPage, element => element.disabled), true);
-  assert.match(await page.$eval('.tutor-library__page-status', element => element.textContent ?? ''), /Page 5 of 5/i);
+  assert.match(await page.$eval('.tutor-library__page-status', element => element.textContent ?? ''), /Page 2 of 2/i);
 
   assert.equal(await page.$eval(picker, element => element.disabled), true);
   const eventCount = await page.evaluate(() => window.tutorLibraryFixture.events.length);

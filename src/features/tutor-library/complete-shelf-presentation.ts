@@ -275,27 +275,27 @@ function drawInterior(canvas: HTMLCanvasElement, page: TutorBookPage, colours: C
 
   if (page.id === "identity") {
     const [name, designation, tagline, subjects] = page.sourceText;
-    context.font = `600 ${Math.round(canvas.width * .06)}px Georgia, serif`;
-    const nameLines = drawWrappedText(context, name, marginX, canvas.height * .25, bodyWidth, canvas.height * .067, 2);
+    context.font = `600 ${Math.round(canvas.width * .072)}px Georgia, serif`;
+    const nameLines = drawWrappedText(context, name, marginX, canvas.height * .25, bodyWidth, canvas.height * .079, 2);
+    context.fillStyle = colours.foil;
+    context.font = `700 ${Math.round(canvas.width * .028)}px Arial, sans-serif`;
+    drawWrappedText(context, designation, marginX, canvas.height * (.295 + nameLines * .062), bodyWidth, canvas.height * .041, 2);
+    context.fillStyle = colours.ink;
+    context.font = `italic ${Math.round(canvas.width * .043)}px Georgia, serif`;
+    drawWrappedText(context, tagline, marginX, canvas.height * .5, bodyWidth, canvas.height * .057, 4);
     context.fillStyle = colours.foil;
     context.font = `700 ${Math.round(canvas.width * .023)}px Arial, sans-serif`;
-    drawWrappedText(context, designation, marginX, canvas.height * (.29 + nameLines * .055), bodyWidth, canvas.height * .035, 2);
+    context.fillText("SUBJECTS", marginX, canvas.height * .71);
     context.fillStyle = colours.ink;
-    context.font = `italic ${Math.round(canvas.width * .034)}px Georgia, serif`;
-    drawWrappedText(context, tagline, marginX, canvas.height * .49, bodyWidth, canvas.height * .045, 5);
-    context.fillStyle = colours.foil;
-    context.font = `700 ${Math.round(canvas.width * .019)}px Arial, sans-serif`;
-    context.fillText("SUBJECTS", marginX, canvas.height * .7);
-    context.fillStyle = colours.ink;
-    context.font = `${Math.round(canvas.width * .026)}px Georgia, serif`;
-    drawWrappedText(context, subjects, marginX, canvas.height * .76, bodyWidth, canvas.height * .038, 5);
+    context.font = `${Math.round(canvas.width * .032)}px Georgia, serif`;
+    drawWrappedText(context, subjects, marginX, canvas.height * .77, bodyWidth, canvas.height * .047, 4);
     return;
   }
 
   if (page.id === "approach") {
-    context.font = `italic ${Math.round(canvas.width * .041)}px Georgia, serif`;
-    drawWrappedText(context, primary, marginX, canvas.height * .28, bodyWidth, canvas.height * .056, 7);
-    drawTags(canvas, context, rest, canvas.height * .66, colours);
+    context.font = `italic ${Math.round(canvas.width * .052)}px Georgia, serif`;
+    drawWrappedText(context, primary, marginX, canvas.height * .28, bodyWidth, canvas.height * .07, 6);
+    drawTags(canvas, context, rest, canvas.height * .68, colours);
     return;
   }
 

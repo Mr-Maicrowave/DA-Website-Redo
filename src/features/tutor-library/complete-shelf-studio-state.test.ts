@@ -21,7 +21,7 @@ test("maps studio page states to the existing imperative controller without a pa
     setPageTurnProgress: (value: number) => { calls.push(`page:${value}`); return true; },
     settlePage: () => { calls.push("settle"); return true; },
     update: () => { calls.push("update"); },
-    getSnapshot: () => ({ rootUuid: "one", openProgress: 0, pageTurnProgress: 0, settledPages: 0, pagePivotCount: 6, paginatedLeafCount: 4, pageSettled: false, deformationReset: true }),
+    getSnapshot: () => ({ rootUuid: "one", openProgress: 0, pageTurnProgress: 0, settledPages: 0, pagePivotCount: 6, paginatedLeafCount: 1, pageSettled: false, deformationReset: true }),
   } as CompleteShelfRigController;
 
   applyCompleteShelfStudioState(controller, "page-turn-75");

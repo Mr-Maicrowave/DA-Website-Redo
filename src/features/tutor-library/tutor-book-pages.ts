@@ -2,7 +2,13 @@ import type { CatalogueTutor } from '../../data/teacherCatalogue.ts';
 import { profileContentFor } from '../../pages/profileContent.ts';
 
 export const TUTOR_BOOK_PAGE_COUNT = 6 as const;
-export const TUTOR_BOOK_PAGINATED_LEAF_COUNT = 4 as const;
+/**
+ * The physical book retains all six leaves, but the reader deliberately offers
+ * one turn only: the opening profile and one follow-up page. Full detail stays
+ * available from the tutor profile rather than asking visitors to page through
+ * a miniature book.
+ */
+export const TUTOR_BOOK_PAGINATED_LEAF_COUNT = 1 as const;
 export const TUTOR_BOOK_READING_STATE_COUNT = TUTOR_BOOK_PAGINATED_LEAF_COUNT + 1;
 
 export type TutorBookPageId = 'identity' | 'approach' | 'why-da' | 'goals' | 'remembered' | 'subjects';

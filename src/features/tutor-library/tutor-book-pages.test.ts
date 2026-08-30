@@ -4,6 +4,8 @@ import test from 'node:test';
 import { TUTORS, type CatalogueTutor } from '../../data/teacherCatalogue.ts';
 import {
   TUTOR_BOOK_PAGE_COUNT,
+  TUTOR_BOOK_PAGINATED_LEAF_COUNT,
+  TUTOR_BOOK_READING_STATE_COUNT,
   advanceTutorBookPageTurn,
   createTutorBookPages,
   createTutorBookSpreads,
@@ -92,9 +94,10 @@ test('maps keyboard and reliable horizontal swipe gestures to bounded page targe
 
   assert.equal(getTutorBookPageTarget(0, -1), undefined);
   assert.equal(getTutorBookPageTarget(0, 1), 1);
-  assert.equal(getTutorBookPageTarget(3, -1), 2);
-  assert.equal(getTutorBookPageTarget(3, 1), 4);
-  assert.equal(getTutorBookPageTarget(4, 1), undefined, 'four approved turns expose five reachable reading states');
+  assert.equal(getTutorBookPageTarget(1, -1), 0);
+  assert.equal(getTutorBookPageTarget(1, 1), undefined, 'the concise reader exposes two reachable states');
+  assert.equal(TUTOR_BOOK_PAGINATED_LEAF_COUNT, 1);
+  assert.equal(TUTOR_BOOK_READING_STATE_COUNT, 2);
 });
 
 test('advances real controller page progress over the existing timing window and clamps once complete', () => {

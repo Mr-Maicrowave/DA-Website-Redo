@@ -68,7 +68,7 @@ function Fixture() {
     sceneError={sceneError}
     focusReturnEditionId={focusReturnEditionId}
     settledPages={settledPages}
-    pageCount={5}
+    pageCount={2}
     onTurn={wallId => events.push(`turn:${wallId}`)}
     onBookInteraction={(editionId, input) => events.push(`book:${editionId}:${input}`)}
     onCancelPending={editionId => events.push(`cancel:${editionId ?? 'all'}`)}
