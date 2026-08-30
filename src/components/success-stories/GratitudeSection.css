@@ -1,172 +1,28 @@
-.ss-gratitude {
-  position: relative;
-  z-index: 2;
-  display: grid;
-  min-height: 90vh;
-  min-height: 90svh;
-  place-items: center;
-  overflow: hidden;
-  margin-bottom: clamp(-4rem, -4.5vw, -2.25rem);
-  padding: clamp(4.5rem, 7vh, 6.5rem) clamp(1.25rem, 5vw, 5rem) clamp(7rem, 10vw, 10rem);
-  border-radius: 0 0 50% 50% / 0 0 clamp(2.75rem, 5vw, 5.5rem) clamp(2.75rem, 5vw, 5.5rem);
-  background: radial-gradient(circle at 50% 32%, rgba(207, 158, 63, 0.1), transparent 38%), #fbf6ec;
-  box-shadow: 0 3px 0 rgba(198, 144, 37, 0.55);
-  isolation: isolate;
+.ss-gratitude{--paper:#fbf5e9;--ink:#0c2d49;--gold:#b77913;position:relative;z-index:2;min-height:64rem;overflow:hidden;margin-bottom:clamp(-4rem,-4.5vw,-2.25rem);padding:4.5rem 1.5rem 7rem;border-radius:0 0 50% 50%/0 0 clamp(2.75rem,5vw,5.5rem) clamp(2.75rem,5vw,5.5rem);background:radial-gradient(circle at 50% 36%,#fffdf7 0,#fbf6ed 50%,#f8f0e2 100%);box-shadow:0 3px 0 rgba(198,144,37,.55);isolation:isolate}
+.ss-gratitude__eyebrow{position:relative;z-index:80;margin:0;color:var(--gold);font-family:var(--ss-font-structure);font-size:.78rem;font-weight:800;letter-spacing:.28em;text-align:center}.ss-gratitude__eyebrow span{display:block;margin-top:.35rem;font-size:.68rem}
+.ss-gratitude__stage{position:relative;z-index:10;width:min(58rem,72vw);height:47rem;margin:1.25rem auto 0;perspective:1000px}.ss-gratitude__envelope{position:absolute;inset:auto 0 4rem;width:100%;aspect-ratio:3/2;filter:drop-shadow(0 22px 25px rgba(70,48,20,.16));transform-style:preserve-3d;transition:filter .3s ease,transform .3s ease}.ss-gratitude__envelope:hover,.ss-gratitude__envelope:focus-within{filter:drop-shadow(0 28px 23px rgba(70,48,20,.23))}.ss-gratitude__stage[data-open="false"] .ss-gratitude__envelope:hover{transform:translateY(-4px)}
+.ss-gratitude__envelope-back,.ss-gratitude__flap,.ss-gratitude__pocket,.ss-gratitude__seal,.ss-gratitude__letter-paper{position:absolute;display:block;pointer-events:none;user-select:none}.ss-gratitude__envelope-back{z-index:10;inset:0;width:100%;height:100%;object-fit:contain}.ss-gratitude__letter{position:absolute;z-index:20;top:8%;left:50%;width:clamp(38.75rem,46vw,43.75rem);aspect-ratio:4/5;transform-origin:bottom center}.ss-gratitude__letter-paper{inset:0;width:100%;height:100%;object-fit:fill;filter:drop-shadow(0 18px 22px rgba(72,46,12,.18))}.ss-gratitude__flap{z-index:30;top:1%;left:0;width:100%;height:72%;object-fit:contain;transform-origin:top center;transition:transform .72s cubic-bezier(.22,1,.36,1),opacity .15s ease .48s;backface-visibility:hidden}.ss-gratitude__stage[data-open="true"] .ss-gratitude__flap{transform:rotateX(180deg);opacity:.18}.ss-gratitude__pocket{z-index:40;inset:0;width:100%;height:100%;object-fit:contain}.ss-gratitude__seal{z-index:50;top:48%;left:50%;width:6.2rem;height:6.2rem;object-fit:contain;transform:translate(-50%,-50%);transition:opacity .2s ease,transform .15s ease}.ss-gratitude__stage[data-open="false"] .ss-gratitude__envelope:hover .ss-gratitude__seal{animation:ss-seal-pulse .48s ease 1}.ss-gratitude__stage[data-open="true"] .ss-gratitude__seal{opacity:0;transform:translate(-50%,-50%) scale(.82)}.ss-gratitude__trigger{position:absolute;z-index:60;inset:0;border:0;border-radius:1rem;background:transparent;cursor:pointer}.ss-gratitude__trigger:focus-visible,.ss-gratitude__close:focus-visible{outline:3px solid #c68b20;outline-offset:5px}
+.ss-gratitude__address{position:absolute;z-index:45;top:24%;left:50%;display:grid;width:70%;translate:-50% 0;color:var(--ink);text-align:center;transition:opacity .18s ease}.ss-gratitude__address span{font-family:var(--ss-font-display);font-size:clamp(1.6rem,2.6vw,2.45rem)}.ss-gratitude__address strong{color:var(--gold);font-family:var(--ss-font-display);font-size:clamp(1.8rem,3.1vw,3rem);font-style:italic;font-weight:500}.ss-gratitude__address small{margin-top:6.2rem;color:var(--ink);font-family:var(--ss-font-structure);font-size:.72rem;font-weight:800;letter-spacing:.18em;text-transform:uppercase}.ss-gratitude__stage[data-open="true"] .ss-gratitude__address{opacity:0}
+.ss-gratitude__letter-copy{position:absolute;z-index:2;inset:11% 12% 10%;display:flex;align-items:center;flex-direction:column;color:var(--ink);text-align:center}.ss-gratitude__letter-kicker{margin:0;color:var(--gold);font-family:var(--ss-font-structure);font-size:.67rem!important;font-weight:800;letter-spacing:.26em}.ss-gratitude__letter-kicker span{display:block;margin-top:.3rem}.ss-gratitude__letter h2{display:flex;align-items:center;flex-direction:column;margin:1rem 0 .65rem;font-family:var(--ss-font-display);font-size:clamp(2.5rem,3.8vw,4rem);font-weight:550;line-height:.92;letter-spacing:-.035em}.ss-gratitude__letter h2 em{color:var(--gold);font-style:italic;font-weight:450}.ss-gratitude__rule{width:76%;height:1px;margin-bottom:1.4rem;background:var(--gold);box-shadow:0 5px 0 -2px var(--gold)}.ss-gratitude__letter-copy>p:not(.ss-gratitude__letter-kicker){width:min(100%,30rem);margin:0 0 1rem;font-family:var(--ss-font-structure);font-size:clamp(.86rem,1.1vw,1rem);line-height:1.6}.ss-gratitude__letter-copy>p:nth-of-type(2){font-weight:650}.ss-gratitude__letter-copy strong{margin-top:.55rem;color:var(--gold);font-family:'Caveat',cursive;font-size:clamp(2rem,3vw,3rem);font-weight:500;transform:rotate(-2deg)}.ss-gratitude__close{position:absolute;z-index:70;top:6%;right:7%;display:grid;width:44px;height:44px;place-items:center;border:1px solid rgba(183,121,19,.28);border-radius:50%;background:rgba(255,252,245,.72);color:var(--ink);font-size:1.6rem;opacity:0;pointer-events:none;transition:opacity .2s ease .55s}.ss-gratitude__stage[data-open="true"] .ss-gratitude__close{opacity:1;pointer-events:auto}
+.ss-gratitude__notes{position:absolute;z-index:5;inset:0;margin:0;padding:0;list-style:none;pointer-events:none}.ss-gratitude__note{--x:0;--y:0;position:absolute;width:clamp(9.5rem,13vw,12.5rem);min-height:8rem;padding:1.1rem;border:1px solid rgba(165,117,39,.14);background:#fffaf0;box-shadow:0 10px 24px rgba(73,49,22,.11);color:var(--ink);font-family:var(--ss-font-structure);transform:translate(var(--x),var(--y)) rotate(var(--r))}.ss-gratitude__note::before{position:absolute;top:-.55rem;left:50%;width:2.5rem;height:1rem;background:rgba(217,196,161,.55);content:'';transform:translateX(-50%) rotate(-2deg)}.ss-gratitude__note-initial{display:grid;width:1.35rem;height:1.35rem;place-items:center;border-radius:50%;background:#d59b32;color:#fff;font-size:.68rem;font-weight:800}.ss-gratitude__note[data-tone="sage"] .ss-gratitude__note-initial{background:#65a48f}.ss-gratitude__note[data-tone="coral"] .ss-gratitude__note-initial{background:#e68268}.ss-gratitude__note[data-tone="blue"] .ss-gratitude__note-initial{background:#70a8ce}.ss-gratitude__note[data-tone="lavender"] .ss-gratitude__note-initial{background:#9983ca}.ss-gratitude__note q{display:block;margin-top:.7rem;font-size:.82rem;line-height:1.55;quotes:none}.ss-gratitude__note-heart{position:absolute;right:.75rem;bottom:.65rem;color:#b7832d;font-size:1.25rem}.ss-gratitude__note--1{--r:-5deg;top:17%;left:4%}.ss-gratitude__note--2{--r:4deg;top:45%;left:6%}.ss-gratitude__note--3{--r:-3deg;bottom:10%;left:13%}.ss-gratitude__note--4{--r:5deg;top:17%;right:4%}.ss-gratitude__note--5{--r:-4deg;top:45%;right:6%}.ss-gratitude__note--6{--r:3deg;right:13%;bottom:10%}
+@keyframes ss-seal-pulse{0%,100%{transform:translate(-50%,-50%) scale(1)}50%{transform:translate(-50%,-50%) scale(1.06)}}
+@media (max-width:860px){.ss-gratitude{min-height:53rem;padding:3.5rem 1rem 6rem}.ss-gratitude__stage{width:86vw;height:41rem;margin-top:5rem}.ss-gratitude__letter{top:3%;width:90vw}.ss-gratitude__note{width:8.3rem;min-height:6.7rem;padding:.85rem}.ss-gratitude__note q{font-size:.72rem}.ss-gratitude__note--desktop{display:none}.ss-gratitude__note--1{top:7%;left:2%}.ss-gratitude__note--2{top:7%;right:2%;left:auto}.ss-gratitude__note--4{top:auto;right:2%;bottom:3%}.ss-gratitude__note--6{right:auto;bottom:3%;left:2%}.ss-gratitude__address small{margin-top:11vw}}
+@media (max-width:520px){.ss-gratitude{min-height:48rem;margin-bottom:-2.4rem;padding-inline:.65rem}.ss-gratitude__stage{height:35rem;margin-top:6rem}.ss-gratitude__letter-copy{inset:10% 10% 8%}.ss-gratitude__letter h2{font-size:clamp(2rem,9.5vw,2.65rem)}.ss-gratitude__letter-copy>p:not(.ss-gratitude__letter-kicker){margin-bottom:.65rem;font-size:.71rem;line-height:1.45}.ss-gratitude__letter-copy strong{font-size:1.7rem}.ss-gratitude__note{width:7.2rem;min-height:5.8rem}.ss-gratitude__note q{font-size:.64rem;line-height:1.4}.ss-gratitude__seal{width:4.5rem;height:4.5rem}.ss-gratitude__address span{font-size:1.05rem}.ss-gratitude__address strong{font-size:1.3rem}.ss-gratitude__address small{margin-top:3.4rem;font-size:.58rem}}
+@media (prefers-reduced-motion:reduce){.ss-gratitude *,.ss-gratitude *::before,.ss-gratitude *::after{animation:none!important;scroll-behavior:auto!important;transition-duration:.01ms!important}.ss-gratitude__stage[data-open="true"] .ss-gratitude__flap{transform:rotateX(180deg)}}
+
+/* Keep Framer Motion's transform channel free for the extraction animation. */
+.ss-gratitude__letter{translate:-50% 0}
+
+/* Desktop composition stays within a conventional 900px viewport. */
+@media (min-width:861px){
+  .ss-gratitude{min-height:56.25rem}
+  .ss-gratitude__stage{height:42rem}
 }
-
-.ss-gratitude__content {
-  position: relative;
-  z-index: 2;
-  display: flex;
-  width: min(100%, 70rem);
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-}
-
-.ss-gratitude__label-wrap { display: flex; align-items: center; gap: 0.8rem; }
-.ss-gratitude__label-wrap > span { width: clamp(2rem, 4vw, 4rem); height: 1px; background: linear-gradient(90deg, transparent, rgba(174, 122, 32, 0.68)); }
-.ss-gratitude__label-wrap > span:last-child { transform: scaleX(-1); }
-
-.ss-gratitude__label {
-  margin: 0;
-  color: #a36f18;
-  font-family: var(--ss-font-structure);
-  font-size: clamp(0.75rem, 0.82vw, 0.9rem);
-  font-weight: 750;
-  letter-spacing: 0.28em;
-  text-transform: uppercase;
-}
-
-.ss-gratitude__label::before { display: block; margin-bottom: 0.32rem; content: '✦'; font-size: 0.75rem; line-height: 1; }
-
-.ss-gratitude__heading {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin: clamp(1rem, 1.6vh, 1.35rem) 0 0;
-  font-family: var(--ss-font-display);
-  font-weight: 500;
-  letter-spacing: -0.035em;
-  line-height: 0.82;
-  text-wrap: balance;
-}
-
-.ss-gratitude__heading-mask { display: block; overflow: hidden; padding: 0.08em 0.08em 0.13em; }
-.ss-gratitude__heading-primary, .ss-gratitude__heading-secondary { display: block; }
-.ss-gratitude__heading-primary { color: var(--ss-navy); font-size: clamp(4rem, 7vw, 7.5rem); font-style: normal; }
-.ss-gratitude__heading-secondary { color: #a96f15; font-size: clamp(3.35rem, 6vw, 6.5rem); font-style: italic; font-weight: 400; }
-
-.ss-gratitude__headline-stroke {
-  width: min(44vw, 32rem);
-  height: auto;
-  margin-top: -0.25rem;
-  color: #bd8523;
-  overflow: visible;
-}
-
-.ss-gratitude__headline-stroke path { stroke-linecap: round; stroke-width: 2; vector-effect: non-scaling-stroke; }
-
-.ss-gratitude__items {
-  display: grid;
-  width: min(100%, 54rem);
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  margin-top: clamp(1.35rem, 2.8vh, 2.3rem);
-}
-
-.ss-gratitude__item {
-  position: relative;
-  display: flex;
-  min-width: 0;
-  align-items: center;
-  flex-direction: column;
-  padding: 0 clamp(0.8rem, 2vw, 1.8rem);
-}
-
-.ss-gratitude__item + .ss-gratitude__item::before {
-  position: absolute;
-  top: 0.1rem;
-  bottom: 0.1rem;
-  left: 0;
-  width: 1px;
-  background: rgba(174, 122, 32, 0.42);
-  content: '';
-}
-
-.ss-gratitude__item svg { width: clamp(1.7rem, 2.3vw, 2.35rem); height: auto; color: #b77e1d; stroke-width: 1.35; }
-.ss-gratitude__item p { display: flex; flex-direction: column; margin: 0.55rem 0 0; color: var(--ss-navy); font-family: var(--ss-font-structure); font-size: clamp(0.82rem, 1vw, 1rem); line-height: 1.45; }
-.ss-gratitude__item em, .ss-gratitude__message em { color: #a96f15; font-style: normal; }
-
-.ss-gratitude__message {
-  width: min(100%, 42rem);
-  margin: clamp(1.5rem, 3vh, 2.25rem) 0 0;
-  padding: 0.8rem clamp(1rem, 3vw, 2rem);
-  border-block: 1px solid rgba(174, 122, 32, 0.2);
-  background: rgba(255, 251, 242, 0.48);
-  color: var(--ss-navy);
-  font-family: var(--ss-font-structure);
-  font-size: clamp(0.95rem, 1.25vw, 1.16rem);
-  line-height: 1.5;
-}
-
-.ss-gratitude__closing { width: min(100%, 44rem); margin-top: clamp(1rem, 2.2vh, 1.7rem); }
-.ss-gratitude__closing img { display: block; width: 100%; height: auto; object-fit: contain; }
-
-.ss-gratitude__script {
-  position: absolute;
-  z-index: -1;
-  color: rgba(177, 128, 38, 0.055);
-  font-family: 'Caveat', cursive;
-  font-size: clamp(9rem, 20vw, 19rem);
-  line-height: 0.8;
-  pointer-events: none;
-  user-select: none;
-  white-space: nowrap;
-}
-
-.ss-gratitude__script--left { top: 19%; left: -3%; transform: rotate(-8deg); }
-.ss-gratitude__script--right { right: -2%; bottom: 24%; transform: rotate(-11deg); }
-
-.ss-gratitude__spark {
-  position: absolute;
-  z-index: 1;
-  color: rgba(188, 133, 31, 0.38);
-  font-size: clamp(0.65rem, 1vw, 0.95rem);
-  pointer-events: none;
-  animation: ss-gratitude-spark-drift 8s ease-in-out infinite alternate;
-}
-
-.ss-gratitude__spark--one { top: 9%; left: 15%; }
-.ss-gratitude__spark--two { top: 18%; right: 13%; animation-delay: -2.5s; }
-.ss-gratitude__spark--three { right: 25%; bottom: 14%; animation-delay: -5s; }
-
-@keyframes ss-gratitude-spark-drift {
-  from { opacity: 0.22; transform: translate3d(0, 0, 0) scale(0.94); }
-  to { opacity: 0.5; transform: translate3d(4px, -8px, 0) scale(1.05); }
-}
-
-@media (max-width: 860px) {
-  .ss-gratitude { min-height: auto; padding-block: 5rem 8rem; }
-  .ss-gratitude__items { width: min(100%, 35rem); grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.5rem 0; }
-  .ss-gratitude__item:nth-child(3)::before { content: none; }
-}
-
-@media (max-width: 520px) {
-  .ss-gratitude { margin-bottom: -2.4rem; padding: 4rem 1.1rem 6.5rem; border-radius: 0 0 50% 50% / 0 0 2.8rem 2.8rem; }
-  .ss-gratitude__heading-primary { font-size: clamp(3.75rem, 19vw, 5rem); }
-  .ss-gratitude__heading-secondary { font-size: clamp(3rem, 15vw, 4.2rem); }
-  .ss-gratitude__headline-stroke { width: min(78vw, 25rem); }
-  .ss-gratitude__items { gap: 1.3rem 0; margin-top: 1.25rem; }
-  .ss-gratitude__item { padding-inline: 0.6rem; }
-  .ss-gratitude__item p { font-size: 0.79rem; }
-  .ss-gratitude__message { font-size: 0.9rem; }
-  .ss-gratitude__script { font-size: clamp(7rem, 38vw, 10rem); opacity: 0.65; }
-  .ss-gratitude__script--left { top: 20%; left: -12%; }
-  .ss-gratitude__script--right { right: -10%; bottom: 18%; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .ss-gratitude *, .ss-gratitude *::before, .ss-gratitude *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; }
-  .ss-gratitude__spark { display: none; }
-  .ss-gratitude path { stroke-dashoffset: 0 !important; }
+.ss-gratitude__trigger:focus-visible,.ss-gratitude__close:focus-visible{outline-offset:-9px}
+.ss-gratitude__stage[data-open="true"] .ss-gratitude__trigger{pointer-events:none}
+.ss-gratitude__stage[data-open="false"] .ss-gratitude__letter{visibility:hidden}
+.ss-gratitude__stage[data-open="true"] .ss-gratitude__letter{visibility:visible}
+@media (max-width:860px){
+  .ss-gratitude__stage[data-open="true"] .ss-gratitude__envelope{translate:0 210px}
+  .ss-gratitude__stage[data-open="true"] .ss-gratitude__letter{translate:-50% -300px}
 }
