@@ -15,7 +15,6 @@ import BookInterview from "./pages/BookInterview";
 import Reviews from "./pages/Reviews";
 import NotFound from "./pages/NotFound";
 import FindTeacher from "./pages/FindTeacher";
-import Tutors from "./pages/Tutors";
 import Articles from "./pages/Articles";
 import ArticleView from "./pages/ArticleView";
 import AppreciationAdvice from "./pages/AppreciationAdvice";
@@ -58,8 +57,13 @@ import { signalInitialRoutePainted } from "./lib/initialLoader";
 const CompleteShelfR3FCheckpoint = lazy(
   () => import("./features/tutor-library/CompleteShelfR3FCheckpoint"),
 );
+const Tutors = lazy(() => import("./pages/Tutors"));
 
 const queryClient = new QueryClient();
+
+const TutorRouteLoading = () => <main aria-live="polite" aria-label="Opening tutor library" style={{ display: 'grid', minHeight: '100svh', placeItems: 'center', background: '#071323', color: '#f7ecd4', textAlign: 'center' }}>
+  <div><p style={{ margin: 0, color: '#d5b369', fontSize: '.72rem', fontWeight: 700, letterSpacing: '.12em', textTransform: 'uppercase' }}>DA Tuition faculty</p><h1 style={{ margin: '.65rem 0 0', fontFamily: 'Georgia, serif', fontWeight: 500 }}>Opening the tutor library</h1></div>
+</main>;
 
 const InitialLoaderReadySignal = () => {
   useEffect(() => signalInitialRoutePainted(), []);
@@ -86,7 +90,7 @@ const AnimatedRoutes = () => {
         <Route path="/book-interview" element={<PageTransition><BookInterview /></PageTransition>} />
         <Route path="/reviews" element={<Navigate to="/success-stories" replace />} />
         <Route path="/find-teacher" element={<PageTransition><FindTeacher /></PageTransition>} />
-        <Route path="/tutors" element={<PageTransition><Tutors /></PageTransition>} />
+        <Route path="/tutors" element={<Suspense fallback={<TutorRouteLoading />}><PageTransition><Tutors /></PageTransition></Suspense>} />
         <Route path="/teachers" element={<Navigate to="/find-teacher" replace />} />
         <Route path="/articles" element={<PageTransition><Articles /></PageTransition>} />
         <Route path="/articles/:slug" element={<PageTransition><ArticleView /></PageTransition>} />

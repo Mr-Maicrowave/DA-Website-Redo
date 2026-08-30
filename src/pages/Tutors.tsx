@@ -1,10 +1,17 @@
 import FooterNew from '@/components/FooterNew';
 import NavigationNew from '@/components/NavigationNew';
 import SEO from '@/components/SEO';
+import { lazy, Suspense } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { TutorLibrary } from '@/features/tutor-library/TutorLibrary';
-import { TutorBookStudio, type CompleteShelfEngineCamera } from '@/features/tutor-library/TutorBookStudio';
+import type { CompleteShelfEngineCamera } from '@/features/tutor-library/TutorBookStudio';
 import type { CompleteShelfBookState } from '@/features/tutor-library/CompleteShelfTutorBook';
+
+const TutorLibrary = lazy(() => import('@/features/tutor-library/TutorLibrary').then(module => ({ default: module.TutorLibrary })));
+const TutorBookStudio = lazy(() => import('@/features/tutor-library/TutorBookStudio').then(module => ({ default: module.TutorBookStudio })));
+
+const TutorLibraryRouteLoading = () => <main aria-live="polite" aria-label="Opening tutor library" style={{ display: 'grid', minHeight: 'min(78rem, 100svh)', placeItems: 'center', background: '#071323', color: '#f7ecd4', textAlign: 'center' }}>
+  <div><p style={{ margin: 0, color: '#d5b369', fontSize: '.72rem', fontWeight: 700, letterSpacing: '.12em', textTransform: 'uppercase' }}>DA Tuition faculty</p><h1 style={{ margin: '.65rem 0 0', fontFamily: 'Georgia, serif', fontWeight: 500 }}>Opening the tutor library</h1></div>
+</main>;
 
 const Tutors = () => {
   const [searchParams] = useSearchParams();
@@ -16,7 +23,7 @@ const Tutors = () => {
     const engineStates: readonly CompleteShelfBookState[] = ['closed-front', 'closed-spine', 'shelf', 'extracting', 'preview', 'half-open', 'open', 'page-turn-25', 'page-turning', 'page-turn-75', 'page-settled', 'closed-returned'];
     const requestedEngineCamera = searchParams.get('bookEngineCamera');
     const engineCamera: CompleteShelfEngineCamera = requestedEngineCamera === 'open-top-oblique' || requestedEngineCamera === 'turn-side-oblique' || requestedEngineCamera === 'turn-top-oblique' || requestedEngineCamera === 'turn-close' ? requestedEngineCamera : 'default';
-    return <TutorBookStudio view={studioView} engineState={engineStates.includes(requestedEngineState as CompleteShelfBookState) ? requestedEngineState as CompleteShelfBookState : undefined} engineCamera={engineCamera} collisionDebug={searchParams.get('bookCollisionDebug') === '1'} />;
+    return <Suspense fallback={<TutorLibraryRouteLoading />}><TutorBookStudio view={studioView} engineState={engineStates.includes(requestedEngineState as CompleteShelfBookState) ? requestedEngineState as CompleteShelfBookState : undefined} engineCamera={engineCamera} collisionDebug={searchParams.get('bookCollisionDebug') === '1'} /></Suspense>;
   }
 
   return (
@@ -28,7 +35,7 @@ const Tutors = () => {
       />
       <NavigationNew />
       <main>
-        <TutorLibrary />
+        <Suspense fallback={<TutorLibraryRouteLoading />}><TutorLibrary /></Suspense>
       </main>
       <FooterNew />
     </div>

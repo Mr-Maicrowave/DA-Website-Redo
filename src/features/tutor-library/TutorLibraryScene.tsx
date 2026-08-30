@@ -80,6 +80,18 @@ function CameraFrame({ fromWallIndex, toWallIndex, motionProgress, debugTurnProg
   return null;
 }
 
+function RoomReadySignal({ onRoomReady }: { onRoomReady: () => void }) {
+  const emitted = useRef(false);
+
+  useFrame(() => {
+    if (emitted.current) return;
+    emitted.current = true;
+    requestAnimationFrame(() => onRoomReady());
+  });
+
+  return null;
+}
+
 function MotionDriver({ phase, generation, timing, motionProgress, debugTurnProgress, debugBookProgress, onComplete }: { phase: LibraryPhase; generation: number; timing: BookMotionTimingPolicy; motionProgress: MutableRefObject<TutorLibraryMotionProgress>; debugTurnProgress?: number; debugBookProgress?: number; onComplete: (event: LibraryEvent) => void }) {
   const startedAt = useRef<number>();
   const completed = useRef<string>();
@@ -106,7 +118,7 @@ function MotionDriver({ phase, generation, timing, motionProgress, debugTurnProg
   return null;
 }
 
-export function TutorLibraryScene({ fromWallIndex, toWallIndex, motionProgress, debugTurnProgress, debugBookProgress, timing, reviewView, showWallLabels = true, phase, generation, reducedMotion, pageTurnDirection, selectedEditionId, rigIntentEditionId: requestedRigIntentEditionId, rigIntentToken, onActivate, onRigReady, onRigUnavailable, onLifecycleComplete, onPageSettled, onError }: { fromWallIndex: number; toWallIndex: number; motionProgress: MutableRefObject<TutorLibraryMotionProgress>; debugTurnProgress?: number; debugBookProgress?: number; timing: BookMotionTimingPolicy; reviewView?: string | null; showWallLabels?: boolean; phase: LibraryPhase; generation: number; reducedMotion: boolean; pageTurnDirection: TutorBookPageTurnDirection; selectedEditionId?: string; rigIntentEditionId?: string; rigIntentToken: number; onActivate: (editionId: string, rootUuid: string) => void; onRigReady: (editionId: string, rootUuid: string, token: number) => void; onRigUnavailable: (editionId: string, rootUuid: string) => void; onLifecycleComplete: (event: LibraryEvent) => void; onPageSettled: (settledPages: number) => void; onError: (message: string) => void }) {
+export function TutorLibraryScene({ fromWallIndex, toWallIndex, motionProgress, debugTurnProgress, debugBookProgress, timing, reviewView, showWallLabels = true, phase, generation, reducedMotion, pageTurnDirection, selectedEditionId, rigIntentEditionId: requestedRigIntentEditionId, rigIntentToken, onRoomReady, onActivate, onRigReady, onRigUnavailable, onLifecycleComplete, onPageSettled, onError }: { fromWallIndex: number; toWallIndex: number; motionProgress: MutableRefObject<TutorLibraryMotionProgress>; debugTurnProgress?: number; debugBookProgress?: number; timing: BookMotionTimingPolicy; reviewView?: string | null; showWallLabels?: boolean; phase: LibraryPhase; generation: number; reducedMotion: boolean; pageTurnDirection: TutorBookPageTurnDirection; selectedEditionId?: string; rigIntentEditionId?: string; rigIntentToken: number; onRoomReady: () => void; onActivate: (editionId: string, rootUuid: string) => void; onRigReady: (editionId: string, rootUuid: string, token: number) => void; onRigUnavailable: (editionId: string, rootUuid: string) => void; onLifecycleComplete: (event: LibraryEvent) => void; onPageSettled: (settledPages: number) => void; onError: (message: string) => void }) {
   const bookPool = useMemo(() => createCompleteShelfBookPool<CompleteShelfTutorRig>({ maxDormantRigs: 3 }), []);
   const [pointerRigIntentEditionId, setPointerRigIntentEditionId] = useState<string>();
   const rigIntentEditionId = requestedRigIntentEditionId ?? pointerRigIntentEditionId;
@@ -118,6 +130,7 @@ export function TutorLibraryScene({ fromWallIndex, toWallIndex, motionProgress, 
   return (
     <>
       <MotionDriver phase={phase} generation={generation} timing={timing} motionProgress={motionProgress} debugTurnProgress={debugTurnProgress} debugBookProgress={debugBookProgress} onComplete={onLifecycleComplete} />
+      <RoomReadySignal onRoomReady={onRoomReady} />
       <CameraFrame fromWallIndex={fromWallIndex} toWallIndex={toWallIndex} motionProgress={motionProgress} debugTurnProgress={debugTurnProgress} reviewView={reviewView} phase={phase} />
       <color attach="background" args={['#050d1a']} />
       <fog attach="fog" args={['#050d1a', 11.5, 26]} />
