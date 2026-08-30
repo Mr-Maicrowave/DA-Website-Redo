@@ -1,0 +1,23 @@
+.year-cube {
+  width: 100%;
+  background: #FAF8F5;
+  position: relative;
+}
+
+.year-cube__experience {
+  display: block;
+  width: 100%;
+  height: 100svh;
+  min-height: 720px;
+  max-height: 950px;
+  border: 0;
+  background: #FAF8F5;
+}
+
+@media (max-width: 960px) {
+  .year-cube__experience {
+    height: 100svh;
+    min-height: 880px;
+    max-height: 1100px;
+  }
+}

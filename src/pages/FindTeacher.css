@@ -30,6 +30,9 @@
 .faculty-tools nav { display: flex; flex-wrap: wrap; gap: .35rem; }
 .faculty-tools nav button { padding: .45rem .68rem; color: rgba(17,38,66,.65); border: 0; border-bottom: 1px solid transparent; background: transparent; font: 700 .65rem var(--faculty-sans); cursor: pointer; }
 .faculty-tools nav button.is-active { color: var(--faculty-navy); border-color: var(--faculty-gold); }
+.faculty-results { margin: 0; color: rgba(17,38,66,.66); font: 700 .62rem var(--faculty-sans); letter-spacing: .08em; text-transform: uppercase; }
+.faculty-catalogue__back { display: inline-flex; align-items: center; gap: .55rem; margin: 0 0 1.2rem; padding: 0; color: var(--faculty-gold); border: 0; background: transparent; font: 700 .66rem var(--faculty-sans); letter-spacing: .12em; text-transform: uppercase; cursor: pointer; }
+.faculty-catalogue__back svg { width: 1rem; }
 
 .faculty-cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(.9rem, 1.6vw, 1.4rem); }
 .educator-card { min-height: 23rem; display: grid; grid-template-columns: 41% 59%; overflow: hidden; background: var(--faculty-surface); border: 1px solid rgba(197,154,53,.36); border-radius: 14px; transition: transform .35s cubic-bezier(.2,.75,.2,1), border-color .25s ease, box-shadow .25s ease; }
@@ -86,6 +89,11 @@
 .faculty-preview__strengths b { display: block; margin-bottom: .35rem; color: var(--faculty-gold-soft); font: 700 .58rem var(--faculty-sans); }
 .faculty-preview__full { width: 100%; min-height: 3rem; margin-top: 1.2rem; display: flex; justify-content: center; align-items: center; gap: .8rem; color: var(--faculty-navy-deep); background: var(--faculty-surface); border: 0; font: 700 .68rem var(--faculty-sans); letter-spacing: .07em; text-transform: uppercase; cursor: pointer; }
 .faculty-preview__full svg { width: .9rem; }
+.faculty-preview__facts { width: 100%; margin: 0; padding: 0; border-top: 1px solid rgba(222,194,125,.22); }
+.faculty-preview__facts > div { padding: .9rem 0; border-bottom: 1px solid rgba(222,194,125,.16); }
+.faculty-preview__facts dt { color: var(--faculty-gold-soft); font-size: .6rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
+.faculty-preview__facts dd { margin: .35rem 0 0; color: rgba(255,255,255,.82); font: 400 .76rem/1.55 var(--faculty-serif); }
+.faculty-mobile-preview { display: none; }
 
 .faculty-mobile-guidance { display: none; }
 .teacher-profile-open .site-sticky-book-button, .teacher-profile-open .site-scroll-to-top { opacity: 0 !important; pointer-events: none !important; }
@@ -134,6 +142,8 @@
 @media (max-width: 1180px) {
   .faculty-workspace { grid-template-columns: 1fr; }
   .faculty-preview { display: none; }
+  .faculty-mobile-preview { display: block; margin-top: 1.25rem; color: #fff; background: var(--faculty-navy-deep); }
+  .faculty-mobile-preview .faculty-preview__inner { min-height: auto; padding: 2.75rem clamp(1.5rem, 7vw, 4rem); }
   .faculty-catalogue { min-height: auto; }
   .faculty-mobile-guidance { padding: clamp(4rem, 9vw, 7rem) 1.5rem; display: block; color: #fff; background: var(--faculty-navy-deep); text-align: center; }
   .faculty-mobile-guidance p { color: var(--faculty-gold-soft); font-size: .7rem; text-transform: uppercase; letter-spacing: .08em; }

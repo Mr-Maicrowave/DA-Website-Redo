@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { HelmetProvider } from 'react-helmet-async';
 import { AnimatePresence } from "framer-motion";
+import { lazy, Suspense, useEffect } from "react";
 import PageTransition from "@/components/animations/PageTransition";
 import ScrollProgress from "@/components/animations/ScrollProgress";
 import StickyBookButton from "@/components/StickyBookButton";
@@ -52,8 +53,19 @@ import TestimonialDetail from "./pages/TestimonialDetail";
 import ScrollToTop from "./components/ScrollToTop";
 import RouteScrollReset from "./components/RouteScrollReset";
 import BookIntroCalibration from "./pages/BookIntroCalibration";
+import { signalInitialRoutePainted } from "./lib/initialLoader";
+
+const CompleteShelfR3FCheckpoint = lazy(
+  () => import("./features/tutor-library/CompleteShelfR3FCheckpoint"),
+);
 
 const queryClient = new QueryClient();
+
+const InitialLoaderReadySignal = () => {
+  useEffect(() => signalInitialRoutePainted(), []);
+
+  return null;
+};
 
 const AnimatedRoutes = () => {
   const location = useLocation();
@@ -65,6 +77,10 @@ const AnimatedRoutes = () => {
         <Route
           path="/book-intro-calibration"
           element={import.meta.env.DEV ? <BookIntroCalibration /> : <Navigate to="/" replace />}
+        />
+        <Route
+          path="/dev/complete-shelf-r3f"
+          element={import.meta.env.DEV ? <Suspense fallback={null}><CompleteShelfR3FCheckpoint /></Suspense> : <Navigate to="/" replace />}
         />
         <Route path="/interview" element={<Navigate to="/principal-interview-paper" replace />} />
         <Route path="/book-interview" element={<PageTransition><BookInterview /></PageTransition>} />
@@ -129,6 +145,7 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
+          <InitialLoaderReadySignal />
           <RouteScrollReset />
           <ScrollProgress />
           <StickyBookButton />

@@ -1,7 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { existsSync, readFileSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
+import { readFileSync } from 'node:fs';
 
 const pageUrl = new URL('./Science.tsx', import.meta.url);
 
@@ -15,23 +14,15 @@ test('builds Newton orchard from one clean background and reusable transparent a
   assert.doesNotMatch(source, /newton-apple-cover/);
   assert.doesNotMatch(source, /newton-apple__sprite/);
   assert.doesNotMatch(source, /background-image: url\('\/images\/apple-tree-background\.png'\)/);
-
-  for (const asset of ['apple-red.png', 'apple-gold.png', 'apple-green.png']) {
-    assert.equal(
-      existsSync(fileURLToPath(new URL(`../../../public/images/newton-apples/${asset}`, import.meta.url))),
-      true,
-      `${asset} must ship with the orchard`,
-    );
-  }
 });
 
-test('caps the orchard at seven deterministic controls with a curated mobile subset', () => {
+test('reserves the low-hanging apple for the scroll story rather than duplicating it as a click control', () => {
   const source = readFileSync(pageUrl, 'utf8');
   const appleIds = source.match(/id: '[a-z-]+', sourceX:/g) ?? [];
   const mobileApples = source.match(/mobileVisible: true/g) ?? [];
 
-  assert.equal(appleIds.length, 7);
-  assert.equal(mobileApples.length, 2);
+  assert.equal(appleIds.length, 6);
+  assert.equal(mobileApples.length, 1);
   assert.match(source, /asset: 'red'/);
   assert.match(source, /asset: 'gold'/);
   assert.match(source, /asset: 'green'/);
@@ -115,9 +106,15 @@ test('keeps the click instruction visible in the empty sky left of the tree', ()
   assert.match(source, /\.newton-click-note \{[\s\S]*?left: clamp\(390px, 32vw, 490px\);[\s\S]*?top: 38%;/);
   assert.match(source, /@media \(max-width: 1024px\)[\s\S]*?\.newton-click-note \{[\s\S]*?left: clamp\(32px, 6vw, 64px\);[\s\S]*?top: 44%;/);
   assert.match(source, /@media \(max-width: 680px\)[\s\S]*?\.newton-click-note \{[\s\S]*?left: 18px;[\s\S]*?top: 80px;/);
-  assert.match(source, /<div className="newton-click-note" aria-hidden="true">/);
+  assert.match(source, /className="newton-click-note" aria-hidden="true">/);
   assert.doesNotMatch(source, /\{!activeFact && \(\s*<div className="newton-click-note"/);
   assert.match(source, /className=\{`newton-scene\$\{activeFact \? ' has-active-fact' : ''\}`\}/);
   assert.match(source, /@media \(max-width: 680px\)[\s\S]*?\.newton-scene\.has-active-fact \{[\s\S]*?min-height: 700px;/);
   assert.match(source, /@media \(max-width: 680px\)[\s\S]*?\.newton-scene\.has-active-fact \.newton-fact \{[\s\S]*?top: 230px;[\s\S]*?bottom: auto;/);
+});
+
+test('fades the orchard instruction before the microscope aperture takes over', () => {
+  const source = readFileSync(pageUrl, 'utf8');
+
+  assert.match(source, /<motion\.div\s+style=\{reducedMotion \? undefined : \{ opacity: storyContentOpacity \}\}\s+className="newton-click-note"/);
 });

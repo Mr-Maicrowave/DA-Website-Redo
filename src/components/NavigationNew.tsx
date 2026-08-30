@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
-import { Menu, ChevronDown } from 'lucide-react';
+import { Menu, ChevronDown, Search } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { HoverCard, HoverCardTrigger, HoverCardContent } from "@/components/ui/hover-card";
 import { useAdaptiveNav } from '@/hooks/useAdaptiveNav';
 import MobileNavSheet from '@/components/nav/MobileNavSheet';
+import GlobalSearch from '@/components/nav/GlobalSearch';
 
 // Desktop shape morph, expressed as a clip-path wipe rather than an
 // animated width/margin/height. Those are layout properties — every frame
@@ -43,6 +44,8 @@ const NavigationNew = ({ heroMode = false }: NavigationNewProps) => {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [reducedMotion, setReducedMotion] = useState(false);
   const [mobileHeaderHidden, setMobileHeaderHidden] = useState(false);
+  const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
+  const [desktopSearchOpen, setDesktopSearchOpen] = useState(false);
   const [pastHero, setPastHero] = useState(false);
   const location = useLocation();
   const isHomepage = location.pathname === '/';
@@ -247,20 +250,35 @@ const NavigationNew = ({ heroMode = false }: NavigationNewProps) => {
               </span>
             </Link>
 
-            <button
-              ref={hamburgerRef}
-              type="button"
-              onClick={() => {
-                setMobileHeaderHidden(false);
-                setSheetOpen(true);
-              }}
-              aria-label="Open menu"
-              aria-expanded={sheetOpen}
-              aria-controls="mobile-nav-sheet"
-              className={`flex h-11 w-11 items-center justify-center transition-colors -mr-1.5 ${hamburgerIconClass}`}
-            >
-              <Menu size={24} aria-hidden="true" />
-            </button>
+            <div className="flex items-center gap-0.5">
+              <button
+                type="button"
+                onClick={() => {
+                  setMobileHeaderHidden(false);
+                  setMobileSearchOpen(true);
+                  setSheetOpen(true);
+                }}
+                aria-label="Search DA Tuition"
+                className={`flex h-11 w-11 items-center justify-center transition-colors ${hamburgerIconClass}`}
+              >
+                <Search size={21} aria-hidden="true" />
+              </button>
+              <button
+                ref={hamburgerRef}
+                type="button"
+                onClick={() => {
+                  setMobileHeaderHidden(false);
+                  setMobileSearchOpen(false);
+                  setSheetOpen(true);
+                }}
+                aria-label="Open menu"
+                aria-expanded={sheetOpen}
+                aria-controls="mobile-nav-sheet"
+                className={`flex h-11 w-11 items-center justify-center transition-colors -mr-1.5 ${hamburgerIconClass}`}
+              >
+                <Menu size={24} aria-hidden="true" />
+              </button>
+            </div>
           </div>
         </nav>
       </div>
@@ -270,6 +288,7 @@ const NavigationNew = ({ heroMode = false }: NavigationNewProps) => {
           type="button"
           onClick={() => {
             setMobileHeaderHidden(false);
+            setMobileSearchOpen(false);
             setSheetOpen(true);
           }}
           aria-label="Open menu"
@@ -283,7 +302,11 @@ const NavigationNew = ({ heroMode = false }: NavigationNewProps) => {
 
       <MobileNavSheet
         isOpen={sheetOpen}
-        onClose={() => setSheetOpen(false)}
+        searchOpen={mobileSearchOpen}
+        onClose={() => {
+          setSheetOpen(false);
+          setMobileSearchOpen(false);
+        }}
         triggerRef={hamburgerRef}
         programsItems={programsItems}
         subjectsItems={subjectsItems}
@@ -482,6 +505,10 @@ const NavigationNew = ({ heroMode = false }: NavigationNewProps) => {
                       </HoverCardContent>
                     </HoverCard>
 
+                    <GlobalSearch onOpenChange={(open) => {
+                      setDesktopSearchOpen(open);
+                      pin(open);
+                    }} />
                     <Link
                       to="/book-interview"
                       aria-current={location.pathname === '/book-interview' ? 'page' : undefined}

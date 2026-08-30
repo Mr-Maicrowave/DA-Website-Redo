@@ -212,11 +212,18 @@ if "!CHANGE_COUNT!"=="0" (
 for /f "delims=" %%C in ('git rev-parse --abbrev-ref HEAD') do set "CURRENT_BRANCH=%%C"
 echo You are currently working on: !CURRENT_BRANCH!
 
-call :LIST_REMOTE_BRANCHES
-if errorlevel 1 goto MAIN_MENU
-call :PICK_BRANCH
-if errorlevel 1 goto MAIN_MENU
-set "TARGET=!SELECTED_BRANCH!"
+echo.
+echo Where do you want to push your changes?
+echo   1^) master   [default]
+echo   2^) lee-work
+echo.
+set "PUSHCHOICE="
+set /p PUSHCHOICE="Enter 1 or 2 (press Enter for master): "
+if "!PUSHCHOICE!"=="2" (
+    set "TARGET=lee-work"
+) else (
+    set "TARGET=master"
+)
 echo.
 echo Target branch: !TARGET!
 echo.
@@ -244,57 +251,29 @@ if errorlevel 1 (
     goto MAIN_MENU
 )
 
-REM --- Always sync + push whatever branch you were already on first ---
+REM --- Sync the target branch before pushing ---
 git fetch origin
-git merge origin/!CURRENT_BRANCH! --no-edit
-if errorlevel 1 (
-    echo.
-    echo ============================================================
-    echo CONFLICT while merging origin/!CURRENT_BRANCH! into your local branch.
-    echo Your work is safely committed locally - nothing was lost or pushed.
-    echo Copy everything below and paste it to Claude for help:
-    echo ============================================================
-    git status
-    pause
-    goto MAIN_MENU
-)
+if "!TARGET!"=="!CURRENT_BRANCH!" goto PUSH_CURRENT_BRANCH
 
-git push origin !CURRENT_BRANCH!
-if errorlevel 1 (
-    echo.
-    echo ERROR: Push to !CURRENT_BRANCH! failed. Copy the message above and paste it to Claude.
-    pause
-    goto MAIN_MENU
-)
-echo.
-echo Successfully pushed to !CURRENT_BRANCH!.
-
-if "!TARGET!"=="!CURRENT_BRANCH!" (
-    echo Done.
-    pause
-    goto MAIN_MENU
-)
-
-REM --- Target is a different branch - merge into it locally and push that too ---
+REM --- Target is a different branch - merge this work into it locally and push that branch ---
 echo.
 echo Now merging into !TARGET!...
 git checkout !TARGET! 2>nul
 if errorlevel 1 (
     git checkout -b !TARGET! origin/!TARGET!
     if errorlevel 1 (
-        echo ERROR: Could not switch to !TARGET!. Stopping - your work is already safely pushed to !CURRENT_BRANCH!.
+        echo ERROR: Could not switch to !TARGET!. Stopping - your work is safely committed locally on !CURRENT_BRANCH!.
         pause
         goto MAIN_MENU
     )
 )
 
-git fetch origin
 git merge origin/!TARGET! --no-edit
 if errorlevel 1 (
     echo.
     echo ============================================================
     echo CONFLICT while updating local !TARGET! from origin/!TARGET!.
-    echo Your work is safe either way - it is already pushed to !CURRENT_BRANCH!.
+    echo Your work is safely committed locally on !CURRENT_BRANCH! - nothing was lost or pushed.
     echo Copy everything below and paste it to Claude for help:
     echo ============================================================
     git status
@@ -307,7 +286,23 @@ if errorlevel 1 (
     echo.
     echo ============================================================
     echo CONFLICT while merging !CURRENT_BRANCH! into !TARGET!.
-    echo Your work is safe either way - it is already pushed to !CURRENT_BRANCH!.
+    echo Your work is safely committed locally on !CURRENT_BRANCH! - nothing was lost or pushed.
+    echo Copy everything below and paste it to Claude for help:
+    echo ============================================================
+    git status
+    pause
+    goto MAIN_MENU
+)
+goto CONFIRM_TARGET_PUSH
+
+REM --- Target is the branch you are already on ---
+:PUSH_CURRENT_BRANCH
+git merge origin/!TARGET! --no-edit
+if errorlevel 1 (
+    echo.
+    echo ============================================================
+    echo CONFLICT while merging origin/!TARGET! into your local branch.
+    echo Your work is safely committed locally - nothing was lost or pushed.
     echo Copy everything below and paste it to Claude for help:
     echo ============================================================
     git status
@@ -315,25 +310,22 @@ if errorlevel 1 (
     goto MAIN_MENU
 )
 
+:CONFIRM_TARGET_PUSH
 echo.
-echo About to push the following commits to !TARGET!:
+for /f %%N in ('git rev-list --count origin/!TARGET!..!TARGET!') do set "PUSH_COUNT=%%N"
+echo About to push !PUSH_COUNT! commit^(s^) to !TARGET!.
+echo Most recent commit:
 echo ------------------------------------------------------------
-git log origin/!TARGET!..!TARGET! --oneline
+git log -1 --oneline
 echo ------------------------------------------------------------
 echo.
-set /p CONFIRM2="Type YES to push to !TARGET!: "
-if /i not "!CONFIRM2!"=="YES" (
-    echo Cancelled - !TARGET! was updated locally but NOT pushed.
-    echo Your changes are already safe on the !CURRENT_BRANCH! branch on GitHub.
-    pause
-    goto MAIN_MENU
-)
-
+echo Pushing to !TARGET!...
 git push origin !TARGET!
 if errorlevel 1 (
     echo.
     echo ERROR: Push to !TARGET! failed - most likely someone else pushed to it in the meantime.
-    echo Nothing was overwritten. Copy the message above and paste it to Claude for help.
+    echo Nothing was overwritten. Your changes are safely committed locally.
+    echo Copy the message above and paste it to Claude for help.
     pause
     goto MAIN_MENU
 )

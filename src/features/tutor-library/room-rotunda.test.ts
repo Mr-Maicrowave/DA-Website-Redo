@@ -1,0 +1,32 @@
+import assert from 'node:assert/strict';
+import test from 'node:test';
+import { existsSync, readFileSync } from 'node:fs';
+
+const roomPath = new URL('./RoomRotunda.tsx', import.meta.url);
+const scenePath = new URL('./TutorLibraryScene.tsx', import.meta.url);
+const libraryPath = new URL('./TutorLibrary.tsx', import.meta.url);
+
+test('renders a data-driven Three.js room without fixed wall geometry', () => {
+  assert.equal(existsSync(roomPath), true);
+  assert.equal(existsSync(scenePath), true);
+  const room = readFileSync(roomPath, 'utf8');
+  const library = readFileSync(libraryPath, 'utf8');
+  assert.match(room, /SUBJECT_WALLS\.map/);
+  assert.match(room, /getWallAngle/);
+  assert.doesNotMatch(room, /wall-0|wall-1|wall-2|wall-3/);
+  assert.match(library, /<Canvas/);
+});
+
+test('uses lightweight material variation and layered mouldings for architectural fidelity', () => {
+  const source = readFileSync(new URL('./RoomRotunda.tsx', import.meta.url), 'utf8');
+
+  assert.match(source, /DataTexture/);
+  assert.match(source, /CabinetMoulding/);
+  assert.match(source, /nosingDepth/);
+});
+
+test('keeps rendered wall labels self-contained for offline production capture', () => {
+  const source = readFileSync(new URL('./RoomRotunda.tsx', import.meta.url), 'utf8');
+
+  assert.match(source, /<Text[^>]*font="\/fonts\/da-prologue-marcellus-sc-400\.ttf"/);
+});

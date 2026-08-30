@@ -1,0 +1,15 @@
+.field-station-native {
+  background: #06141c;
+  isolation: isolate;
+  position: relative;
+}
+
+.field-station-native__mount {
+  background: #06141c;
+}
+
+.field-station-native__fallback {
+  color: #fff6e2;
+  margin: 0;
+  padding: 2rem;
+}
