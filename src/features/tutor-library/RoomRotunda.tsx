@@ -128,12 +128,12 @@ function ShelfFrontProfile({ width, y, depth, nosingDepth }: { width: number; y:
   </group>;
 }
 
-function WallShelves({ wall, angle, width, showWallLabel, pool, rigIntentEditionId, rigIntentToken, onRigIntent, phase, generation, reducedMotion, pageTurnDirection, selectedEditionId, motionProgress, motionProgressRef, onActivate, onRigReady, onRigUnavailable, onLifecycleComplete, onPageSettled, onError }: { wall: SubjectWall; angle: number; width: number; showWallLabel: boolean; pool: CompleteShelfBookPool<CompleteShelfTutorRig>; rigIntentEditionId?: string; rigIntentToken: number; onRigIntent: (editionId?: string) => void; phase: LibraryPhase; selectedEditionId?: string; motionProgress: number; motionProgressRef: Readonly<{ current: { turn: number; book: number } }> } & RoomBookInteractionProps) {
+function WallShelves({ visible, wall, angle, width, showWallLabel, pool, rigIntentEditionId, rigIntentToken, onRigIntent, phase, generation, reducedMotion, pageTurnDirection, selectedEditionId, motionProgress, motionProgressRef, onActivate, onRigReady, onRigUnavailable, onLifecycleComplete, onPageSettled, onError }: { visible: boolean; wall: SubjectWall; angle: number; width: number; showWallLabel: boolean; pool: CompleteShelfBookPool<CompleteShelfTutorRig>; rigIntentEditionId?: string; rigIntentToken: number; onRigIntent: (editionId?: string) => void; phase: LibraryPhase; selectedEditionId?: string; motionProgress: number; motionProgressRef: Readonly<{ current: { turn: number; book: number } }> } & RoomBookInteractionProps) {
   const palette = WALL_COLOURS[wall.palette];
   const cabinet = useMemo(() => createCabinetBlueprint(width, ROOM_HEIGHT), [width]);
   const interiorHeight = ROOM_HEIGHT - .82;
   const shelfWidth = width - cabinet.frameThickness * 1.8;
-  return <group position={[Math.sin(angle) * ROOM_RADIUS, ROOM_HEIGHT / 2, -Math.cos(angle) * ROOM_RADIUS]} rotation={[0, -angle, 0]}>
+  return <group visible={visible} position={[Math.sin(angle) * ROOM_RADIUS, ROOM_HEIGHT / 2, -Math.cos(angle) * ROOM_RADIUS]} rotation={[0, -angle, 0]}>
     <pointLight position={[0, .2, 1.55]} intensity={3.4} distance={7.2} decay={2} color="#ffe8c4" />
     <CabinetBox size={[width + .32, ROOM_HEIGHT + .16, .15]} position={[0, 0, -.16]} color="#102039" roughness={.9} radius={.035} grain={false} />
     <CabinetBox size={[width, ROOM_HEIGHT, .2]} position={[0, 0, cabinet.backPanelZ]} color="#28160e" roughness={.79} />
@@ -221,6 +221,10 @@ function CaseLighting({ fromWallIndex, toWallIndex, motionProgressRef }: { fromW
   </group>;
 }
 
+export function isTutorLibraryWallVisible(index: number, activeWallIndex: number, pendingWallIndex: number, phase: LibraryPhase) {
+  return index === activeWallIndex || (phase === 'ROOM_TURNING' && index === pendingWallIndex);
+}
+
 export function RoomRotunda({ fromWallIndex, toWallIndex, showWallLabels = true, pool, rigIntentEditionId, rigIntentToken, onRigIntent, phase, generation, reducedMotion, pageTurnDirection, selectedEditionId, motionProgress, motionProgressRef, onActivate, onRigReady, onRigUnavailable, onLifecycleComplete, onPageSettled, onError }: { fromWallIndex: number; toWallIndex: number; showWallLabels?: boolean; pool: CompleteShelfBookPool<CompleteShelfTutorRig>; rigIntentEditionId?: string; rigIntentToken: number; onRigIntent: (editionId?: string) => void; phase: LibraryPhase; selectedEditionId?: string; motionProgress: number; motionProgressRef: Readonly<{ current: { turn: number; book: number } }> } & RoomBookInteractionProps) {
-  return <group><RoomShell /><CaseLighting fromWallIndex={fromWallIndex} toWallIndex={toWallIndex} motionProgressRef={motionProgressRef} />{SUBJECT_WALLS.map((wall, index) => <WallShelves key={wall.id} wall={wall} angle={getWallAngle(index, SUBJECT_WALLS.length)} width={WALL_WIDTH} showWallLabel={showWallLabels} pool={pool} rigIntentEditionId={rigIntentEditionId} rigIntentToken={rigIntentToken} onRigIntent={onRigIntent} phase={phase} generation={generation} reducedMotion={reducedMotion} pageTurnDirection={pageTurnDirection} selectedEditionId={selectedEditionId} motionProgress={motionProgress} motionProgressRef={motionProgressRef} onActivate={onActivate} onRigReady={onRigReady} onRigUnavailable={onRigUnavailable} onLifecycleComplete={onLifecycleComplete} onPageSettled={onPageSettled} onError={onError} />)}</group>;
+  return <group><RoomShell /><CaseLighting fromWallIndex={fromWallIndex} toWallIndex={toWallIndex} motionProgressRef={motionProgressRef} />{SUBJECT_WALLS.map((wall, index) => <WallShelves key={wall.id} visible={isTutorLibraryWallVisible(index, fromWallIndex, toWallIndex, phase)} wall={wall} angle={getWallAngle(index, SUBJECT_WALLS.length)} width={WALL_WIDTH} showWallLabel={showWallLabels} pool={pool} rigIntentEditionId={rigIntentEditionId} rigIntentToken={rigIntentToken} onRigIntent={onRigIntent} phase={phase} generation={generation} reducedMotion={reducedMotion} pageTurnDirection={pageTurnDirection} selectedEditionId={selectedEditionId} motionProgress={motionProgress} motionProgressRef={motionProgressRef} onActivate={onActivate} onRigReady={onRigReady} onRigUnavailable={onRigUnavailable} onLifecycleComplete={onLifecycleComplete} onPageSettled={onPageSettled} onError={onError} />)}</group>;
 }

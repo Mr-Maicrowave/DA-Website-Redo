@@ -32,6 +32,14 @@ test('keeps continuous tutor-library motion inside the canvas rather than React 
   assert.match(scene, /useFrame/);
 });
 
+test('culls every wall except the current case and its turn destination', () => {
+  const room = readFileSync(roomPath, 'utf8');
+
+  assert.match(room, /function isTutorLibraryWallVisible/);
+  assert.match(room, /visible=\{isTutorLibraryWallVisible\(index, fromWallIndex, toWallIndex, phase\)\}/);
+  assert.match(room, /<WallShelves key=\{wall\.id\} visible=/);
+});
+
 test('uses lightweight material variation and layered mouldings for architectural fidelity', () => {
   const source = readFileSync(new URL('./RoomRotunda.tsx', import.meta.url), 'utf8');
 
