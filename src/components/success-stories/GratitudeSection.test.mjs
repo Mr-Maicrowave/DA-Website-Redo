@@ -39,6 +39,21 @@ test('renders an accessible layered envelope with the approved letter copy', asy
   ]) assert.ok(component.includes(contract), `component includes ${contract}`);
 });
 
+test('uses the matched v2 stationery set without duplicate visible letter copy', async () => {
+  const component = await readFile(componentPath, 'utf8');
+  for (const asset of [
+    'gratitude-envelope-back-v2.png',
+    'gratitude-envelope-pocket-v2.png',
+    'gratitude-envelope-flap-v2.png',
+    'gratitude-heart-seal-v2.png',
+    'gratitude-letter-v2.png',
+  ]) assert.ok(component.includes(asset), `component uses ${asset}`);
+
+  assert.ok(!component.includes('ss-gratitude__letter-copy'));
+  assert.ok(!component.includes('ss-gratitude__address'));
+  assert.ok(component.includes('ss-gratitude__letter-transcript'));
+});
+
 test('defines responsive layering and reduced-motion contracts', async () => {
   const styles = await readFile(stylesPath, 'utf8');
   for (const contract of ['perspective:1000px', 'rotateX(180deg)', '@media (max-width:860px)', '@media (prefers-reduced-motion:reduce)']) {

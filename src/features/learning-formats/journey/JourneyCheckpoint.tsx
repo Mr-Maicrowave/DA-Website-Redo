@@ -1,4 +1,4 @@
-import { useId } from "react";
+import { useId, type CSSProperties } from "react";
 
 import type { AssessmentQuestionConfig } from "../logic/types";
 
@@ -11,6 +11,7 @@ interface JourneyCheckpointProps {
   disabled?: boolean;
   onSelect: (optionId: string) => void;
   onBack?: () => void;
+  backLabel?: string;
 }
 
 const JourneyCheckpoint = ({
@@ -22,6 +23,7 @@ const JourneyCheckpoint = ({
   disabled = false,
   onSelect,
   onBack,
+  backLabel = "← Previous question",
 }: JourneyCheckpointProps) => {
   const legendId = useId();
 
@@ -32,8 +34,13 @@ const JourneyCheckpoint = ({
         <legend id={legendId}>{question.question}</legend>
         {context && <p className="lf-journey-checkpoint__context">{context}</p>}
         <div className="lf-journey-checkpoint__choices">
-          {question.options.map((option) => (
-            <label key={option.id} className="lf-journey-choice" data-selected={value === option.id ? "true" : "false"}>
+          {question.options.map((option, optionIndex) => (
+            <label
+              key={option.id}
+              className="lf-journey-choice"
+              data-selected={value === option.id ? "true" : "false"}
+              style={{ "--choice-index": optionIndex } as CSSProperties}
+            >
               <input
                 type="radio"
                 name={`journey-${question.stage}-${question.slot}`}
@@ -46,7 +53,7 @@ const JourneyCheckpoint = ({
           ))}
         </div>
       </fieldset>
-      {onBack && <button type="button" className="lf-checkpoint-back" onClick={onBack} disabled={disabled}>← Back</button>}
+      {onBack && <button type="button" className="lf-checkpoint-back" onClick={onBack} disabled={disabled}>{backLabel}</button>}
     </section>
   );
 };

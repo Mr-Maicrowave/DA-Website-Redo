@@ -527,3 +527,20 @@ test('reference motion stays root-scoped, clears reduced-motion transforms, and 
   assert.doesNotMatch(styles, /animation:\s*primary-reference-teaching-settle/);
   assert.match(styles, /\.primary-reference-teaching li:nth-child\(1\) figure\s*\{\s*transform:\s*rotate\(-1\.4deg\)/);
 });
+
+test('major Primary chapters scale their composition proportionally on desktop without forced viewport heights', () => {
+  const styles = readFileSync(new URL('./primary-reference.css', import.meta.url), 'utf8');
+  const challengeStyles = readFileSync(new URL('./seed-tree-challenge.css', import.meta.url), 'utf8');
+
+  assert.match(styles, /@media \(min-width:\s*1100px\) and \(min-height:\s*700px\)/);
+  assert.match(styles, /--primary-fold-space:\s*clamp\([^;]*svh/);
+  assert.match(styles, /--primary-fold-title:\s*clamp\([^;]*min\([^;]*vw[^;]*svh/);
+  assert.match(styles, /height:\s*auto/);
+  assert.match(styles, /font-size:\s*var\(--primary-fold-title\)/);
+  assert.match(styles, /max-height:\s*clamp\([^;]*svh/);
+  assert.match(challengeStyles, /@media \(min-width:\s*1100px\) and \(min-height:\s*700px\)/);
+  assert.match(challengeStyles, /--seed-fold-space:\s*clamp\([^;]*svh/);
+  assert.match(challengeStyles, /height:\s*auto/);
+  assert.doesNotMatch(challengeStyles, /seed-tree-challenge__paper\s*\{[^}]*overflow-y:\s*auto/);
+  assert.doesNotMatch(styles, /@media \(max-width:\s*800px\)[\s\S]*height:\s*100svh[^\n}]*!important/);
+});

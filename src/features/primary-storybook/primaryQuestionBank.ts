@@ -1,33 +1,107 @@
 export type PrimaryYear = 1 | 2 | 3 | 4 | 5 | 6;
 export type PrimarySubject = 'maths' | 'english';
-export type QuestionDifficulty = 'warm-up' | 'apply' | 'think' | 'reason' | 'challenge';
+export type QuestionDifficulty = 1 | 2 | 3 | 4 | 5;
+
+export type TeachingExplanation = {
+  strategy: string;
+  steps: string[];
+};
+
+export type FollowUpQuestion = {
+  question: string;
+  options: string[];
+  correctAnswer: string;
+  explanation: string;
+};
 
 export type PrimaryQuestion = {
   id: string;
   year: PrimaryYear;
   subject: PrimarySubject;
+  topic: string;
+  subtopic: string;
   difficulty: QuestionDifficulty;
   question: string;
   options: string[];
   correctAnswer: string;
   hint: string;
-  explanation: string;
+  explanation: TeachingExplanation;
+  misconceptionFeedback: Record<string, string>;
+  followUp: FollowUpQuestion;
   type: 'contextual-maths' | 'language-in-context';
 };
 
-type QuestionSeed = Omit<PrimaryQuestion, 'id' | 'year' | 'subject' | 'difficulty' | 'type'>;
+type QuestionSeed = {
+  question: string;
+  options: string[];
+  correctAnswer: string;
+  hint: string;
+  explanation: string;
+};
 type CompactSeed = [string, string[], string, string, string];
 
-const difficulties: QuestionDifficulty[] = ['warm-up', 'apply', 'apply', 'think', 'reason', 'challenge'];
+const difficultyPattern: QuestionDifficulty[] = [1, 2, 2, 3, 4, 5];
+const mathsTopics = ['number', 'operations', 'fractions', 'measurement', 'geometry', 'problem solving'];
+const englishTopics = ['phonics', 'grammar', 'vocabulary', 'comprehension', 'inference', 'author craft'];
+const variantNames = [
+  ['Sam', 'Mia', 'Leo', 'Ava'],
+  ['Kai', 'Zoe', 'Noah', 'Ella'],
+  ['Luca', 'Priya', 'Nina', 'Ben'],
+] as const;
+
+const varyContext = (text: string, variant: number) => {
+  const names = variantNames[variant];
+  return text
+    .split('Sam').join(names[0])
+    .split('Mia').join(names[1])
+    .split('Leo').join(names[2])
+    .split('Ava').join(names[3]);
+};
 
 const makeQuestions = (year: PrimaryYear, subject: PrimarySubject, seeds: QuestionSeed[]): PrimaryQuestion[] =>
-  seeds.map((seed, index) => ({
-    ...seed,
-    id: `y${year}-${subject}-${index + 1}`,
-    year,
-    subject,
-    difficulty: difficulties[Math.min(5, Math.floor(index / 2))],
-    type: subject === 'maths' ? 'contextual-maths' : 'language-in-context',
+  seeds.flatMap((seed, seedIndex) => [0, 1, 2].map((variant) => {
+    const topicList = subject === 'maths' ? mathsTopics : englishTopics;
+    const topic = topicList[seedIndex % topicList.length];
+    const question = varyContext(seed.question, variant);
+    const options = seed.options.map((option) => varyContext(option, variant));
+    const correctAnswer = varyContext(seed.correctAnswer, variant);
+    const explanation = varyContext(seed.explanation, variant);
+    const hint = varyContext(seed.hint, variant);
+    const incorrectOptions = options.filter((option) => option !== correctAnswer);
+
+    return {
+      id: `y${year}-${subject}-${topic.split(' ').join('-')}-${String(seedIndex * 3 + variant + 1).padStart(3, '0')}`,
+      year,
+      subject,
+      topic,
+      subtopic: subject === 'maths' ? `year-${year}-${topic}` : `year-${year}-${topic}`,
+      difficulty: difficultyPattern[seedIndex % difficultyPattern.length],
+      type: subject === 'maths' ? 'contextual-maths' : 'language-in-context',
+      question,
+      options,
+      correctAnswer,
+      hint,
+      explanation: {
+        strategy: topic,
+        steps: subject === 'maths'
+          ? [`First, identify what the question is asking.`, hint, explanation]
+          : [`Look closely at the important words or clues.`, hint, explanation],
+      },
+      misconceptionFeedback: Object.fromEntries(incorrectOptions.map((option, optionIndex) => [
+        option,
+        optionIndex === 0
+          ? `That answer uses part of the information. ${hint}`
+          : `Good attempt. Let’s check the clue that matters most.`,
+      ])),
+      followUp: {
+        question: subject === 'maths'
+          ? `Your turn: use the same method once more. ${question}`
+          : `Your turn: use the same reading skill once more. ${question}`,
+        options: [...options],
+        correctAnswer,
+        explanation,
+      },
+    } satisfies PrimaryQuestion;
   }));
 
 const mathsSeeds: Record<PrimaryYear, CompactSeed[]> = {
@@ -191,14 +265,26 @@ englishPrompts[4] = advancedEnglish(4);
 englishPrompts[5] = advancedEnglish(5);
 englishPrompts[6] = advancedEnglish(6);
 
+const linkRelatedFollowUps = (questions: PrimaryQuestion[]): PrimaryQuestion[] => questions.map((question) => {
+  const related = questions.find((candidate) => candidate.topic === question.topic && candidate.subtopic === question.subtopic && candidate.id !== question.id && candidate.question !== question.question);
+  if (!related) return question;
+  return {
+    ...question,
+    followUp: {
+      question: `Your turn: ${related.question}`,
+      options: [...related.options],
+      correctAnswer: related.correctAnswer,
+      explanation: related.explanation.steps.at(-1) ?? related.hint,
+    },
+  };
+});
+
 export const primaryQuestionBank = Object.fromEntries(
   ([1, 2, 3, 4, 5, 6] as PrimaryYear[]).map((year) => [year, {
-    maths: makeQuestions(year, 'maths', mathsSeeds[year].map(normalise)),
-    english: makeQuestions(year, 'english', englishPrompts[year].map(normalise)),
+    maths: linkRelatedFollowUps(makeQuestions(year, 'maths', mathsSeeds[year].map(normalise))),
+    english: linkRelatedFollowUps(makeQuestions(year, 'english', englishPrompts[year].map(normalise))),
   }]),
 ) as Record<PrimaryYear, Record<PrimarySubject, PrimaryQuestion[]>>;
 
-export const getChallengeQuestions = (year: PrimaryYear, subject: PrimarySubject): PrimaryQuestion[] => {
-  const bank = primaryQuestionBank[year][subject];
-  return [0, 2, 4, 6, 9, 11].map((index) => bank[index]);
-};
+export const getChallengeQuestions = (year: PrimaryYear, subject: PrimarySubject): PrimaryQuestion[] =>
+  primaryQuestionBank[year][subject];

@@ -60,19 +60,41 @@
 .seed-tree-challenge__progress i.is-complete { border-color:#628d4b; background:#628d4b; }
 .seed-tree-challenge__progress i.is-current { box-shadow:0 0 0 4px rgba(201,141,37,.15); background:#d7a12d; }
 .seed-tree-challenge__paper { position:relative; border:1px solid rgba(144,105,39,.14); border-radius:.75rem 1.25rem .9rem 1.4rem; padding:clamp(1.5rem,3vw,2.8rem); background:rgba(255,252,243,.72); box-shadow:0 12px 30px rgba(77,59,28,.09); }
+.seed-tree-challenge.is-teaching .seed-tree-challenge__paper { background:rgba(251,252,239,.94); }
 .seed-tree-challenge__paper::before { position:absolute; top:1rem; bottom:1rem; left:1.1rem; width:1px; background:rgba(218,128,128,.22); content:""; }
 .seed-tree-challenge__question { max-width:32rem; margin:0 0 1.7rem; white-space:pre-line; color:var(--garden-navy); font-family:"Cormorant Garamond",Georgia,serif; font-size:clamp(1.55rem,2.35vw,2.15rem); font-weight:600; line-height:1.2; }
+.seed-tree-challenge__question--compact { margin-bottom:1.1rem; font-size:clamp(1.2rem,1.8vw,1.55rem); opacity:.72; transform:translateY(-.2rem); transition:font-size .45s cubic-bezier(.22,1,.36,1),opacity .45s ease,transform .45s cubic-bezier(.22,1,.36,1); }
 .seed-tree-challenge__answers { display:grid; grid-template-columns:1fr 1fr; gap:.75rem; }
 .seed-tree-challenge__answers button { display:flex; align-items:center; justify-content:space-between; border:1px solid rgba(8,39,67,.15); border-radius:.7rem; padding:.8rem 1rem; background:rgba(255,255,255,.58); color:#183c55; cursor:pointer; font-weight:700; text-align:left; transition:.25s ease; }
 .seed-tree-challenge__answers button:hover { border-color:#b98a35; background:#fffdf8; transform:translateY(-1px); }
 .seed-tree-challenge__answers button.is-tried { border-color:#d0a866; background:#fff7e6; }
 .seed-tree-challenge__answers button.is-correct { border-color:#5f8c4c; background:#e7f1da; color:#315529; }
+.seed-tree-challenge__answers button:disabled { cursor:default; }
 .seed-tree-challenge__answers button b { display:grid; width:1.5rem; aspect-ratio:1; place-items:center; border-radius:50%; background:#5f8c4c; color:white; }
 .seed-tree-challenge__game.is-correct .seed-tree-challenge__paper { opacity:.76; transition:opacity .4s ease; }
 .seed-tree-challenge__feedback { min-height:4.5rem; padding-top:1rem; color:#496246; }
 .seed-tree-challenge__feedback strong { color:#4f7a3d; font-family:"Cormorant Garamond",Georgia,serif; font-size:1.4rem; }
 .seed-tree-challenge__feedback>span,.seed-tree-challenge__feedback p { color:#687a7e; font-size:.85rem; }
 .seed-tree-challenge__feedback p { margin:.45rem 0 0; line-height:1.5; }
+.seed-tree-challenge__teaching,.seed-tree-challenge__follow-up { animation:seed-tree-teaching-enter .48s cubic-bezier(.22,1,.36,1) both; }
+@keyframes seed-tree-teaching-enter { from{opacity:0;transform:translateY(.75rem)} to{opacity:1;transform:none} }
+.seed-tree-challenge__teaching-label { margin:0 0 .55rem; color:#497137; font-size:.76rem; font-weight:850; letter-spacing:.1em; text-transform:uppercase; }
+.seed-tree-challenge__acknowledgement,.seed-tree-challenge__support-note { margin:.25rem 0 1rem; color:#4b6472; font-size:.92rem; line-height:1.55; }
+.seed-tree-challenge__steps { display:grid; gap:.55rem; margin:0 0 1rem; padding:0; list-style:none; }
+.seed-tree-challenge__steps li { display:grid; grid-template-columns:2rem 1fr; align-items:start; gap:.55rem; margin:0; color:#294b5e; }
+.seed-tree-challenge__steps li>span { display:grid; width:1.75rem; aspect-ratio:1; place-items:center; border-radius:50%; background:#e7efd8; color:#4f753d; font-size:.65rem; font-weight:850; }
+.seed-tree-challenge__steps li p { margin:.14rem 0 0; line-height:1.45; }
+.seed-tree-challenge__steps li.is-new { animation:seed-tree-step-in .42s cubic-bezier(.22,1,.36,1) both; }
+@keyframes seed-tree-step-in { from{opacity:0;transform:translateY(.55rem)} to{opacity:1;transform:none} }
+.seed-tree-challenge__method { display:flex; min-height:3.2rem; align-items:center; justify-content:space-between; gap:1rem; margin:1rem 0; border-block:1px solid rgba(82,119,64,.18); padding:.7rem 0; }
+.seed-tree-challenge__method span { color:#7a6b47; font-size:.72rem; font-weight:800; letter-spacing:.08em; text-transform:uppercase; }
+.seed-tree-challenge__method strong { color:#3c6834; font-family:"Cormorant Garamond",Georgia,serif; font-size:1.35rem; text-align:right; }
+.seed-tree-challenge__continue { display:inline-flex; align-items:center; gap:.75rem; border:0; border-radius:999px; padding:.7rem 1.1rem; background:var(--garden-navy); color:#fffaf0; cursor:pointer; font-weight:750; }
+.seed-tree-challenge__follow-up-question { margin:.35rem 0 1.1rem; color:var(--garden-navy); font-family:"Cormorant Garamond",Georgia,serif; font-size:clamp(1.2rem,1.8vw,1.55rem); font-weight:600; line-height:1.25; }
+.seed-tree-challenge__support-note { border-radius:.65rem; padding:.75rem .9rem; background:#f0f4df; }
+.seed-tree-challenge__understood { border-radius:.8rem; padding:1rem; background:#e9f2dc; color:#355a2f; animation:seed-tree-teaching-enter .42s cubic-bezier(.22,1,.36,1) both; }
+.seed-tree-challenge__understood>strong { display:block; font-family:"Cormorant Garamond",Georgia,serif; font-size:1.55rem; }
+.seed-tree-challenge__understood>p:last-child { margin:.35rem 0 0; color:#506b58; line-height:1.5; }
 .seed-tree-challenge__complete { text-align:left; }
 .seed-tree-challenge__complete h2 { max-width:13ch; }
 .seed-tree-challenge__complete h2 strong { display:block; margin-top:1rem; color:#557c41; font-family:inherit; font-size:.45em; letter-spacing:.01em; line-height:1.05; text-transform:uppercase; }
@@ -94,9 +116,25 @@
   .seed-tree-challenge h2 { font-size:clamp(2.8rem,14vw,4.2rem); }
   .seed-tree-challenge__answers { grid-template-columns:1fr; }
   .seed-tree-challenge__meta { font-size:.68rem; }
+  .seed-tree-challenge__method { align-items:flex-start; flex-direction:column; gap:.3rem; }
+  .seed-tree-challenge__method strong { text-align:left; }
 }
 
 @media (prefers-reduced-motion:reduce) {
   .seed-tree-challenge *,.seed-tree-challenge *::before,.seed-tree-challenge *::after { scroll-behavior:auto!important; animation-duration:.01ms!important; animation-iteration-count:1!important; transition-duration:.01ms!important; }
   .seed-tree-challenge__plant-stage img { transform:translateX(-50%)!important; }
+}
+
+@media (min-width: 1100px) and (min-height: 700px) {
+  .seed-tree-challenge {
+    --seed-fold-space: clamp(.85rem, 2.2svh, 2rem);
+    height: auto;
+    min-height: 0;
+    margin-block: var(--seed-fold-space);
+    padding-block: clamp(1.5rem, 3.4svh, 3rem);
+  }
+  .seed-tree-challenge__garden { min-height: 0; }
+  .seed-tree-challenge__plant-stage { height: clamp(24rem, 62svh, 42rem); }
+  .seed-tree-challenge h2 { font-size: clamp(3rem, min(5vw, 7svh), 5.4rem); }
+  .seed-tree-challenge__paper { max-height: none; }
 }
