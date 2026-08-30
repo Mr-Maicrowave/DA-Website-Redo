@@ -49,6 +49,8 @@ try {
   assert.equal(await page.$eval(previousPage, element => element.disabled), true);
   assert.equal(await page.$eval(nextPage, element => element.disabled), false);
   await page.$eval(nextPage, element => element.click());
+  await page.evaluate(() => (document.activeElement instanceof HTMLElement ? document.activeElement.blur() : undefined));
+  await page.keyboard.press('ArrowRight');
   await page.focus('.tutor-library__reader');
   await page.keyboard.press('ArrowRight');
   await page.keyboard.press('PageDown');
@@ -59,9 +61,9 @@ try {
     element.dispatchEvent(new PointerEvent('pointerup', { bubbles: true, clientX: 100, clientY: 126, pointerId: 4, isPrimary: true }));
   });
   assert.deepEqual((await page.evaluate(() => window.tutorLibraryFixture.events)).filter(event => event.startsWith('page:')), [
-    'page:1', 'page:1', 'page:1', 'page:-1', 'page:-1', 'page:1',
+    'page:1', 'page:1', 'page:1', 'page:1', 'page:-1', 'page:-1', 'page:1',
   ]);
-  assert.match(await page.$eval('.tutor-library__page-status', element => element.textContent ?? ''), /Page 3 of 5/i);
+  assert.match(await page.$eval('.tutor-library__page-status', element => element.textContent ?? ''), /Page 4 of 5/i);
 
   await page.setViewport({ width: 390, height: 844, deviceScaleFactor: 2 });
   const mobileReadingLayout = await page.evaluate(() => {

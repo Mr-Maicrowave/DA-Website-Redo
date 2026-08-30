@@ -10,7 +10,7 @@ type CoverMode = 'spine' | 'cover';
 export type SpineTreatment = 'classic' | 'stacked' | 'surname';
 
 const SUBJECT_MARK: Record<string, string> = { primary: 'PRIMARY STUDIES', mathematics: 'MATHEMATICS', english: 'ENGLISH', 'science-social': 'SCIENCE & SOCIAL' };
-const COVER_CLOTH = ['#183653', '#63323b', '#5c412d', '#24475a'];
+const COVER_CLOTH = ['#183653', '#63323b', '#5c412d', '#24475a', '#294a35', '#462d54', '#5c3b25', '#25494e', '#3c4654', '#673324'];
 
 function configureMaterialTexture(texture: CanvasTexture, repeat: [number, number], color = false) {
   texture.colorSpace = color ? SRGBColorSpace : NoColorSpace;

@@ -72,6 +72,21 @@ export function TutorLibraryControlSurface({ library, activeWall, visibleEdition
     return () => window.removeEventListener('keydown', escape);
   }, [onCancelPending, onEscape]);
 
+  useEffect(() => {
+    if (!selectedTutor || sceneError) return;
+    const turnPage = (event: KeyboardEvent) => {
+      if (event.defaultPrevented) return;
+      const target = event.target;
+      if (target instanceof Element && target.closest('input, select, textarea, [contenteditable="true"]')) return;
+      const direction = getPageTurnDirectionForKey(event.key);
+      if (!direction || !canTurn(direction)) return;
+      event.preventDefault();
+      requestPageTurn(direction);
+    };
+    window.addEventListener('keydown', turnPage);
+    return () => window.removeEventListener('keydown', turnPage);
+  }, [availability.canTurnPage, onPageTurn, pageCount, sceneError, selectedTutor, settledPages]);
+
   return <>
     {showControls ? <div className="tutor-library__controls" aria-disabled={sceneError ? 'true' : undefined} {...(sceneError ? { inert: '' } as Record<string, string> : {})}>
       <nav className="tutor-library__wall-nav" aria-label="Turn toward a subject wall">{SUBJECT_WALLS.map(wall => <button key={wall.id} type="button" disabled={Boolean(sceneError) || !availability.canTurnRoom || wall.id === activeWall.id} aria-pressed={wall.id === activeWall.id} onClick={() => onTurn(wall.id)}>{wall.label}</button>)}</nav>
@@ -98,7 +113,7 @@ export function TutorLibraryControlSurface({ library, activeWall, visibleEdition
       </label>
     </div> : null}
 
-    {selectedTutor && !sceneError ? <aside className="tutor-library__reader" aria-label={`${selectedTutor.name} tutor book controls`} tabIndex={0}
+    {selectedTutor && !sceneError ? <aside className="tutor-library__reader" aria-label={`${selectedTutor.name} tutor book controls`} aria-keyshortcuts="ArrowLeft ArrowRight PageUp PageDown" tabIndex={0}
       onKeyDown={event => {
         const direction = getPageTurnDirectionForKey(event.key);
         if (!direction || !canTurn(direction)) return;
@@ -120,6 +135,7 @@ export function TutorLibraryControlSurface({ library, activeWall, visibleEdition
       <div className="tutor-library__reader-profile"><Portrait tutor={selectedTutor} /><div><p>{selectedTutor.name}</p><span>{selectedTutor.designation}</span></div></div>
       <p className="tutor-library__reader-summary">{selectedTutor.tagline}</p>
       <p className="tutor-library__page-status" aria-live="polite">Page {Math.min(pageCount, settledPages + 1)} of {pageCount}</p>
+      <p className="tutor-library__page-hint">Use <kbd>←</kbd> <kbd>→</kbd> to turn pages</p>
       <div className="tutor-library__reader-actions"><button type="button" disabled={!availability.canOpen} onClick={onOpen}>Open book</button><button type="button" aria-label="Previous tutor profile page" disabled={!canTurn(-1)} onClick={() => requestPageTurn(-1)}>Previous page</button><button type="button" aria-label="Next tutor profile page" disabled={!canTurn(1)} onClick={() => requestPageTurn(1)}>Next page</button><button type="button" disabled={!availability.canClose} onClick={onClose}>Close and return book</button><Link to={`/find-teacher?tutor=${selectedTutor.id}`}>View full tutor profile</Link></div>
       <div className="sr-only">{pages.map(page => <section key={page.id}><h2>{page.label}</h2>{page.sourceText.map((text, index) => <p key={`${page.id}-${index}`}>{text}</p>)}</section>)}</div>
     </aside> : null}

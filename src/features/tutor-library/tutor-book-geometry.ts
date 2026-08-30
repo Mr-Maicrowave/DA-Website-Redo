@@ -55,11 +55,11 @@ export function getBookVisualProfile(edition: TutorBookEdition): BookVisualProfi
   const b = stableHash(`${seed}:b`);
   const c = stableHash(`${seed}:c`);
   return {
-    width: .36 + a * .16,
-    height: .76 + b * .18,
-    depth: .285 + c * .055,
-    lean: (stableHash(`${seed}:lean`) - .5) * .072,
-    clothTone: Math.floor(stableHash(`${seed}:cloth`) * 4),
+    width: .32 + a * .23,
+    height: .7 + b * .29,
+    depth: .27 + c * .08,
+    lean: (stableHash(`${seed}:lean`) - .5) * .15,
+    clothTone: Math.floor(stableHash(`${seed}:cloth`) * 10),
     goldRuleOffset: .13 + stableHash(`${seed}:foil`) * .16,
     pageTone: Math.floor(stableHash(`${seed}:paper`) * 3),
   };

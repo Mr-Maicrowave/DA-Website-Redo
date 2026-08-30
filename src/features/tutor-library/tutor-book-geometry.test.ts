@@ -38,7 +38,8 @@ test('derives restrained, stable book variation and non-uniform shelf rhythm fro
   assert.deepEqual(getBookVisualProfile(editions[0]), profiles[0]);
   assert.ok(new Set(profiles.map(profile => profile.height)).size > 3);
   assert.ok(new Set(profiles.map(profile => profile.width)).size > 3);
-  assert.ok(profiles.every(profile => Math.abs(profile.lean) <= .052));
+  assert.ok(profiles.every(profile => Math.abs(profile.lean) <= .09));
+  assert.ok(new Set(editions.map(edition => edition.materialVariant)).size > 4, 'shelf cloth colours should not repeat in a four-book loop');
   const gaps = poses.slice(1).map((pose, index) => Number((pose.position[0] - poses[index].position[0]).toFixed(3)));
   assert.ok(new Set(gaps).size > 2, 'books should form restrained clusters, not equal intervals');
 });

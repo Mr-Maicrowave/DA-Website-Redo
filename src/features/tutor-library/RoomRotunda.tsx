@@ -1,7 +1,7 @@
 import { RoundedBox, Text } from '@react-three/drei';
 import { useLayoutEffect, useMemo, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { DataTexture, DirectionalLight, DoubleSide, Group, MeshStandardMaterial, Object3D, RGBAFormat, RepeatWrapping, SRGBColorSpace, UnsignedByteType } from 'three';
+import { DataTexture, DirectionalLight, DoubleSide, Group, InstancedMesh, MeshStandardMaterial, Object3D, RGBAFormat, RepeatWrapping, SRGBColorSpace, UnsignedByteType } from 'three';
 import { RectAreaLightUniformsLib } from 'three/examples/jsm/lights/RectAreaLightUniformsLib.js';
 import { SUBJECT_WALLS, getWallAngle, type SubjectWall } from './tutor-library-data';
 import { createCabinetBlueprint } from './room-architecture';
@@ -43,6 +43,14 @@ const FLOOR_BOARDS = Array.from({ length: 58 }, (_, index) => ({
   tone: ['#2b180f', '#24130c', '#301c11', '#27160e', '#342016'][index % 5],
   offset: index % 3 === 0 ? .035 : index % 3 === 1 ? -.025 : .01,
 }));
+const DECORATIVE_BOOK_SLOTS = [
+  { row: 0, bay: 0, x: .43, lean: -.12 },
+  { row: 0, bay: 2, x: -.43, lean: .1 },
+  { row: 1, bay: 0, x: .42, lean: .14 },
+  { row: 1, bay: 1, x: -.42, lean: -.1 },
+  { row: 2, bay: 1, x: .43, lean: .12 },
+  { row: 2, bay: 2, x: -.44, lean: -.14 },
+] as const;
 
 type RoomBookInteractionProps = {
   generation: number;
@@ -128,6 +136,41 @@ function ShelfFrontProfile({ width, y, depth, nosingDepth }: { width: number; y:
   </group>;
 }
 
+/** One batched, non-interactive layer keeps shelf texture rich without additional book controllers. */
+function DecorativeShelfBooks({ cabinet, wallId }: { cabinet: ReturnType<typeof createCabinetBlueprint>; wallId: string }) {
+  const mesh = useRef<InstancedMesh>(null);
+  const dummy = useMemo(() => new Object3D(), []);
+  const books = useMemo(() => DECORATIVE_BOOK_SLOTS.map((slot, index) => {
+    const bay = cabinet.bays[slot.bay];
+    const seed = wallId.length + wallId.charCodeAt(index % wallId.length) + index * 7;
+    const height = .64 + (seed % 5) * .075;
+    const depth = .23 + (seed % 3) * .025;
+    return {
+      position: [bay.centerX + slot.x * bay.width, cabinet.shelfLevels[slot.row] + cabinet.shelfThickness / 2 + height / 2, bay.bookFrontZ - depth / 2 - .05] as const,
+      scale: [.18 + (seed % 3) * .035, height, depth] as const,
+      lean: slot.lean,
+    };
+  }), [cabinet, wallId]);
+
+  useLayoutEffect(() => {
+    const target = mesh.current;
+    if (!target) return;
+    books.forEach((book, index) => {
+      dummy.position.set(...book.position);
+      dummy.rotation.set(0, Math.PI / 2, book.lean);
+      dummy.scale.set(...book.scale);
+      dummy.updateMatrix();
+      target.setMatrixAt(index, dummy.matrix);
+    });
+    target.instanceMatrix.needsUpdate = true;
+  }, [books, dummy]);
+
+  return <instancedMesh ref={mesh} args={[undefined, undefined, books.length]} castShadow receiveShadow>
+    <boxGeometry args={[1, 1, 1]} />
+    <meshStandardMaterial color="#73513b" roughness={.86} metalness={.01} emissive="#1d1008" emissiveIntensity={.24} />
+  </instancedMesh>;
+}
+
 function WallShelves({ visible, wall, angle, width, showWallLabel, pool, rigIntentEditionId, rigIntentToken, onRigIntent, phase, generation, reducedMotion, pageTurnDirection, selectedEditionId, motionProgress, motionProgressRef, onActivate, onRigReady, onRigUnavailable, onLifecycleComplete, onPageSettled, onError }: { visible: boolean; wall: SubjectWall; angle: number; width: number; showWallLabel: boolean; pool: CompleteShelfBookPool<CompleteShelfTutorRig>; rigIntentEditionId?: string; rigIntentToken: number; onRigIntent: (editionId?: string) => void; phase: LibraryPhase; selectedEditionId?: string; motionProgress: number; motionProgressRef: Readonly<{ current: { turn: number; book: number } }> } & RoomBookInteractionProps) {
   const palette = WALL_COLOURS[wall.palette];
   const cabinet = useMemo(() => createCabinetBlueprint(width, ROOM_HEIGHT), [width]);
@@ -149,12 +192,13 @@ function WallShelves({ visible, wall, angle, width, showWallLabel, pool, rigInte
       <ShelfFrontProfile width={shelfWidth} y={y} depth={cabinet.shelfDepth} nosingDepth={cabinet.nosingDepth} />
     </group>)}
     <TutorShelf editions={EDITIONS_BY_WALL.get(wall.id) ?? []} tutors={TUTOR_BY_ID} pool={pool} rigIntentEditionId={rigIntentEditionId} rigIntentToken={rigIntentToken} onRigIntent={onRigIntent} phase={phase} generation={generation} reducedMotion={reducedMotion} pageTurnDirection={pageTurnDirection} selectedEditionId={selectedEditionId} motionProgress={motionProgress} motionProgressRef={motionProgressRef} onActivate={onActivate} onRigReady={onRigReady} onRigUnavailable={onRigUnavailable} onLifecycleComplete={onLifecycleComplete} onPageSettled={onPageSettled} onError={onError} />
+    <DecorativeShelfBooks cabinet={cabinet} wallId={wall.id} />
     <CabinetBox size={[width, cabinet.plinthHeight, 1.04]} position={[0, -ROOM_HEIGHT / 2 + cabinet.plinthHeight / 2, .45]} color="#351a10" roughness={.54} radius={.04} />
     <CabinetMoulding width={width + .16} y={-ROOM_HEIGHT / 2 + .12} z={.45} color="#654028" depth={1.13} />
     <CabinetBox size={[width, .38, 1.06]} position={[0, ROOM_HEIGHT / 2 - .22, .45]} color="#3b1e12" roughness={.52} radius={.04} />
     <CabinetMoulding width={width + .18} y={ROOM_HEIGHT / 2 - .07} z={.45} color="#583421" depth={cabinet.corniceDepth} />
     <CabinetBox size={[width - .78, .035, .035]} position={[0, ROOM_HEIGHT / 2 - .39, .98]} color="#a77945" roughness={.3} metalness={.72} radius={.005} />
-    {showWallLabel && <Text position={[0, ROOM_HEIGHT / 2 - .25, 1.01]} font="/fonts/da-prologue-marcellus-sc-400.ttf" fontSize={.24} anchorX="center" color={palette.label} letterSpacing={.075}>{wall.label.toUpperCase()}</Text>}
+    {showWallLabel && <Text position={[0, ROOM_HEIGHT / 2 - .68, 1.01]} font="/fonts/da-prologue-marcellus-sc-400.ttf" fontSize={.24} anchorX="center" color={palette.label} letterSpacing={.075}>{wall.label.toUpperCase()}</Text>}
     <CabinetBox size={[width - .86, .025, .025]} position={[0, -ROOM_HEIGHT / 2 + .43, .96]} color={palette.accent} roughness={.32} metalness={.55} radius={.004} />
   </group>;
 }

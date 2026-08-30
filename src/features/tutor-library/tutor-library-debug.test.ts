@@ -30,7 +30,9 @@ test('defines bounded viewport profiles for every Task 6 acceptance width', () =
   assert.equal(laptop.maxDpr, 1.5);
   assert.equal(tablet.maxDpr, 1.4);
   assert.equal(mobile.maxDpr, 1.25);
-  assert.ok(desktopWide.lateralTargetOffset > tablet.lateralTargetOffset);
+  assert.equal(desktopWide.lateralTargetOffset, 0, 'desktop reading keeps the physical book centred');
+  assert.ok(desktopWide.cameraRadius < tablet.cameraRadius, 'desktop reading moves closer to make the page content legible');
+  assert.ok(desktopWide.fov < tablet.fov, 'desktop reading gives the book a more generous share of the frame');
   assert.ok(mobile.lateralTargetOffset <= -.6, 'mobile compensates for the real rig opening asymmetrically from its spine');
   assert.ok(mobile.targetHeight < tablet.targetHeight, 'mobile reading aim must lift the physical book above the controls');
   assert.ok(mobile.fov >= 60, 'mobile needs safe margins around the unchanged physical book');

@@ -132,12 +132,12 @@ export function getTutorLibraryViewportProfile(width: number, height: number, ph
   }
 
   return {
-    cameraRadius: 4.1,
-    targetRadius: 3.2,
+    cameraRadius: laptop ? 3.85 : 3.65,
+    targetRadius: 3.45,
     cameraHeight: 2.45,
     targetHeight: laptop ? 2.82 : 2.9,
-    fov: laptop ? 46 : 44,
-    lateralTargetOffset: laptop ? .64 : .82,
+    fov: laptop ? 43 : 41,
+    lateralTargetOffset: 0,
     maxDpr,
   };
 }

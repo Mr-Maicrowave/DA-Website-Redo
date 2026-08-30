@@ -22,7 +22,7 @@ import { TutorBookCover, TutorBookFoil, type SpineTreatment, useBookMaterialMaps
 import type { LibraryEvent, LibraryPhase } from './tutor-library-state';
 import type { TutorBookPageTurnDirection } from './tutor-book-pages';
 
-const COVER_COLOURS = ['#203a57', '#6a3035', '#63462c', '#25465a'];
+const COVER_COLOURS = ['#203a57', '#6a3035', '#63462c', '#25465a', '#36533d', '#4f345c', '#6d4a2e', '#31535a', '#4d5663', '#743f2c'];
 const PAPER = ['#eadbb9', '#e4d2aa', '#f0dfbd'];
 
 function LegacyTutorBook({ edition, tutor, phase, selected, motionProgress, neighbourResponse = 0, onHover, poseOverride, studio = false, spineTreatment, geometryDebug = false }: { edition: TutorBookEdition; tutor: CatalogueTutor; phase: LibraryPhase; selected: boolean; motionProgress: number; neighbourResponse?: number; onHover: (editionId: string) => void; poseOverride?: ReturnType<typeof getShelfPose>; studio?: boolean; spineTreatment?: SpineTreatment; geometryDebug?: boolean }) {

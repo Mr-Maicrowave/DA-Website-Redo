@@ -49,6 +49,13 @@ test('uses lightweight material variation and layered mouldings for architectura
   assert.match(source, /nosingDepth/);
 });
 
+test('fills quiet shelf gaps with one batched non-interactive decorative book layer', () => {
+  const room = readFileSync(new URL('./RoomRotunda.tsx', import.meta.url), 'utf8');
+  assert.match(room, /function DecorativeShelfBooks/);
+  assert.match(room, /<instancedMesh ref=\{mesh\}/);
+  assert.match(room, /<DecorativeShelfBooks cabinet=\{cabinet\} wallId=\{wall\.id\} \/>/);
+});
+
 test('keeps rendered wall labels self-contained for offline production capture', () => {
   const source = readFileSync(new URL('./RoomRotunda.tsx', import.meta.url), 'utf8');
 

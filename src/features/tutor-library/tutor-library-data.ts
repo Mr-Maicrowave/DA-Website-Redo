@@ -35,6 +35,15 @@ export const SUBJECT_WALLS: SubjectWall[] = [
 
 export const getWallAngle = (index: number, count: number) => (index / count) * Math.PI * 2;
 
+function getMaterialVariant(seed: string) {
+  let hash = 2166136261;
+  for (let index = 0; index < seed.length; index += 1) {
+    hash ^= seed.charCodeAt(index);
+    hash = Math.imul(hash, 16777619);
+  }
+  return (hash >>> 0) % 10;
+}
+
 export function createTutorBookEditions(tutors: readonly CatalogueTutor[]): TutorBookEdition[] {
   return SUBJECT_WALLS.flatMap((wall) => {
     const matching = tutors.filter(wall.matches);
@@ -44,7 +53,7 @@ export function createTutorBookEditions(tutors: readonly CatalogueTutor[]): Tuto
       wallId: wall.id,
       shelfIndex: Math.floor(index / 8),
       slotIndex: index % 8,
-      materialVariant: index % 4,
+      materialVariant: getMaterialVariant(`${tutor.id}:${wall.id}:${index}`),
     }));
   });
 }
