@@ -32,6 +32,14 @@ test('keeps continuous tutor-library motion inside the canvas rather than React 
   assert.match(scene, /useFrame/);
 });
 
+test('keeps a branded HTML loading surface visible until the first WebGL frame is ready', () => {
+  const library = readFileSync(libraryPath, 'utf8');
+
+  assert.match(library, /const \[canvasReady, setCanvasReady\] = useState\(false\)/);
+  assert.match(library, /tutor-library__loading/);
+  assert.match(library, /onCreated=\{\(\) => requestAnimationFrame\(\(\) => setCanvasReady\(true\)\)\}/);
+});
+
 test('keeps adjoining shelf corners while culling the wall opposite the viewer', () => {
   const room = readFileSync(roomPath, 'utf8');
 
