@@ -140,10 +140,8 @@ export function getBookInteractionEvents(
   }
   if (!maySelect && !mayActivateCurrent) return [];
 
-  const events: LibraryEvent[] = [];
-  if (!isCurrent) events.push({ type: 'HOVER', editionId, rootUuid });
-  events.push({ type: 'OPEN' });
-  return events;
+  if (!isCurrent) return [{ type: 'HOVER', editionId, rootUuid }];
+  return [{ type: 'OPEN' }];
 }
 
 export const isBookControlDisabled = (state: LibraryState, editionId: string) => {
