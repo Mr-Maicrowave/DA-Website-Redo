@@ -39,6 +39,9 @@ test('uses Jenny canonical fields verbatim without invented profile prose', () =
       'The Excellence Standard',
       "She doesn't teach to the test. She teaches to last.",
       'Primary (English & Mathematics) / English (Yr 7–10) / English Standard / English Advanced',
+      'English specialist',
+      '10+ years experience',
+      'Primary school manager',
     ],
     [
       'Every child deserves to know what excellent work feels like.',

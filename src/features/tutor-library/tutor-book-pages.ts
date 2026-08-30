@@ -34,12 +34,12 @@ export function createTutorBookPages(tutor: CatalogueTutor): readonly TutorBookP
       id: 'identity',
       folio: 1,
       label: 'Profile',
-      sourceText: [tutor.name, tutor.designation, tutor.tagline, tutor.subjects],
+      sourceText: [tutor.name, tutor.designation, tutor.tagline, tutor.subjects, ...profile.strengths],
     },
     {
       id: 'approach',
       folio: 2,
-      label: 'Approach & strengths',
+      label: 'Teaching profile',
       sourceText: [tutor.motto, ...profile.strengths],
     },
     {

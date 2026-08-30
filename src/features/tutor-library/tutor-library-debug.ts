@@ -135,7 +135,7 @@ export function getTutorLibraryViewportProfile(width: number, height: number, ph
     cameraRadius: laptop ? 3.45 : 3.25,
     targetRadius: 3.5,
     cameraHeight: 2.45,
-    targetHeight: laptop ? 2.88 : 2.96,
+    targetHeight: laptop ? 3.14 : 3.22,
     fov: laptop ? 40 : 38,
     lateralTargetOffset: 0,
     maxDpr,
