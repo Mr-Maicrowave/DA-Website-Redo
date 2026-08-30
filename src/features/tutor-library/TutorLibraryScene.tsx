@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useMemo, useState } from 'react';
-import { useFrame, useThree } from '@react-three/fiber';
-import { Color, PerspectiveCamera } from 'three';
+import { useThree } from '@react-three/fiber';
+import { PerspectiveCamera } from 'three';
 import { RoomRotunda } from './RoomRotunda';
 import { createRoomTurnPose } from './tutor-library-timeline';
 import type { LibraryEvent, LibraryPhase } from './tutor-library-state';
@@ -8,6 +8,7 @@ import { SUBJECT_WALLS } from './tutor-library-data';
 import { createCompleteShelfBookPool } from './complete-shelf-book-pool';
 import type { CompleteShelfTutorRig } from './CompleteShelfTutorBookBridge';
 import type { TutorBookPageTurnDirection } from './tutor-book-pages';
+import { getTutorLibraryViewportProfile } from './tutor-library-debug';
 
 const REVIEW_CAMERA_POSES = {
   'resting-book': { position: [.15, 2.42, -4.35], target: [.15, 2.42, -7.55], fov: 38 },
@@ -18,20 +19,31 @@ const REVIEW_CAMERA_POSES = {
   'extracted-book': { position: [.86, .68, .65], target: [.12, .12, -3.18], fov: 34 },
 } as const;
 
-function CameraFrame({ fromWallIndex, toWallIndex, turnProgress, reviewView }: { fromWallIndex: number; toWallIndex: number; turnProgress: number; reviewView?: string | null }) {
+function CameraFrame({ fromWallIndex, toWallIndex, turnProgress, reviewView, phase }: { fromWallIndex: number; toWallIndex: number; turnProgress: number; reviewView?: string | null; phase: LibraryPhase }) {
   const camera = useThree(state => state.camera) as PerspectiveCamera;
+  const size = useThree(state => state.size);
 
-  const frameCamera = () => {
+  useLayoutEffect(() => {
     const reviewPose = reviewView ? REVIEW_CAMERA_POSES[reviewView as keyof typeof REVIEW_CAMERA_POSES] : undefined;
-    const pose = reviewPose ?? createRoomTurnPose(fromWallIndex, toWallIndex, turnProgress, 4.1, 7.75, SUBJECT_WALLS.length);
+    const profile = getTutorLibraryViewportProfile(size.width, size.height, phase);
+    const pose = reviewPose ?? createRoomTurnPose(
+      fromWallIndex,
+      toWallIndex,
+      turnProgress,
+      profile.cameraRadius,
+      profile.targetRadius,
+      SUBJECT_WALLS.length,
+    );
+    const angle = Math.atan2(pose.target[0], -pose.target[2]);
+    const targetX = reviewPose ? pose.target[0] : pose.target[0] + Math.cos(angle) * profile.lateralTargetOffset;
+    const targetY = reviewPose ? pose.target[1] : profile.targetHeight;
+    const targetZ = reviewPose ? pose.target[2] : pose.target[2] + Math.sin(angle) * profile.lateralTargetOffset;
     camera.position.set(pose.position[0], pose.position[1], pose.position[2]);
-    camera.lookAt(pose.target[0], pose.target[1], pose.target[2]);
-    camera.fov = reviewPose?.fov ?? 52;
+    if (!reviewPose) camera.position.y = profile.cameraHeight;
+    camera.lookAt(targetX, targetY, targetZ);
+    camera.fov = reviewPose?.fov ?? profile.fov;
     camera.updateProjectionMatrix();
-  };
-
-  useLayoutEffect(frameCamera, [camera, fromWallIndex, toWallIndex, turnProgress, reviewView]);
-  useFrame(frameCamera);
+  }, [camera, fromWallIndex, phase, reviewView, size.height, size.width, toWallIndex, turnProgress]);
 
   return null;
 }
@@ -47,8 +59,8 @@ export function TutorLibraryScene({ fromWallIndex, toWallIndex, turnProgress, re
 
   return (
     <>
-      <CameraFrame fromWallIndex={fromWallIndex} toWallIndex={toWallIndex} turnProgress={turnProgress} reviewView={reviewView} />
-      <color attach="background" args={[new Color('#071323')]} />
+      <CameraFrame fromWallIndex={fromWallIndex} toWallIndex={toWallIndex} turnProgress={turnProgress} reviewView={reviewView} phase={phase} />
+      <color attach="background" args={['#071323']} />
       <fog attach="fog" args={['#071323', 13, 28]} />
       <ambientLight intensity={0.54} color="#e6e1d6" />
       <hemisphereLight intensity={0.62} color="#b9c5cf" groundColor="#382416" />

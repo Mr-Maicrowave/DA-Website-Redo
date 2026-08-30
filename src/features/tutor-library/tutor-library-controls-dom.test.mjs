@@ -36,6 +36,7 @@ try {
 
   await page.evaluate(() => window.tutorLibraryFixture.setPhase('BOOK_READING'));
   await page.evaluate(() => window.tutorLibraryFixture.setPage(0));
+  assert.equal(await page.$eval('.tutor-library__book-controls', element => getComputedStyle(element).pointerEvents), 'auto', 'desktop selected-book activation must remain available');
   const previousPage = '[aria-label="Previous tutor profile page"]';
   const nextPage = '[aria-label="Next tutor profile page"]';
   assert.equal(await page.$eval(previousPage, element => element.disabled), true);
@@ -54,6 +55,33 @@ try {
     'page:1', 'page:1', 'page:1', 'page:-1', 'page:-1', 'page:1',
   ]);
   assert.match(await page.$eval('.tutor-library__page-status', element => element.textContent ?? ''), /Page 3 of 5/i);
+
+  await page.setViewport({ width: 390, height: 844, deviceScaleFactor: 2 });
+  const mobileReadingLayout = await page.evaluate(() => {
+    const reader = document.querySelector('.tutor-library__reader');
+    const books = document.querySelector('.tutor-library__book-controls');
+    const actions = document.querySelector('.tutor-library__reader-actions');
+    if (!(reader instanceof HTMLElement) || !(books instanceof HTMLElement) || !(actions instanceof HTMLElement)) return null;
+    const readerRect = reader.getBoundingClientRect();
+    const actionButtons = [...actions.querySelectorAll('button, a')].map(element => element.getBoundingClientRect().height);
+    return {
+      libraryHeight: Math.round(document.querySelector('.tutor-library')?.getBoundingClientRect().height ?? 0),
+      readerBottom: Math.round(innerHeight - readerRect.bottom),
+      readerHeight: Math.round(readerRect.height),
+      bookControlsDisplay: getComputedStyle(books).display,
+      actionColumns: getComputedStyle(actions).gridTemplateColumns.split(' ').length,
+      minimumActionHeight: Math.min(...actionButtons),
+      horizontalOverflow: document.documentElement.scrollWidth - innerWidth,
+    };
+  });
+  assert.ok(mobileReadingLayout);
+  assert.ok(mobileReadingLayout.libraryHeight <= 780, 'the library must fit beneath the mobile site navigation without forcing focus-scroll');
+  assert.equal(mobileReadingLayout.bookControlsDisplay, 'none', 'inactive shelf controls must not cover the reading book on mobile');
+  assert.equal(mobileReadingLayout.actionColumns, 2, 'mobile reader actions stay compact instead of becoming a tall single column');
+  assert.ok(mobileReadingLayout.readerHeight <= 280, 'mobile reader panel must leave the upper canvas readable');
+  assert.ok(mobileReadingLayout.minimumActionHeight >= 44, 'mobile action targets remain at least 44 CSS pixels');
+  assert.ok(mobileReadingLayout.readerBottom >= 52, 'wall navigation remains separately reachable below the reader');
+  assert.ok(mobileReadingLayout.horizontalOverflow <= 0, 'mobile controls cannot introduce horizontal scrolling');
   await page.evaluate(() => window.tutorLibraryFixture.setPage(4));
   assert.equal(await page.$eval(nextPage, element => element.disabled), true);
   assert.match(await page.$eval('.tutor-library__page-status', element => element.textContent ?? ''), /Page 5 of 5/i);
@@ -74,6 +102,7 @@ try {
   await page.evaluate(() => window.tutorLibraryFixture.setFailure(true));
   assert.deepEqual(await page.$eval('.tutor-library__controls', element => ({ inert: element.hasAttribute('inert'), ariaDisabled: element.getAttribute('aria-disabled'), enabled: element.querySelectorAll('button:not(:disabled)').length })), { inert: true, ariaDisabled: 'true', enabled: 0 });
   assert.equal(await page.$eval('.tutor-library__fallback a', element => element.getAttribute('href')), '/find-teacher?tutor=T003');
+
   console.log('Tutor Library semantic DOM controls: PASS');
 } finally {
   if (browser) await browser.close();

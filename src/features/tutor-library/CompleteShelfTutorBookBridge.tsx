@@ -14,6 +14,7 @@ import type { TutorBookEdition } from './tutor-library-data';
 import { getControllerCompletionEvent, type LibraryEvent, type LibraryPhase } from './tutor-library-state';
 import { createBookMotionTimingPolicy } from './tutor-book-motion';
 import { advanceTutorBookPageTurn, type TutorBookPageTurnDirection } from './tutor-book-pages';
+import { getMatrixDeltaFromIdentity, writeTutorLibraryRigDiagnostics } from './tutor-library-debug';
 
 export interface CompleteShelfTutorRig extends CompleteShelfPoolRig {
   root: Object3D;
@@ -65,7 +66,7 @@ export function CompleteShelfTutorBookBridge({
   const pageTurnProgress = useRef(0);
   const pageTurnCommitted = useRef(false);
   const pageTurnCommand = useRef('');
-  const pageTurnDurationMs = createBookMotionTimingPolicy(reducedMotion).pageTurnMs;
+  const pageTurnDurationMs = useMemo(() => createBookMotionTimingPolicy(reducedMotion).pageTurnMs, [reducedMotion]);
 
   useEffect(() => {
     callbacks.current = { onReady, onRelease, onLifecycleComplete, onPageSettled, onError };
@@ -100,15 +101,27 @@ export function CompleteShelfTutorBookBridge({
 
     return () => {
       cancelled = true;
-      if (mountedRootUuid) callbacks.current.onRelease(mountedRootUuid);
+      if (mountedRootUuid) {
+        callbacks.current.onRelease(mountedRootUuid);
+        const qaRoot = gl.domElement.closest<HTMLElement>('[data-tutor-library-qa="root"]');
+        if (qaRoot?.dataset.libraryRootUuid === mountedRootUuid) {
+          writeTutorLibraryRigDiagnostics(gl.domElement, { rootUuid: 'unmounted' });
+        }
+      }
       lease.release();
     };
   }, [edition.id, gl, pool, presentation]);
 
   useLayoutEffect(() => {
     if (!rig) return;
+    rig.root.updateMatrix();
+    writeTutorLibraryRigDiagnostics(gl.domElement, {
+      rootUuid: rig.root.uuid,
+      matrixDelta: getMatrixDeltaFromIdentity(rig.root.matrix.elements),
+      resetState: 'not-required',
+    });
     callbacks.current.onReady(rig.root.uuid, rig.controller);
-  }, [rig]);
+  }, [gl, rig]);
 
   useEffect(() => {
     if (!rig || !active) return;
@@ -126,15 +139,21 @@ export function CompleteShelfTutorBookBridge({
       pageTurnCommitted.current = false;
       rig.controller.setPageTurnProgress(0, pageTurnDirection);
     }
-    else if (phase === 'BOOK_CLOSING') rig.controller.close();
-    else if (phase === 'BOOK_RESETTING') rig.controller.reset();
-  }, [active, generation, pageTurnDirection, phase, reducedMotion, rig]);
+    else if (phase === 'BOOK_CLOSING') {
+      writeTutorLibraryRigDiagnostics(gl.domElement, { rootUuid: rig.root.uuid, matrixDelta: getMatrixDeltaFromIdentity(rig.root.matrix.elements), resetState: 'pending' });
+      rig.controller.close();
+    }
+    else if (phase === 'BOOK_RESETTING') {
+      writeTutorLibraryRigDiagnostics(gl.domElement, { rootUuid: rig.root.uuid, matrixDelta: getMatrixDeltaFromIdentity(rig.root.matrix.elements), resetState: 'pending' });
+      rig.controller.reset();
+    }
+  }, [active, generation, gl, pageTurnDirection, phase, reducedMotion, rig]);
 
   useFrame((_, delta) => {
     if (!active || !rig) return;
-    const command = `${rig.root.uuid}:${phase}:${generation}`;
-    if (phase === 'PAGE_TURNING' && pageTurnCommand.current !== command) {
-      pageTurnCommand.current = command;
+    const pageCommand = phase === 'PAGE_TURNING' ? `${rig.root.uuid}:${phase}:${generation}` : '';
+    if (phase === 'PAGE_TURNING' && pageTurnCommand.current !== pageCommand) {
+      pageTurnCommand.current = pageCommand;
       pageTurnProgress.current = 0;
       pageTurnCommitted.current = false;
       rig.controller.setPageTurnProgress(0, pageTurnDirection);
@@ -155,6 +174,13 @@ export function CompleteShelfTutorBookBridge({
     if (emittedCompletion.current === key) return;
     emittedCompletion.current = key;
     if (completion.type === 'PAGE_TURN_COMPLETE') callbacks.current.onPageSettled(snapshot.settledPages);
+    if (completion.type === 'RESET_COMPLETE') {
+      writeTutorLibraryRigDiagnostics(gl.domElement, {
+        rootUuid: rig.root.uuid,
+        matrixDelta: getMatrixDeltaFromIdentity(rig.root.matrix.elements),
+        resetState: 'complete',
+      });
+    }
     callbacks.current.onLifecycleComplete(completion);
   });
 

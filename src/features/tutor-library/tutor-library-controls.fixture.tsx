@@ -7,6 +7,8 @@ import { TutorLibraryControlSurface } from './TutorLibraryControls';
 import { createTutorBookEditions, SUBJECT_WALLS } from './tutor-library-data';
 import { createLibraryState, getLibraryControlAvailability, type LibraryPhase } from './tutor-library-state';
 import { getTutorBookPageTarget, type TutorBookPageTurnDirection } from './tutor-book-pages';
+import '../../index.css';
+import './tutor-library.css';
 
 declare global {
   interface Window {
@@ -47,7 +49,7 @@ function Fixture() {
     selectedEditionId: phase === 'ROOM_IDLE' ? undefined : 'T003:primary',
   };
 
-  return <MemoryRouter><TutorLibraryControlSurface
+  return <MemoryRouter><section className={`tutor-library${phase === 'ROOM_IDLE' ? '' : ' tutor-library--book-active'}`}><TutorLibraryControlSurface
     library={library}
     activeWall={primaryWall}
     visibleEditions={primaryEditions}
@@ -72,7 +74,7 @@ function Fixture() {
       setSettledPages(target);
     }}
     onClose={() => events.push('close')}
-  /></MemoryRouter>;
+  /></section></MemoryRouter>;
 }
 
 await act(async () => { createRoot(document.getElementById('root')!).render(<Fixture />); });

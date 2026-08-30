@@ -1,6 +1,6 @@
 import { RoundedBox, Text } from '@react-three/drei';
 import { useMemo } from 'react';
-import { DataTexture, DoubleSide, RGBAFormat, RepeatWrapping, SRGBColorSpace, UnsignedByteType } from 'three';
+import { DataTexture, DoubleSide, MeshStandardMaterial, RGBAFormat, RepeatWrapping, SRGBColorSpace, UnsignedByteType } from 'three';
 import { SUBJECT_WALLS, getWallAngle, type SubjectWall } from './tutor-library-data';
 import { createCabinetBlueprint } from './room-architecture';
 import { createTutorBookEditions } from './tutor-library-data';
@@ -21,6 +21,23 @@ const WALL_COLOURS: Record<SubjectWall['palette'], { label: string; accent: stri
 };
 const TUTOR_BY_ID = new Map(TUTORS.map(tutor => [tutor.id, tutor]));
 const BOOK_EDITIONS = createTutorBookEditions(TUTORS);
+const EDITIONS_BY_WALL = new Map(SUBJECT_WALLS.map(wall => [
+  wall.id,
+  BOOK_EDITIONS.filter(edition => edition.wallId === wall.id),
+]));
+const WALL_WIDTH = 2 * ROOM_RADIUS * Math.tan(Math.PI / SUBJECT_WALLS.length) + .45;
+const ROOM_SHELL_CORNERS: ReadonlyArray<readonly [number, number]> = [
+  [-ROOM_RADIUS, -ROOM_RADIUS],
+  [ROOM_RADIUS, -ROOM_RADIUS],
+  [ROOM_RADIUS, ROOM_RADIUS],
+  [-ROOM_RADIUS, ROOM_RADIUS],
+];
+const FLOOR_BOARDS = Array.from({ length: 58 }, (_, index) => ({
+  x: -8.12 + index * .286,
+  width: [.255, .278, .292, .266][index % 4],
+  tone: ['#2b180f', '#24130c', '#301c11', '#27160e', '#342016'][index % 5],
+  offset: index % 3 === 0 ? .035 : index % 3 === 1 ? -.025 : .01,
+}));
 
 type RoomBookInteractionProps = {
   generation: number;
@@ -50,11 +67,27 @@ const WALNUT_GRAIN = (() => {
   return texture;
 })();
 
+const CABINET_MATERIALS = new Map<string, MeshStandardMaterial>();
+
+function getCabinetMaterial(color: string, roughness: number, metalness: number, grain: boolean) {
+  const key = `${color}:${roughness}:${metalness}:${grain ? 'grain' : 'flat'}`;
+  const existing = CABINET_MATERIALS.get(key);
+  if (existing) return existing;
+  const material = new MeshStandardMaterial({
+    color,
+    map: grain ? WALNUT_GRAIN : null,
+    roughness,
+    metalness,
+  });
+  CABINET_MATERIALS.set(key, material);
+  return material;
+}
+
 type BoxProps = { size: [number, number, number]; position: [number, number, number]; color: string; roughness?: number; metalness?: number; radius?: number; grain?: boolean };
 
 function CabinetBox({ size, position, color, roughness = 0.68, metalness = 0.04, radius = 0.035, grain = true }: BoxProps) {
   return <RoundedBox args={size} position={position} radius={radius} smoothness={3} castShadow receiveShadow>
-    <meshStandardMaterial color={color} map={grain ? WALNUT_GRAIN : undefined} roughness={roughness} metalness={metalness} />
+    <primitive object={getCabinetMaterial(color, roughness, metalness, grain)} attach="material" dispose={null} />
   </RoundedBox>;
 }
 
@@ -110,7 +143,7 @@ function WallShelves({ wall, angle, width, showWallLabel, pool, rigIntentEdition
       <CabinetBox size={[shelfWidth, cabinet.shelfThickness, cabinet.shelfDepth]} position={[0, y, .34]} color="#4b2a1a" roughness={.54} radius={.03} />
       <ShelfFrontProfile width={shelfWidth} y={y} depth={cabinet.shelfDepth} nosingDepth={cabinet.nosingDepth} />
     </group>)}
-    <TutorShelf editions={BOOK_EDITIONS.filter(edition => edition.wallId === wall.id)} tutors={TUTOR_BY_ID} pool={pool} rigIntentEditionId={rigIntentEditionId} rigIntentToken={rigIntentToken} onRigIntent={onRigIntent} phase={phase} generation={generation} reducedMotion={reducedMotion} pageTurnDirection={pageTurnDirection} selectedEditionId={selectedEditionId} motionProgress={motionProgress} onHover={onHover} onActivate={onActivate} onRigReady={onRigReady} onRigUnavailable={onRigUnavailable} onLifecycleComplete={onLifecycleComplete} onPageSettled={onPageSettled} onError={onError} />
+    <TutorShelf editions={EDITIONS_BY_WALL.get(wall.id) ?? []} tutors={TUTOR_BY_ID} pool={pool} rigIntentEditionId={rigIntentEditionId} rigIntentToken={rigIntentToken} onRigIntent={onRigIntent} phase={phase} generation={generation} reducedMotion={reducedMotion} pageTurnDirection={pageTurnDirection} selectedEditionId={selectedEditionId} motionProgress={motionProgress} onHover={onHover} onActivate={onActivate} onRigReady={onRigReady} onRigUnavailable={onRigUnavailable} onLifecycleComplete={onLifecycleComplete} onPageSettled={onPageSettled} onError={onError} />
     <CabinetBox size={[width, cabinet.plinthHeight, 1.04]} position={[0, -ROOM_HEIGHT / 2 + cabinet.plinthHeight / 2, .45]} color="#351a10" roughness={.54} radius={.04} />
     <CabinetMoulding width={width + .16} y={-ROOM_HEIGHT / 2 + .12} z={.45} color="#654028" depth={1.13} />
     <CabinetBox size={[width, .38, 1.06]} position={[0, ROOM_HEIGHT / 2 - .22, .45]} color="#3b1e12" roughness={.52} radius={.04} />
@@ -122,11 +155,9 @@ function WallShelves({ wall, angle, width, showWallLabel, pool, rigIntentEdition
 }
 
 function RoomShell() {
-  const floorBoards = Array.from({ length: 58 }, (_, index) => ({ x: -8.12 + index * .286, width: [.255, .278, .292, .266][index % 4], tone: ['#2b180f', '#24130c', '#301c11', '#27160e', '#342016'][index % 5], offset: index % 3 === 0 ? .035 : index % 3 === 1 ? -.025 : .01 }));
-  const corners: Array<[number, number]> = [[-ROOM_RADIUS, -ROOM_RADIUS], [ROOM_RADIUS, -ROOM_RADIUS], [ROOM_RADIUS, ROOM_RADIUS], [-ROOM_RADIUS, ROOM_RADIUS]];
   return <group>
     <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow><planeGeometry args={[17.2, 17.2]} /><meshStandardMaterial color="#160d0a" roughness={.64} metalness={.08} side={DoubleSide} /></mesh>
-    {floorBoards.map(board => <CabinetBox key={`floor-${board.x}`} size={[board.width, .042, 16.9]} position={[board.x, .02, board.offset]} color={board.tone} roughness={.52} metalness={.02} radius={.009} />)}
+    {FLOOR_BOARDS.map(board => <CabinetBox key={`floor-${board.x}`} size={[board.width, .042, 16.9]} position={[board.x, .02, board.offset]} color={board.tone} roughness={.52} metalness={.02} radius={.009} />)}
     <CabinetBox size={[17.2, .16, 17.2]} position={[0, ROOM_HEIGHT, 0]} color="#0b1930" roughness={.86} radius={.035} grain={false} />
     <CabinetBox size={[15.75, .055, 15.75]} position={[0, ROOM_HEIGHT - .12, 0]} color="#10223b" roughness={.92} radius={.04} grain={false} />
     <CabinetBox size={[17.1, .16, .28]} position={[0, .18, -ROOM_RADIUS]} color="#3b2115" roughness={.5} />
@@ -137,7 +168,7 @@ function RoomShell() {
     <CabinetBox size={[17.1, .14, .28]} position={[0, ROOM_HEIGHT - .1, ROOM_RADIUS]} color="#54331f" roughness={.42} />
     <CabinetBox size={[.28, .14, 17.1]} position={[-ROOM_RADIUS, ROOM_HEIGHT - .1, 0]} color="#54331f" roughness={.42} />
     <CabinetBox size={[.28, .14, 17.1]} position={[ROOM_RADIUS, ROOM_HEIGHT - .1, 0]} color="#54331f" roughness={.42} />
-    {corners.map(([x, z]) => <group key={`${x}-${z}`}>
+    {ROOM_SHELL_CORNERS.map(([x, z]) => <group key={`${x}-${z}`}>
       <CabinetBox size={[.62, ROOM_HEIGHT, .62]} position={[x, ROOM_HEIGHT / 2, z]} color="#211008" roughness={.51} radius={.07} />
       <CabinetBox size={[.44, ROOM_HEIGHT - .52, .44]} position={[x, ROOM_HEIGHT / 2, z]} color="#3a1e12" roughness={.45} radius={.055} />
       <CabinetBox size={[.28, ROOM_HEIGHT - .82, .28]} position={[x, ROOM_HEIGHT / 2, z]} color="#5b3520" roughness={.38} radius={.04} />
@@ -153,6 +184,5 @@ function RoomShell() {
 }
 
 export function RoomRotunda({ showWallLabels = true, pool, rigIntentEditionId, rigIntentToken, onRigIntent, phase, generation, reducedMotion, pageTurnDirection, selectedEditionId, motionProgress, onHover, onActivate, onRigReady, onRigUnavailable, onLifecycleComplete, onPageSettled, onError }: { showWallLabels?: boolean; pool: CompleteShelfBookPool<CompleteShelfTutorRig>; rigIntentEditionId?: string; rigIntentToken: number; onRigIntent: (editionId?: string) => void; phase: LibraryPhase; selectedEditionId?: string; motionProgress: number; onHover: (editionId: string, rootUuid: string) => void } & RoomBookInteractionProps) {
-  const wallWidth = useMemo(() => 2 * ROOM_RADIUS * Math.tan(Math.PI / SUBJECT_WALLS.length) + .45, []);
-  return <group><RoomShell />{SUBJECT_WALLS.map((wall, index) => <WallShelves key={wall.id} wall={wall} angle={getWallAngle(index, SUBJECT_WALLS.length)} width={wallWidth} showWallLabel={showWallLabels} pool={pool} rigIntentEditionId={rigIntentEditionId} rigIntentToken={rigIntentToken} onRigIntent={onRigIntent} phase={phase} generation={generation} reducedMotion={reducedMotion} pageTurnDirection={pageTurnDirection} selectedEditionId={selectedEditionId} motionProgress={motionProgress} onHover={onHover} onActivate={onActivate} onRigReady={onRigReady} onRigUnavailable={onRigUnavailable} onLifecycleComplete={onLifecycleComplete} onPageSettled={onPageSettled} onError={onError} />)}</group>;
+  return <group><RoomShell />{SUBJECT_WALLS.map((wall, index) => <WallShelves key={wall.id} wall={wall} angle={getWallAngle(index, SUBJECT_WALLS.length)} width={WALL_WIDTH} showWallLabel={showWallLabels} pool={pool} rigIntentEditionId={rigIntentEditionId} rigIntentToken={rigIntentToken} onRigIntent={onRigIntent} phase={phase} generation={generation} reducedMotion={reducedMotion} pageTurnDirection={pageTurnDirection} selectedEditionId={selectedEditionId} motionProgress={motionProgress} onHover={onHover} onActivate={onActivate} onRigReady={onRigReady} onRigUnavailable={onRigUnavailable} onLifecycleComplete={onLifecycleComplete} onPageSettled={onPageSettled} onError={onError} />)}</group>;
 }
