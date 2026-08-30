@@ -1,11 +1,13 @@
 import { useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import { useThree } from '@react-three/fiber';
-import { PerspectiveCamera } from 'three';
+import { PerspectiveCamera, PMREMGenerator } from 'three';
+import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { RoomRotunda } from './RoomRotunda';
 import { createRoomTurnPose } from './tutor-library-timeline';
 import type { LibraryEvent, LibraryPhase } from './tutor-library-state';
 import { SUBJECT_WALLS } from './tutor-library-data';
 import { createCompleteShelfBookPool } from './complete-shelf-book-pool';
+import { getIlluminationAngle } from './tutor-library-lighting';
 import type { CompleteShelfTutorRig } from './CompleteShelfTutorBookBridge';
 import type { TutorBookPageTurnDirection } from './tutor-book-pages';
 import { getTutorLibraryViewportProfile } from './tutor-library-debug';
@@ -18,6 +20,32 @@ const REVIEW_CAMERA_POSES = {
   'oblique-cabinet': { position: [-3.35, 2.5, 1.4], target: [-.55, 2.6, -7.4], fov: 46 },
   'extracted-book': { position: [.86, .68, .65], target: [.12, .12, -3.18], fov: 34 },
 } as const;
+
+/**
+ * A dim image-based environment. Cloth sheen and gilt need a source with area to reflect: punctual
+ * lights alone are what made every material read as untextured plastic. Kept low so it lifts the
+ * specular without flattening the contrast the strips are there to create.
+ */
+function LibraryEnvironment({ intensity = .3 }: { intensity?: number }) {
+  const gl = useThree(state => state.gl);
+  const scene = useThree(state => state.scene);
+
+  useLayoutEffect(() => {
+    const generator = new PMREMGenerator(gl);
+    const room = new RoomEnvironment();
+    const environment = generator.fromScene(room, .04).texture;
+    scene.environment = environment;
+    scene.environmentIntensity = intensity;
+    return () => {
+      scene.environment = null;
+      environment.dispose();
+      generator.dispose();
+      room.dispose();
+    };
+  }, [gl, intensity, scene]);
+
+  return null;
+}
 
 function CameraFrame({ fromWallIndex, toWallIndex, turnProgress, reviewView, phase }: { fromWallIndex: number; toWallIndex: number; turnProgress: number; reviewView?: string | null; phase: LibraryPhase }) {
   const camera = useThree(state => state.camera) as PerspectiveCamera;
@@ -48,7 +76,7 @@ function CameraFrame({ fromWallIndex, toWallIndex, turnProgress, reviewView, pha
   return null;
 }
 
-export function TutorLibraryScene({ fromWallIndex, toWallIndex, turnProgress, reviewView, showWallLabels = true, phase, generation, reducedMotion, pageTurnDirection, selectedEditionId, rigIntentEditionId: requestedRigIntentEditionId, rigIntentToken, bookMotionProgress, onHover, onActivate, onRigReady, onRigUnavailable, onLifecycleComplete, onPageSettled, onError }: { fromWallIndex: number; toWallIndex: number; turnProgress: number; reviewView?: string | null; showWallLabels?: boolean; phase: LibraryPhase; generation: number; reducedMotion: boolean; pageTurnDirection: TutorBookPageTurnDirection; selectedEditionId?: string; rigIntentEditionId?: string; rigIntentToken: number; bookMotionProgress: number; onHover: (editionId: string, rootUuid: string) => void; onActivate: (editionId: string, rootUuid: string) => void; onRigReady: (editionId: string, rootUuid: string, token: number) => void; onRigUnavailable: (editionId: string, rootUuid: string) => void; onLifecycleComplete: (event: LibraryEvent) => void; onPageSettled: (settledPages: number) => void; onError: (message: string) => void }) {
+export function TutorLibraryScene({ fromWallIndex, toWallIndex, turnProgress, reviewView, showWallLabels = true, phase, generation, reducedMotion, pageTurnDirection, selectedEditionId, rigIntentEditionId: requestedRigIntentEditionId, rigIntentToken, bookMotionProgress, onActivate, onRigReady, onRigUnavailable, onLifecycleComplete, onPageSettled, onError }: { fromWallIndex: number; toWallIndex: number; turnProgress: number; reviewView?: string | null; showWallLabels?: boolean; phase: LibraryPhase; generation: number; reducedMotion: boolean; pageTurnDirection: TutorBookPageTurnDirection; selectedEditionId?: string; rigIntentEditionId?: string; rigIntentToken: number; bookMotionProgress: number; onActivate: (editionId: string, rootUuid: string) => void; onRigReady: (editionId: string, rootUuid: string, token: number) => void; onRigUnavailable: (editionId: string, rootUuid: string) => void; onLifecycleComplete: (event: LibraryEvent) => void; onPageSettled: (settledPages: number) => void; onError: (message: string) => void }) {
   const bookPool = useMemo(() => createCompleteShelfBookPool<CompleteShelfTutorRig>({ maxDormantRigs: 3 }), []);
   const [pointerRigIntentEditionId, setPointerRigIntentEditionId] = useState<string>();
   const rigIntentEditionId = requestedRigIntentEditionId ?? pointerRigIntentEditionId;
@@ -60,14 +88,12 @@ export function TutorLibraryScene({ fromWallIndex, toWallIndex, turnProgress, re
   return (
     <>
       <CameraFrame fromWallIndex={fromWallIndex} toWallIndex={toWallIndex} turnProgress={turnProgress} reviewView={reviewView} phase={phase} />
-      <color attach="background" args={['#071323']} />
-      <fog attach="fog" args={['#071323', 13, 28]} />
-      <ambientLight intensity={0.54} color="#e6e1d6" />
-      <hemisphereLight intensity={0.62} color="#b9c5cf" groundColor="#382416" />
-      <pointLight castShadow position={[0, 4.25, -4.5]} intensity={20} distance={11.5} decay={2} color="#fff1cf" shadow-mapSize={[1024, 1024]} />
-      <pointLight position={[-6.2, 3.4, -4.6]} intensity={12} distance={8.8} decay={2} color="#f0e4cb" />
-      <pointLight position={[6.2, 3.4, -4.6]} intensity={12} distance={8.8} decay={2} color="#f0e4cb" />
-      <RoomRotunda showWallLabels={showWallLabels} pool={bookPool} rigIntentEditionId={rigIntentEditionId} rigIntentToken={rigIntentToken} onRigIntent={setPointerRigIntentEditionId} phase={phase} generation={generation} reducedMotion={reducedMotion} pageTurnDirection={pageTurnDirection} selectedEditionId={selectedEditionId} motionProgress={bookMotionProgress} onHover={onHover} onActivate={onActivate} onRigReady={onRigReady} onRigUnavailable={onRigUnavailable} onLifecycleComplete={onLifecycleComplete} onPageSettled={onPageSettled} onError={onError} />
+      <color attach="background" args={['#050d1a']} />
+      <fog attach="fog" args={['#050d1a', 11.5, 26]} />
+      <LibraryEnvironment />
+      <ambientLight intensity={0.1} color="#d9e4f2" />
+      <hemisphereLight intensity={0.16} color="#93a8bd" groundColor="#2a1a10" />
+      <RoomRotunda illuminationAngle={getIlluminationAngle(fromWallIndex, toWallIndex, turnProgress, SUBJECT_WALLS.length)} showWallLabels={showWallLabels} pool={bookPool} rigIntentEditionId={rigIntentEditionId} rigIntentToken={rigIntentToken} onRigIntent={setPointerRigIntentEditionId} phase={phase} generation={generation} reducedMotion={reducedMotion} pageTurnDirection={pageTurnDirection} selectedEditionId={selectedEditionId} motionProgress={bookMotionProgress} onActivate={onActivate} onRigReady={onRigReady} onRigUnavailable={onRigUnavailable} onLifecycleComplete={onLifecycleComplete} onPageSettled={onPageSettled} onError={onError} />
     </>
   );
 }

@@ -1,8 +1,10 @@
 import { RoundedBox, Text } from '@react-three/drei';
-import { useMemo } from 'react';
-import { DataTexture, DoubleSide, MeshStandardMaterial, RGBAFormat, RepeatWrapping, SRGBColorSpace, UnsignedByteType } from 'three';
+import { useLayoutEffect, useMemo, useRef } from 'react';
+import { DataTexture, DirectionalLight, DoubleSide, MeshStandardMaterial, Object3D, RGBAFormat, RepeatWrapping, SRGBColorSpace, UnsignedByteType } from 'three';
+import { RectAreaLightUniformsLib } from 'three/examples/jsm/lights/RectAreaLightUniformsLib.js';
 import { SUBJECT_WALLS, getWallAngle, type SubjectWall } from './tutor-library-data';
 import { createCabinetBlueprint } from './room-architecture';
+import { CASE_STRIP_TILT_X, createCaseLightPlan } from './tutor-library-lighting';
 import { createTutorBookEditions } from './tutor-library-data';
 import { TUTORS } from '../../data/teacherCatalogue';
 import { TutorShelf } from './TutorShelf';
@@ -10,6 +12,8 @@ import type { LibraryEvent, LibraryPhase } from './tutor-library-state';
 import type { CompleteShelfBookPool } from './complete-shelf-book-pool';
 import type { CompleteShelfTutorRig } from './CompleteShelfTutorBookBridge';
 import type { TutorBookPageTurnDirection } from './tutor-book-pages';
+
+RectAreaLightUniformsLib.init();
 
 const ROOM_RADIUS = 8;
 const ROOM_HEIGHT = 5.8;
@@ -123,13 +127,13 @@ function ShelfFrontProfile({ width, y, depth, nosingDepth }: { width: number; y:
   </group>;
 }
 
-function WallShelves({ wall, angle, width, showWallLabel, pool, rigIntentEditionId, rigIntentToken, onRigIntent, phase, generation, reducedMotion, pageTurnDirection, selectedEditionId, motionProgress, onHover, onActivate, onRigReady, onRigUnavailable, onLifecycleComplete, onPageSettled, onError }: { wall: SubjectWall; angle: number; width: number; showWallLabel: boolean; pool: CompleteShelfBookPool<CompleteShelfTutorRig>; rigIntentEditionId?: string; rigIntentToken: number; onRigIntent: (editionId?: string) => void; phase: LibraryPhase; selectedEditionId?: string; motionProgress: number; onHover: (editionId: string, rootUuid: string) => void } & RoomBookInteractionProps) {
+function WallShelves({ wall, angle, width, showWallLabel, pool, rigIntentEditionId, rigIntentToken, onRigIntent, phase, generation, reducedMotion, pageTurnDirection, selectedEditionId, motionProgress, onActivate, onRigReady, onRigUnavailable, onLifecycleComplete, onPageSettled, onError }: { wall: SubjectWall; angle: number; width: number; showWallLabel: boolean; pool: CompleteShelfBookPool<CompleteShelfTutorRig>; rigIntentEditionId?: string; rigIntentToken: number; onRigIntent: (editionId?: string) => void; phase: LibraryPhase; selectedEditionId?: string; motionProgress: number } & RoomBookInteractionProps) {
   const palette = WALL_COLOURS[wall.palette];
   const cabinet = useMemo(() => createCabinetBlueprint(width, ROOM_HEIGHT), [width]);
   const interiorHeight = ROOM_HEIGHT - .82;
   const shelfWidth = width - cabinet.frameThickness * 1.8;
   return <group position={[Math.sin(angle) * ROOM_RADIUS, ROOM_HEIGHT / 2, -Math.cos(angle) * ROOM_RADIUS]} rotation={[0, -angle, 0]}>
-    <pointLight position={[0, .65, .92]} intensity={16} distance={9.5} decay={2} color="#fff2d5" />
+    <pointLight position={[0, .2, 1.55]} intensity={3.4} distance={7.2} decay={2} color="#ffe8c4" />
     <CabinetBox size={[width + .32, ROOM_HEIGHT + .16, .15]} position={[0, 0, -.16]} color="#102039" roughness={.9} radius={.035} grain={false} />
     <CabinetBox size={[width, ROOM_HEIGHT, .2]} position={[0, 0, cabinet.backPanelZ]} color="#28160e" roughness={.79} />
     {cabinet.bays.map((bay, index) => <FramedPanel key={`back-${bay.centerX}`} x={bay.centerX} width={bay.width} height={interiorHeight} color={palette.back} emphasis={index === 1} />)}
@@ -143,7 +147,7 @@ function WallShelves({ wall, angle, width, showWallLabel, pool, rigIntentEdition
       <CabinetBox size={[shelfWidth, cabinet.shelfThickness, cabinet.shelfDepth]} position={[0, y, .34]} color="#4b2a1a" roughness={.54} radius={.03} />
       <ShelfFrontProfile width={shelfWidth} y={y} depth={cabinet.shelfDepth} nosingDepth={cabinet.nosingDepth} />
     </group>)}
-    <TutorShelf editions={EDITIONS_BY_WALL.get(wall.id) ?? []} tutors={TUTOR_BY_ID} pool={pool} rigIntentEditionId={rigIntentEditionId} rigIntentToken={rigIntentToken} onRigIntent={onRigIntent} phase={phase} generation={generation} reducedMotion={reducedMotion} pageTurnDirection={pageTurnDirection} selectedEditionId={selectedEditionId} motionProgress={motionProgress} onHover={onHover} onActivate={onActivate} onRigReady={onRigReady} onRigUnavailable={onRigUnavailable} onLifecycleComplete={onLifecycleComplete} onPageSettled={onPageSettled} onError={onError} />
+    <TutorShelf editions={EDITIONS_BY_WALL.get(wall.id) ?? []} tutors={TUTOR_BY_ID} pool={pool} rigIntentEditionId={rigIntentEditionId} rigIntentToken={rigIntentToken} onRigIntent={onRigIntent} phase={phase} generation={generation} reducedMotion={reducedMotion} pageTurnDirection={pageTurnDirection} selectedEditionId={selectedEditionId} motionProgress={motionProgress} onActivate={onActivate} onRigReady={onRigReady} onRigUnavailable={onRigUnavailable} onLifecycleComplete={onLifecycleComplete} onPageSettled={onPageSettled} onError={onError} />
     <CabinetBox size={[width, cabinet.plinthHeight, 1.04]} position={[0, -ROOM_HEIGHT / 2 + cabinet.plinthHeight / 2, .45]} color="#351a10" roughness={.54} radius={.04} />
     <CabinetMoulding width={width + .16} y={-ROOM_HEIGHT / 2 + .12} z={.45} color="#654028" depth={1.13} />
     <CabinetBox size={[width, .38, 1.06]} position={[0, ROOM_HEIGHT / 2 - .22, .45]} color="#3b1e12" roughness={.52} radius={.04} />
@@ -177,12 +181,36 @@ function RoomShell() {
       <CabinetBox size={[.08, ROOM_HEIGHT - .76, .08]} position={[x + (x > 0 ? -.24 : .24), ROOM_HEIGHT / 2, z + (z > 0 ? -.24 : .24)]} color="#9a7040" roughness={.28} metalness={.7} radius={.01} />
     </group>)}
     <group position={[0, ROOM_HEIGHT - .24, 0]}>
-      <mesh rotation={[Math.PI / 2, 0, 0]}><cylinderGeometry args={[.56, .72, .16, 32]} /><meshStandardMaterial color="#a97b43" roughness={.3} metalness={.72} /></mesh>
-      <pointLight position={[0, -.34, 0]} intensity={52} distance={14} decay={2} color="#fff0cf" />
+      <mesh rotation={[Math.PI / 2, 0, 0]}><cylinderGeometry args={[.56, .72, .16, 32]} /><meshStandardMaterial color="#a97b43" roughness={.3} metalness={.72} emissive="#5d3d16" emissiveIntensity={.5} /></mesh>
+      <mesh position={[0, -.085, 0]} rotation={[Math.PI / 2, 0, 0]}><circleGeometry args={[.5, 32]} /><meshBasicMaterial color="#ffeac3" /></mesh>
+      <pointLight position={[0, -.34, 0]} intensity={16} distance={12} decay={2} color="#fff0cf" />
     </group>
   </group>;
 }
 
-export function RoomRotunda({ showWallLabels = true, pool, rigIntentEditionId, rigIntentToken, onRigIntent, phase, generation, reducedMotion, pageTurnDirection, selectedEditionId, motionProgress, onHover, onActivate, onRigReady, onRigUnavailable, onLifecycleComplete, onPageSettled, onError }: { showWallLabels?: boolean; pool: CompleteShelfBookPool<CompleteShelfTutorRig>; rigIntentEditionId?: string; rigIntentToken: number; onRigIntent: (editionId?: string) => void; phase: LibraryPhase; selectedEditionId?: string; motionProgress: number; onHover: (editionId: string, rootUuid: string) => void } & RoomBookInteractionProps) {
-  return <group><RoomShell />{SUBJECT_WALLS.map((wall, index) => <WallShelves key={wall.id} wall={wall} angle={getWallAngle(index, SUBJECT_WALLS.length)} width={WALL_WIDTH} showWallLabel={showWallLabels} pool={pool} rigIntentEditionId={rigIntentEditionId} rigIntentToken={rigIntentToken} onRigIntent={onRigIntent} phase={phase} generation={generation} reducedMotion={reducedMotion} pageTurnDirection={pageTurnDirection} selectedEditionId={selectedEditionId} motionProgress={motionProgress} onHover={onHover} onActivate={onActivate} onRigReady={onRigReady} onRigUnavailable={onRigUnavailable} onLifecycleComplete={onLifecycleComplete} onPageSettled={onPageSettled} onError={onError} />)}</group>;
+const CASE_LIGHT_PLAN = createCaseLightPlan(WALL_WIDTH, ROOM_HEIGHT);
+
+/**
+ * Strips under each shelf board plus one shadow-casting key, mounted on a single group that travels
+ * to the case being viewed. Keeping the light count constant matters: adding or removing a light
+ * recompiles every material in the scene, which would stall the room turn.
+ */
+function CaseLighting({ angle }: { angle: number }) {
+  const key = useRef<DirectionalLight>(null);
+  const aim = useRef<Object3D>(null);
+
+  useLayoutEffect(() => {
+    if (key.current && aim.current) key.current.target = aim.current;
+  }, []);
+
+  return <group position={[Math.sin(angle) * ROOM_RADIUS, ROOM_HEIGHT / 2, -Math.cos(angle) * ROOM_RADIUS]} rotation={[0, -angle, 0]}>
+    {CASE_LIGHT_PLAN.map(strip => <rectAreaLight key={strip.row} position={[0, strip.y, strip.z]} rotation={[CASE_STRIP_TILT_X, 0, 0]} width={strip.width} height={strip.height} intensity={strip.intensity} color="#ffe3ae" />)}
+    <object3D ref={aim} position={[0, -.45, .42]} />
+    <directionalLight ref={key} castShadow position={[1.7, 3.3, 5.4]} intensity={1.25} color="#ffe7c2" shadow-mapSize={[2048, 2048]} shadow-bias={-.0006} shadow-normalBias={.018} shadow-camera-left={-8.6} shadow-camera-right={8.6} shadow-camera-top={5.4} shadow-camera-bottom={-5.4} shadow-camera-near={.5} shadow-camera-far={18} />
+    <pointLight position={[0, 1.1, 2.2]} intensity={6.5} distance={7.6} decay={2} color="#ffdfae" />
+  </group>;
+}
+
+export function RoomRotunda({ illuminationAngle = 0, showWallLabels = true, pool, rigIntentEditionId, rigIntentToken, onRigIntent, phase, generation, reducedMotion, pageTurnDirection, selectedEditionId, motionProgress, onActivate, onRigReady, onRigUnavailable, onLifecycleComplete, onPageSettled, onError }: { illuminationAngle?: number; showWallLabels?: boolean; pool: CompleteShelfBookPool<CompleteShelfTutorRig>; rigIntentEditionId?: string; rigIntentToken: number; onRigIntent: (editionId?: string) => void; phase: LibraryPhase; selectedEditionId?: string; motionProgress: number } & RoomBookInteractionProps) {
+  return <group><RoomShell /><CaseLighting angle={illuminationAngle} />{SUBJECT_WALLS.map((wall, index) => <WallShelves key={wall.id} wall={wall} angle={getWallAngle(index, SUBJECT_WALLS.length)} width={WALL_WIDTH} showWallLabel={showWallLabels} pool={pool} rigIntentEditionId={rigIntentEditionId} rigIntentToken={rigIntentToken} onRigIntent={onRigIntent} phase={phase} generation={generation} reducedMotion={reducedMotion} pageTurnDirection={pageTurnDirection} selectedEditionId={selectedEditionId} motionProgress={motionProgress} onActivate={onActivate} onRigReady={onRigReady} onRigUnavailable={onRigUnavailable} onLifecycleComplete={onLifecycleComplete} onPageSettled={onPageSettled} onError={onError} />)}</group>;
 }
