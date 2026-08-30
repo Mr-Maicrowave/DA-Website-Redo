@@ -180,6 +180,7 @@ test("draws every Jenny presentation canvas and refreshes the cover after the po
     assert.equal(openingPagePortrait.src, "/teachers/jenny.png");
     coverPortrait.onload?.();
     openingPagePortrait.onload?.();
+    RecordingImage.instances[2]?.onload?.();
 
     assert.equal(coverRefreshes, 1);
     assert.ok(cover.commands.some(command => command.name === "drawImage"));
@@ -188,7 +189,7 @@ test("draws every Jenny presentation canvas and refreshes the cover after the po
     const frontEndpaper = sources.frontEndpaper as unknown as RecordingCanvas;
     assert.ok(openingEndpaper.commands.some(command => command.name === "drawImage"), "the portrait appears on the opening left-hand page");
     assert.equal(frontEndpaper.commands.some(command => command.name === "drawImage"), false, "the front endpaper must not duplicate the opening portrait at the binding");
-    assert.equal((sources.interiors[0] as unknown as RecordingCanvas).commands.some(command => command.name === "drawImage"), false);
+    assert.ok((sources.interiors[0] as unknown as RecordingCanvas).commands.some(command => command.name === "drawImage"), "the Meet the Tutor page uses an editorial portrait, not a duplicated cover arch");
   } finally {
     Object.assign(globalThis, { Image: originalImage });
   }
@@ -230,19 +231,36 @@ test("prints every canonical Jenny page within the high-resolution safe area", (
   });
 });
 
-test("fits Jenny's complete canonical whyDA text using realistic Georgia metrics without truncation", () => {
+test("stacks teaching strengths as distinct readable lines", () => {
+  const { document } = createRecordingDocument();
+  const sources = createCompleteShelfPresentation(jenny).createCanvasSources(document as unknown as Document);
+  const canvas = sources.interiors[1] as unknown as RecordingCanvas;
+  const strengths = createTutorBookPages(jenny)[1].sourceText.slice(1);
+  const strengthBaselines = strengths.map(strength => {
+    const command = canvas.commands.find(entry => entry.name === "fillText" && entry.args[0] === strength);
+    return Number(command?.args[2]);
+  });
+
+  assert.ok(strengthBaselines.every(Number.isFinite));
+  assert.ok(strengthBaselines[1]! - strengthBaselines[0]! >= canvas.height * .02);
+  assert.ok(strengthBaselines[2]! - strengthBaselines[1]! >= canvas.height * .02);
+});
+
+test("fits Jenny's readable Why Trust Them excerpt and evidence using realistic Georgia metrics", () => {
   const { document } = createRecordingDocument();
   const sources = createCompleteShelfPresentation(jenny).createCanvasSources(document as unknown as Document);
   const canvas = sources.interiors[2] as unknown as RecordingCanvas;
-  const bodyCommands = canvas.commands.filter(command => command.name === "fillText" && Number(command.args[2]) >= canvas.height * .2);
+  const bodyCommands = canvas.commands.filter(command => command.name === "fillText" && Number(command.args[2]) >= canvas.height * .2 && Number(command.args[2]) < canvas.height * .72);
   const printed = bodyCommands.map(command => String(command.args[0])).join(" ").replace(/\s+/g, " ").trim();
-  const canonical = jenny.profile!.whyDA.replace(/\s+/g, " ").trim();
+  const canonical = createTutorBookPages(jenny)[2].sourceText;
+  const allPrinted = canvas.commands.filter(command => command.name === "fillText").map(command => String(command.args[0])).join(" ");
 
-  assert.equal(printed, canonical, "every canonical word is printed in order");
+  assert.ok(printed.includes(canonical[0]!), "the readable excerpt remains visible");
+  assert.ok(canonical.slice(1).every(text => allPrinted.includes(text)), "the real evidence remains visible");
   assert.ok(bodyCommands.every(command => Number(command.args[2]) <= canvas.height * .92), "every baseline stays inside the bottom print-safe bound");
-  assert.ok(bodyCommands.every(command => Number(/(\d+(?:\.\d+)?)px/.exec(command.font ?? "")?.[1] ?? 0) >= 21), "the deterministic fit never drops below the scaled legible raster floor");
+  assert.ok(bodyCommands.every(command => Number(/(\d+(?:\.\d+)?)px/.exec(command.font ?? "")?.[1] ?? 0) >= 25), "the deterministic fit never drops below the readable raster floor");
   assert.ok(bodyCommands.every(command => realisticTextWidth(String(command.args[0]), command.font ?? "") <= canvas.width * .82), "every measured line stays within the body width");
-  assert.ok(bodyCommands.length > 15, "the regression exercises the long-form page, not a short fixture");
+  assert.ok(bodyCommands.length >= 2, "the regression exercises a wrapped reading excerpt, not a one-word fixture");
 });
 
 test("rejects attempts to override the factory's physical dimensions or physics", () => {

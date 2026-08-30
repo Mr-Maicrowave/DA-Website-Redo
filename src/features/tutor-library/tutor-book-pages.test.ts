@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 
 import { TUTORS, type CatalogueTutor } from '../../data/teacherCatalogue.ts';
+import { profileContentFor } from '../../pages/profileContent.ts';
 import {
   TUTOR_BOOK_PAGE_COUNT,
   TUTOR_BOOK_PAGINATED_LEAF_COUNT,
@@ -16,7 +17,7 @@ import {
 
 const jenny = TUTORS.find(tutor => tutor.id === 'T003')!;
 
-test('builds three complete Jenny spreads from the six canonical profile pages', () => {
+test('builds two complete Jenny reader spreads from the first four canonical profile pages', () => {
   const pages = createTutorBookPages(jenny);
   const spreads = createTutorBookSpreads(jenny);
 
@@ -25,40 +26,18 @@ test('builds three complete Jenny spreads from the six canonical profile pages',
   assert.deepEqual(spreads.map(spread => spread.pages.map(page => page.id)), [
     ['identity', 'approach'],
     ['why-da', 'goals'],
-    ['remembered', 'subjects'],
   ]);
   assert.ok(spreads.every(spread => spread.pages.every(page => page.sourceText.length > 0)));
 });
 
-test('uses Jenny canonical fields verbatim without invented profile prose', () => {
+test('uses only Jenny canonical fields and verbatim sentence excerpts', () => {
   const pages = createTutorBookPages(jenny);
+  const canonicalFields = [jenny.name, jenny.designation, jenny.tagline, jenny.motto, jenny.subjects, jenny.profile!.whyDA, jenny.profile!.goals, jenny.profile!.remembered, ...profileContentFor(jenny).strengths];
 
-  assert.deepEqual(pages.map(page => page.sourceText), [
-    [
-      'Mrs Jenny N.',
-      'The Excellence Standard',
-      "She doesn't teach to the test. She teaches to last.",
-      'Primary (English & Mathematics) / English (Yr 7–10) / English Standard / English Advanced',
-      'English specialist',
-      '10+ years experience',
-      'Primary school manager',
-    ],
-    [
-      'Every child deserves to know what excellent work feels like.',
-      'English specialist',
-      '10+ years experience',
-      'Primary school manager',
-    ],
-    [jenny.profile!.whyDA],
-    [jenny.profile!.goals],
-    [jenny.profile!.remembered],
-    [
-      'Primary (English & Mathematics) / English (Yr 7–10) / English Standard / English Advanced',
-      'English specialist',
-      '10+ years experience',
-      'Primary school manager',
-    ],
-  ]);
+  assert.ok(pages.flatMap(page => page.sourceText).every(text => canonicalFields.some(field => field.includes(text) || text.includes(field))));
+  assert.equal(pages[0].sourceText.length, 4);
+  assert.equal(pages[2].sourceText[0], 'I started as a part-time tutor at DA Tuition while I was studying my double degree of business and law at university.');
+  assert.equal(pages[3].sourceText[0], "My legal background gave me a deep appreciation of the power of words, while my Master's in Teaching equipped me with strategies to make English clear, structured and accessible.");
 });
 
 test('falls back explicitly to motto and an empty tag list when conventional profile fields are absent', () => {
@@ -109,6 +88,24 @@ test('gives the four visible tutor pages their reader-first editorial roles', ()
     'How they teach',
     'Why trust them',
     'Who they are right for',
+  ]);
+});
+
+test('keeps the four visible pages readable by reserving detailed strengths for teaching and trust', () => {
+  const [identity, approach, whyTrust, fit] = createTutorBookPages(jenny);
+
+  assert.deepEqual(identity.sourceText, [jenny.name, jenny.designation, jenny.tagline, jenny.subjects]);
+  assert.ok(approach.sourceText.length > 1, 'teaching principles remain available on How They Teach');
+  assert.ok(whyTrust.sourceText[0]!.split(/\s+/).length < 90, 'Why Trust Them begins with a readable canonical excerpt');
+  assert.ok(fit.sourceText[0]!.split(/\s+/).length < 90, 'Who They Are Right For begins with a readable canonical excerpt');
+});
+
+test('exposes exactly the two reader spreads in the agreed editorial order', () => {
+  const spreads = createTutorBookSpreads(jenny);
+
+  assert.deepEqual(spreads.map(spread => spread.pages.map(page => page.id)), [
+    ['identity', 'approach'],
+    ['why-da', 'goals'],
   ]);
 });
 

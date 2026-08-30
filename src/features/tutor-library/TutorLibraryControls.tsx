@@ -145,8 +145,8 @@ export function TutorLibraryControlSurface({ library, activeWall, visibleEdition
         <Link className="tutor-library__reader-action" to={`/find-teacher?tutor=${selectedTutor.id}`}><UserRound aria-hidden="true" /><span>View full tutor profile</span><ChevronRight aria-hidden="true" /></Link>
         <button className="tutor-library__reader-action" type="button" disabled={!availability.canClose} onClick={onClose}><CircleX aria-hidden="true" /><span>Return book</span><ChevronRight aria-hidden="true" /></button>
         </> : <>
-        <button className="tutor-library__reader-action" type="button" aria-label="Previous tutor profile page" disabled={!canTurn(-1)} onClick={() => requestPageTurn(-1)}><ArrowLeft aria-hidden="true" /><span>Previous page</span><ChevronRight aria-hidden="true" /></button>
-        <button className="tutor-library__reader-action" type="button" aria-label="Next tutor profile page" disabled={!canTurn(1)} onClick={() => requestPageTurn(1)}><ArrowRight aria-hidden="true" /><span>Next page</span><ChevronRight aria-hidden="true" /></button>
+        <button className="tutor-library__reader-action" type="button" aria-label="Previous tutor profile spread" disabled={!canTurn(-1)} onClick={() => requestPageTurn(-1)}><ArrowLeft aria-hidden="true" /><span>Previous spread</span><ChevronRight aria-hidden="true" /></button>
+        <button className="tutor-library__reader-action" type="button" aria-label="Next tutor profile spread" disabled={!canTurn(1)} onClick={() => requestPageTurn(1)}><ArrowRight aria-hidden="true" /><span>Next spread</span><ChevronRight aria-hidden="true" /></button>
         <Link className="tutor-library__reader-action" to={`/find-teacher?tutor=${selectedTutor.id}`}><UserRound aria-hidden="true" /><span>View full tutor profile</span><ChevronRight aria-hidden="true" /></Link>
         <button className="tutor-library__reader-action" type="button" disabled={!availability.canClose} onClick={onClose}><CircleX aria-hidden="true" /><span>Close book</span><ChevronRight aria-hidden="true" /></button>
         </>}

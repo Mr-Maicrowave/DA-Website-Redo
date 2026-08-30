@@ -217,6 +217,17 @@ test('drives only the outer pose and returns to the exact closed handoff', () =>
   assert.deepEqual(returned, shelf);
 });
 
+test('keeps the cover and reading poses compositionally aligned while reserving room for the opened spread', () => {
+  const jenny = createTutorBookEditions(TUTORS).find((edition) => edition.id === 'T003:primary')!;
+  const cover = getCompleteShelfOuterMotionPose(jenny, 'BOOK_PREVIEW', 1);
+  const open = getCompleteShelfOuterMotionPose(jenny, 'BOOK_OPENING', 0);
+
+  assert.deepEqual(cover.scale, open.scale);
+  assert.ok(cover.scale[0] >= 2.1, 'the selected book has a readable hero scale');
+  assert.ok(Math.abs(cover.position[0] - open.position[0]) <= .08, 'cover and spread share one central stage');
+  assert.ok(open.position[1] > cover.position[1], 'open spread clears the shelf without leaving the reading composition');
+});
+
 test('holds the sampled outer pose through close and reset before returning', () => {
   const jenny = createTutorBookEditions(TUTORS).find((edition) => edition.id === 'T003:primary')!;
   let motion = createCompleteShelfOuterMotionState(jenny);

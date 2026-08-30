@@ -284,7 +284,7 @@ function drawInteriorHeader(canvas: HTMLCanvasElement, context: CanvasRenderingC
   const marginX = canvas.width * .09;
   context.fillStyle = colours.ink;
   context.textAlign = "left";
-  context.font = `600 ${Math.round(canvas.width * .019)}px Cabin, sans-serif`;
+  context.font = `600 ${Math.round(canvas.width * .027)}px Cabin, sans-serif`;
   context.fillText("DA TUITION / TUTOR PROFILE", marginX, canvas.height * .078);
   context.textAlign = "right";
   context.fillText(String(page.folio).padStart(2, "0"), canvas.width - marginX, canvas.height * .078);
@@ -296,7 +296,7 @@ function drawInteriorHeader(canvas: HTMLCanvasElement, context: CanvasRenderingC
   context.stroke();
   context.textAlign = "left";
   context.fillStyle = colours.foil;
-  context.font = `700 ${Math.round(canvas.width * .021)}px Cabin, sans-serif`;
+  context.font = `700 ${Math.round(canvas.width * .03)}px Cabin, sans-serif`;
   context.fillText(page.label.toUpperCase(), marginX, canvas.height * .15);
 }
 
@@ -311,7 +311,7 @@ function drawTags(
   if (tags.length === 0) return;
   const marginX = canvas.width * .09;
   context.textAlign = "left";
-  context.font = `600 ${Math.round(canvas.width * .023)}px Cabin, sans-serif`;
+  context.font = `600 ${Math.round(canvas.width * .032)}px Cabin, sans-serif`;
   tags.forEach((tag, index) => {
     const tagY = y + index * canvas.height * lineGap;
     context.fillStyle = colours.foil;
@@ -339,28 +339,29 @@ function drawInterior(
 
   if (page.id === "identity") {
     const [name, designation, tagline, subjects, ...strengths] = page.sourceText;
+    drawPortrait(canvas, context, portrait, colours, { x: .14, y: .17, width: .72, height: .18, fit: "contain" });
     context.font = `600 ${Math.round(canvas.width * .079)}px "Cormorant Garamond", serif`;
-    const nameLines = drawWrappedText(context, name, marginX, canvas.height * .28, bodyWidth, canvas.height * .086, 2);
+    const nameLines = drawWrappedText(context, name, marginX, canvas.height * .43, bodyWidth, canvas.height * .086, 2);
     context.fillStyle = colours.foil;
     context.font = `700 ${Math.round(canvas.width * .033)}px Cabin, sans-serif`;
-    drawWrappedText(context, designation, marginX, canvas.height * (.36 + nameLines * .065), bodyWidth, canvas.height * .046, 2);
+    drawWrappedText(context, designation, marginX, canvas.height * (.52 + nameLines * .04), bodyWidth, canvas.height * .046, 2);
     context.fillStyle = colours.ink;
     context.font = `italic ${Math.round(canvas.width * .048)}px "Cormorant Garamond", serif`;
-    drawWrappedText(context, tagline, marginX, canvas.height * .5, bodyWidth, canvas.height * .062, 3);
+    drawWrappedText(context, tagline, marginX, canvas.height * .61, bodyWidth, canvas.height * .062, 2);
     context.fillStyle = colours.foil;
-    context.font = `700 ${Math.round(canvas.width * .026)}px Cabin, sans-serif`;
-    context.fillText("SUBJECTS", marginX, canvas.height * .71);
+    context.font = `700 ${Math.round(canvas.width * .032)}px Cabin, sans-serif`;
+    context.fillText("SUBJECTS", marginX, canvas.height * .74);
     context.fillStyle = colours.ink;
-    context.font = `${Math.round(canvas.width * .035)}px "Cormorant Garamond", serif`;
-    drawWrappedText(context, subjects, marginX, canvas.height * .77, bodyWidth, canvas.height * .048, 2);
-    drawTags(canvas, context, strengths, canvas.height * .9, colours, .018);
+    context.font = `${Math.round(canvas.width * .04)}px "Cormorant Garamond", serif`;
+    drawWrappedText(context, subjects, marginX, canvas.height * .8, bodyWidth, canvas.height * .04, 3);
+    drawTags(canvas, context, strengths, canvas.height * .88, colours, .025);
     return;
   }
 
   if (page.id === "approach") {
-    context.font = `italic ${Math.round(canvas.width * .052)}px "Cormorant Garamond", serif`;
-    drawWrappedText(context, primary, marginX, canvas.height * .28, bodyWidth, canvas.height * .07, 6);
-    drawTags(canvas, context, rest, canvas.height * .68, colours);
+    context.font = `italic ${Math.round(canvas.width * .064)}px "Cormorant Garamond", serif`;
+    drawWrappedText(context, primary, marginX, canvas.height * .29, bodyWidth, canvas.height * .078, 5);
+    drawTags(canvas, context, rest, canvas.height * .73, colours, .065);
     return;
   }
 
@@ -374,11 +375,12 @@ function drawInterior(
   drawFittedCanonicalText(context, primary, {
     x: marginX,
     firstBaseline: canvas.height * .25,
-    maxBaseline: canvas.height * .92,
+    maxBaseline: rest.length > 0 ? canvas.height * .67 : canvas.height * .88,
     maxWidth: bodyWidth,
-    initialFontSize: Math.round(canvas.width * .028),
-    minimumFontSize: Math.round(canvas.width * .021),
+    initialFontSize: Math.round(canvas.width * .04),
+    minimumFontSize: Math.round(canvas.width * .025),
   });
+  drawTags(canvas, context, rest, canvas.height * .77, colours, .065);
 }
 
 function drawTransparentFoil(canvas: HTMLCanvasElement) {

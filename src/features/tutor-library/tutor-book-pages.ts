@@ -27,6 +27,11 @@ export interface TutorBookSpread {
   readonly pages: readonly [TutorBookPage, TutorBookPage];
 }
 
+function editorialExcerpt(text: string) {
+  const firstSentence = text.trim().match(/^.*?[.!?](?=\s|$)/)?.[0];
+  return (firstSentence ?? text).trim();
+}
+
 export function createTutorBookPages(tutor: CatalogueTutor): readonly TutorBookPage[] {
   const profile = profileContentFor(tutor);
   return [
@@ -34,7 +39,7 @@ export function createTutorBookPages(tutor: CatalogueTutor): readonly TutorBookP
       id: 'identity',
       folio: 1,
       label: 'Meet the tutor',
-      sourceText: [tutor.name, tutor.designation, tutor.tagline, tutor.subjects, ...profile.strengths],
+      sourceText: [tutor.name, tutor.designation, tutor.tagline, tutor.subjects],
     },
     {
       id: 'approach',
@@ -46,13 +51,13 @@ export function createTutorBookPages(tutor: CatalogueTutor): readonly TutorBookP
       id: 'why-da',
       folio: 3,
       label: 'Why trust them',
-      sourceText: [profile.whyDA],
+      sourceText: [editorialExcerpt(profile.whyDA), ...profile.strengths],
     },
     {
       id: 'goals',
       folio: 4,
       label: 'Who they are right for',
-      sourceText: [profile.approach],
+      sourceText: [editorialExcerpt(profile.approach)],
     },
     {
       id: 'remembered',
@@ -74,7 +79,6 @@ export function createTutorBookSpreads(tutor: CatalogueTutor): readonly TutorBoo
   return [
     { id: 'profile-approach', pages: [pages[0], pages[1]] },
     { id: 'why-da-goals', pages: [pages[2], pages[3]] },
-    { id: 'remembered-subjects', pages: [pages[4], pages[5]] },
   ];
 }
 

@@ -183,14 +183,17 @@ const interpolatePose = (from: CompleteShelfBookPose, to: CompleteShelfBookPose,
 export function getCompleteShelfOuterMotionPose(edition: TutorBookEdition, phase: LibraryPhase, progress: number) {
   const plan = createCompleteShelfPrototypePlan(getShelfPose(edition));
   const reading: CompleteShelfBookPose = {
-    position: [0, .48, 4.96],
+    position: [0, .44, 4.92],
     rotation: [-.045, 0, .012],
     scale: [...plan.preview.scale],
   };
 
   if (phase === 'BOOK_HOVER_INTENT') return sampleCompleteShelfPrototypePose(plan, .04);
   if (phase === 'BOOK_EXTRACTING') return sampleCompleteShelfPrototypePose(plan, progress);
-  if (phase === 'BOOK_PREVIEW') return plan.preview;
+  if (phase === 'BOOK_PREVIEW') return {
+    ...plan.preview,
+    position: [.06, .18, 4.84],
+  };
   if (phase === 'BOOK_TO_READING') return interpolatePose(plan.preview, reading, progress);
   if (isCompleteShelfControllerOpeningAllowed(phase) || phase === 'BOOK_CLOSING') return reading;
   if (phase === 'BOOK_RESETTING') return plan.preview;

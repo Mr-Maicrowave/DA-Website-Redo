@@ -147,7 +147,7 @@ export function createCompleteShelfPrototypePlan(shelfPose: ShelfPose): Complete
   const preview: CompleteShelfBookPose = {
     position: [.12, .08, 4.82],
     rotation: [-.045, 0, .012],
-    scale: [uniformScale * 3.2, uniformScale * 3.2, uniformScale * 3.2],
+    scale: [uniformScale * 3.6, uniformScale * 3.6, uniformScale * 3.6],
   };
   return { shelf, cleared, preview };
 }

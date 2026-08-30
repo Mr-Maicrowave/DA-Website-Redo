@@ -182,6 +182,14 @@
 .tutor-library__wall-nav button:hover:not(:disabled),
 .tutor-library__wall-nav button[aria-pressed="true"] { color: #fff7df; border-bottom-color: #d6a655; }
 .tutor-library__wall-nav button:disabled { cursor: default; }
+.tutor-library--book-active .tutor-library__wall-nav {
+  opacity: .28;
+  transform: scale(.92);
+  transform-origin: center bottom;
+  transition: opacity .2s ease-out, transform .2s ease-out;
+}
+.tutor-library--book-active .tutor-library__wall-nav:hover,
+.tutor-library--book-active .tutor-library__wall-nav:focus-within { opacity: .82; }
 
 .tutor-library__tutor-picker {
   display: flex;
@@ -279,6 +287,17 @@
 .tutor-library__reader-action svg:last-child { width: 1rem; height: 1rem; color: #9d7733; }
 .tutor-library__reader-action:hover:not(:disabled) { background: #f0e6d1; }
 .tutor-library__reader-action:disabled { opacity: .45; cursor: not-allowed; }
+.tutor-library__reader[data-reader-stage="spread"] {
+  width: min(15rem, calc(100% - 2rem));
+  padding: .8rem;
+  background: #f8f3e9e8;
+  box-shadow: 0 .45rem 1.25rem #0005;
+}
+.tutor-library__reader[data-reader-stage="spread"] .tutor-library__reader-profile,
+.tutor-library__reader[data-reader-stage="spread"] .tutor-library__reader-summary { display: none; }
+.tutor-library__reader[data-reader-stage="spread"] .tutor-library__page-status { margin-top: 0; }
+.tutor-library__reader[data-reader-stage="spread"] .tutor-library__reader-actions { margin-top: .65rem; }
+.tutor-library__reader[data-reader-stage="spread"] .tutor-library__reader-action { min-height: 2.65rem; }
 
 .tutor-library__fallback {
   position: absolute;

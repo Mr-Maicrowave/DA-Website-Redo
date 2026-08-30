@@ -44,8 +44,8 @@ try {
   })), { ariaLabel: 'Mrs Jenny N. tutor library reader', ariaLabelledBy: null });
   assert.equal(await page.$eval('.tutor-library__reader', element => element.getAttribute('aria-label')), 'Mrs Jenny N. tutor book controls');
   assert.equal(await page.$eval('.tutor-library__tutor-picker', element => getComputedStyle(element).display), 'none', 'the picker yields to the selected-book reader');
-  const previousPage = '[aria-label="Previous tutor profile page"]';
-  const nextPage = '[aria-label="Next tutor profile page"]';
+  const previousPage = '[aria-label="Previous tutor profile spread"]';
+  const nextPage = '[aria-label="Next tutor profile spread"]';
   assert.equal(await page.$eval(previousPage, element => element.disabled), true);
   assert.equal(await page.$eval(nextPage, element => element.disabled), false);
   await page.$eval(nextPage, element => element.click());

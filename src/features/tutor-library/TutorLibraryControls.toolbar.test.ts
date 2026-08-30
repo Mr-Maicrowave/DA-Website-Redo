@@ -16,6 +16,10 @@ test('only presents the controls that make sense for the closed cover or an open
   assert.match(controls, /readerStage === 'cover'/);
   assert.match(controls, /Return book/);
   assert.match(controls, /Close book/);
+  assert.match(controls, /Previous spread/);
+  assert.match(controls, /Next spread/);
+  assert.match(styles, /\.tutor-library--book-active \.tutor-library__wall-nav/);
+  assert.match(styles, /\.tutor-library__reader\[data-reader-stage="spread"\] \.tutor-library__reader-profile/);
 });
 
 test('uses the site editorial font pair throughout the tutor library', () => {
