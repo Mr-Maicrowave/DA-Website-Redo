@@ -1,5 +1,73 @@
 import type { ControllerRuntimeSnapshot, LibraryPhase } from './tutor-library-state.ts';
 
+export const TUTOR_LIBRARY_QA_STATES = [
+  'shelf-rest',
+  'hover-intent',
+  'extract-50',
+  'cover-preview',
+  'open-50',
+  'reading-open',
+  'page-25',
+  'page-50',
+  'page-75',
+  'page-settled',
+  'close-50',
+  'return-50',
+  'shelf-restored',
+] as const;
+
+export type TutorLibraryQaStateId = typeof TUTOR_LIBRARY_QA_STATES[number];
+
+export interface TutorLibraryQaState {
+  id: TutorLibraryQaStateId;
+  phase: LibraryPhase;
+  motionProgress: number;
+  controller: {
+    openProgress: number;
+    pageTurnProgress: number;
+    settlePage: boolean;
+  };
+  showReader: boolean;
+}
+
+const qaState = (
+  id: TutorLibraryQaStateId,
+  phase: LibraryPhase,
+  motionProgress: number,
+  openProgress = 0,
+  pageTurnProgress = 0,
+  settlePage = false,
+  showReader = !['shelf-rest', 'shelf-restored', 'hover-intent', 'extract-50'].includes(id),
+): TutorLibraryQaState => Object.freeze({
+  id,
+  phase,
+  motionProgress,
+  controller: Object.freeze({ openProgress, pageTurnProgress, settlePage }),
+  showReader,
+});
+
+const QA_STATE_BY_ID = new Map<TutorLibraryQaStateId, TutorLibraryQaState>([
+  ['shelf-rest', qaState('shelf-rest', 'ROOM_IDLE', 0)],
+  ['hover-intent', qaState('hover-intent', 'BOOK_HOVER_INTENT', 0)],
+  ['extract-50', qaState('extract-50', 'BOOK_EXTRACTING', .5)],
+  ['cover-preview', qaState('cover-preview', 'BOOK_PREVIEW', 1)],
+  ['open-50', qaState('open-50', 'BOOK_OPENING', 1, .5)],
+  ['reading-open', qaState('reading-open', 'BOOK_READING', 1, 1)],
+  ['page-25', qaState('page-25', 'PAGE_TURNING', 1, 1, .25)],
+  ['page-50', qaState('page-50', 'PAGE_TURNING', 1, 1, .5)],
+  ['page-75', qaState('page-75', 'PAGE_TURNING', 1, 1, .75)],
+  ['page-settled', qaState('page-settled', 'PAGE_SETTLED', 1, 1, 0, true)],
+  ['close-50', qaState('close-50', 'BOOK_CLOSING', 1, .5)],
+  ['return-50', qaState('return-50', 'BOOK_RETURNING', .5)],
+  ['shelf-restored', qaState('shelf-restored', 'ROOM_IDLE', 0)],
+]);
+
+export function selectTutorLibraryQaState(value: string | null): TutorLibraryQaState | undefined {
+  return value && TUTOR_LIBRARY_QA_STATES.includes(value as TutorLibraryQaStateId)
+    ? QA_STATE_BY_ID.get(value as TutorLibraryQaStateId)
+    : undefined;
+}
+
 export function parseDebugTurnProgress(value: string | null): number | undefined {
   if (value === null || value.trim() === '') return undefined;
   const parsed = Number(value);
@@ -163,12 +231,19 @@ export function writeTutorLibraryRigDiagnostics(canvas: HTMLCanvasElement, input
   matrixDelta?: number;
   resetState?: TutorLibraryResetState;
   controllerProgress?: number;
+  controllerSnapshot?: ControllerRuntimeSnapshot;
 }) {
   const root = canvas.closest<HTMLElement>('[data-tutor-library-qa="root"]');
   if (!root) return;
   root.dataset.libraryRootUuid = input.rootUuid;
   root.dataset.libraryMatrixDelta = input.matrixDelta === undefined ? 'unavailable' : input.matrixDelta.toFixed(6);
   if (input.resetState) root.dataset.libraryResetState = input.resetState;
+  if (input.controllerSnapshot) {
+    root.dataset.libraryOpenProgress = input.controllerSnapshot.openProgress.toFixed(6);
+    root.dataset.libraryPageTurnProgress = input.controllerSnapshot.pageTurnProgress.toFixed(6);
+    root.dataset.librarySettledPages = String(input.controllerSnapshot.settledPages);
+    root.dataset.libraryDeformationReset = String(input.controllerSnapshot.deformationReset);
+  }
   if (input.controllerProgress !== undefined) {
     const progress = clampProgress(input.controllerProgress).toFixed(3);
     root.dataset.libraryControllerProgress = progress;

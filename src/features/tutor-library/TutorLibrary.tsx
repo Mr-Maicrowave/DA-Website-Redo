@@ -4,7 +4,7 @@ import { useSearchParams } from 'react-router-dom';
 import { TUTORS } from '../../data/teacherCatalogue';
 import { createMountedRigRootRegistry, selectVisibleShelfEditions } from './complete-shelf-book-pool';
 import { createBookMotionTimingPolicy } from './tutor-book-motion';
-import { createTutorLibraryQaSnapshot, getTutorLibraryAccessibilityProps, getTutorLibraryViewportProfile, parseDebugTurnProgress } from './tutor-library-debug';
+import { createTutorLibraryQaSnapshot, getTutorLibraryAccessibilityProps, getTutorLibraryViewportProfile, parseDebugTurnProgress, selectTutorLibraryQaState } from './tutor-library-debug';
 import { createTutorBookEditions, SUBJECT_WALLS } from './tutor-library-data';
 import {
   createLibraryState,
@@ -76,6 +76,7 @@ export function TutorLibrary() {
   const previousLibrary = useRef(library);
   const debugTurnProgress = parseDebugTurnProgress(searchParams.get('libraryTurnProgress'));
   const debugBookProgress = parseDebugTurnProgress(searchParams.get('libraryBookProgress'));
+  const qaState = selectTutorLibraryQaState(searchParams.get('libraryQaState'));
   const isDebugTurn = debugTurnProgress !== undefined;
   const isDebugBook = debugBookProgress !== undefined;
   const debugEditionId = BOOK_EDITIONS.find(edition => edition.wallId === 'primary')?.id;
@@ -84,18 +85,24 @@ export function TutorLibrary() {
   const pendingWallIndex = Math.max(0, SUBJECT_WALLS.findIndex(wall => wall.id === library.pendingWallId));
   const targetWallIndex = isDebugTurn ? 1 : isTurning ? pendingWallIndex : activeWallIndex;
   const sceneProgress = isDebugTurn ? debugTurnProgress : turnProgress;
-  const sceneBookPhase = isDebugBook ? (debugBookProgress === 0 ? 'BOOK_HOVER_INTENT' : debugBookProgress === 1 ? 'BOOK_PREVIEW' : 'BOOK_EXTRACTING') : library.phase;
-  const sceneSelectedEditionId = isDebugBook ? debugEditionId : library.selectedEditionId;
-  const sceneBookMotionProgress = isDebugBook ? debugBookProgress : bookMotionProgress;
+  const sceneBookPhase = qaState?.phase ?? (isDebugBook ? (debugBookProgress === 0 ? 'BOOK_HOVER_INTENT' : debugBookProgress === 1 ? 'BOOK_PREVIEW' : 'BOOK_EXTRACTING') : library.phase);
+  const sceneSelectedEditionId = qaState || isDebugBook ? debugEditionId : library.selectedEditionId;
+  const sceneBookMotionProgress = qaState?.motionProgress ?? (isDebugBook ? debugBookProgress : bookMotionProgress);
   const checkpointView = searchParams.get('checkpoint') === 'b';
   const reviewView = searchParams.get('libraryReviewView');
   const forceCanvasFailure = searchParams.get('libraryForceCanvasError') === '1';
   const activeWall = SUBJECT_WALLS[activeWallIndex];
   const targetWall = SUBJECT_WALLS[targetWallIndex];
-  const selectedEdition = BOOK_EDITIONS.find(edition => edition.id === library.selectedEditionId);
+  const selectedEdition = BOOK_EDITIONS.find(edition => edition.id === (qaState?.showReader ? sceneSelectedEditionId : library.selectedEditionId));
   const selectedTutor = selectedEdition ? TUTOR_BY_ID.get(selectedEdition.tutorId) : undefined;
-  const visibleEditions = selectVisibleShelfEditions(BOOK_EDITIONS.filter(edition => edition.wallId === activeWall.id), library.selectedEditionId);
-  const availability = getLibraryControlAvailability(library);
+  const controlLibrary: LibraryState = qaState?.showReader && sceneSelectedEditionId ? {
+    ...library,
+    phase: sceneBookPhase,
+    selectedEditionId: sceneSelectedEditionId,
+    expectedRootUuid: library.expectedRootUuid ?? 'qa-pending-root',
+  } : library;
+  const visibleEditions = selectVisibleShelfEditions(BOOK_EDITIONS.filter(edition => edition.wallId === activeWall.id), sceneSelectedEditionId);
+  const availability = getLibraryControlAvailability(controlLibrary);
   const focusReturnEditionId = getFocusReturnEditionId(previousLibrary.current, library);
 
   const dispatchEvents = (events: readonly LibraryEvent[]) => events.forEach(dispatch);
@@ -207,14 +214,14 @@ export function TutorLibrary() {
     generation: library.transitionGeneration,
     editionId: sceneSelectedEditionId,
     wallId: targetWall.id,
-    reviewView,
+    reviewView: qaState?.id ?? reviewView,
     progress: qaProgress,
   });
   const viewportProfile = getTutorLibraryViewportProfile(viewport.width, viewport.height, sceneBookPhase);
   const bookActive = sceneBookPhase.startsWith('BOOK_') || sceneBookPhase.startsWith('PAGE_');
   const accessibility = getTutorLibraryAccessibilityProps(bookActive, selectedTutor?.name);
 
-  return <section className={`tutor-library${isDebugTurn || isDebugBook ? ' tutor-library--diagnostic' : ''}${bookActive ? ' tutor-library--book-active' : ''}`} aria-label={accessibility.rootLabel} aria-labelledby={accessibility.rootLabelledBy} data-tutor-library-qa="root" data-library-phase={qa.phase} data-library-transition-id={qa.transitionId} data-library-generation={qa.generation} data-library-edition={qa.edition} data-library-wall={qa.wall} data-library-root-uuid={qa.rootUuid} data-library-matrix-delta={qa.matrixDelta} data-library-reset-state={qa.resetState} data-library-review-view={qa.reviewView} data-library-review-progress={qa.progress} data-library-qa-progress={qa.progress} data-library-controller-progress="unavailable" data-room-phase={sceneBookPhase} data-turn-progress={sceneProgress.toFixed(2)} data-reduced-motion={reducedMotion ? 'true' : 'false'}>
+  return <section className={`tutor-library${isDebugTurn || isDebugBook || qaState ? ' tutor-library--diagnostic' : ''}${bookActive ? ' tutor-library--book-active' : ''}`} aria-label={accessibility.rootLabel} aria-labelledby={accessibility.rootLabelledBy} data-tutor-library-qa="root" data-library-phase={qa.phase} data-library-transition-id={qa.transitionId} data-library-generation={qa.generation} data-library-edition={qa.edition} data-library-wall={qa.wall} data-library-root-uuid={qa.rootUuid} data-library-matrix-delta={qa.matrixDelta} data-library-reset-state={qa.resetState} data-library-review-view={qa.reviewView} data-library-review-progress={qa.progress} data-library-qa-progress={qa.progress} data-library-controller-progress="unavailable" data-library-qa-state={qaState?.id ?? 'live'} data-room-phase={sceneBookPhase} data-turn-progress={sceneProgress.toFixed(2)} data-reduced-motion={reducedMotion ? 'true' : 'false'}>
     <header className={`tutor-library__copy${checkpointView || isDebugTurn ? ' tutor-library__copy--checkpoint' : ''}`} aria-hidden={accessibility.copyAriaHidden}>
       <p>DA Tuition faculty</p><h1 id="tutor-library-title">Find the person behind the teaching.</h1><span>Turn toward a subject and explore the educators who bring it to life.</span>
     </header>
@@ -224,6 +231,6 @@ export function TutorLibrary() {
       </Canvas>}
     </CanvasBoundary></div>
 
-    <TutorLibraryControlSurface library={library} activeWall={activeWall} visibleEditions={visibleEditions} tutors={TUTOR_BY_ID} selectedTutor={selectedTutor} fallbackTutor={fallbackTutor} availability={availability} status={status} sceneError={sceneError} focusReturnEditionId={focusReturnEditionId} settledPages={settledPages} pageCount={TUTOR_BOOK_READING_STATE_COUNT} showControls={!isDebugTurn} onTurn={wallId => dispatch({ type: 'TURN', wallId })} onBookInteraction={interactWithBook} onCancelPending={cancelPendingIntent} onEscape={() => dispatch({ type: 'ESCAPE' })} onOpen={() => dispatch({ type: 'OPEN' })} onPageTurn={handlePageTurn} onClose={() => dispatch({ type: 'CLOSE' })} />
+    <TutorLibraryControlSurface library={controlLibrary} activeWall={activeWall} visibleEditions={visibleEditions} tutors={TUTOR_BY_ID} selectedTutor={selectedTutor} fallbackTutor={fallbackTutor} availability={availability} status={status} sceneError={sceneError} focusReturnEditionId={focusReturnEditionId} settledPages={settledPages} pageCount={TUTOR_BOOK_READING_STATE_COUNT} showControls={!isDebugTurn} onTurn={wallId => dispatch({ type: 'TURN', wallId })} onBookInteraction={interactWithBook} onCancelPending={cancelPendingIntent} onEscape={() => dispatch({ type: 'ESCAPE' })} onOpen={() => dispatch({ type: 'OPEN' })} onPageTurn={handlePageTurn} onClose={() => dispatch({ type: 'CLOSE' })} />
   </section>;
 }

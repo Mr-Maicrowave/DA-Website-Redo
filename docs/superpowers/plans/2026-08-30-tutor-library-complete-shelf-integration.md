@@ -151,6 +151,8 @@
 
 ### Task 7: Build and capture the final acceptance evidence
 
+**Status:** implementation complete; final clean commit/build/capture evidence is recorded in the adjacent Task 7 report and the external manifest-bound evidence folder.
+
 **Files:**
 - Create: `scripts/capture-tutor-library-acceptance.mjs`
 - Create: `src/features/tutor-library/tutor-library-acceptance.test.ts`
@@ -167,3 +169,4 @@
 6. Run the complete validation suite from a clean worktree, inspect all 24 screenshots, fix any in-scope defect through the review process, and make the final local milestone commit.
 7. Record final evidence paths, URLs, remaining defects, performance notes, architecture summary, and the licensing reminder. Do not push or merge.
 
+Task 7 keeps the 24-file integrated screenshot inventory as a versioned contract, adds deterministic query-selected QA states that still use the production room/motion-root/imperative-controller path, exercises ten live lifecycle cycles plus hostile sequences, captures matched proxy/primitive seam frames, and compares the six approved standalone/R3F states directly. `manifest.json` is the authority for the exact source commit, URL, viewport, phase, physical root UUID, matrix delta, reset residue, controller progress, and console status of every frame.

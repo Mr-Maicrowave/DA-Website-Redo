@@ -8,7 +8,7 @@ try {
   await server.listen();
   const address = server.httpServer?.address();
   assert.ok(address && typeof address !== 'string');
-  browser = await puppeteer.launch({ headless: true });
+  browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox', '--disable-dev-shm-usage'] });
   const page = await browser.newPage();
   page.on('console', message => console.error(`Browser console: ${message.text()}`));
   page.on('pageerror', error => console.error(`Browser page error: ${error.message}`));

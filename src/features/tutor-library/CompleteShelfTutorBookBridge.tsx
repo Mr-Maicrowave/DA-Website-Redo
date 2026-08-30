@@ -14,7 +14,7 @@ import type { TutorBookEdition } from './tutor-library-data';
 import { getControllerCompletionEvent, type LibraryEvent, type LibraryPhase } from './tutor-library-state';
 import { createBookMotionTimingPolicy } from './tutor-book-motion';
 import { advanceTutorBookPageTurn, type TutorBookPageTurnDirection } from './tutor-book-pages';
-import { getControllerDiagnosticProgress, getMatrixDeltaFromIdentity, writeTutorLibraryRigDiagnostics } from './tutor-library-debug';
+import { getControllerDiagnosticProgress, getMatrixDeltaFromIdentity, selectTutorLibraryQaState, writeTutorLibraryRigDiagnostics } from './tutor-library-debug';
 
 export interface CompleteShelfTutorRig extends CompleteShelfPoolRig {
   root: Object3D;
@@ -68,6 +68,9 @@ export function CompleteShelfTutorBookBridge({
   const pageTurnCommand = useRef('');
   const publishedControllerProgress = useRef('');
   const pageTurnDurationMs = useMemo(() => createBookMotionTimingPolicy(reducedMotion).pageTurnMs, [reducedMotion]);
+  const qaState = selectTutorLibraryQaState(typeof window === 'undefined'
+    ? null
+    : new URLSearchParams(window.location.search).get('libraryQaState'));
 
   useEffect(() => {
     callbacks.current = { onReady, onRelease, onLifecycleComplete, onPageSettled, onError };
@@ -120,6 +123,7 @@ export function CompleteShelfTutorBookBridge({
       rootUuid: rig.root.uuid,
       matrixDelta: getMatrixDeltaFromIdentity(rig.root.matrix.elements),
       resetState: 'not-required',
+      controllerSnapshot: rig.controller.getSnapshot(),
     });
     callbacks.current.onReady(rig.root.uuid, rig.controller);
   }, [gl, rig]);
@@ -130,6 +134,29 @@ export function CompleteShelfTutorBookBridge({
     if (appliedCommand.current === command) return;
     appliedCommand.current = command;
     publishedControllerProgress.current = '';
+
+    if (qaState) {
+      rig.controller.reset();
+      rig.controller.setOpenProgress(qaState.controller.openProgress);
+      if (qaState.controller.pageTurnProgress > 0) {
+        rig.controller.setPageTurnProgress(qaState.controller.pageTurnProgress, 1);
+      }
+      if (qaState.controller.settlePage) rig.controller.settlePage(1);
+      for (let frame = 0; frame < 180; frame += 1) rig.controller.update(1 / 60);
+      const qaProgress = qaState.id === 'open-50' || qaState.id === 'close-50'
+        ? .5
+        : qaState.id.startsWith('page-') ? (qaState.controller.settlePage ? 1 : qaState.controller.pageTurnProgress)
+          : qaState.id === 'reading-open' ? 1 : undefined;
+      const snapshot = rig.controller.getSnapshot();
+      writeTutorLibraryRigDiagnostics(gl.domElement, {
+        rootUuid: rig.root.uuid,
+        matrixDelta: getMatrixDeltaFromIdentity(rig.root.matrix.elements),
+        resetState: qaState.id === 'shelf-restored' || qaState.id === 'return-50' ? 'complete' : undefined,
+        controllerProgress: qaProgress,
+        controllerSnapshot: snapshot,
+      });
+      return;
+    }
 
     if (phase === 'BOOK_OPENING' && isCompleteShelfControllerOpeningAllowed(phase)) {
       if (reducedMotion) rig.controller.setOpenProgress(1);
@@ -142,11 +169,11 @@ export function CompleteShelfTutorBookBridge({
       rig.controller.setPageTurnProgress(0, pageTurnDirection);
     }
     else if (phase === 'BOOK_CLOSING') {
-      writeTutorLibraryRigDiagnostics(gl.domElement, { rootUuid: rig.root.uuid, matrixDelta: getMatrixDeltaFromIdentity(rig.root.matrix.elements), resetState: 'pending' });
+      writeTutorLibraryRigDiagnostics(gl.domElement, { rootUuid: rig.root.uuid, matrixDelta: getMatrixDeltaFromIdentity(rig.root.matrix.elements), resetState: 'pending', controllerSnapshot: rig.controller.getSnapshot() });
       rig.controller.close();
     }
     else if (phase === 'BOOK_RESETTING') {
-      writeTutorLibraryRigDiagnostics(gl.domElement, { rootUuid: rig.root.uuid, matrixDelta: getMatrixDeltaFromIdentity(rig.root.matrix.elements), resetState: 'pending' });
+      writeTutorLibraryRigDiagnostics(gl.domElement, { rootUuid: rig.root.uuid, matrixDelta: getMatrixDeltaFromIdentity(rig.root.matrix.elements), resetState: 'pending', controllerSnapshot: rig.controller.getSnapshot() });
       rig.controller.reset();
     }
     const controllerProgress = getControllerDiagnosticProgress(phase, rig.controller.getSnapshot());
@@ -156,12 +183,14 @@ export function CompleteShelfTutorBookBridge({
         rootUuid: rig.root.uuid,
         matrixDelta: getMatrixDeltaFromIdentity(rig.root.matrix.elements),
         controllerProgress,
+        controllerSnapshot: rig.controller.getSnapshot(),
       });
     }
-  }, [active, generation, gl, pageTurnDirection, phase, reducedMotion, rig]);
+  }, [active, generation, gl, pageTurnDirection, phase, qaState, reducedMotion, rig]);
 
   useFrame((_, delta) => {
     if (!active || !rig) return;
+    if (qaState) return;
     const pageCommand = phase === 'PAGE_TURNING' ? `${rig.root.uuid}:${phase}:${generation}` : '';
     if (phase === 'PAGE_TURNING' && pageTurnCommand.current !== pageCommand) {
       pageTurnCommand.current = pageCommand;
@@ -189,6 +218,7 @@ export function CompleteShelfTutorBookBridge({
         rootUuid: rig.root.uuid,
         matrixDelta: getMatrixDeltaFromIdentity(rig.root.matrix.elements),
         controllerProgress: 1,
+        controllerSnapshot: snapshot,
       });
       if (completion.type === 'PAGE_TURN_COMPLETE') callbacks.current.onPageSettled(snapshot.settledPages);
       if (completion.type === 'RESET_COMPLETE') {
@@ -196,6 +226,7 @@ export function CompleteShelfTutorBookBridge({
           rootUuid: rig.root.uuid,
           matrixDelta: getMatrixDeltaFromIdentity(rig.root.matrix.elements),
           resetState: 'complete',
+          controllerSnapshot: snapshot,
         });
       }
       callbacks.current.onLifecycleComplete(completion);
@@ -209,6 +240,7 @@ export function CompleteShelfTutorBookBridge({
         rootUuid: rig.root.uuid,
         matrixDelta: getMatrixDeltaFromIdentity(rig.root.matrix.elements),
         controllerProgress,
+        controllerSnapshot: snapshot,
       });
     }
   });
