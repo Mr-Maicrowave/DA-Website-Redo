@@ -1,23 +1,13 @@
 import FooterNew from '@/components/FooterNew';
 import NavigationNew from '@/components/NavigationNew';
 import SEO from '@/components/SEO';
-import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import FindTeacher from './FindTeacher';
-import { TutorOrbitHero } from '@/features/tutor-orbit/TutorOrbitHero';
 import { TutorLibrary } from '@/features/tutor-library/TutorLibrary';
 import { TutorBookStudio, type CompleteShelfEngineCamera } from '@/features/tutor-library/TutorBookStudio';
 import type { CompleteShelfBookState } from '@/features/tutor-library/CompleteShelfTutorBook';
 
-const libraryEnabled = (search: URLSearchParams) => search.get('library-preview') === '1';
-
 const Tutors = () => {
-  const [view, setView] = useState<'hero' | 'directory'>('hero');
   const [searchParams] = useSearchParams();
-
-  useEffect(() => {
-    if (searchParams.get('tutor')) setView('directory');
-  }, [searchParams]);
 
   if (searchParams.get('tutor-book-studio') === '1') {
     const requested = searchParams.get('studioView');
@@ -38,11 +28,7 @@ const Tutors = () => {
       />
       <NavigationNew />
       <main>
-        {libraryEnabled(searchParams) ? <TutorLibrary /> : view === 'hero' ? (
-          <TutorOrbitHero onExplore={() => setView('directory')} />
-        ) : (
-          <FindTeacher embedded onBackToHero={() => setView('hero')} />
-        )}
+        <TutorLibrary />
       </main>
       <FooterNew />
     </div>
