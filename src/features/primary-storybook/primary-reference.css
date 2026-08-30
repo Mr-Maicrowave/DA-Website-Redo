@@ -3790,3 +3790,58 @@
   .primary-reference-stage-curriculum--growth .primary-reference-stage-curriculum__list { display: block; margin-top: 2.5rem; }
   .primary-reference-stage-curriculum--growth .primary-reference-stage-curriculum__list li { grid-template-rows: auto 7rem; border-top: 1px solid rgba(7,27,53,.16); border-left: 0; padding: 1.25rem 0; }
 }
+
+/* Scale complete desktop compositions together without forcing them into a viewport. */
+@media (min-width: 1100px) and (min-height: 700px) {
+  .primary-reference-story {
+    --primary-fold-space: clamp(.85rem, 2.2svh, 2rem);
+    --primary-fold-title: clamp(2.6rem, min(4.4vw, 6.2svh), 5.2rem);
+    --primary-fold-art: clamp(20rem, 56svh, 38rem);
+  }
+
+  .primary-reference-foundation,
+  .primary-reference-curriculum,
+  .primary-reference-growth,
+  .primary-reference-mastery,
+  .primary-reference-teaching,
+  .primary-program-bag,
+  .primary-support-journey__transformation,
+  .primary-support-pathways,
+  .primary-journey-outro {
+    box-sizing: border-box;
+    height: auto;
+    min-height: 0;
+    margin-block: var(--primary-fold-space);
+  }
+
+  .primary-reference-foundation,
+  .primary-reference-growth,
+  .primary-reference-mastery,
+  .primary-reference-teaching,
+  .primary-program-bag { padding-block: clamp(1.5rem, 3.4svh, 3rem); }
+
+  .primary-reference-curriculum__intro h2,
+  .primary-reference-growth__intro h2,
+  .primary-reference-mastery__intro h2,
+  .primary-reference-teaching__header h2,
+  .primary-program-bag__intro > h2 { font-size: var(--primary-fold-title); }
+
+  .primary-reference-growth__photo > div,
+  .primary-reference-mastery__photo > div,
+  .primary-reference-teaching__photo { max-height: clamp(20rem, 56svh, 38rem); }
+
+  .primary-reference-stage-curriculum {
+    min-height: 0;
+    margin-block: var(--primary-fold-space);
+    padding-block: clamp(1.75rem, 4svh, 3.5rem);
+  }
+  .primary-reference-stage-curriculum--growth { margin-bottom: var(--primary-fold-space); }
+  .primary-reference-teaching__header { margin-bottom: clamp(1.1rem, 3svh, 2.5rem); }
+  .primary-reference-teaching li:nth-child(even) { padding-top: clamp(.8rem, 2.5svh, 2.25rem); }
+  .primary-program-bag__stage { min-height: clamp(25rem, 62svh, 42rem); }
+  .primary-program-bag__guide { margin-top: var(--primary-fold-space); }
+  .primary-support-journey { margin-block: var(--primary-fold-space); }
+  .primary-support-journey__transformation,
+  .primary-support-pathways { padding-block: clamp(1.5rem, 3.4svh, 3rem); }
+  .primary-journey-outro__content { margin-top: clamp(2rem, 6svh, 5rem); }
+}

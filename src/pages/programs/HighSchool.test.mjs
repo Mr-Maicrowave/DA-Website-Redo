@@ -4,22 +4,38 @@ import test from 'node:test';
 
 const source = await readFile(new URL('./HighSchool.tsx', import.meta.url), 'utf8');
 
-test('renders the approved editorial High School hero without a student image', () => {
+test('renders the supplied High School hero artwork with the approved editorial copy', () => {
   assert.match(source, /data-testid="highschool-editorial-hero"/);
-  assert.match(source, /HIGH SCHOOL · YEARS 7–10/);
-  assert.match(source, /FIND YOUR/);
-  assert.match(source, /hs-editorial-hero__gold">WAY</);
-  assert.match(source, /FORWARD\./);
-  assert.match(source, /Four years of exploring, challenging yourself,/);
-  assert.match(source, /growing and preparing for what comes next\./);
-  assert.match(source, /SCROLL TO BEGIN/);
-  assert.match(source, /highschool-hero-watercolor-v1\.png/);
+  assert.match(source, /highschool-hero-student-hallway-v2\.png/);
+  const hero = source.match(/function HighSchoolEditorialHero\(\) \{([\s\S]*?)\n\}/)?.[1] ?? '';
+  assert.match(hero, /HIGH SCHOOL · YEARS 7–10/);
+  assert.match(hero, /FIND YOUR/);
+  assert.match(hero, /WAY<\/em> FORWARD\./);
+  assert.match(hero, /High school is where students begin to discover how they learn,/);
+  assert.match(hero, /At DA, we help them build the/);
+  assert.match(hero, /knowledge/);
+  assert.match(hero, /confidence/);
+  assert.match(hero, /independence/);
+  assert.match(hero, /EXPLORE YEARS 7–10/);
+  assert.match(source, /@media \(min-width: 768px\)[\s\S]*?hs-editorial-hero__line-mask:nth-child\(2\)[^}]*white-space: nowrap/);
   assert.doesNotMatch(source, /<SubjectHero[\s\S]*?backgroundImageSrc="\/highschool-girl\.png"/);
 });
 
-test('the editorial hero fills one complete viewport at every breakpoint', () => {
+test('the hero uses restrained entrance and scroll choreography with reduced-motion support', () => {
+  const hero = source.match(/function HighSchoolEditorialHero\(\) \{([\s\S]*?)\n\}/)?.[1] ?? '';
+  assert.match(hero, /useReducedMotion\(\)/);
+  assert.match(hero, /useScroll\(/);
+  assert.match(hero, /hs-editorial-hero__content/);
+  assert.match(hero, /hs-editorial-hero__rule/);
+  assert.match(hero, /hs-editorial-hero__scroll/);
+  assert.doesNotMatch(hero, /card|panel|sparkle|doodle/i);
+});
+
+test('the fixed navigation overlays a complete edge-to-edge viewport hero', () => {
+  assert.match(source, /<NavigationNew \/>[\s\S]*?<HighSchoolEditorialHero \/>/);
+  assert.doesNotMatch(source, /className="hs-hero-viewport"/);
   assert.match(source, /\.hs-editorial-hero \{[^}]*min-height: 100svh;/);
-  assert.match(source, /\.hs-editorial-hero__layout \{[^}]*min-height: 100svh;/);
+  assert.match(source, /\.hs-editorial-hero__watercolor \{[^}]*width: 100%;[^}]*height: 100%;[^}]*object-fit: fill;/);
   assert.doesNotMatch(source, /min-height: calc\(100svh -/);
 });
 

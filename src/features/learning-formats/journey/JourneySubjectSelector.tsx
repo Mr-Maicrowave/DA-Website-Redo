@@ -16,12 +16,7 @@ interface JourneySubjectSelectorProps {
 const JourneySubjectSelector = ({ stage, eligibleSubjects, selected, confirmed, onToggle, onContinue }: JourneySubjectSelectorProps) => (
   <section className="lf-subject-destination" data-stage={stage} aria-labelledby="lf-subject-heading">
     <div className="lf-subject-merge" aria-hidden="true">
-      <svg viewBox="0 0 900 120" preserveAspectRatio="none">
-        <path className="lf-subject-merge__route lf-subject-merge__route--primary" d="M0 16 C120 16 145 60 250 60" />
-        <path className="lf-subject-merge__route lf-subject-merge__route--high" d="M0 60 L250 60" />
-        <path className="lf-subject-merge__route lf-subject-merge__route--hsc" d="M0 104 C120 104 145 60 250 60" />
-        <path className="lf-subject-merge__shared" d="M250 60 C470 56 670 65 900 60" />
-      </svg>
+      <span className="lf-subject-destination__marker" />
       <img src={journeyAssets.shared.books.src} alt="" />
     </div>
     {!confirmed ? <>

@@ -28,15 +28,16 @@ test('question content is data-driven for every year and subject', () => {
   const challenge = readFileSync(challengeUrl, 'utf8');
   for (let year = 1; year <= 6; year += 1) {
     const level = primaryQuestionBank[year as keyof typeof primaryQuestionBank];
-    assert.equal(level.maths.length >= 12, true);
-    assert.equal(level.english.length >= 12, true);
+    assert.equal(level.maths.length >= 30, true);
+    assert.equal(level.english.length >= 30, true);
   }
-  for (const field of ['difficulty', 'question', 'options', 'correctAnswer', 'hint', 'explanation', 'type']) {
+  for (const field of ['difficulty', 'topic', 'subtopic', 'question', 'options', 'correctAnswer', 'hint', 'explanation', 'misconceptionFeedback', 'followUp', 'type']) {
     assert.match(bank, new RegExp(field));
   }
   assert.match(challenge, /Question \{questionIndex \+ 1\} of 6/);
-  assert.match(challenge, /Almost! Try once more\./);
-  assert.match(challenge, /attempts >= 2/);
+  assert.match(challenge, /createChallenge/);
+  assert.match(challenge, /SeedTreeTeachingPanel/);
+  assert.match(challenge, /ready-to-grow/);
   assert.match(challenge, /Look what you grew!/);
 });
 
@@ -49,4 +50,12 @@ test('the garden challenge remains accessible, responsive and reduced-motion saf
   assert.match(styles, /min-height:\s*44px/);
   assert.match(styles, /@media \(max-width:\s*800px\)/);
   assert.match(styles, /@media \(prefers-reduced-motion:\s*reduce\)/);
+});
+
+test('a correct final answer always has a deterministic path to completion', () => {
+  const challenge = readFileSync(challengeUrl, 'utf8');
+  assert.match(challenge, /const advanceJourney = useCallback/);
+  assert.match(challenge, /onClick=\{advanceJourney\}/);
+  assert.match(challenge, /Continue growing/);
+  assert.match(challenge, /if \(correctCount >= 6\) return/);
 });
