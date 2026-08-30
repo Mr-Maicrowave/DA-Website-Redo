@@ -9,6 +9,7 @@ const English = () => {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const iframeResizeObserverRef = useRef<ResizeObserver | null>(null);
   const [iframeHeight, setIframeHeight] = useState('100svh');
+  const [bookletPreviewOpen, setBookletPreviewOpen] = useState(false);
 
   const updateIframeHeight = () => {
     const doc = iframeRef.current?.contentDocument;
@@ -37,6 +38,18 @@ const English = () => {
     };
   }, []);
 
+  useEffect(() => {
+    const handlePreviewMessage = (event: MessageEvent) => {
+      if (event.origin !== window.location.origin) return;
+      if (event.source !== iframeRef.current?.contentWindow) return;
+      if (event.data?.type !== 'da-english-preview') return;
+      setBookletPreviewOpen(Boolean(event.data.open));
+    };
+
+    window.addEventListener('message', handlePreviewMessage);
+    return () => window.removeEventListener('message', handlePreviewMessage);
+  }, []);
+
   return (
     <>
       <EnglishIntroVideoGate />
@@ -45,7 +58,7 @@ const English = () => {
         description="English tuition for Years 7-12 students who need structure, confidence, sharper analysis, and detailed writing feedback."
         canonicalUrl="/subjects/english"
       />
-      <NavigationNew />
+      {!bookletPreviewOpen && <NavigationNew />}
       <SubjectHero
         eyebrow="Years 7-12 English"
         icon={BookOpen}

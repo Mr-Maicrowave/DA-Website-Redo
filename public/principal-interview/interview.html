@@ -250,8 +250,9 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--paper);color:var(
   margin-bottom:0;
 }
 .qa-strip-img{
-  width:100%;height:100%;object-fit:cover;display:block;
+  width:100%;height:100%;object-fit:cover;object-position:center center;display:block;
 }
+.qa-photo-strip--headroom .qa-strip-img{object-position:center 18%}
 .qa-strip-overlay{
   position:absolute;inset:0;
   background:linear-gradient(
@@ -698,7 +699,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--paper);color:var(
 
     <!-- Q04 -->
     <div class="qa-new" id="q4">
-      <div class="qa-photo-strip">
+      <div class="qa-photo-strip qa-photo-strip--headroom">
         <img src="q04-students-need-most.png" class="qa-strip-img" alt="Two DA students studying together at a desk">
         <div class="qa-strip-overlay"></div>
         <div class="qa-strip-content">
@@ -764,7 +765,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--paper);color:var(
 
     <!-- Q08 -->
     <div class="qa-new" id="q8">
-      <div class="qa-photo-strip">
+      <div class="qa-photo-strip qa-photo-strip--headroom">
         <img src="q08-typical-student-journey.png" class="qa-strip-img" alt="DA tutor guiding a student through written work">
         <div class="qa-strip-overlay"></div>
         <div class="qa-strip-content">
@@ -832,7 +833,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--paper);color:var(
 
     <!-- Q12 -->
     <div class="qa-new" id="q12">
-      <div class="qa-photo-strip">
+      <div class="qa-photo-strip qa-photo-strip--headroom">
         <img src="q12-family-feedback.png" class="qa-strip-img" alt="DA Tuition students with their tutor">
         <div class="qa-strip-overlay"></div>
         <div class="qa-strip-content">
@@ -900,7 +901,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--paper);color:var(
 
     <!-- Q16 -->
     <div class="qa-new" id="q16">
-      <div class="qa-photo-strip">
+      <div class="qa-photo-strip qa-photo-strip--headroom">
         <img src="q16-student-life-changed.png" class="qa-strip-img" alt="DA students working together in class">
         <div class="qa-strip-overlay"></div>
         <div class="qa-strip-content">

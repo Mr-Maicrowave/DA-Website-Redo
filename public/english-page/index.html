@@ -1815,7 +1815,7 @@
             <h3 class="serif">Strengthening analysis and assessment confidence</h3>
           </div>
           <div class="stage-photo-frame">
-            <div class="stage-photo"><img class="stage-photo-img--year910" src="images/subjects/english/year-9-10-analysis-confidence.jpeg" alt="DA Tuition English tutor and student working together at a laptop"></div>
+            <div class="stage-photo"><img class="stage-photo-img--year910" src="images/subjects/english/year-9-10-analysis-confidence.png" alt="DA Tuition English tutor and student working together at a laptop"></div>
             <svg class="stage-photo-outline" viewBox="0 0 1 1" preserveAspectRatio="none" aria-hidden="true">
               <path class="stage-photo-outline-halo" d="M0.52,0.02 C0.66,0.03 0.72,0.1 0.84,0.1 C0.96,0.1 1,0.22 0.96,0.35 C0.93,0.46 0.98,0.52 0.96,0.64 C0.94,0.78 0.86,0.83 0.75,0.9 C0.64,0.97 0.56,0.93 0.44,0.97 C0.32,1 0.2,0.93 0.12,0.84 C0.04,0.75 0.02,0.62 0.04,0.5 C0.06,0.4 0.01,0.34 0.03,0.22 C0.05,0.1 0.15,0.04 0.28,0.02 C0.36,0.005 0.43,0.01 0.52,0.02 Z"/>
               <path class="stage-photo-outline-gold" d="M0.52,0.02 C0.66,0.03 0.72,0.1 0.84,0.1 C0.96,0.1 1,0.22 0.96,0.35 C0.93,0.46 0.98,0.52 0.96,0.64 C0.94,0.78 0.86,0.83 0.75,0.9 C0.64,0.97 0.56,0.93 0.44,0.97 C0.32,1 0.2,0.93 0.12,0.84 C0.04,0.75 0.02,0.62 0.04,0.5 C0.06,0.4 0.01,0.34 0.03,0.22 C0.05,0.1 0.15,0.04 0.28,0.02 C0.36,0.005 0.43,0.01 0.52,0.02 Z"/>
@@ -2331,8 +2331,7 @@
           "previews/romanticism-04.png",
           "previews/romanticism-05.png",
           "previews/romanticism-12.png",
-          "previews/romanticism-16.png",
-          { kind: "cta" }
+          "previews/romanticism-16.png"
         ]
       },
       "feedback-sample": {
@@ -2340,8 +2339,7 @@
         type: "feedback",
         pages: [
           "previews/feedback-1.png",
-          "previews/feedback-2.png",
-          { kind: "cta" }
+          "previews/feedback-2.png"
         ]
       }
     };
@@ -2402,6 +2400,11 @@
       if(locked) setPreviewViewport();
       document.documentElement.classList.toggle("preview-open", locked);
       document.body.classList.toggle("preview-open", locked);
+      try{
+        if(window.parent && window.parent !== window){
+          window.parent.postMessage({ type: "da-english-preview", open: locked }, window.location.origin);
+        }
+      } catch(error){}
       try{
         if(window.parent && window.parent !== window){
           const parentDoc = window.parent.document;
@@ -2483,7 +2486,14 @@
       previewImage.removeAttribute("src");
     }
 
-    document.querySelector(".preview-close").addEventListener("click", closePreviewModal);
+    const previewCloseButton = document.querySelector(".preview-close");
+    function handlePreviewCloseButton(event){
+      event.preventDefault();
+      event.stopPropagation();
+      closePreviewModal();
+    }
+    previewCloseButton.addEventListener("pointerdown", handlePreviewCloseButton);
+    previewCloseButton.addEventListener("click", handlePreviewCloseButton);
 
     function handlePreviewKeydown(event){
       if(!modal.classList.contains("is-open")) return;
