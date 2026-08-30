@@ -5,11 +5,11 @@ export const COMPLETE_SHELF_PRESENTATION_NAMES = ["jenny"] as const;
 export type CompleteShelfPresentationName = typeof COMPLETE_SHELF_PRESENTATION_NAMES[number];
 
 const CANVAS_METADATA = {
-  cover: { width: 1536, height: 2304 },
-  spine: { width: 512, height: 2304 },
-  back: { width: 1536, height: 2304 },
-  endpaper: { width: 1024, height: 1536 },
-  interiors: { count: 6, width: 1536, height: 2048 },
+  cover: { width: 768, height: 1152 },
+  spine: { width: 256, height: 1152 },
+  back: { width: 768, height: 1152 },
+  endpaper: { width: 512, height: 768 },
+  interiors: { count: 6, width: 1024, height: 1365 },
 } as const;
 
 const JENNY_FALLBACK_PORTRAIT = "/teachers/jenny.png";
@@ -31,12 +31,17 @@ export interface CompleteShelfPresentationCanvasSources {
   interiors: HTMLCanvasElement[];
 }
 
+export interface DeferredCompleteShelfPresentationCanvasSources extends CompleteShelfPresentationCanvasSources {
+  drawInterior(index: number): void;
+}
+
 export interface CompleteShelfPresentation {
   tutorId: string;
   portrait: { url: string; fallbackUrl: string };
   colours: { cloth: string; foil: string; paper: string; ink: string; edge: string };
   canvasMetadata: typeof CANVAS_METADATA;
   createCanvasSources(canvasDocument?: Pick<Document, "createElement">): CompleteShelfPresentationCanvasSources;
+  createInitialCanvasSources(canvasDocument?: Pick<Document, "createElement">): DeferredCompleteShelfPresentationCanvasSources;
 }
 
 function getJennyTutor() {
@@ -307,7 +312,7 @@ function drawInterior(canvas: HTMLCanvasElement, page: TutorBookPage, colours: C
     maxBaseline: canvas.height * .92,
     maxWidth: bodyWidth,
     initialFontSize: Math.round(canvas.width * .028),
-    minimumFontSize: 32,
+    minimumFontSize: Math.round(canvas.width * .021),
   });
 }
 
@@ -358,6 +363,33 @@ export function createCompleteShelfPresentation(tutor: CatalogueTutor): Complete
       drawEndpaper(endpaper, tutor, colours);
       interiors.forEach((canvas, pageNumber) => drawInterior(canvas, pages[pageNumber], colours));
       return { cover, coverFoil, spine, spineFoil, back, backFoil, endpaper, interiors };
+    },
+    createInitialCanvasSources(canvasDocument = document) {
+      const cover = createCanvas(canvasDocument, CANVAS_METADATA.cover);
+      const coverFoil = createCanvas(canvasDocument, CANVAS_METADATA.cover);
+      const spine = createCanvas(canvasDocument, CANVAS_METADATA.spine);
+      const spineFoil = createCanvas(canvasDocument, CANVAS_METADATA.spine);
+      const back = createCanvas(canvasDocument, CANVAS_METADATA.back);
+      const backFoil = createCanvas(canvasDocument, CANVAS_METADATA.back);
+      const endpaper = createCanvas(canvasDocument, CANVAS_METADATA.endpaper);
+      const pages = createTutorBookPages(tutor);
+      const interiors = pages.map(() => createCanvas(canvasDocument, CANVAS_METADATA.interiors));
+      const drawInteriorAt = (index: number) => {
+        const canvas = interiors[index];
+        const page = pages[index];
+        if (!canvas || !page) return;
+        drawInterior(canvas, page, colours);
+        notifyTextureUpdate(canvas);
+      };
+      drawCover(cover, tutor, portrait, colours);
+      drawTransparentFoil(coverFoil);
+      drawSpine(spine, tutor, colours);
+      drawTransparentFoil(spineFoil);
+      drawBack(back, tutor, colours);
+      drawTransparentFoil(backFoil);
+      drawEndpaper(endpaper, tutor, colours);
+      drawInteriorAt(0);
+      return { cover, coverFoil, spine, spineFoil, back, backFoil, endpaper, interiors, drawInterior: drawInteriorAt };
     },
   };
 }

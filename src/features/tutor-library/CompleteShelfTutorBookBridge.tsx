@@ -81,14 +81,24 @@ export function CompleteShelfTutorBookBridge({
     let mountedRootUuid: string | undefined;
     const lease = pool.acquire(edition.id, async () => {
       const module = await importPublicModule(RIG_MODULE_URL);
-      return module.createCompleteShelfBookRig({
+      const sources = presentation.createInitialCanvasSources();
+      const rig = module.createCompleteShelfBookRig({
         renderer: gl,
         presentation: {
           tutorId: presentation.tutorId,
           colours: presentation.colours,
-          sources: presentation.createCanvasSources(),
+          sources,
         },
       });
+      let nextInterior = 1;
+      const drawNextInterior = () => {
+        if (nextInterior >= sources.interiors.length) return;
+        sources.drawInterior(nextInterior);
+        nextInterior += 1;
+        requestAnimationFrame(drawNextInterior);
+      };
+      requestAnimationFrame(drawNextInterior);
+      return rig;
     });
 
     void lease.rig.then((nextRig) => {

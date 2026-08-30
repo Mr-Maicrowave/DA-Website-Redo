@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import {
   createLibraryState,
+  getBookInteractionEvents,
   libraryReducer,
   type ControllerResetSnapshot,
   type LibraryEvent,
@@ -345,6 +346,15 @@ test('remembers a click during extraction and proceeds through the safe reading 
   assert.equal(state.transitionGeneration, generation);
   state = complete(state, { type: 'PREVIEW_READY' });
   assert.equal(state.phase, 'BOOK_TO_READING');
+});
+
+test('routes an initial activation directly through extraction toward reading', () => {
+  const events = getBookInteractionEvents(createLibraryState('primary'), 'touch-activate', 'book-a', 'root-a');
+
+  assert.deepEqual(events, [
+    { type: 'HOVER', editionId: 'book-a', rootUuid: 'root-a' },
+    { type: 'OPEN' },
+  ]);
 });
 
 test('Escape recovers deterministically from every book transient and reading state', () => {

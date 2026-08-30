@@ -28,15 +28,15 @@ test('pointer hover previews through the shared reducer with the ready rig root'
   assert.equal(selected.expectedRootUuid, 'root-jenny');
 });
 
-test('touch and native selection stop at the front-cover preview before opening', () => {
+test('touch and native selection request reading from the first activation', () => {
   for (const input of ['touch-activate', 'keyboard-activate'] as const) {
     const idle = createLibraryState('primary');
     const events = getBookInteractionEvents(idle, input, 'T003:primary', 'root-jenny');
     const selected = applyEvents(idle, events);
 
-    assert.deepEqual(events.map(event => event.type), ['HOVER'], input);
-    assert.equal(selected.phase, 'BOOK_HOVER_INTENT', input);
-    assert.equal(selected.openRequested, undefined, input);
+    assert.deepEqual(events.map(event => event.type), ['HOVER', 'OPEN'], input);
+    assert.equal(selected.phase, 'BOOK_EXTRACTING', input);
+    assert.equal(selected.openRequested, true, input);
   }
 });
 
@@ -71,16 +71,17 @@ test('does not reopen a returned book from its programmatic focus restoration', 
   assert.equal(shouldPreviewBookOnFocus(false), true);
 });
 
-test('selection switching during preview intent invalidates the first root and previews the second', () => {
+test('selection switching during preview intent invalidates the first root and opens the second', () => {
   const idle = createLibraryState('primary');
   const first = applyEvents(idle, getBookInteractionEvents(idle, 'pointer-preview', 'T003:primary', 'root-jenny'));
   const switchedEvents = getBookInteractionEvents(first, 'keyboard-activate', 'T009:primary', 'root-jacob');
   const switched = applyEvents(first, switchedEvents);
 
-  assert.deepEqual(switchedEvents.map(event => event.type), ['HOVER']);
+  assert.deepEqual(switchedEvents.map(event => event.type), ['HOVER', 'OPEN']);
   assert.equal(switched.selectedEditionId, 'T009:primary');
   assert.equal(switched.expectedRootUuid, 'root-jacob');
-  assert.equal(switched.phase, 'BOOK_HOVER_INTENT');
+  assert.equal(switched.phase, 'BOOK_EXTRACTING');
+  assert.equal(switched.openRequested, true);
 });
 
 test('disables hostile selection and wall actions during book and room transitions', () => {

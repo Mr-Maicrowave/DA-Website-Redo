@@ -72,3 +72,10 @@ test('reduced motion shortens movement while retaining every semantic lifecycle 
   assert.ok(reduced.pageTurnMs > 0 && reduced.pageTurnMs < standard.pageTurnMs);
   assert.equal(reduced.pageRiffle, false);
 });
+
+test('uses the shortened click-to-reading timing budget', () => {
+  const timing = createBookMotionTimingPolicy(false);
+
+  assert.equal(timing.extractionMs, 450);
+  assert.equal(timing.toReadingMs, 380);
+});

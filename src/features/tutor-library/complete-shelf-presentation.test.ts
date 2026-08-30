@@ -128,11 +128,11 @@ test("defines deterministic high-resolution metadata for every presentation surf
   const presentation = createCompleteShelfPresentation(jenny);
 
   assert.deepEqual(presentation.canvasMetadata, {
-    cover: { width: 1536, height: 2304 },
-    spine: { width: 512, height: 2304 },
-    back: { width: 1536, height: 2304 },
-    endpaper: { width: 1024, height: 1536 },
-    interiors: { count: 6, width: 1536, height: 2048 },
+    cover: { width: 768, height: 1152 },
+    spine: { width: 256, height: 1152 },
+    back: { width: 768, height: 1152 },
+    endpaper: { width: 512, height: 768 },
+    interiors: { count: 6, width: 1024, height: 1365 },
   });
   assert.equal(typeof presentation.createCanvasSources, "function");
 });
@@ -152,9 +152,9 @@ test("draws every Jenny presentation canvas and refreshes the cover after the po
     sources.cover.addEventListener("complete-shelf-presentation-update", () => { coverRefreshes += 1; });
 
     assert.equal(canvases.length, 13, "cover, foil layers, endpaper, and six physical profile pages are all canvas-backed");
-    assert.deepEqual([sources.cover.width, sources.cover.height], [1536, 2304]);
-    assert.deepEqual([sources.spine.width, sources.spine.height], [512, 2304]);
-    assert.deepEqual([sources.endpaper.width, sources.endpaper.height], [1024, 1536]);
+    assert.deepEqual([sources.cover.width, sources.cover.height], [768, 1152]);
+    assert.deepEqual([sources.spine.width, sources.spine.height], [256, 1152]);
+    assert.deepEqual([sources.endpaper.width, sources.endpaper.height], [512, 768]);
     assert.equal(sources.interiors.length, 6);
     assert.ok(cover.commands.some(command => command.name === "fillText" && command.args[0] === "DA TUITION"));
     assert.ok(back.commands.some(command => command.name === "fillText" && command.args[0] === "DA TUITION"));
@@ -168,6 +168,20 @@ test("draws every Jenny presentation canvas and refreshes the cover after the po
   } finally {
     Object.assign(globalThis, { Image: originalImage });
   }
+});
+
+test("builds only the first profile page before the interactive rig mounts", () => {
+  const { document } = createRecordingDocument();
+  const presentation = createCompleteShelfPresentation(jenny);
+  const sources = presentation.createInitialCanvasSources(document as unknown as Document);
+
+  const first = sources.interiors[0] as unknown as RecordingCanvas;
+  const deferred = sources.interiors[1] as unknown as RecordingCanvas;
+  assert.ok(first.commands.some(command => command.name === "fillText"));
+  assert.equal(deferred.commands.length, 0);
+
+  sources.drawInterior(1);
+  assert.ok(deferred.commands.some(command => command.name === "fillText"));
 });
 
 test("prints every canonical Jenny page within the high-resolution safe area", () => {
@@ -202,7 +216,7 @@ test("fits Jenny's complete canonical whyDA text using realistic Georgia metrics
 
   assert.equal(printed, canonical, "every canonical word is printed in order");
   assert.ok(bodyCommands.every(command => Number(command.args[2]) <= canvas.height * .92), "every baseline stays inside the bottom print-safe bound");
-  assert.ok(bodyCommands.every(command => Number(/(\d+(?:\.\d+)?)px/.exec(command.font ?? "")?.[1] ?? 0) >= 32), "the deterministic fit never drops below the legible 32px floor");
+  assert.ok(bodyCommands.every(command => Number(/(\d+(?:\.\d+)?)px/.exec(command.font ?? "")?.[1] ?? 0) >= 21), "the deterministic fit never drops below the scaled legible raster floor");
   assert.ok(bodyCommands.every(command => realisticTextWidth(String(command.args[0]), command.font ?? "") <= canvas.width * .82), "every measured line stays within the body width");
   assert.ok(bodyCommands.length > 15, "the regression exercises the long-form page, not a short fixture");
 });
