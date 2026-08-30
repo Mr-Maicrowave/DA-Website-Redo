@@ -70,6 +70,8 @@ export function validateCaptureRecord(record) {
   }
   assert.ok(record.viewport && Number.isFinite(record.viewport.width) && Number.isFinite(record.viewport.height), 'capture record viewport must be finite');
   assert.match(String(record.url), /^https?:\/\//, 'capture record URL must be absolute');
+  assert.notEqual(record.rootUuid, 'unmounted', 'capture record requires a mounted physical root');
+  assert.notEqual(record.matrixDelta, 'unavailable', 'capture record requires a physical matrix delta');
 }
 
 export function validateLifecycleEvidence(evidence) {
@@ -191,6 +193,20 @@ async function setQaState(page, state) {
   await delay(180);
 }
 
+async function setTurnReviewProgress(page, progress) {
+  await page.evaluate(nextProgress => {
+    const url = new URL(location.href);
+    url.searchParams.set('library-preview', '1');
+    url.searchParams.delete('libraryQaState');
+    url.searchParams.set('libraryTurnProgress', nextProgress);
+    history.pushState(null, '', url);
+    dispatchEvent(new PopStateEvent('popstate'));
+  }, String(progress));
+  await page.waitForFunction(expected => document.querySelector('[data-tutor-library-qa="root"]')?.getAttribute('data-turn-progress') === expected, { timeout: 15_000 }, Number(progress).toFixed(2));
+  await waitForMountedRoot(page);
+  await delay(180);
+}
+
 async function clickButtonByText(page, text) {
   const clicked = await page.evaluate(label => {
     const button = [...document.querySelectorAll('button')].find(candidate => candidate.textContent?.trim() === label);
@@ -301,24 +317,28 @@ async function runAcceptanceCapture() {
 
   try {
     const roomPage = await newPage('room');
+    await roomPage.setViewport({ width: 1920, height: 1080, deviceScaleFactor: 1 });
+    await roomPage.goto(libraryUrl({}), { waitUntil: 'domcontentloaded', timeout: 30_000 });
+    await waitForLibrary(roomPage);
+    await waitForMountedRoot(roomPage);
+    const roomRootUuid = (await readRootSnapshot(roomPage)).rootUuid;
     for (const [file, width] of [['01-room-idle-1920.png', 1920], ['02-room-idle-1440.png', 1440], ['03-room-idle-1366.png', 1366]]) {
       await roomPage.setViewport({ width, height: width === 1920 ? 1080 : width === 1440 ? 900 : 768, deviceScaleFactor: 1 });
-      await roomPage.goto(libraryUrl({}), { waitUntil: 'domcontentloaded', timeout: 30_000 });
-      await waitForLibrary(roomPage);
-      await captureMain(roomPage, file, `Live room idle at ${width}px`);
+      const snapshot = await captureMain(roomPage, file, `Live room idle at ${width}px`);
+      assert.equal(snapshot.rootUuid, roomRootUuid, `${file} must retain the room physical root during resize`);
     }
 
     await roomPage.setViewport({ width: 1440, height: 900, deviceScaleFactor: 1 });
-    await roomPage.goto(libraryUrl({ libraryTurnProgress: '0.01' }), { waitUntil: 'domcontentloaded', timeout: 30_000 });
-    await waitForLibrary(roomPage);
-    await captureMain(roomPage, '06-turn-start.png', 'Query-selected real room camera turn at 1%');
-    await roomPage.goto(libraryUrl({ libraryTurnProgress: '0.5' }), { waitUntil: 'domcontentloaded', timeout: 30_000 });
-    await waitForLibrary(roomPage);
-    await captureMain(roomPage, '07-turn-50.png', 'Query-selected real room camera turn at 50%');
-    await roomPage.goto(libraryUrl({ libraryTurnProgress: '1' }), { waitUntil: 'domcontentloaded', timeout: 30_000 });
-    await waitForLibrary(roomPage);
+    await setTurnReviewProgress(roomPage, .01);
+    const turnStart = await captureMain(roomPage, '06-turn-start.png', 'Query-selected real room camera turn at 1%');
+    assert.equal(turnStart.rootUuid, roomRootUuid);
+    await setTurnReviewProgress(roomPage, .5);
+    const turnMid = await captureMain(roomPage, '07-turn-50.png', 'Query-selected real room camera turn at 50%');
+    assert.equal(turnMid.rootUuid, roomRootUuid);
+    await setTurnReviewProgress(roomPage, 1);
     const settledTurn = await captureMain(roomPage, '08-turn-settled.png', 'Query-selected real production room camera settled at 100% on Mathematics');
     assert.equal(settledTurn.wall, 'mathematics');
+    assert.equal(settledTurn.rootUuid, roomRootUuid);
     await roomPage.close();
 
     const integratedPage = await newPage('integrated-qa');
@@ -419,12 +439,13 @@ async function runAcceptanceCapture() {
     await touchPage.setViewport({ width: 1024, height: 768, deviceScaleFactor: 1, hasTouch: true });
     await touchPage.goto(libraryUrl({}), { waitUntil: 'domcontentloaded', timeout: 30_000 });
     await waitForLibrary(touchPage);
+    await waitForMountedRoot(touchPage);
     const touchPoint = await touchPage.$eval('[data-edition-id="T003:primary"]', element => {
       const rect = element.getBoundingClientRect();
       return { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
     });
     await touchPage.touchscreen.tap(touchPoint.x, touchPoint.y);
-    await touchPage.waitForFunction(() => ['BOOK_HOVER_INTENT', 'BOOK_EXTRACTING'].includes(document.querySelector('[data-tutor-library-qa="root"]')?.getAttribute('data-library-phase')), { timeout: 10_000 });
+    await touchPage.waitForFunction(() => ['BOOK_HOVER_INTENT', 'BOOK_EXTRACTING'].includes(document.querySelector('[data-tutor-library-qa="root"]')?.getAttribute('data-library-phase')), { timeout: MOUNTED_ROOT_TIMEOUT_MS });
     const touchActivation = await readRootSnapshot(touchPage);
     await setQaState(touchPage, 'reading-open');
     const touchReading = await readRootSnapshot(touchPage);
@@ -453,6 +474,7 @@ async function runAcceptanceCapture() {
     await escapePage.setViewport({ width: 1440, height: 900, deviceScaleFactor: 1 });
     await escapePage.goto(libraryUrl({}), { waitUntil: 'domcontentloaded', timeout: 30_000 });
     await waitForLibrary(escapePage);
+    await waitForMountedRoot(escapePage);
     await escapePage.click('[data-edition-id="T003:primary"]');
     await waitForPhase(escapePage, 'BOOK_EXTRACTING');
     await setQaState(escapePage, 'open-50');
@@ -594,9 +616,9 @@ async function runAcceptanceCapture() {
       const standaloneUrl = `${BASE_URL}/dev/complete-shelf-rig?state=${standaloneState}`;
       const r3fUrl = `${BASE_URL}/dev/complete-shelf-r3f?state=${comparison.state}`;
       await standalonePage.goto(standaloneUrl, { waitUntil: 'domcontentloaded', timeout: 30_000 });
-      await standalonePage.waitForFunction(() => document.querySelector('#stage')?.getAttribute('data-artwork-status') === 'applied' && document.querySelector('#stage')?.getAttribute('data-contract-passed') === 'true', { timeout: 30_000 });
+      await standalonePage.waitForFunction(() => document.querySelector('#stage')?.getAttribute('data-artwork-status') === 'applied' && document.querySelector('#stage')?.getAttribute('data-contract-passed') === 'true', { timeout: MOUNTED_ROOT_TIMEOUT_MS });
       await r3fPage.goto(r3fUrl, { waitUntil: 'domcontentloaded', timeout: 30_000 });
-      await r3fPage.waitForFunction(() => document.querySelector('[data-host="r3f"]')?.getAttribute('data-artwork-status') === 'applied' && document.querySelector('[data-host="r3f"]')?.getAttribute('data-persistent-root') === 'true', { timeout: 30_000 });
+      await r3fPage.waitForFunction(() => document.querySelector('[data-host="r3f"]')?.getAttribute('data-artwork-status') === 'applied' && document.querySelector('[data-host="r3f"]')?.getAttribute('data-persistent-root') === 'true', { timeout: MOUNTED_ROOT_TIMEOUT_MS });
       await delay(300);
       await standalonePage.screenshot({ path: path.join(EVIDENCE_DIR, comparison.standaloneFile), type: 'png' });
       await r3fPage.screenshot({ path: path.join(EVIDENCE_DIR, comparison.r3fFile), type: 'png' });

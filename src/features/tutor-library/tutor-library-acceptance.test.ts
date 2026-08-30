@@ -94,8 +94,8 @@ test('requires every manifest capture to record the reproducibility and health f
     viewport: { width: 1920, height: 1080, deviceScaleFactor: 1 },
     phase: 'ROOM_IDLE',
     transitionId: 'library-0',
-    rootUuid: 'unmounted',
-    matrixDelta: 'unavailable',
+    rootUuid: 'persistent-root',
+    matrixDelta: '0.000000',
     resetState: 'idle',
     controllerProgress: 'unavailable',
     consoleStatus: 'clean',
@@ -106,6 +106,8 @@ test('requires every manifest capture to record the reproducibility and health f
     delete incomplete[field];
     assert.throws(() => validate?.(incomplete), new RegExp(field, 'i'));
   }
+  assert.throws(() => validate?.({ ...valid, rootUuid: 'unmounted' }), /mounted physical root/i);
+  assert.throws(() => validate?.({ ...valid, matrixDelta: 'unavailable' }), /matrix delta/i);
 });
 
 test('maps query-driven integrated QA states onto the production scene and physical controller', () => {
