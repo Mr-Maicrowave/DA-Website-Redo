@@ -2260,7 +2260,52 @@
   font-size: 1rem;
 }
 
+.ss-story-stack__message-link {
+  display: flex;
+  width: fit-content;
+  align-items: center;
+  gap: 0.7rem;
+  margin: 1rem auto 0;
+  padding-block: 0.25rem 0.4rem;
+  border-bottom: 1px solid rgba(183, 137, 36, 0.68);
+  color: var(--ss-navy);
+  font-family: var(--ss-font-story);
+  font-size: clamp(1rem, 1.25vw, 1.2rem);
+  font-style: italic;
+  line-height: 1.3;
+  text-decoration: none;
+  transition: border-color 180ms ease, color 180ms ease, transform 180ms ease;
+}
+
+.ss-story-stack__message-link span {
+  color: var(--ss-gold);
+  font-family: var(--ss-font-structure);
+  font-style: normal;
+  transition: transform 180ms ease;
+}
+
+.ss-story-stack__message-link:hover {
+  border-color: var(--ss-gold);
+  color: #071b33;
+  transform: translateY(-2px);
+}
+
+.ss-story-stack__message-link:hover span { transform: translateX(4px); }
+
+.ss-story-stack__message-link:focus-visible {
+  border-radius: 2px;
+  outline: 3px solid var(--ss-gold);
+  outline-offset: 5px;
+}
+
 @media (max-width: 780px) {
+  .ss-story-stack__message-link {
+    max-width: calc(100vw - 3rem);
+    margin-top: 0.85rem;
+    font-size: 1rem;
+    text-align: center;
+  }
+
   .ss-story-stack__track,
   .ss-story-stack--reduced .ss-story-stack__track {
     width: 94vw;

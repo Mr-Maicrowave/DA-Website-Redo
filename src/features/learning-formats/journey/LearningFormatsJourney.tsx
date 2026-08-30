@@ -15,6 +15,7 @@ import JourneySubjectSelector from "./JourneySubjectSelector";
 import WalkingStudent from "./WalkingStudent";
 import { journeyAssets } from "./journeyAssets";
 import { routeForSubject } from "./finalPathwayRoutes";
+import { getRestartedJourneyUiState } from "./restartJourney";
 import "./checkpoint-journey.css";
 import "./learning-formats-journey.css";
 
@@ -50,7 +51,7 @@ const X = {
 } as const;
 
 const ROUTE_Y: Record<LearningStage, number> = { primary: 54, "high-school": 68, hsc: 81 };
-const ACTIVE_ROUTE_Y = 72;
+const ACTIVE_ROUTE_Y = 80;
 const STAGE_COPY: Record<LearningStage, { title: string; years: string }> = {
   primary: { title: "Primary", years: "Years 1–6" },
   "high-school": { title: "High School", years: "Years 7–10" },
@@ -63,9 +64,27 @@ const STAGE_SCENERY = {
   hsc: [journeyAssets.hsc.examPaper, journeyAssets.hsc.timer],
 } as const;
 
-const SCENE_FOCUS = {
-  result: { x: X.result, viewportAnchor: 0.32 },
-  subjects: { x: X.subjects, viewportAnchor: 0.32 },
+type SceneStop = {
+  worldX: number;
+  cameraX: number;
+  characterX: number;
+  contentAnchor: "left" | "split";
+  contentWidth: number;
+};
+
+const sceneStops = {
+  yearJunction: { worldX: X.junction, cameraX: X.junction, characterX: .32, contentAnchor: "left", contentWidth: 850 },
+  q1: { worldX: X.questions[0], cameraX: X.questions[0], characterX: .68, contentAnchor: "left", contentWidth: 760 },
+  q2: { worldX: X.questions[1], cameraX: X.questions[1], characterX: .68, contentAnchor: "left", contentWidth: 760 },
+  q3: { worldX: X.questions[2], cameraX: X.questions[2], characterX: .68, contentAnchor: "left", contentWidth: 760 },
+  q4: { worldX: X.questions[3], cameraX: X.questions[3], characterX: .68, contentAnchor: "left", contentWidth: 760 },
+  preliminaryResult: { worldX: X.result, cameraX: X.result, characterX: .68, contentAnchor: "left", contentWidth: 720 },
+  subjectSelection: { worldX: X.subjects, cameraX: X.subjects, characterX: .68, contentAnchor: "split", contentWidth: 1180 },
+  englishFollowup: { worldX: X.specialist, cameraX: X.specialist, characterX: .68, contentAnchor: "left", contentWidth: 760 },
+  mathsFollowup: { worldX: X.specialist, cameraX: X.specialist, characterX: .68, contentAnchor: "left", contentWidth: 760 },
+  scienceFollowup: { worldX: X.specialist, cameraX: X.specialist, characterX: .68, contentAnchor: "left", contentWidth: 760 },
+  specialistFollowup: { worldX: X.specialist, cameraX: X.specialist, characterX: .68, contentAnchor: "left", contentWidth: 760 },
+  finalResult: { worldX: X.final, cameraX: X.final, characterX: .68, contentAnchor: "split", contentWidth: 1180 },
 } as const;
 
 const cameraFor = (x: number, viewportAnchor = 0.32) =>
@@ -88,12 +107,14 @@ const LearningFormatsJourney = ({ controller }: Props) => {
   const [questionIndex, setQuestionIndex] = useState(() => resumeQuestion < 0 ? 4 : resumeQuestion);
   const [specialistIndex, setSpecialistIndex] = useState(0);
   const [transitioning, setTransitioning] = useState(false);
+  const [restarting, setRestarting] = useState(false);
   const rootRef = useRef<HTMLElement>(null);
   const viewportRef = useRef<HTMLDivElement>(null);
   const worldRef = useRef<HTMLDivElement>(null);
   const studentRef = useRef<HTMLSpanElement>(null);
   const triggerRef = useRef<ScrollTrigger>();
   const motionRef = useRef<gsap.core.Timeline>();
+  const restartTimerRef = useRef<number>();
   const initialStageRef = useRef(stage);
   const initialCompletedRef = useRef(completedQuestions);
   const initialQuestionRef = useRef(resumeQuestion);
@@ -124,13 +145,13 @@ const LearningFormatsJourney = ({ controller }: Props) => {
   }, []);
 
   const focusJourneyScene = useCallback((
-    scene: keyof typeof SCENE_FOCUS,
+    scene: keyof typeof sceneStops,
     duration: number,
     onComplete: () => void,
     direction: "right" | "left" = "right",
   ) => {
-    const focus = SCENE_FOCUS[scene];
-    setCamera(focus.x, duration, onComplete, direction, focus.viewportAnchor);
+    const focus = sceneStops[scene];
+    setCamera(focus.cameraX, duration, onComplete, direction, focus.characterX);
   }, [setCamera]);
 
   useLayoutEffect(() => {
@@ -141,13 +162,13 @@ const LearningFormatsJourney = ({ controller }: Props) => {
     if (!root || !viewport || !world || !student) return;
 
     const initialStage = initialStageRef.current;
-    const initialX = initialStage
-      ? initialPhaseRef.current === "final" ? X.final
-        : initialPhaseRef.current === "awaiting-specialist" ? X.specialist
-        : initialCompletedRef.current ? X.result : X.questions[Math.min(initialQuestionRef.current, 3)]
-      : X.opening;
-    gsap.set(world, { x: cameraFor(initialX) });
-    gsap.set(student, { top: `${initialStage ? ACTIVE_ROUTE_Y : 68}%` });
+    const initialStop = initialStage
+      ? initialPhaseRef.current === "final" ? sceneStops.finalResult
+        : initialPhaseRef.current === "awaiting-specialist" ? sceneStops.specialistFollowup
+        : initialCompletedRef.current ? sceneStops.preliminaryResult : sceneStops[`q${Math.min(initialQuestionRef.current, 3) + 1}` as "q1" | "q2" | "q3" | "q4"]
+      : null;
+    gsap.set(world, { x: initialStop ? cameraFor(initialStop.cameraX, initialStop.characterX) : cameraFor(X.opening) });
+    gsap.set(student, { top: `${initialStage ? ACTIVE_ROUTE_Y : 82}%` });
 
     const context = gsap.context(() => {
       const trigger = ScrollTrigger.create({
@@ -158,10 +179,11 @@ const LearningFormatsJourney = ({ controller }: Props) => {
         anticipatePin: 1,
         invalidateOnRefresh: true,
         onUpdate: (self) => {
-          if (initialStage || phaseRef.current !== "education") return;
+          if (initialStageRef.current || phaseRef.current !== "education") return;
           const p = Math.min(self.progress / 0.78, 1);
           const x = X.opening + (X.junction - X.opening) * p;
           gsap.set(world, { x: cameraFor(x) });
+          gsap.set(student, { top: `${82 - Math.min(p / .12, 1) * 14}%` });
           student.dataset.state = self.getVelocity() === 0 ? "idle" : "walking";
           if (p >= 1) {
             student.dataset.state = "idle";
@@ -196,6 +218,7 @@ const LearningFormatsJourney = ({ controller }: Props) => {
       window.removeEventListener("touchmove", blockProgress, true);
       window.removeEventListener("keydown", blockKeys, true);
       motionRef.current?.kill();
+      if (restartTimerRef.current) window.clearTimeout(restartTimerRef.current);
       context.revert();
     };
   }, []);
@@ -210,7 +233,7 @@ const LearningFormatsJourney = ({ controller }: Props) => {
         .to(student, { top: `${ACTIVE_ROUTE_Y}%`, duration: 1.05, ease: "power2.inOut" });
     }
     setQuestionIndex(0);
-    setCamera(X.questions[0], 1.8, () => {
+    focusJourneyScene("q1", 1.8, () => {
       setRouteMode("inside");
       setPhase("awaiting-question");
     });
@@ -245,9 +268,9 @@ const LearningFormatsJourney = ({ controller }: Props) => {
     window.setTimeout(() => {
       if (questionIndex < 3) {
         const next = questionIndex + 1;
-        setCamera(X.questions[next], 1.25, () => { setQuestionIndex(next); setPhase("awaiting-question"); });
+        focusJourneyScene(`q${next + 1}` as "q2" | "q3" | "q4", 1.25, () => { setQuestionIndex(next); setPhase("awaiting-question"); });
       } else {
-        focusJourneyScene("result", 1.5, () => { setQuestionIndex(4); setPhase("awaiting-result"); });
+        focusJourneyScene("preliminaryResult", 1.5, () => { setQuestionIndex(4); setPhase("awaiting-result"); });
       }
     }, 380);
   };
@@ -255,18 +278,13 @@ const LearningFormatsJourney = ({ controller }: Props) => {
   const backQuestion = () => {
     if (questionIndex <= 0 || transitioning) return;
     const next = questionIndex - 1;
-    setCamera(
-      X.questions[next],
-      1.1,
-      () => { setQuestionIndex(next); setPhase("awaiting-question"); },
-      "left",
-    );
+    focusJourneyScene(`q${next + 1}` as "q1" | "q2" | "q3", 1.1, () => { setQuestionIndex(next); setPhase("awaiting-question"); }, "left");
   };
 
-  const continueToSubjects = () => focusJourneyScene("subjects", 1.35, () => setPhase("awaiting-subjects"));
+  const continueToSubjects = () => focusJourneyScene("subjectSelection", 1.35, () => setPhase("awaiting-subjects"));
   const changeAssessmentAnswers = () => {
     if (transitioning) return;
-    setCamera(X.questions[3], 1.1, () => {
+    focusJourneyScene("q4", 1.1, () => {
       setQuestionIndex(3);
       setPhase("awaiting-question");
     }, "left");
@@ -274,9 +292,9 @@ const LearningFormatsJourney = ({ controller }: Props) => {
   const confirmSubjects = () => {
     if (controller.visibleFollowUps.length > 0) {
       setSpecialistIndex(0);
-      setCamera(X.specialist, 1.2, () => setPhase("awaiting-specialist"));
+      focusJourneyScene("specialistFollowup", 1.2, () => setPhase("awaiting-specialist"));
     } else {
-      setCamera(X.final, 1.5, () => setPhase("final"));
+      focusJourneyScene("finalResult", 1.5, () => setPhase("final"));
     }
   };
   const answerSpecialist = (optionId: string) => {
@@ -285,8 +303,65 @@ const LearningFormatsJourney = ({ controller }: Props) => {
     controller.setSubjectAnswer(followUp.config.key, optionId);
     window.setTimeout(() => {
       if (specialistIndex < controller.visibleFollowUps.length - 1) setSpecialistIndex((value) => value + 1);
-      else setCamera(X.final, 1.5, () => setPhase("final"));
+      else focusJourneyScene("finalResult", 1.5, () => setPhase("final"));
     }, 380);
+  };
+
+  const backSpecialist = () => {
+    if (transitioning) return;
+    if (specialistIndex > 0) setSpecialistIndex((value) => value - 1);
+    else focusJourneyScene("subjectSelection", 1.1, () => setPhase("awaiting-subjects"), "left");
+  };
+
+  const adjustFinalAnswers = () => {
+    if (controller.visibleFollowUps.length > 0) {
+      setSpecialistIndex(controller.visibleFollowUps.length - 1);
+      focusJourneyScene("specialistFollowup", 1.2, () => setPhase("awaiting-specialist"), "left");
+    } else focusJourneyScene("subjectSelection", 1.2, () => setPhase("awaiting-subjects"), "left");
+  };
+
+  const restartJourney = () => {
+    if (restarting) return;
+    const world = worldRef.current;
+    const student = studentRef.current;
+    const trigger = triggerRef.current;
+    if (!world || !student || !trigger) return;
+
+    const opening = getRestartedJourneyUiState();
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    setRestarting(true);
+    motionRef.current?.kill();
+
+    restartTimerRef.current = window.setTimeout(() => {
+      controller.reset();
+      initialStageRef.current = opening.initialStage;
+      setPhase(opening.phase);
+      setRouteMode(opening.routeMode);
+      setQuestionIndex(opening.questionIndex);
+      setSpecialistIndex(opening.specialistIndex);
+      setTransitioning(opening.transitioning);
+
+      gsap.set(world, { x: cameraFor(X.opening) });
+      gsap.set(student, { top: opening.characterTop });
+      phaseRef.current = "travelling";
+      trigger.refresh();
+
+      const htmlScrollBehavior = document.documentElement.style.scrollBehavior;
+      const bodyScrollBehavior = document.body.style.scrollBehavior;
+      document.documentElement.style.scrollBehavior = "auto";
+      document.body.style.scrollBehavior = "auto";
+      window.scrollTo({ top: trigger.start, left: 0, behavior: "auto" });
+      trigger.update();
+
+      window.requestAnimationFrame(() => {
+        document.documentElement.style.scrollBehavior = htmlScrollBehavior;
+        document.body.style.scrollBehavior = bodyScrollBehavior;
+        phaseRef.current = opening.phase;
+        student.dataset.state = opening.characterState;
+        setRestarting(false);
+      });
+      restartTimerRef.current = undefined;
+    }, reducedMotion ? 0 : 240);
   };
 
   const startingPoint = buildJourneyStartingPoint(controller.state);
@@ -294,10 +369,19 @@ const LearningFormatsJourney = ({ controller }: Props) => {
   const recommendation = controller.bundle.recommendation;
 
   return <section ref={rootRef} className="lf-master" aria-label="Learning Formats journey">
-    <div ref={viewportRef} className="lf-master__viewport" data-phase={phase}>
+    <div ref={viewportRef} className="lf-master__viewport" data-phase={phase} data-restarting={restarting} data-interactive-character={Boolean(stage) && phase !== "awaiting-year"}>
       <div ref={worldRef} className="lf-master__world" style={{ width: X.width }}>
         <div className="lf-master__road" style={{ width: X.junction }} aria-hidden="true" />
-        <article className="lf-zone lf-zone--opening" style={{ left: X.opening }}><span>Learning formats</span><h1>Every student learns differently.</h1><p>Let&apos;s find where your child thrives.</p><h2>So the way we teach them shouldn&apos;t always look the same.</h2></article>
+        <article className="lf-zone lf-zone--opening" style={{ left: X.opening }}>
+          <div className="lf-opening-station__copy"><span>Learning formats</span><h1>Every student learns differently.</h1><p>Let&apos;s find the environment where<br/>your child can thrive.</p></div>
+          <div className="lf-opening-station__vignette" aria-hidden="true">
+            <img className="lf-opening-station__shrubs" src={journeyAssets.shared.shrubs.src} alt="" />
+            <img className="lf-opening-station__backpack" src={journeyAssets.shared.backpack.src} alt="" />
+            <img className="lf-opening-station__books" src={journeyAssets.shared.books.src} alt="" />
+            <img className="lf-opening-station__flag" src={journeyAssets.shared.daFlag.src} alt="" />
+          </div>
+          <span className="lf-opening-station__road" aria-hidden="true"><i /></span>
+        </article>
         <article className="lf-zone lf-zone--format" style={{ left: X.private }}><div><span>Private learning</span><h2>Built around one student.</h2><p>Highly adaptable pace. Targeted support. More time where it&apos;s needed.</p></div><img src="/media/hsc/editorial/explorer/explorer-private-photo.png" alt="A DA tutor providing individual support" loading="lazy" /></article>
         <article className="lf-zone lf-zone--format" style={{ left: X.class }}><img src="/media/hsc/editorial/explorer/explorer-small-group-photo.png" alt="Students learning together with a DA tutor" loading="lazy" /><div><span>Class learning</span><h2>Structured together.</h2><p>Curriculum-paced progression, peer momentum and tutor guidance throughout.</p></div></article>
         <article className="lf-zone lf-zone--comparison" style={{ left: X.comparison }}><h2>Different environments.<br/>Different strengths.</h2><div><p><strong>Private</strong><br/>Highly adaptable and individual.</p><p><strong>Class</strong><br/>Structured progression with peers.</p></div><em>Neither is better. The right environment depends on the student.</em></article>
@@ -311,20 +395,28 @@ const LearningFormatsJourney = ({ controller }: Props) => {
         </section>
         {stage && routeMode === "inside" && <div className="lf-selected-route" style={{ left: X.junction + 400, top: `${ACTIVE_ROUTE_Y}%`, width: X.final - X.junction + 2100 }} data-stage={stage} aria-hidden="true" />}
 
-        {stage && questions.map((question, index) => <section key={question.slot} className="lf-interactive-zone" style={{ left: X.questions[index] - 450, "--route-y": `${ACTIVE_ROUTE_Y}%` } as CSSProperties} data-active={phase === "awaiting-question" && questionIndex === index} data-stage={stage}>
-          {phase === "awaiting-question" && questionIndex === index && <JourneyCheckpoint question={question} index={index} total={4} value={controller.state.answers[question.slot]} disabled={transitioning} onSelect={answerQuestion} onBack={index > 0 ? backQuestion : changeYearGroup} backLabel={index > 0 ? "← Previous question" : "← Change year group"}/>}<span className="lf-road-marker" data-complete={Boolean(controller.state.answers[question.slot])} aria-hidden="true"/><span className="lf-route-name">{STAGE_COPY[stage].title} path · Q{index + 1}</span><img className="lf-question-scenery" src={STAGE_SCENERY[stage][index % 2].src} alt="" aria-hidden="true" />
+        {stage && questions.map((question, index) => <section key={question.slot} className="lf-interactive-zone lf-world-checkpoint" style={{ left: X.questions[index] - 450, "--route-y": `${ACTIVE_ROUTE_Y}%` } as CSSProperties} data-active={phase === "awaiting-question" && questionIndex === index} data-stage={stage}>
+          <span className="lf-road-marker" data-complete={Boolean(controller.state.answers[question.slot])} aria-hidden="true"/><span className="lf-route-name">{STAGE_COPY[stage].title} path · Q{index + 1}</span><img className="lf-question-scenery" src={STAGE_SCENERY[stage][index % 2].src} alt="" aria-hidden="true" />
         </section>)}
 
-        <section className="lf-interactive-zone lf-result-zone" style={{ left: X.result - 350 }} data-active={phase === "awaiting-result"}>{phase === "awaiting-result" && startingPoint && <RecommendationDestination result={startingPoint} onContinue={continueToSubjects} onChangeAnswers={changeAssessmentAnswers}/>}</section>
-        <section className="lf-interactive-zone lf-subject-zone" style={{ left: X.subjects - 350 }} data-active={phase === "awaiting-subjects"}>{phase === "awaiting-subjects" && stage && <JourneySubjectSelector stage={stage} eligibleSubjects={controller.eligibleSubjects} selected={controller.state.selectedSubjects} confirmed={false} onToggle={controller.toggleSubject} onContinue={confirmSubjects}/>}</section>
-        <section className="lf-interactive-zone lf-specialist-zone" style={{ left: X.specialist - 500, top: `${ACTIVE_ROUTE_Y - 49}%` }} data-active={phase === "awaiting-specialist"}>{phase === "awaiting-specialist" && followUp && <div className="lf-specialist-inline"><p>{subjectLabel(followUp.subject)} · Follow-up</p><fieldset><legend>{followUp.question}</legend>{followUp.options.map((option) => <label key={option.id}><input type="radio" name={followUp.key} onChange={() => answerSpecialist(option.id)}/><span>{option.label}</span></label>)}</fieldset></div>}</section>
-        <section className="lf-interactive-zone lf-master-final" style={{ left: X.final - 600, top: "7%" }} data-active={phase === "final"}>{phase === "final" && recommendation && <div><p>Arrived at DA</p><h2>Your DA starting pathway.</h2><h3>{recommendation.close ? "Both could work" : envLabel(recommendation.primaryEnvironment)}</h3><ul>{startingPoint?.reasons.slice(0,3).map((reason) => <li key={reason}>{reason}</li>)}</ul><div className="lf-master-final__subjects">{recommendation.subjects.map((subject) => <span key={subject.subject}>{subject.subjectLabel} — {envLabel(subject.environment)}</span>)}</div><Link to="/book-interview">Book a consultation</Link><Link to={recommendation.subjects[0] ? routeForSubject(recommendation.subjects[0].subject) : "/subjects/english"}>Explore recommended programs</Link></div>}</section>
-
         {(phase === "education" || phase === "awaiting-year" || routeMode === "committed") && <img className="lf-world-prop lf-world-prop--sign" style={{ left: X.junction - 900 }} src={journeyAssets.shared.junctionSignpost.src} alt="" aria-hidden="true" />}
-        <img className="lf-world-prop lf-world-prop--final" style={{ left: X.final + 700 }} src={journeyAssets.shared.daFlagWide.src} alt="" />
+        <img className="lf-world-prop lf-world-prop--final" style={{ left: X.final + 160 }} src={journeyAssets.shared.daFlagWide.src} alt="" aria-hidden="true" />
       </div>
       <WalkingStudent ref={studentRef} state="idle" className="lf-master__student" />
-      {(phase === "education" || phase === "travelling" || phase === "final" || (phase === "awaiting-question" && stage && questionIndex < questions.length && !controller.state.answers[questions[questionIndex].slot])) && <p className="lf-master__hint" aria-live="polite">{phase === "education" ? "Scroll to continue" : phase === "final" ? "Scroll to leave the journey" : phase === "travelling" ? "Walking to the next stop…" : "Choose an option to continue"}</p>}
+      <div className="scene-safe-area" data-anchor={phase === "awaiting-subjects" || phase === "final" ? "split" : "left"}>
+        {phase === "awaiting-question" && stage && questions[questionIndex] && (
+          <JourneyCheckpoint question={questions[questionIndex]} index={questionIndex} total={4} value={controller.state.answers[questions[questionIndex].slot]} disabled={transitioning} onSelect={answerQuestion} onBack={questionIndex > 0 ? backQuestion : changeYearGroup} backLabel={questionIndex > 0 ? "← Previous question" : "← Change year group"}/>
+        )}
+        {phase === "awaiting-result" && startingPoint && (
+          <RecommendationDestination result={startingPoint} onContinue={continueToSubjects} onChangeAnswers={changeAssessmentAnswers}/>
+        )}
+        {phase === "awaiting-subjects" && stage && (
+          <JourneySubjectSelector stage={stage} eligibleSubjects={controller.eligibleSubjects} selected={controller.state.selectedSubjects} confirmed={false} onToggle={controller.toggleSubject} onContinue={confirmSubjects}/>
+        )}
+        {phase === "awaiting-specialist" && followUp && <div className="lf-specialist-inline"><p>{subjectLabel(followUp.subject)} · Follow-up</p><fieldset><legend>{followUp.question}</legend><div>{followUp.options.map((option) => <label key={option.id} data-selected={controller.state.subjectAnswers[followUp.key] === option.id}><input type="radio" name={followUp.key} checked={controller.state.subjectAnswers[followUp.key] === option.id} onChange={() => answerSpecialist(option.id)}/><span>{option.label}</span></label>)}</div></fieldset><button type="button" onClick={backSpecialist}>← Back</button></div>}
+        {phase === "final" && recommendation && <section className="lf-master-final" aria-labelledby="lf-final-heading"><p>Your result</p><h2 id="lf-final-heading">Your DA starting pathway.</h2><h3>{recommendation.close ? "Both could work" : envLabel(recommendation.primaryEnvironment)}</h3><ul>{startingPoint?.reasons.slice(0,3).map((reason) => <li key={reason}>{reason}</li>)}</ul><div className="lf-master-final__subjects">{recommendation.subjects.map((subject) => <span key={subject.subject}><strong>{subject.subjectLabel}</strong>{envLabel(subject.environment)}</span>)}</div><div className="lf-master-final__actions"><Link to="/book-interview">Book a consultation</Link><Link to={recommendation.subjects[0] ? routeForSubject(recommendation.subjects[0].subject) : "/subjects/english"}>Explore recommended programs</Link><div className="lf-master-final__text-actions"><button type="button" onClick={adjustFinalAnswers}>← Adjust my answers</button><button type="button" onClick={restartJourney} disabled={restarting}><span aria-hidden="true">↺</span> Start again</button></div></div></section>}
+      </div>
+      {(phase === "education" || phase === "travelling" || (phase === "awaiting-question" && stage && questionIndex < questions.length && !controller.state.answers[questions[questionIndex].slot])) && <p className="lf-master__hint" aria-live="polite">{phase === "education" ? <><span>Begin the journey</span><b aria-hidden="true">↓</b></> : phase === "travelling" ? "Walking to the next stop…" : "Choose an option to continue"}</p>}
     </div>
   </section>;
 };

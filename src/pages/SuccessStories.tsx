@@ -320,6 +320,13 @@ const SuccessStoryCarousel = ({ reduceMotion, onOpenStory }: { reduceMotion: boo
       <p className="ss-story-stack__counter" aria-live="polite">
         <span>{String(activeIndex + 1).padStart(2, '0')}</span> / {String(storyPanels.length).padStart(2, '0')}
       </p>
+      <a
+        className="ss-story-stack__message-link"
+        href="/testimonials/a-student-reflection-tu-nguyen"
+      >
+        Read more heartfelt messages here
+        <span aria-hidden="true">→</span>
+      </a>
     </section>
   );
 };
@@ -876,7 +883,7 @@ type ReviewMotionCardProps = {
 };
 
 const ReviewMotionCard = ({ index, activeIndex, dragOffset, dragging, progress, reduceMotion, review }: ReviewMotionCardProps) => {
-  const path = reviewScrollPaths[index];
+  const path = reviewScrollPaths[index % reviewScrollPaths.length];
   const scrollY = useTransform(progress, [0, 1], [path.y * -0.08, path.y * 0.12]);
   const scrollZ = useTransform(progress, [0, 1], [path.z * -0.08, path.z * 0.1]);
   const relative = wrappedRelativeIndex(index, activeIndex, successStoryReviewCards.length);

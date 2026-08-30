@@ -52,7 +52,7 @@ A thin antique-gold rail runs near the left edge with four numbered icon nodes. 
 
 On capable desktop devices:
 
-- The active story changes nearby grid tracks by only 3–6% over 700–900ms with GSAP `power3.inOut`.
+- Grid tracks remain fixed during interaction so the supplied reference composition never shifts or causes reflow.
 - Its image pushes from the resting scale to no more than `1.045`, with a story-specific transform origin and directional translation.
 - Pointer-responsive image movement is clamped to ±4px horizontally and ±3px vertically and affects only the image inside its crop window.
 - One nearby gold divider grows from roughly 35% to 100% over 500–700ms.
@@ -64,7 +64,7 @@ Layout state is controlled by a single active story index on the spread. React u
 
 ## Initial Reveal
 
-When the chapter first enters, one 1–1.4 second sequence reveals the chapter marker, draws selected divider lines, reveals the four photographs in their specified directions, and settles typography. Content is visible by default before JavaScript enhancement. There is no pinning, scroll-jacking, carousel behavior, or staged multi-screen wait.
+When the chapter first enters, one 1.2–1.6 second sequence reveals the chapter marker, draws selected divider lines, reveals the four photographs in their specified directions, and settles typography. Content is visible by default before JavaScript enhancement. The cream surface lifts naturally from the dark hero boundary over 500–800ms without changing or pinning the hero. There is no pinning, scroll-jacking, carousel behavior, or staged multi-screen wait.
 
 Reveal directions are:
 
