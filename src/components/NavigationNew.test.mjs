@@ -7,7 +7,7 @@ const source = (await readFile(new URL('./NavigationNew.tsx', import.meta.url), 
 test('places a Why DA desktop tab directly after Home', () => {
   assert.match(
     source,
-    /<Link to="\/"[\s\S]*?>Home<\/Link>\s*<Link\s+to="\/why-choose-da"[\s\S]*?>\s*Why DA\s*<\/Link>/,
+    /<Link to="\/"[\s\S]*?>Home<\/Link>[\s\S]{0,120}<Link[\s\S]{0,120}to="\/why-choose-da"[\s\S]*?>\s*Why DA\s*<\/Link>/,
   );
 });
 
@@ -20,13 +20,12 @@ test('keeps search immediately before the desktop consultation action', () => {
 });
 
 test('passes an explicit mobile search state to the mobile navigation sheet', () => {
-  assert.match(source, /<MobileNavSheet[\s\S]*?searchOpen=\{false\}/);
+  assert.match(source, /<MobileNavSheet[\s\S]*?searchOpen=\{mobileSearchOpen\}/);
+  assert.match(source, /setMobileSearchOpen\(true\)/);
 });
 
-test('centres the link cluster between equal outer grid tracks', () => {
-  assert.match(source, /grid-cols-\[1fr_auto_1fr\]/);
-  assert.doesNotMatch(source, /ml-\[clamp\(5rem,8vw,8\.5rem\)\]/);
-  assert.match(source, /justify-self-center/);
-  assert.match(source, /hidden min-\[1100px\]:block/);
-  assert.match(source, /items-center justify-self-end[\s\S]*?<GlobalSearch[\s\S]*?Book Consultation/);
+test('keeps Huyen’s centred desktop navigation while retaining search', () => {
+  assert.match(source, /flex items-center flex-1 justify-center/);
+  assert.match(source, /hidden lg:block/);
+  assert.match(source, /<GlobalSearch[\s\S]*?Book Consultation/);
 });

@@ -3,6 +3,8 @@ import { readFile } from 'node:fs/promises';
 import test from 'node:test';
 
 const source = await readFile(new URL('./HighSchool.tsx', import.meta.url), 'utf8');
+const journeySource = await readFile(new URL('../../data/highSchoolJourneyScenes.ts', import.meta.url), 'utf8');
+const journeyAssets = await readFile(new URL('../../data/highSchoolJourneyAssets.ts', import.meta.url), 'utf8');
 
 test('renders the supplied High School hero artwork with the approved editorial copy', () => {
   assert.match(source, /data-testid="highschool-editorial-hero"/);
@@ -46,21 +48,23 @@ test('keeps the existing Years 7–10 journey section', () => {
 
 test('renders the four progressive Years 7–10 milestones with concise copy', () => {
   assert.match(source, /data-testid="why-it-matters-progress"/);
-  assert.match(source, /The Curriculum Gets Serious/);
-  assert.match(source, /Habits Form Now or Not at All/);
-  assert.match(source, /Selective &amp; Scholarship Pressure/);
-  assert.match(source, /Confidence Decides Outcomes/);
-  assert.match(source, /Year 7 introduces more complex ideas that build the foundations for future success\./);
-  assert.match(source, /The habits developed in Years 7–8 shape how students handle pressure in Years 11–12\./);
-  assert.match(source, /Year 9–10 decisions can shape opportunities\. We help students stay prepared and confident\./);
-  assert.match(source, /When students believe in themselves, they&rsquo;re willing to take on bigger challenges\./);
+  assert.match(source, /highSchoolJourneyStages\.map/);
+  assert.match(journeySource, /The Curriculum Gets Serious/);
+  assert.match(journeySource, /Habits Form Now or Not at All/);
+  assert.match(journeySource, /Selective & Scholarship Pressure/);
+  assert.match(journeySource, /Confidence Decides Outcomes/);
+  assert.match(journeySource, /Year 7 introduces more complex ideas that build the foundations for future success\./);
+  assert.match(journeySource, /The habits developed in Years 7–8 shape how students handle pressure in Years 11–12\./);
+  assert.match(journeySource, /Year 9–10 decisions can shape opportunities\. We help students stay prepared and confident\./);
+  assert.match(journeySource, /When students believe in themselves, they’re willing to take on bigger challenges\./);
 });
 
 test('uses the supplied watercolours in a long sticky scroll stage', () => {
-  assert.match(source, /highschool-stakes-blue\.png/);
-  assert.match(source, /highschool-stakes-green\.png/);
-  assert.match(source, /highschool-stakes-purple\.png/);
-  assert.match(source, /highschool-stakes-orange\.png/);
+  assert.match(source, /highSchoolJourneyAssetsForStage/);
+  assert.match(journeyAssets, /blue-world-ai\.png/);
+  assert.match(journeyAssets, /green-world-ai\.png/);
+  assert.match(journeyAssets, /purple-world-ai\.png/);
+  assert.match(journeyAssets, /orange-world-ai\.png/);
   assert.match(source, /lg:h-\[300vh\]/);
   assert.match(source, /lg:sticky/);
 });
