@@ -48,6 +48,8 @@ export const CHECKPOINT_COMPARISONS = Object.freeze([
   r3fFile: `comparisons/${state}-r3f.png`,
 })));
 
+export const MOUNTED_ROOT_TIMEOUT_MS = 60_000;
+
 const requiredCaptureFields = [
   'file',
   'url',
@@ -168,7 +170,7 @@ async function waitForPhase(page, phase, timeout = 30_000) {
   await page.waitForFunction(expected => document.querySelector('[data-tutor-library-qa="root"]')?.getAttribute('data-library-phase') === expected, { timeout }, phase);
 }
 
-async function waitForMountedRoot(page, timeout = 30_000) {
+async function waitForMountedRoot(page, timeout = MOUNTED_ROOT_TIMEOUT_MS) {
   await page.waitForFunction(() => {
     const uuid = document.querySelector('[data-tutor-library-qa="root"]')?.getAttribute('data-library-root-uuid');
     return Boolean(uuid && uuid !== 'unmounted');

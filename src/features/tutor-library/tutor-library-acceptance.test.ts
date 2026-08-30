@@ -56,6 +56,10 @@ test('pairs every approved Checkpoint 2 state between standalone and R3F hosts',
   }
 });
 
+test('allows the production Complete Shelf primitive enough time to mount in constrained browsers', () => {
+  assert.equal(captureModule.MOUNTED_ROOT_TIMEOUT_MS, 60_000);
+});
+
 test('rejects evidence that is not root-persistent, reset-clean, console-clean, or restored within 1e-6', () => {
   const validate = captureModule.validateLifecycleEvidence as undefined | ((evidence: unknown) => void);
   assert.equal(typeof validate, 'function');
