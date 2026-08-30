@@ -3,6 +3,7 @@ import test from 'node:test';
 import type { CatalogueTutor } from '../../data/teacherCatalogue.ts';
 import { createSpotlightSearchPose, getSpotlightResultWindow, getSpotlightRestingPose, getSpotlightSearchSlotOrder, searchTutorSpotlight } from './tutor-library-spotlight.ts';
 import type { TutorBookEdition } from './tutor-library-data.ts';
+import type { CompleteShelfBookPose } from './complete-shelf-book-prototype.ts';
 
 const tutors = [
   { id: 'math', name: 'Ms Ada M.', designation: 'The Methodical Guide', tagline: 'Makes difficult mathematics feel manageable.', subjects: 'Mathematics (Yr 7–10) / Mathematics Advanced', motto: '', hasPrimary: false },
@@ -51,8 +52,8 @@ test('two spotlight results form a centred top-shelf pair', () => {
 });
 
 test('spotlight keeps its derived shelf pose instead of falling back to the normal idle pose', () => {
-  const searchPose = { position: [0, -.5, 1.02], rotation: [0, 0, 0], scale: [.6, .6, .6] } as const;
-  const normalPose = { position: [3.8, 1.4, .34], rotation: [0, Math.PI / 2, 0], scale: [.5, .5, .5] } as const;
+  const searchPose: CompleteShelfBookPose = { position: [0, -.5, 1.02], rotation: [0, 0, 0], scale: [.6, .6, .6] };
+  const normalPose: CompleteShelfBookPose = { position: [3.8, 1.4, .34], rotation: [0, Math.PI / 2, 0], scale: [.5, .5, .5] };
   assert.deepEqual(getSpotlightRestingPose(searchPose, normalPose), searchPose);
 });
 

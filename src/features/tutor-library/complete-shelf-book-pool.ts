@@ -193,7 +193,7 @@ function createPlanForPose(edition: TutorBookEdition, shelfPose?: CompleteShelfB
   return createCompleteShelfPrototypePlan(syntheticShelfPose);
 }
 
-export function getCompleteShelfOuterMotionPose(edition: TutorBookEdition, phase: LibraryPhase, progress: number, shelfPose?: CompleteShelfBookPose) {
+export function getCompleteShelfOuterMotionPose(edition: TutorBookEdition, phase: LibraryPhase, progress: number, shelfPose?: CompleteShelfBookPose): CompleteShelfBookPose {
   const plan = createPlanForPose(edition, shelfPose);
   const reading: CompleteShelfBookPose = {
     // Keep the reading volume dominant while balancing its opened width with

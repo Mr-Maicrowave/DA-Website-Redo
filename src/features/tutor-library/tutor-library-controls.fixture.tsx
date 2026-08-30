@@ -59,8 +59,6 @@ function Fixture() {
     <TutorLibraryControlSurface
     library={library}
     activeWall={primaryWall}
-    visibleEditions={primaryEditions}
-    tutors={tutors}
     selectedTutor={selectedTutor}
     fallbackTutor={tutors.get('T003')!}
     availability={getLibraryControlAvailability(library)}
@@ -69,8 +67,14 @@ function Fixture() {
     focusReturnEditionId={focusReturnEditionId}
     settledPages={settledPages}
     pageCount={2}
+    spotlightQuery=""
+    spotlightResultCount={0}
+    spotlightOffset={0}
+    spotlightPageCount={1}
+    spotlightActive={false}
+    onSpotlightQueryChange={() => undefined}
+    onSpotlightOffsetChange={() => undefined}
     onTurn={wallId => events.push(`turn:${wallId}`)}
-    onBookInteraction={(editionId, input) => events.push(`book:${editionId}:${input}`)}
     onCancelPending={editionId => events.push(`cancel:${editionId ?? 'all'}`)}
     onEscape={() => events.push('escape')}
     onOpen={() => events.push('open')}

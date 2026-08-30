@@ -56,7 +56,7 @@ export function searchTutorSpotlight(
       return [];
     }
     return [{ tutor, score }];
-  }).toSorted((left, right) => right.score - left.score || left.tutor.name.localeCompare(right.tutor.name));
+  }).sort((left, right) => right.score - left.score || left.tutor.name.localeCompare(right.tutor.name));
 }
 
 export function getSpotlightResultWindow<T>(results: readonly T[], page: number, windowSize: number): readonly T[] {

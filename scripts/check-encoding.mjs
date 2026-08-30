@@ -7,7 +7,7 @@ const INCLUDED_EXTENSIONS = new Set([
   '.css', '.html', '.js', '.json', '.jsx', '.md', '.mdx', '.mjs', '.scss', '.ts', '.tsx', '.txt', '.xml', '.yaml', '.yml',
 ]);
 const IGNORED_DIRECTORIES = new Set([
-  '.git', '.next', 'build', 'coverage', 'dist', 'node_modules', 'out',
+  '.git', '.next', '.worktrees', 'build', 'coverage', 'dist', 'node_modules', 'out',
 ]);
 const SUSPICIOUS_PREFIXES = new Set([0x00E2, 0x00C2, 0x00C3, 0x00EF, 0x00F0, 0xFFFD]);
 
