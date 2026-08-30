@@ -112,8 +112,8 @@ test("gates animation readiness and contains horizontal overflow", () => {
   assert.match(css, /max-width:\s*100%/);
 });
 
-test("is mounted below the existing HSC hero", () => {
-  assert.match(page, /<SubjectHero[\s\S]*<HSCJourneyFilm\s*\/>/);
+test("is mounted below the current HSC hero", () => {
+  assert.match(page, /<HSCHero\s*\/>[\s\S]*<HSCJourneyFilm\s*\/>/);
 });
 
 test("uses the approved editorial copy for all nine frames", () => {

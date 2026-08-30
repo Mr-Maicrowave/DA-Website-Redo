@@ -1,24 +1,25 @@
-import { Search, Lightbulb, PencilLine, Rocket, ClipboardCheck, Blocks, CalendarDays, UserRound, Trophy, GraduationCap, MessageSquare, Flag } from 'lucide-react';
-
-export const teachingStages = [
-  { title: 'Diagnose', description: 'Identify strengths, weaknesses and learning gaps.', Icon: Search },
-  { title: 'Explain', description: 'Break concepts into clear, manageable steps.', Icon: Lightbulb },
-  { title: 'Practise', description: 'Use targeted questions to build accuracy.', Icon: PencilLine },
-  { title: 'Apply', description: 'Transfer skills to unfamiliar and exam-style tasks.', Icon: Rocket },
-  { title: 'Review', description: 'Track progress and refine strategies regularly.', Icon: ClipboardCheck },
-] as const;
+import {
+  CircleHelp,
+  Eye,
+  Flag,
+  LibraryBig,
+  MessageSquareText,
+  Sprout,
+  Star,
+  Trophy,
+} from 'lucide-react';
 
 export const supportPrinciples = [
-  { title: 'Small-group attention', description: 'More time for questions and individual support.', Icon: UserRound },
-  { title: 'Questions encouraged', description: 'A safe place to ask, share and grow confidently.', Icon: MessageSquare },
-  { title: 'Individual feedback', description: 'Specific guidance that shows how to improve.', Icon: ClipboardCheck },
-  { title: 'Weaknesses caught early', description: 'We address gaps before they become barriers.', Icon: Flag },
+  { title: 'Questions encouraged', description: 'There’s always room to ask.', Icon: CircleHelp },
+  { title: 'Mistakes noticed', description: 'Before they become gaps.', Icon: Eye },
+  { title: 'Feedback happens here', description: 'Specific. Immediate. Personal.', Icon: MessageSquareText },
+  { title: 'Weaknesses addressed', description: 'So confidence can grow.', Icon: Sprout },
 ] as const;
 
 export const milestones = [
-  { title: 'Stronger foundations', description: 'Build a solid base for future learning.', Icon: Blocks },
-  { title: 'Better study habits', description: 'Smarter planning and consistent effort.', Icon: CalendarDays },
-  { title: 'Greater independence', description: 'Take charge of learning and problem solving.', Icon: UserRound },
-  { title: 'Assessment confidence', description: 'Approach tests and assignments with confidence.', Icon: Trophy },
-  { title: 'Senior-school readiness', description: 'Skills and mindset for Years 11–12 and beyond.', Icon: GraduationCap },
+  { title: 'Foundations', description: 'Strong understanding of the basics.', Icon: Sprout },
+  { title: 'Study habits', description: 'Better routines. Better focus.', Icon: LibraryBig },
+  { title: 'Independence', description: 'Thinking for themselves.', Icon: Flag },
+  { title: 'Confidence', description: 'They know they can do it.', Icon: Star },
+  { title: 'Readiness', description: 'Ready for assessments, ready for what’s next.', Icon: Trophy },
 ] as const;

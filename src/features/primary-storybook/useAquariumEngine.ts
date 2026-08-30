@@ -1,5 +1,5 @@
 import { useEffect, type RefObject } from 'react';
-import { aquariumFish } from './primaryStoryData';
+import { aquariumCreatures } from './primaryStoryData';
 import { keepInBounds, resizeFishMotion, steerFromPointer, stepFish, type FishMotion } from './aquariumPhysics';
 import {
   advanceRipple,
@@ -18,10 +18,10 @@ type AquariumSize = { width: number; height: number };
 
 class AquariumSetupCancelled extends Error {}
 
-const coverSprite = (sprite: import('pixi.js').Sprite, width: number, height: number) => {
+const fitAquariumPlate = (sprite: import('pixi.js').Sprite, width: number, height: number) => {
   const textureWidth = Math.max(sprite.texture.width, 1);
   const textureHeight = Math.max(sprite.texture.height, 1);
-  const scale = Math.max(width / textureWidth, height / textureHeight);
+  const scale = Math.min(width / textureWidth, height / textureHeight);
   sprite.scale.set(scale);
   sprite.position.set((width - textureWidth * scale) / 2, (height - textureHeight * scale) / 2);
 };
@@ -54,25 +54,21 @@ const buildWorld = async (
   const assertActive = () => {
     if (isCancelled()) throw new AquariumSetupCancelled();
   };
-  const layerSources = [
-    '/primary-reference/aquarium/water-background.png',
-    '/primary-reference/aquarium/distant-reef.png',
-    '/primary-reference/aquarium/midground-reef.png',
-  ];
+  const layerSources = ['/primary-reference/aquarium/reference-tank-background.png'];
   const layerTextures = await Promise.all(layerSources.map((source) => PIXI.Assets.load(source)));
   assertActive();
   const layers = layerTextures.map((texture) => {
     const sprite = new PIXI.Sprite(texture);
-    coverSprite(sprite, app.screen.width, app.screen.height);
+    fitAquariumPlate(sprite, app.screen.width, app.screen.height);
     world.addChild(sprite);
     return sprite;
   });
 
-  const fishTextures = await Promise.all(aquariumFish.map((fish) => PIXI.Assets.load(fish.src)));
+  const fishTextures = await Promise.all(aquariumCreatures.map((fish) => PIXI.Assets.load(fish.src)));
   assertActive();
   const motions: FishMotion[] = [];
   const sprites = fishTextures.map((texture, index) => {
-    const definition = aquariumFish[index];
+    const definition = aquariumCreatures[index];
     const sprite = new PIXI.Sprite(texture);
     sprite.anchor.set(.5);
     sprite.scale.set(definition.start.scale);
@@ -82,12 +78,6 @@ const buildWorld = async (
     return sprite;
   });
 
-  const foregroundTexture = await PIXI.Assets.load('/primary-reference/aquarium/foreground-reef.png');
-  assertActive();
-  const foreground = new PIXI.Sprite(foregroundTexture);
-  coverSprite(foreground, app.screen.width, app.screen.height);
-  world.addChild(foreground);
-  layers.push(foreground);
   return { layers, sprites, motions };
 };
 
@@ -224,6 +214,18 @@ export const useAquariumEngine = (hostRef: RefObject<HTMLDivElement>) => {
         };
         const onUp = () => { pointerRef.current.dragging = false; };
         const onLeave = () => { pointerRef.current.active = pointerRef.current.dragging; pointerRef.current.targetSpeed = 0; };
+        const onFishClick = (event: Event) => {
+          const id = (event as CustomEvent<{ id: string }>).detail?.id;
+          const index = aquariumCreatures.findIndex((fish) => fish.id === id);
+          const motion = motions[index];
+          const sprite = sprites[index];
+          if (!motion || !sprite) return;
+          motion.vx += motion.vx < 0 ? -1.25 : 1.25;
+          motion.vy -= .85;
+          spawnRipple(motion.x, motion.y);
+          sprite.scale.y *= .86;
+          window.setTimeout(() => { if (!cancelled && sprite && !sprite.destroyed) sprite.scale.y = Math.abs(sprite.scale.x); }, 180);
+        };
 
         const observers: { resizeObserver?: ResizeObserver; visibilityObserver?: IntersectionObserver } = {};
         runtimeCleanup = () => {
@@ -232,6 +234,7 @@ export const useAquariumEngine = (hostRef: RefObject<HTMLDivElement>) => {
           host.removeEventListener('pointerup', onUp);
           host.removeEventListener('pointercancel', onUp);
           host.removeEventListener('pointerleave', onLeave);
+          host.removeEventListener('aquarium:fish-click', onFishClick);
           observers.resizeObserver?.disconnect();
           observers.visibilityObserver?.disconnect();
           fishButtons.forEach((button) => button.removeAttribute('style'));
@@ -243,12 +246,13 @@ export const useAquariumEngine = (hostRef: RefObject<HTMLDivElement>) => {
         host.addEventListener('pointerup', onUp);
         host.addEventListener('pointercancel', onUp);
         host.addEventListener('pointerleave', onLeave, { passive: true });
+        host.addEventListener('aquarium:fish-click', onFishClick);
 
         const resizeWorld = (nextWidth: number, nextHeight: number) => {
           const next = { width: Math.max(nextWidth, 1), height: Math.max(nextHeight, 1) };
           if (next.width === viewport.width && next.height === viewport.height) return;
           app.renderer.resize(next.width, next.height);
-          layers.forEach((layer) => coverSprite(layer, next.width, next.height));
+          layers.forEach((layer) => fitAquariumPlate(layer, next.width, next.height));
           motions.forEach((motion, index) => {
             const resized = resizeFishMotion(motion, viewport, next);
             motions[index] = resized;
@@ -313,6 +317,10 @@ export const useAquariumEngine = (hostRef: RefObject<HTMLDivElement>) => {
           if (motionPolicy.animateFish) sprites.forEach((sprite, index) => {
             let next = stepFish(motions[index], deltaMs);
             if (pointer.active) next = steerFromPointer(next, pointer, 175, 2.4);
+            const home = aquariumCreatures[index].start;
+            const frame = deltaMs / 16.667;
+            next.vx = (next.vx + (home.x * app.screen.width - next.x) * .00009 * frame) * .996;
+            next.vy = (next.vy + (home.y * app.screen.height - next.y) * .00008 * frame) * .996;
             next = keepInBounds(next, app.screen.width, app.screen.height, 54);
             motions[index] = next;
             sprite.position.set(next.x, next.y);

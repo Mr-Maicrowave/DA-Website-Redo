@@ -189,7 +189,7 @@ const NavigationNew = () => {
   ];
 
   const linkClass = 'relative px-2.5 xl:px-3.5 py-2 text-sm xl:text-[0.9rem] font-medium transition-colors whitespace-nowrap text-brand-navy hover:text-brand-blue-dark';
-  const navLinkClass = (active = false) => `${linkClass} ${active ? 'after:absolute after:left-2.5 after:right-2.5 after:-bottom-0.5 after:h-px after:bg-brand-gold/80' : ''}`;
+  const navLinkClass = (active = false) => `${linkClass} ${active ? 'rounded-md bg-[#d4af37]/[0.13] font-semibold after:absolute after:left-3 after:right-3 after:-bottom-1 after:h-[2px] after:rounded-full after:bg-brand-gold' : ''}`;
   const logoTextClass = 'text-brand-navy';
   const hamburgerIconClass = 'text-brand-midnight/80 hover:text-brand-blue-dark';
   const collapsedPillIconClass = 'text-brand-navy hover:bg-brand-navy/10';
@@ -339,11 +339,18 @@ const NavigationNew = () => {
 
                 <div className="flex items-center flex-1 justify-center">
                   <div className="flex gap-0.5 items-center">
-                    <Link to="/" className={navLinkClass(isHomepage)}>Home</Link>
+                    <Link to="/" className={navLinkClass(isHomepage)} aria-current={isHomepage ? 'page' : undefined}>Home</Link>
+                    <Link
+                      to="/why-choose-da"
+                      className={navLinkClass(location.pathname === '/why-choose-da')}
+                      aria-current={location.pathname === '/why-choose-da' ? 'page' : undefined}
+                    >
+                      Why DA
+                    </Link>
 
                     <HoverCard openDelay={120} closeDelay={180} onOpenChange={(open) => handleDropdownChange('programs', open)}>
                       <HoverCardTrigger asChild>
-                        <button type="button" className={`${navLinkClass(location.pathname.startsWith('/programs') || location.pathname === '/hsc-excellence')} inline-flex items-center gap-0.5`}>
+                        <button type="button" aria-current={location.pathname.startsWith('/programs') || location.pathname === '/hsc-excellence' ? 'page' : undefined} className={`${navLinkClass(location.pathname.startsWith('/programs') || location.pathname === '/hsc-excellence')} inline-flex items-center gap-0.5`}>
                           Programs <ChevronDown className="h-3.5 w-3.5" />
                         </button>
                       </HoverCardTrigger>
@@ -366,7 +373,7 @@ const NavigationNew = () => {
 
                     <HoverCard openDelay={120} closeDelay={180} onOpenChange={(open) => handleDropdownChange('subjects', open)}>
                       <HoverCardTrigger asChild>
-                        <button type="button" className={`${navLinkClass(location.pathname.startsWith('/subjects'))} inline-flex items-center gap-0.5`}>
+                        <button type="button" aria-current={location.pathname.startsWith('/subjects') ? 'page' : undefined} className={`${navLinkClass(location.pathname.startsWith('/subjects'))} inline-flex items-center gap-0.5`}>
                           Subjects <ChevronDown className="h-3.5 w-3.5" />
                         </button>
                       </HoverCardTrigger>
@@ -389,7 +396,7 @@ const NavigationNew = () => {
 
                     <HoverCard openDelay={120} closeDelay={180} onOpenChange={(open) => handleDropdownChange('about', open)}>
                       <HoverCardTrigger asChild>
-                        <button type="button" className={`${navLinkClass(['/why-choose-da', '/find-teacher', '/tutors', '/principal-reflections', '/principal-interview-paper', '/learning-formats'].includes(location.pathname))} inline-flex items-center gap-0.5`}>
+                        <button type="button" aria-current={['/why-choose-da', '/find-teacher', '/tutors', '/principal-reflections', '/principal-interview-paper', '/learning-formats'].includes(location.pathname) ? 'page' : undefined} className={`${navLinkClass(['/why-choose-da', '/find-teacher', '/tutors', '/principal-reflections', '/principal-interview-paper', '/learning-formats'].includes(location.pathname))} inline-flex items-center gap-0.5`}>
                           About <ChevronDown className="h-3.5 w-3.5" />
                         </button>
                       </HoverCardTrigger>
@@ -410,11 +417,11 @@ const NavigationNew = () => {
                       </HoverCardContent>
                     </HoverCard>
 
-                    <Link to="/success-stories" className={navLinkClass(location.pathname === '/success-stories')}>Success Stories</Link>
+                    <Link to="/success-stories" className={navLinkClass(location.pathname === '/success-stories')} aria-current={location.pathname === '/success-stories' ? 'page' : undefined}>Success Stories</Link>
 
                     <HoverCard openDelay={120} closeDelay={180} onOpenChange={(open) => handleDropdownChange('resources', open)}>
                       <HoverCardTrigger asChild>
-                        <button type="button" className={`${navLinkClass(['/faq', '/tutoring-canley-heights', '/articles'].some((path) => location.pathname.startsWith(path)))} inline-flex items-center gap-0.5`}>
+                        <button type="button" aria-current={['/faq', '/tutoring-canley-heights', '/articles'].some((path) => location.pathname.startsWith(path)) ? 'page' : undefined} className={`${navLinkClass(['/faq', '/tutoring-canley-heights', '/articles'].some((path) => location.pathname.startsWith(path)))} inline-flex items-center gap-0.5`}>
                           Resources <ChevronDown className="h-3.5 w-3.5" />
                         </button>
                       </HoverCardTrigger>
@@ -451,21 +458,17 @@ const NavigationNew = () => {
                       </HoverCardContent>
                     </HoverCard>
 
-                    <Link to="/contact" className={linkClass}>
-                      Contact
+                    <Link
+                      to="/book-interview"
+                      aria-current={location.pathname === '/book-interview' ? 'page' : undefined}
+                      className="book-consultation-nav-card ml-1.5 inline-flex items-center rounded-md px-4 py-2 text-[0.8rem] font-semibold text-[#fff3d6] whitespace-nowrap transition-all duration-200 hover:-translate-y-px hover:brightness-110 active:translate-y-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2 focus-visible:ring-offset-[#f8f1e7]"
+                      style={{ background: 'linear-gradient(135deg, #0A1B34 0%, #122b4d 100%)', border: '1px solid rgba(200,149,52,.76)', boxShadow: '0 2px 5px rgba(10,27,52,.16)' }}
+                    >
+                      Book Consultation
                     </Link>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3 shrink-0">
-                  <Link
-                    to="/book-interview"
-                    className="inline-flex items-center px-3.5 py-1.5 text-[0.8rem] font-semibold text-[#fff3d6] rounded-sm whitespace-nowrap transition-all duration-200 hover:opacity-90 active:scale-95"
-                    style={{ background: 'linear-gradient(135deg, #0A1B34 0%, #122b4d 100%)', border: '1px solid rgba(200,149,52,.76)', boxShadow: '0 2px 5px rgba(10,27,52,.16)' }}
-                  >
-                    Book Consultation
-                  </Link>
-                </div>
               </div>
             </div>
         </nav>

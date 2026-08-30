@@ -1,35 +1,59 @@
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion';
-import { ArrowRight, BookOpen, Brain, Calculator, Check, ClipboardCheck, GraduationCap, Heart, Play, Star, Target, Trophy, UserRound, UsersRound } from 'lucide-react';
+import { BookOpen, Brain, Calculator, Check, ClipboardCheck, GraduationCap, Heart, Star, Target, Trophy, UserRound, UsersRound } from 'lucide-react';
 import NavigationNew from '@/components/NavigationNew';
 import StickyBookButton from '@/components/StickyBookButton';
 import SEO from '@/components/SEO';
-import SubjectHero from '@/components/subjects/SubjectHero';
 import PrimaryReferenceStory from '@/features/primary-storybook/PrimaryReferenceStory';
-import PrimaryLandscapeJourney from '@/features/primary-storybook/PrimaryLandscapeJourney';
-
-const heroJourneyNav = [
-  { number: '01', label: 'Foundation' },
-  { number: '02', label: 'Growth' },
-  { number: '03', label: 'Mastery' },
-  { number: '04', label: 'Why DA' },
-  { number: '05', label: 'Book Consultation' },
-];
 
 const premiumEase = [0.22, 1, 0.36, 1] as const;
 
-const PrimaryHero = ({ pinned = false }: { pinned?: boolean }) => {
+const PrimaryHero = () => {
   const reduceMotion = useReducedMotion();
   const heroRef = useRef<HTMLElement>(null);
-  const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] });
-  const heroContentY = useTransform(scrollYProgress, [0.68, 1], [0, reduceMotion ? 0 : -30]);
-  const heroContentOpacity = useTransform(scrollYProgress, [0.72, 1], [1, reduceMotion ? 1 : 0.84]);
-  const heroImageY = useTransform(scrollYProgress, [0.62, 1], [0, reduceMotion ? 0 : -15]);
-  const heroImageScale = useTransform(scrollYProgress, [0.62, 1], [1, reduceMotion ? 1 : 1.025]);
-  const sparkY = useTransform(scrollYProgress, [0.72, 1], [-8, reduceMotion ? -8 : 76]);
-  const sparkX = useTransform(scrollYProgress, [0.72, 1], [0, reduceMotion ? 0 : 18]);
-  const sparkOpacity = useTransform(scrollYProgress, [0.68, 0.76, 0.96, 1], [0, 0.78, 0.78, 0]);
+
+  useEffect(() => {
+    const hero = heroRef.current;
+    if (!hero || reduceMotion) return;
+
+    const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)');
+    if (!finePointer.matches) return;
+
+    let frame = 0;
+    let targetX = 0;
+    let targetY = 0;
+    let currentX = 0;
+    let currentY = 0;
+
+    const render = () => {
+      currentX += (targetX - currentX) * 0.065;
+      currentY += (targetY - currentY) * 0.065;
+      hero.style.setProperty('--hero-pointer-x', currentX.toFixed(3));
+      hero.style.setProperty('--hero-pointer-y', currentY.toFixed(3));
+      frame = requestAnimationFrame(render);
+    };
+
+    const onPointerMove = (event: PointerEvent) => {
+      targetX = (event.clientX / window.innerWidth - 0.5) * 2;
+      targetY = (event.clientY / window.innerHeight - 0.5) * 2;
+    };
+
+    const onPointerLeave = () => {
+      targetX = 0;
+      targetY = 0;
+    };
+
+    window.addEventListener('pointermove', onPointerMove, { passive: true });
+    document.documentElement.addEventListener('mouseleave', onPointerLeave);
+    frame = requestAnimationFrame(render);
+
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener('pointermove', onPointerMove);
+      document.documentElement.removeEventListener('mouseleave', onPointerLeave);
+    };
+  }, [reduceMotion]);
 
   const entrance = (delay: number, y = 24) => ({
     initial: reduceMotion ? false : { opacity: 0, y },
@@ -39,44 +63,29 @@ const PrimaryHero = ({ pinned = false }: { pinned?: boolean }) => {
 
   return (
     <section ref={heroRef} className="ps-hero" aria-labelledby="primary-title">
-      <motion.div className="ps-hero__image-wrap" style={pinned ? undefined : { y: heroImageY, scale: heroImageScale }}>
-        <motion.div
-          className="ps-hero__image"
-          initial={reduceMotion ? false : { scale: 1.03 }}
-          animate={{ scale: 1 }}
-          transition={{ duration: reduceMotion ? 0 : 1.2, ease: premiumEase }}
-        />
+      <picture className="ps-hero__background">
+        <source srcSet="/primary-reference/hero/primary-school-watercolor-viewport.avif" type="image/avif" />
+        <source srcSet="/primary-reference/hero/primary-school-watercolor-viewport.webp" type="image/webp" />
+        <img src="/primary-reference/hero/primary-school-watercolor-viewport.png" alt="Two primary students looking up a flower-lined staircase toward a sunlit door" fetchPriority="high" />
+      </picture>
+      <div className="ps-hero__clouds" aria-hidden="true" />
+      <div className="ps-hero__midground ps-hero__wind ps-hero__wind--children" aria-hidden="true" />
+      <div className="ps-hero__wind ps-hero__wind--foreground" aria-hidden="true" />
+      <div className="ps-hero__wind ps-hero__wind--lower-flowers" aria-hidden="true" />
+      <div className="ps-hero__wind ps-hero__wind--lower-stairs" aria-hidden="true" />
+      <div className="ps-hero__wind ps-hero__wind--middle-stairs" aria-hidden="true" />
+      <div className="ps-hero__wind ps-hero__wind--upper-flowers" aria-hidden="true" />
+      <div className="ps-hero__wind ps-hero__wind--door" aria-hidden="true" />
+      <div className="ps-hero__foreground" aria-hidden="true" />
+      <div className="ps-hero__sunlight" aria-hidden="true" />
+      <div className="ps-hero__veil" aria-hidden="true" />
+
+      <motion.div className="ps-hero__content">
+        <motion.p {...entrance(0.08)} className="ps-kicker">Primary School</motion.p>
+        <motion.h1 id="primary-title" {...entrance(0.18, 28)}>Where little steps<br />become big ones.</motion.h1>
+        <motion.p {...entrance(0.34)} className="ps-hero__intro">Building confidence, curiosity and strong foundations from Years 1–6.</motion.p>
+        <motion.a {...entrance(0.48)} className="ps-hero__journey-link" href="#primary-page-content">Explore their journey <span aria-hidden="true">↓</span></motion.a>
       </motion.div>
-      <motion.div
-        className="ps-hero__veil"
-        aria-hidden="true"
-        initial={reduceMotion ? false : { opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: reduceMotion ? 0 : 1.15, ease: premiumEase }}
-      />
-      <motion.div className="ps-hero__content" style={pinned ? undefined : { y: heroContentY, opacity: heroContentOpacity }}>
-        <motion.p {...entrance(0.08)} className="ps-kicker">Primary School · Years 1–6</motion.p>
-        <div className="ps-mobile-progress" aria-label={`Current stage: ${heroJourneyNav[0].label}`}>
-          <span><b>{heroJourneyNav[0].number}</b>{heroJourneyNav[0].label}</span>
-          <i><b style={{ transform: `scaleX(${1 / heroJourneyNav.length})` }} /></i>
-        </div>
-        <h1 id="primary-title">
-          <motion.span {...entrance(0.18, 28)}>Every Stage.</motion.span>
-          <motion.span {...entrance(0.31, 28)} className="ps-hero__gold-line">Every Child.</motion.span>
-        </h1>
-        <motion.p {...entrance(0.43)} className="ps-hero__intro">
-          From strong foundations to lifelong confidence, we guide your child through every critical stage of primary school.
-        </motion.p>
-        <motion.div {...entrance(0.55)} className="ps-hero__actions">
-          <Link className="ps-button ps-button--gold" to="/book-interview">Book a Free Trial Lesson <ArrowRight /></Link>
-          <a className="ps-how-link" href="#pathway"><span><Play /></span>How We Teach</a>
-        </motion.div>
-      </motion.div>
-      <motion.span
-        className="ps-hero__handoff"
-        aria-hidden="true"
-        style={pinned ? { opacity: 0 } : { x: sparkX, y: sparkY, opacity: reduceMotion ? 0 : sparkOpacity }}
-      />
     </section>
   );
 };
@@ -382,23 +391,9 @@ const PrimarySchool = () => (
     <StickyBookButton />
     <div className="ps-opening">
       <div className="ps-opening__hero">
-        <SubjectHero
-          eyebrow="Primary School · Years 1–6"
-          icon={GraduationCap}
-          headlineWhite="Every Stage."
-          headlineGold="Every Child."
-          subtext="From strong foundations to lifelong confidence, we guide your child through every critical stage of primary school."
-          proofPills={['Years 1–6 pathway', 'Personalised support', 'Confident learners']}
-          exploreTargetId="pathway"
-          placeholderLabel="Primary school classroom"
-          backgroundImageSrc="/images/programs/primary-hero-tutor-two-students.png"
-          backgroundImageAlt="A DA Tuition tutor working with two primary school students"
-          mobileBackgroundPosition="64% center"
-          mobileContentPosition="bottom"
-        />
+        <PrimaryHero />
       </div>
     </div>
-    <PrimaryLandscapeJourney />
     <PrimaryReferenceStory />
     <style>{`
       @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&display=swap');
@@ -662,7 +657,40 @@ const PrimarySchool = () => (
       .ps-growth-curriculum,.ps-mastery-curriculum{margin-top:var(--ps-curriculum-gap)}
       @media(max-width:820px){.ps-opening__hero{-webkit-mask-image:radial-gradient(ellipse 48% 17% at 50% 82%,#000 0%,#000 40%,rgba(0,0,0,.74) 59%,rgba(0,0,0,.3) 78%,transparent 100%),linear-gradient(180deg,#000 0%,#000 80%,rgba(0,0,0,.74) 84%,rgba(0,0,0,.3) 89%,transparent 94%);mask-image:radial-gradient(ellipse 48% 17% at 50% 82%,#000 0%,#000 40%,rgba(0,0,0,.74) 59%,rgba(0,0,0,.3) 78%,transparent 100%),linear-gradient(180deg,#000 0%,#000 80%,rgba(0,0,0,.74) 84%,rgba(0,0,0,.3) 89%,transparent 94%)}.ps-landscape-breath{padding-top:.35rem}.ps-landscape-breath__copy{left:auto;width:min(calc(100% - 2.5rem),40rem)}.ps-landscape-breath__copy h2{font-size:clamp(2.9rem,8vw,3.8rem)}.ps-landscape-breath__visual{height:auto;min-height:0;margin-top:-5rem}.ps-landscape-breath__visual:before{height:clamp(3.75rem,10vw,5rem)}.ps-landscape-breath__visual:after{top:clamp(-5.5rem,-10vw,-3.5rem);width:86%;height:clamp(11rem,27vw,15rem)}.ps-landscape-breath__image{object-position:center}.ps-landscape-breath__year-nav{top:18%;right:.8rem}.ps-landscape-stage--foundation{top:80.2%}.ps-landscape-stage--growth{top:74.45%}.ps-landscape-stage--mastery{top:68.95%}.ps-landscape-reflection{height:clamp(14rem,43vw,20rem);margin-top:0;background-size:auto 175%;background-position:center bottom}.ps-foundation-intro{padding-top:4.5rem}.ps-foundation-intro__side-doodles{top:1.5rem}}
       @media(max-width:540px){.ps-foundation-intro{padding-top:4rem;padding-bottom:var(--ps-stage-edge)}.ps-landscape-breath{padding-top:.25rem}.ps-landscape-breath__copy{top:auto;left:auto;width:calc(100% - 2rem)}.ps-landscape-breath__copy>p{gap:.55rem;margin-bottom:.7rem;font-size:.56rem;letter-spacing:.15em}.ps-landscape-breath__copy>p i{width:1.8rem}.ps-landscape-breath__copy h2{font-size:clamp(2.55rem,11vw,3.15rem);line-height:.94}.ps-landscape-breath__rule{margin:.9rem auto}.ps-landscape-breath__copy>span{max-width:21rem;font-size:.78rem;line-height:1.52}.ps-pathway-copy-break{display:none}.ps-landscape-breath__visual{height:auto;margin-top:-4.5rem}.ps-landscape-breath__visual:before{top:-1rem;right:-5%;left:-5%;height:3.5rem;box-shadow:0 .75rem 1.4rem rgba(247,240,227,.72);filter:blur(.6rem)}.ps-landscape-breath__visual:after{top:-4.25rem;width:90%;height:11.5rem;box-shadow:0 .8rem 1.5rem rgba(247,240,227,.66);filter:blur(.7rem)}.ps-landscape-breath__image{object-position:center}.ps-landscape-breath__year-nav{top:20%;right:.55rem}.ps-landscape-stage{display:none}.ps-landscape-reflection{height:13rem;margin-top:0;background-size:auto 190%}}
-      @media(prefers-reduced-motion:reduce){.ps-button,.ps-mobile-progress i b,.ps-landscape-stage,.ps-landscape-stage small,.ps-landscape-stage strong{transition:none}.ps-hero__handoff{display:none}}
+      /* Phase 1 Primary hero: supplied artwork, calm editorial copy and restrained ambient depth. */
+      .ps-opening,.ps-opening__hero{width:100%;margin:0;padding:0;background:#9dd0f1}
+      .ps-opening__hero{height:100svh;min-height:100svh;overflow:hidden;-webkit-mask-image:none;mask-image:none}
+      .ps-opening__hero .ps-hero{--hero-pointer-x:0;--hero-pointer-y:0;position:relative;display:block;width:100%;height:100%;min-height:100svh;margin:0;overflow:hidden;background:#9dd0f1;color:#09223d;isolation:isolate}
+      .ps-hero:before,.ps-opening__hero .ps-hero:after{content:none}
+      .ps-hero__background{position:absolute;z-index:0;inset:0;display:block;transform:translate3d(calc(var(--hero-pointer-x) * -2px),calc(var(--hero-pointer-y) * -2px),0) scale(1.012);transition:none;will-change:transform}
+      .ps-hero__background img{display:block;width:100%;height:100%;object-fit:cover;object-position:center;background:#9dd0f1}
+      .ps-hero__clouds{position:absolute;z-index:1;top:-8%;left:-8%;width:72%;height:55%;background:radial-gradient(ellipse at 45% 55%,rgba(255,255,255,.16),rgba(255,255,255,0) 68%);opacity:.7;transform:translate3d(calc(var(--hero-pointer-x) * -1px),calc(var(--hero-pointer-y) * -1px),0);animation:psHeroCloudDrift 34s ease-in-out infinite alternate;pointer-events:none;will-change:transform}
+      .ps-hero__midground{transform:translate3d(calc(var(--hero-pointer-x) * 4px),calc(var(--hero-pointer-y) * 3px),0)}
+      .ps-hero__foreground{position:absolute;z-index:2;right:-4%;bottom:-5%;width:58%;height:46%;background:radial-gradient(ellipse at 76% 72%,rgba(255,255,255,.07),rgba(255,255,255,0) 68%);transform:translate3d(calc(var(--hero-pointer-x) * 9px),calc(var(--hero-pointer-y) * 7px),0);pointer-events:none;will-change:transform}
+      .ps-hero__sunlight{position:absolute;z-index:3;inset:-18%;background:radial-gradient(circle at 22% 24%,rgba(255,250,218,.18),transparent 31%),linear-gradient(112deg,transparent 25%,rgba(255,244,204,.07) 48%,transparent 68%);opacity:.58;animation:psHeroSunlight 30s ease-in-out infinite alternate;pointer-events:none;will-change:transform,opacity}
+      .ps-hero__veil{position:absolute;z-index:4;inset:0;background:linear-gradient(90deg,rgba(244,250,250,.82) 0%,rgba(244,250,250,.56) 23%,rgba(244,250,250,.08) 43%,transparent 61%);pointer-events:none}
+      .ps-hero__content{position:absolute;z-index:8;top:clamp(8.5rem,18vh,12rem);left:max(clamp(2rem,6vw,6rem),calc((100vw - 96rem)/2));width:min(35rem,38vw);margin:0;padding:0;color:#09223d;text-shadow:0 1px 0 rgba(255,255,255,.26)}
+      .ps-hero .ps-kicker{display:flex;align-items:center;gap:.8rem;margin:0 0 1.15rem;color:#214b6d;font-size:.7rem;font-weight:800;letter-spacing:.22em;text-transform:uppercase}
+      .ps-hero .ps-kicker:before{width:2.6rem;height:1px;background:#b47d20;content:""}
+      .ps-hero h1{max-width:9ch;margin:0;color:#09223d;font-family:"Cormorant Garamond",Georgia,serif;font-size:clamp(3.7rem,5.3vw,5.8rem);font-weight:500;letter-spacing:-.04em;line-height:.88;text-wrap:balance}
+      .ps-hero__intro{max-width:31rem;margin:1.65rem 0 0;color:#173d5c;font-family:"Cormorant Garamond",Georgia,serif;font-size:clamp(1.15rem,1.42vw,1.45rem);font-style:italic;line-height:1.42;text-wrap:pretty}
+      .ps-hero__journey-link{display:inline-flex;min-height:44px;align-items:center;gap:.65rem;margin-top:1.35rem;border-bottom:1px solid rgba(9,34,61,.52);padding:.15rem 0 .32rem;color:#09223d;font-size:.76rem;font-weight:750;letter-spacing:.035em;text-decoration:none;transition:border-color .25s ease,transform .25s ease}
+      .ps-hero__journey-link span{font-family:Georgia,serif;font-size:1rem;transition:transform .25s ease}
+      .ps-hero__journey-link:hover{border-color:#b47d20;transform:translateY(-1px)}.ps-hero__journey-link:hover span{transform:translateY(3px)}
+      .ps-hero__wind{position:absolute;z-index:5;border-radius:50%;background:linear-gradient(100deg,transparent 15%,rgba(255,255,255,.045) 50%,transparent 82%);opacity:0;pointer-events:none;transform-origin:50% 100%;animation:psHeroWind 11s cubic-bezier(.45,.05,.4,.95) infinite;will-change:transform,opacity}
+      .ps-hero__wind--foreground{right:-2%;bottom:-5%;width:46%;height:28%;animation-delay:0s}
+      .ps-hero__wind--children{z-index:5;bottom:2%;left:31%;width:25%;height:39%;animation-delay:.35s}
+      .ps-hero__wind--lower-flowers{right:18%;bottom:5%;width:30%;height:36%;animation-delay:.7s}
+      .ps-hero__wind--lower-stairs{right:18%;bottom:27%;width:25%;height:26%;animation-delay:1.05s}
+      .ps-hero__wind--middle-stairs{right:17%;bottom:46%;width:23%;height:24%;animation-delay:1.45s}
+      .ps-hero__wind--upper-flowers{right:5%;top:14%;width:31%;height:36%;animation-delay:1.9s}
+      .ps-hero__wind--door{right:3%;top:2%;width:30%;height:38%;animation-delay:2.35s}
+      @keyframes psHeroWind{0%,3%,43%,100%{opacity:0;transform:translate3d(0,0,0) rotate(0)}10%{opacity:.7;transform:translate3d(2px,-1px,0) rotate(.7deg)}20%{opacity:.35;transform:translate3d(-1px,-2px,0) rotate(-.35deg)}32%{opacity:.18;transform:translate3d(1px,0,0) rotate(.2deg)}}
+      @keyframes psHeroCloudDrift{0%{transform:translate3d(calc(var(--hero-pointer-x) * -1px - 8px),calc(var(--hero-pointer-y) * -1px),0)}100%{transform:translate3d(calc(var(--hero-pointer-x) * -1px + 16px),calc(var(--hero-pointer-y) * -1px + 3px),0)}}
+      @keyframes psHeroSunlight{0%{opacity:.42;transform:translate3d(-1.2%,0,0) scale(1)}100%{opacity:.63;transform:translate3d(1.4%,-.6%,0) scale(1.015)}}
+      @media(max-width:900px){.ps-hero__background img{object-fit:cover;object-position:62% center}.ps-hero__veil{background:linear-gradient(90deg,rgba(244,250,250,.82),rgba(244,250,250,.42) 42%,rgba(244,250,250,.05) 68%,transparent)}.ps-hero__content{top:clamp(7rem,14vh,9rem);left:clamp(1.5rem,5vw,3rem);width:min(28rem,48vw)}.ps-hero h1{font-size:clamp(3.2rem,7.5vw,4.6rem)}.ps-hero__intro{font-size:1.12rem}}
+      @media(max-width:600px){.ps-opening__hero,.ps-opening__hero .ps-hero{height:100svh;min-height:100svh}.ps-hero__background{inset:0;transform:none}.ps-hero__background img{object-fit:cover;object-position:62% center}.ps-hero__clouds,.ps-hero__foreground{display:none}.ps-hero__veil{background:linear-gradient(180deg,rgba(244,250,250,.8) 0%,rgba(244,250,250,.58) 31%,rgba(244,250,250,.12) 57%,transparent 76%)}.ps-hero__content{top:5.8rem;left:1.25rem;width:calc(100% - 2.5rem);text-align:left}.ps-hero .ps-kicker{margin-bottom:.8rem;font-size:.62rem}.ps-hero h1{max-width:8.5ch;font-size:clamp(3rem,13.2vw,4rem);line-height:.9}.ps-hero__intro{max-width:21rem;margin-top:1rem;font-size:1.03rem;line-height:1.34}.ps-hero__journey-link{margin-top:.8rem}.ps-hero__wind{animation-duration:12.5s;opacity:0}}
+      @media(prefers-reduced-motion:reduce){.ps-button,.ps-mobile-progress i b,.ps-landscape-stage,.ps-landscape-stage small,.ps-landscape-stage strong,.ps-hero__journey-link,.ps-hero__journey-link span{transition:none}.ps-hero__handoff{display:none}.ps-hero__background,.ps-hero__clouds,.ps-hero__midground,.ps-hero__foreground,.ps-hero__sunlight,.ps-hero__wind{animation:none;transform:none}.ps-hero__wind{opacity:0}}
     `}</style>
   </div>
 );

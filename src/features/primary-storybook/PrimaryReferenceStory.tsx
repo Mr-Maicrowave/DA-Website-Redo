@@ -7,8 +7,10 @@ import GrowthSection from './GrowthSection';
 import HowWeTeach from './HowWeTeach';
 import MasteryCurriculum from './MasteryCurriculum';
 import MasterySection from './MasterySection';
+import PrimaryAquarium from './PrimaryAquarium';
 import PrimaryJourneyOutro from './PrimaryJourneyOutro';
 import ProgramBag from './ProgramBag';
+import SupportJourney from './SupportJourney';
 import { GrowthBridgeConnector } from './StoryConnectors';
 import usePrimaryReferenceMotion from './usePrimaryReferenceMotion';
 import './primary-reference.css';
@@ -26,12 +28,14 @@ const PrimaryReferenceStory = () => {
       </nav>
       <FoundationSection />
       <FoundationCurriculum />
-      <HowWeTeach />
       <GrowthBridgeConnector />
       <GrowthSection />
       <GrowthCurriculum />
       <MasterySection />
       <MasteryCurriculum />
+      <PrimaryAquarium />
+      <SupportJourney />
+      <HowWeTeach />
       <ProgramBag />
       <FamilyReasons />
       <PrimaryJourneyOutro />

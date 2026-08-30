@@ -1,15 +1,911 @@
+import React, { useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import SEO from '@/components/SEO';
 import NavigationNew from '@/components/NavigationNew';
 import FooterNew from '@/components/FooterNew';
-import FAQAnswerDesk from '@/features/faq-answer-desk/FAQAnswerDesk';
-import { allFaqQuestions } from '@/features/faq-answer-desk/faqData';
+import { Button } from '@/components/ui/button';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import {
+  ArrowRight,
+  Award,
+  BookOpen,
+  CheckCircle2,
+  Clock,
+  ChevronRight,
+  DoorOpen,
+  DollarSign,
+  HelpCircle,
+  MapPin,
+  Minus,
+  Phone,
+  Plus,
+  School,
+  Search,
+  Shield,
+  TrendingUp,
+  Users,
+  WalletCards,
+} from 'lucide-react';
+import { siteStats } from '@/data/site-stats';
 import { faqPageSchema } from '@/lib/seo/schema';
+import { filterFaqItems } from './faq-content';
 
-export default function FAQ() {
-  return <div className="min-h-screen bg-brand-ivory">
-    <SEO title="Frequently Asked Questions | DA Tuition" description="Clear answers about DA Tuition classes, fees, teachers, subjects, progress and getting started." canonicalUrl="/faq" jsonLd={faqPageSchema(allFaqQuestions.map(({ question, answer }) => ({ question, answer })))} />
-    <NavigationNew />
-    <FAQAnswerDesk />
-    <FooterNew />
-  </div>;
-}
+type CategoryId = 'all' | 'start' | 'programs' | 'fees' | 'classes' | 'teachers' | 'results' | 'safety';
+
+type FAQItem = {
+  category: Exclude<CategoryId, 'all'>;
+  question: string;
+  answer: React.ReactNode;
+  schemaAnswer: string;
+  keywords: string[];
+  popular?: boolean;
+  links?: Array<{ label: string; href: string }>;
+};
+
+const inlineLink = 'font-semibold text-brand-navy underline decoration-brand-gold/60 underline-offset-4 hover:text-brand-gold';
+const easeOut = [0.16, 1, 0.3, 1] as const;
+const categories: Array<{ id: CategoryId; label: string; shortLabel: string; icon: React.ElementType }> = [
+  { id: 'all', label: 'All questions', shortLabel: 'All', icon: HelpCircle },
+  { id: 'start', label: 'Starting at DA', shortLabel: 'Start', icon: School },
+  { id: 'programs', label: 'Programs and subjects', shortLabel: 'Programs', icon: BookOpen },
+  { id: 'fees', label: 'Fees and payments', shortLabel: 'Fees', icon: DollarSign },
+  { id: 'classes', label: 'Classes and timing', shortLabel: 'Classes', icon: Clock },
+  { id: 'teachers', label: 'Teachers and support', shortLabel: 'Teachers', icon: Users },
+  { id: 'results', label: 'Results and progress', shortLabel: 'Results', icon: Award },
+  { id: 'safety', label: 'Safety and policies', shortLabel: 'Safety', icon: Shield },
+];
+
+const faqs: FAQItem[] = [
+  {
+    category: 'start',
+    question: 'What is the best way to get started at DA Tuition?',
+    schemaAnswer: 'The best first step is to book an interview. DA Tuition uses the interview to understand the student, their current level, goals, confidence, and the right class or program fit.',
+    keywords: ['enrol', 'enroll', 'start', 'interview', 'assessment', 'book'],
+    popular: true,
+    links: [{ label: 'Book an interview', href: '/book-interview' }],
+    answer: (
+      <>
+        <p>
+          Start with a <Link to="/book-interview" className={inlineLink}>booked interview</Link>. We use that time to understand your child's current level, goals, confidence, and the class fit that will actually help.
+        </p>
+        <p>
+          You do not need to know the exact subject or program before contacting us. Bring the school year, recent concerns, and any goals you have in mind.
+        </p>
+      </>
+    ),
+  },
+  {
+    category: 'start',
+    question: 'Is the interview a test?',
+    schemaAnswer: 'The interview is not a formal entrance test. It is a guided conversation and learning check so DA Tuition can recommend the right class, teacher, and starting point.',
+    keywords: ['test', 'assessment', 'interview', 'nervous', 'entry'],
+    popular: true,
+    links: [{ label: 'Book an interview', href: '/book-interview' }],
+    answer: (
+      <>
+        <p>
+          No. It is a guided conversation and learning check, not a pass-or-fail exam. The goal is to place your child where they can improve without feeling lost or held back.
+        </p>
+        <p>
+          If your child is anxious, tell us. The interview can be paced gently.
+        </p>
+      </>
+    ),
+  },
+  {
+    category: 'start',
+    question: 'Can my child join during the term?',
+    schemaAnswer: 'Students can usually join during the term if there is a suitable class and available place. DA Tuition recommends booking an interview first so the student is placed correctly.',
+    keywords: ['join', 'mid term', 'during term', 'availability', 'start date'],
+    links: [{ label: 'View learning formats', href: '/learning-formats' }],
+    answer: (
+      <p>
+        Usually, yes, if there is a suitable class available. We will not just put a student anywhere to fill a seat. The interview helps us choose the right level and timing before they start. You can also review our <Link to="/learning-formats" className={inlineLink}>learning formats</Link>.
+      </p>
+    ),
+  },
+  {
+    category: 'programs',
+    question: 'Which year levels do you teach?',
+    schemaAnswer: 'DA Tuition teaches students from primary school through high school and HSC. Programs include primary school, high school, and HSC preparation.',
+    keywords: ['year', 'primary', 'high school', 'hsc', 'k-6', '7-10', 'year 12'],
+    popular: true,
+    links: [
+      { label: 'Primary school', href: '/programs/primary-school' },
+      { label: 'High school', href: '/programs/high-school' },
+      { label: 'HSC excellence', href: '/hsc-excellence' },
+    ],
+    answer: (
+      <p>
+        We teach from primary school through HSC. Start with <Link to="/programs/primary-school" className={inlineLink}>primary school</Link>, <Link to="/programs/high-school" className={inlineLink}>high school</Link>, or <Link to="/hsc-excellence" className={inlineLink}>HSC excellence</Link> depending on your child's stage.
+      </p>
+    ),
+  },
+  {
+    category: 'programs',
+    question: 'What subjects are available?',
+    schemaAnswer: 'DA Tuition offers Mathematics, English, Science, Business Studies, Legal Studies, primary support, high school support, and HSC preparation.',
+    keywords: ['subjects', 'maths', 'mathematics', 'english', 'science', 'business', 'legal'],
+    links: [{ label: 'View all subjects', href: '/subjects' }],
+    answer: (
+      <p>
+        Core subjects include <Link to="/subjects/mathematics" className={inlineLink}>Mathematics</Link>, <Link to="/subjects/english" className={inlineLink}>English</Link>, <Link to="/subjects/science" className={inlineLink}>Science</Link>, Business Studies, Legal Studies, and HSC preparation. See the full <Link to="/subjects" className={inlineLink}>subjects page</Link> for the current list.
+      </p>
+    ),
+  },
+  {
+    category: 'programs',
+    question: 'Do you follow the NSW curriculum?',
+    schemaAnswer: 'Yes. DA Tuition follows the NSW curriculum and NESA syllabus expectations, while also teaching exam technique, response structure, and deeper understanding.',
+    keywords: ['nsw', 'nesa', 'curriculum', 'syllabus', 'school'],
+    answer: (
+      <p>
+        Yes. Lessons are aligned with NSW syllabus expectations, but we do more than cover content. Students also learn how to structure answers, manage exam time, and understand why a method works.
+      </p>
+    ),
+  },
+  {
+    category: 'fees',
+    question: 'How much does tutoring cost?',
+    schemaAnswer: 'Fees depend on the year level, subject, and program. DA Tuition discusses the relevant fee after understanding the student and recommending the right class.',
+    keywords: ['price', 'pricing', 'cost', 'fees', 'payment', 'how much'],
+    popular: true,
+    links: [{ label: 'Book an interview', href: '/book-interview' }],
+    answer: (
+      <p>
+        Fees depend on the year level, subject, and program. The simplest way to get an accurate answer is to <Link to="/book-interview" className={inlineLink}>book an interview</Link> so we can recommend the right class before discussing the fee.
+      </p>
+    ),
+  },
+  {
+    category: 'fees',
+    question: 'Are learning materials included?',
+    schemaAnswer: 'Learning materials are included with DA Tuition classes unless a specific exception is explained during enrolment.',
+    keywords: ['materials', 'resources', 'books', 'extra costs', 'worksheets'],
+    answer: (
+      <p>
+        Yes, regular class materials and learning resources are included unless we explain a specific exception before enrolment. Parents should not be surprised by hidden resource charges.
+      </p>
+    ),
+  },
+  {
+    category: 'classes',
+    question: 'How big are the classes?',
+    schemaAnswer: 'DA Tuition keeps groups intentionally small so students can ask questions, receive meaningful feedback, and still benefit from learning alongside peers.',
+    keywords: ['class size', 'small group', 'one on one', '1 on 1', 'students'],
+    popular: true,
+    links: [{ label: 'Learning formats', href: '/learning-formats' }],
+    answer: (
+      <p>
+        Groups are intentionally kept small so students have room to ask questions and receive meaningful feedback while still benefiting from peer discussion. See <Link to="/learning-formats" className={inlineLink}>learning formats</Link> for how the classes are structured.
+      </p>
+    ),
+  },
+  {
+    category: 'classes',
+    question: 'When are classes held?',
+    schemaAnswer: 'DA Tuition classes run after school and on weekends, with exact times depending on subject, year level, and availability.',
+    keywords: ['time', 'schedule', 'weekend', 'after school', 'hours'],
+    links: [{ label: 'Contact DA Tuition', href: '/#contact' }],
+    answer: (
+      <p>
+        Classes run after school and on weekends. Exact times depend on the subject, year level, and current availability. If timing is your main concern, <Link to="/#contact" className={inlineLink}>contact us</Link> and we can check realistic options.
+      </p>
+    ),
+  },
+  {
+    category: 'classes',
+    question: 'Do you offer online classes?',
+    schemaAnswer: 'DA Tuition is primarily an in-person centre. Online support may be arranged in specific circumstances, but the main learning experience is face to face.',
+    keywords: ['online', 'zoom', 'remote', 'in person', 'face to face'],
+    links: [{ label: 'Visit our location', href: '/tutoring-canley-heights' }],
+    answer: (
+      <p>
+        DA is primarily an in-person centre because the teaching style depends on close feedback, attention, and classroom energy. If your family has a specific access issue, ask us directly. You can also view our <Link to="/tutoring-canley-heights" className={inlineLink}>Canley Heights location</Link>.
+      </p>
+    ),
+  },
+  {
+    category: 'teachers',
+    question: 'Who teaches the classes?',
+    schemaAnswer: 'DA Tuition classes are taught by trained tutors who understand the subject, syllabus, and student experience. Teacher matching depends on the subject, year level, and student needs.',
+    keywords: ['teacher', 'tutor', 'who teaches', 'staff', 'mentor'],
+    popular: true,
+    links: [{ label: 'Find a tutor', href: '/find-teacher' }],
+    answer: (
+      <p>
+        Classes are taught by trained tutors who understand the subject, syllabus, and student experience. Many families also value that our teachers are relatable mentors, not just content deliverers. Meet some of them on <Link to="/find-teacher" className={inlineLink}>Find a Tutor</Link>.
+      </p>
+    ),
+  },
+  {
+    category: 'teachers',
+    question: 'Can we request a specific teacher?',
+    schemaAnswer: 'Families can request a teacher, subject to availability. DA Tuition still considers class fit, level, and student needs before confirming placement.',
+    keywords: ['request', 'specific teacher', 'choose tutor', 'teacher change'],
+    answer: (
+      <p>
+        You can ask, and we will consider availability. We also look at class fit, level, subject, and personality. The best teacher on paper is not always the best match for every student.
+      </p>
+    ),
+  },
+  {
+    category: 'results',
+    question: 'What results do DA students achieve?',
+    schemaAnswer: `DA Tuition has helped students over ${siteStats.yearsExperience} years, with ${siteStats.band6Results} Band 6 results and ${siteStats.atar95Plus} students achieving ATARs above 95.`,
+    keywords: ['results', 'atar', 'band 6', 'success', 'reviews', 'proof'],
+    popular: true,
+    links: [{ label: 'Success stories', href: '/success-stories' }],
+    answer: (
+      <p>
+        Over {siteStats.yearsExperience} years, DA students have achieved {siteStats.band6Results} Band 6 results and {siteStats.atar95Plus} ATARs above 95. For the more useful version of that proof, read the real <Link to="/success-stories" className={inlineLink}>success stories</Link>.
+      </p>
+    ),
+  },
+  {
+    category: 'results',
+    question: 'How do parents know if their child is improving?',
+    schemaAnswer: 'DA Tuition tracks student progress through class performance, teacher feedback, assessment, and parent communication.',
+    keywords: ['progress', 'reports', 'feedback', 'improvement', 'parents'],
+    answer: (
+      <p>
+        Improvement is tracked through class performance, teacher feedback, assessment, and parent communication. We look for stronger confidence, better habits, clearer understanding, and better marks, not just one isolated test result.
+      </p>
+    ),
+  },
+  {
+    category: 'results',
+    question: 'Do you guarantee marks?',
+    schemaAnswer: 'DA Tuition does not guarantee specific marks because results depend on attendance, effort, practice, and school assessment conditions. DA Tuition does commit to quality teaching and support.',
+    keywords: ['guarantee', 'marks', 'improve', 'promise'],
+    answer: (
+      <p>
+        We do not guarantee a specific mark because effort, attendance, practice, and school assessment conditions matter. We do commit to quality teaching, honest feedback, and support when a student is doing the work but still struggling.
+      </p>
+    ),
+  },
+  {
+    category: 'safety',
+    question: 'Is DA Tuition safe for younger students?',
+    schemaAnswer: 'DA Tuition takes student safety seriously, including supervision, parent communication, and Working With Children Check expectations for staff.',
+    keywords: ['safe', 'safety', 'younger', 'child', 'wwcc'],
+    popular: true,
+    answer: (
+      <p>
+        Yes. Student safety is treated seriously, especially for younger students. Staff expectations, supervision, parent communication, and Working With Children Check requirements are part of how the centre operates.
+      </p>
+    ),
+  },
+  {
+    category: 'safety',
+    question: 'What should we do if our child is sick or misses class?',
+    schemaAnswer: 'Families should contact DA Tuition if a student is sick or needs to miss class. The centre can advise what catch-up or material support is available.',
+    keywords: ['sick', 'miss class', 'absence', 'catch up', 'make up'],
+    links: [{ label: 'Contact us', href: '/#contact' }],
+    answer: (
+      <p>
+        Keep sick children at home and contact us as early as possible. We can advise what catch-up support or materials are available for that situation.
+      </p>
+    ),
+  },
+];
+
+const categoryCounts = faqs.reduce<Record<CategoryId, number>>((acc, faq) => {
+  acc[faq.category] += 1;
+  acc.all += 1;
+  return acc;
+}, { all: 0, start: 0, programs: 0, fees: 0, classes: 0, teachers: 0, results: 0, safety: 0 });
+
+const categoryById = new Map(categories.map((category) => [category.id, category]));
+const faqByQuestion = new Map(faqs.map((faq) => [faq.question, faq]));
+const popularFAQs = faqs.filter((faq) => faq.popular);
+const heroHints = ['Fees', 'Class size', 'Teachers', 'Results'];
+const heroConcerns = [
+  { label: 'What will this cost?', question: 'How much does tutoring cost?' },
+  { label: 'Will the class suit my child?', question: 'How big are the classes?' },
+  { label: 'Can I trust the results?', question: 'What results do DA students achieve?' },
+];
+const parentPathways: Array<{
+  title: string;
+  description: string;
+  category: CategoryId;
+  icon: React.ElementType;
+}> = [
+  { title: 'How to begin', description: 'Interview, placement and joining', category: 'start', icon: DoorOpen },
+  { title: 'The investment', description: 'Fees, inclusions and payments', category: 'fees', icon: WalletCards },
+  { title: 'The classroom', description: 'Class size, timing and teachers', category: 'classes', icon: Users },
+  { title: 'The outcomes', description: 'Progress, results and support', category: 'results', icon: TrendingUp },
+];
+
+const starterSearches = [
+  { label: 'Fees & payments', question: 'How much does tutoring cost?' },
+  { label: 'Class sizes', question: 'How big are the classes?' },
+  { label: 'Getting started', question: 'What is the best way to get started at DA Tuition?' },
+  { label: 'Year levels', question: 'Which year levels do you teach?' },
+  { label: 'Subjects', question: 'What subjects are available?' },
+  { label: 'Class times', question: 'When are classes held?' },
+  { label: 'Meet the tutors', question: 'Who teaches the classes?' },
+  { label: 'Student progress', question: 'How do parents know if their child is improving?' },
+];
+
+const FAQ = () => {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState<CategoryId>('all');
+  const [openQuestion, setOpenQuestion] = useState<string>();
+  const [showAllQuestions, setShowAllQuestions] = useState(false);
+  const showLegacyFaq = window.location.hash === '#legacy-faq';
+
+  const filteredFAQs = useMemo(
+    () => filterFaqItems(faqs, selectedCategory, searchTerm),
+    [searchTerm, selectedCategory],
+  );
+
+  const quickAnswer = searchTerm.trim() ? filteredFAQs[0] : undefined;
+  const visibleFAQs = searchTerm || selectedCategory !== 'all' || showAllQuestions ? filteredFAQs : filteredFAQs.slice(0, 5);
+  const selectedCategoryLabel = categoryById.get(selectedCategory)?.label ?? 'All questions';
+  const activeAccordionValue = openQuestion ?? filteredFAQs[0]?.question;
+  const openAnswer = (faq: FAQItem) => {
+    setSelectedCategory(faq.category);
+    setSearchTerm('');
+    setOpenQuestion(faq.question);
+    window.setTimeout(() => {
+      const popularQuestions = document.getElementById('popular-questions');
+      if (!popularQuestions) return;
+      const pagePosition = window.scrollY + popularQuestions.getBoundingClientRect().top;
+      const visibleOffset = Math.min(160, Math.round(window.innerHeight * 0.16));
+      window.scrollTo({ top: Math.max(0, pagePosition - visibleOffset), behavior: 'smooth' });
+    }, 0);
+  };
+
+  const revealQuickAnswer = () => {
+    window.setTimeout(() => document.getElementById('quick-answer')?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 0);
+  };
+
+  return (
+    <div className="min-h-screen bg-[#f8f3eb] text-[#0b203a]">
+      <SEO
+        title="Frequently Asked Questions"
+        description="Clear answers about DA Tuition programs, fees, class sizes, teachers, results, safety, and how to book an interview."
+        canonicalUrl="/faq"
+        jsonLd={faqPageSchema(faqs.map(({ question, schemaAnswer }) => ({ question, answer: schemaAnswer })))}
+      />
+      <NavigationNew />
+
+      <main>
+        <section className="relative overflow-hidden border-b border-[#b78a3a]/15 bg-[#f8f3eb]">
+          <div className="absolute -left-16 bottom-3 h-px w-64 rotate-[10deg] bg-[#b78a3a]/45" aria-hidden="true" />
+          <div className="absolute -left-12 bottom-8 h-px w-56 rotate-[-3deg] bg-[#b78a3a]/25" aria-hidden="true" />
+          <div className="mx-auto grid max-w-7xl lg:grid-cols-[minmax(0,.9fr)_minmax(0,1.1fr)] lg:items-stretch">
+            <div className="order-2 flex items-center px-5 pb-14 pt-10 sm:px-8 lg:order-1 lg:px-10 lg:py-20 xl:px-14">
+              <div className="max-w-xl">
+                <h1 className="font-serif text-[clamp(3.25rem,6.7vw,6.6rem)] font-medium leading-[.9] tracking-[-0.04em] text-[#0b203a]">
+                  You ask.<span className="block text-[#b78a3a]">We answer.</span>
+                </h1>
+                <p className="mt-7 max-w-md text-base leading-7 text-[#0b203a]/75 sm:text-lg sm:leading-8">
+                  Clear, honest answers about classes, fees, teachers, progress and finding the right place to begin.
+                </p>
+                <label className="mt-8 flex h-14 max-w-xl items-center rounded-full bg-white px-5 shadow-[0_12px_32px_rgba(11,32,58,.10)] ring-1 ring-[#b78a3a]/15 transition focus-within:ring-2 focus-within:ring-[#b78a3a]">
+                  <Search className="h-5 w-5 shrink-0 text-[#0b203a]" aria-hidden="true" />
+                  <span className="sr-only">Search frequently asked questions</span>
+                  <input
+                    type="search"
+                    placeholder="Search any question..."
+                    value={searchTerm}
+                    onChange={(event) => {
+                      setSearchTerm(event.target.value);
+                      setSelectedCategory('all');
+                      setOpenQuestion(undefined);
+                    }}
+                    className="min-w-0 flex-1 bg-transparent px-4 text-base text-[#0b203a] outline-none placeholder:text-[#0b203a]/45"
+                  />
+                  {searchTerm ? (
+                    <button type="button" onClick={() => setSearchTerm('')} className="text-sm font-semibold text-[#0b203a]/65 hover:text-[#0b203a]">Clear</button>
+                  ) : (
+                    <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#c3994b] text-[#0b203a]" aria-hidden="true"><ArrowRight className="h-4 w-4" /></span>
+                  )}
+                </label>
+              </div>
+            </div>
+
+            <div className="order-1 min-h-[300px] sm:min-h-[390px] lg:order-2 lg:min-h-[500px]">
+              <img
+                src="/images/faq/faq-tutor-hero-placeholder.png"
+                alt="Temporary placeholder showing a tutor listening to a student"
+                className="h-full w-full object-cover object-center"
+              />
+            </div>
+          </div>
+        </section>
+
+        <section id="faq-questions" className="scroll-mt-24 px-4 py-8 sm:px-6 lg:px-8 lg:py-12">
+          <div className="mx-auto grid max-w-7xl gap-5 lg:grid-cols-[245px_minmax(0,1fr)_310px] lg:items-start">
+            <aside className="rounded-2xl bg-white p-5 shadow-[0_12px_32px_rgba(11,32,58,.07)] ring-1 ring-[#b78a3a]/10 lg:sticky lg:top-24" aria-label="FAQ topics">
+              <h2 className="font-serif text-xl font-medium text-[#0b203a]">Browse categories</h2>
+              <div className="mt-4 -mx-1 flex gap-2 overflow-x-auto px-1 pb-2 lg:mx-0 lg:block lg:space-y-1 lg:overflow-visible lg:px-0 lg:pb-0">
+                {categories.map((category) => {
+                  const Icon = category.icon;
+                  const active = selectedCategory === category.id;
+                  return (
+                    <button
+                      key={category.id}
+                      type="button"
+                      aria-pressed={active}
+                      onClick={() => { setSelectedCategory(category.id); setSearchTerm(''); setOpenQuestion(undefined); }}
+                      className={`flex shrink-0 items-center gap-3 rounded-xl px-3 py-3 text-left text-sm transition lg:w-full ${active ? 'bg-[#f3eadb] font-bold text-[#0b203a]' : 'text-[#0b203a]/72 hover:bg-[#f8f3eb] hover:text-[#0b203a]'}`}
+                    >
+                      <Icon className="h-[18px] w-[18px] shrink-0 text-[#b78a3a]" />
+                      <span className="whitespace-nowrap lg:whitespace-normal">{category.label}</span>
+                      <span className="ml-auto text-xs font-medium text-[#0b203a]/55">{categoryCounts[category.id]}</span>
+                    </button>
+                  );
+                })}
+              </div>
+              <div className="mt-5 border-t border-[#0b203a]/10 pt-5">
+                <p className="text-sm font-semibold text-[#0b203a]">Still have a question?</p>
+                <p className="mt-1 text-sm leading-6 text-[#0b203a]/65">Our team is here to help.</p>
+                <Link to="/contact" className="mt-4 inline-flex items-center gap-2 rounded-full border border-[#b78a3a]/45 px-4 py-2.5 text-sm font-bold text-[#0b203a] transition hover:bg-[#f3eadb]">
+                  Contact our team <ArrowRight className="h-4 w-4" />
+                </Link>
+              </div>
+            </aside>
+
+            <section className="rounded-2xl bg-white p-5 shadow-[0_12px_32px_rgba(11,32,58,.07)] ring-1 ring-[#b78a3a]/10 sm:p-7">
+              <div className="mb-5 flex items-end justify-between gap-4">
+                <div>
+                  <p className="text-sm font-semibold text-[#b78a3a]">{searchTerm ? `Results for “${searchTerm}”` : selectedCategoryLabel}</p>
+                  <h2 className="mt-1 font-serif text-3xl font-medium tracking-[-0.03em] text-[#0b203a]">Questions and answers</h2>
+                </div>
+                <span className="shrink-0 text-xs font-semibold uppercase tracking-[0.12em] text-[#0b203a]/48">{filteredFAQs.length} questions</span>
+              </div>
+
+              {filteredFAQs.length ? (
+                <Accordion type="single" collapsible value={activeAccordionValue} onValueChange={setOpenQuestion} className="border-t border-[#0b203a]/10">
+                  {filteredFAQs.map((faq) => (
+                    <AccordionItem key={`${faq.category}-${faq.question}`} value={faq.question} className="border-[#0b203a]/10">
+                      <AccordionTrigger className="group gap-4 py-5 text-left hover:no-underline">
+                        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[#b78a3a]/45 text-[#b78a3a]">
+                          <Plus className="h-4 w-4 group-data-[state=open]:hidden" />
+                          <Minus className="hidden h-4 w-4 group-data-[state=open]:block" />
+                        </span>
+                        <span className="pr-2 font-serif text-lg font-medium leading-7 text-[#0b203a] sm:text-xl">{faq.question}</span>
+                      </AccordionTrigger>
+                      <AccordionContent className="pb-6 pl-12 text-[#0b203a]/76">
+                        <div className="max-w-2xl space-y-4 text-base leading-8">
+                          {faq.answer}
+                          {faq.links && <div className="flex flex-wrap gap-2 pt-1">{faq.links.map((link) => <Link key={link.href} to={link.href} className="inline-flex items-center gap-1.5 rounded-full bg-[#f3eadb] px-3 py-2 text-sm font-bold text-[#0b203a] transition hover:bg-[#e7d2a4]">{link.label}<ArrowRight className="h-3.5 w-3.5" /></Link>)}</div>}
+                        </div>
+                      </AccordionContent>
+                    </AccordionItem>
+                  ))}
+                </Accordion>
+              ) : (
+                <div className="border-t border-[#0b203a]/10 py-12 text-center">
+                  <HelpCircle className="mx-auto h-8 w-8 text-[#b78a3a]" />
+                  <h3 className="mt-4 font-serif text-2xl text-[#0b203a]">We could not find that question.</h3>
+                  <p className="mx-auto mt-2 max-w-md leading-7 text-[#0b203a]/65">Try “fees”, “HSC”, “teachers” or “class size”, or contact our team directly.</p>
+                  <button type="button" onClick={() => { setSearchTerm(''); setSelectedCategory('all'); }} className="mt-5 font-bold text-[#b78a3a] hover:text-[#0b203a]">Clear search</button>
+                </div>
+              )}
+            </section>
+
+            <aside className="overflow-hidden rounded-2xl bg-white shadow-[0_12px_32px_rgba(11,32,58,.07)] ring-1 ring-[#b78a3a]/10 lg:sticky lg:top-24">
+              <img src="/images/faq/faq-human-answer-focus-with-tables.png" alt="A DA Tuition tutor and student working together" className="h-48 w-full object-cover" />
+              <div className="p-6">
+                <h2 className="font-serif text-3xl font-medium leading-[1.05] tracking-[-0.035em] text-[#0b203a]">Still have a question?<span className="block text-[#b78a3a]">We’re here to help.</span></h2>
+                <p className="mt-4 text-sm leading-6 text-[#0b203a]/72">Sometimes it is easier to talk. Tell us what is on your mind and we will help you find the right next step.</p>
+                <Link to="/contact" className="mt-6 flex items-center justify-between rounded-full bg-[#0b203a] px-5 py-3 text-sm font-bold text-white transition hover:bg-[#b78a3a] hover:text-[#0b203a]">Contact us <ChevronRight className="h-4 w-4" /></Link>
+              </div>
+            </aside>
+          </div>
+        </section>
+      </main>
+      <FooterNew />
+    </div>
+  );
+
+  return (
+    <div className="min-h-screen bg-[#fbf6ea] text-brand-navy">
+      <SEO
+        title="Frequently Asked Questions"
+        description="Clear answers about DA Tuition programs, fees, class sizes, teachers, results, safety, and how to book an interview."
+        canonicalUrl="/faq"
+        jsonLd={faqPageSchema(faqs.map(({ question, schemaAnswer }) => ({ question, answer: schemaAnswer })))}
+      />
+      <NavigationNew />
+
+      {showLegacyFaq && <main>
+        <section className="relative overflow-hidden bg-[#071629] pt-36 lg:pt-40">
+          <div className="absolute inset-0">
+            <img
+              src="/images/hero/da-hero-glow-bg-1600.webp"
+              alt=""
+              aria-hidden="true"
+              className="h-full w-full object-cover opacity-55"
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-[#071629] via-[#071629]/90 to-[#071629]/52" />
+            <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[#fbf6ea] to-transparent" />
+          </div>
+
+          <div className="relative z-10 mx-auto grid w-full max-w-7xl gap-10 px-5 pb-24 lg:grid-cols-[1.05fr_.75fr] lg:px-8 lg:pb-28">
+            <motion.div initial={{ opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.75, ease: easeOut }}>
+              <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-xs font-black uppercase tracking-[0.14em] text-[#f1df9a] backdrop-blur-md">
+                <HelpCircle className="h-4 w-4" />
+                Parent questions
+              </div>
+              <h1 className="max-w-4xl font-serif text-5xl font-medium leading-[0.98] tracking-[-0.045em] text-white sm:text-6xl lg:text-7xl">
+                The answer should feel easy to find.
+              </h1>
+              <p className="mt-6 max-w-2xl text-lg leading-8 text-white/75">
+                Search naturally, choose a question, or follow the parent concerns below. The answer opens without making you hunt through dropdowns.
+              </p>
+
+              <div className="mt-8 grid max-w-3xl gap-3 sm:grid-cols-[1fr_auto]">
+                <label className="relative block">
+                  <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-brand-navy/45" />
+                  <input
+                    type="text"
+                    placeholder="Search fees, class size, HSC, teachers..."
+                    aria-label="Search frequently asked questions"
+                    value={searchTerm}
+                    onChange={(event) => {
+                      setSearchTerm(event.target.value);
+                      setOpenQuestion(undefined);
+                    }}
+                    className="h-14 w-full rounded-full border border-white/70 bg-white pl-12 pr-5 text-base font-medium text-brand-navy shadow-sm outline-none transition focus:border-brand-gold focus:ring-4 focus:ring-brand-gold/20"
+                  />
+                </label>
+                <Button asChild className="h-14 rounded-full bg-brand-gold px-7 font-bold text-brand-navy hover:bg-brand-lightGold">
+                  <Link to="/book-interview">
+                    Book Interview
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Link>
+                </Button>
+              </div>
+
+              <div className="mt-7 flex flex-wrap gap-2">
+                {heroHints.map((hint) => (
+                  <button
+                    key={hint}
+                    type="button"
+                    onClick={() => {
+                      setSearchTerm(hint);
+                      setSelectedCategory('all');
+                      setOpenQuestion(undefined);
+                      document.getElementById('faq-answers')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }}
+                    className="rounded-full border border-[#c9a227]/40 bg-[#c9a227]/10 px-4 py-1.5 text-xs font-bold tracking-wide text-[#f1df9a] transition hover:bg-[#c9a227]/20"
+                  >
+                    {hint}
+                  </button>
+                ))}
+              </div>
+            </motion.div>
+
+            <motion.aside
+              initial={{ opacity: 0, y: 28 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.75, delay: 0.12, ease: easeOut }}
+              className="hidden self-end rounded-3xl border border-white/18 bg-[#071629]/55 p-6 shadow-2xl backdrop-blur-xl lg:block"
+            >
+              <p className="text-[10px] font-black uppercase tracking-[0.28em] text-[#f1df9a]/75">Start with the real concern</p>
+              <div className="relative mt-6 space-y-3">
+                <div className="absolute bottom-6 left-[18px] top-6 w-px bg-gradient-to-b from-[#f1df9a]/70 via-[#f1df9a]/20 to-transparent" />
+                {heroConcerns.map(({ label, question }, index) => (
+                  <button
+                    key={label}
+                    type="button"
+                    onClick={() => {
+                      const faq = faqByQuestion.get(question);
+                      if (faq) openAnswer(faq);
+                    }}
+                    className="group relative flex w-full items-center gap-4 rounded-2xl bg-white/[0.08] p-4 text-left text-white transition hover:bg-white/[0.13]"
+                  >
+                    <span className="relative z-10 flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[#f1df9a]/35 bg-[#071629] text-xs font-black text-[#f1df9a]">
+                      {index + 1}
+                    </span>
+                    <span className="text-sm font-semibold leading-6">{label}</span>
+                    <ArrowRight className="ml-auto h-4 w-4 text-[#f1df9a] opacity-0 transition group-hover:translate-x-1 group-hover:opacity-100" />
+                  </button>
+                ))}
+              </div>
+              <p className="mt-5 text-sm leading-6 text-white/78">
+                Each concern opens the answer directly, then points to the next useful page if you need more context.
+              </p>
+            </motion.aside>
+          </div>
+        </section>
+
+        <section className="-mt-10 px-5 lg:px-8">
+          <div className="relative z-10 mx-auto max-w-7xl rounded-3xl border border-[#c9a227]/20 bg-[#fffdf8] p-3 shadow-2xl shadow-[#071629]/10">
+            <p className="px-2 pb-3 text-[10px] font-black uppercase tracking-[0.24em] text-[#c9a227]">Browse topics</p>
+              <div className="grid grid-cols-2 gap-2 lg:grid-cols-4">
+                {categories.map((category) => {
+                  const Icon = category.icon;
+                  const active = selectedCategory === category.id;
+
+                  return (
+                    <button
+                      key={category.id}
+                      type="button"
+                      onClick={() => {
+                        setSelectedCategory(category.id);
+                        setOpenQuestion(undefined);
+                      }}
+                      className={`flex items-center justify-between rounded-xl px-3 py-3 text-left transition ${
+                        active
+                          ? 'bg-brand-navy text-white shadow-sm'
+                          : 'text-brand-navy/76 hover:bg-brand-gold/10 hover:text-brand-navy'
+                      }`}
+                    >
+                      <span className="flex min-w-0 items-center gap-3">
+                        <Icon className={`h-4 w-4 shrink-0 ${active ? 'text-brand-lightGold' : 'text-brand-gold'}`} />
+                        <span className="truncate text-sm font-semibold">{category.shortLabel}</span>
+                      </span>
+                      <span className={`ml-3 rounded-full px-2 py-0.5 text-xs font-bold ${active ? 'bg-white/14 text-white' : 'bg-brand-navy/6 text-brand-navy/65'}`}>
+                        {categoryCounts[category.id]}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+          </div>
+        </section>
+
+        <section className="px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
+          <div className="mx-auto max-w-7xl space-y-8">
+              <motion.section
+                initial={{ opacity: 0, y: 28 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-80px' }}
+                transition={{ duration: 0.65, ease: easeOut }}
+                className="overflow-hidden rounded-[2rem] border border-[#c9a227]/20 bg-[#fffdf8] shadow-xl shadow-[#071629]/5"
+              >
+                <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+                  <div className="px-5 pt-5 sm:px-6 sm:pt-6">
+                    <p className="text-[10px] font-black uppercase tracking-[0.24em] text-[#c9a227]">Most asked</p>
+                    <h2 className="font-serif text-3xl font-medium tracking-[-0.035em] text-[#071629]">Start where parents usually start.</h2>
+                  </div>
+                  <Link to="/success-stories" className="mx-5 mt-1 inline-flex items-center text-sm font-bold text-brand-navy hover:text-brand-gold sm:mx-6">
+                    See proof
+                    <ArrowRight className="ml-1 h-4 w-4" />
+                  </Link>
+                </div>
+
+                <div className="grid border-t border-[#071629]/10 md:grid-cols-2">
+                  {popularFAQs.slice(0, 6).map((faq) => (
+                    <button
+                      key={faq.question}
+                      type="button"
+                      onClick={() => openAnswer(faq)}
+                      className="group flex min-h-[92px] items-center gap-4 border-b border-[#071629]/10 px-5 py-5 text-left transition hover:bg-[#f5ecd9] md:border-r md:px-6"
+                    >
+                      <CheckCircle2 className="h-5 w-5 shrink-0 text-brand-gold" />
+                      <span className="block text-sm font-black leading-6 text-brand-navy">{faq.question}</span>
+                      <ArrowRight className="ml-auto h-4 w-4 shrink-0 text-brand-gold opacity-0 transition group-hover:translate-x-1 group-hover:opacity-100" />
+                    </button>
+                  ))}
+                </div>
+              </motion.section>
+
+              <motion.section
+                id="faq-answers"
+                initial={{ opacity: 0, y: 28 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-80px' }}
+                transition={{ duration: 0.65, ease: easeOut }}
+                className="scroll-mt-32 rounded-[2rem] border border-[#c9a227]/20 bg-[#fffdf8] p-5 shadow-xl shadow-[#071629]/5 sm:p-6"
+              >
+                <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+                  <div>
+                    <p className="text-sm font-bold text-brand-gold">{selectedCategoryLabel}</p>
+                    <h2 className="font-serif text-3xl font-semibold tracking-[-0.01em] text-brand-navy">
+                      {filteredFAQs.length} answer{filteredFAQs.length === 1 ? '' : 's'}
+                    </h2>
+                  </div>
+                  {(searchTerm || selectedCategory !== 'all') && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSearchTerm('');
+                        setSelectedCategory('all');
+                        setOpenQuestion(undefined);
+                      }}
+                      className="text-sm font-bold text-brand-navy/65 hover:text-brand-gold"
+                    >
+                      Clear filters
+                    </button>
+                  )}
+                </div>
+
+                {filteredFAQs.length > 0 ? (
+                  <Accordion type="single" collapsible value={activeAccordionValue} onValueChange={setOpenQuestion} className="space-y-3">
+                    {filteredFAQs.map((faq, index) => (
+                      <AccordionItem
+                        key={`${faq.category}-${faq.question}`}
+                        value={faq.question}
+                        className="rounded-2xl border border-brand-navy/10 bg-white px-5 shadow-sm data-[state=open]:border-brand-gold/45"
+                      >
+                        <AccordionTrigger className="gap-4 py-5 text-left hover:no-underline">
+                          <span className="text-base font-bold leading-7 text-brand-navy">{faq.question}</span>
+                        </AccordionTrigger>
+                        <AccordionContent className="pb-5 text-brand-navy/76">
+                          <div className="space-y-4 text-base leading-8">
+                            {faq.answer}
+                            {faq.links && (
+                              <div className="flex flex-wrap gap-2 pt-1">
+                                {faq.links.map((link) => (
+                                  <Link
+                                    key={link.href}
+                                    to={link.href}
+                                    className="inline-flex items-center rounded-full border border-brand-gold/35 bg-brand-gold/10 px-3 py-1.5 text-sm font-bold text-brand-navy hover:bg-brand-gold hover:text-brand-navy"
+                                  >
+                                    {link.label}
+                                    <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
+                                  </Link>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        </AccordionContent>
+                      </AccordionItem>
+                    ))}
+                  </Accordion>
+                ) : (
+                  <div className="rounded-2xl border border-dashed border-brand-gold/45 bg-[#fffaf0] p-8 text-center">
+                    <HelpCircle className="mx-auto mb-4 h-8 w-8 text-brand-gold" />
+                    <h3 className="font-serif text-2xl font-semibold text-brand-navy">No matching question yet.</h3>
+                    <p className="mx-auto mt-3 max-w-xl text-brand-navy/70">
+                      Try a simpler search like "fees", "HSC", "teacher", or "class size". If your question depends on your child, book an interview and we will answer it directly.
+                    </p>
+                    <div className="mt-6 flex flex-wrap justify-center gap-3">
+                      <Button variant="outline" className="rounded-full border-brand-gold/40" onClick={() => {
+                        setSearchTerm('');
+                        setSelectedCategory('all');
+                      }}>
+                        Clear filters
+                      </Button>
+                      <Button asChild className="rounded-full bg-brand-gold text-brand-navy hover:bg-brand-lightGold">
+                        <Link to="/book-interview">Book Interview</Link>
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </motion.section>
+          </div>
+        </section>
+
+        <section className="relative overflow-hidden bg-brand-navy px-4 py-20 text-white sm:px-6 lg:px-8">
+          <div className="absolute inset-x-6 top-0 h-px bg-gradient-to-r from-transparent via-[#c9a227]/35 to-transparent" />
+          <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[1fr_360px] lg:items-center">
+            <div>
+              <p className="text-sm font-bold uppercase tracking-[0.16em] text-brand-lightGold">Need a human answer?</p>
+              <h2 className="mt-4 max-w-3xl font-serif text-4xl font-semibold leading-tight tracking-[-0.02em] sm:text-5xl">
+                Bring the question to the interview.
+              </h2>
+              <p className="mt-5 max-w-2xl text-base leading-8 text-white/72">
+                The fastest answer is often personal: year level, subject, confidence, school goals, and timing all matter. We will help you find the right starting point.
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-white/12 bg-white/8 p-5">
+              <div className="grid gap-3">
+                <a href="tel:0401940207" className="flex items-center gap-3 rounded-xl bg-white/10 px-4 py-3 text-sm font-semibold text-white hover:bg-white/15">
+                  <Phone className="h-4 w-4 text-brand-lightGold" />
+                  Call 0401 940 207
+                </a>
+                <Link to="/book-interview" className="flex items-center gap-3 rounded-xl bg-brand-gold px-4 py-3 text-sm font-bold text-brand-navy hover:bg-brand-lightGold">
+                  <School className="h-4 w-4" />
+                  Book an Interview
+                </Link>
+                <Link to="/tutoring-canley-heights" className="flex items-center gap-3 rounded-xl border border-white/14 px-4 py-3 text-sm font-semibold text-white hover:bg-white/10">
+                  <MapPin className="h-4 w-4 text-brand-lightGold" />
+                  Visit Canley Heights
+                </Link>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>}
+
+      <main>
+        <section className="relative flex min-h-screen items-center overflow-hidden bg-[#071629] px-5 py-28 text-white lg:px-8">
+          <div className="absolute inset-0">
+            <img src="/images/faq/faq-hero-tutor-student-brow-touchup.png" alt="A DA Tuition tutor and student smiling gently while they work through mathematics together" className="h-full w-full object-cover object-[54%_42%] lg:object-[54%_38%]" />
+            {/* subject-hero-style overlay */}
+            <div className="absolute inset-0" style={{ background: 'linear-gradient(90deg, rgba(4,11,23,.9) 0%, rgba(4,11,23,.7) 46%, rgba(4,11,23,.22) 100%)' }} />
+          </div>
+          <div className="relative z-10 mx-auto w-full max-w-7xl">
+            <motion.div initial={{ opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, ease: easeOut }} className="max-w-3xl">
+              <div className="mb-5 inline-flex items-center gap-2.5 text-xs font-black uppercase tracking-[0.18em] text-[#f1df9a]">
+                <span className="h-[2px] w-7 bg-[#c9a227]" />
+                DA Answer Desk
+              </div>
+              <h1 className="text-balance text-white" style={{ fontFamily: '"Playfair Display", Georgia, serif', fontSize: 'clamp(3rem, 6.5vw, 6.6rem)', lineHeight: 0.96, letterSpacing: '-0.01em', margin: 0 }}>
+                Start with what’s
+                <span className="block text-[#c9a227]">on your mind.</span>
+              </h1>
+              <p className="mt-7 max-w-[54ch] text-lg leading-[1.75] text-white/85">Clear answers before you commit: classes, fees, teachers, progress and getting started.</p>
+              <div className="mt-8">
+                <button type="button" onClick={() => document.getElementById('faq-answers')?.scrollIntoView({ behavior: 'smooth', block: 'start' })} className="inline-flex h-12 items-center rounded-full bg-[#c9a227] px-7 font-black text-[#101521] shadow-xl shadow-[#c9a227]/25 transition hover:bg-[#e0bd4b]">
+                  Explore answers <ArrowRight className="ml-2 h-4 w-4" />
+                </button>
+              </div>
+              <div className="mt-9 flex flex-wrap gap-x-5 gap-y-2 text-[13px] font-black uppercase tracking-[0.06em] text-white">
+                <span className="border-l-2 border-[#c9a227] pl-3">Clear fees</span>
+                <span className="border-l-2 border-[#c9a227] pl-3">Right class fit</span>
+                <span className="border-l-2 border-[#c9a227] pl-3">Real progress</span>
+              </div>
+            </motion.div>
+          </div>
+        </section>
+
+        <section className={`bg-[#fbf6ea] px-4 pb-6 pt-10 sm:px-6 sm:pt-12 lg:px-8 ${searchTerm ? 'lg:pb-20' : 'lg:pb-8'}`}>
+          <div className="mx-auto max-w-7xl">
+            <label className="relative flex items-center rounded-2xl bg-white px-5 shadow-lg shadow-[#071629]/10 sm:px-7">
+              <Search className="h-5 w-5 shrink-0 text-brand-gold" aria-hidden="true" />
+              <span className="sr-only">Search frequently asked questions</span>
+              <input type="search" placeholder="Search in your own words. Try “class size”" value={searchTerm} onChange={(event) => { const value = event.target.value; const isStartingSearch = value.trim().length > 0 && searchTerm.trim().length === 0; setSearchTerm(value); setSelectedCategory('all'); setOpenQuestion(undefined); setShowAllQuestions(false); if (isStartingSearch) revealQuickAnswer(); }} className="h-16 min-w-0 flex-1 bg-transparent px-4 text-base font-medium text-brand-navy outline-none placeholder:text-brand-navy/55 sm:h-[72px] sm:text-lg" />
+              {searchTerm && <button type="button" onClick={() => { setSearchTerm(''); setOpenQuestion(undefined); setShowAllQuestions(false); }} className="shrink-0 text-sm font-bold text-brand-navy/65 hover:text-brand-gold">Clear</button>}
+            </label>
+            <div id="popular-questions" className="mt-4"><p className="mb-2 px-1 text-xs font-bold uppercase tracking-[0.14em] text-[#8a6810]">Popular questions</p><div className="flex flex-wrap gap-2">{starterSearches.map((suggestion) => { const faq = faqByQuestion.get(suggestion.question); return <button key={suggestion.question} type="button" onClick={() => { if (faq) openAnswer(faq); }} className="rounded-full border border-white/35 bg-[#071629] px-3.5 py-2 text-sm font-semibold text-white shadow-sm transition hover:border-brand-gold hover:bg-brand-gold hover:text-brand-navy">{suggestion.label}</button>; })}</div></div>
+            {searchTerm && <div id="quick-answer" className="mb-12 scroll-mt-24 rounded-2xl border border-brand-gold/30 bg-[#fffdf8] p-5 shadow-lg shadow-[#071629]/10 sm:p-6" aria-live="polite">
+              {quickAnswer ? <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between"><div className="max-w-3xl"><p className="text-sm font-bold text-[#8a6810]">Quick answer</p><h2 className="mt-1 font-serif text-2xl font-medium tracking-[-0.025em] text-brand-navy">{quickAnswer.question}</h2><p className="mt-2 text-sm leading-6 text-brand-navy/75 sm:text-base">{quickAnswer.schemaAnswer}</p></div><button type="button" onClick={() => openAnswer(quickAnswer)} className="inline-flex shrink-0 items-center self-start rounded-full bg-brand-navy px-4 py-2.5 text-sm font-bold text-white transition hover:bg-brand-gold hover:text-brand-navy sm:self-auto">Read full answer <ArrowRight className="ml-1.5 h-4 w-4" /></button></div> : <div><p className="text-sm font-bold text-[#8a6810]">No close match yet</p><p className="mt-1 text-brand-navy/75">Try “fees”, “HSC”, “teachers” or “class size”, or ask our team directly.</p></div>}
+            </div>}
+            {!searchTerm && <div className="text-center"><p className="mb-2 text-sm font-bold text-[#8a6810]">Choose your concern</p><h2 className="font-serif text-3xl font-medium tracking-[-0.03em] text-brand-navy sm:text-4xl">Where would a little more clarity help?</h2></div>}
+          </div>
+        </section>
+
+        <section id="faq-answers" className="scroll-mt-24 bg-[#fbf6ea] px-4 pb-20 sm:px-6 lg:px-8 lg:pb-28">
+          <div className="mx-auto grid max-w-7xl overflow-hidden rounded-2xl bg-[#fffdf8] shadow-lg shadow-[#071629]/10 lg:grid-cols-[250px_1fr]">
+            <aside className="border-b border-brand-navy/12 p-5 lg:border-b-0 lg:border-r lg:p-7" aria-label="FAQ topics">
+              <p className="mb-4 font-serif text-xl font-medium text-brand-navy">Browse all topics</p>
+              <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-2 lg:mx-0 lg:block lg:overflow-visible lg:px-0 lg:pb-0">
+                {categories.map((category) => {
+                  const Icon = category.icon;
+                  const active = selectedCategory === category.id;
+                  return <button key={category.id} type="button" onClick={() => { setSelectedCategory(category.id); setSearchTerm(''); setOpenQuestion(undefined); setShowAllQuestions(false); }} className={`flex shrink-0 items-center gap-2 border-b px-3 py-3 text-left text-sm transition lg:w-full lg:justify-between lg:px-1 ${active ? 'border-brand-gold font-bold text-brand-navy' : 'border-brand-navy/10 text-brand-navy/65 hover:text-brand-navy'}`} aria-pressed={active}>
+                    <span className="flex items-center gap-2"><Icon className={`h-4 w-4 ${active ? 'text-brand-gold' : 'text-brand-navy/40'}`} />{category.shortLabel}</span>
+                  </button>;
+                })}
+              </div>
+            </aside>
+            <div className="min-w-0 p-5 sm:p-8 lg:p-10">
+            <div className="min-w-0">
+              <div className="mb-7 flex flex-col gap-2 border-b border-brand-navy/15 pb-5 sm:flex-row sm:items-end sm:justify-between">
+                <div><p className="mb-1 text-sm font-bold text-brand-gold">{searchTerm ? `Results for “${searchTerm}”` : selectedCategoryLabel}</p><h2 className="font-serif text-3xl font-medium tracking-[-0.03em] text-brand-navy sm:text-4xl">Questions and answers</h2></div>
+                {(searchTerm || selectedCategory !== 'all') && <button type="button" onClick={() => { setSearchTerm(''); setSelectedCategory('all'); setOpenQuestion(undefined); setShowAllQuestions(false); }} className="self-start text-sm font-bold text-brand-navy/60 hover:text-brand-gold sm:self-auto">View all questions</button>}
+              </div>
+              {filteredFAQs.length > 0 ? <Accordion type="single" collapsible value={activeAccordionValue} onValueChange={setOpenQuestion}>
+                {visibleFAQs.map((faq) => <AccordionItem key={`${faq.category}-${faq.question}`} value={faq.question} className="border-b border-brand-navy/15">
+                  <AccordionTrigger className="gap-5 py-5 text-left hover:no-underline sm:py-6"><span className="pr-4 text-base font-bold leading-7 text-brand-navy sm:text-lg">{faq.question}</span></AccordionTrigger>
+                  <AccordionContent className="pb-6 text-brand-navy/76"><div className="max-w-3xl space-y-4 text-base leading-8">{faq.answer}{faq.links && <div className="flex flex-wrap gap-2 pt-1">{faq.links.map((link) => <Link key={link.href} to={link.href} className="inline-flex items-center rounded-full bg-brand-gold/15 px-4 py-2 text-sm font-bold text-brand-navy transition hover:bg-brand-gold">{link.label}<ArrowRight className="ml-1.5 h-3.5 w-3.5" /></Link>)}</div>}</div></AccordionContent>
+                </AccordionItem>)}
+              </Accordion> : <div className="py-12 text-center"><HelpCircle className="mx-auto mb-4 h-8 w-8 text-brand-gold" /><h3 className="font-serif text-2xl font-medium text-brand-navy">We could not find that question.</h3><p className="mx-auto mt-3 max-w-xl leading-7 text-brand-navy/68">Try a simpler phrase such as “fees”, “HSC”, “teachers” or “class size”. You can also ask our team directly.</p><Button variant="outline" onClick={() => { setSearchTerm(''); setSelectedCategory('all'); setShowAllQuestions(false); }} className="mt-6 rounded-full border-brand-gold/45">Clear search</Button></div>}
+              {!searchTerm && selectedCategory === 'all' && filteredFAQs.length > 5 && <div className="pt-7 text-center"><button type="button" onClick={() => { if (showAllQuestions) { setShowAllQuestions(false); window.setTimeout(() => document.getElementById('faq-answer-desk')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 0); } else { setShowAllQuestions(true); } }} className="inline-flex items-center rounded-full bg-brand-navy px-5 py-3 text-sm font-bold text-white transition hover:bg-brand-gold hover:text-brand-navy">{showAllQuestions ? 'Show fewer questions' : 'See more questions'} <ArrowRight className={`ml-2 h-4 w-4 transition-transform ${showAllQuestions ? '-rotate-90' : ''}`} /></button></div>}
+            </div>
+          </div>
+          </div>
+        </section>
+
+        <section className="mx-4 grid overflow-hidden rounded-2xl bg-brand-navy text-white sm:mx-6 lg:mx-8 lg:grid-cols-[0.85fr_1.15fr]">
+          <div className="min-h-[320px] overflow-hidden lg:min-h-[420px]"><img src="/images/faq/faq-human-answer-focus-with-tables.png" alt="A DA Tuition tutor and student smiling while working together at a laptop" className="h-full w-full object-cover" /></div>
+          <div className="flex flex-col justify-center px-6 py-14 sm:px-10 lg:px-[clamp(3rem,8vw,8rem)] lg:py-20">
+            <p className="text-sm font-bold text-brand-lightGold">The human answer desk</p>
+            <h2 className="mt-4 max-w-2xl text-balance font-serif text-4xl font-medium leading-tight tracking-[-0.035em] sm:text-5xl">Some questions are easier to talk through.</h2>
+            <p className="mt-5 max-w-2xl text-base leading-8 text-white/72">Every child starts from a different place. Tell us what is on your mind and we’ll help you work out the most useful next step.</p>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <Link to="/book-interview" className="inline-flex items-center rounded-full bg-brand-gold px-5 py-3 text-sm font-bold text-brand-navy hover:bg-brand-lightGold">Book an Interview<ArrowRight className="ml-2 h-4 w-4" /></Link>
+              <a href="tel:0401940207" className="inline-flex items-center rounded-full border border-white/25 px-5 py-3 text-sm font-bold text-white hover:bg-white/10"><Phone className="mr-2 h-4 w-4 text-brand-lightGold" />Call 0401 940 207</a>
+              <Link to="/tutoring-canley-heights" className="inline-flex items-center px-2 py-3 text-sm font-bold text-white/78 hover:text-brand-lightGold"><MapPin className="mr-2 h-4 w-4" />Visit Canley Heights</Link>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <FooterNew />
+    </div>
+  );
+};
+
+export default FAQ;
