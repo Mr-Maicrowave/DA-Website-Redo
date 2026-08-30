@@ -142,7 +142,7 @@ export function getBookInteractionEvents(
 
   if (!isCurrent) {
     const select = { type: 'HOVER' as const, editionId, rootUuid };
-    return input === 'pointer-preview' ? [select] : [select, { type: 'OPEN' }];
+    return [select, { type: 'OPEN' }];
   }
   return [{ type: 'OPEN' }];
 }

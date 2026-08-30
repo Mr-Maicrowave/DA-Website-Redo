@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { ArrowLeft, ArrowRight, BookOpen, ChevronRight, CircleX, UserRound } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { getPhotoStyle, getPhotoUrl, type CatalogueTutor } from '../../data/teacherCatalogue';
 import { SUBJECT_WALLS, type SubjectWall, type TutorBookEdition } from './tutor-library-data';
@@ -136,7 +137,13 @@ export function TutorLibraryControlSurface({ library, activeWall, visibleEdition
       <p className="tutor-library__reader-summary">{selectedTutor.tagline}</p>
       <p className="tutor-library__page-status" aria-live="polite">Page {Math.min(pageCount, settledPages + 1)} of {pageCount}</p>
       <p className="tutor-library__page-hint">Use <kbd>←</kbd> <kbd>→</kbd> to turn pages</p>
-      <div className="tutor-library__reader-actions"><button type="button" disabled={!availability.canOpen} onClick={onOpen}>Open book</button><button type="button" aria-label="Previous tutor profile page" disabled={!canTurn(-1)} onClick={() => requestPageTurn(-1)}>Previous page</button><button type="button" aria-label="Next tutor profile page" disabled={!canTurn(1)} onClick={() => requestPageTurn(1)}>Next page</button><button type="button" disabled={!availability.canClose} onClick={onClose}>Close and return book</button><Link to={`/find-teacher?tutor=${selectedTutor.id}`}>View full tutor profile</Link></div>
+      <div className="tutor-library__reader-actions">
+        <button className="tutor-library__reader-action" type="button" disabled={!availability.canOpen} onClick={onOpen}><BookOpen aria-hidden="true" /><span>Open book</span><ChevronRight aria-hidden="true" /></button>
+        <button className="tutor-library__reader-action" type="button" aria-label="Previous tutor profile page" disabled={!canTurn(-1)} onClick={() => requestPageTurn(-1)}><ArrowLeft aria-hidden="true" /><span>Previous page</span><ChevronRight aria-hidden="true" /></button>
+        <button className="tutor-library__reader-action" type="button" aria-label="Next tutor profile page" disabled={!canTurn(1)} onClick={() => requestPageTurn(1)}><ArrowRight aria-hidden="true" /><span>Next page</span><ChevronRight aria-hidden="true" /></button>
+        <Link className="tutor-library__reader-action" to={`/find-teacher?tutor=${selectedTutor.id}`}><UserRound aria-hidden="true" /><span>View full tutor profile</span><ChevronRight aria-hidden="true" /></Link>
+        <button className="tutor-library__reader-action" type="button" disabled={!availability.canClose} onClick={onClose}><CircleX aria-hidden="true" /><span>Close and return book</span><ChevronRight aria-hidden="true" /></button>
+      </div>
       <div className="sr-only">{pages.map(page => <section key={page.id}><h2>{page.label}</h2>{page.sourceText.map((text, index) => <p key={`${page.id}-${index}`}>{text}</p>)}</section>)}</div>
     </aside> : null}
 

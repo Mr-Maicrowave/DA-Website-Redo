@@ -85,8 +85,8 @@ try {
   assert.ok(mobileReadingLayout);
   assert.ok(mobileReadingLayout.libraryHeight <= 780, 'the library must fit beneath the mobile site navigation without forcing focus-scroll');
   assert.equal(mobileReadingLayout.pickerDisplay, 'none', 'the compact tutor picker must not cover the reading book on mobile');
-  assert.equal(mobileReadingLayout.actionColumns, 2, 'mobile reader actions stay compact instead of becoming a tall single column');
-  assert.ok(mobileReadingLayout.readerHeight <= 280, 'mobile reader panel must leave the upper canvas readable');
+  assert.equal(mobileReadingLayout.actionColumns, 1, 'the inline toolbar preserves an unambiguous reading order on mobile');
+  assert.ok(mobileReadingLayout.readerHeight <= 390, 'mobile reader panel must leave the upper canvas readable');
   assert.ok(mobileReadingLayout.minimumActionHeight >= 44, 'mobile action targets remain at least 44 CSS pixels');
   assert.ok(mobileReadingLayout.readerBottom >= 52, 'wall navigation remains separately reachable below the reader');
   assert.ok(mobileReadingLayout.horizontalOverflow <= 0, 'mobile controls cannot introduce horizontal scrolling');

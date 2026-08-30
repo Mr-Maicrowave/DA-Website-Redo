@@ -37,8 +37,10 @@ test('keeps a branded HTML loading surface visible until the room has rendered i
   const scene = readFileSync(scenePath, 'utf8');
 
   assert.match(library, /const \[roomReady, setRoomReady\] = useState\(false\)/);
+  assert.match(library, /const \[loadingVisible, setLoadingVisible\] = useState\(false\)/);
+  assert.match(library, /setTimeout\(\(\) => setLoadingVisible\(true\), 180\)/);
   assert.match(library, /tutor-library__loading/);
-  assert.match(library, /!roomReady && !sceneError/);
+  assert.match(library, /loadingVisible && !roomReady && !sceneError/);
   assert.match(library, /onRoomReady=\{\(\) => setRoomReady\(true\)\}/);
   assert.match(scene, /function RoomReadySignal/);
   assert.match(scene, /requestAnimationFrame\(\(\) => onRoomReady\(\)\)/);

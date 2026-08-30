@@ -164,10 +164,11 @@ test("draws every Jenny presentation canvas and refreshes the cover after the po
     let coverRefreshes = 0;
     sources.cover.addEventListener("complete-shelf-presentation-update", () => { coverRefreshes += 1; });
 
-    assert.equal(canvases.length, 13, "cover, foil layers, endpaper, and six physical profile pages are all canvas-backed");
+    assert.equal(canvases.length, 14, "cover, foil layers, separate endpapers, and six physical profile pages are all canvas-backed");
     assert.deepEqual([sources.cover.width, sources.cover.height], [768, 1152]);
     assert.deepEqual([sources.spine.width, sources.spine.height], [256, 1152]);
-    assert.deepEqual([sources.endpaper.width, sources.endpaper.height], [512, 768]);
+    assert.deepEqual([sources.openingEndpaper.width, sources.openingEndpaper.height], [512, 768]);
+    assert.deepEqual([sources.frontEndpaper.width, sources.frontEndpaper.height], [512, 768]);
     assert.equal(sources.interiors.length, 6);
     assert.ok(cover.commands.some(command => command.name === "fillText" && command.args[0] === "DA TUITION"));
     assert.ok(back.commands.some(command => command.name === "fillText" && command.args[0] === "DA TUITION"));
@@ -181,8 +182,10 @@ test("draws every Jenny presentation canvas and refreshes the cover after the po
 
     assert.equal(coverRefreshes, 1);
     assert.ok(cover.commands.some(command => command.name === "drawImage"));
-    const endpaper = sources.endpaper as unknown as RecordingCanvas;
-    assert.ok(endpaper.commands.some(command => command.name === "drawImage"), "the portrait appears on the opening left-hand page only");
+    const openingEndpaper = sources.openingEndpaper as unknown as RecordingCanvas;
+    const frontEndpaper = sources.frontEndpaper as unknown as RecordingCanvas;
+    assert.ok(openingEndpaper.commands.some(command => command.name === "drawImage"), "the portrait appears on the opening left-hand page");
+    assert.equal(frontEndpaper.commands.some(command => command.name === "drawImage"), false, "the front endpaper must not duplicate the opening portrait at the binding");
     assert.equal((sources.interiors[0] as unknown as RecordingCanvas).commands.some(command => command.name === "drawImage"), false);
   } finally {
     Object.assign(globalThis, { Image: originalImage });

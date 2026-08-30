@@ -100,19 +100,19 @@ function createFoilTexture(tutor: CatalogueTutor, edition: TutorBookEdition, mod
   if (mode === 'spine') {
     const surname = tutor.name.split(' ').at(-1)?.toUpperCase() ?? tutor.name.toUpperCase();
     if (treatment === 'stacked') {
-      context.font = '600 42px "Playfair Display", Georgia, serif';
+      context.font = '600 42px "Cormorant Garamond", serif';
       surname.split('').forEach((letter, index) => context.fillText(letter, canvas.width / 2, 350 + index * 92));
     } else {
       context.save(); context.translate(canvas.width / 2, canvas.height / 2); context.rotate(Math.PI / 2);
-      context.font = `600 ${treatment === 'surname' ? 76 : tutor.name.length > 15 ? 46 : 58}px "Playfair Display", Georgia, serif`;
+      context.font = `600 ${treatment === 'surname' ? 76 : tutor.name.length > 15 ? 46 : 58}px "Cormorant Garamond", serif`;
       context.fillText(treatment === 'surname' ? surname : tutor.name.toUpperCase(), 0, treatment === 'surname' ? -16 : 0, canvas.height - 130); context.restore();
     }
-    context.font = '600 16px Cabin, Arial, sans-serif'; context.fillText(SUBJECT_MARK[edition.wallId] ?? 'DA TUITION', canvas.width / 2, 94);
+    context.font = '600 16px Cabin, sans-serif'; context.fillText(SUBJECT_MARK[edition.wallId] ?? 'DA TUITION', canvas.width / 2, 94);
   } else {
     context.lineWidth = 7; context.strokeRect(118, 218, canvas.width - 236, 464);
-    context.font = '600 27px Cabin, Arial, sans-serif'; context.fillText(`DA TUITION · ${SUBJECT_MARK[edition.wallId] ?? 'FACULTY'}`, canvas.width / 2, 110);
-    context.font = '600 86px "Playfair Display", Georgia, serif'; context.fillText(tutor.name.replace(/^Mrs\s+/i, ''), canvas.width / 2, 1008, canvas.width - 150);
-    context.font = '600 25px Cabin, Arial, sans-serif'; context.fillText(tutor.designation.toUpperCase(), canvas.width / 2, 1082, canvas.width - 180);
+    context.font = '600 27px Cabin, sans-serif'; context.fillText(`DA TUITION · ${SUBJECT_MARK[edition.wallId] ?? 'FACULTY'}`, canvas.width / 2, 110);
+    context.font = '600 86px "Cormorant Garamond", serif'; context.fillText(tutor.name.replace(/^Mrs\s+/i, ''), canvas.width / 2, 1008, canvas.width - 150);
+    context.font = '600 25px Cabin, sans-serif'; context.fillText(tutor.designation.toUpperCase(), canvas.width / 2, 1082, canvas.width - 180);
   }
   const texture = new CanvasTexture(canvas); texture.colorSpace = SRGBColorSpace; texture.minFilter = LinearMipmapLinearFilter; texture.magFilter = LinearFilter; texture.generateMipmaps = true; texture.anisotropy = 4; texture.needsUpdate = true;
   return texture;
@@ -120,7 +120,7 @@ function createFoilTexture(tutor: CatalogueTutor, edition: TutorBookEdition, mod
 
 function useFontRevision() {
   const [revision, setRevision] = useState(0);
-  useEffect(() => { let mounted = true; document.fonts?.load('600 86px "Playfair Display"').then(() => document.fonts.load('600 27px Cabin')).then(() => { if (mounted) { COVER_TEXTURES.clear(); FOIL_TEXTURES.clear(); setRevision(value => value + 1); } }).catch(() => undefined); return () => { mounted = false; }; }, []);
+  useEffect(() => { let mounted = true; document.fonts?.load('600 86px "Cormorant Garamond"').then(() => document.fonts.load('600 27px Cabin')).then(() => { if (mounted) { COVER_TEXTURES.clear(); FOIL_TEXTURES.clear(); setRevision(value => value + 1); } }).catch(() => undefined); return () => { mounted = false; }; }, []);
   return revision;
 }
 

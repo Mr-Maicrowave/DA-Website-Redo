@@ -64,11 +64,20 @@ export function TutorLibrary() {
   const [rigIntent, setRigIntent] = useState<PendingRigIntent>();
   const [sceneError, setSceneError] = useState<string | undefined>(() => searchParams.get('libraryForceCanvasError') === '1' ? 'Forced Tutor Library Canvas failure' : undefined);
   const [roomReady, setRoomReady] = useState(false);
+  const [loadingVisible, setLoadingVisible] = useState(false);
   const [viewport, setViewport] = useState(() => ({
     width: typeof window === 'undefined' ? 1440 : window.innerWidth,
     height: typeof window === 'undefined' ? 900 : window.innerHeight,
   }));
   const reducedMotion = useReducedMotionPreference();
+  useEffect(() => {
+    if (roomReady || sceneError) {
+      setLoadingVisible(false);
+      return;
+    }
+    const timer = window.setTimeout(() => setLoadingVisible(true), 180);
+    return () => window.clearTimeout(timer);
+  }, [roomReady, sceneError]);
   const timing = useMemo(() => createBookMotionTimingPolicy(reducedMotion), [reducedMotion]);
   const mountedRoots = useRef(createMountedRigRootRegistry());
   const pendingIntent = useRef(createPendingRigIntentTracker());
@@ -187,7 +196,7 @@ export function TutorLibrary() {
   const accessibility = getTutorLibraryAccessibilityProps(bookActive, selectedTutor?.name);
 
   return <section className={`tutor-library${isDebugTurn || isDebugBook || qaState ? ' tutor-library--diagnostic' : ''}${bookActive ? ' tutor-library--book-active' : ''}`} aria-label={accessibility.rootLabel} aria-labelledby={accessibility.rootLabelledBy} data-tutor-library-qa="root" data-library-phase={qa.phase} data-library-transition-id={qa.transitionId} data-library-generation={qa.generation} data-library-edition={qa.edition} data-library-wall={qa.wall} data-library-root-uuid={qa.rootUuid} data-library-matrix-delta={qa.matrixDelta} data-library-reset-state={qa.resetState} data-library-review-view={qa.reviewView} data-library-review-progress={qa.progress} data-library-qa-progress={qa.progress} data-library-controller-progress="unavailable" data-library-qa-state={qaState?.id ?? 'live'} data-room-phase={sceneBookPhase} data-turn-progress={liveProgress.toFixed(2)} data-reduced-motion={reducedMotion ? 'true' : 'false'}>
-    {!roomReady && !sceneError ? <div className="tutor-library__loading" role="status" aria-live="polite">
+    {loadingVisible && !roomReady && !sceneError ? <div className="tutor-library__loading" role="status" aria-live="polite">
       <div className="tutor-library__loading-card">
         <p>DA Tuition faculty</p>
         <h2>The tutor library is opening</h2>

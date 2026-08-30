@@ -24,7 +24,8 @@ export function applyCompleteShelfPresentation({ presentation, textures, materia
   applyTexture(textures.spineFoil, sources.spineFoil);
   applyTexture(textures.back, sources.back);
   applyTexture(textures.backFoil, sources.backFoil);
-  applyTexture(textures.endpaper, sources.endpaper);
+  applyTexture(textures.openingEndpaper, sources.openingEndpaper);
+  applyTexture(textures.frontEndpaper, sources.frontEndpaper);
   (sources.interiors ?? []).slice(0, textures.interiors?.length ?? 0).forEach((source, index) => applyTexture(textures.interiors[index], source));
   if (colours.cloth) setMaterialColours(materials.cloth, colours.cloth);
   if (colours.foil) setMaterialColours(materials.foil, colours.foil);

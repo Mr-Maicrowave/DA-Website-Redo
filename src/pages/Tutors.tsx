@@ -10,7 +10,7 @@ const TutorLibrary = lazy(() => import('@/features/tutor-library/TutorLibrary').
 const TutorBookStudio = lazy(() => import('@/features/tutor-library/TutorBookStudio').then(module => ({ default: module.TutorBookStudio })));
 
 const TutorLibraryRouteLoading = () => <main aria-live="polite" aria-label="Opening tutor library" style={{ display: 'grid', minHeight: 'min(78rem, 100svh)', placeItems: 'center', background: '#071323', color: '#f7ecd4', textAlign: 'center' }}>
-  <div><p style={{ margin: 0, color: '#d5b369', fontSize: '.72rem', fontWeight: 700, letterSpacing: '.12em', textTransform: 'uppercase' }}>DA Tuition faculty</p><h1 style={{ margin: '.65rem 0 0', fontFamily: 'Georgia, serif', fontWeight: 500 }}>Opening the tutor library</h1></div>
+  <div><p style={{ margin: 0, color: '#d5b369', fontSize: '.72rem', fontWeight: 700, letterSpacing: '.12em', textTransform: 'uppercase' }}>DA Tuition faculty</p><h1 style={{ margin: '.65rem 0 0', fontFamily: "'Cormorant Garamond', serif", fontWeight: 500 }}>Opening the tutor library</h1></div>
 </main>;
 
 const Tutors = () => {

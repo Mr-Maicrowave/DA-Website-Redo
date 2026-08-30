@@ -85,10 +85,10 @@ function useDaCoverTexture(tutor: CatalogueTutor, edition: TutorBookEdition) {
     const context = canvas.getContext('2d');
     if (!context) throw new Error('Tutor cover creation is unavailable');
     context.clearRect(0, 0, canvas.width, canvas.height);
-    context.fillStyle = 'rgba(255,255,255,.93)'; context.font = '600 29px Georgia, serif'; context.textAlign = 'center';
+    context.fillStyle = 'rgba(255,255,255,.93)'; context.font = '600 29px "Cormorant Garamond", serif'; context.textAlign = 'center';
     context.fillText('DA TUITION', 512, 105);
-    context.font = '600 62px Georgia, serif'; context.fillText(tutor.name.replace(/^(Mr|Ms|Mrs)\s+/i, ''), 512, 895, 820);
-    context.font = '600 23px Arial, sans-serif'; context.fillText(edition.wallId.replace('-', ' ').toUpperCase(), 512, 946);
+    context.font = '600 62px "Cormorant Garamond", serif'; context.fillText(tutor.name.replace(/^(Mr|Ms|Mrs)\s+/i, ''), 512, 895, 820);
+    context.font = '600 23px Cabin, sans-serif'; context.fillText(edition.wallId.replace('-', ' ').toUpperCase(), 512, 946);
     const texture = new CanvasTexture(canvas); texture.colorSpace = SRGBColorSpace; texture.minFilter = LinearMipmapLinearFilter; texture.magFilter = LinearFilter; texture.anisotropy = 16;
     const portrait = new Image(); portrait.decoding = 'async'; portrait.onload = () => {
       context.save(); context.beginPath(); context.rect(142, 188, 740, 610); context.clip();
@@ -107,11 +107,11 @@ function useSpineTexture(tutor: CatalogueTutor, edition: TutorBookEdition) {
     const tutorName = tutor.name.replace(/^(Mr|Ms|Mrs)\s+/i, '').toUpperCase();
     context.clearRect(0, 0, canvas.width, canvas.height);
     context.fillStyle = '#d9b463'; context.textAlign = 'center'; context.textBaseline = 'middle';
-    context.font = '700 23px Arial, sans-serif'; context.fillText('DA  /  EDITION', 128, 64);
+    context.font = '700 23px Cabin, sans-serif'; context.fillText('DA  /  EDITION', 128, 64);
     context.save(); context.translate(128, 512); context.rotate(-Math.PI / 2);
-    context.font = '600 46px Georgia, serif'; context.fillText(tutorName, 0, 0, 790);
+    context.font = '600 46px "Cormorant Garamond", serif'; context.fillText(tutorName, 0, 0, 790);
     context.restore();
-    context.font = '700 20px Arial, sans-serif'; context.fillText(edition.wallId.replace('-', ' ').toUpperCase(), 128, 962);
+    context.font = '700 20px Cabin, sans-serif'; context.fillText(edition.wallId.replace('-', ' ').toUpperCase(), 128, 962);
     const texture = new CanvasTexture(canvas); texture.colorSpace = SRGBColorSpace; texture.minFilter = LinearMipmapLinearFilter; texture.magFilter = LinearFilter; texture.anisotropy = 16;
     return texture;
   }, [edition.wallId, tutor.name]);
