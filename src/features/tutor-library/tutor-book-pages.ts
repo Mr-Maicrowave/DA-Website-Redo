@@ -33,25 +33,25 @@ export function createTutorBookPages(tutor: CatalogueTutor): readonly TutorBookP
     {
       id: 'identity',
       folio: 1,
-      label: 'Profile',
+      label: 'Meet the tutor',
       sourceText: [tutor.name, tutor.designation, tutor.tagline, tutor.subjects, ...profile.strengths],
     },
     {
       id: 'approach',
       folio: 2,
-      label: 'Teaching profile',
+      label: 'How they teach',
       sourceText: [tutor.motto, ...profile.strengths],
     },
     {
       id: 'why-da',
       folio: 3,
-      label: 'Why DA',
+      label: 'Why trust them',
       sourceText: [profile.whyDA],
     },
     {
       id: 'goals',
       folio: 4,
-      label: 'Teaching goals',
+      label: 'Who they are right for',
       sourceText: [profile.approach],
     },
     {

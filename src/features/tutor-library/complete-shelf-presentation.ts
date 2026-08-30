@@ -174,22 +174,52 @@ function drawPortrait(
   image.src = portrait.url;
 }
 
+function drawArchPortrait(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D, portrait: CompleteShelfPresentation["portrait"], colours: CompleteShelfPresentation["colours"]) {
+  if (typeof Image === "undefined") return;
+  const image = new Image();
+  image.decoding = "async";
+  let triedFallback = false;
+  const draw = () => {
+    const width = canvas.width * .62;
+    const height = canvas.height * .51;
+    const x = (canvas.width - width) / 2;
+    const y = canvas.height * .18;
+    const radius = width / 2;
+    const scale = Math.max(width / image.naturalWidth, height / image.naturalHeight);
+    const renderedWidth = image.naturalWidth * scale;
+    const renderedHeight = image.naturalHeight * scale;
+    context.save(); context.beginPath(); context.moveTo(x, y + radius); context.arc(x + radius, y + radius, radius, Math.PI, 0); context.lineTo(x + width, y + height); context.lineTo(x, y + height); context.clip();
+    context.drawImage(image, x + (width - renderedWidth) / 2, y + (height - renderedHeight) / 2, renderedWidth, renderedHeight);
+    context.restore();
+    context.strokeStyle = colours.foil; context.lineWidth = Math.max(3, canvas.width * .0035);
+    context.beginPath(); context.moveTo(x, y + radius); context.arc(x + radius, y + radius, radius, Math.PI, 0); context.lineTo(x + width, y + height); context.lineTo(x, y + height); context.stroke();
+    notifyTextureUpdate(canvas);
+  };
+  image.onload = draw;
+  image.onerror = () => { if (!triedFallback && portrait.url !== portrait.fallbackUrl) { triedFallback = true; image.src = portrait.fallbackUrl; } };
+  image.src = portrait.url;
+}
+
 function drawCover(canvas: HTMLCanvasElement, tutor: CatalogueTutor, portrait: CompleteShelfPresentation["portrait"], colours: CompleteShelfPresentation["colours"]) {
   const context = contextFor(canvas);
   context.fillStyle = colours.cloth;
   context.fillRect(0, 0, canvas.width, canvas.height);
   drawRule(context, canvas, colours.foil);
+  context.fillStyle = colours.paper;
+  context.fillRect(canvas.width * .11, canvas.height * .08, canvas.width * .78, canvas.height * .84);
   context.fillStyle = colours.foil;
   context.textAlign = "center";
   context.font = `600 ${Math.round(canvas.width * 0.04)}px Cabin, sans-serif`;
   context.fillText("DA TUITION", canvas.width / 2, canvas.height * 0.105);
-  drawPortrait(canvas, context, portrait, colours);
-  context.fillStyle = "#ffffff";
+  drawArchPortrait(canvas, context, portrait, colours);
+  context.fillStyle = colours.ink;
   context.font = `600 ${Math.round(canvas.width * 0.074)}px "Cormorant Garamond", serif`;
-  drawWrappedText(context, tutor.name.replace(/^(Mr|Ms|Mrs)\s+/i, ""), canvas.width / 2, canvas.height * 0.68, canvas.width * 0.78, canvas.width * 0.087, 2);
+  drawWrappedText(context, tutor.name, canvas.width / 2, canvas.height * 0.76, canvas.width * 0.72, canvas.width * 0.075, 2);
   context.fillStyle = colours.foil;
-  context.font = `600 ${Math.round(canvas.width * 0.027)}px Cabin, sans-serif`;
-  drawWrappedText(context, tutor.designation.toUpperCase(), canvas.width / 2, canvas.height * 0.84, canvas.width * 0.72, canvas.width * 0.04, 2);
+  context.font = `600 ${Math.round(canvas.width * 0.024)}px Cabin, sans-serif`;
+  drawWrappedText(context, tutor.subjects.split(" / ").slice(0, 2).join(" • ").toUpperCase(), canvas.width / 2, canvas.height * 0.845, canvas.width * 0.68, canvas.width * 0.034, 2);
+  context.font = `600 ${Math.round(canvas.width * 0.018)}px Cabin, sans-serif`;
+  context.fillText("DEDICATED TO EXCELLENCE", canvas.width / 2, canvas.height * .89);
 }
 
 function drawSpine(canvas: HTMLCanvasElement, tutor: CatalogueTutor, colours: CompleteShelfPresentation["colours"]) {

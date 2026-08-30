@@ -249,6 +249,7 @@ test('restores perturbed pose, matrices, and neighbours through ten complete sem
     assert.notDeepEqual(coordinator.currentNeighbourPoses, coordinator.neighbourPoses);
     library = libraryReducer(library, { type: 'CLOSE' });
     library = completeLibrary(library, { type: 'CLOSE_COMPLETE' });
+    library = libraryReducer(library, { type: 'CLOSE' });
     library = completeLibrary(library, { type: 'RESET_COMPLETE', controller: resetReady });
     assert.equal(library.phase, 'BOOK_RETURNING');
 

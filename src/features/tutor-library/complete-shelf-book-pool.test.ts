@@ -108,6 +108,7 @@ test('revisits an evicted tutor with only the newly mounted root through reset a
   state = complete(state, { type: 'OPEN_COMPLETE' } as Omit<LibraryEvent, 'generation'>);
   state = libraryReducer(state, { type: 'CLOSE' });
   state = complete(state, { type: 'CLOSE_COMPLETE' } as Omit<LibraryEvent, 'generation'>);
+  state = libraryReducer(state, { type: 'CLOSE' });
   state = complete(state, {
     type: 'RESET_COMPLETE',
     controller: {

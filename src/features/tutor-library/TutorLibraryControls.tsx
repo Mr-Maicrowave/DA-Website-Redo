@@ -52,6 +52,8 @@ export function TutorLibraryControlSurface({ library, activeWall, visibleEdition
   const tutorPicker = useRef<HTMLSelectElement>(null);
   const pointerStart = useRef<{ x: number; y: number; id: number }>();
   const pages = selectedTutor ? createTutorBookPages(selectedTutor) : [];
+  const readerStage = library.phase === 'BOOK_PREVIEW' ? 'cover' : 'spread';
+  const readerVisible = library.phase === 'BOOK_PREVIEW' || library.phase === 'BOOK_READING' || library.phase === 'PAGE_SETTLED';
   const canTurn = (direction: TutorBookPageTurnDirection) => availability.canTurnPage
     && getTutorBookPageTarget(settledPages, direction) !== undefined;
   const requestPageTurn = (direction: TutorBookPageTurnDirection) => {
@@ -114,7 +116,7 @@ export function TutorLibraryControlSurface({ library, activeWall, visibleEdition
       </label>
     </div> : null}
 
-    {selectedTutor && !sceneError ? <aside className="tutor-library__reader" aria-label={`${selectedTutor.name} tutor book controls`} aria-keyshortcuts="ArrowLeft ArrowRight PageUp PageDown" tabIndex={0}
+    {selectedTutor && readerVisible && !sceneError ? <aside className="tutor-library__reader" data-reader-stage={readerStage} aria-label={`${selectedTutor.name} tutor book controls`} aria-keyshortcuts="ArrowLeft ArrowRight PageUp PageDown" tabIndex={0}
       onKeyDown={event => {
         const direction = getPageTurnDirectionForKey(event.key);
         if (!direction || !canTurn(direction)) return;
@@ -135,14 +137,19 @@ export function TutorLibraryControlSurface({ library, activeWall, visibleEdition
       onPointerCancel={() => { pointerStart.current = undefined; }}>
       <div className="tutor-library__reader-profile"><Portrait tutor={selectedTutor} /><div><p>{selectedTutor.name}</p><span>{selectedTutor.designation}</span></div></div>
       <p className="tutor-library__reader-summary">{selectedTutor.tagline}</p>
-      <p className="tutor-library__page-status" aria-live="polite">Page {Math.min(pageCount, settledPages + 1)} of {pageCount}</p>
-      <p className="tutor-library__page-hint">Use <kbd>←</kbd> <kbd>→</kbd> to turn pages</p>
+      {readerStage === 'spread' ? <><p className="tutor-library__page-status" aria-live="polite">Spread {Math.min(pageCount, settledPages + 1)} of {pageCount}</p>
+      <p className="tutor-library__page-hint">Use <kbd>←</kbd> <kbd>→</kbd> to turn spreads</p></> : null}
       <div className="tutor-library__reader-actions">
+        {readerStage === 'cover' ? <>
         <button className="tutor-library__reader-action" type="button" disabled={!availability.canOpen} onClick={onOpen}><BookOpen aria-hidden="true" /><span>Open book</span><ChevronRight aria-hidden="true" /></button>
+        <Link className="tutor-library__reader-action" to={`/find-teacher?tutor=${selectedTutor.id}`}><UserRound aria-hidden="true" /><span>View full tutor profile</span><ChevronRight aria-hidden="true" /></Link>
+        <button className="tutor-library__reader-action" type="button" disabled={!availability.canClose} onClick={onClose}><CircleX aria-hidden="true" /><span>Return book</span><ChevronRight aria-hidden="true" /></button>
+        </> : <>
         <button className="tutor-library__reader-action" type="button" aria-label="Previous tutor profile page" disabled={!canTurn(-1)} onClick={() => requestPageTurn(-1)}><ArrowLeft aria-hidden="true" /><span>Previous page</span><ChevronRight aria-hidden="true" /></button>
         <button className="tutor-library__reader-action" type="button" aria-label="Next tutor profile page" disabled={!canTurn(1)} onClick={() => requestPageTurn(1)}><ArrowRight aria-hidden="true" /><span>Next page</span><ChevronRight aria-hidden="true" /></button>
         <Link className="tutor-library__reader-action" to={`/find-teacher?tutor=${selectedTutor.id}`}><UserRound aria-hidden="true" /><span>View full tutor profile</span><ChevronRight aria-hidden="true" /></Link>
-        <button className="tutor-library__reader-action" type="button" disabled={!availability.canClose} onClick={onClose}><CircleX aria-hidden="true" /><span>Close and return book</span><ChevronRight aria-hidden="true" /></button>
+        <button className="tutor-library__reader-action" type="button" disabled={!availability.canClose} onClick={onClose}><CircleX aria-hidden="true" /><span>Close book</span><ChevronRight aria-hidden="true" /></button>
+        </>}
       </div>
       <div className="sr-only">{pages.map(page => <section key={page.id}><h2>{page.label}</h2>{page.sourceText.map((text, index) => <p key={`${page.id}-${index}`}>{text}</p>)}</section>)}</div>
     </aside> : null}

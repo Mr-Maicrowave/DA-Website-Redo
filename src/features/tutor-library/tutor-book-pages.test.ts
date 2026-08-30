@@ -103,6 +103,15 @@ test('maps keyboard and reliable horizontal swipe gestures to bounded page targe
   assert.equal(TUTOR_BOOK_READING_STATE_COUNT, 2);
 });
 
+test('gives the four visible tutor pages their reader-first editorial roles', () => {
+  assert.deepEqual(createTutorBookPages(jenny).slice(0, 4).map(page => page.label), [
+    'Meet the tutor',
+    'How they teach',
+    'Why trust them',
+    'Who they are right for',
+  ]);
+});
+
 test('advances real controller page progress over the existing timing window and clamps once complete', () => {
   assert.equal(advanceTutorBookPageTurn(0, .38, 760), .5);
   assert.equal(advanceTutorBookPageTurn(.8, .38, 760), 1);

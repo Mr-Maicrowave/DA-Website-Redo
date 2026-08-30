@@ -225,6 +225,9 @@ export function advanceCompleteShelfOuterMotion(state: CompleteShelfOuterMotionS
       returnFrom,
     };
   }
+  if (phase === 'BOOK_PREVIEW' && state.phase === 'BOOK_CLOSING') {
+    return { ...state, phase, pose: state.pose };
+  }
   return {
     edition: state.edition,
     phase,

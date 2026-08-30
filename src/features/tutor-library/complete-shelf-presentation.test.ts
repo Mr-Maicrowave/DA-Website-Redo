@@ -48,6 +48,7 @@ class RecordingCanvas extends EventTarget {
     stroke: () => this.commands.push({ name: "stroke", args: [] }),
     moveTo: (...args: unknown[]) => this.commands.push({ name: "moveTo", args }),
     lineTo: (...args: unknown[]) => this.commands.push({ name: "lineTo", args }),
+    arc: (...args: unknown[]) => this.commands.push({ name: "arc", args }),
     translate: (...args: unknown[]) => this.commands.push({ name: "translate", args }),
     rotate: (...args: unknown[]) => this.commands.push({ name: "rotate", args }),
     clearRect: (...args: unknown[]) => this.commands.push({ name: "clearRect", args }),
@@ -182,6 +183,7 @@ test("draws every Jenny presentation canvas and refreshes the cover after the po
 
     assert.equal(coverRefreshes, 1);
     assert.ok(cover.commands.some(command => command.name === "drawImage"));
+    assert.ok(cover.commands.some(command => command.name === "arc"), "the closed cover frames the portrait in the DA arch motif");
     const openingEndpaper = sources.openingEndpaper as unknown as RecordingCanvas;
     const frontEndpaper = sources.frontEndpaper as unknown as RecordingCanvas;
     assert.ok(openingEndpaper.commands.some(command => command.name === "drawImage"), "the portrait appears on the opening left-hand page");

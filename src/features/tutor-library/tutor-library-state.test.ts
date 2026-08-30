@@ -51,9 +51,30 @@ function reachReading(): LibraryState {
 
 function finishReturn(state: LibraryState): LibraryState {
   state = complete(state, { type: 'CLOSE_COMPLETE' });
+  state = libraryReducer(state, { type: 'CLOSE' });
   state = complete(state, { type: 'RESET_COMPLETE', controller: resetReady });
   return complete(state, { type: 'RETURN_COMPLETE' });
 }
+
+test('takes a newly selected shelf book to its closed cover before an explicit open request', () => {
+  const idle = createLibraryState('primary');
+  assert.deepEqual(getBookInteractionEvents(idle, 'touch-activate', 'book-a', 'root-a'), [
+    { type: 'HOVER', editionId: 'book-a', rootUuid: 'root-a' },
+  ]);
+
+  let state = libraryReducer(idle, { type: 'HOVER', editionId: 'book-a', rootUuid: 'root-a' });
+  state = complete(state, { type: 'HOVER_INTENT_COMPLETE' });
+  state = complete(state, { type: 'PREVIEW_READY' });
+  assert.equal(state.phase, 'BOOK_PREVIEW');
+  assert.equal(libraryReducer(state, { type: 'OPEN' }).phase, 'BOOK_TO_READING');
+});
+
+test('returns a closed reading book to its cover before it can be returned to the shelf', () => {
+  let state = libraryReducer(reachReading(), { type: 'CLOSE' });
+  state = complete(state, { type: 'CLOSE_COMPLETE' });
+  assert.equal(state.phase, 'BOOK_PREVIEW');
+  assert.equal(libraryReducer(state, { type: 'CLOSE' }).phase, 'BOOK_RESETTING');
+});
 
 test('runs every legal book lifecycle transition without frame-level state', () => {
   let state = createLibraryState('primary');
@@ -80,6 +101,8 @@ test('runs every legal book lifecycle transition without frame-level state', () 
   state = libraryReducer(state, { type: 'CLOSE' });
   assert.equal(state.phase, 'BOOK_CLOSING');
   state = complete(state, { type: 'CLOSE_COMPLETE' });
+  assert.equal(state.phase, 'BOOK_PREVIEW');
+  state = libraryReducer(state, { type: 'CLOSE' });
   assert.equal(state.phase, 'BOOK_RESETTING');
   state = complete(state, { type: 'RESET_COMPLETE', controller: resetReady });
   assert.equal(state.phase, 'BOOK_RETURNING');
@@ -150,7 +173,7 @@ test('enumerates every legal reducer transition, including direct-open and cance
     { name: 'settled drag', from: state('PAGE_SETTLED'), event: { type: 'PAGE_DRAG_START' }, phase: 'PAGE_DRAGGING' },
     { name: 'settled turn', from: state('PAGE_SETTLED'), event: { type: 'PAGE_TURN' }, phase: 'PAGE_TURNING' },
     { name: 'settled close', from: state('PAGE_SETTLED'), event: { type: 'CLOSE' }, phase: 'BOOK_CLOSING' },
-    { name: 'close complete', from: state('BOOK_CLOSING'), event: { type: 'CLOSE_COMPLETE', generation: 7 }, phase: 'BOOK_RESETTING' },
+    { name: 'close complete', from: state('BOOK_CLOSING'), event: { type: 'CLOSE_COMPLETE', generation: 7 }, phase: 'BOOK_PREVIEW' },
     { name: 'reset complete', from: state('BOOK_RESETTING'), event: { type: 'RESET_COMPLETE', generation: 7, controller: resetReady }, phase: 'BOOK_RETURNING' },
     { name: 'return complete', from: state('BOOK_RETURNING'), event: { type: 'RETURN_COMPLETE', generation: 7 }, phase: 'ROOM_IDLE' },
   ];
@@ -311,6 +334,7 @@ test('completes a full recovery cycle with one stable required root identifier',
   state = complete(state, { type: 'OPEN_COMPLETE' });
   state = libraryReducer(state, { type: 'CLOSE' });
   state = complete(state, { type: 'CLOSE_COMPLETE' });
+  state = libraryReducer(state, { type: 'CLOSE' });
   state = complete(state, {
     type: 'RESET_COMPLETE',
     controller: { ...resetReady, rootUuid: 'logical:tutor-book:book-a' },
@@ -320,7 +344,7 @@ test('completes a full recovery cycle with one stable required root identifier',
   assert.deepEqual(state, {
     phase: 'ROOM_IDLE',
     activeWallId: 'primary',
-    transitionGeneration: 10,
+    transitionGeneration: 11,
   });
 });
 
@@ -348,12 +372,11 @@ test('remembers a click during extraction and proceeds through the safe reading 
   assert.equal(state.phase, 'BOOK_TO_READING');
 });
 
-test('routes an initial activation directly through extraction toward reading', () => {
+test('routes an initial activation through extraction toward the closed cover', () => {
   const events = getBookInteractionEvents(createLibraryState('primary'), 'touch-activate', 'book-a', 'root-a');
 
   assert.deepEqual(events, [
     { type: 'HOVER', editionId: 'book-a', rootUuid: 'root-a' },
-    { type: 'OPEN' },
   ]);
 });
 
@@ -384,7 +407,8 @@ test('Escape recovers deterministically from every book transient and reading st
 
 test('will not return until close/reset complete with zero controller residue', () => {
   const closing = libraryReducer(reachReading(), { type: 'CLOSE' });
-  const resetting = complete(closing, { type: 'CLOSE_COMPLETE' });
+  const cover = complete(closing, { type: 'CLOSE_COMPLETE' });
+  const resetting = libraryReducer(cover, { type: 'CLOSE' });
   const invalidSnapshots: ControllerResetSnapshot[] = [
     { ...resetReady, closeComplete: false },
     { ...resetReady, resetComplete: false },

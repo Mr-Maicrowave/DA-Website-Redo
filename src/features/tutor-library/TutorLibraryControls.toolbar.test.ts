@@ -11,6 +11,13 @@ test('uses the compact inline-toolbar structure for the book companion', () => {
   assert.match(styles, /\.tutor-library__reader-actions \{ display: grid; grid-template-columns: 1fr;/);
 });
 
+test('only presents the controls that make sense for the closed cover or an open spread', () => {
+  assert.match(controls, /const readerStage = library\.phase === 'BOOK_PREVIEW' \? 'cover' : 'spread'/);
+  assert.match(controls, /readerStage === 'cover'/);
+  assert.match(controls, /Return book/);
+  assert.match(controls, /Close book/);
+});
+
 test('uses the site editorial font pair throughout the tutor library', () => {
   assert.match(styles, /'Cormorant Garamond'/);
   assert.match(styles, /'Cabin'/);

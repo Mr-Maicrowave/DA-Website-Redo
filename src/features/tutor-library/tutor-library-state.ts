@@ -142,7 +142,7 @@ export function getBookInteractionEvents(
 
   if (!isCurrent) {
     const select = { type: 'HOVER' as const, editionId, rootUuid };
-    return [select, { type: 'OPEN' }];
+    return [select];
   }
   return [{ type: 'OPEN' }];
 }
@@ -425,7 +425,7 @@ export function libraryReducer(state: LibraryState, event: LibraryEvent): Librar
 
   if (state.phase === 'BOOK_CLOSING') {
     if (event.type === 'CLOSE_COMPLETE' && isCurrentCompletion(state, event)) {
-      return advance(state, 'BOOK_RESETTING');
+      return advance(state, 'BOOK_PREVIEW');
     }
     return state;
   }

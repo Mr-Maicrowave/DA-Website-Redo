@@ -62,7 +62,7 @@ try {
   assert.deepEqual((await page.evaluate(() => window.tutorLibraryFixture.events)).filter(event => event.startsWith('page:')), [
     'page:1', 'page:-1', 'page:1',
   ]);
-  assert.match(await page.$eval('.tutor-library__page-status', element => element.textContent ?? ''), /Page 2 of 2/i);
+  assert.match(await page.$eval('.tutor-library__page-status', element => element.textContent ?? ''), /Spread 2 of 2/i);
 
   await page.setViewport({ width: 390, height: 844, deviceScaleFactor: 2 });
   const mobileReadingLayout = await page.evaluate(() => {
@@ -92,7 +92,7 @@ try {
   assert.ok(mobileReadingLayout.horizontalOverflow <= 0, 'mobile controls cannot introduce horizontal scrolling');
   await page.evaluate(() => window.tutorLibraryFixture.setPage(1));
   assert.equal(await page.$eval(nextPage, element => element.disabled), true);
-  assert.match(await page.$eval('.tutor-library__page-status', element => element.textContent ?? ''), /Page 2 of 2/i);
+  assert.match(await page.$eval('.tutor-library__page-status', element => element.textContent ?? ''), /Spread 2 of 2/i);
 
   assert.equal(await page.$eval(picker, element => element.disabled), true);
   const eventCount = await page.evaluate(() => window.tutorLibraryFixture.events.length);
