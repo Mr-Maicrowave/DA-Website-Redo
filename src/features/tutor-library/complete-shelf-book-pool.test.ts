@@ -273,3 +273,18 @@ test('allows exactly one global intent/selected rig and blocks non-idle pointer 
   }));
   assert.deepEqual(hostileOwners, [selectedEditionId]);
 });
+
+test('keeps hover lightweight and reserves full-rig acquisition for explicit activation', async () => {
+  const module = await import('./complete-shelf-book-pool.ts');
+  assert.equal(
+    typeof module.shouldStartCompleteShelfRigIntent,
+    'function',
+    'the production pointer boundary must distinguish hover from activation',
+  );
+  const shouldStart = module.shouldStartCompleteShelfRigIntent!;
+
+  assert.equal(shouldStart('hover', 'ROOM_IDLE', false), false, 'hover must never construct the page rig');
+  assert.equal(shouldStart('activate', 'ROOM_IDLE', false), true, 'click or tap may request the rig');
+  assert.equal(shouldStart('activate', 'BOOK_EXTRACTING', false), false, 'transitions reject competing requests');
+  assert.equal(shouldStart('activate', 'ROOM_IDLE', true), false, 'the selected book already owns its rig');
+});

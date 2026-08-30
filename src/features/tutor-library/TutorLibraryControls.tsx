@@ -4,7 +4,6 @@ import { getPhotoStyle, getPhotoUrl, type CatalogueTutor } from '../../data/teac
 import { SUBJECT_WALLS, type SubjectWall, type TutorBookEdition } from './tutor-library-data';
 import {
   isBookControlDisabled,
-  shouldPreviewBookOnFocus,
   type BookInteractionInput,
   type LibraryControlAvailability,
   type LibraryState,
@@ -49,8 +48,7 @@ export interface TutorLibraryControlSurfaceProps {
 }
 
 export function TutorLibraryControlSurface({ library, activeWall, visibleEditions, tutors, selectedTutor, fallbackTutor, availability, status, sceneError, focusReturnEditionId, settledPages, pageCount, showControls = true, onTurn, onBookInteraction, onCancelPending, onEscape, onOpen, onPageTurn, onClose }: TutorLibraryControlSurfaceProps) {
-  const restoringFocus = useRef(false);
-  const bookButtons = useRef(new Map<string, HTMLButtonElement>());
+  const tutorPicker = useRef<HTMLSelectElement>(null);
   const pointerStart = useRef<{ x: number; y: number; id: number }>();
   const pages = selectedTutor ? createTutorBookPages(selectedTutor) : [];
   const canTurn = (direction: TutorBookPageTurnDirection) => availability.canTurnPage
@@ -61,9 +59,7 @@ export function TutorLibraryControlSurface({ library, activeWall, visibleEdition
 
   useEffect(() => {
     if (!focusReturnEditionId) return;
-    restoringFocus.current = true;
-    bookButtons.current.get(focusReturnEditionId)?.focus();
-    restoringFocus.current = false;
+    tutorPicker.current?.focus();
   }, [focusReturnEditionId]);
 
   useEffect(() => {
@@ -79,11 +75,27 @@ export function TutorLibraryControlSurface({ library, activeWall, visibleEdition
   return <>
     {showControls ? <div className="tutor-library__controls" aria-disabled={sceneError ? 'true' : undefined} {...(sceneError ? { inert: '' } as Record<string, string> : {})}>
       <nav className="tutor-library__wall-nav" aria-label="Turn toward a subject wall">{SUBJECT_WALLS.map(wall => <button key={wall.id} type="button" disabled={Boolean(sceneError) || !availability.canTurnRoom || wall.id === activeWall.id} aria-pressed={wall.id === activeWall.id} onClick={() => onTurn(wall.id)}>{wall.label}</button>)}</nav>
-      <div className="tutor-library__book-controls" role="group" aria-label={`${activeWall.label} tutor books`}>{visibleEditions.map(edition => {
-        const tutor = tutors.get(edition.tutorId); if (!tutor) return null;
-        const selected = edition.id === library.selectedEditionId;
-        return <button key={edition.id} ref={node => { if (node) bookButtons.current.set(edition.id, node); else bookButtons.current.delete(edition.id); }} type="button" className="tutor-library__book-control" data-edition-id={edition.id} disabled={Boolean(sceneError) || isBookControlDisabled(library, edition.id)} aria-pressed={selected} aria-label={`${selected ? 'Open' : 'Preview'} ${tutor.name}'s tutor book`} onPointerEnter={event => { if (event.pointerType !== 'touch') onBookInteraction(edition.id, 'pointer-preview'); }} onPointerLeave={() => onCancelPending(edition.id)} onFocus={() => { if (shouldPreviewBookOnFocus(restoringFocus.current)) onBookInteraction(edition.id, 'pointer-preview'); }} onBlur={() => onCancelPending(edition.id)} onClick={() => onBookInteraction(edition.id, 'keyboard-activate')}><span>{tutor.name.replace(/^(Mr|Ms|Mrs)\s+/i, '')}</span><small>{tutor.designation}</small></button>;
-      })}</div>
+      <label className="tutor-library__tutor-picker" hidden={Boolean(selectedTutor)}>
+        <span>Choose a tutor</span>
+        <select
+          ref={tutorPicker}
+          aria-label={`Choose a ${activeWall.label} tutor book`}
+          value=""
+          disabled={Boolean(sceneError) || visibleEditions.every(edition => isBookControlDisabled(library, edition.id))}
+          onChange={event => {
+            const editionId = event.currentTarget.value;
+            if (editionId && !sceneError && !isBookControlDisabled(library, editionId)) {
+              onBookInteraction(editionId, 'keyboard-activate');
+            }
+          }}
+        >
+          <option value="">Select a book from the shelf</option>
+          {visibleEditions.map(edition => {
+            const tutor = tutors.get(edition.tutorId);
+            return tutor ? <option key={edition.id} value={edition.id}>{tutor.name}</option> : null;
+          })}
+        </select>
+      </label>
     </div> : null}
 
     {selectedTutor && !sceneError ? <aside className="tutor-library__reader" aria-label={`${selectedTutor.name} tutor book controls`} tabIndex={0}

@@ -241,3 +241,13 @@ export function shouldAcquireCompleteShelfRig(input: {
   if (input.selectedEditionId) return input.editionId === input.selectedEditionId;
   return input.phase === 'ROOM_IDLE' && input.editionId === input.intentEditionId;
 }
+
+export type CompleteShelfPointerInteraction = 'hover' | 'activate';
+
+export function shouldStartCompleteShelfRigIntent(
+  interaction: CompleteShelfPointerInteraction,
+  phase: LibraryPhase,
+  selected: boolean,
+) {
+  return interaction === 'activate' && phase === 'ROOM_IDLE' && !selected;
+}

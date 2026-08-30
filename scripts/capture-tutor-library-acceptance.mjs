@@ -439,19 +439,14 @@ async function runAcceptanceCapture() {
     await touchPage.setViewport({ width: 1024, height: 768, deviceScaleFactor: 1, hasTouch: true });
     await touchPage.goto(libraryUrl({}), { waitUntil: 'domcontentloaded', timeout: 30_000 });
     await waitForLibrary(touchPage);
-    await waitForMountedRoot(touchPage);
-    const touchPoint = await touchPage.$eval('[data-edition-id="T003:primary"]', element => {
-      const rect = element.getBoundingClientRect();
-      return { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
-    });
-    await touchPage.touchscreen.tap(touchPoint.x, touchPoint.y);
+    await touchPage.select('.tutor-library__tutor-picker select', 'T003:primary');
     await touchPage.waitForFunction(() => ['BOOK_HOVER_INTENT', 'BOOK_EXTRACTING'].includes(document.querySelector('[data-tutor-library-qa="root"]')?.getAttribute('data-library-phase')), { timeout: MOUNTED_ROOT_TIMEOUT_MS });
     const touchActivation = await readRootSnapshot(touchPage);
     await setQaState(touchPage, 'reading-open');
     const touchReading = await readRootSnapshot(touchPage);
     hostileResults.touchEquivalent = {
       passed: touchActivation.edition === 'T003:primary' && touchReading.phase === 'BOOK_READING',
-      input: 'Touchscreen.tap',
+      input: 'Native tutor select on touch viewport',
       activation: touchActivation,
       deterministicRenderedEndpoint: touchReading,
     };
@@ -474,8 +469,7 @@ async function runAcceptanceCapture() {
     await escapePage.setViewport({ width: 1440, height: 900, deviceScaleFactor: 1 });
     await escapePage.goto(libraryUrl({}), { waitUntil: 'domcontentloaded', timeout: 30_000 });
     await waitForLibrary(escapePage);
-    await waitForMountedRoot(escapePage);
-    await escapePage.click('[data-edition-id="T003:primary"]');
+    await escapePage.select('.tutor-library__tutor-picker select', 'T003:primary');
     await waitForPhase(escapePage, 'BOOK_EXTRACTING');
     await setQaState(escapePage, 'open-50');
     const escapeOpening = await readRootSnapshot(escapePage);
@@ -521,20 +515,17 @@ async function runAcceptanceCapture() {
 
     await hostilePage.goto(libraryUrl({}), { waitUntil: 'domcontentloaded', timeout: 30_000 });
     await waitForLibrary(hostilePage);
-    await waitForMountedRoot(hostilePage);
-    await hostilePage.hover('[data-edition-id="T003:primary"]');
-    await hostilePage.hover('[data-edition-id="T009:primary"]');
-    await hostilePage.waitForFunction(() => document.querySelector('[data-tutor-library-qa="root"]')?.getAttribute('data-library-edition') === 'T009:primary', { timeout: MOUNTED_ROOT_TIMEOUT_MS });
-    const hoverSwitch = await readRootSnapshot(hostilePage);
-    await hostilePage.keyboard.press('Escape');
-    await waitForPhase(hostilePage, 'BOOK_RESETTING');
+    await hostilePage.hover('.tutor-library__tutor-picker');
+    const hoverIdle = await readRootSnapshot(hostilePage);
+    assert.equal(hoverIdle.phase, 'ROOM_IDLE');
+    assert.equal(hoverIdle.rootUuid, 'unmounted');
 
     await hostilePage.goto(libraryUrl({}), { waitUntil: 'domcontentloaded', timeout: 30_000 });
     await waitForLibrary(hostilePage);
-    await waitForMountedRoot(hostilePage);
-    await hostilePage.click('[data-edition-id="T003:primary"]');
+    await hostilePage.select('.tutor-library__tutor-picker select', 'T003:primary');
     await waitForPhase(hostilePage, 'BOOK_EXTRACTING');
-    await hostilePage.click('[data-edition-id="T003:primary"]');
+    const pickerDisabledDuringExtraction = await hostilePage.$eval('.tutor-library__tutor-picker select', element => element.disabled);
+    await hostilePage.select('.tutor-library__tutor-picker select', 'T009:primary');
     const clickDuringExtraction = await readRootSnapshot(hostilePage);
     assert.equal(clickDuringExtraction.phase, 'BOOK_EXTRACTING');
 
@@ -570,20 +561,21 @@ async function runAcceptanceCapture() {
       repeatedOpenClose[repeatedOpenClose.length - 1].open = await readRootSnapshot(hostilePage);
     }
     await setQaState(hostilePage, 'return-50');
-    const competingBookDisabled = await hostilePage.$eval('[data-edition-id="T009:primary"]', element => element.disabled);
-    await hostilePage.$eval('[data-edition-id="T009:primary"]', element => element.click());
+    const competingBookDisabled = await hostilePage.$eval('.tutor-library__tutor-picker select', element => element.disabled);
+    await hostilePage.select('.tutor-library__tutor-picker select', 'T009:primary');
     const returnEdition = (await readRootSnapshot(hostilePage)).edition;
     await setQaState(hostilePage, 'shelf-restored');
     const hostileStable = await captureMain(hostilePage, '24-rapid-switch-resize-visibility-resume-stable.png', 'Hostile input sequence restored through the retained production physical controller after wall/book/page conflicts, resize, and visibility resume');
     hostileResults.rapidSequence = {
-      passed: conflictingWallDisabled && repeatedPageButtonDisabled && competingBookDisabled && returnEdition === 'T003:primary' && mobileOpen.horizontalOverflow <= 0 && hostileStable.phase === 'ROOM_IDLE' && hostileStable.matrixDelta === '0.000000',
+      passed: conflictingWallDisabled && pickerDisabledDuringExtraction && repeatedPageButtonDisabled && competingBookDisabled && returnEdition === 'T003:primary' && mobileOpen.horizontalOverflow <= 0 && hostileStable.phase === 'ROOM_IDLE' && hostileStable.matrixDelta === '0.000000',
       conflictingWallDisabled,
       repeatedPageButtonDisabled,
       competingBookDisabled,
+      pickerDisabledDuringExtraction,
       returnEdition,
       rapidWallInput,
       rapidWallSettled,
-      hoverSwitch,
+      hoverIdle,
       clickDuringExtraction,
       repeatedOpenClose,
       mobileOpen,

@@ -15,22 +15,18 @@ try {
   await page.setRequestInterception(true);
   page.on('request', request => request.url().includes('google') ? void request.abort() : void request.continue());
   await page.goto(`http://127.0.0.1:${address.port}/src/features/tutor-library/tutor-library-controls.fixture.html`, { waitUntil: 'domcontentloaded' });
-  await page.waitForSelector('[data-edition-id="T003:primary"]');
+  await page.waitForSelector('.tutor-library__controls');
+  assert.equal(await page.$$eval('.tutor-library__book-control', elements => elements.length), 0, 'the bottom surface must not render every tutor name');
+  assert.equal(await page.$$eval('.tutor-library__tutor-picker select', elements => elements.length), 1, 'tutors remain available through one progressive-disclosure picker');
 
-  const book = '[data-edition-id="T003:primary"]';
-  await page.$eval(book, element => element.click());
-  await page.focus(book);
-  await page.keyboard.press('Enter');
-  await page.keyboard.press('Space');
+  const picker = '.tutor-library__tutor-picker select';
+  await page.select(picker, 'T003:primary');
   await page.focus('.tutor-library__wall-nav button:not(:disabled)');
   await page.keyboard.press('Enter');
   await page.keyboard.press('Escape');
   assert.deepEqual((await page.evaluate(() => window.tutorLibraryFixture.events)).filter(event => event.includes('keyboard-activate')), [
     'book:T003:primary:keyboard-activate',
-    'book:T003:primary:keyboard-activate',
-    'book:T003:primary:keyboard-activate',
   ]);
-  assert.ok((await page.evaluate(() => window.tutorLibraryFixture.events)).includes('cancel:T003:primary'));
   assert.ok((await page.evaluate(() => window.tutorLibraryFixture.events)).includes('turn:mathematics'));
   assert.ok((await page.evaluate(() => window.tutorLibraryFixture.events)).includes('escape'));
 
@@ -47,7 +43,7 @@ try {
     ariaLabelledBy: element.getAttribute('aria-labelledby'),
   })), { ariaLabel: 'Mrs Jenny N. tutor library reader', ariaLabelledBy: null });
   assert.equal(await page.$eval('.tutor-library__reader', element => element.getAttribute('aria-label')), 'Mrs Jenny N. tutor book controls');
-  assert.equal(await page.$eval('.tutor-library__book-controls', element => getComputedStyle(element).pointerEvents), 'auto', 'desktop selected-book activation must remain available');
+  assert.equal(await page.$eval('.tutor-library__tutor-picker', element => getComputedStyle(element).display), 'none', 'the picker yields to the selected-book reader');
   const previousPage = '[aria-label="Previous tutor profile page"]';
   const nextPage = '[aria-label="Next tutor profile page"]';
   assert.equal(await page.$eval(previousPage, element => element.disabled), true);
@@ -70,16 +66,16 @@ try {
   await page.setViewport({ width: 390, height: 844, deviceScaleFactor: 2 });
   const mobileReadingLayout = await page.evaluate(() => {
     const reader = document.querySelector('.tutor-library__reader');
-    const books = document.querySelector('.tutor-library__book-controls');
+    const picker = document.querySelector('.tutor-library__tutor-picker');
     const actions = document.querySelector('.tutor-library__reader-actions');
-    if (!(reader instanceof HTMLElement) || !(books instanceof HTMLElement) || !(actions instanceof HTMLElement)) return null;
+    if (!(reader instanceof HTMLElement) || !(picker instanceof HTMLElement) || !(actions instanceof HTMLElement)) return null;
     const readerRect = reader.getBoundingClientRect();
     const actionButtons = [...actions.querySelectorAll('button, a')].map(element => element.getBoundingClientRect().height);
     return {
       libraryHeight: Math.round(document.querySelector('.tutor-library')?.getBoundingClientRect().height ?? 0),
       readerBottom: Math.round(innerHeight - readerRect.bottom),
       readerHeight: Math.round(readerRect.height),
-      bookControlsDisplay: getComputedStyle(books).display,
+      pickerDisplay: getComputedStyle(picker).display,
       actionColumns: getComputedStyle(actions).gridTemplateColumns.split(' ').length,
       minimumActionHeight: Math.min(...actionButtons),
       horizontalOverflow: document.documentElement.scrollWidth - innerWidth,
@@ -87,7 +83,7 @@ try {
   });
   assert.ok(mobileReadingLayout);
   assert.ok(mobileReadingLayout.libraryHeight <= 780, 'the library must fit beneath the mobile site navigation without forcing focus-scroll');
-  assert.equal(mobileReadingLayout.bookControlsDisplay, 'none', 'inactive shelf controls must not cover the reading book on mobile');
+  assert.equal(mobileReadingLayout.pickerDisplay, 'none', 'the compact tutor picker must not cover the reading book on mobile');
   assert.equal(mobileReadingLayout.actionColumns, 2, 'mobile reader actions stay compact instead of becoming a tall single column');
   assert.ok(mobileReadingLayout.readerHeight <= 280, 'mobile reader panel must leave the upper canvas readable');
   assert.ok(mobileReadingLayout.minimumActionHeight >= 44, 'mobile action targets remain at least 44 CSS pixels');
@@ -97,17 +93,16 @@ try {
   assert.equal(await page.$eval(nextPage, element => element.disabled), true);
   assert.match(await page.$eval('.tutor-library__page-status', element => element.textContent ?? ''), /Page 5 of 5/i);
 
-  const disabledBook = '[data-edition-id="T009:primary"]';
-  assert.equal(await page.$eval(disabledBook, element => element.disabled), true);
+  assert.equal(await page.$eval(picker, element => element.disabled), true);
   const eventCount = await page.evaluate(() => window.tutorLibraryFixture.events.length);
-  await page.$eval(disabledBook, element => element.click());
+  await page.select(picker, 'T009:primary');
   assert.equal(await page.evaluate(() => window.tutorLibraryFixture.events.length), eventCount);
 
   await page.evaluate(() => window.tutorLibraryFixture.setPhase('ROOM_IDLE'));
   await page.focus('.tutor-library__wall-nav button:not(:disabled)');
   const beforeFocusReturn = await page.evaluate(() => window.tutorLibraryFixture.events.length);
   await page.evaluate(() => window.tutorLibraryFixture.setFocusReturn('T003:primary'));
-  assert.equal(await page.evaluate(() => document.activeElement?.getAttribute('data-edition-id')), 'T003:primary');
+  assert.equal(await page.evaluate(() => document.activeElement?.matches('.tutor-library__tutor-picker select')), true);
   assert.equal(await page.evaluate(() => window.tutorLibraryFixture.events.length), beforeFocusReturn);
 
   await page.evaluate(() => window.tutorLibraryFixture.setFailure(true));

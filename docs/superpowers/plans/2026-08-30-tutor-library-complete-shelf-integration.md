@@ -151,7 +151,9 @@
 
 ### Task 7: Build and capture the final acceptance evidence
 
-**Status:** implementation complete; final clean commit/build/capture evidence is recorded in the adjacent Task 7 report and the external manifest-bound evidence folder.
+**Status:** acceptance harness implemented; final evidence must be regenerated after the user-directed interaction simplification below.
+
+**Ruling (2026-08-30):** User feedback supersedes the always-visible tutor-name strip and hover-preview acceptance behavior. Subject tabs remain visible, tutor names move into one progressive-disclosure picker, and the full Complete Shelf rig is acquired only after explicit click/tap/select activation. Hover is intentionally lightweight. Existing pre-ruling captures are not final evidence.
 
 **Files:**
 - Create: `scripts/capture-tutor-library-acceptance.mjs`
