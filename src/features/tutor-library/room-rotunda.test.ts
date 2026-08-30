@@ -24,3 +24,9 @@ test('uses lightweight material variation and layered mouldings for architectura
   assert.match(source, /CabinetMoulding/);
   assert.match(source, /nosingDepth/);
 });
+
+test('keeps rendered wall labels self-contained for offline production capture', () => {
+  const source = readFileSync(new URL('./RoomRotunda.tsx', import.meta.url), 'utf8');
+
+  assert.match(source, /<Text[^>]*font="\/fonts\/da-prologue-marcellus-sc-400\.ttf"/);
+});

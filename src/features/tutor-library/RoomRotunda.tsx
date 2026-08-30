@@ -149,7 +149,7 @@ function WallShelves({ wall, angle, width, showWallLabel, pool, rigIntentEdition
     <CabinetBox size={[width, .38, 1.06]} position={[0, ROOM_HEIGHT / 2 - .22, .45]} color="#3b1e12" roughness={.52} radius={.04} />
     <CabinetMoulding width={width + .18} y={ROOM_HEIGHT / 2 - .07} z={.45} color="#583421" depth={cabinet.corniceDepth} />
     <CabinetBox size={[width - .78, .035, .035]} position={[0, ROOM_HEIGHT / 2 - .39, .98]} color="#a77945" roughness={.3} metalness={.72} radius={.005} />
-    {showWallLabel && <Text position={[0, ROOM_HEIGHT / 2 - .25, 1.01]} fontSize={.24} anchorX="center" color={palette.label} letterSpacing={.075}>{wall.label.toUpperCase()}</Text>}
+    {showWallLabel && <Text position={[0, ROOM_HEIGHT / 2 - .25, 1.01]} font="/fonts/da-prologue-marcellus-sc-400.ttf" fontSize={.24} anchorX="center" color={palette.label} letterSpacing={.075}>{wall.label.toUpperCase()}</Text>}
     <CabinetBox size={[width - .86, .025, .025]} position={[0, -ROOM_HEIGHT / 2 + .43, .96]} color={palette.accent} roughness={.32} metalness={.55} radius={.004} />
   </group>;
 }
