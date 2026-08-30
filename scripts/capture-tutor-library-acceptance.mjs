@@ -499,15 +499,17 @@ async function runAcceptanceCapture() {
 
     await hostilePage.goto(libraryUrl({}), { waitUntil: 'domcontentloaded', timeout: 30_000 });
     await waitForLibrary(hostilePage);
+    await waitForMountedRoot(hostilePage);
     await hostilePage.hover('[data-edition-id="T003:primary"]');
     await hostilePage.hover('[data-edition-id="T009:primary"]');
-    await hostilePage.waitForFunction(() => document.querySelector('[data-tutor-library-qa="root"]')?.getAttribute('data-library-edition') === 'T009:primary', { timeout: 10_000 });
+    await hostilePage.waitForFunction(() => document.querySelector('[data-tutor-library-qa="root"]')?.getAttribute('data-library-edition') === 'T009:primary', { timeout: MOUNTED_ROOT_TIMEOUT_MS });
     const hoverSwitch = await readRootSnapshot(hostilePage);
     await hostilePage.keyboard.press('Escape');
     await waitForPhase(hostilePage, 'BOOK_RESETTING');
 
     await hostilePage.goto(libraryUrl({}), { waitUntil: 'domcontentloaded', timeout: 30_000 });
     await waitForLibrary(hostilePage);
+    await waitForMountedRoot(hostilePage);
     await hostilePage.click('[data-edition-id="T003:primary"]');
     await waitForPhase(hostilePage, 'BOOK_EXTRACTING');
     await hostilePage.click('[data-edition-id="T003:primary"]');
