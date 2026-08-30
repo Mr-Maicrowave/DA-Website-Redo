@@ -23,6 +23,15 @@ test('does not treat leaving the canvas as leaving an active tutor book', () => 
   assert.doesNotMatch(library, /<Canvas[^>]*onPointerLeave=/);
 });
 
+test('keeps continuous tutor-library motion inside the canvas rather than React state', () => {
+  const library = readFileSync(libraryPath, 'utf8');
+  const scene = readFileSync(scenePath, 'utf8');
+
+  assert.doesNotMatch(library, /setTurnProgress\(/);
+  assert.doesNotMatch(library, /setBookMotionProgress\(/);
+  assert.match(scene, /useFrame/);
+});
+
 test('uses lightweight material variation and layered mouldings for architectural fidelity', () => {
   const source = readFileSync(new URL('./RoomRotunda.tsx', import.meta.url), 'utf8');
 

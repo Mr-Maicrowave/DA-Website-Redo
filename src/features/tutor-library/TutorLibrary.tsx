@@ -32,7 +32,6 @@ import './tutor-library.css';
 const BOOK_EDITIONS = createTutorBookEditions(TUTORS);
 const TUTOR_BY_ID = new Map(TUTORS.map(tutor => [tutor.id, tutor]));
 const FALLBACK_TUTOR = TUTORS.find(tutor => tutor.id === 'T003')!;
-const easeInOutQuart = (progress: number) => progress < .5 ? 8 * progress ** 4 : 1 - (-2 * progress + 2) ** 4 / 2;
 
 class CanvasBoundary extends Component<{ children: ReactNode; onError(message: string): void }, { failed: boolean }> {
   state = { failed: false };
@@ -60,8 +59,6 @@ function useReducedMotionPreference() {
 export function TutorLibrary() {
   const [searchParams] = useSearchParams();
   const [library, dispatch] = useReducer(libraryReducer, 'primary', createLibraryState);
-  const [turnProgress, setTurnProgress] = useState(0);
-  const [bookMotionProgress, setBookMotionProgress] = useState(0);
   const [settledPages, setSettledPages] = useState(0);
   const [pageTurnDirection, setPageTurnDirection] = useState<TutorBookPageTurnDirection>(1);
   const [rigIntent, setRigIntent] = useState<PendingRigIntent>();
@@ -75,6 +72,7 @@ export function TutorLibrary() {
   const mountedRoots = useRef(createMountedRigRootRegistry());
   const pendingIntent = useRef(createPendingRigIntentTracker());
   const previousLibrary = useRef(library);
+  const motionProgress = useRef({ turn: 0, book: 0 });
   const debugTurnProgress = parseDebugTurnProgress(searchParams.get('libraryTurnProgress'));
   const debugBookProgress = parseDebugTurnProgress(searchParams.get('libraryBookProgress'));
   const qaState = selectTutorLibraryQaState(searchParams.get('libraryQaState'));
@@ -85,10 +83,8 @@ export function TutorLibrary() {
   const activeWallIndex = isDebugTurn ? 0 : Math.max(0, SUBJECT_WALLS.findIndex(wall => wall.id === library.activeWallId));
   const pendingWallIndex = Math.max(0, SUBJECT_WALLS.findIndex(wall => wall.id === library.pendingWallId));
   const targetWallIndex = isDebugTurn ? 1 : isTurning ? pendingWallIndex : activeWallIndex;
-  const sceneProgress = isDebugTurn ? debugTurnProgress : turnProgress;
   const sceneBookPhase = qaState?.phase ?? (isDebugBook ? (debugBookProgress === 0 ? 'BOOK_HOVER_INTENT' : debugBookProgress === 1 ? 'BOOK_PREVIEW' : 'BOOK_EXTRACTING') : library.phase);
   const sceneSelectedEditionId = qaState || isDebugBook ? debugEditionId : library.selectedEditionId;
-  const sceneBookMotionProgress = qaState?.motionProgress ?? (isDebugBook ? debugBookProgress : bookMotionProgress);
   const checkpointView = searchParams.get('checkpoint') === 'b';
   const reviewView = searchParams.get('libraryReviewView');
   const forceCanvasFailure = searchParams.get('libraryForceCanvasError') === '1';
@@ -154,40 +150,6 @@ export function TutorLibrary() {
     };
   }, []);
 
-  useEffect(() => {
-    if (!isTurning) { setTurnProgress(0); return; }
-    let frameId = 0;
-    const startedAt = performance.now();
-    const tick = (now: number) => {
-      const rawProgress = timing.roomTurnMs === 0 ? 1 : Math.min(1, (now - startedAt) / timing.roomTurnMs);
-      setTurnProgress(easeInOutQuart(rawProgress));
-      if (rawProgress < 1) frameId = requestAnimationFrame(tick);
-      else dispatch({ type: 'TURN_COMPLETE', generation: library.transitionGeneration });
-    };
-    frameId = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(frameId);
-  }, [isTurning, library.transitionGeneration, timing.roomTurnMs]);
-
-  useEffect(() => {
-    const completion: Partial<Record<LibraryState['phase'], { duration: number; type: LibraryEvent['type'] }>> = {
-      BOOK_HOVER_INTENT: { duration: timing.hoverIntentMs, type: 'EXTRACT' },
-      BOOK_EXTRACTING: { duration: timing.extractionMs, type: 'PREVIEW_READY' },
-      BOOK_TO_READING: { duration: timing.toReadingMs, type: 'READING_POSE_READY' },
-      BOOK_RETURNING: { duration: timing.returnMs, type: 'RETURN_COMPLETE' },
-    };
-    const current = completion[library.phase];
-    if (!current) { if (library.phase !== 'BOOK_PREVIEW') setBookMotionProgress(0); return; }
-    let frameId = 0;
-    const startedAt = performance.now();
-    const tick = (now: number) => {
-      const rawProgress = current.duration === 0 ? 1 : Math.min(1, (now - startedAt) / current.duration);
-      setBookMotionProgress(rawProgress * rawProgress * (3 - 2 * rawProgress));
-      if (rawProgress < 1) frameId = requestAnimationFrame(tick);
-      else dispatch({ type: current.type, generation: library.transitionGeneration } as LibraryEvent);
-    };
-    frameId = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(frameId);
-  }, [library.phase, library.transitionGeneration, timing.extractionMs, timing.hoverIntentMs, timing.returnMs, timing.toReadingMs]);
 
   const handleRigReady = (editionId: string, rootUuid: string, token: number) => {
     mountedRoots.current.mount(editionId, rootUuid);
@@ -208,8 +170,9 @@ export function TutorLibrary() {
 
   const fallbackTutor = selectedTutor ?? FALLBACK_TUTOR;
   const status = getLibraryLiveStatus(library, selectedTutor?.name, targetWall.label);
-  const qaProgress = isDebugTurn || isTurning ? sceneProgress
-    : sceneBookPhase.startsWith('BOOK_') || sceneBookPhase.startsWith('PAGE_') ? sceneBookMotionProgress : 0;
+  const liveProgress = isTurning ? motionProgress.current.turn : motionProgress.current.book;
+  const qaProgress = isDebugTurn ? debugTurnProgress!
+    : sceneBookPhase.startsWith('BOOK_') || sceneBookPhase.startsWith('PAGE_') || isTurning ? liveProgress : 0;
   const qa = createTutorLibraryQaSnapshot({
     phase: sceneBookPhase,
     generation: library.transitionGeneration,
@@ -222,13 +185,13 @@ export function TutorLibrary() {
   const bookActive = sceneBookPhase.startsWith('BOOK_') || sceneBookPhase.startsWith('PAGE_');
   const accessibility = getTutorLibraryAccessibilityProps(bookActive, selectedTutor?.name);
 
-  return <section className={`tutor-library${isDebugTurn || isDebugBook || qaState ? ' tutor-library--diagnostic' : ''}${bookActive ? ' tutor-library--book-active' : ''}`} aria-label={accessibility.rootLabel} aria-labelledby={accessibility.rootLabelledBy} data-tutor-library-qa="root" data-library-phase={qa.phase} data-library-transition-id={qa.transitionId} data-library-generation={qa.generation} data-library-edition={qa.edition} data-library-wall={qa.wall} data-library-root-uuid={qa.rootUuid} data-library-matrix-delta={qa.matrixDelta} data-library-reset-state={qa.resetState} data-library-review-view={qa.reviewView} data-library-review-progress={qa.progress} data-library-qa-progress={qa.progress} data-library-controller-progress="unavailable" data-library-qa-state={qaState?.id ?? 'live'} data-room-phase={sceneBookPhase} data-turn-progress={sceneProgress.toFixed(2)} data-reduced-motion={reducedMotion ? 'true' : 'false'}>
+  return <section className={`tutor-library${isDebugTurn || isDebugBook || qaState ? ' tutor-library--diagnostic' : ''}${bookActive ? ' tutor-library--book-active' : ''}`} aria-label={accessibility.rootLabel} aria-labelledby={accessibility.rootLabelledBy} data-tutor-library-qa="root" data-library-phase={qa.phase} data-library-transition-id={qa.transitionId} data-library-generation={qa.generation} data-library-edition={qa.edition} data-library-wall={qa.wall} data-library-root-uuid={qa.rootUuid} data-library-matrix-delta={qa.matrixDelta} data-library-reset-state={qa.resetState} data-library-review-view={qa.reviewView} data-library-review-progress={qa.progress} data-library-qa-progress={qa.progress} data-library-controller-progress="unavailable" data-library-qa-state={qaState?.id ?? 'live'} data-room-phase={sceneBookPhase} data-turn-progress={liveProgress.toFixed(2)} data-reduced-motion={reducedMotion ? 'true' : 'false'}>
     <header className={`tutor-library__copy${checkpointView || isDebugTurn ? ' tutor-library__copy--checkpoint' : ''}`} aria-hidden={accessibility.copyAriaHidden}>
       <p>DA Tuition faculty</p><h1 id="tutor-library-title">Find the person behind the teaching.</h1><span>Turn toward a subject and explore the educators who bring it to life.</span>
     </header>
     <div className="tutor-library__canvas" aria-hidden="true"><CanvasBoundary onError={(message) => { cancelPendingIntent(); setSceneError(message); }}>
       {forceCanvasFailure ? null : <Canvas shadows="soft" camera={{ position: [0, 1.9, .2], fov: 52, near: .1, far: 60 }} dpr={[1, viewportProfile.maxDpr]} gl={{ antialias: true, alpha: false, powerPreference: 'high-performance', toneMapping: ACESFilmicToneMapping, toneMappingExposure: 1.06 }}>
-        <TutorLibraryScene fromWallIndex={activeWallIndex} toWallIndex={targetWallIndex} turnProgress={sceneProgress} reviewView={reviewView} showWallLabels={!isDebugTurn && !isDebugBook} phase={sceneBookPhase} generation={library.transitionGeneration} reducedMotion={reducedMotion} pageTurnDirection={pageTurnDirection} selectedEditionId={sceneSelectedEditionId} rigIntentEditionId={rigIntent?.editionId} rigIntentToken={rigIntent?.token ?? 0} bookMotionProgress={sceneBookMotionProgress} onActivate={(editionId, rootUuid) => dispatchEvents(getBookInteractionEvents(library, 'touch-activate', editionId, rootUuid))} onRigReady={handleRigReady} onRigUnavailable={handleRigUnavailable} onLifecycleComplete={dispatch} onPageSettled={setSettledPages} onError={(message) => { cancelPendingIntent(); setSceneError(message); }} />
+        <TutorLibraryScene fromWallIndex={activeWallIndex} toWallIndex={targetWallIndex} motionProgress={motionProgress} debugTurnProgress={isDebugTurn ? debugTurnProgress : undefined} debugBookProgress={qaState?.motionProgress ?? (isDebugBook ? debugBookProgress : undefined)} timing={timing} reviewView={reviewView} showWallLabels={!isDebugTurn && !isDebugBook} phase={sceneBookPhase} generation={library.transitionGeneration} reducedMotion={reducedMotion} pageTurnDirection={pageTurnDirection} selectedEditionId={sceneSelectedEditionId} rigIntentEditionId={rigIntent?.editionId} rigIntentToken={rigIntent?.token ?? 0} onActivate={(editionId, rootUuid) => dispatchEvents(getBookInteractionEvents(library, 'touch-activate', editionId, rootUuid))} onRigReady={handleRigReady} onRigUnavailable={handleRigUnavailable} onLifecycleComplete={dispatch} onPageSettled={setSettledPages} onError={(message) => { cancelPendingIntent(); setSceneError(message); }} />
       </Canvas>}
     </CanvasBoundary></div>
 

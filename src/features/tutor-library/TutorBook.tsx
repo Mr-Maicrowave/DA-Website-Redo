@@ -1,5 +1,5 @@
 import { RoundedBox } from '@react-three/drei';
-import { useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { Group, Vector2 } from 'three';
 import type { CatalogueTutor } from '../../data/teacherCatalogue';
@@ -91,6 +91,7 @@ type TutorBookProps = {
   phase: LibraryPhase;
   selected: boolean;
   motionProgress: number;
+  motionProgressRef?: Readonly<{ current: { book: number } }>;
   neighbourResponse?: number;
   onHover?: (editionId: string, rootUuid: string) => void;
   onHoverChange?: (editionId?: string) => void;
@@ -124,22 +125,15 @@ function DormantCompleteShelfProxy({ tutor, edition }: { tutor: CatalogueTutor; 
   </group>;
 }
 
-function RoomTutorBook({ edition, tutor, phase, selected, motionProgress, neighbourResponse = 0, onHoverChange, onActivate, onRigReady, onRigUnavailable, onLifecycleComplete, onPageSettled, onError, generation = 0, reducedMotion = false, pageTurnDirection = 1, pool, rigIntent = false, rigIntentToken = 0, onRigIntent }: TutorBookProps & { pool: CompleteShelfBookPool<CompleteShelfTutorRig> }) {
+function RoomTutorBook({ edition, tutor, phase, selected, motionProgress, motionProgressRef, neighbourResponse = 0, onHoverChange, onActivate, onRigReady, onRigUnavailable, onLifecycleComplete, onPageSettled, onError, generation = 0, reducedMotion = false, pageTurnDirection = 1, pool, rigIntent = false, rigIntentToken = 0, onRigIntent }: TutorBookProps & { pool: CompleteShelfBookPool<CompleteShelfTutorRig> }) {
   const [rigReady, setRigReady] = useState(false);
   const [hovered, setHovered] = useState(false);
   const activationRequested = useRef(false);
   const rootUuid = useRef<string>();
   const bookGroup = useRef<Group>(null);
   const motionState = useRef(createCompleteShelfOuterMotionState(edition));
-  const nextMotionState = advanceCompleteShelfOuterMotion(
-    motionState.current,
-    selected ? phase : 'ROOM_IDLE',
-    motionProgress,
-  );
-  useLayoutEffect(() => { motionState.current = nextMotionState; }, [nextMotionState]);
-  const pose = nextMotionState.pose;
+  const pose = motionState.current.pose;
   const hovering = hovered && phase === 'ROOM_IDLE' && !selected;
-  const hoverPose = hovering ? getCompleteShelfOuterMotionPose(edition, 'BOOK_HOVER_INTENT', 0) : pose;
   const rigRequested = shouldAcquireCompleteShelfRig({
     phase,
     editionId: edition.id,
@@ -151,14 +145,23 @@ function RoomTutorBook({ edition, tutor, phase, selected, motionProgress, neighb
   useFrame((_, delta) => {
     const group = bookGroup.current;
     if (!group) return;
-    const ease = reducedMotion ? 1 : 1 - Math.exp(-delta * 14);
-    group.position.lerp({ x: hoverPose.position[0], y: hoverPose.position[1], z: hoverPose.position[2] }, ease);
-    group.rotation.set(
-      group.rotation.x + (hoverPose.rotation[0] - group.rotation.x) * ease,
-      group.rotation.y + (hoverPose.rotation[1] - group.rotation.y) * ease,
-      group.rotation.z + (hoverPose.rotation[2] + neighbourResponse - group.rotation.z) * ease,
+    const nextMotionState = advanceCompleteShelfOuterMotion(
+      motionState.current,
+      selected ? phase : 'ROOM_IDLE',
+      motionProgressRef?.current.book ?? motionProgress,
     );
-    group.scale.lerp({ x: hoverPose.scale[0], y: hoverPose.scale[1], z: hoverPose.scale[2] }, ease);
+    motionState.current = nextMotionState;
+    const targetPose = hovering
+      ? getCompleteShelfOuterMotionPose(edition, 'BOOK_HOVER_INTENT', 0)
+      : nextMotionState.pose;
+    const ease = reducedMotion ? 1 : 1 - Math.exp(-delta * 14);
+    group.position.lerp({ x: targetPose.position[0], y: targetPose.position[1], z: targetPose.position[2] }, ease);
+    group.rotation.set(
+      group.rotation.x + (targetPose.rotation[0] - group.rotation.x) * ease,
+      group.rotation.y + (targetPose.rotation[1] - group.rotation.y) * ease,
+      group.rotation.z + (targetPose.rotation[2] + neighbourResponse - group.rotation.z) * ease,
+    );
+    group.scale.lerp({ x: targetPose.scale[0], y: targetPose.scale[1], z: targetPose.scale[2] }, ease);
   });
 
   return <group
