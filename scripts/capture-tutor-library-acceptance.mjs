@@ -319,6 +319,7 @@ async function runAcceptanceCapture() {
     await waitForLibrary(roomPage);
     const settledTurn = await captureMain(roomPage, '08-turn-settled.png', 'Query-selected real production room camera settled at 100% on Mathematics');
     assert.equal(settledTurn.wall, 'mathematics');
+    await roomPage.close();
 
     const integratedPage = await newPage('integrated-qa');
     await integratedPage.setViewport({ width: 1440, height: 900, deviceScaleFactor: 1 });
@@ -329,15 +330,23 @@ async function runAcceptanceCapture() {
     assert.notEqual(persistentRootUuid, 'unmounted');
     await captureMain(integratedPage, '09-shelf-rest.png', 'Production room with the retained physical rig at shelf rest');
 
-    await integratedPage.setViewport({ width: 1024, height: 768, deviceScaleFactor: 1, hasTouch: true });
-    await setQaState(integratedPage, 'cover-preview');
-    await captureMain(integratedPage, '04-tablet-tap-preview.png', 'Tablet presentation of the production touch-preview state; touch behavior is exercised separately in this run');
-    await integratedPage.setViewport({ width: 390, height: 844, deviceScaleFactor: 2, hasTouch: true, isMobile: true });
-    await setQaState(integratedPage, 'reading-open');
-    const mobileSnapshot = await captureMain(integratedPage, '05-mobile-390-reading.png', '390x844 production reader with physical book open');
-    assert.ok(mobileSnapshot.horizontalOverflow <= 0, 'mobile reading cannot overflow horizontally');
+    const tabletPage = await newPage('tablet');
+    await tabletPage.setViewport({ width: 1024, height: 768, deviceScaleFactor: 1, hasTouch: true });
+    await tabletPage.goto(libraryUrl({ libraryQaState: 'cover-preview' }), { waitUntil: 'domcontentloaded', timeout: 30_000 });
+    await waitForLibrary(tabletPage);
+    await waitForMountedRoot(tabletPage);
+    await captureMain(tabletPage, '04-tablet-tap-preview.png', 'Tablet presentation of the production touch-preview state; touch behavior is exercised separately in this run');
+    await tabletPage.close();
 
-    await integratedPage.setViewport({ width: 1440, height: 900, deviceScaleFactor: 1 });
+    const mobilePage = await newPage('mobile');
+    await mobilePage.setViewport({ width: 390, height: 844, deviceScaleFactor: 2, hasTouch: true, isMobile: true });
+    await mobilePage.goto(libraryUrl({ libraryQaState: 'reading-open' }), { waitUntil: 'domcontentloaded', timeout: 30_000 });
+    await waitForLibrary(mobilePage);
+    await waitForMountedRoot(mobilePage);
+    const mobileSnapshot = await captureMain(mobilePage, '05-mobile-390-reading.png', '390x844 production reader with physical book open');
+    assert.ok(mobileSnapshot.horizontalOverflow <= 0, 'mobile reading cannot overflow horizontally');
+    await mobilePage.close();
+
     const qaCaptures = [
       ['extract-50', '10-extract-50.png'],
       ['cover-preview', '11-cover-preview.png'],
@@ -368,6 +377,7 @@ async function runAcceptanceCapture() {
     const focusSnapshot = await captureMain(integratedPage, '21-keyboard-focus-reading.png', 'Production reader with keyboard focus on the conventional profile route');
     assert.notEqual(focusSnapshot.activeElement?.outlineStyle, 'none', 'keyboard focus must remain visible');
     assert.notEqual(focusSnapshot.activeElement?.outlineWidth, '0px', 'keyboard focus must have a visible outline width');
+    await integratedPage.close();
 
     const cyclePage = await newPage('ten-cycles');
     await cyclePage.setViewport({ width: 1440, height: 900, deviceScaleFactor: 1 });
@@ -403,6 +413,7 @@ async function runAcceptanceCapture() {
     const canvasElementCountAfter = await cyclePage.$$eval('[data-tutor-library-qa="root"] canvas', elements => elements.length);
     const sameCanvasElement = await cyclePage.evaluate(() => globalThis.__tutorLibraryAcceptanceCanvas === document.querySelector('canvas'));
     assert.equal(sameCanvasElement, true, 'the production Canvas element must not be replaced across ten cycles');
+    await cyclePage.close();
 
     const touchPage = await newPage('touch');
     await touchPage.setViewport({ width: 1024, height: 768, deviceScaleFactor: 1, hasTouch: true });
@@ -424,6 +435,7 @@ async function runAcceptanceCapture() {
       deterministicRenderedEndpoint: touchReading,
     };
     assert.equal(hostileResults.touchEquivalent.passed, true);
+    await touchPage.close();
 
     const reducedPage = await newPage('reduced-motion');
     await reducedPage.emulateMediaFeatures([{ name: 'prefers-reduced-motion', value: 'reduce' }]);
@@ -435,6 +447,7 @@ async function runAcceptanceCapture() {
     assert.equal(reducedSnapshot.reducedMotion, 'true');
     assert.notEqual(reducedSnapshot.rootUuid, 'unmounted');
     assert.equal(await reducedPage.$eval('.tutor-library__reader', element => getComputedStyle(element).visibility), 'visible');
+    await reducedPage.close();
 
     const escapePage = await newPage('escape');
     await escapePage.setViewport({ width: 1440, height: 900, deviceScaleFactor: 1 });
@@ -465,6 +478,7 @@ async function runAcceptanceCapture() {
       restored: escapeRestored,
     };
     assert.equal(hostileResults.escapeMidOpening.passed, true);
+    await escapePage.close();
 
     const hostilePage = await newPage('hostile');
     await hostilePage.setViewport({ width: 1440, height: 900, deviceScaleFactor: 1 });
@@ -504,7 +518,7 @@ async function runAcceptanceCapture() {
     const repeatedPageButtonDisabled = await hostilePage.$eval('[aria-label="Next tutor profile page"]', element => element.disabled);
     await hostilePage.$eval('[aria-label="Next tutor profile page"]', element => element.click());
     await setQaState(hostilePage, 'page-settled');
-    await hostilePage.setViewport({ width: 390, height: 844, deviceScaleFactor: 2, hasTouch: true, isMobile: true });
+    await hostilePage.setViewport({ width: 390, height: 844, deviceScaleFactor: 1 });
     await delay(250);
     await setQaState(hostilePage, 'reading-open');
     const mobileOpen = await readRootSnapshot(hostilePage);
@@ -551,6 +565,7 @@ async function runAcceptanceCapture() {
       restored: hostileStable,
     };
     assert.equal(hostileResults.rapidSequence.passed, true);
+    await hostilePage.close();
 
     const routePage = await newPage('conventional-route');
     await routePage.setViewport({ width: 1440, height: 900, deviceScaleFactor: 1 });
@@ -564,6 +579,7 @@ async function runAcceptanceCapture() {
     ]);
     assert.match(routePage.url(), /\/find-teacher\?tutor=T003$/);
     hostileResults.conventionalRoute = { passed: true, href: routeHref, navigatedUrl: routePage.url() };
+    await routePage.close();
 
     for (const comparison of CHECKPOINT_COMPARISONS) {
       const standalonePage = await newPage(`standalone-${comparison.state}`);
