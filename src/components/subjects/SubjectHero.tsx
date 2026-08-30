@@ -34,6 +34,8 @@ interface SubjectHeroProps {
   backgroundFit?: 'cover' | 'contain';
   /** Optional zoom for photos that need tighter art direction behind the fixed copy. */
   backgroundScale?: number;
+  /** Optional photo-only top offset, for subject imagery that must clear a fixed header. */
+  backgroundTopOffsetClassName?: string;
   /** English trial: place the copy low in the mobile hero to preserve the photo's focal subject. */
   mobileContentPosition?: 'center' | 'bottom';
   /** Optional page-specific nudge for the copy block, without changing the shared hero layout. */
@@ -69,6 +71,7 @@ const SubjectHero = ({
   backgroundPosition,
   backgroundFit = 'cover',
   backgroundScale,
+  backgroundTopOffsetClassName,
   mobileContentPosition = 'center',
   copyOffsetClassName,
   heroTone = 'dark',
@@ -83,7 +86,7 @@ const SubjectHero = ({
 
   return (
     <section className={`subject-hero relative flex min-h-screen flex-col justify-center overflow-hidden bg-[#071629] px-5 py-28 lg:px-8 ${mobileContentPosition === 'bottom' ? 'subject-hero--mobile-bottom-copy' : ''} ${isLightTone ? 'subject-hero--light' : ''} ${heroTone === 'muted' ? 'subject-hero--muted' : ''} ${isWarmTone ? 'subject-hero--warm' : ''}`}>
-      <div className="absolute inset-0">
+      <div className={`absolute inset-x-0 bottom-0 top-0 ${backgroundTopOffsetClassName ?? ''}`}>
         {backgroundImageSrc ? (
           <img
             src={backgroundImageSrc}

@@ -10,6 +10,7 @@ import {
   createCompleteShelfClosedHandoff,
   createCompleteShelfOuterMotionState,
   getCompleteShelfOuterMotionPose,
+  getTutorBookHoverPose,
   isCompleteShelfControllerOpeningAllowed,
   selectVisibleShelfEditions,
   shouldAcquireCompleteShelfRig,
@@ -224,7 +225,7 @@ test('keeps the cover and reading poses compositionally aligned while reserving 
 
   assert.deepEqual(cover.scale, open.scale);
   assert.ok(cover.scale[0] >= 2.1, 'the selected book has a readable hero scale');
-  assert.ok(Math.abs(cover.position[0] - open.position[0]) <= .08, 'cover and spread share one central stage');
+  assert.ok(open.position[0] > cover.position[0] && open.position[0] - cover.position[0] <= .28, 'open spread shifts slightly right to balance its companion controls');
   assert.ok(open.position[1] > cover.position[1], 'open spread clears the shelf without leaving the reading composition');
 });
 
@@ -299,4 +300,17 @@ test('keeps hover lightweight and reserves full-rig acquisition for explicit act
   assert.equal(shouldStart('activate', 'ROOM_IDLE', false), true, 'click or tap may request the rig');
   assert.equal(shouldStart('activate', 'BOOK_EXTRACTING', false), false, 'transitions reject competing requests');
   assert.equal(shouldStart('activate', 'ROOM_IDLE', true), false, 'the selected book already owns its rig');
+});
+
+test('keeps face-out books facing the visitor while spine-out books reveal their cover on hover', () => {
+  const edition = createTutorBookEditions(TUTORS)[0]!;
+  const spine = createCompleteShelfOuterMotionState(edition).pose;
+  const spinePreview = getTutorBookHoverPose(spine, false);
+  const faceOut = { ...spine, rotation: [0, 0, 0] as [number, number, number] };
+  const facePreview = getTutorBookHoverPose(faceOut, true);
+
+  assert.ok(Math.abs(spinePreview.rotation[1]) < Math.PI / 3, 'spine preview reveals the cover');
+  assert.equal(facePreview.rotation[1], 0, 'face-out cover never rotates away');
+  assert.ok(facePreview.position[2] > faceOut.position[2]);
+  assert.ok(facePreview.scale[0] > faceOut.scale[0]);
 });

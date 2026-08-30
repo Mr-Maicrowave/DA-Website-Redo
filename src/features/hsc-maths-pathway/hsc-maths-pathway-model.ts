@@ -1,106 +1,23 @@
-export type HscStreamId =
-  | 'standard'
-  | 'advanced'
-  | 'extension-1'
-  | 'extension-2';
+export type HscStreamId = 'standard' | 'advanced' | 'extension-1' | 'extension-2';
+export type StandardYear12Id = 'standard-1' | 'standard-2';
 
+export interface HscCourseAttribute { label: 'Calculus' | 'Course style' | 'Question style' | 'Relationship'; description: string; }
 export interface HscStream {
-  id: HscStreamId;
-  name: string;
-  shortDescriptor: string;
-  badge: string;
-  availability: string;
-  year12Only: boolean;
-  prerequisites: string[];
-  bestFit: string;
-  whatChanges: string;
-  helpNeeded: string;
-  daSupport: string;
-  topics: string[];
-  color: string;
-  vividColor: string;
+  id: HscStreamId | StandardYear12Id; name: string; shortDescriptor: string; badge: string; availability: string; year12Only: boolean; prerequisites: string[]; bestFit: string; whatChanges: string; feelsLike: string; underestimate: string; questions: string; helpNeeded: string; daSupport: string; topics: string[]; color: string; vividColor: string; attributes: HscCourseAttribute[];
 }
 
-const ACTIVE_PATHS: Record<HscStreamId, HscStreamId[]> = {
-  standard: ['standard'],
-  advanced: ['advanced'],
-  'extension-1': ['advanced', 'extension-1'],
-  'extension-2': ['advanced', 'extension-1', 'extension-2'],
-};
+const ACTIVE_PATHS: Record<HscStreamId, HscStreamId[]> = { standard: ['standard'], advanced: ['advanced'], 'extension-1': ['advanced', 'extension-1'], 'extension-2': ['advanced', 'extension-1', 'extension-2'] };
 
-export const HSC_STREAMS: HscStream[] = [
-  {
-    id: 'standard',
-    name: 'Standard 1 & 2',
-    shortDescriptor: 'No calculus',
-    badge: 'Practical mathematics without calculus',
-    availability: 'Years 11–12',
-    year12Only: false,
-    prerequisites: [],
-    bestFit: 'Students who want practical mathematics and are heading towards study or work that does not require calculus.',
-    whatChanges: 'The course emphasises financial mathematics, measurement, networks and statistics rather than abstract proof or calculus.',
-    helpNeeded: 'Choosing efficient methods, interpreting unfamiliar contexts and avoiding small errors across multi-part questions.',
-    daSupport: 'We connect each method to a real question type, then build accuracy and checking habits under assessment conditions.',
-    topics: ['Financial mathematics', 'Statistical analysis', 'Networks and measurement'],
-    color: '#c9921b',
-    vividColor: '#f2a90d',
-  },
-  {
-    id: 'advanced',
-    name: 'Advanced',
-    shortDescriptor: 'Calculus foundation',
-    badge: 'Calculus for quantitative pathways',
-    availability: 'Years 11–12',
-    year12Only: false,
-    prerequisites: [],
-    bestFit: 'Students who are comfortable with algebra and want to keep quantitative university pathways open.',
-    whatChanges: 'Calculus is introduced alongside more demanding work with functions, trigonometry, sequences and probability.',
-    helpNeeded: 'Moving beyond memorised procedures, connecting representations and explaining why a method applies.',
-    daSupport: 'We make calculus visual and structured, then develop the flexible problem-solving required for unfamiliar exam questions.',
-    topics: ['Differential and integral calculus', 'Functions and trigonometry', 'Sequences and random variables'],
-    color: '#2f8f69',
-    vividColor: '#0aa876',
-  },
-  {
-    id: 'extension-1',
-    name: 'Extension 1',
-    shortDescriptor: 'With Advanced',
-    badge: 'Studied alongside Advanced',
-    availability: 'Years 11–12 · with Advanced',
-    year12Only: false,
-    prerequisites: ['Advanced'],
-    bestFit: 'Students who are confident in Advanced and want deeper problem-solving, proof and calculus.',
-    whatChanges: 'Extension 1 adds proof, vectors, combinatorics and harder calculus while students continue the full Advanced course.',
-    helpNeeded: 'Recognising hidden structures, sustaining multi-step reasoning and writing complete mathematical arguments.',
-    daSupport: 'We teach the thinking between steps, not just the final technique, then refine proof and difficult-question strategy.',
-    topics: ['Proof and vectors', 'Further calculus', 'Combinatorics and polynomials'],
-    color: '#297dbf',
-    vividColor: '#1c8ff2',
-  },
-  {
-    id: 'extension-2',
-    name: 'Extension 2',
-    shortDescriptor: 'Year 12 only',
-    badge: 'Requires Advanced + Extension 1',
-    availability: 'Year 12 only',
-    year12Only: true,
-    prerequisites: ['Advanced', 'Extension 1'],
-    bestFit: 'Students who already thrive in Extension 1 and genuinely enjoy abstract, rigorous mathematics.',
-    whatChanges: 'Extension 2 begins in Year 12, replaces the Advanced HSC course in Year 12, and adds complex numbers, mechanics, deeper integration and more demanding proof.',
-    helpNeeded: 'Turning insight into rigorous working, choosing a path through unfamiliar problems and maintaining precision under pressure.',
-    daSupport: 'Specialist teachers make advanced ideas accessible, strengthen proof writing and build calm strategies for the hardest questions.',
-    topics: ['Complex numbers', 'Proof and further integration', 'Vectors and mechanics'],
-    color: '#8051bf',
-    vividColor: '#9c4bea',
-  },
+export const STANDARD_YEAR12_OPTIONS: HscStream[] = [
+  { id: 'standard-1', name: 'Standard 1', shortDescriptor: 'Applied senior mathematics', badge: 'A Year 12 branch of the shared Mathematics Standard pathway.', availability: 'Year 12 · 2 units', year12Only: true, prerequisites: ['Mathematics Standard Year 11'], bestFit: 'Students who prefer practical contexts such as money, measurement and data over extended symbolic manipulation.', whatChanges: 'Questions ask students to decide what information matters, choose a method and explain whether the result makes sense.', feelsLike: 'You interpret a real situation, build a calculation plan and check whether the answer is sensible. The challenge is often reading and judgement, not advanced algebra.', underestimate: 'Practical does not mean automatic: units, percentages and small arithmetic errors can change every later step.', questions: 'Choose a financial calculation, interpret data or a graph, and explain what the result means in context.', helpNeeded: 'Students can lose marks when they rush the reading, ignore units or treat every worded question as the same template.', daSupport: 'We help students identify the decision a question is asking for, turn context into a calculation plan and check whether an answer is reasonable.', topics: ['Investment and loans', 'Measurement and rates', 'Data and probability'], color: '#c9921b', vividColor: '#f2a90d', attributes: [{ label: 'Calculus', description: 'Not included' }, { label: 'Course style', description: 'Applied and contextual' }, { label: 'Question style', description: 'Interpret, calculate and explain' }, { label: 'Relationship', description: 'Year 12 Standard branch' }] },
+  { id: 'standard-2', name: 'Standard 2', shortDescriptor: 'Broader applied mathematics', badge: 'A Year 12 branch of the shared Mathematics Standard pathway.', availability: 'Year 12 · 2 units', year12Only: true, prerequisites: ['Mathematics Standard Year 11'], bestFit: 'Students who value applied mathematics and are comfortable sustaining linked finance, data, trigonometry and network work.', whatChanges: 'The Year 12 program adds broader technical applications, so planning a multi-step route matters as much as completing the arithmetic.', feelsLike: 'The work remains contextual, but questions more often connect several decisions. You may need to plan a finance, network or statistical approach before calculating.', underestimate: 'Annuities and networks require planning and interpretation, not just arithmetic.', questions: 'Model repayments, use trigonometry in context, plan a network route or interpret variation and probability.', helpNeeded: 'A single memorised template is rarely enough when a question combines finance, data or network decisions.', daSupport: 'We help students organise multi-step work, choose the model before calculating and check linked answers for avoidable errors.', topics: ['Annuities and loans', 'Trigonometry', 'Networks and critical path', 'Normal distribution'], color: '#c9921b', vividColor: '#f2a90d', attributes: [{ label: 'Calculus', description: 'Not included' }, { label: 'Course style', description: 'Applied and contextual' }, { label: 'Question style', description: 'Linked finance, data and network problems' }, { label: 'Relationship', description: 'Year 12 Standard branch' }] },
 ];
 
-export function getHscStream(id: HscStreamId): HscStream {
-  const stream = HSC_STREAMS.find((candidate) => candidate.id === id);
-  if (!stream) throw new Error(`Unknown HSC stream: ${id}`);
-  return stream;
-}
-
-export function getActivePath(id: HscStreamId): HscStreamId[] {
-  return [...ACTIVE_PATHS[id]];
-}
+export const HSC_STREAMS: HscStream[] = [
+  { id: 'standard', name: 'Standard 1 & 2', shortDescriptor: 'Shared Year 11 pathway', badge: 'Year 11 Mathematics Standard branches to Standard 1 or Standard 2 in Year 12.', availability: 'Years 11–12', year12Only: false, prerequisites: [], bestFit: 'Students who prefer applied mathematics and want to explore the Year 12 Standard pathway that fits their goals.', whatChanges: 'Year 11 is shared. In Year 12, Standard 1 and Standard 2 differ in content and the kinds of linked applications students encounter.', feelsLike: 'Applied senior mathematics is about making decisions from financial, measurement, network and data contexts—not just completing a calculation.', underestimate: 'Practical questions still reward careful reading, organised working and sensible checks.', questions: 'Interpret a situation, choose a calculation or model, and explain the result in context.', helpNeeded: 'The first decision—what the question is actually asking—can be harder than the calculation itself.', daSupport: 'We help students identify what a question is asking, choose a workable method and check their reasoning.', topics: ['Financial mathematics', 'Measurement', 'Networks', 'Statistics'], color: '#c9921b', vividColor: '#f2a90d', attributes: [{ label: 'Calculus', description: 'Not included' }, { label: 'Course style', description: 'Applied and contextual' }, { label: 'Question style', description: 'Interpret and model situations' }, { label: 'Relationship', description: 'Shared Year 11 pathway' }] },
+  { id: 'advanced', name: 'Advanced', shortDescriptor: 'Calculus-based study', badge: 'A calculus-based course built around functions, algebraic relationships, modelling and analytical reasoning.', availability: 'Years 11–12 · 2 units', year12Only: false, prerequisites: [], bestFit: 'Students who enjoy algebraic structure and want to connect graphs, functions and real situations.', whatChanges: 'Questions become less signposted: students increasingly need to decide which method applies before they can begin.', feelsLike: 'Functions, graphs and algebra become interconnected. Calculus is used to describe change, but success depends on choosing and communicating a method, not just recalling a rule.', underestimate: 'Calculus performance is often limited by algebra rather than differentiation rules.', questions: 'Transform or model a function, decide whether calculus applies and connect a result to a situation.', helpNeeded: 'Weak fractions, indices, equations or graph skills can make otherwise familiar calculus methods unreliable.', daSupport: 'We help students repair algebraic bottlenecks, connect graphs with symbolic forms and practise the decision before the calculation.', topics: ['Functions and graphs', 'Trigonometry', 'Differential calculus', 'Integral calculus', 'Probability'], color: '#2f8f69', vividColor: '#0aa876', attributes: [{ label: 'Calculus', description: 'Core component' }, { label: 'Course style', description: 'Analytical, functional and modelling-based' }, { label: 'Question style', description: 'Method selection and unfamiliar applications' }, { label: 'Relationship', description: '2-unit course and Extension base' }] },
+  { id: 'extension-1', name: 'Extension 1', shortDescriptor: 'With Advanced', badge: 'An additional course studied with Advanced that develops proof, structure, further calculus and unfamiliar problem-solving.', availability: 'Years 11–12 · 1 unit', year12Only: false, prerequisites: ['Advanced'], bestFit: 'Students who enjoy asking why a technique works, spotting patterns and combining ideas in a problem.', whatChanges: 'Proof and notation become part of the mathematical work; a correct answer with incomplete reasoning is often not enough.', feelsLike: 'Questions reward recognising structure, making a useful representation and explaining why a result follows. The extra unit runs alongside the full Advanced course.', underestimate: 'Students still complete the full Advanced course while taking the extra unit.', questions: 'Prove a result, use vectors or polynomial structure, and combine trigonometry or calculus ideas.', helpNeeded: 'Small algebra slips can derail a long argument, especially when the route to a method is not obvious.', daSupport: 'We help students identify hidden structures, write proof as justified steps and diagnose recurring algebra errors.', topics: ['Proof and induction', 'Vectors', 'Polynomials and combinatorics', 'Further calculus'], color: '#297dbf', vividColor: '#1c8ff2', attributes: [{ label: 'Calculus', description: 'Extended techniques' }, { label: 'Course style', description: 'Structural, abstract and proof-aware' }, { label: 'Question style', description: 'Connections and multi-stage problems' }, { label: 'Relationship', description: '1 unit studied alongside Advanced' }] },
+  { id: 'extension-2', name: 'Extension 2', shortDescriptor: 'Year 12 only', badge: 'A Year 12 specialist course studied with Advanced and Extension 1.', availability: 'Year 12 · 1 unit', year12Only: true, prerequisites: ['Advanced', 'Extension 1'], bestFit: 'Students who enjoy abstract questions, precise proof and problems whose starting method is not obvious.', whatChanges: 'Students meet new mathematical objects and are expected to reason from definitions, connect representations and test routes through a problem.', feelsLike: 'The course centres on proof, complex numbers, vectors, further integration and mechanics. Students often choose a representation or approach before they can apply a technique.', underestimate: 'It is taken alongside two other mathematics courses, and proof requires exact communication.', questions: 'Model mechanics with calculus, connect complex-number representations, prove a result or choose an integration/vector approach.', helpNeeded: 'The challenge is often making a defensible first decision, then maintaining exact algebra and communication through long work.', daSupport: 'We help students slow down the decision before technique, model rigorous written solutions and stage unfamiliar questions before timed work.', topics: ['Proof', 'Complex numbers', 'Vectors', 'Further integration', 'Mechanics'], color: '#8051bf', vividColor: '#9c4bea', attributes: [{ label: 'Calculus', description: 'Advanced techniques' }, { label: 'Course style', description: 'Specialist proof and modelling' }, { label: 'Question style', description: 'Exact unfamiliar problems' }, { label: 'Relationship', description: 'Year 12 · with Advanced + Extension 1' }] },
+];
+export function getHscStream(id: HscStreamId): HscStream { const stream = HSC_STREAMS.find((candidate) => candidate.id === id); if (!stream) throw new Error(`Unknown HSC stream: ${id}`); return stream; }
+export function getActivePath(id: HscStreamId): HscStreamId[] { return [...ACTIVE_PATHS[id]]; }

@@ -53,6 +53,12 @@ test('expands the floating player directly, allows it to move, and keeps later c
   assert.doesNotMatch(source, /Cream → Navy gradient transition/);
 });
 
+test('removes the supporting corner portraits when the floating player is expanded', () => {
+  const source = readFileSync(indexUrl, 'utf8');
+
+  assert.match(source, /\{!isExpanded && SCARDS\.map\(card => \(/);
+});
+
 test('keeps the floating player visually unframed while preserving its soft separation shadow', () => {
   const source = readFileSync(indexUrl, 'utf8');
   const floatingRule = source.match(/\.da-video-wrapper\.is-floating\{[^\n]+/);

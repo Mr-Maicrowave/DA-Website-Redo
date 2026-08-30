@@ -8,6 +8,7 @@ const heroSource = readFileSync(new URL('../../components/subjects/SubjectHero.t
 const mathsSource = readFileSync(new URL('../../pages/subjects/Mathematics.tsx', import.meta.url), 'utf8');
 const mathematicsComponent = mathsSource.slice(mathsSource.indexOf('const Mathematics = () => {'));
 const guidedJourneyPanelSource = readFileSync(new URL('../graph-lab/GuidedJourneyPanel.tsx', import.meta.url), 'utf8');
+const teachingProofSource = readFileSync(new URL('../maths-teaching-proof/MathsTeachingProof.tsx', import.meta.url), 'utf8');
 
 test('exports only the three approved ambient concepts', () => {
   for (const component of ['NetworkAmbientMoment', 'DerivativeAmbientMoment', 'VectorAmbientMoment']) {
@@ -98,17 +99,14 @@ test('each mathematical scene exposes its derivation rather than decorative moti
   assert.match(featureSource, /maths-vector-ambient__projection/);
 });
 
-test('normal Mathematics route distributes three passive ambient moments beside later content', () => {
+test('normal Mathematics route opens straight into the cube without an ambient transition', () => {
   assert.doesNotMatch(heroSource, /visualOverlay/);
   assert.doesNotMatch(mathematicsComponent, /isMathsAmbientPreview|motionPreview/);
-  assert.equal((mathematicsComponent.match(/<NetworkAmbientMoment\s+passive\s*\/>/g) ?? []).length, 1);
+  assert.equal((mathematicsComponent.match(/<NetworkAmbientMoment\s+passive\s*\/>/g) ?? []).length, 0);
   assert.equal((mathematicsComponent.match(/<DerivativeAmbientMoment\s+passive\s*\/>/g) ?? []).length, 1);
-  assert.equal((mathematicsComponent.match(/<VectorAmbientMoment\s+passive\s*\/>/g) ?? []).length, 1);
-  assert.ok(mathematicsComponent.indexOf('<NetworkAmbientMoment passive />') > mathematicsComponent.indexOf('aria-label="Mathematics page sections"'));
-  assert.ok(mathematicsComponent.indexOf('<NetworkAmbientMoment passive />') < mathematicsComponent.indexOf('<ConfidenceJourney'));
-  assert.ok(mathematicsComponent.indexOf('<VectorAmbientMoment passive />') < mathematicsComponent.indexOf('<HscMathsPathway />'));
+  assert.equal((mathematicsComponent.match(/<VectorAmbientMoment\s+passive\s*\/>/g) ?? []).length, 0);
+  assert.ok(mathematicsComponent.indexOf('<YearCube />') > mathematicsComponent.indexOf('aria-label="Mathematics page sections"'));
   assert.ok(mathematicsComponent.indexOf('<DerivativeAmbientMoment passive />') > mathematicsComponent.indexOf('<MathsGraphLabInvitation />'));
-  assert.ok(mathematicsComponent.indexOf('<DerivativeAmbientMoment passive />') < mathematicsComponent.indexOf('Real Google review'));
   assert.doesNotMatch(mathematicsComponent, /<(Sine|Integral)MotionStage\s*\/>/);
   assert.match(featureSource, /side="right"[\s\S]*side="left"[\s\S]*side="right"/);
 });
@@ -148,4 +146,17 @@ test('passive ambient mode is decorative and cannot open focused lessons', () =>
   assert.match(featureSource, /aria-hidden="true"/);
   assert.match(featureSource, /is-passive/);
   assert.match(featureCss, /\.maths-ambient-moment\.is-passive\s*\{[\s\S]*pointer-events:\s*none/);
+});
+
+test('the network constellation lives within the teaching-progress section rather than between page sections', () => {
+  assert.doesNotMatch(mathematicsComponent, /<NetworkAmbientMoment\s+passive\s*\/>/);
+  assert.match(teachingProofSource, /import \{ NetworkAmbientMoment \} from '@\/features\/maths-ambient-motion\/MathsAmbientMotion'/);
+  assert.match(teachingProofSource, /id="math-teaching-proof"[\s\S]*<NetworkAmbientMoment passive \/>/);
+});
+
+test('the teaching sequence traces one calm connection before resting', () => {
+  const teachingProofSource = readFileSync(new URL('../maths-teaching-proof/MathsTeachingProof.tsx', import.meta.url), 'utf8');
+  assert.match(teachingProofSource, /maths-teaching-sequence/);
+  assert.match(teachingProofSource, /maths-teaching-sequence-trace/);
+  assert.match(teachingProofSource, /maths-teaching-proof-motion\.css/);
 });

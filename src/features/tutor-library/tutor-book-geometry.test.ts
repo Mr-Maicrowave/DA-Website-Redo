@@ -3,6 +3,7 @@ import test from 'node:test';
 import { createTutorBookEditions } from './tutor-library-data.ts';
 import { TUTORS } from '../../data/teacherCatalogue.ts';
 import { createBookParts, getBookVisualProfile, getShelfPose } from './tutor-book-geometry.ts';
+import { getTutorBookCoverTheme } from './tutor-book-appearance.ts';
 
 test('assigns every tutor edition a deterministic, shelf-contacting pose', () => {
   const [edition] = createTutorBookEditions(TUTORS);
@@ -42,4 +43,12 @@ test('derives restrained, stable book variation and non-uniform shelf rhythm fro
   assert.ok(new Set(editions.map(edition => edition.materialVariant)).size > 4, 'shelf cloth colours should not repeat in a four-book loop');
   const gaps = poses.slice(1).map((pose, index) => Number((pose.position[0] - poses[index].position[0]).toFixed(3)));
   assert.ok(new Set(gaps).size > 2, 'books should form restrained clusters, not equal intervals');
+});
+
+test('keeps one reusable cover system flexible across restrained academic cloth palettes', () => {
+  const themes = [0, 1, 4, 7].map(getTutorBookCoverTheme);
+
+  assert.deepEqual(themes.map(theme => theme.cloth), ['#203a57', '#6a3035', '#36533d', '#31535a']);
+  assert.equal(new Set(themes.map(theme => theme.foil)).size, 4);
+  assert.ok(themes.every(theme => /^#[0-9a-f]{6}$/i.test(theme.accent)));
 });

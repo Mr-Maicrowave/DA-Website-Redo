@@ -6,7 +6,7 @@ const componentUrl = new URL('./YearCube.tsx', import.meta.url);
 const mathematicsPageUrl = new URL('../../pages/subjects/Mathematics.tsx', import.meta.url);
 const originalExperienceUrl = new URL('../../../public/interactive/year-cube/index.html', import.meta.url);
 
-test('provides 3D depth dice toss, top-down geometric net unfolding, and rich Years 7–12 course details without AI tells or emojis', () => {
+test('provides a clean 3D cube toss, top-down geometric net unfolding, and rich Years 7–12 course details without AI tells or emojis', () => {
   assert.equal(existsSync(componentUrl), true, 'YearCube.tsx must provide the Mathematics page replacement');
 
   const source = readFileSync(componentUrl, 'utf8');
@@ -16,8 +16,14 @@ test('provides 3D depth dice toss, top-down geometric net unfolding, and rich Ye
   // Verify React embedding
   assert.match(source, /\/interactive\/year-cube\/index\.html/);
   assert.match(source, /title="Interactive Years 7 to 12 mathematics cube"/);
+  assert.match(source, /id="year-cube"/);
   assert.match(mathematicsPage, /import \{ YearCube \} from '@\/features\/year-cube\/YearCube'/);
   assert.match(mathematicsPage, /<YearCube\s*\/>/);
+  assert.match(mathematicsPage, /\{ label: 'Explore Years 7–12', href: '#year-cube' \}/);
+  assert.match(mathematicsPage, /exploreTargetId="year-cube"/);
+  assert.doesNotMatch(mathematicsPage, /id="year-cube-introduction"/);
+  assert.doesNotMatch(mathematicsPage, /Explore Years 7–12 <ArrowRight/);
+  assert.match(mathematicsPage, /<\/nav>\s*<YearCube\s*\/>/);
 
   // Verify 3D Cube Structure & 6 Faces
   assert.match(originalExperience, /data-face="front"/);
@@ -34,13 +40,43 @@ test('provides 3D depth dice toss, top-down geometric net unfolding, and rich Ye
   assert.match(originalExperience, /hinged-net-wrapper/);
   assert.match(originalExperience, /top-down-view/);
   assert.match(originalExperience, /net-panel/);
-  assert.match(originalExperience, /pips-overlay/);
+  assert.match(originalExperience, /classList\.add\('net-open'\)/);
+  assert.match(originalExperience, /classList\.remove\('net-open'\)/);
+  assert.doesNotMatch(originalExperience, /pips-overlay/);
+  assert.doesNotMatch(originalExperience, /PIP_LAYOUTS/);
 
   // Verify Course Details Modal Structure
   assert.match(originalExperience, /id="masterclassModal"/);
   assert.match(originalExperience, /id="modalYearNav"/);
   assert.match(originalExperience, /id="modalContentArea"/);
   assert.match(originalExperience, /renderYearCard/);
+
+  // Year 7 is the first completed curriculum field guide. Its layout must be
+  // an open blueprint sheet with a real DA photograph, rather than the former
+  // boxed content schedule.
+  assert.match(originalExperience, /renderYearSevenFieldGuide/);
+  assert.match(originalExperience, /year-field-guide/);
+  assert.match(originalExperience, /Year shift/i);
+  assert.match(originalExperience, /Core focus areas/i);
+  assert.match(originalExperience, /At a glance/i);
+  assert.match(originalExperience, /How DA teaches it/i);
+  assert.match(originalExperience, /Common mistakes we fix/i);
+  assert.match(originalExperience, /highschool-tutor-1on1-1\.jpg/);
+  assert.match(originalExperience, /yfg-year-shift/);
+  assert.match(originalExperience, /yfg-core-focus/);
+  assert.match(originalExperience, /yfg-at-glance/);
+  assert.match(originalExperience, /yfg-common-mistakes/);
+  assert.doesNotMatch(originalExperience, /\['Year level', 'Year 7(?: of 12)?'\]/);
+
+  // Desktop field-guide content must use the available viewport width rather
+  // than forcing the Year 7 sheet into a tall internally-scrolling column.
+  assert.match(originalExperience, /\.modal-window\s*\{[^}]*max-width:\s*min\(96vw,\s*1600px\)/);
+  assert.doesNotMatch(originalExperience, /\.modal-content-area\s*\{[^}]*overflow-y:\s*hidden/);
+  assert.match(originalExperience, /\.yfg-layout\s*\{[^}]*grid-template-columns:\s*minmax\(0,\s*1\.3fr\)\s+minmax\(0,\s*1fr\)/);
+  assert.match(originalExperience, /\.yfg-title\s*\{[^}]*max-width:\s*none;[^}]*font-size:\s*clamp\(3\.25rem,\s*3\.3vw,\s*3\.625rem\)/);
+  assert.match(originalExperience, /\.yfg-table div\s*\{[^}]*grid-template-columns:\s*minmax\(0,\s*\.3fr\)\s+minmax\(0,\s*\.7fr\)/);
+  assert.doesNotMatch(originalExperience, /\.yfg-table div\s*\{[^}]*border-bottom:/);
+  assert.match(originalExperience, /@media \(max-height:\s*900px\) and \(min-width:\s*821px\)/);
 
   // One treatment ships: the blueprint sheet, on every face and every card.
   assert.match(originalExperience, /layout-concept-4/);
@@ -60,6 +96,16 @@ test('provides 3D depth dice toss, top-down geometric net unfolding, and rich Ye
   assert.match(originalExperience, /addEventListener\('dblclick'/);
   assert.match(originalExperience, /FLICK_MIN_SPEED/);
   assert.match(originalExperience, /cube-hint/);
+
+  // A rotated face can extend beyond the cube's original layout box. The full
+  // 3D stage must therefore own pointer capture, so every visible angle stays
+  // draggable rather than leaving an unresponsive projected face.
+  assert.match(originalExperience, /const dragSurface = stage/);
+  assert.match(originalExperience, /dragSurface\.addEventListener\('pointerdown'/);
+
+  // The cube's own contact shadow is enough. A rectangular stage glow leaves a
+  // visible horizontal seam under the object at some viewport sizes.
+  assert.doesNotMatch(originalExperience, /\.stage::after/);
 
   // Nothing on the dice may be selectable: double-clicking to throw would
   // otherwise select the word under the cursor, and a select-all paints the

@@ -4507,7 +4507,7 @@ const DAEnvironmentSection = () => {
 
         {/* ── SUPPORT PHOTO CARDS ────────────────────────────────── */}
         {/* z-index 8 (above video card z:5) so they appear on top    */}
-        {SCARDS.map(card => (
+        {!isExpanded && SCARDS.map(card => (
           <motion.div key={card.id} className="da-scard" style={{
             ...card.pos,
             width: card.w,

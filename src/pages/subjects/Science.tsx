@@ -255,14 +255,17 @@ const LensStudy = ({ kind }: { kind: typeof SCIENCE_LENSES[number]['diagram'] })
   );
 };
 
+// The microscope does not choose a point in the orchard. The orchard owns the
+// physical apple and deliberately presents its landed centre at this stable
+// viewport focal point. SciencePrograms consumes the same value to place the
+// lens; there is no DOM measurement flowing back into the orchard.
+const NEWTON_MICROSCOPE_FOCAL_POINT = { x: .5, y: .5 } as const;
+
 const SciencePrograms = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const storyRef = useRef<HTMLDivElement>(null);
-  const lensFrameRef = useRef<HTMLDivElement>(null);
-  const handoffCapturedRef = useRef(false);
   const reducedMotion = useReducedMotion();
   const { scrollYProgress } = useScroll({ target: storyRef, offset: ['start start', 'end end'] });
-  const [handoffGeometry, setHandoffGeometry] = useState<{ x: number; y: number; scale: number } | null>(null);
   useEffect(() => {
     [
       '/images/science-scale/fallen-apple-impact-v3.png',
@@ -275,48 +278,9 @@ const SciencePrograms = () => {
       image.src = src;
     });
   }, []);
-  // The orchard apple is authored in the tree's 1536×1024 coordinate space;
-  // the optical layer is viewport-pinned. Freeze the actual rendered apple
-  // rect at handoff and convert it to the lens frame's viewport space so the
-  // first ring forms around that apple, at every responsive size.
-  useEffect(() => {
-    const captureHandoffGeometry = () => {
-      if (handoffCapturedRef.current) return;
-      const apple = document.querySelector<HTMLElement>('.science-story-apple');
-      const lensFrame = lensFrameRef.current;
-      if (!apple || !lensFrame) return;
-      const appleRect = apple.getBoundingClientRect();
-      const lensRect = lensFrame.getBoundingClientRect();
-      // Do not compare a scene rect with a lens that is still below the
-      // viewport in normal document flow. The lens frame must be on its
-      // pinned stage before both rects share viewport coordinates.
-      const appleCenterY = appleRect.top + appleRect.height / 2;
-      if (!appleRect.width || !appleRect.height || !lensRect.width || !lensRect.height || lensRect.top < -12 || lensRect.top > window.innerHeight || appleCenterY < window.innerHeight * .8 || appleCenterY > window.innerHeight) return;
-      setHandoffGeometry({
-        x: appleRect.left + appleRect.width / 2 - (lensRect.left + lensRect.width / 2),
-        y: appleRect.top + appleRect.height / 2 - (lensRect.top + lensRect.height / 2),
-        scale: Math.max(.1, Math.min(.32, Math.max(appleRect.width, appleRect.height) / lensRect.width)),
-      });
-      handoffCapturedRef.current = true;
-    };
-    const unsubscribe = scrollYProgress.on('change', (progress) => {
-      if (progress <= .015) captureHandoffGeometry();
-    });
-    const onResize = () => {
-      handoffCapturedRef.current = false;
-      captureHandoffGeometry();
-    };
-    window.addEventListener('scroll', captureHandoffGeometry, { passive: true });
-    window.addEventListener('resize', onResize);
-    return () => {
-      unsubscribe();
-      window.removeEventListener('scroll', captureHandoffGeometry);
-      window.removeEventListener('resize', onResize);
-    };
-  }, [scrollYProgress]);
-  const lensEntryScale = useTransform(scrollYProgress, [0, .018, .055], [handoffGeometry?.scale ?? .18, handoffGeometry?.scale ?? .18, 1]);
-  const lensEntryX = useTransform(scrollYProgress, [0, .018, .055], [handoffGeometry?.x ?? 0, handoffGeometry?.x ?? 0, 0]);
-  const lensEntryY = useTransform(scrollYProgress, [0, .018, .055], [handoffGeometry?.y ?? 0, handoffGeometry?.y ?? 0, 0]);
+  // The lens is born at the orchard focal point. It blooms through scale and
+  // optical focus only; it never travels from a separately measured location.
+  const lensEntryScale = useTransform(scrollYProgress, [0, .018, .055], [.16, .16, 1]);
   const lensEntryOpacity = useTransform(scrollYProgress, [0, .006, .018], [0, 1, 1]);
   const lensEntryFilter = useTransform(scrollYProgress, [0, .018, .055], ['blur(6px) brightness(1.16)', 'blur(2px) brightness(1.05)', 'blur(0px) brightness(1)']);
   const lensBackdropOpacity = useTransform(scrollYProgress, [0, .035, .072], [0, .35, 1]);
@@ -389,17 +353,17 @@ const SciencePrograms = () => {
   const fieldTargetOpacity = useTransform(scrollYProgress, [.85, .88, .91, .94], [0, 1, 1, 0]);
 
   return (
-    <section ref={sectionRef} id="science-pathways" className="relative z-10 bg-[#fff8eb] px-5 pb-24 pt-12 lg:-mt-[100svh] lg:bg-transparent lg:px-8 lg:pb-32 lg:pt-0">
+    <section ref={sectionRef} id="science-pathways" className="relative z-10 bg-[#fff8eb] px-5 pb-24 pt-12 lg:px-8 lg:pb-32 lg:pt-0">
       <div>
         <div className="relative mx-auto max-w-7xl">
         <div ref={storyRef} className="science-scale-story relative left-1/2 h-[580vh] w-screen -translate-x-1/2 lg:h-[600vh]">
           <div className="sticky top-0 grid min-h-[100svh] place-items-center overflow-hidden bg-transparent py-12 lg:py-8">
             <motion.div aria-hidden="true" className="science-lens-backdrop pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_42%,rgba(255,248,235,.04)_0%,rgba(255,248,235,.42)_34%,#fff8eb_72%)]" style={reducedMotion ? { opacity: 1 } : { opacity: lensBackdropOpacity }} />
             <div className="science-macro-stage relative z-10 h-[min(72svh,700px)] w-full" aria-label="A scientific view moving from the visible world to cells, molecules, and physical fields as the page scrolls">
-              <div ref={lensFrameRef} className="science-eyepiece science-lens-reveal absolute left-1/2 top-[39%] h-[min(50svh,50vw,500px)] aspect-square -translate-x-1/2 -translate-y-1/2 overflow-visible">
+              <div className="science-eyepiece science-lens-reveal absolute h-[min(50svh,50vw,500px)] aspect-square -translate-x-1/2 -translate-y-1/2 overflow-visible" style={{ left: `${NEWTON_MICROSCOPE_FOCAL_POINT.x * 100}%`, top: `${NEWTON_MICROSCOPE_FOCAL_POINT.y * 100}%` }}>
                 <motion.div
                 className="science-lens-entry absolute inset-0"
-                style={reducedMotion ? undefined : { x: lensEntryX, y: lensEntryY, scale: lensEntryScale, opacity: lensEntryOpacity, filter: lensEntryFilter, transformOrigin: '50% 50%' }}
+                style={reducedMotion ? undefined : { scale: lensEntryScale, opacity: lensEntryOpacity, filter: lensEntryFilter, transformOrigin: '50% 50%' }}
               >
                 <div aria-hidden="true" className="pointer-events-none absolute -inset-[10px] rounded-full border border-[#071629]/55" />
                 <div aria-hidden="true" className="pointer-events-none absolute -inset-[6px] rounded-full border border-[#c9a227]/55 shadow-[inset_0_0_0_1px_rgba(255,255,255,.35)]" />
@@ -531,18 +495,31 @@ const SCIENCE_FACTS = [
 ] as const;
 
 const NEWTON_APPLES = [
-  { id: 'upper-centre-right', sourceX: 1220, sourceY: 350, sourceSize: 74, fallX: -62, fallY: 395, asset: 'gold', rotation: -4, fallRotation: 51, mirror: true, scale: .94, mobileVisible: false, smallMobileVisible: false },
-  { id: 'lower-left-hero', sourceX: 646, sourceY: 322, sourceSize: 70, fallX: 48, fallY: 422, asset: 'gold', rotation: -5, fallRotation: 44, mirror: false, scale: .92, mobileVisible: false, smallMobileVisible: false },
-  { id: 'centre-lower-red', sourceX: 826, sourceY: 405, sourceSize: 70, fallX: 0, fallY: 382, asset: 'red', rotation: 4, fallRotation: 52, mirror: true, scale: .92, mobileVisible: false, smallMobileVisible: false },
-  { id: 'lower-centre-hero', sourceX: 927, sourceY: 376, sourceSize: 74, fallX: -6, fallY: 386, asset: 'green', rotation: -3, fallRotation: 48, mirror: false, scale: .94, mobileVisible: false, smallMobileVisible: false },
-  { id: 'right-lower-red', sourceX: 1131, sourceY: 380, sourceSize: 70, fallX: -48, fallY: 374, asset: 'red', rotation: 3, fallRotation: 55, mirror: false, scale: .92, mobileVisible: true, smallMobileVisible: true },
-  { id: 'mid-low-red', sourceX: 969, sourceY: 573, sourceSize: 64, fallX: -18, fallY: 232, asset: 'gold', rotation: -4, fallRotation: 43, mirror: true, scale: .9, mobileVisible: false, smallMobileVisible: false },
+  // branch is the stem-tip contact point on the 1536 × 1024 tree artwork.
+  // source coordinates account for each transparent asset's off-centre stem
+  // (and its mirrored orientation), so the visible tip—not the image centre—
+  // meets the woody branch.
+  { id: 'upper-centre-right', branch: [1162, 371], sourceX: 1165, sourceY: 398, sourceSize: 74, fallX: -62, fallY: 342, asset: 'green', rotation: -4, fallRotation: 51, mirror: true, scale: .94, mobileVisible: false, smallMobileVisible: false, scrollOnly: true },
+  { id: 'lower-left-hero', branch: [698, 389], sourceX: 693, sourceY: 420, sourceSize: 70, fallX: 48, fallY: 326, asset: 'gold', rotation: -5, fallRotation: -40, mirror: false, scale: .92, mobileVisible: false, smallMobileVisible: false, scrollOnly: false },
+  { id: 'centre-lower-red', branch: [878, 447], sourceX: 880, sourceY: 477, sourceSize: 70, fallX: 0, fallY: 313, asset: 'red', rotation: 4, fallRotation: 52, mirror: true, scale: .92, mobileVisible: false, smallMobileVisible: false, scrollOnly: false },
+  { id: 'lower-centre-hero', branch: [956, 429], sourceX: 959, sourceY: 456, sourceSize: 74, fallX: -6, fallY: 303, asset: 'green', rotation: -3, fallRotation: -48, mirror: false, scale: .94, mobileVisible: false, smallMobileVisible: false, scrollOnly: false },
+  { id: 'right-lower-red', branch: [1062, 485], sourceX: 1060, sourceY: 515, sourceSize: 70, fallX: -48, fallY: 288, asset: 'red', rotation: 3, fallRotation: 55, mirror: false, scale: .92, mobileVisible: true, smallMobileVisible: true, scrollOnly: false },
+  { id: 'mid-low-red', branch: [970, 553], sourceX: 973, sourceY: 579, sourceSize: 64, fallX: -18, fallY: 226, asset: 'gold', rotation: -4, fallRotation: -43, mirror: true, scale: .9, mobileVisible: false, smallMobileVisible: false, scrollOnly: false },
 ] as const;
 
 const NEWTON_ARTWORK_WIDTH = 1536;
 const NEWTON_ARTWORK_HEIGHT = 1024;
+// Apple-centre contact points sampled from the visible grass/ground line in
+// the 1536 × 1024 orchard artwork. Each apple keeps its own x-coordinate.
+const NEWTON_GROUND_CONTACT_Y: Record<string, number> = {
+  'upper-centre-right': 920,
+  'lower-left-hero': 970,
+  'centre-lower-red': 950,
+  'lower-centre-hero': 935,
+  'right-lower-red': 920,
+  'mid-low-red': 935,
+};
 const NEWTON_IMPACT_MS = 1420;
-const NEWTON_RESET_MS = 4300;
 const NEWTON_APPLE_ASSETS = {
   red: '/images/newton-apples/apple-red.png',
   gold: '/images/newton-apples/apple-gold.png',
@@ -550,6 +527,17 @@ const NEWTON_APPLE_ASSETS = {
 } as const;
 
 type ScienceFact = typeof SCIENCE_FACTS[number];
+const NEWTON_SCROLL_APPLE = NEWTON_APPLES.find((apple) => apple.scrollOnly)!;
+// This is the sole physical source of truth once the scroll apple leaves its
+// branch. It remains in artwork-local coordinates, so resize and stage layout
+// cannot change where the apple is considered to have landed.
+const NEWTON_SCROLL_LANDED_TARGET = {
+  x: NEWTON_SCROLL_APPLE.sourceX,
+  y: NEWTON_GROUND_CONTACT_Y[NEWTON_SCROLL_APPLE.id],
+  u: NEWTON_SCROLL_APPLE.sourceX / NEWTON_ARTWORK_WIDTH,
+  v: NEWTON_GROUND_CONTACT_Y[NEWTON_SCROLL_APPLE.id] / NEWTON_ARTWORK_HEIGHT,
+} as const;
+const NEWTON_ORCHARD_CAMERA_SCALE = 1.22;
 
 const formatFactTitle = (title: string) => title.replace(/^[\p{Extended_Pictographic}\uFE0F\u200D]+\s*/u, '');
 
@@ -569,7 +557,7 @@ const randomFact = (current: ScienceFact | null) => {
 const NewtonGravityExperience = () => {
   const [activeFact, setActiveFact] = useState<ScienceFact | null>(null);
   const [fallingApple, setFallingApple] = useState<string | null>(null);
-  const [restoringApple, setRestoringApple] = useState<string | null>(null);
+  const [caughtAppleIds, setCaughtAppleIds] = useState<Set<string>>(() => new Set());
   const [reducedMotion, setReducedMotion] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [isSmallMobile, setIsSmallMobile] = useState(false);
@@ -578,10 +566,11 @@ const NewtonGravityExperience = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const sceneRef = useRef<HTMLDivElement>(null);
   const treeWrapRef = useRef<HTMLDivElement>(null);
+  const treeLayerRef = useRef<HTMLDivElement>(null);
+  const [storyTreeWidth, setStoryTreeWidth] = useState(0);
+  const [storyCamera, setStoryCamera] = useState({ x: 0, y: 0 });
   const appleButtonRefs = useRef(new Map<string, HTMLButtonElement>());
-  const resetTimerRef = useRef<number | null>(null);
   const factTimerRef = useRef<number | null>(null);
-  const restoreTimerRef = useRef<number | null>(null);
   const lastFactRef = useRef<ScienceFact | null>(null);
   const debugMode = import.meta.env.DEV
     && typeof window !== 'undefined'
@@ -590,22 +579,29 @@ const NewtonGravityExperience = () => {
   // SciencePrograms below. The sticky orchard gives the apple enough physical
   // room to detach, cross the ground plane, and create the lens transition.
   const { scrollYProgress: storyProgress } = useScroll({ target: sectionRef, offset: ['start start', 'end end'] });
-  const storyAppleY = useTransform(storyProgress, [0, .62, .76, .89, .96, 1], ['0vh', '0vh', '4vh', '22vh', '34vh', '38vh']);
-  const storyAppleRotate = useTransform(storyProgress, [0, .62, .89, .96, 1], [-5, -5, 38, 64, 74]);
-  const storyAppleScale = useTransform(storyProgress, [0, .62, .89, .96, 1], [1, 1, 1.04, .98, .95]);
+  const storyAppleGroundY = NEWTON_GROUND_CONTACT_Y[NEWTON_SCROLL_APPLE.id] - NEWTON_SCROLL_APPLE.sourceY;
+  // The tree art has a fixed 1536 × 1024 coordinate system. Convert the
+  // mapped ground distance to rendered pixels so the scroll apple and the
+  // clicked apples resolve on exactly the same foreground ground line.
+  const storyFallPixels = (storyAppleGroundY / NEWTON_ARTWORK_WIDTH) * storyTreeWidth;
+  const storyAppleY = useTransform(storyProgress, [0, .62, .76, .89, .96, 1], [0, 0, storyFallPixels * .08, storyFallPixels * .46, storyFallPixels, storyFallPixels]);
+  const storyAppleRotate = useTransform(storyProgress, [0, .62, .76, .89, .96, 1], [-5, -5, 8, 28, 42, 42]);
+  const storyAppleScale = useTransform(storyProgress, [0, .62, .76, .89, .96, 1], [1, 1, 1.04, 1, .96, .96]);
   // The orchard apple is the source object for the optical handoff. Keep it
   // present until the cream field and detailed lens specimen have taken over;
   // the overlap prevents a visible apple-to-nothing frame in either direction.
   const storyAppleOpacity = useTransform(storyProgress, [0, .88, 1], [1, 1, 1]);
-  const storyContentOpacity = useTransform(storyProgress, [0, .84, .91], [1, 1, 0]);
+  const storyContentOpacity = useTransform(storyProgress, [0, .96, 1], [1, 1, 0]);
   const scrollCueOpacity = useTransform(storyProgress, [.55, .64, .79, .86], [0, 1, 1, 0]);
   // The orchard and the fallen apple share this plane. Scaling it around the
   // apple anchor turns the final fall into a camera approach, rather than
   // asking an unrelated lens to do all of the narrative work.
-  const storyPushScale = useTransform(storyProgress, [0, .82, .96, 1], [1, 1, 1.46, 1.66]);
-  const storyPushX = useTransform(storyProgress, [0, .82, .96, 1], ['0vw', '0vw', '-15vw', '-20vw']);
-  const storyPushY = useTransform(storyProgress, [0, .82, .96, 1], ['0vh', '0vh', '-11vh', '-15vh']);
-  const storyFocusOpacity = useTransform(storyProgress, [.78, .90, .98, 1], [0, .12, .32, .42]);
+  const storyPushScale = useTransform(storyProgress, [0, .995, 1], [1, 1, NEWTON_ORCHARD_CAMERA_SCALE]);
+  const storyPushX = useTransform(storyProgress, [0, .995, 1], [0, 0, storyCamera.x]);
+  const storyPushY = useTransform(storyProgress, [0, .995, 1], [0, 0, storyCamera.y]);
+  // Do not introduce the microscope/focus treatment while the apple is still
+  // in the air. It begins only once the mapped ground contact has occurred.
+  const storyFocusOpacity = useTransform(storyProgress, [.995, .998, 1], [0, .12, .42]);
 
   useEffect(() => {
     const media = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -632,9 +628,45 @@ const NewtonGravityExperience = () => {
   }, []);
 
   useEffect(() => () => {
-    if (resetTimerRef.current) window.clearTimeout(resetTimerRef.current);
     if (factTimerRef.current) window.clearTimeout(factTimerRef.current);
-    if (restoreTimerRef.current) window.clearTimeout(restoreTimerRef.current);
+  }, []);
+
+  useLayoutEffect(() => {
+    const treeLayer = treeLayerRef.current;
+    const treeWrap = treeWrapRef.current;
+    if (!treeLayer || !treeWrap) return;
+
+    // One-way coordinate conversion:
+    // artwork-local landed target -> tree-layer local pixels -> viewport focal
+    // point. The camera transform is applied around the same landed target,
+    // so scale leaves that target fixed and this translation solves its final
+    // screen position exactly. No microscope DOM geometry is consulted here.
+    const updateCameraGeometry = () => {
+      const width = treeLayer.offsetWidth;
+      setStoryTreeWidth((current) => current === width ? current : width);
+
+      const wrapRect = treeWrap.getBoundingClientRect();
+      const landedViewportX = wrapRect.left + treeLayer.offsetLeft + NEWTON_SCROLL_LANDED_TARGET.u * treeLayer.offsetWidth;
+      const landedViewportY = wrapRect.top + treeLayer.offsetTop + NEWTON_SCROLL_LANDED_TARGET.v * treeLayer.offsetHeight;
+      const focalX = window.innerWidth * NEWTON_MICROSCOPE_FOCAL_POINT.x;
+      const focalY = window.innerHeight * NEWTON_MICROSCOPE_FOCAL_POINT.y;
+      const next = { x: focalX - landedViewportX, y: focalY - landedViewportY };
+      setStoryCamera((current) => (
+        Math.abs(current.x - next.x) < .5 && Math.abs(current.y - next.y) < .5
+          ? current
+          : next
+      ));
+    };
+
+    updateCameraGeometry();
+    const observer = new ResizeObserver(updateCameraGeometry);
+    observer.observe(treeLayer);
+    observer.observe(treeWrap);
+    window.addEventListener('resize', updateCameraGeometry);
+    return () => {
+      window.removeEventListener('resize', updateCameraGeometry);
+      observer.disconnect();
+    };
   }, []);
 
   useLayoutEffect(() => {
@@ -686,10 +718,10 @@ const NewtonGravityExperience = () => {
     setActiveFact(nextFact);
   };
 
-  const restoreApple = (appleId: string) => {
+  const catchApple = (appleId: string) => {
+    setCaughtAppleIds((current) => new Set(current).add(appleId));
     setFallingApple(null);
-    setRestoringApple(appleId);
-    restoreTimerRef.current = window.setTimeout(() => setRestoringApple(null), 180);
+    revealFact();
   };
 
   const handleAppleClick = (appleId: string) => {
@@ -697,32 +729,21 @@ const NewtonGravityExperience = () => {
 
     setHasInteracted(true);
 
-    if (resetTimerRef.current) window.clearTimeout(resetTimerRef.current);
     if (factTimerRef.current) window.clearTimeout(factTimerRef.current);
-    if (restoreTimerRef.current) window.clearTimeout(restoreTimerRef.current);
 
     setFallingApple(appleId);
-    setRestoringApple(null);
     setActiveFact(null);
 
     if (reducedMotion) {
-      revealFact();
-      resetTimerRef.current = window.setTimeout(() => restoreApple(appleId), 900);
+      catchApple(appleId);
       return;
     }
 
-    factTimerRef.current = window.setTimeout(revealFact, NEWTON_IMPACT_MS);
-
-    resetTimerRef.current = window.setTimeout(() => {
-      restoreApple(appleId);
-    }, NEWTON_RESET_MS);
+    factTimerRef.current = window.setTimeout(() => catchApple(appleId), NEWTON_IMPACT_MS);
   };
 
   const handleFactClose = () => {
-    if (resetTimerRef.current) window.clearTimeout(resetTimerRef.current);
-    if (factTimerRef.current) window.clearTimeout(factTimerRef.current);
     setActiveFact(null);
-    if (fallingApple) restoreApple(fallingApple);
   };
 
   return (
@@ -842,55 +863,102 @@ const NewtonGravityExperience = () => {
 
         .newton-law-card {
           position: relative;
-          display: grid;
-          grid-template-columns: auto 1fr;
-          gap: 16px;
           max-width: 430px;
-          margin-top: 24px;
-          padding: clamp(18px, 1.8vw, 24px);
-          border: 1px solid rgba(201, 162, 39, .18);
-          border-radius: 22px;
-          background: rgba(255, 255, 255, .76);
-          box-shadow: 0 18px 48px rgba(7, 22, 41, .07);
-          backdrop-filter: blur(18px);
+          margin-top: 28px;
+          padding: clamp(30px, 2.5vw, 38px);
+          overflow: hidden;
+          border: 1px solid #c9951c;
+          border-radius: 15px;
+          background:
+            radial-gradient(circle at 22% 14%, rgba(255, 255, 255, .82), transparent 30%),
+            repeating-linear-gradient(0deg, rgba(113, 81, 31, .025) 0 1px, transparent 1px 5px),
+            #f8f1df;
+          box-shadow: 0 18px 44px rgba(62, 43, 16, .12), inset 0 0 0 5px rgba(255, 253, 245, .75);
         }
 
-        .newton-fact__icon {
-          display: grid;
-          place-items: center;
-          width: 62px;
-          height: 62px;
-          border-radius: 999px;
-          background: rgba(201, 162, 39, .12);
-          color: #c9a227;
+        .newton-law-card::before {
+          content: "";
+          position: absolute;
+          inset: 7px;
+          border: 1px solid rgba(201, 149, 28, .62);
+          border-radius: 10px;
+          pointer-events: none;
         }
 
-        .newton-law-card__icon {
-          display: grid;
-          place-items: center;
-          width: 46px;
-          height: 46px;
-          border-radius: 999px;
-          background: rgba(201, 162, 39, .12);
-          color: #c9a227;
+        .newton-law-card__corner {
+          position: absolute;
+          z-index: 1;
+          width: 19px;
+          height: 19px;
+          border-color: rgba(201, 149, 28, .7);
+          pointer-events: none;
+        }
+
+        .newton-law-card__corner--top-left { top: 7px; left: 7px; border-top: 1px solid; border-left: 1px solid; border-radius: 9px 0 0; }
+        .newton-law-card__corner--top-right { top: 7px; right: 7px; border-top: 1px solid; border-right: 1px solid; border-radius: 0 9px 0 0; }
+        .newton-law-card__corner--bottom-left { bottom: 7px; left: 7px; border-bottom: 1px solid; border-left: 1px solid; border-radius: 0 0 0 9px; }
+        .newton-law-card__corner--bottom-right { right: 7px; bottom: 7px; border-right: 1px solid; border-bottom: 1px solid; border-radius: 0 0 9px; }
+
+        .newton-law-card__observation {
+          position: relative;
+          z-index: 1;
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          margin: 0 0 15px;
+          color: #b98512;
+          font-family: Georgia, 'Times New Roman', serif;
+          font-size: .73rem;
+          font-weight: 700;
+          letter-spacing: .14em;
+          text-transform: uppercase;
+        }
+
+        .newton-law-card__observation span { letter-spacing: .18em; }
+
+        .newton-law-card__observation::after {
+          content: "";
+          width: 26px;
+          height: 1px;
+          background: currentColor;
         }
 
         .newton-law-card h3 {
-          margin: 0 0 10px;
-          font-size: clamp(.82rem, .95vw, .98rem);
-          font-weight: 900;
-          letter-spacing: .085em;
-          line-height: 1.36;
-          text-transform: uppercase;
-          color: #b98512;
+          position: relative;
+          z-index: 1;
+          margin: 0;
+          font-family: Georgia, 'Times New Roman', serif;
+          font-size: clamp(1.55rem, 2vw, 2.05rem);
+          font-weight: 400;
+          letter-spacing: -.035em;
+          line-height: 1.02;
+          color: #10233f;
         }
 
         .newton-law-card p {
+          position: relative;
+          z-index: 1;
           margin: 0;
-          font-size: clamp(.88rem, .95vw, .98rem);
-          font-weight: 650;
-          line-height: 1.58;
-          color: rgba(16, 35, 63, .76);
+          font-family: Georgia, 'Times New Roman', serif;
+          font-size: clamp(.95rem, 1.05vw, 1.08rem);
+          font-weight: 400;
+          line-height: 1.53;
+          color: rgba(16, 35, 63, .88);
+        }
+
+        .newton-law-card__divider {
+          position: relative;
+          z-index: 1;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          margin: 19px 0 22px;
+          color: #c9951c;
+        }
+
+        .newton-law-card__divider::before,
+        .newton-law-card__divider::after { content: ""; height: 1px; flex: 1; background: currentColor; }
+        .newton-law-card__divider span { width: 6px; height: 6px; border: 1px solid currentColor; transform: rotate(45deg); }
         }
 
         .newton-click-note {
@@ -955,7 +1023,7 @@ const NewtonGravityExperience = () => {
           inset: 0;
           z-index: 2;
           pointer-events: none;
-          background: radial-gradient(circle at 69.5% 65.8%, transparent 0%, transparent 13%, rgba(7,22,41,.04) 28%, rgba(255,248,235,.22) 68%, rgba(255,248,235,.42) 100%);
+          background: radial-gradient(circle at 50% 39%, transparent 0%, transparent 13%, rgba(7,22,41,.04) 28%, rgba(255,248,235,.22) 68%, rgba(255,248,235,.42) 100%);
         }
 
         .newton-tree-layer {
@@ -966,7 +1034,6 @@ const NewtonGravityExperience = () => {
           aspect-ratio: 3 / 2;
           filter: saturate(1.04) contrast(1.02) drop-shadow(0 34px 48px rgba(7, 22, 41, .18));
           transform-origin: 58% 22%;
-          transition: transform 900ms cubic-bezier(.16, 1, .3, 1);
           will-change: transform;
         }
 
@@ -978,10 +1045,6 @@ const NewtonGravityExperience = () => {
           max-width: none;
           object-fit: cover;
           object-position: right bottom;
-        }
-
-        .newton-scene:hover .newton-tree-layer {
-          transform: rotate(.35deg) scale(1.006);
         }
 
         .newton-apple {
@@ -1007,8 +1070,8 @@ const NewtonGravityExperience = () => {
 
         .newton-scroll-apple-anchor {
           position: absolute;
-          left: 69.5%;
-          top: 65.8%;
+          left: var(--scroll-apple-x);
+          top: var(--scroll-apple-y);
           z-index: 5;
           width: clamp(46px, calc(72 / 1536 * var(--tree-width)), 92px);
           height: clamp(46px, calc(72 / 1536 * var(--tree-width)), 92px);
@@ -1073,8 +1136,21 @@ const NewtonGravityExperience = () => {
           animation: newtonAppleFall 4.3s linear forwards;
         }
 
-        .newton-apple.is-restoring {
-          animation: newtonAppleRestore 180ms ease-out both;
+        .newton-grounded-apple {
+          position: absolute;
+          left: var(--ground-apple-x);
+          top: var(--ground-apple-y);
+          z-index: 4;
+          display: block;
+          width: calc(var(--ground-apple-size) * var(--ground-apple-scale));
+          height: calc(var(--ground-apple-size) * var(--ground-apple-scale));
+          max-width: none;
+          object-fit: contain;
+          pointer-events: none;
+          filter: drop-shadow(0 7px 5px rgba(38, 17, 3, .3));
+          transform: translate3d(-50%, -50%, 0) rotate(var(--ground-apple-rotation));
+          transform-origin: 50% 50%;
+          animation: newtonAppleSettle 220ms ease-out both;
         }
 
         .newton-impact {
@@ -1105,6 +1181,33 @@ const NewtonGravityExperience = () => {
           overflow: visible;
           pointer-events: none;
         }
+
+        .newton-debug-crosshair {
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          z-index: 10;
+          width: 26px;
+          height: 26px;
+          border: 2px solid #00c2ff;
+          border-radius: 50%;
+          box-shadow: 0 0 0 2px rgba(255,255,255,.75);
+          transform: translate3d(-50%, -50%, 0);
+          pointer-events: none;
+        }
+
+        .newton-debug-crosshair::before,
+        .newton-debug-crosshair::after {
+          content: "";
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          background: #00c2ff;
+          transform: translate(-50%, -50%);
+        }
+
+        .newton-debug-crosshair::before { width: 38px; height: 2px; }
+        .newton-debug-crosshair::after { width: 2px; height: 38px; }
 
         .newton-fact {
           position: absolute;
@@ -1261,9 +1364,9 @@ const NewtonGravityExperience = () => {
           }
         }
 
-        @keyframes newtonAppleRestore {
-          from { opacity: 0; transform: translate3d(-50%, -50%, 0) scale(.96); }
-          to { opacity: 1; transform: translate3d(-50%, -50%, 0) scale(1); }
+        @keyframes newtonAppleSettle {
+          from { opacity: .72; transform: translate3d(-50%, calc(-50% - 3px), 0) rotate(var(--ground-apple-rotation)) scale(1.03); }
+          to { opacity: 1; transform: translate3d(-50%, -50%, 0) rotate(var(--ground-apple-rotation)) scale(1); }
         }
 
         @keyframes impactRipple {
@@ -1293,8 +1396,8 @@ const NewtonGravityExperience = () => {
           }
 
           .newton-click-note {
-            left: clamp(32px, 6vw, 64px);
-            top: 44%;
+            left: clamp(390px, 32vw, 490px);
+            top: 40%;
           }
 
           .newton-fact {
@@ -1320,8 +1423,8 @@ const NewtonGravityExperience = () => {
           }
 
           .newton-click-note {
-            left: 18px;
-            top: 80px;
+            left: 32%;
+            top: 38%;
             font-size: 1.08rem;
             width: 160px;
           }
@@ -1459,8 +1562,7 @@ const NewtonGravityExperience = () => {
           .newton-apple.is-falling,
           .newton-apple.is-restoring,
           .newton-apple.is-discovery-cue,
-          .newton-impact.is-active,
-          .newton-scene:hover .newton-tree-layer {
+          .newton-impact.is-active {
             animation: none !important;
             transition: none !important;
             transform: none !important;
@@ -1491,17 +1593,18 @@ const NewtonGravityExperience = () => {
           </p>
 
           <div className="newton-law-card">
-            <div className="newton-law-card__icon" aria-hidden="true">
-              <Atom className="h-5 w-5" />
-            </div>
-            <div>
-              <h3>Newton&apos;s Law of Universal Gravitation</h3>
-              <p>
-                Every object with mass attracts every other object.<br />
-                The larger the mass, the stronger the attraction.<br />
-                This invisible force is what pulls the apple toward the Earth.
-              </p>
-            </div>
+            <span className="newton-law-card__corner newton-law-card__corner--top-left" aria-hidden="true" />
+            <span className="newton-law-card__corner newton-law-card__corner--top-right" aria-hidden="true" />
+            <span className="newton-law-card__corner newton-law-card__corner--bottom-left" aria-hidden="true" />
+            <span className="newton-law-card__corner newton-law-card__corner--bottom-right" aria-hidden="true" />
+            <p className="newton-law-card__observation">Observation <span>01</span></p>
+            <h3>Newton&apos;s Law of<br />Universal Gravitation</h3>
+            <div className="newton-law-card__divider" aria-hidden="true"><span /></div>
+            <p>
+              Every object with mass attracts every other object.<br />
+              The larger the mass, the stronger the attraction.<br />
+              This invisible force is what pulls the apple toward the Earth.
+            </p>
           </div>
         </motion.div>
 
@@ -1535,10 +1638,16 @@ const NewtonGravityExperience = () => {
               />
             </svg>
           </motion.div>
-          <motion.p style={reducedMotion ? { opacity: 1 } : { opacity: scrollCueOpacity }} className="newton-scroll-cue" aria-hidden="true">Scroll to follow the apple</motion.p>
+          <motion.p style={reducedMotion ? { opacity: 1 } : { opacity: scrollCueOpacity }} className="newton-scroll-cue" aria-hidden="true">This apple falls as you scroll</motion.p>
           <motion.div aria-hidden="true" style={reducedMotion ? { opacity: 0 } : { opacity: storyFocusOpacity }} className="newton-focus-falloff" />
+          {debugMode && <span className="newton-debug-crosshair" aria-hidden="true" />}
           <div ref={treeWrapRef} className="newton-tree-wrap">
-            <motion.div className="newton-tree-layer" style={reducedMotion ? undefined : { x: storyPushX, y: storyPushY, scale: storyPushScale, transformOrigin: '69.5% 65.8%' }}>
+            <motion.div ref={treeLayerRef} className="newton-tree-layer" style={reducedMotion ? undefined : {
+              x: storyPushX,
+              y: storyPushY,
+              scale: storyPushScale,
+              transformOrigin: `${(NEWTON_SCROLL_APPLE.sourceX / NEWTON_ARTWORK_WIDTH) * 100}% ${(NEWTON_GROUND_CONTACT_Y[NEWTON_SCROLL_APPLE.id] / NEWTON_ARTWORK_HEIGHT) * 100}%`,
+            }}>
               <img
                 className="newton-tree"
                 src="/images/apple-tree-background-clean.png"
@@ -1548,23 +1657,48 @@ const NewtonGravityExperience = () => {
                 loading="eager"
                 decoding="async"
               />
-              <div className="newton-scroll-apple-anchor" aria-hidden="true">
+              <div
+                className="newton-scroll-apple-anchor"
+                aria-hidden="true"
+                style={{
+                  ['--scroll-apple-x' as string]: `${(NEWTON_SCROLL_APPLE.sourceX / NEWTON_ARTWORK_WIDTH) * 100}%`,
+                  ['--scroll-apple-y' as string]: `${(NEWTON_SCROLL_APPLE.sourceY / NEWTON_ARTWORK_HEIGHT) * 100}%`,
+                }}
+              >
                 <motion.img
                   className="newton-scroll-apple science-story-apple"
-                  src={NEWTON_APPLE_ASSETS.red}
+                  src={NEWTON_APPLE_ASSETS[NEWTON_SCROLL_APPLE.asset]}
                   alt=""
                   style={reducedMotion ? { opacity: 0 } : { y: storyAppleY, rotate: storyAppleRotate, scale: storyAppleScale, opacity: storyAppleOpacity }}
                   draggable="false"
                   decoding="async"
                 />
               </div>
-              {NEWTON_APPLES.map((apple, index) => {
+              {NEWTON_APPLES.filter((apple) => !apple.scrollOnly && apple.id !== 'mid-low-red' && caughtAppleIds.has(apple.id)).map((apple) => (
+                <img
+                  key={`grounded-${apple.id}`}
+                  className="newton-grounded-apple"
+                  src={NEWTON_APPLE_ASSETS[apple.asset]}
+                  alt=""
+                  aria-hidden="true"
+                  decoding="async"
+                  style={{
+                    ['--ground-apple-x' as string]: `${(apple.sourceX / NEWTON_ARTWORK_WIDTH) * 100}%`,
+                    ['--ground-apple-y' as string]: `${(NEWTON_GROUND_CONTACT_Y[apple.id] / NEWTON_ARTWORK_HEIGHT) * 100}%`,
+                    ['--ground-apple-size' as string]: `clamp(38px, calc(${apple.sourceSize / NEWTON_ARTWORK_WIDTH} * var(--tree-width)), 92px)`,
+                    ['--ground-apple-scale' as string]: apple.scale,
+                    ['--ground-apple-rotation' as string]: `${apple.fallRotation}deg`,
+                  }}
+                />
+              ))}
+              {NEWTON_APPLES.filter((apple) => !apple.scrollOnly && apple.id !== 'mid-low-red').map((apple, index) => {
                 const isFalling = fallingApple === apple.id;
-                const isRestoring = restoringApple === apple.id;
+                const isCaught = caughtAppleIds.has(apple.id);
                 const hiddenForViewport = (isMobile && !apple.mobileVisible)
                   || (isSmallMobile && !apple.smallMobileVisible);
-                const isInteractive = !hiddenForViewport && visibleAppleIds.has(apple.id);
-                const fallY = isMobile ? Math.min(apple.fallY, 650 - apple.sourceY) : apple.fallY;
+                const isInteractive = !hiddenForViewport && !isCaught && visibleAppleIds.has(apple.id);
+                const fallX = 0;
+                const fallY = isMobile ? Math.min(NEWTON_GROUND_CONTACT_Y[apple.id] - apple.sourceY, 650 - apple.sourceY) : NEWTON_GROUND_CONTACT_Y[apple.id] - apple.sourceY;
                 return (
                   <button
                     ref={(button) => {
@@ -1573,12 +1707,12 @@ const NewtonGravityExperience = () => {
                     }}
                     key={apple.id}
                     type="button"
-                    className={`newton-apple ${isFalling ? 'is-falling' : ''} ${isRestoring ? 'is-restoring' : ''} ${!hasInteracted && apple.id === 'right-lower-red' ? 'is-discovery-cue' : ''}`}
+                    className={`newton-apple ${isFalling ? 'is-falling' : ''} ${!hasInteracted && apple.id === 'right-lower-red' ? 'is-discovery-cue' : ''}`}
                     aria-label={`Drop apple ${index + 1} and reveal a science fact`}
                     aria-hidden={!isInteractive}
                     tabIndex={isInteractive ? 0 : -1}
                     disabled={Boolean(fallingApple)}
-                    hidden={hiddenForViewport}
+                    hidden={hiddenForViewport || isCaught}
                     onClick={() => handleAppleClick(apple.id)}
                     style={{
                       ['--apple-x' as string]: `${(apple.sourceX / NEWTON_ARTWORK_WIDTH) * 100}%`,
@@ -1589,7 +1723,7 @@ const NewtonGravityExperience = () => {
                       ['--apple-rotation' as string]: `${apple.rotation}deg`,
                       ['--apple-hover-rotation' as string]: `${apple.rotation + (apple.rotation > 0 ? -3 : 3)}deg`,
                       ['--fall-rotation' as string]: `${apple.fallRotation}deg`,
-                      ['--fall-x' as string]: `calc(${apple.fallX / NEWTON_ARTWORK_WIDTH} * var(--tree-width))`,
+                      ['--fall-x' as string]: `calc(${fallX / NEWTON_ARTWORK_WIDTH} * var(--tree-width))`,
                       ['--fall-y' as string]: `calc(${fallY / NEWTON_ARTWORK_WIDTH} * var(--tree-width))`,
                     }}
                   >
@@ -1607,8 +1741,9 @@ const NewtonGravityExperience = () => {
                 );
               })}
 
-              {NEWTON_APPLES.map((apple) => {
-                const fallY = isMobile ? Math.min(apple.fallY, 650 - apple.sourceY) : apple.fallY;
+              {NEWTON_APPLES.filter((apple) => !apple.scrollOnly && apple.id !== 'mid-low-red').map((apple) => {
+                const fallX = 0;
+                const fallY = isMobile ? Math.min(NEWTON_GROUND_CONTACT_Y[apple.id] - apple.sourceY, 650 - apple.sourceY) : NEWTON_GROUND_CONTACT_Y[apple.id] - apple.sourceY;
                 return (
                   <span
                     key={`impact-${apple.id}`}
@@ -1617,7 +1752,7 @@ const NewtonGravityExperience = () => {
                     style={{
                       ['--apple-x' as string]: `${(apple.sourceX / NEWTON_ARTWORK_WIDTH) * 100}%`,
                       ['--apple-y' as string]: `${(apple.sourceY / NEWTON_ARTWORK_HEIGHT) * 100}%`,
-                      ['--fall-x' as string]: `calc(${apple.fallX / NEWTON_ARTWORK_WIDTH} * var(--tree-width))`,
+                      ['--fall-x' as string]: `calc(${fallX / NEWTON_ARTWORK_WIDTH} * var(--tree-width))`,
                       ['--fall-y' as string]: `calc(${fallY / NEWTON_ARTWORK_WIDTH} * var(--tree-width))`,
                     }}
                   />
@@ -1627,13 +1762,16 @@ const NewtonGravityExperience = () => {
               {debugMode && (
                 <svg className="newton-debug" viewBox={`0 0 ${NEWTON_ARTWORK_WIDTH} ${NEWTON_ARTWORK_HEIGHT}`} aria-hidden="true">
                   <rect x="2" y="2" width={NEWTON_ARTWORK_WIDTH - 4} height={NEWTON_ARTWORK_HEIGHT - 4} fill="none" stroke="#00e5ff" strokeWidth="4" />
-                  {NEWTON_APPLES.map((apple) => (
+                  <circle cx={NEWTON_SCROLL_APPLE.sourceX} cy={NEWTON_SCROLL_APPLE.sourceY} r="10" fill="#ff365e" stroke="#fff" strokeWidth="3" />
+                  <circle cx={NEWTON_SCROLL_LANDED_TARGET.x} cy={NEWTON_SCROLL_LANDED_TARGET.y} r="13" fill="none" stroke="#24d66b" strokeWidth="5" />
+                  <circle cx={NEWTON_SCROLL_LANDED_TARGET.x} cy={NEWTON_SCROLL_LANDED_TARGET.y} r="7" fill="#00c2ff" stroke="#fff" strokeWidth="3" />
+                  {NEWTON_APPLES.filter((apple) => !apple.scrollOnly && apple.id !== 'mid-low-red').map((apple) => (
                     <g key={`debug-${apple.id}`}>
                       <line
                         x1={apple.sourceX}
                         y1={apple.sourceY}
-                        x2={apple.sourceX + apple.fallX}
-                        y2={apple.sourceY + apple.fallY}
+                        x2={apple.sourceX}
+                        y2={NEWTON_GROUND_CONTACT_Y[apple.id]}
                         stroke="#00e5ff"
                         strokeWidth="3"
                         strokeDasharray="10 8"
@@ -1641,9 +1779,9 @@ const NewtonGravityExperience = () => {
                       />
                       <rect x={apple.sourceX - 22} y={apple.sourceY - 22} width="44" height="44" fill="rgba(0, 229, 255, .14)" stroke="#00e5ff" strokeWidth="2" />
                       <circle cx={apple.sourceX} cy={apple.sourceY} r="5" fill="#ff2d55" />
-                      <circle cx={apple.sourceX + apple.fallX} cy={apple.sourceY + apple.fallY} r="8" fill="none" stroke="#ffe66d" strokeWidth="4" />
+                      <circle cx={apple.sourceX} cy={NEWTON_GROUND_CONTACT_Y[apple.id]} r="8" fill="none" stroke="#ffe66d" strokeWidth="4" />
                       <text x={apple.sourceX + 12} y={apple.sourceY - 12} fill="#071629" stroke="#fff" strokeWidth="5" paintOrder="stroke" fontSize="22" fontWeight="800">
-                        {apple.id} → ({apple.sourceX + apple.fallX}, {apple.sourceY + apple.fallY})
+                        {apple.id} → ({apple.sourceX}, {NEWTON_GROUND_CONTACT_Y[apple.id]})
                       </text>
                     </g>
                   ))}
@@ -1765,6 +1903,11 @@ const Science = () => {
           proofPills={['Real-world explanations', 'Marked feedback', 'Clear HSC pathway']}
           exploreTargetId="science-pathways"
           placeholderLabel="Science classroom"
+          backgroundImageSrc="/images/subjects/science/hero-classroom.png"
+          backgroundImageAlt="Science teacher explaining physics on a whiteboard to students"
+          backgroundPosition="center top"
+          mobileBackgroundPosition="62% center"
+          heroTone="charcoal"
         />
 
         {/* ── Anchor nav ── */}

@@ -12,6 +12,10 @@ export interface CatalogueTutor {
   scale?: number;      // zoom scale (default 1)
   subjects: string;    // raw subjects string from Ha's data
   hasPrimary: boolean;
+  /** Explicit, editorially verified library presentation role. Never inferred from seniority. */
+  presentation?: {
+    featuredRole?: 'manager' | 'subject-lead';
+  };
   profile?: {
     tags: string[];
     whyDA: string;
@@ -30,6 +34,7 @@ export const TUTORS: CatalogueTutor[] = [
     photo: 'jenny', posX: '51.5%', posY: '14%',
     subjects: 'Primary (English & Mathematics) / English (Yr 7–10) / English Standard / English Advanced',
     hasPrimary: true,
+    presentation: { featuredRole: 'manager' },
     profile: {
       tags: ['English specialist', '10+ years experience', 'Primary school manager'],
       whyDA: `I started as a part-time tutor at DA Tuition while I was studying my double degree of business and law at university. Even after being admitted as a lawyer in 2016, it was difficult to suppress my true passion for teaching and working with children, which inspired me to pursue a Master's in Teaching at Macquarie University, where I was honoured with the Highest Achiever Award in Secondary English Teaching and co-authored a chapter on teaching EAL/D students. Being part of DA has continually challenged me to reflect on and improve my teaching, fuelling my passion for learning and self-improvement. I particularly love my role as the primary school manager, as it's deeply rewarding to watch students' progress from developing a strong foundation in primary school into confident high school learners. I've had the privilege of mentoring students from Year 4 to Year 12; getting to know them as individuals allows me to tailor my teaching to their unique challenges, both academic and personal. I'm proud to have had hundreds of students who have topped their grade across a variety of high schools.`,

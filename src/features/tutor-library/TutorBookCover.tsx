@@ -11,6 +11,7 @@ type CoverMode = 'spine' | 'cover';
 export type SpineTreatment = 'classic' | 'stacked' | 'surname';
 
 const SUBJECT_MARK: Record<string, string> = { primary: 'PRIMARY STUDIES', mathematics: 'MATHEMATICS', english: 'ENGLISH', 'science-social': 'SCIENCE & SOCIAL' };
+const COVER_PORTRAIT_FRAME = { x: 76, y: 156, width: 872, height: 850 };
 function configureMaterialTexture(texture: CanvasTexture, repeat: [number, number], color = false) {
   texture.colorSpace = color ? SRGBColorSpace : NoColorSpace;
   texture.wrapS = RepeatWrapping; texture.wrapT = RepeatWrapping;
@@ -45,6 +46,9 @@ function drawFrame(context: CanvasRenderingContext2D, tutor: CatalogueTutor, edi
   context.fillRect(0, 0, canvas.width, canvas.height);
   context.textAlign = 'center'; context.textBaseline = 'middle';
   if (mode === 'spine') {
+    context.fillStyle = 'rgba(255,255,255,.15)';
+    context.fillRect(14, 0, 7, canvas.height);
+    context.fillRect(canvas.width - 21, 0, 7, canvas.height);
     context.save();
     context.translate(canvas.width / 2, canvas.height / 2);
     context.rotate(Math.PI / 2);
@@ -73,12 +77,12 @@ function createTexture(tutor: CatalogueTutor, edition: TutorBookEdition, mode: C
     portrait.onload = () => {
       context.save();
       context.beginPath();
-      context.rect(118, 220, canvas.width - 236, 460);
+      context.rect(COVER_PORTRAIT_FRAME.x, COVER_PORTRAIT_FRAME.y, COVER_PORTRAIT_FRAME.width, COVER_PORTRAIT_FRAME.height);
       context.clip();
-      const ratio = Math.max((canvas.width - 236) / portrait.width, 460 / portrait.height);
+      const ratio = Math.max(COVER_PORTRAIT_FRAME.width / portrait.width, COVER_PORTRAIT_FRAME.height / portrait.height);
       const width = portrait.width * ratio;
       const height = portrait.height * ratio;
-      context.drawImage(portrait, (canvas.width - width) / 2, 220 + (460 - height) / 2, width, height);
+      context.drawImage(portrait, (canvas.width - width) / 2, COVER_PORTRAIT_FRAME.y + (COVER_PORTRAIT_FRAME.height - height) / 2, width, height);
       context.restore();
       texture.needsUpdate = true;
     };
@@ -109,10 +113,10 @@ function createFoilTexture(tutor: CatalogueTutor, edition: TutorBookEdition, mod
     }
     context.font = '600 16px Cabin, sans-serif'; context.fillText(SUBJECT_MARK[edition.wallId] ?? 'DA TUITION', canvas.width / 2, 94);
   } else {
-    context.lineWidth = 7; context.strokeRect(118, 218, canvas.width - 236, 464);
+    context.lineWidth = 7; context.strokeRect(COVER_PORTRAIT_FRAME.x, COVER_PORTRAIT_FRAME.y, COVER_PORTRAIT_FRAME.width, COVER_PORTRAIT_FRAME.height);
     context.font = '600 27px Cabin, sans-serif'; context.fillText(`DA TUITION · ${SUBJECT_MARK[edition.wallId] ?? 'FACULTY'}`, canvas.width / 2, 110);
-    context.font = '600 86px "Cormorant Garamond", serif'; context.fillText(tutor.name.replace(/^Mrs\s+/i, ''), canvas.width / 2, 1008, canvas.width - 150);
-    context.font = '600 25px Cabin, sans-serif'; context.fillText(tutor.designation.toUpperCase(), canvas.width / 2, 1082, canvas.width - 180);
+    context.font = '600 82px "Cormorant Garamond", serif'; context.fillText(tutor.name.replace(/^Mrs\s+/i, ''), canvas.width / 2, 1132, canvas.width - 130);
+    context.font = '600 25px Cabin, sans-serif'; context.fillText(tutor.designation.toUpperCase(), canvas.width / 2, 1202, canvas.width - 160);
   }
   const texture = new CanvasTexture(canvas); texture.colorSpace = SRGBColorSpace; texture.minFilter = LinearMipmapLinearFilter; texture.magFilter = LinearFilter; texture.generateMipmaps = true; texture.anisotropy = 4; texture.needsUpdate = true;
   return texture;

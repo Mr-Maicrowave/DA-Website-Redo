@@ -283,9 +283,9 @@ export function createCompleteShelfBookRig(config = {}) {
   const trackedTextures = [coverTexture, foilTexture, clothBumpTexture, clothSurfaceMaps.normal, clothSurfaceMaps.roughness, paperFaceTexture, ...interiorPageTextures, openingEndpaperTexture, frontEndpaperTexture, pageEdgeTextures.fore, pageEdgeTextures.headTail, spineTexture, spineFoilTexture, backCoverTexture, backFoilTexture, foilEmbossTexture, spineEmbossTexture, backEmbossTexture];
   const cloth = new THREE.MeshPhysicalMaterial({ color: book.color, normalMap: clothSurfaceMaps.normal, normalScale: new THREE.Vector2(0.34, 0.34), roughnessMap: clothSurfaceMaps.roughness, roughness: 0.98, metalness: 0.02, bumpMap: clothBumpTexture, bumpScale: 0.0045, sheen: 0.34, sheenRoughness: 0.76, sheenColor: new THREE.Color(book.foil), transparent: true });
   const coverArt = new THREE.MeshPhysicalMaterial({ map: coverTexture, normalMap: clothSurfaceMaps.normal, normalScale: new THREE.Vector2(0.28, 0.28), roughnessMap: clothSurfaceMaps.roughness, bumpMap: clothBumpTexture, bumpScale: 0.0035, roughness: 0.92, metalness: 0.035, clearcoat: 0.06, clearcoatRoughness: 0.72, sheen: 0.26, sheenRoughness: 0.78, transparent: true });
-  const foilArt = new THREE.MeshPhysicalMaterial({ color: book.foil, map: foilTexture, alphaMap: foilTexture, bumpMap: foilEmbossTexture, bumpScale: 0.016, roughness: 0.2, metalness: 0.94, clearcoat: 0.18, clearcoatRoughness: 0.12, transparent: true, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -2 });
+  const foilArt = new THREE.MeshPhysicalMaterial({ color: book.foil, emissive: book.foil, emissiveIntensity: 0.28, map: foilTexture, alphaMap: foilTexture, bumpMap: foilEmbossTexture, bumpScale: 0.016, roughness: 0.34, metalness: 0.68, clearcoat: 0.12, clearcoatRoughness: 0.2, transparent: true, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -2 });
   const spineArt = new THREE.MeshPhysicalMaterial({ map: spineTexture, normalMap: clothSurfaceMaps.normal, normalScale: new THREE.Vector2(0.3, 0.3), roughnessMap: clothSurfaceMaps.roughness, bumpMap: clothBumpTexture, bumpScale: 0.004, roughness: 0.95, metalness: 0.025, sheen: 0.27, sheenRoughness: 0.78, transparent: true, side: THREE.DoubleSide });
-  const spineFoilArt = new THREE.MeshPhysicalMaterial({ color: book.foil, map: spineFoilTexture, alphaMap: spineFoilTexture, bumpMap: spineEmbossTexture, bumpScale: 0.017, roughness: 0.19, metalness: 0.92, clearcoat: 0.16, clearcoatRoughness: 0.13, transparent: true, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -2, side: THREE.DoubleSide });
+  const spineFoilArt = new THREE.MeshPhysicalMaterial({ color: book.foil, emissive: book.foil, emissiveIntensity: 0.28, map: spineFoilTexture, alphaMap: spineFoilTexture, bumpMap: spineEmbossTexture, bumpScale: 0.017, roughness: 0.34, metalness: 0.68, clearcoat: 0.12, clearcoatRoughness: 0.2, transparent: true, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -2, side: THREE.DoubleSide });
   const backArt = new THREE.MeshPhysicalMaterial({ map: backCoverTexture, normalMap: clothSurfaceMaps.normal, normalScale: new THREE.Vector2(0.28, 0.28), roughnessMap: clothSurfaceMaps.roughness, bumpMap: clothBumpTexture, bumpScale: 0.0035, roughness: 0.96, metalness: 0.025, sheen: 0.25, sheenRoughness: 0.8, transparent: true, side: THREE.DoubleSide });
   const backFoilArt = new THREE.MeshPhysicalMaterial({ color: book.foil, map: backFoilTexture, alphaMap: backFoilTexture, bumpMap: backEmbossTexture, bumpScale: 0.016, roughness: 0.21, metalness: 0.9, clearcoat: 0.14, clearcoatRoughness: 0.14, transparent: true, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -2, side: THREE.DoubleSide });
   const openingEndpaperMaterial = new THREE.MeshPhysicalMaterial({ color: new THREE.Color(book.palette.paperPale).lerp(new THREE.Color(0xf2ead8), 0.5), map: openingEndpaperTexture, bumpMap: paperFaceTexture, bumpScale: 0.0018, roughness: 0.94, metalness: 0, sheen: 0.025, sheenRoughness: 1, side: THREE.DoubleSide, transparent: true }); const frontEndpaperMaterial = new THREE.MeshPhysicalMaterial({ color: new THREE.Color(book.palette.paperPale).lerp(new THREE.Color(0xf2ead8), 0.5), map: frontEndpaperTexture, bumpMap: paperFaceTexture, bumpScale: 0.0018, roughness: 0.94, metalness: 0, sheen: 0.025, sheenRoughness: 1, side: THREE.DoubleSide, transparent: true });
@@ -309,17 +309,23 @@ export function createCompleteShelfBookRig(config = {}) {
   const boxGeometry = new THREE.BoxGeometry(1, 1, 1); const planeGeometry = new THREE.PlaneGeometry(1, 1); const coverGeometry = new RoundedBoxGeometry(width, height, board, 2, coverRadius); const pageGeometry = createPageBlockGeometry(pageWidth, pageHeight, pageDepth, pageRadius); const coverSurfaceGeometry = createRoundedPlaneGeometry(width - 0.007, height - 0.007, 0.0035); const endpaperGeometry = createRoundedPlaneGeometry(width - 0.045, height - 0.045, 0.003);
   const pageBlock = createMesh(pageGeometry, pageMaterial, 'codex-page-block'); pageBlock.position.x = 0.018; motion.add(pageBlock);
   const backPivot = new THREE.Group(); backPivot.name = 'codex-back-cover-pivot'; backPivot.position.set(-width * 0.5, 0, -depth * 0.5 - board * 0.5); const backCover = createMesh(coverGeometry, cloth, 'codex-back-cover'); backCover.position.x = width * 0.5; backPivot.add(backCover); const backPlane = createMesh(coverSurfaceGeometry, backArt, 'codex-back-cover-art', false, false); backPlane.position.set(width * 0.5, 0, -board * 0.55); backPlane.rotation.y = Math.PI; backPivot.add(backPlane); const backFoilPlane = createMesh(coverSurfaceGeometry, backFoilArt, 'codex-back-foil-art', false, false); backFoilPlane.position.set(width * 0.5, 0, -board * 0.605); backFoilPlane.rotation.y = Math.PI; backPivot.add(backFoilPlane); const backEndpaper = createMesh(endpaperGeometry, openingEndpaperMaterial, 'codex-back-endpaper', false, true); backEndpaper.position.set(width * 0.5, 0, board * 0.515); backPivot.add(backEndpaper); addTurnIns(backPivot, book, 'back', width, height, board * 0.53, cloth, boxGeometry); const backGroove = createMesh(planeGeometry, grooveMaterial, 'codex-back-hinge-groove', false, false); backGroove.scale.set(0.012, height * 0.94, 1); backGroove.position.set(0.038, 0, -board * 0.535); backGroove.rotation.y = Math.PI; backPivot.add(backGroove); motion.add(backPivot);
-  const identityPageMaterial = presentationApplied ? interiorPageMaterials[0] : frontEndpaperMaterial;
+  // The cover endpaper is blank. Every readable folio occupies a physical leaf:
+  // 01 rests left, 02/03 are the turning leaf, and 04 waits on the right stack.
+  const identityPageMaterial = frontEndpaperMaterial;
   const readerLeafMaterials = presentationApplied
-    ? [[interiorPageMaterials[1], interiorPageMaterials[2]], [interiorPageMaterials[3], interiorPageMaterials[3]]]
+    ? [[interiorPageMaterials[0], blankPageMaterial], [interiorPageMaterials[1], interiorPageMaterials[2]], [interiorPageMaterials[3], blankPageMaterial]]
     : [];
+  const turnableLeafOrder = 1;
+  const initialLeftLeafOrder = 0;
   const frontPivot = new THREE.Group(); frontPivot.name = 'codex-front-cover-pivot'; frontPivot.position.set(-width * 0.5, 0, depth * 0.5 + board * 0.5); const frontCover = createMesh(coverGeometry, cloth, 'codex-front-cover'); frontCover.position.x = width * 0.5; frontPivot.add(frontCover); const coverPlane = createMesh(coverSurfaceGeometry, coverArt, 'codex-cover-art', false, false); coverPlane.position.set(width * 0.5, 0, board * 0.55); frontPivot.add(coverPlane); const foilPlane = createMesh(coverSurfaceGeometry, foilArt, 'codex-foil-art', false, false); foilPlane.position.set(width * 0.5, 0, board * 0.605); frontPivot.add(foilPlane); const frontEndpaper = createMesh(endpaperGeometry, identityPageMaterial, 'codex-front-endpaper', false, true); frontEndpaper.position.set(width * 0.5, 0, -board * 0.515); frontEndpaper.rotation.y = Math.PI; frontPivot.add(frontEndpaper); addTurnIns(frontPivot, book, 'front', width, height, -board * 0.53, cloth, boxGeometry); const frontGroove = createMesh(planeGeometry, grooveMaterial, 'codex-front-hinge-groove', false, false); frontGroove.scale.set(0.012, height * 0.94, 1); frontGroove.position.set(0.038, 0, board * 0.655); frontPivot.add(frontGroove); motion.add(frontPivot);
   const pagePivots = [];
   for (let pageIndex = 0; pageIndex < 6; pageIndex += 1) {
     const leafOrder = 5 - pageIndex; const pivot = new THREE.Group(); pivot.name = `codex-page-${pageIndex}`; pivot.position.set(-width * 0.5 + spineWidth * 0.65, 0, pageDepth * 0.5 + 0.0015 + pageIndex * 0.0015); pivot.userData.restZ = pivot.position.z; pivot.userData.turnedZ = depth * 0.5 + board + 0.004 + leafOrder * 0.0015;
     const frontGeometry = new THREE.PlaneGeometry(1, 1, FLEXIBLE_PAGE_SEGMENTS, FLEXIBLE_PAGE_VERTICAL_SEGMENTS); const backGeometry = new THREE.PlaneGeometry(1, 1, FLEXIBLE_PAGE_SEGMENTS, FLEXIBLE_PAGE_VERTICAL_SEGMENTS); const visiblePageWidth = pageWidth - spineWidth * 0.42;
     const readerLeaf = readerLeafMaterials[leafOrder];
-    const frontPageMaterial = readerLeaf?.[0] ?? (leafOrder < 4 ? interiorPageMaterials[leafOrder * 2] : blankPageMaterial); const backPageMaterial = readerLeaf?.[1] ?? (leafOrder < 4 ? interiorPageMaterials[leafOrder * 2 + 1] : blankPageMaterial);
+    // The remaining physical leaves give the book believable depth only. Giving
+    // them profile canvases let inactive copy peek through the settled spread.
+    const frontPageMaterial = readerLeaf?.[0] ?? blankPageMaterial; const backPageMaterial = readerLeaf?.[1] ?? blankPageMaterial;
     const front = createMesh(frontGeometry, frontPageMaterial, `codex-page-sheet-${pageIndex}-front`, false, true); front.scale.set(visiblePageWidth, pageHeight - 0.014, 1); front.position.set(visiblePageWidth * 0.5, 0, 0.00022); pivot.add(front);
     const back = createMesh(backGeometry, backPageMaterial, `codex-page-sheet-${pageIndex}-back`, false, true); back.scale.set(visiblePageWidth, pageHeight - 0.014, 1); back.position.set(visiblePageWidth * 0.5, 0, -0.00022); back.rotation.y = Math.PI; pivot.add(back);
     pivot.userData.flex = { curve: 0, curveVelocity: 0, twist: 0, twistVelocity: 0, surfaces: [{ geometry: frontGeometry, position: frontGeometry.attributes.position, base: Float32Array.from(frontGeometry.attributes.position.array), direction: 1 }, { geometry: backGeometry, position: backGeometry.attributes.position, base: Float32Array.from(backGeometry.attributes.position.array), direction: -1 }] };
@@ -355,14 +361,18 @@ export function createCompleteShelfBookRig(config = {}) {
     pagePivots.forEach((pivot, pageIndex) => {
       const leafOrder = pagePivots.length - 1 - pageIndex;
       let pageTarget = 0; let positionTarget = pivot.userData.restZ; let pageTwistTarget = 0; let dragCurveBoost = 0; let flexTwistTarget = 0;
-      if (leafOrder < PAGINATED_LEAF_COUNT) {
-        const isTurned = leafOrder < state.settledPages;
+      if (leafOrder === initialLeftLeafOrder) {
+        pageTarget = -Math.PI + 0.07;
+        positionTarget = pivot.userData.turnedZ;
+        pivot.position.z = damp(pivot.position.z, pivot.userData.restZ + (positionTarget - pivot.userData.restZ) * amount, speed, delta);
+      } else if (leafOrder === turnableLeafOrder) {
+        const isTurned = state.settledPages >= 1;
         const unturnedTarget = -0.038 + leafOrder * 0.008;
         const turnedTarget = -Math.PI + 0.085 + leafOrder * 0.014;
         pageTarget = isTurned ? turnedTarget : unturnedTarget;
         positionTarget = isTurned ? pivot.userData.turnedZ : pivot.userData.restZ;
         if (pageDrag.active && pageDrag.direction !== 0) {
-          const dragLeafOrder = pageDrag.direction > 0 ? state.settledPages : state.settledPages - 1;
+          const dragLeafOrder = turnableLeafOrder;
           if (leafOrder === dragLeafOrder) {
             const dragProgress = smoothstep(pageDrag.progress);
             const dragEnvelope = Math.sin(Math.PI * dragProgress);
@@ -377,7 +387,7 @@ export function createCompleteShelfBookRig(config = {}) {
         }
         pivot.position.z = damp(pivot.position.z, pivot.userData.restZ + (positionTarget - pivot.userData.restZ) * amount, speed, delta);
       } else {
-        pageTarget = -0.006 + (leafOrder - PAGINATED_LEAF_COUNT) * 0.003;
+        pageTarget = -0.006 + (leafOrder - turnableLeafOrder) * 0.003;
         pivot.position.z = damp(pivot.position.z, pivot.userData.restZ, speed, delta);
       }
       pivot.rotation.y = damp(pivot.rotation.y, pageTarget * amount, speed, delta);
@@ -391,12 +401,13 @@ export function createCompleteShelfBookRig(config = {}) {
     const amount = clamp(state.open, 0, 1);
     return pagePivots.every((pivot, pageIndex) => {
       const leafOrder = pagePivots.length - 1 - pageIndex;
-      const paginated = leafOrder < PAGINATED_LEAF_COUNT;
-      const turned = paginated && leafOrder < state.settledPages;
+      const initialLeft = leafOrder === initialLeftLeafOrder;
+      const paginated = leafOrder === turnableLeafOrder;
+      const turned = paginated && state.settledPages >= 1;
       const pageTarget = paginated
         ? turned ? -Math.PI + 0.085 + leafOrder * 0.014 : -0.038 + leafOrder * 0.008
-        : -0.006 + (leafOrder - PAGINATED_LEAF_COUNT) * 0.003;
-      const positionTarget = turned ? pivot.userData.turnedZ : pivot.userData.restZ;
+        : initialLeft ? -Math.PI + 0.07 : -0.006 + (leafOrder - turnableLeafOrder) * 0.003;
+      const positionTarget = turned || initialLeft ? pivot.userData.turnedZ : pivot.userData.restZ;
       const expectedRotation = pageTarget * amount;
       const expectedPosition = pivot.userData.restZ + (positionTarget - pivot.userData.restZ) * amount;
       const turnProgress = clamp(Math.abs(expectedRotation) / Math.PI, 0, 1);

@@ -7,7 +7,7 @@ import './year-cube.css';
  */
 export function YearCube() {
   return (
-    <section className="year-cube" aria-label="Years 7 to 12 mathematics cube">
+    <section id="year-cube" className="year-cube" aria-label="Years 7 to 12 mathematics cube">
       <iframe
         className="year-cube__experience"
         src="/interactive/year-cube/index.html?v=blueprint-noselect-20260830"

@@ -6,6 +6,7 @@ import { RoomRotunda } from './RoomRotunda';
 import { createRoomTurnPose } from './tutor-library-timeline';
 import type { LibraryEvent, LibraryPhase } from './tutor-library-state';
 import { SUBJECT_WALLS } from './tutor-library-data';
+import type { TutorBookEdition } from './tutor-library-data';
 import { createCompleteShelfBookPool } from './complete-shelf-book-pool';
 import type { CompleteShelfTutorRig } from './CompleteShelfTutorBookBridge';
 import type { TutorBookPageTurnDirection } from './tutor-book-pages';
@@ -118,7 +119,7 @@ function MotionDriver({ phase, generation, timing, motionProgress, debugTurnProg
   return null;
 }
 
-export function TutorLibraryScene({ fromWallIndex, toWallIndex, motionProgress, debugTurnProgress, debugBookProgress, timing, reviewView, showWallLabels = true, phase, generation, reducedMotion, pageTurnDirection, selectedEditionId, rigIntentEditionId: requestedRigIntentEditionId, rigIntentToken, onRoomReady, onActivate, onRigReady, onRigUnavailable, onLifecycleComplete, onPageSettled, onError }: { fromWallIndex: number; toWallIndex: number; motionProgress: MutableRefObject<TutorLibraryMotionProgress>; debugTurnProgress?: number; debugBookProgress?: number; timing: BookMotionTimingPolicy; reviewView?: string | null; showWallLabels?: boolean; phase: LibraryPhase; generation: number; reducedMotion: boolean; pageTurnDirection: TutorBookPageTurnDirection; selectedEditionId?: string; rigIntentEditionId?: string; rigIntentToken: number; onRoomReady: () => void; onActivate: (editionId: string, rootUuid: string) => void; onRigReady: (editionId: string, rootUuid: string, token: number) => void; onRigUnavailable: (editionId: string, rootUuid: string) => void; onLifecycleComplete: (event: LibraryEvent) => void; onPageSettled: (settledPages: number) => void; onError: (message: string) => void }) {
+export function TutorLibraryScene({ fromWallIndex, toWallIndex, motionProgress, debugTurnProgress, debugBookProgress, timing, reviewView, showWallLabels = true, spotlightEditions, phase, generation, reducedMotion, pageTurnDirection, selectedEditionId, rigIntentEditionId: requestedRigIntentEditionId, rigIntentToken, onRoomReady, onActivate, onRigReady, onRigUnavailable, onLifecycleComplete, onPageSettled, onError }: { fromWallIndex: number; toWallIndex: number; motionProgress: MutableRefObject<TutorLibraryMotionProgress>; debugTurnProgress?: number; debugBookProgress?: number; timing: BookMotionTimingPolicy; reviewView?: string | null; showWallLabels?: boolean; spotlightEditions?: readonly TutorBookEdition[]; phase: LibraryPhase; generation: number; reducedMotion: boolean; pageTurnDirection: TutorBookPageTurnDirection; selectedEditionId?: string; rigIntentEditionId?: string; rigIntentToken: number; onRoomReady: () => void; onActivate: (editionId: string, rootUuid: string) => void; onRigReady: (editionId: string, rootUuid: string, token: number) => void; onRigUnavailable: (editionId: string, rootUuid: string) => void; onLifecycleComplete: (event: LibraryEvent) => void; onPageSettled: (settledPages: number) => void; onError: (message: string) => void }) {
   const bookPool = useMemo(() => createCompleteShelfBookPool<CompleteShelfTutorRig>({ maxDormantRigs: 3 }), []);
   const [pointerRigIntentEditionId, setPointerRigIntentEditionId] = useState<string>();
   const rigIntentEditionId = requestedRigIntentEditionId ?? pointerRigIntentEditionId;
@@ -137,7 +138,7 @@ export function TutorLibraryScene({ fromWallIndex, toWallIndex, motionProgress, 
       <LibraryEnvironment />
       <ambientLight intensity={0.1} color="#d9e4f2" />
       <hemisphereLight intensity={0.16} color="#93a8bd" groundColor="#2a1a10" />
-      <RoomRotunda fromWallIndex={fromWallIndex} toWallIndex={toWallIndex} showWallLabels={showWallLabels} pool={bookPool} rigIntentEditionId={rigIntentEditionId} rigIntentToken={rigIntentToken} onRigIntent={setPointerRigIntentEditionId} phase={phase} generation={generation} reducedMotion={reducedMotion} pageTurnDirection={pageTurnDirection} selectedEditionId={selectedEditionId} motionProgress={debugBookProgress ?? motionProgress.current.book} motionProgressRef={motionProgress} onActivate={onActivate} onRigReady={onRigReady} onRigUnavailable={onRigUnavailable} onLifecycleComplete={onLifecycleComplete} onPageSettled={onPageSettled} onError={onError} />
+      <RoomRotunda fromWallIndex={fromWallIndex} toWallIndex={toWallIndex} showWallLabels={showWallLabels} spotlightEditions={spotlightEditions} pool={bookPool} rigIntentEditionId={rigIntentEditionId} rigIntentToken={rigIntentToken} onRigIntent={setPointerRigIntentEditionId} phase={phase} generation={generation} reducedMotion={reducedMotion} pageTurnDirection={pageTurnDirection} selectedEditionId={selectedEditionId} motionProgress={debugBookProgress ?? motionProgress.current.book} motionProgressRef={motionProgress} onActivate={onActivate} onRigReady={onRigReady} onRigUnavailable={onRigUnavailable} onLifecycleComplete={onLifecycleComplete} onPageSettled={onPageSettled} onError={onError} />
     </>
   );
 }

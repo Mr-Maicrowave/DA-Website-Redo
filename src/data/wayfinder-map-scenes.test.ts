@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { closestPointOnPolyline, extractRoadSegment, getCommunityCameraBounds, getMapScene, getSceneBounds, interpolateBounds, projectCoordinate } from './wayfinder-map-scenes.ts';
+import { closestPointOnPolyline, extractRoadSegment, getMapScene, getSceneBounds, projectCoordinate } from './wayfinder-map-scenes.ts';
 import { PHYSICAL_CENTRES } from './physical-centres.ts';
 
 test('projects the confirmed physical centres into one shared Canley Heights SVG scene', () => {
@@ -40,35 +40,6 @@ test('uses a dedicated ready composition without duplicating the geographic scen
   const scene = getMapScene('canley-heights');
   assert.notDeepEqual(getSceneBounds(scene, 'ready'), getSceneBounds(scene, 'hero'));
   assert.equal(getMapScene('canley-heights'), scene);
-});
-
-test('defines a separate wide community camera that contains the mock regional reach', () => {
-  const scene = getMapScene('canley-heights');
-  const communityBounds = scene.communityBounds;
-
-  assert.ok(communityBounds.north > -33.68, 'wide view reaches beyond the Hills District');
-  assert.ok(communityBounds.south < -33.98, 'wide view includes the southern reach');
-  assert.ok(communityBounds.west < 150.78, 'wide view includes the western reach');
-  assert.ok(communityBounds.east > 151.21, 'wide view includes the eastern reach');
-});
-
-test('interpolates the community camera continuously between local and wide bounds', () => {
-  const scene = getMapScene('canley-heights');
-  const local = getSceneBounds(scene, 'nearby');
-  assert.deepEqual(interpolateBounds(local, scene.communityBounds, 0), local);
-  assert.deepEqual(interpolateBounds(local, scene.communityBounds, 1), scene.communityBounds);
-  assert.equal(interpolateBounds(local, scene.communityBounds, .5).east, (local.east + scene.communityBounds.east) / 2);
-});
-
-test('holds a metropolitan community frame before resolving to the Sydney-wide camera', () => {
-  const scene = getMapScene('canley-heights');
-  const early = getCommunityCameraBounds(scene, .25);
-  const middle = getCommunityCameraBounds(scene, .5);
-  const wide = getCommunityCameraBounds(scene, 1);
-
-  assert.ok(early.east - early.west < scene.communityBounds.east - scene.communityBounds.west, 'early view retains map presence');
-  assert.ok(middle.east - middle.west < scene.communityBounds.east - scene.communityBounds.west, 'middle view remains a metropolitan frame');
-  assert.deepEqual(wide, scene.communityBounds);
 });
 
 test('uses the corrected Building 2 property coordinate', () => {

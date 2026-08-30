@@ -3,9 +3,19 @@ import { Link } from 'react-router-dom';
 import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion';
 import { BookOpen, Brain, Calculator, Check, ClipboardCheck, GraduationCap, Heart, Star, Target, Trophy, UserRound, UsersRound } from 'lucide-react';
 import NavigationNew from '@/components/NavigationNew';
+import PageJourney from '@/components/page-journey/PageJourney';
 import StickyBookButton from '@/components/StickyBookButton';
 import SEO from '@/components/SEO';
 import PrimaryReferenceStory from '@/features/primary-storybook/PrimaryReferenceStory';
+
+const PRIMARY_JOURNEY_SECTIONS = [
+  { id: 'primary-introduction', label: 'Introduction', description: 'Primary school learning', theme: 'light' as const },
+  { id: 'foundation', label: 'Learning journey', description: 'Years 1 to 6', theme: 'light' as const },
+  { id: 'pathway', label: 'How We Teach', description: 'Support that adapts', theme: 'light' as const },
+  { id: 'programs', label: 'Programs', description: 'Find the right fit', theme: 'light' as const },
+  { id: 'family-reasons', label: 'Why DA', description: 'What families value', theme: 'light' as const },
+  { id: 'primary-journey-outro', label: 'Next Step', description: 'Start with a conversation', theme: 'light' as const },
+];
 
 const premiumEase = [0.22, 1, 0.36, 1] as const;
 
@@ -388,8 +398,9 @@ const PrimarySchool = () => (
   <div className="primary-story">
     <SEO title="Primary School Tutoring (Years 1–6)" description="One continuous primary learning journey from strong foundations to NAPLAN confidence, selective school preparation and high school readiness." canonicalUrl="/programs/primary-school" />
     <NavigationNew />
+    <PageJourney pageLabel="Primary School" sections={PRIMARY_JOURNEY_SECTIONS} />
     <StickyBookButton />
-    <div className="ps-opening">
+    <div id="primary-introduction" className="ps-opening">
       <div className="ps-opening__hero">
         <PrimaryHero />
       </div>

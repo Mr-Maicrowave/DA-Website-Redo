@@ -31,11 +31,18 @@ test('Standard remains separate from the Advanced extension pathway', () => {
   assert.deepEqual(getActivePath('standard'), ['standard']);
 });
 
-test('Extension 1 includes Advanced in its active prerequisite path', () => {
-  assert.deepEqual(getActivePath('extension-1'), ['advanced', 'extension-1']);
+test('Advanced is the base of the extension pathway rather than a step after Standard', () => {
+  assert.deepEqual(getActivePath('advanced'), ['advanced']);
 });
 
-test('Extension 2 includes both prerequisites and is Year 12 only', () => {
+test('Extension 1 retains its Advanced prerequisite in the active pathway', () => {
+  assert.deepEqual(getActivePath('extension-1'), [
+    'advanced',
+    'extension-1',
+  ] satisfies HscStreamId[]);
+});
+
+test('Extension 2 retains both prerequisites and is Year 12 only', () => {
   assert.deepEqual(getActivePath('extension-2'), [
     'advanced',
     'extension-1',
@@ -48,47 +55,50 @@ test('Extension 2 includes both prerequisites and is Year 12 only', () => {
   ]);
 });
 
-test('pathway begins with a course chooser and keeps the dependency map subordinate', () => {
+test('pathway leads with a vertical course ladder and a selected-course detail panel', () => {
   const source = readFileSync(componentUrl, 'utf8');
-  assert.match(source, /Choose an HSC maths course with confidence/);
-  assert.match(source, /Which course is your child considering\?/);
-  assert.match(source, /I&apos;m not sure which course fits yet/);
-  assert.match(source, /How the courses connect/);
-  assert.doesNotMatch(source, /hsc-pathway-map/);
-  assert.doesNotMatch(source, /ROUTE_SEGMENTS/);
+  assert.match(source, /hsc-pathway-ladder/);
+  assert.match(source, /hsc-pathway-detail/);
+  assert.match(source, /data-course-path/);
+  assert.match(source, /data-active-course/);
+  assert.match(source, /hsc-pathway-ladder__rail/);
+  assert.match(source, /Course attributes/);
+  assert.doesNotMatch(source, /How the courses connect/);
+});
+
+test('course selection retains the prerequisite path and moves the selected indicator', () => {
+  const source = readFileSync(componentUrl, 'utf8');
+  assert.match(source, /const activePath = getActivePath\(activeStreamId\);/);
+  assert.match(source, /className=\{`hsc-pathway-ladder__course\$\{isSelected \? ' is-selected' : ''\}\$\{isInActivePath \? ' is-on-path' : ''\}`\}/);
+  assert.match(source, /className="hsc-pathway-ladder__connector"/);
 });
 
 test('pathway makes each course a keyboard-accessible single selection', () => {
   const source = readFileSync(componentUrl, 'utf8');
-  assert.match(source, /aria-pressed=\{isSelected\}/);
+  const styles = readFileSync(new URL('./hsc-maths-pathway.css', import.meta.url), 'utf8');
+  assert.match(source, /role="tab" aria-selected=\{isSelected\}/);
   assert.match(source, /aria-controls="hsc-course-guide"/);
-  assert.match(source, /role="region" aria-live="polite"/);
-  assert.match(source, /focus-visible:ring-2/);
+  assert.match(source, /role="tabpanel" aria-live="polite"/);
+  assert.match(styles, /\.hsc-pathway-ladder__course:focus-visible/);
 });
 
 test('pathway presents the approved decision content and actions', () => {
   const source = readFileSync(componentUrl, 'utf8');
-  assert.match(source, /Best fit when/);
-  assert.match(source, /What changes/);
-  assert.match(source, /Where students need help/);
-  assert.match(source, /How DA helps/);
+  assert.match(source, /Who it tends to suit/);
+  assert.match(source, /What students underestimate/);
+  assert.match(source, /What this course feels like/);
+  assert.match(source, /Challenges & DA help/);
   assert.match(source, /Talk through your child/);
   assert.match(source, /to="\/book-interview"/);
   assert.match(source, /to="\/hsc-excellence"/);
-  assert.match(source, /See topics covered/);
+  assert.match(source, /Representative topics/);
+  assert.match(source, /Course attributes/);
 });
 
-test('secondary actions and topic disclosure keep a 48px minimum target', () => {
-  const source = readFileSync(componentUrl, 'utf8');
-  assert.match(
-    source,
-    /<summary className="[^"]*min-h-12[^"]*">\s*See topics covered/,
-  );
-  assert.match(
-    source,
-    /to="\/hsc-excellence" className="[^"]*min-h-12[^"]*"/,
-  );
-  assert.doesNotMatch(source, /to="\/hsc-excellence" className="[^"]*min-h-11/);
+test('secondary actions and disclosure rows keep compact usable targets', () => {
+  const styles = readFileSync(new URL('./hsc-maths-pathway.css', import.meta.url), 'utf8');
+  assert.match(styles, /\.hsc-pathway-detail__rows summary\{[^}]*min-height:2\.7rem/);
+  assert.match(styles, /\.hsc-pathway-detail__primary\{[^}]*min-height:2\.85rem/);
 });
 
 test('course guide uses a stable heading relationship', () => {
@@ -99,26 +109,96 @@ test('course guide uses a stable heading relationship', () => {
 
 test('course colour remains an accent rather than the only source of meaning', () => {
   const source = readFileSync(componentUrl, 'utf8');
-  assert.match(source, /borderColor: stream\.color/);
-  assert.match(source, /backgroundColor: stream\.color/);
+  assert.match(source, /'--course-accent': stream\.color/);
+  assert.doesNotMatch(source, /backgroundColor: stream\.color/);
   assert.match(source, /\{stream\.availability\}/);
 });
 
-test('chooser is full-bleed, rounds its course controls, and gives unsure families a non-diagnostic next step', () => {
-  const source = readFileSync(componentUrl, 'utf8');
-  assert.match(source, /max-w-none/);
-  assert.match(source, /rounded-xl/);
-  assert.match(source, /Start with the facts, not a score/);
-  assert.match(source, /What year is your child entering\?/);
-  assert.match(source, /What are they studying now\?/);
-  assert.match(source, /What has the school recommended or offered\?/);
-  assert.match(source, /This is a comparison checklist, not a placement recommendation/);
-  assert.doesNotMatch(source, /Book a course-choice conversation/);
-  assert.doesNotMatch(source, /bg-\[#171716\]/);
+test('course model uses four descriptive attributes rather than ranked scores', () => {
+  for (const stream of ['standard', 'advanced', 'extension-1', 'extension-2'] satisfies HscStreamId[]) {
+    const course = getHscStream(stream);
+    assert.equal(course.attributes.length, 4);
+    for (const attribute of course.attributes) {
+      assert.ok(attribute.label.length > 0);
+      assert.ok(attribute.description.length > 0);
+    }
+  }
 });
 
-test('Extension 2 makes its Year 12 Advanced-course replacement explicit', () => {
+test('refined detail prioritises visible guidance and topics over a stack of matching accordions', () => {
   const source = readFileSync(componentUrl, 'utf8');
-  assert.match(source, /replaces the Advanced HSC course in Year 12/);
-  assert.match(getHscStream('extension-2').whatChanges, /replaces the Advanced HSC course in Year 12/);
+  assert.match(source, /hsc-pathway-detail__overview/);
+  assert.match(source, /hsc-pathway-detail__topics/);
+  assert.match(source, /hsc-pathway-detail__explore/);
+  assert.match(source, /Expect/);
+  assert.match(source, /Questions/);
+  assert.match(source, /Challenges & DA help/);
+  assert.doesNotMatch(source, /BookOpenCheck/);
+  assert.doesNotMatch(source, /Target,/);
+  assert.doesNotMatch(source, /TrendingUp/);
+  assert.doesNotMatch(source, /HelpCircle/);
+  assert.doesNotMatch(source, /Compass,/);
+});
+
+test('refined selector removes row arrows and shares one rail coordinate with every node', () => {
+  const source = readFileSync(componentUrl, 'utf8');
+  const styles = readFileSync(new URL('./hsc-maths-pathway.css', import.meta.url), 'utf8');
+  assert.doesNotMatch(source.slice(source.indexOf('HSC_STREAMS.map')), /<ArrowRight aria-hidden="true" \/>/);
+  assert.match(source, /hsc-pathway-ladder__connector/);
+  assert.match(styles, /--rail-x/);
+  assert.match(styles, /left:var\(--rail-x\)/);
+});
+
+test('pathway is responsive and keeps the selector free of redundant notes', () => {
+  const source = readFileSync(componentUrl, 'utf8');
+  const styles = readFileSync(new URL('./hsc-maths-pathway.css', import.meta.url), 'utf8');
+  assert.doesNotMatch(source, /Pathway note/);
+  assert.doesNotMatch(source, /Extension 1 is studied with Advanced\. Extension 2/);
+  assert.doesNotMatch(source, /A practical course-choice checklist/);
+  assert.match(styles, /@media\(max-width:950px\)/);
+  assert.match(styles, /@media\(max-width:600px\)/);
+});
+
+test('Extension 2 is a Year 12 course studied with Advanced and Extension 1', () => {
+  const extensionTwo = getHscStream('extension-2');
+  assert.match(extensionTwo.badge, /studied with Advanced and Extension 1/);
+  assert.doesNotMatch(extensionTwo.whatChanges, /replaces/);
+});
+
+test('compact refinement removes decorative artwork, rankings and duplicated Extension 2 metadata', () => {
+  const source = readFileSync(componentUrl, 'utf8');
+  const styles = readFileSync(new URL('./hsc-maths-pathway.css', import.meta.url), 'utf8');
+  assert.doesNotMatch(source, /hsc-pathway-detail__diagram/);
+  assert.doesNotMatch(source, /hsc-pathway-character/);
+  assert.match(source, /Year 11–12 mathematics/);
+  assert.match(source, /hsc-pathway-attributes/);
+  assert.match(source, /Year 11 Mathematics Standard is shared/);
+  assert.doesNotMatch(styles, /hsc-pathway-character__scale/);
+  assert.doesNotMatch(styles, /hsc-pathway-detail__diagram/);
+});
+
+test('final density pass uses a compact introduction and resets disclosures on course changes', () => {
+  const source = readFileSync(componentUrl, 'utf8');
+  const styles = readFileSync(new URL('./hsc-maths-pathway.css', import.meta.url), 'utf8');
+  assert.match(source, /Choose a course to explore its content, suitability and pathway/);
+  assert.match(source, /key=\{`\$\{activeStreamId\}-\$\{standardYear12Id\}`\}/);
+  assert.doesNotMatch(source, /<details open/);
+  assert.match(styles, /\.hsc-pathway-intro\{[^}]*margin:0 0 \.85rem/);
+  assert.match(styles, /\.hsc-pathway-detail__actions\{[^}]*margin-top:\.75rem/);
+});
+
+test('course explorer separates the Year 12 Standard branch and reveals richer course guidance progressively', () => {
+  const source = readFileSync(componentUrl, 'utf8');
+  const model = readFileSync(new URL('./hsc-maths-pathway-model.ts', import.meta.url), 'utf8');
+  assert.match(model, /STANDARD_YEAR12_OPTIONS/);
+  assert.match(model, /feelsLike/);
+  assert.match(model, /underestimate/);
+  assert.match(model, /name: 'Standard 1'/);
+  assert.match(model, /name: 'Standard 2'/);
+  assert.match(source, /What this course feels like/);
+  assert.match(source, /What students underestimate/);
+  assert.match(source, /Expect/);
+  assert.match(source, /Questions/);
+  assert.match(source, /Challenges & DA help/);
+  assert.doesNotMatch(model, /replaces the Advanced HSC course/);
 });

@@ -314,7 +314,7 @@ const NavigationNew = ({ heroMode = false }: NavigationNewProps) => {
       />
 
       {/* ── Desktop header — scroll-adaptive: collapses while reading, expands on deliberate scroll-up ── */}
-      <div className="fixed top-0 left-0 right-0 z-[60] hidden lg:block">
+      <div className="fixed top-0 left-0 right-0 z-[60] hidden lg:block" data-da-nav-state={navState}>
         <nav
           ref={desktopNavRef}
           className="backdrop-blur-md backdrop-saturate-125 overflow-hidden"

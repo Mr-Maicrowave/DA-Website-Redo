@@ -25,6 +25,19 @@ test('places Graph Lab after teaching proof and before student feedback', () => 
   assert.ok(studentFeedbackIndex > graphLabIndex, 'student feedback must follow Graph Lab');
 });
 
+test('keeps the cube as the sole in-page mathematics exploration and opens Graph Lab in a new tab', () => {
+  const source = readFileSync(mathematicsUrl, 'utf8');
+  const component = source.slice(source.indexOf('const Mathematics = () => {'));
+
+  assert.match(component, /<YearCube\s*\/>/);
+  assert.doesNotMatch(component, /<MathematicalFieldStation\s*\/>/);
+  assert.doesNotMatch(component, /<MathsTopicNetwork\s*\/>/);
+  assert.match(
+    component,
+    /target=\{opensPage \? '_blank' : undefined\}[\s\S]*rel=\{opensPage \? 'noopener noreferrer' : undefined\}/,
+  );
+});
+
 test('uses a verified student quote sourced from a real review, not the old placeholder', () => {
   const source = readFileSync(mathematicsUrl, 'utf8');
 

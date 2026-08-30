@@ -1,0 +1,91 @@
+:root { --map-warmth: sepia(.30) saturate(.82) hue-rotate(-8deg) brightness(1.03); }
+
+.community-map { position: relative; width: 100%; height: 100%; background: #f8f4ea; }
+.community-map__canvas { position: absolute; inset: 0; z-index: 0; width: 100%; height: 100%; }
+.community-map__canvas.leaflet-container { background: #f8f4ea; }
+.community-map__canvas .leaflet-tile-pane { filter: var(--map-warmth); }
+.community-map__canvas .leaflet-tile { opacity: 1 !important; }
+.community-map__canvas .leaflet-control-attribution { background: #f0e8dcb0; color: #526173; font-size: 9px; padding: 1px 6px; }
+.community-map__canvas .leaflet-control-attribution a { color: #526173; }
+
+.community-map__overlay { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 2; overflow: hidden; }
+
+/* DA property markers, shown only in the street-level phase */
+.community-map__building { opacity: 0; }
+.community-map__building-halo { fill: #fff; fill-opacity: .88; stroke: #d6a921; stroke-width: 1; }
+.community-map__building-ring { fill: #071629; stroke: #d6a921; stroke-width: 2.25; }
+.community-map__building-core { fill: #d6a921; }
+.community-map__connector { fill: none; stroke: #b4870f; stroke-width: 3; opacity: 0; }
+.community-map__building-label line { stroke: #b4870f; stroke-width: 1.5; }
+.community-map__building-label rect { fill: #071629; }
+.community-map__building-label text, .community-map__hub-label text { fill: #fff; font: 800 8px/1 Cabin, Arial, sans-serif; letter-spacing: 1.15px; }
+
+/* Regional school dots — grouped so the reveal (translate + scale + opacity) moves ring and dot together */
+.community-map__dot-group { opacity: 0; }
+.community-map__dot { fill: #173f5b; stroke: #fff; stroke-width: 2; opacity: .96; }
+.community-map__dot-group.is-inner-catchment .community-map__dot { fill: #0c3755; }
+.community-map__dot-group.is-outer-sydney .community-map__dot { opacity: .78; }
+.community-map__dot-ring { fill: none; stroke: #fff; stroke-width: 1.5; opacity: .8; }
+.community-map__connections { pointer-events: none; }
+.community-map__connection { fill: none; stroke: #b4870f; stroke-width: .85; stroke-opacity: .4; stroke-linecap: round; stroke-dasharray: 1.5 8; vector-effect: non-scaling-stroke; }
+
+/* Gold hub at the midpoint of the two Canley Heights buildings */
+.community-map__hub-density { fill: #244a63; fill-opacity: .055; }
+.community-map__hub-glow { fill: #d6a921; fill-opacity: .18; }
+.community-map__hub-ring-outer { fill: none; stroke: #d6a921; stroke-width: 2; }
+.community-map__hub-ring { fill: #fff; }
+.community-map__hub-core { fill: #d6a921; }
+.community-map__hub-label rect { fill: #071629; }
+
+/* A quiet editorial veil keeps the copy legible without masking the regional map. */
+.community-card {
+  position: absolute;
+  z-index: 3;
+  right: clamp(20px, 5vw, 72px);
+  top: 50%;
+  transform: translateY(-50%);
+  width: clamp(300px, 28vw, 390px);
+  padding: clamp(28px, 3vw, 40px);
+  background: linear-gradient(90deg, #fffdf8f0 0%, #fffdf8e3 100%);
+  border-left: 1px solid #e3ddd2;
+}
+.community-card__stack { display: grid; }
+.community-card__local, .community-card__regional { grid-area: 1 / 1; }
+.community-card__local { opacity: 1; }
+.community-card__regional { opacity: 0; }
+.community-card__eyebrow { margin: 0 0 14px; font: 800 11px/1 Cabin, Arial, sans-serif; letter-spacing: 2px; color: #6b7f8d; }
+.community-card h2 { margin: 0; font: 500 clamp(36px, 3.4vw, 52px)/1.06 Georgia, serif; color: #0b2135; text-wrap: balance; }
+.community-card__regional h2 em { font-style: italic; color: #a77e11; }
+.community-card__body { margin: 18px 0 0; max-width: 330px; color: #365063; font-size: 15px; line-height: 1.6; }
+.community-card__network-label { margin: 0; color: #6b7f8d; font: 800 10px/1 Cabin, Arial, sans-serif; letter-spacing: 1.7px; }
+.community-card hr { border: 0; border-top: 1px solid #e3ddd2; margin: 22px 0; }
+.community-card__stat { display: flex; align-items: baseline; gap: 10px; }
+.community-card__stat strong { font: 500 48px/1 Georgia, serif; color: #a77e11; }
+.community-card__stat span { max-width: 150px; color: #365063; font-size: 13px; line-height: 1.4; }
+.community-card__stat-sentence { margin: 0; color: #365063; font-size: 15px; line-height: 1.6; }
+.community-card__cta { display: inline-flex; align-items: center; gap: 8px; color: #071629; font: 800 12px/1 Cabin, Arial, sans-serif; letter-spacing: 2px; text-decoration: underline; text-underline-offset: 4px; }
+
+@media (max-width: 768px) {
+  .community-map { display: flex; flex-direction: column; }
+  .community-map__canvas, .community-map__overlay { position: relative; inset: auto; height: 40svh; flex: 0 0 auto; }
+  .community-map__overlay { position: absolute; }
+  .community-card {
+    position: relative;
+    left: auto; right: auto; top: auto; transform: none;
+    width: 100%;
+    border: 0;
+    border-top: 1px solid #e3ddd2;
+    background: #fffdf8;
+    padding: 22px 28px 24px;
+    flex: 1 1 auto;
+  }
+  .community-card h2 { font-size: clamp(32px, 8vw, 40px); }
+  .community-card__body { margin-top: 14px; line-height: 1.48; }
+  .community-card hr { margin: 16px 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .community-map { display: block; }
+  .community-map__canvas, .community-map__overlay { position: absolute; inset: 0; height: 100%; }
+  .community-card { position: absolute; }
+}

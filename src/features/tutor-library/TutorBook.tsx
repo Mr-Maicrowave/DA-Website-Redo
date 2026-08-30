@@ -5,12 +5,14 @@ import { Group, Vector2 } from 'three';
 import type { CatalogueTutor } from '../../data/teacherCatalogue';
 import {
   getCompleteShelfOuterMotionPose,
+  getTutorBookHoverPose,
   advanceCompleteShelfOuterMotion,
   createCompleteShelfOuterMotionState,
   shouldAcquireCompleteShelfRig,
   shouldStartCompleteShelfRigIntent,
   type CompleteShelfBookPool,
 } from './complete-shelf-book-pool';
+import type { CompleteShelfBookPose } from './complete-shelf-book-prototype.ts';
 import {
   CompleteShelfTutorBookBridge,
   type CompleteShelfTutorRig,
@@ -20,6 +22,8 @@ import { createBookParts, getBookVisualProfile, getShelfPose } from './tutor-boo
 import { createBookMotionPoses, interpolateBookMotion } from './tutor-book-motion';
 import { TutorBookCover, TutorBookFoil, type SpineTreatment, useBookMaterialMaps } from './TutorBookCover';
 import { getTutorBookClothColour } from './tutor-book-appearance';
+import { getSpotlightRestingPose } from './tutor-library-spotlight';
+import { getFaceOutTutorShelfPose } from './tutor-library-presentation';
 import type { LibraryEvent, LibraryPhase } from './tutor-library-state';
 import type { TutorBookPageTurnDirection } from './tutor-book-pages';
 
@@ -48,7 +52,7 @@ function LegacyTutorBook({ edition, tutor, phase, selected, motionProgress, neig
   return <group name={`tutor-book-${edition.id}`} position={currentPose.position} rotation={renderedRotation} scale={currentPose.scale} castShadow onPointerEnter={event => { event.stopPropagation(); onHover(edition.id); }}>
     <group name="back-board-pivot">
       <RoundedBox name="back-board" args={[parts.backBoard.width, parts.backBoard.height, parts.backBoard.depth]} position={[0, 0, -pose.depth / 2 + parts.backBoard.depth / 2]} radius={parts.boardRadius} smoothness={2} castShadow receiveShadow>
-        <meshPhysicalMaterial color={geometryDebug ? '#18d94c' : cover} normalMap={geometryDebug ? undefined : materials.clothNormal} normalScale={new Vector2(.12, .12)} roughnessMap={geometryDebug ? undefined : materials.clothRoughness} bumpMap={geometryDebug ? undefined : materials.clothRoughness} bumpScale={.008} roughness={geometryDebug ? .58 : .88} metalness={.01} sheen={geometryDebug ? 0 : .28} sheenRoughness={.7} />
+        <meshPhysicalMaterial color={geometryDebug ? '#18d94c' : cover} emissive={geometryDebug ? '#000000' : cover} emissiveIntensity={geometryDebug ? 0 : .065} normalMap={geometryDebug ? undefined : materials.clothNormal} normalScale={new Vector2(.12, .12)} roughnessMap={geometryDebug ? undefined : materials.clothRoughness} bumpMap={geometryDebug ? undefined : materials.clothRoughness} bumpScale={.008} roughness={geometryDebug ? .58 : .88} metalness={.01} sheen={geometryDebug ? 0 : .28} sheenRoughness={.7} />
       </RoundedBox>
       <mesh name="rear-endpaper" position={[0, 0, -pose.depth / 2 + parts.backBoard.depth + .001]}><planeGeometry args={[parts.pageBlock.width, parts.pageBlock.height]} /><meshPhysicalMaterial color={geometryDebug ? '#ff9acb' : '#e7dcc4'} roughness={.95} /></mesh>
     </group>
@@ -61,7 +65,7 @@ function LegacyTutorBook({ edition, tutor, phase, selected, motionProgress, neig
     <mesh name="tail-edge" position={[0, -parts.pageBlock.height / 2 - .002, 0]} rotation={[Math.PI / 2, 0, 0]}><planeGeometry args={[parts.pageBlock.width, parts.pageBlock.depth - .01]} /><meshPhysicalMaterial color={geometryDebug ? '#9d4edd' : '#e9dcc7'} map={geometryDebug ? undefined : materials.paper} roughnessMap={geometryDebug ? undefined : materials.paperBump} bumpMap={geometryDebug ? undefined : materials.paperBump} bumpScale={.014} roughness={.94} /></mesh>
     <group name="front-board-pivot">
       <RoundedBox name="front-board" args={[parts.frontBoard.width, parts.frontBoard.height, parts.frontBoard.depth]} position={[0, 0, pose.depth / 2 - parts.frontBoard.depth / 2]} radius={parts.boardRadius} smoothness={2} castShadow receiveShadow>
-        <meshPhysicalMaterial color={geometryDebug ? '#f32121' : cover} normalMap={geometryDebug ? undefined : materials.clothNormal} normalScale={new Vector2(.12, .12)} roughnessMap={geometryDebug ? undefined : materials.clothRoughness} bumpMap={geometryDebug ? undefined : materials.clothRoughness} bumpScale={.008} roughness={geometryDebug ? .58 : .88} metalness={.01} sheen={geometryDebug ? 0 : .28} sheenRoughness={.7} />
+        <meshPhysicalMaterial color={geometryDebug ? '#f32121' : cover} emissive={geometryDebug ? '#000000' : cover} emissiveIntensity={geometryDebug ? 0 : .065} normalMap={geometryDebug ? undefined : materials.clothNormal} normalScale={new Vector2(.12, .12)} roughnessMap={geometryDebug ? undefined : materials.clothRoughness} bumpMap={geometryDebug ? undefined : materials.clothRoughness} bumpScale={.008} roughness={geometryDebug ? .58 : .88} metalness={.01} sheen={geometryDebug ? 0 : .28} sheenRoughness={.7} />
       </RoundedBox>
       <mesh name="front-endpaper" position={[0, 0, pose.depth / 2 - parts.frontBoard.depth - .001]} rotation={[0, Math.PI, 0]}><planeGeometry args={[parts.pageBlock.width, parts.pageBlock.height]} /><meshPhysicalMaterial color={geometryDebug ? '#ff9acb' : '#e7dcc4'} roughness={.95} /></mesh>
     </group>
@@ -109,32 +113,38 @@ type TutorBookProps = {
   rigIntentToken?: number;
   onRigIntent?: (editionId?: string) => void;
   poseOverride?: ReturnType<typeof getShelfPose>;
+  searchPose?: CompleteShelfBookPose;
+  spotlight?: boolean;
+  faceOut?: boolean;
   studio?: boolean;
   spineTreatment?: SpineTreatment;
   geometryDebug?: boolean;
 };
 
-function DormantCompleteShelfProxy({ tutor, edition }: { tutor: CatalogueTutor; edition: TutorBookEdition }) {
+function DormantCompleteShelfProxy({ tutor, edition, faceOut = false }: { tutor: CatalogueTutor; edition: TutorBookEdition; faceOut?: boolean }) {
   const cover = getTutorBookClothColour(edition.materialVariant);
   return <group name={`dormant-complete-shelf-proxy-${edition.id}`}>
     <RoundedBox args={[COMPLETE_SHELF_WIDTH, COMPLETE_SHELF_HEIGHT, COMPLETE_SHELF_CLOSED_DEPTH]} radius={.0045} smoothness={2} castShadow receiveShadow>
-      <meshPhysicalMaterial color={cover} roughness={.94} metalness={.02} sheen={.28} sheenRoughness={.78} />
+    <meshPhysicalMaterial color={cover} emissive={cover} emissiveIntensity={.075} roughness={.9} metalness={.025} sheen={.3} sheenRoughness={.74} />
     </RoundedBox>
     <RoundedBox name="tutor-book-selection-marker" args={[.024, .18, .046]} position={[COMPLETE_SHELF_SPINE_X - .007, COMPLETE_SHELF_HEIGHT / 2 - .15, 0]} radius={.004} smoothness={2}>
       <meshStandardMaterial color="#d5b369" roughness={.32} metalness={.72} />
     </RoundedBox>
     <TutorBookCover tutor={tutor} edition={edition} mode="spine" width={COMPLETE_SHELF_CLOSED_DEPTH - .018} height={COMPLETE_SHELF_HEIGHT - .075} position={[COMPLETE_SHELF_SPINE_X, 0, 0]} rotation={[0, -Math.PI / 2, 0]} visible />
     <TutorBookFoil tutor={tutor} edition={edition} mode="spine" width={COMPLETE_SHELF_CLOSED_DEPTH - .014} height={COMPLETE_SHELF_HEIGHT - .04} position={[COMPLETE_SHELF_SPINE_X - .001, 0, 0]} rotation={[0, -Math.PI / 2, 0]} visible />
+    {faceOut ? <group name="tutor-book-cover-art"><TutorBookCover tutor={tutor} edition={edition} mode="cover" width={COMPLETE_SHELF_WIDTH - .04} height={COMPLETE_SHELF_HEIGHT - .04} z={COMPLETE_SHELF_CLOSED_DEPTH / 2 + .002} visible /><TutorBookFoil tutor={tutor} edition={edition} mode="cover" width={COMPLETE_SHELF_WIDTH - .04} height={COMPLETE_SHELF_HEIGHT - .04} z={COMPLETE_SHELF_CLOSED_DEPTH / 2 + .004} visible /></group> : null}
   </group>;
 }
 
-function RoomTutorBook({ edition, tutor, phase, selected, motionProgress, motionProgressRef, neighbourResponse = 0, onHoverChange, onActivate, onRigReady, onRigUnavailable, onLifecycleComplete, onPageSettled, onError, generation = 0, reducedMotion = false, pageTurnDirection = 1, pool, rigIntent = false, rigIntentToken = 0, onRigIntent }: TutorBookProps & { pool: CompleteShelfBookPool<CompleteShelfTutorRig> }) {
+function RoomTutorBook({ edition, tutor, phase, selected, motionProgress, motionProgressRef, neighbourResponse = 0, onHoverChange, onActivate, onRigReady, onRigUnavailable, onLifecycleComplete, onPageSettled, onError, generation = 0, reducedMotion = false, pageTurnDirection = 1, pool, rigIntent = false, rigIntentToken = 0, onRigIntent, searchPose, spotlight = false, faceOut = false }: TutorBookProps & { pool: CompleteShelfBookPool<CompleteShelfTutorRig> }) {
   const [rigReady, setRigReady] = useState(false);
   const [hovered, setHovered] = useState(false);
   const activationRequested = useRef(false);
   const rootUuid = useRef<string>();
   const bookGroup = useRef<Group>(null);
-  const motionState = useRef(createCompleteShelfOuterMotionState(edition));
+  const motionState = useRef(createCompleteShelfOuterMotionState(edition, searchPose));
+  const searchPoseKey = searchPose ? searchPose.position.join(':') : 'shelf';
+  const previousSearchPoseKey = useRef(searchPoseKey);
   const pose = motionState.current.pose;
   const hovering = hovered && phase === 'ROOM_IDLE' && !selected;
   const rigRequested = shouldAcquireCompleteShelfRig({
@@ -145,18 +155,24 @@ function RoomTutorBook({ edition, tutor, phase, selected, motionProgress, motion
   });
   const rotation: [number, number, number] = [pose.rotation[0], pose.rotation[1], pose.rotation[2] + neighbourResponse];
 
-  useFrame((_, delta) => {
+  useFrame((state, delta) => {
     const group = bookGroup.current;
     if (!group) return;
+    if (!selected && phase === 'ROOM_IDLE' && previousSearchPoseKey.current !== searchPoseKey) {
+      motionState.current = createCompleteShelfOuterMotionState(edition, searchPose);
+      previousSearchPoseKey.current = searchPoseKey;
+    }
     const nextMotionState = advanceCompleteShelfOuterMotion(
       motionState.current,
       selected ? phase : 'ROOM_IDLE',
       motionProgressRef?.current.book ?? motionProgress,
     );
     motionState.current = nextMotionState;
-    const targetPose = hovering
-      ? getCompleteShelfOuterMotionPose(edition, 'BOOK_HOVER_INTENT', 0)
+    const faceOutPose = faceOut && phase === 'ROOM_IDLE'
+      ? getFaceOutTutorShelfPose(nextMotionState.pose)
       : nextMotionState.pose;
+    const restingPose = spotlight ? getSpotlightRestingPose(searchPose, faceOutPose) : faceOutPose;
+    const targetPose = hovering ? getTutorBookHoverPose(restingPose, faceOut || spotlight) : restingPose;
     const ease = reducedMotion ? 1 : 1 - Math.exp(-delta * 14);
     group.position.lerp({ x: targetPose.position[0], y: targetPose.position[1], z: targetPose.position[2] }, ease);
     group.rotation.set(
@@ -201,7 +217,7 @@ function RoomTutorBook({ edition, tutor, phase, selected, motionProgress, motion
       <boxGeometry args={[1.34, 1.8, .6]} />
       <meshBasicMaterial transparent opacity={0} depthWrite={false} colorWrite={false} />
     </mesh>
-    <group visible={!rigRequested || !rigReady}><DormantCompleteShelfProxy tutor={tutor} edition={edition} /></group>
+    <group visible={!rigRequested || !rigReady}><DormantCompleteShelfProxy tutor={tutor} edition={edition} faceOut={faceOut || spotlight || hovering} /></group>
     {rigRequested ? <CompleteShelfTutorBookBridge
       key={`${edition.id}:${rigIntentToken}`}
       edition={edition}

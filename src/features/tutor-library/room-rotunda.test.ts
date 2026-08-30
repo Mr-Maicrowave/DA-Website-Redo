@@ -68,6 +68,9 @@ test('fills quiet shelf gaps with one batched non-interactive decorative book la
   assert.match(room, /function DecorativeShelfBooks/);
   assert.match(room, /const DECORATIVE_BOOK_COLOURS = \[/);
   assert.match(room, /<instancedMesh ref=\{mesh\}/);
+  assert.match(room, /const detailMesh = useRef<InstancedMesh>/);
+  assert.match(room, /name="decorative-book-edge-details"/);
+  assert.match(room, /DECORATIVE_BOOK_DETAIL_COLOURS/);
   assert.match(room, /<DecorativeShelfBooks cabinet=\{cabinet\} wallId=\{wall\.id\} \/>/);
 });
 

@@ -1,6 +1,8 @@
 import { ArrowRight, CheckCircle2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import katex from 'katex';
+import { NetworkAmbientMoment } from '@/features/maths-ambient-motion/MathsAmbientMotion';
+import './maths-teaching-proof-motion.css';
 
 const InlineMath = ({ expression, label }: { expression: string; label: string }) => (
   <span
@@ -32,6 +34,8 @@ export const MathsGraphLabInvitation = () => (
         </p>
         <Link
           to="/maths-graph-lab"
+          target="_blank"
+          rel="noopener noreferrer"
           className="mt-7 inline-flex min-h-12 items-center justify-center rounded-full bg-[#f0c86a] px-6 text-sm font-black text-[#071629] transition-colors hover:bg-[#ffe19a] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-4 focus-visible:ring-offset-[#071629]"
         >
           Open the Graph Lab <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
@@ -70,6 +74,7 @@ export const MathsGraphLabInvitation = () => (
 
 export const MathsTeachingProof = () => (
   <section id="math-teaching-proof" className="scroll-mt-24 bg-[#fff6e7] px-5 py-20 lg:px-8 lg:py-24" aria-labelledby="math-teaching-proof-heading">
+    <NetworkAmbientMoment passive />
     <div className="mx-auto max-w-7xl">
       <div className="grid gap-7 border-b border-[#071629]/14 pb-10 lg:grid-cols-[0.8fr_1.2fr] lg:items-end">
         <div>
@@ -83,17 +88,20 @@ export const MathsTeachingProof = () => (
         </p>
       </div>
 
-      <ol className="grid border-b border-[#071629]/14 md:grid-cols-4" aria-label="DA Tuition teaching sequence">
-        {teachingSequence.map((step, index) => (
-          <li key={step.name} className="border-[#071629]/12 py-6 md:border-r md:px-5 md:last:border-r-0 md:first:pl-0">
-            <div className="flex items-baseline gap-3">
-              <span className="text-xs font-black tabular-nums text-[#9a6e0b]">0{index + 1}</span>
-              <h3 className="text-lg font-black text-[#071629]">{step.name}</h3>
-            </div>
-            <p className="mt-2 text-sm leading-6 text-[#536077]">{step.detail}</p>
-          </li>
-        ))}
-      </ol>
+      <div className="maths-teaching-sequence">
+        <span className="maths-teaching-sequence-trace" aria-hidden="true" />
+        <ol className="grid border-b border-[#071629]/14 md:grid-cols-4" aria-label="DA Tuition teaching sequence">
+          {teachingSequence.map((step, index) => (
+            <li key={step.name} className="border-[#071629]/12 py-6 md:border-r md:px-5 md:last:border-r-0 md:first:pl-0">
+              <div className="flex items-baseline gap-3">
+                <span className="text-xs font-black tabular-nums text-[#9a6e0b]">0{index + 1}</span>
+                <h3 className="text-lg font-black text-[#071629]">{step.name}</h3>
+              </div>
+              <p className="mt-2 text-sm leading-6 text-[#536077]">{step.detail}</p>
+            </li>
+          ))}
+        </ol>
+      </div>
 
       <div className="mt-12 grid gap-8 lg:grid-cols-[0.88fr_1.12fr] lg:items-start">
         <div className="rounded-2xl border border-[#071629]/14 bg-white p-6 sm:p-8">

@@ -41,6 +41,7 @@ class RecordingCanvas extends EventTarget {
     fillText: (...args: unknown[]) => this.commands.push({ name: "fillText", args, font: this.context.font }),
     drawImage: (...args: unknown[]) => this.commands.push({ name: "drawImage", args }),
     beginPath: () => this.commands.push({ name: "beginPath", args: [] }),
+    closePath: () => this.commands.push({ name: "closePath", args: [] }),
     rect: (...args: unknown[]) => this.commands.push({ name: "rect", args }),
     clip: () => this.commands.push({ name: "clip", args: [] }),
     save: () => this.commands.push({ name: "save", args: [] }),
@@ -52,6 +53,7 @@ class RecordingCanvas extends EventTarget {
     translate: (...args: unknown[]) => this.commands.push({ name: "translate", args }),
     rotate: (...args: unknown[]) => this.commands.push({ name: "rotate", args }),
     clearRect: (...args: unknown[]) => this.commands.push({ name: "clearRect", args }),
+    createLinearGradient: () => ({ addColorStop: () => undefined }),
     measureText: (value: string) => ({ width: realisticTextWidth(value, this.context.font) }),
   };
 
@@ -161,6 +163,7 @@ test("draws every Jenny presentation canvas and refreshes the cover after the po
     const presentation = createCompleteShelfPresentation(jenny);
     const sources = presentation.createCanvasSources(document as unknown as Document);
     const cover = sources.cover as unknown as RecordingCanvas;
+    const coverFoil = sources.coverFoil as unknown as RecordingCanvas;
     const back = sources.back as unknown as RecordingCanvas;
     let coverRefreshes = 0;
     sources.cover.addEventListener("complete-shelf-presentation-update", () => { coverRefreshes += 1; });
@@ -171,7 +174,13 @@ test("draws every Jenny presentation canvas and refreshes the cover after the po
     assert.deepEqual([sources.openingEndpaper.width, sources.openingEndpaper.height], [512, 768]);
     assert.deepEqual([sources.frontEndpaper.width, sources.frontEndpaper.height], [512, 768]);
     assert.equal(sources.interiors.length, 6);
-    assert.ok(cover.commands.some(command => command.name === "fillText" && command.args[0] === "DA TUITION"));
+    assert.ok(coverFoil.commands.some(command => command.name === "fillText" && command.args[0] === "DA TUITION"));
+    assert.equal(
+      cover.commands.some(command => command.name === "fillRect" && command.args[0] === cover.width * .11 && command.args[1] === cover.height * .08),
+      false,
+      "the cloth cover must not be covered by a cream-paper panel",
+    );
+    assert.ok(coverFoil.commands.some(command => command.name === "arc"), "the reusable arch linework lives on the metallic foil layer");
     assert.ok(back.commands.some(command => command.name === "fillText" && command.args[0] === "DA TUITION"));
 
     const coverPortrait = RecordingImage.instances[0]!;
@@ -189,7 +198,7 @@ test("draws every Jenny presentation canvas and refreshes the cover after the po
     const frontEndpaper = sources.frontEndpaper as unknown as RecordingCanvas;
     assert.ok(openingEndpaper.commands.some(command => command.name === "drawImage"), "the portrait appears on the opening left-hand page");
     assert.equal(frontEndpaper.commands.some(command => command.name === "drawImage"), false, "the front endpaper must not duplicate the opening portrait at the binding");
-    assert.ok((sources.interiors[0] as unknown as RecordingCanvas).commands.some(command => command.name === "drawImage"), "the Meet the Tutor page uses an editorial portrait, not a duplicated cover arch");
+    assert.equal((sources.interiors[0] as unknown as RecordingCanvas).commands.some(command => command.name === "drawImage"), false, "the Meet the Tutor page must not repeat the formal cover portrait");
   } finally {
     Object.assign(globalThis, { Image: originalImage });
   }
@@ -220,7 +229,7 @@ test("prints every canonical Jenny page within the high-resolution safe area", (
     const printed = textCommands.map(command => String(command.args[0])).join(" ").replace(/\s+/g, " ");
 
     for (const canonicalText of canonicalPages[index].sourceText) {
-      assert.ok(printed.includes(canonicalText.replace(/\s+/g, " ")), `${canonicalPages[index].id} prints canonical source text`);
+      assert.ok(printed.includes(canonicalText.replace(/\s+/g, " ")), `${canonicalPages[index].id} prints canonical source text: ${canonicalText}`);
     }
     assert.ok(textCommands.every(command => {
       const x = Number(command.args[1]);

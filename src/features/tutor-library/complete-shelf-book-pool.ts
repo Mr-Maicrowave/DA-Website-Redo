@@ -4,7 +4,7 @@ import {
   sampleCompleteShelfPrototypePose,
   type CompleteShelfBookPose,
 } from './complete-shelf-book-prototype.ts';
-import { getShelfPose } from './tutor-book-geometry.ts';
+import { getShelfPose, type ShelfPose } from './tutor-book-geometry.ts';
 import { createBookReturnMotion, interpolateBookMotion } from './tutor-book-motion.ts';
 import type { LibraryPhase } from './tutor-library-state.ts';
 
@@ -180,10 +180,25 @@ const interpolatePose = (from: CompleteShelfBookPose, to: CompleteShelfBookPose,
   };
 };
 
-export function getCompleteShelfOuterMotionPose(edition: TutorBookEdition, phase: LibraryPhase, progress: number) {
-  const plan = createCompleteShelfPrototypePlan(getShelfPose(edition));
+function createPlanForPose(edition: TutorBookEdition, shelfPose?: CompleteShelfBookPose) {
+  if (!shelfPose) return createCompleteShelfPrototypePlan(getShelfPose(edition));
+  const scale = shelfPose.scale[0];
+  const syntheticShelfPose: ShelfPose = {
+    position: [...shelfPose.position],
+    rotation: [...shelfPose.rotation],
+    width: .42,
+    height: 1.58 * scale,
+    depth: .31,
+  };
+  return createCompleteShelfPrototypePlan(syntheticShelfPose);
+}
+
+export function getCompleteShelfOuterMotionPose(edition: TutorBookEdition, phase: LibraryPhase, progress: number, shelfPose?: CompleteShelfBookPose) {
+  const plan = createPlanForPose(edition, shelfPose);
   const reading: CompleteShelfBookPose = {
-    position: [0, .44, 4.92],
+    // Keep the reading volume dominant while balancing its opened width with
+    // the companion controls instead of forcing the book against the left edge.
+    position: [.28, .26, 5.04],
     rotation: [-.045, 0, .012],
     scale: [...plan.preview.scale],
   };
@@ -206,10 +221,21 @@ export interface CompleteShelfOuterMotionState {
   readonly phase: LibraryPhase;
   readonly pose: CompleteShelfBookPose;
   readonly returnFrom?: CompleteShelfBookPose;
+  readonly shelfPose?: CompleteShelfBookPose;
 }
 
-export function createCompleteShelfOuterMotionState(edition: TutorBookEdition): CompleteShelfOuterMotionState {
-  return { edition, phase: 'ROOM_IDLE', pose: getCompleteShelfOuterMotionPose(edition, 'ROOM_IDLE', 0) };
+/** A shelf-only recognition preview; it never acquires or drives the page rig. */
+export function getTutorBookHoverPose(pose: CompleteShelfBookPose, faceOut: boolean): CompleteShelfBookPose {
+  const scale = faceOut ? 1.07 : 1.1;
+  return {
+    position: [pose.position[0], pose.position[1] + (faceOut ? .025 : .012), pose.position[2] + (faceOut ? .16 : .12)],
+    rotation: faceOut ? [pose.rotation[0], 0, pose.rotation[2]] : [-.018, 0, pose.rotation[2] * .35],
+    scale: [pose.scale[0] * scale, pose.scale[1] * scale, pose.scale[2] * scale],
+  };
+}
+
+export function createCompleteShelfOuterMotionState(edition: TutorBookEdition, shelfPose?: CompleteShelfBookPose): CompleteShelfOuterMotionState {
+  return { edition, shelfPose, phase: 'ROOM_IDLE', pose: getCompleteShelfOuterMotionPose(edition, 'ROOM_IDLE', 0, shelfPose) };
 }
 
 export function advanceCompleteShelfOuterMotion(state: CompleteShelfOuterMotionState, phase: LibraryPhase, progress: number): CompleteShelfOuterMotionState {
@@ -219,7 +245,7 @@ export function advanceCompleteShelfOuterMotion(state: CompleteShelfOuterMotionS
   }
   if (phase === 'BOOK_RETURNING') {
     const returnFrom = state.returnFrom ?? state.pose;
-    const shelf = getCompleteShelfOuterMotionPose(state.edition, 'ROOM_IDLE', 0);
+    const shelf = getCompleteShelfOuterMotionPose(state.edition, 'ROOM_IDLE', 0, state.shelfPose);
     const returnMotion = createBookReturnMotion(returnFrom, shelf);
     return {
       ...state,
@@ -234,7 +260,7 @@ export function advanceCompleteShelfOuterMotion(state: CompleteShelfOuterMotionS
   return {
     edition: state.edition,
     phase,
-    pose: getCompleteShelfOuterMotionPose(state.edition, phase, progress),
+    pose: getCompleteShelfOuterMotionPose(state.edition, phase, progress, state.shelfPose),
   };
 }
 

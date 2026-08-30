@@ -1,9 +1,9 @@
 import { Canvas } from '@react-three/fiber';
 import { ACESFilmicToneMapping } from 'three';
-import { Component, useEffect, useMemo, useReducer, useRef, useState, type ErrorInfo, type ReactNode } from 'react';
+import { Component, useDeferredValue, useEffect, useMemo, useReducer, useRef, useState, type ErrorInfo, type ReactNode } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { TUTORS } from '../../data/teacherCatalogue';
-import { createMountedRigRootRegistry, selectVisibleShelfEditions } from './complete-shelf-book-pool';
+import { createMountedRigRootRegistry } from './complete-shelf-book-pool';
 import { createBookMotionTimingPolicy } from './tutor-book-motion';
 import { createTutorLibraryQaSnapshot, getTutorLibraryAccessibilityProps, getTutorLibraryViewportProfile, parseDebugTurnProgress, selectTutorLibraryQaState } from './tutor-library-debug';
 import { createTutorBookEditions, SUBJECT_WALLS } from './tutor-library-data';
@@ -22,6 +22,8 @@ import {
 } from './tutor-library-state';
 import { TutorLibraryScene } from './TutorLibraryScene';
 import { TutorLibraryControlSurface } from './TutorLibraryControls';
+import { getSpotlightPageCount, getSpotlightResultWindow, searchTutorSpotlight } from './tutor-library-spotlight';
+import { profileContentFor } from '../../pages/profileContent';
 import {
   TUTOR_BOOK_READING_STATE_COUNT,
   getTutorBookPageTarget,
@@ -65,11 +67,14 @@ export function TutorLibrary() {
   const [sceneError, setSceneError] = useState<string | undefined>(() => searchParams.get('libraryForceCanvasError') === '1' ? 'Forced Tutor Library Canvas failure' : undefined);
   const [roomReady, setRoomReady] = useState(false);
   const [loadingVisible, setLoadingVisible] = useState(false);
+  const [spotlightQuery, setSpotlightQuery] = useState('');
+  const [spotlightOffset, setSpotlightOffset] = useState(0);
   const [viewport, setViewport] = useState(() => ({
     width: typeof window === 'undefined' ? 1440 : window.innerWidth,
     height: typeof window === 'undefined' ? 900 : window.innerHeight,
   }));
   const reducedMotion = useReducedMotionPreference();
+  const deferredSpotlightQuery = useDeferredValue(spotlightQuery);
   useEffect(() => {
     if (roomReady || sceneError) {
       setLoadingVisible(false);
@@ -108,7 +113,16 @@ export function TutorLibrary() {
     selectedEditionId: sceneSelectedEditionId,
     expectedRootUuid: library.expectedRootUuid ?? 'qa-pending-root',
   } : library;
-  const visibleEditions = selectVisibleShelfEditions(BOOK_EDITIONS.filter(edition => edition.wallId === activeWall.id), sceneSelectedEditionId);
+  const spotlightResults = useMemo(() => searchTutorSpotlight(TUTORS, deferredSpotlightQuery, tutor => profileContentFor(tutor).strengths), [deferredSpotlightQuery]);
+  const spotlightWindowSize = viewport.width <= 700 ? 5 : 7;
+  const spotlightPageCount = getSpotlightPageCount(spotlightResults.length, spotlightWindowSize);
+  const spotlightResultWindow = getSpotlightResultWindow(spotlightResults, spotlightOffset, spotlightWindowSize);
+  const spotlightEditions = useMemo(() => spotlightResultWindow.flatMap(({ tutor }) => {
+    const edition = BOOK_EDITIONS.find(candidate => candidate.tutorId === tutor.id && candidate.wallId === activeWall.id)
+      ?? BOOK_EDITIONS.find(candidate => candidate.tutorId === tutor.id);
+    return edition ? [edition] : [];
+  }), [activeWall.id, spotlightResultWindow]);
+  const spotlightActive = deferredSpotlightQuery.trim().length > 0;
   const availability = getLibraryControlAvailability(controlLibrary);
   const focusReturnEditionId = getFocusReturnEditionId(previousLibrary.current, library);
 
@@ -140,6 +154,8 @@ export function TutorLibrary() {
       setPageTurnDirection(1);
     }
   }, [library.phase]);
+
+  useEffect(() => { setSpotlightOffset(0); }, [deferredSpotlightQuery, spotlightWindowSize]);
 
   useEffect(() => {
     let resizeFrame = 0;
@@ -195,7 +211,7 @@ export function TutorLibrary() {
   const bookActive = sceneBookPhase.startsWith('BOOK_') || sceneBookPhase.startsWith('PAGE_');
   const accessibility = getTutorLibraryAccessibilityProps(bookActive, selectedTutor?.name);
 
-  return <section className={`tutor-library${isDebugTurn || isDebugBook || qaState ? ' tutor-library--diagnostic' : ''}${bookActive ? ' tutor-library--book-active' : ''}`} aria-label={accessibility.rootLabel} aria-labelledby={accessibility.rootLabelledBy} data-tutor-library-qa="root" data-library-phase={qa.phase} data-library-transition-id={qa.transitionId} data-library-generation={qa.generation} data-library-edition={qa.edition} data-library-wall={qa.wall} data-library-root-uuid={qa.rootUuid} data-library-matrix-delta={qa.matrixDelta} data-library-reset-state={qa.resetState} data-library-review-view={qa.reviewView} data-library-review-progress={qa.progress} data-library-qa-progress={qa.progress} data-library-controller-progress="unavailable" data-library-qa-state={qaState?.id ?? 'live'} data-room-phase={sceneBookPhase} data-turn-progress={liveProgress.toFixed(2)} data-reduced-motion={reducedMotion ? 'true' : 'false'}>
+  return <section className={`tutor-library${isDebugTurn || isDebugBook || qaState ? ' tutor-library--diagnostic' : ''}${bookActive ? ' tutor-library--book-active' : ''}${spotlightActive ? ' tutor-library--spotlight-active' : ''}`} aria-label={accessibility.rootLabel} aria-labelledby={accessibility.rootLabelledBy} data-tutor-library-qa="root" data-library-phase={qa.phase} data-library-transition-id={qa.transitionId} data-library-generation={qa.generation} data-library-edition={qa.edition} data-library-wall={qa.wall} data-library-root-uuid={qa.rootUuid} data-library-matrix-delta={qa.matrixDelta} data-library-reset-state={qa.resetState} data-library-review-view={qa.reviewView} data-library-review-progress={qa.progress} data-library-qa-progress={qa.progress} data-library-controller-progress="unavailable" data-library-qa-state={qaState?.id ?? 'live'} data-room-phase={sceneBookPhase} data-turn-progress={liveProgress.toFixed(2)} data-reduced-motion={reducedMotion ? 'true' : 'false'}>
     {loadingVisible && !roomReady && !sceneError ? <div className="tutor-library__loading" role="status" aria-live="polite">
       <div className="tutor-library__loading-card">
         <p>DA Tuition faculty</p>
@@ -207,14 +223,14 @@ export function TutorLibrary() {
       </div>
     </div> : null}
     <header className={`tutor-library__copy${checkpointView || isDebugTurn ? ' tutor-library__copy--checkpoint' : ''}`} aria-hidden={accessibility.copyAriaHidden}>
-      <p>DA Tuition faculty</p><h1 id="tutor-library-title">Find the person behind the teaching.</h1><span>Turn toward a subject and explore the educators who bring it to life.</span>
+      <p>{spotlightActive ? 'Spotlight search' : 'DA Tuition faculty'}</p><h1 id="tutor-library-title">{spotlightActive ? 'Find your tutor.' : 'Find the person behind the teaching.'}</h1><span>{spotlightActive ? 'Search by name, subject or teaching style.' : 'Turn toward a subject and explore the educators who bring it to life.'}</span>
     </header>
     <div className="tutor-library__canvas" aria-hidden="true"><CanvasBoundary onError={(message) => { cancelPendingIntent(); setSceneError(message); }}>
       {forceCanvasFailure ? null : <Canvas shadows="soft" camera={{ position: [0, 1.9, .2], fov: 52, near: .1, far: 60 }} dpr={[1, viewportProfile.maxDpr]} gl={{ antialias: true, alpha: false, powerPreference: 'high-performance', toneMapping: ACESFilmicToneMapping, toneMappingExposure: 1.06 }}>
-        <TutorLibraryScene fromWallIndex={activeWallIndex} toWallIndex={targetWallIndex} motionProgress={motionProgress} debugTurnProgress={isDebugTurn ? debugTurnProgress : undefined} debugBookProgress={qaState?.motionProgress ?? (isDebugBook ? debugBookProgress : undefined)} timing={timing} reviewView={reviewView} showWallLabels={!isDebugTurn && !isDebugBook} phase={sceneBookPhase} generation={library.transitionGeneration} reducedMotion={reducedMotion} pageTurnDirection={pageTurnDirection} selectedEditionId={sceneSelectedEditionId} rigIntentEditionId={rigIntent?.editionId} rigIntentToken={rigIntent?.token ?? 0} onRoomReady={() => setRoomReady(true)} onActivate={(editionId, rootUuid) => dispatchEvents(getBookInteractionEvents(library, 'touch-activate', editionId, rootUuid))} onRigReady={handleRigReady} onRigUnavailable={handleRigUnavailable} onLifecycleComplete={dispatch} onPageSettled={setSettledPages} onError={(message) => { cancelPendingIntent(); setSceneError(message); }} />
+        <TutorLibraryScene fromWallIndex={activeWallIndex} toWallIndex={targetWallIndex} motionProgress={motionProgress} debugTurnProgress={isDebugTurn ? debugTurnProgress : undefined} debugBookProgress={qaState?.motionProgress ?? (isDebugBook ? debugBookProgress : undefined)} timing={timing} reviewView={reviewView} showWallLabels={!isDebugTurn && !isDebugBook} spotlightEditions={spotlightActive ? spotlightEditions : undefined} phase={sceneBookPhase} generation={library.transitionGeneration} reducedMotion={reducedMotion} pageTurnDirection={pageTurnDirection} selectedEditionId={sceneSelectedEditionId} rigIntentEditionId={rigIntent?.editionId} rigIntentToken={rigIntent?.token ?? 0} onRoomReady={() => setRoomReady(true)} onActivate={(editionId, rootUuid) => dispatchEvents(getBookInteractionEvents(library, 'touch-activate', editionId, rootUuid))} onRigReady={handleRigReady} onRigUnavailable={handleRigUnavailable} onLifecycleComplete={dispatch} onPageSettled={setSettledPages} onError={(message) => { cancelPendingIntent(); setSceneError(message); }} />
       </Canvas>}
     </CanvasBoundary></div>
 
-    <TutorLibraryControlSurface library={controlLibrary} activeWall={activeWall} visibleEditions={visibleEditions} tutors={TUTOR_BY_ID} selectedTutor={selectedTutor} fallbackTutor={fallbackTutor} availability={availability} status={status} sceneError={sceneError} focusReturnEditionId={focusReturnEditionId} settledPages={settledPages} pageCount={TUTOR_BOOK_READING_STATE_COUNT} showControls={!isDebugTurn} onTurn={wallId => dispatch({ type: 'TURN', wallId })} onBookInteraction={interactWithBook} onCancelPending={cancelPendingIntent} onEscape={() => dispatch({ type: 'ESCAPE' })} onOpen={() => dispatch({ type: 'OPEN' })} onPageTurn={handlePageTurn} onClose={() => dispatch({ type: 'CLOSE' })} />
+    <TutorLibraryControlSurface library={controlLibrary} activeWall={activeWall} selectedTutor={selectedTutor} fallbackTutor={fallbackTutor} availability={availability} status={status} sceneError={sceneError} focusReturnEditionId={focusReturnEditionId} settledPages={settledPages} pageCount={TUTOR_BOOK_READING_STATE_COUNT} spotlightQuery={spotlightQuery} spotlightResultCount={spotlightResults.length} spotlightOffset={spotlightOffset} spotlightPageCount={spotlightPageCount} spotlightActive={spotlightActive} showControls={!isDebugTurn} onSpotlightQueryChange={setSpotlightQuery} onSpotlightOffsetChange={setSpotlightOffset} onTurn={wallId => dispatch({ type: 'TURN', wallId })} onCancelPending={cancelPendingIntent} onEscape={() => dispatch({ type: 'ESCAPE' })} onOpen={() => dispatch({ type: 'OPEN' })} onPageTurn={handlePageTurn} onClose={() => dispatch({ type: 'CLOSE' })} />
   </section>;
 }

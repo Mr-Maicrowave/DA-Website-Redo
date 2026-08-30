@@ -6,14 +6,11 @@ export type ProjectedCoordinate = { x: number; y: number };
 export type RoadSnap = { coordinate: GeographicCoordinate; segmentIndex: number; t: number };
 export type GeographicRoad = { id: string; name: string; hierarchy: 'major' | 'secondary' | 'minor' | 'rail'; coordinates: readonly GeographicCoordinate[] };
 export type ContextualPlace = { id: string; name: string; kind: 'station' | 'school'; coordinates: GeographicCoordinate; labelOffset?: ProjectedCoordinate };
-export type WayfinderMapScene = { id: string; bounds: MapBounds; nearbyBounds: MapBounds; readyBounds: MapBounds; communityMetroBounds: MapBounds; communityBounds: MapBounds; viewBox: MapViewBox; roads: readonly GeographicRoad[]; places: readonly ContextualPlace[]; connection: readonly GeographicCoordinate[] };
+export type WayfinderMapScene = { id: string; bounds: MapBounds; nearbyBounds: MapBounds; readyBounds: MapBounds; viewBox: MapViewBox; roads: readonly GeographicRoad[]; places: readonly ContextualPlace[]; connection: readonly GeographicCoordinate[] };
 
 const HERO_BOUNDS: MapBounds = { north: -33.880, south: -33.887, west: 150.917, east: 150.938 };
 const NEARBY_BOUNDS: MapBounds = { north: -33.8700, south: -33.8900, west: 150.9205, east: 150.9535 };
 const READY_BOUNDS: MapBounds = { north: -33.8795, south: -33.8885, west: 150.919, east: 150.945 };
-const COMMUNITY_METRO_BOUNDS: MapBounds = { north: -33.73, south: -34.00, west: 150.72, east: 151.15 };
-// This is intentionally a camera frame, not a claim about DA's service area or student-origin data.
-const COMMUNITY_BOUNDS: MapBounds = { north: -33.64, south: -34.03, west: 150.60, east: 151.35 };
 const CANLEY_HEIGHTS_VIEWBOX: MapViewBox = { width: 1200, height: 700 };
 
 export const projectCoordinate = (
@@ -37,14 +34,6 @@ export const interpolateBounds = (from: MapBounds, to: MapBounds, progress: numb
     east: interpolate(from.east, to.east),
     west: interpolate(from.west, to.west),
   };
-};
-
-export const getCommunityCameraBounds = (scene: WayfinderMapScene, progress: number, finalBounds: MapBounds = scene.communityBounds): MapBounds => {
-  const localBounds = getSceneBounds(scene, 'nearby');
-  const clamped = Math.max(0, Math.min(1, progress));
-  return clamped < .52
-    ? interpolateBounds(localBounds, scene.communityMetroBounds, Math.pow(clamped / .52, 1.6))
-    : interpolateBounds(scene.communityMetroBounds, finalBounds, (clamped - .52) / .48);
 };
 
 const sameCoordinate = (first: GeographicCoordinate, second: GeographicCoordinate) =>
@@ -159,8 +148,6 @@ export const WAYFINDER_MAP_SCENES: readonly WayfinderMapScene[] = [{
   bounds: HERO_BOUNDS,
   nearbyBounds: NEARBY_BOUNDS,
   readyBounds: READY_BOUNDS,
-  communityMetroBounds: COMMUNITY_METRO_BOUNDS,
-  communityBounds: COMMUNITY_BOUNDS,
   viewBox: CANLEY_HEIGHTS_VIEWBOX,
   roads: [CANLEY_VALE_ROAD, ...LOCAL_STREETS],
   places: [

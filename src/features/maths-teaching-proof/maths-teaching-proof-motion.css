@@ -1,0 +1,4 @@
+.maths-teaching-sequence{position:relative}.maths-teaching-sequence-trace{display:none}
+@media (min-width:768px){.maths-teaching-sequence-trace{display:block;position:absolute;z-index:1;top:2.55rem;left:2.25%;width:95.5%;height:1px;pointer-events:none;background:linear-gradient(90deg,transparent 0%,#b98718 9%,#f0c86a 48%,#b98718 91%,transparent 100%);transform:scaleX(0);transform-origin:left;animation:maths-teaching-trace 2.4s cubic-bezier(.22,1,.36,1) .35s forwards;opacity:.8}}
+@keyframes maths-teaching-trace{0%{transform:scaleX(0);opacity:0}18%{opacity:.8}58%,100%{transform:scaleX(1);opacity:.8}}
+@media (prefers-reduced-motion:reduce){.maths-teaching-sequence-trace{animation:none;transform:scaleX(1)}}

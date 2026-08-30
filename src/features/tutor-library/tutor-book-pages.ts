@@ -39,7 +39,7 @@ export function createTutorBookPages(tutor: CatalogueTutor): readonly TutorBookP
       id: 'identity',
       folio: 1,
       label: 'Meet the tutor',
-      sourceText: [tutor.name, tutor.designation, tutor.tagline, tutor.subjects],
+      sourceText: [tutor.name, tutor.designation, tutor.tagline, tutor.subjects, ...profile.strengths.slice(0, 3)],
     },
     {
       id: 'approach',
@@ -51,13 +51,13 @@ export function createTutorBookPages(tutor: CatalogueTutor): readonly TutorBookP
       id: 'why-da',
       folio: 3,
       label: 'Why trust them',
-      sourceText: [editorialExcerpt(profile.whyDA), ...profile.strengths],
+      sourceText: [editorialExcerpt(profile.whyDA), tutor.subjects, ...profile.strengths, ...(profile.approach === tutor.motto ? [] : [editorialExcerpt(profile.approach)])],
     },
     {
       id: 'goals',
       folio: 4,
       label: 'Who they are right for',
-      sourceText: [editorialExcerpt(profile.approach)],
+      sourceText: [editorialExcerpt(profile.approach), ...profile.strengths],
     },
     {
       id: 'remembered',

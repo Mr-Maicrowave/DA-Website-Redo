@@ -2,10 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import { ArrowLeft, ArrowRight, BookOpen, ChevronRight, CircleX, UserRound } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { getPhotoStyle, getPhotoUrl, type CatalogueTutor } from '../../data/teacherCatalogue';
-import { SUBJECT_WALLS, type SubjectWall, type TutorBookEdition } from './tutor-library-data';
+import { SUBJECT_WALLS, type SubjectWall } from './tutor-library-data';
 import {
-  isBookControlDisabled,
-  type BookInteractionInput,
   type LibraryControlAvailability,
   type LibraryState,
 } from './tutor-library-state';
@@ -16,6 +14,7 @@ import {
   getTutorBookPageTarget,
   type TutorBookPageTurnDirection,
 } from './tutor-book-pages';
+import { getTutorLibraryKeyboardAction } from './tutor-library-keyboard';
 
 function Portrait({ tutor }: { tutor: CatalogueTutor }) {
   const [failed, setFailed] = useState(false);
@@ -28,8 +27,6 @@ function Portrait({ tutor }: { tutor: CatalogueTutor }) {
 export interface TutorLibraryControlSurfaceProps {
   library: LibraryState;
   activeWall: SubjectWall;
-  visibleEditions: readonly TutorBookEdition[];
-  tutors: ReadonlyMap<string, CatalogueTutor>;
   selectedTutor?: CatalogueTutor;
   fallbackTutor: CatalogueTutor;
   availability: LibraryControlAvailability;
@@ -38,9 +35,15 @@ export interface TutorLibraryControlSurfaceProps {
   focusReturnEditionId?: string;
   settledPages: number;
   pageCount: number;
+  spotlightQuery: string;
+  spotlightResultCount: number;
+  spotlightOffset: number;
+  spotlightPageCount: number;
+  spotlightActive: boolean;
   showControls?: boolean;
+  onSpotlightQueryChange(query: string): void;
+  onSpotlightOffsetChange(offset: number): void;
   onTurn(wallId: string): void;
-  onBookInteraction(editionId: string, input: BookInteractionInput): void;
   onCancelPending(editionId?: string): void;
   onEscape(): void;
   onOpen(): void;
@@ -48,8 +51,8 @@ export interface TutorLibraryControlSurfaceProps {
   onClose(): void;
 }
 
-export function TutorLibraryControlSurface({ library, activeWall, visibleEditions, tutors, selectedTutor, fallbackTutor, availability, status, sceneError, focusReturnEditionId, settledPages, pageCount, showControls = true, onTurn, onBookInteraction, onCancelPending, onEscape, onOpen, onPageTurn, onClose }: TutorLibraryControlSurfaceProps) {
-  const tutorPicker = useRef<HTMLSelectElement>(null);
+export function TutorLibraryControlSurface({ library, activeWall, selectedTutor, fallbackTutor, availability, status, sceneError, focusReturnEditionId, settledPages, pageCount, spotlightQuery, spotlightResultCount, spotlightOffset, spotlightPageCount, spotlightActive, showControls = true, onSpotlightQueryChange, onSpotlightOffsetChange, onTurn, onCancelPending, onEscape, onOpen, onPageTurn, onClose }: TutorLibraryControlSurfaceProps) {
+  const spotlightInput = useRef<HTMLInputElement>(null);
   const pointerStart = useRef<{ x: number; y: number; id: number }>();
   const pages = selectedTutor ? createTutorBookPages(selectedTutor) : [];
   const readerStage = library.phase === 'BOOK_PREVIEW' ? 'cover' : 'spread';
@@ -62,58 +65,60 @@ export function TutorLibraryControlSurface({ library, activeWall, visibleEdition
 
   useEffect(() => {
     if (!focusReturnEditionId) return;
-    tutorPicker.current?.focus();
+    spotlightInput.current?.focus();
   }, [focusReturnEditionId]);
 
   useEffect(() => {
     const escape = (event: KeyboardEvent) => {
       if (event.key !== 'Escape') return;
+      if (spotlightQuery && !selectedTutor) {
+        event.preventDefault();
+        onSpotlightQueryChange('');
+        return;
+      }
       onCancelPending();
       onEscape();
     };
     window.addEventListener('keydown', escape);
     return () => window.removeEventListener('keydown', escape);
-  }, [onCancelPending, onEscape]);
+  }, [onCancelPending, onEscape, onSpotlightQueryChange, selectedTutor, spotlightQuery]);
 
   useEffect(() => {
-    if (!selectedTutor || sceneError) return;
-    const turnPage = (event: KeyboardEvent) => {
+    if (sceneError) return;
+    const navigate = (event: KeyboardEvent) => {
       if (event.defaultPrevented) return;
       const target = event.target;
       if (target instanceof Element && target.closest('input, select, textarea, [contenteditable="true"]')) return;
-      const direction = getPageTurnDirectionForKey(event.key);
-      if (!direction || !canTurn(direction)) return;
+      const action = getTutorLibraryKeyboardAction(event.key, library.phase, false, settledPages);
+      if (!action) return;
       event.preventDefault();
-      requestPageTurn(direction);
+      if (action === 'open-book') onOpen();
+      else if (action === 'return-book') onClose();
+      else if (action === 'previous-spread') requestPageTurn(-1);
+      else if (action === 'next-spread') requestPageTurn(1);
+      else {
+        const current = SUBJECT_WALLS.findIndex(wall => wall.id === activeWall.id);
+        const offset = action === 'previous-wall' ? -1 : 1;
+        onTurn(SUBJECT_WALLS[(current + offset + SUBJECT_WALLS.length) % SUBJECT_WALLS.length]!.id);
+      }
     };
-    window.addEventListener('keydown', turnPage);
-    return () => window.removeEventListener('keydown', turnPage);
-  }, [availability.canTurnPage, onPageTurn, pageCount, sceneError, selectedTutor, settledPages]);
+    window.addEventListener('keydown', navigate);
+    return () => window.removeEventListener('keydown', navigate);
+  }, [activeWall.id, library.phase, onClose, onOpen, onPageTurn, onTurn, sceneError, settledPages]);
 
   return <>
     {showControls ? <div className="tutor-library__controls" aria-disabled={sceneError ? 'true' : undefined} {...(sceneError ? { inert: '' } as Record<string, string> : {})}>
-      <nav className="tutor-library__wall-nav" aria-label="Turn toward a subject wall">{SUBJECT_WALLS.map(wall => <button key={wall.id} type="button" disabled={Boolean(sceneError) || !availability.canTurnRoom || wall.id === activeWall.id} aria-pressed={wall.id === activeWall.id} onClick={() => onTurn(wall.id)}>{wall.label}</button>)}</nav>
-      <label className="tutor-library__tutor-picker" hidden={Boolean(selectedTutor)}>
-        <span>Choose a tutor</span>
-        <select
-          ref={tutorPicker}
-          aria-label={`Choose a ${activeWall.label} tutor book`}
-          value=""
-          disabled={Boolean(sceneError) || visibleEditions.every(edition => isBookControlDisabled(library, edition.id))}
-          onChange={event => {
-            const editionId = event.currentTarget.value;
-            if (editionId && !sceneError && !isBookControlDisabled(library, editionId)) {
-              onBookInteraction(editionId, 'keyboard-activate');
-            }
-          }}
-        >
-          <option value="">Select a book from the shelf</option>
-          {visibleEditions.map(edition => {
-            const tutor = tutors.get(edition.tutorId);
-            return tutor ? <option key={edition.id} value={edition.id}>{tutor.name}</option> : null;
-          })}
-        </select>
-      </label>
+      <nav className="tutor-library__wall-nav" hidden={spotlightActive} aria-label="Turn toward a subject wall">{SUBJECT_WALLS.map(wall => <button key={wall.id} type="button" disabled={Boolean(sceneError) || !availability.canTurnRoom || wall.id === activeWall.id} aria-pressed={wall.id === activeWall.id} onClick={() => onTurn(wall.id)}>{wall.label}</button>)}</nav>
+      <div className="tutor-library__spotlight" hidden={Boolean(selectedTutor)}>
+        <label htmlFor="tutor-library-spotlight">Find a tutor</label>
+        <input ref={spotlightInput} id="tutor-library-spotlight" type="search" value={spotlightQuery} placeholder="Search all tutors" autoComplete="off" disabled={Boolean(sceneError)} aria-describedby="tutor-library-spotlight-status" onChange={event => onSpotlightQueryChange(event.currentTarget.value)} />
+        {spotlightActive ? <div className="tutor-library__spotlight-results">
+          <button type="button" aria-label="Show previous tutor results" disabled={spotlightOffset === 0} onClick={() => onSpotlightOffsetChange(spotlightOffset - 1)}>‹</button>
+          <p id="tutor-library-spotlight-status" role="status">{spotlightResultCount === 0 ? 'No tutors found. Try a name, subject or teaching strength.' : `${Math.min(spotlightResultCount, spotlightOffset * (window.innerWidth <= 700 ? 5 : 7) + 1)}–${Math.min(spotlightResultCount, (spotlightOffset + 1) * (window.innerWidth <= 700 ? 5 : 7))} of ${spotlightResultCount} tutors`}</p>
+          <button type="button" aria-label="Show next tutor results" disabled={spotlightOffset >= spotlightPageCount - 1} onClick={() => onSpotlightOffsetChange(spotlightOffset + 1)}>›</button>
+          <button className="tutor-library__spotlight-clear" type="button" onClick={() => onSpotlightQueryChange('')}>Clear search</button>
+        </div> : <p id="tutor-library-spotlight-status">Search names, subjects or teaching strengths.</p>}
+      </div>
     </div> : null}
 
     {selectedTutor && readerVisible && !sceneError ? <aside className="tutor-library__reader" data-reader-stage={readerStage} aria-label={`${selectedTutor.name} tutor book controls`} aria-keyshortcuts="ArrowLeft ArrowRight PageUp PageDown" tabIndex={0}

@@ -18,7 +18,9 @@
       --gold-bright: #C9A227;
       --border-gold: rgba(184, 142, 24, 0.38);
       --border-light: rgba(18, 30, 46, 0.1);
-      --cube-size: clamp(168px, 19vw, 226px);
+      /* The desktop stage has room for a more legible, tactile cube. Keep the
+         same real hinged geometry; only give it a stronger viewport presence. */
+      --cube-size: clamp(244px, 23vw, 320px);
       --half-cube: calc(var(--cube-size) / 2);
       --net-scale: 1;
       --net-shift: 0px;
@@ -52,9 +54,26 @@
       .experience { grid-template-columns: 1fr; padding: 22px 14px 32px; gap: 20px; }
       :root { --cube-size: clamp(132px, 30vw, 168px); }
     }
+    @media (min-width: 1001px) {
+      .experience.net-open {
+        grid-template-columns: 1fr;
+        padding: 16px 32px;
+      }
+      .experience.net-open .copy { display: none; }
+      .experience.net-open .stage {
+        min-height: calc(100svh - 32px);
+        transform: none;
+      }
+    }
 
     /* ---------------- Left copy column ---------------- */
     .copy { position: relative; z-index: 4; }
+
+    /* Give the full desktop composition a higher, more deliberate resting
+       position while preserving the natural stacked mobile flow. */
+    @media (min-width: 1001px) {
+      .copy { transform: translateY(-42px); }
+    }
     .eyebrow {
       display: flex; align-items: center; gap: 10px;
       color: var(--gold-deep); font-size: .7rem; font-weight: 800;
@@ -112,18 +131,18 @@
     .sr-live { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
 
     /* ---------------- 3D stage ---------------- */
-    .stage::after {
-      content: ""; position: absolute; left: 8%; right: 8%; bottom: 12%; height: 42%;
-      background: radial-gradient(ellipse at 50% 100%, rgba(120,96,44,.09), transparent 68%);
-      pointer-events: none; z-index: 0;
-    }
     .stage {
       position: relative; z-index: 3;
       display: flex; align-items: center; justify-content: center;
-      min-height: clamp(540px, 64vw, 720px);
+      /* Leave enough room for the full unfolded net, without forcing a
+         taller-than-viewport desktop experience at normal browser zoom. */
+      min-height: clamp(480px, 48vw, 620px);
       perspective: 1700px;
       perspective-origin: 50% 48%;
       touch-action: pan-y;
+    }
+    @media (min-width: 1001px) {
+      .stage { transform: translateY(-60px); }
     }
 
     .stage-banner {
@@ -181,11 +200,11 @@
        it tightens and darkens as the cube nears the floor, and spreads and
        fades as it rises, which is what actually sells the contact. */
     .cube-shadow {
-      position: absolute; left: 50%; top: 98%;
-      width: 116%; margin-left: -58%; height: 30px;
+      position: absolute; left: 54%; top: 108%;
+      width: 148%; margin-left: -74%; height: clamp(38px, 3vw, 50px);
       border-radius: 50%;
       background: radial-gradient(ellipse at center, rgba(72,54,22,.38), rgba(72,54,22,.15) 46%, transparent 72%);
-      filter: blur(6px);
+      filter: blur(8px);
       pointer-events: none;
       transform-origin: 50% 50%;
       opacity: .85;
@@ -300,17 +319,10 @@
       margin-top: 3px; align-self: flex-start; font-size: .68rem; font-weight: 800;
       color: var(--gold-deep); border-bottom: 1.5px solid var(--gold-deep); padding-bottom: 1px;
     }
+    .hinged-net-wrapper.unfolded .fs-title { font-size: .76rem; }
+    .hinged-net-wrapper.unfolded .fs-hook { font-size: .9rem; line-height: 1.38; }
+    .hinged-net-wrapper.unfolded .fs-go { font-size: .82rem; }
     .fs-rule, .fs-corner, .fs-grid { position: absolute; pointer-events: none; opacity: 0; }
-
-    /* dice pips, shown only while the cube is actually rolling */
-    .pips-overlay { position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity .18s ease; z-index: 3; }
-    .hinged-net-wrapper.dice-mode .pips-overlay { opacity: 1; }
-    .hinged-net-wrapper.dice-mode .face-skin > :not(.pips-overlay) { opacity: .12; }
-    .pip {
-      position: absolute; width: 15%; aspect-ratio: 1; border-radius: 50%;
-      background: var(--gold-deep); transform: translate(-50%, -50%);
-      box-shadow: 0 2px 6px rgba(18,30,46,.25);
-    }
 
     /* =========================================================
        EIGHT FACE DESIGN SYSTEMS
@@ -323,7 +335,7 @@
         linear-gradient(rgba(30,72,110,.09) 1px, transparent 1px) 0 0 / 100% 14px,
         linear-gradient(90deg, rgba(30,72,110,.09) 1px, transparent 1px) 0 0 / 14px 100%,
         #EEF3F8;
-      border: 1.5px solid #2F5F8C; border-radius: 3px;
+      border: 1.5px solid #2F5F8C; border-radius: 12px;
       box-shadow: 0 8px 22px rgba(20,45,70,.14);
     }
     [data-design="4"] > .face-skin .fs-corner {
@@ -338,6 +350,7 @@
     [data-design="4"] > .face-skin .fs-title { color: #2F5F8C; font-family: ui-monospace, Consolas, monospace; }
     [data-design="4"] > .face-skin .fs-hook { color: #1A3B5C; font-size: .71rem; }
     [data-design="4"] > .face-skin .fs-go { color: #1E486E; border-bottom-color: #1E486E; font-family: ui-monospace, Consolas, monospace; }
+    .hinged-net-wrapper.unfolded [data-design="4"] > .face-skin .fs-hook { font-size: .9rem; }
 
     /* =========================================================
        CARD (modal) — shared chrome, then eight card designs
@@ -354,7 +367,7 @@
     .modal-backdrop.is-open { opacity: 1; pointer-events: auto; }
 
     .modal-window {
-      width: 100%; max-width: 1000px; max-height: 92vh;
+      width: min(96vw, 1600px); max-width: min(96vw, 1600px); max-height: 92svh;
       display: flex; flex-direction: column; overflow: hidden;
       background: #FFFFFF; border: 1px solid var(--border-gold); border-radius: 18px;
       box-shadow: 0 26px 64px rgba(18,30,46,.22);
@@ -387,7 +400,7 @@
     }
     .modal-close-btn:hover { background: #E0D4BE; color: var(--text-primary); }
 
-    .modal-content-area { overflow-y: auto; flex: 1; padding: clamp(16px, 2.6vw, 30px); background: #FFFFFF; }
+    .modal-content-area { overflow-y: auto; flex: 1; padding: clamp(14px, 1.8vw, 24px); background: #FFFFFF; }
 
     .modal-footer {
       padding: 12px 20px; background: #E3ECF4; border-top: 1px solid #2F5F8C;
@@ -453,6 +466,93 @@
     @media (max-width: 820px) {
       .layout-concept-4 .c4-grid { grid-template-columns: 1fr; }
     }
+
+    /* ---------------- Year 7 curriculum field guide ---------------- */
+    .year-field-guide {
+      --guide-blue: #2865ae;
+      --guide-ink: #092a5a;
+      --guide-rule: rgba(40,101,174,.55);
+      --guide-grid: rgba(73,138,209,.075);
+      color: var(--guide-ink);
+      padding: clamp(18px, 2.1vw, 32px);
+      background-color: #fffdf8;
+      background-image:
+        linear-gradient(var(--guide-grid) 1px, transparent 1px),
+        linear-gradient(90deg, var(--guide-grid) 1px, transparent 1px),
+        linear-gradient(rgba(73,138,209,.11) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(73,138,209,.11) 1px, transparent 1px);
+      background-size: 18px 18px, 18px 18px, 90px 90px, 90px 90px;
+      animation: field-guide-in .36s cubic-bezier(.22,1,.36,1) both;
+    }
+    .year-field-guide, .year-field-guide * { box-sizing: border-box; }
+    .yfg-layout { display: grid; grid-template-columns: minmax(0,1.3fr) minmax(0,1fr); gap: clamp(24px,3.2vw,52px); max-width: 1480px; margin: 0 auto; }
+    .yfg-main, .yfg-side { min-width: 0; }
+    .yfg-kicker, .yfg-section-title, .yfg-table dt { font-family: ui-sans-serif, system-ui, sans-serif; font-size: .68rem; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: var(--guide-blue); }
+    .yfg-kicker { margin-bottom: 10px; }
+    .yfg-title { max-width: none; margin: 0; font-family: Georgia, "Times New Roman", serif; font-size: clamp(3.25rem,3.3vw,3.625rem); line-height: .96; letter-spacing: -.03em; color: var(--guide-ink); text-wrap: balance; }
+    .yfg-stage { display: flex; gap: 10px; flex-wrap: wrap; margin: 12px 0 12px; font-family: ui-sans-serif, system-ui, sans-serif; font-size: .75rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--guide-blue); }
+    .yfg-stage span + span::before { content: "•"; margin-right: 11px; color: #6f8db4; }
+    .yfg-summary { max-width: 66ch; margin: 0; font-family: ui-sans-serif, system-ui, sans-serif; font-size: clamp(1.125rem,1.28vw,1.25rem); line-height: 1.45; color: #163b6d; }
+    .yfg-section { position: relative; margin-top: clamp(18px,2.1vw,30px); padding-top: 11px; border-top: 1px solid var(--guide-rule); }
+    .yfg-section-title { display: flex; align-items: center; gap: 12px; margin: 0 0 10px; }
+    .yfg-section-title b { min-width: 20px; }
+    .yfg-section p { max-width: 70ch; margin: 0; font-family: ui-sans-serif, system-ui, sans-serif; font-size: .9rem; line-height: 1.5; color: #123766; }
+    .yfg-focus { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); }
+    .yfg-focus-item { min-height: 70px; padding: 0 18px 11px 0; margin: 0 18px 10px 0; border-bottom: 1px dotted rgba(40,101,174,.36); }
+    .yfg-focus-item:nth-child(odd) { border-right: 1px dotted rgba(40,101,174,.36); padding-right: 18px; }
+    .yfg-focus-item:nth-child(even) { padding-left: 0; }
+    .yfg-focus-item strong { display: block; margin-bottom: 3px; font-family: ui-sans-serif, system-ui, sans-serif; font-size: .84rem; line-height: 1.25; color: var(--guide-ink); }
+    .yfg-focus-item p { font-size: .76rem; line-height: 1.38; }
+    .yfg-teaching { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); }
+    .yfg-teaching div { min-height: 54px; padding: 0 14px 0 0; margin-right: 14px; border-right: 1px dotted rgba(40,101,174,.45); font-family: ui-sans-serif, system-ui, sans-serif; font-size: .76rem; line-height: 1.4; color: #123766; }
+    .yfg-teaching div:last-child { border-right: 0; margin-right: 0; }
+    .yfg-photo { display: block; width: 100%; aspect-ratio: 2.25 / 1; object-fit: cover; object-position: 50% 42%; border: 1px solid var(--guide-rule); filter: saturate(.86) contrast(1.03); }
+    .yfg-side .yfg-section { margin-top: 20px; }
+    .yfg-table { margin: 0; border-left: 1px solid var(--guide-rule); }
+    .yfg-table div { display: grid; grid-template-columns: minmax(0,.3fr) minmax(0,.7fr); gap: 14px; padding: 8px 12px 8px 28px; }
+    .yfg-table dd { margin: 0; font-family: ui-sans-serif, system-ui, sans-serif; font-size: .84rem; line-height: 1.36; color: #123766; }
+    .yfg-callout { padding: 12px 15px 13px; border-top: 1px solid #ca9114; background: rgba(255,245,222,.72); }
+    .yfg-callout .yfg-section-title { margin-bottom: 8px; color: #a66e00; }
+    .yfg-callout ul { display: grid; gap: 5px; margin: 0; padding-left: 17px; font-family: ui-sans-serif, system-ui, sans-serif; font-size: .8rem; line-height: 1.36; color: #123766; }
+    .yfg-callout li::marker { color: #bd8107; }
+    @keyframes field-guide-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    @media (max-width: 820px) {
+      .yfg-layout { grid-template-columns: 1fr; gap: 0; }
+      .yfg-side { display: contents; }
+      .yfg-main { display: contents; }
+      .yfg-kicker { order: 1; }.yfg-title { order: 2; }.yfg-stage { order: 3; }.yfg-summary { order: 4; }
+      .yfg-photo { order: 5; margin: 24px 0 0; }
+      .yfg-year-shift { order: 6; }.yfg-core-focus { order: 7; }.yfg-at-glance { order: 8; }.yfg-common-mistakes { order: 9; }.yfg-teaching-section { order: 10; }
+      .yfg-title, .yfg-kicker, .yfg-stage, .yfg-summary { grid-column: 1; }
+      .yfg-focus { grid-template-columns: 1fr; }
+      .yfg-focus-item:nth-child(odd) { border-right: 0; }
+      .yfg-teaching { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 15px 0; }
+      .yfg-teaching div:nth-child(2) { border-right: 0; }
+    }
+    @media (max-height: 900px) and (min-width: 821px) {
+      .modal-window { max-height: 96svh; }
+      .modal-top-bar { padding-block: 8px; }
+      .modal-footer { padding-block: 9px; }
+      .year-field-guide { padding: 5px 20px; }
+      .yfg-title { font-size: clamp(3.25rem,3.25vw,3.4rem); }
+      .yfg-section { margin-top: 15px; padding-top: 9px; }
+      .yfg-focus-item { min-height: 61px; padding-bottom: 8px; margin-bottom: 7px; }
+      .yfg-focus { grid-template-columns: repeat(3,minmax(0,1fr)); }
+      .yfg-focus-item:nth-child(odd) { border-right: 0; padding-right: 12px; }
+      .yfg-focus-item:not(:nth-child(3n)) { border-right: 1px dotted rgba(40,101,174,.36); padding-right: 12px; }
+      .yfg-teaching div { min-height: 46px; }
+      .yfg-side .yfg-section { margin-top: 15px; }
+      .yfg-photo { aspect-ratio: 2.5 / 1; }
+      .yfg-table div { padding-block: 4px; }
+      .yfg-callout { padding-block: 8px; }
+    }
+    @media (max-width: 520px) {
+      .year-field-guide { padding: 22px 18px; }
+      .yfg-table div { grid-template-columns: 1fr; gap: 5px; padding: 11px 14px 11px 24px; }
+      .yfg-teaching { grid-template-columns: 1fr; }
+      .yfg-teaching div { border-right: 0; border-bottom: 1px dotted rgba(40,101,174,.45); padding-bottom: 11px; }
+    }
+    @media (prefers-reduced-motion: reduce) { .year-field-guide { animation: none; } }
 
     @media (prefers-reduced-motion: reduce) {
       .face, .net-stage, .modal-window, .modal-backdrop { transition-duration: 1ms !important; }
@@ -532,7 +632,6 @@
               <span class="fs-rule" aria-hidden="true"></span>
               <span class="fs-corner" aria-hidden="true"></span>
               <span class="fs-grid" aria-hidden="true"></span>
-              <div class="pips-overlay" data-pips="1" aria-hidden="true"></div>
               <div class="fs-top"><span class="fs-num">7</span><span class="fs-tag">Stage 4</span></div>
               <div class="fs-bottom">
                 <p class="fs-title">Year 7 Mathematics</p>
@@ -546,7 +645,6 @@
                 <span class="fs-rule" aria-hidden="true"></span>
                 <span class="fs-corner" aria-hidden="true"></span>
                 <span class="fs-grid" aria-hidden="true"></span>
-                <div class="pips-overlay" data-pips="5" aria-hidden="true"></div>
                 <div class="fs-top"><span class="fs-num">10</span><span class="fs-tag">Stage 5.3</span></div>
                 <div class="fs-bottom">
                   <p class="fs-title">Year 10 Mathematics</p>
@@ -561,7 +659,6 @@
                 <span class="fs-rule" aria-hidden="true"></span>
                 <span class="fs-corner" aria-hidden="true"></span>
                 <span class="fs-grid" aria-hidden="true"></span>
-                <div class="pips-overlay" data-pips="3" aria-hidden="true"></div>
                 <div class="fs-top"><span class="fs-num">11</span><span class="fs-tag">Preliminary</span></div>
                 <div class="fs-bottom">
                   <p class="fs-title">Year 11 Mathematics</p>
@@ -576,7 +673,6 @@
                 <span class="fs-rule" aria-hidden="true"></span>
                 <span class="fs-corner" aria-hidden="true"></span>
                 <span class="fs-grid" aria-hidden="true"></span>
-                <div class="pips-overlay" data-pips="4" aria-hidden="true"></div>
                 <div class="fs-top"><span class="fs-num">12</span><span class="fs-tag">HSC exam</span></div>
                 <div class="fs-bottom">
                   <p class="fs-title">Year 12 Mathematics</p>
@@ -591,7 +687,6 @@
                 <span class="fs-rule" aria-hidden="true"></span>
                 <span class="fs-corner" aria-hidden="true"></span>
                 <span class="fs-grid" aria-hidden="true"></span>
-                <div class="pips-overlay" data-pips="2" aria-hidden="true"></div>
                 <div class="fs-top"><span class="fs-num">8</span><span class="fs-tag">Stage 4</span></div>
                 <div class="fs-bottom">
                   <p class="fs-title">Year 8 Mathematics</p>
@@ -605,7 +700,6 @@
                   <span class="fs-rule" aria-hidden="true"></span>
                   <span class="fs-corner" aria-hidden="true"></span>
                   <span class="fs-grid" aria-hidden="true"></span>
-                  <div class="pips-overlay" data-pips="6" aria-hidden="true"></div>
                   <div class="fs-top"><span class="fs-num">9</span><span class="fs-tag">Stage 5.2/5.3</span></div>
                   <div class="fs-bottom">
                     <p class="fs-title">Year 9 Mathematics</p>
@@ -667,6 +761,36 @@
         photo: '/images/programs/highschool-tutor-1on1-1.jpg',
         photoTitle: 'Diagnostic Coaching',
         photoCaption: 'Building structured calculation habits early to eliminate arithmetic errors.',
+        fieldGuide: {
+          summary: 'Students leave the security of mental arithmetic and begin thinking with symbols, structure and proof.',
+          yearShift: 'Year 7 is where students move from relying on number sense to using formal mathematics. We build the habits that make later mathematics possible: clear setup, correct methods and logical reasoning.',
+          focusAreas: [
+            ['Directed numbers & negative arithmetic', 'Add, subtract, multiply and divide with confidence.'],
+            ['Fractions, decimals, percentages & ratios', 'Compare, convert and apply to real situations.'],
+            ['Algebraic notation & like terms', 'Write, simplify and manipulate expressions.'],
+            ['Angle relationships & geometry proofs', 'Understand angle rules and prove simple relationships.'],
+            ['Solving linear equations', 'Solve one-step and two-step equations in context.'],
+            ['Perimeter, area & Cartesian coordinates', 'Measure, model and plot points on the grid.']
+          ],
+          atAGlance: [
+            ['Stage', 'Stage 4 Mathematics'],
+            ['Focus', 'Building algebraic thinking and mathematical accuracy'],
+            ['Learning style', 'Guided practice with feedback and problem-solving'],
+            ['Ideal for', 'Students who are ready to slow down and think carefully']
+          ],
+          teachingSteps: [
+            'Break complex skills into small, achievable steps.',
+            'Show how ideas connect across topics.',
+            'Build accuracy habits and self-checking strategies.',
+            'Give personal feedback so mistakes become improvements.'
+          ],
+          commonMistakes: [
+            'Order-of-operations (BODMAS) errors',
+            'Dropping negative signs during substitution (e.g. −3² vs (−3)²)',
+            'Bracket substitution without distributing to every term',
+            'Rushing multi-step equations'
+          ]
+        },
         teaching: 'The transition from primary school arithmetic to high school algebra requires students to abandon mental shortcuts and adopt formal mathematical communication. We train line-by-line working: setting out inverse operations clearly, mastering negative number arithmetic, and treating the equals sign as an exact balance.',
         topics: [
           'Directed Numbers & Negative Arithmetic',
@@ -776,15 +900,6 @@
       }
     };
 
-    const PIP_LAYOUTS = {
-      1: [[50, 50]],
-      2: [[25, 25], [75, 75]],
-      3: [[25, 25], [50, 50], [75, 75]],
-      4: [[25, 25], [75, 25], [25, 75], [75, 75]],
-      5: [[25, 25], [75, 25], [50, 50], [25, 75], [75, 75]],
-      6: [[25, 22], [75, 22], [25, 50], [75, 50], [25, 78], [75, 78]],
-    };
-
     const IDLE_DELAY_MS = 3200;
     const SPIN_SPEED_DEG_PER_SEC = 9;
     const TUMBLE_AMPLITUDE_DEG = 11;
@@ -793,6 +908,7 @@
     const COAST_STOP_THRESHOLD = 2;
 
     const stage = document.getElementById('stage');
+    const experience = document.querySelector('.experience');
     const netStage = document.getElementById('netStage');
     const wrapper = document.getElementById('hingedNetWrapper');
     const cubeShadow = document.getElementById('cubeShadow');
@@ -837,17 +953,6 @@
        when hinged to 0.
        ----------------------------------------------------------- */
     function buildNetStructure() {
-      document.querySelectorAll('.pips-overlay').forEach(p => {
-        p.innerHTML = '';
-        (PIP_LAYOUTS[Number(p.dataset.pips)] || []).forEach(([lx, ly]) => {
-          const dot = document.createElement('div');
-          dot.className = 'pip';
-          dot.style.left = lx + '%';
-          dot.style.top = ly + '%';
-          p.appendChild(dot);
-        });
-      });
-
       document.querySelectorAll('.face').forEach(face => {
         const year = Number(face.dataset.year);
         const skin = face.querySelector(':scope > .face-skin');
@@ -1002,26 +1107,29 @@
     let startPX = 0, startPY = 0, startRotY = 0, startRotX = 0;
     let dragDistance = 0;
     let history = [];
+    // The projected faces can travel outside the cube's original 320px layout
+    // box. Capture gestures on the stable stage, not the moving cube wrapper.
+    const dragSurface = stage;
 
     // The second mousedown of a double-click is what selects a word, so it has
     // to be cancelled before the browser acts on it.
-    wrapper.addEventListener('mousedown', (e) => { if (e.detail > 1) e.preventDefault(); });
-    wrapper.addEventListener('selectstart', (e) => e.preventDefault());
+    dragSurface.addEventListener('mousedown', (e) => { if (e.detail > 1) e.preventDefault(); });
+    dragSurface.addEventListener('selectstart', (e) => e.preventDefault());
 
-    wrapper.addEventListener('pointerdown', (e) => {
+    dragSurface.addEventListener('pointerdown', (e) => {
       if (isNetOpen || modal.classList.contains('is-open')) return;
       mode = 'dragging';
       dragDistance = 0;
       clearIdleTimer();
       stopRAF();
       wrapper.classList.add('grabbing');
-      try { wrapper.setPointerCapture(e.pointerId); } catch (_) {}
+      try { dragSurface.setPointerCapture(e.pointerId); } catch (_) {}
       startPX = e.clientX; startPY = e.clientY;
       startRotY = rotY; startRotX = rotX;
       history = [{ t: performance.now(), rotY, rotX, px: e.clientX, py: e.clientY }];
     });
 
-    wrapper.addEventListener('pointermove', (e) => {
+    dragSurface.addEventListener('pointermove', (e) => {
       if (mode !== 'dragging') return;
       const dx = e.clientX - startPX, dy = e.clientY - startPY;
       dragDistance = Math.hypot(dx, dy);
@@ -1042,7 +1150,7 @@
       const dt = Math.max(16, now - ref.t) / 1000;
       const velY = (rotY - ref.rotY) / dt, velX = (rotX - ref.rotX) / dt;
       wrapper.classList.remove('grabbing');
-      try { wrapper.releasePointerCapture(e.pointerId); } catch (_) {}
+      try { dragSurface.releasePointerCapture(e.pointerId); } catch (_) {}
 
       // Flick upward and let go. Measured as the PEAK upward speed across the
       // last few samples, not the average to release: a real flick decelerates
@@ -1074,14 +1182,14 @@
     // Throwing is bound to the cube as a whole. It cannot hang off an individual
     // face: pointer capture during the drag retargets click and dblclick to the
     // capturing element, so a face-level listener would never hear it.
-    wrapper.addEventListener('dblclick', (e) => {
+    dragSurface.addEventListener('dblclick', (e) => {
       if (isNetOpen || modal.classList.contains('is-open')) return;
       e.preventDefault();
       rollAndUnfold();
     });
 
-    wrapper.addEventListener('pointerup', endDrag);
-    wrapper.addEventListener('pointercancel', endDrag);
+    dragSurface.addEventListener('pointerup', endDrag);
+    dragSurface.addEventListener('pointercancel', endDrag);
 
     wrapper.setAttribute('tabindex', '0');
     wrapper.setAttribute('role', 'region');
@@ -1134,8 +1242,6 @@
       let landed = { x: 0, y: FLOOR_RUN - 10, z: Z_FAR - 55, rz: 0 };
 
       if (!prefersReducedMotion()) {
-        wrapper.classList.add('dice-mode');
-
         const startY = rotY, startX = rotX;
         // land on whole turns so the net opens from a square-on cube
         const endY = Math.ceil(startY / 360) * 360 + 720;
@@ -1150,7 +1256,6 @@
           return 0.88 + 0.12 * (1 - Math.pow(1 - v, 3));
         }
 
-        let pipsDropped = false;
         await new Promise(res => {
           const t0 = performance.now();
           function tick(now) {
@@ -1187,7 +1292,6 @@
               ground = FLOOR_RUN - 10; z = Z_FAR - 55;
               sy = 1 - 0.02 * damp * Math.cos(u * Math.PI * 3);
               sx = 1 + 0.014 * damp * Math.cos(u * Math.PI * 3);
-              if (!pipsDropped) { wrapper.classList.remove('dice-mode'); pipsDropped = true; }
             }
 
             const y = ground - height;
@@ -1205,7 +1309,6 @@
           }
           requestAnimationFrame(tick);
         });
-        wrapper.classList.remove('dice-mode');
         landed = { x: 0, y: FLOOR_RUN - 10, z: Z_FAR - 55, rz: 0 };
       } else {
         landed = { x: 0, y: 0, z: 0, rz: 0 };
@@ -1213,6 +1316,7 @@
 
       isNetOpen = true;
       mode = 'net';
+      experience.classList.add('net-open');
       layoutNet();
 
       // It landed away from the viewer, so the unfold is also the return: the
@@ -1265,6 +1369,7 @@
         wrapper.style.transition = '';
         wrapper.classList.remove('is-net');
         isNetOpen = false;
+        experience.classList.remove('net-open');
         mode = 'cube';
         updateActiveFaceHighlight(activeYear);
         armIdleTimer();
@@ -1280,6 +1385,37 @@
        ========================================================= */
     const esc = (s) => String(s);
     const cleanFix = (d) => d.fix.replace(/^The DA Fix:\s*/, '');
+
+    function renderYearSevenFieldGuide(d) {
+      const guide = d.fieldGuide;
+      return '' +
+      '<article class="year-field-guide" aria-labelledby="modalDynamicTitle">' +
+        '<div class="yfg-layout">' +
+          '<main class="yfg-main">' +
+            '<p class="yfg-kicker">Year 7</p>' +
+            '<h2 class="yfg-title" id="modalDynamicTitle">' + d.heading + '</h2>' +
+            '<p class="yfg-stage"><span>Stage 4 Mathematics</span><span>Year 7</span></p>' +
+            '<p class="yfg-summary">' + guide.summary + '</p>' +
+            '<section class="yfg-section yfg-year-shift"><h3 class="yfg-section-title"><b>01</b> Year shift</h3><p>' + guide.yearShift + '</p></section>' +
+            '<section class="yfg-section yfg-core-focus"><h3 class="yfg-section-title"><b>02</b> Core focus areas</h3><div class="yfg-focus">' +
+              guide.focusAreas.map(area => '<div class="yfg-focus-item"><strong>' + area[0] + '</strong><p>' + area[1] + '</p></div>').join('') +
+            '</div></section>' +
+            '<section class="yfg-section yfg-teaching-section"><h3 class="yfg-section-title"><b>04</b> How DA teaches it</h3><div class="yfg-teaching">' +
+              guide.teachingSteps.map(step => '<div>' + step + '</div>').join('') +
+            '</div></section>' +
+          '</main>' +
+          '<aside class="yfg-side">' +
+            '<img class="yfg-photo" src="' + d.photo + '" alt="' + d.photoCaption + '" />' +
+            '<section class="yfg-section yfg-at-glance"><h3 class="yfg-section-title"><b>03</b> At a glance</h3><dl class="yfg-table">' +
+              guide.atAGlance.map(row => '<div><dt>' + row[0] + '</dt><dd>' + row[1] + '</dd></div>').join('') +
+            '</dl></section>' +
+            '<section class="yfg-section yfg-callout yfg-common-mistakes"><h3 class="yfg-section-title"><b>05</b> Common mistakes we fix</h3><ul>' +
+              guide.commonMistakes.map(mistake => '<li>' + mistake + '</li>').join('') +
+            '</ul></section>' +
+          '</aside>' +
+        '</div>' +
+      '</article>';
+    }
 
     function renderYearCard(d, n) {
       return '' +
@@ -1317,7 +1453,7 @@
     function populateModalContent(yearNum) {
       const data = YEAR_DETAILS[yearNum] || YEAR_DETAILS[7];
       activeYear = yearNum;
-      modalContentArea.innerHTML = renderYearCard(data, yearNum);
+      modalContentArea.innerHTML = yearNum === 7 ? renderYearSevenFieldGuide(data) : renderYearCard(data, yearNum);
       modalContentArea.scrollTop = 0;
       modalYearNav.querySelectorAll('.modal-year-btn').forEach(btn => {
         btn.setAttribute('aria-pressed', String(Number(btn.dataset.modalYear) === yearNum));

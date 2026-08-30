@@ -35,7 +35,7 @@ test('uses only Jenny canonical fields and verbatim sentence excerpts', () => {
   const canonicalFields = [jenny.name, jenny.designation, jenny.tagline, jenny.motto, jenny.subjects, jenny.profile!.whyDA, jenny.profile!.goals, jenny.profile!.remembered, ...profileContentFor(jenny).strengths];
 
   assert.ok(pages.flatMap(page => page.sourceText).every(text => canonicalFields.some(field => field.includes(text) || text.includes(field))));
-  assert.equal(pages[0].sourceText.length, 4);
+  assert.equal(pages[0].sourceText.length, 7);
   assert.equal(pages[2].sourceText[0], 'I started as a part-time tutor at DA Tuition while I was studying my double degree of business and law at university.');
   assert.equal(pages[3].sourceText[0], "My legal background gave me a deep appreciation of the power of words, while my Master's in Teaching equipped me with strategies to make English clear, structured and accessible.");
 });
@@ -55,7 +55,7 @@ test('falls back explicitly to motto and an empty tag list when conventional pro
   assert.deepEqual(createTutorBookPages(sparse).map(page => page.sourceText), [
     ['Tutor Name', 'Tutor Designation', 'Tutor tagline.', 'English'],
     ['Patient, structured teaching.'],
-    ['Patient, structured teaching.'],
+    ['Patient, structured teaching.', 'English'],
     ['Patient, structured teaching.'],
     ['Patient, structured teaching.'],
     ['English'],
@@ -94,7 +94,7 @@ test('gives the four visible tutor pages their reader-first editorial roles', ()
 test('keeps the four visible pages readable by reserving detailed strengths for teaching and trust', () => {
   const [identity, approach, whyTrust, fit] = createTutorBookPages(jenny);
 
-  assert.deepEqual(identity.sourceText, [jenny.name, jenny.designation, jenny.tagline, jenny.subjects]);
+  assert.deepEqual(identity.sourceText, [jenny.name, jenny.designation, jenny.tagline, jenny.subjects, ...profileContentFor(jenny).strengths.slice(0, 3)]);
   assert.ok(approach.sourceText.length > 1, 'teaching principles remain available on How They Teach');
   assert.ok(whyTrust.sourceText[0]!.split(/\s+/).length < 90, 'Why Trust Them begins with a readable canonical excerpt');
   assert.ok(fit.sourceText[0]!.split(/\s+/).length < 90, 'Who They Are Right For begins with a readable canonical excerpt');
