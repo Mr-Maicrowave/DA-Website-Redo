@@ -283,6 +283,7 @@ const NavigationNew = ({ heroMode = false }: NavigationNewProps) => {
 
       <MobileNavSheet
         isOpen={sheetOpen}
+        searchOpen={false}
         onClose={() => setSheetOpen(false)}
         triggerRef={hamburgerRef}
         programsItems={programsItems}
