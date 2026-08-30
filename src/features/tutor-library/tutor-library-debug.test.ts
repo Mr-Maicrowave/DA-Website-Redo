@@ -2,9 +2,12 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import {
   createTutorLibraryQaSnapshot,
+  getControllerDiagnosticProgress,
   getMatrixDeltaFromIdentity,
+  getTutorLibraryAccessibilityProps,
   getTutorLibraryViewportProfile,
   parseDebugTurnProgress,
+  writeTutorLibraryRigDiagnostics,
 } from './tutor-library-debug.ts';
 
 test('accepts exact diagnostic camera samples only within the turn range', () => {
@@ -28,9 +31,62 @@ test('defines bounded viewport profiles for every Task 6 acceptance width', () =
   assert.equal(tablet.maxDpr, 1.4);
   assert.equal(mobile.maxDpr, 1.25);
   assert.ok(desktopWide.lateralTargetOffset > tablet.lateralTargetOffset);
-  assert.ok(mobile.lateralTargetOffset < 0, 'mobile compensates for the real rig opening asymmetrically from its spine');
+  assert.ok(mobile.lateralTargetOffset <= -.6, 'mobile compensates for the real rig opening asymmetrically from its spine');
   assert.ok(mobile.targetHeight < tablet.targetHeight, 'mobile reading aim must lift the physical book above the controls');
-  assert.ok(mobile.fov > desktopWide.fov, 'mobile needs more breathing room around the unchanged physical book');
+  assert.ok(mobile.fov >= 60, 'mobile needs safe margins around the unchanged physical book');
+});
+
+test('reports real controller progress for every controller-owned transition', () => {
+  const snapshot = {
+    rootUuid: 'rig-1',
+    openProgress: .42,
+    pageTurnProgress: .63,
+    settledPages: 2,
+    pagePivotCount: 1,
+    pageSettled: false,
+    deformationReset: false,
+  };
+
+  assert.equal(getControllerDiagnosticProgress('BOOK_OPENING', snapshot), .42);
+  assert.equal(getControllerDiagnosticProgress('PAGE_TURNING', snapshot), .63);
+  assert.ok(Math.abs((getControllerDiagnosticProgress('BOOK_CLOSING', snapshot) ?? 0) - .58) < 1e-9);
+  assert.ok(Math.abs((getControllerDiagnosticProgress('BOOK_RESETTING', snapshot) ?? 0) - .2375) < 1e-9);
+  assert.equal(getControllerDiagnosticProgress('BOOK_READING', snapshot), undefined);
+
+  assert.equal(getControllerDiagnosticProgress('BOOK_OPENING', { ...snapshot, openProgress: 1 }), 1);
+  assert.equal(getControllerDiagnosticProgress('PAGE_TURNING', { ...snapshot, pageTurnProgress: 0, pageSettled: true }), 1);
+  assert.equal(getControllerDiagnosticProgress('BOOK_CLOSING', { ...snapshot, openProgress: 0 }), 1);
+  assert.equal(getControllerDiagnosticProgress('BOOK_RESETTING', {
+    ...snapshot,
+    openProgress: 0,
+    pageTurnProgress: 0,
+    settledPages: 0,
+    deformationReset: true,
+  }), 1);
+});
+
+test('publishes nonzero controller progress and settled endpoints without React state', () => {
+  const root = { dataset: {} as Record<string, string> };
+  const canvas = { closest: () => root } as unknown as HTMLCanvasElement;
+  writeTutorLibraryRigDiagnostics(canvas, { rootUuid: 'rig-1', controllerProgress: .42 });
+  assert.equal(root.dataset.libraryControllerProgress, '0.420');
+  assert.equal(root.dataset.libraryQaProgress, '0.420');
+  writeTutorLibraryRigDiagnostics(canvas, { rootUuid: 'rig-1', controllerProgress: 1 });
+  assert.equal(root.dataset.libraryControllerProgress, '1.000');
+  assert.equal(root.dataset.libraryQaProgress, '1.000');
+});
+
+test('removes active intro copy from the accessibility tree while retaining reader context', () => {
+  assert.deepEqual(getTutorLibraryAccessibilityProps(false), {
+    rootLabel: undefined,
+    rootLabelledBy: 'tutor-library-title',
+    copyAriaHidden: false,
+  });
+  assert.deepEqual(getTutorLibraryAccessibilityProps(true, 'Mrs Jenny N.'), {
+    rootLabel: 'Mrs Jenny N. tutor library reader',
+    rootLabelledBy: undefined,
+    copyAriaHidden: true,
+  });
 });
 
 test('keeps idle room framing architectural while applying reading-only composition', () => {

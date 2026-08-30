@@ -36,6 +36,17 @@ try {
 
   await page.evaluate(() => window.tutorLibraryFixture.setPhase('BOOK_READING'));
   await page.evaluate(() => window.tutorLibraryFixture.setPage(0));
+  await new Promise(resolve => setTimeout(resolve, 350));
+  assert.deepEqual(await page.$eval('.tutor-library__copy', element => ({
+    ariaHidden: element.getAttribute('aria-hidden'),
+    visibility: getComputedStyle(element).visibility,
+    opacity: getComputedStyle(element).opacity,
+  })), { ariaHidden: 'true', visibility: 'hidden', opacity: '0' });
+  assert.deepEqual(await page.$eval('.tutor-library', element => ({
+    ariaLabel: element.getAttribute('aria-label'),
+    ariaLabelledBy: element.getAttribute('aria-labelledby'),
+  })), { ariaLabel: 'Mrs Jenny N. tutor library reader', ariaLabelledBy: null });
+  assert.equal(await page.$eval('.tutor-library__reader', element => element.getAttribute('aria-label')), 'Mrs Jenny N. tutor book controls');
   assert.equal(await page.$eval('.tutor-library__book-controls', element => getComputedStyle(element).pointerEvents), 'auto', 'desktop selected-book activation must remain available');
   const previousPage = '[aria-label="Previous tutor profile page"]';
   const nextPage = '[aria-label="Next tutor profile page"]';

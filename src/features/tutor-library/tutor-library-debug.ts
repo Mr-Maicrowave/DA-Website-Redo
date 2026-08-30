@@ -1,4 +1,4 @@
-import type { LibraryPhase } from './tutor-library-state.ts';
+import type { ControllerRuntimeSnapshot, LibraryPhase } from './tutor-library-state.ts';
 
 export function parseDebugTurnProgress(value: string | null): number | undefined {
   if (value === null || value.trim() === '') return undefined;
@@ -44,9 +44,9 @@ export function getTutorLibraryViewportProfile(width: number, height: number, ph
       cameraRadius: 4.2,
       targetRadius: 3.2,
       cameraHeight: 2.55,
-      targetHeight: 2.25,
-      fov: 56,
-      lateralTargetOffset: -.42,
+      targetHeight: 2.2,
+      fov: 60,
+      lateralTargetOffset: -.68,
       maxDpr,
     };
   }
@@ -71,6 +71,38 @@ export function getTutorLibraryViewportProfile(width: number, height: number, ph
     fov: laptop ? 46 : 44,
     lateralTargetOffset: laptop ? .64 : .82,
     maxDpr,
+  };
+}
+
+const clampProgress = (progress: number) => Number.isFinite(progress) ? Math.max(0, Math.min(1, progress)) : 0;
+
+/** Normalized progress from the controller that owns the physical cover/page/reset motion. */
+export function getControllerDiagnosticProgress(
+  phase: LibraryPhase,
+  snapshot: ControllerRuntimeSnapshot,
+): number | undefined {
+  if (phase === 'BOOK_OPENING') return clampProgress(snapshot.openProgress);
+  if (phase === 'PAGE_TURNING') return snapshot.pageSettled ? 1 : clampProgress(snapshot.pageTurnProgress);
+  if (phase === 'BOOK_CLOSING') return 1 - clampProgress(snapshot.openProgress);
+  if (phase === 'BOOK_RESETTING') {
+    const coverReset = 1 - clampProgress(snapshot.openProgress);
+    const pageReset = 1 - clampProgress(snapshot.pageTurnProgress);
+    const settledPagesReset = snapshot.settledPages === 0 ? 1 : 0;
+    const deformationReset = snapshot.deformationReset ? 1 : 0;
+    return (coverReset + pageReset + settledPagesReset + deformationReset) / 4;
+  }
+  return undefined;
+}
+
+export function getTutorLibraryAccessibilityProps(bookActive: boolean, tutorName?: string) {
+  return bookActive ? {
+    rootLabel: `${tutorName ?? 'Selected tutor'} tutor library reader`,
+    rootLabelledBy: undefined,
+    copyAriaHidden: true,
+  } : {
+    rootLabel: undefined,
+    rootLabelledBy: 'tutor-library-title',
+    copyAriaHidden: false,
   };
 }
 
@@ -130,10 +162,16 @@ export function writeTutorLibraryRigDiagnostics(canvas: HTMLCanvasElement, input
   rootUuid: string;
   matrixDelta?: number;
   resetState?: TutorLibraryResetState;
+  controllerProgress?: number;
 }) {
   const root = canvas.closest<HTMLElement>('[data-tutor-library-qa="root"]');
   if (!root) return;
   root.dataset.libraryRootUuid = input.rootUuid;
   root.dataset.libraryMatrixDelta = input.matrixDelta === undefined ? 'unavailable' : input.matrixDelta.toFixed(6);
   if (input.resetState) root.dataset.libraryResetState = input.resetState;
+  if (input.controllerProgress !== undefined) {
+    const progress = clampProgress(input.controllerProgress).toFixed(3);
+    root.dataset.libraryControllerProgress = progress;
+    root.dataset.libraryQaProgress = progress;
+  }
 }

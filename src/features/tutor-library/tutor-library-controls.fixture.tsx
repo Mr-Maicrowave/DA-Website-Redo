@@ -5,6 +5,7 @@ import { TUTORS } from '../../data/teacherCatalogue';
 import { selectVisibleShelfEditions } from './complete-shelf-book-pool';
 import { TutorLibraryControlSurface } from './TutorLibraryControls';
 import { createTutorBookEditions, SUBJECT_WALLS } from './tutor-library-data';
+import { getTutorLibraryAccessibilityProps } from './tutor-library-debug';
 import { createLibraryState, getLibraryControlAvailability, type LibraryPhase } from './tutor-library-state';
 import { getTutorBookPageTarget, type TutorBookPageTurnDirection } from './tutor-book-pages';
 import '../../index.css';
@@ -48,13 +49,19 @@ function Fixture() {
     phase,
     selectedEditionId: phase === 'ROOM_IDLE' ? undefined : 'T003:primary',
   };
+  const selectedTutor = phase === 'ROOM_IDLE' ? undefined : tutors.get('T003');
+  const accessibility = getTutorLibraryAccessibilityProps(phase !== 'ROOM_IDLE', selectedTutor?.name);
 
-  return <MemoryRouter><section className={`tutor-library${phase === 'ROOM_IDLE' ? '' : ' tutor-library--book-active'}`}><TutorLibraryControlSurface
+  return <MemoryRouter><section className={`tutor-library${phase === 'ROOM_IDLE' ? '' : ' tutor-library--book-active'}`} aria-label={accessibility.rootLabel} aria-labelledby={accessibility.rootLabelledBy}>
+    <header className="tutor-library__copy" aria-hidden={accessibility.copyAriaHidden}>
+      <p>DA Tuition faculty</p><h1 id="tutor-library-title">Find the person behind the teaching.</h1><span>Turn toward a subject and explore the educators who bring it to life.</span>
+    </header>
+    <TutorLibraryControlSurface
     library={library}
     activeWall={primaryWall}
     visibleEditions={primaryEditions}
     tutors={tutors}
-    selectedTutor={phase === 'ROOM_IDLE' ? undefined : tutors.get('T003')}
+    selectedTutor={selectedTutor}
     fallbackTutor={tutors.get('T003')!}
     availability={getLibraryControlAvailability(library)}
     status="Fixture status"

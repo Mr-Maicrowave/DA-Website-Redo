@@ -33,7 +33,7 @@ The production root now exposes stable, presentation-inert selectors/attributes:
 - `data-library-reset-state`
 - `data-library-review-view`, `data-library-review-progress`, and `data-library-qa-progress`
 
-Browser evidence reached `BOOK_READING` with a real UUID and `data-library-matrix-delta="0.000000"`. The idle proxy and mounted primitive were reviewed before/after interaction with no visible transform jump; this closes the deferred Task 3 proxy-to-primitive seam inspection at the available sampled boundary.
+Browser evidence reached `BOOK_READING` with a real UUID and `data-library-matrix-delta="0.000000"`. This Task 6 pass did not capture matched proxy-before and primitive-after frames, so it does **not** claim final seam closure; that capture remains explicitly deferred to Task 7.
 
 ## Impeccable scoped audit
 
@@ -56,27 +56,28 @@ The detector surfaced three pre-existing findings only when the fixture imported
 
 Completed:
 
-- Focused viewport/QA/matrix tests: 5/5 pass.
-- Aggregate TypeScript Tutor Library/Complete Shelf tests: 106/106 pass.
+- Focused viewport/QA/matrix/accessibility tests: 8/8 pass.
+- Aggregate TypeScript Tutor Library/Complete Shelf tests: 109/109 pass.
 - Production-styled semantic DOM test: pass after the final CSS change. It covers native click/Enter/Space, horizontal swipe, Arrow/Page keys, Escape, focus return, disabled controls, fallback, 390px reflow, 44px actions, hidden inactive mobile shelf controls, and no horizontal overflow.
-- TypeScript typecheck: exit 0 after the React/Three changes (before the final CSS/test-fixture-only adjustments).
+- TypeScript typecheck: exit 0 after all fix-round changes.
+- Fresh production build: exit 0 after all fix-round changes; the generated sitemap was restored to its committed state.
 - Focused ESLint: 0 errors; one existing fixture-only Fast Refresh warning.
 - `git diff --check`: exit 0 before the final report-only handoff.
 - Browser page identity, meaningful DOM, no framework overlay, real interaction flow, resize continuity, diagnostics, and console inspection completed.
 - Browser console had no application errors. Existing React Router future-flag notices and the approved public rig's duplicate-Three warning remain.
-- `public/sitemap.xml` was unchanged; no restoration was required.
+- `public/sitemap.xml` was restored after the fresh build.
 
-Explicitly uncompleted after the instruction to stop adding checks:
+Explicitly uncompleted / deferred:
 
-- A fresh final production build was not run in Task 6.
-- The aggregate `npm run test:tutor-library` command's TypeScript portion passed 106/106, but that combined invocation exited 1 on an interim mobile-height assertion. The corrected DOM constituent was rerun separately and passed; the combined wrapper was not rerun after the stop instruction.
 - The in-app Browser exposes viewport control but not media emulation. The existing reduced-motion lifecycle unit test passed and the production CSS/JS reduced-motion contracts remain in place, but an attempted second full-route headless media-emulation pass timed out before the Tutor Library root mounted. No reduced-motion screenshot is claimed.
 - Browser production interaction used real pointer and keyboard flows; touch/swipe behavior was verified in the production-styled DOM gate, not on a physical touch device.
+- Matched proxy-to-primitive seam frames were not captured; final seam closure remains Task 7 work.
 - A separate Task 7 acceptance/capture pass was not started.
 
 ## Rendered evidence
 
 - `.superpowers/sdd/2026-08-30-tutor-library-complete-shelf-integration/task-6-evidence/desktop-1920-idle.png`
+- `.superpowers/sdd/2026-08-30-tutor-library-complete-shelf-integration/task-6-evidence/desktop-1920-reading.png` (fresh fix-round capture, 1920x1080, `scrollY=0`)
 - `.superpowers/sdd/2026-08-30-tutor-library-complete-shelf-integration/task-6-evidence/desktop-1440-reading.png`
 - `.superpowers/sdd/2026-08-30-tutor-library-complete-shelf-integration/task-6-evidence/laptop-1366-reading.png`
 - `.superpowers/sdd/2026-08-30-tutor-library-complete-shelf-integration/task-6-evidence/tablet-1024-reading-resize.png`
@@ -88,4 +89,12 @@ These local evidence images are intentionally ignored by git; the report and imp
 
 - The public Complete Shelf factory imports its vendored Three.js build, so Browser logs retain the existing `Multiple instances of Three.js` warning. Replacing the factory's runtime dependency would alter the approved rig boundary and is outside this polish task.
 - Existing global site CSS findings and React Router future-flag notices remain outside Tutor Library scope.
-- Final build and reduced-motion capture belong in the next explicitly authorized acceptance pass.
+- Reduced-motion full-route capture and matched seam capture remain in the next explicitly authorized acceptance pass.
+
+## Fix round 1 evidence (2026-08-30)
+
+- The real Complete Shelf bridge now publishes controller-owned `data-library-controller-progress` and mirrors it to `data-library-qa-progress` only when the three-decimal value changes. Opening, page-turn, closing, and reset progress comes from the physical controller snapshot rather than outer React motion state. Browser sampling observed `BOOK_OPENING=0.843`, then retained the settled `BOOK_READING=1.000` endpoint; the focused tests cover nonzero intermediates and `1.000` endpoints for all four controller transitions.
+- The 390x844 mobile reading profile now uses only presentation framing changes (`fov=60`, lateral target offset `-0.68`, target height `2.2`). Fresh evidence shows the entire open spread with a visible left safe margin and space above the reader. Browser measurements: viewport `390x844`, `scrollY=0`, reader top `455`, and horizontal overflow `-9` pixels.
+- Active intro copy is now `visibility:hidden`, opacity `0`, and `aria-hidden=true`. The root switches from the idle heading reference to the readable `Mrs Jenny N. tutor library reader` label; the existing labelled reader controls and polite live status remain available. The production-styled DOM assertion passed.
+- Fresh desktop evidence was captured at 1440x900 and 1920x1080, both at `scrollY=0`, `BOOK_READING`, controller progress `1.000`, matrix delta `0.000000`, and with no horizontal overflow.
+- Final scoped Impeccable detector result for the touched Tutor Library UI: `[]`. No unrelated global site findings were changed.

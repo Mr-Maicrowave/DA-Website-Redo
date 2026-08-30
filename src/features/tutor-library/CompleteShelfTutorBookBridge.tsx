@@ -14,7 +14,7 @@ import type { TutorBookEdition } from './tutor-library-data';
 import { getControllerCompletionEvent, type LibraryEvent, type LibraryPhase } from './tutor-library-state';
 import { createBookMotionTimingPolicy } from './tutor-book-motion';
 import { advanceTutorBookPageTurn, type TutorBookPageTurnDirection } from './tutor-book-pages';
-import { getMatrixDeltaFromIdentity, writeTutorLibraryRigDiagnostics } from './tutor-library-debug';
+import { getControllerDiagnosticProgress, getMatrixDeltaFromIdentity, writeTutorLibraryRigDiagnostics } from './tutor-library-debug';
 
 export interface CompleteShelfTutorRig extends CompleteShelfPoolRig {
   root: Object3D;
@@ -66,6 +66,7 @@ export function CompleteShelfTutorBookBridge({
   const pageTurnProgress = useRef(0);
   const pageTurnCommitted = useRef(false);
   const pageTurnCommand = useRef('');
+  const publishedControllerProgress = useRef('');
   const pageTurnDurationMs = useMemo(() => createBookMotionTimingPolicy(reducedMotion).pageTurnMs, [reducedMotion]);
 
   useEffect(() => {
@@ -128,6 +129,7 @@ export function CompleteShelfTutorBookBridge({
     const command = `${rig.root.uuid}:${phase}:${generation}`;
     if (appliedCommand.current === command) return;
     appliedCommand.current = command;
+    publishedControllerProgress.current = '';
 
     if (phase === 'BOOK_OPENING' && isCompleteShelfControllerOpeningAllowed(phase)) {
       if (reducedMotion) rig.controller.setOpenProgress(1);
@@ -146,6 +148,15 @@ export function CompleteShelfTutorBookBridge({
     else if (phase === 'BOOK_RESETTING') {
       writeTutorLibraryRigDiagnostics(gl.domElement, { rootUuid: rig.root.uuid, matrixDelta: getMatrixDeltaFromIdentity(rig.root.matrix.elements), resetState: 'pending' });
       rig.controller.reset();
+    }
+    const controllerProgress = getControllerDiagnosticProgress(phase, rig.controller.getSnapshot());
+    if (controllerProgress !== undefined) {
+      publishedControllerProgress.current = controllerProgress.toFixed(3);
+      writeTutorLibraryRigDiagnostics(gl.domElement, {
+        rootUuid: rig.root.uuid,
+        matrixDelta: getMatrixDeltaFromIdentity(rig.root.matrix.elements),
+        controllerProgress,
+      });
     }
   }, [active, generation, gl, pageTurnDirection, phase, reducedMotion, rig]);
 
@@ -169,19 +180,37 @@ export function CompleteShelfTutorBookBridge({
     }
     const snapshot = rig.controller.getSnapshot();
     const completion = getControllerCompletionEvent(phase, generation, snapshot);
-    if (!completion) return;
-    const key = `${rig.root.uuid}:${phase}:${generation}:${completion.type}`;
-    if (emittedCompletion.current === key) return;
-    emittedCompletion.current = key;
-    if (completion.type === 'PAGE_TURN_COMPLETE') callbacks.current.onPageSettled(snapshot.settledPages);
-    if (completion.type === 'RESET_COMPLETE') {
+    if (completion) {
+      const key = `${rig.root.uuid}:${phase}:${generation}:${completion.type}`;
+      if (emittedCompletion.current === key) return;
+      emittedCompletion.current = key;
+      publishedControllerProgress.current = '1.000';
       writeTutorLibraryRigDiagnostics(gl.domElement, {
         rootUuid: rig.root.uuid,
         matrixDelta: getMatrixDeltaFromIdentity(rig.root.matrix.elements),
-        resetState: 'complete',
+        controllerProgress: 1,
+      });
+      if (completion.type === 'PAGE_TURN_COMPLETE') callbacks.current.onPageSettled(snapshot.settledPages);
+      if (completion.type === 'RESET_COMPLETE') {
+        writeTutorLibraryRigDiagnostics(gl.domElement, {
+          rootUuid: rig.root.uuid,
+          matrixDelta: getMatrixDeltaFromIdentity(rig.root.matrix.elements),
+          resetState: 'complete',
+        });
+      }
+      callbacks.current.onLifecycleComplete(completion);
+      return;
+    }
+    const controllerProgress = getControllerDiagnosticProgress(phase, snapshot);
+    const serializedProgress = controllerProgress?.toFixed(3);
+    if (controllerProgress !== undefined && serializedProgress !== publishedControllerProgress.current) {
+      publishedControllerProgress.current = serializedProgress ?? '';
+      writeTutorLibraryRigDiagnostics(gl.domElement, {
+        rootUuid: rig.root.uuid,
+        matrixDelta: getMatrixDeltaFromIdentity(rig.root.matrix.elements),
+        controllerProgress,
       });
     }
-    callbacks.current.onLifecycleComplete(completion);
   });
 
   return rig ? <primitive object={rig.root} dispose={null} /> : null;
