@@ -60,8 +60,15 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--paper);color:var(
 .reflection-cta span:first-child{border-bottom:2px solid var(--gold);padding-bottom:7px}
 .reflection-cta span:last-child{font-size:1.7em;line-height:1;color:var(--gold);transform:translateY(-1px);transition:transform .22s ease}
 .reflection-cta:hover span:last-child,.reflection-cta:focus-visible span:last-child{transform:translate(5px,-1px)}
+.hero-after-type{opacity:0;transform:translateX(-34px);transition:opacity .58s ease,transform .72s cubic-bezier(.22,.61,.36,1)}
+.hero-after-type.from-right{transform:translateX(42px)}
+.hero-after-type.from-bottom{transform:translateY(24px)}
+.hero-after-type.is-revealed{opacity:1;transform:translate(0,0)}
+.byline.hero-after-type{transition-delay:0ms}
+.reflection-cta.hero-after-type{transition-delay:110ms}
+.book-stage.hero-after-type{transition-delay:190ms}
 
-/* ─── SIDE BADGES ─── */
+/* SIDE BADGES */
 .hero-side{position:absolute;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;align-items:center;gap:20px;z-index:2;width:112px;pointer-events:none}
 .hero-side-left{left:clamp(0px,0.4vw,8px)}
 .hero-side-right{right:clamp(0px,0.4vw,8px)}
@@ -70,7 +77,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--paper);color:var(
 .hero-side-rule span{position:absolute;left:50%;top:50%;width:5px;height:5px;background:var(--gold);transform:translate(-50%,-50%) rotate(45deg)}
 @media (max-width:1180px){.hero-side{display:none}}
 
-/* ─── PRINCIPAL'S VOICE BOOK (transparent PNG — book + pedestal + badge) ─── */
+/* PRINCIPAL'S VOICE BOOK */
 .book-stage{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:0}
 .book-visual{
   appearance:none;border:none;background:none;padding:0;
@@ -91,13 +98,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--paper);color:var(
   filter:drop-shadow(12px 18px 20px rgba(7,27,53,.18)) drop-shadow(0 0 18px rgba(201,162,39,.38));
 }
 
-@media (prefers-reduced-motion: reduce){
-  .book-visual{transition:filter .3s ease}
-  .book-visual:hover,.book-visual:focus-visible,.book-visual.opened{transform:none}
-  .rotating-word span{animation:none}
-}
-
-/* ─── HERO QUOTE ─── */
+/* HERO QUOTE */
 .hero-quote{width:100%;max-width:min(760px,58%);margin:0 auto;text-align:center;padding:0 24px}
 .hero-quote-rule{width:56px;height:1px;background:var(--gold);margin:0 auto 16px}
 .hero-quote blockquote{
@@ -105,6 +106,13 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--paper);color:var(
   font-size:clamp(0.95rem,1.5vw,1.2rem);color:var(--ink);line-height:1.5;margin:0;
 }
 .hero-quote-mark{color:var(--gold);font-size:1.3em;vertical-align:-.1em}
+
+@media (prefers-reduced-motion: reduce){
+  .rotating-word span{animation:none}
+  .book-visual{transition:filter .3s ease}
+  .book-visual:hover,.book-visual:focus-visible,.book-visual.opened{transform:none}
+  .hero-after-type{opacity:1;transform:none;transition:none}
+}
 
 /* ─── INTERVIEW SECTION ─── */
 .interview{background:var(--paper);padding:100px 0;}
@@ -373,6 +381,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--paper);color:var(
   .iv-idx-divider{height:14px}
   .iv-idx-chevron{font-size:14px}
 }
+
 </style>
 </head>
 <body>
@@ -406,19 +415,19 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--paper);color:var(
           <span class="typing-cursor" id="reflection-cursor" aria-hidden="true"></span>
         </span>
       </h1>
-      <div class="byline">
+      <div class="byline hero-after-type">
         <div>
           <div class="byline-name">Miss Amanda</div>
           <div class="byline-role">DA Tuition Principal &amp; Founder</div>
         </div>
       </div>
-      <a class="reflection-cta" href="/principal-interview-paper" target="_parent" aria-label="Read the principal reflection">
+      <a class="reflection-cta hero-after-type" href="/principal-interview-paper" target="_parent" aria-label="Read the principal reflection">
         <span>Read the Reflection</span>
         <span aria-hidden="true">&rarr;</span>
       </a>
     </div>
 
-    <div class="book-stage">
+    <div class="book-stage hero-after-type from-right">
       <a class="book-visual" id="book" href="/principal-interview-paper" target="_parent" aria-label="Open the principal interview paper">
         <img src="images/principals-voice-book-pedestal.png" alt="Principal&rsquo;s Voice reflection book displayed on a gold pedestal">
       </a>
@@ -440,6 +449,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--paper);color:var(
     <span class="hero-fold-spark">&#10022;</span>
   </div>
 </section>
+
 
 
 
@@ -488,11 +498,18 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--paper);color:var(
     return new Promise(function(resolve){ setTimeout(resolve, ms); });
   }
 
+  function revealHeroAfterType(){
+    document.querySelectorAll('.hero-after-type').forEach(function(el){
+      el.classList.add('is-revealed');
+    });
+  }
+
   async function run(){
     if (reduceMotion){
       targets.forEach(function(el){ el.textContent = el.getAttribute('data-text') || ''; });
       setWord('Future.');
       cursor?.classList.add('done');
+      revealHeroAfterType();
       return;
     }
 
@@ -510,6 +527,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--paper);color:var(
     await wait(240);
     if (targets[4]) await typeText(targets[4], 24);
     cursor?.classList.add('done');
+    revealHeroAfterType();
   }
 
   run();

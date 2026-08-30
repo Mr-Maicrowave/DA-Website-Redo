@@ -73,11 +73,12 @@ const PrimaryHero = () => {
 
   return (
     <section ref={heroRef} className="ps-hero" aria-labelledby="primary-title">
-      <picture className="ps-hero__background">
-        <source srcSet="/primary-reference/hero/primary-school-watercolor-viewport.avif" type="image/avif" />
-        <source srcSet="/primary-reference/hero/primary-school-watercolor-viewport.webp" type="image/webp" />
-        <img src="/primary-reference/hero/primary-school-watercolor-viewport.png" alt="Two primary students looking up a flower-lined staircase toward a sunlit door" fetchPriority="high" />
-      </picture>
+      <div className="ps-hero__background">
+        <img src="/primary-reference/hero/primary-school-hero-poster.jpg" alt="Two primary students overlooking a sunlit valley" fetchPriority="high" />
+        <video className="ps-hero__video" autoPlay muted loop playsInline preload="metadata" poster="/primary-reference/hero/primary-school-hero-poster.jpg" aria-hidden="true">
+          <source src="/primary-reference/hero/primary-school-hero.mp4" type="video/mp4" />
+        </video>
+      </div>
       <div className="ps-hero__clouds" aria-hidden="true" />
       <div className="ps-hero__midground ps-hero__wind ps-hero__wind--children" aria-hidden="true" />
       <div className="ps-hero__wind ps-hero__wind--foreground" aria-hidden="true" />
@@ -675,16 +676,17 @@ const PrimarySchool = () => (
       .ps-hero:before,.ps-opening__hero .ps-hero:after{content:none}
       .ps-hero__background{position:absolute;z-index:0;inset:0;display:block;transform:translate3d(calc(var(--hero-pointer-x) * -2px),calc(var(--hero-pointer-y) * -2px),0) scale(1.012);transition:none;will-change:transform}
       .ps-hero__background img{display:block;width:100%;height:100%;object-fit:cover;object-position:center;background:#9dd0f1}
+      .ps-hero__video{position:absolute;inset:0;display:block;width:100%;height:100%;object-fit:cover;object-position:center;background:#9dd0f1}
       .ps-hero__clouds{position:absolute;z-index:1;top:-8%;left:-8%;width:72%;height:55%;background:radial-gradient(ellipse at 45% 55%,rgba(255,255,255,.16),rgba(255,255,255,0) 68%);opacity:.7;transform:translate3d(calc(var(--hero-pointer-x) * -1px),calc(var(--hero-pointer-y) * -1px),0);animation:psHeroCloudDrift 34s ease-in-out infinite alternate;pointer-events:none;will-change:transform}
       .ps-hero__midground{transform:translate3d(calc(var(--hero-pointer-x) * 4px),calc(var(--hero-pointer-y) * 3px),0)}
       .ps-hero__foreground{position:absolute;z-index:2;right:-4%;bottom:-5%;width:58%;height:46%;background:radial-gradient(ellipse at 76% 72%,rgba(255,255,255,.07),rgba(255,255,255,0) 68%);transform:translate3d(calc(var(--hero-pointer-x) * 9px),calc(var(--hero-pointer-y) * 7px),0);pointer-events:none;will-change:transform}
       .ps-hero__sunlight{position:absolute;z-index:3;inset:-18%;background:radial-gradient(circle at 22% 24%,rgba(255,250,218,.18),transparent 31%),linear-gradient(112deg,transparent 25%,rgba(255,244,204,.07) 48%,transparent 68%);opacity:.58;animation:psHeroSunlight 30s ease-in-out infinite alternate;pointer-events:none;will-change:transform,opacity}
       .ps-hero__veil{position:absolute;z-index:4;inset:0;background:linear-gradient(90deg,rgba(244,250,250,.82) 0%,rgba(244,250,250,.56) 23%,rgba(244,250,250,.08) 43%,transparent 61%);pointer-events:none}
-      .ps-hero__content{position:absolute;z-index:8;top:clamp(8.5rem,18vh,12rem);left:max(clamp(2rem,6vw,6rem),calc((100vw - 96rem)/2));width:min(35rem,38vw);margin:0;padding:0;color:#09223d;text-shadow:0 1px 0 rgba(255,255,255,.26)}
-      .ps-hero .ps-kicker{display:flex;align-items:center;gap:.8rem;margin:0 0 1.15rem;color:#214b6d;font-size:.7rem;font-weight:800;letter-spacing:.22em;text-transform:uppercase}
+      .ps-hero__content{position:absolute;z-index:8;top:clamp(7.5rem,17svh,11rem);left:50%;width:min(48rem,calc(100% - 4rem));margin:0;padding:0;color:#09223d;text-align:center;text-shadow:0 1px 0 rgba(255,255,255,.32);transform:translateX(-50%)}
+      .ps-hero .ps-kicker{display:flex;align-items:center;justify-content:center;gap:.8rem;margin:0 0 1.15rem;color:#214b6d;font-size:.7rem;font-weight:800;letter-spacing:.22em;text-transform:uppercase}
       .ps-hero .ps-kicker:before{width:2.6rem;height:1px;background:#b47d20;content:""}
-      .ps-hero h1{max-width:9ch;margin:0;color:#09223d;font-family:"Cormorant Garamond",Georgia,serif;font-size:clamp(3.7rem,5.3vw,5.8rem);font-weight:500;letter-spacing:-.04em;line-height:.88;text-wrap:balance}
-      .ps-hero__intro{max-width:31rem;margin:1.65rem 0 0;color:#173d5c;font-family:"Cormorant Garamond",Georgia,serif;font-size:clamp(1.15rem,1.42vw,1.45rem);font-style:italic;line-height:1.42;text-wrap:pretty}
+      .ps-hero h1{max-width:12ch;margin:0 auto;color:#09223d;font-family:"Cormorant Garamond",Georgia,serif;font-size:clamp(3.7rem,5.3vw,5.8rem);font-weight:500;letter-spacing:-.04em;line-height:.88;text-wrap:balance}
+      .ps-hero__intro{max-width:31rem;margin:1.65rem auto 0;color:#173d5c;font-family:"Cormorant Garamond",Georgia,serif;font-size:clamp(1.15rem,1.42vw,1.45rem);font-style:italic;line-height:1.42;text-wrap:pretty}
       .ps-hero__journey-link{display:inline-flex;min-height:44px;align-items:center;gap:.65rem;margin-top:1.35rem;border-bottom:1px solid rgba(9,34,61,.52);padding:.15rem 0 .32rem;color:#09223d;font-size:.76rem;font-weight:750;letter-spacing:.035em;text-decoration:none;transition:border-color .25s ease,transform .25s ease}
       .ps-hero__journey-link span{font-family:Georgia,serif;font-size:1rem;transition:transform .25s ease}
       .ps-hero__journey-link:hover{border-color:#b47d20;transform:translateY(-1px)}.ps-hero__journey-link:hover span{transform:translateY(3px)}
@@ -699,9 +701,9 @@ const PrimarySchool = () => (
       @keyframes psHeroWind{0%,3%,43%,100%{opacity:0;transform:translate3d(0,0,0) rotate(0)}10%{opacity:.7;transform:translate3d(2px,-1px,0) rotate(.7deg)}20%{opacity:.35;transform:translate3d(-1px,-2px,0) rotate(-.35deg)}32%{opacity:.18;transform:translate3d(1px,0,0) rotate(.2deg)}}
       @keyframes psHeroCloudDrift{0%{transform:translate3d(calc(var(--hero-pointer-x) * -1px - 8px),calc(var(--hero-pointer-y) * -1px),0)}100%{transform:translate3d(calc(var(--hero-pointer-x) * -1px + 16px),calc(var(--hero-pointer-y) * -1px + 3px),0)}}
       @keyframes psHeroSunlight{0%{opacity:.42;transform:translate3d(-1.2%,0,0) scale(1)}100%{opacity:.63;transform:translate3d(1.4%,-.6%,0) scale(1.015)}}
-      @media(max-width:900px){.ps-hero__background img{object-fit:cover;object-position:62% center}.ps-hero__veil{background:linear-gradient(90deg,rgba(244,250,250,.82),rgba(244,250,250,.42) 42%,rgba(244,250,250,.05) 68%,transparent)}.ps-hero__content{top:clamp(7rem,14vh,9rem);left:clamp(1.5rem,5vw,3rem);width:min(28rem,48vw)}.ps-hero h1{font-size:clamp(3.2rem,7.5vw,4.6rem)}.ps-hero__intro{font-size:1.12rem}}
-      @media(max-width:600px){.ps-opening__hero,.ps-opening__hero .ps-hero{height:100svh;min-height:100svh}.ps-hero__background{inset:0;transform:none}.ps-hero__background img{object-fit:cover;object-position:62% center}.ps-hero__clouds,.ps-hero__foreground{display:none}.ps-hero__veil{background:linear-gradient(180deg,rgba(244,250,250,.8) 0%,rgba(244,250,250,.58) 31%,rgba(244,250,250,.12) 57%,transparent 76%)}.ps-hero__content{top:5.8rem;left:1.25rem;width:calc(100% - 2.5rem);text-align:left}.ps-hero .ps-kicker{margin-bottom:.8rem;font-size:.62rem}.ps-hero h1{max-width:8.5ch;font-size:clamp(3rem,13.2vw,4rem);line-height:.9}.ps-hero__intro{max-width:21rem;margin-top:1rem;font-size:1.03rem;line-height:1.34}.ps-hero__journey-link{margin-top:.8rem}.ps-hero__wind{animation-duration:12.5s;opacity:0}}
-      @media(prefers-reduced-motion:reduce){.ps-button,.ps-mobile-progress i b,.ps-landscape-stage,.ps-landscape-stage small,.ps-landscape-stage strong,.ps-hero__journey-link,.ps-hero__journey-link span{transition:none}.ps-hero__handoff{display:none}.ps-hero__background,.ps-hero__clouds,.ps-hero__midground,.ps-hero__foreground,.ps-hero__sunlight,.ps-hero__wind{animation:none;transform:none}.ps-hero__wind{opacity:0}}
+      @media(max-width:900px){.ps-hero__background img,.ps-hero__video{object-fit:cover;object-position:56% center}.ps-hero__veil{background:linear-gradient(180deg,rgba(244,250,250,.52),rgba(244,250,250,.2) 48%,transparent 76%)}.ps-hero__content{top:clamp(7rem,14svh,9rem);left:50%;width:min(40rem,calc(100% - 3rem));transform:translateX(-50%)}.ps-hero h1{font-size:clamp(3.2rem,7.5vw,4.6rem)}.ps-hero__intro{font-size:1.12rem}}
+      @media(max-width:600px){.ps-opening__hero,.ps-opening__hero .ps-hero{height:100svh;min-height:100svh}.ps-hero__background{inset:0;transform:none}.ps-hero__background img,.ps-hero__video{object-fit:cover;object-position:54% center}.ps-hero__clouds,.ps-hero__foreground{display:none}.ps-hero__veil{background:linear-gradient(180deg,rgba(244,250,250,.72) 0%,rgba(244,250,250,.46) 31%,rgba(244,250,250,.1) 57%,transparent 76%)}.ps-hero__content{top:clamp(5.5rem,12svh,7rem);left:50%;width:calc(100% - 2.5rem);text-align:center;transform:translateX(-50%)}.ps-hero .ps-kicker{margin-bottom:.8rem;font-size:.62rem}.ps-hero h1{max-width:9.5ch;font-size:clamp(3rem,13.2vw,4rem);line-height:.9}.ps-hero__intro{max-width:21rem;margin:1rem auto 0;font-size:1.03rem;line-height:1.34}.ps-hero__journey-link{margin-top:.8rem}.ps-hero__wind{animation-duration:12.5s;opacity:0}}
+      @media(prefers-reduced-motion:reduce){.ps-button,.ps-mobile-progress i b,.ps-landscape-stage,.ps-landscape-stage small,.ps-landscape-stage strong,.ps-hero__journey-link,.ps-hero__journey-link span{transition:none}.ps-hero__handoff{display:none}.ps-hero__video{display:none}.ps-hero__background,.ps-hero__clouds,.ps-hero__midground,.ps-hero__foreground,.ps-hero__sunlight,.ps-hero__wind{animation:none;transform:none}.ps-hero__wind{opacity:0}}
     `}</style>
   </div>
 );

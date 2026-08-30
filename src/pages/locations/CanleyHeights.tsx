@@ -5,7 +5,8 @@ import NavigationNew from '@/components/NavigationNew';
 import FooterNew from '@/components/FooterNew';
 import LocationHero from '@/components/location/LocationHero';
 import LiveHours from '@/components/location/LiveHours';
-import { Car, Train, School, Users, Trophy, Star, CheckCircle, ArrowRight, Navigation, MapPin } from 'lucide-react';
+import SydneyTrustMap from '@/components/location/SydneyTrustMap';
+import { Car, Train, Users, Trophy, CheckCircle, ArrowRight, Navigation, MapPin } from 'lucide-react';
 import { siteStats } from '@/data/site-stats';
 import { educationalOrganizationSchema, breadcrumbSchema } from '@/lib/seo/schema';
 import WayfinderLocationsPage from '@/features/wayfinder/WayfinderLocationsPage';
@@ -24,30 +25,7 @@ const fadeUp = {
   hidden: { opacity: 0, y: 36 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.85, ease: [0.22,1,0.36,1] as [number,number,number,number] } },
 };
-const fadeIn = {
-  hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { duration: 0.7 } },
-};
 const stagger = { hidden: {}, visible: { transition: { staggerChildren: 0.1, delayChildren: 0.05 } } };
-const schoolCard = {
-  hidden: (index: number) => ({
-    opacity: 0,
-    x: (index % 4 - 1.5) * 18,
-    y: index < 4 ? 28 : 42,
-    rotate: (index % 2 === 0 ? -1 : 1) * 0.75,
-  }),
-  visible: (index: number) => ({
-    opacity: 1,
-    x: 0,
-    y: 0,
-    rotate: 0,
-    transition: {
-      duration: 0.7,
-      delay: index * 0.065,
-      ease: [0.22, 1, 0.36, 1] as [number, number, number, number],
-    },
-  }),
-};
 
 const Reveal = ({ children }: { children: React.ReactNode }) => {
   const ref = useRef(null);
@@ -84,20 +62,6 @@ const transport = [
   { type: "Bus", details: "Routes 802, 803, 804 stop nearby", Icon: Navigation, colour: C.gold, wash: 'rgba(212,175,55,.12)' },
   { type: "Parking", details: "Free 2-hour street parking available", Icon: Car, colour: '#4f9570', wash: 'rgba(134,239,172,.16)' },
   { type: "Drop-off", details: "Convenient drop-off zone at entrance", Icon: MapPin, colour: '#8a6bb2', wash: 'rgba(196,181,253,.18)' },
-];
-
-const stories = [
-  { student: "Jessica L.", school: "Canley Vale High School", result: "99.85 ATAR — Medicine at UNSW", year: "2024", quote: "DA Tuition's location was so convenient — just a 10-minute walk from school!" },
-  { student: "Michael N.", school: "Fairfield High School", result: "99.25 ATAR — Medicine at UNSW", year: "2024", quote: "The Canley Heights centre became my second home during Year 12." },
-  { student: "Sarah C.", school: "Freeman Catholic College", result: "Band 6 in All Subjects", year: "2023", quote: "Being so close to home meant I could attend extra sessions easily." },
-];
-
-const programs = [
-  { name: "Primary School Excellence", avail: "Limited spots", popular: true },
-  { name: "High School Programs", avail: "3 spots left", popular: true },
-  { name: "HSC Excellence", avail: "Open enrollment", popular: false },
-  { name: "Primary School Support", avail: "Open enrollment", popular: false },
-  { name: "High School (7–10)", avail: "Limited spots", popular: false },
 ];
 
 const features = [
@@ -221,43 +185,11 @@ const CanleyHeights = () => {
         </div>
       </section>
 
-      {/* SCHOOLS */}
-      <section style={{ background: C.cream2, padding: '96px 24px' }}>
-        <div style={{ maxWidth: 1100, margin: '0 auto' }}>
-          <Reveal>
-            <motion.div variants={fadeUp} style={{ textAlign: 'center', marginBottom: 56 }}>
-              <Tag t="Local Schools" />
-              <GoldRule />
-              <h2 style={{ fontFamily: serif, fontWeight: 500, fontSize: 'clamp(2rem,3.5vw,3rem)', color: C.navy, letterSpacing: '-.02em', lineHeight: 1.1 }}>Schools We Serve</h2>
-              <p style={{ ...s, fontSize: '.95rem', color: C.muted, marginTop: 14 }}>Supporting students from every local school</p>
-            </motion.div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(220px,1fr))', gap: 16 }}>
-              {schools.map((sc, i) => (
-                <motion.div
-                  key={i}
-                  custom={i}
-                  variants={schoolCard}
-                  whileHover={{ y: -6, transition: { duration: 0.25, ease: [0.22, 1, 0.36, 1] } }}
-                  style={{ background: C.white, border: `1px solid rgba(212,175,55,.2)`, borderRadius: 8, padding: '28px 24px', transformOrigin: 'center bottom' }}
-                >
-                  <div style={{ width: 72, height: 58, marginBottom: 14, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <img src={sc.logo} alt={`${sc.name} logo`} style={{ width: 72, height: 58, objectFit: 'contain' }} />
-                  </div>
-                  <div style={{ fontFamily: serif, fontSize: '1.05rem', fontWeight: 500, color: C.navy, marginBottom: 8 }}>{sc.name}</div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span style={{ ...s, fontSize: '.78rem', color: C.muted }}>{sc.dist} away</span>
-                    <span style={{ ...s, fontSize: '.65rem', fontWeight: 700, letterSpacing: '.12em', textTransform: 'uppercase', color: C.gold, border: `1px solid rgba(212,175,55,.35)`, borderRadius: 2, padding: '2px 8px' }}>{sc.type}</span>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-            <motion.p variants={fadeIn} style={{ ...s, fontSize: '.88rem', color: C.muted, textAlign: 'center', marginTop: 32 }}>
-              Plus students from: Cabramatta, Lansvale, Wakeley, Wetherill Park, and surrounding areas
-            </motion.p>
-          </Reveal>
-        </div>
-      </section>
+      <SydneyTrustMap
+        focusSuburb="Canley Heights"
+        className="bg-[#EDE5D4]"
+        schools={schools.map(({ dist, ...school }) => ({ ...school, distance: dist }))}
+      />
 
       {/* ABOUT */}
       <section style={{ background: C.cream, padding: '72px 24px' }}>

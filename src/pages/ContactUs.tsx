@@ -81,16 +81,101 @@ const ContactUs = () => {
       <NavigationNew />
 
       <main>
-        <section style={{ background: C.navy, padding: 'clamp(72px, 10vw, 128px) 24px 92px', position: 'relative', overflow: 'hidden' }}>
-          <div aria-hidden="true" style={{ position: 'absolute', inset: 0, background: 'radial-gradient(circle at 85% 15%, rgba(212,175,55,.18), transparent 30%), radial-gradient(circle at 12% 90%, rgba(240,200,106,.10), transparent 33%)' }} />
-          <div style={{ position: 'relative', maxWidth: 1120, margin: '0 auto' }}>
+        <section className="contact-hero">
+          <img
+            className="contact-hero__image"
+            src="/images/contact/contact-hero-consultation.webp"
+            alt=""
+            aria-hidden="true"
+            decoding="async"
+          />
+          <div className="contact-hero__overlay" aria-hidden="true" />
+          <div className="contact-hero__content">
             <p style={{ color: C.goldL, fontWeight: 800, letterSpacing: '.14em', textTransform: 'uppercase', fontSize: '.76rem', marginBottom: 18 }}>Contact Us</p>
             <h1 style={{ maxWidth: 720, fontFamily: serif, fontWeight: 500, fontSize: 'clamp(3rem, 7vw, 5.5rem)', lineHeight: .96, letterSpacing: '-.035em', color: C.white, margin: 0, textWrap: 'balance' }}>A helpful answer starts with a conversation.</h1>
             <p style={{ maxWidth: 600, color: 'rgba(247,244,238,.78)', fontSize: '1.05rem', lineHeight: 1.75, marginTop: 28 }}>Tell us what is on your mind. Whether you are exploring tutoring for the first time or looking for support with a specific subject, our team will point you in the right direction.</p>
           </div>
         </section>
+        <style>{`
+          .contact-hero {
+            position: relative;
+            display: flex;
+            min-height: clamp(620px, 82svh, 860px);
+            align-items: center;
+            overflow: hidden;
+            background: ${C.navy};
+            padding: clamp(96px, 12vw, 150px) 24px clamp(88px, 10vw, 122px);
+            isolation: isolate;
+          }
 
-        <section style={{ maxWidth: 1120, margin: '0 auto', padding: 'clamp(48px, 7vw, 88px) 24px', display: 'grid', gridTemplateColumns: 'minmax(0, 1.5fr) minmax(260px, .75fr)', gap: 'clamp(32px, 6vw, 80px)', alignItems: 'start' }}>
+          .contact-hero__image,
+          .contact-hero__overlay {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+          }
+
+          .contact-hero__image {
+            z-index: -2;
+            display: block;
+            object-fit: contain;
+            object-position: right center;
+            filter: brightness(0.96) contrast(1.03) saturate(1.02);
+          }
+
+          .contact-hero__overlay {
+            z-index: -1;
+            background:
+              linear-gradient(90deg, rgba(6,17,31,0.88) 0%, rgba(6,17,31,0.68) 33%, rgba(6,17,31,0.26) 62%, rgba(6,17,31,0.08) 100%),
+              linear-gradient(0deg, rgba(6,17,31,0.44) 0%, rgba(6,17,31,0.03) 52%, rgba(6,17,31,0.18) 100%);
+          }
+
+          .contact-hero__content {
+            position: relative;
+            width: min(100%, 1120px);
+            margin: 0 auto;
+          }
+
+          .contact-content {
+            display: grid;
+            grid-template-columns: minmax(0, 1.5fr) minmax(260px, 0.75fr);
+            gap: clamp(32px, 6vw, 80px);
+            align-items: start;
+            max-width: 1120px;
+            margin: 0 auto;
+            padding: clamp(48px, 7vw, 88px) 24px;
+          }
+
+          @media (max-width: 767px) {
+            .contact-hero {
+              min-height: 720px;
+              align-items: flex-end;
+              padding: 118px 20px 56px;
+            }
+
+            .contact-hero__image {
+              bottom: auto;
+              height: auto;
+              aspect-ratio: 1448 / 1086;
+              max-height: 46%;
+              object-position: center top;
+            }
+
+            .contact-hero__overlay {
+              background:
+                linear-gradient(180deg, rgba(6,17,31,0.08) 0%, rgba(6,17,31,0.18) 34%, rgba(6,17,31,0.88) 100%),
+                linear-gradient(90deg, rgba(6,17,31,0.36), rgba(6,17,31,0.18));
+            }
+
+            .contact-content {
+              grid-template-columns: 1fr;
+              padding-inline: 20px;
+            }
+          }
+        `}</style>
+
+        <section className="contact-content">
           <div>
             <p style={{ color: '#8a6810', fontSize: '.78rem', fontWeight: 800, letterSpacing: '.12em', textTransform: 'uppercase', marginBottom: 12 }}>Send an enquiry</p>
             <h2 style={{ fontFamily: serif, fontSize: 'clamp(2.25rem, 4vw, 3.5rem)', fontWeight: 500, letterSpacing: '-.03em', lineHeight: 1.05, margin: 0 }}>How can we help?</h2>

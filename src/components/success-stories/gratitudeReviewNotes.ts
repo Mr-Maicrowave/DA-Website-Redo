@@ -13,4 +13,6 @@ export const gratitudeReviewNotes: readonly GratitudeReviewNote[] = [
   { author: 'Khushleen Kaur', initial: 'K', quote: 'I went from a 60% in math to a 97%.', tone: 'blue', mobile: true },
   { author: 'Harry Kha', initial: 'H', quote: 'They always had my back whenever I needed them', tone: 'lavender', mobile: false },
   { author: 'Charlie Kien', initial: 'C', quote: 'They have made me believe in myself', tone: 'sage', mobile: true },
+  { author: 'Jessica La', initial: 'J', quote: 'My marks went from low to the top of the class.', tone: 'blue', mobile: true },
+  { author: 'Jenny Nguyen', initial: 'J', quote: 'I like da because we can learn and teacher is so kind.', tone: 'coral', mobile: true },
 ] as const;

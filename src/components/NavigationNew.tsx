@@ -505,6 +505,8 @@ const NavigationNew = ({ heroMode = false }: NavigationNewProps) => {
                       </HoverCardContent>
                     </HoverCard>
 
+                    <Link to="/contact" className={navLinkClass(location.pathname === '/contact')} aria-current={location.pathname === '/contact' ? 'page' : undefined}>Contact Us</Link>
+
                     <GlobalSearch onOpenChange={(open) => {
                       setDesktopSearchOpen(open);
                       pin(open);

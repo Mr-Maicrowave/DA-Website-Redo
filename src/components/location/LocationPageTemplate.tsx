@@ -2,6 +2,7 @@ import SEO from '@/components/SEO';
 import NavigationNew from '@/components/NavigationNew';
 import FooterNew from '@/components/FooterNew';
 import LocationHero from '@/components/location/LocationHero';
+import SydneyTrustMap from '@/components/location/SydneyTrustMap';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -10,7 +11,6 @@ import {
     Car,
     Train,
     Bus,
-    School,
     Users,
     Trophy,
     Star,
@@ -154,32 +154,7 @@ const LocationPageTemplate = ({ content }: LocationPageTemplateProps) => {
                 </div>
             </section>
 
-            {/* Schools we serve */}
-            <section className="py-16 bg-brand-ivory">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="text-center mb-12">
-                        <h2 className="font-serif text-4xl font-semibold mb-4 text-brand-navy">{content.suburb} Schools We Support</h2>
-                        <p className="text-xl text-brand-midnight/80">Helping students from every local school succeed</p>
-                    </div>
-
-                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {content.nearbySchools.map((school, index) => (
-                            <Card key={index} className="border-brand-gold/20 hover:shadow-lg transition-shadow">
-                                <CardContent className="p-6">
-                                    <School className="w-8 h-8 text-brand-gold mb-3" />
-                                    <h3 className="font-semibold mb-2">{school.name}</h3>
-                                    <div className="flex items-center justify-between text-sm">
-                                        {school.distance && (
-                                            <span className="text-brand-midnight/80">{school.distance} from our centre</span>
-                                        )}
-                                        <Badge variant="outline">{school.type}</Badge>
-                                    </div>
-                                </CardContent>
-                            </Card>
-                        ))}
-                    </div>
-                </div>
-            </section>
+            <SydneyTrustMap focusSuburb={content.suburb} schools={content.nearbySchools} />
 
             {/* Transport */}
             <section className="py-16 bg-white">

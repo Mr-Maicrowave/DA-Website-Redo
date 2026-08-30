@@ -6,6 +6,8 @@
 /* The junction is the only moment where three routes coexist. */
 .lf-master__road{right:auto}
 .lf-master__viewport{overflow:clip}
+.lf-master__viewport::after{position:absolute;z-index:60;inset:0;background:#f8f2e8;content:"";opacity:0;pointer-events:none;transition:opacity 240ms cubic-bezier(.22,1,.36,1)}
+.lf-master__viewport[data-restarting="true"]::after{opacity:1;pointer-events:auto}
 .lf-junction-zone svg{transition:opacity .32s ease}
 .lf-junction-zone path,.lf-junction-zone circle{transition:opacity .24s ease}
 .lf-junction-zone[data-route-mode="committed"][data-selected-stage="primary"] path:not(.primary),.lf-junction-zone[data-route-mode="committed"][data-selected-stage="high-school"] path:not(.high),.lf-junction-zone[data-route-mode="committed"][data-selected-stage="hsc"] path:not(.hsc),.lf-junction-zone[data-route-mode="committed"] circle{opacity:0}
@@ -48,3 +50,99 @@
 /* Subjects use the same camera-safe destination geometry as the result. */
 .lf-subject-zone{--subject-safe-pad:clamp(3rem,6vw,7.5rem);top:0;width:1100px;height:100%;padding-inline:var(--subject-safe-pad)}
 .lf-subject-zone .lf-subject-destination{height:100%;min-height:0;background:transparent}
+
+/* Readable interface is composed in screen space; the illustrated world still moves below it. */
+.scene-safe-area{position:absolute;z-index:50;inset:max(5.5rem,calc(env(safe-area-inset-top) + 3.5rem)) max(3rem,5vw) max(3.5rem,calc(env(safe-area-inset-bottom) + 3rem));pointer-events:none}
+.scene-safe-area>*{pointer-events:auto;animation:lf-scene-ui-arrive .35s ease-out both}
+.scene-safe-area[data-anchor="left"]>*{width:min(760px,55vw)}
+.scene-safe-area[data-anchor="split"]>*{width:100%}
+.lf-master__viewport[data-interactive-character="true"] .lf-master__student{left:68%;top:80%}
+.lf-master__viewport[data-interactive-character="true"] .lf-selected-route{top:80%!important}
+.lf-master__viewport[data-interactive-character="true"] .lf-world-checkpoint{--route-y:80%!important}
+.lf-world-checkpoint{pointer-events:none!important}
+.lf-world-prop--final{top:auto;bottom:20%;height:9rem}
+.lf-master__viewport:not([data-phase="final"]) .lf-world-prop--final{opacity:0}
+@keyframes lf-scene-ui-arrive{from{opacity:0}}
+
+/* Shared question composition. */
+.scene-safe-area .lf-journey-checkpoint{width:min(760px,55vw);padding:0;background:transparent}
+.scene-safe-area .lf-journey-checkpoint legend{max-width:min(700px,48vw);margin-bottom:1.15rem;font-size:clamp(2.625rem,4vw,4.125rem);line-height:1}
+.scene-safe-area .lf-journey-checkpoint__choices{display:grid;grid-template-columns:1fr;gap:.35rem;width:min(700px,48vw);margin-top:1rem}
+.scene-safe-area .lf-journey-choice{min-height:auto;border:0;border-radius:6px;padding:.55rem .8rem .55rem 2.45rem;background:rgba(255,250,241,.74)}
+.scene-safe-area .lf-journey-choice span::before{position:absolute;left:.85rem;top:.9rem;width:.78rem;height:.78rem;border:1.5px solid #718096;border-radius:50%;background:#f8f2e8;content:""}
+.scene-safe-area .lf-journey-choice[data-selected="true"]{background:#f2e7d0;color:#0b2341}
+.scene-safe-area .lf-journey-choice[data-selected="true"] span::before{border-color:#bd8a30;background:#bd8a30;box-shadow:inset 0 0 0 3px #f8f2e8}
+.scene-safe-area .lf-checkpoint-back{margin-top:.8rem;border:0;border-bottom:1px solid rgba(11,35,65,.35);border-radius:0;padding:.45rem .1rem;background:transparent}
+
+/* Preliminary guidance and subject selection inherit the safe viewport instead of world offsets. */
+.scene-safe-area .lf-starting-destination{position:relative;height:100%;min-height:0}
+.scene-safe-area .lf-starting-destination__copy{position:relative;left:auto;top:auto;width:min(700px,52vw)}
+.scene-safe-area .lf-starting-destination__landscape{position:fixed;inset:0;pointer-events:none}
+.scene-safe-area .lf-starting-destination__marker{left:68%;top:80%}
+.scene-safe-area .lf-starting-destination__flag{left:72%;top:calc(80% - 8rem)}
+.scene-safe-area .lf-starting-destination__plant{left:80%;top:calc(80% - 4.6rem)}
+.scene-safe-area .lf-starting-destination__books{left:86%;top:calc(80% - 3.9rem)}
+.scene-safe-area .lf-starting-destination__actions{flex-direction:row;align-items:center}
+.scene-safe-area .lf-subject-destination{position:relative;height:100%;padding:0}
+.scene-safe-area .lf-subject-merge{position:fixed;inset:0;height:100%;pointer-events:none}
+.scene-safe-area .lf-subject-destination__marker{left:68%;top:80%}
+.scene-safe-area .lf-subject-merge img{left:74%;right:auto;top:calc(80% - 4.2rem);height:4.2rem}
+.scene-safe-area .lf-subject-destination__heading{position:absolute;left:0;top:0;width:min(31rem,42vw)}
+.scene-safe-area .lf-subject-options{position:absolute;left:50%;top:1rem;width:46%;margin:0}
+.scene-safe-area .lf-subject-collection{position:absolute;left:50%;top:34%;width:46%;margin:0}
+.scene-safe-area .lf-subject-continue{position:absolute;left:50%;top:52%;margin:0}
+
+/* All specialist follow-ups share one constrained vertical answer treatment. */
+.scene-safe-area .lf-specialist-inline{width:min(760px,60vw);padding:0;background:transparent}
+.scene-safe-area .lf-specialist-inline>p{margin:0 0 .75rem;color:#9b6c1d;font-size:.7rem;font-weight:750;letter-spacing:.14em;text-transform:uppercase}
+.scene-safe-area .lf-specialist-inline fieldset{margin:0;border:0;padding:0}
+.scene-safe-area .lf-specialist-inline legend{max-width:min(760px,60vw);font-family:"Cormorant Garamond",Georgia,serif;font-size:clamp(2.25rem,3.35vw,3.35rem);font-weight:500;letter-spacing:-.035em;line-height:.98}
+.scene-safe-area .lf-specialist-inline fieldset>div{display:grid;grid-template-columns:1fr;gap:.25rem;width:min(760px,60vw);margin-top:.75rem}
+.scene-safe-area .lf-specialist-inline label{position:relative;display:block;min-height:auto;border:0;border-radius:6px;padding:.5rem .8rem .5rem 2.45rem;background:rgba(255,250,241,.74);color:#30465f;cursor:pointer}
+.scene-safe-area .lf-specialist-inline label::before{position:absolute;left:.85rem;top:.72rem;width:.78rem;height:.78rem;border:1.5px solid #718096;border-radius:50%;background:#f8f2e8;content:""}
+.scene-safe-area .lf-specialist-inline label[data-selected="true"]{background:#f2e7d0;color:#0b2341;font-weight:650}
+.scene-safe-area .lf-specialist-inline label[data-selected="true"]::before{border-color:#bd8a30;background:#bd8a30;box-shadow:inset 0 0 0 3px #f8f2e8}
+.scene-safe-area .lf-specialist-inline input{position:absolute;width:1px;height:1px;opacity:0}
+.scene-safe-area .lf-specialist-inline>button{margin-top:.8rem;border:0;border-bottom:1px solid rgba(11,35,65,.35);padding:.55rem .1rem;background:transparent;color:#526275;cursor:pointer}
+
+/* Final arrival: readable result left, DA destination right. */
+.scene-safe-area .lf-master-final{width:58%;max-width:850px;opacity:1}
+.scene-safe-area .lf-master-final>p{margin:0 0 .7rem;color:#9b6c1d;font-size:.7rem;font-weight:750;letter-spacing:.15em;text-transform:uppercase}
+.scene-safe-area .lf-master-final h2{max-width:15ch;font-size:clamp(2.75rem,4.35vw,4.25rem)}
+.scene-safe-area .lf-master-final h3{margin:1rem 0 .5rem}
+.scene-safe-area .lf-master-final>ul{max-width:44rem;margin:.6rem 0 0;padding-left:1.1rem}
+.scene-safe-area .lf-master-final__subjects{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.55rem;margin:1rem 0}
+.scene-safe-area .lf-master-final__subjects span{min-width:0;border-top:1px solid #bd8a30;border-bottom:0;padding:.55rem 0;color:#405167}
+.scene-safe-area .lf-master-final__subjects strong{display:block;margin-bottom:.25rem;color:#9b6c1d;font-size:.66rem;letter-spacing:.1em;text-transform:uppercase}
+.scene-safe-area .lf-master-final__actions{display:flex;flex-wrap:wrap;align-items:center;gap:.65rem}
+.scene-safe-area .lf-master-final__actions a{margin:0}
+.scene-safe-area .lf-master-final__text-actions{display:flex;align-items:center;gap:1rem}
+.scene-safe-area .lf-master-final__actions button{border:0;border-bottom:1px solid rgba(11,35,65,.35);padding:.75rem .2rem .35rem;background:transparent;color:#0b2341;font:inherit;cursor:pointer;transition:border-color 160ms ease,color 160ms ease}
+.scene-safe-area .lf-master-final__actions button:hover{border-color:#0b2341;color:#9b6c1d}
+.scene-safe-area .lf-master-final__actions button:focus-visible{border-color:#0b2341;border-radius:2px;outline:2px solid #0b2341;outline-offset:4px}
+.scene-safe-area .lf-master-final__actions button:disabled{cursor:default;opacity:.55}
+@media(prefers-reduced-motion:reduce){.lf-master__viewport::after{transition:none}}
+@media(max-width:767px){.scene-safe-area{inset:5rem 1.25rem 2rem}.scene-safe-area[data-anchor]>*{width:100%}.lf-master__viewport[data-interactive-character="true"] .lf-master__student{left:78%}.scene-safe-area .lf-journey-checkpoint,.scene-safe-area .lf-specialist-inline,.scene-safe-area .lf-journey-checkpoint legend,.scene-safe-area .lf-journey-checkpoint__choices,.scene-safe-area .lf-specialist-inline legend,.scene-safe-area .lf-specialist-inline fieldset>div{width:100%;max-width:none}.scene-safe-area .lf-journey-checkpoint legend,.scene-safe-area .lf-specialist-inline legend{font-size:clamp(2.1rem,9vw,3rem)}.scene-safe-area .lf-subject-destination__heading,.scene-safe-area .lf-subject-options,.scene-safe-area .lf-subject-collection,.scene-safe-area .lf-subject-continue{position:relative;left:auto;top:auto;width:100%}.scene-safe-area .lf-subject-options{margin-top:1rem}.scene-safe-area .lf-subject-collection,.scene-safe-area .lf-subject-continue{margin-top:.8rem}.scene-safe-area .lf-master-final{width:100%;max-width:none}.scene-safe-area .lf-master-final__subjects{grid-template-columns:repeat(2,minmax(0,1fr))}.scene-safe-area .lf-starting-destination__landscape,.scene-safe-area .lf-subject-merge{opacity:.45}}
+
+/* Opening station — a composed editorial scene using the existing journey asset family. */
+.lf-zone--opening{top:0;width:clamp(92rem,125vw,125rem);height:100%;margin-left:-25vw;padding:0;background:#f8f2e8}
+.lf-zone--opening::before{position:absolute;right:100%;top:0;width:50vw;height:100%;background:#f8f2e8;content:""}
+.lf-opening-station__copy{position:absolute;z-index:3;left:2rem;top:14%;width:min(70rem,72vw)}
+.lf-zone--opening .lf-opening-station__copy>span{display:block;margin:0 0 1.25rem;color:#9b6c1d;font-size:.8rem;font-weight:800;letter-spacing:.23em;text-transform:uppercase}
+.lf-zone--opening .lf-opening-station__copy>span::after{display:block;width:2.8rem;height:1px;margin-top:1rem;background:#bd8a30;content:""}
+.lf-zone--opening h1{max-width:16ch;font-size:clamp(4rem,6.7vw,7rem);letter-spacing:-.035em;line-height:.88}
+.lf-zone--opening p{margin:2.1rem 0 0;color:#ad7b25;font-size:clamp(2rem,2.8vw,3rem);line-height:1.08}
+.lf-opening-station__vignette{position:absolute;z-index:4;left:-2.5rem;top:65%;width:27rem;height:17%;pointer-events:none}
+.lf-opening-station__vignette img{position:absolute;width:auto;object-fit:contain}
+.lf-opening-station__shrubs{left:0;bottom:0;height:7rem}
+.lf-opening-station__backpack{left:5.1rem;bottom:-.1rem;height:5.6rem}
+.lf-opening-station__books{left:10.4rem;bottom:-.1rem;height:4.2rem}
+.lf-opening-station__flag{left:1.15rem;bottom:2.2rem;height:8rem;transform:scaleX(.68);transform-origin:left bottom}
+.lf-zone--opening .lf-opening-station__road{position:absolute;z-index:2;left:0;right:0;top:82%;display:block;height:2px;margin:0;background:linear-gradient(to right,#b98a32 0 calc(100% - 32rem),transparent calc(100% - 32rem))}
+.lf-opening-station__road::after{position:absolute;right:0;bottom:0;width:32rem;height:14svh;background:linear-gradient(to bottom right,transparent calc(50% - 1px),#b98a32 50%,transparent calc(50% + 1px));content:""}
+.lf-opening-station__road i{position:absolute;left:25.4rem;top:50%;width:.9rem;height:.9rem;border:2px solid #f8f2e8;border-radius:50%;background:#b98a32;transform:translate(-50%,-50%)}
+.lf-master__viewport[data-phase="education"] .lf-master__student{left:23%;height:clamp(11rem,13vw,15rem)}
+.lf-master__viewport[data-phase="education"] .lf-master__hint{right:8%;bottom:5%;color:#0b2341;font-family:"Cormorant Garamond",Georgia,serif;font-size:1.35rem;letter-spacing:0;text-transform:none}
+.lf-master__viewport[data-phase="education"] .lf-master__hint span,.lf-master__viewport[data-phase="education"] .lf-master__hint b{display:block;text-align:center}
+.lf-master__viewport[data-phase="education"] .lf-master__hint b{margin-top:.35rem;color:#ad7b25;font-size:2.25rem;font-weight:400;line-height:1}
+@media(max-width:767px){.lf-zone--opening{width:66rem;margin-left:-25vw}.lf-opening-station__copy{left:1rem;top:12%;width:22rem}.lf-zone--opening h1{max-width:9ch;font-size:clamp(3.35rem,15vw,4.35rem)}.lf-zone--opening p{margin-top:1.5rem;font-size:1.7rem}.lf-opening-station__vignette{left:-1rem;top:68%;transform:scale(.72);transform-origin:left bottom}.lf-master__viewport[data-phase="education"] .lf-master__student{left:38%;height:9rem}.lf-master__viewport[data-phase="education"] .lf-master__hint{right:1.2rem;bottom:3%;font-size:1rem}}

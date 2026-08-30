@@ -199,6 +199,11 @@ export function HighSchoolCinematicScene() {
             const droplets = layers.current[`${id}-droplets`];
             const objects = layers.current[`${id}-objects`];
             const stage = layers.current[`${id}-stage`];
+            const label = layers.current[`${id}-label`];
+            const number = layers.current[`${id}-number`];
+            const headline = layers.current[`${id}-headline`];
+            const insight = layers.current[`${id}-insight`];
+            const response = layers.current[`${id}-response`];
             const world = layers.current[`${id}-world`];
             const direction = window.direction;
 
@@ -218,12 +223,12 @@ export function HighSchoolCinematicScene() {
                 },
                 window.arrival,
               )
-              .fromTo(
-                stage,
-                { autoAlpha: 0, y: 20 },
-                { autoAlpha: 1, y: 0, duration: 3, ease: "power1.out" },
-                window.heroStart,
-              )
+              .set(stage, { autoAlpha: 1 }, window.heroStart)
+              .fromTo(label, { autoAlpha: 0, y: 10 }, { autoAlpha: 1, y: 0, duration: 1.2, ease: "power2.out" }, window.heroStart)
+              .fromTo(number, { autoAlpha: 0, y: 16 }, { autoAlpha: 1, y: 0, duration: 1.4, ease: "power2.out" }, window.heroStart + 0.35)
+              .fromTo(headline, { autoAlpha: 0, y: 14, clipPath: "inset(0 0 100% 0)" }, { autoAlpha: 1, y: 0, clipPath: "inset(0 0 0% 0)", duration: 1.6, ease: "power2.out" }, window.heroStart + 0.75)
+              .fromTo(insight, { autoAlpha: 0, y: 12 }, { autoAlpha: 1, y: 0, duration: 1.4, ease: "power2.out" }, window.heroStart + 1.2)
+              .fromTo(response, { autoAlpha: 0, y: 10 }, { autoAlpha: 1, y: 0, duration: 1.4, ease: "power2.out" }, window.heroStart + 1.75)
               .to(
                 stage,
                 { autoAlpha: 0, y: -15, duration: 3 },
@@ -669,10 +674,42 @@ export function HighSchoolCinematicScene() {
                   className="hs-journey__stage"
                   ref={assign(id, "stage") as React.Ref<HTMLElement>}
                 >
-                  <span className="hs-journey__number">{stage.number}</span>
-                  <div>
-                    <h3>{stage.heading}</h3>
-                    <p>{stage.body}</p>
+                  <div className="hs-journey__marker">
+                    <span
+                      className="hs-journey__label"
+                      ref={assign(id, "label") as React.Ref<HTMLSpanElement>}
+                    >
+                      {stage.label}
+                    </span>
+                    <span
+                      className="hs-journey__number"
+                      ref={assign(id, "number") as React.Ref<HTMLSpanElement>}
+                    >
+                      {stage.number}
+                    </span>
+                  </div>
+                  <div className="hs-journey__message">
+                    <h3 ref={assign(id, "headline") as React.Ref<HTMLHeadingElement>}>
+                      {stage.heading}
+                    </h3>
+                    <div
+                      className="hs-journey__insight"
+                      ref={assign(id, "insight") as React.Ref<HTMLDivElement>}
+                    >
+                      <p>{stage.insight}</p>
+                      {stage.emphasis && <strong>{stage.emphasis}</strong>}
+                    </div>
+                    <p
+                      className="hs-journey__response"
+                      ref={assign(id, "response") as React.Ref<HTMLParagraphElement>}
+                    >
+                      {stage.responseLead && (
+                        <strong className="hs-journey__response-lead">
+                          {stage.responseLead}
+                        </strong>
+                      )}
+                      {stage.response}
+                    </p>
                   </div>
                 </article>
               </div>

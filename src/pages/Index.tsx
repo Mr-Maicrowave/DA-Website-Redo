@@ -1017,7 +1017,7 @@ const PhilosophyVisualFace = ({ index, progress }: { index: number; progress: Mo
   const entryRotate = useTransform(
     progress,
     index === 0 ? [0, PHILOSOPHY_KNOWN_REVEAL[0], PHILOSOPHY_KNOWN_REVEAL[1], 1] : [0, 1],
-    index === 0 ? [3, 3, -1, -1] : [0, 0],
+    index === 0 ? [0, 0, 0, 0] : [0, 0],
   );
   const opacity = useTransform(
     progress,
