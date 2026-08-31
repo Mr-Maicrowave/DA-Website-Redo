@@ -173,6 +173,13 @@ const MobileNavSheet = ({
             <Link to="/tutoring-canley-heights" onClick={onClose} className="block pl-4 text-brand-midnight/75 hover:text-brand-blue-dark py-2.5">Our Location</Link>
             <Link to="/articles" onClick={onClose} className="block pl-4 text-brand-midnight/75 hover:text-brand-blue-dark py-2.5">Articles &amp; Guides</Link>
           </div>
+          <Link
+            to="/contact"
+            onClick={onClose}
+            className="block text-brand-midnight/80 hover:text-brand-blue-dark font-medium py-2.5 border-b border-brand-gold/10"
+          >
+            Contact Us
+          </Link>
         </div>
 
         <div className="px-4 pb-4 pt-2 border-t border-brand-gold/20">

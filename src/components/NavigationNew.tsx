@@ -168,11 +168,6 @@ const NavigationNew = ({ heroMode: _heroMode = false }: NavigationNewProps) => {
 
   const aboutItems = [
     {
-      title: "The DA Difference",
-      href: "/why-choose-da",
-      description: "Our unique approach and why parents trust us"
-    },
-    {
       title: "Tutors",
       href: "/tutors",
       description: "Meet the people behind the progress"
@@ -482,6 +477,8 @@ const NavigationNew = ({ heroMode: _heroMode = false }: NavigationNewProps) => {
                         </ul>
                       </HoverCardContent>
                     </HoverCard>
+
+                    <Link to="/contact" className={navLinkClass(location.pathname === '/contact')} aria-current={location.pathname === '/contact' ? 'page' : undefined}>Contact Us</Link>
 
                   </div>
                 </div>
