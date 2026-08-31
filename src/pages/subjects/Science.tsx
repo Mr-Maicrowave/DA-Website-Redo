@@ -19,7 +19,6 @@ import {
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence, useInView, useReducedMotion, useScroll, useTransform } from 'framer-motion';
 import SEO from '@/components/SEO';
-import DAMethodSection from '@/components/DAMethodSection';
 import { ScienceIntroVideoGate } from '@/features/science-intro-video/ScienceIntroVideoGate';
 import PageJourney from '@/components/page-journey/PageJourney';
 
@@ -2027,7 +2026,6 @@ const Science = () => {
               ['Curious minds',    '#science-concerns'],
               ['Science programs',  '#science-pathways'],
               ['HSC focus areas',  '#science-pathways'],
-              ['How we teach',     '#science-method'],
             ].map(([label, href]) => (
               <a key={label} href={href} className="rounded-2xl px-4 py-3 text-center text-sm font-black text-[#10233f] transition hover:bg-[#f5ecd9]">
                 {label}
@@ -2615,11 +2613,6 @@ const Science = () => {
         </section>
 
         <SciencePrograms />
-
-        {/* ── How DA Turns Understanding Into Results ── */}
-        <div id="science-method" className="scroll-mt-24">
-          <DAMethodSection />
-        </div>
 
         {/* ── What Students Struggle With ── */}
         <ScienceStruggleSection />
