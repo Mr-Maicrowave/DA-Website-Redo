@@ -198,7 +198,7 @@ const ContactUs = () => {
         <section className="contact-hero">
           <img
             className="contact-hero__image"
-            src="/images/contact/contact-hero-consultation.webp"
+            src="/images/contact/contact-hero-enquiry-consultation.webp"
             alt=""
             aria-hidden="true"
             decoding="async"
@@ -206,7 +206,7 @@ const ContactUs = () => {
           <div className="contact-hero__overlay" aria-hidden="true" />
           <div className="contact-hero__content">
             <p style={{ color: C.goldL, fontWeight: 800, letterSpacing: '.14em', textTransform: 'uppercase', fontSize: '.76rem', marginBottom: 18 }}>Contact Us</p>
-            <h1 style={{ maxWidth: 720, fontFamily: serif, fontWeight: 500, fontSize: 'clamp(3rem, 7vw, 5.5rem)', lineHeight: .96, letterSpacing: '-.035em', color: C.white, margin: 0, textWrap: 'balance' }}>A helpful answer starts with a conversation.</h1>
+            <h1 style={{ maxWidth: 720, fontFamily: serif, fontWeight: 500, fontSize: 'clamp(3rem, 7vw, 5.5rem)', lineHeight: .96, letterSpacing: '-.035em', color: C.white, margin: 0, textWrap: 'balance' }}>Not sure where to start?<br />Start with us.</h1>
             <p style={{ maxWidth: 600, color: 'rgba(247,244,238,.78)', fontSize: '1.05rem', lineHeight: 1.75, marginTop: 28 }}>Tell us what is on your mind. Whether you are exploring tutoring for the first time or looking for support with a specific subject, our team will point you in the right direction.</p>
           </div>
         </section>
@@ -233,8 +233,8 @@ const ContactUs = () => {
           .contact-hero__image {
             z-index: -2;
             display: block;
-            object-fit: contain;
-            object-position: right center;
+            object-fit: cover;
+            object-position: center 4%;
             filter: brightness(0.96) contrast(1.03) saturate(1.02);
           }
 
@@ -643,11 +643,7 @@ const ContactUs = () => {
             }
 
             .contact-hero__image {
-              bottom: auto;
-              height: auto;
-              aspect-ratio: 1448 / 1086;
-              max-height: 46%;
-              object-position: center top;
+              object-position: center 4%;
             }
 
             .contact-hero__overlay {
