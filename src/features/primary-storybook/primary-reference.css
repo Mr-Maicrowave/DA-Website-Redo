@@ -6,6 +6,7 @@
   --primary-reference-pink: #db7d91;
   --primary-reference-green: #6f9d62;
   --primary-reference-gold: #c58d25;
+  --primary-chapter-width: min(calc(100% - 3rem), 92rem);
   position: relative;
   width: 100%;
   overflow-x: clip;
@@ -2861,7 +2862,7 @@
 .primary-reference-curriculum {
   position: relative;
   display: block;
-  width: min(calc(100% - 3rem), 92rem);
+  width: var(--primary-chapter-width);
   min-height: 0;
   margin: clamp(2.5rem, 5vw, 5rem) auto;
   border: 1px solid rgba(177, 133, 55, .16);
@@ -3827,7 +3828,7 @@
 
   .primary-reference-foundation {
     --foundation-scale-unit: min(1vw, 1.6svh);
-    width: min(calc(var(--foundation-scale-unit) * 96), calc(100% - var(--foundation-scale-unit) * 2));
+    width: var(--primary-chapter-width);
     height: 100svh;
     min-height: 100svh;
     align-items: start;

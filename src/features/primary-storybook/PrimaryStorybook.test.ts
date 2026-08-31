@@ -565,7 +565,10 @@ test('Years 1–2 fills a desktop viewport with one shared proportional scale wh
   assert.match(styles, /--primary-fold-space:\s*clamp\([^;]*svh/);
   assert.match(styles, /--primary-fold-title:\s*clamp\([^;]*min\([^;]*vw[^;]*svh/);
   assert.match(styles, /height:\s*auto/);
+  assert.match(styles, /--primary-chapter-width:\s*min\(calc\(100% - 3rem\),\s*92rem\)/);
   assert.match(styles, /--foundation-scale-unit:\s*min\(1vw,\s*1\.6svh\)/);
+  assert.match(styles, /\.primary-reference-foundation\s*\{[^}]*width:\s*var\(--primary-chapter-width\)/);
+  assert.match(styles, /\.primary-reference-curriculum\s*\{[^}]*width:\s*var\(--primary-chapter-width\)/);
   assert.match(styles, /\.primary-reference-foundation\s*\{[^}]*height:\s*100svh/);
   assert.match(styles, /\.primary-reference-foundation__intro h2\s*\{[^}]*var\(--foundation-scale-unit\)/);
   assert.match(styles, /\.primary-reference-foundation__photo\s*\{[^}]*var\(--foundation-scale-unit\)/);
