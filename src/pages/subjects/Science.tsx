@@ -1518,15 +1518,15 @@ const NewtonGravityExperience = () => {
           }
 
           .newton-click-note {
-            left: 32%;
-            top: 38%;
+            left: clamp(52px, 14vw, 84px);
+            top: 14%;
             font-size: 1.08rem;
-            width: 160px;
+            width: 180px;
           }
 
           .newton-click-note svg {
-            margin: 6px 0 0 65px;
-            transform: rotate(-35deg);
+            margin: 8px 0 0 72px;
+            transform: rotate(-48deg);
             transform-origin: 52% 44%;
           }
 
