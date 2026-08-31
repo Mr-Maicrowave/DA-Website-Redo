@@ -438,7 +438,7 @@ const NavigationNew = ({ heroMode = false }: NavigationNewProps) => {
 
                     <HoverCard openDelay={120} closeDelay={180} onOpenChange={(open) => handleDropdownChange('about', open)}>
                       <HoverCardTrigger asChild>
-                        <button type="button" aria-current={['/why-choose-da', '/find-teacher', '/tutors', '/principal-reflections', '/principal-interview-paper', '/learning-formats'].includes(location.pathname) ? 'page' : undefined} className={`${navLinkClass(['/why-choose-da', '/find-teacher', '/tutors', '/principal-reflections', '/principal-interview-paper', '/learning-formats'].includes(location.pathname))} inline-flex items-center gap-0.5`}>
+                        <button type="button" aria-current={['/find-teacher', '/tutors', '/principal-reflections', '/principal-interview-paper', '/learning-formats'].includes(location.pathname) ? 'page' : undefined} className={`${navLinkClass(['/find-teacher', '/tutors', '/principal-reflections', '/principal-interview-paper', '/learning-formats'].includes(location.pathname))} inline-flex items-center gap-0.5`}>
                           About <ChevronDown className="h-3.5 w-3.5" />
                         </button>
                       </HoverCardTrigger>

@@ -27,6 +27,14 @@ test('centres the link cluster between equal outer grid tracks', () => {
   assert.match(source, /items-center gap-5 justify-self-end[\s\S]*?<GlobalSearch[\s\S]*?Book Consultation/);
 });
 
+test('does not mark About active on the standalone Why DA route', () => {
+  const aboutTrigger = source.match(/handleDropdownChange\('about'[\s\S]*?<\/HoverCardTrigger>/)?.[0] ?? '';
+
+  assert.doesNotMatch(aboutTrigger, /\/why-choose-da/);
+  assert.match(aboutTrigger, /\/tutors/);
+  assert.match(aboutTrigger, /\/principal-reflections/);
+});
+
 test('uses hero mode until the page scrolls beyond the Why DA hero', () => {
   assert.match(source, /interface NavigationNewProps \{\s*heroMode\?: boolean;/);
   assert.match(source, /const NavigationNew = \(\{ heroMode = false \}: NavigationNewProps\) =>/);
