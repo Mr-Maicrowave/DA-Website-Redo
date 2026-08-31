@@ -10,7 +10,7 @@
 
 .community-map__overlay { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 2; overflow: hidden; }
 
-/* DA property markers, shown only in the street-level phase */
+/* Real DA property markers remain anchored through both the local and regional phases. */
 .community-map__building { opacity: 0; }
 .community-map__building-halo { fill: #fff; fill-opacity: .88; stroke: #d6a921; stroke-width: 1; }
 .community-map__building-ring { fill: #071629; stroke: #d6a921; stroke-width: 2.25; }

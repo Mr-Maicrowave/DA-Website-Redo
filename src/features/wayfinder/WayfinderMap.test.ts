@@ -163,6 +163,12 @@ test('the community map shows only the two physical DA building destinations', (
   assert.doesNotMatch(communityMapSource, /DA CANLEY HEIGHTS/, 'a generic third DA destination label must not appear');
   assert.doesNotMatch(communityMapSource, /community-map__hub/, 'the midpoint must not render as another destination marker');
   assert.doesNotMatch(communityMapCssSource, /\.community-map__hub-/, 'obsolete midpoint marker styling must not remain');
+  assert.match(communityMapSource, /if \(showRegionalContext\) \{\s*centre = sydneyCentre;\s*zoom = sydneyZoom;\s*buildingOpacity = 1;/s, 'the two real building markers must remain visible in the completed regional view');
+  assert.match(communityMapSource, /else \{\s*centre = sydneyCentre;\s*zoom = sydneyZoom;\s*buildingOpacity = 1;/s, 'the regional scroll state must retain the two real building locations');
+  assert.ok(
+    communityMapSource.lastIndexOf('className="community-map__building"') > communityMapSource.lastIndexOf('className="community-map__dot"'),
+    'the centre markers must paint after the school dots so they remain visible above the network',
+  );
 });
 
 test('the pull-back has enough physical scroll distance and a final community-network hold', () => {
@@ -172,19 +178,19 @@ test('the pull-back has enough physical scroll distance and a final community-ne
   assert.match(communityMapSource, /zoomSnap:\s*0/, 'camera interpolation remains fractional rather than stair-stepped');
 });
 
-test('the regional map keeps its visual texture honest and gently connected to DA', () => {
+test('the regional map explains what the blue school dots represent without overstating their plotted precision', () => {
   assert.match(communityMapSource, /className="community-map__connection"/, 'school markers should have a dedicated connector layer');
   assert.match(communityMapSource, /const CONNECTION_SCHOOL_INDICES/, 'the map should use a curated set of network anchors rather than a full starburst');
   assert.match(communityMapSource, /connection\.style\.opacity = String\(t \* 0\.3\)/, 'connections should reveal progressively and remain quieter than dots');
   assert.match(communityMapCssSource, /\.community-map__connection\s*\{[^}]*stroke-dasharray:\s*1\.5 8/s, 'connections should retain their light map-notation rhythm');
   assert.match(communityMapSource, /INDICATIVE COMMUNITY MAP/, 'the regional card must label its placeholders honestly');
-  assert.match(communityMapSource, /not verified school-origin data/, 'the regional card must not imply that placeholder dots are verified origins');
-  assert.doesNotMatch(communityMapSource, /Students join DA from schools|SCHOOL COMMUNITIES|connected to DA through our students|Students travel to Canley Heights from right across the city/, 'Community copy must not turn placeholder dots into claims about students or schools');
+  assert.match(communityMapSource, /The blue dots represent schools attended by students we teach across Sydney\./, 'the card must explain the blue dots in plain language');
+  assert.match(communityMapSource, /Their positions are indicative while our school-location data is being verified\./, 'the card must distinguish represented schools from verified plotted positions');
 });
 
 test('reduced motion opens directly into one coherent regional map state', () => {
   assert.match(communityMapSource, /const showRegionalContext = Boolean\(reduceMotion\)/, 'reduced motion must select one explicit static presentation state');
-  assert.match(communityMapSource, /if \(showRegionalContext\) \{\s*centre = sydneyCentre;\s*zoom = sydneyZoom;\s*buildingOpacity = 0;/s, 'the static state must use the regional camera rather than a local card over a regional map');
+  assert.match(communityMapSource, /if \(showRegionalContext\) \{\s*centre = sydneyCentre;\s*zoom = sydneyZoom;\s*buildingOpacity = 1;/s, 'the static regional state must retain the two real building locations');
   assert.match(communityMapSource, /const localOpacity = showRegionalContext \? 0/, 'the local copy must be hidden in the static regional state');
   assert.match(communityMapSource, /const regionalOpacity = showRegionalContext \? 1/, 'the regional copy must be visible in the static regional state');
   assert.match(communityMapSource, /const t = showRegionalContext \? 1/, 'the regional markers must be visible with the regional copy');

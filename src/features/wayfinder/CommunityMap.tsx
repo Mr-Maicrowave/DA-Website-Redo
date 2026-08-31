@@ -106,6 +106,7 @@ export const CommunityMap = ({ progress, bookingPath }: { progress: MotionValue<
     let centre: L.LatLng;
     let zoom: number;
     let buildingOpacity: number;
+    let connectorOpacity: number;
 
     // Motion-reduced visitors receive the completed regional frame immediately. Keeping the
     // camera, dots and copy in the same state avoids an otherwise contradictory local card
@@ -114,20 +115,24 @@ export const CommunityMap = ({ progress, bookingPath }: { progress: MotionValue<
     if (showRegionalContext) {
       centre = sydneyCentre;
       zoom = sydneyZoom;
-      buildingOpacity = 0;
+      buildingOpacity = 1;
+      connectorOpacity = 0;
     } else if (p <= 0.28) {
       centre = localCentre;
       zoom = localZoom;
       buildingOpacity = 1;
+      connectorOpacity = 1;
     } else if (p <= 0.62) {
       const t = smoothstep(clamp01((p - 0.28) / (0.62 - 0.28)));
       centre = L.latLng(lerp(localCentre.lat, sydneyCentre.lat, t), lerp(localCentre.lng, sydneyCentre.lng, t));
       zoom = lerp(localZoom, sydneyZoom, t);
-      buildingOpacity = 1 - clamp01((p - 0.28) / (0.38 - 0.28));
+      buildingOpacity = 1;
+      connectorOpacity = 1 - clamp01((p - 0.28) / (0.38 - 0.28));
     } else {
       centre = sydneyCentre;
       zoom = sydneyZoom;
-      buildingOpacity = 0;
+      buildingOpacity = 1;
+      connectorOpacity = 0;
     }
 
     const scrubbedMap = map as ScrubbedLeafletMap;
@@ -173,7 +178,7 @@ export const CommunityMap = ({ progress, bookingPath }: { progress: MotionValue<
         return `${index === 0 ? 'M' : 'L'}${point.x.toFixed(1)} ${point.y.toFixed(1)}`;
       }).join(' ');
       connectorRef.current.setAttribute('d', d);
-      connectorRef.current.style.opacity = String(reduceMotion ? 0 : buildingOpacity);
+      connectorRef.current.style.opacity = String(connectorOpacity);
     }
 
     PHYSICAL_CENTRES.forEach((centrePoint, index) => {
@@ -181,7 +186,7 @@ export const CommunityMap = ({ progress, bookingPath }: { progress: MotionValue<
       if (!marker) return;
       const point = map.latLngToContainerPoint([centrePoint.coordinates.lat, centrePoint.coordinates.lng]);
       marker.setAttribute('transform', `translate(${point.x.toFixed(1)} ${point.y.toFixed(1)})`);
-      marker.style.opacity = String(reduceMotion ? 0 : buildingOpacity);
+      marker.style.opacity = String(buildingOpacity);
     });
 
     const hubPoint = map.latLngToContainerPoint([HUB_COORDINATES.lat, HUB_COORDINATES.lng]);
@@ -304,18 +309,6 @@ export const CommunityMap = ({ progress, bookingPath }: { progress: MotionValue<
       <div className="community-map__canvas" ref={mapElRef} />
       <svg className="community-map__overlay" aria-hidden="true">
         <path ref={connectorRef} className="community-map__connector" />
-        {PHYSICAL_CENTRES.map((centrePoint, index) => (
-          <g key={centrePoint.id} ref={(el) => { buildingRefs.current[index] = el; }} className="community-map__building">
-            <circle r="10" className="community-map__building-halo" />
-            <circle r="7" className="community-map__building-ring" />
-            <circle r="3.25" className="community-map__building-core" />
-            <g className="community-map__building-label" transform={`translate(${index === 0 ? 16 : -16} ${index === 0 ? -13 : 18})`}>
-              <line x1={index === 0 ? -10 : 10} y1="8" x2="0" y2="8" />
-              <rect x={index === 0 ? 0 : -76} y="0" width="76" height="17" />
-              <text x={index === 0 ? 8 : -8} y="12" textAnchor={index === 0 ? 'start' : 'end'}>{centrePoint.buildingLabel.toUpperCase()}</text>
-            </g>
-          </g>
-        ))}
         <g className="community-map__connections">
           {CONNECTION_SCHOOL_INDICES.map((index) => (
             <line key={SORTED_SCHOOLS[index].id} ref={(el) => { schoolConnectionRefs.current[index] = el; }} className="community-map__connection" />
@@ -335,6 +328,18 @@ export const CommunityMap = ({ progress, bookingPath }: { progress: MotionValue<
             </g>
           );
         })}
+        {PHYSICAL_CENTRES.map((centrePoint, index) => (
+          <g key={centrePoint.id} ref={(el) => { buildingRefs.current[index] = el; }} className="community-map__building">
+            <circle r="10" className="community-map__building-halo" />
+            <circle r="7" className="community-map__building-ring" />
+            <circle r="3.25" className="community-map__building-core" />
+            <g className="community-map__building-label" transform={`translate(${index === 0 ? 16 : -16} ${index === 0 ? -13 : 18})`}>
+              <line x1={index === 0 ? -10 : 10} y1="8" x2="0" y2="8" />
+              <rect x={index === 0 ? 0 : -76} y="0" width="76" height="17" />
+              <text x={index === 0 ? 8 : -8} y="12" textAnchor={index === 0 ? 'start' : 'end'}>{centrePoint.buildingLabel.toUpperCase()}</text>
+            </g>
+          </g>
+        ))}
       </svg>
       <div className="community-card">
         <div className="community-card__stack">
@@ -348,15 +353,13 @@ export const CommunityMap = ({ progress, bookingPath }: { progress: MotionValue<
             <h2 ref={regionalTitleRef} aria-hidden="true">One centre,<br /><em>in context.</em></h2>
             <hr />
             <p className="community-card__network-label">REGIONAL VIEW</p>
-            <p className="community-card__body">Markers provide indicative visual context around DA Canley Heights; they are not verified school-origin data.</p>
+            <p className="community-card__body">The blue dots represent schools attended by students we teach across Sydney. Their positions are indicative while our school-location data is being verified.</p>
             {verifiedCount > 0 ? (
               <div className="community-card__stat">
                 <strong>{verifiedCount}</strong>
                 <span>verified school locations represented</span>
               </div>
-            ) : (
-              <p className="community-card__stat-sentence">Regional context is shown while verified location data is being developed.</p>
-            )}
+            ) : null}
           </div>
         </div>
         <hr />
