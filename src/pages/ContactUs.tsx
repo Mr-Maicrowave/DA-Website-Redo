@@ -1,5 +1,5 @@
 import { FormEvent, useEffect, useState } from 'react';
-import { BarChart3, CheckCircle2, ChevronLeft, ChevronRight, ClipboardList, Clock3, Mail, MapPin, PencilLine, Phone, Search, Users, X } from 'lucide-react';
+import { CheckCircle2, ChevronLeft, ChevronRight, Clock3, Mail, MapPin, Phone, X } from 'lucide-react';
 import SEO from '@/components/SEO';
 import NavigationNew from '@/components/NavigationNew';
 import FooterNew from '@/components/FooterNew';
@@ -23,27 +23,32 @@ const fieldClass = 'mt-2 w-full rounded-md border border-brand-navy/20 bg-white 
 
 const differenceItems = [
   {
-    icon: Search,
+    iconSrc: '/images/contact/difference-icons/look-beyond-marks.png',
+    iconAlt: '',
     title: 'We look beyond marks',
     body: 'We understand how your child learns, not just what they know.',
   },
   {
-    icon: ClipboardList,
+    iconSrc: '/images/contact/difference-icons/diagnostic-profile.png',
+    iconAlt: '',
     title: 'Every student begins with a structured diagnostic profile',
     body: 'A detailed starting point is refined as we get to know your child.',
   },
   {
-    icon: Users,
+    iconSrc: '/images/contact/difference-icons/tutor-guidance.png',
+    iconAlt: '',
     title: 'Tutors receive detailed guidance',
     body: 'Strengths, barriers and teaching strategies are shared with the people supporting them.',
   },
   {
-    icon: BarChart3,
+    iconSrc: '/images/contact/difference-icons/parent-progress.png',
+    iconAlt: '',
     title: 'Parents see what we are noticing',
     body: 'We show what we are working on and how progress is being tracked.',
   },
   {
-    icon: PencilLine,
+    iconSrc: '/images/contact/difference-icons/refined-profile.png',
+    iconAlt: '',
     title: 'Profiles are refined through real teaching observations',
     body: 'We keep updating the plan from what we see in lessons, not assumptions.',
   },
@@ -330,7 +335,6 @@ const ContactUs = () => {
             padding: 16px 14px;
           }
 
-          .difference-panel__icon,
           .report-preview__tick {
             display: grid;
             place-items: center;
@@ -340,8 +344,11 @@ const ContactUs = () => {
           }
 
           .difference-panel__icon {
-            width: 52px;
-            height: 52px;
+            display: block;
+            width: 64px;
+            height: 64px;
+            object-fit: contain;
+            object-position: center;
           }
 
           .difference-panel__item strong {
@@ -672,8 +679,8 @@ const ContactUs = () => {
             }
 
             .difference-panel__icon {
-              width: 40px;
-              height: 40px;
+              width: 48px;
+              height: 48px;
             }
 
             .report-preview {
@@ -758,10 +765,9 @@ const ContactUs = () => {
           <div className="difference-panel__rule" aria-hidden="true" />
           <div className="difference-panel__list">
             {differenceItems.map((item) => {
-              const Icon = item.icon;
               return (
                 <article className="difference-panel__item" key={item.title}>
-                  <span className="difference-panel__icon" aria-hidden="true"><Icon size={23} strokeWidth={1.9} /></span>
+                  <img className="difference-panel__icon" src={item.iconSrc} alt={item.iconAlt} loading="lazy" decoding="async" />
                   <div>
                     <strong>{item.title}</strong>
                     <span>{item.body}</span>
