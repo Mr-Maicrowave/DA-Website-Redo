@@ -285,24 +285,11 @@ const Articles = () => {
           </nav>
         </header>
 
-        <section className="articles-intro-banner" aria-labelledby="articles-intro-title">
-          <div className="articles-intro-banner__copy">
-            <h2 id="articles-intro-title" aria-label="Written by the people who know learning best">
-              <span className="articles-intro-banner__line articles-intro-banner__line--desktop articles-intro-banner__line--one">Written by the people who</span>
-              <span className="articles-intro-banner__line articles-intro-banner__line--desktop articles-intro-banner__line--two">know learning best</span>
-              <span className="articles-intro-banner__line articles-intro-banner__line--mobile articles-intro-banner__line--mobile-one">Written by</span>
-              <span className="articles-intro-banner__line articles-intro-banner__line--mobile articles-intro-banner__line--mobile-two">the people</span>
-              <span className="articles-intro-banner__line articles-intro-banner__line--mobile articles-intro-banner__line--mobile-three">who know</span>
-              <span className="articles-intro-banner__line articles-intro-banner__line--mobile articles-intro-banner__line--mobile-four">learning best</span>
-            </h2>
-            <i aria-hidden="true" />
-            <p>
-              The DA Newsletter brings together articles written by our students and tutors,
-              sharing real perspectives from inside the classroom. From study strategies and
-              exam advice to student experiences, academic insights and practical guidance,
-              each article is created to inform, encourage and help our community grow.
-            </p>
-          </div>
+        <section className="newsletter-intro-png" aria-label="Newsletter introduction">
+          <img
+            src="/Articles/images/newsletter/articles-guides-intro-transparent.png"
+            alt="Written by the people who know learning best. The DA Newsletter brings together articles written by our students and tutors, sharing real perspectives from inside the classroom. From study strategies and exam advice to student experiences, academic insights and practical guidance, each article is created to inform, encourage and help our community grow."
+          />
         </section>
 
         <section id="featured" className="newsletter-section">
@@ -445,144 +432,19 @@ const Articles = () => {
           letter-spacing: 0.04em;
         }
 
-        .articles-intro-banner {
-          position: relative;
-          isolation: isolate;
-          overflow: hidden;
+        .newsletter-intro-png {
           width: 100vw;
-          min-height: clamp(360px, 33.333vw, 724px);
           margin: 0 calc(50% - 50vw);
-          background: url('/Articles/images/newsletter/articles-guides-banner.png') center / 100% 100% no-repeat;
         }
 
-        .articles-intro-banner__copy {
-          display: flex;
-          min-height: inherit;
-          width: min(760px, 54vw);
-          box-sizing: border-box;
-          flex-direction: column;
-          justify-content: center;
-          padding: clamp(2rem, 4.5vw, 4rem) 0 clamp(2rem, 4.5vw, 4rem) max(40px, calc((100vw - 1240px) / 2 + 76px));
-        }
-
-        .articles-intro-banner h2 {
-          margin: 0;
-          color: ${C.navy};
-          font-family: ${serif};
-          font-size: clamp(2.35rem, 3.1vw, 3.65rem);
-          font-weight: 600;
-          line-height: 1.05;
-          letter-spacing: 0;
-        }
-
-        .articles-intro-banner__line {
+        .newsletter-intro-png img {
           display: block;
-          width: max-content;
-          max-width: 0;
-          overflow: hidden;
-          white-space: nowrap;
-          border-right: 2px solid ${C.gold};
-        }
-
-        .articles-intro-banner__line--mobile {
-          display: none;
-        }
-
-        .articles-intro-banner__line--one {
-          animation:
-            articlesTypeLineOne 1.53s steps(25, end) 160ms forwards,
-            articlesCaretOne 1.86s step-end 160ms forwards;
-        }
-
-        .articles-intro-banner__line--two {
-          animation:
-            articlesTypeLineTwo 1.1s steps(18, end) 1.82s forwards,
-            articlesCaretFinal 1.34s step-end 1.82s forwards;
-        }
-
-        .articles-intro-banner i {
-          width: min(180px, 42vw);
-          height: 2px;
-          margin: clamp(0.8rem, 1.5vw, 1.35rem) 0 clamp(1rem, 2vw, 1.6rem);
-          background: linear-gradient(90deg, #b77b19 0%, ${C.goldSoft} 46%, transparent 100%);
-          transform-origin: left;
-          animation: articlesRuleIn 520ms ease 2.53s both;
-        }
-
-        .articles-intro-banner p {
-          max-width: 610px;
-          margin: 0;
-          color: #1d2834;
-          font-size: clamp(0.98rem, 1.2vw, 1.12rem);
-          line-height: 1.55;
-          transform: translateY(26px);
-          opacity: 0;
-          animation: articlesCopySwipe 550ms cubic-bezier(.22, 1, .36, 1) 2.7s forwards;
-        }
-
-        @keyframes articlesTypeLineOne {
-          to { max-width: 25ch; }
-        }
-
-        @keyframes articlesTypeLineTwo {
-          to { max-width: 20ch; }
-        }
-
-        @keyframes articlesTypeMobileOne {
-          to { max-width: 11ch; }
-        }
-
-        @keyframes articlesTypeMobileTwo {
-          to { max-width: 11ch; }
-        }
-
-        @keyframes articlesTypeMobileThree {
-          to { max-width: 9ch; }
-        }
-
-        @keyframes articlesTypeMobileFour {
-          to { max-width: 13ch; }
-        }
-
-        @keyframes articlesCaretOne {
-          0%, 82% { border-right-color: ${C.gold}; }
-          83%, 100% { border-right-color: transparent; }
-        }
-
-        @keyframes articlesCaretTwo {
-          0%, 100% { border-right-color: ${C.gold}; }
-          50% { border-right-color: transparent; }
-        }
-
-        @keyframes articlesCaretFinal {
-          0%, 72% { border-right-color: ${C.gold}; }
-          73%, 100% { border-right-color: transparent; }
-        }
-
-        @keyframes articlesRuleIn {
-          from {
-            transform: scaleX(0);
-            opacity: 0;
-          }
-          to {
-            transform: scaleX(1);
-            opacity: 1;
-          }
-        }
-
-        @keyframes articlesCopySwipe {
-          to {
-            transform: translateY(0);
-            opacity: 1;
-          }
+          width: 100%;
+          height: auto;
         }
 
         .newsletter-section {
           margin-top: clamp(28px, 5vw, 54px);
-        }
-
-        .articles-intro-banner + .newsletter-section {
-          margin-top: clamp(18px, 3.2vw, 32px);
         }
 
         .section-heading {
@@ -1068,73 +930,6 @@ const Articles = () => {
             grid-template-columns: 1fr;
           }
 
-          .articles-intro-banner {
-            min-height: 560px;
-            background: url('/Articles/images/newsletter/articles-guides-banner.png') 46% center / auto 100% no-repeat;
-          }
-
-          .articles-intro-banner__copy {
-            width: 100%;
-            justify-content: flex-start;
-            padding: 2rem 1.25rem;
-          }
-
-          .articles-intro-banner h2 {
-            font-size: clamp(2.45rem, 13vw, 3.2rem);
-            line-height: 0.94;
-          }
-
-          .articles-intro-banner p {
-            font-size: 1rem;
-            line-height: 1.65;
-          }
-
-          .articles-intro-banner__line--desktop {
-            display: none;
-          }
-
-          .articles-intro-banner__line--mobile {
-            display: block;
-          }
-
-          .articles-intro-banner__line--mobile-one {
-            animation:
-              articlesTypeMobileOne 680ms steps(10, end) 160ms forwards,
-              articlesCaretOne 910ms step-end 160ms forwards;
-          }
-
-          .articles-intro-banner__line--mobile-two {
-            animation:
-              articlesTypeMobileTwo 680ms steps(10, end) 990ms forwards,
-              articlesCaretOne 910ms step-end 990ms forwards;
-          }
-
-          .articles-intro-banner__line--mobile-three {
-            animation:
-              articlesTypeMobileThree 560ms steps(8, end) 1.81s forwards,
-              articlesCaretOne 750ms step-end 1.81s forwards;
-          }
-
-          .articles-intro-banner__line--mobile-four {
-            animation:
-              articlesTypeMobileFour 720ms steps(13, end) 2.52s forwards,
-              articlesCaretFinal 950ms step-end 2.52s forwards;
-          }
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-          .articles-intro-banner__line {
-            max-width: none;
-            border-right: 0;
-            animation: none;
-          }
-
-          .articles-intro-banner i,
-          .articles-intro-banner p {
-            transform: none;
-            opacity: 1;
-            animation: none;
-          }
         }
       `}</style>
     </div>

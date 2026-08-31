@@ -577,26 +577,6 @@ export default function FAQPage() {
             </aside>
           </div>
         </section>
-        <section className="faq-editorial-closing text-white">
-          <div className="faq-editorial-closing-copy">
-            <p className="text-xs font-black uppercase tracking-[.15em] text-[#e7ca73]">
-              When a page is not enough
-            </p>
-            <h2 className="mt-4 max-w-xl font-serif text-[clamp(2.8rem,5vw,4.5rem)] leading-none tracking-[-.035em]">
-              Some questions are easier answered together.
-            </h2>
-            <p className="mt-6 max-w-xl leading-7 text-white/75">
-              Tell us what is on your mind and we’ll help you work out the most
-              useful next step.
-            </p>
-            <Link
-              className="mt-8 inline-flex items-center gap-2 rounded-full bg-[#c69a38] px-6 py-3 font-bold text-[#091a31]"
-              to="/book-interview"
-            >
-              Book an interview <ArrowRight className="h-4 w-4" />
-            </Link>
-          </div>
-        </section>
       </main>
       <FooterNew />
     </div>
