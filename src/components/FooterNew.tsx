@@ -44,7 +44,7 @@ const FooterNew = () => {
 
   return (
     <footer
-      className="relative z-site-footer bg-[#e9d8c8] font-sans text-brand-navy"
+      className="relative bg-[#e9d8c8] font-sans text-brand-navy"
       aria-label="DA Tuition footer"
     >
       <div className="mx-auto grid max-w-7xl grid-cols-1 gap-x-12 gap-y-11 px-5 pb-12 pt-16 sm:grid-cols-2 sm:px-8 sm:pb-14 sm:pt-[4.5rem] lg:grid-cols-[1.35fr_0.85fr_0.9fr_1.25fr] lg:gap-x-16 lg:px-8 lg:pb-12 lg:pt-16">

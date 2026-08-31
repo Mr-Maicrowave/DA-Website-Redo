@@ -72,3 +72,11 @@ test('dedicated closing booking panels do not duplicate the footer action', () =
     assert.doesNotMatch(readSource(page), pattern, page);
   }
 });
+
+test('the shared footer stays on the base layer so page overlays can never be covered by it', () => {
+  const footer = readSource('src/components/FooterNew.tsx');
+  const tailwindConfig = readSource('tailwind.config.ts');
+
+  assert.doesNotMatch(footer, /z-site-footer/);
+  assert.doesNotMatch(tailwindConfig, /['"]site-footer['"]/);
+});
