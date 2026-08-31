@@ -3,494 +3,1031 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>DA Tuition — Year Cube</title>
+  <title>DA Tuition — Years 7–12 Mathematics</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/katex.min.css" />
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/katex.min.js"></script>
   <style>
     :root {
-      color-scheme: dark;
-      --navy: #06111f;
-      --navy-2: #0b1c30;
-      --ink: #f2ecdc;
-      --muted: #9fb0c2;
-      --gold: #c9a227;
-      --gold-soft: #f1df9a;
-      --cream: #fff6e7;
+      color-scheme: light;
+      --bg-page: #FAF8F5;
+      --text-primary: #121E2E;
+      --text-secondary: #546477;
+      --text-muted: #7E8E9F;
+      --gold: #B88E18;
+      --gold-deep: #94710A;
+      --gold-soft: #D4AF37;
+      --gold-light: #F7ECD0;
+      --gold-bright: #C9A227;
+      --border-gold: rgba(184, 142, 24, 0.38);
+      --border-light: rgba(18, 30, 46, 0.1);
+      /* The desktop stage has room for a more legible, tactile cube. Keep the
+         same real hinged geometry; only give it a stronger viewport presence. */
+      --cube-size: clamp(244px, 23vw, 320px);
+      --half-cube: calc(var(--cube-size) / 2);
+      --net-scale: 1;
+      --net-shift: 0px;
+      --net-drop: 0px;
     }
-    * { box-sizing: border-box; }
-    html, body { margin: 0; min-height: 100%; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { min-height: 100%; width: 100%; }
     body {
-      background: var(--navy);
-      color: var(--ink);
-      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+      background: var(--bg-page);
+      color: var(--text-primary);
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
     }
+
     .experience {
       min-height: 100svh;
       position: relative;
       isolation: isolate;
       background:
-        radial-gradient(circle at 72% 45%, rgba(201,162,39,.10), transparent 40%),
-        radial-gradient(ellipse at 20% 80%, rgba(54,87,130,.16), transparent 55%),
-        var(--navy);
+        radial-gradient(circle at 74% 48%, rgba(201,162,39,.10), transparent 45%),
+        radial-gradient(ellipse at 18% 78%, rgba(220,205,180,.35), transparent 55%),
+        var(--bg-page);
       display: grid;
-      grid-template-columns: minmax(320px, 480px) 1fr;
+      grid-template-columns: minmax(300px, 380px) 1fr;
       align-items: center;
-      gap: clamp(24px, 4vw, 64px);
-      padding: clamp(28px, 6vh, 72px) clamp(20px, 6vw, 88px);
+      gap: clamp(14px, 2.4vw, 34px);
+      padding: clamp(18px, 3vh, 40px) clamp(14px, 3vw, 48px);
     }
-    @media (max-width: 900px) {
-      .experience { grid-template-columns: 1fr; padding-top: 40px; }
+    @media (max-width: 1000px) {
+      .experience { grid-template-columns: 1fr; padding: 22px 14px 32px; gap: 20px; }
+      :root { --cube-size: clamp(132px, 30vw, 168px); }
+    }
+    @media (min-width: 1001px) {
+      .experience.net-open {
+        grid-template-columns: 1fr;
+        padding: 16px 32px;
+      }
+      .experience.net-open .copy { display: none; }
+      .experience.net-open .stage {
+        min-height: calc(100svh - 32px);
+        transform: none;
+      }
     }
 
-    /* ---- copy column ---- */
+    /* ---------------- Left copy column ---------------- */
     .copy { position: relative; z-index: 4; }
+
+    /* Give the full desktop composition a higher, more deliberate resting
+       position while preserving the natural stacked mobile flow. */
+    @media (min-width: 1001px) {
+      .copy { transform: translateY(-42px); }
+    }
     .eyebrow {
       display: flex; align-items: center; gap: 10px;
-      color: var(--gold-soft); font-size: .7rem; font-weight: 800;
-      letter-spacing: .18em; text-transform: uppercase; margin: 0 0 20px;
+      color: var(--gold-deep); font-size: .7rem; font-weight: 800;
+      letter-spacing: .16em; text-transform: uppercase; margin: 0 0 10px;
     }
-    .eyebrow::before { content: ""; width: 34px; height: 2px; background: var(--gold); display: block; }
+    .eyebrow::before { content: ""; width: 30px; height: 2px; background: var(--gold); display: block; border-radius: 2px; }
     h1 {
-      margin: 0 0 16px; font-family: Georgia, "Times New Roman", serif; font-weight: 700;
-      font-size: clamp(2.1rem, 3.4vw, 3.1rem); line-height: 1.06; letter-spacing: -.01em;
-      color: #fff;
+      margin: 0 0 10px; font-family: Georgia, "Times New Roman", serif; font-weight: 700;
+      font-size: clamp(1.85rem, 2.9vw, 2.7rem); line-height: 1.08; letter-spacing: -.02em;
+      color: var(--text-primary); text-wrap: balance;
     }
-    h1 em { font-style: italic; color: var(--gold-soft); }
-    .lede {
-      max-width: 42ch; color: var(--muted); font-size: 1rem; line-height: 1.7; margin: 0 0 28px;
-    }
+    h1 em { font-style: italic; color: var(--gold-deep); font-weight: 400; }
+    .lede { max-width: 44ch; color: var(--text-secondary); font-size: .92rem; line-height: 1.6; margin: 0 0 14px; }
 
-    .year-picker {
-      display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px;
-    }
+    .year-picker { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 12px; }
     .year-picker button {
-      font: inherit; cursor: pointer; border: 1px solid rgba(242,236,220,.18);
-      background: rgba(255,255,255,.03); color: var(--muted);
-      width: 46px; height: 46px; border-radius: 12px;
-      font-weight: 800; font-size: .95rem; transition: all .2s ease;
+      font: inherit; cursor: pointer; border: 1px solid var(--border-light);
+      background: #FFFFFF; color: var(--text-secondary);
+      width: 40px; height: 40px; border-radius: 11px;
+      font-weight: 800; font-size: .9rem; transition: all .2s cubic-bezier(.2,.8,.2,1);
+      box-shadow: 0 2px 6px rgba(0,0,0,.04);
     }
-    .year-picker button:hover { border-color: rgba(201,162,39,.5); color: var(--ink); }
+    .year-picker button:hover { border-color: var(--gold); color: var(--text-primary); background: #FAF5E9; }
     .year-picker button:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
     .year-picker button[aria-pressed="true"] {
-      background: var(--gold); border-color: var(--gold); color: #1a1206;
-      box-shadow: 0 6px 18px rgba(201,162,39,.35);
+      background: var(--gold-deep); border-color: var(--gold-deep); color: #FFFFFF;
+      box-shadow: 0 4px 14px rgba(184,142,24,.35); transform: translateY(-1px);
     }
-    .year-picker button:disabled { opacity: .35; cursor: not-allowed; }
 
-    .controls-row { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
-    .drag-hint {
-      display: flex; align-items: center; gap: 8px;
-      color: var(--muted); font-size: .82rem; margin: 0;
+    .left-actions-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
+    .roll-unfold-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--gold-deep); color: #FFFFFF; font: inherit; font-size: .86rem; font-weight: 800;
+      padding: 10px 18px; border-radius: 10px; border: none; cursor: pointer;
+      transition: all .2s cubic-bezier(.2,.8,.2,1);
+      box-shadow: 0 4px 14px rgba(184,142,24,.35);
     }
-    .drag-hint svg { flex: none; opacity: .8; }
+    .roll-unfold-btn:hover { background: #7C5C05; transform: translateY(-1px); }
+    .roll-unfold-btn:focus-visible { outline: 2px solid var(--text-primary); outline-offset: 2px; }
+    .roll-unfold-btn svg { flex: none; }
+
+    .controls-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
+    .drag-hint { display: flex; align-items: center; gap: 8px; color: var(--text-secondary); font-size: .8rem; font-weight: 500; margin: 0; }
+    .drag-hint svg { flex: none; opacity: .9; color: var(--gold-deep); }
 
     .spin-toggle {
       display: inline-flex; align-items: center; gap: 7px;
-      font: inherit; font-size: .78rem; font-weight: 700; color: var(--muted);
-      background: rgba(255,255,255,.03); border: 1px solid rgba(242,236,220,.18);
-      border-radius: 999px; padding: 7px 13px 7px 11px; cursor: pointer; transition: all .2s ease;
+      font: inherit; font-size: .76rem; font-weight: 700; color: var(--text-secondary);
+      background: #FFFFFF; border: 1px solid var(--border-light);
+      border-radius: 999px; padding: 6px 13px; cursor: pointer; transition: all .2s ease;
     }
-    .spin-toggle:hover { color: var(--ink); border-color: rgba(201,162,39,.5); }
+    .spin-toggle:hover { color: var(--text-primary); border-color: var(--gold); background: #FAF7F0; }
     .spin-toggle:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
-    .spin-toggle svg { flex: none; }
 
     .sr-live { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
 
-    /* ---- cube stage ---- */
+    /* ---------------- 3D stage ---------------- */
     .stage {
       position: relative; z-index: 3;
       display: flex; align-items: center; justify-content: center;
-      height: clamp(360px, 52vw, 560px);
-      perspective: 1600px;
+      /* Leave enough room for the full unfolded net, without forcing a
+         taller-than-viewport desktop experience at normal browser zoom. */
+      min-height: clamp(480px, 48vw, 620px);
+      perspective: 1700px;
+      perspective-origin: 50% 48%;
       touch-action: pan-y;
     }
-    .cube-wrap { position: relative; width: clamp(230px, 27vw, 320px); height: clamp(230px, 27vw, 320px); transform-style: preserve-3d; }
-    .cube {
-      position: absolute; inset: 0; transform-style: preserve-3d;
+    @media (min-width: 1001px) {
+      .stage { transform: translateY(-60px); }
+    }
+
+    .stage-banner {
+      position: absolute; top: 4px; left: 50%; transform: translateX(-50%) translateY(-14px);
+      background: rgba(255,255,255,.95); backdrop-filter: blur(12px);
+      border: 1px solid var(--border-gold); padding: 7px 8px 7px 18px; border-radius: 999px;
+      display: flex; align-items: center; gap: 14px; z-index: 30;
+      opacity: 0; pointer-events: none; transition: all .35s cubic-bezier(.2,.8,.2,1);
+      box-shadow: 0 8px 24px rgba(18,30,46,.08);
+    }
+    .stage-banner.in { opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: auto; }
+    .stage-banner-text { font-size: .78rem; font-weight: 800; color: var(--gold-deep); }
+    .stage-banner-btn {
+      font: inherit; cursor: pointer; background: #FAF5E8; color: var(--text-primary); font-weight: 800;
+      font-size: .72rem; padding: 5px 13px; border-radius: 999px; border: 1px solid var(--border-gold);
+      transition: all .2s ease;
+    }
+    .stage-banner-btn:hover { background: var(--gold-deep); color: #FFFFFF; }
+
+    /* net-stage carries the flat-net framing (offset + fit-to-stage scale). */
+    .net-stage {
+      position: relative;
+      width: var(--cube-size); height: var(--cube-size);
+      transform-style: preserve-3d;
+      transform: none;
+      transition: transform 900ms cubic-bezier(.22, 1, .36, 1);
+    }
+    .net-stage.top-down-view {
+      transform: scale3d(var(--net-scale), var(--net-scale), var(--net-scale)) translate(var(--net-shift), var(--net-drop));
+    }
+
+    /* The gesture is not discoverable on its own, so the instruction lives
+       next to the dice rather than only in the copy column. */
+    .cube-hint {
+      position: absolute; left: 50%; top: 50%;
+      transform: translate(-50%, calc(var(--cube-size) * 0.86));
+      display: flex; align-items: center; gap: 10px; white-space: nowrap;
+      background: rgba(255,255,255,.86); backdrop-filter: blur(6px);
+      border: 1px solid var(--border-gold); border-radius: 999px;
+      padding: 7px 15px; z-index: 20; pointer-events: none;
+      box-shadow: 0 6px 18px rgba(18,30,46,.07);
+      transition: opacity .3s ease, transform .35s ease;
+    }
+    .cube-hint b { font-weight: 800; color: var(--gold-deep); font-size: .76rem; display: inline-flex; align-items: center; gap: 5px; }
+    .cube-hint span { font-size: .74rem; color: var(--text-secondary); font-weight: 600; }
+    .cube-hint i { display: block; width: 1px; height: 13px; background: var(--border-gold); }
+    .cube-hint svg { flex: none; }
+    .cube-hint.out { opacity: 0; transform: translate(-50%, calc(var(--cube-size) * 0.86 + 8px)); }
+    @media (max-width: 1000px) {
+      .cube-hint { padding: 6px 12px; gap: 7px; }
+      .cube-hint b, .cube-hint span { font-size: .68rem; }
+    }
+
+    /* A thrown object needs ground to land on. This shadow tracks the cube:
+       it tightens and darkens as the cube nears the floor, and spreads and
+       fades as it rises, which is what actually sells the contact. */
+    .cube-shadow {
+      position: absolute; left: 54%; top: 108%;
+      width: 148%; margin-left: -74%; height: clamp(38px, 3vw, 50px);
+      border-radius: 50%;
+      background: radial-gradient(ellipse at center, rgba(72,54,22,.38), rgba(72,54,22,.15) 46%, transparent 72%);
+      filter: blur(8px);
+      pointer-events: none;
+      transform-origin: 50% 50%;
+      opacity: .85;
+    }
+    .net-stage.top-down-view .cube-shadow { opacity: 0; transition: opacity .35s ease; }
+
+    /* the one real cube: rotation + fold-depth live here */
+    .hinged-net-wrapper {
+      position: absolute; inset: 0;
+      transform-style: preserve-3d;
       cursor: grab;
-      user-select: none; -webkit-user-select: none; -moz-user-select: none;
+      touch-action: none;          /* the upward flick needs the vertical axis */
+    }
+    .hinged-net-wrapper.grabbing { cursor: grabbing; }
+    .hinged-net-wrapper.is-net { touch-action: auto; }   /* give scrolling back once it is open */
+    .hinged-net-wrapper.is-net { cursor: default; }
+
+    /* ---------------- The six real faces ----------------
+       Nested exactly as a physical net is hinged, so folding is
+       one set of elements changing hinge angle — never a swap. */
+    .face {
+      position: absolute; top: 0; left: 0;
+      width: 100%; height: 100%;
+      transform-style: preserve-3d;
+      backface-visibility: hidden; -webkit-backface-visibility: hidden;
+      transition: transform 820ms cubic-bezier(.34, 1.06, .4, 1);
+    }
+    /* hinge geometry: 90deg = folded cube, 0deg = flat net */
+    .face--front  { }
+    .face--right  { left: 100%;  transform-origin: left center;   transform: rotateY(90deg); }
+    .face--left   { left: -100%; transform-origin: right center;  transform: rotateY(-90deg); }
+    .face--top    { top: -100%;  transform-origin: center bottom; transform: rotateX(90deg); }
+    .face--bottom { top: 100%;   transform-origin: center top;    transform: rotateX(-90deg); }
+    .face--back   { left: 100%;  transform-origin: left center;   transform: rotateY(90deg); }
+
+    .hinged-net-wrapper.unfolded .face--right,
+    .hinged-net-wrapper.unfolded .face--back   { transform: rotateY(0deg); }
+    .hinged-net-wrapper.unfolded .face--left   { transform: rotateY(0deg); }
+    .hinged-net-wrapper.unfolded .face--top,
+    .hinged-net-wrapper.unfolded .face--bottom { transform: rotateX(0deg); }
+
+    .hinged-net-wrapper.unfolded .face--right  { transition-delay: 0ms; }
+    .hinged-net-wrapper.unfolded .face--left   { transition-delay: 60ms; }
+    .hinged-net-wrapper.unfolded .face--top    { transition-delay: 130ms; }
+    .hinged-net-wrapper.unfolded .face--bottom { transition-delay: 130ms; }
+    .hinged-net-wrapper.unfolded .face--back   { transition-delay: 300ms; }
+    .hinged-net-wrapper .face--back  { transition-delay: 0ms; }
+    .hinged-net-wrapper .face--top,
+    .hinged-net-wrapper .face--bottom { transition-delay: 170ms; }
+    .hinged-net-wrapper .face--right,
+    .hinged-net-wrapper .face--left  { transition-delay: 240ms; }
+
+    /* Nothing on the dice is selectable. Double-clicking to throw would otherwise
+       select the word under the cursor, and a swept or select-all selection paints
+       through to faces that backface-visibility has hidden. Belt and braces:
+       user-select stops it being made, ::selection stops it being drawn. */
+    .hinged-net-wrapper,
+    .hinged-net-wrapper *,
+    .cube-hint,
+    .cube-hint * {
+      user-select: none;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
       -webkit-touch-callout: none;
     }
-    .cube.grabbing { cursor: grabbing; }
-    .cube.exploring { cursor: default; }
-    .face {
+    .hinged-net-wrapper ::selection,
+    .hinged-net-wrapper::selection,
+    .cube-hint ::selection,
+    .cube-hint::selection { background: transparent; color: inherit; }
+    .hinged-net-wrapper ::-moz-selection,
+    .cube-hint ::-moz-selection { background: transparent; color: inherit; }
+
+    /* the visible panel surface — separate from .face so hinge maths stays exact */
+    .face-skin {
       position: absolute; inset: 0;
-      display: flex; flex-direction: column; justify-content: flex-end;
-      padding: clamp(20px, 2.6vw, 30px);
-      border-radius: 20px;
-      background: linear-gradient(160deg, var(--navy-2), #071322 65%);
-      border: 1px solid rgba(201,162,39,.28);
-      box-shadow: inset 0 0 60px rgba(0,0,0,.35);
-      user-select: none; -webkit-user-select: none; -moz-user-select: none;
-      transition: box-shadow .3s ease;
-      cursor: pointer;
+      display: flex; flex-direction: column; justify-content: space-between;
+      padding: clamp(11px, 1.3vw, 17px);
+      border-radius: 16px;
+      overflow: hidden;
       backface-visibility: hidden; -webkit-backface-visibility: hidden;
+      cursor: pointer;
+      transition: box-shadow .28s ease, border-color .28s ease, transform .28s ease;
+      background: #FFFFFF;
+      border: 1.5px solid var(--border-gold);
+      box-shadow: 0 10px 26px rgba(18,30,46,.1);
     }
-    .face.fx-active { box-shadow: inset 0 0 60px rgba(0,0,0,.35), 0 0 0 2px rgba(201,162,39,.55), 0 10px 40px rgba(201,162,39,.25); }
-    .face .num {
-      position: absolute; top: 18px; left: 22px;
+    .face-skin:focus-visible { outline: 3px solid var(--gold-deep); outline-offset: 3px; }
+    .hinged-net-wrapper.unfolded .face-skin:hover { transform: translateZ(26px) scale(1.03); z-index: 5; }
+    .face.is-active-face > .face-skin { box-shadow: 0 0 0 2px var(--gold-deep), 0 12px 30px rgba(184,142,24,.28); }
+
+    .fs-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 6px; pointer-events: none; }
+    .fs-num {
       font-family: Georgia, "Times New Roman", serif; font-weight: 700;
-      font-size: clamp(3.2rem, 6vw, 4.6rem); line-height: 1; color: rgba(241,223,154,.16);
-      transition: opacity .25s ease;
+      font-size: clamp(2.35rem, 3.6vw, 3.25rem); line-height: .84; color: var(--gold-deep);
     }
-    .face .label {
-      font-size: .72rem; font-weight: 800; letter-spacing: .14em; text-transform: uppercase;
-      color: var(--gold-soft); margin-bottom: 8px; transition: opacity .25s ease;
+    .fs-tag {
+      font-size: .66rem; font-weight: 800; letter-spacing: .09em; text-transform: uppercase;
+      color: #7C5C05; background: #F6EED8; border: 1px solid rgba(184,142,24,.4);
+      padding: 3px 7px; border-radius: 999px; white-space: nowrap;
     }
-    .face .hook {
-      font-size: .92rem; line-height: 1.5; color: #dfe6ee; margin: 0 0 14px;
-      max-width: 26ch; transition: opacity .25s ease;
+    .fs-bottom { display: flex; flex-direction: column; gap: 3px; pointer-events: none; }
+    .fs-title {
+      font-size: .70rem; font-weight: 800; letter-spacing: .09em; text-transform: uppercase;
+      color: var(--text-muted);
     }
-    .face .go {
-      align-self: flex-start; font-size: .8rem; font-weight: 700; color: var(--gold);
-      text-decoration: none; border-bottom: 1px solid rgba(201,162,39,.4); padding-bottom: 2px;
-      transition: opacity .25s ease;
+    .fs-hook {
+      font-size: .73rem; line-height: 1.32; color: var(--text-primary); font-weight: 500;
+      display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
     }
-    .face .go:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
-    .face.fx-dim .num, .face.fx-dim .label, .face.fx-dim .hook, .face.fx-dim .go { opacity: 0; pointer-events: none; }
+    .fs-go {
+      margin-top: 3px; align-self: flex-start; font-size: .78rem; font-weight: 800;
+      color: var(--gold-deep); border-bottom: 1.5px solid var(--gold-deep); padding-bottom: 1px;
+    }
+    .hinged-net-wrapper.unfolded .fs-title { font-size: .88rem; }
+    .hinged-net-wrapper.unfolded .fs-hook { font-size: 1.05rem; line-height: 1.38; }
+    .hinged-net-wrapper.unfolded .fs-go { font-size: .96rem; }
+    .fs-rule, .fs-corner, .fs-grid { position: absolute; pointer-events: none; opacity: 0; }
 
-    /* six faces of the cube — half the cube edge, tuned per box size via CSS var */
-    .cube-wrap { --half: clamp(115px, 13.5vw, 160px); }
-    .face--front  { transform: translateZ(var(--half)); }
-    .face--right  { transform: rotateY(90deg) translateZ(var(--half)); }
-    .face--back   { transform: rotateY(180deg) translateZ(var(--half)); }
-    .face--left   { transform: rotateY(-90deg) translateZ(var(--half)); }
-    .face--top    { transform: rotateX(90deg) translateZ(var(--half)); }
-    .face--bottom { transform: rotateX(-90deg) translateZ(var(--half)); }
+    /* =========================================================
+       EIGHT FACE DESIGN SYSTEMS
+       Each design styles the face panel and its matching card.
+       ========================================================= */
 
-    .stage-caption {
-      position: absolute; bottom: -6px; left: 50%; transform: translateX(-50%);
-      font-size: .74rem; color: var(--muted); white-space: nowrap;
-      transition: opacity .3s ease;
+    /* --- Design 4 — Blueprint --- */
+    [data-design="4"] > .face-skin {
+      background:
+        linear-gradient(rgba(30,72,110,.09) 1px, transparent 1px) 0 0 / 100% 14px,
+        linear-gradient(90deg, rgba(30,72,110,.09) 1px, transparent 1px) 0 0 / 14px 100%,
+        #EEF3F8;
+      border: 1.5px solid #2F5F8C; border-radius: 12px;
+      box-shadow: 0 8px 22px rgba(20,45,70,.14);
+    }
+    [data-design="4"] > .face-skin .fs-corner {
+      opacity: 1; inset: 5px; border: 1px solid rgba(47,95,140,.45);
+      clip-path: polygon(0 0,18px 0,18px 1px,1px 1px,1px 18px,0 18px,0 0, 100% 0,100% 18px,calc(100% - 1px) 18px,calc(100% - 1px) 1px,calc(100% - 18px) 1px,calc(100% - 18px) 0,100% 0, 100% 100%,calc(100% - 18px) 100%,calc(100% - 18px) calc(100% - 1px),calc(100% - 1px) calc(100% - 1px),calc(100% - 1px) calc(100% - 18px),100% calc(100% - 18px), 0 100%,0 calc(100% - 18px),1px calc(100% - 18px),1px calc(100% - 1px),18px calc(100% - 1px),18px 100%);
+    }
+    [data-design="4"] > .face-skin .fs-num { color: #1E486E; font-family: ui-monospace, "SFMono-Regular", Consolas, monospace; font-weight: 700; }
+    [data-design="4"] > .face-skin .fs-tag {
+      background: #1E486E; border-color: #1E486E; color: #EEF3F8; border-radius: 2px;
+      font-family: ui-monospace, Consolas, monospace; letter-spacing: .05em;
+    }
+    [data-design="4"] > .face-skin .fs-title { color: #2F5F8C; font-family: ui-monospace, Consolas, monospace; }
+    [data-design="4"] > .face-skin .fs-hook { color: #1A3B5C; font-size: .84rem; }
+    [data-design="4"] > .face-skin .fs-go { color: #1E486E; border-bottom-color: #1E486E; font-family: ui-monospace, Consolas, monospace; }
+    .hinged-net-wrapper.unfolded [data-design="4"] > .face-skin .fs-hook { font-size: 1.05rem; }
+
+    /* =========================================================
+       CARD (modal) — shared chrome, then eight card designs
+       ========================================================= */
+    .modal-backdrop {
+      position: fixed; inset: 0; z-index: 100;
+      background: rgba(18,30,46,.5);
+      backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+      opacity: 0; pointer-events: none;
+      display: flex; align-items: center; justify-content: center;
+      padding: clamp(10px, 2.6vw, 30px);
+      transition: opacity .3s cubic-bezier(.2,.8,.2,1);
+    }
+    .modal-backdrop.is-open { opacity: 1; pointer-events: auto; }
+
+    .modal-window {
+      width: min(96vw, 1600px); max-width: min(96vw, 1600px); max-height: 92svh;
+      display: flex; flex-direction: column; overflow: hidden;
+      background: #FFFFFF; border: 1px solid var(--border-gold); border-radius: 18px;
+      box-shadow: 0 26px 64px rgba(18,30,46,.22);
+      transform: scale(.95) translateY(14px); opacity: 0;
+      transition: transform .4s cubic-bezier(.16,1,.3,1), opacity .3s ease;
+    }
+    .modal-backdrop.is-open .modal-window { transform: scale(1) translateY(0); opacity: 1; }
+
+    .modal-top-bar {
+      padding: 10px 16px; background: #F8F4EA; border-bottom: 1px solid var(--border-gold);
+      display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap;
+    }
+    .modal-sheet-label {
+      font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
+      font-size: .68rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+      color: #DCEBF7;
+    }
+    .modal-year-nav { display: flex; align-items: center; gap: 5px; }
+    .modal-year-btn {
+      font: inherit; cursor: pointer; border: 1px solid var(--border-light);
+      background: #FFFFFF; color: var(--text-secondary);
+      width: 34px; height: 34px; border-radius: 8px; font-weight: 800; font-size: .82rem; transition: all .18s ease;
+    }
+    .modal-year-btn:hover { border-color: var(--gold); color: var(--text-primary); }
+    .modal-year-btn[aria-pressed="true"] { background: var(--gold-deep); border-color: var(--gold-deep); color: #FFF; }
+    .modal-close-btn {
+      font: inherit; cursor: pointer; display: inline-flex; align-items: center; justify-content: center;
+      width: 34px; height: 34px; border-radius: 50%; background: #EFE8DA;
+      border: 1px solid var(--border-light); color: var(--text-secondary); transition: all .2s ease;
+    }
+    .modal-close-btn:hover { background: #E0D4BE; color: var(--text-primary); }
+
+    .modal-content-area { overflow-y: auto; flex: 1; padding: clamp(14px, 1.8vw, 24px); background: #FFFFFF; }
+
+    .modal-footer {
+      padding: 12px 20px; background: #E3ECF4; border-top: 1px solid #2F5F8C;
+      display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+    }
+    .modal-secondary-btn {
+      font: inherit; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;
+      background: #FFFFFF; color: var(--text-secondary); font-weight: 700; font-size: .82rem;
+      padding: 8px 13px; border-radius: 8px; border: 1px solid var(--border-light); transition: all .2s ease;
+    }
+    .modal-secondary-btn:hover { color: var(--text-primary); border-color: var(--gold); }
+    .modal-window[data-design="4"] .modal-secondary-btn { border-color: rgba(47,95,140,.5); color: #1E486E; }
+    .modal-window[data-design="4"] .modal-secondary-btn:hover { border-color: #1E486E; }
+    .modal-cta-btn {
+      font: inherit; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      background: var(--gold-deep); color: #FFFFFF; font-weight: 800; font-size: .85rem;
+      padding: 10px 20px; border-radius: 10px; border: none; text-decoration: none; transition: all .2s ease;
+      box-shadow: 0 4px 14px rgba(184,142,24,.35);
+    }
+    .modal-cta-btn:hover { background: #7C5C05; transform: translateY(-1px); }
+
+    /* shared card primitives */
+    .cd-photo { width: 100%; display: block; object-fit: cover; }
+    .cd-list { list-style: none; }
+
+    /* ---- Card 4 — Blueprint ---- */
+    .modal-window[data-design="4"] { border-color: #2F5F8C; border-radius: 3px; }
+    .modal-window[data-design="4"] .modal-content-area {
+      background:
+        linear-gradient(rgba(30,72,110,.07) 1px, transparent 1px) 0 0 / 100% 22px,
+        linear-gradient(90deg, rgba(30,72,110,.07) 1px, transparent 1px) 0 0 / 22px 100%,
+        #EEF3F8;
+    }
+    .modal-window[data-design="4"] .modal-top-bar { background: #1E486E; border-bottom-color: #2F5F8C; }
+    .modal-window[data-design="4"] .modal-year-btn { background: rgba(255,255,255,.08); color: #DCEBF7; border-color: rgba(220,235,247,.3); }
+    .modal-window[data-design="4"] .modal-year-btn[aria-pressed="true"] { background: #DCEBF7; color: #1E486E; border-color: #DCEBF7; }
+    .modal-window[data-design="4"] .modal-close-btn { background: rgba(255,255,255,.12); color: #DCEBF7; border-color: rgba(220,235,247,.3); }
+    .layout-concept-4 { font-family: ui-monospace, "SFMono-Regular", Consolas, monospace; color: #1A3B5C; }
+    .layout-concept-4 .c4-title { font-family: ui-sans-serif, system-ui, sans-serif; font-size: clamp(1.3rem, 2.2vw, 1.8rem); font-weight: 800; letter-spacing: -.01em; color: #12324F; margin-bottom: 3px; }
+    .layout-concept-4 .c4-sub { font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; color: #2F5F8C; margin-bottom: 18px; }
+    .layout-concept-4 .c4-grid { display: grid; grid-template-columns: 1.15fr .85fr; gap: 20px; }
+    .layout-concept-4 .c4-view { border: 1px solid #2F5F8C; background: rgba(255,255,255,.62); padding: 15px 16px; position: relative; }
+    .layout-concept-4 .c4-view + .c4-view { margin-top: 16px; }
+    .layout-concept-4 .c4-view-label {
+      position: absolute; top: -9px; left: 12px; background: #EEF3F8; padding: 0 7px;
+      font-size: .64rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: #2F5F8C;
+    }
+    .layout-concept-4 .c4-view p { font-family: ui-sans-serif, system-ui, sans-serif; font-size: .87rem; line-height: 1.65; color: #1A3B5C; }
+    .layout-concept-4 .c4-dim { display: flex; align-items: center; gap: 10px; font-size: .8rem; padding: 6px 0; }
+    .layout-concept-4 .c4-dim::before { content: ""; width: 26px; height: 2px; background: #2F5F8C; flex: none; border-radius: 1px; }
+    .layout-concept-4 .c4-dim span { font-family: ui-sans-serif, system-ui, sans-serif; color: #12324F; }
+    .math-inline { display: inline-block; max-width: 100%; overflow-x: auto; overflow-y: hidden; vertical-align: middle; white-space: nowrap; scrollbar-width: thin; }
+    .math-inline .katex { white-space: nowrap; }
+    .yfg-focus-item .math-inline { display: block; width: max-content; margin-top: 3px; }
+    .layout-concept-4 .c4-titleblock { border: 1px solid #2F5F8C; background: rgba(255,255,255,.8); margin-top: 16px; }
+    .layout-concept-4 .c4-tb-row { display: flex; border-bottom: 1px solid rgba(47,95,140,.4); }
+    .layout-concept-4 .c4-tb-row:last-child { border-bottom: none; }
+    .layout-concept-4 .c4-tb-k { width: 42%; padding: 7px 10px; font-size: .64rem; letter-spacing: .1em; text-transform: uppercase; color: #2F5F8C; border-right: 1px solid rgba(47,95,140,.4); }
+    .layout-concept-4 .c4-tb-v { padding: 7px 10px; font-size: .76rem; color: #12324F; }
+    .layout-concept-4 .c4-photo { height: 165px; border: 1px solid #2F5F8C; filter: saturate(.55) contrast(1.05); }
+    .layout-concept-4 .c4-note { border: 1px dashed #C4453B; padding: 12px 14px; margin-top: 16px; }
+    .layout-concept-4 .c4-note h4 { font-size: .64rem; letter-spacing: .12em; text-transform: uppercase; color: #C4453B; margin-bottom: 6px; }
+    .layout-concept-4 .c4-note p { font-family: ui-sans-serif, system-ui, sans-serif; font-size: .83rem; line-height: 1.55; }
+    .layout-concept-4 .c4-note p + p { margin-top: 7px; color: #1E486E; font-weight: 600; }
+
+    @media (max-width: 820px) {
+      .layout-concept-4 .c4-grid { grid-template-columns: 1fr; }
     }
 
-    footer.note {
-      grid-column: 1 / -1; z-index: 4; margin-top: 30px;
-      font-size: .74rem; color: rgba(159,176,194,.7);
+    /* ---------------- Year 7 curriculum field guide ---------------- */
+    .year-field-guide {
+      --guide-blue: #2865ae;
+      --guide-ink: #092a5a;
+      --guide-rule: rgba(40,101,174,.55);
+      --guide-grid: rgba(73,138,209,.075);
+      color: var(--guide-ink);
+      padding: clamp(18px, 2.1vw, 32px);
+      background-color: #fffdf8;
+      background-image:
+        linear-gradient(var(--guide-grid) 1px, transparent 1px),
+        linear-gradient(90deg, var(--guide-grid) 1px, transparent 1px),
+        linear-gradient(rgba(73,138,209,.11) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(73,138,209,.11) 1px, transparent 1px);
+      background-size: 18px 18px, 18px 18px, 90px 90px, 90px 90px;
+      animation: field-guide-in .36s cubic-bezier(.22,1,.36,1) both;
     }
+    .year-field-guide, .year-field-guide * { box-sizing: border-box; }
+    .yfg-layout { display: grid; grid-template-columns: minmax(0,1.3fr) minmax(0,1fr); gap: clamp(24px,3.2vw,52px); max-width: 1480px; margin: 0 auto; }
+    .yfg-main, .yfg-side { min-width: 0; }
+    .yfg-kicker, .yfg-section-title, .yfg-table dt { font-family: ui-sans-serif, system-ui, sans-serif; font-size: .68rem; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: var(--guide-blue); }
+    .yfg-kicker { margin-bottom: 10px; }
+    .yfg-title { max-width: none; margin: 0; font-family: Georgia, "Times New Roman", serif; font-size: clamp(3.25rem,3.3vw,3.625rem); line-height: .96; letter-spacing: -.03em; color: var(--guide-ink); text-wrap: balance; }
+    .yfg-stage { display: flex; gap: 10px; flex-wrap: wrap; margin: 12px 0 12px; font-family: ui-sans-serif, system-ui, sans-serif; font-size: .75rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--guide-blue); }
+    .yfg-stage span + span::before { content: "•"; margin-right: 11px; color: #6f8db4; }
+    .yfg-summary { max-width: 66ch; margin: 0; font-family: ui-sans-serif, system-ui, sans-serif; font-size: clamp(1.125rem,1.28vw,1.25rem); line-height: 1.45; color: #163b6d; }
+    .yfg-section { position: relative; margin-top: clamp(18px,2.1vw,30px); padding-top: 11px; border-top: 1px solid var(--guide-rule); }
+    .yfg-section-title { display: flex; align-items: center; gap: 12px; margin: 0 0 10px; }
+    .yfg-section-title b { min-width: 20px; }
+    .yfg-section p { max-width: 70ch; margin: 0; font-family: ui-sans-serif, system-ui, sans-serif; font-size: .9rem; line-height: 1.5; color: #123766; }
+    .yfg-focus { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); }
+    .yfg-focus-item { min-height: 70px; padding: 0 18px 11px 0; margin: 0 18px 10px 0; border-bottom: 1px dotted rgba(40,101,174,.36); }
+    .yfg-focus-item:nth-child(odd) { border-right: 1px dotted rgba(40,101,174,.36); padding-right: 18px; }
+    .yfg-focus-item:nth-child(even) { padding-left: 0; }
+    .yfg-focus-item strong { display: block; margin-bottom: 3px; font-family: ui-sans-serif, system-ui, sans-serif; font-size: .84rem; line-height: 1.25; color: var(--guide-ink); }
+    .yfg-focus-item p { font-size: .76rem; line-height: 1.38; }
+    .yfg-teaching { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); }
+    .yfg-teaching div { min-height: 54px; padding: 0 14px 0 0; margin-right: 14px; border-right: 1px dotted rgba(40,101,174,.45); font-family: ui-sans-serif, system-ui, sans-serif; font-size: .76rem; line-height: 1.4; color: #123766; }
+    .yfg-teaching div:last-child { border-right: 0; margin-right: 0; }
+    .yfg-photo { display: block; width: 100%; aspect-ratio: 2.25 / 1; object-fit: cover; object-position: 50% 42%; border: 1px solid var(--guide-rule); filter: saturate(.86) contrast(1.03); }
+    .yfg-side .yfg-section { margin-top: 20px; }
+    .yfg-table { margin: 0; border-left: 1px solid var(--guide-rule); }
+    .yfg-table div { display: grid; grid-template-columns: minmax(0,.3fr) minmax(0,.7fr); gap: 14px; padding: 8px 12px 8px 28px; }
+    .yfg-table dd { margin: 0; font-family: ui-sans-serif, system-ui, sans-serif; font-size: .84rem; line-height: 1.36; color: #123766; }
+    .yfg-callout { padding: 12px 15px 13px; border-top: 1px solid #ca9114; background: rgba(255,245,222,.72); }
+    .yfg-callout .yfg-section-title { margin-bottom: 8px; color: #a66e00; }
+    .yfg-callout ul { display: grid; gap: 5px; margin: 0; padding-left: 17px; font-family: ui-sans-serif, system-ui, sans-serif; font-size: .8rem; line-height: 1.36; color: #123766; }
+    .yfg-callout li::marker { color: #bd8107; }
+    @keyframes field-guide-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    @media (max-width: 820px) {
+      .yfg-layout { grid-template-columns: 1fr; gap: 0; }
+      .yfg-side { display: contents; }
+      .yfg-main { display: contents; }
+      .yfg-kicker { order: 1; }.yfg-title { order: 2; }.yfg-stage { order: 3; }.yfg-summary { order: 4; }
+      .yfg-photo { order: 5; margin: 24px 0 0; }
+      .yfg-year-shift { order: 6; }.yfg-core-focus { order: 7; }.yfg-at-glance { order: 8; }.yfg-common-mistakes { order: 9; }.yfg-teaching-section { order: 10; }
+      .yfg-title, .yfg-kicker, .yfg-stage, .yfg-summary { grid-column: 1; }
+      .yfg-focus { grid-template-columns: 1fr; }
+      .yfg-focus-item:nth-child(odd) { border-right: 0; }
+      .yfg-teaching { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 15px 0; }
+      .yfg-teaching div:nth-child(2) { border-right: 0; }
+    }
+    @media (max-height: 900px) and (min-width: 821px) {
+      .modal-window { max-height: 96svh; }
+      .modal-top-bar { padding-block: 8px; }
+      .modal-footer { padding-block: 9px; }
+      .year-field-guide { padding: 5px 20px; }
+      .yfg-title { font-size: clamp(3.25rem,3.25vw,3.4rem); }
+      .yfg-section { margin-top: 15px; padding-top: 9px; }
+      .yfg-focus-item { min-height: 61px; padding-bottom: 8px; margin-bottom: 7px; }
+      .yfg-focus { grid-template-columns: repeat(3,minmax(0,1fr)); }
+      .yfg-focus-item:nth-child(odd) { border-right: 0; padding-right: 12px; }
+      .yfg-focus-item:not(:nth-child(3n)) { border-right: 1px dotted rgba(40,101,174,.36); padding-right: 12px; }
+      .yfg-teaching div { min-height: 46px; }
+      .yfg-side .yfg-section { margin-top: 15px; }
+      .yfg-photo { aspect-ratio: 2.5 / 1; }
+      .yfg-table div { padding-block: 4px; }
+      .yfg-callout { padding-block: 8px; }
+    }
+    @media (max-width: 520px) {
+      .year-field-guide { padding: 22px 18px; }
+      .yfg-table div { grid-template-columns: 1fr; gap: 5px; padding: 11px 14px 11px 24px; }
+      .yfg-teaching { grid-template-columns: 1fr; }
+      .yfg-teaching div { border-right: 0; border-bottom: 1px dotted rgba(40,101,174,.45); padding-bottom: 11px; }
+    }
+    @media (prefers-reduced-motion: reduce) { .year-field-guide { animation: none; } }
 
-    /* ---- dice pips (Year 10) ---- */
-    .pips {
-      display: none;
-      position: absolute; inset: clamp(20px, 2.6vw, 30px);
-      grid-template: repeat(3, 1fr) / repeat(3, 1fr);
+    @media (prefers-reduced-motion: reduce) {
+      .face, .net-stage, .modal-window, .modal-backdrop { transition-duration: 1ms !important; }
     }
-    .cube.dice-mode .pips { display: grid; }
-    /* Year 8 uses the real cube: rotating it exposes the third dimension. */
-    .cube.depth-mode .face {
-      background: linear-gradient(160deg, rgba(20, 49, 80, .95), rgba(7, 19, 34, .9) 65%);
-      border-color: rgba(241,223,154,.58);
-      box-shadow: inset 0 0 60px rgba(0,0,0,.25), 0 0 24px rgba(201,162,39,.14);
-    }
-    .cube.depth-mode .face.fx-active { box-shadow: inset 0 0 60px rgba(0,0,0,.2), 0 0 0 2px rgba(201,162,39,.8), 0 10px 40px rgba(201,162,39,.3); }
-    .cube.depth-mode .face--front { background: linear-gradient(160deg, rgba(13, 48, 82, .96), rgba(6, 24, 42, .94)); }
-    .cube.depth-mode .face--right { background: linear-gradient(160deg, rgba(38, 80, 112, .96), rgba(12, 38, 61, .94)); }
-    .cube.depth-mode .face--top { background: linear-gradient(160deg, rgba(81, 113, 142, .94), rgba(25, 55, 82, .94)); }
-    /* Year 9 keeps the cube's edges, but lets the through-line remain legible. */
-    .cube.space-diagonal-mode .face {
-      background: rgba(11, 28, 48, .24);
-      border-color: rgba(241,223,154,.46);
-      box-shadow: inset 0 0 38px rgba(0,0,0,.12), 0 0 18px rgba(201,162,39,.08);
-    }
-    .cube.space-diagonal-mode .face:not(.fx-active) .num,
-    .cube.space-diagonal-mode .face:not(.fx-active) .label,
-    .cube.space-diagonal-mode .face:not(.fx-active) .hook,
-    .cube.space-diagonal-mode .face:not(.fx-active) .go { opacity: .08; }
-    .space-diagonal-line {
-      position: absolute; left: 4%; top: 10%; height: 3px; width: 0; z-index: 4;
-      transform: translateZ(320px) rotate(43deg);
-      transform-origin: 0 50%; pointer-events: none;
-      background: var(--gold-soft); box-shadow: 0 0 12px rgba(241,223,154,.85);
-      transition: width 900ms cubic-bezier(.22,1,.36,1);
-    }
-    .space-diagonal-line::before, .space-diagonal-line::after {
-      content: ''; position: absolute; top: 50%; width: 8px; height: 8px; border-radius: 50%;
-      background: var(--gold-soft); box-shadow: 0 0 10px rgba(241,223,154,.9); transform: translate(-50%,-50%);
-    }
-    .space-diagonal-line::after { left: 100%; }
-    .cube.space-diagonal-mode .face .num, .cube.space-diagonal-mode .face .label,
-    .cube.space-diagonal-mode .face .hook, .cube.space-diagonal-mode .face .go { opacity: 0; }
-    .diagonal-wireframe { position:absolute; inset:0; z-index:8; pointer-events:none; opacity:0; transition:opacity .35s ease; }
-    .diagonal-wireframe.in { opacity:1; }
-    .diagonal-wireframe .edge { fill:rgba(11,28,48,.06); stroke:rgba(241,223,154,.48); stroke-width:1.3; }
-    .diagonal-wireframe .face-diagonal { stroke:rgba(159,176,194,.85); stroke-width:1.5; stroke-dasharray:4 3; }
-    .diagonal-wireframe .space-diagonal { stroke:var(--gold-soft); stroke-width:2.4; filter:drop-shadow(0 0 4px rgba(241,223,154,.9)); }
-    .hinged-net { position:absolute; inset:0; z-index:8; pointer-events:none; perspective:900px; transform-style:preserve-3d; }
-    .hinged-net__panel { position:absolute; width:24%; aspect-ratio:1; transform-style:preserve-3d; transition:transform 1000ms cubic-bezier(.22,1,.36,1); }
-    .hinged-net__panel[data-net="front"] { left:38%; top:38%; }
-    .hinged-net__panel[data-net="right"] { left:100%; top:0; transform-origin:left center; transform:rotateY(-90deg); }
-    .hinged-net__panel[data-net="left"] { right:100%; top:0; transform-origin:right center; transform:rotateY(90deg); }
-    .hinged-net__panel[data-net="top"] { left:0; bottom:100%; transform-origin:center bottom; transform:rotateX(90deg); }
-    .hinged-net__panel[data-net="bottom"] { left:0; top:100%; transform-origin:center top; transform:rotateX(-90deg); }
-    .hinged-net__panel[data-net="back"] { left:100%; top:0; transform-origin:left center; transform:rotateY(-90deg); }
-    .hinged-net.in .hinged-net__panel { transform:rotateX(0) rotateY(0); }
-    .hinged-net__panel .face { position:absolute; inset:0; transform:none !important; border-radius:10px; padding:14px; }
-    .pip {
-      width: 18%; aspect-ratio: 1; border-radius: 50%;
-      background: var(--gold-soft); align-self: center; justify-self: center;
-      box-shadow: 0 0 10px rgba(241,223,154,.5);
-    }
-
-    /* ---- generic fx layer used by the face explorations ---- */
-    .fx-layer { position: absolute; inset: 0; pointer-events: none; overflow: hidden; border-radius: inherit; }
-    .fx-layer.space-diagonal-layer { overflow: visible; }
-    .fx-line {
-      position: absolute; height: 2px; background: var(--gold);
-      transform-origin: 0 50%; opacity: 0; box-shadow: 0 0 8px rgba(201,162,39,.6);
-    }
-    .fx-chip {
-      position: absolute; font-size: .68rem; font-weight: 800; letter-spacing: .04em;
-      color: #0f1a10; background: var(--gold-soft); padding: 3px 8px; border-radius: 999px;
-      opacity: 0; transform: translateY(6px) scale(.85); transition: opacity .35s ease-out, transform .35s cubic-bezier(.22,1,.36,1);
-      white-space: nowrap;
-    }
-    .fx-chip.in { opacity: 1; transform: translateY(0) scale(1); }
-    .fx-sq {
-      position: absolute; border: 2px solid var(--gold); border-radius: 6px;
-      background: rgba(201,162,39,.08);
-    }
-    .probability-sample { position: absolute; inset: 15% 12% 31%; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-    .probability-outcome { display: grid; place-items: center; border: 1px solid rgba(241,223,154,.35); border-radius: 8px; color: var(--gold-soft); font-weight: 800; font-size: .86rem; opacity: 0; transform: scale(.65); transition: opacity .22s ease-out, transform .22s cubic-bezier(.22,1,.36,1), background .22s ease; }
-    .probability-outcome.in { opacity: 1; transform: scale(1); }
-    .probability-outcome.is-result { background: var(--gold); color: #1a1206; box-shadow: 0 0 16px rgba(201,162,39,.5); }
-    .probability-caption { position: absolute; left: 50%; bottom: 8%; transform: translate(-50%, 8px); opacity: 0; color: var(--gold-soft); font-size: .68rem; font-weight: 800; white-space: nowrap; transition: opacity .25s ease, transform .25s cubic-bezier(.22,1,.36,1); }
-    .probability-caption.in { opacity: 1; transform: translate(-50%, 0); }
-    .method-chain { position: absolute; inset: 14% 11% 33%; display: grid; align-content: center; gap: 8px; }
-    .method-step { display: flex; align-items: center; gap: 8px; color: #dfe6ee; font-size: .68rem; font-weight: 800; opacity: 0; transform: translateX(-16px); transition: opacity .28s ease-out, transform .28s cubic-bezier(.22,1,.36,1); }
-    .method-step::before { content: ''; width: 16px; height: 16px; border: 1px solid var(--gold); border-radius: 50%; flex: none; }
-    .method-step.in { opacity: 1; transform: translateX(0); }
-    .method-step.in::before { background: var(--gold); box-shadow: 0 0 10px rgba(201,162,39,.45); }
-    .method-link { height: 10px; width: 1px; background: rgba(201,162,39,.55); margin-left: 7px; transform: scaleY(0); transform-origin: top; transition: transform .22s ease-out; }
-    .method-link.in { transform: scaleY(1); }
-    .marking-lens { position: absolute; inset: 17% 13% 33%; display: grid; align-content: center; gap: 10px; }
-    .mark-line { height: 10px; border-radius: 999px; background: rgba(223,230,238,.15); position: relative; overflow: hidden; }
-    .mark-line::after { content: ''; position: absolute; inset: 0; transform: translateX(-101%); background: linear-gradient(90deg, var(--gold), var(--gold-soft)); transition: transform .38s cubic-bezier(.22,1,.36,1); }
-    .mark-line.in::after { transform: translateX(0); }
-    .mark-line:nth-child(2) { width: 82%; }.mark-line:nth-child(3) { width: 92%; }.mark-line:nth-child(4) { width: 68%; }
-    .marking-caption { color: var(--gold-soft); font-size: .68rem; font-weight: 800; opacity: 0; transform: translateY(8px); transition: opacity .25s ease, transform .25s cubic-bezier(.22,1,.36,1); }
-    .marking-caption.in { opacity: 1; transform: translateY(0); }
-    .scene-narration { position: absolute; left: 9%; right: 9%; bottom: 7%; padding: 9px 10px; border: 1px solid rgba(201,162,39,.32); border-radius: 8px; background: rgba(6,17,31,.92); color: #dfe6ee; opacity: 0; transform: translateY(8px); transition: opacity .26s ease, transform .26s cubic-bezier(.22,1,.36,1); }
-    .scene-narration.in { opacity: 1; transform: translateY(0); }
-    .scene-narration strong { display: block; color: var(--gold-soft); font-size: .7rem; line-height: 1.25; }
-    .scene-narration span { display: block; margin-top: 3px; font-size: .64rem; line-height: 1.35; }
-    .net-projection { position: absolute; width: 400%; height: 300%; left: -150%; top: -100%; transform: scale(.54); transform-origin: center; opacity: 0; transition: opacity .35s ease, transform .65s cubic-bezier(.22,1,.36,1); pointer-events: none; }
-    .net-projection.in { opacity: 1; transform: scale(.6); }
-    .net-projection__tile { position: absolute; width: 25%; height: 33.333%; display: grid; place-items: center; border: 2px solid rgba(201,162,39,.62); border-radius: 10px; background: #0b1c30; color: var(--gold-soft); font: 700 2rem Georgia, serif; opacity: 0; transform: scale(.8); transition: opacity .28s ease, transform .4s cubic-bezier(.22,1,.36,1); }
-    .net-projection__tile.in { opacity: 1; transform: scale(1); }
-    .cube.net-projecting { opacity: .12; transition: opacity .3s ease; }
-    .function-board, .worked-solution { position: absolute; inset: 13% 10% 34%; color: var(--ink); font-family: Georgia, serif; }
-    .function-board__equation, .worked-solution__line { opacity: 0; transform: translateY(10px); transition: opacity .35s ease, transform .35s cubic-bezier(.22,1,.36,1); }
-    .function-board__equation.in, .worked-solution__line.in { opacity: 1; transform: translateY(0); }
-    .function-board__equation { font-size: clamp(1rem, 2.5vw, 1.45rem); margin: 0 0 11px; }
-    .function-board__result { color: var(--gold-soft); font-size: .88rem; }
-    .function-board svg { width: 100%; height: 45%; margin-top: 8px; }
-    .function-board path { fill: none; stroke: var(--gold); stroke-width: 3; stroke-dasharray: 260; stroke-dashoffset: 260; transition: stroke-dashoffset .7s cubic-bezier(.22,1,.36,1); }
-    .function-board path.in { stroke-dashoffset: 0; }
-    .worked-solution { display: grid; align-content: center; gap: 9px; font-size: clamp(1rem, 2.5vw, 1.35rem); }
-    .worked-solution__line { display: flex; justify-content: space-between; align-items: center; }
-    .worked-solution__mark { color: var(--gold-soft); font: 800 .6rem ui-sans-serif, system-ui, sans-serif; letter-spacing: .06em; }
-    .worked-solution__answer { border: 1px solid var(--gold); padding: 6px 8px; color: var(--gold-soft); }
-    .algebra-block { position: absolute; inset: 16% 18% 36%; transform-style: preserve-3d; perspective: 700px; }
-    .algebra-block__solid { position: absolute; inset: 0; transform-style: preserve-3d; transform: rotateX(-18deg) rotateY(-30deg); transition: transform 1.1s cubic-bezier(.22,1,.36,1); }
-    .algebra-block.in .algebra-block__solid { transform: rotateX(-25deg) rotateY(32deg); }
-    .algebra-block__face { position: absolute; inset: 0; display: grid; place-items: center; border: 2px solid var(--gold); background: rgba(201,162,39,.09); color: var(--gold-soft); font: 700 1.35rem Georgia, serif; }
-    .algebra-block__top { transform: rotateX(90deg) translateZ(38px); transform-origin: top; background: rgba(241,223,154,.18); }
-    .algebra-block__side { transform: rotateY(90deg) translateZ(38px); transform-origin: right; background: rgba(201,162,39,.17); }
-
-    /* ---- explore content panel ---- */
-    .explore-panel {
-      position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
-      opacity: 0; pointer-events: none; transition: opacity .45s ease; z-index: 6;
-    }
-    .explore-panel.visible { opacity: 1; pointer-events: auto; }
-    .explore-card {
-      max-width: 360px; text-align: left; background: rgba(6,17,31,.82);
-      border: 1px solid rgba(201,162,39,.35); border-radius: 22px; padding: clamp(24px, 3vw, 34px);
-      backdrop-filter: blur(6px);
-      transform: translateY(10px); opacity: 0; transition: all .5s cubic-bezier(.2,.9,.3,1);
-    }
-    @media (max-width: 900px) {
-      .explore-card { background: #06111f; }
-    }
-    .explore-panel.visible .explore-card { transform: translateY(0); opacity: 1; transition-delay: .15s; }
-    .explore-card .num { font-family: Georgia, serif; font-size: 3.4rem; color: var(--gold-soft); line-height: 1; margin: 0 0 6px; }
-    .explore-card .label { font-size: .72rem; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: var(--gold-soft); margin: 0 0 14px; }
-    .explore-card p { font-size: .95rem; line-height: 1.6; color: #dfe6ee; margin: 0 0 22px; }
-    .back-btn {
-      font: inherit; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;
-      background: transparent; border: 1px solid rgba(242,236,220,.3); color: var(--ink);
-      padding: 10px 16px; border-radius: 999px; font-size: .82rem; font-weight: 700; transition: all .2s ease;
-    }
-    .back-btn:hover { border-color: var(--gold); color: var(--gold-soft); }
-    .back-btn:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
   </style>
 </head>
 <body>
-  <section class="experience">
+  <section class="experience" aria-label="Years 7 to 12 Interactive Mathematics Cube and Net">
     <div class="copy">
       <p class="eyebrow">Years 7&ndash;12 Mathematics</p>
       <h1>Step inside <em>a year level.</em></h1>
       <p class="lede">
-        Drag the cube to look around, or jump straight to a year &mdash; each
-        face is a snapshot of what that year actually covers and where
-        students usually lose marks.
+        Drag the dice to look around it. Flick it upward, or double-click it, and it is thrown
+        &mdash; it lands, then its own six faces hinge open into a single connected net. Every
+        face is a year; open one for the teaching method, the NSW syllabus content and where
+        marks are usually lost.
       </p>
       <div class="year-picker" role="group" aria-label="Choose a year level">
-        <!-- JS fills these -->
+        <!-- Generated by JS -->
+      </div>
+      <div class="left-actions-row">
+        <button type="button" class="roll-unfold-btn" id="rollUnfoldBtn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+            <rect x="3" y="3" width="18" height="18" rx="4"></rect>
+            <circle cx="8.5" cy="8.5" r="1.5" fill="currentColor"></circle>
+            <circle cx="15.5" cy="8.5" r="1.5" fill="currentColor"></circle>
+            <circle cx="12" cy="12" r="1.5" fill="currentColor"></circle>
+            <circle cx="8.5" cy="15.5" r="1.5" fill="currentColor"></circle>
+            <circle cx="15.5" cy="15.5" r="1.5" fill="currentColor"></circle>
+          </svg>
+          <span id="rollUnfoldBtnText">Roll and unfold</span>
+        </button>
       </div>
       <div class="controls-row">
         <p class="drag-hint">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
             <path d="M8 9l-4 3 4 3M16 9l4 3-4 3M2 12h20" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
-          Drag it, then let go &mdash; it keeps drifting on its own
+          Drag to rotate &middot; flick up or double-click to throw
         </p>
         <button type="button" class="spin-toggle" id="spinToggle" aria-pressed="true">
-          <svg id="spinIcon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <svg id="spinIcon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
             <rect x="6" y="4" width="4" height="16" rx="1"></rect>
             <rect x="14" y="4" width="4" height="16" rx="1"></rect>
           </svg>
           <span id="spinToggleLabel">Pause drift</span>
         </button>
       </div>
+
       <div class="sr-live" role="status" aria-live="polite" id="srLive"></div>
     </div>
 
-    <div class="stage">
-      <div class="cube-wrap">
-        <div class="cube" id="cube">
-          <div class="face face--front" data-face="front">
-            <div class="pips" data-count="1"></div>
-            <div class="fx-layer" data-fx="front"></div>
-            <span class="num">7</span>
-            <span class="label">Year 7</span>
-            <p class="hook">Order of operations, negatives and substitution &mdash; the habits that decide every year after this one.</p>
-            <a class="go" href="#" data-explore="7">Explore Year 7 &rarr;</a>
-          </div>
-          <div class="face face--right" data-face="right">
-            <div class="pips" data-count="2"></div>
-            <div class="fx-layer" data-fx="right"></div>
-            <span class="num">8</span>
-            <span class="label">Year 8</span>
-            <p class="hook">Algebraic foundations: expanding, factorising and index laws, before Stage 5 compounds on top.</p>
-            <a class="go" href="#" data-explore="8">Explore Year 8 &rarr;</a>
-          </div>
-          <div class="face face--back" data-face="back">
-            <div class="pips" data-count="6"></div>
-            <div class="fx-layer" data-fx="back"></div>
-            <span class="num">9</span>
-            <span class="label">Year 9</span>
-            <p class="hook">Stage 5 begins &mdash; trigonometry, quadratics, and the jump in abstraction that catches most students off guard.</p>
-            <a class="go" href="#" data-explore="9">Explore Year 9 &rarr;</a>
-          </div>
-          <div class="face face--left" data-face="left">
-            <div class="pips" data-count="5"></div>
-            <div class="fx-layer" data-fx="left"></div>
-            <span class="num">10</span>
-            <span class="label">Year 10</span>
-            <p class="hook">Consolidating Stage 5 and choosing a pathway &mdash; Standard, Advanced or Extension &mdash; before it locks in.</p>
-            <a class="go" href="#" data-explore="10">Explore Year 10 &rarr;</a>
-          </div>
-          <div class="face face--top" data-face="top">
-            <div class="pips" data-count="3"></div>
-            <div class="fx-layer" data-fx="top"></div>
-            <span class="num">11</span>
-            <span class="label">Year 11</span>
-            <p class="hook">Preliminary content the HSC exam assumes you already know cold &mdash; the year most marks are quietly lost.</p>
-            <a class="go" href="#" data-explore="11">Explore Year 11 &rarr;</a>
-          </div>
-          <div class="face face--bottom" data-face="bottom">
-            <div class="pips" data-count="4"></div>
-            <div class="fx-layer" data-fx="bottom"></div>
-            <span class="num">12</span>
-            <span class="label">Year 12</span>
-            <p class="hook">Past papers, exam technique, and marking to the same standard NESA does.</p>
-            <a class="go" href="#" data-explore="12">Explore Year 12 &rarr;</a>
-          </div>
-        </div>
+    <div class="stage" id="stage">
+      <div class="stage-banner" id="stageBanner">
+        <span class="stage-banner-text">Curriculum net &middot; choose a year</span>
+        <button type="button" class="stage-banner-btn" id="stageFoldBtn">Fold back up</button>
       </div>
-      <p class="stage-caption" id="stageCaption">Sample copy &mdash; swap in real syllabus hooks per year</p>
 
-      <div class="explore-panel" id="explorePanel">
-        <div class="explore-card">
-          <p class="num" id="ecNum">7</p>
-          <p class="label" id="ecLabel">Year 7</p>
-          <p id="ecHook">&nbsp;</p>
-          <button type="button" class="back-btn" id="backBtn">&larr; Back to the cube</button>
+      <!-- One cube. One set of faces. Hinged exactly as a paper net is. -->
+      <p class="cube-hint" id="cubeHint">
+        <span>Drag to rotate</span>
+        <i aria-hidden="true"></i>
+        <b>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" aria-hidden="true">
+            <path d="M12 20V5M5 12l7-7 7 7" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Flick up or double-click to throw
+        </b>
+      </p>
+
+      <div class="net-stage" id="netStage">
+        <div class="cube-shadow" id="cubeShadow" aria-hidden="true"></div>
+        <div class="hinged-net-wrapper" id="hingedNetWrapper">
+
+          <div class="face net-panel face--front" data-face="front" data-design="4" data-year="7">
+            <div class="face-skin" role="button" tabindex="0" aria-label="Open Year 7 Mathematics">
+              <span class="fs-rule" aria-hidden="true"></span>
+              <span class="fs-corner" aria-hidden="true"></span>
+              <span class="fs-grid" aria-hidden="true"></span>
+              <div class="fs-top"><span class="fs-num">7</span><span class="fs-tag">Stage 4</span></div>
+              <div class="fs-bottom">
+                <p class="fs-title">Year 7 Mathematics</p>
+                <p class="fs-hook">Directed numbers, linear equations and algebraic notation.</p>
+                <span class="fs-go">Explore &rarr;</span>
+              </div>
+            </div>
+
+            <div class="face net-panel face--left" data-face="left" data-design="4" data-year="10">
+              <div class="face-skin" role="button" tabindex="0" aria-label="Open Year 10 Mathematics">
+                <span class="fs-rule" aria-hidden="true"></span>
+                <span class="fs-corner" aria-hidden="true"></span>
+                <span class="fs-grid" aria-hidden="true"></span>
+                <div class="fs-top"><span class="fs-num">10</span><span class="fs-tag">Stage 5.3</span></div>
+                <div class="fs-bottom">
+                  <p class="fs-title">Year 10 Mathematics</p>
+                  <p class="fs-hook">Surds, logarithms, functions and HSC pathway selection.</p>
+                  <span class="fs-go">Explore &rarr;</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="face net-panel face--top" data-face="top" data-design="4" data-year="11">
+              <div class="face-skin" role="button" tabindex="0" aria-label="Open Year 11 Mathematics">
+                <span class="fs-rule" aria-hidden="true"></span>
+                <span class="fs-corner" aria-hidden="true"></span>
+                <span class="fs-grid" aria-hidden="true"></span>
+                <div class="fs-top"><span class="fs-num">11</span><span class="fs-tag">Preliminary</span></div>
+                <div class="fs-bottom">
+                  <p class="fs-title">Year 11 Mathematics</p>
+                  <p class="fs-hook">Preliminary calculus, function sketching and identities.</p>
+                  <span class="fs-go">Explore &rarr;</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="face net-panel face--bottom" data-face="bottom" data-design="4" data-year="12">
+              <div class="face-skin" role="button" tabindex="0" aria-label="Open Year 12 Mathematics">
+                <span class="fs-rule" aria-hidden="true"></span>
+                <span class="fs-corner" aria-hidden="true"></span>
+                <span class="fs-grid" aria-hidden="true"></span>
+                <div class="fs-top"><span class="fs-num">12</span><span class="fs-tag">HSC exam</span></div>
+                <div class="fs-bottom">
+                  <p class="fs-title">Year 12 Mathematics</p>
+                  <p class="fs-hook">Integral calculus, trial past papers and NESA rubrics.</p>
+                  <span class="fs-go">Explore &rarr;</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="face net-panel face--right" data-face="right" data-design="4" data-year="8">
+              <div class="face-skin" role="button" tabindex="0" aria-label="Open Year 8 Mathematics">
+                <span class="fs-rule" aria-hidden="true"></span>
+                <span class="fs-corner" aria-hidden="true"></span>
+                <span class="fs-grid" aria-hidden="true"></span>
+                <div class="fs-top"><span class="fs-num">8</span><span class="fs-tag">Stage 4</span></div>
+                <div class="fs-bottom">
+                  <p class="fs-title">Year 8 Mathematics</p>
+                  <p class="fs-hook">Expanding, factorising, index laws and deductive proofs.</p>
+                  <span class="fs-go">Explore &rarr;</span>
+                </div>
+              </div>
+
+              <div class="face net-panel face--back" data-face="back" data-design="4" data-year="9">
+                <div class="face-skin" role="button" tabindex="0" aria-label="Open Year 9 Mathematics">
+                  <span class="fs-rule" aria-hidden="true"></span>
+                  <span class="fs-corner" aria-hidden="true"></span>
+                  <span class="fs-grid" aria-hidden="true"></span>
+                  <div class="fs-top"><span class="fs-num">9</span><span class="fs-tag">Stage 5.2/5.3</span></div>
+                  <div class="fs-bottom">
+                    <p class="fs-title">Year 9 Mathematics</p>
+                    <p class="fs-hook">Stage 5 quadratics, trigonometry and non-linear graphs.</p>
+                    <span class="fs-go">Explore &rarr;</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
         </div>
       </div>
     </div>
-
-    <footer class="note">Prototype for discussion &mdash; not wired into the live Mathematics page yet. Explore transitions are illustrative concepts, not final motion design.</footer>
   </section>
+
+  <!-- Year card -->
+  <div class="modal-backdrop" id="masterclassModal" role="dialog" aria-modal="true" aria-labelledby="modalDynamicTitle">
+    <div class="modal-window" id="modalWindow" data-design="4">
+      <div class="modal-top-bar">
+        <p class="modal-sheet-label">DA Tuition &middot; Mathematics 7&ndash;12</p>
+        <div class="modal-year-nav" id="modalYearNav" aria-label="Switch year"></div>
+        <button type="button" class="modal-close-btn" id="modalCloseBtn" aria-label="Close overview">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+            <path d="M18 6L6 18M6 6l12 12" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="modal-content-area" id="modalContentArea"></div>
+
+      <div class="modal-footer">
+        <button type="button" class="modal-secondary-btn" id="modalBackToCubeBtn">&larr; Back to the net</button>
+        <a href="/book-interview" target="_top" class="modal-cta-btn">
+          <span>Book diagnostic assessment</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+            <path d="M5 12h14M12 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </div>
 
   <script>
     const YEARS = [
-      { n: 7,  rotY: 0,    rotX: 0, face: 'front'  },
-      { n: 8,  rotY: -90,  rotX: 0, face: 'right'  },
-      { n: 9,  rotY: -180, rotX: 0, face: 'back'   },
-      { n: 10, rotY: 90,   rotX: 0, face: 'left'   },
-      { n: 11, rotY: 0,    rotX: -90, face: 'top'    },
-      { n: 12, rotY: 0,    rotX: 90,  face: 'bottom' },
+      { n: 7,  rotY: 0,    rotX: 0,   face: 'front',  design: 4, tag: 'Stage 4', desc: 'Directed numbers, linear equations & algebraic notation' },
+      { n: 8,  rotY: -90,  rotX: 0,   face: 'right',  design: 4, tag: 'Stage 4', desc: 'Expanding, factorising, index laws & deductive proofs' },
+      { n: 9,  rotY: -180, rotX: 0,   face: 'back',   design: 4, tag: 'Stage 5.2/5.3', desc: 'Stage 5 quadratics, trigonometry & non-linear graphs' },
+      { n: 10, rotY: 90,   rotX: 0,   face: 'left',   design: 4, tag: 'Stage 5.3', desc: 'Surds, logarithms, functions & HSC pathway selection' },
+      { n: 11, rotY: 0,    rotX: -90, face: 'top',    design: 4, tag: 'Preliminary', desc: 'Preliminary calculus, function sketching & identities' },
+      { n: 12, rotY: 0,    rotX: 90,  face: 'bottom', design: 4, tag: 'HSC Exam', desc: 'Integral calculus, trial past papers & NESA rubrics' },
     ];
-    const YEAR_CONTENT = {
-      7:  'Order of operations, negatives and substitution — the habits that decide every year after this one.',
-      8:  'Algebraic foundations: expanding, factorising and index laws, before Stage 5 compounds on top.',
-      9:  'Stage 5 begins — trigonometry, quadratics, and the jump in abstraction that catches most students off guard.',
-      10: 'Consolidating Stage 5 and choosing a pathway — Standard, Advanced or Extension — before it locks in.',
-      11: 'Preliminary content the HSC exam assumes you already know cold — the year most marks are quietly lost.',
-      12: 'Past papers, exam technique, and marking to the same standard NESA does.',
+
+    const YEAR_DETAILS = {
+      7: {
+        hook: 'The year mental shortcuts stop working and written method starts earning the marks.',
+        stageTag: 'Stage 4 Mathematics · Year 7',
+        heading: 'Year 7: Building Mathematical Foundations',
+        photo: '/images/programs/highschool-tutor-1on1-1.jpg',
+        photoTitle: 'Diagnostic Coaching',
+        photoCaption: 'Building structured calculation habits early to eliminate arithmetic errors.',
+        fieldGuide: {
+          summary: 'Students leave the security of mental arithmetic and begin thinking with symbols, structure and proof.',
+          yearShift: 'Year 7 is where students move from relying on number sense to using formal mathematics. We build the habits that make later mathematics possible: clear setup, correct methods and logical reasoning.',
+          focusAreas: [
+            ['Directed numbers & negative arithmetic', 'Add, subtract, multiply and divide with confidence.'],
+            ['Fractions, decimals, percentages & ratios', 'Compare, convert and apply to real situations.'],
+            ['Algebraic notation & like terms', 'Write, simplify and manipulate expressions.'],
+            ['Angle relationships & geometry proofs', 'Understand angle rules and prove simple relationships.'],
+            ['Solving linear equations', 'Solve one-step and two-step equations in context.'],
+            ['Perimeter, area & Cartesian coordinates', 'Measure, model and plot points on the grid.']
+          ],
+          atAGlance: [
+            ['Stage', 'Stage 4 Mathematics'],
+            ['Focus', 'Building algebraic thinking and mathematical accuracy'],
+            ['Learning style', 'Guided practice with feedback and problem-solving']
+          ],
+          teachingSteps: [
+            'Break complex skills into small, achievable steps.',
+            'Show how ideas connect across topics.',
+            'Build accuracy habits and self-checking strategies.',
+            'Give personal feedback so mistakes become improvements.'
+          ],
+          commonMistakes: [
+            'Order-of-operations (BODMAS) errors',
+            'Dropping negative signs during substitution (e.g. $-3^2$ vs $(-3)^2$)',
+            'Bracket substitution without distributing to every term',
+            'Rushing multi-step equations'
+          ]
+        },
+        teaching: 'The transition from primary school arithmetic to high school algebra requires students to abandon mental shortcuts and adopt formal mathematical communication. We train line-by-line working: setting out inverse operations clearly, mastering negative number arithmetic, and treating the equals sign as an exact balance.',
+        topics: [
+          'Directed Numbers & Negative Arithmetic',
+          'Algebraic Notation & Like Terms',
+          'Solving 1- & 2-Step Linear Equations',
+          'Fractions, Decimals, Percentages & Ratios',
+          'Angle Relationships & Geometry Proofs',
+          'Perimeter, Area & Cartesian Coordinates'
+        ],
+        mistake: 'Order-of-operations (BODMAS) failures and dropping negative signs during algebraic substitution (such as calculating $-3^2 = -9$ instead of $(-3)^2 = 9$).',
+        fix: 'The "Bracket Substitution Protocol" — wrapping all substituted negative values in brackets immediately to eliminate early algebra errors.'
+      },
+      8: {
+        hook: 'The year formulas stop being memorised and start being understood.',
+        stageTag: 'Stage 4 Mathematics · Year 8',
+        heading: 'Year 8: Algebraic Fluency & Geometric Reasoning',
+        photo: '/images/programs/highschool-whiteboard-teach-2.jpg',
+        photoTitle: 'Whiteboard Instruction',
+        photoCaption: 'Connecting linear equations, gradients, and geometric reasoning on the board.',
+        teaching: 'In Year 8, students move from formula memorization to understanding underlying mathematical structures. We use visual area models for the distributive law, teach systematic factorisation techniques, and require written geometric reasons for deductive proofs.',
+        topics: [
+          'Expanding Brackets & Factorising Expressions',
+          'Index Laws with Positive & Zero Indices',
+          'Linear Equations with Brackets & Fractions',
+          'Linear Relationships & Graphing — $y = mx + b$',
+          'Congruent Triangles & Deductive Geometry',
+          'Pythagoras’ Theorem & Practical Trigonometry'
+        ],
+        mistake: 'Sign errors when expanding brackets with a negative multiplier (such as $-3(x - 4) = -3x - 12$ instead of $-3x + 12$) and confusing index multiplication with power rules.',
+        fix: 'Systematic sign-checking checklists and structured index verification methods.'
+      },
+      9: {
+        hook: 'The year the jump in abstraction catches most students off guard.',
+        stageTag: 'Stage 5.2 / 5.3 Advanced · Year 9',
+        heading: 'Year 9: Stage 5 Abstraction & Trigonometry',
+        photo: '/images/programs/highschool-tutor-whiteboard.jpg',
+        photoTitle: 'Problem-Solving Sessions',
+        photoCaption: 'Deconstructing multi-step trigonometry and non-linear relationships with calculators.',
+        teaching: 'Year 9 introduces non-linear relationships, quadratics, multi-step right-angled trigonometry, and coordinate proofs. We teach students how to deconstruct complex problems into three steps: diagram transcription, formula selection, and algebraic execution.',
+        topics: [
+          'Monic Quadratic Equations & Factorisation',
+          'Right-Angled Trigonometry, Bearings & Elevation',
+          'Coordinate Geometry (Distance, Midpoint, Gradient)',
+          'Fractional & Negative Index Laws',
+          'Surface Area & Volume of Prisms & Pyramids',
+          'Two-Step Probability & Tree Diagrams'
+        ],
+        mistake: 'Incorrect bearing diagrams (measuring clockwise from North) and omitting negative roots when solving quadratic equations like $x^2 = 25$.',
+        fix: 'Standard 4-point compass sketching rules and enforcing ± roots on quadratic equations.'
+      },
+      10: {
+        hook: 'Year 10 results decide whether Advanced or Extension is open in Year 11.',
+        stageTag: 'Stage 5.3 Advanced · Year 10',
+        heading: 'Year 10: Advanced Algebra & HSC Pathway Preparation',
+        photo: '/images/programs/highschool-laptop-group-1.jpg',
+        photoTitle: 'Advanced Algebra Coaching',
+        photoCaption: 'Mastering Stage 5.3 surds, logarithms, and functions before Year 11 begins.',
+        teaching: 'Year 10 performance determines placement into Advanced or Extension 1 Mathematics for Year 11. Our curriculum covers non-monic quadratics, surds, logarithms, and functions ahead of school schedules, providing diagnostic feedback to help families make informed course choices.',
+        topics: [
+          'Surds, Rationalising Denominators & Exact Values',
+          'Non-Monic Quadratics & The Quadratic Formula',
+          'Non-Right-Angled Trig (Sine Rule, Cosine Rule, Area)',
+          'Logarithms & Exponential Relationships',
+          'Functions & Graphs (Parabolas, Hyperbolas, Circles)',
+          'Single Variable Data & Bivariate Statistics'
+        ],
+        mistake: 'Failing to reverse inequality signs when multiplying or dividing by a negative number, and illegal cancellation across algebraic fractions.',
+        fix: 'The "Factor Before Cancelling" rule and algebraic fraction checklists tested weekly.'
+      },
+      11: {
+        hook: 'Over 30% of HSC exam questions draw on Year 11 content.',
+        stageTag: 'HSC Preliminary · Year 11',
+        heading: 'Year 11: Preliminary Calculus & Function Analysis',
+        photo: '/images/programs/highschool-whiteboard-teach-1.jpg',
+        photoTitle: 'Calculus Instruction',
+        photoCaption: 'Deriving calculus rules from first principles and mastering function analysis.',
+        teaching: 'Over 30% of final HSC exam questions draw directly or indirectly on Year 11 content. We build conceptual rigor in differential calculus (derivatives, tangents, rates of change) and function analysis, training students in complete mathematical justification.',
+        topics: [
+          'Differential Calculus (First Principles & Product/Quotient/Chain Rules)',
+          'Functions, Relations & Transformations (Even/Odd, Inverses)',
+          'Trigonometric Functions, Graphs & Compound Angle Identities',
+          'Exponential & Logarithmic Calculus & Modeling',
+          'Arithmetic & Geometric Sequences & Financial Series',
+          'Combinatorics & Binomial Expansions (Extension 1)'
+        ],
+        mistake: 'Omitting the chain rule derivative on composite functions (such as $\\frac{d}{dx}(3x-1)^4 = 4(3x-1)^3$ without the inner multiplier $3$) and overlooking domain restrictions.',
+        fix: 'The "Inside-Out Differentiation Checklist" and explicit domain verification before graphing.'
+      },
+      12: {
+        hook: 'Marked against the same criteria NESA uses, so no method mark is left behind.',
+        stageTag: 'HSC Examination · Year 12',
+        heading: 'Year 12: HSC Exam Strategy & Marking Criteria',
+        photo: '/images/programs/hsc-maths.jpg',
+        photoTitle: 'Past Paper Marking Workshop',
+        photoCaption: 'Evaluating student trial solutions against official NESA marking guidelines.',
+        teaching: 'Year 12 coaching focuses on communication and exam technique under timed conditions. We analyze past HSC and trial examination papers, grading student work against official NESA criteria to ensure every method mark is secured.',
+        topics: [
+          'Integral Calculus (Anti-derivatives, Definite Integrals & Areas)',
+          'Differential Equations & Real-World Exponential Modeling',
+          'Continuous Random Variables & Normal Distribution',
+          'Financial Mathematics: Annuities, Loans & Superannuation',
+          'Vectors, 3D Geometry & Proofs (Extension 1 & 2)',
+          'Mathematical Induction, Complex Numbers & Mechanics'
+        ],
+        mistake: 'Omitting the constant of integration, $+C$, missing units on financial applications, and failing to show adequate intermediate steps for multi-mark questions.',
+        fix: 'Training students to write clear, defensible steps so that method marks are retained even if an arithmetic slip occurs.'
+      }
     };
-    const IDLE_DELAY_MS = 3000;
+
+    const IDLE_DELAY_MS = 3200;
     const SPIN_SPEED_DEG_PER_SEC = 9;
-    const TUMBLE_AMPLITUDE_DEG = 12;
-    const TUMBLE_PERIOD_MS = 5200;
+    const TUMBLE_AMPLITUDE_DEG = 11;
+    const TUMBLE_PERIOD_MS = 5400;
     const COAST_FRICTION = 0.06;
     const COAST_STOP_THRESHOLD = 2;
 
-    const cube = document.getElementById('cube');
-    const cubeWrap = document.querySelector('.cube-wrap');
+    const stage = document.getElementById('stage');
+    const experience = document.querySelector('.experience');
+    const netStage = document.getElementById('netStage');
+    const wrapper = document.getElementById('hingedNetWrapper');
+    const cubeShadow = document.getElementById('cubeShadow');
+    const cubeHint = document.getElementById('cubeHint');
     const picker = document.querySelector('.year-picker');
+    const rollUnfoldBtn = document.getElementById('rollUnfoldBtn');
+    const rollUnfoldBtnText = document.getElementById('rollUnfoldBtnText');
+    const stageBanner = document.getElementById('stageBanner');
+    const stageFoldBtn = document.getElementById('stageFoldBtn');
     const srLive = document.getElementById('srLive');
     const spinToggle = document.getElementById('spinToggle');
     const spinToggleLabel = document.getElementById('spinToggleLabel');
-    const stageCaption = document.getElementById('stageCaption');
-    const explorePanel = document.getElementById('explorePanel');
-    const ecNum = document.getElementById('ecNum');
-    const ecLabel = document.getElementById('ecLabel');
-    const ecHook = document.getElementById('ecHook');
-    const backBtn = document.getElementById('backBtn');
-    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const modal = document.getElementById('masterclassModal');
+    const modalWindow = document.getElementById('modalWindow');
+    const modalContentArea = document.getElementById('modalContentArea');
+    const modalYearNav = document.getElementById('modalYearNav');
+    const modalCloseBtn = document.getElementById('modalCloseBtn');
+    const modalBackToCubeBtn = document.getElementById('modalBackToCubeBtn');
+
+    function prefersReducedMotion() {
+      return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    }
 
     const faceEls = {};
-    document.querySelectorAll('.face').forEach(f => faceEls[f.dataset.face] = f);
+    document.querySelectorAll('.face').forEach(f => { faceEls[f.dataset.face] = f; });
 
-    let rotX = 0, rotY = 0;
-    let mode = 'still'; // 'still' | 'dragging' | 'coasting' | 'jumping' | 'free-spin'
+    let rotX = 0, rotY = 0, foldZ = 0;
+    let mode = 'cube';
     let rafId = null;
     let idleTimer = null;
     let userPausedSpin = false;
     let tumbleStart = 0;
-    let exploring = false;
+    let activeYear = 7;
+    let isNetOpen = false;
+
+    function edge() { return netStage.offsetWidth || parseFloat(getComputedStyle(netStage).width); }
+
+    /* -----------------------------------------------------------
+       buildNetStructure — wires the six real faces of the one cube.
+       There is no second copy of the net anywhere: the same six
+       elements are the cube when hinged to 90 degrees and the net
+       when hinged to 0.
+       ----------------------------------------------------------- */
+    function buildNetStructure() {
+      document.querySelectorAll('.face').forEach(face => {
+        const year = Number(face.dataset.year);
+        const skin = face.querySelector(':scope > .face-skin');
+        if (!skin) return;
+        // In the net a single click opens that year. On the cube a single click
+        // does nothing — it would fire on every stray click while rotating —
+        // so throwing is a deliberate double-click or an upward flick.
+        skin.addEventListener('click', (e) => {
+          if (dragDistance > 8 || !isNetOpen) return;
+          e.stopPropagation();
+          openMasterclass(year);
+        });
+        skin.addEventListener('keydown', (e) => {
+          if (e.key !== 'Enter' && e.key !== ' ') return;
+          e.preventDefault(); e.stopPropagation();
+          if (isNetOpen) openMasterclass(year); else rollAndUnfold();
+        });
+      });
+    }
 
     picker.innerHTML = YEARS.map(y =>
-      `<button type="button" data-year="${y.n}" aria-pressed="false">${y.n}</button>`
+      '<button type="button" data-year="' + y.n + '" aria-pressed="' + (y.n === 7) + '">' + y.n + '</button>'
     ).join('');
 
-    function render() { cube.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg)`; }
+    modalYearNav.innerHTML = YEARS.map(y =>
+      '<button type="button" class="modal-year-btn" data-modal-year="' + y.n + '" aria-pressed="' + (y.n === 7) + '">' + y.n + '</button>'
+    ).join('');
+
+    buildNetStructure();
+
+    /* ---------------- transform plumbing ---------------- */
+    // `screenSpace` is applied OUTSIDE the rotations, so a throw arcs through the
+    // viewport. Anything placed after the rotations travels in the cube's own
+    // spinning frame instead, which reads as swinging around a displaced pivot.
+    function render(screenSpace) {
+      wrapper.style.transform =
+        (screenSpace || '') +
+        ' rotateX(' + rotX.toFixed(2) + 'deg) rotateY(' + rotY.toFixed(2) + 'deg)' +
+        ' translateZ(' + foldZ.toFixed(2) + 'px)';
+    }
     function stopRAF() { if (rafId) cancelAnimationFrame(rafId); rafId = null; }
     function clearIdleTimer() { if (idleTimer) clearTimeout(idleTimer); idleTimer = null; }
-    function clearPressed() { [...picker.children].forEach(b => b.setAttribute('aria-pressed', 'false')); }
+
+    function setCubeDepth() { foldZ = edge() / 2; }
+
+    function layoutNet() {
+      const E = edge();
+      const rect = stage.getBoundingClientRect();
+      const fit = Math.min((rect.width * 0.94) / (4 * E), (rect.height * 0.86) / (3 * E), 1.1);
+      netStage.style.setProperty('--net-scale', String(Math.max(0.3, fit)));
+      netStage.style.setProperty('--net-shift', (-0.5 * E) + 'px');
+      netStage.style.setProperty('--net-drop', (0.1 * E) + 'px');
+    }
+    window.addEventListener('resize', () => { layoutNet(); if (!isNetOpen) { setCubeDepth(); render(); } });
+
+    function updateActiveFaceHighlight(n) {
+      document.querySelectorAll('.face').forEach(f => f.classList.remove('is-active-face'));
+      const found = YEARS.find(y => y.n === n);
+      if (found && faceEls[found.face]) faceEls[found.face].classList.add('is-active-face');
+      [...picker.children].forEach(b => b.setAttribute('aria-pressed', String(Number(b.dataset.year) === n)));
+    }
 
     function armIdleTimer() {
       clearIdleTimer();
-      if (reduceMotion || userPausedSpin || exploring) return;
+      if (prefersReducedMotion() || userPausedSpin || isNetOpen || modal.classList.contains('is-open')) return;
       idleTimer = setTimeout(startFreeSpin, IDLE_DELAY_MS);
     }
 
     function startFreeSpin() {
-      if (exploring) return;
+      if (isNetOpen || modal.classList.contains('is-open')) return;
       mode = 'free-spin';
-      clearPressed();
       let last = performance.now();
       tumbleStart = last;
       stopRAF();
@@ -518,7 +1055,7 @@
         velY *= decay; velX *= decay;
         render();
         if (Math.abs(velY) < COAST_STOP_THRESHOLD && Math.abs(velX) < COAST_STOP_THRESHOLD) {
-          mode = 'still'; armIdleTimer(); return;
+          mode = 'cube'; armIdleTimer(); return;
         }
         rafId = requestAnimationFrame(tick);
       }
@@ -546,89 +1083,130 @@
           rotY = startY + (goalY - startY) * eased;
           rotX = startX + (goalX - startX) * eased;
           render();
-          if (t < 1) { rafId = requestAnimationFrame(tick); }
-          else { mode = 'still'; resolve(); }
+          if (t < 1) rafId = requestAnimationFrame(tick);
+          else { mode = 'cube'; resolve(); }
         }
         rafId = requestAnimationFrame(tick);
       });
     }
 
-    function jumpToYear(n, opts = {}) {
+    function jumpToYear(n) {
       const face = YEARS.find(f => f.n === n);
       if (!face) return Promise.resolve();
-      return jumpTo(face.rotY, face.rotX, opts.duration || 650).then(() => {
-        if (opts.select !== false) {
-          [...picker.children].forEach(b => b.setAttribute('aria-pressed', String(Number(b.dataset.year) === n)));
-          srLive.textContent = `Year ${n} selected`;
-          armIdleTimer();
-        }
+      activeYear = n;
+      updateActiveFaceHighlight(n);
+      if (isNetOpen) { srLive.textContent = 'Year ' + n + ' highlighted in the net.'; return Promise.resolve(); }
+      return jumpTo(face.rotY, face.rotX, 550).then(() => {
+        srLive.textContent = 'Year ' + n + ' facing you.';
+        armIdleTimer();
       });
     }
 
     picker.addEventListener('click', (e) => {
-      if (exploring) return;
       const btn = e.target.closest('button[data-year]');
-      if (!btn) return;
-      jumpToYear(Number(btn.dataset.year));
+      if (btn) jumpToYear(Number(btn.dataset.year));
     });
 
-    // ---- drag-to-rotate ----
+    /* ---------------- drag ---------------- */
     let startPX = 0, startPY = 0, startRotY = 0, startRotX = 0;
-    let faceClickSuppressed = false;
+    let dragDistance = 0;
     let history = [];
+    // The projected faces can travel outside the cube's original 320px layout
+    // box. Capture gestures on the stable stage, not the moving cube wrapper.
+    const dragSurface = stage;
 
-    cube.addEventListener('pointerdown', (e) => {
-      if (exploring) return;
-      if (e.target.closest('a, button')) return; // let Explore links/buttons receive their own click, don't hijack via pointer capture
+    // The second mousedown of a double-click is what selects a word, so it has
+    // to be cancelled before the browser acts on it.
+    dragSurface.addEventListener('mousedown', (e) => { if (e.detail > 1) e.preventDefault(); });
+    dragSurface.addEventListener('selectstart', (e) => e.preventDefault());
+
+    dragSurface.addEventListener('pointerdown', (e) => {
+      if (isNetOpen || modal.classList.contains('is-open')) return;
       mode = 'dragging';
+      dragDistance = 0;
       clearIdleTimer();
-      clearPressed();
       stopRAF();
-      cube.classList.add('grabbing');
-      cube.setPointerCapture(e.pointerId);
+      wrapper.classList.add('grabbing');
+      try { dragSurface.setPointerCapture(e.pointerId); } catch (_) {}
       startPX = e.clientX; startPY = e.clientY;
-      faceClickSuppressed = false;
       startRotY = rotY; startRotX = rotX;
-      history = [{ t: performance.now(), rotY, rotX }];
+      history = [{ t: performance.now(), rotY, rotX, px: e.clientX, py: e.clientY }];
     });
 
-    cube.addEventListener('pointermove', (e) => {
+    dragSurface.addEventListener('pointermove', (e) => {
       if (mode !== 'dragging') return;
       const dx = e.clientX - startPX, dy = e.clientY - startPY;
-      if (Math.abs(dx) > 6 || Math.abs(dy) > 6) faceClickSuppressed = true;
+      dragDistance = Math.hypot(dx, dy);
       rotY = startRotY + dx * 0.35;
       rotX = Math.max(-130, Math.min(130, startRotX - dy * 0.35));
       render();
-      history.push({ t: performance.now(), rotY, rotX });
+      history.push({ t: performance.now(), rotY, rotX, px: e.clientX, py: e.clientY });
       if (history.length > 6) history.shift();
     });
 
-    function endDrag() {
+    const FLICK_MIN_SPEED = 520;   // px/sec upward before it counts as a throw
+    const FLICK_MIN_TRAVEL = 38;   // px, so a twitch is not a throw
+
+    function endDrag(e) {
       if (mode !== 'dragging') return;
       const now = performance.now();
       const ref = history.find(s => now - s.t <= 120) || history[0];
       const dt = Math.max(16, now - ref.t) / 1000;
-      let velY = (rotY - ref.rotY) / dt, velX = (rotX - ref.rotX) / dt;
-      cube.classList.remove('grabbing');
-      if (reduceMotion) { mode = 'still'; armIdleTimer(); return; }
-      if (Math.abs(velY) > 40 || Math.abs(velX) > 40) startCoast(velY, velX);
-      else { mode = 'still'; armIdleTimer(); }
-    }
-    cube.addEventListener('pointerup', endDrag);
-    cube.addEventListener('pointercancel', endDrag);
+      const velY = (rotY - ref.rotY) / dt, velX = (rotX - ref.rotX) / dt;
+      wrapper.classList.remove('grabbing');
+      try { dragSurface.releasePointerCapture(e.pointerId); } catch (_) {}
 
-    cube.setAttribute('tabindex', '0');
-    cube.setAttribute('role', 'group');
-    cube.setAttribute('aria-label', 'Year level cube, use arrow keys or the year buttons to rotate');
-    cube.addEventListener('keydown', (e) => {
-      if (exploring) return;
+      // Flick upward and let go. Measured as the PEAK upward speed across the
+      // last few samples, not the average to release: a real flick decelerates
+      // in the moment before the finger lifts, and averaging hides it.
+      let upSpeed = 0;
+      const trail = history.concat([{ t: now, px: e.clientX, py: e.clientY }]);
+      for (let i = 1; i < trail.length; i++) {
+        const a = trail[i - 1], b = trail[i];
+        if (a.py === undefined || b.py === undefined) continue;
+        const span = Math.max(8, b.t - a.t) / 1000;
+        upSpeed = Math.max(upSpeed, (a.py - b.py) / span);
+      }
+      const upTravel = startPY - e.clientY;
+      const sideways = Math.abs(e.clientX - startPX);
+      if (!prefersReducedMotion() && !isNetOpen &&
+          upSpeed > FLICK_MIN_SPEED && upTravel > FLICK_MIN_TRAVEL && upTravel > sideways * 0.7) {
+        mode = 'cube';
+        dragDistance = 0;
+        const power = Math.max(0.85, Math.min(1.35, 0.9 + (upSpeed - FLICK_MIN_SPEED) / 2400));
+        rollAndUnfold(power);
+        return;
+      }
+
+      if (prefersReducedMotion()) { mode = 'cube'; armIdleTimer(); return; }
+      if (Math.abs(velY) > 40 || Math.abs(velX) > 40) startCoast(velY, velX);
+      else { mode = 'cube'; armIdleTimer(); }
+      setTimeout(() => { dragDistance = 0; }, 0);
+    }
+    // Throwing is bound to the cube as a whole. It cannot hang off an individual
+    // face: pointer capture during the drag retargets click and dblclick to the
+    // capturing element, so a face-level listener would never hear it.
+    dragSurface.addEventListener('dblclick', (e) => {
+      if (isNetOpen || modal.classList.contains('is-open')) return;
+      e.preventDefault();
+      rollAndUnfold();
+    });
+
+    dragSurface.addEventListener('pointerup', endDrag);
+    dragSurface.addEventListener('pointercancel', endDrag);
+
+    wrapper.setAttribute('tabindex', '0');
+    wrapper.setAttribute('role', 'region');
+    wrapper.setAttribute('aria-label', 'Interactive year level cube. Arrow keys rotate it, Enter rolls and unfolds it.');
+    wrapper.addEventListener('keydown', (e) => {
+      if (isNetOpen) return;
       const order = [7, 8, 9, 10];
-      const currentFace = YEARS.find(f => Math.round(f.rotY) === Math.round(((rotY % 360) + 360) % 360 % 360)) || YEARS[0];
-      const idx = order.indexOf(currentFace.n) === -1 ? 0 : order.indexOf(currentFace.n);
+      const idx = order.indexOf(activeYear) === -1 ? 0 : order.indexOf(activeYear);
       if (e.key === 'ArrowRight') jumpToYear(order[(idx + 1) % order.length]);
       else if (e.key === 'ArrowLeft') jumpToYear(order[(idx - 1 + order.length) % order.length]);
       else if (e.key === 'ArrowUp') jumpToYear(11);
       else if (e.key === 'ArrowDown') jumpToYear(12);
+      else if (e.key === 'Enter' || e.key === ' ') rollAndUnfold();
       else return;
       e.preventDefault();
     });
@@ -640,428 +1218,320 @@
       spinIcon.innerHTML = paused
         ? '<path d="M6 4l14 8-14 8V4z"></path>'
         : '<rect x="6" y="4" width="4" height="16" rx="1"></rect><rect x="14" y="4" width="4" height="16" rx="1"></rect>';
-      if (paused) { clearIdleTimer(); if (mode === 'free-spin' || mode === 'coasting') mode = 'still'; }
+      if (paused) { clearIdleTimer(); if (mode === 'free-spin' || mode === 'coasting') mode = 'cube'; }
       else armIdleTimer();
     }
     spinToggle.addEventListener('click', () => setSpinToggle(!userPausedSpin));
 
-    /* ============================================================
-       EXPLORE — one bespoke transition per year, all built out of
-       the cube's own faces/edges rather than a separate animation.
-       ============================================================ */
+    /* ---------------- roll, then hinge open ---------------- */
+    async function rollAndUnfold(power) {
+      if (isNetOpen || mode === 'rolling') return;
+      const P = Math.max(0.85, Math.min(1.35, Number(power) || 1));
+      clearIdleTimer(); stopRAF(); mode = 'rolling'; setSpinToggle(true);
+      cubeHint.classList.add('out');
 
-    function wait(ms) { return new Promise(r => setTimeout(r, ms)); }
-    function ease3(t) { return 1 - Math.pow(1 - t, 3); }
-    function createSceneNarration(fx) {
-      const narration = document.createElement('div');
-      narration.className = 'scene-narration';
-      narration.innerHTML = '<strong></strong><span></span>';
-      fx.appendChild(narration);
-      return narration;
-    }
-    function showSceneNarration(narration, title, detail) {
-      narration.classList.remove('in');
-      narration.querySelector('strong').textContent = title;
-      narration.querySelector('span').textContent = detail;
-      requestAnimationFrame(() => narration.classList.add('in'));
-    }
+      // The throw reads as a throw only if it recedes. Depth carries the motion
+      // (the cube shrinks ~30% under the stage perspective), the floor track runs
+      // UP the screen as it gets further away, and it bounces before it settles.
+      const TOSS_MS    = 1250 * (0.95 + 0.05 * P);
+      const WIND_END   = 0.09;   // wind-up: drawn back toward the viewer
+      const FLIGHT_END = 0.66;   // first contact with the floor
+      const BOUNCE_END = 0.87;   // two decaying bounces
+      const Z_NEAR     =   80;   // px toward the viewer at full wind-up
+      const Z_FAR      = -640 * P;   // px away by first contact
+      const FLOOR_RUN  = -128 * P;   // px up the screen: further along the floor
+      const ARC_RISE   =   96 * P;   // px above the floor at the top of the flight
+      const SIDE_DRIFT =   30;
 
-    function setPickerDisabled(disabled) {
-      [...picker.children].forEach(b => b.disabled = disabled);
-    }
+      let landed = { x: 0, y: FLOOR_RUN - 10, z: Z_FAR - 55, rz: 0 };
 
-    function openPanel(n) {
-      ecNum.textContent = n;
-      ecLabel.textContent = `Year ${n}`;
-      ecHook.textContent = YEAR_CONTENT[n];
-      explorePanel.classList.add('visible');
-      stageCaption.style.opacity = '0';
-    }
-    function closePanel() {
-      explorePanel.classList.remove('visible');
-      stageCaption.style.opacity = '';
-    }
+      if (!prefersReducedMotion()) {
+        const startY = rotY, startX = rotX;
+        // land on whole turns so the net opens from a square-on cube
+        const endY = Math.ceil(startY / 360) * 360 + 720;
+        const endX = Math.ceil(startX / 360) * 360 + 360;
 
-    // ---- Year 7 : unfold into a net ----
-    const FACE_ORDER = ['front', 'right', 'back', 'left', 'top', 'bottom'];
-    const CUBE_ANGLES = {
-      front: { rx: 0, ry: 0 }, right: { rx: 0, ry: 90 }, back: { rx: 0, ry: 180 },
-      left: { rx: 0, ry: -90 }, top: { rx: 90, ry: 0 }, bottom: { rx: -90, ry: 0 },
-    };
-    function setFaceTransform(name, tx, ty, tz, rx, ry) {
-      faceEls[name].style.transform =
-        `translateX(${tx}px) translateY(${ty}px) rotateX(${rx}deg) rotateY(${ry}deg) translateZ(${tz}px)`;
-    }
-    function resetFaceTransforms() {
-      FACE_ORDER.forEach(name => { faceEls[name].style.transform = ''; });
-    }
-    function netOffsets(E) {
-      return {
-        front: { x: 0, y: 0 }, right: { x: E, y: 0 }, back: { x: 2 * E, y: 0 },
-        left: { x: -E, y: 0 }, top: { x: 0, y: -E }, bottom: { x: 0, y: E },
-      };
-    }
-    function foldAnimation(direction, duration) {
-      // direction: 1 = unfold (cube -> net), -1 = fold (net -> cube)
-      return new Promise(resolve => {
-        const E = cubeWrap.getBoundingClientRect().width;
-        const half = E / 2;
-        const net = netOffsets(E);
-        const stagger = { front: 0, right: 0, left: 90, top: 180, bottom: 180, back: 300 };
+        // fast and near-constant in the air, braking through the bounces
+        function spin(t) {
+          if (t <= WIND_END) return 0;
+          const u = (t - WIND_END) / (1 - WIND_END);
+          if (u < 0.7) return (u / 0.7) * 0.88;
+          const v = (u - 0.7) / 0.3;
+          return 0.88 + 0.12 * (1 - Math.pow(1 - v, 3));
+        }
+
+        await new Promise(res => {
+          const t0 = performance.now();
+          function tick(now) {
+            const t = Math.min(1, (now - t0) / TOSS_MS);
+            const e = spin(t);
+            rotY = startY + (endY - startY) * e;
+            rotX = startX + (endX - startX) * e;
+
+            let x = 0, ground = 0, height = 0, z = 0, rz = 0, sx = 1, sy = 1;
+
+            if (t < WIND_END) {
+              const u = t / WIND_END;                    // drawn back, closer and lower
+              z = Z_NEAR * u; ground = 12 * u; rz = -5 * u;
+              sx = 1 + 0.05 * u; sy = 1 - 0.06 * u;
+            } else if (t < FLIGHT_END) {
+              const u = (t - WIND_END) / (FLIGHT_END - WIND_END);
+              const out = 1 - Math.pow(1 - u, 1.6);      // covers ground early, eases in
+              z = Z_NEAR + (Z_FAR - Z_NEAR) * out;
+              ground = FLOOR_RUN * out;
+              height = ARC_RISE * Math.sin(Math.PI * u);
+              x = SIDE_DRIFT * Math.sin(Math.PI * u);
+              rz = 20 * Math.sin(Math.PI * u);
+            } else if (t < BOUNCE_END) {
+              const u = (t - FLIGHT_END) / (BOUNCE_END - FLIGHT_END);
+              height = 30 * Math.abs(Math.sin(Math.PI * u * 2)) * (1 - u);
+              ground = FLOOR_RUN - 10 * u;
+              z = Z_FAR - 55 * u;
+              rz = 6 * (1 - u) * Math.sin(Math.PI * u * 2);
+              const squash = (1 - Math.min(1, height / 30)) * (1 - u) * 0.09;
+              sy = 1 - squash; sx = 1 + squash * 0.7;    // flattens on each contact
+            } else {
+              const u = (t - BOUNCE_END) / (1 - BOUNCE_END);
+              const damp = Math.exp(-5 * u);
+              ground = FLOOR_RUN - 10; z = Z_FAR - 55;
+              sy = 1 - 0.02 * damp * Math.cos(u * Math.PI * 3);
+              sx = 1 + 0.014 * damp * Math.cos(u * Math.PI * 3);
+            }
+
+            const y = ground - height;
+            const hn = Math.min(1, height / ARC_RISE);
+            render('translate3d(' + x.toFixed(1) + 'px, ' + y.toFixed(1) + 'px, ' + z.toFixed(1) + 'px)' +
+                   ' rotateZ(' + rz.toFixed(1) + 'deg)' +
+                   ' scale3d(' + sx.toFixed(3) + ', ' + sy.toFixed(3) + ', 1)');
+            // the shadow stays on the floor, under wherever the cube is
+            cubeShadow.style.transform =
+              'translate3d(' + x.toFixed(1) + 'px, ' + ground.toFixed(1) + 'px, ' + z.toFixed(1) + 'px)' +
+              ' scale(' + (1 - 0.34 * hn).toFixed(3) + ', ' + (1 - 0.5 * hn).toFixed(3) + ')';
+            cubeShadow.style.opacity = (0.9 - 0.6 * hn).toFixed(2);
+
+            if (t < 1) requestAnimationFrame(tick); else res();
+          }
+          requestAnimationFrame(tick);
+        });
+        landed = { x: 0, y: FLOOR_RUN - 10, z: Z_FAR - 55, rz: 0 };
+      } else {
+        landed = { x: 0, y: 0, z: 0, rz: 0 };
+      }
+
+      isNetOpen = true;
+      mode = 'net';
+      experience.classList.add('net-open');
+      layoutNet();
+
+      // It landed away from the viewer, so the unfold is also the return: the
+      // hinges swing open (CSS) while the net travels back to the front of the
+      // stage and squares up (below). Rotation is already a whole number of
+      // turns, so it is held rather than re-animated.
+      wrapper.classList.add('unfolded', 'is-net');
+      netStage.classList.add('top-down-view');
+      stageBanner.classList.add('in');
+      cubeShadow.style.opacity = '0';
+
+      const openDepth = foldZ;
+      const OPEN_MS = prefersReducedMotion() ? 1 : 820;
+      await new Promise(res => {
         const t0 = performance.now();
         function tick(now) {
-          let allDone = true;
-          FACE_ORDER.forEach(name => {
-            const delay = direction === 1 ? stagger[name] : (300 - stagger[name]);
-            let t = (now - t0 - delay) / duration;
-            t = Math.max(0, Math.min(1, t));
-            if (t < 1) allDone = false;
-            const e = ease3(direction === 1 ? t : t);
-            const cs = CUBE_ANGLES[name], ns = net[name];
-            const p = direction === 1 ? e : (1 - e); // 0 = cube, 1 = net
-            const tx = ns.x * p, ty = ns.y * p;
-            const tz = half + (0 - half) * p;
-            const rx = cs.rx + (0 - cs.rx) * p, ry = cs.ry + (0 - cs.ry) * p;
-            setFaceTransform(name, tx, ty, tz, rx, ry);
-          });
-          if (!allDone) requestAnimationFrame(tick); else resolve();
+          const t = Math.min(1, (now - t0) / OPEN_MS);
+          const e = 1 - Math.pow(1 - t, 3);
+          foldZ = openDepth * (1 - e);
+          render('translate3d(' + (landed.x * (1 - e)).toFixed(1) + 'px, ' +
+                                  (landed.y * (1 - e)).toFixed(1) + 'px, ' +
+                                  (landed.z * (1 - e)).toFixed(1) + 'px)' +
+                 ' rotateZ(' + (landed.rz * (1 - e)).toFixed(1) + 'deg)');
+          if (t < 1) requestAnimationFrame(tick); else res();
         }
         requestAnimationFrame(tick);
       });
-    }
-    function projectNetAnimation() {
-      const projection = document.createElement('div');
-      projection.className = 'net-projection';
-      const positions = { front:[1,1], right:[2,1], back:[3,1], left:[0,1], top:[1,0], bottom:[1,2] };
-      FACE_ORDER.forEach((name, index) => {
-        const tile = document.createElement('div'); tile.className = 'net-projection__tile'; tile.textContent = FACE_EXPLORER_YEARS[name];
-        const [column, row] = positions[name]; tile.style.left = `${column * 25}%`; tile.style.top = `${row * 33.333}%`;
-        projection.appendChild(tile); setTimeout(() => tile.classList.add('in'), 90 * index);
-      });
-      cubeWrap.appendChild(projection); cube.classList.add('net-projecting');
-      requestAnimationFrame(() => projection.classList.add('in'));
-      return projection;
-    }
-    function buildHingedNet() {
-      const net = document.createElement('div'); net.className = 'hinged-net';
-      const panels = {};
-      FACE_ORDER.forEach(name => {
-        const panel = document.createElement('div'); panel.className = 'hinged-net__panel'; panel.dataset.net = name;
-        panel.appendChild(faceEls[name]); panels[name] = panel;
-      });
-      panels.front.append(panels.right, panels.left, panels.top, panels.bottom);
-      panels.right.appendChild(panels.back);
-      net.appendChild(panels.front);
-      cubeWrap.appendChild(net); requestAnimationFrame(() => net.classList.add('in'));
-      return net;
-    }
-    async function exploreYear7() {
-      buildHingedNet();
-      await wait(1500);
-      openPanel(7);
-    }
-    async function closeYear7() {
-      closePanel();
-      FACE_ORDER.forEach(name => cube.appendChild(faceEls[name]));
-      cubeWrap.querySelector('.hinged-net')?.remove();
-      resetFaceTransforms();
+      rotX = 0; rotY = 0; foldZ = 0;
+      render('');
+
+      rollUnfoldBtnText.textContent = 'Fold back up';
+      srLive.textContent = 'The cube unfolded into its net. Six year panels are now flat on screen.';
     }
 
-    // ---- Year 8 : the actual cube gives x² a third dimension ----
-    async function exploreYear8() {
-      const face = faceEls.right;
-      const fx = face.querySelector('[data-fx="right"]');
-      face.classList.add('fx-dim', 'fx-active');
-      cube.classList.add('depth-mode');
-      const narration = createSceneNarration(fx);
-      showSceneNarration(narration, 'x² fills one face.', 'That is area: length × width.'); await wait(1050);
-      await jumpTo(-45, -18, 1250);
-      showSceneNarration(narration, 'The cube supplies the depth.', 'Now x × x × x becomes x³ — a volume.'); await wait(1600);
-      openPanel(8);
-    }
-    function closeYear8() {
-      const face = faceEls.right;
-      const fx = face.querySelector('[data-fx="right"]');
-      fx.innerHTML = '';
-      face.classList.remove('fx-dim', 'fx-active');
-      cube.classList.remove('depth-mode');
-      closePanel();
+    function foldBackToCube() {
+      if (!isNetOpen) return;
+      wrapper.classList.remove('unfolded');
+      netStage.classList.remove('top-down-view');
+      stageBanner.classList.remove('in');
+      rollUnfoldBtnText.textContent = 'Roll and unfold';
+
+      setCubeDepth();
+      cubeShadow.style.transform = '';
+      cubeShadow.style.opacity = '';
+      wrapper.style.transition = 'transform 820ms cubic-bezier(.34, 1.06, .4, 1)';
+      render();
+
+      cubeHint.classList.remove('out');
+      setTimeout(() => {
+        wrapper.style.transition = '';
+        wrapper.classList.remove('is-net');
+        isNetOpen = false;
+        experience.classList.remove('net-open');
+        mode = 'cube';
+        updateActiveFaceHighlight(activeYear);
+        armIdleTimer();
+        srLive.textContent = 'Folded back into the cube.';
+      }, prefersReducedMotion() ? 40 : 900);
     }
 
-    // ---- Year 9 : traces its own diagonal ----
-    function buildDiagonalWireframe() {
-      const diagram = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-      diagram.setAttribute('viewBox', '0 0 100 100'); diagram.setAttribute('class', 'diagonal-wireframe');
-      diagram.innerHTML = '<path class="edge" d="M18 27 L68 16 L87 34 L37 46 Z M18 27 L18 76 L37 92 L37 46 M37 92 L87 78 L87 34 M68 16 L68 62 L87 78"/><line class="face-diagonal" x1="18" y1="27" x2="37" y2="92"/><line class="space-diagonal" x1="68" y1="16" x2="37" y2="92"/>';
-      cubeWrap.appendChild(diagram); requestAnimationFrame(() => diagram.classList.add('in')); return diagram;
-    }
-    async function exploreYear9() {
-      const face = faceEls.back;
-      const fx = face.querySelector('[data-fx="back"]');
-      face.classList.add('fx-dim', 'fx-active');
-      cube.classList.add('space-diagonal-mode');
-      fx.classList.add('space-diagonal-layer');
-      fx.style.overflow = 'visible';
-      const rect = face.getBoundingClientRect();
-      const w = rect.width, h = rect.height;
-      const len = Math.sqrt(w * w + h * h);
-      const angle = Math.atan2(h, w) * 180 / Math.PI;
-      const line = document.createElement('div');
-      line.className = 'fx-line';
-      Object.assign(line.style, {
-        left: '0px', top: '0px', width: '0px',
-        transform: `rotate(${angle}deg)`,
-      });
-      fx.appendChild(line);
-      const chipA = document.createElement('div');
-      chipA.className = 'fx-chip'; chipA.textContent = 'face diagonal — a² + b² = c²';
-      Object.assign(chipA.style, { left: '10%', top: '46%' });
-      fx.appendChild(chipA);
-      await wait(150);
-      line.style.transition = `width 700ms cubic-bezier(.2,.8,.3,1)`;
-      line.style.opacity = '1';
-      line.style.width = `${len}px`;
-      requestAnimationFrame(() => chipA.classList.add('in'));
-      await wait(1050);
-      chipA.classList.remove('in');
-      // Keep Year 9's face in view while opening the top and side planes.
-      await jumpTo(-150, -20, 900);
-      await wait(300);
-      // A single 3D segment joins two opposite vertices of the actual cube.
-      const wireframe = buildDiagonalWireframe();
-      const chipB = document.createElement('div');
-      chipB.className = 'fx-chip'; chipB.textContent = 'space diagonal — through the cube';
-      Object.assign(chipB.style, { right: '6%', bottom: '30%' });
-      fx.appendChild(chipB);
-      await wait(80);
-      requestAnimationFrame(() => chipB.classList.add('in'));
-      // Leave the complete line on screen long enough to inspect before the reading panel arrives.
-      await wait(2500);
-      openPanel(9);
-    }
-    function closeYear9() {
-      const face = faceEls.back;
-      const fx = face.querySelector('[data-fx="back"]');
-      fx.innerHTML = '';
-      fx.classList.remove('space-diagonal-layer');
-      fx.style.overflow = '';
-      cubeWrap.querySelector('.space-diagonal-line')?.remove();
-      cubeWrap.querySelector('.diagonal-wireframe')?.remove();
-      face.classList.remove('fx-dim', 'fx-active');
-      cube.classList.remove('space-diagonal-mode');
-      closePanel();
-    }
+    rollUnfoldBtn.addEventListener('click', () => { if (isNetOpen) foldBackToCube(); else rollAndUnfold(); });
+    stageFoldBtn.addEventListener('click', foldBackToCube);
 
-    // ---- Year 10 : a dice toss becomes a visible sample space ----
-    const PIP_LAYOUTS = {
-      1: [[50, 50]],
-      2: [[25, 25], [75, 75]],
-      3: [[25, 25], [50, 50], [75, 75]],
-      4: [[25, 25], [75, 25], [25, 75], [75, 75]],
-      5: [[25, 25], [75, 25], [50, 50], [25, 75], [75, 75]],
-      6: [[25, 20], [75, 20], [25, 50], [75, 50], [25, 80], [75, 80]],
-    };
-    function buildPips() {
-      document.querySelectorAll('.pips').forEach(p => {
-        p.innerHTML = '';
-        const count = Number(p.dataset.count);
-        PIP_LAYOUTS[count].forEach(([lx, ly]) => {
-          const dot = document.createElement('div');
-          dot.className = 'pip';
-          dot.style.gridColumn = 'auto'; dot.style.gridRow = 'auto';
-          dot.style.position = 'absolute';
-          dot.style.left = `${lx}%`; dot.style.top = `${ly}%`;
-          dot.style.transform = 'translate(-50%, -50%)';
-          p.appendChild(dot);
-        });
+    /* =========================================================
+       YEAR CARD — blueprint sheet
+       ========================================================= */
+    const esc = (value) => String(value).replace(/[&<>"']/g, (character) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[character]);
+    function renderMathText(value) {
+      return esc(value).replace(/\$([^$]+)\$/g, (_, tex) => {
+        const rendered = window.katex
+          ? katex.renderToString(tex, { throwOnError: false })
+          : tex;
+        return '<span class="math-inline" role="math">' + rendered + '</span>';
       });
     }
-    function buildProbabilitySample(fx, result) {
-      const sample = document.createElement('div');
-      sample.className = 'probability-sample';
-      for (let outcome = 1; outcome <= 6; outcome++) {
-        const cell = document.createElement('span');
-        cell.className = 'probability-outcome';
-        cell.textContent = outcome;
-        if (outcome === result) cell.classList.add('is-result');
-        sample.appendChild(cell);
-        setTimeout(() => cell.classList.add('in'), 70 * outcome);
-      }
-      fx.appendChild(sample);
+    const cleanFix = (d) => d.fix.replace(/^The DA Fix:\s*/, '');
+
+    function renderYearFieldGuide(d, n) {
+      const guide = d.fieldGuide || {
+        summary: d.hook,
+        yearShift: d.teaching,
+        focusAreas: d.topics.map(topic => [topic, '']),
+        atAGlance: [
+          ['Stage', d.stageTag.split('·')[0].trim()],
+          ['Focus', d.hook],
+          ['Learning style', 'Guided practice with feedback and problem-solving']
+        ],
+        teachingSteps: [
+          'Break complex skills into clear, achievable steps.',
+          'Show how ideas connect across topics and methods.',
+          'Build accuracy habits and self-checking strategies.',
+          'Give personal feedback so mistakes become improvements.'
+        ],
+        commonMistakes: [d.mistake, cleanFix(d)]
+      };
+      return '' +
+      '<article class="year-field-guide" aria-labelledby="modalDynamicTitle">' +
+        '<div class="yfg-layout">' +
+          '<main class="yfg-main">' +
+        '<h2 class="yfg-title" id="modalDynamicTitle">' + renderMathText(d.heading) + '</h2>' +
+        '<p class="yfg-stage"><span>' + renderMathText(d.stageTag.split('·')[0].trim()) + '</span></p>' +
+        '<p class="yfg-summary">' + renderMathText(guide.summary) + '</p>' +
+        '<section class="yfg-section yfg-year-shift"><h3 class="yfg-section-title"><b>01</b> Year shift</h3><p>' + renderMathText(guide.yearShift) + '</p></section>' +
+        '<section class="yfg-section yfg-core-focus"><h3 class="yfg-section-title"><b>02</b> Core focus areas</h3><div class="yfg-focus">' +
+              guide.focusAreas.map(area => '<div class="yfg-focus-item"><strong>' + renderMathText(area[0]) + '</strong><p>' + renderMathText(area[1]) + '</p></div>').join('') +
+            '</div></section>' +
+            '<section class="yfg-section yfg-teaching-section"><h3 class="yfg-section-title"><b>04</b> How DA teaches it</h3><div class="yfg-teaching">' +
+              guide.teachingSteps.map(step => '<div>' + renderMathText(step) + '</div>').join('') +
+            '</div></section>' +
+          '</main>' +
+          '<aside class="yfg-side">' +
+            '<img class="yfg-photo" src="' + d.photo + '" alt="' + d.photoCaption + '" />' +
+            '<section class="yfg-section yfg-at-glance"><h3 class="yfg-section-title"><b>03</b> At a glance</h3><dl class="yfg-table">' +
+              guide.atAGlance.map(row => '<div><dt>' + row[0] + '</dt><dd>' + row[1] + '</dd></div>').join('') +
+            '</dl></section>' +
+            '<section class="yfg-section yfg-callout yfg-common-mistakes"><h3 class="yfg-section-title"><b>05</b> Common mistakes we fix</h3><ul>' +
+              guide.commonMistakes.map(mistake => '<li>' + renderMathText(mistake) + '</li>').join('') +
+            '</ul></section>' +
+          '</aside>' +
+        '</div>' +
+      '</article>';
     }
-    async function exploreYear10() {
-      buildPips();
-      cube.classList.add('dice-mode');
-      const fx = faceEls.left.querySelector('[data-fx="left"]');
-      const narration = createSceneNarration(fx);
-      showSceneNarration(narration, 'One roll is uncertain.', 'We cannot predict the next result before the die lands.');
-      await wait(1100);
-      const startY = rotY, startX = rotX;
-      const goalY = startY + 360 + 90;
-      const goalX = startX + 180 - 10;
-      await new Promise(resolve => {
-        const t0 = performance.now(), duration = 850;
-        function tick(now) {
-          const t = Math.min(1, (now - t0) / duration);
-          const e = 1 - Math.pow(1 - t, 4);
-          rotY = startY + (goalY - startY) * e;
-          rotX = startX + (goalX - startX) * e;
-          render();
-          if (t < 1) requestAnimationFrame(tick); else resolve();
-        }
-        requestAnimationFrame(tick);
+
+    function renderYearCard(d, n) {
+      return '' +
+      '<div class="layout-concept-4">' +
+        '<h2 class="c4-title" id="modalDynamicTitle">' + d.heading + '</h2>' +
+        '<p class="c4-sub">' + d.stageTag + '</p>' +
+        '<div class="c4-grid">' +
+          '<div>' +
+            '<div class="c4-view">' +
+              '<span class="c4-view-label">Method</span>' +
+              '<p>' + d.teaching + '</p>' +
+            '</div>' +
+            '<div class="c4-view">' +
+              '<span class="c4-view-label">Content schedule</span>' +
+              d.topics.map(t => '<div class="c4-dim"><span>' + t + '</span></div>').join('') +
+            '</div>' +
+          '</div>' +
+          '<div>' +
+            '<img class="cd-photo c4-photo" src="' + d.photo + '" alt="' + d.photoTitle + '" />' +
+            '<div class="c4-titleblock">' +
+              '<div class="c4-tb-row"><div class="c4-tb-k">Sheet</div><div class="c4-tb-v">Year ' + n + ' of 12</div></div>' +
+              '<div class="c4-tb-row"><div class="c4-tb-k">Stage</div><div class="c4-tb-v">' + d.stageTag.split('·')[0].trim() + '</div></div>' +
+              '<div class="c4-tb-row"><div class="c4-tb-k">Detail</div><div class="c4-tb-v">' + d.photoTitle + '</div></div>' +
+              '<div class="c4-tb-row"><div class="c4-tb-k">Issued by</div><div class="c4-tb-v">DA Tuition</div></div>' +
+            '</div>' +
+            '<div class="c4-note">' +
+              '<h4>Tolerance note</h4>' +
+              '<p>' + d.mistake + '</p><p>' + cleanFix(d) + '</p>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+    }
+
+    function populateModalContent(yearNum) {
+      const data = YEAR_DETAILS[yearNum] || YEAR_DETAILS[7];
+      activeYear = yearNum;
+      modalContentArea.innerHTML = renderYearFieldGuide(data, yearNum);
+      modalContentArea.scrollTop = 0;
+      modalYearNav.querySelectorAll('.modal-year-btn').forEach(btn => {
+        btn.setAttribute('aria-pressed', String(Number(btn.dataset.modalYear) === yearNum));
       });
-      await jumpTo(90, 0, 220); // settle precisely back onto Year 10's face
-      faceEls.left.classList.add('fx-active');
-      faceEls.left.classList.add('fx-dim');
-      showSceneNarration(narration, 'A fair die has six possible faces.', 'Turn it slowly: every numbered face is one equally likely outcome.');
-      await jumpTo(45, -15, 1500);
-      showSceneNarration(narration, 'P(4) = 1/6', 'The rolled face is one outcome from the six faces of the same die.');
-      await wait(1500);
-      await jumpTo(90, 0, 1100);
-      cube.classList.remove('dice-mode');
-      await wait(500);
-      openPanel(10);
-    }
-    function closeYear10() {
-      const fx = faceEls.left.querySelector('[data-fx="left"]');
-      fx.innerHTML = '';
-      faceEls.left.classList.remove('fx-active', 'fx-dim');
-      cube.classList.remove('dice-mode');
-      closePanel();
+      updateActiveFaceHighlight(yearNum);
     }
 
-    // ---- Year 11 : transform an equation into a graph feature ----
-    async function exploreYear11() {
-      const face = faceEls.top;
-      const fx = face.querySelector('[data-fx="top"]');
-      face.classList.add('fx-dim', 'fx-active');
-      const board = buildFunctionTransformation(); fx.appendChild(board);
-      const narration = createSceneNarration(fx);
-      const equations = [...board.querySelectorAll('.function-board__equation')];
-      showSceneNarration(narration, 'Start with the function.', 'The equation tells us the shape we are about to investigate.'); equations[0].classList.add('in'); await wait(1100);
-      showSceneNarration(narration, 'Rewrite to reveal the structure.', 'Completing the square makes the turning point visible.'); equations[1].classList.add('in'); await wait(1200);
-      showSceneNarration(narration, 'Read the mathematics from the graph.', 'The turning point is now a fact we can see and explain.'); equations[2].classList.add('in'); board.querySelector('path').classList.add('in'); await wait(1300);
-      openPanel(11);
-    }
-    function closeYear11() {
-      const fx = faceEls.top.querySelector('[data-fx="top"]');
-      fx.innerHTML = '';
-      faceEls.top.classList.remove('fx-dim', 'fx-active');
-      closePanel();
-    }
+    // tabbed card (design 6)
+    modalContentArea.addEventListener('click', (e) => {
+      const tab = e.target.closest('.c9-tab');
+      if (!tab) return;
+      const root = tab.closest('.layout-concept-9');
+      root.querySelectorAll('.c9-tab').forEach(t => t.setAttribute('aria-selected', String(t === tab)));
+      root.querySelectorAll('[data-c9-panel]').forEach(p => { p.hidden = p.dataset.c9Panel !== tab.dataset.c9; });
+    });
 
-    function buildFunctionTransformation() {
-      const board = document.createElement('div'); board.className = 'function-board';
-      board.innerHTML = '<p class="function-board__equation">f(x) = x² − 4x + 3</p><p class="function-board__equation">f(x) = (x − 2)² − 1</p><p class="function-board__equation function-board__result">turning point: (2, −1)</p><svg viewBox="0 0 200 90" aria-hidden="true"><path d="M12 78 Q100 8 188 78"></path></svg>';
-      return board;
-    }
-    function buildWorkedSolution() {
-      const solution = document.createElement('div'); solution.className = 'worked-solution';
-      solution.innerHTML = '<div class="worked-solution__line">A = πr² <span class="worked-solution__mark">METHOD</span></div><div class="worked-solution__line">A = π(4.5)² <span class="worked-solution__mark">SUBSTITUTE</span></div><div class="worked-solution__line">A ≈ 63.6 cm² <span class="worked-solution__mark">ACCURACY</span></div><div class="worked-solution__line worked-solution__answer">Area = 63.6 cm²</div>';
-      return solution;
-    }
-    // ---- Year 12 : a worked mathematical solution earns visible marks ----
-    async function exploreYear12() {
-      const face = faceEls.bottom;
-      const fx = face.querySelector('[data-fx="bottom"]');
-      face.classList.add('fx-dim', 'fx-active');
-      const solution = buildWorkedSolution(); fx.appendChild(solution);
-      const narration = createSceneNarration(fx);
-      const stages = [
-        ['Read the command word.', 'Students first identify what the question is asking them to do.'],
-        ['Set up a defensible method.', 'A correct approach needs to be visible before calculation begins.'],
-        ['Make each decision visible.', 'Working is evidence a marker can reward, not just rough notes.'],
-        ['Conclude clearly.', 'A final answer should answer the question and complete the argument.'],
-      ];
-      const lines = [...solution.querySelectorAll('.worked-solution__line')];
-      for (let index = 0; index < stages.length; index++) {
-        const [title, detail] = stages[index];
-        showSceneNarration(narration, title, detail);
-        lines[index].classList.add('in');
-        await wait(950);
-      }
-      openPanel(12);
-    }
-    function closeYear12() {
-      const fx = faceEls.bottom.querySelector('[data-fx="bottom"]');
-      fx.innerHTML = '';
-      faceEls.bottom.classList.remove('fx-active', 'fx-dim');
-      closePanel();
-    }
-
-    const EXPLORERS = {
-      7: { open: exploreYear7, close: closeYear7 },
-      8: { open: exploreYear8, close: closeYear8 },
-      9: { open: exploreYear9, close: closeYear9 },
-      10: { open: exploreYear10, close: closeYear10 },
-      11: { open: exploreYear11, close: closeYear11 },
-      12: { open: exploreYear12, close: closeYear12 },
-    };
-    let activeYear = null;
-
-    async function explore(n) {
-      if (exploring) return;
-      exploring = true;
-      cube.classList.add('exploring');
-      setPickerDisabled(true);
+    function openMasterclass(yearNum) {
       clearIdleTimer();
-      if (mode === 'free-spin' || mode === 'coasting') mode = 'still';
-      userPausedSpin = true; // hold drift while inside an explore sequence
-      spinToggle.setAttribute('aria-pressed', 'false');
-      spinToggleLabel.textContent = 'Resume drift';
-      if (n !== 10) await jumpTo(YEARS.find(f => f.n === n).rotY, YEARS.find(f => f.n === n).rotX, reduceMotion ? 0 : 500);
-      activeYear = n;
-      if (reduceMotion) {
-        openPanel(n);
-        return;
-      }
-      await EXPLORERS[n].open();
+      stopRAF();
+      populateModalContent(yearNum);
+      modal.classList.add('is-open');
+      srLive.textContent = 'Opened Year ' + yearNum + ' details.';
+      setTimeout(() => { try { modalCloseBtn.focus(); } catch (_) {} }, 60);
     }
 
-    backBtn.addEventListener('click', async () => {
-      if (!activeYear) return;
-      const n = activeYear;
-      activeYear = null;
-      if (reduceMotion) closePanel();
-      else await EXPLORERS[n].close();
-      exploring = false;
-      cube.classList.remove('exploring');
-      setPickerDisabled(false);
-      userPausedSpin = reduceMotion; // reduced-motion users stay paused; everyone else resumes
-      if (!reduceMotion) {
-        spinToggle.setAttribute('aria-pressed', 'true');
-        spinToggleLabel.textContent = 'Pause drift';
-      }
-      [...picker.children].forEach(b => b.setAttribute('aria-pressed', String(Number(b.dataset.year) === n)));
-      armIdleTimer();
+    function closeMasterclass() {
+      modal.classList.remove('is-open');
+      srLive.textContent = 'Closed the year card.';
+      if (!isNetOpen) armIdleTimer();
+    }
+
+    modalYearNav.addEventListener('click', (e) => {
+      const btn = e.target.closest('button[data-modal-year]');
+      if (btn) populateModalContent(Number(btn.dataset.modalYear));
+    });
+    modalCloseBtn.addEventListener('click', closeMasterclass);
+    modalBackToCubeBtn.addEventListener('click', closeMasterclass);
+    modal.addEventListener('click', (e) => { if (e.target === modal) closeMasterclass(); });
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && modal.classList.contains('is-open')) closeMasterclass();
     });
 
-    document.querySelectorAll('[data-explore]').forEach(a => {
-      a.addEventListener('click', (e) => {
-        e.preventDefault();
-        explore(Number(a.dataset.explore));
-      });
+    /* ---------------- init ---------------- */
+    requestAnimationFrame(() => {
+      setCubeDepth();
+      layoutNet();
+      rotX = -14; rotY = -24;
+      render();
+      updateActiveFaceHighlight(7);
+      if (prefersReducedMotion()) setSpinToggle(true); else armIdleTimer();
     });
-
-    // A face is the invitation: clicking it runs that year's actual sequence.
-    // The small text link remains for keyboard and screen-reader discovery.
-    const FACE_EXPLORER_YEARS = {
-      front: 7, right: 8, back: 9, left: 10, top: 11, bottom: 12,
-    };
-    document.querySelectorAll('.face[data-face]').forEach(face => {
-      face.addEventListener('click', (e) => {
-        if (exploring || faceClickSuppressed || e.target.closest('a, button')) return;
-        const year = FACE_EXPLORER_YEARS[face.dataset.face];
-        if (year) explore(year);
-      });
-    });
-
-    // ---- init ----
-    rotY = 0; rotX = 0; render();
-    [...picker.children].forEach(b => b.setAttribute('aria-pressed', String(b.dataset.year === '7')));
-    if (reduceMotion) setSpinToggle(true);
-    else armIdleTimer();
   </script>
 </body>
 </html>
