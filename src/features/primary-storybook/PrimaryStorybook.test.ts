@@ -83,6 +83,7 @@ test('the Primary proof section previews learning and progress without fabricate
   assert.match(source, /showModal\(\)/);
   assert.match(source, /onCancel/);
   assert.match(source, /event\.key !== 'Tab'/);
+  assert.match(source, /event\.key === 'Escape'/);
   assert.match(source, /<iframe/);
   assert.match(source, /aria-modal="true"/);
 });
