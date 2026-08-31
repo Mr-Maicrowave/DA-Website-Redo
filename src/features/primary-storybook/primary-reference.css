@@ -3791,7 +3791,7 @@
   .primary-reference-stage-curriculum--growth .primary-reference-stage-curriculum__list li { grid-template-rows: auto 7rem; border-top: 1px solid rgba(7,27,53,.16); border-left: 0; padding: 1.25rem 0; }
 }
 
-/* Scale complete desktop compositions together without forcing them into a viewport. */
+/* Scale desktop compositions together; Years 1–2 intentionally occupies one complete viewport. */
 @media (min-width: 1100px) and (min-height: 700px) {
   .primary-reference-story {
     --primary-fold-space: clamp(.85rem, 2.2svh, 2rem);
@@ -3819,6 +3819,77 @@
   .primary-reference-mastery,
   .primary-reference-teaching,
   .primary-program-bag { padding-block: clamp(1.5rem, 3.4svh, 3rem); }
+
+  .primary-reference-foundation {
+    --foundation-scale-unit: min(1vw, 1.6svh);
+    width: min(calc(var(--foundation-scale-unit) * 96), calc(100% - var(--foundation-scale-unit) * 2));
+    height: 100svh;
+    min-height: 100svh;
+    grid-template-columns: calc(var(--foundation-scale-unit) * 18) calc(var(--foundation-scale-unit) * 32) minmax(0, 1fr);
+    gap: calc(var(--foundation-scale-unit) * 2.2);
+    margin: 0 auto;
+    border-radius: calc(var(--foundation-scale-unit) * .75);
+    padding: calc(var(--foundation-scale-unit) * 4.2) calc(var(--foundation-scale-unit) * 3.2);
+  }
+
+  .primary-reference-foundation__doodles {
+    top: 12%;
+    bottom: 10%;
+    left: 16%;
+    width: calc(var(--foundation-scale-unit) * 17);
+  }
+
+  .primary-reference-foundation .primary-reference-chapter {
+    gap: calc(var(--foundation-scale-unit) * .8);
+    margin-bottom: calc(var(--foundation-scale-unit) * 1.55);
+  }
+
+  .primary-reference-foundation .primary-reference-chapter span {
+    width: calc(var(--foundation-scale-unit) * 2.7);
+    font-size: calc(var(--foundation-scale-unit) * .82);
+  }
+
+  .primary-reference-foundation .primary-reference-chapter p {
+    font-size: calc(var(--foundation-scale-unit) * .9);
+  }
+
+  .primary-reference-foundation__intro h2 {
+    max-width: 11ch;
+    font-size: calc(var(--foundation-scale-unit) * 4);
+  }
+
+  .primary-reference-foundation__photo {
+    width: calc(var(--foundation-scale-unit) * 32);
+    justify-self: center;
+  }
+
+  .primary-reference-foundation__outcomes {
+    gap: calc(var(--foundation-scale-unit) * 3.6) calc(var(--foundation-scale-unit) * 2.4);
+  }
+
+  .primary-reference-foundation__outcomes li {
+    grid-template-columns: calc(var(--foundation-scale-unit) * 3.35) 1fr;
+    gap: calc(var(--foundation-scale-unit) * .85);
+  }
+
+  .primary-reference-foundation__outcome-icon {
+    width: calc(var(--foundation-scale-unit) * 3.35);
+    height: calc(var(--foundation-scale-unit) * 3.35);
+  }
+
+  .primary-reference-foundation__outcomes b {
+    margin-bottom: calc(var(--foundation-scale-unit) * .24);
+    font-size: calc(var(--foundation-scale-unit) * .62);
+  }
+
+  .primary-reference-foundation__outcomes h3 {
+    font-size: calc(var(--foundation-scale-unit) * 1.3);
+  }
+
+  .primary-reference-foundation__outcomes p {
+    margin-top: calc(var(--foundation-scale-unit) * .45);
+    font-size: calc(var(--foundation-scale-unit) * .8);
+  }
 
   .primary-reference-curriculum__intro h2,
   .primary-reference-growth__intro h2,

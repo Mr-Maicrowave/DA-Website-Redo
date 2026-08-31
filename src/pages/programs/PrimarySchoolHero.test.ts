@@ -19,6 +19,7 @@ test('Primary School opens with the supplied full-viewport video and an accessib
   assert.match(source, /Building confidence, curiosity and strong foundations from Years 1–6\./);
   assert.match(source, /Explore their journey/);
   assert.match(source, /href="#primary-page-content"/);
+  assert.match(source, /className="ps-hero__title-rule"/);
   assert.match(source, /ps-hero__clouds/);
   assert.match(source, /ps-hero__sunlight/);
   assert.match(source, /ps-hero__wind--foreground/);
@@ -29,10 +30,10 @@ test('Primary School opens with the supplied full-viewport video and an accessib
   assert.match(source, /min-height:100svh/);
   assert.match(source, /\.ps-hero__video\{[^}]*width:100%;height:100%;object-fit:cover/);
   assert.match(source, /@media\(prefers-reduced-motion:reduce\)[\s\S]*\.ps-hero__video\{display:none\}/);
-  assert.match(source, /\.ps-hero__content\{[^}]*left:50%/);
-  assert.match(source, /\.ps-hero__content\{[^}]*text-align:center/);
-  assert.match(source, /\.ps-hero__content\{[^}]*transform:translateX\(-50%\)/);
-  assert.match(source, /@media\(max-width:600px\)[\s\S]*\.ps-hero__content\{[^}]*left:50%;[^}]*transform:translateX\(-50%\)/);
+  assert.match(source, /\.ps-hero__content\{[^}]*left:clamp\([^}]*text-align:left/);
+  assert.match(source, /\.ps-hero h1\{[^}]*max-width:none/);
+  assert.match(source, /\.ps-hero__title-rule\{[^}]*background:#b47d20/);
+  assert.match(source, /@media\(max-width:600px\)[\s\S]*\.ps-hero__content\{[^}]*left:50%;[^}]*text-align:center;[^}]*transform:translateX\(-50%\)/);
   assert.doesNotMatch(source, /PrimaryWorldTransition|PrimaryLandscapeJourney/);
   assert.doesNotMatch(source, /petal|particle/i);
 });

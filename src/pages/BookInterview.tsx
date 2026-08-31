@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { CheckCircle, Clock3, HandHeart, Home, Phone, ShieldCheck, Star, Users } from 'lucide-react';
+import { CheckCircle, Clock3, GraduationCap, HandHeart, Home, Phone, ShieldCheck, Smile, Star, Users } from 'lucide-react';
 import { motion } from 'framer-motion';
 import SEO from '@/components/SEO';
 import NavigationNew from '@/components/NavigationNew';
@@ -51,7 +51,7 @@ const BookInterview = () => {
           <p className="interview-handwritten">A thoughtful conversation today<br /><span>can shape their tomorrow. ♡</span></p>
           <p className="interview-intro">Tell us a little about your child and we’ll recommend the most suitable subject, level and pathway.</p>
         </motion.div>
-        <motion.img className="interviewers" src="/images/interview/interviewers.png" alt="Two DA Tuition interviewers ready to meet your family" initial={{ opacity: 0, x: 25, scale: .98 }} animate={{ opacity: 1, x: 0, scale: 1 }} transition={{ duration: .9, ease: 'easeOut' }} />
+        <motion.img className="interviewers" src="/images/interview/hero-da-team.jpg" alt="Two DA Tuition interviewers ready to meet your family" initial={{ opacity: 0, x: 25, scale: .98 }} animate={{ opacity: 1, x: 0, scale: 1 }} transition={{ duration: .9, ease: 'easeOut' }} />
       </div>
     </section>
     <motion.section className="interview-benefits" aria-label="Why families choose DA Tuition" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: .2, duration: .6 }}>
@@ -69,6 +69,8 @@ const BookInterview = () => {
       </div>
     </div>
     {!completedData ? <ConsultationContent /> : null}
+    {!completedData ? <section className="interview-trust-strip" aria-label="DA Tuition experience"><div><Smile aria-hidden="true" /><strong>20+</strong><span>Years of experience</span></div><div><Users aria-hidden="true" /><strong>1,500+</strong><span>Students helped</span></div><div><GraduationCap aria-hidden="true" /><strong>Small groups</strong><span>of 3–5</span></div></section> : null}
+    {!completedData ? <p className="interview-closing">Every conversation is the start of something great. <span>♡</span></p> : null}
     <FooterNew />
   </div>;
 };

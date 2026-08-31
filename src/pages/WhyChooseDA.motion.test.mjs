@@ -93,6 +93,9 @@ test('counts proof metrics once and reveals the reusable personalisation film', 
 });
 
 test('choreographs the remaining continuation chapters without legacy teaching motion', () => {
+  assert.match(motion, /why-da-transform/);
+  assert.match(motion, /transform-panel/);
+  assert.match(motion, /transform-finale-handoff/);
   assert.doesNotMatch(page, /data-motion="teach-step"|data-motion="lesson-board"/);
   assert.match(careSection, /data-motion="care-film"/);
   assert.doesNotMatch(page, /data-motion="connection-panel"/);
@@ -101,12 +104,8 @@ test('choreographs the remaining continuation chapters without legacy teaching m
   assert.doesNotMatch(motion, /connection-panel|why-da-connected__dashboard/);
 });
 
-test('reveals growth milestones, results, testimonials, and the closing invitation', () => {
-  assert.match(page, /data-motion="growth-milestone"/);
-  assert.match(page, /data-motion="growth-quality"/);
-  assert.match(page, /data-motion="result-card"/);
-  assert.match(page, /data-motion="testimonial"/);
+test('removes the legacy growth and achievement motion while preserving the closing invitation', () => {
+  assert.doesNotMatch(page, /data-motion="growth-milestone"|data-motion="growth-quality"|data-motion="result-card"|data-motion="testimonial"/);
   assert.match(page, /data-motion="closing-cta"/);
-  assert.match(motion, /why-da-grow/);
-  assert.match(motion, /why-da-achieve/);
+  assert.doesNotMatch(motion, /why-da-grow|why-da-achieve|growth-milestone|growth-quality|result-card|testimonial/);
 });

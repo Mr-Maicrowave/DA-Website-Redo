@@ -8,6 +8,7 @@ import HowWeTeach from './HowWeTeach';
 import MasteryCurriculum from './MasteryCurriculum';
 import MasterySection from './MasterySection';
 import PrimaryJourneyOutro from './PrimaryJourneyOutro';
+import PrimarySampleResources from './PrimarySampleResources';
 import ProgramBag from './ProgramBag';
 import SeedTreeChallenge from './SeedTreeChallenge';
 import SupportJourney from './SupportJourney';
@@ -38,6 +39,7 @@ const PrimaryReferenceStory = () => {
       <HowWeTeach />
       <ProgramBag />
       <FamilyReasons />
+      <PrimarySampleResources />
       <PrimaryJourneyOutro />
     </main>
   );

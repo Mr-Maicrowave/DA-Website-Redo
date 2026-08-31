@@ -34,7 +34,6 @@ const MasteryCurriculum = () => {
           </li>
         ))}
       </ul>
-      <img className="primary-reference-stage-curriculum__meadow" src={`${MASTERY_ASSET_ROOT}/mastery-meadow-strip.png`} alt="" loading="lazy" decoding="async" />
       <img className="primary-reference-stage-curriculum__signpost" src={`${MASTERY_ASSET_ROOT}/mastery-signpost.png`} alt="" loading="lazy" decoding="async" />
     </section>
   );

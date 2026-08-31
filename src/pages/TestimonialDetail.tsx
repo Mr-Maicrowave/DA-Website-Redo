@@ -3,9 +3,8 @@ import FooterNew from '@/components/FooterNew';
 import { Link, useParams } from 'react-router-dom';
 import SEO from '@/components/SEO';
 import { testimonials } from '@/data/testimonials';
-import PrincipalMessageLayout from '@/components/testimonials/PrincipalMessageLayout';
-import ParentLetterLayout from '@/components/testimonials/ParentLetterLayout';
-import StudentReviewLayout from '@/components/testimonials/StudentReviewLayout';
+import TestimonialStoryView from '@/components/testimonials/transformation/TestimonialStoryView';
+import { useEffect } from 'react';
 
 const TestimonialDetail = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -28,8 +27,12 @@ const TestimonialDetail = () => {
     );
   }
 
-  const prev = index > 0 ? testimonials[index - 1] : null;
-  const next = index < testimonials.length - 1 ? testimonials[index + 1] : null;
+  const prev = testimonials[(index - 1 + testimonials.length) % testimonials.length];
+  const next = testimonials[(index + 1) % testimonials.length];
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'auto' });
+  }, [slug]);
 
   return (
     <>
@@ -41,8 +44,8 @@ const TestimonialDetail = () => {
       />
       <NavigationNew />
 
-      <div className="mt-[120px]">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="mt-[96px]">
+        <div className="mx-auto px-3 sm:px-6 py-6">
           <Link
             to="/testimonials"
             className="inline-flex items-center text-sm text-gray-500 hover:text-gray-800 transition-colors mb-8"
@@ -50,42 +53,7 @@ const TestimonialDetail = () => {
             ← Back to Testimonials
           </Link>
 
-          {testimonial.type === 'principal-message' && (
-            <PrincipalMessageLayout testimonial={testimonial} />
-          )}
-          {testimonial.type === 'parent-letter' && (
-            <ParentLetterLayout testimonial={testimonial} />
-          )}
-          {testimonial.type === 'student-review' && (
-            <StudentReviewLayout testimonial={testimonial} />
-          )}
-
-          {(prev || next) && (
-            <nav className="mt-12 pt-8 border-t border-gray-200 flex flex-col sm:flex-row justify-between gap-4">
-              {prev ? (
-                <Link
-                  to={`/testimonials/${prev.slug}`}
-                  className="text-sm text-gray-500 hover:text-gray-900 transition-colors max-w-xs"
-                >
-                  <span className="block text-xs uppercase tracking-wide text-gray-400 mb-1">Previous</span>
-                  ← {prev.title}
-                </Link>
-              ) : (
-                <div />
-              )}
-              {next ? (
-                <Link
-                  to={`/testimonials/${next.slug}`}
-                  className="text-sm text-gray-500 hover:text-gray-900 transition-colors text-right max-w-xs"
-                >
-                  <span className="block text-xs uppercase tracking-wide text-gray-400 mb-1">Next</span>
-                  {next.title} →
-                </Link>
-              ) : (
-                <div />
-              )}
-            </nav>
-          )}
+          <TestimonialStoryView testimonial={testimonial} index={index} total={testimonials.length} previous={prev} next={next} />
         </div>
       </div>
 

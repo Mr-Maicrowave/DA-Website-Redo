@@ -16,8 +16,6 @@ const HowWeTeach = () => (
     aria-labelledby="pathway-title"
     data-primary-reference-section="pathway"
   >
-    <div className="primary-reference-teaching__plane primary-reference-teaching__decor" style={{ backgroundImage: `url(${TEACHING_DECOR_ATLAS})` }} aria-hidden="true" />
-    <div className="primary-reference-teaching__school primary-reference-teaching__decor" style={{ backgroundImage: `url(${TEACHING_DECOR_ATLAS})` }} aria-hidden="true" />
     <header className="primary-reference-teaching__header">
       <p>One clear step at a time</p>
       <h2 id="pathway-title">How we teach</h2>

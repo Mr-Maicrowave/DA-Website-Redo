@@ -19,6 +19,7 @@ const aquariumEngineUrl = new URL('./useAquariumEngine.ts', import.meta.url);
 const aquariumFactCardUrl = new URL('./AquariumFactCard.tsx', import.meta.url);
 const programBagUrl = new URL('./ProgramBag.tsx', import.meta.url);
 const familyReasonsUrl = new URL('./FamilyReasons.tsx', import.meta.url);
+const sampleResourcesUrl = new URL('./PrimarySampleResources.tsx', import.meta.url);
 const outroUrl = new URL('./PrimaryJourneyOutro.tsx', import.meta.url);
 const referenceMotionUrl = new URL('./usePrimaryReferenceMotion.ts', import.meta.url);
 const storyConnectorsUrl = new URL('./StoryConnectors.tsx', import.meta.url);
@@ -41,6 +42,7 @@ test('Primary reference story keeps all year-group chapters together before enri
     '<HowWeTeach',
     '<ProgramBag',
     '<FamilyReasons',
+    '<PrimarySampleResources',
     '<PrimaryJourneyOutro',
   ];
 
@@ -54,6 +56,35 @@ test('Primary reference story keeps all year-group chapters together before enri
   assert.match(pageSource, /href="#primary-page-content"/);
   assert.doesNotMatch(pageSource, /Primary(?:Aquarium|JourneyLayer|JourneyOutro)/);
   assert.match(readFileSync(referenceStoryDataUrl, 'utf8'), /as const satisfies/);
+});
+
+test('the Primary proof section previews learning and progress without fabricated document content', () => {
+  assert.equal(existsSync(sampleResourcesUrl), true, 'PrimarySampleResources must exist');
+
+  const story = readFileSync(referenceStoryUrl, 'utf8');
+  const source = readFileSync(sampleResourcesUrl, 'utf8');
+
+  assert.match(story, /<FamilyReasons\s*\/>\s*<PrimarySampleResources\s*\/>\s*<PrimaryJourneyOutro\s*\/>/);
+  [
+    'A CLOSER LOOK',
+    'Don’t just take our word for it.',
+    'See what learning looks like.',
+    'Their learning.',
+    'Their progress.',
+    'SAMPLE STUDENT WORK',
+    'SAMPLE PARENT REPORT',
+    'PDF preview coming soon',
+    'Learning you can see.',
+    'Progress you can follow.',
+  ].forEach((copy) => assert.ok(source.includes(copy), `sample resources must include ${copy}`));
+
+  assert.match(source, /studentBookletPdf/);
+  assert.match(source, /parentReportPdf/);
+  assert.match(source, /showModal\(\)/);
+  assert.match(source, /onCancel/);
+  assert.match(source, /event\.key !== 'Tab'/);
+  assert.match(source, /<iframe/);
+  assert.match(source, /aria-modal="true"/);
 });
 
 test('story slots expose approved copy as semantic HTML rather than implementation artifacts', () => {
@@ -199,24 +230,14 @@ test('the support journey follows the seed challenge with both reference-matched
   assert.match(source, /aria-hidden="true"/);
 });
 
-test('How We Teach preserves square decor atlas cells in its compact reference header', () => {
+test('How We Teach removes the large school and paper-plane header decorations', () => {
   const styles = readFileSync(primaryReferenceCssUrl, 'utf8');
   const referenceMatchedStyles = styles.slice(styles.indexOf('/* Reference-matched How We Teach chapter'));
+  const source = readFileSync(howWeTeachUrl, 'utf8');
 
-  assert.match(
-    referenceMatchedStyles,
-    /\.primary-reference-teaching__plane\s*\{[\s\S]*?aspect-ratio:\s*1\s*\/\s*1/,
-    'the paper-plane atlas cell must not be stretched',
-  );
-  assert.match(
-    referenceMatchedStyles,
-    /\.primary-reference-teaching__school\s*\{[\s\S]*?aspect-ratio:\s*1\s*\/\s*1/,
-    'the school atlas cell must not be stretched',
-  );
+  assert.doesNotMatch(source, /primary-reference-teaching__(?:plane|school)/);
   assert.match(referenceMatchedStyles, /\.primary-reference-teaching__header\s*\{[\s\S]*?margin:\s*0 auto clamp\(1\.75rem,\s*3vw,\s*2\.75rem\)/);
   assert.match(referenceMatchedStyles, /\.primary-reference-teaching__header h2\s*\{[\s\S]*?font-size:\s*clamp\(3rem,\s*5vw,\s*5rem\)/);
-  assert.match(referenceMatchedStyles, /@media \(max-width:\s*560px\)[\s\S]*?\.primary-reference-teaching__plane\s*\{[^}]*width:\s*7rem[^}]*opacity:\s*\.18/);
-  assert.match(referenceMatchedStyles, /@media \(max-width:\s*560px\)[\s\S]*?\.primary-reference-teaching__school\s*\{[^}]*width:\s*8rem[^}]*opacity:\s*\.18/);
 });
 
 test('the post-hero story exposes static connector markers and three teaching segments', () => {
@@ -268,10 +289,9 @@ test('Years 3–4 renders the complete growth story from typed outcomes and an a
   assert.match(growth, /primary-reference-growth__small-steps/);
   assert.match(growth, /Small steps today/);
   assert.match(curriculum, /years-3-4-curriculum-atlas\.png/);
-  assert.match(curriculum, /years-3-4-garden-strip\.png/);
+  assert.doesNotMatch(curriculum, /years-3-4-garden-strip\.png|primary-reference-stage-curriculum__garden/);
   assert.match(curriculum, /primary-reference-stage-curriculum__art/);
   assert.match(styles, /primary-reference-stage-curriculum--growth[^}]*isolation:\s*isolate/);
-  assert.match(styles, /primary-reference-stage-curriculum__garden[^}]*z-index:\s*3/);
   assert.doesNotMatch(growth, /primary-reference-growth__flight/);
   [
     'Growing skills. Building independence.',
@@ -311,18 +331,21 @@ test('Years 5–6 matches the illustrated reference with separate transparent ar
     'mastery-brain-icon.png',
     'mastery-collaboration-icon.png',
     'mastery-graduation-icon.png',
-    'mastery-photo-decor.png',
   ].forEach((asset) => assert.ok(mastery.includes(asset), `mastery chapter must use ${asset}`));
+  assert.doesNotMatch(mastery, /mastery-photo-decor\.png|primary-reference-mastery__plane/);
+  assert.doesNotMatch(
+    mastery,
+    /mastery-photo-note\.png|primary-reference-mastery__note|A capable classroom|looking ahead together/,
+  );
   [
     'mastery-writing-books.png',
     'mastery-reasoning-sheet.png',
     'mastery-year-seven-books.png',
-    'mastery-meadow-strip.png',
     'mastery-signpost.png',
   ].forEach((asset) => assert.ok(curriculum.includes(asset), `mastery curriculum must use ${asset}`));
   assert.match(mastery, /primary-reference-mastery__outcome-icon/);
   assert.match(curriculum, /primary-reference-stage-curriculum__art/);
-  assert.match(curriculum, /primary-reference-stage-curriculum__meadow/);
+  assert.doesNotMatch(curriculum, /mastery-meadow-strip\.png|primary-reference-stage-curriculum__meadow/);
   assert.match(curriculum, /curriculum\.items\.map/);
   [
     'Ready for what comes next.',
@@ -528,7 +551,7 @@ test('reference motion stays root-scoped, clears reduced-motion transforms, and 
   assert.match(styles, /\.primary-reference-teaching li:nth-child\(1\) figure\s*\{\s*transform:\s*rotate\(-1\.4deg\)/);
 });
 
-test('major Primary chapters scale their composition proportionally on desktop without forced viewport heights', () => {
+test('Years 1–2 fills a desktop viewport with one shared proportional scale while other chapters remain naturally sized', () => {
   const styles = readFileSync(new URL('./primary-reference.css', import.meta.url), 'utf8');
   const challengeStyles = readFileSync(new URL('./seed-tree-challenge.css', import.meta.url), 'utf8');
 
@@ -536,6 +559,11 @@ test('major Primary chapters scale their composition proportionally on desktop w
   assert.match(styles, /--primary-fold-space:\s*clamp\([^;]*svh/);
   assert.match(styles, /--primary-fold-title:\s*clamp\([^;]*min\([^;]*vw[^;]*svh/);
   assert.match(styles, /height:\s*auto/);
+  assert.match(styles, /--foundation-scale-unit:\s*min\(1vw,\s*1\.6svh\)/);
+  assert.match(styles, /\.primary-reference-foundation\s*\{[^}]*height:\s*100svh/);
+  assert.match(styles, /\.primary-reference-foundation__intro h2\s*\{[^}]*var\(--foundation-scale-unit\)/);
+  assert.match(styles, /\.primary-reference-foundation__photo\s*\{[^}]*var\(--foundation-scale-unit\)/);
+  assert.match(styles, /\.primary-reference-foundation__outcomes\s*\{[^}]*var\(--foundation-scale-unit\)/);
   assert.match(styles, /font-size:\s*var\(--primary-fold-title\)/);
   assert.match(styles, /max-height:\s*clamp\([^;]*svh/);
   assert.match(challengeStyles, /@media \(min-width:\s*1100px\) and \(min-height:\s*700px\)/);
