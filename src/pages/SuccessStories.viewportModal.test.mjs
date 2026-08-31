@@ -18,6 +18,17 @@ test('keeps the desktop card unscaled and uses internal scrolling only on mobile
   assert.match(styles, /@media \(max-width:\s*600px\)[\s\S]*\.ss-story-sheet__page\s*\{[^}]*overflow-y:\s*auto;/s);
 });
 
+test('stacks the story and achievement panel into one mobile column', () => {
+  assert.match(
+    styles,
+    /@media \(max-width:\s*600px\)[\s\S]*\.ss-story-sheet__story-column\s*,\s*\.ss-story-sheet__achievement\s*\{[^}]*grid-column:\s*1;[^}]*grid-row:\s*auto;/s,
+  );
+  assert.match(
+    styles,
+    /@media \(max-width:\s*600px\)[\s\S]*\.ss-story-sheet__achievement\s*\{[^}]*width:\s*100%;[^}]*height:\s*30rem;/s,
+  );
+});
+
 test('matches the reference with a dedicated mountain achievement panel', () => {
   assert.match(styles, /\.ss-story-sheet__main\s*\{[^}]*display:\s*contents;/s);
   assert.match(styles, /\.ss-story-sheet__achievement\s*\{[^}]*grid-column:\s*2;/s);

@@ -73,13 +73,17 @@ test('the Primary proof section previews learning and progress without fabricate
     'Their progress.',
     'SAMPLE STUDENT WORK',
     'SAMPLE PARENT REPORT',
-    'PDF preview coming soon',
+    '3-page PDF preview',
+    'PDF report preview',
     'Learning you can see.',
     'Progress you can follow.',
   ].forEach((copy) => assert.ok(source.includes(copy), `sample resources must include ${copy}`));
 
   assert.match(source, /studentBookletPdf/);
   assert.match(source, /parentReportPdf/);
+  assert.match(source, /\/assets\/primary\/sample-booklet\.pdf/);
+  assert.match(source, /\/assets\/primary\/sample-report\.pdf/);
+  assert.doesNotMatch(source, /PDF preview coming soon/);
   assert.match(source, /showModal\(\)/);
   assert.match(source, /onCancel/);
   assert.match(source, /event\.key !== 'Tab'/);
@@ -555,6 +559,7 @@ test('reference motion stays root-scoped, clears reduced-motion transforms, and 
 test('Years 1–2 fills a desktop viewport with one shared proportional scale while other chapters remain naturally sized', () => {
   const styles = readFileSync(new URL('./primary-reference.css', import.meta.url), 'utf8');
   const challengeStyles = readFileSync(new URL('./seed-tree-challenge.css', import.meta.url), 'utf8');
+  const foundation = readFileSync(new URL('./FoundationSection.tsx', import.meta.url), 'utf8');
 
   assert.match(styles, /@media \(min-width:\s*1100px\) and \(min-height:\s*700px\)/);
   assert.match(styles, /--primary-fold-space:\s*clamp\([^;]*svh/);
@@ -565,6 +570,12 @@ test('Years 1–2 fills a desktop viewport with one shared proportional scale wh
   assert.match(styles, /\.primary-reference-foundation__intro h2\s*\{[^}]*var\(--foundation-scale-unit\)/);
   assert.match(styles, /\.primary-reference-foundation__photo\s*\{[^}]*var\(--foundation-scale-unit\)/);
   assert.match(styles, /\.primary-reference-foundation__outcomes\s*\{[^}]*var\(--foundation-scale-unit\)/);
+  assert.match(styles, /grid-template-areas:\s*['"]intro outcomes['"]\s*['"]photo outcomes['"]/);
+  assert.match(styles, /\.primary-reference-foundation__intro\s*\{[^}]*grid-area:\s*intro/);
+  assert.match(styles, /\.primary-reference-foundation__photo\s*\{[^}]*grid-area:\s*photo/);
+  assert.match(styles, /\.primary-reference-foundation__outcomes\s*\{[^}]*grid-area:\s*outcomes/);
+  assert.match(styles, /\.primary-reference-foundation__lead\s*\{[^}]*display:\s*block/);
+  assert.match(foundation, /In Years 1–2, we build the skills, habits and confidence that set children up for every future success\./);
   assert.match(styles, /font-size:\s*var\(--primary-fold-title\)/);
   assert.match(styles, /max-height:\s*clamp\([^;]*svh/);
   assert.match(challengeStyles, /@media \(min-width:\s*1100px\) and \(min-height:\s*700px\)/);

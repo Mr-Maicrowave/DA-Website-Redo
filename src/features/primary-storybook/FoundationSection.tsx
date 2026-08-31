@@ -22,7 +22,7 @@ const FoundationSection = () => (
         <span aria-hidden="true">that follows.</span>
       </h2>
       <p className="primary-reference-foundation__lead">
-        We build core skills, spark curiosity and nurture confidence—creating the strongest start for your child’s future.
+        In Years 1–2, we build the skills, habits and confidence that set children up for every future success.
       </p>
     </div>
 

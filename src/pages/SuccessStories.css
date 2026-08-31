@@ -1039,9 +1039,11 @@
   .ss-story-sheet__header h2 { font-size: clamp(2.15rem, 11vw, 3.1rem); }
   .ss-story-sheet__annotation { display: none; }
   .ss-story-sheet__main { display:grid; grid-template-columns: 1fr; gap: 0.5rem; }
+  .ss-story-sheet__story-column,
+  .ss-story-sheet__achievement { grid-column: 1; grid-row: auto; }
   .ss-story-sheet__review p { font-size: 1.04rem; line-height: 1.72; }
   .ss-story-sheet__pull-quote { font-size: 1.5rem; }
-  .ss-story-sheet__achievement { position: relative; top: auto; display:grid; min-height: 30rem; padding-top: 2rem; }
+  .ss-story-sheet__achievement { position: relative; top: auto; display:grid; width: 100%; height: 30rem; min-height: 30rem; padding-top: 2rem; }
   .ss-story-sheet__mountain { width: 100%; margin: 1rem 0 -1rem; }
   .ss-story-sheet__future-note { width: 100%; margin-top: 1rem; padding: 1.2rem 1.2rem 4rem; }
   .ss-story-sheet__navigation { position: sticky; bottom: 0; padding: 1rem 1.25rem; }

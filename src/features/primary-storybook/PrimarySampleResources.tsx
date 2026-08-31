@@ -2,8 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import { ExternalLink, ShieldCheck, X } from 'lucide-react';
 import './primary-sample-resources.css';
 
-const studentBookletPdf: string | null = null;
-const parentReportPdf: string | null = null;
+const studentBookletPdf = '/assets/primary/sample-booklet.pdf';
+const parentReportPdf = '/assets/primary/sample-report.pdf';
 
 type ResourceKey = 'work' | 'report';
 
@@ -95,7 +95,7 @@ const PrimarySampleResources = () => {
               <div className="primary-samples__page primary-samples__page--middle" aria-hidden="true" />
               <div className="primary-samples__page primary-samples__page--front">
                 <span>SAMPLE STUDENT WORK</span>
-                <small>PDF preview coming soon</small>
+                <small>3-page PDF preview</small>
                 <i aria-hidden="true" />
               </div>
             </div>
@@ -113,7 +113,7 @@ const PrimarySampleResources = () => {
             <div className="primary-samples__report" aria-label="Sample parent report placeholder">
               <div className="primary-samples__report-heading">
                 <span>SAMPLE PARENT REPORT</span>
-                <small>PDF preview coming soon</small>
+                <small>PDF report preview</small>
               </div>
               <div className="primary-samples__report-line" aria-hidden="true" />
               <div className="primary-samples__report-fields" aria-hidden="true">
