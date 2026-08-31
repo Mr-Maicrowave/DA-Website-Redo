@@ -14,6 +14,7 @@ function Arrow({ direction = 'horizontal' }: { direction?: 'horizontal' | 'verti
 function HowCard() {
   return <section className="consultation-card consultation-how-card" aria-labelledby="consultation-how-title">
     <h2 id="consultation-how-title">How the consultation <span>works</span></h2>
+    <p className="consultation-opening-note">Every conversation is the start of something great. <span>♡</span></p>
     <div className="consultation-how-steps" aria-label="Consultation journey">
       {CONSULTATION_STEPS.map((item, index) => <div className="consultation-how-step-wrap" key={item.key}>
         <article className="consultation-how-step">

@@ -36,6 +36,7 @@ test('keeps consultation content semantic and connected in reading order', () =>
 
   assert.match(source, /<section[\s\S]*<article/);
   assert.match(source, /aria-label="Consultation journey"/);
+  assert.match(source, /Every conversation is the start of something great/);
   assert.match(source, /You don’t need to arrive with the answer/);
   assert.match(source, /consultation-arrow/);
 });

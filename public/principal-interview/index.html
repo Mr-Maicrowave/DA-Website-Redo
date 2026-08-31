@@ -78,25 +78,20 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--paper);color:var(
 @media (max-width:1180px){.hero-side{display:none}}
 
 /* PRINCIPAL'S VOICE BOOK */
-.book-stage{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:0}
+.book-stage{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:0;
+}
 .book-visual{
   appearance:none;border:none;background:none;padding:0;
-  cursor:pointer;display:block;
-  width:clamp(296px,37.2vw,468px);
+  display:block;
+  width:clamp(320px,36vw,502px);
   max-width:100%;
-  transition:transform .45s cubic-bezier(.22,.61,.36,1),filter .45s cubic-bezier(.22,.61,.36,1);
+  aspect-ratio:1058 / 941;
+  transform:translateX(clamp(-44px,-2.4vw,-26px));
+  transition:filter .45s cubic-bezier(.22,.61,.36,1);
   filter:drop-shadow(12px 18px 20px rgba(7,27,53,.18));
 }
-.book-visual img{width:100%;height:auto;display:block;pointer-events:none}
-.book-visual:hover,.book-visual:focus-visible{
-  transform:translateY(-5px) scale(1.015);
-  filter:drop-shadow(12px 18px 20px rgba(7,27,53,.18)) drop-shadow(0 0 14px rgba(201,162,39,.3));
-}
-.book-visual:focus-visible{outline:3px solid var(--gold-soft);outline-offset:8px}
-.book-visual.opened{
-  transform:translateY(-3px) scale(1.02);
-  filter:drop-shadow(12px 18px 20px rgba(7,27,53,.18)) drop-shadow(0 0 18px rgba(201,162,39,.38));
-}
+.book-visual img{width:100%;height:100%;object-fit:contain;display:block;pointer-events:none}
 
 /* HERO QUOTE */
 .hero-quote{width:100%;max-width:min(760px,58%);margin:0 auto;text-align:center;padding:0 24px}
@@ -106,6 +101,370 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--paper);color:var(
   font-size:clamp(0.95rem,1.5vw,1.2rem);color:var(--ink);line-height:1.5;margin:0;
 }
 .hero-quote-mark{color:var(--gold);font-size:1.3em;vertical-align:-.1em}
+
+/* PRINCIPAL REFLECTION ORNAMENTAL CARD */
+.principal-reflection-card-section{
+  background:var(--paper);
+  padding:clamp(44px,7vw,86px) 0 clamp(60px,8vw,108px);
+}
+.principal-reflection-card-shell{
+  width:100%;
+  overflow-x:auto;
+  overflow-y:hidden;
+  padding:0 clamp(14px,3vw,40px);
+  -webkit-overflow-scrolling:touch;
+}
+.principal-reflection-card-shell + .principal-reflection-card-shell{margin-top:clamp(40px,6vw,76px)}
+.principal-reflection-card{
+  position:relative;
+  width:min(1122px,100%);
+  min-width:760px;
+  aspect-ratio:1122 / 1402;
+  margin:0 auto;
+  background-image:url("images/principal-reflection-ornamental-card-bg.png");
+  background-size:100% 100%;
+  background-repeat:no-repeat;
+  background-position:center;
+  color:#171717;
+  container-type:inline-size;
+  font-family:'Playfair Display',Georgia,serif;
+}
+.principal-reflection-card p{margin:0}
+.prc-title{
+  position:absolute;
+  top:8.6%;
+  left:10.6%;
+  width:78.8%;
+  color:#cf2f67;
+  font-size:clamp(46px,7.2cqw,78px);
+  font-weight:400;
+  line-height:1.03;
+  text-align:center;
+}
+.prc-intro{
+  position:absolute;
+  top:28.2%;
+  left:14.8%;
+  width:70.4%;
+  font-family:'Playfair Display',Georgia,serif;
+  font-size:clamp(14px,1.8cqw,20.2px);
+  line-height:1.55;
+  text-align:center;
+}
+.prc-heading{
+  position:absolute;
+  color:#cf2f67;
+  font-size:clamp(12px,1.72cqw,19px);
+  font-weight:600;
+  line-height:1;
+  letter-spacing:.16em;
+  text-align:center;
+  text-transform:uppercase;
+}
+.prc-heading-left{top:38.1%;left:8.8%;width:31.4%}
+.prc-heading-right{top:38.1%;left:56.2%;width:33.2%}
+.prc-body{
+  position:absolute;
+  font-family:'Playfair Display',Georgia,serif;
+  font-size:clamp(12px,1.68cqw,18.85px);
+  font-weight:400;
+  line-height:1.52;
+}
+.prc-body strong{font-weight:700}
+.prc-left-first{top:43.1%;left:7.7%;width:41.4%}
+.prc-quote{
+  position:absolute;
+  top:62.9%;
+  left:9.0%;
+  width:35.0%;
+  height:12.0%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-family:'Playfair Display',Georgia,serif;
+  font-size:clamp(13.4px,1.78cqw,20px);
+  line-height:1.36;
+  text-align:center;
+}
+.prc-left-lower{
+  top:80.5%;
+  left:7.7%;
+  width:41.1%;
+  font-size:clamp(10.8px,1.43cqw,16px);
+  line-height:1.33;
+}
+.prc-right-copy{
+  top:43.1%;
+  left:52.7%;
+  width:41.0%;
+  font-size:clamp(11.7px,1.61cqw,18.1px);
+  line-height:1.49;
+}
+.prc-right-copy p + p{margin-top:.7em}
+.prc-value{
+  position:absolute;
+  top:81.7%;
+  left:54.8%;
+  width:35.8%;
+  height:8.4%;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+}
+.prc-value h3{
+  margin:0 0 .28em;
+  color:#cf2f67;
+  font-size:clamp(10.5px,1.52cqw,17.1px);
+  font-weight:600;
+  line-height:1;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+}
+.prc-value p{
+  width:82%;
+  font-family:'Playfair Display',Georgia,serif;
+  font-size:clamp(11.2px,1.48cqw,16.6px);
+  line-height:1.15;
+}
+.prc-final{
+  position:absolute;
+  top:91.4%;
+  left:52.7%;
+  width:40.1%;
+  font-family:'Playfair Display',Georgia,serif;
+  font-size:clamp(9.3px,1.08cqw,12.1px);
+  line-height:1.14;
+}
+.prc-final-strong{
+  margin-bottom:.28em;
+  font-size:clamp(10.4px,1.25cqw,14px);
+  font-weight:600;
+  line-height:1.18;
+}
+
+@media (max-width:820px){
+  .principal-reflection-card-shell{padding-inline:12px}
+  .principal-reflection-card{width:760px}
+}
+
+.reflection-theme-card{
+  position:relative;
+  width:min(var(--card-width),100%);
+  min-width:760px;
+  aspect-ratio:var(--card-aspect);
+  margin:0 auto;
+  background-image:var(--card-bg);
+  background-size:100% 100%;
+  background-repeat:no-repeat;
+  background-position:center;
+  color:var(--body-color);
+  container-type:inline-size;
+  font-family:'Playfair Display',Georgia,serif;
+}
+.reflection-theme-card p,
+.reflection-theme-card h2,
+.reflection-theme-card h3{margin:0}
+.theme-card--purple{
+  --card-width:1122px;
+  --card-aspect:1024 / 1536;
+  --card-bg:url("images/principal-reflection-purple-card-bg.png");
+  --accent:#7c639b;
+  --body-color:#5c5388;
+  --quote-color:#8063a0;
+  --warm:#9a6231;
+}
+.theme-card--blue{
+  --card-width:1122px;
+  --card-aspect:1122 / 1402;
+  --card-bg:url("images/principal-reflection-blue-card-bg.png");
+  --accent:#8b5528;
+  --body-color:#17366b;
+  --quote-color:#955520;
+  --warm:#955520;
+}
+.theme-card--green{
+  --card-width:1122px;
+  --card-aspect:1024 / 1536;
+  --card-bg:url("images/principal-reflection-green-card-bg.png");
+  --accent:#87551f;
+  --body-color:#142033;
+  --quote-color:#233c1f;
+  --warm:#87551f;
+}
+.theme-card--yellow{
+  --card-width:1122px;
+  --card-aspect:1006 / 1564;
+  --card-bg:url("images/principal-reflection-yellow-card-bg.png");
+  --accent:#87551f;
+  --body-color:#17233a;
+  --quote-color:#9a5a22;
+  --warm:#9a5a22;
+}
+.tc-title{
+  position:absolute;
+  top:7.1%;
+  left:12%;
+  width:76%;
+  color:var(--quote-color);
+  font-size:clamp(40px,6.1cqw,68px);
+  font-weight:400;
+  line-height:1.04;
+  text-align:center;
+}
+.tc-title--three{top:7.4%;font-size:clamp(39px,5.7cqw,64px)}
+.tc-title--four{top:5.7%;font-size:clamp(37px,5.8cqw,65px);line-height:1.08}
+.tc-title--blue{top:8.5%;left:10.5%;width:79%;font-size:clamp(40px,5.25cqw,59px);line-height:1.08}
+.tc-intro{
+  position:absolute;
+  top:24.0%;
+  left:18%;
+  width:64%;
+  font-size:clamp(14px,2.0cqw,20.5px);
+  line-height:1.28;
+  text-align:center;
+}
+.tc-intro--blue{top:26.5%;font-size:clamp(14px,1.75cqw,19.6px);line-height:1.27}
+.tc-intro--green{top:23.6%;font-size:clamp(14px,1.85cqw,19px)}
+.tc-top-quote{
+  position:absolute;
+  top:30.2%;
+  left:17%;
+  width:66%;
+  height:6.4%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:var(--quote-color);
+  font-size:clamp(16px,2.18cqw,22.5px);
+  font-style:italic;
+  line-height:1.32;
+  text-align:center;
+}
+.tc-top-quote--blue{top:35.1%;left:19%;width:62%;height:5.8%;font-size:clamp(16px,2.06cqw,23.1px)}
+.tc-top-quote--green{top:29.3%;left:15%;width:70%;height:7.2%;font-size:clamp(14px,1.62cqw,16.6px);line-height:1.45}
+.tc-heading{
+  position:absolute;
+  top:41.1%;
+  color:var(--accent);
+  font-size:clamp(13px,1.82cqw,18.7px);
+  font-weight:600;
+  line-height:1;
+  letter-spacing:.14em;
+  text-align:center;
+  text-transform:uppercase;
+}
+.tc-heading-left{left:12%;width:30%}
+.tc-heading-right{left:55%;width:32%}
+.tc-heading--blue{top:44.1%}
+.tc-body{
+  position:absolute;
+  font-size:clamp(12px,1.44cqw,14.8px);
+  font-weight:400;
+  line-height:1.47;
+}
+.tc-body p + p{margin-top:.78em}
+.tc-body strong{font-weight:700}
+.tc-left-copy{top:45.6%;left:11.8%;width:33.8%}
+.tc-right-copy{top:60.8%;left:52.3%;width:35.8%}
+.tc-left-copy--blue{top:47.2%;left:12.6%;width:35.2%;font-size:clamp(12px,1.48cqw,16.6px);line-height:1.44}
+.tc-right-copy--blue{top:59.3%;left:51.4%;width:36.8%;font-size:clamp(11.6px,1.32cqw,14.8px);line-height:1.32}
+.tc-left-copy--green,.tc-left-copy--yellow{top:44.6%;left:12.4%;width:34.6%;font-size:clamp(12px,1.48cqw,15.2px);line-height:1.48}
+.tc-right-copy--green,.tc-right-copy--yellow{top:60.0%;left:52.2%;width:35.2%;font-size:clamp(11.5px,1.37cqw,14px);line-height:1.42}
+.tc-framed-copy{
+  position:absolute;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+}
+.tc-box-top-right{
+  top:48.7%;
+  left:52%;
+  width:36%;
+  height:10.6%;
+  padding:0 4%;
+  font-size:clamp(11px,1.32cqw,13.5px);
+  line-height:1.42;
+}
+.tc-box-top-right--blue{top:46.8%;left:52.7%;width:34.8%;height:10.6%;font-size:clamp(12px,1.42cqw,15.9px);line-height:1.32;text-align:left;justify-content:flex-start}
+.tc-box-left{
+  top:71.0%;
+  left:12.5%;
+  width:32.8%;
+  height:8.6%;
+  color:var(--quote-color);
+  font-size:clamp(14px,1.92cqw,19.7px);
+  font-style:italic;
+  line-height:1.42;
+}
+.tc-box-left--blue{top:66.8%;left:13.0%;width:33.8%;height:10.3%;font-size:clamp(15px,1.72cqw,19.3px);line-height:1.55}
+.tc-left-lower{
+  top:82.4%;
+  left:12.4%;
+  width:34%;
+  font-size:clamp(11.5px,1.32cqw,13.5px);
+  line-height:1.42;
+}
+.tc-left-lower--blue{top:79.6%;left:12.7%;width:35.3%;font-size:clamp(12px,1.42cqw,15.9px);line-height:1.42}
+.theme-card--purple .tc-heading--blue{top:45.5%}
+.theme-card--purple .tc-body,
+.theme-card--purple .tc-framed-copy{font-family:'Playfair Display',Georgia,serif}
+.theme-card--purple .tc-left-copy--blue{top:48.8%;font-size:clamp(12px,1.46cqw,16.4px);line-height:1.42}
+.theme-card--purple .tc-box-top-right--blue{top:49.2%;height:10.6%;font-size:clamp(11px,1.32cqw,14.8px);line-height:1.28;align-items:center;padding-top:0}
+.theme-card--purple .tc-right-copy--blue{top:63.7%;font-size:clamp(10.8px,1.24cqw,13.9px);line-height:1.31}
+.theme-card--purple .tc-box-left--blue{top:71.4%;height:8.3%;font-size:clamp(13px,1.5cqw,16.8px);line-height:1.34}
+.theme-card--purple .tc-left-lower--blue{top:85.0%;font-size:clamp(10.8px,1.24cqw,13.9px);line-height:1.3}
+.tc-box-left--green{top:66.2%;height:8.9%}
+.tc-box-left--yellow{top:76.3%;height:10.8%}
+.theme-card--yellow .tc-box-top-right{top:43.7%;height:11.2%}
+.theme-card--green .tc-left-copy--green{top:43.0%;font-size:clamp(12.4px,1.5cqw,16.8px);line-height:1.43}
+.theme-card--green .tc-box-left--green{top:64.8%;height:9.2%;font-size:clamp(15px,1.8cqw,20.2px);line-height:1.42}
+.theme-card--green .tc-left-lower{top:76.4%;font-size:clamp(11.5px,1.34cqw,15px);line-height:1.38}
+.theme-card--green .tc-box-top-right{top:43.8%;height:13.6%;align-items:flex-start;padding-top:4.6%;font-size:clamp(10.8px,1.3cqw,14.6px);line-height:1.28}
+.theme-card--green .tc-right-copy--green{top:61.2%;font-size:clamp(11px,1.27cqw,14.2px);line-height:1.34}
+.theme-card--yellow .tc-left-copy--yellow{font-size:clamp(12px,1.42cqw,15.9px);line-height:1.43}
+.theme-card--yellow .tc-box-left--yellow{top:75.4%;height:10.8%;font-size:clamp(14.5px,1.7cqw,19.1px);line-height:1.34}
+.theme-card--yellow .tc-box-top-right{top:42.5%;height:12.0%;align-items:flex-start;padding-top:3.4%;font-size:clamp(12px,1.54cqw,17.3px);line-height:1.27}
+.theme-card--yellow .tc-right-copy--yellow{top:56.3%;font-size:clamp(11.4px,1.34cqw,15px);line-height:1.36}
+.tc-right-mini{
+  position:absolute;
+  top:84.0%;
+  left:55.5%;
+  width:27%;
+  height:7.1%;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  text-align:center;
+  color:var(--body-color);
+  font-size:clamp(11px,1.18cqw,12.1px);
+  line-height:1.25;
+}
+.tc-right-mini h3{
+  color:var(--accent);
+  font-size:clamp(10px,1.42cqw,14.5px);
+  font-weight:500;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  margin-bottom:.35em;
+}
+.tc-footer{
+  position:absolute;
+  bottom:2.4%;
+  left:16%;
+  width:68%;
+  color:var(--quote-color);
+  font-size:clamp(16px,2.2cqw,22.5px);
+  font-style:italic;
+  line-height:1;
+  text-align:center;
+}
+
+@media (max-width:820px){
+  .reflection-theme-card{width:760px}
+}
 
 @media (prefers-reduced-motion: reduce){
   .rotating-word span{animation:none}
@@ -352,7 +711,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--paper);color:var(
   .hero-eyebrow-rule{margin-bottom:16px}
   .hero-sub{font-size:14px;line-height:1.5;max-width:42ch;margin-bottom:18px}
   .hero-sub p{margin-bottom:10px}
-  .book-visual{width:clamp(250px,40.8vw,374px)}
+  .book-visual{width:clamp(244px,37vw,340px)}
   .hero-quote{max-width:80%}
   .iv-index{padding:12px 14px;border-radius:22px}
   .iv-index-head{padding:16px 10px;gap:10px}
@@ -370,7 +729,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--paper);color:var(
   .hero-eyebrow-rule{margin-left:auto;margin-right:auto}
   .hero-sub{margin-left:auto;margin-right:auto}
   .byline{justify-content:center}
-  .book-visual{width:clamp(288px,86.4vw,456px)}
+  .book-visual{width:clamp(288px,78vw,420px);transform:none}
   .hero-quote{max-width:90%}
   .iv-index{padding:10px 10px;border-radius:18px;max-width:94%}
   .iv-index-head{padding:14px 8px;gap:8px;font-size:clamp(11px,3.4vw,13px)}
@@ -428,9 +787,9 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--paper);color:var(
     </div>
 
     <div class="book-stage hero-after-type from-right">
-      <a class="book-visual" id="book" href="/principal-interview-paper" target="_parent" aria-label="Open the principal interview paper">
-        <img src="images/principals-voice-book-pedestal.png" alt="Principal&rsquo;s Voice reflection book displayed on a gold pedestal">
-      </a>
+      <div class="book-visual" id="book" aria-hidden="true">
+        <img src="images/principal-reflection-desk-set.png" alt="Reflection journal with flowers, books, fountain pen and teacup">
+      </div>
     </div>
   </div>
 
@@ -447,6 +806,141 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--paper);color:var(
       <path d="M0,10 C420,56 1020,56 1440,10" fill="none" style="stroke:var(--gold)" stroke-width="1" opacity="0.45"></path>
     </svg>
     <span class="hero-fold-spark">&#10022;</span>
+  </div>
+</section>
+
+<section class="principal-reflection-card-section" aria-labelledby="principal-reflection-card-title">
+  <div class="principal-reflection-card-shell">
+    <article class="principal-reflection-card" aria-labelledby="principal-reflection-card-title">
+      <h2 class="prc-title" id="principal-reflection-card-title">More Than Tutoring.<br>Where Children Rise.</h2>
+
+      <p class="prc-intro">DA Tuition helps students move beyond what has been holding them back,<br>rebuild confidence, and pursue strong academic growth through thoughtful<br>guidance, high standards, and deeply personalised care.</p>
+
+      <h3 class="prc-heading prc-heading-left">CORE IDEA</h3>
+      <p class="prc-body prc-left-first">I love working at DA Tuition because the work<br>we do is <strong>deeply meaningful.</strong> It reaches far<br>beyond academic improvement and allows us to<br>play a careful part in helping young people move<br>forward with greater confidence, direction, and<br>hope.</p>
+
+      <p class="prc-quote">This is a place where students are known<br>carefully, guided thoughtfully, and<br>supported to grow well from where<br>they are.</p>
+
+      <p class="prc-body prc-left-lower">What I value most about DA is the thoughtfulness<br>behind the way we work. Every child is different,<br>and we take that seriously. We do not approach<br>students as though the same formula should<br>apply to everyone. We take the time to<br>understand where each child is, what they are<br>aiming for, and how we can support them well<br>from that point.</p>
+
+      <h3 class="prc-heading prc-heading-right">WHAT FAMILIES SENSE</h3>
+      <div class="prc-body prc-right-copy">
+        <p>I am also very proud of the team around me. This<br>is a team of people who care deeply, think<br>carefully, and hold a great deal of respect for one<br>another.</p>
+        <p>There is a calm, genuine warmth in the culture<br>here, and that matters. Children grow best in<br>environments where there is steadiness, sincerity,<br>and thoughtful care behind the work.</p>
+        <p>Partnership with parents is also central to what<br>we do. Every family comes with its own hopes,<br>concerns, and goals for their child, and we take<br>that responsibility seriously. We listen carefully,<br>communicate honestly, and work closely with<br>parents because progress is strongest when the<br>adults around a child are working with trust and<br>shared purpose.</p>
+      </div>
+
+      <div class="prc-value">
+        <h3>WHAT FAMILIES VALUE</h3>
+        <p>A child who is genuinely known, guided<br>carefully, and taken seriously from the<br>beginning.</p>
+      </div>
+
+      <div class="prc-final">
+        <p class="prc-final-strong">Thoughtful care and strong guidance can<br>exist together.</p>
+        <p>That is why I am so proud to be part of DA. It is a<br>place where students are known carefully, guided<br>thoughtfully, and supported to grow well from<br>where they are.</p>
+      </div>
+    </article>
+  </div>
+
+  <div class="principal-reflection-card-shell">
+    <article class="reflection-theme-card theme-card--purple" aria-labelledby="purple-reflection-card-title">
+      <h2 class="tc-title tc-title--blue" id="purple-reflection-card-title">Helping students<br>achieve more than<br>they once believed possible.</h2>
+      <p class="tc-intro tc-intro--blue">Helping students move from discouragement to discipline,<br>from uncertainty to stronger results, and from low<br>expectations to meaningful ambition.</p>
+      <p class="tc-top-quote tc-top-quote--blue">"That kind of progress reaches further than a report.<br>It changes the way a child begins to carry themselves."</p>
+
+      <h3 class="tc-heading tc-heading-left tc-heading--blue">CORE IDEA</h3>
+      <div class="tc-body tc-left-copy tc-left-copy--blue">
+        <p><strong>I hope to help children achieve what may once have felt beyond them.</strong></p>
+        <p>For some students, that means rebuilding from the ground up. For others, it means refining their skills and pursuing exceptional results with clarity, discipline, and consistency. Whatever their starting point, I want each child to know that where they begin should never be mistaken for their potential.</p>
+      </div>
+      <p class="tc-framed-copy tc-box-left tc-box-left--blue">Excellent results are earned through<br>clear guidance, high standards,<br>honest feedback, and sustained effort.</p>
+      <p class="tc-body tc-left-lower tc-left-lower--blue">I care deeply about strong academic outcomes. I want my students to build solid foundations, think clearly, write with purpose, and develop the habits that high achievement requires. For students aiming high, I want to help them pursue those goals with maturity, precision, and seriousness.</p>
+
+      <h3 class="tc-heading tc-heading-right tc-heading--blue">TRANSFORMATION</h3>
+      <p class="tc-framed-copy tc-box-top-right tc-box-top-right--blue">To see a child move from thirty percent to ninety percent is deeply rewarding. Beyond the mark itself, I value the ambition, responsibility, and belief that make that result possible.</p>
+      <div class="tc-body tc-right-copy tc-right-copy--blue">
+        <p><strong>Strong results matter, but the deeper aim is a child who works with purpose.</strong></p>
+        <p>What makes this work especially meaningful is seeing children change in the way they approach their own future. A student who once felt far behind begins to work with purpose. A child who had stopped aiming high begins to set goals again. A young person who doubted what was possible begins to see that stronger outcomes can be earned through steady effort.</p>
+        <p>To see a child move from thirty percent to ninety percent is deeply rewarding. But beyond the mark itself, I value the growth in ambition, responsibility, and belief that often makes that result possible. That kind of progress reaches further than a report. It changes the way a child begins to carry themselves.</p>
+        <p>My hope is that every child leaves not only with stronger results, but with clearer goals, stronger habits, and a firmer belief in what they can achieve.</p>
+      </div>
+    </article>
+  </div>
+
+  <div class="principal-reflection-card-shell">
+    <article class="reflection-theme-card theme-card--blue" aria-labelledby="blue-reflection-card-title">
+      <h2 class="tc-title tc-title--blue" id="blue-reflection-card-title">Helping students<br>achieve more than<br>they once believed possible.</h2>
+      <p class="tc-intro tc-intro--blue">Helping students move from discouragement to discipline,<br>from uncertainty to stronger results, and from low<br>expectations to meaningful ambition.</p>
+      <p class="tc-top-quote tc-top-quote--blue">"That kind of progress reaches further than a report.<br>It changes the way a child begins to carry themselves."</p>
+
+      <h3 class="tc-heading tc-heading-left tc-heading--blue">CORE IDEA</h3>
+      <div class="tc-body tc-left-copy tc-left-copy--blue">
+        <p><strong>I hope to help children achieve what may once have felt beyond them.</strong></p>
+        <p>For some students, that means rebuilding from the ground up. For others, it means refining their skills and pursuing exceptional results with clarity, discipline, and consistency. Whatever their starting point, I want each child to know that where they begin should never be mistaken for their potential.</p>
+      </div>
+      <p class="tc-framed-copy tc-box-left tc-box-left--blue">Excellent results are earned through<br>clear guidance, high standards,<br>honest feedback, and sustained effort.</p>
+      <p class="tc-body tc-left-lower tc-left-lower--blue">I care deeply about strong academic outcomes. I want my students to build solid foundations, think clearly, write with purpose, and develop the habits that high achievement requires. For students aiming high, I want to help them pursue those goals with maturity, precision, and seriousness.</p>
+
+      <h3 class="tc-heading tc-heading-right tc-heading--blue">TRANSFORMATION</h3>
+      <p class="tc-framed-copy tc-box-top-right tc-box-top-right--blue">To see a child move from thirty percent to ninety percent is deeply rewarding. Beyond the mark itself, I value the ambition, responsibility, and belief that make that result possible.</p>
+      <div class="tc-body tc-right-copy tc-right-copy--blue">
+        <p><strong>Strong results matter, but the deeper aim is a child who works with purpose.</strong></p>
+        <p>What makes this work especially meaningful is seeing children change in the way they approach their own future. A student who once felt far behind begins to work with purpose. A child who had stopped aiming high begins to set goals again. A young person who doubted what was possible begins to see that stronger outcomes can be earned through steady effort.</p>
+        <p>To see a child move from thirty percent to ninety percent is deeply rewarding. But beyond the mark itself, I value the growth in ambition, responsibility, and belief that often makes that result possible. That kind of progress reaches further than a report. It changes the way a child begins to carry themselves.</p>
+        <p>My hope is that every child leaves not only with stronger results, but with clearer goals, stronger habits, and a firmer belief in what they can achieve.</p>
+      </div>
+    </article>
+  </div>
+
+  <div class="principal-reflection-card-shell">
+    <article class="reflection-theme-card theme-card--green" aria-labelledby="green-reflection-card-title">
+      <h2 class="tc-title tc-title--four" id="green-reflection-card-title">What kind of teacher<br>do you want your<br>students to remember<br>you as?</h2>
+      <p class="tc-intro tc-intro--green">A teacher who cared deeply, treated them with kindness,<br>and never took their potential lightly.</p>
+      <p class="tc-top-quote tc-top-quote--green">I do not only want students to remember what they learned from me.<br>I want them to remember how they were treated, what was strengthened<br>in them, and who they became while they were under my care.</p>
+
+      <h3 class="tc-heading tc-heading-left">CORE IDEA</h3>
+      <div class="tc-body tc-left-copy tc-left-copy--green">
+        <p>I hope my students remember me as a teacher who cared for them deeply, treated them with kindness, and never took their potential lightly.</p>
+        <p>More than anything, I would want them to feel safe in my care.</p>
+        <p>I would want them to know that they were never reduced to a mark, a weakness, or a difficult season. There is often far more in a child than is visible at first, and I would hope my students felt that I recognised that with patience, honesty, and genuine belief.</p>
+      </div>
+      <p class="tc-framed-copy tc-box-left tc-box-left--green">Safe, seen, and strengthened by both<br>warmth and clear expectations.</p>
+      <p class="tc-body tc-left-lower">I hope they remember me as someone who offered both warmth and steadiness. I believe children need gentleness, but they also need clear expectations. They need encouragement, but they also need someone willing to ask more of them because they are worth that effort. Not out of harshness, but out of sincere belief that their future matters and that they are capable of more than they may currently see in themselves.</p>
+
+      <h3 class="tc-heading tc-heading-right">LASTING HONOUR</h3>
+      <p class="tc-framed-copy tc-box-top-right">If, years from now, my students remember me as someone who believed in them when they could not yet do that well for themselves, someone who lifted their standards with kindness, and someone who helped expand what they believed was possible for their life, I would consider that one of the greatest honours of my life.</p>
+      <div class="tc-body tc-right-copy tc-right-copy--green">
+        <p><strong>The deepest imprint of teaching is often who a child becomes while learning.</strong></p>
+        <p>I would also hope they remember me as a teacher who helped them grow not only in knowledge, but in character. Someone who helped them become more disciplined, more resilient, more thoughtful, and more assured in themselves. To me, teaching has never only been about content. It is about helping a young person develop the inner strength, judgment, and self-belief that will serve them long after they leave the classroom.</p>
+        <p>Because in the end, I do not only want students to remember what they learned from me. I want them to remember how they were treated, what was strengthened in them, and who they became while they were under my care.</p>
+      </div>
+    </article>
+  </div>
+
+  <div class="principal-reflection-card-shell">
+    <article class="reflection-theme-card theme-card--yellow" aria-labelledby="yellow-reflection-card-title">
+      <h2 class="tc-title tc-title--three" id="yellow-reflection-card-title">Why do families see<br>such meaningful<br>change at DA?</h2>
+      <p class="tc-intro">Because progress here is deliberate, individualised, and supported<br>by care, structure, partnership, and high expectations.</p>
+      <p class="tc-top-quote">"We are trying to strengthen<br>the child behind the result."</p>
+
+      <h3 class="tc-heading tc-heading-left">CORE IDEA</h3>
+      <div class="tc-body tc-left-copy tc-left-copy--yellow">
+        <p><strong>Families often see meaningful change at DA because our support is deliberate, individualised, and consistent.</strong></p>
+        <p>We do not treat progress as something generic. We look closely at the whole picture and consider what kind of guidance, structure, and accountability will help each child move forward in a meaningful way. Our work is not only to teach, but to respond wisely to what each student needs most.</p>
+        <p>That is why our approach is never one-size-fits-all. Some students need patient rebuilding. Others need sharper thinking, stronger discipline, and greater refinement in order to reach the highest levels. We take both kinds of students seriously. In each case, our role is to bring direction, structure, and momentum to the growth process.</p>
+      </div>
+      <p class="tc-framed-copy tc-box-left tc-box-left--yellow">Progress here is not only<br>about improvement. It is<br>about well-guided improvement.</p>
+
+      <h3 class="tc-heading tc-heading-right">WHAT PARENTS NOTICE</h3>
+      <p class="tc-framed-copy tc-box-top-right">Students learn best when they feel supported enough to persist, challenged enough to grow, and engaged enough to take ownership of their progress.</p>
+      <div class="tc-body tc-right-copy tc-right-copy--yellow">
+        <p><strong>Meaningful change is rarely accidental. It is carefully guided.</strong></p>
+        <p>We are also very intentional about the way children experience learning. Students learn best when they feel supported enough to persist, challenged enough to grow, and engaged enough to take ownership of their progress. We want them to develop clarity, discipline, self-respect, and a stronger sense of purpose in their effort. That is what makes progress more lasting.</p>
+        <p>Another important part of the DA approach is partnership. We place great value on working closely with parents, because children grow best when the adults around them are aligned. This allows us to support each student with greater consistency and understanding over time.</p>
+        <p>At the heart of it, families often see meaningful change at DA because we are committed not only to improvement, but to well-guided improvement. We are trying to strengthen the child behind the result. When that happens, academic progress often becomes both stronger and more lasting.</p>
+      </div>
+      <p class="tc-footer">The care, structure, and consistency behind progress</p>
+    </article>
   </div>
 </section>
 

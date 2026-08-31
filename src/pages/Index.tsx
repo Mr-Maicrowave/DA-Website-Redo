@@ -350,6 +350,49 @@ const HeroSection = ({ embedded = false }: { embedded?: boolean }) => {
         }
         .hero-scroll { margin-top: clamp(2px, .7vh, 8px); color: #b8842f; animation: heroChevron 2.8s cubic-bezier(.22,1,.36,1) infinite; }
         @keyframes heroChevron { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(4px); } }
+        @media (min-width: 1400px) and (min-height: 820px) {
+          .hero-composition {
+            width: min(94%, 1210px);
+            gap: 18px;
+            padding-inline: 64px;
+            padding-bottom: 104px;
+          }
+          .hero-crest { width: 300px; }
+          .hero-eyebrow { font-size: .94rem; letter-spacing: .2em; }
+          .hero-title { font-size: 5.9rem; line-height: .99; }
+          .hero-support { max-width: 760px; font-size: 1.32rem; line-height: 1.52; }
+          .hero-trust { font-size: 1rem; }
+          .hero-actions { gap: 21px; margin-top: 12px; }
+          .hero-cta {
+            min-width: 285px;
+            min-height: 72px;
+            padding: 18px 36px;
+            font-size: 1.25rem;
+          }
+          .hero-values {
+            width: min(100%, 1030px);
+            gap: 42px;
+            margin-top: 24px;
+          }
+          .hero-value { grid-template-columns: 54px 1fr; gap: 17px; }
+          .hero-value svg { width: 51px; height: 51px; }
+          .hero-value strong { margin-bottom: 7px; font-size: 1.1rem; }
+          .hero-value p { font-size: .98rem; line-height: 1.45; }
+          .hero-scroll { margin-top: 10px; width: 38px; height: 38px; }
+        }
+        @media (min-width: 1800px) and (min-height: 1180px) {
+          .hero-composition {
+            width: min(94%, 1320px);
+            gap: 23px;
+          }
+          .hero-crest { width: 345px; }
+          .hero-eyebrow { font-size: 1.1rem; }
+          .hero-title { font-size: 6.85rem; }
+          .hero-support { max-width: 885px; font-size: 1.6rem; }
+          .hero-trust { font-size: 1.18rem; }
+          .hero-cta { font-size: 1.35rem; }
+          .hero-values { width: min(100%, 1095px); }
+        }
         @media (max-width: 1100px) {
           .hero-luxury { grid-template-columns: minmax(0, 15fr) minmax(0, 70fr) minmax(0, 15fr); }
           .hero-composition { width: 96%; padding-inline: 22px; }
@@ -395,6 +438,8 @@ const HeroSection = ({ embedded = false }: { embedded?: boolean }) => {
           .hero-composition { gap: 7px; padding-top: 10px; padding-bottom: 9px; }
           .hero-crest { width: 132px; }
           .hero-title { font-size: clamp(2.45rem, 3.8vw, 3.55rem); }
+          .hero-support { font-size: clamp(.82rem, 1vw, .98rem); }
+          .hero-cta { min-height: 46px; padding: 11px 22px; font-size: .86rem; }
           .hero-values { margin-top: 7px; }
           .hero-trust { margin-top: 6px; }
         }

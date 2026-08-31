@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { CheckCircle, Clock3, GraduationCap, HandHeart, Home, Phone, ShieldCheck, Smile, Star, Users } from 'lucide-react';
+import { CheckCircle, Clock3, HandHeart, Home, Phone, ShieldCheck, Star, Users } from 'lucide-react';
 import { motion } from 'framer-motion';
 import SEO from '@/components/SEO';
 import NavigationNew from '@/components/NavigationNew';
@@ -69,8 +69,6 @@ const BookInterview = () => {
       </div>
     </div>
     {!completedData ? <ConsultationContent /> : null}
-    {!completedData ? <section className="interview-trust-strip" aria-label="DA Tuition experience"><div><Smile aria-hidden="true" /><strong>20+</strong><span>Years of experience</span></div><div><Users aria-hidden="true" /><strong>1,500+</strong><span>Students helped</span></div><div><GraduationCap aria-hidden="true" /><strong>Small groups</strong><span>of 3–5</span></div></section> : null}
-    {!completedData ? <p className="interview-closing">Every conversation is the start of something great. <span>♡</span></p> : null}
     <FooterNew />
   </div>;
 };
