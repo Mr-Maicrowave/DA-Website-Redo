@@ -1730,6 +1730,10 @@
       display: none !important;
     }
 
+    html.tutor-intro:not(.fallback-visible) .static-fallback {
+      display: none;
+    }
+
     html.tutor-intro .tutor-static-fallback {
       display: grid;
       grid-template-columns: minmax(150px, 230px) minmax(260px, 440px);
@@ -6265,6 +6269,7 @@
 
     function showFallback(message) {
       experience.classList.remove("webgl-ready");
+      document.documentElement.classList.add("fallback-visible");
       fallbackStatus.textContent = message;
     }
 

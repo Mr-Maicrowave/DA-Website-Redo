@@ -13,6 +13,11 @@ test('Tutor Library intro hosts the direct single-book Complete Shelf variant wi
   assert.doesNotMatch(intro, /SpreadCopy|SingleShelfBay|CompleteShelfRigBridge/);
 });
 
+test('Tutor intro skips its branded loading interstitial but preserves the real failure fallback', () => {
+  assert.match(completeShelf, /html\.tutor-intro:not\(\.fallback-visible\) \.static-fallback\s*\{[^}]*display:\s*none/);
+  assert.match(completeShelf, /function showFallback\(message\)\s*\{[\s\S]*document\.documentElement\.classList\.add\("fallback-visible"\)/);
+});
+
 test('Complete Shelf exposes one tutor-selection volume and signals when its last page is reached', () => {
   assert.match(completeShelf, /get\("variant"\).*tutor-intro/);
   assert.match(completeShelf, /3,000 Apply/);
