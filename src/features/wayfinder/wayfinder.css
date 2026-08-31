@@ -66,14 +66,14 @@
 .wayfinder-arrive { position: relative; min-height: 72vh; padding: clamp(96px,11vw,158px) clamp(24px,8vw,136px); background: #fffdf8; display: grid; grid-template-columns: minmax(245px,.9fr) minmax(300px,1.08fr) minmax(265px,.92fr); gap: clamp(36px,5vw,78px); align-items: center; }
 .wayfinder-arrive h2 { font: 500 clamp(44px,5vw,78px)/.96 Georgia,serif; letter-spacing: -.04em; margin: 15px 0; }
 .wayfinder-editorial { max-width: 350px; line-height: 1.7; color: #526173; }
-.wayfinder-arrive__journey { --wayfinder-journey-axis: 27px; position: relative; margin: 0; padding: 8px 0; list-style: none; }
-.wayfinder-arrive__journey::before { content: ''; position: absolute; left: var(--wayfinder-journey-axis); top: 31px; bottom: 40px; width: 1px; transform: translateX(-50%); background: #b68b16; }
+.wayfinder-arrive__journey { position: relative; margin: 0; padding: 8px 0; list-style: none; }
+.wayfinder-arrive__journey::before { content: ''; position: absolute; left: 26px; top: 31px; bottom: 40px; width: 1px; background: #b68b16; }
 .wayfinder-route-node { position: relative; display: grid; grid-template-columns: 54px minmax(0, 1fr); gap: 22px; padding: 0 0 36px; }
 .wayfinder-route-node > div { min-width: 0; }
 .wayfinder-route-node:last-child { padding-bottom: 0; }
-.wayfinder-arrive__waypoint { position: relative; z-index: 1; display: grid; width: 46px; height: 46px; justify-self: center; place-items: center; color: #071629; background: #fffdf8; border: 1px solid #b68b16; border-radius: 50%; }
+.wayfinder-arrive__waypoint { position: relative; z-index: 1; display: grid; width: 46px; height: 46px; margin-left: 4px; place-items: center; color: #071629; background: #fffdf8; border: 1px solid #b68b16; border-radius: 50%; }
 .wayfinder-route-node.is-destination { padding-top: 6px; }
-.wayfinder-route-node.is-destination .wayfinder-arrive__waypoint { width: 54px; height: 54px; color: #f7f3eb; background: #071629; border: 2px solid #d6a921; box-shadow: 0 0 0 6px #fffdf8; }
+.wayfinder-route-node.is-destination .wayfinder-arrive__waypoint { width: 54px; height: 54px; margin-left: 0; color: #f7f3eb; background: #071629; border: 2px solid #d6a921; box-shadow: 0 0 0 6px #fffdf8; }
 .wayfinder-route-node small { display: block; margin-bottom: 5px; color: var(--wayfinder-gold-ink); font-size: 10px; font-weight: 800; letter-spacing: 1.6px; }
 .wayfinder-route-node b { display: block; font: 500 22px/1.1 Georgia, serif; }
 .wayfinder-route-node p { margin: 6px 0 0; color: #526173; font-size: 14px; line-height: 1.5; }
@@ -108,7 +108,7 @@
 .wayfinder-when__week .is-today dd { color: #8b670d; }
 
 /* Community reach */
-.wayfinder-community { position: relative; min-height: 320svh; background: radial-gradient(ellipse at 61% 53%, #d8dfdb66 0%, transparent 34%), linear-gradient(115deg, #eee3d2 0%, #e9decb 58%, #e5d9c6 100%); }
+.wayfinder-community { position: relative; min-height: 260svh; background: radial-gradient(ellipse at 61% 53%, #d8dfdb66 0%, transparent 34%), linear-gradient(115deg, #eee3d2 0%, #e9decb 58%, #e5d9c6 100%); }
 .wayfinder-community__sticky { position: sticky; top: 56px; height: calc(100svh - 56px); overflow: hidden; isolation: isolate; border-top: 1px solid #c9c0ad; border-bottom: 1px solid #c9c0ad; }
 @media (min-width: 1024px) {
   body:has([data-da-nav-state='collapsed']) .wayfinder-community__sticky { top: 0; height: 100svh; border-top: 0; }
@@ -163,9 +163,10 @@
  .wayfinder-arrive { min-height: 0; display: block; padding: 76px 24px 66px; }
  .wayfinder-arrive h2 { font-size: clamp(42px, 9vw, 58px); }
  .wayfinder-spine { height: 86px; }
- .wayfinder-arrive__journey { --wayfinder-journey-axis: 26px; margin-top: 34px; padding: 0; }
- .wayfinder-arrive__journey::before { top: 22px; bottom: 38px; }
+ .wayfinder-arrive__journey { margin-top: 34px; padding: 0; }
+ .wayfinder-arrive__journey::before { left: 23px; top: 22px; bottom: 38px; }
  .wayfinder-route-node { grid-template-columns: 52px minmax(0, 1fr); gap: 12px; padding-bottom: 30px; }
+ .wayfinder-arrive__waypoint { margin-left: 0; }
  .wayfinder-arrive__details { margin-top: 38px; }
  .wayfinder-arrive__details > div { grid-template-columns: minmax(70px,.3fr) minmax(0,1fr); padding: 16px 0; }
 

@@ -81,6 +81,7 @@ export const CommunityMap = ({ progress, bookingPath }: { progress: MotionValue<
 
   const connectorRef = useRef<SVGPathElement>(null);
   const buildingRefs = useRef<(SVGGElement | null)[]>([]);
+  const hubRef = useRef<SVGGElement>(null);
   const schoolConnectionRefs = useRef<(SVGLineElement | null)[]>([]);
   const dotGroupRefs = useRef<(SVGGElement | null)[]>([]);
   const localCardRef = useRef<HTMLDivElement>(null);
@@ -185,6 +186,9 @@ export const CommunityMap = ({ progress, bookingPath }: { progress: MotionValue<
     });
 
     const hubPoint = map.latLngToContainerPoint([HUB_COORDINATES.lat, HUB_COORDINATES.lng]);
+    if (hubRef.current) {
+      hubRef.current.setAttribute('transform', `translate(${hubPoint.x.toFixed(1)} ${hubPoint.y.toFixed(1)})`);
+    }
 
     SORTED_SCHOOLS.forEach((school, index) => {
       const connection = schoolConnectionRefs.current[index];
@@ -335,6 +339,17 @@ export const CommunityMap = ({ progress, bookingPath }: { progress: MotionValue<
             </g>
           );
         })}
+        <g ref={hubRef} className="community-map__hub">
+          <circle r="32" className="community-map__hub-density" />
+          <circle r="24" className="community-map__hub-glow" />
+          <circle r="14" className="community-map__hub-ring-outer" />
+          <circle r="11" className="community-map__hub-ring" />
+          <circle r="6" className="community-map__hub-core" />
+          <g className="community-map__hub-label" transform="translate(-64 -44)">
+            <rect width="128" height="19" />
+            <text x="64" y="13" textAnchor="middle">DA CANLEY HEIGHTS</text>
+          </g>
+        </g>
       </svg>
       <div className="community-card">
         <div className="community-card__stack">

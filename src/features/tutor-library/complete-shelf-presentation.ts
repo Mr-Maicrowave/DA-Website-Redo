@@ -540,11 +540,6 @@ export function createCompleteShelfPresentation(tutor: CatalogueTutor, edition?:
     ink: "#1a314c",
     edge: "#e5d9c7",
   };
-  const interiorColours = {
-    ...colours,
-    ink: "#071a33",
-    foil: "#8a5700",
-  };
 
   return {
     tutorId: tutor.id,
@@ -590,7 +585,7 @@ export function createCompleteShelfPresentation(tutor: CatalogueTutor, edition?:
       drawTransparentFoil(backFoil);
       drawEndpaper(openingEndpaper, tutor, portrait, colours, true);
       drawEndpaper(frontEndpaper, tutor, portrait, colours, false);
-      interiors.forEach((canvas, pageNumber) => drawInterior(canvas, pages[pageNumber], portrait, interiorColours));
+      interiors.forEach((canvas, pageNumber) => drawInterior(canvas, pages[pageNumber], portrait, colours));
       return { cover, coverFoil, spine, spineFoil, back, backFoil, openingEndpaper, frontEndpaper, interiors };
     },
     createInitialCanvasSources(canvasDocument = document) {
@@ -608,7 +603,7 @@ export function createCompleteShelfPresentation(tutor: CatalogueTutor, edition?:
         const canvas = interiors[index];
         const page = pages[index];
         if (!canvas || !page) return;
-        drawInterior(canvas, page, portrait, interiorColours);
+        drawInterior(canvas, page, portrait, colours);
         notifyTextureUpdate(canvas);
       };
       drawCover(cover, portrait, colours);
