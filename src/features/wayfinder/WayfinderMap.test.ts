@@ -21,6 +21,7 @@ test('WayfinderMap.tsx still exports the hero / nearby / ready variants and drop
 });
 
 test('the Locations journey has the approved five-stage order and preserves CommunityMap progress', () => {
+  assert.doesNotMatch(wayfinderPageSource, /DA\s*<span>WAYFINDER<\/span>/, 'the hero must not render the redundant DA WAYFINDER label');
   assert.match(wayfinderPageSource, /01 \/ WHERE/);
   assert.match(wayfinderPageSource, /02 \/ WHEN/);
   assert.match(wayfinderPageSource, /03 \/ ARRIVE/);
@@ -59,6 +60,11 @@ test('WHERE keeps its selected destination live region mounted and uses accessib
   assert.match(
     wayfinderCssSource,
     /\.wayfinder-navline span, \.wayfinder-step, \.wayfinder-where__editorial > p \{ color: var\(--wayfinder-gold-ink\); \}/,
+  );
+  assert.match(
+    wayfinderCssSource,
+    /@media \(min-width: 769px\)[\s\S]*?\.wayfinder-where__editorial\s*\{[^}]*transform:\s*translateY\(clamp\(-72px,\s*-5vh,\s*-48px\)\)/s,
+    'the desktop hero copy should sit high enough to leave the Canley Vale Road waypoint visible',
   );
 });
 
@@ -118,6 +124,13 @@ test('WHERE map geometry and its markers share one responsive SVG coordinate sys
   assert.match(wayfinderMapSource, /<motion\.g animate=\{camera\}/, 'roads, route, property links, and markers must move as one map group');
   assert.match(wayfinderMapSource, /<motion\.path d=\{pathFromCoordinates\(scene\.connection, bounds, scene\.viewBox\)\}/, 'the gold route must use projected geographic coordinates');
   assert.match(wayfinderMapSource, /transform=\{`translate\(\$\{point\.x\} \$\{point\.y\}\)`\}/, 'building markers must use the same projected coordinates');
+  assert.match(wayfinderMapSource, /selected && <circle r="34" className="wayfinder-marker-glow" \/>/, 'the selected building needs a dedicated glow layer');
+  assert.match(wayfinderMapSource, /wayfinder-road-label wayfinder-road-label-\$\{road\.id\}/, 'named road labels need addressable landmark classes');
+  assert.match(wayfinderMapSource, /place\.kind === 'station' && <g className="wayfinder-station-symbol"/, 'the station landmark needs a distinct map symbol');
+  assert.match(wayfinderMapSource, /variant === 'hero' && station && <g className="wayfinder-station-cue"/, 'the hero needs an honest directional cue when the real station lies beyond its crop');
+  assert.match(wayfinderCssSource, /\.wayfinder-hero \.wayfinder-road-label-canley-vale-road\s*\{[^}]*display:\s*block/s, 'Canley Vale Road must be visible as the driving landmark');
+  assert.match(wayfinderCssSource, /@keyframes wayfinder-selected-glow/, 'the selected marker glow needs a restrained pulse');
+  assert.match(wayfinderCssSource, /@media \(prefers-reduced-motion:\s*reduce\)[\s\S]*?\.wayfinder-marker-glow\s*\{[^}]*animation:\s*none/s, 'the selected marker glow must become static for reduced motion');
   assert.doesNotMatch(wayfinderPageSource, /wayfinder-route-exit/, 'a page-level absolute connector must not pretend to be part of the map geometry');
 });
 

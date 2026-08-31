@@ -49,7 +49,7 @@ export default function WayfinderLocationsPage() {
         <WayfinderMap selectedCentre={centre} variant="hero" />
         <div className="wayfinder-where__layout">
           <div className="wayfinder-navline">
-            DA <span>WAYFINDER</span><b>01 / WHERE</b>
+            <b>01 / WHERE</b>
           </div>
           <div className="wayfinder-where__editorial">
             <p>DA TUITION LOCATIONS</p>

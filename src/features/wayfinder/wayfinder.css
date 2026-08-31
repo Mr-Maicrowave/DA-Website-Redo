@@ -34,7 +34,14 @@
 .wayfinder-marker-ring { fill: #071629; stroke: #d6a921; stroke-width: 2; }
 .wayfinder-marker-core { fill: #d6a921; }
 .wayfinder-marker-halo { fill: none; stroke: #d6a921; stroke-opacity: .38; stroke-width: 1; }
+.wayfinder-marker-glow { fill: #d6a921; fill-opacity: .18; stroke: #d6a921; stroke-opacity: .72; stroke-width: 1.5; filter: drop-shadow(0 0 12px rgba(214, 169, 33, .88)); transform-box: fill-box; transform-origin: center; animation: wayfinder-selected-glow 2.4s cubic-bezier(.22, 1, .36, 1) infinite; }
 .wayfinder-place circle { fill: #d6a921; opacity: .8; }
+.wayfinder-station-symbol circle { fill: #f0e9dc; fill-opacity: .96; stroke: #72500a; stroke-width: 1.5; }
+.wayfinder-station-symbol path { fill: none; stroke: #071629; stroke-width: 1.5; stroke-linecap: round; }
+.wayfinder-station-cue circle { fill: #f0e9dc; stroke: #72500a; stroke-width: 1.5; }
+.wayfinder-station-cue text { fill: #415366; font: 700 11px Cabin, Arial, sans-serif; letter-spacing: 1.2px; }
+.wayfinder-station-cue__rail { fill: none; stroke: #071629; stroke-width: 1.5; stroke-linecap: round; }
+.wayfinder-station-cue__direction { fill: none; stroke: #72500a; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
 .is-secondary { opacity: .5; }
 .wayfinder-gold-route { fill: none; stroke: #d6a921; stroke-width: 3; }
 .wayfinder-property-connector { stroke: #d6a921; stroke-opacity: .45; stroke-width: 1; stroke-dasharray: 3 4; }
@@ -45,6 +52,20 @@
 .wayfinder-hero .wayfinder-label, .wayfinder-hero .wayfinder-marker-label { fill: #071629; fill-opacity: .7; }
 .wayfinder-hero .wayfinder-marker-ring { fill: #f0e9dc; }
 .wayfinder-hero .wayfinder-road-label { display: none; }
+.wayfinder-hero .wayfinder-road-label-canley-vale-road { display: block; fill: #415366; fill-opacity: .82; font-size: 11px; letter-spacing: 1.4px; }
+
+@keyframes wayfinder-selected-glow {
+  0%, 100% { opacity: .74; transform: scale(.94); }
+  50% { opacity: 1; transform: scale(1.12); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wayfinder-marker-glow { animation: none; opacity: .86; }
+}
+
+@media (max-width: 768px) {
+  .wayfinder-station-cue { display: none; }
+}
 
 /* Destination rail and selector */
 .wayfinder-where__rail { grid-area: rail; position: relative; isolation: isolate; display: flex; min-width: 0; flex-direction: column; padding: 62px 0 0 clamp(20px, 2.4vw, 38px); border-left: 1px solid #8c806e80; }
@@ -84,6 +105,7 @@
 .wayfinder-spine { position: absolute; left: var(--wayfinder-route-axis); top: 0; width: 1px; height: 104px; background: #d6a921; }
 
 @media (min-width: 769px) {
+ .wayfinder-where__editorial { transform: translateY(clamp(-72px, -5vh, -48px)); }
  .wayfinder-spine { height: clamp(164px, 14.5vw, 196px); }
 }
 
