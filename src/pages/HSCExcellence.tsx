@@ -279,7 +279,6 @@ const HSCExcellence = () => {
           inset: auto;
           top: 0;
         }
-        .hsc-video-only-footer { display: none; }
         .hsc-landscape-background {
           position: sticky;
           top: 0;
@@ -390,17 +389,6 @@ const HSCExcellence = () => {
         .hsc-fit-list { list-style: none; display: grid; grid-template-columns: repeat(auto-fit,minmax(320px,1fr)); gap: 12px; margin: 0 0 36px; padding: 0; }
         .hsc-fit-list li { display: flex; align-items: flex-start; gap: 12px; font-size: .95rem; color: var(--text); line-height: 1.6; }
         .hsc-fit-check { width: 24px; height: 24px; min-width: 24px; background: #fff; border: 1.5px solid var(--gold-light); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: .82rem; color: var(--gold); margin-top: 2px; }
-        .hsc-fit-cta-row { text-align: center; margin-top: 8px; }
-
-        .hsc-cta-section { background: var(--navy); border-top: 4px solid var(--gold); padding: 80px 52px; text-align: center; }
-        .hsc-cta-section h2 { font-family: var(--font-serif); font-size: clamp(1.9rem,3.8vw,2.8rem); font-weight: 700; color: #fff; letter-spacing: -1px; margin: 0 0 16px; text-wrap: balance; }
-        .hsc-cta-section p { font-size: 1.03rem; color: rgba(255,255,255,.72); max-width: 540px; margin: 0 auto 36px; line-height: 1.72; text-wrap: pretty; }
-        .hsc-cta-btns { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-bottom: 20px; }
-        .hsc-btn-gold { background: var(--gold-light); color: var(--navy); border: none; padding: 15px 36px; border-radius: 999px; font-size: 1rem; font-weight: 900; cursor: pointer; transition: all .2s; text-decoration: none; display: inline-block; box-shadow: 0 10px 30px rgba(201,162,39,.3); }
-        .hsc-btn-gold:hover { background: var(--gold); transform: translateY(-2px); box-shadow: 0 12px 32px rgba(201,162,39,.4); }
-        .hsc-btn-outline-cta { background: transparent; color: #fff; border: 2px solid rgba(255,255,255,.35); padding: 15px 36px; border-radius: 999px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: all .2s; text-decoration: none; display: inline-block; }
-        .hsc-btn-outline-cta:hover { border-color: #fff; background: rgba(255,255,255,.08); }
-        .hsc-cta-note { font-size: .82rem !important; color: rgba(255,255,255,.45) !important; margin: 0 !important; }
 
         .hsc-footer { background: var(--navy); border-top: 1px solid rgba(255,255,255,.1); padding: 28px 52px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px; }
         .hsc-footer-logo { font-size: 1rem; font-weight: 900; color: #fff; }
@@ -419,7 +407,7 @@ const HSCExcellence = () => {
 
         @media (max-width: 768px) {
           .hsc-landscape-overlay { background: rgba(248,243,232,.70); }
-          .hsc-hero, .hsc-section, .hsc-cta-section { padding-left: 20px; padding-right: 20px; }
+          .hsc-hero, .hsc-section { padding-left: 20px; padding-right: 20px; }
           .hsc-breadcrumb, .hsc-urgency-banner { padding-left: 20px; padding-right: 20px; }
           .hsc-sibling-tabs { justify-content: flex-start; }
           .hsc-stab { padding: 14px 20px; }
@@ -546,29 +534,11 @@ const HSCExcellence = () => {
                 </li>
               ))}
             </ul>
-            <div className="hsc-fit-cta-row">
-              <Link className="hsc-btn-navy" to="/book-interview">Secure a Spot - Limited Places</Link>
-            </div>
           </div>
         </section>
-
-        <div className="hsc-cta-section">
-          <h2>The HSC Does Not Wait.<br />Neither Should You.</h2>
-          <p>
-            Every term without the right support is a term of marks that cannot be recovered. Book an interview
-            and find out exactly what is possible for your child's ATAR.
-          </p>
-          <div className="hsc-cta-btns">
-              <Link className="hsc-btn-gold" to="/book-interview">Book an Interview</Link>
-              <Link className="hsc-btn-outline-cta" to="/success-stories">See Results</Link>
-          </div>
-          <p className="hsc-cta-note">No entrance exam &nbsp;&middot;&nbsp; Honest placement advice &nbsp;&middot;&nbsp; Limited spots each term</p>
-        </div>
       </main>
       </div>
-      <div className="hsc-video-only-footer" hidden>
-        <FooterNew />
-      </div>
+      <FooterNew />
     </div>
   );
 };

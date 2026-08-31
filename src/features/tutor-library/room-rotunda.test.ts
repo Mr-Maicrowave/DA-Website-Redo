@@ -5,6 +5,7 @@ import { existsSync, readFileSync } from 'node:fs';
 const roomPath = new URL('./RoomRotunda.tsx', import.meta.url);
 const scenePath = new URL('./TutorLibraryScene.tsx', import.meta.url);
 const libraryPath = new URL('./TutorLibrary.tsx', import.meta.url);
+const loadingPath = new URL('./TutorLibraryLoadingSurface.tsx', import.meta.url);
 
 test('renders a data-driven Three.js room without fixed wall geometry', () => {
   assert.equal(existsSync(roomPath), true);
@@ -32,16 +33,20 @@ test('keeps continuous tutor-library motion inside the canvas rather than React 
   assert.match(scene, /useFrame/);
 });
 
-test('keeps a branded HTML loading surface visible until the room has rendered its first frame', () => {
+test('keeps a branded loading surface until the first frame and visible shelf assets are ready', () => {
   const library = readFileSync(libraryPath, 'utf8');
+  const loading = readFileSync(loadingPath, 'utf8');
   const scene = readFileSync(scenePath, 'utf8');
 
   assert.match(library, /const \[roomReady, setRoomReady\] = useState\(false\)/);
-  assert.match(library, /const \[loadingVisible, setLoadingVisible\] = useState\(false\)/);
-  assert.match(library, /setTimeout\(\(\) => setLoadingVisible\(true\), 180\)/);
-  assert.match(library, /tutor-library__loading/);
-  assert.match(library, /loadingVisible && !roomReady && !sceneError/);
-  assert.match(library, /onRoomReady=\{\(\) => setRoomReady\(true\)\}/);
+  assert.match(library, /const \[firstShelfReady, setFirstShelfReady\] = useState\(false\)/);
+  assert.match(library, /warmTutorLibraryFirstShelf\(\)/);
+  assert.match(library, /isTutorLibraryRevealReady/);
+  assert.match(library, /TutorLibraryLoadingSurface/);
+  assert.match(loading, /tutor-library__loading/);
+  assert.match(loading, /tutor-library__loading--departing/);
+  assert.match(library, /tutor-library__canvas--ready/);
+  assert.match(library, /onRoomReady=\{\(\) => \{ setRoomReady\(true\)/);
   assert.match(scene, /function RoomReadySignal/);
   assert.match(scene, /requestAnimationFrame\(\(\) => onRoomReady\(\)\)/);
 });
@@ -59,19 +64,16 @@ test('uses lightweight material variation and layered mouldings for architectura
   const source = readFileSync(new URL('./RoomRotunda.tsx', import.meta.url), 'utf8');
 
   assert.match(source, /DataTexture/);
+  assert.match(source, /createWalnutGrainPixels\(128\)/);
+  assert.doesNotMatch(source, /const size = 32/);
   assert.match(source, /CabinetMoulding/);
   assert.match(source, /nosingDepth/);
 });
 
-test('fills quiet shelf gaps with one batched non-interactive decorative book layer', () => {
+test('renders only real tutor books in every shelf state', () => {
   const room = readFileSync(new URL('./RoomRotunda.tsx', import.meta.url), 'utf8');
-  assert.match(room, /function DecorativeShelfBooks/);
-  assert.match(room, /const DECORATIVE_BOOK_COLOURS = \[/);
-  assert.match(room, /<instancedMesh ref=\{mesh\}/);
-  assert.match(room, /const detailMesh = useRef<InstancedMesh>/);
-  assert.match(room, /name="decorative-book-edge-details"/);
-  assert.match(room, /DECORATIVE_BOOK_DETAIL_COLOURS/);
-  assert.match(room, /<DecorativeShelfBooks cabinet=\{cabinet\} wallId=\{wall\.id\} \/>/);
+  assert.match(room, /<TutorShelf editions=\{spotlightEditions \?\? \(EDITIONS_BY_WALL\.get\(wall\.id\) \?\? \[\]\)\}/);
+  assert.doesNotMatch(room, /DecorativeShelfBooks|DECORATIVE_BOOK_/);
 });
 
 test('batches the non-interactive floor boards into a single colour-varied mesh', () => {

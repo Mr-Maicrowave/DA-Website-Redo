@@ -22,7 +22,10 @@ import {
 } from './tutor-library-state';
 import { TutorLibraryScene } from './TutorLibraryScene';
 import { TutorLibraryControlSurface } from './TutorLibraryControls';
+import { TutorLibraryLoadingSurface } from './TutorLibraryLoadingSurface';
 import { getSpotlightPageCount, getSpotlightResultWindow, searchTutorSpotlight } from './tutor-library-spotlight';
+import { warmTutorLibraryFirstShelf } from './tutor-library-assets';
+import { isTutorLibraryRevealReady } from './tutor-library-performance';
 import { profileContentFor } from '../../pages/profileContent';
 import {
   TUTOR_BOOK_READING_STATE_COUNT,
@@ -58,7 +61,7 @@ function useReducedMotionPreference() {
   return reducedMotion;
 }
 
-export function TutorLibrary() {
+export function TutorLibrary({ onReady }: { onReady?: () => void } = {}) {
   const [searchParams] = useSearchParams();
   const [library, dispatch] = useReducer(libraryReducer, 'primary', createLibraryState);
   const [settledPages, setSettledPages] = useState(0);
@@ -66,7 +69,8 @@ export function TutorLibrary() {
   const [rigIntent, setRigIntent] = useState<PendingRigIntent>();
   const [sceneError, setSceneError] = useState<string | undefined>(() => searchParams.get('libraryForceCanvasError') === '1' ? 'Forced Tutor Library Canvas failure' : undefined);
   const [roomReady, setRoomReady] = useState(false);
-  const [loadingVisible, setLoadingVisible] = useState(false);
+  const [firstShelfReady, setFirstShelfReady] = useState(false);
+  const [loadingDismissed, setLoadingDismissed] = useState(false);
   const [spotlightQuery, setSpotlightQuery] = useState('');
   const [spotlightOffset, setSpotlightOffset] = useState(0);
   const [viewport, setViewport] = useState(() => ({
@@ -76,13 +80,26 @@ export function TutorLibrary() {
   const reducedMotion = useReducedMotionPreference();
   const deferredSpotlightQuery = useDeferredValue(spotlightQuery);
   useEffect(() => {
-    if (roomReady || sceneError) {
-      setLoadingVisible(false);
+    let active = true;
+    void warmTutorLibraryFirstShelf().then(() => { if (active) setFirstShelfReady(true); });
+    return () => { active = false; };
+  }, []);
+  const revealReady = isTutorLibraryRevealReady({ roomReady, assetsReady: firstShelfReady, sceneError: Boolean(sceneError) });
+  useEffect(() => {
+    if (!revealReady) return;
+    if (reducedMotion || sceneError) {
+      setLoadingDismissed(true);
       return;
     }
-    const timer = window.setTimeout(() => setLoadingVisible(true), 180);
+    const timer = window.setTimeout(() => setLoadingDismissed(true), 340);
     return () => window.clearTimeout(timer);
-  }, [roomReady, sceneError]);
+  }, [reducedMotion, revealReady, sceneError]);
+  const readyNotified = useRef(false);
+  useEffect(() => {
+    if (!revealReady || sceneError || readyNotified.current) return;
+    readyNotified.current = true;
+    onReady?.();
+  }, [onReady, revealReady, sceneError]);
   const timing = useMemo(() => createBookMotionTimingPolicy(reducedMotion), [reducedMotion]);
   const mountedRoots = useRef(createMountedRigRootRegistry());
   const pendingIntent = useRef(createPendingRigIntentTracker());
@@ -212,22 +229,16 @@ export function TutorLibrary() {
   const accessibility = getTutorLibraryAccessibilityProps(bookActive, selectedTutor?.name);
 
   return <section className={`tutor-library${isDebugTurn || isDebugBook || qaState ? ' tutor-library--diagnostic' : ''}${bookActive ? ' tutor-library--book-active' : ''}${spotlightActive ? ' tutor-library--spotlight-active' : ''}`} aria-label={accessibility.rootLabel} aria-labelledby={accessibility.rootLabelledBy} data-tutor-library-qa="root" data-library-phase={qa.phase} data-library-transition-id={qa.transitionId} data-library-generation={qa.generation} data-library-edition={qa.edition} data-library-wall={qa.wall} data-library-root-uuid={qa.rootUuid} data-library-matrix-delta={qa.matrixDelta} data-library-reset-state={qa.resetState} data-library-review-view={qa.reviewView} data-library-review-progress={qa.progress} data-library-qa-progress={qa.progress} data-library-controller-progress="unavailable" data-library-qa-state={qaState?.id ?? 'live'} data-room-phase={sceneBookPhase} data-turn-progress={liveProgress.toFixed(2)} data-reduced-motion={reducedMotion ? 'true' : 'false'}>
-    {loadingVisible && !roomReady && !sceneError ? <div className="tutor-library__loading" role="status" aria-live="polite">
-      <div className="tutor-library__loading-card">
-        <p>DA Tuition faculty</p>
-        <h2>The tutor library is opening</h2>
-        <div className="tutor-library__loading-shelf" aria-hidden="true">
-          <i /><i /><i /><i /><i /><i /><i />
-        </div>
-        <span>Preparing the reading room</span>
-      </div>
-    </div> : null}
+    {!loadingDismissed && !sceneError ? <TutorLibraryLoadingSurface
+      departing={revealReady}
+      statusText={roomReady ? 'Preparing tutor portraits and materials' : 'Preparing the reading room'}
+    /> : null}
     <header className={`tutor-library__copy${checkpointView || isDebugTurn ? ' tutor-library__copy--checkpoint' : ''}`} aria-hidden={accessibility.copyAriaHidden}>
       <p>{spotlightActive ? 'Spotlight search' : 'DA Tuition faculty'}</p><h1 id="tutor-library-title">{spotlightActive ? 'Find your tutor.' : 'Find the person behind the teaching.'}</h1><span>{spotlightActive ? 'Search by name, subject or teaching style.' : 'Turn toward a subject and explore the educators who bring it to life.'}</span>
     </header>
-    <div className="tutor-library__canvas" aria-hidden="true"><CanvasBoundary onError={(message) => { cancelPendingIntent(); setSceneError(message); }}>
+    <div className={`tutor-library__canvas${revealReady ? ' tutor-library__canvas--ready' : ''}`} aria-hidden="true"><CanvasBoundary onError={(message) => { cancelPendingIntent(); setSceneError(message); }}>
       {forceCanvasFailure ? null : <Canvas shadows="soft" camera={{ position: [0, 1.9, .2], fov: 52, near: .1, far: 60 }} dpr={[1, viewportProfile.maxDpr]} gl={{ antialias: true, alpha: false, powerPreference: 'high-performance', toneMapping: ACESFilmicToneMapping, toneMappingExposure: 1.06 }}>
-        <TutorLibraryScene fromWallIndex={activeWallIndex} toWallIndex={targetWallIndex} motionProgress={motionProgress} debugTurnProgress={isDebugTurn ? debugTurnProgress : undefined} debugBookProgress={qaState?.motionProgress ?? (isDebugBook ? debugBookProgress : undefined)} timing={timing} reviewView={reviewView} showWallLabels={!isDebugTurn && !isDebugBook} spotlightEditions={spotlightActive ? spotlightEditions : undefined} phase={sceneBookPhase} generation={library.transitionGeneration} reducedMotion={reducedMotion} pageTurnDirection={pageTurnDirection} selectedEditionId={sceneSelectedEditionId} rigIntentEditionId={rigIntent?.editionId} rigIntentToken={rigIntent?.token ?? 0} onRoomReady={() => setRoomReady(true)} onActivate={(editionId, rootUuid) => dispatchEvents(getBookInteractionEvents(library, 'touch-activate', editionId, rootUuid))} onRigReady={handleRigReady} onRigUnavailable={handleRigUnavailable} onLifecycleComplete={dispatch} onPageSettled={setSettledPages} onError={(message) => { cancelPendingIntent(); setSceneError(message); }} />
+        <TutorLibraryScene fromWallIndex={activeWallIndex} toWallIndex={targetWallIndex} motionProgress={motionProgress} debugTurnProgress={isDebugTurn ? debugTurnProgress : undefined} debugBookProgress={qaState?.motionProgress ?? (isDebugBook ? debugBookProgress : undefined)} timing={timing} reviewView={reviewView} showWallLabels={!isDebugTurn && !isDebugBook} spotlightEditions={spotlightActive ? spotlightEditions : undefined} phase={sceneBookPhase} generation={library.transitionGeneration} reducedMotion={reducedMotion} pageTurnDirection={pageTurnDirection} selectedEditionId={sceneSelectedEditionId} rigIntentEditionId={rigIntent?.editionId} rigIntentToken={rigIntent?.token ?? 0} onRoomReady={() => { setRoomReady(true); }} onActivate={(editionId, rootUuid) => dispatchEvents(getBookInteractionEvents(library, 'touch-activate', editionId, rootUuid))} onRigReady={handleRigReady} onRigUnavailable={handleRigUnavailable} onLifecycleComplete={dispatch} onPageSettled={setSettledPages} onError={(message) => { cancelPendingIntent(); setSceneError(message); }} />
       </Canvas>}
     </CanvasBoundary></div>
 

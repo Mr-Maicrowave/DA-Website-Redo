@@ -42,12 +42,12 @@ export function createBookMotionPoses(shelfPose: ShelfPose): BookMotionTimelines
     scale: [1, 1, 1],
   };
   const preview: BookMotionPose = {
-    position: [.12, .08, 4.82],
+    position: [.12, -.25, 4.82],
     rotation: [-.045, -.18, .012],
     scale: [3.2, 3.2, 3.2],
   };
   const reading: BookMotionPose = {
-    position: [0, .48, 4.96],
+    position: [0, -.05, 4.96],
     rotation: [-.045, 0, .012],
     scale: [3.2, 3.2, 3.2],
   };

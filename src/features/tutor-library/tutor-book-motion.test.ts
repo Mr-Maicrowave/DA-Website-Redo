@@ -24,6 +24,8 @@ test('keeps extraction continuous from the exact stored shelf pose into preview'
   assert.ok(motion.preview.to.rotation[0] !== 0, 'preview avoids poster-flat alignment');
   assert.deepEqual(motion.reading.from, motion.preview.to);
   assert.ok(motion.reading.to.position[1] > motion.preview.to.position[1], 'reading pose clears the furniture before opening');
+  assert.ok(motion.preview.to.position[1] <= -.25, 'the closed preview sits low enough to keep its identity visible');
+  assert.ok(motion.reading.to.position[1] <= 0, 'the open spread sits low enough to keep every page edge onscreen');
 });
 
 test('returns from the exact sampled interruption pose instead of the preview endpoint', () => {

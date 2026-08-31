@@ -1,180 +1,149 @@
-import type { ReactNode } from 'react';
-import { Phone, MapPin, Clock, Award } from 'lucide-react';
+import { Clock3, MapPin, Phone } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
-const GOLD = '#c9a227';
+import { contactInfo } from '@/data/business-info';
+import { footerConfig, type FooterLink } from '@/components/footer/footer-config';
 
-const ColumnHeading = ({ children }: { children: ReactNode }) => (
-  <h3 className="mb-6 flex items-center gap-2.5 font-bold text-white">
-    <span className="h-[2px] w-5 shrink-0" style={{ background: GOLD }} />
+const linkClass =
+  'inline-flex min-h-11 min-w-11 items-center text-[15px] leading-6 text-[#243a54] transition-colors duration-200 hover:text-[#765416] focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy focus-visible:ring-offset-4 focus-visible:ring-offset-[#e9d8c8] lg:min-h-8';
+
+const FooterHeading = ({ id, children }: { id: string; children: string }) => (
+  <h2
+    id={id}
+    className="mb-4 text-[11px] font-bold uppercase tracking-[0.16em] text-[#765416] lg:mb-3"
+  >
     {children}
-  </h3>
+  </h2>
+);
+
+const FooterNavigation = ({
+  id,
+  title,
+  links,
+}: {
+  id: string;
+  title: string;
+  links: readonly FooterLink[];
+}) => (
+  <nav aria-labelledby={id}>
+    <FooterHeading id={id}>{title}</FooterHeading>
+    <ul className="space-y-1">
+      {links.map((link) => (
+        <li key={link.to}>
+          <Link to={link.to} className={linkClass}>
+            {link.label}
+          </Link>
+        </li>
+      ))}
+    </ul>
+  </nav>
 );
 
 const FooterNew = () => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="text-gray-300" style={{ background: '#071629' }}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="grid md:grid-cols-2 lg:grid-cols-6 gap-8">
-          {/* Company Info */}
-          <div className="lg:col-span-2">
-            <img
-              src="/lovable-uploads/7692e107-bde1-4906-b047-2458fe6a81ca.png"
-              alt="DA Tuition Logo"
-              className="h-16 w-auto mb-6 brightness-0 invert"
-            />
-            <p className="text-gray-400 mb-6 leading-relaxed text-sm max-w-sm">
-              Award-winning education center specializing in exam excellence through our unique curriculum and teaching methodology.
-            </p>
-            <div className="flex items-center gap-2 mb-4">
-              <Award className="w-5 h-5" style={{ color: GOLD }} />
-              <span className="text-sm">Outstanding Education Service 2025</span>
+    <footer
+      className="relative z-site-footer bg-[#e9d8c8] font-sans text-brand-navy"
+      aria-label="DA Tuition footer"
+    >
+      <div className="mx-auto grid max-w-7xl grid-cols-1 gap-x-12 gap-y-11 px-5 pb-12 pt-16 sm:grid-cols-2 sm:px-8 sm:pb-14 sm:pt-[4.5rem] lg:grid-cols-[1.35fr_0.85fr_0.9fr_1.25fr] lg:gap-x-16 lg:px-8 lg:pb-12 lg:pt-16">
+        <section aria-label="DA Tuition">
+          <Link
+            to="/"
+            className="inline-flex rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy focus-visible:ring-offset-4 focus-visible:ring-offset-[#e9d8c8]"
+          >
+            <span className="flex h-40 w-40 items-center justify-start">
+              <img
+                src={footerConfig.logo.src}
+                alt={footerConfig.logo.alt}
+                width="1254"
+                height="1254"
+                className="h-full w-full object-contain object-left"
+                loading="lazy"
+                decoding="async"
+              />
+            </span>
+          </Link>
+          <p className="mt-5 max-w-[15rem] font-serif text-[17px] leading-7 text-[#40546a]">
+            Local support, built around each student.
+          </p>
+          <Link
+            to={footerConfig.primaryAction.to}
+            className="mt-6 inline-flex min-h-11 items-center gap-3 rounded-sm bg-brand-navy px-5 py-3 text-[12px] font-bold uppercase tracking-[0.12em] text-[#f6ead8] transition-colors duration-200 hover:bg-[#243a54] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy focus-visible:ring-offset-4 focus-visible:ring-offset-[#e9d8c8]"
+          >
+            {footerConfig.primaryAction.label}
+            <span className="text-[#d6ad4b]" aria-hidden="true">→</span>
+          </Link>
+        </section>
+
+        <FooterNavigation
+          id="footer-explore-heading"
+          title="Explore"
+          links={footerConfig.explore}
+        />
+
+        <FooterNavigation
+          id="footer-subjects-heading"
+          title="Subjects"
+          links={footerConfig.subjects}
+        />
+
+        <section aria-labelledby="footer-visit-heading">
+          <FooterHeading id="footer-visit-heading">Visit DA Tuition</FooterHeading>
+          <address className="space-y-1 not-italic text-[15px] leading-6">
+            <a href="tel:0401940207" className={`${linkClass} gap-3`}>
+              <Phone className="h-4 w-4 shrink-0 text-[#765416]" aria-hidden="true" />
+              {contactInfo.phone}
+            </a>
+            <div className="flex gap-3 text-[#243a54]">
+              <MapPin className="mt-1 h-4 w-4 shrink-0 text-[#765416]" aria-hidden="true" />
+              <span>
+                Level 1/229 Canley Vale Rd
+                <br />
+                Canley Heights NSW 2166
+              </span>
             </div>
-          </div>
+            <div className="flex gap-3 text-[#40546a]">
+              <Clock3 className="mt-1 h-4 w-4 shrink-0 text-[#765416]" aria-hidden="true" />
+              <span>
+                Tue–Fri 5–9pm
+                <br />
+                Sat 9am–6pm
+                <br />
+                Sun 10am–7pm
+              </span>
+            </div>
+          </address>
+          <a
+            href={footerConfig.directionsUrl}
+            target="_blank"
+            rel="noreferrer"
+            className={`${linkClass} mt-2 text-brand-navy`}
+            aria-label="Get directions to DA Tuition (opens in a new tab)"
+          >
+            Get directions <span className="ml-1 text-[#765416]" aria-hidden="true">→</span>
+          </a>
+        </section>
+      </div>
 
-          {/* Programs */}
-          <div>
-            <ColumnHeading>Programs</ColumnHeading>
-            <ul className="space-y-3 text-sm">
-              <li>
-                <Link to="/hsc-excellence" className="hover:text-[#c9a227] transition-colors">
-                  HSC Excellence
-                </Link>
-              </li>
-              <li>
-                <Link to="/programs/primary-school" className="hover:text-[#c9a227] transition-colors">
-                  Primary School (K-6)
-                </Link>
-              </li>
-              <li>
-                <Link to="/programs/high-school" className="hover:text-[#c9a227] transition-colors">
-                  High School (7-10)
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* About */}
-          <div>
-            <ColumnHeading>About DA</ColumnHeading>
-            <ul className="space-y-3 text-sm">
-              <li>
-                <Link to="/our-approach" className="hover:text-[#c9a227] transition-colors">
-                  Our Approach
-                </Link>
-              </li>
-              <li>
-                <Link to="/our-teachers" className="hover:text-[#c9a227] transition-colors">
-                  Our Teachers
-                </Link>
-              </li>
-              <li>
-                <Link to="/learning-formats" className="hover:text-[#c9a227] transition-colors">
-                  Learning Formats
-                </Link>
-              </li>
-              <li>
-                <Link to="/principal-reflections" className="hover:text-[#c9a227] transition-colors">
-                  Principal's Reflection
-                </Link>
-              </li>
-              <li>
-                <Link to="/principal-interview-paper" className="hover:text-[#c9a227] transition-colors">
-                  Principal's Interview
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Resources */}
-          <div>
-            <ColumnHeading>Resources</ColumnHeading>
-            <ul className="space-y-3 text-sm">
-              <li>
-                <Link to="/success-stories" className="hover:text-[#c9a227] transition-colors">
-                  Success Stories
-                </Link>
-              </li>
-              <li>
-                <Link to="/articles" className="hover:text-[#c9a227] transition-colors">
-                  Articles & Guides
-                </Link>
-              </li>
-              <li>
-                <Link to="/faq" className="hover:text-[#c9a227] transition-colors">
-                  FAQ
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Contact Info */}
-          <div>
-            <ColumnHeading>Contact</ColumnHeading>
-            <div className="space-y-4 text-sm">
-              <a
-                href="tel:0401940207"
-                className="flex items-start hover:text-[#c9a227] transition-colors"
-              >
-                <Phone size={18} className="mr-3 mt-0.5 flex-shrink-0" style={{ color: GOLD }} />
-                <span>0401 940 207</span>
-              </a>
-
-              <div className="flex items-start">
-                <MapPin size={18} className="mr-3 mt-0.5 flex-shrink-0" style={{ color: GOLD }} />
-                <div>
-                  <Link to="/tutoring-canley-heights" className="hover:text-[#c9a227] transition-colors">
-                    Level 1/229 Canley Vale Rd<br />
-                    Canley Heights NSW 2166
+      <div className="border-t border-brand-navy/15">
+        <div className="mx-auto flex max-w-7xl flex-col gap-3 px-5 py-5 text-[13px] leading-5 text-[#526477] sm:flex-row sm:items-center sm:justify-between sm:px-8 lg:py-3">
+          <p>© {currentYear} DA Tuition. All rights reserved.</p>
+          <nav aria-label="Legal">
+            <ul className="flex flex-wrap gap-x-6 gap-y-1">
+              {footerConfig.legal.map((link) => (
+                <li key={link.to}>
+                  <Link
+                    to={link.to}
+                    className="inline-flex min-h-11 min-w-11 items-center transition-colors duration-200 hover:text-[#765416] focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy focus-visible:ring-offset-4 focus-visible:ring-offset-[#e9d8c8] lg:min-h-8"
+                  >
+                    {link.label}
                   </Link>
-                </div>
-              </div>
-
-              <div className="flex items-start">
-                <Clock size={18} className="mr-3 mt-0.5 flex-shrink-0" style={{ color: GOLD }} />
-                <div>
-                  <p className="font-semibold mb-1 text-white">Business Hours</p>
-                  <p>Tue-Fri: 5pm - 9pm</p>
-                  <p>Sat: 9am - 6pm</p>
-                  <p>Sun: 10am - 7pm</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Subject Links */}
-        <div className="border-t border-white/10 mt-12 pt-8">
-          <ColumnHeading>Subjects We Teach</ColumnHeading>
-          <div className="flex flex-wrap gap-4 text-sm">
-            <Link to="/subjects/mathematics" className="hover:text-[#c9a227] transition-colors">Mathematics</Link>
-            <span className="text-gray-600">•</span>
-            <Link to="/subjects/english" className="hover:text-[#c9a227] transition-colors">English</Link>
-            <span className="text-gray-600">•</span>
-            <Link to="/subjects/science" className="hover:text-[#c9a227] transition-colors">Science</Link>
-            <span className="text-gray-600">•</span>
-            <Link to="/subjects/business-studies" className="hover:text-[#c9a227] transition-colors">Business Studies</Link>
-            <span className="text-gray-600">•</span>
-            <Link to="/subjects/legal-studies" className="hover:text-[#c9a227] transition-colors">Legal Studies</Link>
-            <span className="text-gray-600">•</span>
-            <span className="text-gray-500">Physics • Chemistry • Biology</span>
-          </div>
-        </div>
-
-        {/* Bottom Bar */}
-        <div className="border-t border-white/10 mt-8 pt-8">
-          <div className="flex flex-col md:flex-row justify-between items-center">
-            <p className="text-gray-400 text-sm">
-              {/* TODO: Replace with real ABN before launch */}
-              © {currentYear} DA Tuition. All rights reserved.
-            </p>
-            <div className="flex space-x-6 mt-4 md:mt-0">
-              <Link to="/privacy-policy" className="text-gray-400 hover:text-[#c9a227] text-sm transition-colors">Privacy Policy</Link>
-              <a href="/sitemap.xml" className="text-gray-400 hover:text-[#c9a227] text-sm transition-colors">Sitemap</a>
-            </div>
-          </div>
+                </li>
+              ))}
+            </ul>
+          </nav>
         </div>
       </div>
     </footer>

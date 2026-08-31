@@ -4,7 +4,7 @@ import { readFile } from 'node:fs/promises';
 
 const baseUrl = process.argv[2] ?? 'http://127.0.0.1:8080';
 const routeBase = `${baseUrl.replace(/\/$/, '')}/dev/complete-shelf-rig`;
-const expectedReferenceHash = '163b4a99d34e24ce8ab205f28f1d3f1f33da216285be2c5db31422f13090b026';
+const expectedReferenceHash = 'de5fb0fbea46e7ce06c258eac8682746167486fc79e33001a0171791c9140847';
 const referencePath = new URL('../public/dev/complete-shelf-reference/index.html', import.meta.url);
 
 const reference = await readFile(referencePath);

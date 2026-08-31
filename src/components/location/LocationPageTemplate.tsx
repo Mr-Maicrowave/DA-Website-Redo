@@ -3,7 +3,6 @@ import NavigationNew from '@/components/NavigationNew';
 import FooterNew from '@/components/FooterNew';
 import LocationHero from '@/components/location/LocationHero';
 import SydneyTrustMap from '@/components/location/SydneyTrustMap';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -15,7 +14,6 @@ import {
     Trophy,
     Star,
     CheckCircle,
-    ArrowRight,
     Navigation,
 } from 'lucide-react';
 import { siteStats } from '@/data/site-stats';
@@ -283,45 +281,6 @@ const LocationPageTemplate = ({ content }: LocationPageTemplateProps) => {
                             </Link>
                         ))}
                     </div>
-                </div>
-            </section>
-
-            {/* CTA */}
-            <section className="py-16 bg-white">
-                <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                    <MapPin className="w-16 h-16 text-brand-gold mx-auto mb-6" />
-                    <h2 className="font-serif text-4xl font-semibold mb-4 text-brand-navy">Ready to Get Started?</h2>
-                    <p className="text-xl text-brand-midnight/80 mb-8">
-                        Book your interview at our Canley Heights centre and discover why {content.suburb} families
-                        have trusted DA Tuition for nearly 20 years.
-                    </p>
-
-                    <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                        <Button
-                            size="lg"
-                            className="btn-primary group"
-                            onClick={() => (window.location.href = '/#contact')}
-                        >
-                            Book Interview
-                            <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                        </Button>
-                        <Button
-                            size="lg"
-                            variant="outline"
-                            onClick={() =>
-                                window.open(
-                                    'https://maps.google.com/?q=229+Canley+Vale+Rd+Canley+Heights+NSW+2166',
-                                    '_blank'
-                                )
-                            }
-                        >
-                            Get Directions
-                        </Button>
-                    </div>
-
-                    <p className="mt-6 text-sm text-brand-midnight/70">
-                        Level 1/229 Canley Vale Rd, Canley Heights NSW 2166 • 0401 940 207
-                    </p>
                 </div>
             </section>
 

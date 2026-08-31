@@ -8,7 +8,6 @@ import LegalSyllabusQuiz from '@/components/subjects/LegalSyllabusQuiz';
 import LegalTransformationSteps from '@/components/subjects/LegalTransformationSteps';
 import LegalCareerPathways from '@/components/subjects/LegalCareerPathways';
 import { LegalStudiesIntroVideoGate } from '@/features/legal-intro-video/LegalStudiesIntroVideoGate';
-import { Button } from '@/components/ui/button';
 import {
   Scale,
   Gavel,
@@ -38,6 +37,7 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 import SEO from '@/components/SEO';
+import PageJourney from '@/components/page-journey/PageJourney';
 import './LegalStudies.css';
 
 const LEGAL_SAMPLE_PAGE_COUNT = 16;
@@ -58,6 +58,14 @@ const legalTrustedSchools = [
   { name: 'Amity College', logoSrc: '/images/schools/amity-college.png' },
   { name: 'Good Samaritan Catholic College', logoSrc: '/images/schools/good-samaritan-catholic-college.png' },
 ];
+
+const LEGAL_JOURNEY_SECTIONS = [
+  { id: 'legal-authority-carousel', label: 'Legal foundations', description: 'Cases, legislation and legal thinking' },
+  { id: 'legal-myths', label: 'Common myths', description: 'Make the law clearer' },
+  { id: 'legal-evaluation', label: 'Evaluation', description: 'Build Band 6 judgement' },
+  { id: 'legal-exam-structure', label: 'Exam structure', description: 'Prepare with purpose' },
+  { id: 'legal-access', label: 'Resources', description: 'Study support and sample essays' },
+] as const;
 
 const lcmidMethod = [
   {
@@ -1061,7 +1069,7 @@ const LegalMythsDifferenceSection = () => {
   };
 
   return (
-    <section className="legal-myths-section" aria-labelledby="legal-myths-title">
+    <section id="legal-myths" className="legal-myths-section" aria-labelledby="legal-myths-title">
       <div className="legal-myths-inner">
         <header className="legal-myths-header">
           <span className="legal-myths-eyebrow">
@@ -1382,7 +1390,7 @@ const LegalStudies = () => {
       <LegalMythsDifferenceSection />
 
       {/* Evaluation Criteria */}
-      <section ref={evaluationSectionRef} className="legal-evaluation-section" aria-label="Evaluation Criteria">
+      <section id="legal-evaluation" ref={evaluationSectionRef} className="legal-evaluation-section" aria-label="Evaluation Criteria">
         <div className="legal-evaluation-inner">
           <div className="legal-evaluation-grid">
             <div className="legal-method-panel">
@@ -1440,7 +1448,7 @@ const LegalStudies = () => {
       </section>
 
       {/* Exam Structure */}
-      <section ref={examStructureRef} className="legal-exam-structure-section" aria-labelledby="legal-exam-structure-title">
+      <section id="legal-exam-structure" ref={examStructureRef} className="legal-exam-structure-section" aria-labelledby="legal-exam-structure-title">
         <div className="legal-exam-structure-inner">
           <div className="legal-exam-structure-heading">
             <h2 id="legal-exam-structure-title">Get to Know the Structure of Your Exam</h2>
@@ -1504,7 +1512,7 @@ const LegalStudies = () => {
       </section>
 
       {/* Legal Studies Resource Preview */}
-      <section ref={accessSectionRef} className="legal-access-section" aria-labelledby="legal-access-title">
+      <section id="legal-access" ref={accessSectionRef} className="legal-access-section" aria-labelledby="legal-access-title">
         <div className="legal-access-shell">
           <div className="legal-access-visual">
             <img
@@ -1564,29 +1572,7 @@ const LegalStudies = () => {
 
       <LegalCareerPathways />
 
-      {/* CTA Section */}
-      <section className="py-16 bg-brand-navy text-white relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-accent-purple rounded-full blur-3xl"></div>
-          <div className="absolute bottom-0 left-0 w-64 h-64 bg-brand-blue rounded-full blur-3xl"></div>
-        </div>
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
-          <h2 className="text-3xl font-bold text-white mb-4">
-            Excel in HSC Legal Studies
-          </h2>
-          <p className="text-xl text-purple-100 mb-8">
-            Master legal thinking and achieve the Band 6 results you deserve
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" className="bg-white text-purple-600 hover:bg-purple-50">
-              Book Interview
-            </Button>
-            <Button size="lg" variant="outline" className="bg-transparent text-white border-white hover:bg-white/10">
-              Call 0401 940 207
-            </Button>
-          </div>
-        </div>
-      </section>
+      <PageJourney pageLabel="Legal Studies" sections={LEGAL_JOURNEY_SECTIONS} />
 
       {isSampleOpen && (
         <div

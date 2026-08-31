@@ -53,6 +53,7 @@ import ScrollToTop from "./components/ScrollToTop";
 import RouteScrollReset from "./components/RouteScrollReset";
 import BookIntroCalibration from "./pages/BookIntroCalibration";
 import { signalInitialRoutePainted } from "./lib/initialLoader";
+import { TutorLibraryLoadingSurface } from "./features/tutor-library/TutorLibraryLoadingSurface";
 
 const CompleteShelfR3FCheckpoint = lazy(
   () => import("./features/tutor-library/CompleteShelfR3FCheckpoint"),
@@ -61,9 +62,7 @@ const Tutors = lazy(() => import("./pages/Tutors"));
 
 const queryClient = new QueryClient();
 
-const TutorRouteLoading = () => <main aria-live="polite" aria-label="Opening tutor library" style={{ display: 'grid', minHeight: '100svh', placeItems: 'center', background: '#071323', color: '#f7ecd4', textAlign: 'center' }}>
-  <div><p style={{ margin: 0, color: '#d5b369', fontSize: '.72rem', fontWeight: 700, letterSpacing: '.12em', textTransform: 'uppercase' }}>DA Tuition faculty</p><h1 style={{ margin: '.65rem 0 0', fontFamily: "'Cormorant Garamond', serif", fontWeight: 500 }}>Opening the tutor library</h1></div>
-</main>;
+const TutorRouteLoading = () => <TutorLibraryLoadingSurface standalone />;
 
 const InitialLoaderReadySignal = () => {
   useEffect(() => signalInitialRoutePainted(), []);

@@ -55,3 +55,7 @@ export function createCabinetBlueprint(width: number, height: number): CabinetBl
     })),
   };
 }
+
+export function getSubjectWallLabelPose(cabinet: CabinetBlueprint, height: number): [number, number, number] {
+  return [0, height / 2 - .54, .45 + cabinet.corniceDepth + .035];
+}

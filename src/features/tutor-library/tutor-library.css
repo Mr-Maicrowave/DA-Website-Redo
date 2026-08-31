@@ -24,6 +24,14 @@
   display: block;
   width: 100%;
   height: 100%;
+  opacity: .01;
+  filter: brightness(.82) saturate(.86);
+  transition: opacity .34s cubic-bezier(.22, 1, .36, 1), filter .34s cubic-bezier(.22, 1, .36, 1);
+}
+
+.tutor-library__canvas--ready {
+  opacity: 1;
+  filter: none;
 }
 
 .tutor-library__loading {
@@ -37,13 +45,13 @@
     radial-gradient(circle at 50% 38%, #27415a 0, #11243b 31%, #071323 72%),
     var(--library-bg);
   color: var(--library-ivory);
+  opacity: 1;
+  transition: opacity .34s cubic-bezier(.22, 1, .36, 1);
 }
 
-.tutor-library__loading::before {
-  position: absolute;
-  inset: 0;
-  background: repeating-linear-gradient(90deg, transparent 0 4.8rem, #d5b36908 4.8rem 4.87rem);
-  content: "";
+.tutor-library__loading--departing {
+  opacity: 0;
+  pointer-events: none;
 }
 
 .tutor-library__loading-card {
@@ -52,9 +60,6 @@
   width: min(33rem, calc(100% - 2rem));
   gap: .8rem;
   padding: 2rem clamp(1.25rem, 4vw, 3.25rem);
-  border: 1px solid #d5b36955;
-  background: #071323b8;
-  box-shadow: 0 1.5rem 5rem #0008;
   text-align: center;
 }
 
@@ -188,9 +193,9 @@
 }
 
 .tutor-library--spotlight-active .tutor-library__controls {
-  inset: 10.4rem auto auto 50%;
-  width: min(31rem, calc(100% - 2rem));
-  transform: translateX(-50%);
+  inset: auto clamp(.75rem, 2vw, 1.5rem) 1rem;
+  width: auto;
+  transform: none;
 }
 .tutor-library--spotlight-active .tutor-library__spotlight { width: 100%; }
 
@@ -375,6 +380,41 @@
   clip-path: inset(50%);
 }
 
+.tutor-library__audio {
+  position: absolute;
+  z-index: 8;
+  top: 1rem;
+  right: clamp(.75rem, 2vw, 1.5rem);
+  display: flex;
+  align-items: center;
+  gap: .55rem;
+  min-height: 2.6rem;
+  padding: .35rem .65rem .35rem .4rem;
+  border: 1px solid #d5b36966;
+  border-radius: 999px;
+  background: #071323d9;
+  box-shadow: 0 .45rem 1rem #0005;
+  backdrop-filter: blur(10px);
+}
+
+.tutor-library__audio button {
+  display: grid;
+  width: 1.9rem;
+  height: 1.9rem;
+  place-items: center;
+  border: 1px solid #d5b36966;
+  border-radius: 50%;
+  background: #102842;
+  color: #f2cf76;
+  cursor: pointer;
+}
+
+.tutor-library__audio button:hover { background: #1a3956; }
+.tutor-library__audio button svg { width: 1rem; height: 1rem; }
+.tutor-library__audio input { width: clamp(4.5rem, 8vw, 7rem); accent-color: #d5b369; cursor: pointer; }
+.tutor-library__audio button:focus-visible,
+.tutor-library__audio input:focus-visible { outline: 3px solid var(--library-gold-bright, #f2cf76); outline-offset: 3px; }
+
 @media (min-width: 1600px) {
   .tutor-library__reader { right: clamp(3rem, 5vw, 6rem); }
   .tutor-library__controls { inset-inline: clamp(2rem, 4vw, 5rem); }
@@ -392,7 +432,7 @@
   .tutor-library__copy h1 { font-size: clamp(1.65rem, 8vw, 2.2rem); }
   .tutor-library--book-active .tutor-library__copy { opacity: 0; visibility: hidden; }
   .tutor-library__controls { inset: auto .6rem .55rem; }
-  .tutor-library--spotlight-active .tutor-library__controls { inset: 11.25rem .6rem auto; width: auto; transform: none; }
+  .tutor-library--spotlight-active .tutor-library__controls { inset: auto .6rem .55rem; width: auto; transform: none; }
   .tutor-library__wall-nav { width: 100%; justify-content: flex-start; }
   .tutor-library__wall-nav button,
   .tutor-library__tutor-picker,
@@ -425,3 +465,11 @@
     animation-iteration-count: 1 !important;
   }
 }
+.tutors-page__library-stage { position: relative; min-height: min(78rem, 100svh); background: #071323; }
+
+.tutor-library-intro { position: absolute; inset: 0; min-height: min(78rem, 100svh); overflow: hidden; background: #171a24; z-index: 2; }
+.tutor-library-intro__complete-shelf { display: block; width: 100%; height: 100%; min-height: min(78rem, 100svh); border: 0; }
+.tutor-library-intro__enter { position: absolute; right: clamp(1rem, 3vw, 2rem); bottom: clamp(1rem, 3vw, 2rem); z-index: 1; border: 1px solid rgba(244, 238, 230, .45); border-radius: 999px; padding: .65rem 1rem; background: rgba(23, 26, 36, .78); color: #f4eee6; font: 600 .68rem/1 Cabin, Arial, sans-serif; letter-spacing: .1em; text-transform: uppercase; backdrop-filter: blur(8px); }
+.tutor-library-intro__enter:disabled { opacity: .56; cursor: wait; }
+@media (prefers-reduced-motion: reduce) { .tutors-page__library-stage > div { transition-duration: 1ms !important; } }
+.tutor-library__room-hint { margin: .85rem 0 0; color: rgba(244, 232, 204, .8); font-size: .78rem; }

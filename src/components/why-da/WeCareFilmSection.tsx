@@ -60,7 +60,7 @@ export default function WeCareFilmSection() {
   const resumeFilm = () => { resumeTimerRef.current = setTimeout(() => easeRateTo(1, 850), 300); };
   const handlePointerDown = (event: ReactPointerEvent) => { if (event.pointerType !== 'mouse') slowFilm(); };
 
-  return <section className="why-da-care why-da-care--film" data-testid="why-da-care" aria-labelledby="why-da-care-title">
+  return <section id="why-da-care" className="why-da-care why-da-care--film" data-testid="why-da-care" aria-labelledby="why-da-care-title">
     <header className="care-editorial-intro" data-motion="care-intro">
       <div className="care-editorial-intro__main">
         <div className="why-da-section-heading"><span>03 /</span><h2 id="why-da-care-title">WE CARE</h2></div>

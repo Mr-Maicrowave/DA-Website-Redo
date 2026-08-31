@@ -6,7 +6,7 @@ const rigSource = readFileSync(new URL('../../../public/dev/complete-shelf-rig/c
 
 test('maps the two readable spreads to distinct physical leaves', () => {
   assert.match(rigSource, /const identityPageMaterial = frontEndpaperMaterial/);
-  assert.match(rigSource, /\[\[interiorPageMaterials\[0\], blankPageMaterial\], \[interiorPageMaterials\[1\], interiorPageMaterials\[2\]\], \[interiorPageMaterials\[3\], blankPageMaterial\]\]/);
+  assert.match(rigSource, /\[\[blankPageMaterial, interiorPageMaterials\[0\]\], \[interiorPageMaterials\[1\], interiorPageMaterials\[2\]\], \[interiorPageMaterials\[3\], blankPageMaterial\]\]/);
   assert.match(rigSource, /const turnableLeafOrder = 1/);
   assert.match(rigSource, /const initialLeftLeafOrder = 0/);
   assert.match(rigSource, /const frontPageMaterial = readerLeaf\?\.\[0\] \?\? blankPageMaterial/);

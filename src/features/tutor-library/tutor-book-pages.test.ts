@@ -16,6 +16,7 @@ import {
 } from './tutor-book-pages.ts';
 
 const jenny = TUTORS.find(tutor => tutor.id === 'T003')!;
+const adem = TUTORS.find(tutor => tutor.id === 'T019')!;
 
 test('builds two complete Jenny reader spreads from the first four canonical profile pages', () => {
   const pages = createTutorBookPages(jenny);
@@ -30,14 +31,14 @@ test('builds two complete Jenny reader spreads from the first four canonical pro
   assert.ok(spreads.every(spread => spread.pages.every(page => page.sourceText.length > 0)));
 });
 
-test('uses only Jenny canonical fields and verbatim sentence excerpts', () => {
+test('uses only Jenny canonical fields and authored profile copy', () => {
   const pages = createTutorBookPages(jenny);
   const canonicalFields = [jenny.name, jenny.designation, jenny.tagline, jenny.motto, jenny.subjects, jenny.profile!.whyDA, jenny.profile!.goals, jenny.profile!.remembered, ...profileContentFor(jenny).strengths];
 
   assert.ok(pages.flatMap(page => page.sourceText).every(text => canonicalFields.some(field => field.includes(text) || text.includes(field))));
   assert.equal(pages[0].sourceText.length, 7);
   assert.equal(pages[2].sourceText[0], 'I started as a part-time tutor at DA Tuition while I was studying my double degree of business and law at university.');
-  assert.equal(pages[3].sourceText[0], "My legal background gave me a deep appreciation of the power of words, while my Master's in Teaching equipped me with strategies to make English clear, structured and accessible.");
+  assert.equal(pages[3].sourceText[0], jenny.profile!.goals);
 });
 
 test('falls back explicitly to motto and an empty tag list when conventional profile fields are absent', () => {
@@ -98,6 +99,15 @@ test('keeps the four visible pages readable by reserving detailed strengths for 
   assert.ok(approach.sourceText.length > 1, 'teaching principles remain available on How They Teach');
   assert.ok(whyTrust.sourceText[0]!.split(/\s+/).length < 90, 'Why Trust Them begins with a readable canonical excerpt');
   assert.ok(fit.sourceText[0]!.split(/\s+/).length < 90, 'Who They Are Right For begins with a readable canonical excerpt');
+});
+
+test('uses authored profile answers instead of treating tags as teaching or student-fit copy', () => {
+  const [, approach, , fit] = createTutorBookPages(adem);
+
+  assert.deepEqual(approach.sourceText, [adem.motto, adem.profile!.goals]);
+  assert.deepEqual(fit.sourceText, [adem.profile!.goals]);
+  assert.ok(approach.sourceText.every(text => !adem.profile!.tags.includes(text)));
+  assert.ok(fit.sourceText.every(text => !adem.profile!.tags.includes(text)));
 });
 
 test('exposes exactly the two reader spreads in the agreed editorial order', () => {

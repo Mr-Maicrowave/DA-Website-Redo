@@ -1,6 +1,8 @@
 import { useState, type CSSProperties } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import NavigationNew from '@/components/NavigationNew';
+import FooterNew from '@/components/FooterNew';
+import PageJourney from '@/components/page-journey/PageJourney';
 import SEO from '@/components/SEO';
 import { methodItems } from '@/components/programs/high-school-method-transition/methodTransitionData';
 import './HighSchoolImmersive.css';
@@ -28,6 +30,14 @@ const supportAreas = [
   { id: 'hsc', label: 'HSC preparation', title: 'Senior-school thinking starts early.', body: 'Before Year 11, we begin developing the accuracy, structure, exam technique and independent revision habits that make senior study less overwhelming.', points: ['Structured responses', 'Accuracy and time management', 'Independent revision'] },
 ] as const;
 
+const HIGH_SCHOOL_JOURNEY_SECTIONS = [
+  { id: 'high-school-introduction', label: 'Introduction', description: 'Years 7–10' },
+  { id: 'year-journey', label: 'Year journey', description: 'Find your direction' },
+  { id: 'high-school-starting-points', label: 'Starting points', description: 'Meet them where they are' },
+  { id: 'high-school-support', label: 'Support', description: 'Skills that hold' },
+  { id: 'high-school-method', label: 'How we teach', description: 'A personal approach' },
+] as const;
+
 function FixedLandscape() {
   return <div className="hs-film" aria-hidden="true"><video autoPlay muted loop playsInline preload="auto"><source src="/videos/high-school-landscape-loop.mp4" type="video/mp4" /></video><div className="hs-film__wash" /></div>;
 }
@@ -35,7 +45,7 @@ function FixedLandscape() {
 function Hero() {
   const reduce = useReducedMotion();
   const enter = (delay: number) => ({ initial: reduce ? false : { opacity: 0, y: 20 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.8, delay, ease } });
-  return <section className="hs-immersive-hero" aria-labelledby="high-school-title"><motion.p {...enter(0.1)} className="hs-kicker">Years 7–10</motion.p><motion.h1 {...enter(0.2)} id="high-school-title">Find your feet.<br />Then find your direction.</motion.h1><motion.p {...enter(0.32)} className="hs-immersive-hero__intro">High school is where students begin discovering how they learn, what they’re capable of, and where they want to go.</motion.p><motion.a {...enter(0.45)} href="#year-journey" className="hs-scroll-cue">Explore the journey <span aria-hidden="true">↓</span></motion.a></section>;
+  return <section id="high-school-introduction" className="hs-immersive-hero" aria-labelledby="high-school-title"><motion.p {...enter(0.1)} className="hs-kicker">Years 7–10</motion.p><motion.h1 {...enter(0.2)} id="high-school-title">Find your feet.<br />Then find your direction.</motion.h1><motion.p {...enter(0.32)} className="hs-immersive-hero__intro">High school is where students begin discovering how they learn, what they’re capable of, and where they want to go.</motion.p><motion.a {...enter(0.45)} href="#year-journey" className="hs-scroll-cue">Explore the journey <span aria-hidden="true">↓</span></motion.a></section>;
 }
 
 function YearJourney() {
@@ -46,23 +56,23 @@ function YearJourney() {
 }
 
 function StartingPoints() {
-  return <section className="hs-editorial-section hs-starting" aria-labelledby="starting-title"><header><p className="hs-section-label">Different starting points</p><h2 id="starting-title">Every student arrives<br />somewhere different.</h2><p>So we don’t teach them as though they started in the same place.</p></header><div className="hs-starting__states">{startingPoints.map((item, index) => <article key={item.name} tabIndex={0}><span>0{index + 1}</span><h3>{item.name}</h3><p>{item.copy}</p><p className="hs-starting__detail">{item.detail}</p></article>)}</div></section>;
+  return <section id="high-school-starting-points" className="hs-editorial-section hs-starting" aria-labelledby="starting-title"><header><p className="hs-section-label">Different starting points</p><h2 id="starting-title">Every student arrives<br />somewhere different.</h2><p>So we don’t teach them as though they started in the same place.</p></header><div className="hs-starting__states">{startingPoints.map((item, index) => <article key={item.name} tabIndex={0}><span>0{index + 1}</span><h3>{item.name}</h3><p>{item.copy}</p><p className="hs-starting__detail">{item.detail}</p></article>)}</div></section>;
 }
 
 function SupportHub() {
   const [active, setActive] = useState(0);
   const reduce = useReducedMotion();
   const area = supportAreas[active];
-  return <section className="hs-editorial-section hs-support" aria-labelledby="support-title"><header><p className="hs-section-label">High school support</p><h2 id="support-title">High school asks more of them.<br />So our teaching changes too.</h2></header><div className="hs-tabs" role="tablist" aria-label="High-school support areas">{supportAreas.map((item, index) => <button key={item.id} type="button" role="tab" aria-selected={active === index} onClick={() => setActive(index)}>{item.label}</button>)}</div><AnimatePresence mode="wait" initial={false}><motion.div key={area.id} className="hs-support__panel" role="tabpanel" initial={reduce ? false : { opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.4, ease }}><h3>{area.title}</h3><p>{area.body}</p><ul>{area.points.map(point => <li key={point}>{point}</li>)}</ul></motion.div></AnimatePresence></section>;
+  return <section id="high-school-support" className="hs-editorial-section hs-support" aria-labelledby="support-title"><header><p className="hs-section-label">High school support</p><h2 id="support-title">High school asks more of them.<br />So our teaching changes too.</h2></header><div className="hs-tabs" role="tablist" aria-label="High-school support areas">{supportAreas.map((item, index) => <button key={item.id} type="button" role="tab" aria-selected={active === index} onClick={() => setActive(index)}>{item.label}</button>)}</div><AnimatePresence mode="wait" initial={false}><motion.div key={area.id} className="hs-support__panel" role="tabpanel" initial={reduce ? false : { opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.4, ease }}><h3>{area.title}</h3><p>{area.body}</p><ul>{area.points.map(point => <li key={point}>{point}</li>)}</ul></motion.div></AnimatePresence></section>;
 }
 
 function TeachingMethod() {
   const [active, setActive] = useState(0);
   const reduce = useReducedMotion();
   const item = methodItems[active];
-  return <section className="hs-editorial-section hs-method" aria-labelledby="method-title"><header><p className="hs-section-label">The DA teaching method</p><h2 id="method-title">A proven approach.<br />Personal to every student.</h2></header><div className="hs-method__layout"><nav aria-label="DA teaching method steps">{methodItems.map((step, index) => <button key={step.id} type="button" className={active === index ? 'is-active' : ''} aria-pressed={active === index} onClick={() => setActive(index)}><span>{step.number}</span>{step.label}</button>)}</nav><AnimatePresence mode="wait" initial={false}><motion.article key={item.id} style={{ '--method-accent': item.textAccent } as CSSProperties} initial={reduce ? false : { opacity: 0, x: 16 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }} transition={{ duration: 0.4, ease }}><div className="hs-method__heading"><p className="hs-method__step"><span>{item.number}</span></p><h3>{item.label}</h3><p className="hs-method__emotion">{item.emotionalSubheading}</p></div><div className="hs-method__introduction">{item.introduction.map(paragraph => <p key={paragraph}>{paragraph}</p>)}</div><p className="hs-method__what-we-do">What we do</p><div className="hs-method__actions">{item.actions.map((action, index) => <div className="hs-method__action-row" key={action.title}><span className="hs-method__action-number">{index + 1}</span><div><strong>{action.title}</strong><span>{action.body}</span></div><em>{action.annotation}</em></div>)}</div></motion.article></AnimatePresence></div></section>;
+  return <section id="high-school-method" className="hs-editorial-section hs-method" aria-labelledby="method-title"><header><p className="hs-section-label">The DA teaching method</p><h2 id="method-title">A proven approach.<br />Personal to every student.</h2></header><div className="hs-method__layout"><nav aria-label="DA teaching method steps">{methodItems.map((step, index) => <button key={step.id} type="button" className={active === index ? 'is-active' : ''} aria-pressed={active === index} onClick={() => setActive(index)}><span>{step.number}</span>{step.label}</button>)}</nav><AnimatePresence mode="wait" initial={false}><motion.article key={item.id} style={{ '--method-accent': item.textAccent } as CSSProperties} initial={reduce ? false : { opacity: 0, x: 16 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }} transition={{ duration: 0.4, ease }}><div className="hs-method__heading"><p className="hs-method__step"><span>{item.number}</span></p><h3>{item.label}</h3><p className="hs-method__emotion">{item.emotionalSubheading}</p></div><div className="hs-method__introduction">{item.introduction.map(paragraph => <p key={paragraph}>{paragraph}</p>)}</div><p className="hs-method__what-we-do">What we do</p><div className="hs-method__actions">{item.actions.map((action, index) => <div className="hs-method__action-row" key={action.title}><span className="hs-method__action-number">{index + 1}</span><div><strong>{action.title}</strong><span>{action.body}</span></div><em>{action.annotation}</em></div>)}</div></motion.article></AnimatePresence></div></section>;
 }
 
 export default function HighSchool() {
-  return <div className="hs-immersive-page"><SEO title="High School Tutoring Years 7-10" description="Years 7-10 tutoring at DA Tuition builds the skills, habits, and confidence students need for senior school and beyond." canonicalUrl="/programs/high-school" /><FixedLandscape /><div className="hs-immersive-content"><NavigationNew /><main><Hero /><YearJourney /><StartingPoints /><SupportHub /><TeachingMethod /></main><footer className="hs-immersive-footer"><strong>DA <span>Tuition</span></strong><p>© 2025 DA Tuition · Sydney, Australia</p><p>hello@datuition.com.au</p></footer></div></div>;
+  return <div className="hs-immersive-page"><SEO title="High School Tutoring Years 7-10" description="Years 7-10 tutoring at DA Tuition builds the skills, habits, and confidence students need for senior school and beyond." canonicalUrl="/programs/high-school" /><FixedLandscape /><div className="hs-immersive-content"><NavigationNew /><main><Hero /><YearJourney /><StartingPoints /><SupportHub /><TeachingMethod /></main><PageJourney pageLabel="High School" sections={HIGH_SCHOOL_JOURNEY_SECTIONS} /><FooterNew /></div></div>;
 }

@@ -1,6 +1,7 @@
-import { Link } from 'react-router-dom';
-import { ArrowRight, Brain, Flag, Heart, NotebookTabs, Sparkles, UserRoundCheck } from 'lucide-react';
+import { Brain, Flag, Heart, NotebookTabs, Sparkles, UserRoundCheck } from 'lucide-react';
 import NavigationNew from '@/components/NavigationNew';
+import FooterNew from '@/components/FooterNew';
+import PageJourney from '@/components/page-journey/PageJourney';
 import SEO from '@/components/SEO';
 import WeKnowYouSection from '@/components/why-da/WeKnowYouSection';
 import PersonaliseFilmSection from '@/components/why-da/PersonaliseFilmSection';
@@ -38,6 +39,16 @@ const testimonials = [
   { quote: '20+ years of helping students from Year 2 to Year 12 achieve their potential.', source: 'DA Tuition' },
 ] as const;
 
+const WHY_DA_JOURNEY_SECTIONS = [
+  { id: 'why-da-introduction', label: 'Introduction', description: 'No two students learn alike' },
+  { id: 'why-da-know-you', label: 'We know you', description: 'Understand the learner' },
+  { id: 'why-da-personalise', label: 'We personalise', description: 'Build the right pathway' },
+  { id: 'why-da-care', label: 'We care', description: 'Support that lasts' },
+  { id: 'why-da-succeed', label: 'We succeed', description: 'Progress with purpose' },
+  { id: 'why-da-grow', label: 'We grow', description: 'Skills for life' },
+  { id: 'why-da-achieve', label: 'We achieve', description: 'Success looks different' },
+] as const;
+
 export default function WhyChooseDA() {
   const pageRef = useWhyDAMotion();
 
@@ -51,7 +62,7 @@ export default function WhyChooseDA() {
       <NavigationNew heroMode />
 
       <main ref={pageRef} className="why-da-page">
-        <section className="why-da-hero" data-testid="why-da-hero" aria-labelledby="why-da-title">
+        <section id="why-da-introduction" className="why-da-hero" data-testid="why-da-hero" aria-labelledby="why-da-title">
           <div className="why-da-hero__base" data-motion="hero-base" aria-hidden="true">
             <img src="/assets/why-da/hero-classroom.jpg" alt="" />
           </div>
@@ -90,7 +101,7 @@ export default function WhyChooseDA() {
 
         <WeSucceedSection />
 
-        <section className="why-da-grow" data-testid="why-da-grow" aria-labelledby="why-da-grow-title">
+        <section id="why-da-grow" className="why-da-grow" data-testid="why-da-grow" aria-labelledby="why-da-grow-title">
           <header className="why-da-chapter-heading" data-motion="chapter-heading">
             <div className="why-da-section-heading"><span>06</span><h2 id="why-da-grow-title">WE GROW</h2></div>
             <p>We build more than marks. We build skills for life.</p>
@@ -110,7 +121,7 @@ export default function WhyChooseDA() {
           </div>
         </section>
 
-        <section className="why-da-achieve" data-testid="why-da-achieve" aria-labelledby="why-da-achieve-title">
+        <section id="why-da-achieve" className="why-da-achieve" data-testid="why-da-achieve" aria-labelledby="why-da-achieve-title">
           <div className="why-da-achieve__glow" aria-hidden="true" />
           <header className="why-da-achieve__heading" data-motion="chapter-heading">
             <div className="why-da-section-heading"><span>07</span><h2 id="why-da-achieve-title">WE ACHIEVE</h2></div>
@@ -127,18 +138,9 @@ export default function WhyChooseDA() {
           </div>
         </section>
 
-        <section className="why-da-closing" data-testid="why-da-closing-cta" aria-labelledby="why-da-closing-title">
-          <img src="/images/why-da-reference/why-da-reception-v1.jpg" alt="The welcoming DA Tuition reception" loading="lazy" decoding="async" />
-          <div className="why-da-closing__veil" aria-hidden="true" />
-          <div className="why-da-closing__content" data-motion="closing-cta">
-            <h2 id="why-da-closing-title">Whatever your child’s<br />starting point,</h2>
-            <p>let’s work out what comes next.</p>
-            <Link to="/book-interview">BOOK A CONSULTATION <ArrowRight aria-hidden="true" /></Link>
-            <Link to="/programs" className="why-da-closing__secondary">EXPLORE LEARNING OPTIONS <ArrowRight aria-hidden="true" /></Link>
-            <small>We’re here to help.</small>
-          </div>
-        </section>
       </main>
+      <PageJourney pageLabel="Why DA" sections={WHY_DA_JOURNEY_SECTIONS} />
+      <FooterNew />
     </>
   );
 }

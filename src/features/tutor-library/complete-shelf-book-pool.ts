@@ -198,7 +198,7 @@ export function getCompleteShelfOuterMotionPose(edition: TutorBookEdition, phase
   const reading: CompleteShelfBookPose = {
     // Keep the reading volume dominant while balancing its opened width with
     // the companion controls instead of forcing the book against the left edge.
-    position: [.28, .26, 5.04],
+    position: [.28, -.05, 5.04],
     rotation: [-.045, 0, .012],
     scale: [...plan.preview.scale],
   };
@@ -207,7 +207,7 @@ export function getCompleteShelfOuterMotionPose(edition: TutorBookEdition, phase
   if (phase === 'BOOK_EXTRACTING') return sampleCompleteShelfPrototypePose(plan, progress);
   if (phase === 'BOOK_PREVIEW') return {
     ...plan.preview,
-    position: [.06, .18, 4.84],
+    position: [.06, -.25, 4.84],
   };
   if (phase === 'BOOK_TO_READING') return interpolatePose(plan.preview, reading, progress);
   if (isCompleteShelfControllerOpeningAllowed(phase) || phase === 'BOOK_CLOSING') return reading;
@@ -259,6 +259,7 @@ export function advanceCompleteShelfOuterMotion(state: CompleteShelfOuterMotionS
   }
   return {
     edition: state.edition,
+    shelfPose: state.shelfPose,
     phase,
     pose: getCompleteShelfOuterMotionPose(state.edition, phase, progress, state.shelfPose),
   };

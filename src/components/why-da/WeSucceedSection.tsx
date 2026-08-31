@@ -46,7 +46,7 @@ export default function WeSucceedSection() {
     '--reflection-y': `${reflection.y}%`,
   } as CSSProperties;
 
-  return <section className={`why-da-succeed${playing ? ' is-playing' : ''}`} data-testid="why-da-succeed" aria-labelledby="why-da-succeed-title">
+  return <section id="why-da-succeed" className={`why-da-succeed${playing ? ' is-playing' : ''}`} data-testid="why-da-succeed" aria-labelledby="why-da-succeed-title">
     <header className="succeed-intro" data-motion="succeed-intro">
       <div className="why-da-section-heading"><span>05 /</span><h2 id="why-da-succeed-title">WE SUCCEED</h2></div>
       <h3><span>Everything before this<br />leads </span><em>somewhere.</em></h3>

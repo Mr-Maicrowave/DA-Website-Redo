@@ -19,6 +19,9 @@ export default {
 			}
 		},
 		extend: {
+			zIndex: {
+				'site-footer': '1001',
+			},
 			fontFamily: {
 				sans: ['Cabin', 'system-ui', 'sans-serif'],
 				heading: ['Cormorant Garamond', 'Georgia', 'serif'],
