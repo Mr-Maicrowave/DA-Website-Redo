@@ -27,7 +27,17 @@ test('centres the link cluster between equal outer grid tracks', () => {
   assert.match(source, /items-center gap-5 justify-self-end[\s\S]*?<GlobalSearch[\s\S]*?Book Consultation/);
 });
 
-test('accepts the Why DA hero-mode compatibility prop', () => {
+test('uses hero mode until the page scrolls beyond the Why DA hero', () => {
   assert.match(source, /interface NavigationNewProps \{\s*heroMode\?: boolean;/);
-  assert.match(source, /const NavigationNew = \(\{ heroMode: _heroMode = false \}: NavigationNewProps\) =>/);
+  assert.match(source, /const NavigationNew = \(\{ heroMode = false \}: NavigationNewProps\) =>/);
+  assert.match(source, /const \[pastHero, setPastHero\] = useState\(false\)/);
+  assert.match(source, /const showHeroNav = heroMode && !pastHero/);
+  assert.match(source, /window\.scrollY >= window\.innerHeight \* 0\.92/);
+  assert.match(source, /activeBarBackground = showHeroNav/);
+  assert.match(source, /activeBarBorder = showHeroNav/);
+});
+
+test('clears mobile search state before either menu button opens the sheet', () => {
+  const menuOpenHandlers = source.match(/setMobileHeaderHidden\(false\);\s*setMobileSearchOpen\(false\);\s*setSheetOpen\(true\);/g) ?? [];
+  assert.equal(menuOpenHandlers.length, 2);
 });
