@@ -448,6 +448,11 @@ const FindTeacher = ({ embedded = false, onBackToHero }: FindTeacherProps) => {
         </aside>
       </main>
 
+      {!embedded && <section className="faculty-mobile-guidance">
+        <p>Unsure which educator may suit your child?</p>
+        <h2>We know the person behind every portrait.</h2>
+        <a href="/book-interview">Talk to our education team <ArrowRight /></a>
+      </section>}
       {!embedded && <FooterNew />}
 
       <AnimatePresence>

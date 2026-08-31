@@ -3,13 +3,19 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
 const pageUrl = new URL('./Tutors.tsx', import.meta.url);
-test('uses the tutor library as the default Tutors experience', () => {
-  const page = readFileSync(pageUrl, 'utf8');
+const heroUrl = new URL('../features/tutor-orbit/TutorOrbitHero.tsx', import.meta.url);
 
-  assert.match(page, /const TutorLibrary = lazy\(/);
-  assert.match(page, /import\('@\/features\/tutor-library\/TutorLibrary'\)/);
-  assert.match(page, /const TutorBookStudio = lazy\(/);
-  assert.match(page, /<Suspense fallback=\{<TutorLibraryRouteLoading \/>\}>/);
-  assert.match(page, /<TutorLibrary \/>/);
-  assert.doesNotMatch(page, /libraryEnabled/);
+test('keeps Tutors as the hero entry point and reveals the card directory in the same route', () => {
+  const page = readFileSync(pageUrl, 'utf8');
+  const hero = readFileSync(heroUrl, 'utf8');
+
+  assert.match(page, /FindTeacher/);
+  assert.match(page, /useState/);
+  assert.match(page, /setView\('directory'\)/);
+  assert.match(page, /searchParams\.get\('tutor'\)/);
+  assert.match(page, /<FindTeacher embedded onBackToHero=\{\(\) => setView\('hero'\)\} \/>/);
+  assert.match(page, /onExplore/);
+  assert.match(hero, /onExplore/);
+  assert.match(hero, /onClick=\{onExplore\}/);
+  assert.doesNotMatch(hero, /to="\/find-teacher"[\s\S]{0,80}Explore the whole team/);
 });

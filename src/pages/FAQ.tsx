@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import {
   ArrowLeft,
   ArrowRight,
@@ -20,6 +20,7 @@ type Category =
   | "all"
   | "start"
   | "programs"
+  | "fees"
   | "classes"
   | "teachers"
   | "results"
@@ -49,6 +50,11 @@ const categories: { id: Category; label: string; description: string }[] = [
     description: "Subjects, year levels and syllabus.",
   },
   {
+    id: "fees",
+    label: "Fees and payments",
+    description: "Costs, inclusions and enrolment questions.",
+  },
+  {
     id: "classes",
     label: "Classes and timing",
     description: "Classroom fit, timing and learning formats.",
@@ -72,184 +78,163 @@ const categories: { id: Category; label: string; description: string }[] = [
 const faqs: FAQ[] = [
   {
     category: "start",
-    question: "How do I enrol my child at DA Tuition?",
+    question: "What is the best way to get started at DA Tuition?",
     answer:
-      "Simply complete our enrolment form, with a $50 deposit to secure your child’s place in the enrolment process. Within approximately one week, a DA coordinator will contact you to arrange an interview, where we take the time to carefully understand your child, their current needs, and what you’re hoping to achieve before guiding you towards the most suitable class. We want every family to feel confident that DA is the right fit before their journey begins.",
+      "Start with a booked interview. We use that time to understand your child's current level, goals, confidence, and the class fit that will actually help. You do not need to know the exact subject or program before contacting us.",
     keywords: ["enrol", "enroll", "start", "interview", "assessment", "book"],
     popular: true,
-    links: [{ label: "Book a consultation", href: "/book-interview" }],
-  },
-  {
-    category: "classes",
-    question: "What are your class sizes?",
-    answer:
-      "At DA, we understand that every student learns differently, which is why we offer a range of class environments to suit each child’s pace, confidence and academic goals. Students who thrive with more individual attention can be placed in smaller or private classes, while highly driven students may benefit from larger, more competitive classes that challenge them alongside peers striving for top results. We take the time to understand your child and place them in the environment where they are most likely to feel supported, motivated and capable of reaching their potential.",
-    keywords: ["class size", "small class", "private", "competitive", "individual attention"],
-    popular: true,
+    links: [{ label: "Book an interview", href: "/book-interview" }],
   },
   {
     category: "start",
-    question: "What is the purpose of the interview?",
+    question: "Is the interview a test?",
     answer:
-      "The interview allows us to get to know your child before we begin teaching them: their strengths, challenges, confidence, study habits, goals, and how they learn best. It also helps us understand the type of tutor and class environment most likely to suit their learning style, whether they need more individual support, greater challenge or a more competitive setting. The more we understand from the beginning, the more thoughtfully we can place and support your child from day one.",
-    keywords: ["interview", "assessment", "placement", "learning style", "tutor fit"],
+      "No. It is a guided conversation and learning check, not a pass-or-fail exam. The goal is to place your child where they can improve without feeling lost or held back.",
+    keywords: ["test", "assessment", "interview", "nervous", "entry"],
+    popular: true,
+    links: [{ label: "Book an interview", href: "/book-interview" }],
+  },
+  {
+    category: "start",
+    question: "Can my child join during the term?",
+    answer:
+      "Usually, yes, if there is a suitable class available. The interview helps us choose the right level and timing before they start.",
+    keywords: ["join", "mid term", "during term", "availability", "start date"],
+    links: [{ label: "View learning formats", href: "/learning-formats" }],
   },
   {
     category: "programs",
-    question: "Do you help with school homework and exam preparation?",
-    answer:
-      "Yes! While our lessons follow a structured learning program, we also understand that students sometimes need extra support with school homework, assessments, and upcoming exams. Rather than simply helping them complete the task, our tutors focus on strengthening the understanding, skills and strategies behind it so students know how to approach similar work independently in the future. The goal is not just to get through the next deadline, but to help students become more confident, capable and prepared over time.",
-    keywords: ["homework", "assessment", "exam", "exam preparation", "school work"],
+    question: "Which year levels do you teach?",
+    answer: "We teach from primary school through HSC.",
+    keywords: [
+      "year",
+      "primary",
+      "high school",
+      "hsc",
+      "k-6",
+      "7-10",
+      "year 12",
+    ],
     popular: true,
+    links: [{ label: "View our programs", href: "/programs" }],
+  },
+  {
+    category: "programs",
+    question: "What subjects are available?",
+    answer:
+      "Core subjects include Mathematics, English, Science, Business Studies, Legal Studies, and HSC preparation.",
+    keywords: [
+      "subjects",
+      "maths",
+      "mathematics",
+      "english",
+      "science",
+      "business",
+      "legal",
+    ],
+    links: [{ label: "View all subjects", href: "/subjects" }],
+  },
+  {
+    category: "programs",
+    question: "Do you follow the NSW curriculum?",
+    answer:
+      "Yes. Lessons are aligned with NSW syllabus expectations, while also teaching exam technique, response structure, and deeper understanding.",
+    keywords: ["nsw", "nesa", "curriculum", "syllabus", "school"],
+  },
+  {
+    category: "fees",
+    question: "How much does tutoring cost?",
+    answer:
+      "Fees depend on the year level, subject, and program. The simplest way to get an accurate answer is to book an interview so we can recommend the right class before discussing the fee.",
+    keywords: ["price", "pricing", "cost", "fees", "payment", "how much"],
+    popular: true,
+    links: [{ label: "Book an interview", href: "/book-interview" }],
+  },
+  {
+    category: "fees",
+    question: "Are learning materials included?",
+    answer:
+      "Yes, regular class materials and learning resources are included unless a specific exception is explained before enrolment.",
+    keywords: ["materials", "resources", "books", "extra costs", "worksheets"],
+  },
+  {
+    category: "classes",
+    question: "How big are the classes?",
+    answer:
+      "Groups are intentionally kept small so students have room to ask questions and receive meaningful feedback while still benefiting from peer discussion.",
+    keywords: ["class size", "small group", "one on one", "1 on 1", "students"],
+    popular: true,
+    links: [{ label: "Learning formats", href: "/learning-formats" }],
+  },
+  {
+    category: "classes",
+    question: "When are classes held?",
+    answer:
+      "Classes run after school and on weekends. Exact times depend on the subject, year level, and current availability.",
+    keywords: ["time", "schedule", "weekend", "after school", "hours"],
+    links: [{ label: "Contact DA", href: "/#contact" }],
+  },
+  {
+    category: "classes",
+    question: "Do you offer online classes?",
+    answer:
+      "DA is primarily an in-person centre. If your family has a specific access issue, ask us directly.",
+    keywords: ["online", "zoom", "remote", "in person", "face to face"],
+  },
+  {
+    category: "teachers",
+    question: "Who teaches the classes?",
+    answer:
+      "Classes are taught by trained tutors who understand the subject, syllabus, and student experience.",
+    keywords: ["teacher", "tutor", "who teaches", "staff", "mentor"],
+    popular: true,
+    links: [{ label: "Find a tutor", href: "/find-teacher" }],
+  },
+  {
+    category: "teachers",
+    question: "Can we request a specific teacher?",
+    answer:
+      "You can ask, and we will consider availability alongside class fit, level, subject, and personality.",
+    keywords: ["request", "specific teacher", "choose tutor", "teacher change"],
   },
   {
     category: "results",
     question: "What results do DA students achieve?",
     answer:
-      "We are incredibly proud of what DA students have achieved, from students rebuilding their foundations to high achievers reaching exceptional academic results. Read our Success Stories to find out more about the significant improvements in academic performance and confidence in our students, as well as the dedication tutors invest in helping students succeed.",
-    keywords: ["results", "success", "improvement", "academic performance", "confidence"],
+      "Read our real success stories for the most useful version of that proof.",
+    keywords: ["results", "atar", "band 6", "success", "reviews", "proof"],
     popular: true,
-    links: [{ label: "Read success stories", href: "/success-stories" }],
+    links: [{ label: "Success stories", href: "/success-stories" }],
   },
   {
     category: "results",
-    question: "How do you monitor and follow a child's progress?",
+    question: "How do parents know if their child is improving?",
     answer:
-      "We believe progress should be visible, not assumed. That is why we look at more than a single test mark. We track how your child is performing over time: their understanding, accuracy, homework, confidence, engagement, recurring mistakes and how well they can apply what they have learned. Our tutors use this information to identify patterns early, recognise improvement and respond the moment something is not progressing as expected.\n\nWe also look at whether weaknesses are genuinely being resolved. If a student struggles with a skill, we do not move on simply because it has been taught. We follow up, revisit it where needed and check that they can apply it independently, not just recall it.\n\nParents are kept informed through regular, honest communication about where their child stands, what we are seeing and what needs to happen next.",
-    keywords: ["progress", "monitor", "tracking", "feedback", "parents", "improving"],
-    popular: true,
+      "Improvement is tracked through class performance, teacher feedback, assessment, and parent communication.",
+    keywords: ["progress", "reports", "feedback", "improvement", "parents"],
   },
   {
-    category: "teachers",
-    question: "How do you make sure my child has the right tutor?",
+    category: "results",
+    question: "Do you guarantee marks?",
     answer:
-      "We don’t believe the right tutor is simply the person who knows the subject. Through our Tutor Fit Assessment, we consider your child’s academic level, learning needs, confidence, personality, pace and the type of teaching they respond to best before matching them with the tutor and class environment most likely to help them progress. If we believe a different tutor, class or teaching approach would support them better, we’ll make that change, because our goal is to place every child where they are most likely to improve, feel understood and thrive.",
-    keywords: ["tutor", "tutor fit", "match", "personality", "learning needs", "teacher"],
-    popular: true,
-  },
-  {
-    category: "start",
-    question: "Is there an entrance exam?",
-    answer:
-      "No, our philosophy is that a child shouldn't have to prove they are already “good enough” before they can receive support. At DA, we believe every child deserves support that meets them where they are, without feeling judged by what they may not know yet. Getting to know your child helps us understand their current strengths, challenges and confidence so we can guide them forward in a way that feels encouraging and achievable.",
-    keywords: ["entrance exam", "test", "entry", "assessment", "enrolment"],
-  },
-  {
-    category: "classes",
-    question: "Can my child join during the term?",
-    answer:
-      "Absolutely! We understand that every child’s learning journey is different, and the need for extra support doesn’t always begin at the start of a term. If a session is available, we’ll take the time to understand where your child is currently at and help them transition into the right class with confidence and support.",
-    keywords: ["join", "during term", "mid term", "availability", "start date"],
-  },
-  {
-    category: "safety",
-    question: "How do you handle student behaviour?",
-    answer:
-      "At DA, we believe students thrive when they feel respected, supported and held to clear expectations. Our tutors build strong relationships with students so they can guide behaviour positively, encourage responsibility and keep the classroom focused without making students feel judged. We want every student to feel that DA is a place where they can enjoy learning, grow in confidence and become the best version of themselves.",
-    keywords: ["behaviour", "classroom", "expectations", "respect", "discipline"],
-    links: [{ label: "See why families choose DA", href: "/why-choose-da" }],
-  },
-  {
-    category: "programs",
-    question: "Are learning materials included?",
-    answer:
-      "Yes, students receive structured learning materials that complement what they are learning in class and provide purposeful opportunities to practise and strengthen key skills. Our resources are designed to build confidence, reinforce understanding and help students develop more consistent and effective study habits over time.",
-    keywords: ["materials", "resources", "books", "worksheets", "study habits"],
-  },
-  {
-    category: "safety",
-    question: "What happens when my child is absent?",
-    answer:
-      "We understand that absences can sometimes be unavoidable, so let our team know as early as possible. If a suitable space becomes available in another class, we may be able to place your child into that session so they can catch up while still learning in an environment appropriate for their level and needs. This allows us to support continuity without compromising the quality and balance of each class.",
-    keywords: ["absent", "absence", "miss class", "catch up", "sick"],
+      "We do not guarantee a specific mark because effort, attendance, practice, and school assessment conditions matter.",
+    keywords: ["guarantee", "marks", "improve", "promise"],
   },
   {
     category: "safety",
     question: "Is DA Tuition safe for younger students?",
     answer:
-      "We know that for parents of younger children, feeling that your child is comfortable, noticed and cared for matters just as much as what they learn. We aim to create an environment where younger students feel secure enough to ask questions, make mistakes and gradually grow in confidence. Public reviews consistently describe DA's environment as caring, supportive, comfortable and inviting.",
-    keywords: ["safe", "safety", "younger", "child", "comfortable", "cared for"],
-  },
-  {
-    category: "programs",
-    question: "What is DA's core purpose and values?",
-    answer:
-      "We believe every student deserves to be truly understood, not just taught and not just marked. Marks matter, but they are the outcome, not the method. That is why we begin by understanding your child: where they are strong, where they are struggling, and what may be holding them back, before deciding how best to help.\n\nParents should never be left guessing; we believe in honest, regular communication about where your child stands, what we are seeing, and what needs to happen next, combining high expectations with genuine care. Our goal is for every student to become more capable, more confident, and more independent, not simply better prepared for the next test.\n\nFamilies trust us with something that matters enormously: their child’s education, confidence and future potential. We do not take that responsibility lightly.\n\nTrusted by Families. Transforming Futures.",
-    keywords: ["purpose", "values", "mission", "approach", "understood", "trusted"],
-  },
-  {
-    category: "results",
-    question: "How do you help students stop repeating the same mistakes?",
-    answer:
-      "Simply correcting an answer doesn’t teach a student how to avoid the same mistake next time. Through our Exam Analysis System, tutors look beyond the mark to identify patterns, whether the issue comes from gaps in knowledge, rushing, misreading questions, weak exam technique or difficulty applying what they know. This helps students understand why they lost marks, learn what to change and become more accurate, reflective and independent over time.",
-    keywords: ["mistakes", "exam analysis", "exam technique", "accuracy", "lost marks"],
-  },
-  {
-    category: "teachers",
-    question: "How do you know when my child is struggling, even if they don't say anything?",
-    answer:
-      "Some students will ask for help straight away, while others go quiet, hesitate or try to work through it on their own. Our tutors get to know the students they teach, so they can often notice when something feels off and check in before a small difficulty turns into a bigger one. We want your child to know there is always someone paying attention and ready to help.",
-    keywords: ["struggling", "help", "quiet", "support", "tutor", "notice"],
-  },
-  {
-    category: "results",
-    question: "Why do families stay with DA for years?",
-    answer:
-      "For many families, DA becomes more than a place their child comes to study. Over time, tutors get to know their students, understand what motivates them and support them through different stages of school, which is why so many parents value the relationships just as much as the results. As students grow in confidence and ability, families stay because they can see that their child is genuinely known, supported and encouraged to keep improving.",
-    keywords: ["families", "years", "relationships", "confidence", "support", "results"],
-    links: [{ label: "See why families choose DA", href: "/why-choose-da" }],
-  },
-  {
-    category: "teachers",
-    question: "What if tutoring hasn't worked for my child before?",
-    answer:
-      "We know it can be discouraging when you’ve tried tutoring and haven’t seen the change you hoped for. That’s why we take the time to understand your child specifically: what hasn’t worked, what they respond to, where their confidence may have dropped, and what kind of support they need now. Sometimes the difference is finding the right tutor, the right environment and an approach that finally feels right for them.",
-    keywords: ["tutoring hasn't worked", "discouraging", "confidence", "right tutor", "approach"],
-  },
-  {
-    category: "teachers",
-    question: "Why do students actually enjoy coming to DA?",
-    answer:
-      "Students enjoy DA because they feel comfortable being themselves, asking questions and having a laugh while they learn. Over time, they build real relationships with their tutors and classmates, celebrate their progress and begin to feel more confident in what they can do. We take learning seriously, but we also want DA to be a place students genuinely look forward to coming to each week.",
-    keywords: ["enjoy", "fun", "relationships", "tutors", "classmates", "confidence"],
-    links: [{ label: "Read success stories", href: "/success-stories" }],
-  },
-  {
-    category: "results",
-    question: "Will tutoring put even more pressure on my child?",
-    answer:
-      "At DA, we make school feel less overwhelming, not more stressful. By helping your child understand their work more clearly, stay organised and feel better prepared, we aim to reduce the frustration and uncertainty that often creates pressure. We will still challenge them, but in a way that builds confidence, resilience and a stronger belief in what they can handle.",
-    keywords: ["pressure", "stress", "overwhelming", "organised", "confidence", "resilience"],
-  },
-  {
-    category: "programs",
-    question: "My child is already doing well. How can DA further their academic ability?",
-    answer:
-      "Tutoring isn't only for students who are behind. For high-achieving students, the focus becomes less about catching up and more about pushing beyond what they already know through greater depth, more challenging questions, stronger exam technique and sharper precision. We want to keep capable students stretched, motivated and working towards the highest level they are ready to achieve.",
-    keywords: ["doing well", "high achieving", "extension", "challenge", "academic ability", "advanced"],
-  },
-  {
-    category: "programs",
-    question: "How do you help students become independent learners?",
-    answer:
-      "We want your child to feel confident enough to have a go on their own. Our tutors support them closely at first, then gradually step back as they become more comfortable planning their work, checking their thinking and solving problems independently. For us, one of the best signs of progress is hearing a student say, “Let me try first.”",
-    keywords: ["independent", "independent learner", "confidence", "problem solving", "study skills"],
-  },
-  {
-    category: "teachers",
-    question: "What if my child has no motivation to study?",
-    answer:
-      "Sometimes a student who seems unmotivated is actually feeling discouraged, overwhelmed or unsure whether their effort will make a difference. We take the time to understand what is holding your child back, then use encouragement, achievable goals and consistent support to help them experience progress again. As their confidence grows and they begin to see what they are capable of, motivation follows.",
-    keywords: ["motivation", "unmotivated", "study", "discouraged", "goals", "confidence"],
+      "Student safety is treated seriously, especially for younger students. Staff expectations, supervision, parent communication, and Working With Children Check requirements are part of how the centre operates.",
+    keywords: ["safe", "safety", "younger", "child", "wwcc"],
+    popular: true,
   },
   {
     category: "safety",
-    question: "How do you create a positive learning environment?",
+    question: "What should we do if our child is sick or misses class?",
     answer:
-      "For us, the greatest reflection of DA’s environment is in the hundreds of heartfelt reviews and messages from students and families who still speak about the difference DA made in their lives. Many students look back years later grateful not only for the marks they achieved, but for the tutors who believed in them, motivated them and helped them become more confident in themselves. That is the environment we want every child to experience; a place where they feel happy, genuinely cared for and inspired to become more than they thought they could be.",
-    keywords: ["positive environment", "learning environment", "reviews", "happy", "cared for", "inspired"],
-    popular: true,
-    links: [{ label: "Read family reviews", href: "/reviews" }],
+      "Keep sick children at home and contact us as early as possible. We can advise what catch-up support or materials are available.",
+    keywords: ["sick", "miss class", "absence", "catch up", "make up"],
+    links: [{ label: "Contact DA", href: "/#contact" }],
   },
 ];
 const id = (q: string) =>
@@ -259,7 +244,7 @@ const id = (q: string) =>
     .replace(/(^-|-$)/g, "")}`;
 const filterDeskFAQs = (items: FAQ[], category: Category, query: string) => {
   const inCategory = items.filter((item) => category === "all" || item.category === category);
-  const conceptsByCategory: Partial<Record<Category, string[]>> = { teachers: ['teachers'], safety: ['absence'], start: ['enrolment', 'interview'], classes: ['classes'], programs: ['mathematics'] };
+  const conceptsByCategory: Partial<Record<Category, string[]>> = { fees: ['pricing'], teachers: ['teachers'], safety: ['absence'], start: ['enrolment', 'interview'], classes: ['classes'], programs: ['mathematics'] };
   return searchRecords(inCategory.map((item) => ({ ...item, title: item.question, body: item.answer, concepts: conceptsByCategory[item.category] })), query);
 };
 const counts = faqs.reduce<Record<Category, number>>(
@@ -268,6 +253,7 @@ const counts = faqs.reduce<Record<Category, number>>(
     all: 0,
     start: 0,
     programs: 0,
+    fees: 0,
     classes: 0,
     teachers: 0,
     results: 0,
@@ -275,7 +261,6 @@ const counts = faqs.reduce<Record<Category, number>>(
   },
 );
 export default function FAQPage() {
-  const location = useLocation();
   const [q, setQ] = useState("");
   const [cat, setCat] = useState<Category>("all");
   const [open, setOpen] = useState<string | null>(null);
@@ -311,7 +296,7 @@ export default function FAQPage() {
     if (categories.some((x) => x.id === h)) setCat(h as Category);
     const f = faqs.find((x) => id(x.question) === h);
     if (f) choose(f);
-  }, [location.hash]);
+  }, []);
   return (
     <div className="min-h-screen bg-[#f8f3e8] text-[#091a31]">
       <SEO
@@ -420,7 +405,7 @@ export default function FAQPage() {
                   key={x.id}
                 >
                   <i className="font-serif not-italic text-[#977530]">
-                    {String(i + 1).padStart(2, "0")}
+                    {String(i).padStart(2, "0")}
                   </i>
                   <span>{x.label}</span>
                   <b className="text-xs">{counts[x.id]}</b>
@@ -491,7 +476,7 @@ export default function FAQPage() {
                     </button>
                     {open === x.question && (
                       <div className="mb-7 ml-9 border-t border-[#c69a38] pt-4 text-[#354359] leading-7">
-                        <p className="whitespace-pre-line">{x.answer}</p>
+                        <p>{x.answer}</p>
                         {x.links && (
                           <nav className="mt-4 flex flex-wrap gap-4">
                             {x.links.map((l) => (
@@ -554,14 +539,17 @@ export default function FAQPage() {
                 </nav>
               )}
             </section>
-            <aside className="faq-editorial-help overflow-hidden bg-[#091a31] text-white">
+            <aside className="faq-editorial-help h-fit overflow-hidden bg-[#091a31] text-white">
               <img
                 className="h-48 w-full object-cover"
-                src="/images/faq/faq-human-answer-meeting-room.png"
-                alt="DA Tuition's meeting room, ready for a parent conversation"
+                src="/images/faq/faq-human-answer-focus-with-tables.png"
+                alt="A DA Tuition tutor and student working together"
               />
               <div className="p-6">
-                <h2 className="font-serif text-4xl leading-none">
+                <p className="text-xs font-black tracking-[.14em] text-[#e7ca73]">
+                  THE HUMAN ANSWER DESK
+                </p>
+                <h2 className="mt-4 font-serif text-4xl leading-none">
                   Still have a question?
                 </h2>
                 <p className="mt-4 text-sm leading-6 text-white/75">
@@ -575,6 +563,26 @@ export default function FAQPage() {
                 </Link>
               </div>
             </aside>
+          </div>
+        </section>
+        <section className="faq-editorial-closing text-white">
+          <div className="faq-editorial-closing-copy">
+            <p className="text-xs font-black uppercase tracking-[.15em] text-[#e7ca73]">
+              When a page is not enough
+            </p>
+            <h2 className="mt-4 max-w-xl font-serif text-[clamp(2.8rem,5vw,4.5rem)] leading-none tracking-[-.035em]">
+              Some questions are easier answered together.
+            </h2>
+            <p className="mt-6 max-w-xl leading-7 text-white/75">
+              Tell us what is on your mind and we’ll help you work out the most
+              useful next step.
+            </p>
+            <Link
+              className="mt-8 inline-flex items-center gap-2 rounded-full bg-[#c69a38] px-6 py-3 font-bold text-[#091a31]"
+              to="/book-interview"
+            >
+              Book an interview <ArrowRight className="h-4 w-4" />
+            </Link>
           </div>
         </section>
       </main>

@@ -32,7 +32,7 @@ export default function WayfinderLocationsPage() {
     target: communityRef,
     offset: ['start start', 'end end'],
   });
-  const communityMapProgress = useTransform(communityProgress, [0, 0.82], [0, 1], { clamp: true });
+  const communityMapProgress = useTransform(communityProgress, [0, 0.68], [0, 1], { clamp: true });
   const bookingPath = effective.bookingPath ?? '/book-interview';
 
   const selectCentre = (id: string) => {

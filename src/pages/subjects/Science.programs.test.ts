@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs';
 
 const pageUrl = new URL('./Science.tsx', import.meta.url);
 
-test('renders the Programs pathway as a five-stage scientific thinking journey', () => {
+test('renders the Programs pathway as a macro-to-micro scroll story before HSC lenses', () => {
   const source = readFileSync(pageUrl, 'utf8');
 
   assert.match(source, /<SciencePrograms\s*\/>/);
@@ -23,26 +23,19 @@ test('renders the Programs pathway as a five-stage scientific thinking journey',
   assert.match(source, /const scaleProgress = useTransform/);
   assert.match(source, /style=\{\{ left: scaleProgress \}\}/);
   assert.match(source, /Science at every scale/);
-  assert.match(source, /const SCIENCE_SCALE_CHAPTERS =/);
-  assert.match(source, /mode: 'Observe'/);
-  assert.match(source, /mode: 'Explain'/);
-  assert.match(source, /mode: 'Connect'/);
-  assert.match(source, /mode: 'Model'/);
-  assert.match(source, /mode: 'Predict'/);
-  assert.match(source, /Observe before you explain\./);
-  assert.match(source, /From explanation to prediction\./);
-  assert.match(source, /science-scale-caption__result/);
-  assert.match(source, /science-scale-reduced/);
-  assert.doesNotMatch(source, /Scale readout/);
-  assert.doesNotMatch(source, /Foundation Science · Years 7–10/);
+  assert.match(source, /HSC BIOLOGY · YEARS 11–12/);
+  assert.match(source, /HSC CHEMISTRY · YEARS 11–12/);
+  assert.match(source, /HSC PHYSICS · YEARS 11–12/);
+  assert.match(source, /HSC SPECIALISATION/);
+  assert.match(source, /Scale readout/);
+  assert.match(source, /Current specimen/);
+  assert.match(source, /Macro · impact/);
   assert.match(source, /Fields &amp; waves/);
   assert.match(source, /science-focus-target/);
   assert.doesNotMatch(source, /orchardHandoffOpacity|orchardHandoffFilter|science-handoff-orchard/);
   assert.match(source, /Optical view/);
   assert.match(source, /Physical model/);
-  assert.doesNotMatch(source, /SCIENCE_LENSES/);
-  assert.doesNotMatch(source, /LensStudy/);
-  assert.doesNotMatch(source, /science-programs__hsc/);
+  assert.match(source, /className="science-programs__hsc[^\"]*"/);
   assert.match(source, /prefers-reduced-motion: reduce/);
 });
 
@@ -56,15 +49,24 @@ test('keeps the tree fall and microscope journey on one continuous scroll handof
   assert.match(source, /science-lens-reveal/);
 });
 
-test('begins the scale journey from the already centred orchard lens', () => {
+test('grows the microscope aperture from the apple landing point before centring it', () => {
   const source = readFileSync(pageUrl, 'utf8');
 
-  assert.match(source, /const lensEntryScale = 1;/);
-  assert.match(source, /const lensBackdropOpacity = 1;/);
+  assert.match(source, /const lensEntryScale = useTransform/);
+  assert.match(source, /const lensEntryX = useTransform/);
+  assert.match(source, /const lensEntryY = useTransform/);
+  assert.match(source, /const lensBackdropOpacity = useTransform/);
   assert.match(source, /className=\s*"[^"]*science-lens-entry/);
   assert.match(source, /className="science-lens-backdrop/);
+  assert.match(source, /document\.querySelector<HTMLElement>\('\.science-story-apple'\)/);
+  assert.match(source, /getBoundingClientRect\(\)/);
+  assert.match(source, /const \[handoffGeometry, setHandoffGeometry\]/);
   assert.match(source, /transformOrigin: '50% 50%'/);
-  assert.match(source, /-mt-\[100svh\]/);
+  assert.match(source, /handoffGeometry\?\.x/);
+  assert.match(source, /handoffGeometry\?\.y/);
+  assert.doesNotMatch(source, /science-entry-bloom/);
+  assert.match(source, /lg:-mt-\[100svh\]/);
+  assert.doesNotMatch(source, /border-y border-\[#071629\]\/20/);
   assert.match(source, /bg-\[radial-gradient\(circle_at_50%_42%/);
 });
 
@@ -73,41 +75,33 @@ test('pushes each specimen through its own focal point between scale stages', ()
 
   assert.match(source, /const appleY = useTransform/);
   assert.match(source, /const macroY = useTransform/);
-  assert.match(source, /\[0, \.25, \.30\]/);
-  assert.match(source, /\[1, 1\.12, 2\.35\]/);
+  assert.match(source, /\[0, \.25, \.31\]/);
+  assert.match(source, /\[1, 1, 2\.35\]/);
   assert.match(source, /\[1\.28, 1\.04, 1\.08, 2\.4\]/);
   assert.match(source, /overflow-hidden rounded-full/);
 });
 
-test('uses viewport coordinates for the full-bleed stage and readable chapter panels', () => {
+test('uses viewport coordinates for the full-bleed stage and its supporting rails', () => {
   const source = readFileSync(pageUrl, 'utf8');
 
   assert.match(source, /science-scale-story__intro/);
+  assert.match(source, /science-scale-story__readout/);
   assert.match(source, /left-1\/2 h-\[580vh\] w-screen -translate-x-1\/2/);
   assert.doesNotMatch(source, /lg:-ml-8/);
-  assert.match(source, /science-scale-story__chapter-id/);
+  assert.match(source, /left-\[clamp\(3rem,8vw,10rem\)\] top-\[calc\(50%-12rem\)\]/);
   assert.match(source, /right-\[clamp\(3rem,8vw,10rem\)\]/);
-  assert.match(source, /xl:w-\[min\(25vw,24rem\)\]/);
   assert.match(source, /w-\[min\(80rem,calc\(100vw-3rem\)\)\] -translate-x-1\/2/);
-  assert.match(source, /bottom-\[clamp\(\.25rem,1\.5vh,1rem\)\]/);
-  assert.match(source, /text-wrap:balance/);
+  assert.match(source, /bottom-\[clamp\(1\.5rem,4vh,3rem\)\]/);
+  assert.match(source, /top-\[calc\(50%-12rem\)\]/);
+  assert.match(source, /science-scale-story__readout relative mt-10 h-32/);
 });
 
-test('keeps the fallen apple visible for the full Impact chapter before revealing the Flesh macro', () => {
+test('keeps the course context editorial, staged, and specific to each programme', () => {
   const source = readFileSync(pageUrl, 'utf8');
 
-  assert.match(source, /const appleOpacity = useTransform\(scrollYProgress, \[0, \.275, \.29, \.30\], \[1, 1, 0, 0\]\)/);
-  assert.match(source, /const macroOpacity = useTransform\(scrollYProgress, \[\.25, \.275, \.29, \.485, \.50, \.52\], \[0, 0, 1, 1, 0, 0\]\)/);
-  assert.match(source, /const appleCaptionOpacity = useTransform\(scrollYProgress, \[\.075, \.10, \.27, \.29\]/);
-  assert.match(source, /const macroCaptionOpacity = useTransform\(scrollYProgress, \[\.275, \.30, \.49, \.505\]/);
-});
-
-test('removes subject-marketing repetition from the thinking journey', () => {
-  const source = readFileSync(pageUrl, 'utf8');
-
-  assert.doesNotMatch(source, /HSC BIOLOGY · YEARS 11–12/);
-  assert.doesNotMatch(source, /HSC CHEMISTRY · YEARS 11–12/);
-  assert.doesNotMatch(source, /HSC PHYSICS · YEARS 11–12/);
-  assert.doesNotMatch(source, /Investigation · Problem solving · Exam skills/);
-  assert.doesNotMatch(source, /HSC SPECIALISATION/);
+  assert.match(source, /Foundation Science · Years 7–10/);
+  assert.match(source, /Investigation · Problem solving · Exam skills/);
+  assert.match(source, /Cellular processes · Genetics · Ecosystems/);
+  assert.match(source, /Structure &amp; bonding · Reactions · Quantitative chemistry/);
+  assert.match(source, /Motion &amp; forces · Waves &amp; energy · Fields/);
 });

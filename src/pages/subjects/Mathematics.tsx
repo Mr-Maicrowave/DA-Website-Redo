@@ -1,17 +1,24 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import NavigationNew from '@/components/NavigationNew';
-import PageJourney from '@/components/page-journey/PageJourney';
 import FooterNew from '@/components/FooterNew';
 import SubjectHero from '@/components/subjects/SubjectHero';
 import { SubjectReviewCarousel } from '@/components/subjects/SubjectReviewCarousel';
 import { Button } from '@/components/ui/button';
 import {
   ArrowRight,
+  ArrowUpRight,
+  Brain,
   Calculator,
   CheckCircle,
+  Clock,
+  HelpCircle,
   Play,
   Quote,
   Sparkles,
+  Target,
+  TrendingUp,
+  UserRound,
+  UsersRound,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { motion, useInView, useReducedMotion } from 'framer-motion';
@@ -19,11 +26,17 @@ import SEO from '@/components/SEO';
 import katex from 'katex';
 import 'katex/dist/katex.min.css';
 import { createShieldTrace } from '@/features/graph-lab/fourier-shield';
-import { DerivativeAmbientMoment } from '@/features/maths-ambient-motion/MathsAmbientMotion';
-import { MathsClassShowcase } from '@/features/maths-class-showcase/MathsClassShowcase';
+import {
+  DerivativeAmbientMoment,
+  NetworkAmbientMoment,
+  VectorAmbientMoment,
+} from '@/features/maths-ambient-motion/MathsAmbientMotion';
+import { ConfidenceJourney } from '@/features/maths-confidence-journey/ConfidenceJourney';
 import { MathsGraphLabInvitation, MathsTeachingProof } from '@/features/maths-teaching-proof/MathsTeachingProof';
 import { MathsIntroVideoGate } from '@/features/maths-intro-video/MathsIntroVideoGate';
 import { HscMathsPathway } from '@/features/hsc-maths-pathway/HscMathsPathway';
+import { MathsTopicNetwork } from '@/features/maths-topic-network/MathsTopicNetwork';
+import { MathematicalFieldStation } from '@/features/mathematical-field-station/MathematicalFieldStation';
 import { YearCube } from '@/features/year-cube/YearCube';
 
 interface StepRow {
@@ -44,14 +57,44 @@ interface ErrorTab {
   examples: ErrorExample[];
 }
 
-const MATHS_JOURNEY_SECTIONS = [
-  { id: 'mathematics-introduction', label: 'Introduction', description: 'Years 7 to 12', theme: 'light' as const },
-  { id: 'year-cube', label: 'Years 7–12', description: 'Explore each school year', theme: 'light' as const, longScroll: true },
-  { id: 'maths-class-options', label: 'Classes', description: 'Find their fit', theme: 'light' as const },
-  { id: 'hsc-maths', label: 'HSC Pathways', description: 'Choose a course', theme: 'light' as const },
-  { id: 'math-teaching-proof', label: 'How We Teach', description: 'Build lasting confidence', theme: 'light' as const },
-  { id: 'maths-graph-lab-invitation-heading', label: 'Explore Further', description: 'Try the graph lab', theme: 'dark' as const },
-];
+const MATHS_CLASS_OPTIONS = [
+  {
+    title: 'Private Maths Tuition',
+    description: 'One-to-one lessons for students who need targeted explanations, tailored practice, and a pace built around their own goals.',
+    image: '/english-page/images/subjects/english/class-private.png',
+    alt: 'A tutor working one-to-one with a student',
+    icon: UserRound,
+    accent: '#b9a6e8',
+    tint: '#f0edff',
+  },
+  {
+    title: 'Small-Group Maths Classes',
+    description: 'A consistent weekly class that builds strong foundations, gives students room to ask questions, and keeps them moving forward.',
+    image: '/english-page/images/subjects/english/class-gat.png',
+    alt: 'Students working together in a DA Tuition class',
+    icon: UsersRound,
+    accent: '#8ecfb2',
+    tint: '#e7f6ee',
+  },
+  {
+    title: 'School Focus Classes',
+    description: 'Students from the same school learn in step with their classroom program, reinforcing the exact concepts and assessments they are facing.',
+    image: '/english-page/images/subjects/english/class-focus.png',
+    alt: 'A small group of students learning with a tutor',
+    icon: Target,
+    accent: '#82bceb',
+    tint: '#e8f4ff',
+  },
+  {
+    title: 'Selective & Trial Preparation',
+    description: 'Purpose-built preparation for selective-school and school trial exams, with timed practice, problem-solving strategies, and clear feedback.',
+    image: '/english-page/images/subjects/english/class-bullet.png',
+    alt: 'Students completing focused classroom work',
+    icon: TrendingUp,
+    accent: '#f0b06d',
+    tint: '#fff0df',
+  },
+] as const;
 
 const ERROR_TABS: ErrorTab[] = [
   {
@@ -1157,6 +1200,48 @@ const SHOW_LEGACY_MATHS_INTERACTIONS = false;
 
 const Mathematics = () => {
   const prefersReducedMotion = useReducedMotion();
+  const courseLevels = [
+    {
+      label: 'High School',
+      years: 'Years 7-10',
+      tone: 'from-[#fbfff8] to-[#eaf8ef]',
+      icon: Brain,
+      description: 'As maths becomes more connected, students learn to move between algebra, diagrams, graphs and written reasoning without losing the method. We close earlier gaps, then rehearse how to choose an approach, set out working clearly and check it under assessment conditions.',
+      // "Core" and "Path" are the NSW Mathematics K-10 Syllabus's own content bands within
+      // the single K-10 Mathematics course — there is no separately-named "Advanced
+      // Mathematics" or "Mathematical Methods" course at this stage (Mathematical Methods
+      // is a Victorian VCE subject, not an NSW one). Naming these DA-branded course names
+      // would misrepresent them as official school subjects.
+      subjects: ['Core Mathematics', 'Path Mathematics (extension content)', 'Problem Solving & Enrichment'],
+    },
+    {
+      label: 'HSC Mathematics',
+      years: 'Years 11-12',
+      tone: 'from-[#fffdf7] to-[#fff1cd]',
+      icon: TrendingUp,
+      description: 'HSC preparation is not just more questions. We teach students to read the command word, identify the syllabus idea being tested, build a complete chain of working and make strategic checking decisions before time runs out — across Standard, Advanced and Extension pathways.',
+      subjects: ['Mathematics Standard 1 & 2', 'Mathematics Advanced', 'Mathematics Extension 1', 'Mathematics Extension 2'],
+    },
+  ];
+
+  const parentConcerns = [
+    {
+      icon: HelpCircle,
+      title: 'My child understands it in class, then freezes in tests.',
+      detail: 'We teach students how to identify question types, choose a method, and show working under pressure.',
+    },
+    {
+      icon: Clock,
+      title: 'They are falling behind and avoiding maths homework.',
+      detail: 'We rebuild missing foundations step by step so new school content stops feeling impossible.',
+    },
+    {
+      icon: Target,
+      title: 'They are capable, but careless mistakes cost marks.',
+      detail: 'We focus on checking routines, mathematical communication, and exam habits that reduce avoidable errors.',
+    },
+  ];
+
   // The same running problem (2x + 5 = 13) is annotated differently at each
   // stage of the method, so a viewer can see what actually changes step to step.
   const teachingSteps = [
@@ -1208,6 +1293,10 @@ const Mathematics = () => {
     },
   ];
 
+  const scrollToPathways = () => {
+    document.getElementById('math-pathways')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
   const [teachStep, setTeachStep] = useState<number>(0);
   const [activeTab, setActiveTab] = useState<string>('yr910');
   const [exampleIdx, setExampleIdx] = useState<number>(0);
@@ -1229,19 +1318,17 @@ const Mathematics = () => {
         canonicalUrl="/subjects/mathematics"
       />
       <NavigationNew />
-      <PageJourney pageLabel="Mathematics" sections={MATHS_JOURNEY_SECTIONS} />
 
       <main>
         {/* Hero */}
-        <div id="mathematics-introduction">
-          <SubjectHero
+        <SubjectHero
           eyebrow="Years 7-12 Mathematics"
           icon={Calculator}
           headlineWhite="Understand the method."
           headlineGold="Solve with confidence."
           subtext="Mathematics tuition for students who need clear explanations, stronger problem-solving, and the confidence to show their working — from Year 7 foundations through to HSC questions."
           proofPills={['Step-by-step working', 'Marked feedback', 'Clear problem-solving']}
-          exploreTargetId="year-cube"
+          exploreTargetId="math-pathways"
           placeholderLabel="Mathematics classroom"
           showPlaceholderBadge={false}
           backgroundImageSrc="/math-tutor-ogive-hero.jpg"
@@ -1249,18 +1336,171 @@ const Mathematics = () => {
           backgroundPosition="100% center"
           mobileBackgroundPosition="70% center"
           copyOffsetClassName="lg:-translate-y-10"
-          />
-        </div>
+          heroTone="light"
+        />
 
         {SHOW_LEGACY_MATHS_INTERACTIONS ? <BasketballCalculusJourney /> : null}
 
         {SHOW_LEGACY_MATHS_INTERACTIONS ? <FourierDecomposition /> : null}
 
+        {/* Anchor navigation */}
+        <nav aria-label="Mathematics page sections" className="border-y border-[#071629]/12 bg-[#fffdf8] px-5 lg:px-8">
+          <div className="mx-auto flex max-w-7xl gap-6 overflow-x-auto snap-x md:grid md:grid-cols-5 md:gap-8">
+            {[
+              { label: 'Where they are now', href: '#math-pathways' },
+              { label: 'Their right class', href: '#maths-class-options' },
+              { label: 'HSC direction', href: '#hsc-maths' },
+              { label: 'How progress is built', href: '#math-teaching-proof' },
+              { label: 'Optional exploration', href: '/maths-graph-lab', opensPage: true },
+            ].map(({ label, href, opensPage }) => (
+              <a
+                key={href}
+                href={href}
+                aria-label={opensPage ? `${label}, opens a separate page` : undefined}
+                className="relative flex min-h-14 min-w-[9.75rem] shrink-0 snap-start items-center justify-center gap-1.5 px-1 py-4 text-center text-sm font-black text-[#10233f] outline-none after:absolute after:inset-x-1 after:bottom-0 after:h-0.5 after:origin-left after:scale-x-0 after:bg-[#a6760e] after:transition-transform after:duration-200 hover:after:scale-x-100 focus-visible:after:scale-x-100 md:min-w-0"
+              >
+                {label}
+                {opensPage ? <ArrowUpRight className="h-3.5 w-3.5 shrink-0" aria-hidden="true" /> : null}
+              </a>
+            ))}
+          </div>
+        </nav>
+
+        <NetworkAmbientMoment passive />
+
+        <ConfidenceJourney concerns={parentConcerns} levels={courseLevels} />
+
+        {/* Mid-page CTA — the only other booking action on the page is at the very
+            bottom, after class options, HSC streams and teaching proof. A parent
+            already convinced by the concerns above shouldn't have to scroll the
+            rest of the page to find a way to act on it. */}
+        <section className="border-y border-[#071629]/10 bg-[#fffdf8] px-5 py-14 lg:px-8">
+          <div className="mx-auto flex max-w-6xl flex-col items-center gap-5 text-center sm:flex-row sm:justify-between sm:text-left">
+            <p className="max-w-xl text-lg font-medium leading-7 text-[#10233f]">
+              Recognise your child in one of these? Book an interview and we'll help you work out the right starting point.
+            </p>
+            <Link to="/book-interview" className="shrink-0">
+              <Button size="lg" className="h-12 w-full rounded-full bg-[#c9a227] px-7 font-black text-[#101521] hover:bg-[#e0bd4b] sm:w-auto">
+                Book an Interview
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </Link>
+          </div>
+        </section>
+
+        {/* Maths class options */}
+        <section id="maths-class-options" className="relative isolate overflow-hidden bg-[linear-gradient(160deg,#071629_0%,#0b294d_100%)] px-5 py-24 lg:px-8 lg:py-28">
+          <div className="pointer-events-none absolute -left-36 -top-36 h-80 w-80 rounded-full border border-[#c9a227]/35" aria-hidden="true" />
+          <div className="pointer-events-none absolute -bottom-44 -right-44 h-96 w-96 rounded-full border border-[#c9a227]/30" aria-hidden="true" />
+          <div
+            className="pointer-events-none absolute left-7 top-7 h-32 w-32 opacity-50"
+            style={{ backgroundImage: 'radial-gradient(rgba(255,255,255,.2) 1px, transparent 1.5px)', backgroundSize: '14px 14px' }}
+            aria-hidden="true"
+          />
+          <div
+            className="pointer-events-none absolute bottom-7 right-7 h-32 w-32 opacity-35"
+            style={{ backgroundImage: 'radial-gradient(rgba(255,255,255,.2) 1px, transparent 1.5px)', backgroundSize: '14px 14px' }}
+            aria-hidden="true"
+          />
+          <div className="relative z-10 mx-auto max-w-[1480px]">
+            <motion.div
+              className="mx-auto mb-14 max-w-5xl text-center"
+              initial={prefersReducedMotion ? false : { opacity: 0, y: 22, filter: 'blur(4px)' }}
+              whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+              viewport={{ once: true, amount: 0.35 }}
+              transition={{ duration: 0.68, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <span className="inline-flex items-center gap-3 text-xs font-black uppercase tracking-[0.16em] text-[#f1df9a] before:h-px before:w-16 before:bg-gradient-to-r before:from-transparent before:to-[#c9a227]/80 after:h-px after:w-16 after:bg-gradient-to-l after:from-transparent after:to-[#c9a227]/80">
+                Maths class options
+              </span>
+              <h2 className="mt-6 font-serif text-5xl font-medium leading-[1.25] tracking-[-0.035em] text-[#fff9ef] md:text-6xl xl:text-[4.25rem]">
+                Choose the maths pathway that fits your child.
+              </h2>
+              <p className="mx-auto mt-6 max-w-2xl text-base leading-8 text-[#c7d4e5]">
+                From personalised support to school-aligned learning and exam preparation, we will help you choose the right starting point.
+              </p>
+            </motion.div>
+
+            <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
+              {MATHS_CLASS_OPTIONS.map((option, index) => {
+                const Icon = option.icon;
+                return (
+                  <motion.article
+                    key={option.title}
+                    className="group flex min-h-full flex-col overflow-hidden rounded-2xl border bg-[#fff9ef] transition-colors duration-200 motion-reduce:transition-none"
+                    style={{ borderColor: option.accent }}
+                    initial={prefersReducedMotion ? false : { opacity: 0, y: 28 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    whileHover={prefersReducedMotion ? undefined : { y: -6, transition: { duration: 0.18, delay: 0, ease: [0.16, 1, 0.3, 1] } }}
+                    viewport={{ once: true, amount: 0.2 }}
+                    transition={{ duration: 0.62, delay: index * 0.1, ease: [0.16, 1, 0.3, 1] }}
+                  >
+                    <div className="relative aspect-[4/3] overflow-hidden bg-[#10233f]">
+                      <img
+                        src={option.image}
+                        alt={option.alt}
+                        className="h-full w-full object-cover transition-transform duration-500 motion-reduce:transition-none group-hover:scale-[1.03]"
+                        loading="lazy"
+                      />
+                      <span className="absolute inset-x-0 bottom-0 h-1.5" style={{ backgroundColor: option.accent }} aria-hidden="true" />
+                    </div>
+                    <div className="relative flex flex-1 flex-col px-6 pb-7 pt-11 text-center">
+                      <div className="pointer-events-none absolute inset-x-0 -top-9 flex justify-center">
+                        <motion.span
+                          className="grid h-[4.5rem] w-[4.5rem] place-items-center rounded-full border bg-[#fff9ef]"
+                          style={{
+                            borderColor: option.accent,
+                            color: option.accent,
+                            backgroundColor: option.tint,
+                          }}
+                          initial={prefersReducedMotion ? false : { opacity: 0, scale: 0.78 }}
+                          whileInView={{ opacity: 1, scale: 1 }}
+                          viewport={{ once: true, amount: 0.2 }}
+                          transition={{ duration: 0.44, delay: index * 0.1 + 0.16, ease: [0.16, 1, 0.3, 1] }}
+                          aria-hidden="true"
+                        >
+                          <Icon className="block h-7 w-7" strokeWidth={1.6} />
+                        </motion.span>
+                      </div>
+                      <h3 className="flex min-h-[4.75rem] items-center justify-center text-balance font-serif text-3xl font-semibold leading-tight tracking-[-0.03em] text-[#071629]">
+                        {option.title}
+                      </h3>
+                      <span className="mx-auto flex h-8 items-center gap-2" aria-hidden="true">
+                        <i className="h-px w-7 shrink-0" style={{ backgroundColor: option.accent }} />
+                        <i className="h-1.5 w-1.5 shrink-0 rotate-45" style={{ backgroundColor: '#c9a227' }} />
+                        <i className="h-px w-7 shrink-0" style={{ backgroundColor: option.accent }} />
+                      </span>
+                      <p className="mt-2 text-[15px] leading-7 text-[#40516b]">{option.description}</p>
+                    </div>
+                  </motion.article>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+
+        <VectorAmbientMoment passive />
+
         <YearCube />
 
-        <MathsClassShowcase />
-
         <HscMathsPathway />
+
+        <MathematicalFieldStation />
+
+        <section className="bg-[#071629] px-5 py-20 lg:px-8" aria-labelledby="maths-topic-network-heading">
+          <div className="mx-auto max-w-7xl">
+            <p className="mb-3 text-xs font-black uppercase tracking-[0.16em] text-[#c9a227]">The whole picture</p>
+            <h2 id="maths-topic-network-heading" className="font-serif text-4xl font-medium leading-[1.03] tracking-[-0.04em] text-white sm:text-5xl">
+              Every topic connects to another.
+            </h2>
+            <p className="mt-5 max-w-[52ch] text-base leading-8 text-[#b9c4d6]">
+              Scroll to watch how Years 7–12 maths builds outward from a handful of fundamentals — click any topic to see what it depends on.
+            </p>
+            <div className="mt-10">
+              <MathsTopicNetwork />
+            </div>
+          </div>
+        </section>
 
         <MathsTeachingProof />
 
@@ -1536,6 +1776,33 @@ const Mathematics = () => {
 
         <SubjectReviewCarousel subject="maths" />
 
+        {/* Final CTA */}
+        <section className="bg-[#071629] px-5 py-20 text-white lg:px-8">
+          <div className="mx-auto grid max-w-6xl gap-8 rounded-[2rem] border border-white/12 bg-white/[0.06] p-8 shadow-2xl md:p-12 lg:grid-cols-[1fr_auto] lg:items-center">
+            <div>
+              <p className="mb-3 text-xs font-black uppercase tracking-[0.16em] text-[#f1df9a]">Next step</p>
+              <h2 className="font-serif text-4xl font-medium leading-tight tracking-[-0.045em] text-white">
+                Find the right maths starting point.
+              </h2>
+              <p className="mt-4 max-w-2xl text-base leading-8 text-white/66">
+                Book an interview and we will help you work out whether your child needs confidence support, extension work, or HSC exam preparation.
+              </p>
+            </div>
+            <div className="flex flex-col gap-3 sm:flex-row lg:flex-col">
+              <Link to="/book-interview">
+                <Button size="lg" className="h-12 w-full rounded-full bg-[#c9a227] px-7 font-black text-[#101521] hover:bg-[#e0bd4b]">
+                  Book an Interview
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </Link>
+              <a href="tel:0401940207">
+                <Button size="lg" variant="outline" className="h-12 w-full rounded-full border-white/30 bg-transparent px-7 font-bold text-white hover:bg-white/10 hover:text-white">
+                  Call 0401 940 207
+                </Button>
+              </a>
+            </div>
+          </div>
+        </section>
       </main>
 
       <FooterNew />

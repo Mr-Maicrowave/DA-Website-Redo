@@ -23,13 +23,13 @@ test("keeps a tutor book's shelf cloth colour when its physical rig is mounted",
     materialVariant: 4,
   });
 
-  assert.equal(presentation.colours.cloth, "#36533d");
+  assert.equal(presentation.colours.cloth, "#486b4d");
 });
 
 class RecordingCanvas extends EventTarget {
   width = 0;
   height = 0;
-  readonly commands: Array<{ name: string; args: unknown[]; font?: string }> = [];
+  readonly commands: Array<{ name: string; args: unknown[]; font?: string; fillStyle?: string }> = [];
   readonly context = {
     fillStyle: "",
     strokeStyle: "",
@@ -39,7 +39,7 @@ class RecordingCanvas extends EventTarget {
     globalAlpha: 1,
     fillRect: (...args: unknown[]) => this.commands.push({ name: "fillRect", args }),
     strokeRect: (...args: unknown[]) => this.commands.push({ name: "strokeRect", args }),
-    fillText: (...args: unknown[]) => this.commands.push({ name: "fillText", args, font: this.context.font }),
+    fillText: (...args: unknown[]) => this.commands.push({ name: "fillText", args, font: this.context.font, fillStyle: this.context.fillStyle }),
     drawImage: (...args: unknown[]) => this.commands.push({ name: "drawImage", args }),
     beginPath: () => this.commands.push({ name: "beginPath", args: [] }),
     closePath: () => this.commands.push({ name: "closePath", args: [] }),
@@ -241,6 +241,18 @@ test("uses the tutor-name serif consistently across every interior page", () => 
 
   assert.ok(interiorText.length > 0);
   assert.ok(interiorText.every(command => command.font?.includes('"Cormorant Garamond"')), "every interior text run uses the same family as the tutor name");
+});
+
+test("uses high-contrast saturated ink throughout the tutor-book interiors", () => {
+  const { document } = createRecordingDocument();
+  const sources = createCompleteShelfPresentation(adem).createCanvasSources(document as unknown as Document);
+  const interiorText = sources.interiors.flatMap(source => (source as unknown as RecordingCanvas).commands)
+    .filter(command => command.name === "fillText");
+  const textColours = new Set(interiorText.map(command => command.fillStyle));
+
+  assert.ok(textColours.has("#071a33"), "body copy uses deep navy ink");
+  assert.ok(textColours.has("#8a5700"), "section labels use a richer, darker gold");
+  assert.equal(textColours.has("#1a314c"), false, "interior copy no longer uses the softer legacy navy");
 });
 
 test("prints every canonical Jenny page within the high-resolution safe area", () => {
