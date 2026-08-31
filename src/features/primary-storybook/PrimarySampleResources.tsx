@@ -44,6 +44,11 @@ const PrimarySampleResources = () => {
   };
 
   const trapFocus = (event: React.KeyboardEvent<HTMLDialogElement>) => {
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      closeResource();
+      return;
+    }
     if (event.key !== 'Tab') return;
     const focusable = dialogRef.current?.querySelectorAll<HTMLElement>(
       'button, [href], iframe, [tabindex]:not([tabindex="-1"])',
