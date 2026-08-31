@@ -18,7 +18,7 @@
 .community-map__connector { fill: none; stroke: #b4870f; stroke-width: 3; opacity: 0; }
 .community-map__building-label line { stroke: #b4870f; stroke-width: 1.5; }
 .community-map__building-label rect { fill: #071629; }
-.community-map__building-label text, .community-map__hub-label text { fill: #fff; font: 800 8px/1 Cabin, Arial, sans-serif; letter-spacing: 1.15px; }
+.community-map__building-label text { fill: #fff; font: 800 8px/1 Cabin, Arial, sans-serif; letter-spacing: 1.15px; }
 
 /* Regional school dots — grouped so the reveal (translate + scale + opacity) moves ring and dot together */
 .community-map__dot-group { opacity: 0; }
@@ -28,14 +28,6 @@
 .community-map__dot-ring { fill: none; stroke: #fff; stroke-width: 1.5; opacity: .8; }
 .community-map__connections { pointer-events: none; }
 .community-map__connection { fill: none; stroke: #b4870f; stroke-width: .85; stroke-opacity: .4; stroke-linecap: round; stroke-dasharray: 1.5 8; vector-effect: non-scaling-stroke; }
-
-/* Gold hub at the midpoint of the two Canley Heights buildings */
-.community-map__hub-density { fill: #244a63; fill-opacity: .055; }
-.community-map__hub-glow { fill: #d6a921; fill-opacity: .18; }
-.community-map__hub-ring-outer { fill: none; stroke: #d6a921; stroke-width: 2; }
-.community-map__hub-ring { fill: #fff; }
-.community-map__hub-core { fill: #d6a921; }
-.community-map__hub-label rect { fill: #071629; }
 
 /* A quiet editorial veil keeps the copy legible without masking the regional map. */
 .community-card {

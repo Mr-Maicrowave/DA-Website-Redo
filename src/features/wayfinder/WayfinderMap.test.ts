@@ -105,6 +105,14 @@ test('ARRIVE recomposes before the desktop grid minimums can overflow', () => {
   );
 });
 
+test('ARRIVE route line and waypoint circles share one responsive axis', () => {
+  assert.match(wayfinderCssSource, /\.wayfinder-arrive__journey\s*\{[^}]*--wayfinder-journey-axis:\s*27px/s);
+  assert.match(wayfinderCssSource, /\.wayfinder-arrive__journey::before\s*\{[^}]*left:\s*var\(--wayfinder-journey-axis\)[^}]*transform:\s*translateX\(-50%\)/s);
+  assert.match(wayfinderCssSource, /\.wayfinder-route-node\s*\{[^}]*grid-template-columns:\s*54px[^}]*\}/s);
+  assert.match(wayfinderCssSource, /\.wayfinder-arrive__waypoint\s*\{[^}]*justify-self:\s*center/s);
+  assert.match(wayfinderCssSource, /@media \(max-width: 768px\) \{[\s\S]*?\.wayfinder-arrive__journey\s*\{[^}]*--wayfinder-journey-axis:\s*26px/s);
+});
+
 test('WHERE map geometry and its markers share one responsive SVG coordinate system', () => {
   assert.match(wayfinderMapSource, /<svg className="wayfinder-map" viewBox=\{`0 0 \$\{scene\.viewBox\.width\} \$\{scene\.viewBox\.height\}`\}/);
   assert.match(wayfinderMapSource, /<motion\.g animate=\{camera\}/, 'roads, route, property links, and markers must move as one map group');
@@ -148,19 +156,18 @@ test('the regional composition leaves the western school cluster visible', () =>
   assert.match(communityMapCssSource, /\.community-card\s*\{[^}]*right:\s*clamp\(20px,\s*5vw,\s*72px\)/s, 'the desktop copy veil belongs on the clear right side of the map');
   assert.match(communityMapSource, /r=\{isInnerCatchment \? 7\.5 : isOuterSydney \? 5\.25 : 6\.25\}/, 'school dots must have a legible regional hierarchy');
   assert.match(communityMapSource, /className="community-map__building-label"/, 'the local frame should identify the real DA buildings');
-  assert.match(communityMapSource, /DA CANLEY HEIGHTS/, 'the paired building markers should resolve into one destination');
+  assert.match(communityMapSource, /PHYSICAL_CENTRES\.map/, 'the map should render the two physical building destinations');
 });
 
-test('the Canley Heights hub remains legible without obscuring the surrounding map', () => {
-  assert.match(communityMapSource, /<circle r="32" className="community-map__hub-density" \/>/, 'the catchment tint should stay compact');
-  assert.match(communityMapSource, /<circle r="24" className="community-map__hub-glow" \/>/, 'the gold glow should not mask nearby map labels');
-  assert.doesNotMatch(communityMapSource, /community-map__hub-pulse/, 'the hub should not add a distracting animated radar ring');
-  assert.match(communityMapCssSource, /\.community-map__hub-density\s*\{[^}]*fill-opacity:\s*\.055/s, 'the catchment tint should remain transparent enough to read through');
+test('the community map shows only the two physical DA building destinations', () => {
+  assert.doesNotMatch(communityMapSource, /DA CANLEY HEIGHTS/, 'a generic third DA destination label must not appear');
+  assert.doesNotMatch(communityMapSource, /community-map__hub/, 'the midpoint must not render as another destination marker');
+  assert.doesNotMatch(communityMapCssSource, /\.community-map__hub-/, 'obsolete midpoint marker styling must not remain');
 });
 
 test('the pull-back has enough physical scroll distance and a final community-network hold', () => {
-  assert.match(wayfinderCssSource, /\.wayfinder-community\s*\{[^}]*min-height:\s*260svh/s, 'the longer sticky runway gives the completed map time to be read');
-  assert.match(wayfinderPageSource, /useTransform\(communityProgress, \[0, 0\.82\], \[0, 1\], \{ clamp: true \}\)/, 'the map must finish before the section’s scroll runway ends');
+  assert.match(wayfinderCssSource, /\.wayfinder-community\s*\{[^}]*min-height:\s*320svh/s, 'the sticky runway must preserve a deliberate completed-map reading hold');
+  assert.match(wayfinderPageSource, /useTransform\(communityProgress, \[0, 0\.68\], \[0, 1\], \{ clamp: true \}\)/, 'the school network must finish early enough to remain pinned through continued scrolling');
   assert.match(communityMapSource, /requestAnimationFrame\(\(\) =>/, 'camera updates remain frame-throttled');
   assert.match(communityMapSource, /zoomSnap:\s*0/, 'camera interpolation remains fractional rather than stair-stepped');
 });
