@@ -10,18 +10,16 @@ test('uses the generated interview artwork and real interviewer cutout in a welc
   const source = readFileSync(pageUrl, 'utf8');
   const styles = readFileSync(cssUrl, 'utf8');
 
-  assert.match(styles, /consultation-room-bg\.png/);
-  assert.match(source, /interviewers\.png/);
+  assert.match(source, /book-interview-reference-scene\.webp/);
   assert.match(source, /Book an[\s\S]*Interview/);
   assert.match(source, /A thoughtful conversation today/);
   assert.doesNotMatch(source, /Back to Home/);
 
-  assert.ok(existsSync(new URL('public/images/interview/consultation-room-bg.png', projectRoot)));
-  assert.ok(existsSync(new URL('public/images/interview/interviewers.png', projectRoot)));
+  assert.ok(existsSync(new URL('public/images/interview/book-interview-reference-scene.webp', projectRoot)));
   assert.ok(existsSync(new URL('public/images/interview/ivory-paper-texture.png', projectRoot)));
 });
 
-test('includes the four benefit promises, reassurance, and trust statistics from the approved design', () => {
+test('includes the four benefit promises and reassurance from the approved design', () => {
   const source = readFileSync(pageUrl, 'utf8');
 
   for (const text of [
@@ -29,11 +27,12 @@ test('includes the four benefit promises, reassurance, and trust statistics from
     'Expert Guidance You Can Trust',
     'A Supportive Start to Their Journey',
     'Small Groups Big Impact',
-    'Takes 2 minutes',
-    'Every conversation is the start of something great.',
+    'Takes about 5 minutes',
   ]) {
     assert.match(source, new RegExp(text));
   }
+
+  assert.doesNotMatch(source, /interview-trust-strip/);
 });
 
 test('mounts the six-step wizard with the local adapter and existing confirmation', () => {

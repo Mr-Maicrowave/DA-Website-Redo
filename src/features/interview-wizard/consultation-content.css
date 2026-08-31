@@ -3,7 +3,7 @@
 .consultation-card h2{font-family:Georgia,'Times New Roman',serif;color:#112d4f;letter-spacing:-.025em}
 .consultation-card h3{color:#173250}.consultation-card p{color:#4d6178}
 .consultation-how-card{padding:34px 46px 40px;background:linear-gradient(135deg,rgba(255,253,249,.98),rgba(252,246,236,.93))}
-.consultation-how-card>h2{font-size:clamp(1.9rem,3vw,2.65rem);line-height:1.08}.consultation-how-card>h2 span{color:#ca7d16}
+.consultation-how-card>h2{font-size:clamp(1.9rem,3vw,2.65rem);line-height:1.08}.consultation-how-card>h2 span{color:#ca7d16}.consultation-opening-note{margin:12px 0 0!important;color:#14304d!important;font-family:'Segoe Print','Bradley Hand',cursive;font-size:clamp(1.15rem,2.1vw,1.7rem);line-height:1.35;transform:rotate(-1deg)}.consultation-opening-note span{color:#c9871a}
 .consultation-how-steps{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));margin-top:26px}
 .consultation-how-step-wrap,.consultation-after-step-wrap{position:relative;display:grid;grid-template-columns:minmax(0,1fr) 32px;align-items:start}
 .consultation-how-step-wrap:last-child,.consultation-after-step-wrap:last-child{grid-template-columns:1fr}.consultation-how-step{text-align:center}

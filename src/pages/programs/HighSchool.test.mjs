@@ -27,10 +27,20 @@ test('keeps the global navigation and renders the spacious editorial hero', () =
 
 test('switches one interactive journey between Years 07 and 10', () => {
   for (const text of ['Find your feet.', 'Build your independence.', 'Discover your strengths.', 'Choose your direction.']) assert.match(source, new RegExp(text.replace('.', '\\.')));
-  assert.match(source, /aria-label="Choose a high-school year"/);
-  assert.match(source, /setActive\(index\)/);
+  assert.match(source, /aria-label="High-school year progress"/);
+  assert.match(source, /useScroll/);
+  assert.match(source, /useMotionValueEvent/);
+  assert.match(source, /Math\.floor\(latest \* years\.length\)/);
+  assert.match(source, /src="\/images\/programs\/highschool-hero-student\.png"/);
+  assert.doesNotMatch(source, /src=\{year\.image\}/);
+  assert.match(source, /hs-year-journey__outcomes/);
+  assert.match(source, /hs-year-journey__focus/);
+  assert.match(source, /What students focus on in Year/);
+  assert.match(styles, /\.hs-year-journey__title-rule/);
   assert.doesNotMatch(source, /HighSchoolCinematicScene|HighSchoolProfessionalJourney/);
-  assert.match(styles, /\.hs-year-journey__frame \{[^}]*height:clamp\(620px,68vh,720px\);/);
+  assert.match(styles, /\.hs-year-journey__frame \{[^}]*height:clamp\(680px,74vh,780px\);/);
+  assert.match(styles, /\.hs-year-journey \{[^}]*height:400svh;/);
+  assert.match(styles, /\.hs-year-journey__sticky \{[^}]*position:sticky;/);
   assert.match(styles, /@media \(max-width:800px\)[\s\S]*?\.hs-year-journey__frame \{[^}]*height:auto;/);
 });
 
@@ -38,6 +48,9 @@ test('renders the three different starting points as ruled editorial states', ()
   for (const label of ['Rebuild', 'Progress', 'Extend']) assert.match(source, new RegExp(label));
   assert.match(source, /Every student arrives<br \/>somewhere different\./);
   assert.match(styles, /\.hs-starting__states \{[^}]*grid-template-columns:repeat\(3,1fr\);[^}]*border-block:/);
+  assert.match(source, /hs-starting__icon/);
+  assert.match(source, /item\.outcomes\.map/);
+  assert.match(styles, /\.hs-starting__outcomes/);
 });
 
 test('combines support categories and the DA method into interactive panels', () => {

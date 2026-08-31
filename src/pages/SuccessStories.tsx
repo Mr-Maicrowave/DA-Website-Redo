@@ -17,6 +17,15 @@ import './SuccessStories.css';
 
 const easeOut = [0.22, 1, 0.36, 1] as const;
 
+const storyMountainArtworks = [
+  '/images/success-stories/story-mountain-01-blue-snow-v1.png',
+  '/images/success-stories/story-mountain-02-green-forest-v1.png',
+  '/images/success-stories/story-mountain-03-violet-lavender-v1.png',
+  '/images/success-stories/story-mountain-04-amber-sunset-v1.png',
+  '/images/success-stories/story-mountain-05-pale-sky-v1.png',
+  '/images/success-stories/story-mountain-06-deep-navy-v1.png',
+] as const;
+
 type StoryPanel = {
   id: string;
   number: string;
@@ -485,7 +494,7 @@ const StudentStoryModal = ({ selectedIndex, onSelect, onClose, reduceMotion }: S
                       <strong>{panel.after}</strong>
                       <p>{panel.resultLabel}</p>
                     </div>
-                    <img className="ss-story-sheet__mountain" src="/images/success-stories/student-story-mountain.png" alt="" />
+                    <img className="ss-story-sheet__mountain" src={storyMountainArtworks[selectedIndex]} alt="" />
                     <span className="ss-story-sheet__sparkles" aria-hidden="true">✦ · ✧</span>
                   </aside>
                 </div>

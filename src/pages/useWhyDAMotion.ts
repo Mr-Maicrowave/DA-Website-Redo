@@ -121,7 +121,7 @@ export function useWhyDAMotion(): RefObject<HTMLElement> {
           .from('[data-motion="personalise-film-strip"]', { opacity: 0, x: 48, duration: .92, ease: 'power4.out', immediateRender: false }, .34)
           .from('[data-motion="personalise-frame"] .film-markings', { opacity: 0, y: -5, duration: .36, stagger: .07, ease: 'power3.out', immediateRender: false }, .62);
 
-        gsap.utils.toArray<HTMLElement>('.why-da-care, .why-da-grow, .why-da-achieve', root).forEach((section) => {
+        gsap.utils.toArray<HTMLElement>('.why-da-care', root).forEach((section) => {
           gsap.from(section.querySelector('[data-motion="chapter-heading"]'), {
             opacity: 0, y: 24, duration: 0.7, ease: 'power3.out', immediateRender: false,
             scrollTrigger: { trigger: section, start: 'top 78%', once: true },
@@ -134,6 +134,18 @@ export function useWhyDAMotion(): RefObject<HTMLElement> {
           .from('[data-motion="care-intro"] > p', { opacity: 0, y: 12, duration: .58, ease: 'power3.out', immediateRender: false }, .26)
           .from('[data-motion="care-film"]', { opacity: 0, x: 80, duration: .9, ease: 'power3.out', immediateRender: false }, .34)
           .from('[data-motion="care-closing"] > *', { opacity: 0, y: 14, duration: .62, stagger: .1, ease: 'power3.out', immediateRender: false }, .62);
+
+        const transformTimeline = gsap.timeline({ scrollTrigger: { trigger: '[data-testid="why-da-transform"]', start: 'top 76%', once: true } });
+        transformTimeline
+          .from('[data-motion="transform-label"]', { opacity: 0, y: 10, duration: .44, ease: 'power3.out', immediateRender: false })
+          .from('[data-motion="transform-headline"]', { clipPath: 'inset(0 0 100% 0)', y: 18, duration: .72, ease: 'power4.out', immediateRender: false }, .08)
+          .from('[data-motion="transform-emphasis"]', { opacity: 0, y: 9, duration: .5, ease: 'power3.out', immediateRender: false }, .2)
+          .from('[data-motion="transform-support"]', { opacity: 0, y: 8, duration: .45, ease: 'power3.out', immediateRender: false }, .28)
+          .from('[data-motion="transform-panel"]', { clipPath: 'inset(0 48% 0 48%)', duration: .92, ease: 'power3.inOut', immediateRender: false }, .38);
+        gsap.to('[data-motion="transform-finale-handoff"]', {
+          y: -16, opacity: .82, ease: 'none',
+          scrollTrigger: { trigger: '[data-testid="why-da-succeed"]', start: 'top 96%', end: 'top 78%', scrub: .45 },
+        });
 
         const succeedTimeline = gsap.timeline({ scrollTrigger: { trigger: '[data-testid="why-da-succeed"]', start: 'top 72%', once: true } });
         const succeedFrameSlip = isMobile ? 11 : 28;
@@ -155,22 +167,6 @@ export function useWhyDAMotion(): RefObject<HTMLElement> {
           .to('[data-motion="succeed-projection"]', { y: 0, scale: 1, filter: 'blur(0px)', duration: .08, ease: 'power2.out', clearProps: 'transform,filter' }, 2.2)
           .fromTo('[data-motion="succeed-frame-locked"]', { opacity: 0 }, { opacity: 1, duration: .12, repeat: 1, repeatDelay: .58, yoyo: true }, 2.3)
           .from('[data-motion="succeed-after"] > *', { opacity: 0, y: 18, duration: .65, stagger: .14, ease: 'power3.out', immediateRender: false }, 2.5);
-        gsap.from('[data-motion="growth-milestone"]', {
-          opacity: 0, y: 22, duration: 0.58, stagger: 0.11, ease: 'power3.out', immediateRender: false,
-          scrollTrigger: { trigger: '.why-da-growth-milestones', start: 'top 82%', once: true },
-        });
-        gsap.from('[data-motion="growth-quality"]', {
-          opacity: 0, y: 14, duration: 0.42, stagger: 0.08, ease: 'power3.out', immediateRender: false,
-          scrollTrigger: { trigger: '.why-da-growth-qualities', start: 'top 88%', once: true },
-        });
-        gsap.from('[data-motion="result-card"]', {
-          opacity: 0, y: 26, duration: 0.56, stagger: 0.1, ease: 'power3.out', immediateRender: false,
-          scrollTrigger: { trigger: '.why-da-results', start: 'top 84%', once: true },
-        });
-        gsap.from('[data-motion="testimonial"]', {
-          opacity: 0, y: 20, rotation: (index) => index % 2 ? 0.4 : -0.4, duration: 0.5, stagger: 0.08, ease: 'power3.out', immediateRender: false,
-          scrollTrigger: { trigger: '.why-da-testimonials', start: 'top 84%', once: true },
-        });
         gsap.from('[data-motion="closing-cta"]', {
           opacity: 0, x: -28, duration: 0.75, ease: 'power3.out', immediateRender: false,
           scrollTrigger: { trigger: '[data-testid="why-da-closing-cta"]', start: 'top 78%', once: true },

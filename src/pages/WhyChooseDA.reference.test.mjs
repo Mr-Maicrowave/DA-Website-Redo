@@ -94,13 +94,10 @@ test('removes the legacy teaching and connected blocks while preserving care', (
   assert.match(styles, /\.why-da-care/);
 });
 
-test('completes the seven-part story with growth, achievement, and a consultation close', () => {
-  assert.match(page, /data-testid="why-da-grow"/);
-  assert.match(page, /WE GROW/);
-  assert.match(page, /YEAR 2[\s\S]*YEAR 4[\s\S]*YEAR 7[\s\S]*YEAR 9[\s\S]*YEAR 12/);
-  assert.match(page, /Confidence[\s\S]*Curiosity[\s\S]*Study habits[\s\S]*Independence[\s\S]*Resilience[\s\S]*Tutor connection/);
-  assert.match(page, /data-testid="why-da-achieve"/);
-  assert.match(page, /CATCH UP SUCCESS[\s\S]*IMPROVEMENT[\s\S]*HIGH ACHIEVEMENT[\s\S]*EXTENSION/);
+test('moves directly from the cinematic finale to the consultation close', () => {
+  assert.doesNotMatch(page, /data-testid="why-da-grow"|WE GROW|growthMilestones|growthQualities/);
+  assert.doesNotMatch(page, /data-testid="why-da-achieve"|WE ACHIEVE|achievementResults|testimonials/);
+  assert.match(page, /<WeSucceedSection\s*\/>[\s\S]*data-testid="why-da-closing-cta"/);
   assert.match(page, /data-testid="why-da-closing-cta"/);
   assert.match(page, /BOOK A CONSULTATION[\s\S]*EXPLORE LEARNING OPTIONS/);
 });
