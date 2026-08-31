@@ -72,7 +72,7 @@ export const MathsGraphLabInvitation = () => (
 );
 
 export const MathsTeachingProof = () => (
-  <section id="math-teaching-proof" className="scroll-mt-24 bg-[#fff6e7] px-5 py-20 lg:px-8 lg:py-24" aria-labelledby="math-teaching-proof-heading">
+  <section id="math-teaching-proof" className="scroll-mt-24 bg-[#fff6e7] px-5 py-20 lg:px-8 lg:pb-24 lg:pt-8" aria-labelledby="math-teaching-proof-heading">
     <NetworkAmbientMoment passive />
     <div className="mx-auto max-w-7xl">
       <div className="grid gap-7 border-b border-[#071629]/14 pb-10 lg:grid-cols-[0.8fr_1.2fr] lg:items-end">

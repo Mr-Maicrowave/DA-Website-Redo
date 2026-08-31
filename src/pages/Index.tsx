@@ -6,7 +6,7 @@
 
 import React, { useRef, useEffect, useState, useCallback, useLayoutEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { ArrowRight, Maximize2, Minimize2, Pause, Play, Volume2, VolumeX, X } from 'lucide-react';
+import { ArrowRight, BookOpen, BriefcaseBusiness, Calculator, ChartNoAxesCombined, ChevronDown, FlaskConical, Maximize2, Minimize2, Pause, Play, Scale, ShieldCheck, UsersRound, Volume2, VolumeX, X, type LucideIcon } from 'lucide-react';
 import { motion, AnimatePresence, useInView, useScroll, useTransform, useSpring, useMotionValueEvent, useReducedMotion, type MotionValue } from 'framer-motion';
 import NavigationNew from '@/components/NavigationNew';
 import HomeFooterTrial from '@/components/HomeFooterTrial';
@@ -17,6 +17,7 @@ import Confetti, { fireConfetti } from '@/components/animations/Confetti';
 import SEO from '@/components/SEO';
 import StatsSection from '@/components/StatsSection';
 import { siteStats } from '@/data/site-stats';
+import { supplementalHomepageReviews } from '@/data/homepage-reviews';
 import { organizationSchema, localBusinessSchema } from '@/lib/seo/schema';
 import VisualIntro from '@/components/home/VisualIntro';
 
@@ -194,43 +195,12 @@ const MarqueeStrip = () => (
 //  HERO
 // ══════════════════════════════════════════════════════════════
 
-const HeroSection = ({ embedded = false, introProgress }: { embedded?: boolean; introProgress?: MotionValue<number> }) => {
+const HeroSection = ({ embedded = false }: { embedded?: boolean }) => {
   const sectionRef = useRef<HTMLElement>(null);
   const reducedMotion = useReducedMotion();
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ['start start', 'end start'] });
-  const revealProgress = introProgress ?? scrollYProgress;
-  const cinematicReveal = Boolean(introProgress) && !reducedMotion;
   const contentY = useTransform(scrollYProgress, [0, 1], ['0%', reducedMotion ? '0%' : '20%']);
   const contentOpacity = useTransform(scrollYProgress, [0, 0.72, 1], [1, 0.94, reducedMotion ? 1 : 0]);
-  const sideLeftY = useTransform(revealProgress, [0, 1], ['0%', '-1.2%']);
-  const sideRightY = useTransform(revealProgress, [0, 1], ['0%', '1.2%']);
-  const sideScale = useTransform(revealProgress, [0, 1], [1.012, 1]);
-  const sideOpacity = useTransform(revealProgress, [0.57, 0.69], [0, 1]);
-  const crestY = useTransform(revealProgress, [0.45, 0.57], [14, 0]);
-  const crestOpacity = useTransform(revealProgress, [0.45, 0.57], [0, 1]);
-  const crestScale = useTransform(revealProgress, [0.45, 0.57], [0.96, 1]);
-  const eyebrowY = useTransform(revealProgress, [0.51, 0.61], [10, 0]);
-  const eyebrowOpacity = useTransform(revealProgress, [0.51, 0.61], [0, 1]);
-  const threadScale = useTransform(revealProgress, [0.56, 0.7], [0, 1]);
-  const threadOpacity = useTransform(revealProgress, [0.56, 0.64], [0, 1]);
-  const titleOneY = useTransform(revealProgress, [0.56, 0.7], [130, 0]);
-  const titleOneOpacity = useTransform(revealProgress, [0.56, 0.64], [0, 1]);
-  const titleOneScale = useTransform(revealProgress, [0.56, 0.7], [0.985, 1]);
-  const titleTwoY = useTransform(revealProgress, [0.64, 0.78], [130, 0]);
-  const titleTwoOpacity = useTransform(revealProgress, [0.64, 0.76], [0.3, 1]);
-  const titleTwoScale = useTransform(revealProgress, [0.64, 0.78], [0.985, 1]);
-  const titleTwoTracking = useTransform(revealProgress, [0.64, 0.78], ['.01em', '0em']);
-  const trustY = useTransform(revealProgress, [0.73, 0.83], [12, 0]);
-  const trustOpacity = useTransform(revealProgress, [0.73, 0.83], [0, 1]);
-  const supportY = useTransform(revealProgress, [0.76, 0.86], [14, 0]);
-  const supportOpacity = useTransform(revealProgress, [0.76, 0.86], [0, 1]);
-  const actionsY = useTransform(revealProgress, [0.79, 0.89], [16, 0]);
-  const actionsOpacity = useTransform(revealProgress, [0.79, 0.89], [0, 1]);
-  const secondaryActionY = useTransform(revealProgress, [0.81, 0.91], [16, 0]);
-  const secondaryActionOpacity = useTransform(revealProgress, [0.81, 0.91], [0, 1]);
-  const valuesY = useTransform(revealProgress, [0.87, 0.97], [18, 0]);
-  const valuesOpacity = useTransform(revealProgress, [0.87, 0.97], [0, 1]);
-  const continuationScale = useTransform(revealProgress, [0.97, 1], [0, 1]);
 
   return (
     <motion.section
@@ -269,8 +239,6 @@ const HeroSection = ({ embedded = false, introProgress }: { embedded?: boolean; 
         }
         .hero-side-image--left img { object-position: 31% center; }
         .hero-side-image--right img { object-position: 53% center; }
-        .hero-gold-thread { width: min(230px, 42vw); height: 1px; margin: clamp(2px, .55vh, 7px) 0 0; background: linear-gradient(90deg, transparent, #b8842f 12%, #b8842f 88%, transparent); transform-origin: center; }
-        .hero-title-mask { display: block; height: 1.05em; overflow: hidden; line-height: 1.05; }
         .hero-side-image::after {
           content: '';
           position: absolute;
@@ -368,9 +336,10 @@ const HeroSection = ({ embedded = false, introProgress }: { embedded?: boolean; 
           margin-top: clamp(9px, 1.7vh, 20px);
           text-align: left;
         }
-        .hero-value { min-width: 0; padding-top: 7px; border-top: 1px solid rgba(184,132,47,.48); }
-        .hero-value strong { display: block; margin: 0 0 4px; font-family: ${sans}; font-size: clamp(.68rem, .76vw, .78rem); letter-spacing: .12em; color: #9b681c; }
-        .hero-value p { margin: 0; font-family: ${sans}; font-size: clamp(.68rem, .78vw, .82rem); line-height: 1.38; color: rgba(10,27,52,.76); }
+        .hero-value { min-width: 0; display: grid; grid-template-columns: 40px 1fr; gap: 11px; align-items: start; }
+        .hero-value svg { width: 34px; height: 34px; color: #b8842f; stroke-width: 1.35; }
+        .hero-value strong { display: block; margin: 1px 0 5px; font-family: ${sans}; font-size: clamp(.72rem, .82vw, .84rem); color: ${C.navy}; }
+        .hero-value p { margin: 0; font-family: ${sans}; font-size: clamp(.66rem, .75vw, .77rem); line-height: 1.45; color: rgba(10,27,52,.72); }
         .hero-trust {
           margin: clamp(1px, .35vh, 4px) 0 0;
           font-family: ${sans};
@@ -380,7 +349,6 @@ const HeroSection = ({ embedded = false, introProgress }: { embedded?: boolean; 
           line-height: 1.4;
           color: rgba(10,27,52,.58);
         }
-        .hero-continuation { position: absolute; bottom: clamp(16px, 2.1vh, 24px); left: 50%; width: 1px; height: 28px; background: linear-gradient(#b8842f, transparent); transform-origin: top; }
         .hero-scroll { margin-top: clamp(2px, .7vh, 8px); color: #b8842f; animation: heroChevron 2.8s cubic-bezier(.22,1,.36,1) infinite; }
         @keyframes heroChevron { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(4px); } }
         @media (min-width: 1400px) and (min-height: 820px) {
@@ -430,6 +398,8 @@ const HeroSection = ({ embedded = false, introProgress }: { embedded?: boolean; 
           .hero-luxury { grid-template-columns: minmax(0, 15fr) minmax(0, 70fr) minmax(0, 15fr); }
           .hero-composition { width: 96%; padding-inline: 22px; }
           .hero-title { font-size: clamp(2.35rem, 4.7vw, 3.8rem); }
+          .hero-value { grid-template-columns: 31px 1fr; gap: 8px; }
+          .hero-value svg { width: 28px; height: 28px; }
         }
         @media (max-width: 767px) {
           .hero-luxury {
@@ -457,13 +427,13 @@ const HeroSection = ({ embedded = false, introProgress }: { embedded?: boolean; 
           .hero-actions { width: 100%; gap: 8px; }
           .hero-cta { min-width: 0; flex: 1; min-height: 40px; padding: 9px 10px; font-size: .72rem; }
           .hero-values { grid-template-columns: 1fr 1fr; gap: 7px 13px; margin-top: 4px; max-width: 370px; }
-          .hero-value { padding-top: 5px; }
+          .hero-value { grid-template-columns: 24px 1fr; gap: 6px; }
           .hero-value:last-child { grid-column: 1 / -1; width: 54%; justify-self: center; }
-          .hero-value strong { font-size: .53rem; margin-bottom: 1px; }
-          .hero-value p { font-size: .56rem; line-height: 1.25; }
+          .hero-value svg { width: 22px; height: 22px; }
+          .hero-value strong { font-size: .58rem; margin-bottom: 1px; }
+          .hero-value p { font-size: .52rem; line-height: 1.25; }
           .hero-trust { margin-top: 0; font-size: .58rem; letter-spacing: .045em; }
-          .hero-gold-thread { width: min(170px, 52vw); }
-          .hero-continuation { height: 18px; bottom: 9px; }
+          .hero-scroll { margin-top: 0; }
         }
         @media (max-height: 760px) and (min-width: 768px) {
           .hero-composition { gap: 7px; padding-top: 10px; padding-bottom: 9px; }
@@ -475,56 +445,57 @@ const HeroSection = ({ embedded = false, introProgress }: { embedded?: boolean; 
           .hero-trust { margin-top: 6px; }
         }
         @media (prefers-reduced-motion: reduce) {
+          .hero-scroll { animation: none; }
           .hero-cta { transition: none; }
         }
       `}</style>
 
-      <motion.figure className="hero-side-image hero-side-image--left" style={cinematicReveal ? { y: sideLeftY, scale: sideScale, opacity: sideOpacity } : undefined}>
+      <figure className="hero-side-image hero-side-image--left">
         <img src="/images/homepage/homepage-cream/ngoc and a girl-3.png" alt="DA Tuition tutor guiding a student through her work" />
-      </motion.figure>
+      </figure>
 
       <div className="hero-centre">
         <motion.div
           className="hero-composition"
           style={{ y: embedded ? 0 : contentY, opacity: embedded ? 1 : contentOpacity }}
         >
-          <motion.img className="hero-crest" src="/images/da-logo.png" alt="DA Tuition" style={cinematicReveal ? { y: crestY, opacity: crestOpacity, scale: crestScale } : undefined} />
-          <motion.div className="hero-eyebrow" style={cinematicReveal ? { y: eyebrowY, opacity: eyebrowOpacity } : undefined}>Personalised Learning. Exceptional Results.</motion.div>
-          <motion.div className="hero-gold-thread" aria-hidden="true" style={cinematicReveal ? { scaleX: threadScale, opacity: threadOpacity } : undefined} />
+          <img className="hero-crest" src="/images/da-logo.png" alt="DA Tuition" />
+          <div className="hero-eyebrow">Personalised Learning. Exceptional Results.</div>
           <h1 className="hero-title">
-            <span className="hero-title-mask"><motion.span style={cinematicReveal ? { y: titleOneY, opacity: titleOneOpacity, scale: titleOneScale } : undefined}>Where Ambition Meets</motion.span></span>
-            <span className="hero-title-mask"><motion.em style={cinematicReveal ? { y: titleTwoY, opacity: titleTwoOpacity, scale: titleTwoScale, letterSpacing: titleTwoTracking } : undefined}>Academic Excellence</motion.em></span>
+            <span>Where Ambition Meets</span>
+            <em>Academic Excellence</em>
           </h1>
-          <motion.p className="hero-trust" style={cinematicReveal ? { y: trustY, opacity: trustOpacity } : undefined}>Trusted by Families. Transforming Futures.</motion.p>
-          <motion.p className="hero-support" style={cinematicReveal ? { y: supportY, opacity: supportOpacity } : undefined}>
+          <p className="hero-trust">Trusted by Families. Transforming Futures.</p>
+          <p className="hero-support">
             Tailored academic support that builds confidence,<br className="hidden sm:block" /> strengthens understanding and delivers success.
-          </motion.p>
+          </p>
           <div className="hero-actions">
-            <motion.a className="hero-cta hero-cta--primary" href="#programs-intro" style={cinematicReveal ? { y: actionsY, opacity: actionsOpacity } : undefined}>
+            <a className="hero-cta hero-cta--primary" href="#programs-intro">
               Explore Programs <ArrowRight aria-hidden="true" size={18} strokeWidth={1.6} />
-            </motion.a>
-            <motion.div style={cinematicReveal ? { y: secondaryActionY, opacity: secondaryActionOpacity } : undefined}>
-              <Link className="hero-cta hero-cta--secondary" to="/book-interview">Book Consultation</Link>
-            </motion.div>
+            </a>
+            <Link className="hero-cta hero-cta--secondary" to="/book-interview">Book Consultation</Link>
           </div>
-          <motion.div className="hero-values" aria-label="DA Tuition program highlights" style={cinematicReveal ? { y: valuesY, opacity: valuesOpacity } : undefined}>
+          <div className="hero-values" aria-label="Why families choose DA Tuition">
             <div className="hero-value">
-              <strong>20+ YEARS</strong><p>Established 2005</p>
+              <UsersRound aria-hidden="true" />
+              <div><strong>Personalised Approach</strong><p>Every student is unique.<br />Every plan is tailored.</p></div>
             </div>
             <div className="hero-value">
-              <strong>YEARS 7–12</strong><p>Focused academic support</p>
+              <ChartNoAxesCombined aria-hidden="true" />
+              <div><strong>Expert Educators</strong><p>Experienced tutors who<br />inspire and empower.</p></div>
             </div>
             <div className="hero-value">
-              <strong>MATHS · ENGLISH · SCIENCE</strong><p>Core academic programs</p>
+              <ShieldCheck aria-hidden="true" />
+              <div><strong>Proven Results</strong><p>Stronger academic outcomes<br />and real long-term growth.</p></div>
             </div>
-          </motion.div>
-          <motion.span className="hero-continuation" aria-hidden="true" style={cinematicReveal ? { scaleY: continuationScale } : undefined} />
+          </div>
+          <ChevronDown className="hero-scroll" aria-hidden="true" size={25} strokeWidth={1.2} />
         </motion.div>
       </div>
 
-      <motion.figure className="hero-side-image hero-side-image--right" style={cinematicReveal ? { y: sideRightY, scale: sideScale, opacity: sideOpacity } : undefined}>
+      <figure className="hero-side-image hero-side-image--right">
         <img src="/images/homepage/homepage-cream/studying girl-4.png" alt="DA Tuition student concentrating on her studies" />
-      </motion.figure>
+      </figure>
     </motion.section>
   );
 };
@@ -1092,7 +1063,7 @@ const PhilosophyVisualFace = ({ index, progress }: { index: number; progress: Mo
   const entryRotate = useTransform(
     progress,
     index === 0 ? [0, PHILOSOPHY_KNOWN_REVEAL[0], PHILOSOPHY_KNOWN_REVEAL[1], 1] : [0, 1],
-    index === 0 ? [3, 3, -1, -1] : [0, 0],
+    index === 0 ? [0, 0, 0, 0] : [0, 0],
   );
   const opacity = useTransform(
     progress,
@@ -1143,11 +1114,11 @@ const PhilosophyChapter = ({ index, exitOpacity, exitY, exitHidden = false }: {
   );
 };
 
-const PhilosophyEditorialSection = ({ nextSectionRef }: { nextSectionRef: React.RefObject<HTMLDivElement> }) => {
+const PhilosophyEditorialSection = ({ nextSectionRef }: { nextSectionRef: React.RefObject<HTMLElement> }) => {
   const sectionRef = useRef<HTMLElement>(null);
   const philosophyCardRef = useRef<HTMLDivElement>(null);
   const [headerHeight, setHeaderHeight] = useState(78);
-  const [safeCardWidth, setSafeCardWidth] = useState(360);
+  const [safeCardWidth, setSafeCardWidth] = useState(620);
   const [cardPhase, setCardPhase] = useState<'hidden' | 'prelude' | 'fixed' | 'released'>('hidden');
   const reducedMotion = useReducedMotion();
   const { scrollYProgress } = useScroll({ target: reducedMotion ? undefined : sectionRef, offset: ['start start', 'end end'] });
@@ -1187,7 +1158,7 @@ const PhilosophyEditorialSection = ({ nextSectionRef }: { nextSectionRef: React.
     const measure = () => {
       const navigationHeight = Math.ceil(document.querySelector('nav')?.getBoundingClientRect().height ?? 78);
       setHeaderHeight(navigationHeight);
-      setSafeCardWidth(Math.max(220, (window.innerHeight - navigationHeight - 100) * 0.8));
+      setSafeCardWidth(Math.max(220, (window.innerHeight - navigationHeight - 88) * 0.84));
     };
     measure();
     window.addEventListener('resize', measure);
@@ -1279,14 +1250,14 @@ const PhilosophyEditorialSection = ({ nextSectionRef }: { nextSectionRef: React.
         .phi-backdrop-title{position:absolute;inset:0;z-index:1;display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;margin:0;padding:clamp(18px,2.5vh,32px) 0 clamp(28px,4vh,48px);font-family:'Anton','Arial Narrow',sans-serif;font-weight:400;line-height:.72;letter-spacing:-.035em;text-align:center;text-transform:uppercase;white-space:nowrap;color:#f3eadb;user-select:none;will-change:opacity}
         .phi-backdrop-title span{display:block;width:max-content;will-change:transform}.phi-backdrop-title__our{font-size:clamp(11.25rem,25vw,26.25rem);line-height:.72}.phi-backdrop-title__main{margin-top:-.05em;font-size:clamp(9rem,21.2vw,25rem);line-height:.72}.phi-content-veil{position:absolute;inset:0;z-index:2;background:radial-gradient(circle at center,rgba(7,29,56,.3) 0%,rgba(7,29,56,.12) 42%,transparent 72%);pointer-events:none}
         .phi-story-outro{height:clamp(7rem,18svh,12rem)}
-        .phi-chapter{position:relative;z-index:5;min-height:calc(100svh - var(--header-height));padding-block:clamp(48px,7vh,96px);padding-inline:clamp(48px,5vw,88px);display:grid;grid-template-columns:minmax(280px,1fr) clamp(280px,24vw,360px) minmax(280px,1fr);align-items:center;column-gap:clamp(56px,7vw,120px);overflow:visible}
+        .phi-chapter{position:relative;z-index:5;min-height:calc(100svh - var(--header-height));padding-block:clamp(42px,5vh,76px);padding-inline:clamp(48px,4.2vw,86px);display:grid;grid-template-columns:minmax(390px,1fr) clamp(520px,36vw,760px) minmax(390px,1fr);align-items:center;column-gap:clamp(42px,4.2vw,76px);overflow:visible}
         .phi-chapter--growth{position:sticky;top:var(--header-height)}.phi-chapter--growth.is-growth-hidden{visibility:hidden;pointer-events:none}
         .phi-chapter-copy{grid-column:1}.phi-chapter-definition{grid-column:3}.phi-chapter-anchor{grid-column:2;width:100%;height:min(54svh,520px)}
         .phi-chapter-copy,.phi-chapter-definition{align-self:stretch;min-height:100%;display:flex;flex-direction:column;justify-content:center;margin:0;will-change:transform,opacity,filter}
-        .phi-copy-label{display:block;margin-bottom:18px;font:700 .72rem/1 ${sans};letter-spacing:.16em;text-transform:uppercase;color:${C.gold}}
-        .phi-chapter-copy h3{margin:0;max-width:10.5em;font:400 clamp(2.15rem,3.25vw,3.6rem)/1.08 ${serif};letter-spacing:-.025em;color:rgba(255,250,240,.97);text-wrap:balance}
-        .phi-copy-rule{width:42px;height:1px;margin:25px 0 0;background:${C.gold};opacity:.78}.phi-chapter-definition p{max-width:27em;margin:0;font:400 clamp(.92rem,1.12vw,1.12rem)/1.72 ${sans};color:rgba(247,242,232,.74);text-wrap:pretty}
-        .phi-card-viewport-anchor{z-index:6;left:50%;width:min(clamp(280px,24vw,360px),var(--phi-card-safe-width));pointer-events:none;opacity:0;visibility:hidden;transition:opacity .78s cubic-bezier(.22,1,.36,1),visibility 0s linear .78s}.phi-card-viewport-anchor.is-prelude,.phi-card-viewport-anchor.is-fixed{position:fixed;top:var(--phi-visual-centre);bottom:auto;transform:translate(-50%,-50%)}.phi-card-viewport-anchor.is-fixed,.phi-card-viewport-anchor.is-released{opacity:1;visibility:visible;pointer-events:auto;transition:opacity .78s cubic-bezier(.22,1,.36,1),visibility 0s linear 0s}.phi-card-viewport-anchor.is-released{position:absolute;top:auto;bottom:0;transform:translateX(-50%)}.phi-card-viewport-anchor.is-hidden{position:absolute;top:0;bottom:auto;transform:translateX(-50%)}.phi-travel-centre{width:100%;transform:translateY(50px) scale(.98);transform-origin:center center;transition:transform .78s cubic-bezier(.22,1,.36,1);will-change:transform}.phi-card-viewport-anchor.is-fixed .phi-travel-centre,.phi-card-viewport-anchor.is-released .phi-travel-centre{transform:translateY(0) scale(1)}
+        .phi-copy-label{display:block;margin-bottom:clamp(18px,1.8vh,26px);font:800 clamp(.74rem,.82vw,.92rem)/1 ${sans};letter-spacing:.18em;text-transform:uppercase;color:${C.gold}}
+        .phi-chapter-copy h3{margin:0;max-width:11em;font:400 clamp(3.15rem,4.35vw,5.35rem)/1.08 ${serif};letter-spacing:-.02em;color:rgba(255,250,240,.97);text-wrap:balance;word-break:normal;overflow-wrap:normal;hyphens:none}
+        .phi-copy-rule{width:58px;height:1px;margin:clamp(24px,2.6vh,36px) 0 0;background:${C.gold};opacity:.9}.phi-chapter-definition p{max-width:26em;margin:0;font:600 clamp(1.32rem,1.62vw,2.02rem)/1.45 ${sans};color:rgba(255,252,245,.94);text-wrap:pretty;word-break:normal;overflow-wrap:normal;hyphens:none}
+        .phi-card-viewport-anchor{z-index:6;left:50%;width:min(clamp(520px,36vw,760px),var(--phi-card-safe-width));pointer-events:none;opacity:0;visibility:hidden;transition:opacity .78s cubic-bezier(.22,1,.36,1),visibility 0s linear .78s}.phi-card-viewport-anchor.is-prelude,.phi-card-viewport-anchor.is-fixed{position:fixed;top:var(--phi-visual-centre);bottom:auto;transform:translate(-50%,-50%)}.phi-card-viewport-anchor.is-fixed,.phi-card-viewport-anchor.is-released{opacity:1;visibility:visible;pointer-events:auto;transition:opacity .78s cubic-bezier(.22,1,.36,1),visibility 0s linear 0s}.phi-card-viewport-anchor.is-released{position:absolute;top:auto;bottom:0;transform:translateX(-50%)}.phi-card-viewport-anchor.is-hidden{position:absolute;top:0;bottom:auto;transform:translateX(-50%)}.phi-travel-centre{width:100%;transform:translateY(50px) scale(.98);transform-origin:center center;transition:transform .78s cubic-bezier(.22,1,.36,1);will-change:transform}.phi-card-viewport-anchor.is-fixed .phi-travel-centre,.phi-card-viewport-anchor.is-released .phi-travel-centre{transform:translateY(0) scale(1)}
         .phi-growth-exit{width:100%;transform-origin:center center;will-change:transform,opacity}.phi-growth-exit.is-exit-hidden{visibility:hidden;pointer-events:none}.phi-flip-frame{position:relative;width:100%;aspect-ratio:4/5;overflow:visible;background:transparent;perspective:1500px;transform-origin:center center;transform-style:preserve-3d;will-change:transform}.phi-flip-frame img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:22px;box-shadow:0 20px 38px rgba(0,0,0,.26);backface-visibility:hidden;transform-origin:center center;will-change:transform,opacity;transform-style:preserve-3d}
         .phi-reduced{padding:110px clamp(20px,6vw,80px);background:${C.navy};color:${C.white}}.phi-reduced-intro{min-height:80svh;text-align:center}.phi-reduced-intro h2{margin:0;font:800 clamp(3rem,10vw,8rem)/.9 ${sans};text-transform:uppercase}.phi-reduced article{display:grid;grid-template-columns:minmax(220px,420px) minmax(0,560px);gap:clamp(28px,6vw,80px);align-items:center;margin:0 auto 80px;max-width:1100px}.phi-reduced article img{width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:16px}.phi-reduced article span{color:${C.gold};font:700 .72rem ${sans};letter-spacing:.14em;text-transform:uppercase}.phi-reduced article h3{font:400 clamp(2rem,4vw,3.5rem)/1.08 ${serif}}.phi-reduced article p{max-width:34em;color:rgba(247,242,232,.75);font:400 1rem/1.7 ${sans}}
         @media(min-width:769px) and (max-width:1100px){.phi-backdrop-title__our{font-size:clamp(8.5rem,24vw,16rem)}.phi-backdrop-title__main{font-size:clamp(7rem,21vw,14rem)}.phi-chapter{grid-template-columns:minmax(0,1fr) minmax(260px,340px);grid-template-rows:auto auto;padding-inline:clamp(28px,4vw,48px);column-gap:clamp(28px,4vw,52px);row-gap:24px}.phi-chapter-copy{grid-column:1;grid-row:1;min-height:0;justify-content:flex-end}.phi-chapter-definition{grid-column:1;grid-row:2;min-height:0;justify-content:flex-start}.phi-chapter-anchor{grid-column:2;grid-row:1/3}.phi-card-viewport-anchor{width:min(clamp(260px,31vw,340px),var(--phi-card-safe-width))}.phi-chapter-copy h3{font-size:clamp(1.8rem,3.6vw,2.8rem)}.phi-chapter-definition p{font-size:.88rem}}
@@ -1328,7 +1299,7 @@ const PhilosophyEditorialSection = ({ nextSectionRef }: { nextSectionRef: React.
 // ══════════════════════════════════════════════════════════════
 //  AWARD BRIDGE — a short hand-off from philosophy to recognition
 // ══════════════════════════════════════════════════════════════
-const OurAwardTransition = ({ sectionRef }: { sectionRef: React.RefObject<HTMLDivElement> }) => {
+const OurAwardTransition = ({ sectionRef }: { sectionRef: React.RefObject<HTMLElement> }) => {
   return (
     <section ref={sectionRef} className="our-award-bridge" aria-labelledby="our-award-title">
       <style>{`
@@ -1356,9 +1327,9 @@ const OurAwardTransition = ({ sectionRef }: { sectionRef: React.RefObject<HTMLDi
 //  Dark navy, premium school prospectus aesthetic.
 //  Left: award display + modal.  Right: 2×2 stats grid.
 // ══════════════════════════════════════════════════════════════
-const ImpactRecognitionSection = () => {
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const decorLayerRef = useRef<HTMLDivElement>(null);
+const ImpactRecognitionSection = ({ sectionRef: providedSectionRef }: { sectionRef?: React.RefObject<HTMLElement> } = {}) => {
+  const localSectionRef = useRef<HTMLElement>(null);
+  const sectionRef = providedSectionRef ?? localSectionRef;
   const reducedMotionPreference = useReducedMotion();
   const reducedMotion = Boolean(reducedMotionPreference);
   const { scrollYProgress: awardsEntryProgress } = useScroll({
@@ -1379,331 +1350,601 @@ const ImpactRecognitionSection = () => {
   const mediaY = useTransform(awardsEntryProgress, [0, 0.38, 0.62, 1], reducedMotion ? [0, 0, 0, 0] : [42, 42, 0, 0]);
   const captionOpacity = useTransform(awardsEntryProgress, [0, 0.48, 0.70, 1], reducedMotion ? [1, 1, 1, 1] : [0, 0, 1, 1]);
   const captionY = useTransform(awardsEntryProgress, [0, 0.48, 0.70, 1], reducedMotion ? [0, 0, 0, 0] : [24, 24, 0, 0]);
-  const decorOpacity = useTransform(awardsEntryProgress, [0, 0.32, 0.58, 1], reducedMotion ? [1, 1, 1, 1] : [0, 0, 1, 1]);
-  const decorY = useTransform(awardsEntryProgress, [0, 0.32, 0.58, 1], reducedMotion ? [0, 0, 0, 0] : [20, 20, 0, 0]);
   const closingHeaderOpacity = useTransform(recognitionProgress, [0.56, 0.78], reducedMotion ? [1, 1] : [1, 0.82]);
   const closingHeaderY = useTransform(recognitionProgress, [0.56, 0.78], reducedMotion ? [0, 0] : [0, -16]);
   const awardClosingScale = useTransform(recognitionProgress, [0.55, 0.80], reducedMotion ? [1, 1] : [1, 0.975]);
   const awardClosingY = useTransform(recognitionProgress, [0.55, 0.80], reducedMotion ? [0, 0] : [0, -8]);
+  const [streakVisible, setStreakVisible] = useState(false);
 
-  const handleAwardPointerMove = useCallback((event: React.PointerEvent<HTMLElement>) => {
-    if (reducedMotion || event.pointerType !== 'mouse' || !decorLayerRef.current) return;
-    const bounds = event.currentTarget.getBoundingClientRect();
-    decorLayerRef.current.style.setProperty('--ir-pointer-x', String((event.clientX - bounds.left) / bounds.width - 0.5));
-    decorLayerRef.current.style.setProperty('--ir-pointer-y', String((event.clientY - bounds.top) / bounds.height - 0.5));
-  }, [reducedMotion]);
+  useEffect(() => {
+    if (reducedMotion) {
+      setStreakVisible(true);
+      return;
+    }
 
-  const resetAwardPointer = useCallback(() => {
-    decorLayerRef.current?.style.setProperty('--ir-pointer-x', '0');
-    decorLayerRef.current?.style.setProperty('--ir-pointer-y', '0');
-  }, []);
+    const node = sectionRef.current;
+    if (!node || typeof IntersectionObserver === 'undefined') {
+      setStreakVisible(true);
+      return;
+    }
+
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting && entry.intersectionRatio >= 0.28) {
+        setStreakVisible(true);
+        observer.unobserve(entry.target);
+      }
+    }, { threshold: [0, 0.28, 0.35] });
+
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [reducedMotion, sectionRef]);
 
   return (
       <section
         ref={sectionRef}
         className="ir-section"
         aria-label="Impact and recognition"
-        onPointerMove={handleAwardPointerMove}
-        onPointerLeave={resetAwardPointer}
-        style={{ background: '#F5F0E8', position: 'relative', overflow: 'hidden' }}
+        style={{ background: '#FBF8F2', position: 'relative', overflow: 'hidden' }}
       >
         <style>{`
-          /* Responsive grid */
-          @media (max-width: 900px) {
-            .ir-cols { grid-template-columns: 1fr !important; }
+          /* ── Editorial recognition composition ─────────────────────── */
+          .ir-section {
+            isolation: isolate;
+            background:
+              radial-gradient(circle at 52% 70%, rgba(215,177,94,.045), transparent 32%),
+              radial-gradient(circle at 50% 50%, rgba(219,181,96,.03), transparent 46%),
+              #FBF8F2;
           }
-
-          /* ── Pillar cards (cream background) ────────────────────────── */
-          .wwwon-grid {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 1px;
-            background: rgba(10,27,52,.07); /* gap colour between cards */
+          .ir-section::before {
+            position: absolute;
+            top: 0;
+            left: clamp(24px, 6vw, 96px);
+            right: clamp(24px, 6vw, 96px);
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(190,139,43,.38), transparent);
+            content: '';
           }
-          @media (max-width: 1024px) { .wwwon-grid { grid-template-columns: repeat(3, 1fr); } }
-          @media (max-width: 600px)  { .wwwon-grid { grid-template-columns: 1fr 1fr; } }
-          @media (max-width: 380px)  { .wwwon-grid { grid-template-columns: 1fr; } }
-
-          .wwwon-card {
-            background: #F5F0E8;
-            padding: clamp(32px, 4vw, 48px) clamp(22px, 2.8vw, 36px);
-            cursor: default;
-            transition: background 360ms ease, transform 360ms cubic-bezier(0.22,1,0.36,1);
+          .ir-section::after {
+            position: absolute;
+            left: 50%;
+            top: clamp(600px, 49vw, 760px);
+            z-index: 0;
+            width: clamp(420px, 38vw, 620px);
+            aspect-ratio: 1;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(211,168,78,.10), rgba(211,168,78,.035) 36%, transparent 68%);
+            content: '';
+            pointer-events: none;
+            transform: translate(-50%, -50%);
           }
-          .wwwon-card:hover {
-            background: #EDE6D8;
-            transform: translateY(-4px);
+          .ir-old-rule { display: none; }
+          .ir-shell {
+            position: relative !important;
+            z-index: 3;
+            max-width: 1400px !important;
+            margin: 0 auto;
+            isolation: isolate;
+            padding: clamp(60px, 6vw, 78px) clamp(20px, 4vw, 56px) clamp(66px, 6vw, 86px) !important;
           }
-          .wwwon-num {
-            font-family: 'Cormorant Garamond', Georgia, serif;
-            font-size: .72rem; font-weight: 300; letter-spacing: .12em;
-            color: rgba(212,175,55,.50);
-            display: block; margin-bottom: 28px;
-            transition: color 360ms ease;
+          .ir-header {
+            position: relative;
+            z-index: 4;
+            max-width: 960px !important;
+            margin: 0 auto !important;
+            text-align: center;
           }
-          .wwwon-card:hover .wwwon-num { color: rgba(212,175,55,.80); }
-          .wwwon-line {
-            width: 28px; height: 1px; margin-bottom: 22px;
-            background: linear-gradient(90deg, rgba(212,175,55,.40), transparent);
-            transition: width 360ms cubic-bezier(0.22,1,0.36,1), opacity 360ms ease;
-          }
-          .wwwon-card:hover .wwwon-line { width: 42px; opacity: .90; }
-          .wwwon-title {
-            font-family: 'Cormorant Garamond', Georgia, serif;
-            font-size: clamp(.95rem, 1.3vw, 1.12rem);
-            font-weight: 400; line-height: 1.30; letter-spacing: -.012em;
-            color: rgba(10,27,52,.82);
-            margin: 0 0 14px;
-            transition: color 360ms ease;
-          }
-          .wwwon-card:hover .wwwon-title { color: rgba(10,27,52,.98); }
-          .wwwon-body {
-            font-family: ${sans};
-            font-size: .78rem; font-weight: 300; line-height: 1.82;
-            letter-spacing: .004em;
-            color: rgba(10,27,52,.45);
-            margin: 0;
-            transition: color 360ms ease;
-          }
-          .wwwon-card:hover .wwwon-body { color: rgba(10,27,52,.68); }
-          @media (prefers-reduced-motion: reduce) {
-            .wwwon-card { transition: none !important; }
-            .wwwon-card:hover { transform: none !important; }
-            .wwwon-num, .wwwon-line, .wwwon-title, .wwwon-body { transition: none !important; }
-          }
-
-          /* ── Award image inner container — matches video 4/3 frame ─── */
-          .ir-award-inner {
-            aspect-ratio: 4 / 3;
-            display: flex; align-items: center; justify-content: center;
-            background: #FDFAF5;
-            border-radius: 5px;
-            overflow: hidden;
-          }
-          .ir-award-inner img {
-            width: 100%; height: 100%;
+          .ir-header-logo {
+            display: none;
+            width: clamp(62px, 5.8vw, 78px);
+            height: clamp(62px, 5.8vw, 78px);
             object-fit: contain;
-            display: block;
+            margin: 0 auto 12px;
           }
-
-          /* ── Award frame ────────────────────────────────────────────── */
-          .ir-award-frame {
-            transition:
-              box-shadow 600ms cubic-bezier(0.25, 0.46, 0.45, 0.94),
-              transform 600ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
-          }
-          .ir-award-frame:hover {
-            transform: translateY(-3px);
-            box-shadow:
-              0 2px 6px rgba(212,175,55,.14),
-              0 22px 64px rgba(10,27,52,.15),
-              0 52px 90px rgba(10,27,52,.08),
-              inset 0 1px 0 rgba(255,255,255,.90),
-              inset 0 0 0 1px rgba(255,255,255,.50) !important;
-          }
-          @media (prefers-reduced-motion: reduce) {
-            .ir-award-frame { transition: none !important; }
-            .ir-award-frame:hover { transform: none !important; }
-          }
-
-          /* ── Recognition story lead ──────────────────────────────────── */
-          .ir-story-lead {
-            border-left: 2px solid rgba(212,175,55,.24);
-            padding-left: 20px;
-          }
-
-          /* ── Video thumbnail ─────────────────────────────────────────── */
-          .ir-thumb-wrap {
-            display: flex;
-            flex-direction: column;
+          .ir-eyebrow {
+            display: inline-flex;
             align-items: center;
+            justify-content: center;
+            gap: clamp(14px, 1.6vw, 22px);
+            margin: 0 0 clamp(20px, 2vw, 24px) !important;
+            font-size: clamp(.74rem, .8vw, .86rem) !important;
+            letter-spacing: .30em !important;
+            color: rgba(168,126,52,.92) !important;
+          }
+          .ir-eyebrow::before,
+          .ir-eyebrow::after {
+            width: clamp(44px, 4.8vw, 70px);
+            height: 1px;
+            background: rgba(207,165,74,.66);
+            content: '';
+          }
+          .ir-heading {
+            max-width: 980px;
+            margin: 0 auto 20px !important;
+            font-size: clamp(3.5rem, 5vw, 6.5rem) !important;
+            font-weight: 700 !important;
+            line-height: .97 !important;
+            letter-spacing: 0 !important;
+            text-wrap: balance;
+          }
+          .ir-header-divider {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 128px !important;
+            height: 13px !important;
+            margin: 0 auto 18px !important;
+            background: transparent !important;
+            transform-origin: center !important;
+          }
+          .ir-header-divider::before,
+          .ir-header-divider::after {
+            width: 42px;
+            height: 1px;
+            background: rgba(190,139,43,.48);
+            content: '';
+          }
+          .ir-header-divider::before { margin-right: 14px; }
+          .ir-header-divider::after { margin-left: 14px; }
+          .ir-header-divider span,
+          .ir-showcase-divider span {
+            width: 9px;
+            height: 9px;
+            flex: 0 0 auto;
+            border: 1px solid rgba(190,139,43,.58);
+            background: rgba(212,175,55,.52);
+            transform: rotate(45deg);
+          }
+          .ir-intro-copy {
+            max-width: 900px;
+            margin-inline: auto !important;
+            font-size: clamp(1rem, 1.08vw, 1.18rem) !important;
+            line-height: 1.55 !important;
+            color: rgba(10,27,52,.72) !important;
+          }
+          .ir-award-curves {
+            position: relative;
+            display: block;
+            left: 50%;
+            top: auto;
+            z-index: 1;
+            width: 112vw;
+            height: clamp(86px, 8vw, 116px);
+            margin: clamp(16px, 2vw, 24px) 0 clamp(16px, 2vw, 24px);
+            pointer-events: none;
+            transform: translateX(-50%);
+            overflow: visible;
+          }
+          .ir-streak {
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            stroke-dasharray: 1;
+            stroke-dashoffset: 1;
+            opacity: 0;
+            will-change: stroke-dashoffset;
+          }
+          .ir-streak-primary {
+            filter: drop-shadow(0 4px 8px rgba(115,74,12,.12));
+          }
+          .ir-award-curves.is-visible .ir-streak-primary {
+            opacity: 1;
+            animation: ir-streak-trace 2.25s cubic-bezier(.65,0,.35,1) forwards;
+          }
+          .ir-award-curves.is-visible .ir-streak-secondary {
+            opacity: 1;
+            animation: ir-streak-trace 2.3s cubic-bezier(.65,0,.35,1) 150ms forwards;
+          }
+          .ir-award-curves.is-visible .ir-streak-tertiary {
+            opacity: 1;
+            animation: ir-streak-trace 2.35s cubic-bezier(.65,0,.35,1) 280ms forwards;
+          }
+          .ir-streak-glint {
+            opacity: 0;
+            filter: drop-shadow(0 0 8px rgba(211,168,78,.30));
+            pointer-events: none;
+          }
+          @keyframes ir-streak-trace {
+            to { stroke-dashoffset: 0; }
+          }
+          .ir-showcase {
+            position: relative;
+            z-index: 3;
+            display: grid;
+            grid-template-columns: minmax(280px, .95fr) minmax(320px, 1.15fr) minmax(270px, .9fr);
+            align-items: start;
+            gap: clamp(42px, 4.8vw, 76px);
+            max-width: 1360px;
+            margin: 0 auto;
+            padding: 0;
+          }
+          .ir-showcase-divider { display: none; }
+          .ir-award-proof {
+            align-self: start;
+            text-align: center;
+          }
+          .ir-award-badges {
+            position: relative;
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: clamp(34px, 3.2vw, 52px);
+            align-items: start;
+          }
+          .ir-award-badges::before {
+            position: absolute;
+            top: 22px;
+            bottom: 16px;
+            left: 50%;
+            width: 1px;
+            background: linear-gradient(180deg, transparent, rgba(207,165,74,.58), transparent);
+            content: '';
+            transform: translateX(-50%);
+          }
+          .ir-award-badges::after {
+            position: absolute;
+            top: 58%;
+            left: 50%;
+            width: 12px;
+            height: 12px;
+            border: 1px solid rgba(207,165,74,.66);
+            background: #D3A84E;
+            box-shadow: 0 0 0 10px rgba(251,248,242,.82);
+            content: '';
+            transform: translate(-50%, -50%) rotate(45deg);
+          }
+          .ir-award-badge {
+            min-width: 0;
+            position: relative;
+            z-index: 4;
+            padding: 0;
+            transition:
+              transform 350ms cubic-bezier(.22,.61,.36,1),
+              filter 350ms cubic-bezier(.22,.61,.36,1),
+              opacity 350ms cubic-bezier(.22,.61,.36,1);
+          }
+          .ir-award-badge:hover {
+            transform: translateY(-5px);
+          }
+          .ir-award-frame {
             width: 100%;
+            padding: 0 !important;
+            border: 0 !important;
+            border-radius: 0 !important;
+            background: transparent !important;
+            box-shadow: none !important;
+            transition: transform 300ms ease;
+          }
+          .ir-award-badge:hover .ir-award-frame { transform: translateY(-2px); }
+          .ir-award-inner {
+            position: relative;
+            width: min(100%, 150px);
+            height: auto;
+            margin: 0 auto;
+            aspect-ratio: 407 / 600;
+            overflow: visible !important;
+            border: 0 !important;
+            border-radius: 0 !important;
+            background: transparent !important;
+          }
+          .ir-award-badge--finalist .ir-award-inner {
+            width: min(100%, 166px);
+            aspect-ratio: 1 / 1;
+          }
+          .ir-award-inner .ir-award-medal {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            z-index: 2;
+            width: 100% !important;
+            height: 100% !important;
+            max-width: none !important;
+            max-height: none !important;
+            object-fit: contain !important;
+            display: block;
+            filter:
+              drop-shadow(0 10px 18px rgba(38,31,20,.10))
+              drop-shadow(0 3px 8px rgba(38,31,20,.05));
+            transform: translate(-50%, -50%);
+            transition: filter 350ms cubic-bezier(.22,.61,.36,1);
+          }
+          .ir-award-badge:hover .ir-award-medal {
+            filter:
+              drop-shadow(0 16px 24px rgba(38,31,20,.14))
+              drop-shadow(0 5px 12px rgba(38,31,20,.07));
+          }
+          .ir-award-caption {
+            position: relative;
+            z-index: 5;
+            margin-top: clamp(14px, 1.6vw, 18px) !important;
+            padding: 0 !important;
+          }
+          .ir-award-year {
+            margin: 0 0 3px;
+            font: 500 clamp(1.7rem, 2.6vw, 2.35rem)/1 ${serif};
+            color: #B8872F;
+            letter-spacing: .02em;
+          }
+          .ir-award-caption-title {
+            margin: 0 0 8px;
+            font-family: ${serif} !important;
+            font-size: clamp(1.34rem, 1.85vw, 1.72rem) !important;
+            font-weight: 700 !important;
+            line-height: 1.05 !important;
+            letter-spacing: .09em !important;
+            text-transform: uppercase;
+            color: rgba(10,27,52,.92) !important;
+          }
+          .ir-award-caption p:last-child {
+            font-family: ${sans};
+            font-size: clamp(.72rem, .92vw, .86rem) !important;
+            font-weight: 700 !important;
+            line-height: 1.55 !important;
+            letter-spacing: .20em !important;
+            text-transform: uppercase;
+            color: rgba(10,27,52,.68) !important;
+            margin: 0;
+          }
+          .ir-video-feature {
+            min-width: 0;
+            display: flex;
+            justify-content: center;
+            align-self: start;
+          }
+          .ir-thumb-wrap {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+          }
+          .ir-thumb-wrap::before {
+            position: absolute;
+            z-index: 0;
+            width: clamp(360px, 34vw, 560px);
+            aspect-ratio: 1;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(210,166,76,.12), rgba(210,166,76,.045) 42%, transparent 72%);
+            content: '';
+            pointer-events: none;
           }
           .ir-thumb-frame {
             position: relative;
-            width: clamp(340px,27vw,500px);
+            z-index: 5;
+            width: clamp(320px, 29vw, 480px);
             max-width: 100%;
             aspect-ratio: 1 / 1;
             flex: 0 0 auto;
             border-radius: 50%;
             overflow: hidden;
-            border: 3px solid rgba(190,139,43,.78);
-            filter: drop-shadow(0 8px 8px rgba(10,27,52,.16)) drop-shadow(0 0 8px rgba(190,139,43,.15));
+            border: 2px solid rgba(207,165,74,.70);
+            outline: 1px solid rgba(207,165,74,.22);
+            outline-offset: 8px;
+            box-shadow:
+              0 20px 55px rgba(38,31,20,.10),
+              0 4px 12px rgba(38,31,20,.05),
+              0 5px 18px rgba(207,165,74,.10),
+              inset 0 0 0 1px rgba(255,255,255,.55);
           }
           .ir-thumb-photo {
-            width: 100%; height: 100%; display: block;
+            width: 100%;
+            height: 100%;
+            display: block;
             object-fit: cover;
             object-position: 50% 44%;
-            filter: saturate(0.94) brightness(0.96);
+            filter: saturate(.96) brightness(.98);
           }
           .ir-thumb-overlay {
-            position: absolute; inset: 0; pointer-events: none;
-            background: linear-gradient(
-              to top,
-              rgba(3,6,14,.30) 0%,
-              transparent 54%
-            );
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background: linear-gradient(to top, rgba(3,6,14,.18), transparent 48%);
           }
-          .ir-thumb-caption-wrap {
-            margin-top: 22px;
-            padding-left: 2px;
+          .ir-winner-details {
+            min-width: 0;
+            position: relative;
+            z-index: 5;
+            align-self: start;
+            text-align: center;
+            color: ${C.navy};
+          }
+          .ir-winner-trophy {
+            display: block;
+            width: clamp(148px, 13vw, 208px);
+            height: clamp(148px, 13vw, 208px);
+            object-fit: contain;
+            margin: 0 auto 10px;
+            filter:
+              drop-shadow(0 12px 18px rgba(57,40,16,.12))
+              drop-shadow(0 3px 8px rgba(57,40,16,.06));
+            transform: rotate(-24deg);
+            transform-origin: 50% 58%;
           }
           .ir-thumb-caption-title {
-            font-family: ${sans};
-            font-size: 1.20rem; font-weight: 500; letter-spacing: .006em;
-            color: rgba(10,27,52,.68);
-            margin: 0 0 10px; line-height: 1.4;
+            margin: 0 0 18px;
+            font-family: ${serif};
+            font-size: clamp(2.65rem, 4vw, 4.4rem);
+            font-weight: 500;
+            line-height: .9;
+            letter-spacing: .04em;
+            text-transform: uppercase;
+            color: rgba(10,27,52,.96);
+          }
+          .ir-winner-rule {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 182px;
+            height: 12px;
+            margin: 0 auto 20px;
+          }
+          .ir-winner-rule::before,
+          .ir-winner-rule::after {
+            width: 66px;
+            height: 1px;
+            background: rgba(190,139,43,.42);
+            content: '';
+          }
+          .ir-winner-rule::before { margin-right: 12px; }
+          .ir-winner-rule::after { margin-left: 12px; }
+          .ir-winner-rule span {
+            width: 8px;
+            height: 8px;
+            border: 1px solid rgba(190,139,43,.56);
+            background: rgba(212,175,55,.48);
+            transform: rotate(45deg);
           }
           .ir-thumb-caption-sub {
+            max-width: 34ch;
+            margin: 0 auto;
             font-family: ${sans};
-            font-size: .92rem; font-weight: 300; letter-spacing: .04em;
-            color: rgba(10,27,52,.40);
-            margin: 0 0 3px; line-height: 1.6;
+            font-size: clamp(.95rem, 1.05vw, 1.08rem);
+            font-weight: 400;
+            line-height: 1.62;
+            letter-spacing: .01em;
+            color: rgba(10,27,52,.68);
           }
-          .ir-thumb-caption-sub:last-child { margin-bottom: 0; }
-
-          /* ── Editorial recognition composition ─────────────────────── */
-          .ir-section { --ir-word-area: clamp(260px,34vw,500px); --ir-award-word-lift: clamp(100px,8vw,150px); min-height: clamp(980px,135svh,1380px); isolation: isolate; }
-          .ir-bg-type { position: absolute; top: 0; left: 0; right: 0; height: var(--ir-word-area); z-index: 0; overflow: hidden; pointer-events: none; user-select: none; }
-          .ir-bg-track { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; width: 100%; transform: translateY(calc(0px - var(--ir-award-word-lift))); }
-          .ir-bg-track span { display: block; white-space: nowrap; font: 300 clamp(13rem,28vw,34rem)/.78 ${serif}; letter-spacing: -.04em; color: rgba(168,126,52,.095); }
-          .ir-word-space { position: relative; z-index: 1; height: var(--ir-word-area); pointer-events: none; }
-          .ir-bg-marquee { position:absolute;inset:0;z-index:0;display:flex;align-items:center;overflow:hidden;pointer-events:none;user-select:none; }
-          .ir-marquee-track { display:flex;width:max-content;animation:irAwardsMarquee 34s linear infinite;animation-play-state:paused;will-change:transform; }
-          .ir-section.is-full-screen .ir-marquee-track { animation-play-state:running; }
-          .ir-marquee-group { flex:none;white-space:nowrap;padding-right:.28em;font:300 clamp(11rem,21vw,24rem)/.82 ${serif};letter-spacing:-.04em;color:rgba(168,126,52,.07); }
-          @keyframes irAwardsMarquee { from{transform:translate3d(0,0,0)} to{transform:translate3d(-50%,0,0)} }
-
-          .ir-decor-layer { --ir-pointer-x: 0; --ir-pointer-y: 0; position: absolute; inset: 0; z-index: 2; pointer-events: none; }
-          .ir-decor { position: absolute; transform: translate3d(calc(var(--ir-pointer-x) * var(--parallax-x, 12px)),calc(var(--ir-pointer-y) * var(--parallax-y, 12px)),0); transition: transform .65s cubic-bezier(.22,1,.36,1); filter: drop-shadow(0 16px 16px rgba(63,38,5,.14)); will-change: transform; }
-          .ir-decor > img { display:block;width:100%;height:100%;object-fit:contain;animation:irDecorFloat var(--float-duration,8s) ease-in-out infinite alternate;will-change:transform; }
-          .ir-decor--gold-ribbon { left:-9%; top:12%; width:clamp(150px,15vw,240px); height:clamp(110px,12vw,190px); --parallax-x:-18px;--parallax-y:-14px;--float-duration:9s; }
-          .ir-decor--laurel-left { left:1%; bottom:28px; width:clamp(140px,14vw,210px);height:clamp(114px,11.5vw,175px);--parallax-x:-12px;--parallax-y:18px;--float-duration:11s; }
-          .ir-decor--coin { right:2%;top:7%;width:clamp(120px,12vw,190px);height:clamp(120px,12vw,190px);--parallax-x:14px;--parallax-y:-12px;transform:rotate(18deg);--float-duration:14s; }
-          .ir-decor--coin img{animation-name:irCoinFloat;}
-          .ir-decor--navy-ribbon { right:-13%;top:24%;width:clamp(210px,21vw,340px);height:clamp(155px,18vw,285px);--parallax-x:20px;--parallax-y:12px;transform:rotate(-12deg);--float-duration:12s; }
-          .ir-decor--trophy { right:5%;bottom:24px;width:clamp(170px,16vw,260px);height:clamp(170px,16vw,260px);--parallax-x:18px;--parallax-y:16px;--float-duration:10s; }
-          .ir-decor--star { right:10%;top:44%;width:clamp(48px,5vw,76px);height:clamp(48px,5vw,76px);--float-duration:7s; }
-          .ir-confetti{position:absolute;width:var(--size,34px);height:var(--size,34px);opacity:var(--opacity,.65);transform:rotate(var(--rotation,0deg));filter:drop-shadow(0 6px 7px rgba(93,55,4,.12));}
-          .ir-confetti img{width:100%;height:100%;object-fit:contain;animation:irConfettiFloat var(--duration,9s) ease-in-out infinite alternate;}
-          .ir-confetti--1{left:3%;top:10%;--size:48px;--rotation:18deg;--duration:7s}.ir-confetti--2{left:12%;top:42%;--size:58px;--rotation:-31deg;--opacity:.38;--duration:11s}.ir-confetti--3{left:5%;bottom:13%;--size:46px;--rotation:62deg;--duration:8s}.ir-confetti--4{left:21%;top:19%;--size:38px;--rotation:105deg;--opacity:.34;--duration:13s}.ir-confetti--5{right:22%;top:12%;--size:44px;--rotation:-52deg;--duration:10s}.ir-confetti--6{right:13%;top:43%;--size:54px;--rotation:36deg;--opacity:.38;--duration:12s}.ir-confetti--7{right:5%;top:53%;--size:42px;--rotation:122deg;--duration:8s}.ir-confetti--8{right:22%;bottom:8%;--size:52px;--rotation:-18deg;--opacity:.34;--duration:14s}.ir-confetti--9{left:34%;bottom:3%;--size:40px;--rotation:78deg;--duration:9s}.ir-confetti--10{right:3%;bottom:35%;--size:36px;--rotation:11deg;--duration:6s}
-          @keyframes irDecorFloat { from { transform: translateY(-3px) rotate(-1deg); } to { transform: translateY(5px) rotate(2deg); } }
-          @keyframes irCoinFloat{from{transform:translateY(-4px) rotate(-2deg)}to{transform:translateY(7px) rotate(4deg)}}
-          @keyframes irConfettiFloat{from{transform:translateY(-3px) rotate(-2deg)}to{transform:translateY(6px) rotate(3deg)}}
-
-          .ir-old-rule { display: none; }
-          .ir-shell { position: relative !important; z-index: 3; max-width: 1280px !important; min-height:clamp(700px,102svh,1060px); display:flex; flex-direction:column; padding: clamp(40px,5vh,72px) clamp(24px,5vw,76px) clamp(170px,12vw,220px) !important; }
-          .ir-header { max-width: 920px !important; margin: 0 auto clamp(42px,5vh,64px) !important; text-align: center; }
-          .ir-header-logo{display:block;width:140px;height:140px;object-fit:contain;margin:0 auto 18px;}
-          .ir-eyebrow { margin-bottom: 20px !important; font-size: clamp(.8rem,.9vw,.9rem) !important; letter-spacing:.22em !important; }
-          .ir-heading { font-size: clamp(2.8rem,4.2vw,4.8rem) !important; line-height: 1.04 !important; max-width:900px; margin-inline:auto!important; text-wrap: balance; }
-          .ir-header-divider { margin: 0 auto 22px !important; transform-origin: center !important; }
-          .ir-intro-copy { max-width: 680px; margin-inline: auto !important; font-size:clamp(1.05rem,1.25vw,1.3rem)!important;line-height:1.62!important;color:rgba(10,27,52,.72)!important; }
-          .ir-cols { grid-template-columns: minmax(220px,300px) minmax(300px,400px) !important; justify-content:center; gap: clamp(70px,9vw,150px) !important; align-items: start !important; max-width: 980px; margin: 0 auto !important; }
-          .ir-award-proof { text-align: center; }
-          .ir-award-frame { padding: 0 !important; background: transparent !important; border: 0 !important; border-radius: 0 !important; box-shadow: none !important; animation: irAwardFloat 8s ease-in-out infinite alternate; }
-          .ir-award-frame:hover { transform: translateY(-2px); box-shadow: none !important; }
-          @keyframes irAwardFloat { from { transform: translateY(-2px); } to { transform: translateY(4px); } }
-          .ir-award-inner { position:relative;width:clamp(220px,18vw,300px);height:auto;aspect-ratio:1/1;margin-inline:auto;background:transparent !important;border:0 !important;border-radius:0 !important;overflow:visible !important; }
-          .ir-award-inner .ir-award-medal{position:absolute;left:50%;top:50%;z-index:2;width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;object-fit:contain!important;transform:translate(-50%,-50%);filter:drop-shadow(0 14px 12px rgba(50,30,4,.20));}
-          .ir-award-caption { margin-top: 21px !important; padding: 0 !important; }
-          .ir-award-caption-title { font-family:${sans}!important;font-size:clamp(1.15rem,1.5vw,1.5rem)!important;font-weight:600!important;letter-spacing:.1em!important;text-transform:uppercase;color:${C.gold}!important; }
-          .ir-award-caption p:last-child { font-size:clamp(.9rem,1vw,1.05rem)!important;color:rgba(10,27,52,.72)!important; }
-          .ir-award-badges { display:flex;align-items:flex-start;justify-content:center;gap:clamp(14px,2vw,24px); }
-          .ir-award-badge { min-width:0; }
-          .ir-award-badge--winner { width:clamp(128px,14vw,152px); }
-          .ir-award-badge--finalist { width:clamp(120px,13vw,144px); }
-          .ir-award-badge .ir-award-frame { width:100%; }
-          .ir-award-badge .ir-award-inner { width:100%; }
-          .ir-award-badge--finalist .ir-award-inner { aspect-ratio:407 / 600; }
-          .ir-award-badge--finalist .ir-award-caption-title { color:rgba(10,27,52,.76)!important; }
-          .ir-video-feature { min-width: 0; display: flex; justify-content: center; }
-          .ir-thumb-overlay { background: linear-gradient(to top,rgba(3,6,14,.30),transparent 54%); }
-          .ir-thumb-caption-wrap { text-align: center; margin-top: 21px; }
-          .ir-thumb-caption-title { font-size: clamp(1.15rem,1.5vw,1.5rem); line-height:1.35; letter-spacing: .1em; text-transform: uppercase; color: rgba(10,27,52,.88); }
-          .ir-thumb-caption-sub { font-size: clamp(.9rem,1vw,1.05rem); line-height:1.5; color:rgba(10,27,52,.68); }
-          @media (min-width: 1101px) {
-            .ir-word-space { display:none; }
-            .ir-section { min-height:clamp(700px,102svh,1060px); }
-            .ir-shell { min-height:clamp(700px,102svh,1060px);display:flex;flex-direction:column;justify-content:flex-start;padding:clamp(40px,5vh,72px) clamp(32px,4vw,72px) clamp(170px,12vw,220px)!important; }
-            .ir-header { width:100%;margin:0 auto clamp(42px,5vh,64px)!important;max-width:920px!important; }
-            .ir-header-logo { width:140px;height:140px;margin-bottom:18px; }
-            .ir-heading { margin-bottom:18px!important; }
-            .ir-header-divider { margin-bottom:20px!important; }
-            .ir-cols { display:grid!important;width:100%; }
-            .ir-award-caption { margin-top:18px!important; }
-            .ir-thumb-frame { width:clamp(300px,24vw,400px); }
-            .ir-thumb-caption-wrap { margin-top:18px;max-width:420px; }
-            .ir-thumb-caption-title { margin-bottom:7px; }
+          .ir-thumb-caption-sub em {
+            display: block;
+            margin-bottom: 7px;
+            font-family: ${serif};
+            font-size: clamp(1.08rem, 1.3vw, 1.28rem);
+            font-style: italic;
+            font-weight: 500;
+            line-height: 1.25;
+            color: rgba(10,27,52,.90);
           }
-          @media (min-width:1101px) and (max-height:920px) {
-            .ir-shell { padding-top:32px!important;padding-bottom:150px!important; }
-            .ir-header { margin-bottom:22px!important; }
-            .ir-header-logo { width:88px;height:88px;margin-bottom:12px; }
-            .ir-eyebrow { margin-bottom:10px!important; }
-            .ir-heading { font-size:clamp(2.3rem,3.1vw,3.25rem)!important;margin-bottom:10px!important; }
-            .ir-header-divider { margin-bottom:10px!important; }
-            .ir-intro-copy { font-size:1rem!important;line-height:1.5!important; }
-            .ir-award-inner { width:clamp(190px,16vw,235px); }
-            .ir-thumb-frame { width:min(255px,20vw); }
-            .ir-thumb-caption-wrap { margin-top:10px; }
-            .ir-thumb-caption-title { font-size:1rem; }
-            .ir-thumb-caption-sub { font-size:.95rem; }
+          @media (max-width: 1100px) {
+            .ir-showcase {
+              grid-template-columns: minmax(0, 1fr) minmax(270px, .95fr);
+              align-items: center;
+              row-gap: 38px;
+            }
+            .ir-video-feature {
+              grid-column: 2;
+              grid-row: 1;
+            }
+            .ir-winner-details {
+              grid-column: 1 / -1;
+              grid-row: 2;
+            }
+            .ir-thumb-frame { width: clamp(300px, 40vw, 400px); }
+            .ir-award-curves {
+              height: clamp(82px, 13vw, 116px);
+              margin: clamp(18px, 3vw, 28px) 0 clamp(18px, 3vw, 28px);
+            }
           }
-
-          @media (max-width: 900px) {
-            .ir-section { --ir-word-area: clamp(130px,18vw,165px); --ir-award-word-lift: clamp(25px,5vw,50px); min-height:clamp(760px,96svh,920px); }
-            .ir-shell { min-height:clamp(760px,96svh,920px);padding-top:clamp(40px,5vw,64px)!important;padding-bottom:clamp(140px,13vw,180px)!important; }
-            .ir-header { max-width:760px!important; }
-            .ir-heading { font-size:clamp(2.3rem,5vw,3.6rem)!important; }
-            .ir-intro-copy { font-size:clamp(1rem,2vw,1.15rem)!important; }
-            .ir-cols { grid-template-columns: minmax(210px,1fr) minmax(280px,1.25fr) !important; max-width: 820px; gap: clamp(40px,6vw,70px) !important; }
-            .ir-award-badge--winner { width:clamp(124px,18vw,148px); }
-            .ir-award-badge--finalist { width:clamp(116px,17vw,140px); }
-            .ir-award-inner { width:100%;height:auto; }
-            .ir-award-inner .ir-award-medal{width:100%!important;height:100%!important}
-            .ir-thumb-frame { width: clamp(280px,38vw,360px); }
-            .ir-decor--coin,.ir-decor--navy-ribbon { transform:scale(.78); }
+          @media (max-width: 760px) {
+            .ir-shell {
+              padding: clamp(92px, 22vw, 112px) clamp(18px, 5vw, 24px) clamp(52px, 10vw, 68px) !important;
+            }
+            .ir-header {
+              margin-bottom: 34px !important;
+            }
+            .ir-header-logo {
+              width: 76px;
+              height: 76px;
+              margin-bottom: 13px;
+            }
+            .ir-eyebrow {
+              font-size: .68rem !important;
+              letter-spacing: .20em !important;
+              margin-bottom: 14px !important;
+            }
+            .ir-heading {
+              font-size: clamp(2.35rem, 11vw, 3.25rem) !important;
+              line-height: 1.02 !important;
+              margin-bottom: 17px !important;
+            }
+            .ir-header-divider {
+              margin-bottom: 17px !important;
+            }
+            .ir-intro-copy {
+              font-size: .98rem !important;
+              line-height: 1.58 !important;
+            }
+            .ir-award-curves {
+              height: clamp(76px, 20vw, 104px);
+              margin: 20px 0 24px;
+              opacity: .72;
+            }
+            .ir-showcase {
+              display: flex;
+              flex-direction: column;
+              gap: 30px;
+              padding: 0;
+            }
+            .ir-award-badges {
+              width: 100%;
+              gap: 30px;
+            }
+            .ir-award-badge {
+              padding: 0;
+            }
+            .ir-award-inner {
+              width: min(100%, 116px);
+            }
+            .ir-award-badge--finalist .ir-award-inner {
+              width: min(100%, 132px);
+            }
+            .ir-award-year {
+              font-size: clamp(1.38rem, 7vw, 1.76rem);
+            }
+            .ir-award-caption-title {
+              font-size: clamp(1rem, 5vw, 1.22rem) !important;
+            }
+            .ir-award-caption p:last-child {
+              font-size: .62rem !important;
+              letter-spacing: .10em !important;
+            }
+            .ir-thumb-frame {
+              width: clamp(220px, 70vw, 310px);
+            }
+            .ir-winner-trophy {
+              width: clamp(120px, 34vw, 148px);
+              height: clamp(120px, 34vw, 148px);
+              margin-bottom: 8px;
+            }
+            .ir-thumb-caption-title {
+              font-size: clamp(1.85rem, 9vw, 2.35rem);
+              margin-bottom: 13px;
+            }
+            .ir-winner-rule {
+              margin-bottom: 15px;
+            }
+            .ir-thumb-caption-sub {
+              font-size: .95rem;
+              line-height: 1.54;
+            }
           }
-          @media (max-width: 600px) {
-            .ir-section { --ir-word-area: clamp(125px,35vw,185px); --ir-award-word-lift: clamp(28px,8vw,48px); min-height:auto; }
-            .ir-shell { min-height:auto;padding:clamp(28px,8vw,44px) 20px clamp(90px,18vw,130px)!important; }
-            .ir-bg-track span { font-size: clamp(6rem,31vw,10rem); }
-            .ir-header { margin-bottom: 42px !important; }
-            .ir-heading { font-size: clamp(2.25rem,11vw,3.25rem) !important; }
-            .ir-intro-copy { font-size: 1rem !important; line-height: 1.68 !important; }
-            .ir-thumb-frame { width: clamp(230px,72vw,320px); }
-            .ir-cols { grid-template-columns:1fr !important;max-width:520px;gap:48px!important; }
-            .ir-award-badges { gap:16px; }
-            .ir-award-badge--winner { width:min(41vw,148px); }
-            .ir-award-badge--finalist { width:min(38vw,140px); }
-            .ir-award-inner { width:100%; }
-            .ir-award-caption-title,.ir-thumb-caption-title { font-size:1.15rem!important; }
-            .ir-award-caption p:last-child,.ir-thumb-caption-sub { font-size:.95rem!important; }
-            .ir-thumb-caption-wrap { max-width:200px; }
-            .ir-video-feature { grid-row:2; }.ir-award-proof{grid-row:1}
-            .ir-decor--gold-ribbon,.ir-decor--coin{opacity:.28}.ir-decor--navy-ribbon{right:-28%;opacity:.26}.ir-decor--trophy,.ir-decor--star{display:none}
-            .ir-decor--laurel-left{opacity:.28;width:100px;height:82px;bottom:16px}
-            .ir-confetti:nth-of-type(even){display:none}
+          @media (max-width: 340px) {
+            .ir-award-badges {
+              grid-template-columns: 1fr;
+            }
+            .ir-award-badge {
+              max-width: 230px;
+              margin-inline: auto;
+            }
           }
           @media (prefers-reduced-motion: reduce) {
-            .ir-marquee-track { animation:none!important;transform:translate3d(-8%,0,0);will-change:auto; }
-            .ir-decor > img,.ir-confetti img,.ir-award-frame { animation: none !important; }
-            .ir-decor { transform: none !important; transition: none !important; }
+            .ir-streak {
+              animation: none !important;
+              opacity: 1 !important;
+              stroke-dashoffset: 0 !important;
+            }
+            .ir-streak-glint {
+              display: none !important;
+            }
+            .ir-award-badge,
+            .ir-award-frame {
+              transition: none !important;
+            }
+            .ir-award-badge:hover,
+            .ir-award-badge:hover .ir-award-frame {
+              transform: none !important;
+            }
           }
         `}</style>
-
-        <motion.div ref={decorLayerRef} className="ir-decor-layer" style={{ opacity: decorOpacity, y: decorY }} aria-hidden="true">
-          <div className="ir-decor ir-decor--gold-ribbon"><img src="/images/awards/gold-ribbon-left.png" alt="" /></div>
-          <div className="ir-decor ir-decor--laurel-left"><img src="/images/awards/gold-laurel-left.png" alt="" /></div>
-          <div className="ir-decor ir-decor--coin"><img src="/images/awards/award-medal.png" alt="" /></div>
-          <div className="ir-decor ir-decor--navy-ribbon"><img src="/images/awards/award-ribbon-navy.png" alt="" /></div>
-          <div className="ir-decor ir-decor--trophy"><img src="/images/awards/gold-trophy.png" alt="" /></div>
-          <div className="ir-decor ir-decor--star"><img src="/images/awards/gold-star.png" alt="" /></div>
-          {Array.from({ length: 6 }, (_, index) => (
-            <div key={index} className={`ir-confetti ir-confetti--${index + 1}`}><img src="/images/awards/gold-confetti.png" alt="" /></div>
-          ))}
-        </motion.div>
 
         {/* Top edge: very faint gold rule separating from previous section */}
         <div className="ir-old-rule" style={{
@@ -1742,7 +1983,7 @@ const ImpactRecognitionSection = () => {
               className="ir-heading"
               style={{
                 opacity: headingOpacity, y: headingY,
-                fontFamily: serif, fontWeight: 300,
+                fontFamily: serif, fontWeight: 700,
                 fontSize: 'clamp(2.4rem, 3.8vw, 4.4rem)',
                 lineHeight: 1.10, letterSpacing: '-.028em',
                 color: C.navy, margin: '0 0 20px',
@@ -1760,7 +2001,9 @@ const ImpactRecognitionSection = () => {
                 background: `linear-gradient(90deg, ${C.gold}, transparent)`,
                 transformOrigin: 'left',
               }}
-            />
+            >
+              <span aria-hidden="true" />
+            </motion.div>
 
             <motion.p
               className="ir-intro-copy"
@@ -1779,17 +2022,53 @@ const ImpactRecognitionSection = () => {
             </motion.p>
           </motion.div>
 
-          {/* ── MEDIA GRID: award image | video thumbnail ────────────────── */}
+          <svg
+            className={`ir-award-curves ${streakVisible ? 'is-visible' : ''}`}
+            viewBox="0 0 1600 140"
+            preserveAspectRatio="none"
+            aria-hidden="true"
+          >
+            <path
+              id="ir-streak-primary-path"
+              className="ir-streak ir-streak-primary"
+              pathLength="1"
+              d="M -80 58 C 150 86 350 84 548 56 C 704 34 850 36 1014 58 C 1200 86 1386 90 1680 42"
+              stroke="#CFA54A"
+              strokeWidth="2.35"
+              strokeOpacity=".80"
+            />
+            <path
+              className="ir-streak ir-streak-secondary"
+              pathLength="1"
+              d="M -80 76 C 152 102 354 100 552 74 C 710 52 850 54 1010 76 C 1198 104 1390 108 1680 60"
+              stroke="#D8B45F"
+              strokeWidth="1"
+              strokeOpacity=".28"
+            />
+            <path
+              className="ir-streak ir-streak-tertiary"
+              pathLength="1"
+              d="M -80 94 C 154 118 360 116 560 92 C 712 72 852 74 1008 94 C 1192 122 1390 126 1680 78"
+              stroke="#D8B45F"
+              strokeWidth="1"
+              strokeOpacity=".16"
+            />
+            {streakVisible && !reducedMotion && (
+              <circle className="ir-streak-glint" r="4.2" fill="#E4BC5A">
+                <animateMotion dur="2.25s" begin="0s" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines=".65 0 .35 1">
+                  <mpath href="#ir-streak-primary-path" />
+                </animateMotion>
+                <animate attributeName="opacity" values="0;.85;.75;0" keyTimes="0;.08;.82;1" dur="2.25s" begin="0s" fill="freeze" />
+              </circle>
+            )}
+          </svg>
+
+          {/* ── Awards showcase: achievement badges | recipient photo | winner details ── */}
           <motion.div
-            className="ir-cols"
+            className="ir-showcase"
             style={{
               opacity: mediaOpacity,
               y: mediaY,
-              display: 'grid',
-              gridTemplateColumns: '1fr 1fr',
-              gap: 'clamp(24px, 4vw, 48px)',
-              alignItems: 'start',
-              marginBottom: 'clamp(40px, 5vw, 64px)',
             }}
           >
 
@@ -1807,8 +2086,9 @@ const ImpactRecognitionSection = () => {
                     </div>
                   </div>
                   <motion.div className="ir-award-caption" style={{ opacity: captionOpacity, y: captionY }}>
-                    <p className="ir-award-caption-title">2025 Winner</p>
-                    <p style={{ fontFamily: sans, fontWeight: 500, fontSize: '.78rem', lineHeight: 1.5, letterSpacing: '.10em', textTransform: 'uppercase', color: C.gold, margin: 0 }}>
+                    <p className="ir-award-year">2025</p>
+                    <p className="ir-award-caption-title">Winner</p>
+                    <p>
                       Education Services
                     </p>
                   </motion.div>
@@ -1824,8 +2104,9 @@ const ImpactRecognitionSection = () => {
                     </div>
                   </div>
                   <motion.div className="ir-award-caption" style={{ opacity: captionOpacity, y: captionY }}>
-                    <p className="ir-award-caption-title">2026 Finalist</p>
-                    <p style={{ fontFamily: sans, fontWeight: 500, fontSize: '.78rem', lineHeight: 1.5, letterSpacing: '.10em', textTransform: 'uppercase', color: C.gold, margin: 0 }}>
+                    <p className="ir-award-year">2026</p>
+                    <p className="ir-award-caption-title">Finalist</p>
+                    <p>
                       Fairfield City
                     </p>
                   </motion.div>
@@ -1846,12 +2127,19 @@ const ImpactRecognitionSection = () => {
                   />
                   <div className="ir-thumb-overlay" aria-hidden="true" />
                 </div>
-                <motion.div className="ir-thumb-caption-wrap" style={{ opacity: captionOpacity, y: captionY }}>
-                  <p className="ir-thumb-caption-title">Award Winner</p>
-                  <p className="ir-thumb-caption-sub">Outstanding Education Service · Fairfield City Local Business Awards 2025</p>
-                </motion.div>
               </div>
             </div>
+
+            {/* ── Winner details ───────────────────────────────────────── */}
+            <motion.div className="ir-winner-details" style={{ opacity: captionOpacity, y: captionY }}>
+              <img className="ir-winner-trophy" src="/images/awards/gold-trophy.png" alt="" aria-hidden="true" />
+              <p className="ir-thumb-caption-title">Award<br />Winner</p>
+              <div className="ir-winner-rule" aria-hidden="true"><span /></div>
+              <p className="ir-thumb-caption-sub">
+                <em>Outstanding Education Service</em>
+                Fairfield City Local Business Awards 2025
+              </p>
+            </motion.div>
 
           </motion.div>
 
@@ -2835,6 +3123,476 @@ const ProgramsSection = () => {
   );
 };
 
+// ══════════════════════════════════════════════════════════════
+//  SUBJECT PEEK
+// ══════════════════════════════════════════════════════════════
+const SUBJECT_PEEK_CARDS: Array<{
+  name: string;
+  href: string;
+  image: string;
+  imageFit?: 'cover' | 'contain';
+  imagePosition?: string;
+  desc: string;
+  Icon: LucideIcon;
+}> = [
+  {
+    name: 'Mathematics',
+    href: '/subjects/mathematics',
+    image: '/images/homepage/subject-cards/maths-home-subject.png',
+    imageFit: 'contain',
+    imagePosition: 'center center',
+    desc: 'Build confidence through understanding, problem solving and logical thinking.',
+    Icon: Calculator,
+  },
+  {
+    name: 'English',
+    href: '/subjects/english',
+    image: '/images/homepage/subject-cards/english-home-subject.png',
+    imagePosition: 'center center',
+    desc: 'Develop confident readers, writers and communicators who love ideas.',
+    Icon: BookOpen,
+  },
+  {
+    name: 'Science',
+    href: '/subjects/science',
+    image: '/images/homepage/subject-cards/science-home-subject.png',
+    imagePosition: 'center center',
+    desc: 'Discover the world through curiosity, investigation and experimentation.',
+    Icon: FlaskConical,
+  },
+  {
+    name: 'Business',
+    href: '/subjects/business-studies',
+    image: '/images/homepage/subject-cards/business-home-subject.png',
+    imagePosition: 'center center',
+    desc: 'Think strategically about markets, people, operations and real-world decisions.',
+    Icon: BriefcaseBusiness,
+  },
+  {
+    name: 'Legal',
+    href: '/subjects/legal-studies',
+    image: '/images/homepage/subject-cards/legal-home-subject.png',
+    imagePosition: 'center center',
+    desc: 'Explore justice, rights and contemporary issues with precise, confident reasoning.',
+    Icon: Scale,
+  },
+];
+
+const SubjectPeekPanel = ({ subject, index }: { subject: typeof SUBJECT_PEEK_CARDS[number]; index: number }) => {
+  const Icon = subject.Icon;
+
+  return (
+    <motion.div className="subject-peek-card-wrap" variants={fadeUp} layout>
+      <Link to={subject.href} className="subject-peek-card" aria-label={`Explore ${subject.name}`}>
+        <img
+          className={`subject-peek-image${subject.imageFit === 'contain' ? ' subject-peek-image--contain' : ''}`}
+          src={subject.image}
+          alt=""
+          aria-hidden="true"
+          loading={index < 3 ? 'eager' : 'lazy'}
+          decoding="async"
+          sizes="(max-width: 760px) 82vw, 33vw"
+          style={{ objectPosition: subject.imagePosition }}
+        />
+        <div className="subject-peek-overlay" aria-hidden="true" />
+        <div className="subject-peek-badge">
+          <Icon size={16} strokeWidth={2.2} aria-hidden="true" />
+          <span>{subject.name}</span>
+        </div>
+        <div className="subject-peek-copy">
+          <p>{subject.desc}</p>
+          <span className="subject-peek-link">
+            Explore {subject.name}
+            <ArrowRight size={17} strokeWidth={2.3} aria-hidden="true" />
+          </span>
+        </div>
+      </Link>
+    </motion.div>
+  );
+};
+
+const SubjectPeekSection = () => {
+  const ref = useRef<HTMLElement>(null);
+  const inView = useInView(ref, { once: true, margin: '-70px' });
+  const [showAllSubjects, setShowAllSubjects] = useState(false);
+  const visibleSubjects = showAllSubjects ? SUBJECT_PEEK_CARDS : SUBJECT_PEEK_CARDS.slice(0, 3);
+
+  return (
+    <section ref={ref} aria-labelledby="subject-peek-heading" style={{ background: C.cream, padding: 'clamp(86px, 8vw, 124px) clamp(18px, 3vw, 48px)', position: 'relative', overflow: 'hidden' }}>
+      <style>{`
+        .subject-peek-shell {
+          position: relative;
+          max-width: 1480px;
+          margin: 0 auto;
+        }
+
+        .subject-peek-intro {
+          display: grid;
+          grid-template-columns: minmax(0, 1fr) auto;
+          gap: 24px;
+          align-items: end;
+          margin-bottom: clamp(32px, 4vw, 52px);
+        }
+
+        .subject-peek-kicker {
+          margin: 0 0 12px;
+          font-family: ${sans};
+          font-size: .7rem;
+          font-weight: 800;
+          letter-spacing: .17em;
+          line-height: 1;
+          text-transform: uppercase;
+          color: ${C.gold};
+        }
+
+        .subject-peek-title {
+          max-width: 780px;
+          margin: 0;
+          font-family: ${serif};
+          font-size: clamp(2.2rem, 4.4vw, 3.85rem);
+          font-weight: 600;
+          line-height: 1.06;
+          letter-spacing: -.02em;
+          color: ${C.navy};
+          text-wrap: balance;
+        }
+
+        .subject-peek-more {
+          display: inline-flex;
+          align-items: center;
+          gap: 10px;
+          justify-content: center;
+          min-height: 48px;
+          padding: 14px 20px;
+          border: 1px solid rgba(200, 155, 60, .52);
+          border-radius: 999px;
+          background: ${C.navy};
+          color: ${C.white};
+          font-family: ${sans};
+          font-size: .76rem;
+          font-weight: 800;
+          letter-spacing: .11em;
+          line-height: 1.2;
+          text-transform: uppercase;
+          white-space: nowrap;
+          cursor: pointer;
+          box-shadow: 0 14px 28px rgba(10, 27, 52, .16);
+          transition: transform 350ms cubic-bezier(.22, 1, .36, 1), box-shadow 350ms ease, background 350ms ease;
+        }
+
+        .subject-peek-more svg {
+          color: ${C.goldL};
+          transition: transform 350ms cubic-bezier(.22, 1, .36, 1);
+        }
+
+        .subject-peek-more:hover,
+        .subject-peek-more:focus-visible {
+          background: ${C.navy2};
+          transform: translateY(-2px);
+          box-shadow: 0 18px 34px rgba(10, 27, 52, .2);
+        }
+
+        .subject-peek-more:hover svg,
+        .subject-peek-more:focus-visible svg {
+          transform: translateX(4px);
+        }
+
+        .subject-peek-more:focus-visible {
+          outline: 3px solid rgba(212, 175, 55, .76);
+          outline-offset: 4px;
+        }
+
+        .subject-peek-frame {
+          --peek-gap: clamp(20px, 2.2vw, 36px);
+          position: relative;
+          overflow: visible;
+          padding: 2px 2px 32px;
+        }
+
+        .subject-peek-track {
+          display: grid;
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+          align-items: flex-start;
+          gap: var(--peek-gap);
+        }
+
+        .subject-peek-card-wrap {
+          min-width: 0;
+          padding-top: clamp(22px, 2.4vw, 42px);
+        }
+
+        .subject-peek-card-wrap:nth-child(2) {
+          padding-top: 0;
+        }
+
+        .subject-peek-card {
+          position: relative;
+          display: block;
+          height: clamp(470px, 39vw, 620px);
+          overflow: hidden;
+          isolation: isolate;
+          border: 1px solid rgba(200, 155, 60, .52);
+          border-radius: 30px;
+          background: ${C.navy};
+          color: #fff;
+          text-decoration: none;
+          box-shadow: 0 22px 45px rgba(10, 27, 52, .12);
+          transform: translateZ(0);
+          transition: transform 500ms cubic-bezier(.22, 1, .36, 1), box-shadow 500ms ease, border-color 500ms ease;
+        }
+
+        .subject-peek-card-wrap:nth-child(2) .subject-peek-card {
+          height: clamp(540px, 45vw, 710px);
+        }
+
+        .subject-peek-image {
+          position: absolute;
+          inset: 0;
+          z-index: 0;
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          filter: saturate(.98) brightness(1.04);
+          transition: transform 650ms cubic-bezier(.22, 1, .36, 1), filter 500ms ease;
+        }
+
+        .subject-peek-image--contain {
+          object-fit: contain;
+          background: linear-gradient(180deg, #f5ecdf 0%, #efe0cf 100%);
+        }
+
+        .subject-peek-overlay {
+          position: absolute;
+          inset: 0;
+          z-index: 1;
+          background:
+            linear-gradient(180deg, rgba(10, 27, 52, .04) 0%, rgba(10, 27, 52, .13) 43%, rgba(5, 18, 38, .88) 100%),
+            linear-gradient(90deg, rgba(8, 24, 50, .2) 0%, transparent 48%, rgba(8, 24, 50, .18) 100%);
+        }
+
+        .subject-peek-badge {
+          position: absolute;
+          top: clamp(18px, 2vw, 28px);
+          left: clamp(18px, 2vw, 28px);
+          z-index: 2;
+          display: inline-flex;
+          align-items: center;
+          gap: 10px;
+          max-width: calc(100% - 36px);
+          padding: 10px 17px;
+          border: 1px solid rgba(200, 155, 60, .44);
+          border-radius: 999px;
+          background: rgba(10, 27, 52, .9);
+          color: #fff;
+          box-shadow: 0 10px 20px rgba(4, 14, 30, .18);
+          font-family: ${sans};
+          font-size: .74rem;
+          font-weight: 800;
+          letter-spacing: .13em;
+          line-height: 1;
+          text-transform: uppercase;
+        }
+
+        .subject-peek-badge svg {
+          flex: 0 0 auto;
+          color: ${C.goldL};
+        }
+
+        .subject-peek-copy {
+          position: absolute;
+          left: clamp(24px, 2.5vw, 38px);
+          right: clamp(24px, 2.5vw, 38px);
+          bottom: clamp(28px, 3vw, 42px);
+          z-index: 2;
+        }
+
+        .subject-peek-copy p {
+          max-width: 34ch;
+          margin: 0 0 24px;
+          color: rgba(255, 255, 255, .9);
+          font-family: ${sans};
+          font-size: clamp(1rem, 1.25vw, 1.16rem);
+          font-weight: 600;
+          line-height: 1.55;
+          text-wrap: pretty;
+        }
+
+        .subject-peek-link {
+          display: inline-flex;
+          align-items: center;
+          gap: 12px;
+          color: ${C.goldL};
+          font-family: ${sans};
+          font-size: .78rem;
+          font-weight: 900;
+          letter-spacing: .1em;
+          line-height: 1.25;
+          text-transform: uppercase;
+        }
+
+        .subject-peek-link svg {
+          transition: transform 350ms cubic-bezier(.22, 1, .36, 1);
+        }
+
+        .subject-peek-card:hover,
+        .subject-peek-card:focus-visible {
+          transform: translateY(-8px);
+          border-color: rgba(212, 175, 55, .92);
+          box-shadow: 0 30px 60px rgba(10, 27, 52, .18);
+        }
+
+        .subject-peek-card:hover .subject-peek-image,
+        .subject-peek-card:focus-visible .subject-peek-image {
+          transform: scale(1.045);
+          filter: saturate(1.02) brightness(1.08);
+        }
+
+        .subject-peek-card:hover .subject-peek-link svg,
+        .subject-peek-card:focus-visible .subject-peek-link svg {
+          transform: translateX(7px);
+        }
+
+        .subject-peek-card:focus-visible {
+          outline: 3px solid rgba(212, 175, 55, .78);
+          outline-offset: 5px;
+        }
+
+        .subject-peek-sweep {
+          position: absolute;
+          left: 8%;
+          right: 8%;
+          bottom: -14px;
+          z-index: 0;
+          height: 70px;
+          border-bottom: 1px dashed rgba(200, 155, 60, .48);
+          border-radius: 0 0 50% 50%;
+          pointer-events: none;
+        }
+
+        .subject-peek-star {
+          position: absolute;
+          bottom: -9px;
+          width: 9px;
+          height: 9px;
+          background: ${C.gold};
+          transform: rotate(45deg);
+          box-shadow: 0 0 0 6px rgba(250, 247, 240, .78);
+        }
+
+        .subject-peek-star:nth-child(1) { left: 31%; }
+        .subject-peek-star:nth-child(2) { left: 50%; }
+        .subject-peek-star:nth-child(3) { left: 69%; }
+
+        @media (max-width: 980px) {
+          .subject-peek-intro {
+            grid-template-columns: 1fr;
+            align-items: start;
+          }
+
+          .subject-peek-more {
+            width: fit-content;
+          }
+
+          .subject-peek-frame {
+            padding-bottom: 0;
+          }
+
+          .subject-peek-track {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+          }
+
+          .subject-peek-card-wrap,
+          .subject-peek-card-wrap:nth-child(2) {
+            padding-top: 0;
+          }
+
+          .subject-peek-card,
+          .subject-peek-card-wrap:nth-child(2) .subject-peek-card {
+            height: clamp(440px, 96vw, 570px);
+          }
+
+          .subject-peek-sweep {
+            display: none;
+          }
+        }
+
+        @media (max-width: 560px) {
+          .subject-peek-track {
+            grid-template-columns: 1fr;
+          }
+
+          .subject-peek-card,
+          .subject-peek-card-wrap:nth-child(2) .subject-peek-card {
+            border-radius: 24px;
+          }
+
+          .subject-peek-copy p {
+            font-size: .98rem;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .subject-peek-track,
+          .subject-peek-card,
+          .subject-peek-image,
+          .subject-peek-link svg,
+          .subject-peek-more,
+          .subject-peek-more svg {
+            transition: none !important;
+          }
+
+          .subject-peek-more:hover,
+          .subject-peek-more:focus-visible,
+          .subject-peek-more:hover svg,
+          .subject-peek-more:focus-visible svg,
+          .subject-peek-card:hover,
+          .subject-peek-card:focus-visible,
+          .subject-peek-card:hover .subject-peek-image,
+          .subject-peek-card:focus-visible .subject-peek-image,
+          .subject-peek-card:hover .subject-peek-link svg,
+          .subject-peek-card:focus-visible .subject-peek-link svg {
+            transform: none;
+          }
+        }
+      `}</style>
+      <div className="subject-peek-shell">
+        <motion.div className="subject-peek-intro" variants={stagger} initial="hidden" animate={inView ? 'visible' : 'hidden'}>
+          <motion.div variants={fadeUp}>
+            <p className="subject-peek-kicker">Subject Pathways</p>
+            <h2 id="subject-peek-heading" className="subject-peek-title">Explore the subjects students grow through at DA.</h2>
+          </motion.div>
+          <motion.button
+            type="button"
+            className="subject-peek-more"
+            variants={fadeUp}
+            aria-expanded={showAllSubjects}
+            aria-controls="subject-peek-cards"
+            onClick={() => setShowAllSubjects((open) => !open)}
+          >
+            <span>{showAllSubjects ? 'Show fewer subjects' : 'See more subjects'}</span>
+            <ArrowRight size={16} strokeWidth={2.4} aria-hidden="true" />
+          </motion.button>
+        </motion.div>
+
+        <div className="subject-peek-frame" aria-label="Subject cards">
+          <motion.div id="subject-peek-cards" className="subject-peek-track" variants={stagger} initial="hidden" animate={inView ? 'visible' : 'hidden'} layout>
+            <AnimatePresence initial={false}>
+              {visibleSubjects.map((subject, index) => (
+                <SubjectPeekPanel key={subject.name} subject={subject} index={index} />
+              ))}
+            </AnimatePresence>
+          </motion.div>
+          <div className="subject-peek-sweep" aria-hidden="true">
+            <span className="subject-peek-star" />
+            <span className="subject-peek-star" />
+            <span className="subject-peek-star" />
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
 
 // ══════════════════════════════════════════════════════════════
 //  PULL QUOTE
@@ -3219,7 +3977,7 @@ const WellbeingSection = () => {
                 transition: 'box-shadow 0.5s cubic-bezier(0.22,1,0.36,1)',
               }}>
                 <img
-                  src="/maletutors.jpeg"
+                    src="/images/homepage/wellbeing-male-tutors.png"
                   alt="DA Tuition tutors in a warm collaborative session"
                   loading="lazy"
                   style={{
@@ -3259,8 +4017,8 @@ const WellbeingSection = () => {
                   transition: 'box-shadow 0.5s cubic-bezier(0.22,1,0.36,1)',
                 }}>
                   <img
-                    src="/Lindatwins.JPG"
-                    alt="Students with their DA Tuition teacher"
+                    src="/images/homepage/wellbeing-young-student.png"
+                    alt="DA Tuition student working confidently at a classroom table"
                     loading="lazy"
                     style={{
                       width: '100%', height: '100%',
@@ -3292,7 +4050,7 @@ const WellbeingSection = () => {
                   transition: 'box-shadow 0.5s cubic-bezier(0.22,1,0.36,1)',
                 }}>
                   <img
-                    src="/Freeman.png"
+                    src="/images/homepage/wellbeing-student-community.png"
                     alt="DA Tuition student community"
                     loading="lazy"
                     style={{
@@ -3421,16 +4179,17 @@ const DAEnvironmentSection = () => {
   const resumeAfterVisibilityRef = useRef(false);
   const resumeAfterDismissRef = useRef(false);
   const manuallyPausedRef = useRef(false);
+  const hasEnteredSectionRef = useRef(false);
   const expandedRef = useRef(false);
   const floatingDragRef = useRef<{ pointerId: number; startX: number; startY: number; left: number; top: number } | null>(null);
   const [isSimple, setIsSimple] = useState(false);
-  const [isMuted, setIsMuted] = useState(true);
+  const [isMuted, setIsMuted] = useState(false);
   const [isFloating, setIsFloating] = useState(false);
   const [floatingDismissed, setFloatingDismissed] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [isDraggingFloating, setIsDraggingFloating] = useState(false);
   const [floatingPosition, setFloatingPosition] = useState<{ left: number; top: number } | null>(null);
-  const [isPlaying, setIsPlaying] = useState(true);
+  const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [isVideoFullyInFrame, setIsVideoFullyInFrame] = useState(false);
@@ -3503,7 +4262,8 @@ const DAEnvironmentSection = () => {
   useEffect(() => {
     const obs = new IntersectionObserver(
       ([e]) => {
-        if (!videoRef.current) return;
+        const video = videoRef.current;
+        if (!video) return;
         if (expandedRef.current) {
           setIsFloating(false);
           return;
@@ -3511,20 +4271,29 @@ const DAEnvironmentSection = () => {
         const passedSection = !e.isIntersecting && e.boundingClientRect.bottom <= 0;
         const enableFloating = passedSection && window.innerWidth >= 380 && !dismissedRef.current;
 
+        if (e.isIntersecting && !hasEnteredSectionRef.current) {
+          hasEnteredSectionRef.current = true;
+          video.muted = false;
+          setIsMuted(false);
+          // If audible autoplay is blocked, remain paused and unmuted. The
+          // visitor's Play action will then begin the film with sound.
+          video.play().catch(() => setIsPlaying(false));
+        }
+
         if (e.isIntersecting) {
           dismissedRef.current = false;
           setFloatingDismissed(false);
           setIsFloating(false);
           if (resumeAfterDismissRef.current && !manuallyPausedRef.current) {
-            videoRef.current.play().catch(() => {});
+            video.play().catch(() => {});
           }
           resumeAfterDismissRef.current = false;
         } else if (enableFloating) {
           setIsFloating(true);
         } else if (!passedSection) {
           // Section hasn't been reached yet (or user scrolled back above it).
-          // Don't pause here: pausing and later resuming this muted, looping
-          // background video was causing the browser to discard its buffered
+          // Don't pause here: pausing and later resuming this looping video was
+          // causing the browser to discard its buffered
           // data and re-fetch/re-decode from scratch, which stalls playback
           // noticeably on anything larger than a tiny file. Leaving it playing
           // is cheap (muted, no user-facing audio/CPU cost worth guarding).
@@ -3600,42 +4369,30 @@ const DAEnvironmentSection = () => {
     setIsDraggingFloating(false);
   };
 
-  // The first beat is a visual introduction: copy fades away, the video grows
-  // from the lower centre, then the corner snapshots appear briefly before it
-  // becomes the full environment film.
+  // The section now hands directly from the results story into the environment
+  // film: copy recedes as the video grows cleanly to the full viewport.
   const { scrollYProgress } = useScroll({
     target: outerRef,
     offset: ['start start', 'end end'],
   });
   const s = scrollYProgress;
 
-  const textOp = useTransform(s, [0, 0.20, 0.40], [1, 1, 0]);
-  const textY = useTransform(s, [0.20, 0.40], [0, -90]);
-  const cardScale = useTransform(s, [0, 0.40, 0.65, 1.0], [0.40, 0.68, 0.88, 1.0]);
-  const cardOp = useTransform(s, [0, 0.20, 0.55], [0.35, 0.60, 1.0]);
-  const cardRadV = useTransform(s, [0.75, 0.98], [22, 0]);
+  const textOp = useTransform(s, [0, 0.16, 0.34], [1, 1, 0]);
+  const textY = useTransform(s, [0.16, 0.34], [0, -72]);
+  const cardScale = useTransform(s, [0, 0.28, 0.55, 0.82], [0.58, 0.76, 0.92, 1.0]);
+  const cardOp = useTransform(s, [0, 0.14, 0.42], [0.48, 0.72, 1.0]);
+  const cardRadV = useTransform(s, [0.58, 0.82], [22, 0]);
   const cardRadS = useTransform(cardRadV, (radius: number) => `${Math.max(0, radius)}px`);
-  const overlayOp = useTransform(s, [0.35, 0.65], [0, 0.28]);
-  const sOp = useTransform(s, [0.30, 0.48, 0.70, 0.88], [0, 1, 1, 0]);
-  const sScl = useTransform(s, [0.35, 0.55], [0.80, 1.0]);
+  const overlayOp = useTransform(s, [0.26, 0.55], [0, 0.28]);
 
   useMotionValueEvent(s, 'change', (progress) => {
     setIsVideoFullyInFrame((current) => {
-      const next = progress >= 0.98;
+      const next = progress >= 0.82;
       return current === next ? current : next;
     });
   });
 
-  const SCARDS = [
-    { id: 'tg', src: '/media/threegirls.jpg', alt: 'DA students together',  ratio: '3/4' as const,  w: 'clamp(86px,7.8vw,126px)',  pos: { top: '8%',    left: '2%'  } as React.CSSProperties, rotate: -3  },
-    { id: 'hf', src: '/media/highfive.jpg',   alt: 'High five with tutor',  ratio: '4/3' as const,  w: 'clamp(106px,9.8vw,150px)', pos: { top: '6%',    right: '2%' } as React.CSSProperties, rotate: 2.5 },
-    { id: 'tb', src: '/media/theboys.jpg',    alt: 'DA tutors',             ratio: '4/3' as const,  w: 'clamp(94px,8.8vw,138px)',  pos: { bottom: '8%', left: '2%'  } as React.CSSProperties, rotate: -2  },
-    { id: 'lc', src: '/media/laiclass.jpg',   alt: 'Classroom session',     ratio: '3/4' as const,  w: 'clamp(80px,7.2vw,116px)',  pos: { bottom: '6%', right: '2%' } as React.CSSProperties, rotate: 2   },
-  ];
-
   const envCSS = `
-    .da-scard { position:absolute; border-radius:14px; overflow:hidden;
-      box-shadow:0 16px 48px rgba(0,0,0,0.52), 0 3px 10px rgba(0,0,0,0.28); }
     .da-ebtn { font-family:${sans}; font-size:0.58rem; font-weight:700; letter-spacing:0.18em;
       text-transform:uppercase; color:${C.navy}; background:${C.gold}; border:none;
       border-radius:3px; padding:12px 28px; cursor:pointer; transition:opacity 0.2s ease; }
@@ -3703,7 +4460,7 @@ const DAEnvironmentSection = () => {
               '--da-video-left': `${floatingPosition.left}px`, '--da-video-top': `${floatingPosition.top}px`, '--da-video-right': 'auto', '--da-video-bottom': 'auto',
             } as React.CSSProperties : undefined) : { position: 'absolute', inset: 0, overflow: 'hidden' }}
           >
-            <video ref={videoRef} autoPlay muted={isMuted} loop playsInline src="/images/homepage/homepage-cream/0706.mp4"
+            <video ref={videoRef} muted={isMuted} loop playsInline src="/images/homepage/homepage-cream/0706.mp4"
               onPlay={handleVideoPlay} onPause={handleVideoPause} onLoadedMetadata={syncVideoMetadata} onTimeUpdate={syncVideoProgress}
               style={{ width: '100%', height: '100%', display: 'block', objectFit: 'cover' }} />
             <div className="da-video-overlay" style={{ position: 'absolute', inset: 0, background: 'rgba(4,10,24,0.28)', pointerEvents: 'none' }} />
@@ -3728,7 +4485,7 @@ const DAEnvironmentSection = () => {
 
   // ── DESKTOP: scroll-driven ────────────────────────────────────
   return (
-    <div id="environment" ref={outerRef} style={{ height: '190vh', position: 'relative', zIndex: 20, background: '#06111F' }}>
+    <div id="environment" ref={outerRef} style={{ height: '155vh', position: 'relative', zIndex: 20, background: '#06111F' }}>
       <style>{envCSS}</style>
 
       {/* Sticky panel holds the entrance sequence while the video grows. */}
@@ -3770,7 +4527,7 @@ const DAEnvironmentSection = () => {
             zIndex: 5,
             boxShadow: '0 24px 72px rgba(0,0,0,0.55)',
           }}>
-          <video ref={videoRef} autoPlay muted={isMuted} loop playsInline src="/images/homepage/homepage-cream/0706.mp4"
+          <video ref={videoRef} muted={isMuted} loop playsInline src="/images/homepage/homepage-cream/0706.mp4"
             onPlay={handleVideoPlay} onPause={handleVideoPause} onLoadedMetadata={syncVideoMetadata} onTimeUpdate={syncVideoProgress}
             style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
           <motion.div className="da-video-overlay" style={{
@@ -3792,23 +4549,6 @@ const DAEnvironmentSection = () => {
             <span>{isMuted ? 'Sound on' : 'Mute'}</span>
           </button>
         </motion.div>
-
-        {/* ── SUPPORT PHOTO CARDS ────────────────────────────────── */}
-        {/* z-index 8 (above video card z:5) so they appear on top    */}
-        {SCARDS.map(card => (
-          <motion.div key={card.id} className="da-scard" style={{
-            ...card.pos,
-            width: card.w,
-            aspectRatio: card.ratio,
-            rotate: card.rotate,
-            scale: sScl,
-            opacity: sOp,
-            zIndex: 8,
-          }}>
-            <img src={card.src} alt={card.alt} loading="lazy"
-              style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-          </motion.div>
-        ))}
 
         {/* ── TEXT OVERLAY ────────────────────────────────────────── */}
         {/* z-index 20; fades up at 20–40% scroll progress            */}
@@ -4009,61 +4749,23 @@ const CinematicQuoteSection = () => {
 
 const CAROUSEL_REVIEWS = [
   {
-    id: 'cr-1',
-    subject: 'English',
-    category: 'HSC English',
-    author: 'Katelin Trinh',
-    yearLevel: 'Year 12',
-    result: { before: 'Rank 15th', after: 'Rank 6th' },
-    outcomes: ['Band 5–6', 'Essay Skills', 'Confidence'],
-    preview: "From 15th to 6th in my final HSC ranking. Miss Jenny didn't just lift my marks — she gave me a genuine love for the subject.",
-    pullQuote: "Miss Jenny didn't just lift my marks. She gave me a genuine love for the subject.",
-    story: "I am so grateful for DA Tuition for helping me improve my English results and boosting my confidence in the subject. My tutor Ms Jenny has been exceptionally patient, kind, knowledgeable and always willing to go above and beyond for her students to succeed.\n\nThanks to her, I had a drastic improvement in my assessment rank, moving from 15th to 6th in my final HSC assessment, and I received Band 5–6 across all my English assignments. Beyond academics, Ms Jenny also inspired me to develop a genuine passion for English.\n\nThe staff are incredibly friendly and supportive, and the learning environment is excellent. Highly recommended to anyone looking to excel.",
-    whyItWorked: [
-      { n: '01', point: 'Personalised essay coaching', detail: 'Every draft was reviewed with targeted feedback on thesis clarity, textual evidence, and voice — not generic advice.' },
-      { n: '02', point: 'Progress tracked against the cohort', detail: 'Ranking was monitored regularly so adjustments could be made before each assessment, not after it.' },
-      { n: '03', point: 'Genuine subject connection', detail: 'When a student enjoys what they are studying, results follow naturally. Miss Jenny made English compelling.' },
-    ],
-    learningFormat: 'Small Group · HSC English',
-    newTags: ['HSC Success', 'Band 6 Results', 'English', 'Teacher Support'],
-  },
-  {
-    id: 'cr-2',
+    id: 'cr-7',
     subject: 'Mathematics',
-    category: 'HSC Mathematics',
-    author: 'Bryant Lam',
-    yearLevel: 'Year 12',
-    result: { before: 'Confidence gaps', after: '5 Band 6s' },
-    outcomes: ['Five Band 6s', 'ATAR Achieved', 'Confidence'],
-    preview: "Eight years at DA. Five Band 6s in the HSC. The tutors here help you fall in love with learning.",
-    pullQuote: "Ms Amanda's passion for mathematics was infectious and made me hungry to improve.",
-    story: "Being a student at DA for the last 8 years has been an absolute life changer. DA has guided and supported me to achieve academic excellence — first through the selective school program, then all the way through the HSC.\n\nDespite having confidence issues in my academic abilities, these tutors drew out my best ability and motivated me to strive for success. Ms Amanda's passion for mathematics was infectious and made me hungry to improve.\n\nThrough DA I achieved five Band 6s in the HSC exam and the ATAR that made my parents proud. If you are looking for a place to develop a strong foundation and achieve your maximum potential, DA is the place for you.",
+    category: 'Mathematics',
+    author: 'Diana Nguyen',
+    yearLevel: 'Year 10',
+    result: { before: 'C Average', after: '94% · 1st Class' },
+    outcomes: ['94% Score', '1st in Class', 'Grade Jump'],
+    preview: "Mr Bunsea took me from a C average to 94% and first in my class. I've never been more grateful for a teacher.",
+    pullQuote: "He made the most difficult concepts so easy to understand. I finally believed maths was something I could be good at.",
+    story: "Before going to DA, I was a C average student in maths. After going to DA and having Mr Bunsea as my tutor, he made the most difficult concepts so easy to understand.\n\nIn my first term with him, he pulled me from a C to a B grade. I continued with him and finally achieved 94% on my latest maths exam — first in my class.\n\nI really appreciate his dedication. The teachers at DA are extremely hardworking and caring, always willing to go out of their way to make sure students get the results they deserve.",
     whyItWorked: [
-      { n: '01', point: 'Confidence built before performance', detail: 'Bryant arrived with self-doubt. The focus was first on belief, then on technique — in that order.' },
-      { n: '02', point: 'Eight years of accumulated understanding', detail: 'Long-term relationships mean tutors know how each student learns, not just what they need to know.' },
-      { n: '03', point: 'Selective school foundation', detail: 'The rigour of selective preparation gave Bryant a depth of mathematical reasoning that made the HSC manageable.' },
+      { n: '01', point: 'Conceptual clarity over memorisation', detail: 'Mr Bunsea never moved on until Diana understood the reasoning behind each method — not just the steps.' },
+      { n: '02', point: 'Grade-by-grade progression', detail: 'C to B in one term, then B to A. Staged milestones made the journey feel achievable rather than overwhelming.' },
+      { n: '03', point: 'A tutor who refused to accept the ceiling', detail: 'Diana was categorised as a C student. Mr Bunsea simply didn\'t accept that as the end of the story.' },
     ],
-    learningFormat: 'Small Group · HSC Mathematics',
-    newTags: ['HSC Success', 'Band 6 Results', 'Mathematics', 'Confidence'],
-  },
-  {
-    id: 'cr-3',
-    subject: 'General',
-    category: '8 Years at DA',
-    author: 'Lisa Vu',
-    yearLevel: 'Year 12',
-    result: { before: 'Below average', after: 'Bright future' },
-    outcomes: ['Mindset Shift', 'Academic Growth', '8 Years at DA'],
-    preview: "I began as a below-average student who hated school. Eight years later, I leave with a bright future and a gratitude I will carry for life.",
-    pullQuote: "DA staff are not just teachers but family — promoters of success who bring out the best in every individual.",
-    story: "DA Tuition is not just an educational environment but a place of upbringing and encouragement. As a committed student of 8 years, DA staff are not just teachers but family — promoters of success who bring out the best in every individual.\n\nInitially, I was a below-average student who did not concern myself with success. By being with Miss Linda, she advanced my understanding of what it means to be prosperous, guiding me through hard times by not only lifting my grades but also my perspective.\n\nI am now looking forward to a bright future, in gratitude and appreciation to all the tutors I have had.",
-    whyItWorked: [
-      { n: '01', point: 'The whole child, not just the grade', detail: 'Miss Linda worked on Lisa\'s perspective and self-belief long before the marks reflected it.' },
-      { n: '02', point: 'Consistency across eight years', detail: 'Trust is built over time. The relationship Lisa had with her tutors made honest conversations about struggle possible.' },
-      { n: '03', point: 'A community that holds high expectations', detail: 'Being surrounded by students who care about learning shifts what a student believes is possible for themselves.' },
-    ],
-    learningFormat: 'Small Group · Multi-Year Program',
-    newTags: ['Confidence', 'Academic Growth', 'Parent Feedback'],
+    learningFormat: 'Small Group · Mathematics',
+    newTags: ['Academic Growth', 'Mathematics', 'Teacher Support'],
   },
   {
     id: 'cr-4',
@@ -4085,23 +4787,61 @@ const CAROUSEL_REVIEWS = [
     newTags: ['Academic Growth', 'Mathematics', 'Confidence', 'Teacher Support'],
   },
   {
-    id: 'cr-5',
+    id: 'cr-2',
+    subject: 'Mathematics',
+    category: 'HSC Mathematics',
+    author: 'Bryant Lam',
+    yearLevel: 'Year 12',
+    result: { before: 'Confidence gaps', after: '5 Band 6s' },
+    outcomes: ['Five Band 6s', 'ATAR Achieved', 'Confidence'],
+    preview: "Eight years at DA. Five Band 6s in the HSC. The tutors here help you fall in love with learning.",
+    pullQuote: "Ms Amanda's passion for mathematics was infectious and made me hungry to improve.",
+    story: "Being a student at DA for the last 8 years has been an absolute life changer. DA has guided and supported me to achieve academic excellence — first through the selective school program, then all the way through the HSC.\n\nDespite having confidence issues in my academic abilities, these tutors drew out my best ability and motivated me to strive for success. Ms Amanda's passion for mathematics was infectious and made me hungry to improve.\n\nThrough DA I achieved five Band 6s in the HSC exam and the ATAR that made my parents proud. If you are looking for a place to develop a strong foundation and achieve your maximum potential, DA is the place for you.",
+    whyItWorked: [
+      { n: '01', point: 'Confidence built before performance', detail: 'Bryant arrived with self-doubt. The focus was first on belief, then on technique — in that order.' },
+      { n: '02', point: 'Eight years of accumulated understanding', detail: 'Long-term relationships mean tutors know how each student learns, not just what they need to know.' },
+      { n: '03', point: 'Selective school foundation', detail: 'The rigour of selective preparation gave Bryant a depth of mathematical reasoning that made the HSC manageable.' },
+    ],
+    learningFormat: 'Small Group · HSC Mathematics',
+    newTags: ['HSC Success', 'Band 6 Results', 'Mathematics', 'Confidence'],
+  },
+  {
+    id: 'cr-1',
     subject: 'English',
     category: 'HSC English',
-    author: 'Lillian Pham',
+    author: 'Katelin Trinh',
     yearLevel: 'Year 12',
-    result: { before: 'Struggling', after: 'Rank jump' },
-    outcomes: ['Essay Writing', 'Motivation', 'Rank Improved'],
-    preview: "English was my least favourite subject. Within weeks of joining DA, my marks improved dramatically and I jumped a significant number of ranks.",
-    pullQuote: "She makes classes enjoyable, and I am more motivated than ever to do well in English.",
-    story: "I had Miss Selina from the second term of my HSC year and I wish I had joined sooner. Prior to joining DA, English was my least favourite subject and my marks definitely reflected that.\n\nAlthough it had only been several weeks since I started, my marks for the second assessment task improved dramatically and I jumped up a significant number of ranks in my cohort.\n\nMy essay writing and creative writing skills have improved so much since I started. She makes classes enjoyable, and I am more motivated than ever to do well in English.",
+    result: { before: 'Rank 15th', after: 'Rank 6th' },
+    outcomes: ['Band 5–6', 'Essay Skills', 'Confidence'],
+    preview: "From 15th to 6th in my final HSC ranking. Miss Jenny didn't just lift my marks — she gave me a genuine love for the subject.",
+    pullQuote: "Miss Jenny didn't just lift my marks. She gave me a genuine love for the subject.",
+    story: "I am so grateful for DA Tuition for helping me improve my English results and boosting my confidence in the subject. My tutor Ms Jenny has been exceptionally patient, kind, knowledgeable and always willing to go above and beyond for her students to succeed.\n\nThanks to her, I had a drastic improvement in my assessment rank, moving from 15th to 6th in my final HSC assessment, and I received Band 5–6 across all my English assignments. Beyond academics, Ms Jenny also inspired me to develop a genuine passion for English.\n\nThe staff are incredibly friendly and supportive, and the learning environment is excellent. Highly recommended to anyone looking to excel.",
     whyItWorked: [
-      { n: '01', point: 'Quick diagnosis of the real problem', detail: 'Lillian\'s marks reflected disengagement, not lack of ability. Miss Selina addressed the root cause — not the symptom.' },
-      { n: '02', point: 'Writing skills built systematically', detail: 'Essay structure and creative voice were developed in parallel, lifting both assessment types simultaneously.' },
-      { n: '03', point: 'Motivation as the leading indicator', detail: 'When Lillian began enjoying English classes, consistent effort followed — and results caught up quickly.' },
+      { n: '01', point: 'Personalised essay coaching', detail: 'Every draft was reviewed with targeted feedback on thesis clarity, textual evidence, and voice — not generic advice.' },
+      { n: '02', point: 'Progress tracked against the cohort', detail: 'Ranking was monitored regularly so adjustments could be made before each assessment, not after it.' },
+      { n: '03', point: 'Genuine subject connection', detail: 'When a student enjoys what they are studying, results follow naturally. Miss Jenny made English compelling.' },
     ],
     learningFormat: 'Small Group · HSC English',
-    newTags: ['HSC Success', 'English', 'Teacher Support', 'Academic Growth'],
+    newTags: ['HSC Success', 'Band 6 Results', 'English', 'Teacher Support'],
+  },
+  {
+    id: 'cr-3',
+    subject: 'General',
+    category: '8 Years at DA',
+    author: 'Lisa Vu',
+    yearLevel: 'Year 12',
+    result: { before: 'Below average', after: 'Bright future' },
+    outcomes: ['Mindset Shift', 'Academic Growth', '8 Years at DA'],
+    preview: "I began as a below-average student who hated school. Eight years later, I leave with a bright future and a gratitude I will carry for life.",
+    pullQuote: "DA staff are not just teachers but family — promoters of success who bring out the best in every individual.",
+    story: "DA Tuition is not just an educational environment but a place of upbringing and encouragement. As a committed student of 8 years, DA staff are not just teachers but family — promoters of success who bring out the best in every individual.\n\nInitially, I was a below-average student who did not concern myself with success. By being with Miss Linda, she advanced my understanding of what it means to be prosperous, guiding me through hard times by not only lifting my grades but also my perspective.\n\nI am now looking forward to a bright future, in gratitude and appreciation to all the tutors I have had.",
+    whyItWorked: [
+      { n: '01', point: 'The whole child, not just the grade', detail: 'Miss Linda worked on Lisa\'s perspective and self-belief long before the marks reflected it.' },
+      { n: '02', point: 'Consistency across eight years', detail: 'Trust is built over time. The relationship Lisa had with her tutors made honest conversations about struggle possible.' },
+      { n: '03', point: 'A community that holds high expectations', detail: 'Being surrounded by students who care about learning shifts what a student believes is possible for themselves.' },
+    ],
+    learningFormat: 'Small Group · Multi-Year Program',
+    newTags: ['Confidence', 'Academic Growth', 'Parent Feedback'],
   },
   {
     id: 'cr-6',
@@ -4123,23 +4863,23 @@ const CAROUSEL_REVIEWS = [
     newTags: ['HSC Success', 'Confidence', 'Academic Growth'],
   },
   {
-    id: 'cr-7',
-    subject: 'Mathematics',
-    category: 'Mathematics',
-    author: 'Diana Nguyen',
-    yearLevel: 'Year 10',
-    result: { before: 'C Average', after: '94% · 1st Class' },
-    outcomes: ['94% Score', '1st in Class', 'Grade Jump'],
-    preview: "Mr Bunsea took me from a C average to 94% and first in my class. I've never been more grateful for a teacher.",
-    pullQuote: "He made the most difficult concepts so easy to understand. I finally believed maths was something I could be good at.",
-    story: "Before going to DA, I was a C average student in maths. After going to DA and having Mr Bunsea as my tutor, he made the most difficult concepts so easy to understand.\n\nIn my first term with him, he pulled me from a C to a B grade. I continued with him and finally achieved 94% on my latest maths exam — first in my class.\n\nI really appreciate his dedication. The teachers at DA are extremely hardworking and caring, always willing to go out of their way to make sure students get the results they deserve.",
+    id: 'cr-5',
+    subject: 'English',
+    category: 'HSC English',
+    author: 'Lillian Pham',
+    yearLevel: 'Year 12',
+    result: { before: 'Struggling', after: 'Rank jump' },
+    outcomes: ['Essay Writing', 'Motivation', 'Rank Improved'],
+    preview: "English was my least favourite subject. Within weeks of joining DA, my marks improved dramatically and I jumped a significant number of ranks.",
+    pullQuote: "She makes classes enjoyable, and I am more motivated than ever to do well in English.",
+    story: "I had Miss Selina from the second term of my HSC year and I wish I had joined sooner. Prior to joining DA, English was my least favourite subject and my marks definitely reflected that.\n\nAlthough it had only been several weeks since I started, my marks for the second assessment task improved dramatically and I jumped up a significant number of ranks in my cohort.\n\nMy essay writing and creative writing skills have improved so much since I started. She makes classes enjoyable, and I am more motivated than ever to do well in English.",
     whyItWorked: [
-      { n: '01', point: 'Conceptual clarity over memorisation', detail: 'Mr Bunsea never moved on until Diana understood the reasoning behind each method — not just the steps.' },
-      { n: '02', point: 'Grade-by-grade progression', detail: 'C to B in one term, then B to A. Staged milestones made the journey feel achievable rather than overwhelming.' },
-      { n: '03', point: 'A tutor who refused to accept the ceiling', detail: 'Diana was categorised as a C student. Mr Bunsea simply didn\'t accept that as the end of the story.' },
+      { n: '01', point: 'Quick diagnosis of the real problem', detail: 'Lillian\'s marks reflected disengagement, not lack of ability. Miss Selina addressed the root cause — not the symptom.' },
+      { n: '02', point: 'Writing skills built systematically', detail: 'Essay structure and creative voice were developed in parallel, lifting both assessment types simultaneously.' },
+      { n: '03', point: 'Motivation as the leading indicator', detail: 'When Lillian began enjoying English classes, consistent effort followed — and results caught up quickly.' },
     ],
-    learningFormat: 'Small Group · Mathematics',
-    newTags: ['Academic Growth', 'Mathematics', 'Teacher Support'],
+    learningFormat: 'Small Group · HSC English',
+    newTags: ['HSC Success', 'English', 'Teacher Support', 'Academic Growth'],
   },
   {
     id: 'cr-8',
@@ -4160,1723 +4900,508 @@ const CAROUSEL_REVIEWS = [
     learningFormat: 'Small Group · Multi-Year Program',
     newTags: ['Confidence', 'Academic Growth', 'Parent Feedback', 'Study Habits'],
   },
-
-  // ─────────────────────────────────────────────────────────────
-  // PLACEHOLDER REVIEWS — replace each entry with a verified
-  // testimonial before going live. All content below is sample
-  // data written to match DA's voice and ensure every filter
-  // displays a full grid of 8 cards.
-  // ─────────────────────────────────────────────────────────────
-
-  // PLACEHOLDER pr-01
   {
-    id: 'pr-01',
-    subject: 'English',
-    category: 'HSC English Advanced',
-    author: 'Tyler Pham',
-    yearLevel: 'Year 12',
-    result: { before: 'Band 4', after: 'Band 6' },
-    outcomes: ['Band 6 Essay', 'Rank Improved', 'HSC Success'],
-    preview: "I came to DA with a Band 4 essay average and left with a Band 6 in the HSC. Miss Jenny's feedback was the most useful I had received in six years of schooling.",
-    pullQuote: "The most useful feedback I had received in six years of schooling.",
-    story: "My writing had always been technically acceptable but emotionally flat. After joining DA in Term 2 of Year 12, Miss Jenny helped me find my voice without abandoning the rigour the markers expected.\n\nBy my final HSC exam, I was writing with genuine confidence. Band 6 felt earned, not lucky.",
-    whyItWorked: [
-      { n: '01', point: 'Voice and structure taught together', detail: 'Most tuition focuses on one or the other. Miss Jenny worked on both simultaneously, which accelerated improvement.' },
-      { n: '02', point: 'Timed writing practice', detail: 'Each session included timed paragraphs so exam conditions felt familiar, not frightening.' },
-      { n: '03', point: 'Targeted module coaching', detail: 'Specific attention to weaker modules lifted the overall band result.' },
-    ],
-    learningFormat: 'Small Group · HSC English',
-    newTags: ['Band 6 Results', 'HSC Success', 'English', 'Teacher Support'],
-  },
-
-  // PLACEHOLDER pr-02
-  {
-    id: 'pr-02',
-    subject: 'Mathematics',
-    category: 'HSC Mathematics Advanced',
-    author: 'Amy Vo',
-    yearLevel: 'Year 12',
-    result: { before: 'Below 80%', after: 'Band 6' },
-    outcomes: ['Band 6 Maths', 'ATAR Achieved', 'Exam Confidence'],
-    preview: "I was sitting in the high 70s when I started at DA. By the HSC I had a Band 6 in Mathematics Advanced. The tutors understood exactly where my gaps were and closed them one by one.",
-    pullQuote: "The tutors understood exactly where my gaps were and closed them one by one.",
-    story: "Mathematics had always been a subject I felt I could do — but not excel at. DA changed that. The team identified the specific topics costing me marks and gave me a clear path forward.\n\nBy the HSC, I wasn't just prepared — I was genuinely confident. The Band 6 reflected that.",
-    whyItWorked: [
-      { n: '01', point: 'Gap analysis before drilling', detail: 'Rather than restarting from scratch, DA identified exactly which topics were costing marks and focused there.' },
-      { n: '02', point: 'Past paper exposure', detail: 'Systematic work through HSC papers meant Amy recognised question types and knew instinctively how to approach them.' },
-      { n: '03', point: 'Confidence built through small wins', detail: 'Each mastered topic added to a growing sense of readiness. By exam day, Amy felt in control.' },
-    ],
-    learningFormat: 'Small Group · HSC Mathematics',
-    newTags: ['Band 6 Results', 'HSC Success', 'Mathematics', 'Confidence'],
-  },
-
-  // PLACEHOLDER pr-03
-  {
-    id: 'pr-03',
-    subject: 'Science',
-    category: 'Science',
-    author: 'Sophie Le',
-    yearLevel: 'Year 11',
-    result: { before: 'C grade', after: 'Top 10 in cohort' },
-    outcomes: ['Cohort Top 10', 'Lab Reports', 'Study Skills'],
-    preview: "Science had never clicked for me — until DA. Within a term I was in the top 10 of my cohort. My parents noticed the difference before I did.",
-    pullQuote: "Science had never clicked for me — until DA.",
-    story: "I had always understood concepts in class but struggled to apply them in assessments. DA helped me see the pattern in how science questions are structured and how to respond to them.\n\nMy parents were the first to notice something had shifted — I was actually talking about science at home.",
-    whyItWorked: [
-      { n: '01', point: 'Assessment structure decoded', detail: 'Sophie learned how science markers think — which unlocked her ability to express what she already understood.' },
-      { n: '02', point: 'Lab report technique', detail: 'A common weakness was transformed into a consistent strength with targeted feedback on report structure.' },
-      { n: '03', point: 'Parent-visible transformation', detail: 'When students begin discussing learning at home, it is a reliable sign that genuine engagement has taken hold.' },
-    ],
-    learningFormat: 'Small Group · Science',
-    newTags: ['Science', 'Study Habits', 'Teacher Support', 'Parent Feedback'],
-  },
-
-  // PLACEHOLDER pr-04
-  {
-    id: 'pr-04',
-    subject: 'Mathematics',
-    category: 'Mathematics',
-    author: 'James Chen',
-    yearLevel: 'Year 10',
-    result: { before: 'Struggling', after: 'A grade' },
-    outcomes: ['A Grade', 'Exam Confidence', 'Daily Practice'],
-    preview: "I was close to giving up on maths when I started at DA. Within a term I had an A grade. The difference was a tutor who refused to let me settle for less.",
-    pullQuote: "The difference was a tutor who refused to let me settle for less.",
-    story: "Year 10 maths felt like a wall I couldn't get over. Every assessment knocked me back. At DA, the tutor rebuilt the way I thought about problems — not just reteaching what I had missed.\n\nAn A grade at the end of term felt impossible in January. By June, it felt deserved.",
-    whyItWorked: [
-      { n: '01', point: 'Thinking rebuilt, not just content re-taught', detail: 'James was taught how to approach problems methodically — which had more impact than any individual topic revision.' },
-      { n: '02', point: 'Daily practice habit installed', detail: 'Consistent short practice sessions between classes compounded rapidly into visible results.' },
-      { n: '03', point: 'A tutor who held the standard', detail: 'Accepting "good enough" was never on the table. That refusal to lower the ceiling changed what James believed was possible.' },
-    ],
-    learningFormat: 'Small Group · Mathematics',
-    newTags: ['Mathematics', 'Confidence', 'Study Habits', 'Academic Growth'],
-  },
-
-  // PLACEHOLDER pr-05
-  {
-    id: 'pr-05',
-    subject: 'English',
-    category: 'HSC English',
-    author: 'Rachel Nguyen',
-    yearLevel: 'Year 12',
-    result: { before: 'Rank 20th', after: 'Rank 5th' },
-    outcomes: ['Band 6', 'Rank Jump', 'Creative Writing'],
-    preview: "English was something I endured rather than loved. DA helped me move from 20th to 5th in my cohort — and for the first time I actually enjoyed the process.",
-    pullQuote: "For the first time I actually enjoyed the process of studying English.",
-    story: "I had never enjoyed English. At DA, that changed. My tutor helped me find arguments I genuinely believed in and express them in a way that was both academically correct and genuinely mine.\n\nMoving from 20th to 5th in cohort ranking was the result — but the bigger change was that I wanted to keep writing.",
-    whyItWorked: [
-      { n: '01', point: 'Genuine engagement came first', detail: 'When students argue for ideas they believe in, their writing improves naturally. DA focused first on finding Rachel\'s voice.' },
-      { n: '02', point: 'Creative writing treated seriously', detail: 'The creative component was coached with the same rigour as analytical writing — not treated as secondary.' },
-      { n: '03', point: 'Ranking as a by-product', detail: 'The rank improvement came from genuine improvement in the writing, not from gaming the assessment.' },
-    ],
-    learningFormat: 'Small Group · HSC English',
-    newTags: ['Band 6 Results', 'English', 'HSC Success', 'Confidence'],
-  },
-
-  // PLACEHOLDER pr-06
-  {
-    id: 'pr-06',
-    subject: 'General',
-    category: 'Parent Testimonial',
-    author: 'Linda Tran (Parent)',
-    yearLevel: 'Year 8',
-    result: { before: 'Disengaged', after: 'Loves learning' },
-    outcomes: ['Attitude Shift', 'Self-Motivated', 'Confidence'],
-    preview: "My daughter used to dread homework. After two months at DA she was asking to go in early. The change in her attitude happened faster than I ever imagined.",
-    pullQuote: "After two months she was asking to go in early. I didn't expect it to happen so fast.",
-    story: "My daughter had switched off from school by Year 8. She wasn't struggling academically — she was simply disengaged. I brought her to DA hoping for a grade improvement.\n\nWhat I got was a complete shift in her relationship with learning. She talks about her tutor. She asks questions. She sets up her own study. The grades followed.",
-    whyItWorked: [
-      { n: '01', point: 'The relationship came before the results', detail: 'DA tutors invested in understanding who Linda\'s daughter was as a learner before focusing on what she needed to know.' },
-      { n: '02', point: 'Engagement as the real goal', detail: 'When a student begins to enjoy learning, academic results improve as a natural consequence — not as the primary aim.' },
-      { n: '03', point: 'A parent witness to the change', detail: 'The most reliable signal that something genuine has occurred is when a parent notices the change without being told.' },
-    ],
-    learningFormat: 'Small Group · Year 8',
-    newTags: ['Parent Feedback', 'Confidence', 'Teacher Support', 'Academic Growth'],
-  },
-
-  // PLACEHOLDER pr-07
-  {
-    id: 'pr-07',
-    subject: 'Mathematics',
-    category: 'HSC Mathematics Extension 1',
-    author: 'Kevin Liu',
-    yearLevel: 'Year 12',
-    result: { before: 'E2', after: 'E4' },
-    outcomes: ['E4 Extension 1', 'Problem Solving', 'Exam Readiness'],
-    preview: "Extension 1 Maths was humbling me. At DA I went from an E2 to an E4 by the HSC. The tutor made the hardest questions feel methodical rather than mysterious.",
-    pullQuote: "The hardest questions started to feel methodical rather than mysterious.",
-    story: "Extension 1 Mathematics is unforgiving. I was working hard but not smartly. At DA, the approach to complex problems — breaking them into logical steps — changed how I saw the entire subject.\n\nBy the HSC, I wasn't hoping for an E4. I was expecting one.",
-    whyItWorked: [
-      { n: '01', point: 'Logical decomposition of hard problems', detail: 'Kevin learned to break Extension problems into sub-steps — transforming how manageable even unfamiliar questions felt.' },
-      { n: '02', point: 'Proof and reasoning developed', detail: 'Understanding why a method works builds resilience when a question doesn\'t match the expected pattern.' },
-      { n: '03', point: 'Expectation shifted from hope to confidence', detail: 'By exam day the E4 was an expectation, not a hope. That mindset shift produced the result.' },
-    ],
-    learningFormat: 'Small Group · HSC Mathematics Extension',
-    newTags: ['Band 6 Results', 'Mathematics', 'HSC Success', 'Study Habits'],
-  },
-
-  // PLACEHOLDER pr-08
-  {
-    id: 'pr-08',
-    subject: 'Science',
-    category: 'Science',
-    author: 'Mei Zhang',
-    yearLevel: 'Year 9',
-    result: { before: 'Below average', after: 'Merit Award' },
-    outcomes: ['Merit Award', 'Science Excellence', 'Confidence'],
-    preview: "I received a merit award for Science at the end of Year 9 — something that would have seemed impossible at the start of the year. DA helped me find a genuine love for the subject.",
-    pullQuote: "A merit award in Science at the end of Year 9 — something that would have seemed impossible at the start.",
-    story: "Science had always felt abstract to me — disconnected from anything real. At DA my tutor helped me see the connections between concepts and the world outside the classroom.\n\nThe merit award at year end surprised my school teachers. It didn't surprise me — I had felt the improvement building.",
-    whyItWorked: [
-      { n: '01', point: 'Real-world connections made explicit', detail: 'Abstract scientific concepts became graspable when linked to observable phenomena Mei already understood.' },
-      { n: '02', point: 'Curiosity nurtured before content', detail: 'A student who wants to know why something works will learn the how naturally. DA built the curiosity first.' },
-      { n: '03', point: 'Consistent recognition of progress', detail: 'Small improvements were acknowledged and built upon — creating momentum rather than allowing plateaus.' },
-    ],
-    learningFormat: 'Small Group · Science',
-    newTags: ['Science', 'Academic Growth', 'Teacher Support', 'Confidence'],
-  },
-
-  // PLACEHOLDER pr-09
-  {
-    id: 'pr-09',
-    subject: 'Mathematics',
-    category: 'Parent Testimonial',
-    author: 'Thomas Nguyen (Parent)',
-    yearLevel: 'Year 10',
-    result: { before: 'No study routine', after: 'Self-directed learner' },
-    outcomes: ['Study Routine', 'Grade Improvement', 'Independence'],
-    preview: "My son had no study routine at all. DA didn't just help with Maths — they installed habits that now carry across every subject. He now studies without being asked.",
-    pullQuote: "He now studies without being asked. That is the most significant change DA has given us.",
-    story: "The academic results were important — and they improved significantly. But what struck us as parents was the transformation in our son's habits and self-direction.\n\nHe organises his week, tracks his assessments, and asks for help before problems become crises. DA gave him a structure he has made his own.",
-    whyItWorked: [
-      { n: '01', point: 'Structure taught alongside content', detail: 'DA tutors modelled how to organise study, track progress, and plan ahead — not just how to solve mathematical problems.' },
-      { n: '02', point: 'Independence as the goal', detail: 'The aim was always for students to not need DA — to have the skills and habits to succeed independently. That aim drives the teaching.' },
-      { n: '03', point: 'Parent-visible transformation', detail: 'When changes cross from school into home life without prompting, they are likely to be lasting rather than performance-driven.' },
-    ],
-    learningFormat: 'Small Group · Mathematics',
-    newTags: ['Parent Feedback', 'Study Habits', 'Academic Growth', 'Mathematics'],
-  },
-
-  // PLACEHOLDER pr-10
-  {
-    id: 'pr-10',
-    subject: 'Science',
-    category: 'HSC Biology',
-    author: 'Jessica Lam',
-    yearLevel: 'Year 12',
-    result: { before: 'Band 3–4', after: 'Band 5–6' },
-    outcomes: ['Band 5–6', 'HSC Biology', 'Study Strategy'],
-    preview: "My Biology marks were inconsistent and I couldn't understand why. DA helped me see the pattern. I went from a Band 3–4 average to Band 5–6 by the HSC.",
-    pullQuote: "DA helped me see the pattern I had been missing — and once I saw it, every assessment made sense.",
-    story: "Biology had always frustrated me. I would study for hours and still produce B or C work. At DA, my tutor helped me understand how HSC Biology questions are structured — and why my answers kept missing the mark.\n\nThe Band 5–6 result was less a surprise than a confirmation of what I had worked toward.",
-    whyItWorked: [
-      { n: '01', point: 'Question unpacking as a core skill', detail: 'Jessica learned to identify what each question was really asking — which transformed how she structured her responses.' },
-      { n: '02', point: 'Syllabus dot points as the map', detail: 'Every revision session was built around the syllabus, ensuring no marks were lost through incomplete coverage.' },
-      { n: '03', point: 'Consistency addressed directly', detail: 'The inconsistency came from gaps in understanding, not effort. Addressing those gaps made results predictable.' },
-    ],
-    learningFormat: 'Small Group · HSC Science',
-    newTags: ['Science', 'HSC Success', 'Academic Growth', 'Teacher Support'],
-  },
-
-  // PLACEHOLDER pr-11
-  {
-    id: 'pr-11',
-    subject: 'English',
-    category: 'English',
-    author: 'Sarah Kim',
-    yearLevel: 'Year 11',
-    result: { before: 'Average student', after: 'English Dux' },
-    outcomes: ['English Dux', 'Essay Writing', 'Reading Skills'],
-    preview: "I was average at English — never bad, never exceptional. By the end of Year 11 I was the English Dux of my school. DA changed how I thought about language itself.",
-    pullQuote: "DA changed how I thought about language itself — not just how to write about it.",
-    story: "I had always viewed English as something to survive, not something to master. At DA, that changed. My tutor helped me see texts as conversations — full of choices made by real authors with real intentions.\n\nWhen you read that way, writing becomes easier. By the end of Year 11 I was the English Dux. I hadn't been trying to win anything. I had just started to love the subject.",
-    whyItWorked: [
-      { n: '01', point: 'Texts read as conversations', detail: 'Teaching Sarah to see texts as authorial choices rather than content to summarise fundamentally changed how she engaged with literature.' },
-      { n: '02', point: 'Love of reading before techniques', detail: 'Genuine engagement with texts produces the insights that sophisticated essays require. Technique followed naturally.' },
-      { n: '03', point: 'Raising the internal standard', detail: 'When Sarah began evaluating her own work honestly, she stopped settling for acceptable and started reaching for exceptional.' },
-    ],
-    learningFormat: 'Small Group · English',
-    newTags: ['English', 'Study Habits', 'Academic Growth', 'Confidence'],
-  },
-
-  // PLACEHOLDER pr-12
-  {
-    id: 'pr-12',
-    subject: 'General',
-    category: 'Parent Testimonial',
-    author: 'David Tran (Parent)',
-    yearLevel: 'Year 12',
-    result: { before: 'Worried about HSC', after: '4 Band 6s' },
-    outcomes: ['4 Band 6s', 'ATAR Achieved', 'Peace of Mind'],
-    preview: "We were deeply worried about our daughter's HSC. DA gave us four Band 6s — and gave us back our peace of mind during the hardest year of her schooling.",
-    pullQuote: "DA gave us four Band 6s — and gave us back our peace of mind.",
-    story: "The HSC year is stressful for the entire family. We enrolled our daughter at DA after her Year 11 results came back lower than expected. From the first session, the tutors gave us a clear sense of what was needed and a plan to achieve it.\n\nFour Band 6s at the end of Year 12. We are deeply grateful.",
-    whyItWorked: [
-      { n: '01', point: 'Calm, structured plan given to the family', detail: 'Anxiety is reduced when parents see a clear strategy. DA provided that — and followed through on every step.' },
-      { n: '02', point: 'Multiple subject coverage', detail: 'Coordinated tuition across subjects meant no one area fell behind while another improved.' },
-      { n: '03', point: 'Progress communicated to parents', detail: 'Keeping parents informed helped the whole household stay calm and focused during a high-pressure year.' },
-    ],
-    learningFormat: 'Small Group · HSC Multi-Subject',
-    newTags: ['Parent Feedback', 'HSC Success', 'Band 6 Results', 'Teacher Support'],
-  },
-
-  // PLACEHOLDER pr-13
-  {
-    id: 'pr-13',
-    subject: 'Mathematics',
-    category: 'Mathematics',
-    author: 'Alex Nguyen',
-    yearLevel: 'Year 7',
-    result: { before: 'Year 5 maths level', after: 'Top of Year 7' },
-    outcomes: ['Top of Year 7', 'Foundation Fixed', 'Confidence'],
-    preview: "I started at DA in Year 7 at roughly a Year 5 maths level. Within 18 months I was the top student in my class. The tutors found the gaps I didn't know existed.",
-    pullQuote: "The tutors found the gaps I didn't know I had — and filled them so quietly I barely noticed it happening.",
-    story: "I had passed every maths test at primary school but without really understanding the fundamentals. By Year 7, those cracks showed. At DA, my tutor went back to the foundations without making me feel embarrassed — and rebuilt from there.\n\n18 months later I was top of my class. The foundation makes everything else easier.",
-    whyItWorked: [
-      { n: '01', point: 'Foundation gaps identified without judgment', detail: 'Students who have "passed" without truly understanding are common. DA addressed Alex\'s gaps without making him feel behind.' },
-      { n: '02', point: 'Rebuilt from first principles', detail: 'Rather than patching the gaps, the foundations were rebuilt properly — making every subsequent topic faster to learn.' },
-      { n: '03', point: 'Confidence followed competence', detail: 'As Alex\'s actual understanding grew, his confidence grew with it — built on something real rather than reassurance.' },
-    ],
-    learningFormat: 'Small Group · Primary & High School',
-    newTags: ['Mathematics', 'Academic Growth', 'Study Habits', 'Confidence'],
-  },
-
-  // PLACEHOLDER pr-14
-  {
-    id: 'pr-14',
-    subject: 'General',
-    category: 'Parent Testimonial',
-    author: 'Olivia Ho (Parent)',
-    yearLevel: 'Three children',
-    result: { before: 'Uncertain futures', after: 'All three thriving' },
-    outcomes: ['3 Children at DA', 'All Thriving', 'Family Trust'],
-    preview: "We have had three children at DA over nine years. Each one has been treated as an individual. Each one has exceeded what we initially hoped for.",
-    pullQuote: "Each child has been treated as an individual. That is rarer than it sounds.",
-    story: "Our eldest started at DA in Year 5 and went through to the HSC. We enrolled our second child, then our third. Nine years later, all three have had different experiences — different tutors, different challenges, different outcomes. All three have thrived.\n\nDA's consistency is what gives us confidence. The values don't change. The standard doesn't drop. The care doesn't diminish.",
-    whyItWorked: [
-      { n: '01', point: 'Consistency across years and children', detail: 'The standard of teaching and care that Olivia\'s first child experienced was the same her third child received years later.' },
-      { n: '02', point: 'Each child treated individually', detail: 'Three siblings with different learning styles were each given appropriate approaches — not the same programme with different names.' },
-      { n: '03', point: 'Trust built over nine years', detail: 'Long-term families stay because the relationship delivers year after year. That trust is the clearest signal of consistent quality.' },
-    ],
-    learningFormat: 'Small Group · Multi-Year Family',
-    newTags: ['Parent Feedback', 'Academic Growth', 'Confidence', 'Teacher Support'],
-  },
-
-  // PLACEHOLDER pr-15
-  {
-    id: 'pr-15',
-    subject: 'Science',
-    category: 'HSC Chemistry',
-    author: 'Nathan Park',
-    yearLevel: 'Year 12',
-    result: { before: 'Band 3', after: 'Band 6' },
-    outcomes: ['Band 6 Chemistry', 'HSC Science', 'Lab Excellence'],
-    preview: "Chemistry was my weakest HSC subject. After six months at DA it became my highest-scoring. The transformation came from understanding the why, not just the what.",
-    pullQuote: "After six months at DA, Chemistry became my highest HSC score.",
-    story: "I had been memorising chemistry content without understanding it — which worked until it didn't. At DA, my tutor rebuilt my understanding from the conceptual foundations. Questions that had seemed random became predictable.\n\nChemistry went from my weakest HSC subject to my strongest.",
-    whyItWorked: [
-      { n: '01', point: 'Conceptual understanding over memorisation', detail: 'When the underlying principles are understood, chemistry questions become pattern-recognition rather than content-recall.' },
-      { n: '02', point: 'Lab skills developed rigorously', detail: 'The practical component was treated with the same seriousness as the theory, benefiting both parts of the assessment.' },
-      { n: '03', point: 'Band 3 to Band 6 in a single year', detail: 'A significant shift requiring both a motivated student and exactly the right teaching approach.' },
-    ],
-    learningFormat: 'Small Group · HSC Science',
-    newTags: ['Science', 'Band 6 Results', 'HSC Success', 'Study Habits'],
-  },
-
-  // PLACEHOLDER pr-16
-  {
-    id: 'pr-16',
-    subject: 'English',
-    category: 'English',
-    author: 'Emma Tran',
-    yearLevel: 'Year 8',
-    result: { before: 'Hated reading', after: 'Writing competitions' },
-    outcomes: ['Writing Award', 'Reading Confidence', 'Creative Voice'],
-    preview: "I genuinely hated reading. Now I enter writing competitions and win some of them. DA didn't teach me to read — they helped me fall in love with stories.",
-    pullQuote: "DA didn't teach me to read — they helped me fall in love with stories.",
-    story: "My parents brought me to DA hoping I would just stop failing English assessments. What happened instead was that I discovered I actually love stories — I just hadn't found the right ones or the right way into them.\n\nI now write for pleasure. I enter competitions. My teacher uses my essays as examples in class.",
-    whyItWorked: [
-      { n: '01', point: 'The right texts at the right time', detail: 'Emma\'s tutor curated texts that genuinely interested her — which opened up the subject rather than making it feel prescribed.' },
-      { n: '02', point: 'Creative writing as an art form', detail: 'When students discover that writing is a craft they can develop, their engagement with all English work transforms.' },
-      { n: '03', point: 'From reluctant reader to writer', detail: 'The progression from passive disengagement to active creative output reflects a fundamental shift in how Emma relates to language.' },
-    ],
-    learningFormat: 'Small Group · English',
-    newTags: ['English', 'Teacher Support', 'Study Habits', 'Parent Feedback'],
-  },
-
-  // PLACEHOLDER pr-17
-  {
-    id: 'pr-17',
-    subject: 'English',
-    category: 'HSC English Extension',
-    author: 'Caitlin Wong',
-    yearLevel: 'Year 12',
-    result: { before: 'Below expectation', after: 'Band E4' },
-    outcomes: ['Band E4', 'Extension Essay', 'Deep Thinking'],
-    preview: "Extension English was the subject I nearly dropped. DA helped me find genuine meaning in it — and I ended up with a Band E4 in the HSC.",
-    pullQuote: "I nearly dropped Extension English. I ended up with a Band E4. DA made that possible.",
-    story: "Extension 1 English is a subject that rewards deep thinking — but I had been approaching it as a skills exercise. My DA tutor helped me engage with the ideas rather than the techniques, and the techniques improved as a result.\n\nBy the HSC, Extension English had become the subject I was most proud of.",
-    whyItWorked: [
-      { n: '01', point: 'Ideas before techniques', detail: 'Extension English rewards genuine philosophical engagement. Teaching Caitlin to think deeply produced better writing than technique drills.' },
-      { n: '02', point: 'Essay structure that serves the argument', detail: 'Structure was taught in service of the argument rather than as a formula — which is precisely what Extension markers value.' },
-      { n: '03', point: 'A near-dropout became a success story', detail: 'The willingness to persist through genuine difficulty, supported by the right guidance, produced a result that surprised even Caitlin.' },
-    ],
-    learningFormat: 'Small Group · HSC English Extension',
-    newTags: ['English', 'HSC Success', 'Band 6 Results', 'Academic Growth'],
-  },
-
-  // PLACEHOLDER pr-18
-  {
-    id: 'pr-18',
-    subject: 'English',
-    category: 'English',
-    author: 'Daniel Huynh',
-    yearLevel: 'Year 10',
-    result: { before: 'Reluctant writer', after: 'Class model essays' },
-    outcomes: ['Class Rep Essays', 'Confidence', 'Oral Skills'],
-    preview: "I dreaded English class. At DA I found a reason to care about language. By Year 10 I was the one my teacher asked to model essays for the rest of the class.",
-    pullQuote: "By Year 10 I was the one my teacher asked to model essays for the class.",
-    story: "English felt performative to me — like I was saying what I was supposed to say rather than what I actually thought. At DA, that changed. My tutor created space for my actual perspective and showed me how to express it in ways that worked academically.\n\nThe transition from dreading English to having my essays used as class models was not something I anticipated.",
-    whyItWorked: [
-      { n: '01', point: 'Authentic voice developed', detail: 'Daniel\'s tutor worked with his actual perspective rather than replacing it with a "standard" academic voice — producing writing that felt genuine.' },
-      { n: '02', point: 'Oral skills built alongside writing', detail: 'Developing the ability to articulate ideas verbally strengthened Daniel\'s written expression significantly.' },
-      { n: '03', point: 'Academic credibility built from the inside', detail: 'When students discover that their own thinking has academic value, their confidence and output both change dramatically.' },
-    ],
-    learningFormat: 'Small Group · English',
-    newTags: ['English', 'Confidence', 'Study Habits', 'Academic Growth'],
-  },
-
-  // PLACEHOLDER pr-19
-  {
-    id: 'pr-19',
-    subject: 'Science',
-    category: 'Science',
-    author: 'Lily Phan',
-    yearLevel: 'Year 9',
-    result: { before: 'Failing assessments', after: 'Consistent B+' },
-    outcomes: ['B+ Average', 'Science Confidence', 'Exam Skills'],
-    preview: "I was failing Science assessments and couldn't understand why — I thought I understood the content. DA helped me see that understanding and communicating are two different skills.",
-    pullQuote: "Understanding the content and communicating it in assessments are two very different skills. DA taught me both.",
-    story: "I knew the science. What I couldn't do was express it in a way that earned marks. My DA tutor helped me understand exactly what science assessors are looking for and how to structure my responses accordingly.\n\nFailures became consistent B+ results — not because I learned more content, but because I learned how to show what I already knew.",
-    whyItWorked: [
-      { n: '01', point: 'Communication and comprehension separated', detail: 'Lily understood the content but couldn\'t express it in assessment format. These two skills were developed separately then integrated.' },
-      { n: '02', point: 'Marker perspective taught explicitly', detail: 'Understanding what markers are looking for — and why — transformed how Lily structured every response.' },
-      { n: '03', point: 'From failure to consistency', detail: 'The goal was not a single good result but reliable performance. Consistent B+ results reflected genuine mastery.' },
-    ],
-    learningFormat: 'Small Group · Science',
-    newTags: ['Science', 'Confidence', 'Academic Growth', 'Study Habits'],
-  },
-
-  // PLACEHOLDER pr-20
-  {
-    id: 'pr-20',
-    subject: 'Science',
-    category: 'HSC Physics',
-    author: 'Marcus Vo',
-    yearLevel: 'Year 12',
-    result: { before: 'D average', after: 'Band 5' },
-    outcomes: ['Band 5 Physics', 'HSC Science', 'Mathematical Rigour'],
-    preview: "Physics was my most feared HSC subject. DA turned it into my most confident. I went from a D average to a Band 5 by learning to love the mathematics inside the physics.",
-    pullQuote: "I went from a D average to Band 5 by learning to love the mathematics inside the physics.",
-    story: "I had been treating Physics as a memorisation subject — which doesn't work. At DA I learned to see the mathematical elegance underneath the content. The equations stopped being things to remember and started being tools to think with.\n\nThe Band 5 result in the HSC reflected a genuine change in how I understood the subject.",
-    whyItWorked: [
-      { n: '01', point: 'Physics as applied mathematics', detail: 'Marcus was taught to see physics equations as reasoning tools rather than memorisable formulas — which changed everything.' },
-      { n: '02', point: 'Mathematical skills built alongside physics', detail: 'Where the mathematics was weak, it was strengthened so it could serve the physics rather than limit it.' },
-      { n: '03', point: 'Fear replaced with appreciation', detail: 'The emotional relationship with a subject determines how students engage with it. Marcus left DA with genuine respect for physics.' },
-    ],
-    learningFormat: 'Small Group · HSC Science',
-    newTags: ['Science', 'Band 6 Results', 'HSC Success', 'Study Habits'],
-  },
-
-  // PLACEHOLDER pr-21
-  {
-    id: 'pr-21',
-    subject: 'Science',
-    category: 'Science',
-    author: 'Zoe Chen',
-    yearLevel: 'Year 11',
-    result: { before: 'C grade', after: 'Science Dux' },
-    outcomes: ['Science Dux', 'Academic Growth', 'Lab Skills'],
-    preview: "I ended Year 11 as the Dux of Science. At the start of the year I was a C student. DA gave me a way of thinking about science that changed everything.",
-    pullQuote: "DA gave me a way of thinking about science that changed everything — including how I saw myself.",
-    story: "I had always thought I was simply not a science person. DA helped me understand that science is a method of thinking, not a collection of facts. Once I understood that, my ability to approach new topics accelerated rapidly.\n\nYear 11 Dux of Science felt impossible in February. In December, it felt earned.",
-    whyItWorked: [
-      { n: '01', point: 'Science as a method, not a body of content', detail: 'When students understand scientific reasoning, they can approach unfamiliar content confidently rather than waiting to be taught each topic.' },
-      { n: '02', point: 'Identity shift from "not a science person"', detail: 'The belief that one is not capable is often the primary barrier. Changing that belief is the most important thing a good tutor can do.' },
-      { n: '03', point: 'Lab skills as a differentiator', detail: 'Excellence in the practical component consistently differentiates top-performing students from their peers.' },
-    ],
-    learningFormat: 'Small Group · Science',
-    newTags: ['Science', 'Academic Growth', 'Confidence', 'Teacher Support'],
-  },
-
-  // PLACEHOLDER pr-22
-  {
-    id: 'pr-22',
-    subject: 'Science',
-    category: 'HSC Science',
-    author: 'Ryan Nguyen',
-    yearLevel: 'Year 12',
-    result: { before: 'Inconsistent results', after: 'Band 5–6 both sciences' },
-    outcomes: ['Band 5–6', 'Chemistry & Physics', 'Exam Strategy'],
-    preview: "I was studying two HSC sciences and struggling to keep both on track. DA helped me develop a strategy for both — and I ended with Band 5–6 across the board.",
-    pullQuote: "Managing two HSC sciences alone was overwhelming. DA made it feel structured and achievable.",
-    story: "Studying both Chemistry and Physics for the HSC while keeping other subjects on track was genuinely difficult. At DA, the tutors helped me develop a study strategy that served all subjects without sacrificing any.\n\nBand 5–6 across both sciences felt like the result of a year of organised, intentional effort.",
-    whyItWorked: [
-      { n: '01', point: 'Multi-subject strategy developed', detail: 'Ryan needed a plan that worked across two sciences simultaneously. DA built that plan and helped him execute it systematically.' },
-      { n: '02', point: 'Consistent results over isolated peaks', detail: 'The goal was reliable Band 5–6 performance rather than individual exam success — requiring consistent preparation all year.' },
-      { n: '03', point: 'Subject-specialist tutors for each science', detail: 'Expert guidance tailored to each discipline rather than generic study advice produced distinct improvement in both subjects.' },
-    ],
-    learningFormat: 'Small Group · HSC Science',
-    newTags: ['Science', 'HSC Success', 'Teacher Support', 'Study Habits'],
-  },
-
-  // ── NEW placeholders pr-23–pr-42 ─────────────────────────────
-  // PLACEHOLDER pr-23 — Band 6 Results group
-  {
-    id: 'pr-23',
-    subject: 'Economics',
-    category: 'HSC Economics',
-    author: 'Michael Tran',
-    yearLevel: 'Year 12',
-    result: { before: 'Band 4', after: 'Band 6' },
-    outcomes: ['Band 6 Economics', 'Essay Technique', 'HSC Success'],
-    preview: "I went from Band 4 to Band 6 in Economics. DA helped me understand how to structure an argument the way examiners reward.",
-    pullQuote: "I finally understood what examiners wanted — and gave it to them.",
-    story: "Economics had always confused me because I understood the theory but couldn't translate it into exam marks. At DA my tutor showed me exactly how to structure an economic argument.\n\nBand 6 in the HSC felt like a reward for learning to think as well as know.",
-    whyItWorked: [
-      { n: '01', point: 'Examiner perspective taught', detail: 'Understanding what markers are looking for changed how Michael structured every response.' },
-      { n: '02', point: 'Data integration drilled', detail: 'Using statistics and real-world examples was practised until it became automatic.' },
-      { n: '03', point: 'Essay scaffolding mastered', detail: 'A clear argumentative framework meant marks were consistent rather than unpredictable.' },
-    ],
-    learningFormat: 'Small Group · HSC Economics',
-    newTags: ['Band 6 Results', 'HSC Success'],
-  },
-
-  // PLACEHOLDER pr-24 — HSC Success group
-  {
-    id: 'pr-24',
-    subject: 'Legal Studies',
-    category: 'HSC Legal Studies',
-    author: 'Emma Liu',
-    yearLevel: 'Year 12',
-    result: { before: 'Band 3', after: 'Band 6' },
-    outcomes: ['Band 6 Legal Studies', 'Critical Analysis', 'HSC Success'],
-    preview: "Legal Studies felt like it required a different kind of thinking. DA gave me that — and I went from Band 3 to Band 6.",
-    pullQuote: "Legal Studies requires a different kind of thinking. DA gave me exactly that.",
-    story: "I found Legal Studies difficult because the answers weren't as clear as in other subjects. At DA I learned how to construct and evaluate legal arguments properly.\n\nThe Band 6 result in the HSC validated a year of learning to think critically about law and justice.",
-    whyItWorked: [
-      { n: '01', point: 'Legal reasoning developed', detail: 'Emma learned to construct balanced legal arguments — the core skill Legal Studies rewards.' },
-      { n: '02', point: 'Case studies integrated', detail: 'Specific case references were woven into responses naturally, not forced in as afterthoughts.' },
-      { n: '03', point: 'Consistent practice across all topics', detail: 'No section of the syllabus was left uncovered. That completeness showed in the final result.' },
-    ],
-    learningFormat: 'Small Group · HSC HSIE',
-    newTags: ['HSC Success', 'Band 6 Results'],
-  },
-
-  // PLACEHOLDER pr-25 — HSC Success group
-  {
-    id: 'pr-25',
-    subject: 'Business Studies',
-    category: 'HSC Business Studies',
-    author: 'Jason Park',
-    yearLevel: 'Year 12',
-    result: { before: 'Band 4', after: 'Band 5–6' },
-    outcomes: ['Band 5–6', 'Business Strategy', 'HSC Success'],
-    preview: "I was a solid Band 4 student who couldn't break through. DA showed me the difference between knowing content and applying it at Band 6 level.",
-    pullQuote: "There is a specific difference between Band 4 and Band 6 answers. DA showed me exactly what that difference is.",
-    story: "Band 4 in Business Studies comes from knowing the content. Band 6 comes from applying it. At DA I learned to do the second.\n\nThe improvement in my responses was visible within a month — and the HSC result confirmed that.",
-    whyItWorked: [
-      { n: '01', point: 'Application over recall', detail: 'Jason was taught to use theory to analyse scenarios rather than just define terms — which is what Band 6 requires.' },
-      { n: '02', point: 'Extended response technique', detail: 'The longer responses received systematic feedback until they met Band 6 standards consistently.' },
-      { n: '03', point: 'Real-world examples used', detail: 'Contemporary business examples made Jason\'s responses feel current and sophisticated to markers.' },
-    ],
-    learningFormat: 'Small Group · HSC Business',
-    newTags: ['HSC Success', 'Academic Growth'],
-  },
-
-  // PLACEHOLDER pr-26 — HSC Success group
-  {
-    id: 'pr-26',
-    subject: 'General',
-    category: 'HSC Multi-Subject',
-    author: 'Natalie Vo',
-    yearLevel: 'Year 12',
-    result: { before: 'Band 3–4 across subjects', after: '4 Band 5s' },
-    outcomes: ['4 Band 5s', 'ATAR Achieved', 'Holistic Improvement'],
-    preview: "I came to DA needing to lift across all my subjects. I left with four Band 5s and an ATAR I had told myself was impossible.",
-    pullQuote: "Four Band 5s and an ATAR I had told myself was impossible.",
-    story: "The HSC felt overwhelming when every subject needed attention. DA helped me prioritise what to work on across my four subjects and made each one feel manageable.\n\nFour Band 5s. I came in hoping for one Band 5. I got four.",
-    whyItWorked: [
-      { n: '01', point: 'Cross-subject strategy built', detail: 'A study schedule that gave appropriate time to each subject prevented any one area from dragging the ATAR down.' },
-      { n: '02', point: 'Each subject coached by a specialist', detail: 'Natalie didn\'t receive generic tutoring — each subject had a tutor who knew it deeply.' },
-      { n: '03', point: 'Progress tracking kept motivation alive', detail: 'Seeing improvement across multiple subjects sustained the effort required across a full HSC year.' },
-    ],
-    learningFormat: 'Small Group · HSC Multi-Subject',
-    newTags: ['HSC Success', 'Academic Growth'],
-  },
-
-  // PLACEHOLDER pr-27 — HSC Success group
-  {
-    id: 'pr-27',
-    subject: 'Mathematics',
-    category: 'HSC Mathematics Extension 2',
-    author: 'Chris Nguyen',
-    yearLevel: 'Year 12',
-    result: { before: 'E2', after: 'E4' },
-    outcomes: ['E4 Extension 2', 'Proof Writing', 'HSC Success'],
-    preview: "Extension 2 Mathematics is a different subject from any other. DA helped me understand proof writing and I went from E2 to E4 in the HSC.",
-    pullQuote: "Extension 2 is about proof and rigour. DA gave me both.",
-    story: "Extension 2 Mathematics requires a different level of mathematical rigour than any other HSC subject. At DA the tutor taught me to think like a mathematician — not just solve problems.\n\nThe E4 in the HSC reflected a genuine shift in how I understood and communicated mathematics.",
-    whyItWorked: [
-      { n: '01', point: 'Proof writing taught systematically', detail: 'The ability to construct a rigorous mathematical proof was built step by step rather than expected as a given.' },
-      { n: '02', point: 'Complex topics mastered', detail: 'The topics most students find hardest were given dedicated attention and made genuinely accessible.' },
-      { n: '03', point: 'Mathematical reasoning over computation', detail: 'Extension 2 rewards thinking, not calculating. Chris was taught to lead with reasoning.' },
-    ],
-    learningFormat: 'Small Group · HSC Mathematics Extension',
-    newTags: ['HSC Success', 'Mathematics'],
-  },
-
-  // PLACEHOLDER pr-28 — HSC Success group
-  {
-    id: 'pr-28',
-    subject: 'General',
-    category: 'HSC Humanities',
-    author: 'Priya Sharma',
-    yearLevel: 'Year 12',
-    result: { before: 'Mid-band', after: 'Band 5–6 English & History' },
-    outcomes: ['Band 5–6 English', 'Band 5–6 History', 'Writing Excellence'],
-    preview: "English and Modern History both required strong analytical writing. DA helped me develop an approach that worked for both — and I ended with Band 5–6 in each.",
-    pullQuote: "The writing skills I built at DA transferred across every humanities subject I studied.",
-    story: "My two weakest subjects both required the same core skill — analytical writing. At DA I was taught a transferable approach to argumentation that lifted both subjects simultaneously.\n\nBand 5–6 in English and Modern History. The skills transferred exactly as my tutor promised.",
-    whyItWorked: [
-      { n: '01', point: 'Transferable writing framework', detail: 'A single analytical structure, adapted for each subject, improved Priya\'s performance across humanities simultaneously.' },
-      { n: '02', point: 'Thesis construction mastered', detail: 'A clear, arguable thesis is the foundation of strong humanities essays. Priya\'s were consistently strong.' },
-      { n: '03', point: 'Evidence integration technique', detail: 'Quoting, paraphrasing, and analysing evidence — rather than summarising it — was practised until automatic.' },
-    ],
-    learningFormat: 'Small Group · HSC Humanities',
-    newTags: ['HSC Success', 'Academic Growth'],
-  },
-
-  // PLACEHOLDER pr-29 — Confidence group
-  {
-    id: 'pr-29',
-    subject: 'General',
-    category: 'Primary School',
-    author: 'Emma Wong',
-    yearLevel: 'Year 6',
-    result: { before: 'Anxious learner', after: 'Loves school' },
-    outcomes: ['Attitude Shift', 'Confidence', 'School Enjoyment'],
-    preview: "My daughter used to come home crying about school. After three months at DA she was excited to go. The confidence shift happened faster than I expected.",
-    pullQuote: "She went from dreading school to looking forward to Monday mornings.",
-    story: "Academic anxiety at Year 6 can set a pattern that lasts years. At DA the tutors took time to understand why Emma found learning stressful — and addressed that before focusing on content.\n\nThe shift in her relationship with school was the most important change. The grades followed naturally.",
-    whyItWorked: [
-      { n: '01', point: 'Anxiety addressed before content', detail: 'Understanding the emotional barrier to learning allowed the content work to actually land.' },
-      { n: '02', point: 'Small wins built momentum', detail: 'Early successes gave Emma evidence that she could succeed — which changed her expectation of herself.' },
-      { n: '03', point: 'Enjoyment built into every session', detail: 'Sessions that feel engaging create a positive association with learning that persists long after tuition ends.' },
-    ],
-    learningFormat: 'Small Group · Primary School',
-    newTags: ['Confidence', 'Parent Feedback'],
-  },
-
-  // PLACEHOLDER pr-30 — Confidence group
-  {
-    id: 'pr-30',
-    subject: 'General',
-    category: 'High School',
-    author: 'Michael Lee',
-    yearLevel: 'Year 9',
-    result: { before: 'Avoided class questions', after: 'Volunteers answers' },
-    outcomes: ['Class Participation', 'Confidence', 'Social Growth'],
-    preview: "I was the student who never raised my hand. DA gave me enough confidence that I now answer questions in class without being asked. That changed everything else.",
-    pullQuote: "I now raise my hand before the teacher even finishes the question.",
-    story: "Avoiding questions in class felt safer than being wrong publicly. At DA the small group environment let me get things wrong safely — without judgment.\n\nNow I volunteer answers in class. My teacher noticed before I did.",
-    whyItWorked: [
-      { n: '01', point: 'Safe environment to be wrong', detail: 'The small group setting allowed Michael to make mistakes without social cost — which is how real learning happens.' },
-      { n: '02', point: 'Accuracy built before speed', detail: 'Ensuring answers were right meant Michael never had reason to feel embarrassed by the output.' },
-      { n: '03', point: 'Classroom transfer observed', detail: 'The confidence built in sessions translated directly into classroom behaviour — a reliable sign of genuine change.' },
-    ],
-    learningFormat: 'Small Group · Year 9',
-    newTags: ['Confidence', 'Academic Growth'],
-  },
-
-  // PLACEHOLDER pr-31 — Confidence group
-  {
-    id: 'pr-31',
-    subject: 'English',
-    category: 'English',
-    author: 'Anna Tran',
-    yearLevel: 'Year 10',
-    result: { before: 'Feared oral presentations', after: 'Speaks without notes' },
-    outcomes: ['Oral Confidence', 'Presentations', 'Written Confidence'],
-    preview: "Oral presentations were my nightmare. DA helped me see that the preparation I did in writing carried into speaking — and now I look forward to presenting.",
-    pullQuote: "The confidence I built in writing was the same confidence I needed to speak.",
-    story: "Fear of speaking in class came from not trusting what I had to say. At DA I learned to trust my own ideas through writing — and discovered that trust transferred to speaking.\n\nI now deliver oral presentations without notes. That would have been unimaginable a year ago.",
-    whyItWorked: [
-      { n: '01', point: 'Written confidence transferred to oral', detail: 'Building trust in her own ideas through essay writing gave Anna the foundation to speak those ideas aloud.' },
-      { n: '02', point: 'Content clarity reduced anxiety', detail: 'When students truly understand what they\'re saying, the fear of speaking it reduces dramatically.' },
-      { n: '03', point: 'Low-stakes verbal practice', detail: 'Explaining ideas verbally in sessions prepared Anna for the higher-stakes classroom environment.' },
-    ],
-    learningFormat: 'Small Group · English',
-    newTags: ['Confidence', 'English'],
-  },
-
-  // PLACEHOLDER pr-32 — Teacher Support group
-  {
-    id: 'pr-32',
-    subject: 'Mathematics',
-    category: 'Mathematics',
-    author: 'Oliver Chen',
-    yearLevel: 'Year 7',
-    result: { before: 'Behind peers', after: 'Peer tutor for classmates' },
-    outcomes: ['Peer Tutor', 'Teacher Relationship', 'Maths Mastery'],
-    preview: "My tutor at DA believed in me before I believed in myself. Within two terms I was helping my classmates with the same work that had confused me.",
-    pullQuote: "My tutor believed in me before I did. That made all the difference.",
-    story: "Starting high school behind in maths was demoralising. My DA tutor never treated me as a student who was behind — just as one who needed a different explanation.\n\nBy the end of Year 7 I was the student other kids asked for help.",
-    whyItWorked: [
-      { n: '01', point: 'Belief modelled before it was felt', detail: 'The tutor\'s consistent expectation eventually became Oliver\'s own expectation.' },
-      { n: '02', point: 'Explanations adapted', detail: 'Teaching the same concept multiple ways until one clicks is a patience most classroom teachers cannot afford.' },
-      { n: '03', point: 'Teaching others as a learning tool', detail: 'When Oliver began explaining concepts to classmates, his own understanding deepened further.' },
-    ],
-    learningFormat: 'Small Group · Year 7 Mathematics',
-    newTags: ['Teacher Support', 'Confidence'],
-  },
-
-  // PLACEHOLDER pr-33 — Teacher Support group
-  {
-    id: 'pr-33',
-    subject: 'English',
-    category: 'English',
-    author: 'Grace Kim',
-    yearLevel: 'Year 11',
-    result: { before: 'Average writer', after: 'Top essay writer' },
-    outcomes: ['Essay Excellence', 'Mentor Relationship', 'Academic Growth'],
-    preview: "My DA tutor became the first teacher who genuinely invested in my writing as something worth developing. That changed how I saw myself as a writer.",
-    pullQuote: "The first teacher who treated my writing as something worth investing in.",
-    story: "I had written essays for years without anyone telling me what specifically was good or bad. At DA my tutor gave me the most detailed, useful feedback I had ever received.\n\nThat feedback, consistently applied, turned me into a writer I'm proud of.",
-    whyItWorked: [
-      { n: '01', point: 'Specific, actionable feedback', detail: 'Vague praise does nothing. Detailed feedback gave Grace something specific to improve each session.' },
-      { n: '02', point: 'Drafting process valued', detail: 'Learning to revise rather than just write produced essays with clarity Grace hadn\'t reached before.' },
-      { n: '03', point: 'Tutor investment felt', detail: 'Students who feel genuinely cared about by their tutors work harder and progress faster.' },
-    ],
-    learningFormat: 'Small Group · English',
-    newTags: ['Teacher Support', 'English'],
-  },
-
-  // PLACEHOLDER pr-34 — Teacher Support group
-  {
-    id: 'pr-34',
-    subject: 'Science',
-    category: 'Science',
-    author: 'Patrick Nguyen',
-    yearLevel: 'Year 8',
-    result: { before: 'Disengaged', after: 'Interested in STEM' },
-    outcomes: ['STEM Interest', 'Teacher Connection', 'Science Confidence'],
-    preview: "My tutor at DA was the first adult who made me feel like my questions mattered. That turned Science from a subject into something I care about.",
-    pullQuote: "My questions finally felt like they mattered to someone.",
-    story: "I had always asked too many questions — or so I was told. At DA, my tutor treated every question as worth answering properly, which fundamentally changed my relationship with learning.\n\nI now want to study science at university. That ambition started in a Year 8 DA session.",
-    whyItWorked: [
-      { n: '01', point: 'Questions rewarded', detail: 'A curious student who is welcomed rather than redirected will invest more deeply in the subject.' },
-      { n: '02', point: 'Tutor modelled scientific curiosity', detail: 'When teachers demonstrate genuine enthusiasm for their subject, students are influenced by that enthusiasm.' },
-      { n: '03', point: 'Long-term ambition seeded early', detail: 'A desire to study science at university, planted in Year 8, is one of the highest-impact outcomes tutoring can produce.' },
-    ],
-    learningFormat: 'Small Group · Year 8 Science',
-    newTags: ['Teacher Support', 'Science'],
-  },
-
-  // PLACEHOLDER pr-35 — Teacher Support group
-  {
-    id: 'pr-35',
-    subject: 'General',
-    category: 'Multi-Year Program',
-    author: 'Isabella Wu',
-    yearLevel: 'Year 12',
-    result: { before: 'Starting Year 10 behind', after: 'ATAR target achieved' },
-    outcomes: ['3-Year Journey', 'ATAR Achieved', 'Consistent Support'],
-    preview: "I was at DA from Year 10 to Year 12. Three years of the same tutors, the same standards, the same encouragement. That consistency was what I needed.",
-    pullQuote: "Three years. Same tutors. Same standards. Same encouragement. That consistency was everything.",
-    story: "Starting at DA in Year 10 and finishing after the HSC gave me something I couldn't have found elsewhere — a consistent support structure across the most important years of school.\n\nThe ATAR I achieved came from three years of steady, sustained effort. DA was the constant across all of it.",
-    whyItWorked: [
-      { n: '01', point: 'Consistent tutor relationships', detail: 'Three years of the same team meant no time lost rebuilding context.' },
-      { n: '02', point: 'Long-term plan executed year by year', detail: 'A three-year roadmap allowed each year to build on the previous.' },
-      { n: '03', point: 'Trust built over time', detail: 'By Year 12 Isabella could say what she was struggling with because she trusted her tutors fully.' },
-    ],
-    learningFormat: 'Small Group · Years 10–12',
-    newTags: ['Teacher Support', 'Academic Growth'],
-  },
-
-  // PLACEHOLDER pr-36 — Teacher Support group
-  {
-    id: 'pr-36',
-    subject: 'Mathematics',
-    category: 'Mathematics',
-    author: 'Ethan Lam',
-    yearLevel: 'Year 10',
-    result: { before: 'C+', after: 'A+' },
-    outcomes: ['A+ Maths', 'Problem Solving', 'Tutor Bond'],
-    preview: "The small group size at DA meant my tutor could tell when I understood something and when I was pretending. That honesty made the sessions actually useful.",
-    pullQuote: "My tutor knew when I understood and when I was just pretending. That honesty changed everything.",
-    story: "In a class of 30, pretending to understand is easy. In a DA group of 4, it's impossible — which turned out to be exactly what I needed.\n\nThe A+ in Maths came from never being allowed to slide past something I hadn't fully grasped.",
-    whyItWorked: [
-      { n: '01', point: 'Small group makes pretending impossible', detail: 'With fewer students per tutor, genuine understanding is tested every session.' },
-      { n: '02', point: 'Gaps closed immediately', detail: 'Every misconception was addressed in the same session, preventing the snowballing that causes failure in later topics.' },
-      { n: '03', point: 'Tutor read the student', detail: 'The ability to notice when a student is struggling before they say so changes the outcome of every session.' },
-    ],
-    learningFormat: 'Small Group · Year 10 Mathematics',
-    newTags: ['Teacher Support', 'Mathematics'],
-  },
-
-  // PLACEHOLDER pr-37 — Teacher Support group
-  {
-    id: 'pr-37',
-    subject: 'General',
-    category: 'Primary School',
-    author: 'Sophia Pham',
-    yearLevel: 'Year 5',
-    result: { before: 'Falling behind', after: 'On track and confident' },
-    outcomes: ['Foundation Secured', 'Confidence', 'Patient Teaching'],
-    preview: "My daughter needed patience more than she needed content. DA gave her both — and now she's on track for a strong high school entry.",
-    pullQuote: "She needed patience first. DA understood that before we did.",
-    story: "At Year 5, falling behind in the fundamentals sets a trajectory that is hard to change. The tutors at DA understood that before we articulated it.\n\nThree terms later our daughter is on track. The difference was patient, unhurried teaching that rebuilt her foundations.",
-    whyItWorked: [
-      { n: '01', point: 'Patience as a teaching method', detail: 'Returning to a concept as many times as needed produces deeper understanding than covering content quickly.' },
-      { n: '02', point: 'Foundations rebuilt without embarrassment', detail: 'Returning to earlier content when needed was done naturally, without stigma.' },
-      { n: '03', point: 'High school readiness as the goal', detail: 'Working backward from what Year 7 requires gave sessions clear direction.' },
-    ],
-    learningFormat: 'Small Group · Primary School',
-    newTags: ['Teacher Support', 'Confidence'],
-  },
-
-  // PLACEHOLDER pr-38 — Study Habits group
-  {
-    id: 'pr-38',
-    subject: 'General',
-    category: 'High School',
-    author: 'Lucas Chen',
-    yearLevel: 'Year 9',
-    result: { before: 'No study structure', after: 'Weekly study plan' },
-    outcomes: ['Study Structure', 'Grade Improvement', 'Self-Direction'],
-    preview: "I didn't have a study routine until DA. They taught me how to structure a week, which weeks to prioritise, and how to tell if a session had actually been productive.",
-    pullQuote: "For the first time I actually knew whether I had studied effectively or just been in the room.",
-    story: "Sitting at a desk for two hours and studying for two hours are very different things. At DA I learned the difference.\n\nThe routines I built with my tutor's guidance in Year 9 are still the ones I use now.",
-    whyItWorked: [
-      { n: '01', point: 'Productive vs. present study distinguished', detail: 'Learning to assess whether a session was genuinely effective is a metacognitive skill most students are never taught.' },
-      { n: '02', point: 'Weekly planning installed', detail: 'A consistent structure removed the decision fatigue of figuring out what to study each day.' },
-      { n: '03', point: 'Study audit each session', detail: 'Each session began by reviewing how the previous week\'s independent study had gone — creating accountability.' },
-    ],
-    learningFormat: 'Small Group · Year 9',
-    newTags: ['Study Habits', 'Academic Growth'],
-  },
-
-  // PLACEHOLDER pr-39 — Study Habits group
-  {
-    id: 'pr-39',
-    subject: 'General',
-    category: 'High School',
-    author: 'Chloe Nguyen',
-    yearLevel: 'Year 11',
-    result: { before: 'Disorganised', after: 'Top 5 in cohort' },
-    outcomes: ['Top 5 Cohort', 'Organisation', 'Time Management'],
-    preview: "My marks were always inconsistent because my effort was inconsistent. DA helped me build the systems that made my effort consistent — and the marks followed.",
-    pullQuote: "Consistent marks come from consistent effort. DA helped me build the systems for both.",
-    story: "Year 11 tests organisation as much as ability. I had the ability but not the systems. At DA the tutors helped me build habits that turned inconsistent effort into consistent performance.\n\nTop 5 in cohort at Year 11 end. The systems made it possible.",
-    whyItWorked: [
-      { n: '01', point: 'Organisation treated as a learnable skill', detail: 'Being organised is a skill that can be built, not a personality trait you either have or don\'t.' },
-      { n: '02', point: 'Assessment calendar maintained', detail: 'Mapping all due dates in advance removed the last-minute cramming that had previously cost marks.' },
-      { n: '03', point: 'Consistent effort produced consistent results', detail: 'The connection between systematic preparation and reliable marks became clear once the systems were in place.' },
-    ],
-    learningFormat: 'Small Group · Year 11',
-    newTags: ['Study Habits', 'Academic Growth'],
-  },
-
-  // PLACEHOLDER pr-40 — Study Habits group
-  {
-    id: 'pr-40',
-    subject: 'Mathematics',
-    category: 'Mathematics',
-    author: 'Noah Tran',
-    yearLevel: 'Year 10',
-    result: { before: 'Cramming before exams', after: 'Daily practice routine' },
-    outcomes: ['Daily Practice', 'Grade Consistency', 'Maths Improvement'],
-    preview: "I used to cram for maths the night before. DA showed me that daily 20-minute practice sessions are worth more than five hours the night before an exam.",
-    pullQuote: "Twenty minutes a day beats five hours the night before every single time.",
-    story: "Cramming worked — until it didn't. At DA my tutor explained simply: maths is a skill that improves with spaced practice, not massed review.\n\nOnce I built the daily habit, my marks became predictable in a way they had never been before.",
-    whyItWorked: [
-      { n: '01', point: 'Spaced practice explained and implemented', detail: 'The evidence for spaced repetition was explained simply, giving Noah a reason to trust the new habit.' },
-      { n: '02', point: 'Daily habit small enough to stick', detail: 'Twenty minutes is achievable every day. That consistency compounded into significant improvement across a term.' },
-      { n: '03', point: 'Exam preparation built in', detail: 'Rather than cramming the night before, Noah had already reviewed every topic multiple times through daily practice.' },
-    ],
-    learningFormat: 'Small Group · Year 10 Mathematics',
-    newTags: ['Study Habits', 'Mathematics'],
-  },
-
-  // PLACEHOLDER pr-41 — Study Habits group
-  {
-    id: 'pr-41',
-    subject: 'English',
-    category: 'English',
-    author: 'Mia Liu',
-    yearLevel: 'Year 8',
-    result: { before: 'Non-reader', after: 'Reading for pleasure' },
-    outcomes: ['Reading Habit', 'Essay Improvement', 'Vocabulary Growth'],
-    preview: "I hadn't read a book for pleasure in years. DA helped me find books I actually wanted to read — and once I started reading, my English results improved without me trying.",
-    pullQuote: "Once I started reading for myself, my English marks improved without me trying to improve them.",
-    story: "The connection between reading habit and English results is direct. At DA my tutor helped me find books that actually interested me.\n\nOnce reading became enjoyable, vocabulary, sentence structure, and comprehension all improved naturally.",
-    whyItWorked: [
-      { n: '01', point: 'Right books at the right time', detail: 'Being given texts that genuinely interest a student is more impactful than any specific English technique.' },
-      { n: '02', point: 'Passive learning through reading', detail: 'Hours of reading accumulate language patterns that no formal grammar instruction can replicate at the same speed.' },
-      { n: '03', point: 'Improvement without direct instruction', detail: 'When outcomes improve in areas not directly taught, the intervention is producing genuine change.' },
-    ],
-    learningFormat: 'Small Group · Year 8 English',
-    newTags: ['Study Habits', 'English'],
-  },
-
-  // PLACEHOLDER pr-42 — Study Habits group
-  {
-    id: 'pr-42',
-    subject: 'General',
-    category: 'HSC',
-    author: 'Liam Park',
-    yearLevel: 'Year 12',
-    result: { before: 'Reactive study', after: 'Proactive HSC preparation' },
-    outcomes: ['HSC Readiness', 'Time Management', 'Study Strategy'],
-    preview: "I used to study reactively — when something was due. DA taught me to study proactively, which transformed the HSC from something I feared into something I prepared for.",
-    pullQuote: "DA transformed the HSC from something I feared into something I was prepared for.",
-    story: "Reactive studying works until the HSC, when everything is due at once. At DA I learned to plan ahead across all subjects.\n\nThe HSC year felt manageable in a way I hadn't expected. That came from the habits built in the year before it.",
-    whyItWorked: [
-      { n: '01', point: 'Proactive vs. reactive study distinguished', detail: 'Understanding the difference changed Liam\'s entire approach to every subject.' },
-      { n: '02', point: 'HSC treated as a year-long project', detail: 'Twelve months of consistent preparation rather than a single high-pressure event changed the experience fundamentally.' },
-      { n: '03', point: 'Revision scheduled before urgency', detail: 'Reviewing content before it was urgent meant the final weeks were for refinement, not desperate review.' },
-    ],
-    learningFormat: 'Small Group · HSC',
-    newTags: ['Study Habits', 'HSC Success'],
-  },
-
-  // ── NEW placeholders pr-43–pr-80 ─────────────────────────────
-  // PLACEHOLDER pr-43 — Academic Growth group
-  {
-    id: 'pr-43',
-    subject: 'General',
-    category: 'High School',
-    author: 'Hannah Vo',
-    yearLevel: 'Year 7',
-    result: { before: 'Nervous Year 7 start', after: 'Thriving by Year 7 end' },
-    outcomes: ['Strong Start', 'Academic Growth', 'School Confidence'],
-    preview: "Year 7 was terrifying. DA helped me settle in fast and come out of it with results that set me up for high school in a way I didn't expect.",
-    pullQuote: "I came out of Year 7 feeling like high school was something I could actually do.",
-    story: "The transition from primary to high school is academically and socially demanding. At DA I had support that let me focus on the academic side without the anxiety of feeling behind.\n\nYear 7 ended with results I'm proud of — and the confidence to take on Year 8.",
-    whyItWorked: [
-      { n: '01', point: 'Transition support front-loaded', detail: 'Addressing Year 7 demands early meant Hannah built good habits before bad ones could form.' },
-      { n: '02', point: 'Confidence alongside skills', detail: 'Academic confidence in Year 7 transfers directly into social confidence — a compounding benefit.' },
-      { n: '03', point: 'Foundation for future years', detail: 'Strong habits built in Year 7 reduced the adjustment required in every subsequent year.' },
-    ],
-    learningFormat: 'Small Group · Year 7',
-    newTags: ['Academic Growth', 'Confidence'],
-  },
-
-  // PLACEHOLDER pr-44 — Academic Growth group
-  {
-    id: 'pr-44',
-    subject: 'Mathematics',
-    category: 'Mathematics Advanced',
-    author: 'Benjamin Kim',
-    yearLevel: 'Year 11',
-    result: { before: 'Rank 45th', after: 'Rank 8th' },
-    outcomes: ['Rank Jump', 'Maths Advanced', 'Grade Improvement'],
-    preview: "I moved from 45th to 8th in my cohort ranking in Mathematics Advanced across one year at DA. The tutors identified weaknesses I didn't know I had.",
-    pullQuote: "Moving from rank 45 to rank 8 changed how I thought about what I was capable of.",
-    story: "Year 11 Mathematics Advanced was the subject I was most worried about. At DA the tutors ran a diagnostic and found gaps my class marks hadn't revealed.\n\nClosing those gaps moved my rank from 45th to 8th across a single year.",
-    whyItWorked: [
-      { n: '01', point: 'Diagnostic before intervention', detail: 'A structured assessment of what Benjamin understood — and didn\'t — prevented wasted time on already-mastered content.' },
-      { n: '02', point: 'Hidden gaps addressed', detail: 'Gaps accumulated quietly over years were finally identified and closed — releasing Benjamin\'s actual capacity.' },
-      { n: '03', point: 'Rank used as feedback', detail: 'Using rank as information about what to work on, rather than as a judgment, kept motivation focused and productive.' },
-    ],
-    learningFormat: 'Small Group · Year 11 Mathematics',
-    newTags: ['Academic Growth', 'Mathematics'],
-  },
-
-  // PLACEHOLDER pr-45 — Academic Growth group
-  {
-    id: 'pr-45',
-    subject: 'English',
-    category: 'English',
-    author: 'Abigail Chen',
-    yearLevel: 'Year 8',
-    result: { before: 'C student', after: 'A student two years later' },
-    outcomes: ['A Grade', 'Long-term Growth', 'Writing Excellence'],
-    preview: "Two years at DA transformed my English from C-grade to A-grade work. The change happened gradually, then all at once. I'm a different writer than I was.",
-    pullQuote: "The change happened gradually and then all at once — like the way language itself works.",
-    story: "Starting at DA in Year 7 as a C-grade English student, I didn't expect to become an A student. But over two years the consistent feedback built something real.\n\nBy Year 8 end my teacher was using my essays as examples. That wouldn't have happened without DA.",
-    whyItWorked: [
-      { n: '01', point: 'Long-term progress tracked', detail: 'Two years of consistent improvement gave Abigail evidence of her own capacity for growth.' },
-      { n: '02', point: 'Deliberate practice each session', detail: 'Each session had a specific focus. Targeted practice on identified weaknesses produced improvement faster than general revision.' },
-      { n: '03', point: 'Teacher recognition as external validation', detail: 'When school teachers acknowledge work publicly, it confirms what the student and tutor have been seeing privately.' },
-    ],
-    learningFormat: 'Small Group · English',
-    newTags: ['Academic Growth', 'English'],
-  },
-
-  // PLACEHOLDER pr-46 — Academic Growth group
-  {
-    id: 'pr-46',
-    subject: 'Science',
-    category: 'Science',
-    author: 'Caleb Nguyen',
-    yearLevel: 'Year 10',
-    result: { before: 'Bottom third', after: 'Top 10%' },
-    outcomes: ['Top 10%', 'Science Growth', 'Cohort Rank'],
-    preview: "I was in the bottom third of my cohort for Science in Year 9. By the end of Year 10 I was in the top 10%. DA gave me a pathway and the belief that it was real.",
-    pullQuote: "DA gave me a pathway and the belief that the pathway was actually real.",
-    story: "Moving from bottom third to top 10% requires both the right teaching and the belief that improvement is possible. DA gave me both.\n\nBy Year 10 end the improvement was visible to everyone, including me.",
-    whyItWorked: [
-      { n: '01', point: 'Belief installed before progress', detail: 'The tutor communicated clearly that the improvement was achievable — that communication enabled the actual improvement.' },
-      { n: '02', point: 'Step-by-step pathway visible', detail: 'Breaking the goal into quarterly milestones made the distance from bottom third to top 10% feel crossable.' },
-      { n: '03', point: 'Rank as a navigation tool', detail: 'Tracking rank across terms gave Caleb concrete evidence of momentum — which sustained the effort.' },
-    ],
-    learningFormat: 'Small Group · Year 10 Science',
-    newTags: ['Academic Growth', 'Science'],
-  },
-
-  // PLACEHOLDER pr-47 — Academic Growth group
-  {
-    id: 'pr-47',
-    subject: 'General',
-    category: 'High School',
-    author: 'Ella Tran',
-    yearLevel: 'Year 9',
-    result: { before: 'Inconsistent marks', after: 'Consistently above 85%' },
-    outcomes: ['Consistency', 'Grade Average', 'Multi-Subject Growth'],
-    preview: "My marks used to swing between 60% and 80% depending on how well the topic clicked. DA gave me the tools to stay above 85% consistently across all subjects.",
-    pullQuote: "DA gave me the tools to be consistent, not just occasionally excellent.",
-    story: "Inconsistency is more frustrating than consistently lower marks — because you know what's possible but can't reach it reliably. At DA I learned what was causing the swings and how to address it.\n\nConsistently above 85% across all subjects in Year 9. The frustration is gone.",
-    whyItWorked: [
-      { n: '01', point: 'Root cause of inconsistency identified', detail: 'Ella\'s swings came from uneven topic coverage. Addressing that directly produced consistency more effectively than any exam technique.' },
-      { n: '02', point: 'Every topic treated equally', detail: 'Topics that had caused dips were given equal preparation time to topics Ella found easier.' },
-      { n: '03', point: 'Consistency as the explicit goal', detail: 'When students aim for consistency rather than peak performance, their floor rises — which raises their average.' },
-    ],
-    learningFormat: 'Small Group · Year 9',
-    newTags: ['Academic Growth', 'Study Habits'],
-  },
-
-  // PLACEHOLDER pr-48 — Academic Growth group
-  {
-    id: 'pr-48',
-    subject: 'General',
-    category: 'HSC Year 12',
-    author: 'Owen Liu',
-    yearLevel: 'Year 12',
-    result: { before: 'Poor mid-year results', after: 'Strong HSC finish' },
-    outcomes: ['HSC Recovery', 'Turnaround', 'ATAR Achieved'],
-    preview: "I joined DA halfway through Year 12 after my mid-year results came back poorly. In six months the tutors helped me recover enough to hit my ATAR target.",
-    pullQuote: "Joining DA halfway through Year 12 felt like a last chance. It turned out to be the right one.",
-    story: "A poor set of mid-year results in Year 12 can feel terminal. At DA the tutors assessed where I stood and built a six-month plan to close the gap.\n\nThe ATAR I achieved in December was exactly what I needed. That recovery happened in six months with the right support.",
-    whyItWorked: [
-      { n: '01', point: 'Triage approach to six months', detail: 'Prioritising the topics with the highest mark-recovery potential meant Owen\'s limited time was used optimally.' },
-      { n: '02', point: 'Exam-focused from day one', detail: 'With six months remaining, every session was built around HSC-format questions and marking criteria.' },
-      { n: '03', point: 'Hope given a structure', detail: 'Owen had the motivation to recover — DA gave that motivation a plan.' },
-    ],
-    learningFormat: 'Small Group · HSC Year 12',
-    newTags: ['Academic Growth', 'HSC Success'],
-  },
-
-  // PLACEHOLDER pr-49 — Parent Feedback group
-  {
-    id: 'pr-49',
-    subject: 'General',
-    category: 'Parent Testimonial',
-    author: 'Jennifer Lee (Parent)',
-    yearLevel: 'Year 10',
-    result: { before: 'Worried about trajectory', after: 'Confident in future' },
-    outcomes: ['Parent Confidence', 'Academic Recovery', 'Family Relief'],
-    preview: "As a parent watching my daughter struggle and withdraw, I felt helpless. DA gave us both a direction. Watching her regain confidence was the biggest relief of the school year.",
-    pullQuote: "Watching my daughter regain her confidence was the biggest relief of the school year.",
-    story: "My daughter had slowly withdrawn from school across Year 9. By Year 10 I was genuinely worried. DA didn't just address her marks — they helped her reconnect with learning.\n\nWatching that reconnection happen was something I hadn't let myself hope for.",
-    whyItWorked: [
-      { n: '01', point: 'Reconnection before content', detail: 'DA recognised that Jennifer\'s daughter needed re-engagement first. Marks followed the reconnection.' },
-      { n: '02', point: 'Parent kept informed', detail: 'Knowing what was happening in sessions gave Jennifer the information to support her daughter at home.' },
-      { n: '03', point: 'Family relief as an outcome', detail: 'When a parent\'s worry resolves, the whole family environment shifts — feeding back positively into the student\'s experience.' },
-    ],
-    learningFormat: 'Small Group · Year 10',
-    newTags: ['Parent Feedback', 'Confidence'],
-  },
-
-  // PLACEHOLDER pr-50 — Parent Feedback group
-  {
-    id: 'pr-50',
-    subject: 'Mathematics',
-    category: 'Parent Testimonial',
-    author: 'Michael Wong (Parent)',
-    yearLevel: 'Year 12',
-    result: { before: 'Failing maths', after: 'Band 5 HSC' },
-    outcomes: ['Band 5 Maths', 'Parent Relief', 'HSC Success'],
-    preview: "My son was failing Mathematics in Year 12. Eight months later he had a Band 5 in the HSC. I am still a little stunned by what DA achieved in that time.",
-    pullQuote: "I'm still a little stunned by what DA achieved in eight months.",
-    story: "Failing Year 12 Mathematics is a frightening place to be. At DA the team assessed the gaps and built a recovery plan my son actually stuck to.\n\nBand 5 in the HSC. Eight months earlier that felt impossible. I'll be recommending DA for as long as I know families who need it.",
-    whyItWorked: [
-      { n: '01', point: 'Rapid gap assessment at the start', detail: 'Understanding exactly what was missing meant the eight months were used efficiently.' },
-      { n: '02', point: 'Achievable plan', detail: 'A reasonable study plan my son could commit to was more effective than a theoretically optimal one he wouldn\'t follow.' },
-      { n: '03', point: 'Parent kept in the loop', detail: 'Regular communication gave Michael the confidence to trust the process rather than adding pressure at home.' },
-    ],
-    learningFormat: 'Small Group · HSC Mathematics',
-    newTags: ['Parent Feedback', 'Mathematics'],
-  },
-
-  // PLACEHOLDER pr-51 — Parent Feedback group
-  {
-    id: 'pr-51',
-    subject: 'General',
-    category: 'Parent Testimonial',
-    author: 'Susan Nguyen (Parent)',
-    yearLevel: 'Year 8',
-    result: { before: 'Bright but underperforming', after: 'Achieving potential' },
-    outcomes: ['Potential Realised', 'Parent Satisfaction', 'Academic Growth'],
-    preview: "My daughter was clearly bright but consistently underperforming. DA helped us understand why — and then fixed it. She's now achieving what I always thought she was capable of.",
-    pullQuote: "She's now achieving what I always believed she was capable of. DA made it possible.",
-    story: "Watching a bright child underperform is uniquely frustrating. DA ran an assessment and identified that she had gaps in foundational skills holding everything else back.\n\nAddressing those gaps released her actual capability.",
-    whyItWorked: [
-      { n: '01', point: 'Learning assessment revealed the real cause', detail: 'Rather than assuming effort was the issue, DA identified the specific gaps limiting performance.' },
-      { n: '02', point: 'Foundation fixed before extension', detail: 'Returning to foundational content cleared the path for higher-level achievement.' },
-      { n: '03', point: 'Parent\'s confidence validated', detail: 'When a parent\'s belief in their child is confirmed by results, it strengthens the relationship and the student\'s self-perception.' },
-    ],
-    learningFormat: 'Small Group · Year 8',
-    newTags: ['Parent Feedback', 'Academic Growth'],
-  },
-
-  // PLACEHOLDER pr-52 — Parent Feedback group
-  {
-    id: 'pr-52',
-    subject: 'General',
-    category: 'Parent Testimonial',
-    author: 'Robert Kim (Parent)',
-    yearLevel: 'Two children',
-    result: { before: 'Two struggling children', after: 'Both on track' },
-    outcomes: ['Two Children Supported', 'Family Improvement', 'Long-term Trust'],
-    preview: "We enrolled both of our children at DA and the results exceeded what we hoped for either of them individually. The consistency across two very different learners was impressive.",
-    pullQuote: "Two very different learners. One consistent standard of teaching that worked for both.",
-    story: "Our son and daughter have completely different learning styles. At DA each of them received an approach that suited them — not the same approach applied to different students.\n\nBoth improved significantly. The consistency of quality across two such different learners impressed us most.",
-    whyItWorked: [
-      { n: '01', point: 'Individual approach maintained', detail: 'The small group structure allows tutors to differentiate within a session — giving different students what they individually need.' },
-      { n: '02', point: 'Consistent quality across learners', detail: 'The standard of teaching did not depend on which child or which style. Both received the same quality of attention.' },
-      { n: '03', point: 'Family logistics simplified', detail: 'Having both children at the same centre removed scheduling complexity and gave parents a single relationship with the DA team.' },
-    ],
-    learningFormat: 'Small Group · Multi-Child Family',
-    newTags: ['Parent Feedback', 'Academic Growth'],
-  },
-
-  // PLACEHOLDER pr-53 — Parent Feedback group
-  {
-    id: 'pr-53',
-    subject: 'General',
-    category: 'Parent Testimonial',
-    author: 'Catherine Tran (Parent)',
-    yearLevel: 'Year 11',
-    result: { before: 'Son stressed and disengaged', after: 'Calm and focused' },
-    outcomes: ['Stress Reduction', 'Re-engagement', 'Wellbeing'],
-    preview: "My son's stress about school was affecting the whole family. DA gave him a structure that made school feel manageable — and the relief was felt by all of us.",
-    pullQuote: "When my son's stress reduced, the whole household relaxed. DA made that happen.",
-    story: "Year 11 stress is common, but when it becomes chronic it affects learning and family life equally. At DA the tutors gave my son a structure and a sense of control over his workload.\n\nThe academic results improved. But the reduction in stress was what changed our family's Year 11.",
-    whyItWorked: [
-      { n: '01', point: 'Structure reduces stress directly', detail: 'Knowing what to do and when removes the anxiety of uncertainty — the primary source of Catherine\'s son\'s distress.' },
-      { n: '02', point: 'Control restored to the student', detail: 'When students feel in control of their preparation, anxiety reduces — independent of how much content they have actually covered.' },
-      { n: '03', point: 'Family wellbeing as an outcome', detail: 'Student stress transfers to families. Addressing the student\'s experience improved the whole household.' },
-    ],
-    learningFormat: 'Small Group · Year 11',
-    newTags: ['Parent Feedback', 'Confidence'],
-  },
-
-  // PLACEHOLDER pr-54 — Parent Feedback group
-  {
-    id: 'pr-54',
-    subject: 'Science',
-    category: 'Parent Testimonial',
-    author: 'Andrew Liu (Parent)',
-    yearLevel: 'Year 9',
-    result: { before: 'Daughter hated Science', after: 'Considering STEM career' },
-    outcomes: ['STEM Interest', 'Career Direction', 'Parent Surprise'],
-    preview: "My daughter hated Science. She is now seriously considering a STEM career. I did not expect DA to have that kind of impact — I just wanted her to pass Year 9 Science.",
-    pullQuote: "I just wanted her to pass Year 9 Science. I didn't expect DA to change her career plans.",
-    story: "We enrolled our daughter at DA for a practical reason — she was failing Year 9 Science. What happened was far more than we bargained for.\n\nShe passed Science. Then she started finding it interesting. Now she's researching environmental science at university.",
-    whyItWorked: [
-      { n: '01', point: 'Subject made relevant before academic', detail: 'Connecting science to things Andrew\'s daughter genuinely cared about came before any attempt to improve her results.' },
-      { n: '02', point: 'Curiosity given space', detail: 'A student who asks about science outside class is a student whose interest has genuinely been ignited.' },
-      { n: '03', point: 'Long-term impact beyond the original goal', detail: 'The greatest outcomes of tutoring are often not the ones originally sought — they emerge when a student is genuinely engaged.' },
-    ],
-    learningFormat: 'Small Group · Year 9 Science',
-    newTags: ['Parent Feedback', 'Science'],
-  },
-
-  // PLACEHOLDER pr-55 — Parent Feedback group
-  {
-    id: 'pr-55',
-    subject: 'General',
-    category: 'Parent Testimonial',
-    author: 'Margaret Park (Parent)',
-    yearLevel: 'Year 7',
-    result: { before: 'Struggling with transition', after: 'Settled and confident' },
-    outcomes: ['Transition Support', 'Confidence', 'Parent Reassurance'],
-    preview: "The transition to high school was harder than we expected. DA gave our child the academic support to get on top of things — and gave us peace of mind during a stressful few months.",
-    pullQuote: "DA gave us peace of mind during the most stressful months of our child's schooling so far.",
-    story: "Year 7 is a major transition. Academic support in the first term can determine the trajectory of the whole year.\n\nAt DA our child got on top of things quickly. By Term 2 we stopped worrying. That's the best thing I can say about any service.",
-    whyItWorked: [
-      { n: '01', point: 'Early support prevents trajectory problems', detail: 'Catching difficulties in first term of Year 7 prevents the cascading impact that unaddressed gaps can have.' },
-      { n: '02', point: 'Speed of response meaningful at transition', detail: 'Rapid support in Term 1 had a compounding positive effect across the rest of the year.' },
-      { n: '03', point: 'Parent worry addressed directly', detail: 'When parents are informed and confident, they support their child more effectively.' },
-    ],
-    learningFormat: 'Small Group · Year 7',
-    newTags: ['Parent Feedback', 'Confidence'],
-  },
-
-  // PLACEHOLDER pr-56 — Parent Feedback group
-  {
-    id: 'pr-56',
-    subject: 'General',
-    category: 'Parent Testimonial',
-    author: 'William Chen (Parent)',
-    yearLevel: 'Year 12',
-    result: { before: 'ATAR target felt unrealistic', after: 'ATAR target achieved' },
-    outcomes: ['ATAR Achieved', 'Parent Relief', 'HSC Success'],
-    preview: "My son told me his ATAR target in Year 11. I privately thought it was too high. DA proved me wrong. He achieved it — and I owe them a debt of gratitude for that.",
-    pullQuote: "I privately thought my son's ATAR target was too high. DA proved me wrong.",
-    story: "Every parent wants to believe their child can achieve what they set out to do. I found it hard in Year 11. The ATAR my son was aiming for felt optimistic.\n\nDA gave him a pathway and the skills to walk it. He achieved the ATAR. I'm proud of him and grateful to DA in equal measure.",
-    whyItWorked: [
-      { n: '01', point: 'Ambitious targets taken seriously', detail: 'DA did not counsel William\'s son toward a safer goal — they built a plan to achieve the one he had set.' },
-      { n: '02', point: 'Year 12 as a managed campaign', detail: 'Treating the HSC as a year-long managed campaign — with regular progress checks — kept the target in sight throughout.' },
-      { n: '03', point: 'Parent expectation exceeded', detail: 'When tutoring exceeds what a parent believed was possible, it creates advocates who recommend DA to every family they know.' },
-    ],
-    learningFormat: 'Small Group · HSC Year 12',
-    newTags: ['Parent Feedback', 'HSC Success'],
-  },
-
-  // PLACEHOLDER pr-57 — English group
-  {
-    id: 'pr-57',
-    subject: 'English',
-    category: 'English Advanced',
-    author: 'Jasmine Nguyen',
-    yearLevel: 'Year 11',
-    result: { before: 'Borderline Advanced', after: 'Solid Advanced student' },
-    outcomes: ['English Advanced', 'Text Analysis', 'Essay Writing'],
-    preview: "I was barely keeping up with English Advanced. DA gave me the analytical skills to not just keep up — but genuinely engage with the texts the way the course demands.",
-    pullQuote: "DA helped me engage with the texts the way Advanced demands — not just survive the course.",
-    story: "English Advanced requires genuine analytical engagement rather than competent summary. At DA I learned to read for argument rather than for plot.\n\nThat change made the whole course unlock.",
-    whyItWorked: [
-      { n: '01', point: 'Advanced-level reading modelled', detail: 'Jasmine learned to read texts analytically — for craft, argument, and technique — rather than for story.' },
-      { n: '02', point: 'Complex texts made accessible', detail: 'Difficult texts became manageable once Jasmine had a method for approaching them systematically.' },
-      { n: '03', point: 'Essay quality matched the course level', detail: 'Advanced essays require sophisticated argumentation. Jasmine\'s writing was coached to meet that standard explicitly.' },
-    ],
-    learningFormat: 'Small Group · English Advanced',
-    newTags: ['English', 'Academic Growth'],
-  },
-
-  // PLACEHOLDER pr-58 — English group
-  {
-    id: 'pr-58',
-    subject: 'English',
-    category: 'English',
-    author: 'Theodore Kim',
-    yearLevel: 'Year 9',
-    result: { before: 'C student', after: 'A student' },
-    outcomes: ['A Grade English', 'Essay Structure', 'Reading Depth'],
-    preview: "English went from my worst subject to my best. DA showed me that the skills that make a good essay are learnable — and once learned, they don't leave.",
-    pullQuote: "The skills that make a good essay are learnable. Once you have them, they don't leave.",
-    story: "I had believed English ability was something you either had or didn't. At DA I learned that every component of a good English essay is a skill — and skills can be taught.\n\nOnce I understood that, improvement was just a matter of practice and feedback. And I got both.",
-    whyItWorked: [
-      { n: '01', point: 'English demystified', detail: 'Removing the myth that English is innate talent gave Theodore permission to work toward improvement.' },
-      { n: '02', point: 'Components taught separately then integrated', detail: 'Thesis, evidence, analysis, and structure were each developed individually before being combined into polished essays.' },
-      { n: '03', point: 'Feedback loop accelerated improvement', detail: 'Consistent specific feedback on every essay produced improvement faster than any independent study would have.' },
-    ],
-    learningFormat: 'Small Group · Year 9 English',
-    newTags: ['English', 'Academic Growth'],
-  },
-
-  // PLACEHOLDER pr-59 — English group
-  {
-    id: 'pr-59',
-    subject: 'English',
-    category: 'English',
-    author: 'Violet Tran',
-    yearLevel: 'Year 10',
-    result: { before: 'Nice but basic writing', after: 'Published in school anthology' },
-    outcomes: ['Creative Writing', 'Published Work', 'English Confidence'],
-    preview: "I had always been told my creative writing was 'nice but basic'. At DA I found out what that actually meant and how to go beyond it. One piece was published in a school anthology.",
-    pullQuote: "I found out what 'nice but basic' actually meant — and how to move past it.",
-    story: "Creative writing feedback is often vague. At DA my tutor explained precisely what was working and what wasn't — and gave me techniques to develop the areas holding my writing at 'nice but basic'.\n\nA piece I wrote at DA was selected for the school's creative writing anthology.",
-    whyItWorked: [
-      { n: '01', point: 'Specific creative feedback', detail: 'Vague encouragement does nothing. Violet was given precise, honest feedback on what to change and why.' },
-      { n: '02', point: 'Voice and technique balanced', detail: 'Developing a distinctive voice while mastering the technical elements markers value required both kinds of coaching.' },
-      { n: '03', point: 'External recognition as confirmation', detail: 'Publication in a school anthology gave Violet independent confirmation that her growth was real.' },
-    ],
-    learningFormat: 'Small Group · Year 10 English',
-    newTags: ['English', 'Academic Growth'],
-  },
-
-  // PLACEHOLDER pr-60 — English group
-  {
-    id: 'pr-60',
-    subject: 'English',
-    category: 'HSC English Extension 2',
-    author: 'Penelope Liu',
-    yearLevel: 'Year 12',
-    result: { before: 'No clear direction', after: 'Major Work commended' },
-    outcomes: ['Major Work Commended', 'Extension 2', 'Independent Writing'],
-    preview: "Extension 2 English requires a sustained creative project. DA helped me find a direction I believed in — and the Major Work I produced was commended by my HSC marker.",
-    pullQuote: "My DA tutor helped me find the idea that only I could write — and that made all the difference.",
-    story: "Extension 2 English requires an independent major work — a sustained creative project entirely your own. DA's guidance helped me find a concept I genuinely cared about.\n\nThe major work I produced was commended by my HSC marker. More importantly, I'm proud of it.",
-    whyItWorked: [
-      { n: '01', point: 'Concept development as primary work', detail: 'Finding an idea genuinely Penelope\'s own — not a generic approach — produced work with authentic creative energy.' },
-      { n: '02', point: 'Sustained project supported across the year', detail: 'Major works require consistent momentum. DA\'s ongoing feedback prevented stalls that cause most major works to fall short.' },
-      { n: '03', point: 'Reflection developed alongside creative work', detail: 'Extension 2 requires students to articulate their creative choices. The reflective statement was developed in parallel.' },
-    ],
-    learningFormat: 'Small Group · HSC English Extension 2',
-    newTags: ['English', 'HSC Success'],
-  },
-
-  // PLACEHOLDER pr-61 — English group
-  {
-    id: 'pr-61',
-    subject: 'English',
-    category: 'English',
-    author: 'Sebastian Wong',
-    yearLevel: 'Year 8',
-    result: { before: 'Dreaded essays', after: 'Essay confidence' },
-    outcomes: ['Essay Confidence', 'English Growth', 'Class Improvement'],
-    preview: "I dreaded every English essay. At DA I learned that essays aren't mysterious — they're a structure you can learn. That realisation changed everything.",
-    pullQuote: "Essays aren't mysterious — they're a structure you can learn. That realisation changed everything.",
-    story: "Every English essay felt like starting from zero. At DA I learned that essays have a learnable structure — and once internalised, every essay felt like filling in something I already understood.\n\nThe anxiety I felt before every essay simply went away.",
-    whyItWorked: [
-      { n: '01', point: 'Essay structure demystified', detail: 'Presenting the essay as a learnable form removed Sebastian\'s anxiety immediately.' },
-      { n: '02', point: 'Structure internalised through practice', detail: 'Repeated practice until the structure felt natural meant Sebastian began essays with confidence rather than paralysis.' },
-      { n: '03', point: 'Anxiety elimination', detail: 'When students stop fearing a task type, their capacity to perform at their actual level is finally revealed.' },
-    ],
-    learningFormat: 'Small Group · Year 8 English',
-    newTags: ['English', 'Confidence'],
-  },
-
-  // PLACEHOLDER pr-62 — English group
-  {
-    id: 'pr-62',
-    subject: 'English',
-    category: 'English Advanced',
-    author: 'Aurora Chen',
-    yearLevel: 'Year 11',
-    result: { before: 'Average technique', after: 'Top essay writer in class' },
-    outcomes: ['Top Essay Writer', 'English Advanced', 'Technique'],
-    preview: "My essay technique went from average to the best in my class in one year. My school teacher asked if I had changed tutors — she noticed that clearly.",
-    pullQuote: "My school teacher noticed the improvement before I fully appreciated it myself.",
-    story: "Essay technique in English Advanced is the difference between Band 4 and Band 6. At DA I learned to write with a clarity and analytical precision I hadn't achieved before.\n\nMy school teacher noticed. She asked what had changed. The answer was DA.",
-    whyItWorked: [
-      { n: '01', point: 'Technique gap identified', detail: 'The difference between Aurora\'s essays and top-band essays was analysed specifically — not described generally.' },
-      { n: '02', point: 'Marker\'s eye developed', detail: 'Learning to read her own essays the way markers do gave Aurora the ability to self-edit toward excellence.' },
-      { n: '03', point: 'Teacher-visible improvement', detail: 'When improvement is noticed unprompted by a school teacher, it confirms the change is real and significant.' },
-    ],
-    learningFormat: 'Small Group · English Advanced',
-    newTags: ['English', 'Academic Growth'],
-  },
-
-  // PLACEHOLDER pr-63 — English group
-  {
-    id: 'pr-63',
-    subject: 'English',
-    category: 'English',
-    author: 'Felix Park',
-    yearLevel: 'Year 10',
-    result: { before: 'Passive reader', after: 'Active analytical reader' },
-    outcomes: ['Analytical Reading', 'Comprehension', 'English Improvement'],
-    preview: "I used to read to find out what happened. DA taught me to read to understand how and why — and that changed both my comprehension scores and my essay quality.",
-    pullQuote: "I used to read to find out what happened. Now I read to understand how and why the author made it happen.",
-    story: "Reading for story versus reading for technique are fundamentally different activities. At DA I was taught to do both simultaneously — to engage with a text while noticing the choices its author made.\n\nComprehension scores improved, essays improved, and reading became genuinely more interesting.",
-    whyItWorked: [
-      { n: '01', point: 'Active reading as a teachable skill', detail: 'Annotating, questioning, and noticing choices while reading was modelled until it became automatic.' },
-      { n: '02', point: 'Author intent as primary question', detail: 'When students begin asking "why did the author do this?" their analysis deepens immediately.' },
-      { n: '03', point: 'Comprehension and essay skills linked', detail: 'The same close reading habits improved both Felix\'s comprehension scores and his essay evidence and analysis.' },
-    ],
-    learningFormat: 'Small Group · Year 10 English',
-    newTags: ['English', 'Study Habits'],
-  },
-
-  // PLACEHOLDER pr-64 — English group
-  {
-    id: 'pr-64',
-    subject: 'English',
-    category: 'English',
-    author: 'Isla Nguyen',
-    yearLevel: 'Year 7',
-    result: { before: 'Below literacy benchmark', after: 'On level by Year 7 end' },
-    outcomes: ['Literacy Recovery', 'Reading Level', 'Confidence'],
-    preview: "I came into Year 7 below literacy benchmarks. DA helped me close the gap within two terms. I started Year 8 at the same level as my classmates.",
-    pullQuote: "I started Year 8 at the same level as my classmates. That would not have happened without DA.",
-    story: "Starting high school below literacy benchmarks can establish a pattern of underperformance that follows a student for years. At DA the tutors closed the gap in two terms.\n\nStarting Year 8 at the same level as my classmates meant the gap was behind me, not in front.",
-    whyItWorked: [
-      { n: '01', point: 'Literacy gap closed rapidly', detail: 'Focused work on specific literacy elements below benchmark produced faster progress than broad English tuition.' },
-      { n: '02', point: 'Early secondary intervention', detail: 'Year 7 is the optimal time to close primary literacy gaps before they become embedded secondary patterns.' },
-      { n: '03', point: 'Year 8 readiness as the explicit goal', detail: 'A clear, time-bound target gave both Isla and her tutors a shared definition of success.' },
-    ],
-    learningFormat: 'Small Group · Year 7 English',
-    newTags: ['English', 'Academic Growth'],
-  },
-
-  // PLACEHOLDER pr-65 — Mathematics group
-  {
-    id: 'pr-65',
-    subject: 'Mathematics',
-    category: 'Mathematics Advanced',
-    author: 'Hunter Kim',
-    yearLevel: 'Year 10',
-    result: { before: 'B grade', after: 'A+ grade' },
-    outcomes: ['A+ Maths', 'Advanced Readiness', 'Problem Solving'],
-    preview: "I was a solid B student in Maths who wanted to take Advanced in Year 11. DA built the bridge between where I was and where I needed to be.",
-    pullQuote: "DA built the bridge between where I was and where Advanced needed me to be.",
-    story: "Year 10 Mathematics is preparation for a choice: Standard or Advanced. At DA the tutors prepared me for Advanced specifically — not just for Year 10.\n\nI entered Year 11 Mathematics Advanced with an A+ behind me and genuine confidence in what lay ahead.",
-    whyItWorked: [
-      { n: '01', point: 'Year 11 preparation in Year 10', detail: 'Working ahead ensures the transition is seamless rather than a step-change in difficulty.' },
-      { n: '02', point: 'Advanced topics previewed', detail: 'Exposure to Year 11 concepts before Year 11 meant Hunter arrived at the first Advanced lesson with context.' },
-      { n: '03', point: 'Ambition matched with preparation', detail: 'Hunter wanted to study Advanced. DA made sure that choice was backed by the skills to succeed in it.' },
-    ],
-    learningFormat: 'Small Group · Mathematics',
-    newTags: ['Mathematics', 'Academic Growth'],
-  },
-
-  // PLACEHOLDER pr-66 — Mathematics group
-  {
-    id: 'pr-66',
-    subject: 'Mathematics',
-    category: 'Mathematics Extension 1',
-    author: 'Scarlett Tran',
-    yearLevel: 'Year 11',
-    result: { before: 'Borderline Extension', after: 'Top 5 in cohort' },
-    outcomes: ['Top 5 Cohort', 'Extension 1', 'Mathematical Depth'],
-    preview: "I was borderline for Extension 1 at the start of Year 11. DA helped me find the deeper mathematical thinking the subject requires — and I'm now top 5 in my cohort.",
-    pullQuote: "Extension 1 requires deeper thinking, not just harder work. DA showed me what that means.",
-    story: "Extension 1 Mathematics requires a different relationship with mathematics — patience and rigour rather than speed. At DA I learned to approach problems that way.\n\nTop 5 in my Extension 1 cohort at Year 11 end. Patience turned out to be the missing ingredient.",
-    whyItWorked: [
-      { n: '01', point: 'Mathematical depth over speed', detail: 'Scarlett learned that Extension 1 rewards sitting with a complex problem — not answering quickly.' },
-      { n: '02', point: 'Proof and reasoning developed', detail: 'Justifying every step separates Extension students who consistently perform from those who occasionally shine.' },
-      { n: '03', point: 'Patience as a mathematical virtue', detail: 'Building the habit of careful, unhurried reasoning produced improvement that speed-focused approaches never could.' },
-    ],
-    learningFormat: 'Small Group · Mathematics Extension 1',
-    newTags: ['Mathematics', 'Academic Growth'],
-  },
-
-  // PLACEHOLDER pr-67 — Mathematics group
-  {
-    id: 'pr-67',
-    subject: 'Mathematics',
-    category: 'Mathematics',
-    author: 'Archer Liu',
-    yearLevel: 'Year 8',
-    result: { before: 'Shaky numeracy', after: 'Algebra confident' },
-    outcomes: ['Foundation Secured', 'Algebra Confidence', 'Maths Growth'],
-    preview: "I reached Year 8 with shaky multiplication tables. DA fixed the foundation and built up from there. By the end of the year I was doing algebra with confidence.",
-    pullQuote: "You can't build up without a foundation. DA fixed mine.",
-    story: "Shaky numeracy foundations cause problems that compound as mathematics gets more abstract. At DA the tutors identified the specific gaps and rebuilt without making me feel behind for having them.\n\nAlgebra had previously stumped me. By Year 8 end it was my strongest topic.",
-    whyItWorked: [
-      { n: '01', point: 'Numeracy foundation diagnosed and rebuilt', detail: 'Identifying specific calculation gaps allowed targeted rebuilding of Archer\'s mathematical base.' },
-      { n: '02', point: 'Foundation work done without stigma', detail: 'Returning to primary-level numeracy in Year 8 was handled matter-of-factly. The absence of judgment made it possible.' },
-      { n: '03', point: 'Compounding improvement from the base', detail: 'Once the numeracy foundation was solid, every algebra topic was learned faster than it would have been otherwise.' },
-    ],
-    learningFormat: 'Small Group · Year 8 Mathematics',
-    newTags: ['Mathematics', 'Academic Growth'],
-  },
-
-  // PLACEHOLDER pr-68 — Mathematics group
-  {
-    id: 'pr-68',
-    subject: 'Mathematics',
-    category: 'HSC Mathematics Extension 2',
-    author: 'Willow Park',
-    yearLevel: 'Year 12',
-    result: { before: 'E2', after: 'E3–E4' },
-    outcomes: ['E3–E4 Ext 2', 'Advanced Calculus', 'HSC Success'],
-    preview: "Extension 2 felt like a different language. DA helped me learn that language — and my mark moved from E2 to E3–E4 in the HSC.",
-    pullQuote: "Extension 2 Mathematics is a different language. DA taught me to speak it.",
-    story: "At DA my tutor helped me approach Extension 2 concepts not as harder versions of familiar topics, but as genuinely new mathematical ideas.\n\nThat reframing made everything more learnable. The E3–E4 result reflected a genuine change in my mathematical understanding.",
-    whyItWorked: [
-      { n: '01', point: 'Extension 2 treated as genuinely new', detail: 'Approaching content as novel reduced frustration from applying familiar but insufficient methods.' },
-      { n: '02', point: 'Complex calculus built step by step', detail: 'Each technique was developed in order of difficulty, ensuring each step was secure before the next was introduced.' },
-      { n: '03', point: 'Abstract thinking developed deliberately', detail: 'Extension 2 requires mathematical abstraction. That capacity was built alongside the content.' },
-    ],
-    learningFormat: 'Small Group · HSC Mathematics Extension 2',
-    newTags: ['Mathematics', 'HSC Success'],
-  },
-
-  // PLACEHOLDER pr-69 — Mathematics group
-  {
-    id: 'pr-69',
-    subject: 'Mathematics',
-    category: 'Mathematics',
-    author: 'Finn Nguyen',
-    yearLevel: 'Year 9',
-    result: { before: 'Feared maths', after: 'Enjoys maths' },
-    outcomes: ['Maths Enjoyment', 'Grade Improvement', 'Confidence'],
-    preview: "I used to get a knot in my stomach at the thought of a maths lesson. DA removed the fear so completely that I now actually look forward to maths.",
-    pullQuote: "I used to dread maths. Now I look forward to it. That is not something I expected to say.",
-    story: "Maths anxiety is real and limiting. At DA the tutors created an environment where being wrong was safe — and somehow that safety made getting things right easier.\n\nThe fear went first. The grades came after.",
-    whyItWorked: [
-      { n: '01', point: 'Mathematical safety before challenge', detail: 'An environment where wrong answers are welcomed allows students to take the risks that produce learning.' },
-      { n: '02', point: 'Success experiences front-loaded', detail: 'Early sessions focused on topics where Finn could succeed — building a positive relationship with maths.' },
-      { n: '03', point: 'Fear as the primary target', detail: 'Addressing the emotional barrier to maths produced grade improvements as a secondary outcome — which is more sustainable.' },
-    ],
-    learningFormat: 'Small Group · Year 9 Mathematics',
-    newTags: ['Mathematics', 'Confidence'],
-  },
-
-  // PLACEHOLDER pr-70 — Mathematics group
-  {
-    id: 'pr-70',
-    subject: 'Mathematics',
-    category: 'Mathematics Advanced',
-    author: 'Lyra Chen',
-    yearLevel: 'Year 11',
-    result: { before: 'Rank 30th', after: 'Rank 7th' },
-    outcomes: ['Rank Jump', 'Advanced Maths', 'Exam Technique'],
-    preview: "My cohort rank in Mathematics Advanced went from 30th to 7th in one year. The tutors at DA identified specific exam technique issues that were costing me marks.",
-    pullQuote: "Specific exam technique feedback moved my rank more than any amount of content revision had.",
-    story: "I understood the mathematics but wasn't earning the marks my understanding warranted. At DA the tutors identified exactly where exam marks were being lost.\n\nRank 7 from Rank 30. Technique, not content, was the difference.",
-    whyItWorked: [
-      { n: '01', point: 'Exam technique audited systematically', detail: 'Going through past papers as if marking Lyra\'s work revealed patterns of lost marks that content revision couldn\'t address.' },
-      { n: '02', point: 'Mark allocation understood deeply', detail: 'Knowing exactly where markers award marks changed how Lyra structured her solutions.' },
-      { n: '03', point: 'Technique gap larger than content gap', detail: 'When content is understood but marks don\'t reflect that, technique is almost always the cause.' },
-    ],
-    learningFormat: 'Small Group · Year 11 Mathematics',
-    newTags: ['Mathematics', 'Academic Growth'],
-  },
-
-  // PLACEHOLDER pr-71 — Mathematics group
-  {
-    id: 'pr-71',
-    subject: 'Mathematics',
-    category: 'Mathematics',
-    author: 'Quinn Wong',
-    yearLevel: 'Year 7',
-    result: { before: 'Anxious about high school maths', after: 'Strong Year 7 finish' },
-    outcomes: ['Strong Start', 'Maths Foundation', 'Confidence'],
-    preview: "Year 7 maths was intimidating after primary school. DA made the transition feel manageable — and I finished Year 7 with one of the strongest results in my class.",
-    pullQuote: "The transition to high school maths was less frightening with DA behind me.",
-    story: "High school mathematics is a step change from primary school. At DA I was prepared for that step before I took it — and supported through it once it began.\n\nFinishing Year 7 with one of the strongest maths results in my class was more than I had hoped for going in.",
-    whyItWorked: [
-      { n: '01', point: 'Year 7 transition supported from day one', detail: 'Beginning support at the start of Year 7 prevented the difficulties many students experience in the first months.' },
-      { n: '02', point: 'Primary habits replaced with secondary ones', detail: 'Learning the different conventions and methods of high school mathematics early removed confusion.' },
-      { n: '03', point: 'Strong Year 7 sets trajectory', detail: 'A positive first year in high school maths establishes habits and expectations that compound positively across all subsequent years.' },
-    ],
-    learningFormat: 'Small Group · Year 7 Mathematics',
-    newTags: ['Mathematics', 'Confidence'],
-  },
-
-  // PLACEHOLDER pr-72 — Mathematics group
-  {
-    id: 'pr-72',
-    subject: 'Mathematics',
-    category: 'HSC Mathematics Advanced',
-    author: 'River Kim',
-    yearLevel: 'Year 12',
-    result: { before: 'Band 4', after: 'Band 6' },
-    outcomes: ['Band 6 Maths', 'HSC Advanced', 'Exam Confidence'],
-    preview: "I was a Band 4 Mathematics student for all of Year 11. DA lifted me to Band 6 in the HSC. Every session had a clear purpose I could see.",
-    pullQuote: "Every session had a clear purpose I could see. That made the hard work feel worth it.",
-    story: "Band 4 to Band 6 in Mathematics Advanced requires real effort across a full year. At DA the work was hard — but always purposeful.\n\nBand 6 in the HSC. That result came from a year of directed, purposeful effort.",
-    whyItWorked: [
-      { n: '01', point: 'Purpose embedded in every session', detail: 'River always knew what each session was for and how it connected to the Band 6 goal. That connection sustained effort.' },
-      { n: '02', point: 'Pathway mapped explicitly', detail: 'Breaking the gap into monthly milestones gave River a visible path forward rather than a single distant destination.' },
-      { n: '03', point: 'Hard work made sustainable', detail: 'Effort without direction produces burnout. Directed effort toward a clear goal produces results and stays sustainable.' },
-    ],
-    learningFormat: 'Small Group · HSC Mathematics Advanced',
-    newTags: ['Mathematics', 'Band 6 Results'],
-  },
-
-  // PLACEHOLDER pr-73 — Science group
-  {
-    id: 'pr-73',
-    subject: 'Science',
-    category: 'HSC Physics',
-    author: 'Blake Tran',
-    yearLevel: 'Year 11',
-    result: { before: 'Failing Physics', after: 'B+ average' },
-    outcomes: ['B+ Physics', 'Science Recovery', 'Conceptual Clarity'],
-    preview: "Physics was failing me — or I was failing Physics. DA helped me find the conceptual clarity that made the mathematics finally make sense.",
-    pullQuote: "Once the concepts made sense, the mathematics of Physics stopped being intimidating.",
-    story: "Physics punishes students who try to memorise without understanding. At DA I was taught the concepts properly — the mathematics then became a natural expression of understanding.\n\nB+ average in Physics by Year 11 end. Concepts first, calculations second.",
-    whyItWorked: [
-      { n: '01', point: 'Concepts before calculations', detail: 'Blake was taught to understand first and calculate second — producing learning rather than guessing.' },
-      { n: '02', point: 'Mathematical and physical reasoning integrated', detail: 'The connection between a physical situation and its mathematical description was made explicit in every topic.' },
-      { n: '03', point: 'Failed attempts repurposed as diagnosis', detail: 'Incorrect answers were used as diagnostic information rather than as signs of failure.' },
-    ],
-    learningFormat: 'Small Group · HSC Physics',
-    newTags: ['Science', 'Academic Growth'],
-  },
-
-  // PLACEHOLDER pr-74 — Science group
-  {
-    id: 'pr-74',
-    subject: 'Science',
-    category: 'Science',
-    author: 'Sage Liu',
-    yearLevel: 'Year 9',
-    result: { before: 'D average', after: 'B+ average' },
-    outcomes: ['B+ Science', 'Grade Recovery', 'Exam Skills'],
-    preview: "I went from a D average to B+ in Science across a single term at DA. The tutors showed me that exam answers have a structure that can be learned — and I learned it.",
-    pullQuote: "Science exam answers have a learnable structure. Once I knew it, the D average became a B+.",
-    story: "D grades in Science came from knowing the content but not knowing how to express it in exams. At DA the tutors showed me exactly what examiners want to see.\n\nOne term. D to B+. The content knowledge was always there. The expression was the gap.",
-    whyItWorked: [
-      { n: '01', point: 'Exam expression vs. content knowledge', detail: 'Sage knew more than her marks showed. DA addressed the gap between understanding and exam performance directly.' },
-      { n: '02', point: 'Answer structure templates', detail: 'Having a clear template for each question type removed uncertainty that had produced inconsistent responses.' },
-      { n: '03', point: 'One term sufficient', detail: 'When the diagnosis is accurate and the intervention is targeted, rapid improvement is achievable within a single term.' },
-    ],
-    learningFormat: 'Small Group · Year 9 Science',
-    newTags: ['Science', 'Academic Growth'],
-  },
-
-  // PLACEHOLDER pr-75 — Science group
-  {
-    id: 'pr-75',
-    subject: 'Science',
-    category: 'HSC Chemistry',
-    author: 'Phoenix Nguyen',
-    yearLevel: 'Year 12',
-    result: { before: 'Band 3', after: 'Band 5' },
-    outcomes: ['Band 5 Chemistry', 'Organic Chemistry', 'HSC Science'],
-    preview: "Organic Chemistry was the topic that was sinking my HSC Chemistry result. DA turned it from my worst topic to one of my most reliable. Band 3 to Band 5 in the HSC.",
-    pullQuote: "Organic Chemistry went from my worst topic to one of my most reliable.",
-    story: "Organic Chemistry is the topic most students find hardest in HSC Chemistry. At DA my tutor broke it into a logical structure that made the patterns visible.\n\nBand 3 to Band 5 in the HSC. Organic Chemistry was one of my strongest topics by exam day.",
-    whyItWorked: [
-      { n: '01', point: 'Pattern recognition in organic chemistry', detail: 'Teaching Phoenix to see the patterns made memorisation unnecessary and reduced apparent complexity.' },
-      { n: '02', point: 'Weakest topic made a strength', detail: 'Turning the topic most likely to cost band marks into a reliable strength had a disproportionate impact on the result.' },
-      { n: '03', point: 'Systematic approach to mechanisms', detail: 'Understanding why reactions happen — not just that they do — produced the depth Band 5 answers require.' },
-    ],
-    learningFormat: 'Small Group · HSC Chemistry',
-    newTags: ['Science', 'Band 6 Results'],
-  },
-
-  // PLACEHOLDER pr-76 — Science group
-  {
-    id: 'pr-76',
-    subject: 'Science',
-    category: 'HSC Biology',
-    author: 'Sterling Park',
-    yearLevel: 'Year 10',
-    result: { before: 'C+', after: 'A in Biology' },
-    outcomes: ['A Grade Biology', 'HSC Preparation', 'Science Growth'],
-    preview: "I started studying Biology at DA in Year 10 to prepare for the HSC. I ended Year 10 with an A — higher than I'd managed in any science subject before.",
-    pullQuote: "Starting HSC preparation in Year 10 gave me a head start I didn't know I needed.",
-    story: "Starting Biology tuition in Year 10 rather than Year 11 gave me time to build understanding without exam pressure. At DA the foundation I built across Year 10 made the Year 11 content approachable from day one.\n\nYear 10 ended with my strongest science result ever. Year 11 started with confidence.",
-    whyItWorked: [
-      { n: '01', point: 'Pre-HSC preparation across two years', detail: 'Beginning in Year 10 allowed HSC content to be built in a lower-pressure environment.' },
-      { n: '02', point: 'Biology frameworks established early', detail: 'The conceptual frameworks for HSC Biology were understood before Year 11 exam pressure arrived.' },
-      { n: '03', point: 'Confidence entering Year 11', detail: 'Starting Year 11 with already-familiar content is a significant advantage early preparation produces reliably.' },
-    ],
-    learningFormat: 'Small Group · Science',
-    newTags: ['Science', 'Academic Growth'],
-  },
-
-  // PLACEHOLDER pr-77 — Science group
-  {
-    id: 'pr-77',
-    subject: 'Science',
-    category: 'HSC Biology',
-    author: 'Ember Chen',
-    yearLevel: 'Year 11',
-    result: { before: 'Overwhelmed by content volume', after: 'Top of cohort' },
-    outcomes: ['Top of Cohort', 'Biology Excellence', 'Content Mastery'],
-    preview: "Biology has the highest content volume of any HSC science. DA gave me a system for managing that volume — and I topped my cohort at Year 11 end.",
-    pullQuote: "Biology is about managing volume. DA gave me the system to do that, and the rest followed.",
-    story: "HSC Biology requires managing an enormous amount of content. At DA I was given a systematic approach to organising and retaining it that made the volume manageable.\n\nTopping my cohort at Year 11 end came from applying that system consistently across the whole year.",
-    whyItWorked: [
-      { n: '01', point: 'Content management system taught', detail: 'Organising biology by syllabus dot points with built-in retrieval practice transformed the volume from overwhelming to manageable.' },
-      { n: '02', point: 'Active recall over passive re-reading', detail: 'Ember was taught to test herself rather than re-read — producing significantly better retention of high-volume content.' },
-      { n: '03', point: 'Consistent review schedule', detail: 'A structured review cycle ensured content learned at the start of the year remained accessible by the exam.' },
-    ],
-    learningFormat: 'Small Group · HSC Biology',
-    newTags: ['Science', 'Study Habits'],
-  },
-
-  // PLACEHOLDER pr-78 — Science group
-  {
-    id: 'pr-78',
-    subject: 'Science',
-    category: 'HSC Physics',
-    author: 'Cedar Wong',
-    yearLevel: 'Year 12',
-    result: { before: 'Band 4', after: 'Band 6' },
-    outcomes: ['Band 6 Physics', 'Quantum Understanding', 'HSC Science'],
-    preview: "Quantum mechanics in Physics was the topic I was dreading most. DA made it the topic I was most confident in by the HSC. Band 4 to Band 6.",
-    pullQuote: "DA turned quantum mechanics from the thing I was dreading most into my most confident topic.",
-    story: "Quantum mechanics and special relativity are the most conceptually challenging parts of HSC Physics. At DA my tutor spent real time building the conceptual foundation before touching the mathematics.\n\nBand 4 to Band 6 in the HSC. And quantum mechanics was the topic I answered first.",
-    whyItWorked: [
-      { n: '01', point: 'Concepts before formulas', detail: 'Understanding what quantum mechanics is actually saying before learning the equations produced deeper and more durable understanding.' },
-      { n: '02', point: 'Difficult topics given proportionate time', detail: 'Topics generating most exam anxiety received the most preparation time.' },
-      { n: '03', point: 'Hardest topic became most confident', detail: 'When a student\'s weakest area becomes their strongest, the overall effect on performance is disproportionately positive.' },
-    ],
-    learningFormat: 'Small Group · HSC Physics',
-    newTags: ['Science', 'Band 6 Results'],
-  },
-
-  // PLACEHOLDER pr-79 — Science group
-  {
-    id: 'pr-79',
-    subject: 'Science',
-    category: 'Science',
-    author: 'Luna Kim',
-    yearLevel: 'Year 8',
-    result: { before: 'Reluctant', after: 'Science Club member' },
-    outcomes: ['Science Passion', 'Extra-Curricular', 'Confidence'],
-    preview: "I joined Science Club in Year 8 because of the interest DA sparked. I wouldn't have thought to do that before — I barely wanted to attend science class.",
-    pullQuote: "I joined Science Club because of the curiosity DA sparked. That was not on my agenda when I enrolled.",
-    story: "Reluctance toward science was turned into genuine curiosity at DA. My tutor made experiments something I looked forward to rather than survived.\n\nJoining Science Club was my own idea — which means the interest was real, not performed.",
-    whyItWorked: [
-      { n: '01', point: 'Experiments as hooks for understanding', detail: 'Starting with observable phenomena and working back to theory made science feel real, not just a syllabus.' },
-      { n: '02', point: 'Tutor modelled scientific curiosity', detail: 'When teachers demonstrate genuine enthusiasm for their subject, students are influenced by that enthusiasm.' },
-      { n: '03', point: 'Science as community activity', detail: 'Joining Science Club extends learning beyond the classroom and builds connections with like-minded students.' },
-    ],
-    learningFormat: 'Small Group · Year 8 Science',
-    newTags: ['Science', 'Confidence'],
-  },
-
-  // PLACEHOLDER pr-80 — Science group
-  {
-    id: 'pr-80',
-    subject: 'Science',
-    category: 'HSC Science Dual',
-    author: 'Atlas Tran',
-    yearLevel: 'Year 12',
-    result: { before: 'Band 3 Chemistry & Biology', after: 'Band 5 both' },
-    outcomes: ['Band 5 Chemistry & Biology', 'Dual Science', 'HSC Success'],
-    preview: "Two HSC sciences at Band 3 going into the final term. DA helped me lift both to Band 5 by exam day. The tailored support across two subjects in parallel was exceptional.",
-    pullQuote: "Two Band 3s going in. Two Band 5s coming out. DA made both possible simultaneously.",
-    story: "Managing two HSC sciences at Band 3 required a plan I couldn't have built alone. At DA two specialists worked on Chemistry and Biology in parallel.\n\nBoth results moved to Band 5 by the HSC. The coordination between tutors made that possible.",
-    whyItWorked: [
-      { n: '01', point: 'Parallel subject specialists coordinated', detail: 'Two tutors who communicated about Atlas\'s overall workload meant neither subject was advanced at the expense of the other.' },
-      { n: '02', point: 'Shared study strategies across subjects', detail: 'Techniques that worked in Chemistry were adapted for Biology — reducing cognitive load of managing two approaches simultaneously.' },
-      { n: '03', point: 'Final term focused and targeted', detail: 'With limited time remaining, sessions were exclusively HSC-format questions answered in marking-criteria style.' },
-    ],
-    learningFormat: 'Small Group · HSC Science Dual',
-    newTags: ['Science', 'HSC Success'],
+    "id": "vr-m1",
+    "subject": "Mathematics",
+    "category": "Mathematics Student Result",
+    "author": "Selene Dixon",
+    "yearLevel": "Verified review",
+    "result": {
+      "before": "40% · Failing",
+      "after": "91% · 1st in Trials"
+    },
+    "outcomes": [
+      "40% to 91%",
+      "1st in Trials",
+      "6th of 100+"
+    ],
+    "preview": "From a failing 40% average to 91% and first place in the trials — plus 99 on an assignment and 6th out of 100+ overall.",
+    "pullQuote": "The results of his tutoring are nothing short of astonishing.",
+    "story": "I cannot express enough how truly remarkable my experience has been with Mr. Danny, my biology tutor at DA who has turned my academic life around. When I first approached him, I was on the brink of failing my biology class, with failing grades and a sense of hopelessness. Fast forward to my recent triumph in the trials where I secured the coveted first place, and I owe it all to Mr. Danny. From the very first session, it was clear that Mr. Danny was not your average tutor. His passion for biology was palpable, and it was infectious. He didn't just teach the subject; he brought it to life. He used creative teaching methods and real-world examples to make complex biological concepts understandable and engaging. His ability to simplify the most intricate topics was astounding.\r\n\r\nFurthermore, I can hardly believe the transformation that has occurred in my Mathematics Standard 2 Course, all thanks to the incredible tutoring prowess of Mr. Bunsea. What sets Mr. Bunsea apart is his unwavering commitment to his students' success. He didn't just teach math; he demystified it. He broke down complex problems step by step, ensuring that I not only solved them but understood the underlying principles. His patience was unwavering, and he encouraged questions, no matter how ‘stupid’ they may have seemed. Mr. Bunsea’s dedication extended far beyond our tutoring sessions. He went the extra mile, providing additional resources, practice problems, and personalized study strategies. He was always accessible, ready to assist with homework or clarify doubts, even outside our scheduled sessions. His level of commitment was truly exceptional. The results of his tutoring are nothing short of astonishing. Going from a failing grade (averaging 40%) to securing the top position in the trials with a remarkable 91% is a testament to Mr. Bunsea’s exceptional teaching abilities. Additionally, achieving an assignment mark of 99 and my final ranking 6th out of 100+ students showed that his guidance not only improved my math skills but also rekindled my love for the subject.\r\n\r\nFor English Advanced, one of the standout aspects of Mr. Jonathan’s tutoring was his unwavering patience and encouragement. He created a safe and supportive environment. His feedback on my writing was constructive and inspiring, pushing me to constantly improve. He provided additional reading materials, practice exercises, and recommended literary works that expanded my horizons and deepened my understanding of English. His commitment to my success was evident in the countless hours he spent reviewing my assignments and providing valuable insights. In the end, the results were nothing short of astounding. From ranking last in prelim, to achieving consistently 1st place in all assessments and trials, with an overall rank of 1st in English. Mr. Jonathan’s exceptional teaching, mentorship, and guidance had propelled me to unimaginable heights.",
+    "whyItWorked": [
+      {
+        "n": "01",
+        "point": "A measurable change",
+        "detail": "40% · Failing became 91% · 1st in Trials. This outcome is stated in the student’s original review."
+      },
+      {
+        "n": "02",
+        "point": "Specific teaching support",
+        "detail": "The full review explains the teaching, feedback and encouragement behind the result."
+      },
+      {
+        "n": "03",
+        "point": "Verified student voice",
+        "detail": "This testimonial is reproduced from DA’s supplied review spreadsheet."
+      }
+    ],
+    "learningFormat": "Mathematics Tuition",
+    "newTags": [
+      "HSC Success",
+      "Confidence",
+      "Teacher Support",
+      "Academic Growth",
+      "Mathematics"
+    ]
+  },
+  {
+    "id": "vr-m2",
+    "subject": "Mathematics",
+    "category": "Mathematics Student Result",
+    "author": "Kayla Dos Santos",
+    "yearLevel": "Verified review",
+    "result": {
+      "before": "One of the lowest",
+      "after": "100% in Maths"
+    },
+    "outcomes": [
+      "100% Exam",
+      "Top 10 English",
+      "1st Biology Task"
+    ],
+    "preview": "I went from one of the lowest-ranked students in my class to 100% on my last Advanced Maths exam.",
+    "pullQuote": "All the staff are super nice and supportive but still value education by encouraging kids to do well.",
+    "story": "I currently have Mr Bunsea for Advanced Maths and I went from being one of the lowest ranked students in my class to getting 100% on my last maths exam after being taught by sir. I also have Miss Stephanie for Advanced English and I have improved so much, again I was ranked quite low now I am apart of the top ten in Advanced English. Mr Danny also teaches me for Biology and similar to English, I have improved so much, becoming first in my first biology task.\r\n\r\nOverall, all the staff are super nice and supportive but still value education by encouraging kids to do well",
+    "whyItWorked": [
+      {
+        "n": "01",
+        "point": "A measurable change",
+        "detail": "One of the lowest became 100% in Maths. This outcome is stated in the student’s original review."
+      },
+      {
+        "n": "02",
+        "point": "Specific teaching support",
+        "detail": "The full review explains the teaching, feedback and encouragement behind the result."
+      },
+      {
+        "n": "03",
+        "point": "Verified student voice",
+        "detail": "This testimonial is reproduced from DA’s supplied review spreadsheet."
+      }
+    ],
+    "learningFormat": "Mathematics Tuition",
+    "newTags": [
+      "Confidence",
+      "Teacher Support",
+      "Academic Growth",
+      "English",
+      "Mathematics"
+    ]
+  },
+  {
+    "id": "vr-m3",
+    "subject": "Mathematics",
+    "category": "Mathematics Student Result",
+    "author": "Anthony Nguyen",
+    "yearLevel": "Verified review",
+    "result": {
+      "before": "Untapped potential",
+      "after": "2nd of 135"
+    },
+    "outcomes": [
+      "2nd of 135",
+      "Tailored Teaching",
+      "Confidence"
+    ],
+    "preview": "DA helped me achieve marks I never thought possible — especially second place out of 135 in Mathematics.",
+    "pullQuote": "Their dedication and tailored teaching have truly boosted my confidence.",
+    "story": "I've been attending Da Tuition since Year 10, starting with Maths and later adding English and Biology in Years 11 and 12. I would like to thank my tutors—Ms. Linda, Ms. Lauren, Mr. King, and Mr. Danny—for helping me achieve marks I never thought possible and for deepening my understanding of each subject. Their dedication and tailored teaching have truly boosted my confidence and inspired me to constantly improve, especially in Maths, where I was able to achieve 2nd place out of 135.",
+    "whyItWorked": [
+      {
+        "n": "01",
+        "point": "A measurable change",
+        "detail": "Untapped potential became 2nd of 135. This outcome is stated in the student’s original review."
+      },
+      {
+        "n": "02",
+        "point": "Specific teaching support",
+        "detail": "The full review explains the teaching, feedback and encouragement behind the result."
+      },
+      {
+        "n": "03",
+        "point": "Verified student voice",
+        "detail": "This testimonial is reproduced from DA’s supplied review spreadsheet."
+      }
+    ],
+    "learningFormat": "Mathematics Tuition",
+    "newTags": [
+      "Confidence",
+      "Teacher Support",
+      "Academic Growth",
+      "Mathematics"
+    ]
+  },
+  {
+    "id": "vr-m4",
+    "subject": "Mathematics",
+    "category": "Mathematics Student Result",
+    "author": "Albert Tran",
+    "yearLevel": "Verified review",
+    "result": {
+      "before": "Complex 4U topics",
+      "after": "100% · Top HSC Bands"
+    },
+    "outcomes": [
+      "100% in 4U",
+      "Top Band 3U",
+      "Top Band 4U"
+    ],
+    "preview": "With Mr Bunsea’s help, I achieved 100% in a Year 12 4U exam and the highest bands in both 3U and 4U for the HSC.",
+    "pullQuote": "He even made me enjoy learning the most conceptually confusing topics.",
+    "story": "Mr Bunsea is an awesome tutor who I was lucky enough to have to help me throughout the course of year 12 and the HSC. He is an extremely friendly and approachable tutor who was able to guide me through some of the most tedious and conceptually confusing 4U topics like conics and harder 3U, and even made me enjoy learning them. Whenever I was stuck on a difficult question in class, Mr Bunsea would always be able to help me understand it in a clear manner, allowing me to approach future questions in the same way. Even out of class he offered his help, as I was able to message him if I had any trouble with any questions, which was really useful especially during exam season and I greatly appreciated this. So it was with his help that I was actually able to get 100% on one of my 4U exams in year 12 at Baulkham Hills, as well as get the highest bands in both 3U and 4U for the HSC; and I can't thank him enough.\nAlbert Tran - Baulkham Hills High School - Year 12",
+    "whyItWorked": [
+      {
+        "n": "01",
+        "point": "A measurable change",
+        "detail": "Complex 4U topics became 100% · Top HSC Bands. This outcome is stated in the student’s original review."
+      },
+      {
+        "n": "02",
+        "point": "Specific teaching support",
+        "detail": "The full review explains the teaching, feedback and encouragement behind the result."
+      },
+      {
+        "n": "03",
+        "point": "Verified student voice",
+        "detail": "This testimonial is reproduced from DA’s supplied review spreadsheet."
+      }
+    ],
+    "learningFormat": "Mathematics Tuition",
+    "newTags": [
+      "HSC Success",
+      "Teacher Support",
+      "Academic Growth",
+      "Mathematics"
+    ]
+  },
+  {
+    "id": "vr-m5",
+    "subject": "Mathematics",
+    "category": "Mathematics Student Result",
+    "author": "Amanda Vu",
+    "yearLevel": "Verified review",
+    "result": {
+      "before": "Building confidence",
+      "after": "Top 5 · 95%+"
+    },
+    "outcomes": [
+      "Top 5 in Grade",
+      "95% and Above",
+      "Four Years at DA"
+    ],
+    "preview": "I ranked in the top five in my grade for every Maths test this year, scoring 95% and above.",
+    "pullQuote": "I have never felt more accomplished.",
+    "story": "I have been attending DA tuition for almost 4 years now, and I have never felt more accomplished. Throughout these years, I have seen immense improvement in my schooling results. Originally I attended DA’s selective training class through years 5 - 6, then made my way up to GAT class through year 7. Then, I climbed my way up to ET class through years 8 and currently 9, proving my abilities with top marks and satisfactory results. ET class with Miss Linda is by far the best class I’ve been a part of because of the comfortable environment, and having a knowledgeable teacher that encourages me to do well. Miss Linda’s teaching style is extremely clear and easy to perceive, allowing me to understand content easily, and to apply it tangibly. I love how motivational she is too, encouraging us students to strive to accomplish academic goals as well as enjoying our years of youth. Thanks to Miss Linda, I have become more confident in my abilities and have been more motivated in DA and at school, due to the satisfying results I have accomplished through her guidance. In school I have been able to rank top 5 in the grade for every maths test this year (95% and above) and I couldn't be happier :). As for DA, I have been improving each week, ranking high for homework results as well as in class quizzes. I'm excited for another year at DA!",
+    "whyItWorked": [
+      {
+        "n": "01",
+        "point": "A measurable change",
+        "detail": "Building confidence became Top 5 · 95%+. This outcome is stated in the student’s original review."
+      },
+      {
+        "n": "02",
+        "point": "Specific teaching support",
+        "detail": "The full review explains the teaching, feedback and encouragement behind the result."
+      },
+      {
+        "n": "03",
+        "point": "Verified student voice",
+        "detail": "This testimonial is reproduced from DA’s supplied review spreadsheet."
+      }
+    ],
+    "learningFormat": "Mathematics Tuition",
+    "newTags": [
+      "Confidence",
+      "Teacher Support",
+      "Academic Growth",
+      "Mathematics"
+    ]
+  },
+  {
+    "id": "vr-e1",
+    "subject": "English",
+    "category": "English Student Result",
+    "author": "Cherissa Nguyen",
+    "yearLevel": "Verified review",
+    "result": {
+      "before": "Rank 50th",
+      "after": "Rank 6th"
+    },
+    "outcomes": [
+      "44-Rank Jump",
+      "Writing Skills",
+      "Motivation"
+    ],
+    "preview": "My English marks used to be very bad. With Miss Lai’s support, I jumped from 50th to 6th.",
+    "pullQuote": "Thank you for helping me achieve my goals and giving me more motivation.",
+    "story": "My English marks used to be very bad because I am an international student, but since I joined DA Tuition, Miss Lai, who is my English tutoring teacher, has helped me a lot with my work and improved my understanding so as to improve my writing skills in English. I love her sweet personality and well coming atmosphere during class. I really appreciate that! Thank you, Miss and DA Tuition, for helping me to archive my goals and giving me more motivation to continue working hard on exams! Jumped from 50th to 6th!!!!!!!",
+    "whyItWorked": [
+      {
+        "n": "01",
+        "point": "A measurable change",
+        "detail": "Rank 50th became Rank 6th. This outcome is stated in the student’s original review."
+      },
+      {
+        "n": "02",
+        "point": "Specific teaching support",
+        "detail": "The full review explains the teaching, feedback and encouragement behind the result."
+      },
+      {
+        "n": "03",
+        "point": "Verified student voice",
+        "detail": "This testimonial is reproduced from DA’s supplied review spreadsheet."
+      }
+    ],
+    "learningFormat": "English Tuition",
+    "newTags": [
+      "Confidence",
+      "Teacher Support",
+      "Academic Growth",
+      "English"
+    ]
+  },
+  {
+    "id": "vr-e2",
+    "subject": "English",
+    "category": "English Student Result",
+    "author": "Amy Tran",
+    "yearLevel": "Verified review",
+    "result": {
+      "before": "Barely passing",
+      "after": "20/20 · 100%"
+    },
+    "outcomes": [
+      "20/20 Assessment",
+      "100% Result",
+      "Confidence"
+    ],
+    "preview": "Before DA, I would barely pass exams. Miss Stephanie then helped me achieve 20/20 on my recent English assessment.",
+    "pullQuote": "I could not believe I achieved the 100%.",
+    "story": "Before DA, I would barely pass any exams and would always keep things to myself. After learning at DA and having Miss Stephanie for English and Miss Linda for Maths as my teachers, they have helped me do exceptionally well in many assignments and exams. Miss Stephanie helped me get a 20/20 for my recent assessment and I could not believe I achieved the 100%. They have helped me with all the things that I didn't understand in the subjects before.\nAmy Tran - James Busby High School - Year 9",
+    "whyItWorked": [
+      {
+        "n": "01",
+        "point": "A measurable change",
+        "detail": "Barely passing became 20/20 · 100%. This outcome is stated in the student’s original review."
+      },
+      {
+        "n": "02",
+        "point": "Specific teaching support",
+        "detail": "The full review explains the teaching, feedback and encouragement behind the result."
+      },
+      {
+        "n": "03",
+        "point": "Verified student voice",
+        "detail": "This testimonial is reproduced from DA’s supplied review spreadsheet."
+      }
+    ],
+    "learningFormat": "English Tuition",
+    "newTags": [
+      "Confidence",
+      "Teacher Support",
+      "Academic Growth",
+      "English"
+    ]
+  },
+  {
+    "id": "vr-e3",
+    "subject": "English",
+    "category": "English Student Result",
+    "author": "Angelina Luong",
+    "yearLevel": "Verified review",
+    "result": {
+      "before": "Straight C Grade",
+      "after": "Full Marks"
+    },
+    "outcomes": [
+      "C to A Range",
+      "Full Marks",
+      "Confidence"
+    ],
+    "preview": "I moved from straight Cs to high Bs and As, then achieved full marks on my English preliminary exam.",
+    "pullQuote": "My tutor guided me, built my confidence and supported me through the tough moments.",
+    "story": "DA has helped improved my english grades and understanding in general. From being a straight C grade student to now achieving high B’s and A’s. My tutor Miss Lauren has guided me well and helped me gain confidence in english, and supported me even through the tough moments when getting a disappointed grade! Because of those tough times I studied even harder and learnt from past mistakes, resulting in me getting full marks on my english prelim exam!!! I am entirely grateful :D",
+    "whyItWorked": [
+      {
+        "n": "01",
+        "point": "A measurable change",
+        "detail": "Straight C Grade became Full Marks. This outcome is stated in the student’s original review."
+      },
+      {
+        "n": "02",
+        "point": "Specific teaching support",
+        "detail": "The full review explains the teaching, feedback and encouragement behind the result."
+      },
+      {
+        "n": "03",
+        "point": "Verified student voice",
+        "detail": "This testimonial is reproduced from DA’s supplied review spreadsheet."
+      }
+    ],
+    "learningFormat": "English Tuition",
+    "newTags": [
+      "Confidence",
+      "Teacher Support",
+      "Academic Growth",
+      "English"
+    ]
+  },
+  {
+    "id": "vr-e4",
+    "subject": "English",
+    "category": "English Student Result",
+    "author": "Crystal Tran",
+    "yearLevel": "Verified review",
+    "result": {
+      "before": "First Advanced Task",
+      "after": "19/20"
+    },
+    "outcomes": [
+      "19/20 Result",
+      "Advanced English",
+      "Expert Feedback"
+    ],
+    "preview": "I received 19/20 for my first Advanced English task with Miss Stephanie’s help.",
+    "pullQuote": "It is impossible to want another English tutor after having a lesson with her.",
+    "story": "I received a 19/20 for my first Advanced English task with the help of Miss Stephanie in private class. She has an extensive understanding of the content and is continuously educating herself to aid her students to the best of her ability. It is impossible to want another English tutor after having a lesson with her!",
+    "whyItWorked": [
+      {
+        "n": "01",
+        "point": "A measurable change",
+        "detail": "First Advanced Task became 19/20. This outcome is stated in the student’s original review."
+      },
+      {
+        "n": "02",
+        "point": "Specific teaching support",
+        "detail": "The full review explains the teaching, feedback and encouragement behind the result."
+      },
+      {
+        "n": "03",
+        "point": "Verified student voice",
+        "detail": "This testimonial is reproduced from DA’s supplied review spreadsheet."
+      }
+    ],
+    "learningFormat": "English Tuition",
+    "newTags": [
+      "Teacher Support",
+      "Academic Growth",
+      "English"
+    ]
+  },
+  {
+    "id": "vr-e5",
+    "subject": "English",
+    "category": "English Student Result",
+    "author": "Diana Pham",
+    "yearLevel": "Verified review",
+    "result": {
+      "before": "C Student",
+      "after": "Top 10 in Grade"
+    },
+    "outcomes": [
+      "C to Consistent A",
+      "Top 10",
+      "HSC Success"
+    ],
+    "preview": "From a C student in Year 7, I reached consistent As and finished Year 12 in the top ten for English.",
+    "pullQuote": "This would not have happened if Miss Lai did not push me to my limits.",
+    "story": "Ms Lai was an amazing teacher who encouraged me to do the best I can. I gained better skills and vocabulary over time, which lead me to improve my writing. From being a C student in Year 7, I was eventually able to keep a constant A from Year 8. In Year 12, I was in the top 10 in the grade for English, and this wouldn’t have happened if Miss Lai didn’t push me to my limits. She helped me to think about the way I’ve been writing and assisted me in dropping bad habits, cultivating good ones. Ms Lai broadened my perspective of writing in different styles, and enhanced my ability to quickly answer questions in the HSC format. I finished my HSC English with amazing results and I cannot recommend Ms Lai enough. \nDiana Pham - Mary Mackillop Catholic College, Year 12",
+    "whyItWorked": [
+      {
+        "n": "01",
+        "point": "A measurable change",
+        "detail": "C Student became Top 10 in Grade. This outcome is stated in the student’s original review."
+      },
+      {
+        "n": "02",
+        "point": "Specific teaching support",
+        "detail": "The full review explains the teaching, feedback and encouragement behind the result."
+      },
+      {
+        "n": "03",
+        "point": "Verified student voice",
+        "detail": "This testimonial is reproduced from DA’s supplied review spreadsheet."
+      }
+    ],
+    "learningFormat": "English Tuition",
+    "newTags": [
+      "HSC Success",
+      "Confidence",
+      "Teacher Support",
+      "Academic Growth",
+      "English"
+    ]
+  },
+  {
+    "id": "vr-e6",
+    "subject": "English",
+    "category": "English Student Result",
+    "author": "Adrian Dang",
+    "yearLevel": "Verified review",
+    "result": {
+      "before": "Semester 1 Rank",
+      "after": "Top of Trials Class"
+    },
+    "outcomes": [
+      "10-Place Rank Jump",
+      "Top Trial Result",
+      "Nine Years at DA"
+    ],
+    "preview": "Miss Lai helped boost my English rank by ten places, then I topped my class in the trial exams.",
+    "pullQuote": "The teachers are by far the best, helping me achieve new heights.",
+    "story": "I’ve been at DA for 9 years now, and can say that the teachers are by far the best, helping me achieve new heights I wouldn’t have without their constant support and investment in my learning. Not only are they extremely caring, the teachers put an immense amount of hard work and dedication into helping us achieve exemplary results, which has created a comfortable learning environment for students.\n\nI began in private classes in year 3 which helped build the foundation of my learning in the lead up to years 5 and 6, where I had Mr Danny, and without him and his constant support I would not have achieved excellent results in the selective exams.\n\nFollowing this I had Miss Linda and Miss Jenny, and I owe them a large debt of gratitude in helping me excel in my junior years of high school, putting in an immeasurable amount of effort into making sure I’m prepared for exam conditions and submitting assignments on time and at a high standard.\n\nFrom the lead up to my senior years of high school, I had Mr King and Miss Amanda as my maths teachers, and they are undoubtedly the best math tutors you will find. Having their constant support through ensuring students understand concepts thoroughly whilst exposing us to the toughest questions to prepare for exam conditions constituted my success, and not to mention their unique connection with students which help them understand our areas of improvement to help us excel.\n\nFor English advanced I had Miss Lai, and she is the most supportive, hardworking and dedicated teacher you will find, helping me thrive during assignments and exams which boosted my ranks by 10 places between semester 1 and 2, and topping my class for the trial exams.\n\nI’ve enjoyed every moment here and highly recommend for anyone looking for a fantastic tutor :)",
+    "whyItWorked": [
+      {
+        "n": "01",
+        "point": "A measurable change",
+        "detail": "Semester 1 Rank became Top of Trials Class. This outcome is stated in the student’s original review."
+      },
+      {
+        "n": "02",
+        "point": "Specific teaching support",
+        "detail": "The full review explains the teaching, feedback and encouragement behind the result."
+      },
+      {
+        "n": "03",
+        "point": "Verified student voice",
+        "detail": "This testimonial is reproduced from DA’s supplied review spreadsheet."
+      }
+    ],
+    "learningFormat": "English Tuition",
+    "newTags": [
+      "HSC Success",
+      "Teacher Support",
+      "Academic Growth",
+      "English"
+    ]
   },
 ];
 
+const ALL_CAROUSEL_REVIEWS = [...CAROUSEL_REVIEWS, ...supplementalHomepageReviews];
+
 const REVIEW_TAGS = [
   'All Reviews',
-  'Band 6 Results', 'HSC Success', 'Confidence', 'Teacher Support',
-  'Study Habits', 'Academic Growth', 'Parent Feedback',
-  'English', 'Mathematics', 'Science',
+  'HSC Success', 'Confidence', 'Teacher Support',
+  'Academic Growth', 'English', 'Mathematics', 'Science',
 ] as const;
 
-// Filter map — every keyword shows exactly 8 unique students.
-// No student appears in more than one filter (except 'All Reviews' which shows the 8 real reviews).
-// Real reviews (cr-1 to cr-8): exclusively in 'All Reviews'.
-// Placeholders (pr-01 to pr-80): each assigned to exactly one filter — replace with verified testimonials.
-const FILTER_MAP: Record<string, string[]> = {
-  'All Reviews':    ['cr-1','cr-2','cr-3','cr-4','cr-5','cr-6','cr-7','cr-8'],
-  'Band 6 Results': ['pr-01','pr-02','pr-05','pr-07','pr-15','pr-17','pr-20','pr-23'],
-  'HSC Success':    ['pr-10','pr-12','pr-22','pr-24','pr-25','pr-26','pr-27','pr-28'],
-  'Confidence':     ['pr-04','pr-06','pr-08','pr-11','pr-13','pr-29','pr-30','pr-31'],
-  'Teacher Support':['pr-03','pr-16','pr-32','pr-33','pr-34','pr-35','pr-36','pr-37'],
-  'Study Habits':   ['pr-09','pr-18','pr-19','pr-38','pr-39','pr-40','pr-41','pr-42'],
-  'Academic Growth':['pr-14','pr-21','pr-43','pr-44','pr-45','pr-46','pr-47','pr-48'],
-  'Parent Feedback':['pr-49','pr-50','pr-51','pr-52','pr-53','pr-54','pr-55','pr-56'],
-  'English':        ['pr-57','pr-58','pr-59','pr-60','pr-61','pr-62','pr-63','pr-64'],
-  'Mathematics':    ['pr-65','pr-66','pr-67','pr-68','pr-69','pr-70','pr-71','pr-72'],
-  'Science':        ['pr-73','pr-74','pr-75','pr-76','pr-77','pr-78','pr-79','pr-80'],
-};
+const FILTER_MAP: Record<string, string[]> = Object.fromEntries(
+  REVIEW_TAGS.map((tag) => [
+    tag,
+    ALL_CAROUSEL_REVIEWS
+      .filter((review) => tag === 'All Reviews' || review.newTags.includes(tag))
+      .map((review) => review.id),
+  ]),
+);
 
-type ReviewRecord = typeof CAROUSEL_REVIEWS[0];
+const REVIEW_IMPACT_ORDER = [
+  'vr-m1', 'cr-7', 'vr-m2', 'cr-4', 'vr-e1', 'cr-1', 'vr-e2', 'vr-e3',
+  'vr-m4', 'vr-m3', 'cr-2', 'vr-e4', 'vr-e5', 'vr-e6', 'vr-m5',
+  'cr-3', 'cr-6', 'cr-5', 'cr-8',
+];
+const REVIEW_IMPACT_RANK = new Map(REVIEW_IMPACT_ORDER.map((id, index) => [id, index]));
+
+type ReviewRecord = (typeof ALL_CAROUSEL_REVIEWS)[number];
 
 // ── Story modal ───────────────────────────────────────────────
 function StoryModal({ review, onClose }: { review: ReviewRecord; onClose: () => void }) {
@@ -6415,11 +5940,18 @@ const ReviewsSection = () => {
   const [selected,     setSelected]     = useState<ReviewRecord | null>(null);
   const [activeFilter, setActiveFilter] = useState<string>('All Reviews');
   const [fading,       setFading]       = useState(false);
+  const [reviewPage,   setReviewPage]   = useState(0);
 
   const easeOut = [0.22, 1, 0.36, 1] as const;
+  const reviewsPerPage = 4;
 
-  const filteredReviews = CAROUSEL_REVIEWS.filter(r =>
-    (FILTER_MAP[activeFilter] ?? []).includes(r.id)
+  const filteredReviews = ALL_CAROUSEL_REVIEWS
+    .filter(r => (FILTER_MAP[activeFilter] ?? []).includes(r.id))
+    .sort((a, b) => (REVIEW_IMPACT_RANK.get(a.id) ?? 999) - (REVIEW_IMPACT_RANK.get(b.id) ?? 999));
+  const totalReviewPages = Math.max(1, Math.ceil(filteredReviews.length / reviewsPerPage));
+  const visibleReviews = filteredReviews.slice(
+    reviewPage * reviewsPerPage,
+    reviewPage * reviewsPerPage + reviewsPerPage
   );
 
   const handleFilterChange = (tag: string) => {
@@ -6427,6 +5959,15 @@ const ReviewsSection = () => {
     setFading(true);
     setTimeout(() => {
       setActiveFilter(tag);
+      setReviewPage(0);
+      setFading(false);
+    }, 180);
+  };
+
+  const handleReviewPageChange = (direction: 1 | -1) => {
+    setFading(true);
+    setTimeout(() => {
+      setReviewPage((page) => (page + direction + totalReviewPages) % totalReviewPages);
       setFading(false);
     }, 180);
   };
@@ -6462,7 +6003,7 @@ const ReviewsSection = () => {
             letterSpacing: '-.028em', lineHeight: 1.08,
             color: C.navy, margin: 0,
           }}>
-            450 Five-Star Reviews
+            Let’s look at some of our Google Reviews
           </h2>
         </motion.div>
       </div>
@@ -6488,13 +6029,13 @@ const ReviewsSection = () => {
               onClick={() => handleFilterChange(tag)}
               style={{
                 height: '34px',
-                padding: '0 16px',
+                padding: '0 18px',
                 borderRadius: '100px',
                 border: `1.5px solid ${isActive ? C.gold : 'rgba(10,27,52,0.16)'}`,
                 background: isActive ? C.gold : 'transparent',
                 color: isActive ? '#FFFFFF' : 'rgba(10,27,52,0.58)',
                 fontFamily: sans, fontWeight: 500,
-                fontSize: '.65rem', letterSpacing: '.12em',
+                fontSize: '.72rem', letterSpacing: '.12em',
                 textTransform: 'uppercase' as const,
                 cursor: 'pointer',
                 transition: 'all 0.22s cubic-bezier(0.22,1,0.36,1)',
@@ -6509,8 +6050,8 @@ const ReviewsSection = () => {
 
       {/* ── Card grid ── */}
       <style>{`
-        .rv-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
-        @media (max-width: 1100px) { .rv-grid { grid-template-columns: repeat(2, 1fr); } }
+        .rv-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(22px, 1.65vw, 30px); }
+        @media (max-width: 1180px) { .rv-grid { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 560px)  { .rv-grid { grid-template-columns: 1fr; } }
       `}</style>
       <motion.div
@@ -6519,7 +6060,7 @@ const ReviewsSection = () => {
         style={{ padding: '0 clamp(24px,6vw,80px)' }}
       >
         <div className="rv-grid">
-          {filteredReviews.map((r, i) => (
+          {visibleReviews.map((r, i) => (
             <motion.div
               key={r.id}
               layoutId={`review-card-${r.id}`}
@@ -6532,7 +6073,8 @@ const ReviewsSection = () => {
                 borderRadius: '14px',
                 border: '1px solid rgba(10,27,52,0.07)',
                 boxShadow: '0 1px 10px rgba(10,27,52,0.05)',
-                padding: '24px',
+                padding: 'clamp(26px,2vw,34px)',
+                minHeight: 'clamp(520px,34vw,620px)',
                 display: 'flex',
                 flexDirection: 'column' as const,
                 cursor: 'pointer',
@@ -6540,60 +6082,79 @@ const ReviewsSection = () => {
               }}
             >
               {/* Stars + Subject pill */}
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '18px' }}>
-                <span style={{ color: C.gold, fontSize: '11px', letterSpacing: '0.08em' }}>★★★★★</span>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', marginBottom: '24px' }}>
+                <span style={{ color: C.gold, fontSize: '13px', letterSpacing: '0.10em' }}>★★★★★</span>
                 <span style={{
-                  fontFamily: sans, fontSize: '8px', fontWeight: 700,
+                  fontFamily: sans, fontSize: '9.5px', fontWeight: 700,
                   letterSpacing: '0.14em', textTransform: 'uppercase' as const,
                   color: C.gold, background: 'rgba(212,175,55,0.09)',
                   border: '1px solid rgba(212,175,55,0.20)',
-                  borderRadius: '100px', padding: '3px 10px',
+                  borderRadius: '100px', padding: '5px 12px',
                 }}>{r.subject}</span>
               </div>
 
               {/* Name */}
-              <p style={{ fontFamily: serif, fontSize: '19px', fontWeight: 400, color: C.navy, lineHeight: 1.2, margin: '0 0 4px' }}>
+              <p style={{ fontFamily: serif, fontSize: 'clamp(24px,1.55vw,30px)', fontWeight: 400, color: C.navy, lineHeight: 1.15, margin: '0 0 7px' }}>
                 {r.author}
               </p>
 
               {/* Year · Category */}
-              <p style={{ fontFamily: sans, fontSize: '11px', color: 'rgba(10,27,52,0.42)', margin: '0 0 16px', letterSpacing: '0.03em' }}>
+              <p style={{ fontFamily: sans, fontSize: '13px', color: 'rgba(10,27,52,0.46)', margin: '0 0 22px', letterSpacing: '0.025em', lineHeight: 1.35 }}>
                 {r.yearLevel} · {r.category}
               </p>
 
               {/* Result box */}
               <div style={{
-                background: C.cream2,
-                borderRadius: '8px', padding: '12px 14px', marginBottom: '14px',
-                display: 'flex', alignItems: 'center', gap: '8px',
+                position: 'relative', overflow: 'hidden',
+                background: `linear-gradient(135deg, ${C.navy} 0%, ${C.navy2} 100%)`,
+                borderRadius: '12px', padding: '18px 20px 20px', marginBottom: '18px',
+                border: '1px solid rgba(212,175,55,0.34)',
+                boxShadow: '0 12px 28px rgba(10,27,52,0.18)',
               }}>
-                <span style={{ fontFamily: sans, fontSize: '11px', color: 'rgba(10,27,52,0.38)', whiteSpace: 'nowrap' }}>{r.result.before}</span>
-                <span style={{ color: C.gold, fontWeight: 700, fontSize: '14px', flexShrink: 0 }}>→</span>
-                <span style={{ fontFamily: sans, fontSize: '13px', color: C.navy, fontWeight: 800, whiteSpace: 'nowrap' }}>{r.result.after}</span>
+                <div style={{
+                  fontFamily: sans, fontSize: '9px', fontWeight: 800,
+                  color: C.goldL, letterSpacing: '0.19em', textTransform: 'uppercase',
+                  marginBottom: '11px',
+                }}>The result</div>
+                <div style={{ display: 'flex', alignItems: 'baseline', gap: '10px', flexWrap: 'wrap' }}>
+                  <span style={{ fontFamily: sans, fontSize: '11px', color: 'rgba(255,255,255,0.52)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>{r.result.before}</span>
+                  <span aria-hidden="true" style={{ color: C.gold, fontWeight: 800, fontSize: '18px' }}>→</span>
+                  <strong style={{
+                    fontFamily: serif, fontSize: 'clamp(1.65rem,2.4vw,2.35rem)',
+                    lineHeight: 0.95, color: '#FFFFFF', fontWeight: 600,
+                    letterSpacing: '-0.025em',
+                  }}>{r.result.after}</strong>
+                </div>
+                <div aria-hidden="true" style={{
+                  position: 'absolute', width: '90px', height: '90px', right: '-34px', top: '-42px',
+                  borderRadius: '50%', border: '1px solid rgba(212,175,55,0.24)',
+                  boxShadow: '0 0 50px rgba(212,175,55,0.16)',
+                }} />
               </div>
 
               {/* Outcomes */}
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px', marginBottom: '18px' }}>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '7px', marginBottom: '24px' }}>
                 {r.outcomes.map(o => (
                   <span key={o} style={{
-                    fontFamily: sans, fontSize: '10px', fontWeight: 600,
+                    fontFamily: sans, fontSize: '11.5px', fontWeight: 600,
                     color: 'rgba(10,27,52,0.62)', background: 'rgba(10,27,52,0.04)',
                     border: '1px solid rgba(10,27,52,0.06)', borderRadius: '4px',
-                    padding: '3px 8px', display: 'inline-flex', alignItems: 'center', gap: '4px',
+                    padding: '5px 9px', display: 'inline-flex', alignItems: 'center', gap: '5px',
+                    lineHeight: 1.2,
                   }}>
-                    <span style={{ color: C.gold, fontSize: '11px' }}>✓</span> {o}
+                    <span style={{ color: C.gold, fontSize: '12px' }}>✓</span> {o}
                   </span>
                 ))}
               </div>
 
               {/* Gold divider */}
-              <div style={{ height: '1px', background: `linear-gradient(90deg, ${C.gold}55, ${C.gold}08)`, marginBottom: '16px' }} />
+              <div style={{ height: '1px', background: `linear-gradient(90deg, ${C.gold}55, ${C.gold}08)`, marginBottom: '22px' }} />
 
               {/* Preview quote */}
               <p style={{
                 fontFamily: serif, fontWeight: 300, fontStyle: 'italic',
-                fontSize: '14.5px', lineHeight: 1.65, color: C.navy,
-                margin: '0 0 16px', flex: 1,
+                fontSize: 'clamp(17px,1.06vw,20px)', lineHeight: 1.7, color: C.navy,
+                margin: '0 0 22px', flex: 1,
                 display: '-webkit-box', WebkitLineClamp: 3,
                 WebkitBoxOrient: 'vertical' as const, overflow: 'hidden',
               } as React.CSSProperties}>
@@ -6604,7 +6165,7 @@ const ReviewsSection = () => {
               {/* Read Full Story */}
               <div style={{
                 fontFamily: sans, fontWeight: 600,
-                fontSize: '9.5px', letterSpacing: '0.16em',
+                fontSize: '11px', letterSpacing: '0.16em',
                 textTransform: 'uppercase' as const,
                 color: C.gold,
                 display: 'inline-flex', alignItems: 'center', gap: '6px',
@@ -6615,6 +6176,63 @@ const ReviewsSection = () => {
             </motion.div>
           ))}
         </div>
+        {totalReviewPages > 1 && (
+          <div style={{
+            marginTop: 'clamp(28px,3vw,42px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '18px',
+            flexWrap: 'wrap',
+          }}>
+            <button
+              type="button"
+              onClick={() => handleReviewPageChange(-1)}
+              style={{
+                width: '44px', height: '44px',
+                borderRadius: '999px',
+                border: `1px solid rgba(10,27,52,0.16)`,
+                background: '#FFFFFF',
+                color: C.navy,
+                fontFamily: sans,
+                fontSize: '18px',
+                fontWeight: 700,
+                cursor: 'pointer',
+              }}
+              aria-label="Show previous reviews"
+            >
+              ←
+            </button>
+            <span style={{
+              fontFamily: sans,
+              fontSize: '.78rem',
+              fontWeight: 700,
+              letterSpacing: '.14em',
+              textTransform: 'uppercase',
+              color: 'rgba(10,27,52,0.58)',
+            }}>
+              {reviewPage + 1} / {totalReviewPages}
+            </span>
+            <button
+              type="button"
+              onClick={() => handleReviewPageChange(1)}
+              style={{
+                width: '44px', height: '44px',
+                borderRadius: '999px',
+                border: `1px solid ${C.gold}`,
+                background: C.navy,
+                color: '#FFFFFF',
+                fontFamily: sans,
+                fontSize: '18px',
+                fontWeight: 700,
+                cursor: 'pointer',
+              }}
+              aria-label="Show next reviews"
+            >
+              →
+            </button>
+          </div>
+        )}
       </motion.div>
 
       {/* ── Modal ── */}
@@ -6686,52 +6304,10 @@ const TeachersSection = () => {
 
 
 // ══════════════════════════════════════════════════════════════
-//  CLOSING CTA
-// ══════════════════════════════════════════════════════════════
-const ClosingCTASection = () => {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: '-60px' });
-  return (
-    <section id="closing-cta" ref={ref} style={{ background: '#0A1B34', padding: '120px 24px', textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
-      <div style={{ position: 'absolute', top: 0, left: '24px', right: '24px', height: '1px', background: 'linear-gradient(90deg, transparent, rgba(212,175,55,.25) 20%, rgba(212,175,55,.25) 80%, transparent)' }} />
-      <motion.div variants={stagger} initial="hidden" animate={inView ? 'visible' : 'hidden'} style={{ maxWidth: '680px', margin: '0 auto' }}>
-        <motion.div variants={fadeUp} style={{ fontFamily: sans, fontSize: '.68rem', fontWeight: 700, letterSpacing: '.18em', textTransform: 'uppercase' as const, color: C.gold, marginBottom: '20px' }}>
-          Book a Consultation
-        </motion.div>
-        <motion.h2 variants={fadeUp} style={{ fontFamily: serif, fontWeight: 500, fontSize: 'clamp(2.2rem,4.5vw,3.6rem)', letterSpacing: '-.02em', lineHeight: 1.1, color: C.white, marginBottom: '22px' }}>
-          Ready to find the right program for your child?
-        </motion.h2>
-        <motion.p variants={fadeUp} style={{ fontFamily: sans, fontWeight: 300, fontSize: '.95rem', lineHeight: 1.88, color: 'rgba(250,250,248,.72)', marginBottom: '44px', maxWidth: '520px', margin: '0 auto 44px' }}>
-          Book an interview with our principal. In 30 minutes we will understand your child's needs and match them to the right class, teacher, and starting point.
-        </motion.p>
-        <motion.div variants={fadeUp}>
-          <Link
-            to="/book-interview"
-            style={{
-              display: 'inline-flex', alignItems: 'center', gap: '10px',
-              background: 'linear-gradient(135deg, #D4AF37, #F0C86A)',
-              color: '#0A1B34',
-              fontFamily: sans, fontWeight: 800,
-              fontSize: '.82rem', letterSpacing: '.08em', textTransform: 'uppercase' as const,
-              padding: '16px 44px', borderRadius: '50px',
-              textDecoration: 'none',
-              boxShadow: '0 8px 32px rgba(212,175,55,.35)',
-              transition: 'box-shadow .3s ease',
-            }}
-          >
-            Book an Interview
-          </Link>
-        </motion.div>
-      </motion.div>
-    </section>
-  );
-};
-
-// ══════════════════════════════════════════════════════════════
 //  PAGE
 // ══════════════════════════════════════════════════════════════
 const Index = () => {
-  const philosophyNextSectionRef = useRef<HTMLDivElement>(null);
+  const philosophyNextSectionRef = useRef<HTMLElement>(null);
 
   return (
   <div style={{ fontFamily: sans }}>
@@ -6779,19 +6355,17 @@ const Index = () => {
           <MarqueeStrip />
           <PhilosophyEditorialSection nextSectionRef={philosophyNextSectionRef} />
         </div>
-        <OurAwardTransition sectionRef={philosophyNextSectionRef} />
-        <ImpactRecognitionSection />
+        <ImpactRecognitionSection sectionRef={philosophyNextSectionRef} />
       </div>
       <AchievementsSection />
-      <ProgramsSection />
       <DAEnvironmentSection />
       <ReviewsSection />
-      <TeachersSection />
       <QuoteSection />
-      <WhatWeTeachSection />
+      <ProgramsSection />
+      <SubjectPeekSection />
+      <TeachersSection />
       <WellbeingSection />
       <CinematicQuoteSection />
-      <ClosingCTASection />
     </main>
     <HomeFooterTrial />
   </div>

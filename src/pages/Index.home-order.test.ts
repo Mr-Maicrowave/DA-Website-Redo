@@ -4,20 +4,17 @@ import { readFileSync } from 'node:fs';
 
 const indexUrl = new URL('./Index.tsx', import.meta.url);
 
-test('places video, reviews, and teachers immediately after Programs in that order', () => {
+test('places reviews and the parent-story quote immediately after the environment video', () => {
   const source = readFileSync(indexUrl, 'utf8');
 
   assert.match(
     source,
-    /<ProgramsSection \/>\s*<DAEnvironmentSection \/>\s*<ReviewsSection \/>\s*<TeachersSection \/>/,
+    /<AchievementsSection \/>\s*<DAEnvironmentSection \/>\s*<ReviewsSection \/>\s*<QuoteSection \/>\s*<ProgramsSection \/>\s*<SubjectPeekSection \/>\s*<TeachersSection \/>/,
   );
 });
 
-test('places the confidence quote and subject cards immediately after Teachers', () => {
+test('uses the requested Google Reviews heading', () => {
   const source = readFileSync(indexUrl, 'utf8');
 
-  assert.match(
-    source,
-    /<TeachersSection \/>\s*<QuoteSection \/>\s*<WhatWeTeachSection \/>/,
-  );
+  assert.match(source, /Let(?:’|')s look at some of our Google Reviews/);
 });
