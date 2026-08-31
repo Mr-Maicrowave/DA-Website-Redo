@@ -51,7 +51,7 @@ const BookInterview = () => {
           <p className="interview-handwritten">A thoughtful conversation today<br /><span>can shape their tomorrow. ♡</span></p>
           <p className="interview-intro">Tell us a little about your child and we’ll recommend the most suitable subject, level and pathway.</p>
         </motion.div>
-        <motion.img className="interviewers" src="/images/interview/interviewers.png" alt="Two DA Tuition interviewers ready to meet your family" initial={{ opacity: 0, x: 25, scale: .98 }} animate={{ opacity: 1, x: 0, scale: 1 }} transition={{ duration: .9, ease: 'easeOut' }} />
+        <motion.img className="interviewers" src="/images/interview/hero-da-team.jpg" alt="Two DA Tuition interviewers ready to meet your family" initial={{ opacity: 0, x: 25, scale: .98 }} animate={{ opacity: 1, x: 0, scale: 1 }} transition={{ duration: .9, ease: 'easeOut' }} />
       </div>
     </section>
     <motion.section className="interview-benefits" aria-label="Why families choose DA Tuition" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: .2, duration: .6 }}>

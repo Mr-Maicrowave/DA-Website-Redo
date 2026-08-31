@@ -42,5 +42,11 @@ test('uses the approved editorial copy and chapter handoff', () => {
   assert.match(component, /They need someone to notice/);
   assert.match(component, /What they learn matters/);
   assert.match(component, /How they[\s\S]*feel while[\s\S]*learning[\s\S]*matters too/);
-  assert.match(component, /04 \/[\s\S]*WE STAY CONNECTED/);
+  assert.match(component, /04 \/[\s\S]*WE TRANSFORM/);
+  assert.doesNotMatch(component, /WE STAY CONNECTED/);
+});
+
+test('shows the complete final care photograph without cropping or push-in', () => {
+  assert.match(styles, /\.care-photo--final\s*\{[^}]*aspect-ratio:\s*1\.41\/1/);
+  assert.match(styles, /\.care-photo--final img\s*\{[^}]*object-fit:\s*contain[^}]*animation:\s*none/);
 });

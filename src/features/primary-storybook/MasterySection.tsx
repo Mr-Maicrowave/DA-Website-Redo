@@ -15,8 +15,6 @@ const MasterySection = () => (
     aria-labelledby="mastery-title"
     data-primary-reference-section="mastery"
   >
-    <img className="primary-reference-mastery__plane" src={`${MASTERY_ASSET_ROOT}/mastery-photo-decor.png`} alt="" loading="lazy" decoding="async" />
-
     <header className="primary-reference-mastery__intro">
       <div className="primary-reference-chapter" aria-label="Chapter 3, Years 5–6">
         <span>03</span>
@@ -41,10 +39,6 @@ const MasterySection = () => (
         />
       </div>
       <img className="primary-reference-mastery__photo-star" src={`${MASTERY_ASSET_ROOT}/mastery-photo-star.png`} alt="" loading="lazy" decoding="async" />
-      <div className="primary-reference-mastery__note" aria-hidden="true">
-        <img src={`${MASTERY_ASSET_ROOT}/mastery-photo-note.png`} alt="" loading="lazy" decoding="async" />
-      </div>
-      <figcaption>A capable classroom,<br />looking ahead together.</figcaption>
     </figure>
 
     <ol className="primary-reference-mastery__outcomes" aria-label="Years 5–6 learning outcomes">

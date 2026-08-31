@@ -1,42 +1,14 @@
 import { Link } from 'react-router-dom';
-import { ArrowRight, Brain, Flag, Heart, NotebookTabs, Sparkles, UserRoundCheck } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import NavigationNew from '@/components/NavigationNew';
 import SEO from '@/components/SEO';
 import WeKnowYouSection from '@/components/why-da/WeKnowYouSection';
 import PersonaliseFilmSection from '@/components/why-da/PersonaliseFilmSection';
 import WeCareFilmSection from '@/components/why-da/WeCareFilmSection';
+import WeTransformSection from '@/components/why-da/WeTransformSection';
 import WeSucceedSection from '@/components/why-da/WeSucceedSection';
 import { useWhyDAMotion } from './useWhyDAMotion';
 import './WhyChooseDA.css';
-
-const growthMilestones = [
-  { year: 'YEAR 2', thought: 'I didn’t know how.' },
-  { year: 'YEAR 4', thought: 'I’ll keep trying.' },
-  { year: 'YEAR 7', thought: 'I think I understand.' },
-  { year: 'YEAR 9', thought: 'I’m getting better.' },
-  { year: 'YEAR 12', thought: 'I’ve got this.' },
-] as const;
-
-const growthQualities = [
-  { label: 'Confidence', Icon: Sparkles }, { label: 'Curiosity', Icon: Brain },
-  { label: 'Study habits', Icon: NotebookTabs }, { label: 'Independence', Icon: Flag },
-  { label: 'Resilience', Icon: Heart }, { label: 'Tutor connection', Icon: UserRoundCheck },
-] as const;
-
-const achievementResults = [
-  { title: 'CATCH UP SUCCESS', body: 'From falling behind to back on track.', result: '48% → 71%' },
-  { title: 'IMPROVEMENT', body: 'Meaningful gains and stronger habits.', result: '67% → 84%' },
-  { title: 'HIGH ACHIEVEMENT', body: 'Reaching goals and beyond.', result: 'Band 6' },
-  { title: 'EXTENSION', body: 'Pushing potential further.', result: 'Top band', note: 'Advanced pathway' },
-] as const;
-
-const testimonials = [
-  { quote: 'DA changed the way my daughter thinks about learning.', source: 'Parent' },
-  { quote: 'More than a tutor. A mentor and a friend.', source: 'Year 12 Parent' },
-  { quote: 'My confidence has grown so much since joining DA.', source: 'Year 10 Student' },
-  { quote: 'The tutors explain things so clearly. I finally get it.', source: 'Year 8 Student' },
-  { quote: '20+ years of helping students from Year 2 to Year 12 achieve their potential.', source: 'DA Tuition' },
-] as const;
 
 export default function WhyChooseDA() {
   const pageRef = useWhyDAMotion();
@@ -88,44 +60,9 @@ export default function WhyChooseDA() {
 
         <WeCareFilmSection />
 
+        <WeTransformSection />
+
         <WeSucceedSection />
-
-        <section className="why-da-grow" data-testid="why-da-grow" aria-labelledby="why-da-grow-title">
-          <header className="why-da-chapter-heading" data-motion="chapter-heading">
-            <div className="why-da-section-heading"><span>06</span><h2 id="why-da-grow-title">WE GROW</h2></div>
-            <p>We build more than marks. We build skills for life.</p>
-          </header>
-          <div className="why-da-growth-line" aria-hidden="true"><span /></div>
-          <div className="why-da-growth-milestones">
-            {growthMilestones.map(({ year, thought }, index) => (
-              <article data-motion="growth-milestone" key={year}>
-                <strong>{year}</strong><i aria-hidden="true" />
-                <div className={`why-da-growth-photo why-da-growth-photo--${index + 1}`}><img src="/images/why-da-reference/why-da-growth-v1.jpg" alt="" loading="lazy" decoding="async" /></div>
-                <p>{thought}</p>
-              </article>
-            ))}
-          </div>
-          <div className="why-da-growth-qualities" aria-label="Skills students build at DA">
-            {growthQualities.map(({ label, Icon }) => <span data-motion="growth-quality" key={label}><Icon aria-hidden="true" />{label}</span>)}
-          </div>
-        </section>
-
-        <section className="why-da-achieve" data-testid="why-da-achieve" aria-labelledby="why-da-achieve-title">
-          <div className="why-da-achieve__glow" aria-hidden="true" />
-          <header className="why-da-achieve__heading" data-motion="chapter-heading">
-            <div className="why-da-section-heading"><span>07</span><h2 id="why-da-achieve-title">WE ACHIEVE</h2></div>
-            <p>Success looks different for every student.</p>
-          </header>
-          <div className="why-da-results">
-            {achievementResults.map((achievement) => <article data-motion="result-card" key={achievement.title}><small>{achievement.title}</small><p>{achievement.body}</p><strong>{achievement.result}</strong>{'note' in achievement && <span>{achievement.note}</span>}</article>)}
-          </div>
-          <div className="why-da-transformations">
-            <h3>Real transformations. Real impact.</h3>
-            <div className="why-da-testimonials">
-              {testimonials.map(({ quote, source }, index) => <blockquote data-motion="testimonial" className={index < 2 ? 'why-da-testimonial--large' : ''} key={quote}><div aria-label="5 out of 5 stars">★★★★★</div><p>“{quote}”</p><cite>— {source}</cite></blockquote>)}
-            </div>
-          </div>
-        </section>
 
         <section className="why-da-closing" data-testid="why-da-closing-cta" aria-labelledby="why-da-closing-title">
           <img src="/images/why-da-reference/why-da-reception-v1.jpg" alt="The welcoming DA Tuition reception" loading="lazy" decoding="async" />

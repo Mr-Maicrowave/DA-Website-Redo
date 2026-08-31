@@ -2,7 +2,6 @@ import type { CSSProperties } from 'react';
 import { curriculumBands } from './referenceStoryData';
 
 const GROWTH_CURRICULUM_ATLAS = '/primary-reference/growth/years-3-4-curriculum-atlas.png';
-const GROWTH_GARDEN = '/primary-reference/growth/years-3-4-garden-strip.png';
 
 const GrowthCurriculum = () => {
   const curriculum = curriculumBands.growth;
@@ -18,7 +17,6 @@ const GrowthCurriculum = () => {
           </li>
         ))}
       </ul>
-      <img className="primary-reference-stage-curriculum__garden" src={GROWTH_GARDEN} alt="" loading="lazy" decoding="async" />
     </section>
   );
 };

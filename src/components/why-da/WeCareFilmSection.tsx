@@ -84,7 +84,7 @@ export default function WeCareFilmSection() {
     <footer className="care-editorial-close" data-motion="care-closing">
       <h3>What they learn matters.<strong>How they <em>feel while</em><br /><em>learning</em> matters too.</strong></h3>
       <CareImage photo={finalCarePhoto} final />
-      <a href="#why-da-connected"><span><small>NEXT</small><b>04 /</b><strong>WE STAY CONNECTED</strong></span><i><ArrowRight aria-hidden="true" /></i></a>
+      <a href="#why-da-transform"><span><small>NEXT</small><b>04 /</b><strong>WE TRANSFORM</strong></span><i><ArrowRight aria-hidden="true" /></i></a>
     </footer>
   </section>;
 }
