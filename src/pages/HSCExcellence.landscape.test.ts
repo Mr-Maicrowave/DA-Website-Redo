@@ -20,7 +20,7 @@ test("provides a poster and reduced-motion static fallback", () => {
   assert.match(source, /@media \(prefers-reduced-motion: reduce\)[\s\S]*\.hsc-landscape-video\s*\{[\s\S]*display:\s*none/);
 });
 
-test("renders only the video canvas below the hero", () => {
+test("renders the video canvas followed by the shared footer", () => {
   assert.match(source, /className="hsc-landscape-shell hsc-video-only"/);
   assert.match(source, /\.hsc-video-only\s*\{[\s\S]*min-height:\s*100svh/);
   assert.match(source, /height:\s*100svh/);
@@ -28,5 +28,6 @@ test("renders only the video canvas below the hero", () => {
   assert.match(source, /pointer-events:\s*none/);
   assert.doesNotMatch(source, /<div className="hsc-landscape-overlay"/);
   assert.match(source, /<main className="hsc-landscape-content" hidden>/);
-  assert.match(source, /className="hsc-video-only-footer" hidden/);
+  assert.match(source, /<\/div>\s*<FooterNew \/>/);
+  assert.doesNotMatch(source, /hsc-video-only-footer|<FooterNew \/>\s*<\/div>\s*<\/div>/);
 });

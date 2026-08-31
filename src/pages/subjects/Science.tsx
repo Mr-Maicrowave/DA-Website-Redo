@@ -13,7 +13,6 @@ import {
   HelpCircle,
   Target,
   TrendingUp,
-  Zap,
   FlaskConical,
   Microscope,
 } from 'lucide-react';
@@ -22,6 +21,13 @@ import { motion, AnimatePresence, useInView, useReducedMotion, useScroll, useTra
 import SEO from '@/components/SEO';
 import DAMethodSection from '@/components/DAMethodSection';
 import { ScienceIntroVideoGate } from '@/features/science-intro-video/ScienceIntroVideoGate';
+import PageJourney from '@/components/page-journey/PageJourney';
+
+const SCIENCE_JOURNEY_SECTIONS = [
+  { id: 'science-concerns', label: 'Curious minds', description: 'Explore how science works', longScroll: true },
+  { id: 'science-pathways', label: 'Science programs', description: 'Find the right starting point' },
+  { id: 'science-struggles', label: 'Student challenges', description: 'Turn gaps into progress' },
+] as const;
 
 // ── Curiosity Constellation data ─────────────────────────────────────────────
 // SVG viewBox 0 0 460 460. Hexagonal inner network centred at (230, 230), r=92.
@@ -204,62 +210,63 @@ const SCIENCE_STORIES = [
 ];
 
 
-// ── Programs: One World, Three Lenses ────────────────────────────────────────
-const SCIENCE_LENSES = [
+const SCIENCE_SCALE_CHAPTERS = [
   {
-    label: 'Biology',
-    scale: 'Living systems',
-    tagline: 'Understand life from cells to ecosystems.',
-    topics: ['Genetics & evolution', 'Human systems', 'Ecosystems', 'Scientific investigations'],
-    diagram: 'biology',
+    number: '01',
+    scale: 'Impact',
+    mode: 'Observe',
+    heading: 'Observe before you explain.',
+    body: 'The split apple is evidence: its position, damage and exposed flesh show what changed. Science begins by recording those details before deciding why.',
+    points: ['Notice patterns and anomalies.', 'Separate evidence from assumption.'],
+    result: 'Start with evidence, not guesses.',
+    image: '/images/science-scale/fallen-apple-impact-v3.png',
+    alt: 'A fallen apple split open on the ground',
   },
   {
-    label: 'Chemistry',
-    scale: 'Matter & change',
-    tagline: 'Master reactions, calculations and molecular thinking.',
-    topics: ['Chemical reactions', 'Stoichiometry', 'Equilibrium', 'Organic chemistry'],
-    diagram: 'chemistry',
+    number: '02',
+    scale: 'Flesh',
+    mode: 'Explain',
+    heading: 'Structure explains behaviour.',
+    body: 'Bruising and tearing make more sense when the apple is understood as layers of skin, flesh and fibres—not as one solid object.',
+    points: ['Identify the structure involved.', 'Link visible damage to material properties.'],
+    result: 'Explain what happened through what the apple is made of.',
+    image: '/images/science-scale/apple-flesh-macro-v3.png',
+    alt: "A close view of the apple's exposed flesh and seeds",
   },
   {
-    label: 'Physics',
-    scale: 'Forces & fields',
-    tagline: 'Discover the principles that govern the universe.',
-    topics: ['Mechanics', 'Electricity & magnetism', 'Waves', 'Quantum physics'],
-    diagram: 'physics',
+    number: '03',
+    scale: 'Cells',
+    mode: 'Connect',
+    heading: 'Parts become systems.',
+    body: 'Cells are not isolated details. Their walls, vacuoles and surrounding tissues work together, connecting microscopic structure to the apple’s larger living function.',
+    points: ['Move from cells to tissues.', 'Trace structure, process and consequence.'],
+    result: 'Connect individual parts to the system they create.',
+    image: '/images/science-scale/apple-tissue-micrograph-v3.png',
+    alt: 'Apple tissue under a microscope',
+  },
+  {
+    number: '04',
+    scale: 'Molecules',
+    mode: 'Model',
+    heading: 'Model the invisible.',
+    body: 'Particles, bonds and reactions cannot be viewed directly at this scale, so chemistry uses models to explain browning, softening and material change.',
+    points: ['Represent microscopic interactions clearly.', 'Test whether the model explains the visible evidence.'],
+    result: 'Make invisible interactions useful and understandable.',
+    image: '/images/science-scale/molecular-material-v3.png',
+    alt: 'Molecular structures in a material',
+  },
+  {
+    number: '05',
+    scale: 'Fields & waves',
+    mode: 'Predict',
+    heading: 'From explanation to prediction.',
+    body: 'Physics expresses forces, energy and waves as relationships we can test—moving from what happened to what should happen next.',
+    points: ['Identify the variables that matter.', 'Compare the prediction with observed evidence.'],
+    result: 'Use scientific relationships to predict what happens next.',
+    image: '/images/science-scale/wave-field-v3.png',
+    alt: 'Light and field lines radiating from a central source',
   },
 ] as const;
-
-const LensStudy = ({ kind }: { kind: typeof SCIENCE_LENSES[number]['diagram'] }) => {
-  if (kind === 'biology') return (
-    <svg viewBox="0 0 240 112" aria-hidden="true" className="h-24 w-full overflow-visible fill-none stroke-current">
-      <circle cx="52" cy="56" r="31" strokeWidth="1.25" />
-      <circle cx="52" cy="56" r="11" stroke="#c9a227" strokeWidth="1.25" />
-      <path d="M96 23c36 13 48 35 66 69M89 68c34-2 57-21 84-52" strokeWidth="1.25" />
-      <path d="M154 18c17 5 30 17 45 34M159 81c15-5 27-16 37-31" stroke="#c9a227" strokeWidth="1.25" />
-    </svg>
-  );
-  if (kind === 'chemistry') return (
-    <svg viewBox="0 0 240 112" aria-hidden="true" className="h-24 w-full overflow-visible fill-none stroke-current">
-      <circle cx="28" cy="58" r="7" strokeWidth="1.25" /><circle cx="90" cy="27" r="7" stroke="#c9a227" strokeWidth="1.25" />
-      <circle cx="125" cy="78" r="7" strokeWidth="1.25" /><circle cx="190" cy="43" r="7" stroke="#c9a227" strokeWidth="1.25" />
-      <path d="M35 55l48-24M96 33l24 41M132 75l51-29" strokeWidth="1.25" />
-      <path d="M18 89h196" stroke="#c9a227" strokeWidth="1.25" strokeDasharray="3 5" />
-    </svg>
-  );
-  return (
-    <svg viewBox="0 0 240 112" aria-hidden="true" className="h-24 w-full overflow-visible fill-none stroke-current">
-      <path d="M3 59c18-47 36 47 54 0s36-47 54 0 36 47 54 0 36-47 72-5" strokeWidth="1.25" />
-      <path d="M24 90h146M170 90l-10-6M170 90l-10 6" stroke="#c9a227" strokeWidth="1.25" />
-      <path d="M50 25v32M50 25l-6 9M50 25l6 9" strokeWidth="1.25" />
-    </svg>
-  );
-};
-
-// The microscope does not choose a point in the orchard. The orchard owns the
-// physical apple and deliberately presents its landed centre at this stable
-// viewport focal point. SciencePrograms consumes the same value to place the
-// lens; there is no DOM measurement flowing back into the orchard.
-const NEWTON_MICROSCOPE_FOCAL_POINT = { x: .5, y: .5 } as const;
 
 const SciencePrograms = () => {
   const sectionRef = useRef<HTMLElement>(null);
@@ -278,39 +285,33 @@ const SciencePrograms = () => {
       image.src = src;
     });
   }, []);
-  // The lens is born at the orchard focal point. It blooms through scale and
-  // optical focus only; it never travels from a separately measured location.
-  const lensEntryScale = useTransform(scrollYProgress, [0, .018, .055], [.16, .16, 1]);
-  const lensEntryOpacity = useTransform(scrollYProgress, [0, .006, .018], [0, 1, 1]);
-  const lensEntryFilter = useTransform(scrollYProgress, [0, .018, .055], ['blur(6px) brightness(1.16)', 'blur(2px) brightness(1.05)', 'blur(0px) brightness(1)']);
-  const lensBackdropOpacity = useTransform(scrollYProgress, [0, .035, .072], [0, .35, 1]);
-  // The real orchard apple remains visible through the early aperture. The
-  // photographic impact specimen only takes over once the lens is large
-  // enough for the asset change to read as resolving detail, not replacement.
-  const lensMediaOpacity = useTransform(scrollYProgress, [.02, .055, .10], [0, .15, 1]);
-  // A closing iris reads as a viewing device arriving around the specimen,
-  // rather than a decorative circle that was simply always there.
-  const lensIrisOpacity = useTransform(scrollYProgress, [0, .045], [1, 0]);
+  // Newton finishes the optical handoff itself. This section deliberately
+  // begins with that lens already established, then continues the investigation
+  // through macro, cellular, molecular, and physical scales.
+  const lensEntryScale = 1;
+  const lensEntryOpacity = 1;
+  const lensEntryFilter = 'blur(0px) brightness(1)';
+  const lensBackdropOpacity = 1;
+  const lensMediaOpacity = 1;
+  const lensIrisOpacity = 0;
   // Editorial chrome (headline, scale readout, progress rail) settles in a
   // beat after the specimen has focused, so it never competes with impact.
   const introOpacity = useTransform(scrollYProgress, [.064, .09], [0, 1]);
-  const readoutOpacity = useTransform(scrollYProgress, [.076, .103], [0, 1]);
-  const programmeOpacity = useTransform(scrollYProgress, [.086, .113], [0, 1]);
   const trackOpacity = useTransform(scrollYProgress, [.098, .125], [0, 1]);
   const chromeY = useTransform(scrollYProgress, [.064, .103], ['10px', '0px']);
   // The tree owns the falling action. This stage begins at the resolved
   // impact, so there is no second hanging apple or cropped-tree reset.
-  const appleScale = useTransform(scrollYProgress, [0, .25, .31], [1, 1, 2.35]);
-  const appleOpacity = useTransform(scrollYProgress, [0, .275, .28, .31], [1, 1, 0, 0]);
-  const appleFilter = useTransform(scrollYProgress, [.25, .31], ['blur(0px) brightness(1)', 'blur(8px) brightness(1.12)']);
-  const appleX = useTransform(scrollYProgress, [.25, .31], ['0%', '-7%']);
-  const appleY = useTransform(scrollYProgress, [.25, .31], ['0%', '-4%']);
+  const appleScale = useTransform(scrollYProgress, [0, .25, .30], [1, 1.12, 2.35]);
+  const appleOpacity = useTransform(scrollYProgress, [0, .275, .29, .30], [1, 1, 0, 0]);
+  const appleFilter = useTransform(scrollYProgress, [.25, .30], ['blur(0px) brightness(1)', 'blur(8px) brightness(1.12)']);
+  const appleX = useTransform(scrollYProgress, [.25, .30], ['0%', '-7%']);
+  const appleY = useTransform(scrollYProgress, [.25, .30], ['0%', '-4%']);
 
-  const macroScale = useTransform(scrollYProgress, [.22, .31, .46, .52], [1.28, 1.04, 1.08, 2.4]);
-  const macroOpacity = useTransform(scrollYProgress, [.22, .275, .28, .485, .50, .52], [0, 0, 1, 1, 0, 0]);
-  const macroFilter = useTransform(scrollYProgress, [.22, .31, .46, .52], ['blur(8px) brightness(1.12)', 'blur(0px) brightness(1)', 'blur(0px) brightness(1)', 'blur(8px) brightness(1.12)']);
-  const macroX = useTransform(scrollYProgress, [.22, .31, .46, .52], ['8%', '0%', '0%', '5%']);
-  const macroY = useTransform(scrollYProgress, [.22, .31, .46, .52], ['4%', '0%', '0%', '3%']);
+  const macroScale = useTransform(scrollYProgress, [.25, .30, .46, .52], [1.28, 1.04, 1.08, 2.4]);
+  const macroOpacity = useTransform(scrollYProgress, [.25, .275, .29, .485, .50, .52], [0, 0, 1, 1, 0, 0]);
+  const macroFilter = useTransform(scrollYProgress, [.25, .30, .46, .52], ['blur(8px) brightness(1.12)', 'blur(0px) brightness(1)', 'blur(0px) brightness(1)', 'blur(8px) brightness(1.12)']);
+  const macroX = useTransform(scrollYProgress, [.25, .30, .46, .52], ['8%', '0%', '0%', '5%']);
+  const macroY = useTransform(scrollYProgress, [.25, .30, .46, .52], ['4%', '0%', '0%', '3%']);
 
   const cellScale = useTransform(scrollYProgress, [.46, .52, .67, .73], [1.28, 1.04, 1.08, 2.4]);
   const cellOpacity = useTransform(scrollYProgress, [.46, .485, .50, .695, .71, .73], [0, 0, 1, 1, 0, 0]);
@@ -335,7 +336,7 @@ const SciencePrograms = () => {
   const biologyCaptionOpacity = useTransform(scrollYProgress, [.495, .52, .70, .715], [0, 1, 1, 0]);
   const chemistryCaptionOpacity = useTransform(scrollYProgress, [.705, .73, .88, .895], [0, 1, 1, 0]);
   const physicsCaptionOpacity = useTransform(scrollYProgress, [.885, .92], [0, 1]);
-  const appleProgrammeOpacity = useTransform([appleCaptionOpacity, programmeOpacity], ([stage, reveal]) => Number(stage) * Number(reveal));
+  const chapterOpacities = [appleCaptionOpacity, macroCaptionOpacity, biologyCaptionOpacity, chemistryCaptionOpacity, physicsCaptionOpacity] as const;
   // Bloom seams: each is a sharp single peak — light flaring through as the
   // camera pushes past, not a held white frame — so the zoom never feels
   // like it paused. The first flash is the apple's own impact (final drop
@@ -353,14 +354,14 @@ const SciencePrograms = () => {
   const fieldTargetOpacity = useTransform(scrollYProgress, [.85, .88, .91, .94], [0, 1, 1, 0]);
 
   return (
-    <section ref={sectionRef} id="science-pathways" className="relative z-10 bg-[#fff8eb] px-5 pb-24 pt-12 lg:px-8 lg:pb-32 lg:pt-0">
+    <section ref={sectionRef} id="science-pathways" style={reducedMotion ? { marginTop: 0 } : undefined} className="relative z-10 -mt-[100svh] bg-[#fff8eb] px-5 pb-24 pt-12 lg:px-8 lg:pb-32 lg:pt-0">
       <div>
         <div className="relative mx-auto max-w-7xl">
-        <div ref={storyRef} className="science-scale-story relative left-1/2 h-[580vh] w-screen -translate-x-1/2 lg:h-[600vh]">
+        <div ref={storyRef} className={`science-scale-story relative left-1/2 h-[580vh] w-screen -translate-x-1/2 lg:h-[600vh] ${reducedMotion ? 'hidden' : ''}`}>
           <div className="sticky top-0 grid min-h-[100svh] place-items-center overflow-hidden bg-transparent py-12 lg:py-8">
             <motion.div aria-hidden="true" className="science-lens-backdrop pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_42%,rgba(255,248,235,.04)_0%,rgba(255,248,235,.42)_34%,#fff8eb_72%)]" style={reducedMotion ? { opacity: 1 } : { opacity: lensBackdropOpacity }} />
-            <div className="science-macro-stage relative z-10 h-[min(72svh,700px)] w-full" aria-label="A scientific view moving from the visible world to cells, molecules, and physical fields as the page scrolls">
-              <div className="science-eyepiece science-lens-reveal absolute h-[min(50svh,50vw,500px)] aspect-square -translate-x-1/2 -translate-y-1/2 overflow-visible" style={{ left: `${NEWTON_MICROSCOPE_FOCAL_POINT.x * 100}%`, top: `${NEWTON_MICROSCOPE_FOCAL_POINT.y * 100}%` }}>
+            <div className="science-macro-stage relative z-10 h-[100svh] w-full xl:h-[min(72svh,700px)]" aria-label="A scientific view moving from the visible world to cells, molecules, and physical fields as the page scrolls">
+              <div className="science-eyepiece science-lens-reveal absolute left-1/2 top-[27%] h-[min(40svh,82vw,500px)] aspect-square -translate-x-1/2 -translate-y-1/2 overflow-visible xl:top-1/2 xl:h-[min(50svh,50vw,500px)]">
                 <motion.div
                 className="science-lens-entry absolute inset-0"
                 style={reducedMotion ? undefined : { scale: lensEntryScale, opacity: lensEntryOpacity, filter: lensEntryFilter, transformOrigin: '50% 50%' }}
@@ -400,51 +401,74 @@ const SciencePrograms = () => {
                 </motion.div>
               </motion.div>
               </div>
-              <motion.div style={reducedMotion ? { opacity: 1 } : { opacity: introOpacity, y: chromeY }} className="science-scale-story__intro pointer-events-none absolute bottom-full left-5 mb-5 w-[calc(100%-2.5rem)] text-center xl:hidden"><p className="text-[10px] font-black uppercase tracking-[.3em] text-[#c9a227]">Science at every scale</p><p className="mt-2 font-serif text-xl tracking-[-.03em] text-[#071629] sm:text-2xl">One world.<br />A closer look<br />changes everything.</p></motion.div>
-              <div className="pointer-events-none absolute left-[clamp(3rem,8vw,10rem)] top-[calc(50%-12rem)] hidden w-64 xl:block">
-              <motion.div style={reducedMotion ? { opacity: 1 } : { opacity: introOpacity, y: chromeY }} className="science-scale-story__intro"><p className="text-[10px] font-black uppercase tracking-[.3em] leading-5 text-[#c9a227]">Science at every scale</p><p className="mt-3 font-serif text-3xl leading-[1.05] tracking-[-.03em] text-[#071629]">One world.<br />A closer look<br />changes everything.</p></motion.div>
-              <motion.div style={reducedMotion ? { opacity: 1 } : { opacity: readoutOpacity, y: chromeY }} className="science-scale-story__readout relative mt-10 h-32 border-l border-[#c9a227]/70 pl-4">
-                <p className="text-[9px] font-black uppercase tracking-[.22em] text-[#657084]">Scale readout</p>
-                <p className="mt-2 text-[9px] font-bold uppercase tracking-[.18em] text-[#c9a227]">Current specimen</p>
-                <motion.div style={reducedMotion ? { opacity: 1 } : { opacity: appleCaptionOpacity }} className="absolute left-4 top-11"><p className="font-serif text-lg text-[#071629]">Macro · impact</p><p className="mt-1 text-sm leading-5 text-[#52647a]">A falling apple reveals the specimen.</p></motion.div>
-                <motion.div style={reducedMotion ? { opacity: 0 } : { opacity: macroCaptionOpacity }} className="absolute left-4 top-11"><p className="font-serif text-lg text-[#071629]">Tissue · apple flesh</p><p className="mt-1 text-sm leading-5 text-[#52647a]">Travel through the exposed structure.</p></motion.div>
-                <motion.div style={reducedMotion ? { opacity: 0 } : { opacity: biologyCaptionOpacity }} className="absolute left-4 top-11"><p className="font-serif text-lg text-[#071629]">Cellular · living cells</p><p className="mt-1 text-sm leading-5 text-[#52647a]">Structure becomes a living system.</p></motion.div>
-                <motion.div style={reducedMotion ? { opacity: 0 } : { opacity: chemistryCaptionOpacity }} className="absolute left-4 top-11"><p className="font-serif text-lg text-[#071629]">Molecular · matter</p><p className="mt-1 text-sm leading-5 text-[#52647a]">Follow bonds beneath the surface.</p></motion.div>
-                <motion.div style={reducedMotion ? { opacity: 0 } : { opacity: physicsCaptionOpacity }} className="absolute left-4 top-11"><p className="font-serif text-lg text-[#071629]">Fields &amp; waves</p><p className="mt-1 text-sm leading-5 text-[#52647a]">See the forces that connect it all.</p></motion.div>
-              </motion.div>
+              <motion.div style={{ opacity: introOpacity, y: chromeY }} className="science-scale-story__intro pointer-events-none absolute left-5 top-0 w-[calc(100%-2.5rem)] text-center xl:hidden"><p className="text-[10px] font-black uppercase tracking-[.3em] text-[#a97518]">Science at every scale</p><p className="mt-2 font-serif text-xl tracking-[-.03em] text-[#071629] sm:text-2xl">One world. A closer look changes everything.</p></motion.div>
+              <div className="pointer-events-none absolute left-[clamp(3rem,6vw,7rem)] top-1/2 hidden w-56 -translate-y-1/2 xl:block">
+                <motion.div style={{ opacity: introOpacity, y: chromeY }} className="science-scale-story__intro"><p className="text-[10px] font-black uppercase tracking-[.28em] leading-5 text-[#a97518]">Science at every scale</p><p className="mt-3 font-serif text-3xl leading-[1.05] tracking-[-.03em] text-[#071629]">One world.<br />A closer look<br />changes everything.</p></motion.div>
+                <div className="science-scale-story__chapter-id relative mt-10 h-20 border-t border-[#071629]/15 pt-4">
+                  {SCIENCE_SCALE_CHAPTERS.map((chapter, index) => (
+                    <motion.div key={chapter.scale} style={{ opacity: chapterOpacities[index] }} className="absolute inset-x-0 top-4">
+                      <p className="text-[10px] font-black uppercase tracking-[.22em] text-[#657084]">{chapter.number} / 05</p>
+                      <p className="mt-2 font-serif text-xl text-[#071629]">{chapter.scale}</p>
+                      <p className="mt-1 text-[10px] font-black uppercase tracking-[.18em] text-[#a97518]">{chapter.mode}</p>
+                    </motion.div>
+                  ))}
+                </div>
               </div>
-              <div className="pointer-events-none absolute bottom-[clamp(1.5rem,4vh,3rem)] left-1/2 w-[min(80rem,calc(100vw-3rem))] -translate-x-1/2">
+              <div className="pointer-events-none absolute bottom-[clamp(.25rem,1.5vh,1rem)] left-1/2 w-[min(80rem,calc(100vw-3rem))] -translate-x-1/2">
                 <motion.div style={reducedMotion ? { opacity: 1 } : { opacity: trackOpacity, y: chromeY }} className="relative border-t border-[#071629]/15 pt-5 text-[10px] font-black uppercase tracking-[.16em] text-[#657084]">
                   <motion.div aria-hidden="true" style={{ width: scaleProgress }} className="absolute left-0 top-[-1px] h-px bg-[#c9a227]" />
                   <motion.div aria-hidden="true" style={{ left: scaleProgress }} className="absolute -top-2 grid h-4 w-4 -translate-x-1/2 place-items-center rounded-full border border-[#071629]/70 bg-[#fff8eb] shadow-[0_0_0_3px_#fff8eb]"><span className="h-1.5 w-1.5 rounded-full bg-[#c9a227]" /></motion.div>
-                  <div className="flex justify-between"><span>Impact</span><span className="hidden sm:inline">Flesh</span><span className="hidden sm:inline">Cells</span><span className="hidden md:inline">Molecules</span><span>Fields &amp; waves</span></div>
+                  <div className="grid grid-cols-5 gap-2">
+                    {SCIENCE_SCALE_CHAPTERS.map((chapter) => <span key={chapter.scale} className="min-w-0 text-center"><span className="block truncate text-[#071629]">{chapter.scale}</span><span className="mt-1 hidden text-[9px] text-[#a97518] sm:block">{chapter.mode}</span></span>)}
+                  </div>
                 </motion.div>
               </div>
-              <motion.div style={reducedMotion ? { opacity: 1 } : { opacity: appleProgrammeOpacity }} className="science-scale-caption pointer-events-none absolute left-5 top-full mt-12 max-w-[18rem] border-l-2 border-[#c9a227] pl-4 xl:left-auto xl:right-[clamp(3rem,8vw,10rem)] xl:top-1/2 xl:mt-0 xl:w-64 xl:-translate-y-1/2"><p className="text-[9px] font-black uppercase tracking-[.2em] text-[#c9a227]">Foundation Science · Years 7–10</p><p className="mt-2 font-serif text-2xl text-[#071629]">Build the foundations.</p><p className="mt-2 text-sm leading-5 text-[#43556e]">Develop connected understanding across Biology, Chemistry and Physics—then learn to observe, question, test and explain.</p><p className="mt-3 text-[10px] font-bold uppercase tracking-[.14em] text-[#657084]">Investigation · Problem solving · Exam skills</p></motion.div>
-              <motion.div style={reducedMotion ? { opacity: 0 } : { opacity: macroCaptionOpacity }} className="science-scale-caption pointer-events-none absolute left-5 top-full mt-12 max-w-[18rem] border-l-2 border-[#c9a227] pl-4 xl:left-auto xl:right-[clamp(3rem,8vw,10rem)] xl:top-1/2 xl:mt-0 xl:w-64 xl:-translate-y-1/2"><p className="text-[9px] font-black uppercase tracking-[.2em] text-[#c9a227]">Foundation Science · Years 7–10</p><p className="mt-2 font-serif text-2xl text-[#071629]">Build the foundations.</p><p className="mt-2 text-sm leading-5 text-[#43556e]">Use evidence to connect an everyday specimen to its structure, material change and the forces acting on it.</p><p className="mt-3 text-[10px] font-bold uppercase tracking-[.14em] text-[#657084]">Biology · Chemistry · Physics</p></motion.div>
-              <motion.div style={reducedMotion ? { opacity: 0 } : { opacity: biologyCaptionOpacity }} className="science-scale-caption pointer-events-none absolute left-5 top-full mt-12 max-w-[18rem] border-l-2 border-[#c9a227] pl-4 xl:left-auto xl:right-[clamp(3rem,8vw,10rem)] xl:top-1/2 xl:mt-0 xl:w-64 xl:-translate-y-1/2"><p className="text-[9px] font-black uppercase tracking-[.2em] text-[#c9a227]">HSC BIOLOGY · YEARS 11–12</p><p className="mt-2 font-serif text-2xl text-[#071629]">Living systems, in focus.</p><p className="mt-2 text-sm leading-5 text-[#43556e]">Explore cells, organisms, heredity, ecosystems and biological systems with the analytical habits needed for HSC Biology.</p><p className="mt-3 text-[10px] font-bold uppercase tracking-[.14em] text-[#657084]">Cellular processes · Genetics · Ecosystems</p></motion.div>
-              <motion.div style={reducedMotion ? { opacity: 0 } : { opacity: chemistryCaptionOpacity }} className="science-scale-caption pointer-events-none absolute left-5 top-full mt-12 max-w-[18rem] border-l-2 border-[#c9a227] pl-4 xl:left-auto xl:right-[clamp(3rem,8vw,10rem)] xl:top-1/2 xl:mt-0 xl:w-64 xl:-translate-y-1/2"><p className="text-[9px] font-black uppercase tracking-[.2em] text-[#c9a227]">HSC CHEMISTRY · YEARS 11–12</p><p className="mt-2 font-serif text-2xl text-[#071629]">Matter, in motion.</p><p className="mt-2 text-sm leading-5 text-[#43556e]">Understand how particles, structure, bonding and reactions explain matter—from microscopic interactions to observable change.</p><p className="mt-3 text-[10px] font-bold uppercase tracking-[.14em] text-[#657084]">Structure &amp; bonding · Reactions · Quantitative chemistry</p></motion.div>
-              <motion.div style={reducedMotion ? { opacity: 0 } : { opacity: physicsCaptionOpacity }} className="science-scale-caption pointer-events-none absolute left-5 top-full mt-12 max-w-[18rem] border-l-2 border-[#c9a227] pl-4 xl:left-auto xl:right-[clamp(3rem,8vw,10rem)] xl:top-1/2 xl:mt-0 xl:w-64 xl:-translate-y-1/2"><p className="text-[10px] font-black uppercase tracking-[.18em] text-[#c9a227]">HSC PHYSICS · YEARS 11–12</p><p className="mt-2 font-serif text-2xl text-[#071629]">The rules beneath every scale.</p><p className="mt-2 text-[15px] leading-6 text-[#43556e]">Explore forces, energy, waves and fields that shape the physical world—from the falling apple to interactions within matter.</p><p className="mt-3 text-[10px] font-bold uppercase tracking-[.14em] text-[#657084]">Motion &amp; forces · Waves &amp; energy · Fields</p></motion.div>
+              {SCIENCE_SCALE_CHAPTERS.map((chapter, index) => (
+                <motion.article key={chapter.scale} style={{ opacity: chapterOpacities[index], y: chromeY }} className="science-scale-caption pointer-events-none absolute left-5 top-[47%] w-[calc(100vw-2.5rem)] max-w-[32rem] xl:left-auto xl:right-[clamp(3rem,8vw,10rem)] xl:top-[8%] xl:w-[min(25vw,24rem)]">
+                  <div className="flex items-baseline justify-between border-b border-[#071629]/15 pb-3">
+                    <p className="text-[10px] font-black uppercase tracking-[.2em] text-[#a97518]">{chapter.number} · {chapter.scale}</p>
+                    <p className="text-[10px] font-black uppercase tracking-[.16em] text-[#657084]">{chapter.mode}</p>
+                  </div>
+                  <h3 className="mt-5 font-serif text-[clamp(1.75rem,2.4vw,2.6rem)] leading-[1.02] tracking-[-.035em] text-[#071629] [text-wrap:balance]">{chapter.heading}</h3>
+                  <p className="mt-4 max-w-[40ch] text-[14px] leading-6 text-[#43556e] [text-wrap:pretty]">{chapter.body}</p>
+                  <ul className="mt-5 hidden border-y border-[#071629]/15 text-[12px] font-semibold leading-5 text-[#273b55] sm:block">
+                    {chapter.points.map((point) => <li key={point} className="flex gap-3 py-2.5 not-last:border-b not-last:border-[#071629]/10"><span className="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-[#a97518]" aria-hidden="true" />{point}</li>)}
+                  </ul>
+                  <p className="science-scale-caption__result mt-5 font-serif text-lg leading-6 text-[#071629]"><span className="mr-2 text-[#a97518]">Result</span>{chapter.result}</p>
+                </motion.article>
+              ))}
             </div>
           </div>
         </div>
 
-        <div className="mt-12 border-l border-[#c9a227] pl-6 lg:mt-20"><p className="text-[10px] font-black uppercase tracking-[.24em] text-[#c9a227]">HSC SPECIALISATION</p><p className="mt-3 max-w-lg text-sm leading-6 text-[#52647a]">Follow the scale that most interests you, then study it in depth.</p></div>
-        <section className="science-programs__hsc mt-8 grid border-t border-[#071629]/20 lg:grid-cols-3" aria-label="HSC science specialisations">
-          {SCIENCE_LENSES.map((subject) => (
-            <article key={subject.label} className="group relative border-b border-[#071629]/20 p-7 transition-colors duration-200 hover:bg-[#fff6e7] focus-within:bg-[#fff6e7] lg:min-h-[465px] lg:border-b-0 lg:p-9 lg:not-first:border-l">
-              <p className="text-[9px] font-black uppercase tracking-[.23em] text-[#c9a227]">HSC {subject.label}</p>
-              <h3 className="mt-5 font-serif text-4xl font-medium tracking-[-.045em] text-[#071629]">{subject.label}</h3>
-              <p className="mt-3 text-[14px] leading-6 text-[#4c5e74]">{subject.tagline}</p>
-              <p className="mt-5 border-t border-[#071629]/15 pt-4 text-[10px] font-bold uppercase tracking-[.16em] text-[#657084]">{subject.scale}</p>
-              <ul className="mt-3 space-y-2 border-b border-[#071629]/15 pb-4 text-[12px] text-[#52647a]">{subject.topics.map((topic) => <li key={topic}>{topic}</li>)}</ul>
-              <div className="mt-5 text-[#071629] transition-transform duration-200 group-hover:translate-x-1 group-focus-within:translate-x-1"><LensStudy kind={subject.diagram} /></div>
-              <Link to="/book-interview" className="mt-3 inline-flex items-center gap-2 border-b border-[#c9a227] pb-1.5 text-[10px] font-black uppercase tracking-[.15em] text-[#071629] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#071629]">Explore program <ArrowRight className="h-3.5 w-3.5" /></Link>
-            </article>
-          ))}
-        </section>
+        {reducedMotion && (
+          <div className="science-scale-reduced mx-auto max-w-5xl py-16 lg:py-24">
+            <header className="mb-12 max-w-2xl">
+              <p className="text-[11px] font-black uppercase tracking-[.26em] text-[#a97518]">Science at every scale</p>
+              <h2 className="mt-4 font-serif text-4xl leading-none tracking-[-.035em] text-[#071629] sm:text-5xl">One world. A closer look changes everything.</h2>
+            </header>
+            <div className="divide-y divide-[#071629]/15 border-y border-[#071629]/15">
+              {SCIENCE_SCALE_CHAPTERS.map((chapter) => (
+                <article key={chapter.scale} className="grid gap-7 py-10 md:grid-cols-[minmax(15rem,22rem)_1fr] md:items-center md:gap-12">
+                  <img src={chapter.image} alt={chapter.alt} className="aspect-square w-full rounded-full object-cover" />
+                  <div>
+                    <div className="flex items-baseline justify-between gap-4 border-b border-[#071629]/15 pb-3">
+                      <p className="text-[10px] font-black uppercase tracking-[.2em] text-[#a97518]">{chapter.number} · {chapter.scale}</p>
+                      <p className="text-[10px] font-black uppercase tracking-[.16em] text-[#657084]">{chapter.mode}</p>
+                    </div>
+                    <h3 className="mt-5 font-serif text-3xl leading-none tracking-[-.035em] text-[#071629] [text-wrap:balance]">{chapter.heading}</h3>
+                    <p className="mt-4 max-w-[55ch] text-sm leading-6 text-[#43556e] [text-wrap:pretty]">{chapter.body}</p>
+                    <ul className="mt-5 grid gap-2 text-sm font-semibold text-[#273b55] sm:grid-cols-2">
+                      {chapter.points.map((point) => <li key={point} className="flex gap-3"><span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[#a97518]" aria-hidden="true" />{point}</li>)}
+                    </ul>
+                    <p className="science-scale-caption__result mt-5 font-serif text-lg leading-6 text-[#071629]"><span className="mr-2 text-[#a97518]">Result</span>{chapter.result}</p>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+        )}
 
-        <div className="mt-16 border-t border-[#071629]/20 pt-8 text-center"><svg viewBox="0 0 1100 35" aria-hidden="true" className="mx-auto h-8 w-full max-w-5xl fill-none"><path d="M0 5c120 0 170 25 310 25s178-25 240-25 98 25 240 25S980 5 1100 5" stroke="#c9a227" strokeWidth="1.2" /></svg><p className="mt-6 font-serif text-2xl tracking-[-.03em] text-[#071629]">Not sure which pathway is right?</p><Link to="/book-interview" className="mt-4 inline-flex items-center gap-2 border-b border-[#c9a227] pb-1.5 text-[10px] font-black uppercase tracking-[.16em] text-[#071629] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#071629]">Book a consultation <ArrowRight className="h-3.5 w-3.5" /></Link></div>
         </div>
       </div>
     </section>
@@ -519,6 +543,20 @@ const NEWTON_GROUND_CONTACT_Y: Record<string, number> = {
   'right-lower-red': 920,
   'mid-low-red': 935,
 };
+// The first 260svh is the preserved Newton fall. The extra 90svh is a
+// post-landing camera runway. 160svh / 250svh retains the original physical
+// scroll distance of the fall instead of slowing it down.
+const NEWTON_FALL_PROGRESS_END = 16 / 25;
+const NEWTON_CAMERA_MEASURE_START = .74;
+const NEWTON_CAMERA_MOVE_START = .78;
+
+type OrchardCamera = {
+  anchorX: number;
+  anchorY: number;
+  dx: number;
+  dy: number;
+  cameraScale: number;
+};
 const NEWTON_IMPACT_MS = 1420;
 const NEWTON_APPLE_ASSETS = {
   red: '/images/newton-apples/apple-red.png',
@@ -528,16 +566,9 @@ const NEWTON_APPLE_ASSETS = {
 
 type ScienceFact = typeof SCIENCE_FACTS[number];
 const NEWTON_SCROLL_APPLE = NEWTON_APPLES.find((apple) => apple.scrollOnly)!;
-// This is the sole physical source of truth once the scroll apple leaves its
-// branch. It remains in artwork-local coordinates, so resize and stage layout
-// cannot change where the apple is considered to have landed.
-const NEWTON_SCROLL_LANDED_TARGET = {
-  x: NEWTON_SCROLL_APPLE.sourceX,
-  y: NEWTON_GROUND_CONTACT_Y[NEWTON_SCROLL_APPLE.id],
-  u: NEWTON_SCROLL_APPLE.sourceX / NEWTON_ARTWORK_WIDTH,
-  v: NEWTON_GROUND_CONTACT_Y[NEWTON_SCROLL_APPLE.id] / NEWTON_ARTWORK_HEIGHT,
-} as const;
-const NEWTON_ORCHARD_CAMERA_SCALE = 1.22;
+const NEWTON_SCROLL_APPLE_FALL_DISTANCE = NEWTON_GROUND_CONTACT_Y[NEWTON_SCROLL_APPLE.id] - NEWTON_SCROLL_APPLE.sourceY;
+const NEWTON_SCROLL_APPLE_GROUND_Y = `calc(${NEWTON_SCROLL_APPLE_FALL_DISTANCE / NEWTON_ARTWORK_WIDTH} * var(--tree-width))`;
+const NEWTON_SCROLL_APPLE_FALL_STEP = (fraction: number) => `calc(${(NEWTON_SCROLL_APPLE_FALL_DISTANCE * fraction) / NEWTON_ARTWORK_WIDTH} * var(--tree-width))`;
 
 const formatFactTitle = (title: string) => title.replace(/^[\p{Extended_Pictographic}\uFE0F\u200D]+\s*/u, '');
 
@@ -565,10 +596,10 @@ const NewtonGravityExperience = () => {
   const [visibleAppleIds, setVisibleAppleIds] = useState<Set<string>>(() => new Set());
   const sectionRef = useRef<HTMLElement>(null);
   const sceneRef = useRef<HTMLDivElement>(null);
-  const treeWrapRef = useRef<HTMLDivElement>(null);
-  const treeLayerRef = useRef<HTMLDivElement>(null);
-  const [storyTreeWidth, setStoryTreeWidth] = useState(0);
-  const [storyCamera, setStoryCamera] = useState({ x: 0, y: 0 });
+  const orchardCameraRef = useRef<HTMLDivElement>(null);
+  const scrollAppleRef = useRef<HTMLImageElement>(null);
+  const orchardCameraCapturedRef = useRef(false);
+  const [orchardCamera, setOrchardCamera] = useState<OrchardCamera | null>(null);
   const appleButtonRefs = useRef(new Map<string, HTMLButtonElement>());
   const factTimerRef = useRef<number | null>(null);
   const lastFactRef = useRef<ScienceFact | null>(null);
@@ -579,29 +610,73 @@ const NewtonGravityExperience = () => {
   // SciencePrograms below. The sticky orchard gives the apple enough physical
   // room to detach, cross the ground plane, and create the lens transition.
   const { scrollYProgress: storyProgress } = useScroll({ target: sectionRef, offset: ['start start', 'end end'] });
-  const storyAppleGroundY = NEWTON_GROUND_CONTACT_Y[NEWTON_SCROLL_APPLE.id] - NEWTON_SCROLL_APPLE.sourceY;
-  // The tree art has a fixed 1536 × 1024 coordinate system. Convert the
-  // mapped ground distance to rendered pixels so the scroll apple and the
-  // clicked apples resolve on exactly the same foreground ground line.
-  const storyFallPixels = (storyAppleGroundY / NEWTON_ARTWORK_WIDTH) * storyTreeWidth;
-  const storyAppleY = useTransform(storyProgress, [0, .62, .76, .89, .96, 1], [0, 0, storyFallPixels * .08, storyFallPixels * .46, storyFallPixels, storyFallPixels]);
-  const storyAppleRotate = useTransform(storyProgress, [0, .62, .76, .89, .96, 1], [-5, -5, 8, 28, 42, 42]);
-  const storyAppleScale = useTransform(storyProgress, [0, .62, .76, .89, .96, 1], [1, 1, 1.04, 1, .96, .96]);
+  const fallProgress = useTransform(storyProgress, [0, NEWTON_FALL_PROGRESS_END], [0, 1]);
+  const storyAppleY = useTransform(fallProgress, [0, .22, .38, .54, .68, .8, .9, 1], ['0px', NEWTON_SCROLL_APPLE_FALL_STEP(.06), NEWTON_SCROLL_APPLE_FALL_STEP(.18), NEWTON_SCROLL_APPLE_FALL_STEP(.34), NEWTON_SCROLL_APPLE_FALL_STEP(.54), NEWTON_SCROLL_APPLE_FALL_STEP(.72), NEWTON_SCROLL_APPLE_FALL_STEP(.88), NEWTON_SCROLL_APPLE_GROUND_Y]);
+  const storyAppleRotate = useTransform(fallProgress, [0, .62, .89, .96, 1], [-5, -5, 38, 64, 74]);
+  const storyAppleScale = useTransform(fallProgress, [0, .62, .89, .96, 1], [1, 1, 1.04, .98, .95]);
   // The orchard apple is the source object for the optical handoff. Keep it
   // present until the cream field and detailed lens specimen have taken over;
   // the overlap prevents a visible apple-to-nothing frame in either direction.
-  const storyAppleOpacity = useTransform(storyProgress, [0, .88, 1], [1, 1, 1]);
-  const storyContentOpacity = useTransform(storyProgress, [0, .96, 1], [1, 1, 0]);
-  const scrollCueOpacity = useTransform(storyProgress, [.55, .64, .79, .86], [0, 1, 1, 0]);
-  // The orchard and the fallen apple share this plane. Scaling it around the
-  // apple anchor turns the final fall into a camera approach, rather than
-  // asking an unrelated lens to do all of the narrative work.
-  const storyPushScale = useTransform(storyProgress, [0, .995, 1], [1, 1, NEWTON_ORCHARD_CAMERA_SCALE]);
-  const storyPushX = useTransform(storyProgress, [0, .995, 1], [0, 0, storyCamera.x]);
-  const storyPushY = useTransform(storyProgress, [0, .995, 1], [0, 0, storyCamera.y]);
-  // Do not introduce the microscope/focus treatment while the apple is still
-  // in the air. It begins only once the mapped ground contact has occurred.
-  const storyFocusOpacity = useTransform(storyProgress, [.995, .998, 1], [0, .12, .42]);
+  const storyAppleOpacity = useTransform(fallProgress, [0, .88, 1], [1, 1, 1]);
+  const storyContentOpacity = useTransform(fallProgress, [0, .84, .91], [1, 1, 0]);
+  const scrollCueOpacity = useTransform(fallProgress, [.55, .64, .79, .86], [0, 1, 1, 0]);
+  const cameraScale = useTransform(storyProgress, [0, NEWTON_FALL_PROGRESS_END, NEWTON_CAMERA_MOVE_START, .96, 1], [1, 1, 1, orchardCamera?.cameraScale ?? 1, orchardCamera?.cameraScale ?? 1]);
+  const cameraX = useTransform(storyProgress, [0, NEWTON_FALL_PROGRESS_END, NEWTON_CAMERA_MOVE_START, .96, 1], [0, 0, 0, orchardCamera?.dx ?? 0, orchardCamera?.dx ?? 0]);
+  const cameraY = useTransform(storyProgress, [0, NEWTON_FALL_PROGRESS_END, NEWTON_CAMERA_MOVE_START, .96, 1], [0, 0, 0, orchardCamera?.dy ?? 0, orchardCamera?.dy ?? 0]);
+  const handoffLensOpacity = useTransform(storyProgress, [.88, .94, 1], [0, 1, 1]);
+  const handoffLensScale = useTransform(storyProgress, [.88, .96, 1], [.16, 1, 1]);
+  const storyFocusOpacity = useTransform(storyProgress, [.87, .96, 1], [0, .16, .34]);
+
+  // The post-landing runway trusts the browser's rendered geometry. The apple
+  // anchors the inner scale and the outer wrapper translates that exact point
+  // to viewport centre while the measured scene still covers every edge.
+  useEffect(() => {
+    let frame = 0;
+    const captureOrchardCamera = (progress: number) => {
+      // Let the landed frame settle before reading layout. This is intentionally
+      // inside the new camera-only runway, never during the Newton fall.
+      if (orchardCameraCapturedRef.current || progress < NEWTON_CAMERA_MEASURE_START) return;
+      frame = window.requestAnimationFrame(() => {
+        const appleRect = scrollAppleRef.current?.getBoundingClientRect();
+        const orchardCameraLayer = orchardCameraRef.current;
+        if (!orchardCameraLayer) return;
+        const sceneRect = orchardCameraLayer.getBoundingClientRect();
+        if (!appleRect?.width || !appleRect.height || !sceneRect?.width || !sceneRect.height) return;
+        const appleViewportX = appleRect.left + appleRect.width / 2;
+        const appleViewportY = appleRect.top + appleRect.height / 2;
+        const anchorX = appleViewportX - sceneRect.left;
+        const anchorY = appleViewportY - sceneRect.top;
+        if (anchorX <= 0 || anchorY <= 0 || anchorX >= sceneRect.width || anchorY >= sceneRect.height) return;
+        const targetX = window.innerWidth / 2;
+        const targetY = window.innerHeight / 2;
+        const scaleForLeft = targetX / anchorX;
+        const scaleForRight = (window.innerWidth - targetX) / (sceneRect.width - anchorX);
+        const scaleForTop = targetY / anchorY;
+        const scaleForBottom = (window.innerHeight - targetY) / (sceneRect.height - anchorY);
+        const minimumCoverScale = Math.max(1, scaleForLeft, scaleForRight, scaleForTop, scaleForBottom);
+        setOrchardCamera({
+          anchorX,
+          anchorY,
+          dx: targetX - appleViewportX,
+          dy: targetY - appleViewportY,
+          cameraScale: minimumCoverScale * 1.03,
+        });
+        orchardCameraCapturedRef.current = true;
+      });
+    };
+    const unsubscribe = storyProgress.on('change', captureOrchardCamera);
+    captureOrchardCamera(storyProgress.get());
+    const onResize = () => {
+      orchardCameraCapturedRef.current = false;
+      captureOrchardCamera(storyProgress.get());
+    };
+    window.addEventListener('resize', onResize);
+    return () => {
+      window.cancelAnimationFrame(frame);
+      unsubscribe();
+      window.removeEventListener('resize', onResize);
+    };
+  }, [storyProgress]);
 
   useEffect(() => {
     const media = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -632,46 +707,8 @@ const NewtonGravityExperience = () => {
   }, []);
 
   useLayoutEffect(() => {
-    const treeLayer = treeLayerRef.current;
-    const treeWrap = treeWrapRef.current;
-    if (!treeLayer || !treeWrap) return;
-
-    // One-way coordinate conversion:
-    // artwork-local landed target -> tree-layer local pixels -> viewport focal
-    // point. The camera transform is applied around the same landed target,
-    // so scale leaves that target fixed and this translation solves its final
-    // screen position exactly. No microscope DOM geometry is consulted here.
-    const updateCameraGeometry = () => {
-      const width = treeLayer.offsetWidth;
-      setStoryTreeWidth((current) => current === width ? current : width);
-
-      const wrapRect = treeWrap.getBoundingClientRect();
-      const landedViewportX = wrapRect.left + treeLayer.offsetLeft + NEWTON_SCROLL_LANDED_TARGET.u * treeLayer.offsetWidth;
-      const landedViewportY = wrapRect.top + treeLayer.offsetTop + NEWTON_SCROLL_LANDED_TARGET.v * treeLayer.offsetHeight;
-      const focalX = window.innerWidth * NEWTON_MICROSCOPE_FOCAL_POINT.x;
-      const focalY = window.innerHeight * NEWTON_MICROSCOPE_FOCAL_POINT.y;
-      const next = { x: focalX - landedViewportX, y: focalY - landedViewportY };
-      setStoryCamera((current) => (
-        Math.abs(current.x - next.x) < .5 && Math.abs(current.y - next.y) < .5
-          ? current
-          : next
-      ));
-    };
-
-    updateCameraGeometry();
-    const observer = new ResizeObserver(updateCameraGeometry);
-    observer.observe(treeLayer);
-    observer.observe(treeWrap);
-    window.addEventListener('resize', updateCameraGeometry);
-    return () => {
-      window.removeEventListener('resize', updateCameraGeometry);
-      observer.disconnect();
-    };
-  }, []);
-
-  useLayoutEffect(() => {
     const scene = sceneRef.current;
-    const treeWrap = treeWrapRef.current;
+    const treeWrap = orchardCameraRef.current;
     if (!scene || !treeWrap) return;
 
     const updateAppleVisibility = () => {
@@ -761,7 +798,7 @@ const NewtonGravityExperience = () => {
 
         @media (min-width: 1025px) {
           .science-journey {
-            min-height: 260svh;
+            min-height: 350svh;
             overflow: visible;
           }
 
@@ -959,7 +996,6 @@ const NewtonGravityExperience = () => {
         .newton-law-card__divider::before,
         .newton-law-card__divider::after { content: ""; height: 1px; flex: 1; background: currentColor; }
         .newton-law-card__divider span { width: 6px; height: 6px; border: 1px solid currentColor; transform: rotate(45deg); }
-        }
 
         .newton-click-note {
           position: absolute;
@@ -1018,12 +1054,19 @@ const NewtonGravityExperience = () => {
           mask-image: linear-gradient(90deg, transparent 0%, transparent 20%, rgba(0,0,0,.18) 27%, rgba(0,0,0,.82) 38%, #000 48%, #000 100%);
         }
 
+        .newton-camera-translate,
+        .newton-camera-scale {
+          position: absolute;
+          inset: 0;
+          will-change: transform;
+        }
+
         .newton-focus-falloff {
           position: absolute;
           inset: 0;
           z-index: 2;
           pointer-events: none;
-          background: radial-gradient(circle at 50% 39%, transparent 0%, transparent 13%, rgba(7,22,41,.04) 28%, rgba(255,248,235,.22) 68%, rgba(255,248,235,.42) 100%);
+          background: radial-gradient(circle at 50% 50%, transparent 0%, transparent 13%, rgba(7,22,41,.04) 28%, rgba(255,248,235,.22) 68%, rgba(255,248,235,.42) 100%);
         }
 
         .newton-tree-layer {
@@ -1035,6 +1078,58 @@ const NewtonGravityExperience = () => {
           filter: saturate(1.04) contrast(1.02) drop-shadow(0 34px 48px rgba(7, 22, 41, .18));
           transform-origin: 58% 22%;
           will-change: transform;
+        }
+
+        .newton-handoff-lens-frame {
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          z-index: 7;
+          width: min(50svh, 50vw, 500px);
+          aspect-ratio: 1;
+          transform: translate(-50%, -50%);
+          pointer-events: none;
+        }
+
+        .newton-handoff-lens {
+          position: absolute;
+          inset: 0;
+          transform-origin: 50% 50%;
+          overflow: visible;
+        }
+
+        .newton-handoff-lens__ring {
+          position: absolute;
+          border-radius: 999px;
+          pointer-events: none;
+        }
+
+        .newton-handoff-lens__ring--outer {
+          inset: -10px;
+          border: 1px solid rgba(7, 22, 41, .55);
+        }
+
+        .newton-handoff-lens__ring--inner {
+          inset: -6px;
+          border: 1px solid rgba(201, 162, 39, .55);
+          box-shadow: inset 0 0 0 1px rgba(255,255,255,.35);
+        }
+
+        .newton-handoff-lens__specimen {
+          position: absolute;
+          inset: 0;
+          overflow: hidden;
+          border-radius: 999px;
+          background: #fff8eb;
+          box-shadow: 0 16px 52px rgba(7, 22, 41, .2);
+        }
+
+        .newton-handoff-lens__specimen img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          opacity: .86;
+          transform: scale(1.08);
         }
 
         .newton-tree {
@@ -1641,13 +1736,16 @@ const NewtonGravityExperience = () => {
           <motion.p style={reducedMotion ? { opacity: 1 } : { opacity: scrollCueOpacity }} className="newton-scroll-cue" aria-hidden="true">This apple falls as you scroll</motion.p>
           <motion.div aria-hidden="true" style={reducedMotion ? { opacity: 0 } : { opacity: storyFocusOpacity }} className="newton-focus-falloff" />
           {debugMode && <span className="newton-debug-crosshair" aria-hidden="true" />}
-          <div ref={treeWrapRef} className="newton-tree-wrap">
-            <motion.div ref={treeLayerRef} className="newton-tree-layer" style={reducedMotion ? undefined : {
-              x: storyPushX,
-              y: storyPushY,
-              scale: storyPushScale,
-              transformOrigin: `${(NEWTON_SCROLL_APPLE.sourceX / NEWTON_ARTWORK_WIDTH) * 100}% ${(NEWTON_GROUND_CONTACT_Y[NEWTON_SCROLL_APPLE.id] / NEWTON_ARTWORK_HEIGHT) * 100}%`,
-            }}>
+          <div ref={orchardCameraRef} className="newton-tree-wrap">
+            <motion.div className="newton-camera-translate" style={reducedMotion ? undefined : { x: cameraX, y: cameraY }}>
+              <motion.div
+                className="newton-camera-scale"
+                style={reducedMotion ? undefined : {
+                  scale: cameraScale,
+                  transformOrigin: orchardCamera ? `${orchardCamera.anchorX}px ${orchardCamera.anchorY}px` : '50% 50%',
+                }}
+              >
+            <div className="newton-tree-layer">
               <img
                 className="newton-tree"
                 src="/images/apple-tree-background-clean.png"
@@ -1666,6 +1764,7 @@ const NewtonGravityExperience = () => {
                 }}
               >
                 <motion.img
+                  ref={scrollAppleRef}
                   className="newton-scroll-apple science-story-apple"
                   src={NEWTON_APPLE_ASSETS[NEWTON_SCROLL_APPLE.asset]}
                   alt=""
@@ -1763,8 +1862,6 @@ const NewtonGravityExperience = () => {
                 <svg className="newton-debug" viewBox={`0 0 ${NEWTON_ARTWORK_WIDTH} ${NEWTON_ARTWORK_HEIGHT}`} aria-hidden="true">
                   <rect x="2" y="2" width={NEWTON_ARTWORK_WIDTH - 4} height={NEWTON_ARTWORK_HEIGHT - 4} fill="none" stroke="#00e5ff" strokeWidth="4" />
                   <circle cx={NEWTON_SCROLL_APPLE.sourceX} cy={NEWTON_SCROLL_APPLE.sourceY} r="10" fill="#ff365e" stroke="#fff" strokeWidth="3" />
-                  <circle cx={NEWTON_SCROLL_LANDED_TARGET.x} cy={NEWTON_SCROLL_LANDED_TARGET.y} r="13" fill="none" stroke="#24d66b" strokeWidth="5" />
-                  <circle cx={NEWTON_SCROLL_LANDED_TARGET.x} cy={NEWTON_SCROLL_LANDED_TARGET.y} r="7" fill="#00c2ff" stroke="#fff" strokeWidth="3" />
                   {NEWTON_APPLES.filter((apple) => !apple.scrollOnly && apple.id !== 'mid-low-red').map((apple) => (
                     <g key={`debug-${apple.id}`}>
                       <line
@@ -1787,6 +1884,20 @@ const NewtonGravityExperience = () => {
                   ))}
                 </svg>
               )}
+            </div>
+              </motion.div>
+            </motion.div>
+          </div>
+          <div className="newton-handoff-lens-frame" aria-hidden="true">
+            <motion.div
+              className="newton-handoff-lens"
+              style={reducedMotion ? { opacity: 0 } : { opacity: handoffLensOpacity, scale: handoffLensScale }}
+            >
+              <div className="newton-handoff-lens__ring newton-handoff-lens__ring--outer" />
+              <div className="newton-handoff-lens__ring newton-handoff-lens__ring--inner" />
+              <div className="newton-handoff-lens__specimen">
+                <img src="/images/science-scale/fallen-apple-impact-v3.png" alt="" />
+              </div>
             </motion.div>
           </div>
           <AnimatePresence>
@@ -1907,7 +2018,6 @@ const Science = () => {
           backgroundImageAlt="Science teacher explaining physics on a whiteboard to students"
           backgroundPosition="center top"
           mobileBackgroundPosition="62% center"
-          heroTone="charcoal"
         />
 
         {/* ── Anchor nav ── */}
@@ -1916,8 +2026,8 @@ const Science = () => {
             {[
               ['Curious minds',    '#science-concerns'],
               ['Science programs',  '#science-pathways'],
-              ['HSC focus areas',  '#hsc-sciences'],
-              ['How we teach',     '#hsc-sciences'],
+              ['HSC focus areas',  '#science-pathways'],
+              ['How we teach',     '#science-method'],
             ].map(([label, href]) => (
               <a key={label} href={href} className="rounded-2xl px-4 py-3 text-center text-sm font-black text-[#10233f] transition hover:bg-[#f5ecd9]">
                 {label}
@@ -2507,70 +2617,18 @@ const Science = () => {
         <SciencePrograms />
 
         {/* ── How DA Turns Understanding Into Results ── */}
-        <DAMethodSection />
-
-        {/* ── Learning format cards ── */}
-        <section className="bg-[#fffdf8] px-5 py-20 lg:px-8">
-          <div className="mx-auto grid max-w-7xl gap-5 lg:grid-cols-2">
-            <div className="rounded-[2rem] border border-[#071629]/10 bg-gradient-to-br from-[#f0fff4] to-[#dcfce7] p-8 shadow-lg shadow-[#071629]/5">
-              <Atom className="mb-5 h-10 w-10 text-[#10233f]" />
-              <h2 className="text-2xl font-black tracking-[-0.03em] text-[#10233f]">Small Group Tutoring</h2>
-              <p className="mt-4 text-sm leading-7 text-[#61708a]">
-                Our 3–5 student groups give your child focused attention in a structured environment. Students are matched to their subject and level so every session moves them forward.
-              </p>
-              <Link to="/learning-formats" className="mt-6 inline-flex items-center text-sm font-black text-[#10233f]">
-                Compare formats
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </div>
-
-            <div className="rounded-[2rem] border border-[#071629]/10 bg-gradient-to-br from-[#fffdf7] to-[#fff1cd] p-8 shadow-lg shadow-[#071629]/5">
-              <Zap className="mb-5 h-10 w-10 text-[#10233f]" />
-              <h2 className="text-2xl font-black tracking-[-0.03em] text-[#10233f]">HSC Science Classes</h2>
-              <p className="mt-4 text-sm leading-7 text-[#61708a]">
-                Subject-specific classes for Biology, Chemistry, and Physics. Structured around the syllabus with regular exam practice, past paper walkthroughs, and progress tracking.
-              </p>
-              <Link to="/hsc-excellence" className="mt-6 inline-flex items-center text-sm font-black text-[#10233f]">
-                View HSC Program
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </div>
-          </div>
-        </section>
+        <div id="science-method" className="scroll-mt-24">
+          <DAMethodSection />
+        </div>
 
         {/* ── What Students Struggle With ── */}
         <ScienceStruggleSection />
 
         <SubjectReviewCarousel subject="science" />
 
-        {/* ── Final CTA ── */}
-        <section className="bg-[#071629] px-5 py-20 text-white lg:px-8">
-          <div className="mx-auto grid max-w-6xl gap-8 rounded-[2rem] border border-white/12 bg-white/[0.06] p-8 shadow-2xl md:p-12 lg:grid-cols-[1fr_auto] lg:items-center">
-            <div>
-              <p className="mb-3 text-xs font-black uppercase tracking-[0.16em] text-[#f1df9a]">Next step</p>
-              <h2 className="font-serif text-4xl font-medium leading-tight tracking-[-0.045em] text-white">
-                Find the right science starting point.
-              </h2>
-              <p className="mt-4 max-w-2xl text-base leading-8 text-white/66">
-                Book an interview and we will help you work out whether your child needs foundational support, subject-specific coaching, or HSC exam preparation.
-              </p>
-            </div>
-            <div className="flex flex-col gap-3 sm:flex-row lg:flex-col">
-              <Link to="/book-interview">
-                <Button size="lg" className="h-12 w-full rounded-full bg-[#c9a227] px-7 font-black text-[#101521] hover:bg-[#e0bd4b]">
-                  Book an Interview
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-              </Link>
-              <a href="tel:0401940207">
-                <Button size="lg" variant="outline" className="h-12 w-full rounded-full border-white/30 bg-transparent px-7 font-bold text-white hover:bg-white/10 hover:text-white">
-                  Call 0401 940 207
-                </Button>
-              </a>
-            </div>
-          </div>
-        </section>
       </main>
+
+      <PageJourney pageLabel="Science" sections={SCIENCE_JOURNEY_SECTIONS} />
 
       <FooterNew />
     </div>
@@ -2673,7 +2731,7 @@ const ScienceStruggleSection = () => {
   const selected = STRUGGLES.find(s => s.id === selectedId)!;
 
   return (
-    <section className="bg-[#fff6e7] px-5 py-20 lg:px-8">
+    <section id="science-struggles" className="bg-[#fff6e7] px-5 py-20 lg:px-8">
       <div className="mx-auto max-w-7xl">
 
         {/* Header */}

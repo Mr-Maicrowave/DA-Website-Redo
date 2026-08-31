@@ -15,6 +15,8 @@ export interface CatalogueTutor {
   /** Explicit, editorially verified library presentation role. Never inferred from seniority. */
   presentation?: {
     featuredRole?: 'manager' | 'subject-lead';
+    /** Explicit shelf prominence. Never derived from order, age, or seniority. */
+    featuredPriority?: 'high';
   };
   profile?: {
     tags: string[];
@@ -50,6 +52,7 @@ export const TUTORS: CatalogueTutor[] = [
     photo: 'king', posX: '56%', posY: '41%', scale: 1.1,
     subjects: 'Mathematics (Yr 7–10) / Mathematics Standard / Mathematics Advanced / Mathematics Extension 1 / Mathematics Extension 2',
     hasPrimary: false,
+    presentation: { featuredPriority: 'high' },
     profile: {
       tags: ['Warm & safe environment', 'Growth mindset', 'Encourages big dreams'],
       whyDA: `I love working at DA Tuition because it isn't just a place to teach students but a place to help influence and shape the future. The reward of being able to help children shape their future is priceless. DA is a home, a warm and safe environment where children feel safe, a place where they can learn to be a better version of themselves and tap into their undiscovered talents and skills. I'm proud to be part of a warm and caring team who always put the children first.`,
@@ -65,6 +68,7 @@ export const TUTORS: CatalogueTutor[] = [
     photo: 'lai', posX: '56.5%', posY: '0%', scale: 1.05,
     subjects: 'English (Yr 7–10) / English Standard / English Advanced / English Extension 1',
     hasPrimary: false,
+    presentation: { featuredPriority: 'high' },
     profile: {
       tags: ['English', 'Believes in every student', 'Heart & dedication'],
       whyDA: `I love working at DA because it is a place where I can do something deeply meaningful and impactful for the younger generation. Knowing that I have played a part in shaping them and their future is enormously heart-warming for me and is more fulfilling than any other job. DA is built on values that I deeply resonate with: integrity, compassion and a genuine commitment and love for the kids. I know this because I experienced it first-hand with Miss Amanda as my mentor and guiding light throughout my high school years.`,
@@ -80,6 +84,7 @@ export const TUTORS: CatalogueTutor[] = [
     photo: 'danny', posX: '60.5%', posY: '11%',
     subjects: 'Science (Yr 7–10) / English Standard / English Advanced / Chemistry / Biology / Business Studies',
     hasPrimary: false,
+    presentation: { featuredPriority: 'high' },
     profile: {
       tags: ['Unlocks potential', 'Inspiring mentor', 'Believes in every student'],
       whyDA: `The team behind DA is a special group of people who have decided wholeheartedly to devote their time and effort to bringing out the best in their students, not only through their academic achievements but also through personal growth. There isn't anywhere else quite like DA.`,
@@ -95,6 +100,7 @@ export const TUTORS: CatalogueTutor[] = [
     photo: 'bunsea', posX: '54%', posY: '69%', scale: 1.03,
     subjects: 'Mathematics (Yr 7–10) / Mathematics Standard / Mathematics Advanced / Mathematics Extension 1 / Mathematics Extension 2',
     hasPrimary: false,
+    presentation: { featuredPriority: 'high' },
     profile: {
       tags: ['Maths', 'Confidence-building', 'Patient & understanding'],
       whyDA: `Working at DA Tuition is more than just a job for me; it's a destiny. I love being part of a team that is truly committed to making a difference in students' lives. The loving and caring environment here allows all the tutors to focus on each student's unique needs, and I am proud to contribute to a place where education can be fun and meaningful.`,
@@ -110,6 +116,7 @@ export const TUTORS: CatalogueTutor[] = [
     photo: 'linda', posX: '50%', posY: '2.5%', scale: 1.11,
     subjects: 'Mathematics (Yr 7–10) / Mathematics Standard / Mathematics Advanced',
     hasPrimary: false,
+    presentation: { featuredPriority: 'high' },
     profile: {
       tags: ['Confidence & positive mindset', 'Kind & empathetic', 'Resilience'],
       whyDA: `I always remember the days when I was a little girl and my parents couldn't afford to send me to tutoring like all my other friends. When I finally started, I met my tutor, more like my guardian angel. She was always very patient and understanding. She believed in me more than I believed in myself. Miss Amanda never once asked me for anything in return for her kindness and generosity. I owe all my success to her. I've grown roots at DA; working here allows me to help kids who could be going through struggles like I was.`,
@@ -171,6 +178,7 @@ export const TUTORS: CatalogueTutor[] = [
     photo: 'huyen', posX: '50%', posY: '25.5%', scale: 1.06,
     subjects: 'Primary (English & Mathematics) / Mathematics (Yr 7–10) / Mathematics Standard / Mathematics Advanced / Mathematics Extension 1',
     hasPrimary: true,
+    presentation: { featuredPriority: 'high' },
     profile: {
       tags: ['Personalised learning plans', 'Curiosity & resilience', 'Holistic support'],
       whyDA: `Working at DA Tuition is rewarding because it aligns with my passion for education and helping students unlock their full potential. One of the things I love most is the personalised approach we take with every student.`,
@@ -186,6 +194,7 @@ export const TUTORS: CatalogueTutor[] = [
     photo: 'christina h', posX: '50%', posY: '30%', scale: 1.07,
     subjects: 'Primary (English & Mathematics) / English (Yr 7–10) / Mathematics (Yr 7–10) / Mathematics Standard / Mathematics Advanced',
     hasPrimary: true,
+    presentation: { featuredPriority: 'high' },
     profile: {
       tags: ['Primary, maths & English', 'Confidence that lasts', 'Celebrates every win'],
       whyDA: `Teaching at DA has never felt like a job to me; it's a passion that has come full circle. I'm proud to be part of a family of tutors who genuinely care, where curiosity and creativity matter just as much as marks.`,
@@ -201,6 +210,7 @@ export const TUTORS: CatalogueTutor[] = [
     photo: 'christina l', posX: '53.5%', posY: '0%', scale: 1.2,
     subjects: 'English (Yr 7–10) / English Standard / English Advanced / English Extension 1 / Legal Studies',
     hasPrimary: false,
+    presentation: { featuredPriority: 'high' },
     profile: {
       tags: ['English', 'Resilience & confidence', 'Lifelong mentor'],
       whyDA: `Ever since I was first asked, "What do you want to be when you grow up?" I knew my dream was to make a difference in people's lives. Now, every day the sun rises and sets on the lives I have changed as a tutor. As a former DA student, I am beyond proud to be standing beside the most dedicated and inspiring team of tutors.`,
@@ -216,6 +226,7 @@ export const TUTORS: CatalogueTutor[] = [
     photo: 'phillip', posX: '56.5%', posY: '49%', scale: 1.08,
     subjects: 'Mathematics (Yr 7–10) / Mathematics Standard / Mathematics Advanced / Mathematics Extension 1',
     hasPrimary: false,
+    presentation: { featuredPriority: 'high' },
     profile: {
       tags: ['Maths', 'Drive & determination', 'Mentor for life'],
       whyDA: `Working at DA is an experience like no other because it never really feels like work. Every time I walk through the front doors I'm always looking forward to the ways I can pass on my knowledge and help students.`,
@@ -306,6 +317,7 @@ export const TUTORS: CatalogueTutor[] = [
     photo: 'william', posX: '53%', posY: '32%', scale: 1.14,
     subjects: 'Primary (English & Mathematics) / Mathematics (Yr 7–10) / Mathematics Standard',
     hasPrimary: true,
+    presentation: { featuredPriority: 'high' },
     profile: {
       tags: ['Growth mindset', 'Resilience', 'Role model'],
       whyDA: `DA Tuition provides a nurturing environment where students are able to flourish academically and personally. I am proud to be part of a team that values not only the marks on a paper, but also the holistic development of students.`,
@@ -321,6 +333,7 @@ export const TUTORS: CatalogueTutor[] = [
     photo: 'amy', posX: '50%', posY: '10%', scale: 1.08,
     subjects: 'Primary (English & Mathematics) / Mathematics (Yr 7–10) / English (Yr 7–10) / English Standard / English Advanced',
     hasPrimary: true,
+    presentation: { featuredPriority: 'high' },
     profile: {
       tags: ['Engaging environment', 'Strives for excellence', 'Caring & supportive'],
       whyDA: `DA is a remarkable place that has allowed thousands of students to flourish and thrive in their academic studies. Seeing students happy to attend class, enjoying their studies, and growing into the best versions of themselves is something I am proud to be part of.`,
@@ -336,6 +349,7 @@ export const TUTORS: CatalogueTutor[] = [
     photo: 'serina', posX: '50%', posY: '0%',
     subjects: 'Primary (English & Mathematics) / Mathematics (Yr 7–10)',
     hasPrimary: true,
+    presentation: { featuredPriority: 'high' },
     profile: {
       tags: ['Maths', 'Confidence & wellbeing', 'Caring listener'],
       whyDA: `The wonderful environment and the genuine staff are part of the reason I love working at DA Tuition. I am so proud to be part of this team that makes an impact on students' lives, in both their education and shaping them to be the best versions of themselves.`,

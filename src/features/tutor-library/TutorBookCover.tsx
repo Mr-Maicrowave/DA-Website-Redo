@@ -1,17 +1,17 @@
 import { useEffect, useMemo, useState } from 'react';
 import { CanvasTexture, DoubleSide, LinearFilter, LinearMipmapLinearFilter, NoColorSpace, RepeatWrapping, SRGBColorSpace } from 'three';
-import { getPhotoUrl, type CatalogueTutor } from '../../data/teacherCatalogue';
+import type { CatalogueTutor } from '../../data/teacherCatalogue';
 import type { TutorBookEdition } from './tutor-library-data';
-import { getTutorBookClothColour } from './tutor-book-appearance';
+import { createCompleteShelfPresentation, PRESENTATION_UPDATE_EVENT, type CompleteShelfPresentationShellCanvasSources } from './complete-shelf-presentation';
+import { areTutorLibraryFontsReady, ensureTutorLibraryFonts } from './tutor-library-assets';
 
 const COVER_TEXTURES = new Map<string, CanvasTexture>();
 const FOIL_TEXTURES = new Map<string, CanvasTexture>();
+const SHELL_SOURCES = new Map<string, Partial<CompleteShelfPresentationShellCanvasSources>>();
 
 type CoverMode = 'spine' | 'cover';
 export type SpineTreatment = 'classic' | 'stacked' | 'surname';
 
-const SUBJECT_MARK: Record<string, string> = { primary: 'PRIMARY STUDIES', mathematics: 'MATHEMATICS', english: 'ENGLISH', 'science-social': 'SCIENCE & SOCIAL' };
-const COVER_PORTRAIT_FRAME = { x: 76, y: 156, width: 872, height: 850 };
 function configureMaterialTexture(texture: CanvasTexture, repeat: [number, number], color = false) {
   texture.colorSpace = color ? SRGBColorSpace : NoColorSpace;
   texture.wrapS = RepeatWrapping; texture.wrapT = RepeatWrapping;
@@ -26,8 +26,9 @@ function makeTexture(draw: (context: CanvasRenderingContext2D) => void, repeat: 
   return configureMaterialTexture(new CanvasTexture(canvas), repeat, color);
 }
 
-export function useBookMaterialMaps() {
-  return useMemo(() => {
+let sharedBookMaterialMaps: ReturnType<typeof createBookMaterialMaps> | undefined;
+
+function createBookMaterialMaps() {
     const size = 256; const height = new Float32Array(size * size);
     for (let y = 0; y < size; y++) for (let x = 0; x < size; x++) { const weave = Math.sin(x * .98 + Math.sin(y * .07)) * .23 + Math.sin(y * 1.11 + Math.sin(x * .05)) * .19; const fibre = Math.sin((x * 7.13 + y * 3.71) * .11) * .045; height[y * size + x] = .5 + weave + fibre; }
     const clothNormal = makeTexture(context => { const image = context.createImageData(size, size); for (let y = 0; y < size; y++) for (let x = 0; x < size; x++) { const at = (a: number, b: number) => height[((b + size) % size) * size + ((a + size) % size)]; const dx = (at(x + 1, y) - at(x - 1, y)) * 1.25; const dy = (at(x, y + 1) - at(x, y - 1)) * 1.25; const length = Math.hypot(dx, dy, 1); const i = (y * size + x) * 4; image.data[i] = 128 + Math.round((-dx / length) * 44); image.data[i + 1] = 128 + Math.round((-dy / length) * 44); image.data[i + 2] = 128 + Math.round((1 / length) * 127); image.data[i + 3] = 255; } context.putImageData(image, 0, 0); }, [20, 27]);
@@ -35,35 +36,27 @@ export function useBookMaterialMaps() {
     const clothRoughness = makeTexture(context => { const image = context.createImageData(size, size); for (let i = 0; i < height.length; i++) { const level = Math.round(168 + Math.max(0, Math.min(1, height[i])) * 67); const j = i * 4; image.data[j] = image.data[j + 1] = image.data[j + 2] = level; image.data[j + 3] = 255; } context.putImageData(image, 0, 0); }, [20, 27]);
     const paper = makeTexture(context => { context.fillStyle = '#eee5d2'; context.fillRect(0, 0, size, size); let y = 0; while (y < size) { const gap = 2 + ((Math.sin(y * 1.71) + 1) * .7); const alpha = .028 + ((Math.sin(y * .41) + 1) * .017); context.strokeStyle = `rgba(103,81,52,${alpha})`; context.beginPath(); context.moveTo(0, y); context.lineTo(size, y + Math.sin(y * .19) * .45); context.stroke(); y += gap; } }, [2, 18], true);
     const paperBump = makeTexture(context => { const image = context.createImageData(size, size); for (let y = 0; y < size; y++) for (let x = 0; x < size; x++) { const line = Math.sin(y * 2.15 + Math.sin(x * .08)) * .12; const grain = Math.sin(x * 1.81 + y * 2.47) * .035; const level = Math.round(204 + (line + grain) * 100); const i = (y * size + x) * 4; image.data[i] = image.data[i + 1] = image.data[i + 2] = level; image.data[i + 3] = 255; } context.putImageData(image, 0, 0); }, [2, 18]);
-    return { clothHeight, clothNormal, clothRoughness, paper, paperBump };
+  return { clothHeight, clothNormal, clothRoughness, paper, paperBump };
+}
+
+/** The room reuses one quiet material set; individual tutor artwork remains unique. */
+export function useBookMaterialMaps() {
+  return useMemo(() => {
+    sharedBookMaterialMaps ??= createBookMaterialMaps();
+    return sharedBookMaterialMaps;
   }, []);
 }
 
-function drawFrame(context: CanvasRenderingContext2D, tutor: CatalogueTutor, edition: TutorBookEdition, mode: CoverMode) {
-  const canvas = context.canvas;
-  const dark = getTutorBookClothColour(edition.materialVariant);
-  context.fillStyle = dark;
-  context.fillRect(0, 0, canvas.width, canvas.height);
-  context.textAlign = 'center'; context.textBaseline = 'middle';
-  if (mode === 'spine') {
-    context.fillStyle = 'rgba(255,255,255,.15)';
-    context.fillRect(14, 0, 7, canvas.height);
-    context.fillRect(canvas.width - 21, 0, 7, canvas.height);
-    context.save();
-    context.translate(canvas.width / 2, canvas.height / 2);
-    context.rotate(Math.PI / 2);
-    context.restore();
-    return;
-  }
+function getSharedShellSources(tutor: CatalogueTutor, edition: TutorBookEdition, mode: CoverMode) {
+  const key = `${edition.id}:${tutor.id}:${edition.materialVariant}`;
+  const cached = SHELL_SOURCES.get(key) ?? {};
+  if (mode === 'cover' && !cached.cover) Object.assign(cached, createCompleteShelfPresentation(tutor, edition).createCoverCanvasSources());
+  if (mode === 'spine' && !cached.spine) Object.assign(cached, createCompleteShelfPresentation(tutor, edition).createSpineCanvasSources());
+  SHELL_SOURCES.set(key, cached);
+  return cached as CompleteShelfPresentationShellCanvasSources;
 }
 
-function createTexture(tutor: CatalogueTutor, edition: TutorBookEdition, mode: CoverMode) {
-  const canvas = document.createElement('canvas');
-  canvas.width = mode === 'spine' ? 256 : 1024;
-  canvas.height = 1536;
-  const context = canvas.getContext('2d');
-  if (!context) throw new Error('Canvas rendering is unavailable for tutor cover');
-  drawFrame(context, tutor, edition, mode);
+function textureFromCanvas(canvas: HTMLCanvasElement) {
   const texture = new CanvasTexture(canvas);
   texture.colorSpace = SRGBColorSpace;
   texture.minFilter = LinearMipmapLinearFilter;
@@ -71,60 +64,43 @@ function createTexture(tutor: CatalogueTutor, edition: TutorBookEdition, mode: C
   texture.generateMipmaps = true;
   texture.anisotropy = 4;
   texture.needsUpdate = true;
-  if (mode === 'cover') {
-    const portrait = new Image();
-    portrait.decoding = 'async';
-    portrait.onload = () => {
-      context.save();
-      context.beginPath();
-      context.rect(COVER_PORTRAIT_FRAME.x, COVER_PORTRAIT_FRAME.y, COVER_PORTRAIT_FRAME.width, COVER_PORTRAIT_FRAME.height);
-      context.clip();
-      const ratio = Math.max(COVER_PORTRAIT_FRAME.width / portrait.width, COVER_PORTRAIT_FRAME.height / portrait.height);
-      const width = portrait.width * ratio;
-      const height = portrait.height * ratio;
-      context.drawImage(portrait, (canvas.width - width) / 2, COVER_PORTRAIT_FRAME.y + (COVER_PORTRAIT_FRAME.height - height) / 2, width, height);
-      context.restore();
-      texture.needsUpdate = true;
-    };
-    portrait.src = getPhotoUrl(tutor);
-  }
+  canvas.addEventListener(PRESENTATION_UPDATE_EVENT, () => { texture.needsUpdate = true; });
   return texture;
 }
 
-function createFoilTexture(tutor: CatalogueTutor, edition: TutorBookEdition, mode: CoverMode, treatment: SpineTreatment) {
-  const canvas = document.createElement('canvas');
-  canvas.width = mode === 'spine' ? 256 : 1024;
-  canvas.height = 1536;
-  const context = canvas.getContext('2d');
-  if (!context) throw new Error('Canvas rendering is unavailable for tutor foil');
-  context.clearRect(0, 0, canvas.width, canvas.height);
-  context.strokeStyle = '#fff'; context.fillStyle = '#fff';
-  context.lineWidth = mode === 'spine' ? 3 : 6;
-  context.textAlign = 'center'; context.textBaseline = 'middle';
-  if (mode === 'spine') {
-    const surname = tutor.name.split(' ').at(-1)?.toUpperCase() ?? tutor.name.toUpperCase();
-    if (treatment === 'stacked') {
-      context.font = '600 42px "Cormorant Garamond", serif';
-      surname.split('').forEach((letter, index) => context.fillText(letter, canvas.width / 2, 350 + index * 92));
-    } else {
-      context.save(); context.translate(canvas.width / 2, canvas.height / 2); context.rotate(Math.PI / 2);
-      context.font = `600 ${treatment === 'surname' ? 76 : tutor.name.length > 15 ? 46 : 58}px "Cormorant Garamond", serif`;
-      context.fillText(treatment === 'surname' ? surname : tutor.name.toUpperCase(), 0, treatment === 'surname' ? -16 : 0, canvas.height - 130); context.restore();
-    }
-    context.font = '600 16px Cabin, sans-serif'; context.fillText(SUBJECT_MARK[edition.wallId] ?? 'DA TUITION', canvas.width / 2, 94);
-  } else {
-    context.lineWidth = 7; context.strokeRect(COVER_PORTRAIT_FRAME.x, COVER_PORTRAIT_FRAME.y, COVER_PORTRAIT_FRAME.width, COVER_PORTRAIT_FRAME.height);
-    context.font = '600 27px Cabin, sans-serif'; context.fillText(`DA TUITION · ${SUBJECT_MARK[edition.wallId] ?? 'FACULTY'}`, canvas.width / 2, 110);
-    context.font = '600 82px "Cormorant Garamond", serif'; context.fillText(tutor.name.replace(/^Mrs\s+/i, ''), canvas.width / 2, 1132, canvas.width - 130);
-    context.font = '600 25px Cabin, sans-serif'; context.fillText(tutor.designation.toUpperCase(), canvas.width / 2, 1202, canvas.width - 160);
-  }
-  const texture = new CanvasTexture(canvas); texture.colorSpace = SRGBColorSpace; texture.minFilter = LinearMipmapLinearFilter; texture.magFilter = LinearFilter; texture.generateMipmaps = true; texture.anisotropy = 4; texture.needsUpdate = true;
-  return texture;
+function createTexture(tutor: CatalogueTutor, edition: TutorBookEdition, mode: CoverMode) {
+  const sources = getSharedShellSources(tutor, edition, mode);
+  return textureFromCanvas(mode === 'cover' ? sources.cover : sources.spine);
+}
+
+function createFoilTexture(tutor: CatalogueTutor, edition: TutorBookEdition, mode: CoverMode, _treatment: SpineTreatment) {
+  const sources = getSharedShellSources(tutor, edition, mode);
+  return textureFromCanvas(mode === 'cover' ? sources.coverFoil : sources.spineFoil);
+}
+
+let fontTextureRevision = 0;
+let fontTextureRefresh: Promise<void> | undefined;
+const fontTextureListeners = new Set<(revision: number) => void>();
+
+function refreshTexturesAfterFontsLoad() {
+  fontTextureRefresh ??= ensureTutorLibraryFonts().then(() => {
+    COVER_TEXTURES.clear();
+    FOIL_TEXTURES.clear();
+    SHELL_SOURCES.clear();
+    fontTextureRevision += 1;
+    fontTextureListeners.forEach(listener => listener(fontTextureRevision));
+  });
+  return fontTextureRefresh;
 }
 
 function useFontRevision() {
-  const [revision, setRevision] = useState(0);
-  useEffect(() => { let mounted = true; document.fonts?.load('600 86px "Cormorant Garamond"').then(() => document.fonts.load('600 27px Cabin')).then(() => { if (mounted) { COVER_TEXTURES.clear(); FOIL_TEXTURES.clear(); setRevision(value => value + 1); } }).catch(() => undefined); return () => { mounted = false; }; }, []);
+  const [revision, setRevision] = useState(fontTextureRevision);
+  useEffect(() => {
+    if (areTutorLibraryFontsReady()) return;
+    fontTextureListeners.add(setRevision);
+    void refreshTexturesAfterFontsLoad();
+    return () => { fontTextureListeners.delete(setRevision); };
+  }, []);
   return revision;
 }
 

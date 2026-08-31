@@ -1,20 +1,36 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import { BookOpen } from 'lucide-react';
 import NavigationNew from '@/components/NavigationNew';
+import FooterNew from '@/components/FooterNew';
 import SubjectHero from '@/components/subjects/SubjectHero';
 import SEO from '@/components/SEO';
+import PageJourney from '@/components/page-journey/PageJourney';
 import { EnglishIntroVideoGate } from '@/features/english-intro-video/EnglishIntroVideoGate';
+
+const ENGLISH_JOURNEY_SECTIONS = [
+  { id: 'english-introduction', sourceId: null, label: 'Introduction', description: 'Writing with clarity' },
+  { id: 'english-year-map', sourceId: 'year-map-heading', label: 'Learning journey', description: 'Foundations to HSC' },
+  { id: 'english-short-answer', sourceId: 'short-answer-transform', label: 'Short answers', description: 'Transform responses' },
+  { id: 'english-resources', sourceId: 'resources', label: 'Resources', description: 'Learn from feedback' },
+  { id: 'english-classes', sourceId: 'english-classes', label: 'Classes', description: 'Find the right fit' },
+  { id: 'english-parent-questions', sourceId: 'parents-faq', label: 'Parent questions', description: 'What families ask' },
+] as const;
 
 const English = () => {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const iframeResizeObserverRef = useRef<ResizeObserver | null>(null);
   const [iframeHeight, setIframeHeight] = useState('100svh');
   const [bookletPreviewOpen, setBookletPreviewOpen] = useState(false);
+  const [journeyOffsets, setJourneyOffsets] = useState<Record<string, number>>({});
 
   const updateIframeHeight = () => {
     const doc = iframeRef.current?.contentDocument;
     if (doc?.documentElement) {
       setIframeHeight(`${doc.documentElement.scrollHeight}px`);
+      setJourneyOffsets(Object.fromEntries(ENGLISH_JOURNEY_SECTIONS.map(({ id, sourceId }) => [
+        id,
+        sourceId ? doc.getElementById(sourceId)?.getBoundingClientRect().top ?? 0 : 0,
+      ])));
     }
   };
 
@@ -72,7 +88,15 @@ const English = () => {
         mobileBackgroundPosition="72% center"
         mobileContentPosition="bottom"
       />
-      <div id="english-page-content">
+      <div id="english-page-content" style={{ position: 'relative' }}>
+        {ENGLISH_JOURNEY_SECTIONS.map(({ id }) => (
+          <span
+            key={id}
+            id={id}
+            aria-hidden="true"
+            style={{ position: 'absolute', top: journeyOffsets[id] ?? 0, pointerEvents: 'none' } as CSSProperties}
+          />
+        ))}
         <iframe
           ref={iframeRef}
           src="/english-page/index.html"
@@ -87,6 +111,8 @@ const English = () => {
           }}
         />
       </div>
+      <PageJourney pageLabel="English" sections={ENGLISH_JOURNEY_SECTIONS.map(({ sourceId: _sourceId, ...section }) => section)} />
+      <FooterNew />
     </>
   );
 };

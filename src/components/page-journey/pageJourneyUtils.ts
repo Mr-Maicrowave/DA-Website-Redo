@@ -14,7 +14,7 @@ export type NormalisedJourneySection = Required<Pick<JourneySection, 'id' | 'lab
   longScroll: boolean;
 };
 
-export const normaliseJourneySections = (sections: JourneySection[]): NormalisedJourneySection[] => (
+export const normaliseJourneySections = (sections: readonly JourneySection[]): NormalisedJourneySection[] => (
   sections.map((section) => ({
     id: section.id,
     label: section.label,

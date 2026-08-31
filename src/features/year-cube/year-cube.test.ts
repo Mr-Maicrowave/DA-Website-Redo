@@ -19,11 +19,11 @@ test('provides a clean 3D cube toss, top-down geometric net unfolding, and rich 
   assert.match(source, /id="year-cube"/);
   assert.match(mathematicsPage, /import \{ YearCube \} from '@\/features\/year-cube\/YearCube'/);
   assert.match(mathematicsPage, /<YearCube\s*\/>/);
-  assert.match(mathematicsPage, /\{ label: 'Explore Years 7–12', href: '#year-cube' \}/);
+  assert.doesNotMatch(mathematicsPage, /\{ label: 'Explore Years 7–12', href: '#year-cube' \}/);
   assert.match(mathematicsPage, /exploreTargetId="year-cube"/);
   assert.doesNotMatch(mathematicsPage, /id="year-cube-introduction"/);
   assert.doesNotMatch(mathematicsPage, /Explore Years 7–12 <ArrowRight/);
-  assert.match(mathematicsPage, /<\/nav>\s*<YearCube\s*\/>/);
+  assert.match(mathematicsPage, /<YearCube\s*\/>/);
 
   // Verify 3D Cube Structure & 6 Faces
   assert.match(originalExperience, /data-face="front"/);
@@ -49,12 +49,11 @@ test('provides a clean 3D cube toss, top-down geometric net unfolding, and rich 
   assert.match(originalExperience, /id="masterclassModal"/);
   assert.match(originalExperience, /id="modalYearNav"/);
   assert.match(originalExperience, /id="modalContentArea"/);
-  assert.match(originalExperience, /renderYearCard/);
+  assert.match(originalExperience, /renderYearFieldGuide/);
+  assert.match(originalExperience, /renderYearFieldGuide\(data, yearNum\)/);
 
-  // Year 7 is the first completed curriculum field guide. Its layout must be
-  // an open blueprint sheet with a real DA photograph, rather than the former
-  // boxed content schedule.
-  assert.match(originalExperience, /renderYearSevenFieldGuide/);
+  // Every year uses the open blueprint field guide with its real DA photograph,
+  // rather than a separate boxed content schedule.
   assert.match(originalExperience, /year-field-guide/);
   assert.match(originalExperience, /Year shift/i);
   assert.match(originalExperience, /Core focus areas/i);
@@ -67,6 +66,9 @@ test('provides a clean 3D cube toss, top-down geometric net unfolding, and rich 
   assert.match(originalExperience, /yfg-at-glance/);
   assert.match(originalExperience, /yfg-common-mistakes/);
   assert.doesNotMatch(originalExperience, /\['Year level', 'Year 7(?: of 12)?'\]/);
+  assert.doesNotMatch(originalExperience, /\['Ideal for',/);
+  assert.doesNotMatch(originalExperience, /<p class="yfg-kicker">Year 7<\/p>/);
+  assert.doesNotMatch(originalExperience, /<span>Year 7<\/span>/);
 
   // Desktop field-guide content must use the available viewport width rather
   // than forcing the Year 7 sheet into a tall internally-scrolling column.
@@ -139,4 +141,30 @@ test('provides a clean 3D cube toss, top-down geometric net unfolding, and rich 
   assert.doesNotMatch(originalExperience, /Sample copy — swap in real syllabus hooks/);
   assert.doesNotMatch(originalExperience, /Prototype for discussion/);
   assert.doesNotMatch(originalExperience, /Unshakeable/i);
+});
+
+test('renders curriculum equations with KaTeX inside non-overflowing topic rows', () => {
+  const experience = readFileSync(originalExperienceUrl, 'utf8');
+
+  assert.match(experience, /katex@0\.17\.0\/dist\/katex\.min\.css/);
+  assert.match(experience, /katex@0\.17\.0\/dist\/katex\.min\.js/);
+  assert.match(experience, /function renderMathText\(value\)/);
+  assert.match(experience, /katex\.renderToString\(tex, \{ throwOnError: false \}\)/);
+  assert.match(experience, /class="math-inline"/);
+  assert.match(experience, /\.math-inline\s*\{[^}]*max-width:\s*100%;[^}]*overflow-x:\s*auto/);
+  assert.match(experience, /Linear Relationships & Graphing — \$y = mx \+ b\$/);
+  assert.match(experience, /\$-3\^2\$ vs \$\(-3\)\^2\$/);
+});
+
+test('keeps the existing blueprint face typography while making the cube labels readable at a glance', () => {
+  const experience = readFileSync(originalExperienceUrl, 'utf8');
+
+  assert.match(experience, /\.fs-num\s*\{[^}]*font-size:\s*clamp\(2\.35rem,\s*3\.6vw,\s*3\.25rem\)/);
+  assert.match(experience, /\.fs-tag\s*\{[^}]*font-size:\s*\.66rem/);
+  assert.match(experience, /\.fs-title\s*\{[^}]*font-size:\s*\.70rem/);
+  assert.match(experience, /\[data-design="4"\]\s*>\s*\.face-skin\s*\.fs-hook\s*\{[^}]*font-size:\s*\.84rem/);
+  assert.match(experience, /\.fs-go\s*\{[^}]*font-size:\s*\.78rem/);
+  assert.match(experience, /\.hinged-net-wrapper\.unfolded\s+\.fs-title\s*\{[^}]*font-size:\s*\.88rem/);
+  assert.match(experience, /\.hinged-net-wrapper\.unfolded\s+\[data-design="4"\]\s*>\s*\.face-skin\s+\.fs-hook\s*\{[^}]*font-size:\s*1\.05rem/);
+  assert.match(experience, /\.hinged-net-wrapper\.unfolded\s+\.fs-go\s*\{[^}]*font-size:\s*\.96rem/);
 });

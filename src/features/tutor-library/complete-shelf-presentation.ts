@@ -38,11 +38,35 @@ export interface DeferredCompleteShelfPresentationCanvasSources extends Complete
   drawInterior(index: number): void;
 }
 
+/**
+ * The closed-book artwork shared by dormant shelf books and the interactive rig.
+ * It intentionally excludes pages/endpapers so the room can stay lightweight.
+ */
+export interface CompleteShelfPresentationShellCanvasSources {
+  cover: HTMLCanvasElement;
+  coverFoil: HTMLCanvasElement;
+  spine: HTMLCanvasElement;
+  spineFoil: HTMLCanvasElement;
+}
+
+export interface CompleteShelfPresentationCoverCanvasSources {
+  cover: HTMLCanvasElement;
+  coverFoil: HTMLCanvasElement;
+}
+
+export interface CompleteShelfPresentationSpineCanvasSources {
+  spine: HTMLCanvasElement;
+  spineFoil: HTMLCanvasElement;
+}
+
 export interface CompleteShelfPresentation {
   tutorId: string;
   portrait: { url: string; fallbackUrl: string };
   colours: { cloth: string; foil: string; accent: string; paper: string; ink: string; edge: string };
   canvasMetadata: typeof CANVAS_METADATA;
+  createCoverCanvasSources(canvasDocument?: Pick<Document, "createElement">): CompleteShelfPresentationCoverCanvasSources;
+  createSpineCanvasSources(canvasDocument?: Pick<Document, "createElement">): CompleteShelfPresentationSpineCanvasSources;
+  createShellCanvasSources(canvasDocument?: Pick<Document, "createElement">): CompleteShelfPresentationShellCanvasSources;
   createCanvasSources(canvasDocument?: Pick<Document, "createElement">): CompleteShelfPresentationCanvasSources;
   createInitialCanvasSources(canvasDocument?: Pick<Document, "createElement">): DeferredCompleteShelfPresentationCanvasSources;
 }
@@ -324,7 +348,7 @@ function drawInteriorHeader(canvas: HTMLCanvasElement, context: CanvasRenderingC
   const marginX = canvas.width * .09;
   context.fillStyle = colours.ink;
   context.textAlign = "left";
-  context.font = `600 ${Math.round(canvas.width * .027)}px Cabin, sans-serif`;
+  context.font = `600 ${Math.round(canvas.width * .027)}px "Cormorant Garamond", Georgia, serif`;
   context.fillText("DA TUITION / TUTOR PROFILE", marginX, canvas.height * .078);
   context.textAlign = "right";
   context.fillText(String(page.folio).padStart(2, "0"), canvas.width - marginX, canvas.height * .078);
@@ -336,7 +360,7 @@ function drawInteriorHeader(canvas: HTMLCanvasElement, context: CanvasRenderingC
   context.stroke();
   context.textAlign = "left";
   context.fillStyle = colours.foil;
-  context.font = `700 ${Math.round(canvas.width * .03)}px Cabin, sans-serif`;
+  context.font = `700 ${Math.round(canvas.width * .04)}px "Cormorant Garamond", Georgia, serif`;
   context.fillText(page.label.toUpperCase(), marginX, canvas.height * .15);
 }
 
@@ -351,7 +375,7 @@ function drawTags(
   if (tags.length === 0) return;
   const marginX = canvas.width * .09;
   context.textAlign = "left";
-  context.font = `600 ${Math.round(canvas.width * .032)}px Cabin, sans-serif`;
+  context.font = `600 ${Math.round(canvas.width * .032)}px "Cormorant Garamond", Georgia, serif`;
   tags.forEach((tag, index) => {
     const tagY = y + index * canvas.height * lineGap;
     context.fillStyle = colours.foil;
@@ -379,23 +403,20 @@ function drawInterior(
 
   if (page.id === "identity") {
     const [name, designation, tagline, subjects, ...strengths] = page.sourceText;
-    context.fillStyle = colours.foil;
-    context.font = `700 ${Math.round(canvas.width * .03)}px Cabin, sans-serif`;
-    context.fillText("MEET THE TUTOR", marginX, canvas.height * .25);
     context.fillStyle = colours.ink;
     context.font = `700 ${Math.round(canvas.width * .075)}px "Cormorant Garamond", serif`;
-    const nameLines = drawWrappedText(context, name, marginX, canvas.height * .35, bodyWidth, canvas.height * .08, 2);
+    const nameLines = drawWrappedText(context, name, marginX, canvas.height * .29, bodyWidth, canvas.height * .08, 2);
     context.fillStyle = colours.foil;
-    context.font = `700 ${Math.round(canvas.width * .033)}px Cabin, sans-serif`;
-    drawWrappedText(context, designation, marginX, canvas.height * (.43 + nameLines * .025), bodyWidth, canvas.height * .042, 2);
+    context.font = `700 ${Math.round(canvas.width * .033)}px "Cormorant Garamond", Georgia, serif`;
+    drawWrappedText(context, designation, marginX, canvas.height * (.37 + Math.max(0, nameLines - 1) * .07), bodyWidth, canvas.height * .042, 2);
     context.fillStyle = colours.ink;
     context.font = `italic ${Math.round(canvas.width * .045)}px "Cormorant Garamond", serif`;
-    drawWrappedText(context, tagline, marginX, canvas.height * .54, bodyWidth, canvas.height * .055, 3);
+    drawWrappedText(context, tagline, marginX, canvas.height * .48, bodyWidth, canvas.height * .055, 3);
     context.fillStyle = colours.foil;
-    context.font = `700 ${Math.round(canvas.width * .032)}px Cabin, sans-serif`;
+    context.font = `700 ${Math.round(canvas.width * .032)}px "Cormorant Garamond", Georgia, serif`;
     context.fillText("AT A GLANCE", marginX, canvas.height * .7);
     context.fillStyle = colours.ink;
-    context.font = `500 ${Math.round(canvas.width * .037)}px Cabin, sans-serif`;
+    context.font = `500 ${Math.round(canvas.width * .037)}px "Cormorant Garamond", Georgia, serif`;
     drawWrappedText(context, subjects, marginX, canvas.height * .75, bodyWidth, canvas.height * .038, 2);
     drawTags(canvas, context, strengths, canvas.height * .84, colours, .035);
     return;
@@ -405,15 +426,20 @@ function drawInterior(
     context.font = `italic ${Math.round(canvas.width * .06)}px "Cormorant Garamond", serif`;
     drawWrappedText(context, primary, marginX, canvas.height * .27, bodyWidth, canvas.height * .071, 3);
     context.strokeStyle = colours.foil; context.lineWidth = Math.max(2, canvas.width * .0016); context.beginPath(); context.moveTo(marginX, canvas.height * .49); context.lineTo(canvas.width - marginX, canvas.height * .49); context.stroke();
-    context.font = `700 ${Math.round(canvas.width * .029)}px Cabin, sans-serif`;
-    rest.slice(0, 3).forEach((principle, index) => {
-      const y = canvas.height * (.59 + index * .115);
-      context.fillStyle = colours.foil; context.fillText(principle, marginX, y);
-      context.fillStyle = colours.ink; context.font = `500 ${Math.round(canvas.width * .034)}px Cabin, sans-serif`;
-      const detail = primary.length > 110 ? primary : `Their stated approach centres on ${principle.toLowerCase()}.`;
-      drawWrappedText(context, detail, marginX, y + canvas.height * .04, bodyWidth, canvas.height * .03, 2);
-      context.font = `700 ${Math.round(canvas.width * .029)}px Cabin, sans-serif`;
-    });
+    if (rest[0]) {
+      context.fillStyle = colours.foil;
+      context.font = `700 ${Math.round(canvas.width * .029)}px "Cormorant Garamond", Georgia, serif`;
+      context.fillText("THEIR APPROACH", marginX, canvas.height * .58);
+      context.fillStyle = colours.ink;
+      drawFittedCanonicalText(context, rest[0], {
+        x: marginX,
+        firstBaseline: canvas.height * .64,
+        maxBaseline: canvas.height * .9,
+        maxWidth: bodyWidth,
+        initialFontSize: Math.round(canvas.width * .034),
+        minimumFontSize: Math.round(canvas.width * .027),
+      });
+    }
     return;
   }
 
@@ -421,28 +447,52 @@ function drawInterior(
     const [credibility, subjects, ...remaining] = page.sourceText;
     const priorities = remaining.at(-1) ?? "";
     const strengths = remaining.slice(0, -1);
-    context.font = `500 ${Math.round(canvas.width * .041)}px Cabin, sans-serif`;
-    drawWrappedText(context, credibility, marginX, canvas.height * .27, bodyWidth, canvas.height * .051, 5);
-    context.fillStyle = colours.foil; context.font = `700 ${Math.round(canvas.width * .03)}px Cabin, sans-serif`; context.fillText("ACADEMIC FOCUS", marginX, canvas.height * .61);
-    context.fillStyle = colours.ink; context.font = `500 ${Math.round(canvas.width * .035)}px Cabin, sans-serif`; drawWrappedText(context, subjects, marginX, canvas.height * .66, bodyWidth, canvas.height * .04, 3);
-    context.fillStyle = colours.foil; context.font = `700 ${Math.round(canvas.width * .03)}px Cabin, sans-serif`; context.fillText("TEACHING STRENGTHS", marginX, canvas.height * .82);
-    drawTags(canvas, context, strengths, canvas.height * .85, colours, .03);
+    const sectionGap = canvas.height * .05;
+    const headingToBody = canvas.height * .04;
+    let cursor = canvas.height * .25;
+
+    context.font = `500 ${Math.round(canvas.width * .036)}px "Cormorant Garamond", Georgia, serif`;
+    const credibilityLineHeight = canvas.height * .043;
+    const credibilityLines = drawWrappedText(context, credibility, marginX, cursor, bodyWidth, credibilityLineHeight, 6);
+    cursor += Math.max(1, credibilityLines) * credibilityLineHeight + sectionGap;
+
+    context.fillStyle = colours.foil;
+    context.font = `700 ${Math.round(canvas.width * .028)}px "Cormorant Garamond", Georgia, serif`;
+    context.fillText("ACADEMIC FOCUS", marginX, cursor);
+    cursor += headingToBody;
+    context.fillStyle = colours.ink;
+    context.font = `500 ${Math.round(canvas.width * .031)}px "Cormorant Garamond", Georgia, serif`;
+    const subjectLineHeight = canvas.height * .036;
+    const subjectLines = drawWrappedText(context, subjects, marginX, cursor, bodyWidth, subjectLineHeight, 4);
+    cursor += Math.max(1, subjectLines) * subjectLineHeight + sectionGap;
+
+    context.fillStyle = colours.foil;
+    context.font = `700 ${Math.round(canvas.width * .028)}px "Cormorant Garamond", Georgia, serif`;
+    context.fillText("TEACHING STRENGTHS", marginX, cursor);
+    cursor += headingToBody;
+    drawTags(canvas, context, strengths, cursor, colours, .038);
+    if (strengths.length > 0) cursor += (strengths.length - 1) * canvas.height * .038 + sectionGap;
     if (priorities) {
-      context.fillStyle = colours.foil; context.font = `700 ${Math.round(canvas.width * .026)}px Cabin, sans-serif`; context.fillText("WHAT THEY PRIORITISE", marginX, canvas.height * .91);
-      context.fillStyle = colours.ink; context.font = `500 ${Math.round(canvas.width * .025)}px Cabin, sans-serif`; drawWrappedText(context, priorities, marginX, canvas.height * .945, bodyWidth, canvas.height * .027, 2);
+      context.fillStyle = colours.foil;
+      context.font = `700 ${Math.round(canvas.width * .026)}px "Cormorant Garamond", Georgia, serif`;
+      context.fillText("WHAT THEY PRIORITISE", marginX, cursor);
+      cursor += headingToBody;
+      context.fillStyle = colours.ink;
+      context.font = `500 ${Math.round(canvas.width * .025)}px "Cormorant Garamond", Georgia, serif`;
+      drawWrappedText(context, priorities, marginX, cursor, bodyWidth, canvas.height * .029, 5);
     }
     return;
   }
 
   if (page.id === "goals") {
-    context.font = `italic ${Math.round(canvas.width * .045)}px "Cormorant Garamond", serif`;
-    drawWrappedText(context, primary, marginX, canvas.height * .25, bodyWidth, canvas.height * .052, 5);
-    context.fillStyle = colours.foil; context.font = `700 ${Math.round(canvas.width * .03)}px Cabin, sans-serif`; context.fillText("GREAT FIT FOR STUDENTS WHO…", marginX, canvas.height * .6);
-    context.font = `500 ${Math.round(canvas.width * .037)}px Cabin, sans-serif`;
-    rest.slice(0, 3).forEach((strength, index) => {
-      const y = canvas.height * (.68 + index * .075);
-      context.fillStyle = colours.foil; context.fillRect(marginX, y - canvas.height * .024, canvas.width * .012, canvas.height * .012);
-      context.fillStyle = colours.ink; context.fillText(strength, marginX + canvas.width * .035, y);
+    context.fillStyle = colours.ink;
+    drawFittedCanonicalText(context, primary, {
+      x: marginX,
+      firstBaseline: canvas.height * .27,
+      maxBaseline: canvas.height * .86,
+      maxWidth: bodyWidth,
+      initialFontSize: Math.round(canvas.width * .047),
+      minimumFontSize: Math.round(canvas.width * .032),
     });
     return;
   }
@@ -496,6 +546,26 @@ export function createCompleteShelfPresentation(tutor: CatalogueTutor, edition?:
     portrait,
     colours,
     canvasMetadata: CANVAS_METADATA,
+    createCoverCanvasSources(canvasDocument = document) {
+      const cover = createCanvas(canvasDocument, CANVAS_METADATA.cover);
+      const coverFoil = createCanvas(canvasDocument, CANVAS_METADATA.cover);
+      drawCover(cover, portrait, colours);
+      drawCoverFoil(coverFoil, tutor, colours, coverLabel);
+      return { cover, coverFoil };
+    },
+    createSpineCanvasSources(canvasDocument = document) {
+      const spine = createCanvas(canvasDocument, CANVAS_METADATA.spine);
+      const spineFoil = createCanvas(canvasDocument, CANVAS_METADATA.spine);
+      drawSpine(spine, colours);
+      drawSpineFoil(spineFoil, tutor, coverLabel);
+      return { spine, spineFoil };
+    },
+    createShellCanvasSources(canvasDocument = document) {
+      return {
+        ...this.createCoverCanvasSources(canvasDocument),
+        ...this.createSpineCanvasSources(canvasDocument),
+      };
+    },
     createCanvasSources(canvasDocument = document) {
       const cover = createCanvas(canvasDocument, CANVAS_METADATA.cover);
       const coverFoil = createCanvas(canvasDocument, CANVAS_METADATA.cover);

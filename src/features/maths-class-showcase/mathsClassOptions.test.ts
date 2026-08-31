@@ -27,3 +27,10 @@ test('selecting a maths class softly introduces its new detail panel', () => {
   assert.match(styles, /@keyframes maths-class-detail-in/);
   assert.match(styles, /@media \(prefers-reduced-motion:reduce\).*\.maths-class-detail-content\{animation:none\}/s);
 });
+
+test('uses a wide, right-anchored desktop composition without squeezing the class heading', () => {
+  const styles = readFileSync(new URL('./maths-class-showcase.css', import.meta.url), 'utf8');
+
+  assert.match(styles, /\.maths-classes__inner\{width:min\(1720px,calc\(100% - clamp\(40px,6vw,120px\)\)\);margin:0 auto/);
+  assert.match(styles, /\.maths-class-showcase-shell\{display:grid;grid-template-columns:minmax\(290px,\.29fr\) minmax\(0,\.71fr\)/);
+});

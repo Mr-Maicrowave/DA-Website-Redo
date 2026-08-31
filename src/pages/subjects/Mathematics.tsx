@@ -7,7 +7,6 @@ import { SubjectReviewCarousel } from '@/components/subjects/SubjectReviewCarous
 import { Button } from '@/components/ui/button';
 import {
   ArrowRight,
-  ArrowUpRight,
   Calculator,
   CheckCircle,
   Play,
@@ -1250,7 +1249,6 @@ const Mathematics = () => {
           backgroundPosition="100% center"
           mobileBackgroundPosition="70% center"
           copyOffsetClassName="lg:-translate-y-10"
-            heroTone="light"
           />
         </div>
 
@@ -1258,50 +1256,7 @@ const Mathematics = () => {
 
         {SHOW_LEGACY_MATHS_INTERACTIONS ? <FourierDecomposition /> : null}
 
-        {/* Anchor navigation */}
-        <nav aria-label="Mathematics page sections" className="border-y border-[#071629]/12 bg-[#fffdf8] px-5 lg:px-8">
-          <div className="mx-auto flex max-w-7xl gap-6 overflow-x-auto snap-x md:grid md:grid-cols-5 md:gap-8">
-            {[
-              { label: 'Explore Years 7–12', href: '#year-cube' },
-              { label: 'Their right class', href: '#maths-class-options' },
-              { label: 'HSC direction', href: '#hsc-maths' },
-              { label: 'How progress is built', href: '#math-teaching-proof' },
-              { label: 'Optional exploration', href: '/maths-graph-lab', opensPage: true },
-            ].map(({ label, href, opensPage }) => (
-              <a
-                key={href}
-                href={href}
-                aria-label={opensPage ? `${label}, opens a separate page` : undefined}
-                target={opensPage ? '_blank' : undefined}
-                rel={opensPage ? 'noopener noreferrer' : undefined}
-                className="relative flex min-h-14 min-w-[9.75rem] shrink-0 snap-start items-center justify-center gap-1.5 px-1 py-4 text-center text-sm font-black text-[#10233f] outline-none after:absolute after:inset-x-1 after:bottom-0 after:h-0.5 after:origin-left after:scale-x-0 after:bg-[#a6760e] after:transition-transform after:duration-200 hover:after:scale-x-100 focus-visible:after:scale-x-100 md:min-w-0"
-              >
-                {label}
-                {opensPage ? <ArrowUpRight className="h-3.5 w-3.5 shrink-0" aria-hidden="true" /> : null}
-              </a>
-            ))}
-          </div>
-        </nav>
-
         <YearCube />
-
-        {/* Mid-page CTA — the only other booking action on the page is at the very
-            bottom, after class options, HSC streams and teaching proof. A parent
-            already convinced by the concerns above shouldn't have to scroll the
-            rest of the page to find a way to act on it. */}
-        <section className="border-y border-[#071629]/10 bg-[#fffdf8] px-5 py-14 lg:px-8">
-          <div className="mx-auto flex max-w-6xl flex-col items-center gap-5 text-center sm:flex-row sm:justify-between sm:text-left">
-            <p className="max-w-xl text-lg font-medium leading-7 text-[#10233f]">
-              Ready to find the right starting point? Book an interview and we'll help you work it out.
-            </p>
-            <Link to="/book-interview" className="shrink-0">
-              <Button size="lg" className="h-12 w-full rounded-full bg-[#c9a227] px-7 font-black text-[#101521] hover:bg-[#e0bd4b] sm:w-auto">
-                Book an Interview
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </Link>
-          </div>
-        </section>
 
         <MathsClassShowcase />
 
@@ -1581,33 +1536,6 @@ const Mathematics = () => {
 
         <SubjectReviewCarousel subject="maths" />
 
-        {/* Final CTA */}
-        <section className="bg-[#071629] px-5 py-20 text-white lg:px-8">
-          <div className="mx-auto grid max-w-6xl gap-8 rounded-[2rem] border border-white/12 bg-white/[0.06] p-8 shadow-2xl md:p-12 lg:grid-cols-[1fr_auto] lg:items-center">
-            <div>
-              <p className="mb-3 text-xs font-black uppercase tracking-[0.16em] text-[#f1df9a]">Next step</p>
-              <h2 className="font-serif text-4xl font-medium leading-tight tracking-[-0.045em] text-white">
-                Find the right maths starting point.
-              </h2>
-              <p className="mt-4 max-w-2xl text-base leading-8 text-white/66">
-                Book an interview and we will help you work out whether your child needs confidence support, extension work, or HSC exam preparation.
-              </p>
-            </div>
-            <div className="flex flex-col gap-3 sm:flex-row lg:flex-col">
-              <Link to="/book-interview">
-                <Button size="lg" className="h-12 w-full rounded-full bg-[#c9a227] px-7 font-black text-[#101521] hover:bg-[#e0bd4b]">
-                  Book an Interview
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-              </Link>
-              <a href="tel:0401940207">
-                <Button size="lg" variant="outline" className="h-12 w-full rounded-full border-white/30 bg-transparent px-7 font-bold text-white hover:bg-white/10 hover:text-white">
-                  Call 0401 940 207
-                </Button>
-              </a>
-            </div>
-          </div>
-        </section>
       </main>
 
       <FooterNew />

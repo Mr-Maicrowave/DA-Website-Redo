@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link, Navigate } from 'react-router-dom';
-import { Calendar, Clock, User, ArrowLeft, Share2, BookOpen } from 'lucide-react';
+import { Calendar, Clock, User, ArrowLeft, Share2 } from 'lucide-react';
 import NavigationNew from '@/components/NavigationNew';
 import FooterNew from '@/components/FooterNew';
 import { Button } from '@/components/ui/button';
@@ -427,17 +427,6 @@ const ArticleView = () => {
           </div>
         )}
 
-        <div className="mt-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-8 text-white text-center">
-          <BookOpen className="h-12 w-12 mx-auto mb-4 text-blue-200" />
-          <h3 className="text-2xl font-bold mb-4">Ready to Get Started?</h3>
-          <p className="text-blue-100 mb-6 max-w-2xl mx-auto">
-            Our experienced tutors can help you apply these strategies and achieve your academic goals.
-            Book an interview to create a personalized learning plan.
-          </p>
-          <Link to="/contact">
-            <Button size="lg" className="bg-white text-blue-600 hover:bg-blue-50">Book Interview</Button>
-          </Link>
-        </div>
       </article>
 
       {relatedArticles.length > 0 && (

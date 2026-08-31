@@ -4,7 +4,7 @@ import { useFrame } from '@react-three/fiber';
 import { Color, DataTexture, DirectionalLight, DoubleSide, Group, InstancedMesh, MeshStandardMaterial, Object3D, RGBAFormat, RepeatWrapping, SRGBColorSpace, UnsignedByteType } from 'three';
 import { RectAreaLightUniformsLib } from 'three/examples/jsm/lights/RectAreaLightUniformsLib.js';
 import { SUBJECT_WALLS, getWallAngle, type SubjectWall, type TutorBookEdition } from './tutor-library-data';
-import { createCabinetBlueprint } from './room-architecture';
+import { createCabinetBlueprint, getSubjectWallLabelPose } from './room-architecture';
 import { CASE_STRIP_TILT_X, createCaseLightPlan, getIlluminationAngle } from './tutor-library-lighting';
 import { createTutorBookEditions } from './tutor-library-data';
 import { TUTORS } from '../../data/teacherCatalogue';
@@ -13,6 +13,8 @@ import type { LibraryEvent, LibraryPhase } from './tutor-library-state';
 import type { CompleteShelfBookPool } from './complete-shelf-book-pool';
 import type { CompleteShelfTutorRig } from './CompleteShelfTutorBookBridge';
 import type { TutorBookPageTurnDirection } from './tutor-book-pages';
+import { shouldMountTutorLibraryWallBooks } from './tutor-library-performance';
+import { createWalnutGrainPixels } from './tutor-library-materials';
 
 RectAreaLightUniformsLib.init();
 
@@ -43,18 +45,6 @@ const FLOOR_BOARDS = Array.from({ length: 58 }, (_, index) => ({
   tone: ['#2b180f', '#24130c', '#301c11', '#27160e', '#342016'][index % 5],
   offset: index % 3 === 0 ? .035 : index % 3 === 1 ? -.025 : .01,
 }));
-const DECORATIVE_BOOK_SLOTS = [
-  { row: 0, bay: 0, x: -.43, lean: -.05 }, { row: 0, bay: 0, x: -.31, lean: .04 },
-  { row: 0, bay: 1, x: .34, lean: -.06 }, { row: 0, bay: 2, x: .35, lean: .08 },
-  { row: 1, bay: 0, x: .39, lean: -.1 }, { row: 1, bay: 1, x: -.38, lean: .06 },
-  { row: 1, bay: 2, x: -.38, lean: -.08 }, { row: 1, bay: 2, x: -.27, lean: .05 },
-  { row: 2, bay: 0, x: -.41, lean: .08 }, { row: 2, bay: 1, x: .37, lean: -.07 },
-  { row: 2, bay: 2, x: .36, lean: .06 }, { row: 2, bay: 2, x: .25, lean: -.04 },
-  { row: 3, bay: 0, x: .39, lean: -.07 }, { row: 3, bay: 1, x: -.38, lean: .05 },
-  { row: 3, bay: 2, x: -.38, lean: -.09 }, { row: 3, bay: 2, x: -.27, lean: .04 },
-] as const;
-const DECORATIVE_BOOK_COLOURS = ['#76434a', '#31594b', '#3a5278', '#795538', '#4b5960', '#28636a', '#697385', '#6a4f70', '#8d5150'] as const;
-const DECORATIVE_BOOK_DETAIL_COLOURS = ['#c79958', '#a9b597', '#a4b7c7', '#b7a476'] as const;
 
 type RoomBookInteractionProps = {
   generation: number;
@@ -69,17 +59,13 @@ type RoomBookInteractionProps = {
 };
 
 const WALNUT_GRAIN = (() => {
-  const size = 32;
-  const pixels = new Uint8Array(size * size * 4);
-  for (let y = 0; y < size; y += 1) for (let x = 0; x < size; x += 1) {
-    const index = (y * size + x) * 4;
-    const grain = 168 + Math.round(Math.sin(x * .72 + y * .19) * 11 + Math.sin(x * 2.4) * 4);
-    pixels[index] = grain; pixels[index + 1] = grain; pixels[index + 2] = grain - 5; pixels[index + 3] = 255;
-  }
+  const size = 128;
+  const pixels = createWalnutGrainPixels(128);
   const texture = new DataTexture(pixels, size, size, RGBAFormat, UnsignedByteType);
   texture.colorSpace = SRGBColorSpace;
   texture.wrapS = RepeatWrapping; texture.wrapT = RepeatWrapping;
-  texture.repeat.set(5, 2);
+  texture.repeat.set(3.5, 1.35);
+  texture.anisotropy = 8;
   texture.needsUpdate = true;
   return texture;
 })();
@@ -140,62 +126,6 @@ function ShelfFrontProfile({ width, y, depth, nosingDepth }: { width: number; y:
   </group>;
 }
 
-/** One batched, non-interactive layer keeps shelf texture rich without additional book controllers. */
-function DecorativeShelfBooks({ cabinet, wallId }: { cabinet: ReturnType<typeof createCabinetBlueprint>; wallId: string }) {
-  const mesh = useRef<InstancedMesh>(null);
-  const detailMesh = useRef<InstancedMesh>(null);
-  const dummy = useMemo(() => new Object3D(), []);
-  const books = useMemo(() => DECORATIVE_BOOK_SLOTS.map((slot, index) => {
-    const bay = cabinet.bays[slot.bay];
-    const seed = wallId.length + wallId.charCodeAt(index % wallId.length) + index * 7;
-    const height = .54 + (seed % 6) * .065;
-    const depth = .22 + (seed % 3) * .028;
-    return {
-      position: [bay.centerX + slot.x * bay.width, cabinet.shelfLevels[slot.row] + cabinet.shelfThickness / 2 + height / 2, bay.bookFrontZ - depth / 2 - .05] as const,
-      scale: [.12 + (seed % 4) * .027, height, depth] as const,
-      lean: slot.lean,
-    };
-  }), [cabinet, wallId]);
-
-  useLayoutEffect(() => {
-    const target = mesh.current;
-    const details = detailMesh.current;
-    if (!target || !details) return;
-    books.forEach((book, index) => {
-      dummy.position.set(...book.position);
-      dummy.rotation.set(0, Math.PI / 2, book.lean);
-      dummy.scale.set(...book.scale);
-      dummy.updateMatrix();
-      target.setMatrixAt(index, dummy.matrix);
-      target.setColorAt(index, new Color(DECORATIVE_BOOK_COLOURS[index % DECORATIVE_BOOK_COLOURS.length]));
-
-      dummy.position.set(...book.position);
-      dummy.rotation.set(0, Math.PI / 2, book.lean);
-      dummy.translateY(book.scale[1] * .24);
-      dummy.translateZ(book.scale[2] / 2 + .008);
-      dummy.scale.set(book.scale[0] * 1.12, .024, .012);
-      dummy.updateMatrix();
-      details.setMatrixAt(index, dummy.matrix);
-      details.setColorAt(index, new Color(DECORATIVE_BOOK_DETAIL_COLOURS[index % DECORATIVE_BOOK_DETAIL_COLOURS.length]));
-    });
-    target.instanceMatrix.needsUpdate = true;
-    if (target.instanceColor) target.instanceColor.needsUpdate = true;
-    details.instanceMatrix.needsUpdate = true;
-    if (details.instanceColor) details.instanceColor.needsUpdate = true;
-  }, [books, dummy]);
-
-  return <group>
-    <instancedMesh ref={mesh} args={[undefined, undefined, books.length]} castShadow receiveShadow>
-      <boxGeometry args={[1, 1, 1]} />
-      <meshStandardMaterial color="#ffffff" vertexColors roughness={.66} metalness={.045} emissive="#765d43" emissiveIntensity={.22} />
-    </instancedMesh>
-    <instancedMesh ref={detailMesh} name="decorative-book-edge-details" args={[undefined, undefined, books.length]} castShadow receiveShadow>
-      <boxGeometry args={[1, 1, 1]} />
-      <meshStandardMaterial color="#ffffff" vertexColors roughness={.34} metalness={.24} emissive="#b98b50" emissiveIntensity={.08} />
-    </instancedMesh>
-  </group>;
-}
-
 function FloorBoards() {
   const mesh = useRef<InstancedMesh>(null);
   const dummy = useMemo(() => new Object3D(), []);
@@ -221,9 +151,10 @@ function FloorBoards() {
   </instancedMesh>;
 }
 
-function WallShelves({ visible, wall, angle, width, showWallLabel, spotlightEditions, pool, rigIntentEditionId, rigIntentToken, onRigIntent, phase, generation, reducedMotion, pageTurnDirection, selectedEditionId, motionProgress, motionProgressRef, onActivate, onRigReady, onRigUnavailable, onLifecycleComplete, onPageSettled, onError }: { visible: boolean; wall: SubjectWall; angle: number; width: number; showWallLabel: boolean; spotlightEditions?: readonly TutorBookEdition[]; pool: CompleteShelfBookPool<CompleteShelfTutorRig>; rigIntentEditionId?: string; rigIntentToken: number; onRigIntent: (editionId?: string) => void; phase: LibraryPhase; selectedEditionId?: string; motionProgress: number; motionProgressRef: Readonly<{ current: { turn: number; book: number } }> } & RoomBookInteractionProps) {
+function WallShelves({ visible, mountBooks, wall, angle, width, showWallLabel, spotlightEditions, pool, rigIntentEditionId, rigIntentToken, onRigIntent, phase, generation, reducedMotion, pageTurnDirection, selectedEditionId, motionProgress, motionProgressRef, onActivate, onRigReady, onRigUnavailable, onLifecycleComplete, onPageSettled, onError }: { visible: boolean; mountBooks: boolean; wall: SubjectWall; angle: number; width: number; showWallLabel: boolean; spotlightEditions?: readonly TutorBookEdition[]; pool: CompleteShelfBookPool<CompleteShelfTutorRig>; rigIntentEditionId?: string; rigIntentToken: number; onRigIntent: (editionId?: string) => void; phase: LibraryPhase; selectedEditionId?: string; motionProgress: number; motionProgressRef: Readonly<{ current: { turn: number; book: number } }> } & RoomBookInteractionProps) {
   const palette = WALL_COLOURS[wall.palette];
   const cabinet = useMemo(() => createCabinetBlueprint(width, ROOM_HEIGHT), [width]);
+  const subjectLabelPose = useMemo(() => getSubjectWallLabelPose(cabinet, ROOM_HEIGHT), [cabinet]);
   const interiorHeight = ROOM_HEIGHT - .82;
   const shelfWidth = width - cabinet.frameThickness * 1.8;
   return <group visible={visible} position={[Math.sin(angle) * ROOM_RADIUS, ROOM_HEIGHT / 2, -Math.cos(angle) * ROOM_RADIUS]} rotation={[0, -angle, 0]}>
@@ -241,14 +172,13 @@ function WallShelves({ visible, wall, angle, width, showWallLabel, spotlightEdit
       <CabinetBox size={[shelfWidth, cabinet.shelfThickness, cabinet.shelfDepth]} position={[0, y, .34]} color="#4b2a1a" roughness={.54} radius={.03} />
       <ShelfFrontProfile width={shelfWidth} y={y} depth={cabinet.shelfDepth} nosingDepth={cabinet.nosingDepth} />
     </group>)}
-    <TutorShelf editions={spotlightEditions ?? (EDITIONS_BY_WALL.get(wall.id) ?? [])} spotlight={Boolean(spotlightEditions)} tutors={TUTOR_BY_ID} pool={pool} rigIntentEditionId={rigIntentEditionId} rigIntentToken={rigIntentToken} onRigIntent={onRigIntent} phase={phase} generation={generation} reducedMotion={reducedMotion} pageTurnDirection={pageTurnDirection} selectedEditionId={selectedEditionId} motionProgress={motionProgress} motionProgressRef={motionProgressRef} onActivate={onActivate} onRigReady={onRigReady} onRigUnavailable={onRigUnavailable} onLifecycleComplete={onLifecycleComplete} onPageSettled={onPageSettled} onError={onError} />
-    {!spotlightEditions && <DecorativeShelfBooks cabinet={cabinet} wallId={wall.id} />}
+    {mountBooks ? <TutorShelf editions={spotlightEditions ?? (EDITIONS_BY_WALL.get(wall.id) ?? [])} spotlight={Boolean(spotlightEditions)} tutors={TUTOR_BY_ID} pool={pool} rigIntentEditionId={rigIntentEditionId} rigIntentToken={rigIntentToken} onRigIntent={onRigIntent} phase={phase} generation={generation} reducedMotion={reducedMotion} pageTurnDirection={pageTurnDirection} selectedEditionId={selectedEditionId} motionProgress={motionProgress} motionProgressRef={motionProgressRef} onActivate={onActivate} onRigReady={onRigReady} onRigUnavailable={onRigUnavailable} onLifecycleComplete={onLifecycleComplete} onPageSettled={onPageSettled} onError={onError} /> : null}
     <CabinetBox size={[width, cabinet.plinthHeight, 1.04]} position={[0, -ROOM_HEIGHT / 2 + cabinet.plinthHeight / 2, .45]} color="#351a10" roughness={.54} radius={.04} />
     <CabinetMoulding width={width + .16} y={-ROOM_HEIGHT / 2 + .12} z={.45} color="#654028" depth={1.13} />
     <CabinetBox size={[width, .38, 1.06]} position={[0, ROOM_HEIGHT / 2 - .22, .45]} color="#3b1e12" roughness={.52} radius={.04} />
     <CabinetMoulding width={width + .18} y={ROOM_HEIGHT / 2 - .07} z={.45} color="#583421" depth={cabinet.corniceDepth} />
     <CabinetBox size={[width - .78, .035, .035]} position={[0, ROOM_HEIGHT / 2 - .39, .98]} color="#a77945" roughness={.3} metalness={.72} radius={.005} />
-    {showWallLabel && <Text position={[0, ROOM_HEIGHT / 2 - .68, 1.01]} font="/fonts/da-prologue-marcellus-sc-400.ttf" fontSize={.24} anchorX="center" color={palette.label} letterSpacing={.075}>{wall.label.toUpperCase()}</Text>}
+    {showWallLabel && <Text position={subjectLabelPose} font="/fonts/da-prologue-marcellus-sc-400.ttf" fontSize={.21} anchorX="center" color={palette.label} letterSpacing={.075} renderOrder={20} material-depthTest={true} material-depthWrite={false}>{wall.label.toUpperCase()}</Text>}
     <CabinetBox size={[width - .86, .025, .025]} position={[0, -ROOM_HEIGHT / 2 + .43, .96]} color={palette.accent} roughness={.32} metalness={.55} radius={.004} />
   </group>;
 }
@@ -328,5 +258,5 @@ export function isTutorLibraryWallVisible(index: number, activeWallIndex: number
 }
 
 export function RoomRotunda({ fromWallIndex, toWallIndex, showWallLabels = true, spotlightEditions, pool, rigIntentEditionId, rigIntentToken, onRigIntent, phase, generation, reducedMotion, pageTurnDirection, selectedEditionId, motionProgress, motionProgressRef, onActivate, onRigReady, onRigUnavailable, onLifecycleComplete, onPageSettled, onError }: { fromWallIndex: number; toWallIndex: number; showWallLabels?: boolean; spotlightEditions?: readonly TutorBookEdition[]; pool: CompleteShelfBookPool<CompleteShelfTutorRig>; rigIntentEditionId?: string; rigIntentToken: number; onRigIntent: (editionId?: string) => void; phase: LibraryPhase; selectedEditionId?: string; motionProgress: number; motionProgressRef: Readonly<{ current: { turn: number; book: number } }> } & RoomBookInteractionProps) {
-  return <group><RoomShell /><CaseLighting fromWallIndex={fromWallIndex} toWallIndex={toWallIndex} motionProgressRef={motionProgressRef} />{SUBJECT_WALLS.map((wall, index) => <WallShelves key={wall.id} visible={isTutorLibraryWallVisible(index, fromWallIndex, toWallIndex, phase)} wall={wall} angle={getWallAngle(index, SUBJECT_WALLS.length)} width={WALL_WIDTH} showWallLabel={showWallLabels} spotlightEditions={spotlightEditions ? (index === fromWallIndex ? spotlightEditions : []) : undefined} pool={pool} rigIntentEditionId={rigIntentEditionId} rigIntentToken={rigIntentToken} onRigIntent={onRigIntent} phase={phase} generation={generation} reducedMotion={reducedMotion} pageTurnDirection={pageTurnDirection} selectedEditionId={selectedEditionId} motionProgress={motionProgress} motionProgressRef={motionProgressRef} onActivate={onActivate} onRigReady={onRigReady} onRigUnavailable={onRigUnavailable} onLifecycleComplete={onLifecycleComplete} onPageSettled={onPageSettled} onError={onError} />)}</group>;
+  return <group><RoomShell /><CaseLighting fromWallIndex={fromWallIndex} toWallIndex={toWallIndex} motionProgressRef={motionProgressRef} />{SUBJECT_WALLS.map((wall, index) => <WallShelves key={wall.id} visible={isTutorLibraryWallVisible(index, fromWallIndex, toWallIndex, phase)} mountBooks={shouldMountTutorLibraryWallBooks(index, fromWallIndex, toWallIndex, phase)} wall={wall} angle={getWallAngle(index, SUBJECT_WALLS.length)} width={WALL_WIDTH} showWallLabel={showWallLabels} spotlightEditions={spotlightEditions ? (index === fromWallIndex ? spotlightEditions : []) : undefined} pool={pool} rigIntentEditionId={rigIntentEditionId} rigIntentToken={rigIntentToken} onRigIntent={onRigIntent} phase={phase} generation={generation} reducedMotion={reducedMotion} pageTurnDirection={pageTurnDirection} selectedEditionId={selectedEditionId} motionProgress={motionProgress} motionProgressRef={motionProgressRef} onActivate={onActivate} onRigReady={onRigReady} onRigUnavailable={onRigUnavailable} onLifecycleComplete={onLifecycleComplete} onPageSettled={onPageSettled} onError={onError} />)}</group>;
 }

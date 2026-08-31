@@ -31,11 +31,11 @@ test('defines bounded viewport profiles for every Task 6 acceptance width', () =
   assert.equal(tablet.maxDpr, 1.4);
   assert.equal(mobile.maxDpr, 1.25);
   assert.equal(desktopWide.lateralTargetOffset, 0, 'desktop reading keeps the physical book centred');
-  assert.ok(desktopWide.cameraRadius < tablet.cameraRadius, 'desktop reading moves closer to make the page content legible');
-  assert.ok(desktopWide.fov < tablet.fov, 'desktop reading gives the book a more generous share of the frame');
-  assert.ok(desktopWide.cameraRadius <= 3.25, 'desktop reading brings the physical book close enough for its page text');
-  assert.ok(desktopWide.fov <= 38, 'desktop reading does not shrink the book with an overly wide lens');
-  assert.ok(desktopWide.targetHeight >= 3.2, 'desktop reading keeps the enlarged book within the viewport beneath the site header');
+  assert.ok(desktopWide.cameraRadius < tablet.cameraRadius, 'desktop reading stays closer than tablet framing');
+  assert.ok(desktopWide.fov < tablet.fov, 'desktop reading remains more focused than tablet framing');
+  assert.ok(desktopWide.cameraRadius >= 3.65, 'desktop reading restores breathing room around the physical book');
+  assert.ok(desktopWide.fov >= 41, 'desktop reading keeps the open paper clear of the viewport edges');
+  assert.ok(desktopWide.targetHeight <= 2.9, 'desktop reading uses the established vertical aim instead of enlarging the book into the header');
   assert.ok(mobile.lateralTargetOffset <= -.6, 'mobile compensates for the real rig opening asymmetrically from its spine');
   assert.ok(mobile.targetHeight < tablet.targetHeight, 'mobile reading aim must lift the physical book above the controls');
   assert.ok(mobile.fov >= 60, 'mobile needs safe margins around the unchanged physical book');

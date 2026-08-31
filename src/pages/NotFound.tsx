@@ -1,6 +1,7 @@
 import { useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import SEO from "@/components/SEO";
+import FooterNew from "@/components/FooterNew";
 
 const NotFound = () => {
   const location = useLocation();
@@ -13,7 +14,8 @@ const NotFound = () => {
   }, [location.pathname]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+    <>
+    <main className="min-h-screen flex items-center justify-center bg-gray-100">
       <SEO
         title="Page Not Found (404)"
         description="The page you're looking for isn't here. Return to DA Tuition to explore our K-12 tutoring programs in Canley Heights."
@@ -26,7 +28,9 @@ const NotFound = () => {
           Return to Home
         </a>
       </div>
-    </div>
+    </main>
+    <FooterNew />
+    </>
   );
 };
 

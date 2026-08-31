@@ -66,11 +66,14 @@
   z-index: 3;
   top: 50%;
   right: 0;
-  display: grid;
+  display: flex;
+  flex-direction: column;
   width: 34px;
   height: min(30vh, 248px);
-  align-content: space-evenly;
-  justify-items: end;
+  box-sizing: border-box;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding-block: 18px;
   transform: translateY(-50%);
   pointer-events: none;
   transition: opacity 0.16s ease;

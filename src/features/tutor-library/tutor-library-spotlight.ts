@@ -33,9 +33,44 @@ const editDistanceAtMostOne = (left: string, right: string) => {
   return true;
 };
 
-function hasNameMatch(name: string, term: string) {
-  const words = normalise(name).split(' ');
-  return words.some(word => word.includes(term) || (term.length >= 4 && editDistanceAtMostOne(word, term)));
+type FieldMatch = Readonly<{ score: number; directName: boolean }>;
+
+const EXACT_NAME = 1_000;
+const PREFIX_NAME = 900;
+const PARTIAL_NAME = 800;
+const FUZZY_NAME = 700;
+const EXACT_SUBJECT = 600;
+const PREFIX_SUBJECT = 500;
+const PARTIAL_SUBJECT = 400;
+const PROFILE_TEXT = 200;
+
+function findNameMatch(name: string, term: string): FieldMatch | undefined {
+  const normalisedName = normalise(name);
+  const words = normalisedName.split(' ');
+  if (normalisedName === term || words.includes(term)) return { score: EXACT_NAME, directName: true };
+  if (words.some(word => word.startsWith(term))) return { score: PREFIX_NAME, directName: true };
+  if (words.some(word => word.includes(term))) return { score: PARTIAL_NAME, directName: false };
+  if (term.length >= 4 && words.some(word => editDistanceAtMostOne(word, term))) return { score: FUZZY_NAME, directName: false };
+  return undefined;
+}
+
+function findTextMatch(value: string, term: string, exactScore: number, prefixScore: number, partialScore: number): FieldMatch | undefined {
+  const normalisedValue = normalise(value);
+  const words = normalisedValue.split(' ').filter(Boolean);
+  if (normalisedValue === term || words.includes(term)) return { score: exactScore, directName: false };
+  if (words.some(word => word.startsWith(term))) return { score: prefixScore, directName: false };
+  if (normalisedValue.includes(term)) return { score: partialScore, directName: false };
+  return undefined;
+}
+
+function findTutorTermMatch(tutor: CatalogueTutor, term: string, strengths: readonly string[]): FieldMatch | undefined {
+  const nameMatch = findNameMatch(tutor.name, term);
+  if (nameMatch) return nameMatch;
+
+  const subjectMatch = findTextMatch(tutor.subjects, term, EXACT_SUBJECT, PREFIX_SUBJECT, PARTIAL_SUBJECT);
+  if (subjectMatch) return subjectMatch;
+
+  return findTextMatch([tutor.designation, tutor.tagline, ...strengths].join(' '), term, PROFILE_TEXT, PROFILE_TEXT, PROFILE_TEXT);
 }
 
 export function searchTutorSpotlight(
@@ -45,18 +80,24 @@ export function searchTutorSpotlight(
 ): readonly SpotlightResult[] {
   const terms = normalise(query).split(' ').filter(Boolean);
   if (terms.length === 0) return [];
-  return tutors.flatMap(tutor => {
-    const name = normalise(tutor.name);
-    const searchable = normalise([tutor.subjects, tutor.designation, tutor.tagline, ...getStrengths(tutor)].join(' '));
+  const matches = tutors.flatMap(tutor => {
+    const strengths = getStrengths(tutor);
     let score = 0;
+    let isDirectNameResult = true;
     for (const term of terms) {
-      if (name.includes(term)) { score += 100; continue; }
-      if (hasNameMatch(tutor.name, term)) { score += 80; continue; }
-      if (searchable.includes(term)) { score += 20; continue; }
-      return [];
+      const match = findTutorTermMatch(tutor, term, strengths);
+      if (!match) return [];
+      score += match.score;
+      isDirectNameResult &&= match.directName;
     }
-    return [{ tutor, score }];
-  }).sort((left, right) => right.score - left.score || left.tutor.name.localeCompare(right.tutor.name));
+    return [{ tutor, score, isDirectNameResult }];
+  });
+
+  const authoritativeNameMatches = matches.filter(result => result.isDirectNameResult);
+  const ranked = authoritativeNameMatches.length > 0 ? authoritativeNameMatches : matches;
+  return ranked
+    .sort((left, right) => right.score - left.score || left.tutor.name.localeCompare(right.tutor.name))
+    .map(({ tutor, score }) => ({ tutor, score }));
 }
 
 export function getSpotlightResultWindow<T>(results: readonly T[], page: number, windowSize: number): readonly T[] {
@@ -81,8 +122,8 @@ const MIDDLE_SHELF_OUTWARD_X = [0, -.92, .92, -1.84, 1.84, -2.76, 2.76, -3.68, 3
  */
 export function getSpotlightSearchSlotOrder(limit = Number.POSITIVE_INFINITY): readonly SpotlightShelfSlot[] {
   const slots = [
-    ...TOP_SHELF_OUTWARD_X.map(x => ({ shelfIndex: 1, x })),
-    ...MIDDLE_SHELF_OUTWARD_X.map(x => ({ shelfIndex: 0, x })),
+    ...TOP_SHELF_OUTWARD_X.map(x => ({ shelfIndex: 2, x })),
+    ...MIDDLE_SHELF_OUTWARD_X.map(x => ({ shelfIndex: 1, x })),
   ];
   return slots.slice(0, Math.max(0, Math.trunc(limit)));
 }

@@ -266,9 +266,11 @@ function updateFlexiblePage(pagePivot, targetCurve, delta, immediate = false, ta
 export function createCompleteShelfBookRig(config = {}) {
   const book = CODEX;
   const presentation = config.presentation;
+  const shell = config.shell ?? {};
   const renderer = config.renderer; const root = new THREE.Group(); root.name = 'complete-shelf-codex-rig'; root.userData.source = 'Complete Shelf Codex book rig';
   const motion = new THREE.Group(); motion.name = 'codex-motion'; root.add(motion);
-  const { width, height, depth } = book; const board = 0.032; const coverRadius = 0.0045; const pageRadius = 0.0025; const spineRadius = 0.0015; const spineBoardThickness = 0.014; const spineWidth = 0.082; const pageWidth = width - 0.074; const pageHeight = height - 0.068; const pageDepth = depth - 0.026;
+  const width = shell.width ?? book.width; const height = shell.height ?? book.height; const depth = shell.pageDepth ?? book.depth;
+  const board = shell.board ?? .032; const coverRadius = shell.boardRadius ?? .0045; const pageRadius = .0025; const spineRadius = .0015; const spineBoardThickness = shell.spineBoardThickness ?? .014; const spineWidth = shell.spineWidth ?? .082; const pageWidth = width - (shell.pageInsetWidth ?? .074); const pageHeight = height - (shell.pageInsetHeight ?? .068); const pageDepth = depth - .026;
   const coverTexture = makeCoverTexture(book, renderer, config.coverAtlasImage); const foilTexture = makeFoilTexture(book, renderer); const clothBumpTexture = makeClothBumpTexture(book, renderer); const clothSurfaceMaps = makeClothSurfaceMaps(book, renderer); const paperFaceTexture = makePaperFaceTexture(book, renderer); const interiorPageTextures = makeInteriorPageTextures(book, renderer); const openingEndpaperTexture = makeEndpaperTexture(book, renderer); const frontEndpaperTexture = makeEndpaperTexture(book, renderer); const pageEdgeTextures = makePageEdgeTextures(book, renderer); const spineTexture = makeSpineTexture(book, renderer); const spineFoilTexture = makeSpineFoilTexture(book, renderer); const backCoverTexture = makeBackCoverTexture(book, renderer); const backFoilTexture = makeBackFoilTexture(book, renderer); const foilEmbossTexture = makeEmbossMap(foilTexture, `${book.id}-front-foil-emboss`, renderer); const spineEmbossTexture = makeEmbossMap(spineFoilTexture, `${book.id}-spine-foil-emboss`, renderer); const backEmbossTexture = makeEmbossMap(backFoilTexture, `${book.id}-back-foil-emboss`, renderer);
   const applyCoverAtlas = (atlasImage) => {
     if (!atlasImage?.complete || atlasImage.naturalWidth === 0) return false;
@@ -309,11 +311,11 @@ export function createCompleteShelfBookRig(config = {}) {
   const boxGeometry = new THREE.BoxGeometry(1, 1, 1); const planeGeometry = new THREE.PlaneGeometry(1, 1); const coverGeometry = new RoundedBoxGeometry(width, height, board, 2, coverRadius); const pageGeometry = createPageBlockGeometry(pageWidth, pageHeight, pageDepth, pageRadius); const coverSurfaceGeometry = createRoundedPlaneGeometry(width - 0.007, height - 0.007, 0.0035); const endpaperGeometry = createRoundedPlaneGeometry(width - 0.045, height - 0.045, 0.003);
   const pageBlock = createMesh(pageGeometry, pageMaterial, 'codex-page-block'); pageBlock.position.x = 0.018; motion.add(pageBlock);
   const backPivot = new THREE.Group(); backPivot.name = 'codex-back-cover-pivot'; backPivot.position.set(-width * 0.5, 0, -depth * 0.5 - board * 0.5); const backCover = createMesh(coverGeometry, cloth, 'codex-back-cover'); backCover.position.x = width * 0.5; backPivot.add(backCover); const backPlane = createMesh(coverSurfaceGeometry, backArt, 'codex-back-cover-art', false, false); backPlane.position.set(width * 0.5, 0, -board * 0.55); backPlane.rotation.y = Math.PI; backPivot.add(backPlane); const backFoilPlane = createMesh(coverSurfaceGeometry, backFoilArt, 'codex-back-foil-art', false, false); backFoilPlane.position.set(width * 0.5, 0, -board * 0.605); backFoilPlane.rotation.y = Math.PI; backPivot.add(backFoilPlane); const backEndpaper = createMesh(endpaperGeometry, openingEndpaperMaterial, 'codex-back-endpaper', false, true); backEndpaper.position.set(width * 0.5, 0, board * 0.515); backPivot.add(backEndpaper); addTurnIns(backPivot, book, 'back', width, height, board * 0.53, cloth, boxGeometry); const backGroove = createMesh(planeGeometry, grooveMaterial, 'codex-back-hinge-groove', false, false); backGroove.scale.set(0.012, height * 0.94, 1); backGroove.position.set(0.038, 0, -board * 0.535); backGroove.rotation.y = Math.PI; backPivot.add(backGroove); motion.add(backPivot);
-  // The cover endpaper is blank. Every readable folio occupies a physical leaf:
+  // Every readable folio occupies the visible side of a physical leaf:
   // 01 rests left, 02/03 are the turning leaf, and 04 waits on the right stack.
   const identityPageMaterial = frontEndpaperMaterial;
   const readerLeafMaterials = presentationApplied
-    ? [[interiorPageMaterials[0], blankPageMaterial], [interiorPageMaterials[1], interiorPageMaterials[2]], [interiorPageMaterials[3], blankPageMaterial]]
+    ? [[blankPageMaterial, interiorPageMaterials[0]], [interiorPageMaterials[1], interiorPageMaterials[2]], [interiorPageMaterials[3], blankPageMaterial]]
     : [];
   const turnableLeafOrder = 1;
   const initialLeftLeafOrder = 0;

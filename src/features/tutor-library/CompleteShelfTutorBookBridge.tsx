@@ -9,6 +9,7 @@ import type {
 } from './complete-shelf-book-pool';
 import { isCompleteShelfControllerOpeningAllowed } from './complete-shelf-book-pool';
 import { createCompleteShelfPresentation } from './complete-shelf-presentation';
+import { TUTOR_BOOK_SHELL } from './tutor-book-shell';
 import type { CompleteShelfRigController } from './complete-shelf-r3f-state';
 import type { TutorBookEdition } from './tutor-library-data';
 import { getControllerCompletionEvent, type LibraryEvent, type LibraryPhase } from './tutor-library-state';
@@ -22,7 +23,7 @@ export interface CompleteShelfTutorRig extends CompleteShelfPoolRig {
 }
 
 interface CompleteShelfRigModule {
-  createCompleteShelfBookRig(config: { renderer: unknown; presentation: unknown }): CompleteShelfTutorRig;
+  createCompleteShelfBookRig(config: { renderer: unknown; presentation: unknown; shell: typeof TUTOR_BOOK_SHELL }): CompleteShelfTutorRig;
 }
 
 const RIG_MODULE_URL = '/dev/complete-shelf-rig/complete-shelf-book-rig.js';
@@ -84,6 +85,7 @@ export function CompleteShelfTutorBookBridge({
       const sources = presentation.createInitialCanvasSources();
       const rig = module.createCompleteShelfBookRig({
         renderer: gl,
+        shell: TUTOR_BOOK_SHELL,
         presentation: {
           tutorId: presentation.tutorId,
           colours: presentation.colours,

@@ -4,6 +4,8 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>DA Tuition — Years 7–12 Mathematics</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/katex.min.css" />
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/katex.min.js"></script>
   <style>
     :root {
       color-scheme: light;
@@ -299,16 +301,16 @@
     .fs-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 6px; pointer-events: none; }
     .fs-num {
       font-family: Georgia, "Times New Roman", serif; font-weight: 700;
-      font-size: clamp(2.1rem, 3.2vw, 2.9rem); line-height: .84; color: var(--gold-deep);
+      font-size: clamp(2.35rem, 3.6vw, 3.25rem); line-height: .84; color: var(--gold-deep);
     }
     .fs-tag {
-      font-size: .58rem; font-weight: 800; letter-spacing: .09em; text-transform: uppercase;
+      font-size: .66rem; font-weight: 800; letter-spacing: .09em; text-transform: uppercase;
       color: #7C5C05; background: #F6EED8; border: 1px solid rgba(184,142,24,.4);
       padding: 3px 7px; border-radius: 999px; white-space: nowrap;
     }
     .fs-bottom { display: flex; flex-direction: column; gap: 3px; pointer-events: none; }
     .fs-title {
-      font-size: .62rem; font-weight: 800; letter-spacing: .09em; text-transform: uppercase;
+      font-size: .70rem; font-weight: 800; letter-spacing: .09em; text-transform: uppercase;
       color: var(--text-muted);
     }
     .fs-hook {
@@ -316,12 +318,12 @@
       display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
     }
     .fs-go {
-      margin-top: 3px; align-self: flex-start; font-size: .68rem; font-weight: 800;
+      margin-top: 3px; align-self: flex-start; font-size: .78rem; font-weight: 800;
       color: var(--gold-deep); border-bottom: 1.5px solid var(--gold-deep); padding-bottom: 1px;
     }
-    .hinged-net-wrapper.unfolded .fs-title { font-size: .76rem; }
-    .hinged-net-wrapper.unfolded .fs-hook { font-size: .9rem; line-height: 1.38; }
-    .hinged-net-wrapper.unfolded .fs-go { font-size: .82rem; }
+    .hinged-net-wrapper.unfolded .fs-title { font-size: .88rem; }
+    .hinged-net-wrapper.unfolded .fs-hook { font-size: 1.05rem; line-height: 1.38; }
+    .hinged-net-wrapper.unfolded .fs-go { font-size: .96rem; }
     .fs-rule, .fs-corner, .fs-grid { position: absolute; pointer-events: none; opacity: 0; }
 
     /* =========================================================
@@ -348,9 +350,9 @@
       font-family: ui-monospace, Consolas, monospace; letter-spacing: .05em;
     }
     [data-design="4"] > .face-skin .fs-title { color: #2F5F8C; font-family: ui-monospace, Consolas, monospace; }
-    [data-design="4"] > .face-skin .fs-hook { color: #1A3B5C; font-size: .71rem; }
+    [data-design="4"] > .face-skin .fs-hook { color: #1A3B5C; font-size: .84rem; }
     [data-design="4"] > .face-skin .fs-go { color: #1E486E; border-bottom-color: #1E486E; font-family: ui-monospace, Consolas, monospace; }
-    .hinged-net-wrapper.unfolded [data-design="4"] > .face-skin .fs-hook { font-size: .9rem; }
+    .hinged-net-wrapper.unfolded [data-design="4"] > .face-skin .fs-hook { font-size: 1.05rem; }
 
     /* =========================================================
        CARD (modal) — shared chrome, then eight card designs
@@ -452,6 +454,9 @@
     .layout-concept-4 .c4-dim { display: flex; align-items: center; gap: 10px; font-size: .8rem; padding: 6px 0; }
     .layout-concept-4 .c4-dim::before { content: ""; width: 26px; height: 2px; background: #2F5F8C; flex: none; border-radius: 1px; }
     .layout-concept-4 .c4-dim span { font-family: ui-sans-serif, system-ui, sans-serif; color: #12324F; }
+    .math-inline { display: inline-block; max-width: 100%; overflow-x: auto; overflow-y: hidden; vertical-align: middle; white-space: nowrap; scrollbar-width: thin; }
+    .math-inline .katex { white-space: nowrap; }
+    .yfg-focus-item .math-inline { display: block; width: max-content; margin-top: 3px; }
     .layout-concept-4 .c4-titleblock { border: 1px solid #2F5F8C; background: rgba(255,255,255,.8); margin-top: 16px; }
     .layout-concept-4 .c4-tb-row { display: flex; border-bottom: 1px solid rgba(47,95,140,.4); }
     .layout-concept-4 .c4-tb-row:last-child { border-bottom: none; }
@@ -775,8 +780,7 @@
           atAGlance: [
             ['Stage', 'Stage 4 Mathematics'],
             ['Focus', 'Building algebraic thinking and mathematical accuracy'],
-            ['Learning style', 'Guided practice with feedback and problem-solving'],
-            ['Ideal for', 'Students who are ready to slow down and think carefully']
+            ['Learning style', 'Guided practice with feedback and problem-solving']
           ],
           teachingSteps: [
             'Break complex skills into small, achievable steps.',
@@ -786,7 +790,7 @@
           ],
           commonMistakes: [
             'Order-of-operations (BODMAS) errors',
-            'Dropping negative signs during substitution (e.g. −3² vs (−3)²)',
+            'Dropping negative signs during substitution (e.g. $-3^2$ vs $(-3)^2$)',
             'Bracket substitution without distributing to every term',
             'Rushing multi-step equations'
           ]
@@ -800,7 +804,7 @@
           'Angle Relationships & Geometry Proofs',
           'Perimeter, Area & Cartesian Coordinates'
         ],
-        mistake: 'Order-of-operations (BODMAS) failures and dropping negative signs during algebraic substitution (such as calculating -3² = -9 instead of (-3)² = 9).',
+        mistake: 'Order-of-operations (BODMAS) failures and dropping negative signs during algebraic substitution (such as calculating $-3^2 = -9$ instead of $(-3)^2 = 9$).',
         fix: 'The "Bracket Substitution Protocol" — wrapping all substituted negative values in brackets immediately to eliminate early algebra errors.'
       },
       8: {
@@ -815,11 +819,11 @@
           'Expanding Brackets & Factorising Expressions',
           'Index Laws with Positive & Zero Indices',
           'Linear Equations with Brackets & Fractions',
-          'Linear Relationships & Graphing (y = mx + b)',
+          'Linear Relationships & Graphing — $y = mx + b$',
           'Congruent Triangles & Deductive Geometry',
           'Pythagoras’ Theorem & Practical Trigonometry'
         ],
-        mistake: 'Sign errors when expanding brackets with a negative multiplier (such as -3(x - 4) = -3x - 12 instead of -3x + 12) and confusing index multiplication with power rules.',
+        mistake: 'Sign errors when expanding brackets with a negative multiplier (such as $-3(x - 4) = -3x - 12$ instead of $-3x + 12$) and confusing index multiplication with power rules.',
         fix: 'Systematic sign-checking checklists and structured index verification methods.'
       },
       9: {
@@ -838,7 +842,7 @@
           'Surface Area & Volume of Prisms & Pyramids',
           'Two-Step Probability & Tree Diagrams'
         ],
-        mistake: 'Incorrect bearing diagrams (measuring clockwise from North) and omitting negative roots when solving quadratic equations like x² = 25.',
+        mistake: 'Incorrect bearing diagrams (measuring clockwise from North) and omitting negative roots when solving quadratic equations like $x^2 = 25$.',
         fix: 'Standard 4-point compass sketching rules and enforcing ± roots on quadratic equations.'
       },
       10: {
@@ -876,7 +880,7 @@
           'Arithmetic & Geometric Sequences & Financial Series',
           'Combinatorics & Binomial Expansions (Extension 1)'
         ],
-        mistake: 'Omitting the chain rule derivative on composite functions (such as d/dx(3x-1)⁴ = 4(3x-1)³ without the inner multiplier 3) and overlooking domain restrictions.',
+        mistake: 'Omitting the chain rule derivative on composite functions (such as $\\frac{d}{dx}(3x-1)^4 = 4(3x-1)^3$ without the inner multiplier $3$) and overlooking domain restrictions.',
         fix: 'The "Inside-Out Differentiation Checklist" and explicit domain verification before graphing.'
       },
       12: {
@@ -895,7 +899,7 @@
           'Vectors, 3D Geometry & Proofs (Extension 1 & 2)',
           'Mathematical Induction, Complex Numbers & Mechanics'
         ],
-        mistake: 'Omitting the constant of integration (+C), missing units on financial applications, and failing to show adequate intermediate steps for multi-mark questions.',
+        mistake: 'Omitting the constant of integration, $+C$, missing units on financial applications, and failing to show adequate intermediate steps for multi-mark questions.',
         fix: 'Training students to write clear, defensible steps so that method marks are retained even if an arithmetic slip occurs.'
       }
     };
@@ -1383,25 +1387,48 @@
     /* =========================================================
        YEAR CARD — blueprint sheet
        ========================================================= */
-    const esc = (s) => String(s);
+    const esc = (value) => String(value).replace(/[&<>"']/g, (character) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[character]);
+    function renderMathText(value) {
+      return esc(value).replace(/\$([^$]+)\$/g, (_, tex) => {
+        const rendered = window.katex
+          ? katex.renderToString(tex, { throwOnError: false })
+          : tex;
+        return '<span class="math-inline" role="math">' + rendered + '</span>';
+      });
+    }
     const cleanFix = (d) => d.fix.replace(/^The DA Fix:\s*/, '');
 
-    function renderYearSevenFieldGuide(d) {
-      const guide = d.fieldGuide;
+    function renderYearFieldGuide(d, n) {
+      const guide = d.fieldGuide || {
+        summary: d.hook,
+        yearShift: d.teaching,
+        focusAreas: d.topics.map(topic => [topic, '']),
+        atAGlance: [
+          ['Stage', d.stageTag.split('·')[0].trim()],
+          ['Focus', d.hook],
+          ['Learning style', 'Guided practice with feedback and problem-solving']
+        ],
+        teachingSteps: [
+          'Break complex skills into clear, achievable steps.',
+          'Show how ideas connect across topics and methods.',
+          'Build accuracy habits and self-checking strategies.',
+          'Give personal feedback so mistakes become improvements.'
+        ],
+        commonMistakes: [d.mistake, cleanFix(d)]
+      };
       return '' +
       '<article class="year-field-guide" aria-labelledby="modalDynamicTitle">' +
         '<div class="yfg-layout">' +
           '<main class="yfg-main">' +
-            '<p class="yfg-kicker">Year 7</p>' +
-            '<h2 class="yfg-title" id="modalDynamicTitle">' + d.heading + '</h2>' +
-            '<p class="yfg-stage"><span>Stage 4 Mathematics</span><span>Year 7</span></p>' +
-            '<p class="yfg-summary">' + guide.summary + '</p>' +
-            '<section class="yfg-section yfg-year-shift"><h3 class="yfg-section-title"><b>01</b> Year shift</h3><p>' + guide.yearShift + '</p></section>' +
-            '<section class="yfg-section yfg-core-focus"><h3 class="yfg-section-title"><b>02</b> Core focus areas</h3><div class="yfg-focus">' +
-              guide.focusAreas.map(area => '<div class="yfg-focus-item"><strong>' + area[0] + '</strong><p>' + area[1] + '</p></div>').join('') +
+        '<h2 class="yfg-title" id="modalDynamicTitle">' + renderMathText(d.heading) + '</h2>' +
+        '<p class="yfg-stage"><span>' + renderMathText(d.stageTag.split('·')[0].trim()) + '</span></p>' +
+        '<p class="yfg-summary">' + renderMathText(guide.summary) + '</p>' +
+        '<section class="yfg-section yfg-year-shift"><h3 class="yfg-section-title"><b>01</b> Year shift</h3><p>' + renderMathText(guide.yearShift) + '</p></section>' +
+        '<section class="yfg-section yfg-core-focus"><h3 class="yfg-section-title"><b>02</b> Core focus areas</h3><div class="yfg-focus">' +
+              guide.focusAreas.map(area => '<div class="yfg-focus-item"><strong>' + renderMathText(area[0]) + '</strong><p>' + renderMathText(area[1]) + '</p></div>').join('') +
             '</div></section>' +
             '<section class="yfg-section yfg-teaching-section"><h3 class="yfg-section-title"><b>04</b> How DA teaches it</h3><div class="yfg-teaching">' +
-              guide.teachingSteps.map(step => '<div>' + step + '</div>').join('') +
+              guide.teachingSteps.map(step => '<div>' + renderMathText(step) + '</div>').join('') +
             '</div></section>' +
           '</main>' +
           '<aside class="yfg-side">' +
@@ -1410,7 +1437,7 @@
               guide.atAGlance.map(row => '<div><dt>' + row[0] + '</dt><dd>' + row[1] + '</dd></div>').join('') +
             '</dl></section>' +
             '<section class="yfg-section yfg-callout yfg-common-mistakes"><h3 class="yfg-section-title"><b>05</b> Common mistakes we fix</h3><ul>' +
-              guide.commonMistakes.map(mistake => '<li>' + mistake + '</li>').join('') +
+              guide.commonMistakes.map(mistake => '<li>' + renderMathText(mistake) + '</li>').join('') +
             '</ul></section>' +
           '</aside>' +
         '</div>' +
@@ -1453,7 +1480,7 @@
     function populateModalContent(yearNum) {
       const data = YEAR_DETAILS[yearNum] || YEAR_DETAILS[7];
       activeYear = yearNum;
-      modalContentArea.innerHTML = yearNum === 7 ? renderYearSevenFieldGuide(data) : renderYearCard(data, yearNum);
+      modalContentArea.innerHTML = renderYearFieldGuide(data, yearNum);
       modalContentArea.scrollTop = 0;
       modalYearNav.querySelectorAll('.modal-year-btn').forEach(btn => {
         btn.setAttribute('aria-pressed', String(Number(btn.dataset.modalYear) === yearNum));

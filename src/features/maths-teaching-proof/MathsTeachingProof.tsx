@@ -2,7 +2,6 @@ import { ArrowRight, CheckCircle2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import katex from 'katex';
 import { NetworkAmbientMoment } from '@/features/maths-ambient-motion/MathsAmbientMotion';
-import './maths-teaching-proof-motion.css';
 
 const InlineMath = ({ expression, label }: { expression: string; label: string }) => (
   <span
@@ -89,7 +88,6 @@ export const MathsTeachingProof = () => (
       </div>
 
       <div className="maths-teaching-sequence">
-        <span className="maths-teaching-sequence-trace" aria-hidden="true" />
         <ol className="grid border-b border-[#071629]/14 md:grid-cols-4" aria-label="DA Tuition teaching sequence">
           {teachingSequence.map((step, index) => (
             <li key={step.name} className="border-[#071629]/12 py-6 md:border-r md:px-5 md:last:border-r-0 md:first:pl-0">

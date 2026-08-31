@@ -11,6 +11,7 @@ import {
 import { createTutorBookPages } from "./tutor-book-pages.ts";
 
 const jenny = TUTORS.find((tutor) => tutor.id === "T003")!;
+const adem = TUTORS.find((tutor) => tutor.id === "T019")!;
 
 test("keeps a tutor book's shelf cloth colour when its physical rig is mounted", () => {
   const presentation = createCompleteShelfPresentation(jenny, {
@@ -218,6 +219,30 @@ test("builds only the first profile page before the interactive rig mounts", () 
   assert.ok(deferred.commands.some(command => command.name === "fillText"));
 });
 
+test("prints one larger Meet the Tutor heading and never generates tag-based filler answers", () => {
+  const { document } = createRecordingDocument();
+  const sources = createCompleteShelfPresentation(adem).createCanvasSources(document as unknown as Document);
+  const identity = sources.interiors[0] as unknown as RecordingCanvas;
+  const approach = sources.interiors[1] as unknown as RecordingCanvas;
+  const meetHeadings = identity.commands.filter(command => command.name === "fillText" && command.args[0] === "MEET THE TUTOR");
+  const approachText = approach.commands.filter(command => command.name === "fillText").map(command => String(command.args[0])).join(" ");
+
+  assert.equal(meetHeadings.length, 1);
+  assert.ok(Number(/(\d+(?:\.\d+)?)px/.exec(meetHeadings[0]?.font ?? "")?.[1] ?? 0) >= 40);
+  assert.doesNotMatch(approachText, /Their stated approach centres on/i);
+  assert.match(approachText, /Not only do I want to see my students unlock their academic potential/i);
+});
+
+test("uses the tutor-name serif consistently across every interior page", () => {
+  const { document } = createRecordingDocument();
+  const sources = createCompleteShelfPresentation(adem).createCanvasSources(document as unknown as Document);
+  const interiorText = sources.interiors.flatMap(source => (source as unknown as RecordingCanvas).commands)
+    .filter(command => command.name === "fillText");
+
+  assert.ok(interiorText.length > 0);
+  assert.ok(interiorText.every(command => command.font?.includes('"Cormorant Garamond"')), "every interior text run uses the same family as the tutor name");
+});
+
 test("prints every canonical Jenny page within the high-resolution safe area", () => {
   const { document } = createRecordingDocument();
   const sources = createCompleteShelfPresentation(jenny).createCanvasSources(document as unknown as Document);
@@ -240,19 +265,19 @@ test("prints every canonical Jenny page within the high-resolution safe area", (
   });
 });
 
-test("stacks teaching strengths as distinct readable lines", () => {
+test("prints the authored teaching approach instead of generic tag-derived filler", () => {
   const { document } = createRecordingDocument();
   const sources = createCompleteShelfPresentation(jenny).createCanvasSources(document as unknown as Document);
   const canvas = sources.interiors[1] as unknown as RecordingCanvas;
-  const strengths = createTutorBookPages(jenny)[1].sourceText.slice(1);
-  const strengthBaselines = strengths.map(strength => {
-    const command = canvas.commands.find(entry => entry.name === "fillText" && entry.args[0] === strength);
-    return Number(command?.args[2]);
-  });
+  const printed = canvas.commands
+    .filter(command => command.name === "fillText")
+    .map(command => String(command.args[0]))
+    .join(" ")
+    .replace(/\s+/g, " ");
+  const authoredApproach = createTutorBookPages(jenny)[1].sourceText[1]!;
 
-  assert.ok(strengthBaselines.every(Number.isFinite));
-  assert.ok(strengthBaselines[1]! - strengthBaselines[0]! >= canvas.height * .02);
-  assert.ok(strengthBaselines[2]! - strengthBaselines[1]! >= canvas.height * .02);
+  assert.ok(printed.includes(authoredApproach));
+  assert.doesNotMatch(printed, /Their stated approach centres on/i);
 });
 
 test("fits Jenny's readable Why Trust Them excerpt and evidence using realistic Georgia metrics", () => {
@@ -270,6 +295,28 @@ test("fits Jenny's readable Why Trust Them excerpt and evidence using realistic 
   assert.ok(bodyCommands.every(command => Number(/(\d+(?:\.\d+)?)px/.exec(command.font ?? "")?.[1] ?? 0) >= 25), "the deterministic fit never drops below the readable raster floor");
   assert.ok(bodyCommands.every(command => realisticTextWidth(String(command.args[0]), command.font ?? "") <= canvas.width * .82), "every measured line stays within the body width");
   assert.ok(bodyCommands.length >= 2, "the regression exercises a wrapped reading excerpt, not a one-word fixture");
+});
+
+test("flows Why Trust Them sections without colliding at the bottom of the page", () => {
+  const { document } = createRecordingDocument();
+  const sources = createCompleteShelfPresentation(jenny).createCanvasSources(document as unknown as Document);
+  const canvas = sources.interiors[2] as unknown as RecordingCanvas;
+  const pages = createTutorBookPages(jenny);
+  const strengths = pages[2].sourceText.slice(2, -1);
+  const yFor = (text: string) => canvas.commands
+    .filter(command => command.name === "fillText" && command.args[0] === text)
+    .map(command => Number(command.args[2]));
+  const lastStrengthY = Math.max(...strengths.flatMap(yFor));
+  const priorityHeadingY = yFor("WHAT THEY PRIORITISE")[0]!;
+  const priorityLineYs = canvas.commands
+    .filter(command => command.name === "fillText" && Number(command.args[2]) > priorityHeadingY)
+    .map(command => Number(command.args[2]));
+  const firstPriorityLineY = Math.min(...priorityLineYs);
+
+  assert.ok(Number.isFinite(lastStrengthY));
+  assert.ok(priorityHeadingY >= lastStrengthY + canvas.height * .045, "the next section begins after the final strength");
+  assert.ok(firstPriorityLineY >= priorityHeadingY + canvas.height * .035, "priority copy begins below its heading");
+  assert.ok(priorityLineYs.every(y => y <= canvas.height * .94), "priority copy remains inside the print-safe bottom margin");
 });
 
 test("rejects attempts to override the factory's physical dimensions or physics", () => {

@@ -24,3 +24,12 @@ test('keeps every tutor cloth theme visibly separate from black in the room ligh
   assert.match(source, /#315775/);
   assert.match(source, /#486b4d/);
 });
+
+test('shares one font readiness cycle across all cover and foil instances', () => {
+  const source = readFileSync(new URL('./TutorBookCover.tsx', import.meta.url), 'utf8');
+
+  assert.match(source, /areTutorLibraryFontsReady/);
+  assert.match(source, /ensureTutorLibraryFonts/);
+  assert.match(source, /let fontTextureRefresh/);
+  assert.doesNotMatch(source, /document\.fonts\?\.load/);
+});

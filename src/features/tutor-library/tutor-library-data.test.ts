@@ -16,3 +16,9 @@ test('keeps science and social-science books data-driven', () => {
   assert.ok(editions.some(edition => edition.wallId === 'science-social' && edition.tutorId === 'T010'));
   assert.ok(editions.some(edition => edition.wallId === 'science-social' && edition.tutorId === 'T007'));
 });
+
+test('assigns explicit high-priority tutors to centre-first normal shelf slots', () => {
+  const tutors = TUTORS.filter(tutor => ['T011', 'T012', 'T015', 'T008'].includes(tutor.id));
+  const editions = createTutorBookEditions(tutors).filter(edition => edition.wallId === 'mathematics');
+  assert.deepEqual(editions.slice(0, 4).map(edition => edition.slotIndex), [3, 4, 2, 5]);
+});

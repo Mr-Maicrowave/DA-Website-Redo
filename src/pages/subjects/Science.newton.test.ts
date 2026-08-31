@@ -132,49 +132,62 @@ test('fades the orchard instruction before the microscope aperture takes over', 
   assert.match(source, /<motion\.div\s+style=\{reducedMotion \? undefined : \{ opacity: storyContentOpacity \}\}\s+className="newton-click-note"/);
 });
 
-test('maps apples to the orchard ground without a catch prop', () => {
+test('appends a DOM-measured orchard camera after a continuously visible Newton fall', () => {
   const source = readFileSync(pageUrl, 'utf8');
 
-  assert.match(source, /const NEWTON_SCROLL_LANDED_TARGET = \{/);
-  assert.match(source, /x: NEWTON_SCROLL_APPLE\.sourceX,/);
-  assert.match(source, /y: NEWTON_GROUND_CONTACT_Y\[NEWTON_SCROLL_APPLE\.id\],/);
-  assert.match(source, /const NEWTON_MICROSCOPE_FOCAL_POINT = \{ x: \.5, y: \.5 \}/);
-  assert.match(source, /const landedViewportX = wrapRect\.left \+ treeLayer\.offsetLeft \+ NEWTON_SCROLL_LANDED_TARGET\.u \* treeLayer\.offsetWidth/);
-  assert.match(source, /const landedViewportY = wrapRect\.top \+ treeLayer\.offsetTop \+ NEWTON_SCROLL_LANDED_TARGET\.v \* treeLayer\.offsetHeight/);
-  assert.match(source, /const next = \{ x: focalX - landedViewportX, y: focalY - landedViewportY \}/);
-  assert.match(source, /const storyPushX = useTransform\(storyProgress, \[0, \.995, 1\], \[0, 0, storyCamera\.x\]\)/);
-  assert.match(source, /const storyPushY = useTransform\(storyProgress, \[0, \.995, 1\], \[0, 0, storyCamera\.y\]\)/);
-  assert.match(source, /const NEWTON_GROUND_CONTACT_Y: Record<string, number> =/);
-  assert.match(source, /'lower-left-hero': 970/);
-  assert.match(source, /'upper-centre-right': 920/);
-  assert.doesNotMatch(source, /newtonScrollHandoff/);
-  assert.doesNotMatch(source, /NEWTON_SCROLL_HANDOFF_EVENT/);
-  assert.doesNotMatch(source, /document\.querySelector<HTMLElement>\('\.science-eyepiece'\)/);
-  assert.match(source, /transformOrigin: `\$\{\(NEWTON_SCROLL_APPLE\.sourceX \/ NEWTON_ARTWORK_WIDTH\) \* 100\}% \$\{\(NEWTON_GROUND_CONTACT_Y\[NEWTON_SCROLL_APPLE\.id\] \/ NEWTON_ARTWORK_HEIGHT\) \* 100\}%`/);
+  assert.match(source, /const NEWTON_FALL_PROGRESS_END = 16 \/ 25/);
+  assert.match(source, /const NEWTON_SCROLL_APPLE_FALL_DISTANCE = NEWTON_GROUND_CONTACT_Y\[NEWTON_SCROLL_APPLE\.id\] - NEWTON_SCROLL_APPLE\.sourceY/);
+  assert.match(source, /`calc\(\$\{NEWTON_SCROLL_APPLE_FALL_DISTANCE \/ NEWTON_ARTWORK_WIDTH\} \* var\(--tree-width\)\)`/);
+  assert.match(source, /const fallProgress = useTransform\(storyProgress, \[0, NEWTON_FALL_PROGRESS_END\], \[0, 1\]\)/);
+  assert.match(source, /const NEWTON_SCROLL_APPLE_FALL_STEP = \(fraction: number\) =>/);
+  assert.match(source, /const storyAppleY = useTransform\(fallProgress, \[0, \.22, \.38, \.54, \.68, \.8, \.9, 1\], \['0px', NEWTON_SCROLL_APPLE_FALL_STEP\(\.06\), NEWTON_SCROLL_APPLE_FALL_STEP\(\.18\), NEWTON_SCROLL_APPLE_FALL_STEP\(\.34\), NEWTON_SCROLL_APPLE_FALL_STEP\(\.54\), NEWTON_SCROLL_APPLE_FALL_STEP\(\.72\), NEWTON_SCROLL_APPLE_FALL_STEP\(\.88\), NEWTON_SCROLL_APPLE_GROUND_Y\]\)/);
+  assert.match(source, /const orchardCameraRef = useRef<HTMLDivElement>\(null\)/);
+  assert.match(source, /scrollAppleRef\.current\?\.getBoundingClientRect\(\)/);
+  assert.match(source, /const orchardCameraLayer = orchardCameraRef\.current;[\s\S]*?orchardCameraLayer\.getBoundingClientRect\(\)/);
+  assert.match(source, /minimumCoverScale = Math\.max/);
+  assert.match(source, /cameraScale: minimumCoverScale \* 1\.03/);
+  assert.match(source, /className="newton-camera-translate"/);
+  assert.match(source, /className="newton-camera-scale"/);
+  assert.match(source, /className="newton-handoff-lens"/);
+  assert.doesNotMatch(source, /finalCameraCorrection/);
+  assert.doesNotMatch(source, /lensEntryX/);
+  assert.doesNotMatch(source, /lensEntryY/);
+  assert.doesNotMatch(source, /lensFrameRef/);
   assert.match(source, /This apple falls as you scroll/);
   assert.match(source, /className="newton-grounded-apple"/);
   assert.doesNotMatch(source, /newton-catch-basket/);
   assert.doesNotMatch(source, /newton-story-basket/);
 });
 
-test('uses a far-right scroll apple while every interactive apple falls vertically', () => {
+test('keeps the scroll apple non-interactive while Programs continues from the established lens', () => {
   const source = readFileSync(pageUrl, 'utf8');
 
   assert.match(source, /id: 'upper-centre-right',[\s\S]*?scrollOnly: true/);
   assert.match(source, /id: 'upper-centre-right',[\s\S]*?asset: 'green'/);
   assert.match(source, /const NEWTON_SCROLL_APPLE = NEWTON_APPLES\.find\(\(apple\) => apple\.scrollOnly\)!/);
-  assert.match(source, /const lensEntryScale = useTransform\(scrollYProgress, \[0, \.018, \.055\], \[\.16, \.16, 1\]\)/);
-  assert.doesNotMatch(source, /const lensEntryX/);
-  assert.doesNotMatch(source, /const lensEntryY/);
+  assert.match(source, /const lensEntryScale = 1;/);
+  assert.match(source, /const lensEntryOpacity = 1;/);
+  assert.match(source, /const lensBackdropOpacity = 1;/);
+  assert.match(source, /const lensMediaOpacity = 1;/);
+  assert.match(source, /science-eyepiece science-lens-reveal absolute left-1\/2 top-\[27%\][^\"]*xl:top-1\/2/);
+  assert.doesNotMatch(source, /lg:-mt-\[100svh\]/);
+  assert.doesNotMatch(source, /document\.querySelector<HTMLElement>\('\.science-story-apple'\)/);
   assert.doesNotMatch(source, /science-story-landing-target/);
   assert.match(source, /NEWTON_APPLES\.filter\(\(apple\) => !apple\.scrollOnly && apple\.id !== 'mid-low-red'\)/);
   assert.match(source, /const fallX = 0;/);
-  assert.match(source, /const storyAppleGroundY = NEWTON_GROUND_CONTACT_Y\[NEWTON_SCROLL_APPLE\.id\] - NEWTON_SCROLL_APPLE\.sourceY/);
-  assert.match(source, /const storyFallPixels = \(storyAppleGroundY \/ NEWTON_ARTWORK_WIDTH\) \* storyTreeWidth/);
-  assert.match(source, /\[0, 0, storyFallPixels \* \.08, storyFallPixels \* \.46, storyFallPixels, storyFallPixels\]/);
-  assert.match(source, /const NEWTON_ORCHARD_CAMERA_SCALE = 1\.22/);
-  assert.match(source, /const storyPushScale = useTransform\(storyProgress, \[0, \.995, 1\], \[1, 1, NEWTON_ORCHARD_CAMERA_SCALE\]\)/);
+  assert.match(source, /\['0px', NEWTON_SCROLL_APPLE_FALL_STEP\(\.06\), NEWTON_SCROLL_APPLE_FALL_STEP\(\.18\), NEWTON_SCROLL_APPLE_FALL_STEP\(\.34\), NEWTON_SCROLL_APPLE_FALL_STEP\(\.54\), NEWTON_SCROLL_APPLE_FALL_STEP\(\.72\), NEWTON_SCROLL_APPLE_FALL_STEP\(\.88\), NEWTON_SCROLL_APPLE_GROUND_Y\]/);
+  assert.doesNotMatch(source, /storyPushScale/);
   assert.match(source, /fallRotation: -40/);
   assert.match(source, /fallRotation: -48/);
   assert.match(source, /sourceX: 1060/);
+});
+
+test('continues the established orchard lens directly into the scale investigation', () => {
+  const source = readFileSync(pageUrl, 'utf8');
+
+  assert.match(source, /id="science-pathways"[^>]*className="relative z-10 -mt-\[100svh\]/);
+  assert.match(source, /const handoffLensScale = useTransform\(storyProgress, \[\.88, \.96, 1\], \[\.16, 1, 1\]\)/);
+  assert.match(source, /const appleScale = useTransform\(scrollYProgress, \[0, \.12, \.18\], \[1, 1\.12, 2\.35\]\)/);
+  assert.match(source, /const macroOpacity = useTransform\(scrollYProgress, \[\.1, \.145, \.15, \.485, \.50, \.52\], \[0, 0, 1, 1, 0, 0\]\)/);
+  assert.doesNotMatch(source, /const appleScale = useTransform\(scrollYProgress, \[0, \.25, \.31\], \[1, 1, 2\.35\]\)/);
 });

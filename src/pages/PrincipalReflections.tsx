@@ -1,4 +1,5 @@
 import NavigationNew from '@/components/NavigationNew';
+import FooterNew from '@/components/FooterNew';
 import SEO from '@/components/SEO';
 
 const PrincipalReflections = () => {
@@ -20,6 +21,7 @@ const PrincipalReflections = () => {
         }}
         title="Principal's Reflection"
       />
+      <FooterNew />
     </>
   );
 };

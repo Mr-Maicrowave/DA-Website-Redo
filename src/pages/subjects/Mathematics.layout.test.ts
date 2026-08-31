@@ -24,18 +24,15 @@ test('places Graph Lab after teaching proof and before student feedback', () => 
   assert.ok(graphLabIndex > teachingProofIndex, 'Graph Lab invitation must follow teaching proof');
   assert.ok(studentFeedbackIndex > graphLabIndex, 'student feedback must follow Graph Lab');
 });
-
-test('keeps the cube as the sole in-page mathematics exploration and opens Graph Lab in a new tab', () => {
+test('moves directly from the hero into the Year Cube without a section rail or mid-page CTA', () => {
   const source = readFileSync(mathematicsUrl, 'utf8');
   const component = source.slice(source.indexOf('const Mathematics = () => {'));
 
   assert.match(component, /<YearCube\s*\/>/);
   assert.doesNotMatch(component, /<MathematicalFieldStation\s*\/>/);
   assert.doesNotMatch(component, /<MathsTopicNetwork\s*\/>/);
-  assert.match(
-    component,
-    /target=\{opensPage \? '_blank' : undefined\}[\s\S]*rel=\{opensPage \? 'noopener noreferrer' : undefined\}/,
-  );
+  assert.doesNotMatch(component, /aria-label="Mathematics page sections"/);
+  assert.doesNotMatch(component, /Ready to find the right starting point\?/);
 });
 
 test('uses a verified student quote sourced from a real review, not the old placeholder', () => {
@@ -56,38 +53,10 @@ test('keeps the tutor and mathematics context visible in the mobile hero crop', 
   assert.doesNotMatch(source, /mobileBackgroundPosition="100% center"/);
 });
 
-test('uses a compact horizontal quick-link rail on mobile and distinguishes the page link', () => {
+test('uses the same navy hero tint and light text treatment as English', () => {
   const source = readFileSync(mathematicsUrl, 'utf8');
+  const hero = source.slice(source.indexOf('<SubjectHero'), source.indexOf('/>', source.indexOf('<SubjectHero')) + 2);
 
-  assert.match(source, /overflow-x-auto[^"]*snap-x[^"]*md:grid/);
-  assert.match(source, /opens a separate page/);
-  assert.match(source, /ArrowUpRight/);
-});
-
-test('frames the quick-link rail as a parent decision journey', () => {
-  const source = readFileSync(mathematicsUrl, 'utf8');
-  const component = source.slice(source.indexOf('const Mathematics = () => {'));
-  const indexStart = component.indexOf('{/* Anchor navigation */}');
-  const indexEnd = component.indexOf('</nav>', indexStart) + '</nav>'.length;
-  const sectionIndex = component.slice(indexStart, indexEnd);
-
-  assert.match(sectionIndex, /Where they are now/);
-  assert.match(sectionIndex, /Their right class/);
-  assert.match(sectionIndex, /How progress is built/);
-  assert.match(sectionIndex, /HSC direction/);
-  assert.match(sectionIndex, /Optional exploration/);
-});
-
-test('uses a flat section index without ambient diagrams crowding the opening transition', () => {
-  const source = readFileSync(mathematicsUrl, 'utf8');
-  const component = source.slice(source.indexOf('const Mathematics = () => {'));
-  const indexStart = component.indexOf('{/* Anchor navigation */}');
-  const indexEnd = component.indexOf('</nav>', indexStart) + '</nav>'.length;
-  const sectionIndex = component.slice(indexStart, indexEnd);
-
-  assert.match(sectionIndex, /<nav[^>]*aria-label="Mathematics page sections"/);
-  assert.match(sectionIndex, /border-y/);
-  assert.doesNotMatch(sectionIndex, /rounded-[^\s"]+|shadow-[^\s"]+/);
-  assert.equal((sectionIndex.match(/<NetworkAmbientMoment\s+passive\s*\/>/g) ?? []).length, 0);
-  assert.equal((sectionIndex.match(/<DerivativeAmbientMoment\s+passive\s*\/>/g) ?? []).length, 0);
+  assert.doesNotMatch(hero, /heroTone="light"/);
+  assert.doesNotMatch(hero, /headlineAccentClassName|subtextClassName/);
 });

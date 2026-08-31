@@ -119,6 +119,7 @@ export function TutorLibraryControlSurface({ library, activeWall, selectedTutor,
           <button className="tutor-library__spotlight-clear" type="button" onClick={() => onSpotlightQueryChange('')}>Clear search</button>
         </div> : <p id="tutor-library-spotlight-status">Search names, subjects or teaching strengths.</p>}
       </div>
+      {!selectedTutor ? <p className="tutor-library__room-hint"><kbd>←</kbd> <kbd>→</kbd> Explore subjects</p> : null}
     </div> : null}
 
     {selectedTutor && readerVisible && !sceneError ? <aside className="tutor-library__reader" data-reader-stage={readerStage} aria-label={`${selectedTutor.name} tutor book controls`} aria-keyshortcuts="ArrowLeft ArrowRight PageUp PageDown" tabIndex={0}

@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import NavigationNew from '@/components/NavigationNew';
+import PageJourney from '@/components/page-journey/PageJourney';
 import FooterNew from '@/components/FooterNew';
 import SubjectHero from '@/components/subjects/SubjectHero';
 import SubjectTypedBanner from '@/components/subjects/SubjectTypedBanner';
@@ -43,6 +44,13 @@ const businessTrustedSchools = [
   { name: 'Amity College', logoSrc: '/images/schools/amity-college.png' },
   { name: 'Good Samaritan Catholic College', logoSrc: '/images/schools/good-samaritan-catholic-college.png' },
 ];
+
+const BUSINESS_JOURNEY_SECTIONS = [
+  { id: 'business-modules', label: 'Business foundations', description: 'Build core understanding' },
+  { id: 'business-myths', label: 'Common myths', description: 'Make concepts clear' },
+  { id: 'business-exam-structure', label: 'Exam structure', description: 'Know what to expect' },
+  { id: 'business-real-world', label: 'Real-world learning', description: 'Apply ideas with confidence' },
+] as const;
 
 const businessExamStructureCards = [
   {
@@ -560,6 +568,7 @@ const BusinessPracticeCarousel = () => {
 
   return (
     <section
+      id="business-modules"
       className="biz-practice-section"
       aria-labelledby="biz-practice-title"
       onKeyDown={handleKeyDown}
@@ -863,7 +872,7 @@ const BusinessStudiesMyths = () => {
   const nextPage = nextPageIndex === null ? null : businessMyths[nextPageIndex];
 
   return (
-    <section className="biz-myths-section" aria-labelledby="biz-myths-title">
+    <section id="business-myths" className="biz-myths-section" aria-labelledby="biz-myths-title">
       <div className="biz-myths-inner">
         <header className="biz-myths-header">
           <span className="biz-myths-eyebrow">
@@ -1010,7 +1019,7 @@ const BusinessStudies = () => {
       <BusinessSyllabusQuiz />
 
       {/* Exam Structure */}
-      <section className="biz-exam-structure-section" aria-labelledby="biz-exam-structure-title">
+      <section id="business-exam-structure" className="biz-exam-structure-section" aria-labelledby="biz-exam-structure-title">
         <div className="biz-exam-structure-inner">
           <div className="biz-exam-structure-heading">
             <h2 id="biz-exam-structure-title">Get to Know the Structure of Your Exam</h2>
@@ -1074,7 +1083,7 @@ const BusinessStudies = () => {
       </section>
 
       {/* Case Study Approach */}
-      <section className="py-16">
+      <section id="business-real-world" className="py-16">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
@@ -1164,6 +1173,8 @@ const BusinessStudies = () => {
       <BusinessTransformationSteps />
 
       <BusinessCareerPathways />
+
+      <PageJourney pageLabel="Business Studies" sections={BUSINESS_JOURNEY_SECTIONS} />
 
       <FooterNew />
     </div>

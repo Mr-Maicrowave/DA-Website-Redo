@@ -3,7 +3,7 @@ import { createHash } from 'node:crypto';
 
 const baseUrl = process.argv[2] ?? 'http://127.0.0.1:8080';
 const routeBase = `${baseUrl.replace(/\/$/, '')}/dev/complete-shelf-reference`;
-const expectedHash = '163b4a99d34e24ce8ab205f28f1d3f1f33da216285be2c5db31422f13090b026';
+const expectedHash = '6c8794d5d4893be532bc2b166495897d0d637fd838d17c919d8800feb7c6f438';
 
 for (const route of [routeBase, `${routeBase}/`]) {
   const response = await fetch(route);

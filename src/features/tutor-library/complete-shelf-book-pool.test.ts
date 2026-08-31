@@ -17,6 +17,7 @@ import {
 } from './complete-shelf-book-pool.ts';
 import { createTutorBookEditions } from './tutor-library-data.ts';
 import { createLibraryState, libraryReducer, type LibraryEvent, type LibraryState } from './tutor-library-state.ts';
+import type { CompleteShelfBookPose } from './complete-shelf-book-prototype.ts';
 
 type FakeRig = {
   root: { uuid: string };
@@ -218,13 +219,30 @@ test('drives only the outer pose and returns to the exact closed handoff', () =>
   assert.deepEqual(returned, shelf);
 });
 
+test('preserves an explicit featured shelf pose through idle motion updates', () => {
+  const jenny = createTutorBookEditions(TUTORS).find((edition) => edition.id === 'T003:primary')!;
+  const featuredPose: CompleteShelfBookPose = {
+    position: [0, 1.2, .8],
+    rotation: [0, 0, 0],
+    scale: [.72, .72, .72],
+  };
+  const state = createCompleteShelfOuterMotionState(jenny, featuredPose);
+  const advanced = advanceCompleteShelfOuterMotion(state, 'ROOM_IDLE', 0);
+  const nextFrame = advanceCompleteShelfOuterMotion(advanced, 'ROOM_IDLE', 0);
+
+  assert.deepEqual(advanced.pose, featuredPose);
+  assert.deepEqual(nextFrame.pose, featuredPose);
+});
+
 test('keeps the cover and reading poses compositionally aligned while reserving room for the opened spread', () => {
   const jenny = createTutorBookEditions(TUTORS).find((edition) => edition.id === 'T003:primary')!;
   const cover = getCompleteShelfOuterMotionPose(jenny, 'BOOK_PREVIEW', 1);
   const open = getCompleteShelfOuterMotionPose(jenny, 'BOOK_OPENING', 0);
 
   assert.deepEqual(cover.scale, open.scale);
-  assert.ok(cover.scale[0] >= 2.1, 'the selected book has a readable hero scale');
+  assert.ok(cover.position[1] <= -.25, 'closed cover sits low enough to keep its identity visible');
+  assert.ok(open.position[1] <= 0, 'open spread sits low enough to keep the complete page content visible');
+  assert.ok(cover.scale[0] >= 2, 'the selected book has a readable hero scale');
   assert.ok(open.position[0] > cover.position[0] && open.position[0] - cover.position[0] <= .28, 'open spread shifts slightly right to balance its companion controls');
   assert.ok(open.position[1] > cover.position[1], 'open spread clears the shelf without leaving the reading composition');
 });

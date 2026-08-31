@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion';
 import { BookOpen, Brain, Calculator, Check, ClipboardCheck, GraduationCap, Heart, Star, Target, Trophy, UserRound, UsersRound } from 'lucide-react';
 import NavigationNew from '@/components/NavigationNew';
+import FooterNew from '@/components/FooterNew';
 import PageJourney from '@/components/page-journey/PageJourney';
 import StickyBookButton from '@/components/StickyBookButton';
 import SEO from '@/components/SEO';
@@ -705,6 +706,7 @@ const PrimarySchool = () => (
       @media(max-width:600px){.ps-opening__hero,.ps-opening__hero .ps-hero{height:100svh;min-height:100svh}.ps-hero__background{inset:0;transform:none}.ps-hero__background img,.ps-hero__video{object-fit:cover;object-position:54% center}.ps-hero__clouds,.ps-hero__foreground{display:none}.ps-hero__veil{background:linear-gradient(180deg,rgba(244,250,250,.72) 0%,rgba(244,250,250,.46) 31%,rgba(244,250,250,.1) 57%,transparent 76%)}.ps-hero__content{top:clamp(5.5rem,12svh,7rem);left:50%;width:calc(100% - 2.5rem);text-align:center;transform:translateX(-50%)}.ps-hero .ps-kicker{margin-bottom:.8rem;font-size:.62rem}.ps-hero h1{max-width:9.5ch;font-size:clamp(3rem,13.2vw,4rem);line-height:.9}.ps-hero__intro{max-width:21rem;margin:1rem auto 0;font-size:1.03rem;line-height:1.34}.ps-hero__journey-link{margin-top:.8rem}.ps-hero__wind{animation-duration:12.5s;opacity:0}}
       @media(prefers-reduced-motion:reduce){.ps-button,.ps-mobile-progress i b,.ps-landscape-stage,.ps-landscape-stage small,.ps-landscape-stage strong,.ps-hero__journey-link,.ps-hero__journey-link span{transition:none}.ps-hero__handoff{display:none}.ps-hero__video{display:none}.ps-hero__background,.ps-hero__clouds,.ps-hero__midground,.ps-hero__foreground,.ps-hero__sunlight,.ps-hero__wind{animation:none;transform:none}.ps-hero__wind{opacity:0}}
     `}</style>
+    <FooterNew />
   </div>
 );
 

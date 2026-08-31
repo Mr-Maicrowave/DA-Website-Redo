@@ -5,7 +5,7 @@ import './page-journey.css';
 
 type PageJourneyProps = {
   pageLabel: string;
-  sections: JourneySection[];
+  sections: readonly JourneySection[];
 };
 
 const getActiveSection = (ids: string[]) => {
@@ -26,7 +26,9 @@ export default function PageJourney({ pageLabel, sections: suppliedSections }: P
   const [mobileOpen, setMobileOpen] = useState(false);
   const activeIndex = Math.max(0, sections.findIndex((section) => section.id === activeId));
   const activeTheme = sections[activeIndex]?.theme ?? 'light';
-  const activeMarkerTop = `${((activeIndex + 1) / (sections.length + 1)) * 100}%`;
+  const activeMarkerTop = sections.length > 1
+    ? `calc(19px + (100% - 38px) * ${activeIndex / (sections.length - 1)})`
+    : '50%';
 
   useEffect(() => {
     let frame = 0;

@@ -1,5 +1,5 @@
 import { RoundedBox } from '@react-three/drei';
-import { useMemo, useRef, useState } from 'react';
+import { useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { Group, Vector2 } from 'three';
 import type { CatalogueTutor } from '../../data/teacherCatalogue';
@@ -22,14 +22,14 @@ import { createBookParts, getBookVisualProfile, getShelfPose } from './tutor-boo
 import { createBookMotionPoses, interpolateBookMotion } from './tutor-book-motion';
 import { TutorBookCover, TutorBookFoil, type SpineTreatment, useBookMaterialMaps } from './TutorBookCover';
 import { getTutorBookClothColour } from './tutor-book-appearance';
-import { getSpotlightRestingPose } from './tutor-library-spotlight';
-import { getFaceOutTutorShelfPose } from './tutor-library-presentation';
+import { TutorBookShell } from './tutor-book-shell';
+import { getInitialTutorBookRestingPose } from './tutor-book-resting-pose';
 import type { LibraryEvent, LibraryPhase } from './tutor-library-state';
 import type { TutorBookPageTurnDirection } from './tutor-book-pages';
 
 const PAPER = ['#eadbb9', '#e4d2aa', '#f0dfbd'];
 
-function LegacyTutorBook({ edition, tutor, phase, selected, motionProgress, neighbourResponse = 0, onHover, poseOverride, studio = false, spineTreatment, geometryDebug = false }: { edition: TutorBookEdition; tutor: CatalogueTutor; phase: LibraryPhase; selected: boolean; motionProgress: number; neighbourResponse?: number; onHover: (editionId: string) => void; poseOverride?: ReturnType<typeof getShelfPose>; studio?: boolean; spineTreatment?: SpineTreatment; geometryDebug?: boolean }) {
+function LegacyTutorBook({ edition, tutor, phase, selected, motionProgress, onHover, poseOverride, studio = false, spineTreatment, geometryDebug = false }: { edition: TutorBookEdition; tutor: CatalogueTutor; phase: LibraryPhase; selected: boolean; motionProgress: number; onHover: (editionId: string) => void; poseOverride?: ReturnType<typeof getShelfPose>; studio?: boolean; spineTreatment?: SpineTreatment; geometryDebug?: boolean }) {
   const shelfPose = useMemo(() => getShelfPose(edition), [edition]);
   const pose = poseOverride ?? shelfPose;
   const profile = useMemo(() => getBookVisualProfile(edition), [edition]);
@@ -47,7 +47,7 @@ function LegacyTutorBook({ edition, tutor, phase, selected, motionProgress, neig
   const studioShowsSpine = studio && Math.abs(pose.rotation[1] - Math.PI / 2) < .02;
   const showCover = !geometryDebug && !studioShowsSpine && (studio || (selected && (phase === 'BOOK_EXTRACTING' || phase === 'BOOK_PREVIEW' || (phase === 'BOOK_RETURNING' && motionProgress < .78))));
 
-  const renderedRotation: [number, number, number] = [currentPose.rotation[0], currentPose.rotation[1], currentPose.rotation[2] + neighbourResponse];
+  const renderedRotation: [number, number, number] = [currentPose.rotation[0], currentPose.rotation[1], currentPose.rotation[2]];
 
   return <group name={`tutor-book-${edition.id}`} position={currentPose.position} rotation={renderedRotation} scale={currentPose.scale} castShadow onPointerEnter={event => { event.stopPropagation(); onHover(edition.id); }}>
     <group name="back-board-pivot">
@@ -84,11 +84,6 @@ function LegacyTutorBook({ edition, tutor, phase, selected, motionProgress, neig
   </group>;
 }
 
-const COMPLETE_SHELF_WIDTH = 1.02;
-const COMPLETE_SHELF_HEIGHT = 1.58;
-const COMPLETE_SHELF_CLOSED_DEPTH = .324;
-const COMPLETE_SHELF_SPINE_X = -COMPLETE_SHELF_WIDTH / 2 - .008;
-
 type TutorBookProps = {
   edition: TutorBookEdition;
   tutor: CatalogueTutor;
@@ -96,9 +91,7 @@ type TutorBookProps = {
   selected: boolean;
   motionProgress: number;
   motionProgressRef?: Readonly<{ current: { book: number } }>;
-  neighbourResponse?: number;
   onHover?: (editionId: string, rootUuid: string) => void;
-  onHoverChange?: (editionId?: string) => void;
   onActivate?: (editionId: string, rootUuid: string) => void;
   onRigReady?: (editionId: string, rootUuid: string, token: number) => void;
   onRigUnavailable?: (editionId: string, rootUuid: string) => void;
@@ -114,6 +107,7 @@ type TutorBookProps = {
   onRigIntent?: (editionId?: string) => void;
   poseOverride?: ReturnType<typeof getShelfPose>;
   searchPose?: CompleteShelfBookPose;
+  shelfPoseOverride?: CompleteShelfBookPose;
   spotlight?: boolean;
   faceOut?: boolean;
   studio?: boolean;
@@ -122,29 +116,25 @@ type TutorBookProps = {
 };
 
 function DormantCompleteShelfProxy({ tutor, edition, faceOut = false }: { tutor: CatalogueTutor; edition: TutorBookEdition; faceOut?: boolean }) {
-  const cover = getTutorBookClothColour(edition.materialVariant);
-  return <group name={`dormant-complete-shelf-proxy-${edition.id}`}>
-    <RoundedBox args={[COMPLETE_SHELF_WIDTH, COMPLETE_SHELF_HEIGHT, COMPLETE_SHELF_CLOSED_DEPTH]} radius={.0045} smoothness={2} castShadow receiveShadow>
-    <meshPhysicalMaterial color={cover} emissive={cover} emissiveIntensity={.075} roughness={.9} metalness={.025} sheen={.3} sheenRoughness={.74} />
-    </RoundedBox>
-    <RoundedBox name="tutor-book-selection-marker" args={[.024, .18, .046]} position={[COMPLETE_SHELF_SPINE_X - .007, COMPLETE_SHELF_HEIGHT / 2 - .15, 0]} radius={.004} smoothness={2}>
-      <meshStandardMaterial color="#d5b369" roughness={.32} metalness={.72} />
-    </RoundedBox>
-    <TutorBookCover tutor={tutor} edition={edition} mode="spine" width={COMPLETE_SHELF_CLOSED_DEPTH - .018} height={COMPLETE_SHELF_HEIGHT - .075} position={[COMPLETE_SHELF_SPINE_X, 0, 0]} rotation={[0, -Math.PI / 2, 0]} visible />
-    <TutorBookFoil tutor={tutor} edition={edition} mode="spine" width={COMPLETE_SHELF_CLOSED_DEPTH - .014} height={COMPLETE_SHELF_HEIGHT - .04} position={[COMPLETE_SHELF_SPINE_X - .001, 0, 0]} rotation={[0, -Math.PI / 2, 0]} visible />
-    {faceOut ? <group name="tutor-book-cover-art"><TutorBookCover tutor={tutor} edition={edition} mode="cover" width={COMPLETE_SHELF_WIDTH - .04} height={COMPLETE_SHELF_HEIGHT - .04} z={COMPLETE_SHELF_CLOSED_DEPTH / 2 + .002} visible /><TutorBookFoil tutor={tutor} edition={edition} mode="cover" width={COMPLETE_SHELF_WIDTH - .04} height={COMPLETE_SHELF_HEIGHT - .04} z={COMPLETE_SHELF_CLOSED_DEPTH / 2 + .004} visible /></group> : null}
-  </group>;
+  return <TutorBookShell tutor={tutor} edition={edition} faceOut={faceOut} />;
 }
 
-function RoomTutorBook({ edition, tutor, phase, selected, motionProgress, motionProgressRef, neighbourResponse = 0, onHoverChange, onActivate, onRigReady, onRigUnavailable, onLifecycleComplete, onPageSettled, onError, generation = 0, reducedMotion = false, pageTurnDirection = 1, pool, rigIntent = false, rigIntentToken = 0, onRigIntent, searchPose, spotlight = false, faceOut = false }: TutorBookProps & { pool: CompleteShelfBookPool<CompleteShelfTutorRig> }) {
+function RoomTutorBook({ edition, tutor, phase, selected, motionProgress, motionProgressRef, onActivate, onRigReady, onRigUnavailable, onLifecycleComplete, onPageSettled, onError, generation = 0, reducedMotion = false, pageTurnDirection = 1, pool, rigIntent = false, rigIntentToken = 0, onRigIntent, searchPose, shelfPoseOverride, spotlight = false, faceOut = false }: TutorBookProps & { pool: CompleteShelfBookPool<CompleteShelfTutorRig> }) {
   const [rigReady, setRigReady] = useState(false);
   const [hovered, setHovered] = useState(false);
   const activationRequested = useRef(false);
   const rootUuid = useRef<string>();
   const bookGroup = useRef<Group>(null);
-  const motionState = useRef(createCompleteShelfOuterMotionState(edition, searchPose));
-  const searchPoseKey = searchPose ? searchPose.position.join(':') : 'shelf';
-  const previousSearchPoseKey = useRef(searchPoseKey);
+  const sourceShelfPose = searchPose ?? shelfPoseOverride;
+  const sourceShelfPoseKey = sourceShelfPose
+    ? [...sourceShelfPose.position, ...sourceShelfPose.rotation, ...sourceShelfPose.scale].join(':')
+    : 'shelf';
+  const restingShelfPose = useMemo(() => {
+    const baseShelfPose = createCompleteShelfOuterMotionState(edition, sourceShelfPose).pose;
+    return getInitialTutorBookRestingPose({ shelfPose: baseShelfPose, searchPose, faceOut, spotlight });
+  }, [edition, faceOut, sourceShelfPoseKey, spotlight]);
+  const motionState = useRef(createCompleteShelfOuterMotionState(edition, restingShelfPose));
+  const previousShelfPoseKey = useRef(sourceShelfPoseKey);
   const pose = motionState.current.pose;
   const hovering = hovered && phase === 'ROOM_IDLE' && !selected;
   const rigRequested = shouldAcquireCompleteShelfRig({
@@ -153,14 +143,25 @@ function RoomTutorBook({ edition, tutor, phase, selected, motionProgress, motion
     intentEditionId: rigIntent ? edition.id : undefined,
     selectedEditionId: selected ? edition.id : undefined,
   });
-  const rotation: [number, number, number] = [pose.rotation[0], pose.rotation[1], pose.rotation[2] + neighbourResponse];
+  const rotation: [number, number, number] = [pose.rotation[0], pose.rotation[1], pose.rotation[2]];
+
+  useLayoutEffect(() => {
+    const nextState = createCompleteShelfOuterMotionState(edition, restingShelfPose);
+    motionState.current = nextState;
+    previousShelfPoseKey.current = sourceShelfPoseKey;
+    const group = bookGroup.current;
+    if (!group) return;
+    group.position.set(...nextState.pose.position);
+    group.rotation.set(...nextState.pose.rotation);
+    group.scale.set(...nextState.pose.scale);
+  }, [edition, restingShelfPose, sourceShelfPoseKey]);
 
   useFrame((state, delta) => {
     const group = bookGroup.current;
     if (!group) return;
-    if (!selected && phase === 'ROOM_IDLE' && previousSearchPoseKey.current !== searchPoseKey) {
-      motionState.current = createCompleteShelfOuterMotionState(edition, searchPose);
-      previousSearchPoseKey.current = searchPoseKey;
+    if (!selected && phase === 'ROOM_IDLE' && previousShelfPoseKey.current !== sourceShelfPoseKey) {
+      motionState.current = createCompleteShelfOuterMotionState(edition, restingShelfPose);
+      previousShelfPoseKey.current = sourceShelfPoseKey;
     }
     const nextMotionState = advanceCompleteShelfOuterMotion(
       motionState.current,
@@ -168,17 +169,13 @@ function RoomTutorBook({ edition, tutor, phase, selected, motionProgress, motion
       motionProgressRef?.current.book ?? motionProgress,
     );
     motionState.current = nextMotionState;
-    const faceOutPose = faceOut && phase === 'ROOM_IDLE'
-      ? getFaceOutTutorShelfPose(nextMotionState.pose)
-      : nextMotionState.pose;
-    const restingPose = spotlight ? getSpotlightRestingPose(searchPose, faceOutPose) : faceOutPose;
-    const targetPose = hovering ? getTutorBookHoverPose(restingPose, faceOut || spotlight) : restingPose;
+    const targetPose = hovering ? getTutorBookHoverPose(nextMotionState.pose, faceOut || spotlight) : nextMotionState.pose;
     const ease = reducedMotion ? 1 : 1 - Math.exp(-delta * 14);
     group.position.lerp({ x: targetPose.position[0], y: targetPose.position[1], z: targetPose.position[2] }, ease);
     group.rotation.set(
       group.rotation.x + (targetPose.rotation[0] - group.rotation.x) * ease,
       group.rotation.y + (targetPose.rotation[1] - group.rotation.y) * ease,
-      group.rotation.z + (targetPose.rotation[2] + neighbourResponse - group.rotation.z) * ease,
+      group.rotation.z + (targetPose.rotation[2] - group.rotation.z) * ease,
     );
     group.scale.lerp({ x: targetPose.scale[0], y: targetPose.scale[1], z: targetPose.scale[2] }, ease);
   });
@@ -194,13 +191,11 @@ function RoomTutorBook({ edition, tutor, phase, selected, motionProgress, motion
       event.stopPropagation();
       if (phase !== 'ROOM_IDLE' || selected) return;
       setHovered(true);
-      onHoverChange?.(edition.id);
       document.body.style.cursor = 'pointer';
     }}
     onPointerLeave={(event) => {
       event.stopPropagation();
       setHovered(false);
-      onHoverChange?.();
       document.body.style.cursor = 'auto';
     }}
     onClick={(event) => {
