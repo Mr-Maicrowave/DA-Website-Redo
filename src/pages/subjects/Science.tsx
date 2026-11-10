@@ -2,6 +2,7 @@ import { useState, useRef, useCallback, useEffect, useLayoutEffect } from 'react
 import NavigationNew from '@/components/NavigationNew';
 import FooterNew from '@/components/FooterNew';
 import SubjectHero from '@/components/subjects/SubjectHero';
+import { SubjectReviewCarousel } from '@/components/subjects/SubjectReviewCarousel';
 import { Button } from '@/components/ui/button';
 import {
   ArrowRight,
@@ -2244,8 +2245,7 @@ const Science = () => {
         {/* ── What Students Struggle With ── */}
         <ScienceStruggleSection />
 
-        {/* ── Science Success Stories ── */}
-        <ScienceSuccessCarousel />
+        <SubjectReviewCarousel subject="science" />
 
         {/* ── Final CTA ── */}
         <section className="bg-[#071629] px-5 py-20 text-white lg:px-8">

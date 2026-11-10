@@ -178,7 +178,7 @@
   .english-reviews__heading span{display:block;white-space:nowrap}
   .english-reviews__heading em{color:var(--review-gold);font-style:italic}
   .english-reviews__viewport{
-    position:relative;height:clamp(650px,44vw,700px);outline:none;touch-action:pan-y;user-select:none
+    position:relative;height:clamp(32rem,calc(100svh - 16rem),46rem);outline:none;touch-action:pan-y;user-select:none
   }
   .english-reviews__viewport:focus-visible{outline:none}
   .english-review-card{
@@ -325,7 +325,7 @@
   @media (max-width:900px){
     .english-reviews{padding:82px 0 82px}
     .english-reviews__heading{font-size:clamp(40px,8vw,62px);margin-bottom:36px}
-    .english-reviews__viewport{height:630px}
+    .english-reviews__viewport{height:clamp(32rem,calc(100svh - 14rem),40rem)}
     .english-review-card{width:min(760px,76vw);height:610px;padding:46px 42px 58px}
     .english-review-card.is-prev{width:min(340px,34vw);transform:translateX(calc(-50% - min(500px,52vw))) scale(.88) rotate(-3deg)}
     .english-review-card.is-next{width:min(340px,34vw);transform:translateX(calc(-50% + min(500px,52vw))) scale(.88) rotate(3deg)}
@@ -335,7 +335,7 @@
   @media (max-width:640px){
     .english-reviews{padding:58px 0 62px}
     .english-reviews__heading{font-size:clamp(24px,7.25vw,34px);line-height:1.12;margin-bottom:28px}
-    .english-reviews__viewport{height:620px}
+    .english-reviews__viewport{height:clamp(31rem,calc(100svh - 10rem),38rem)}
     .english-review-card{width:90vw;height:600px;padding:36px 24px 58px;border-radius:16px}
     .english-reviews__viewport.is-reading .english-review-card.is-active{width:92vw;height:610px}
     .english-review-card__expanded{padding:30px 24px}
