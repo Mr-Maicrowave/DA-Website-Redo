@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import NavigationNew from '@/components/NavigationNew';
 import FooterNew from '@/components/FooterNew';
 import SubjectHero from '@/components/subjects/SubjectHero';
@@ -34,6 +34,12 @@ import { ConfidenceJourney } from '@/features/maths-confidence-journey/Confidenc
 import { MathsGraphLabInvitation, MathsTeachingProof } from '@/features/maths-teaching-proof/MathsTeachingProof';
 import { MathsIntroVideoGate } from '@/features/maths-intro-video/MathsIntroVideoGate';
 import { HscMathsPathway } from '@/features/hsc-maths-pathway/HscMathsPathway';
+import '@/features/maths-scroll-scene/maths-scroll-scene-integration.css';
+
+const MathsScrollScene = lazy(async () => {
+  const module = await import('@/features/maths-scroll-scene/MathsScrollScene');
+  return { default: module.MathsScrollScene };
+});
 
 interface StepRow {
   label: string;
@@ -1324,7 +1330,7 @@ const Mathematics = () => {
           headlineGold="Solve with confidence."
           subtext="Mathematics tuition for students who need clear explanations, stronger problem-solving, and the confidence to show their working — from Year 7 foundations through to HSC questions."
           proofPills={['Step-by-step working', 'Marked feedback', 'Clear problem-solving']}
-          exploreTargetId="math-pathways"
+          exploreTargetId="mathematics-scroll-scene"
           placeholderLabel="Mathematics classroom"
           showPlaceholderBadge={false}
           backgroundImageSrc="/math-tutor-ogive-hero.jpg"
@@ -1333,6 +1339,12 @@ const Mathematics = () => {
           mobileBackgroundPosition="70% center"
           copyOffsetClassName="lg:-translate-y-10"
         />
+
+        <div id="mathematics-scroll-scene" className="maths-scene-production-entry">
+          <Suspense fallback={<div className="maths-scene-production-loading" aria-label="Loading mathematics scene" aria-busy="true" />}>
+            <MathsScrollScene />
+          </Suspense>
+        </div>
 
         {SHOW_LEGACY_MATHS_INTERACTIONS ? <BasketballCalculusJourney /> : null}
 

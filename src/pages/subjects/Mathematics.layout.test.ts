@@ -43,6 +43,19 @@ test('keeps the tutor and mathematics context visible in the mobile hero crop', 
   assert.doesNotMatch(source, /mobileBackgroundPosition="100% center"/);
 });
 
+test('places the lazy Mathematics scroll scene directly after the tutor hero', () => {
+  const source = readFileSync(mathematicsUrl, 'utf8');
+  const component = source.slice(source.indexOf('const Mathematics = () => {'));
+  const heroIndex = component.indexOf('<SubjectHero');
+  const sceneIndex = component.indexOf('id="mathematics-scroll-scene"');
+  const navigationIndex = component.indexOf('{/* Anchor navigation */}');
+
+  assert.match(source, /lazy\(async \(\) =>/);
+  assert.match(source, /features\/maths-scroll-scene\/MathsScrollScene/);
+  assert.ok(sceneIndex > heroIndex, 'scene must follow the tutor hero');
+  assert.ok(navigationIndex > sceneIndex, 'existing page navigation must follow the scene');
+});
+
 test('uses a compact horizontal quick-link rail on mobile and distinguishes the page link', () => {
   const source = readFileSync(mathematicsUrl, 'utf8');
 
