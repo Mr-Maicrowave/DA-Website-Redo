@@ -8,6 +8,7 @@ import LiveHours from '@/components/location/LiveHours';
 import { Car, Train, School, Users, Trophy, Star, CheckCircle, ArrowRight, Navigation, MapPin } from 'lucide-react';
 import { siteStats } from '@/data/site-stats';
 import { educationalOrganizationSchema, breadcrumbSchema } from '@/lib/seo/schema';
+import WayfinderLocationsPage from '@/features/wayfinder/WayfinderLocationsPage';
 
 // Design tokens matching home page
 const C = {
@@ -109,6 +110,7 @@ const features = [
 ];
 
 const CanleyHeights = () => {
+  return <div><SEO title="Tutoring in Canley Heights — K-12 & HSC" description="Find your way to DA Tuition's Canley Heights locations." canonicalUrl="/tutoring-canley-heights" jsonLd={[educationalOrganizationSchema(siteStats.reviewCount), breadcrumbSchema([{ name: 'Home', url: '/' }, { name: 'Locations', url: '/tutoring-canley-heights' }])]} /><NavigationNew /><WayfinderLocationsPage /><FooterNew /></div>;
   const s = { fontFamily: sans } as React.CSSProperties;
   const contactHref = () => { window.location.href = '/#contact'; };
 

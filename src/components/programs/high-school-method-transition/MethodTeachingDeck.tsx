@@ -1,7 +1,9 @@
 import {
   type CSSProperties,
   type KeyboardEvent,
+  type MutableRefObject,
   useEffect,
+  useLayoutEffect,
   useRef,
   useState,
 } from 'react';
@@ -31,11 +33,19 @@ const BOTANICAL_ATMOSPHERE_WEBP_SMALL =
   '/images/programs/high-school-method-transition/how-we-teach-watercolor-botanical-v1-768w.webp';
 const BOTANICAL_ATMOSPHERE_WEBP_LARGE =
   '/images/programs/high-school-method-transition/how-we-teach-watercolor-botanical-v1-1536w.webp';
+const TRANSITION_MAGNIFIER = '/high-school-journey/finale/year-08-magnifying-glass-ai.png';
 
 type DeckProperties = CSSProperties & {
   '--hsm-active-accent': string;
   '--hsm-active-text-accent': string;
   '--hsm-active-wash': string;
+};
+
+export type MethodTeachingDeckPresentation = {
+  root: HTMLElement;
+  cards: Record<MethodId, HTMLButtonElement>;
+  diagnose: HTMLButtonElement;
+  diagnoseMagnifier: HTMLImageElement;
 };
 
 function killOwnedAnimation<T extends gsap.core.Animation>(animationRef: {
@@ -130,7 +140,13 @@ export function createMethodSelectionCoordinator(
   };
 }
 
-export function MethodTeachingDeck({ ready }: { ready: boolean }) {
+export function MethodTeachingDeck({
+  ready,
+  presentationRef,
+}: {
+  ready: boolean;
+  presentationRef?: MutableRefObject<MethodTeachingDeckPresentation | null>;
+}) {
   const [activeId, setActiveId] = useState<MethodId>('diagnose');
   const [expanded, setExpanded] = useState(false);
   const deckRef = useRef<HTMLElement>(null);
@@ -143,6 +159,7 @@ export function MethodTeachingDeck({ ready }: { ready: boolean }) {
     apply: null,
     review: null,
   });
+  const diagnoseMagnifierRef = useRef<HTMLImageElement>(null);
   const selectionCoordinatorRef = useRef<ReturnType<
     typeof createMethodSelectionCoordinator
   > | null>(null);
@@ -170,6 +187,30 @@ export function MethodTeachingDeck({ ready }: { ready: boolean }) {
       },
     );
   }
+
+  useEffect(() => {
+    deckRef.current?.toggleAttribute('inert', !ready);
+  }, [ready]);
+
+  useLayoutEffect(() => {
+    if (!presentationRef) return;
+    const root = deckRef.current;
+    const diagnoseMagnifier = diagnoseMagnifierRef.current;
+    const cards = cardRefs.current;
+    if (!root || !diagnoseMagnifier || Object.values(cards).some((card) => card === null)) return;
+
+    const resolvedCards = cards as Record<MethodId, HTMLButtonElement>;
+    presentationRef.current = {
+      root,
+      cards: resolvedCards,
+      diagnose: resolvedCards.diagnose,
+      diagnoseMagnifier,
+    };
+
+    return () => {
+      if (presentationRef.current?.root === root) presentationRef.current = null;
+    };
+  }, [presentationRef]);
   const selectionCoordinator = selectionCoordinatorRef.current;
   const activeMethod = methodItems.find((method) => method.id === activeId) ?? methodItems[0];
   const inactiveMethods = getInactiveMethods(activeId);
@@ -476,6 +517,17 @@ export function MethodTeachingDeck({ ready }: { ready: boolean }) {
                       decoding="async"
                     />
                   </picture>
+                  {method.id === 'diagnose' ? (
+                    <img
+                      className="hsm-deck__diagnose-magnifier"
+                      data-method-transition-diagnose-overlay
+                      ref={diagnoseMagnifierRef}
+                      src={TRANSITION_MAGNIFIER}
+                      alt=""
+                      aria-hidden="true"
+                      decoding="async"
+                    />
+                  ) : null}
                   <span>{method.label}</span>
                 </button>
               );

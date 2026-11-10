@@ -1,9 +1,11 @@
 import { useLayoutEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { MethodTeachingDeck } from './MethodTeachingDeck';
+import {
+  MethodTeachingDeck,
+  type MethodTeachingDeckPresentation,
+} from './MethodTeachingDeck';
 import { reconcileSourceHandoffPose, type TransitionPose } from './methodTransitionGeometry';
-import { methodItems } from './methodTransitionData';
 import {
   METHOD_TRANSITION_TIMING,
   getViewportZoomTargets,
@@ -25,55 +27,26 @@ function decodeImage(image: HTMLImageElement) {
   return image.decode().catch(() => undefined);
 }
 
-async function decodeDiagnoseBackground() {
-  const diagnose = methodItems[0];
-  const highDensity = window.devicePixelRatio > 1;
-  const candidates = [
-    highDensity ? diagnose.cardAvifLarge : diagnose.cardAvifSmall,
-    highDensity ? diagnose.cardWebpLarge : diagnose.cardWebpSmall,
-    diagnose.card,
-  ];
-
-  for (const source of candidates) {
-    const image = new Image();
-    image.decoding = 'async';
-    image.src = source;
-    try {
-      await image.decode();
-      if (image.naturalWidth > 0) return;
-    } catch {
-      // Try the next supported optimized format, then the PNG fallback.
-    }
-  }
-}
-
 export function MethodTransition() {
   const [deckReady, setDeckReady] = useState(false);
   const sectionRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
   const centerBloomRef = useRef<HTMLImageElement>(null);
-  const cardRef = useRef<HTMLDivElement>(null);
-  const staticGlassRef = useRef<HTMLImageElement>(null);
-  const cardSlotRef = useRef<HTMLDivElement>(null);
-  const companionRefs = useRef<Array<HTMLDivElement | null>>([]);
   const proxyRef = useRef<HTMLImageElement>(null);
+  const presentationRef = useRef<MethodTeachingDeckPresentation | null>(null);
 
   useLayoutEffect(() => {
     const section = sectionRef.current;
     const stage = stageRef.current;
     const proxy = proxyRef.current;
     const centerBloom = centerBloomRef.current;
-    const card = cardRef.current;
-    const staticGlass = staticGlassRef.current;
-    const cardSlot = cardSlotRef.current;
+    const presentation = presentationRef.current;
     const source = document.querySelector<HTMLImageElement>('[data-method-transition-magnifier]');
 
-    if (!section || !stage || !proxy || !centerBloom || !card || !staticGlass || !cardSlot) return;
+    if (!section || !stage || !proxy || !centerBloom || !presentation) return;
 
-    const companions = companionRefs.current.filter(
-      (companion): companion is HTMLDivElement => companion !== null,
-    );
-
+    const { cards, diagnose, diagnoseMagnifier } = presentation;
+    const siblings = Object.values(cards).filter((card) => card !== diagnose);
     const sourceOpacity = source?.style.opacity ?? '';
     const sourceVisibility = source?.style.visibility ?? '';
     const finale = source?.closest<HTMLElement>('.hs-finale') ?? null;
@@ -83,11 +56,7 @@ export function MethodTransition() {
     let mounted = true;
 
     const context = gsap.context(() => {
-      const artwork = Array.from(section.querySelectorAll<HTMLImageElement>('img'));
-      void Promise.all([
-        ...artwork.map(decodeImage),
-        decodeDiagnoseBackground(),
-      ]).then(() => {
+      void Promise.all([decodeImage(proxy), decodeImage(centerBloom)]).then(() => {
         if (!mounted) return;
 
         context.add(() => {
@@ -100,46 +69,25 @@ export function MethodTransition() {
             },
             (match) => {
               const conditions = match.conditions as MediaConditions;
+              const resetDeckPresentation = () => {
+                gsap.set([...Object.values(cards), diagnoseMagnifier], {
+                  clearProps: 'transform,opacity,zIndex',
+                });
+                gsap.set(diagnoseMagnifier, { opacity: 0 });
+              };
 
               gsap.set(proxy, { opacity: 0, transformOrigin: '50% 50%' });
               gsap.set(centerBloom, { opacity: 0, scale: 0.86 });
-              gsap.set(card, { xPercent: -50, yPercent: 115, scale: 0.985 });
-              gsap.set(staticGlass, { opacity: 0 });
-              gsap.set(companions, { opacity: 0, y: 34, scale: 0.92 });
 
               if (conditions.reduce || !source) {
+                resetDeckPresentation();
                 setDeckReady(true);
-                gsap.set(card, { xPercent: -50, yPercent: -50, scale: 1, opacity: 1 });
-                gsap.set(staticGlass, { opacity: 1 });
-                gsap.set(proxy, { opacity: 0 });
-                gsap.set(companions, { opacity: 1, y: 0, scale: 1 });
                 gsap.set(centerBloom, { opacity: 0 });
                 if (!source) return;
 
-                const placeReducedMagnifier = () => {
-                  const stageRect = stage.getBoundingClientRect();
-                  const cardRect = card.getBoundingClientRect();
-                  const targetWidth = cardRect.width * 0.58;
-                  const targetRect = new DOMRect(
-                    cardRect.left + (cardRect.width - targetWidth) / 2,
-                    cardRect.top - stageRect.top + cardRect.height * 0.43 - targetWidth / 2,
-                    targetWidth,
-                    targetWidth,
-                  );
-                  gsap.set(proxy, {
-                    x: targetRect.left,
-                    y: targetRect.top,
-                    scale: targetWidth / proxy.offsetWidth,
-                    rotation: 0,
-                    opacity: 1,
-                  });
-                };
-
-                const crossfade = (showCard: boolean) => {
-                  placeReducedMagnifier();
-                  gsap.to(card, { opacity: showCard ? 1 : 0, y: showCard ? 0 : 24, duration: 0.18, overwrite: true });
-                  gsap.to(proxy, { opacity: showCard ? 1 : 0, duration: 0.18, overwrite: true });
-                  gsap.to(source, { opacity: showCard ? 0 : 1, duration: 0.18, overwrite: true });
+                const crossfade = (showDeck: boolean) => {
+                  gsap.to(proxy, { opacity: 0, duration: 0.18, overwrite: true });
+                  gsap.to(source, { opacity: showDeck ? 0 : 1, duration: 0.18, overwrite: true });
                 };
                 const reducedTrigger = ScrollTrigger.create({
                   trigger: section,
@@ -151,29 +99,27 @@ export function MethodTransition() {
                 return () => reducedTrigger.kill();
               }
 
-              const poses: Record<'source' | 'detach' | 'center' | 'lower' | 'card' | 'joinedCard' | 'joinedGlass', TransitionPose> = {
+              const poses: Record<'source' | 'detach' | 'center' | 'dock', TransitionPose> = {
                 source: { x: 0, y: 0, scale: 1 },
                 detach: { x: 0, y: 0, scale: 1 },
                 center: { x: 0, y: 0, scale: 1 },
-                lower: { x: 0, y: 0, scale: 1 },
-                card: { x: 0, y: 0, scale: 1 },
-                joinedCard: { x: 0, y: 0, scale: 1 },
-                joinedGlass: { x: 0, y: 0, scale: 1 },
+                dock: { x: 0, y: 0, scale: 1 },
               };
+              let introTransform = { x: 0, y: 0, scale: 1 };
               let normalizedSourceRect: DOMRect | null = null;
 
               const poseForRect = (rect: DOMRect, targetWidth = rect.width): TransitionPose => {
                 const proxyWidth = proxy.offsetWidth;
                 const proxyHeight = proxy.offsetHeight;
-                const scale = targetWidth / proxyWidth;
                 return {
                   x: rect.left + rect.width / 2 - proxyWidth / 2,
                   y: rect.top + rect.height / 2 - proxyHeight / 2,
-                  scale,
+                  scale: targetWidth / proxyWidth,
                 };
               };
 
               const measureUntransformedSource = () => {
+                if (!source) return new DOMRect();
                 const inlineTransform = finale?.style.transform ?? '';
                 const inlineYearAnimation = sourceYear?.style.animation ?? '';
                 const inlineYearTransform = sourceYear?.style.transform ?? '';
@@ -187,7 +133,12 @@ export function MethodTransition() {
                   const stickyRect = journeySticky?.getBoundingClientRect();
                   if (!stickyRect) return sourceRect;
                   const handoffTravel = section.offsetHeight * SOURCE_HANDOFF_START;
-                  return new DOMRect(sourceRect.left, sourceRect.top - stickyRect.top - handoffTravel, sourceRect.width, sourceRect.height);
+                  return new DOMRect(
+                    sourceRect.left,
+                    sourceRect.top - stickyRect.top - handoffTravel,
+                    sourceRect.width,
+                    sourceRect.height,
+                  );
                 } finally {
                   if (sourceYear) {
                     sourceYear.style.animation = inlineYearAnimation;
@@ -198,48 +149,33 @@ export function MethodTransition() {
               };
 
               const measure = () => {
+                resetDeckPresentation();
                 const sourceRect = measureUntransformedSource();
                 normalizedSourceRect = sourceRect;
                 const stageRect = stage.getBoundingClientRect();
                 const zoomTargets = getViewportZoomTargets(stageRect.width, stageRect.height);
                 const centerRect = centerBloom.getBoundingClientRect();
-                const savedCardTransform = card.style.transform;
-                gsap.set(card, { xPercent: -50, yPercent: -50, y: 0, scale: 1 });
-                const cardRect = card.getBoundingClientRect();
-                card.style.transform = savedCardTransform;
-                const slotRect = cardSlot.getBoundingClientRect();
-                const finalWidth = cardRect.width * 0.58;
-                const cardTargetRect = new DOMRect(
-                  cardRect.left + (cardRect.width - finalWidth) / 2,
-                  cardRect.top - stageRect.top + cardRect.height * 0.43 - finalWidth / 2,
-                  finalWidth,
-                  finalWidth,
-                );
+                const finalRect = diagnose.getBoundingClientRect();
+                const targetWidth = Math.min(stageRect.width * 0.3, stageRect.height * 0.58);
+                const scale = Math.max(1, Math.min(targetWidth / finalRect.width, 1.65));
+                const centerX = stageRect.left + stageRect.width / 2;
+                const centerY = stageRect.top + stageRect.height * 0.53;
+
+                introTransform = {
+                  x: centerX - (finalRect.left + finalRect.width / 2),
+                  y: centerY - (finalRect.top + finalRect.height / 2),
+                  scale,
+                };
+                gsap.set(diagnose, { ...introTransform, opacity: 1, zIndex: 3 });
+                const overlayRect = diagnoseMagnifier.getBoundingClientRect();
+                resetDeckPresentation();
 
                 poses.source = poseForRect(sourceRect);
                 poses.center = poseForRect(
                   new DOMRect(centerRect.left, centerRect.top - stageRect.top, centerRect.width, centerRect.height),
                   zoomTargets.fast,
                 );
-                poses.card = poseForRect(cardTargetRect);
-                const joinedScale = slotRect.width / cardRect.width;
-                poses.joinedCard = {
-                  x: slotRect.left + slotRect.width / 2 - (cardRect.left + cardRect.width / 2),
-                  y: slotRect.top + slotRect.height / 2 - (cardRect.top + cardRect.height / 2),
-                  scale: joinedScale,
-                };
-                const joinedGlassWidth = slotRect.width * 0.72;
-                poses.joinedGlass = poseForRect(new DOMRect(
-                  slotRect.left + (slotRect.width - joinedGlassWidth) / 2,
-                  slotRect.top - stageRect.top + slotRect.height * 0.43 - joinedGlassWidth / 2,
-                  joinedGlassWidth,
-                  joinedGlassWidth,
-                ));
-                poses.lower = {
-                  x: poses.center.x + (poses.card.x - poses.center.x) * 0.72,
-                  y: poses.center.y + (poses.card.y - poses.center.y) * 0.72,
-                  scale: Math.max(poses.card.scale * 1.28, poses.center.scale * 0.42),
-                };
+                poses.dock = poseForRect(overlayRect);
                 poses.detach = {
                   x: poses.source.x + (poses.center.x - poses.source.x) * 0.12,
                   y: poses.source.y + (poses.center.y - poses.source.y) * 0.12,
@@ -248,6 +184,13 @@ export function MethodTransition() {
               };
 
               measure();
+              let interactive = false;
+              const handoffDeck = (nextInteractive: boolean) => {
+                if (interactive === nextInteractive) return;
+                interactive = nextInteractive;
+                if (nextInteractive) resetDeckPresentation();
+                setDeckReady(nextInteractive);
+              };
 
               const master = gsap.timeline({
                 defaults: { ease: 'none' },
@@ -284,70 +227,56 @@ export function MethodTransition() {
                   x: () => poses.center.x, y: () => poses.center.y, scale: () => poses.center.scale, rotation: 5.5,
                   duration: METHOD_TRANSITION_TIMING.largestEnd - METHOD_TRANSITION_TIMING.fastZoomEnd,
                 }, METHOD_TRANSITION_TIMING.fastZoomEnd)
-                .to(proxy, {
-                  x: () => poses.lower.x, y: () => poses.lower.y, scale: () => poses.lower.scale, rotation: 2,
-                  duration: METHOD_TRANSITION_TIMING.insertionStart - METHOD_TRANSITION_TIMING.descendStart,
-                }, METHOD_TRANSITION_TIMING.descendStart)
-                .to(card, {
-                  yPercent: 16, scale: 0.992,
-                  duration: METHOD_TRANSITION_TIMING.insertionStart - METHOD_TRANSITION_TIMING.cardRiseStart,
+                .set(diagnose, {
+                  x: () => introTransform.x,
+                  y: () => introTransform.y + 32,
+                  scale: () => introTransform.scale,
+                  opacity: 0,
+                  zIndex: 3,
                 }, METHOD_TRANSITION_TIMING.cardRiseStart)
-                .to(card, {
-                  yPercent: -50, scale: 1,
-                  duration: METHOD_TRANSITION_TIMING.landEnd - METHOD_TRANSITION_TIMING.insertionStart,
-                }, METHOD_TRANSITION_TIMING.insertionStart)
-                .to(proxy, {
-                  x: () => poses.card.x, y: () => poses.card.y + 6, scale: () => poses.card.scale * 0.96, rotation: 0,
-                  duration: METHOD_TRANSITION_TIMING.landEnd - METHOD_TRANSITION_TIMING.insertionStart,
-                }, METHOD_TRANSITION_TIMING.insertionStart)
-                .to(proxy, {
-                  y: () => poses.card.y, scale: () => poses.card.scale,
-                  duration: METHOD_TRANSITION_TIMING.reactionEnd - METHOD_TRANSITION_TIMING.landEnd, ease: 'power2.out',
-                }, METHOD_TRANSITION_TIMING.landEnd)
-                .to(card, {
-                  scale: 0.985,
-                  duration: (METHOD_TRANSITION_TIMING.reactionEnd - METHOD_TRANSITION_TIMING.landEnd) / 2,
-                }, METHOD_TRANSITION_TIMING.landEnd)
-                .to(card, {
-                  scale: 1,
-                  duration: (METHOD_TRANSITION_TIMING.reactionEnd - METHOD_TRANSITION_TIMING.landEnd) / 2,
+                .set(siblings, { opacity: 0, y: 28, scale: 0.96, zIndex: 2 }, METHOD_TRANSITION_TIMING.cardRiseStart)
+                .to(diagnose, {
+                  y: () => introTransform.y,
+                  opacity: 1,
+                  duration: METHOD_TRANSITION_TIMING.insertionStart - METHOD_TRANSITION_TIMING.cardRiseStart,
                   ease: 'power2.out',
-                }, (METHOD_TRANSITION_TIMING.landEnd + METHOD_TRANSITION_TIMING.reactionEnd) / 2)
+                }, METHOD_TRANSITION_TIMING.cardRiseStart)
                 .to(centerBloom, { opacity: 0.28, scale: 1.42, duration: 0.42 }, 0.3)
-                .to(card, {
-                  x: () => poses.joinedCard.x,
-                  y: () => poses.joinedCard.y,
-                  scale: () => poses.joinedCard.scale,
+                .to(proxy, {
+                  x: () => poses.dock.x,
+                  y: () => poses.dock.y,
+                  scale: () => poses.dock.scale,
+                  rotation: 0,
+                  duration: METHOD_TRANSITION_TIMING.landEnd - METHOD_TRANSITION_TIMING.insertionStart,
+                }, METHOD_TRANSITION_TIMING.insertionStart)
+                .to(diagnoseMagnifier, { opacity: 1, duration: 0.02 }, METHOD_TRANSITION_TIMING.landEnd)
+                .to(proxy, { opacity: 0, duration: 0.02 }, METHOD_TRANSITION_TIMING.landEnd)
+                .to(diagnoseMagnifier, { opacity: 0, duration: 0.02 }, METHOD_TRANSITION_TIMING.joinStart)
+                .to(diagnose, {
+                  x: 0,
+                  y: 0,
+                  scale: 1,
                   duration: METHOD_TRANSITION_TIMING.joinEnd - METHOD_TRANSITION_TIMING.joinStart,
                   ease: 'power2.inOut',
                 }, METHOD_TRANSITION_TIMING.joinStart)
-                .to(proxy, {
-                  x: () => poses.joinedGlass.x,
-                  y: () => poses.joinedGlass.y,
-                  scale: () => poses.joinedGlass.scale,
-                  duration: METHOD_TRANSITION_TIMING.joinEnd - METHOD_TRANSITION_TIMING.joinStart,
-                  ease: 'power2.inOut',
+                .to(siblings, {
+                  opacity: 1,
+                  y: 0,
+                  scale: 1,
+                  duration: METHOD_TRANSITION_TIMING.companionsEnd - METHOD_TRANSITION_TIMING.joinStart,
+                  stagger: 0.012,
+                  ease: 'power2.out',
                 }, METHOD_TRANSITION_TIMING.joinStart)
                 .to(centerBloom, {
                   opacity: 0.14,
                   y: 80,
                   duration: METHOD_TRANSITION_TIMING.joinEnd - METHOD_TRANSITION_TIMING.joinStart,
-                }, METHOD_TRANSITION_TIMING.joinStart)
-                .to(companions, {
-                  opacity: 1,
-                  y: 0,
-                  scale: 1,
-                  duration: METHOD_TRANSITION_TIMING.companionsEnd - 0.88,
-                  stagger: 0.012,
-                  ease: 'power2.out',
-                }, 0.88)
-                .set(proxy, { opacity: 0 }, METHOD_TRANSITION_TIMING.joinEnd)
-                .set(staticGlass, { opacity: 1 }, METHOD_TRANSITION_TIMING.joinEnd);
+                }, METHOD_TRANSITION_TIMING.joinStart);
 
               master.eventCallback('onUpdate', () => {
                 const progress = master.progress();
-                setDeckReady(progress >= METHOD_TRANSITION_TIMING.companionsEnd);
-                if (normalizedSourceRect && progress >= SOURCE_HANDOFF_START && progress <= SOURCE_HANDOFF_END) {
+                handoffDeck(progress >= METHOD_TRANSITION_TIMING.companionsEnd);
+                if (source && normalizedSourceRect && progress >= SOURCE_HANDOFF_START && progress <= SOURCE_HANDOFF_END) {
                   const strength = 1 - ((progress - SOURCE_HANDOFF_START) / (SOURCE_HANDOFF_END - SOURCE_HANDOFF_START));
                   const reconciledPose = reconcileSourceHandoffPose(
                     {
@@ -394,51 +323,12 @@ export function MethodTransition() {
       >
         <div className="hsm-transition__stage" ref={stageRef}>
           <img className="hsm-transition__center-bloom" ref={centerBloomRef} src={CENTER_BLOOM} alt="" aria-hidden="true" decoding="async" />
-          <div className="hsm-transition__card" ref={cardRef} aria-hidden="true">
-            <img
-              className="hsm-transition__static-glass"
-              ref={staticGlassRef}
-              src={MAGNIFIER}
-              alt=""
-              decoding="async"
-            />
-          </div>
           <img className="hsm-transition__proxy" ref={proxyRef} src={MAGNIFIER} alt="" aria-hidden="true" decoding="async" />
-          <div className="hsm-transition__card-row" aria-hidden="true">
-            <div className="hsm-transition__card-slot" ref={cardSlotRef} />
-            {methodItems.slice(1).map((method, index) => (
-              <div
-                className={`hsm-transition__companion-card hsm-transition__companion-card--${method.id}`}
-                key={method.id}
-                ref={(node) => {
-                  companionRefs.current[index] = node;
-                }}
-              >
-                <picture>
-                  <source
-                    type="image/avif"
-                    srcSet={`${method.cardAvifSmall} 512w, ${method.cardAvifLarge} 1024w`}
-                    sizes="(max-width: 639px) calc((94vw - 24px) / 5), min(18vw, 190px)"
-                  />
-                  <source
-                    type="image/webp"
-                    srcSet={`${method.cardWebpSmall} 512w, ${method.cardWebpLarge} 1024w`}
-                    sizes="(max-width: 639px) calc((94vw - 24px) / 5), min(18vw, 190px)"
-                  />
-                  <img
-                    src={method.card}
-                    alt=""
-                    width={1024}
-                    height={1536}
-                    decoding="async"
-                  />
-                </picture>
-              </div>
-            ))}
-          </div>
+        </div>
+        <div className="hsm-transition__interaction">
+          <MethodTeachingDeck ready={deckReady} presentationRef={presentationRef} />
         </div>
       </div>
-      <div className="hsm-transition__interaction"><MethodTeachingDeck ready={deckReady} /></div>
     </section>
   );
 }
