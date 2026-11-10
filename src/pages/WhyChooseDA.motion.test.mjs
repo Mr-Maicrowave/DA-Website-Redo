@@ -104,8 +104,9 @@ test('choreographs the remaining continuation chapters without legacy teaching m
   assert.doesNotMatch(motion, /connection-panel|why-da-connected__dashboard/);
 });
 
-test('removes the legacy growth and achievement motion while preserving the closing invitation', () => {
+test('removes the legacy growth and achievement motion and ends at the shared footer', () => {
   assert.doesNotMatch(page, /data-motion="growth-milestone"|data-motion="growth-quality"|data-motion="result-card"|data-motion="testimonial"/);
-  assert.match(page, /data-motion="closing-cta"/);
+  assert.doesNotMatch(page, /data-motion="closing-cta"/);
+  assert.match(page, /<WeSucceedSection\s*\/>\s*<\/main>[\s\S]*<FooterNew\s*\/>/);
   assert.doesNotMatch(motion, /why-da-grow|why-da-achieve|growth-milestone|growth-quality|result-card|testimonial/);
 });

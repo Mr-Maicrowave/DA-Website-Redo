@@ -94,10 +94,9 @@ test('removes the legacy teaching and connected blocks while preserving care', (
   assert.match(styles, /\.why-da-care/);
 });
 
-test('moves directly from the cinematic finale to the consultation close', () => {
+test('ends the Why DA story at the cinematic finale before the shared footer', () => {
   assert.doesNotMatch(page, /data-testid="why-da-grow"|WE GROW|growthMilestones|growthQualities/);
   assert.doesNotMatch(page, /data-testid="why-da-achieve"|WE ACHIEVE|achievementResults|testimonials/);
-  assert.match(page, /<WeSucceedSection\s*\/>[\s\S]*data-testid="why-da-closing-cta"/);
-  assert.match(page, /data-testid="why-da-closing-cta"/);
-  assert.match(page, /BOOK A CONSULTATION[\s\S]*EXPLORE LEARNING OPTIONS/);
+  assert.doesNotMatch(page, /data-testid="why-da-closing-cta"|BOOK A CONSULTATION|EXPLORE LEARNING OPTIONS/);
+  assert.match(page, /<WeSucceedSection\s*\/>\s*<\/main>[\s\S]*<FooterNew\s*\/>/);
 });

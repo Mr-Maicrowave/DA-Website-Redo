@@ -3,7 +3,6 @@ import assert from 'node:assert/strict';
 import { existsSync, readFileSync } from 'node:fs';
 
 const componentUrl = new URL('./EnglishIntroVideoGate.tsx', import.meta.url);
-const stateUrl = new URL('./english-intro-visit-state.ts', import.meta.url);
 const englishUrl = new URL('../../pages/subjects/English.tsx', import.meta.url);
 const videoUrl = new URL('../../../public/english_intro_video.mp4', import.meta.url);
 
@@ -12,21 +11,16 @@ test('defines the full-screen English video gate', () => {
 
   const source = readFileSync(componentUrl, 'utf8');
 
-  assert.match(source, /shouldShowEnglishIntroOnThisAppLoad/);
+  assert.doesNotMatch(source, /shouldShowEnglishIntroOnThisAppLoad|markEnglishIntroPlayedThisAppLoad/);
   assert.match(source, /VideoArrivalGate/);
   assert.match(source, /videoSrc="\/english_intro_video\.mp4"/);
   assert.match(source, /posterSrc="\/images\/intro-posters\/english-intro\.jpg"/);
   assert.match(source, /subject="English"/);
 });
 
-test('shows once per app load, then stays dismissed across client-side route returns', async () => {
-  assert.equal(existsSync(stateUrl), true, 'english-intro-visit-state.ts must own app-load scoped replay state');
-
-  const visitState = await import(`${stateUrl.href}?case=${Date.now()}`);
-
-  assert.equal(visitState.shouldShowEnglishIntroOnThisAppLoad(), true);
-  visitState.markEnglishIntroPlayedThisAppLoad();
-  assert.equal(visitState.shouldShowEnglishIntroOnThisAppLoad(), false);
+test('renders on every English route entry', () => {
+  const source = readFileSync(componentUrl, 'utf8');
+  assert.match(source, /return <VideoArrivalGate/);
 });
 
 test('mounts the English intro gate on the English page', () => {
