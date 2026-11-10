@@ -1,3 +1,10 @@
+export interface TutorApproachAxes {
+  structured: number;
+  patient: number;
+  traditional: number;
+  supportive: number;
+}
+
 export interface CatalogueTutor {
   id: string;
   tier: 'senior' | 'mid' | 'junior';
@@ -12,6 +19,8 @@ export interface CatalogueTutor {
   scale?: number;      // zoom scale (default 1)
   subjects: string;    // raw subjects string from Ha's data
   hasPrimary: boolean;
+  // Populate only after every tutor has been assessed against the same rubric.
+  approachAxes?: TutorApproachAxes;
   profile?: {
     tags: string[];
     whyDA: string;

@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
-import { ArrowRight, Search, X } from 'lucide-react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { ArrowRight, BookOpen, Search, X } from 'lucide-react';
 import { AnimatePresence } from 'framer-motion';
 import { useSearchParams } from 'react-router-dom';
 import {
@@ -12,15 +12,9 @@ import { FullTutorProfile } from './FullTutorProfile';
 import {
   matchesDiscoveryFilters,
   toDiscoveryRecord,
-  type TutorDiscoveryRecord,
   type TutorSubject,
   type TutorYearLevel,
 } from './tutorDiscovery';
-import {
-  TUTOR_ORBIT_GROUPS,
-  TUTOR_ORBIT_SLOTS,
-  type TutorOrbitSlot,
-} from './tutorOrbitLayout';
 import './tutor-directory.css';
 
 const SUBJECT_FILTERS: Array<{ value: TutorSubject; label: string }> = [
@@ -37,34 +31,8 @@ const YEAR_FILTERS: Array<{ value: TutorYearLevel; label: string }> = [
 ];
 
 const DISCOVERY_RECORDS = TUTORS.map(toDiscoveryRecord);
-const DISCOVERY_RECORDS_BY_ID = new Map(
-  DISCOVERY_RECORDS.map(record => [record.tutor.id, record]),
-);
 
-type OrbitSlotStyle = CSSProperties & {
-  '--td-x': string;
-  '--td-y': string;
-  '--td-size': string;
-  '--td-drift-delay': string;
-  '--td-drift-duration': string;
-};
-
-function orbitSlotStyle(slot: TutorOrbitSlot): OrbitSlotStyle {
-  const placementIndex = [
-    'mathematics',
-    'english',
-    'science',
-    'maths-english-bridge',
-    'maths-science-bridge',
-  ].indexOf(slot.placementId);
-  return {
-    '--td-x': `${slot.x}%`,
-    '--td-y': `${slot.y}%`,
-    '--td-size': `${slot.size}px`,
-    '--td-drift-delay': `${-(placementIndex * 1.1 + slot.placementSlotIndex * 0.37)}s`,
-    '--td-drift-duration': `${8 + ((placementIndex + slot.placementSlotIndex) % 4) * 0.8}s`,
-  };
-}
+const firstName = (name: string) => name.replace(/^(Mr|Mrs|Ms|Miss|Dr)\.?\s+/i, '').split(/\s+/)[0];
 
 function Portrait({ tutor, eager = false }: { tutor: CatalogueTutor; eager?: boolean }) {
   return (
@@ -95,12 +63,8 @@ function FilterToggle<T extends string>({
   );
 }
 
-function selectedSubjects(record: TutorDiscoveryRecord) {
-  return record.tutor.subjects.split('/').map(subject => subject.trim()).filter(Boolean);
-}
-
-function strengthsFor(tutor: CatalogueTutor) {
-  return tutor.profile?.tags ?? [];
+function storyPreview(tutor: CatalogueTutor) {
+  return tutor.profile?.whyDA ?? tutor.tagline;
 }
 
 export function TutorDirectory() {
@@ -118,14 +82,12 @@ export function TutorDirectory() {
     () => DISCOVERY_RECORDS.filter(record => matchesDiscoveryFilters(record, { query, subjects, yearLevels })),
     [query, subjects, yearLevels],
   );
-  const focusedIds = useMemo(() => new Set(focusedRecords.map(record => record.tutor.id)), [focusedRecords]);
-  const selectedRecord = selectedTutorId
-    ? DISCOVERY_RECORDS.find(record => record.tutor.id === selectedTutorId) ?? null
-    : null;
+  const featuredTutor = (selectedTutorId
+    ? TUTORS.find(tutor => tutor.id === selectedTutorId)
+    : focusedRecords[0]?.tutor) ?? TUTORS[0];
   const profileTutor = profileTutorId ? TUTORS.find(tutor => tutor.id === profileTutorId) ?? null : null;
   const profilePosition = profileTutor ? TUTORS.findIndex(tutor => tutor.id === profileTutor.id) : -1;
   const filtersActive = query.trim().length > 0 || subjects.size > 0 || yearLevels.size > 0;
-  const primaryPathwayActive = subjects.has('primary');
 
   useEffect(() => {
     if (!requestedTutorId) return;
@@ -136,8 +98,9 @@ export function TutorDirectory() {
   }, [requestedTutorId]);
 
   useEffect(() => {
-    setSelectedTutorId(current => current && !focusedIds.has(current) ? null : current);
-  }, [focusedIds]);
+    if (!selectedTutorId || focusedRecords.some(record => record.tutor.id === selectedTutorId)) return;
+    setSelectedTutorId(null);
+  }, [focusedRecords, selectedTutorId]);
 
   const toggleSubject = useCallback((subject: TutorSubject) => {
     setSubjects(current => {
@@ -171,28 +134,14 @@ export function TutorDirectory() {
   }, []);
 
   const closeProfile = useCallback(() => setProfileTutorId(null), []);
-
-  const showPreviousProfile = useCallback(() => {
-    if (profilePosition <= 0) return;
-    const previousTutorId = TUTORS[profilePosition - 1].id;
-    setProfileTutorId(previousTutorId);
-    setSelectedTutorId(previousTutorId);
-  }, [profilePosition]);
-
-  const showNextProfile = useCallback(() => {
-    if (profilePosition >= 0 && profilePosition < TUTORS.length - 1) {
-      const nextTutorId = TUTORS[profilePosition + 1].id;
-      setProfileTutorId(nextTutorId);
-      setSelectedTutorId(nextTutorId);
-    }
-  }, [profilePosition]);
+  const selectStory = useCallback((tutor: CatalogueTutor) => setSelectedTutorId(tutor.id), []);
 
   return (
     <section ref={directoryRef} className="tutor-directory" aria-labelledby="tutor-directory-title" tabIndex={-1}>
       <header className="tutor-directory__intro">
         <p>DA Tuition educators</p>
-        <h1 id="tutor-directory-title">Meet the people behind the progress.</h1>
-        <p>Search the whole team, then explore the educators who match your child’s subject and year level.</p>
+        <h1 id="tutor-directory-title">Find the educator who fits your child.</h1>
+        <p>Real people, real teaching philosophies, and a team ready to help your child grow with confidence.</p>
       </header>
 
       <section className="tutor-directory__toolbar" aria-label="Find an educator">
@@ -200,183 +149,78 @@ export function TutorDirectory() {
           <span>Search by educator name</span>
           <span className="tutor-directory__search-control">
             <Search aria-hidden="true" />
-            <input
-              type="search"
-              value={query}
-              onChange={event => setQuery(event.target.value)}
-              placeholder="Start typing a name"
-            />
+            <input type="search" value={query} onChange={event => setQuery(event.target.value)} placeholder="Start typing a name" />
           </span>
         </label>
-
         <fieldset>
           <legend>Subjects</legend>
-          <div>
-            {SUBJECT_FILTERS.map(filter => (
-              <FilterToggle
-                key={filter.value}
-                {...filter}
-                selected={subjects.has(filter.value)}
-                onToggle={toggleSubject}
-              />
-            ))}
-          </div>
+          <div>{SUBJECT_FILTERS.map(filter => <FilterToggle key={filter.value} {...filter} selected={subjects.has(filter.value)} onToggle={toggleSubject} />)}</div>
         </fieldset>
-
         <fieldset>
           <legend>Year level</legend>
-          <div>
-            {YEAR_FILTERS.map(filter => (
-              <FilterToggle
-                key={filter.value}
-                {...filter}
-                selected={yearLevels.has(filter.value)}
-                onToggle={toggleYearLevel}
-              />
-            ))}
-          </div>
+          <div>{YEAR_FILTERS.map(filter => <FilterToggle key={filter.value} {...filter} selected={yearLevels.has(filter.value)} onToggle={toggleYearLevel} />)}</div>
         </fieldset>
-
-        <button className="tutor-directory__reset" type="button" onClick={resetFilters} disabled={!filtersActive}>
-          <X aria-hidden="true" /> Reset
-        </button>
-
-        <p className="tutor-directory__count" aria-live="polite" aria-atomic="true">
-          Focused educators: <strong>{focusedRecords.length}</strong> of {TUTORS.length}
-        </p>
+        <button className="tutor-directory__reset" type="button" onClick={resetFilters} disabled={!filtersActive}><X aria-hidden="true" /> Reset</button>
+        <p className="tutor-directory__count" aria-live="polite" aria-atomic="true"><strong>{focusedRecords.length}</strong> educators to explore</p>
       </section>
 
-      <div
-        className={`tutor-directory__stage${primaryPathwayActive ? ' is-primary-active' : ''}`}
-        aria-label="DA Tuition educators grouped by teaching subject"
-      >
-        <div className="tutor-directory__space-depth" aria-hidden="true">
-          <span />
-          <span />
-          <span />
-        </div>
-
-        <div className="tutor-directory__path-depth">
-          {TUTOR_ORBIT_GROUPS.map(group => (
-            <section
-              key={group.id}
-              className="tutor-directory__system"
-              data-orbit-group={group.id}
-              aria-labelledby={`tutor-system-${group.id}`}
-            >
-              <div className="tutor-directory__system-glow" aria-hidden="true" />
-              <div className="tutor-directory__system-ring tutor-directory__system-ring--outer" aria-hidden="true" />
-              <div className="tutor-directory__system-ring tutor-directory__system-ring--inner" aria-hidden="true" />
-              <h2 id={`tutor-system-${group.id}`} className="tutor-directory__system-label">{group.label}</h2>
-            </section>
-          ))}
-
-          <div className="tutor-directory__bridge-line tutor-directory__bridge-line--maths-english" aria-hidden="true" />
-          <div className="tutor-directory__bridge-line tutor-directory__bridge-line--maths-science" aria-hidden="true" />
-          <div
-            className={`tutor-directory__primary-pathway${primaryPathwayActive ? ' is-active' : ''}`}
-            aria-hidden="true"
-          >
-            <span>Primary pathway · K–6</span>
+      <section className="impact-directory" aria-labelledby="impact-directory-title">
+        <header className="impact-directory__heading">
+          <div>
+            <BookOpen aria-hidden="true" />
+            <p>Book of Impact</p>
           </div>
-        </div>
+          <h2 id="impact-directory-title">Meet the people behind the progress.</h2>
+          <p>Choose an educator to see what they value, how they teach, and the moments that stay with them.</p>
+        </header>
 
-        <div className="tutor-directory__portrait-depth">
-          {TUTOR_ORBIT_SLOTS.map(slot => {
-            const record = DISCOVERY_RECORDS_BY_ID.get(slot.tutorId);
-            if (!record) return null;
-
-            const focused = focusedIds.has(record.tutor.id);
-            const selected = selectedTutorId === record.tutor.id;
-            const partial = !focused
-              && subjects.size > 0
-              && record.subjects.some(subject => subjects.has(subject));
-            const stateClass = focused ? 'is-focused' : partial ? 'is-partial' : 'is-dimmed';
-
-            return (
-              <button
-                key={record.tutor.id}
-                type="button"
-                className={`tutor-directory__portrait-button ${stateClass}${slot.isAnchor ? ' is-anchor' : ''}${selected ? ' is-selected' : ''}`}
-                style={orbitSlotStyle(slot)}
-                data-placement={slot.placementId}
-                aria-label={`Select ${record.tutor.name}`}
-                aria-pressed={selected}
-                onClick={() => setSelectedTutorId(record.tutor.id)}
-              >
-                <span className="tutor-directory__portrait-drift">
-                  {slot.isAnchor && <span className="tutor-directory__anchor-halo" aria-hidden="true" />}
-                  <span className="tutor-directory__portrait-frame">
-                    <Portrait tutor={record.tutor} eager={slot.isAnchor} />
-                  </span>
-                  <span className="tutor-directory__portrait-name">{record.tutor.name}</span>
-                </span>
-              </button>
-            );
-          })}
-        </div>
-
-        <div className={`tutor-directory__focus${selectedRecord ? ' has-selection' : ''}`}>
-          {selectedRecord ? (
-            <>
-              <div className="tutor-directory__focus-portrait"><Portrait tutor={selectedRecord.tutor} eager /></div>
-              <div className="tutor-directory__focus-copy">
-                <h2>{selectedRecord.tutor.name}</h2>
-                <p className="tutor-directory__designation">{selectedRecord.tutor.designation}</p>
-                <p className="tutor-directory__subjects">{selectedSubjects(selectedRecord).join(' · ')}</p>
-                {strengthsFor(selectedRecord.tutor).length > 0 && (
-                  <ul aria-label="Teaching strengths">
-                    {strengthsFor(selectedRecord.tutor).map(strength => <li key={strength}>{strength}</li>)}
-                  </ul>
-                )}
-                <button type="button" onClick={event => openProfile(selectedRecord.tutor, event.currentTarget)}>
-                  View full profile <ArrowRight aria-hidden="true" />
+        {focusedRecords.length > 0 ? (
+          <>
+            <article className="impact-directory__spotlight">
+              <div className="impact-directory__spotlight-photo"><Portrait tutor={featuredTutor} eager /></div>
+              <div className="impact-directory__spotlight-copy">
+                <p className="impact-directory__eyebrow">Educator spotlight</p>
+                <h3>{featuredTutor.name}</h3>
+                <p className="impact-directory__designation">{featuredTutor.designation}</p>
+                <blockquote>“{featuredTutor.tagline}”</blockquote>
+                <p className="impact-directory__story">{storyPreview(featuredTutor)}</p>
+                <ul aria-label={`${featuredTutor.name}'s teaching strengths`}>
+                  {(featuredTutor.profile?.tags ?? []).slice(0, 3).map(tag => <li key={tag}>{tag}</li>)}
+                </ul>
+                <button type="button" onClick={event => openProfile(featuredTutor, event.currentTarget)}>
+                  Read {firstName(featuredTutor.name)}'s story <ArrowRight aria-hidden="true" />
                 </button>
               </div>
-            </>
-          ) : (
-            <div className="tutor-directory__neutral">
-              <span aria-hidden="true">{TUTORS.length}</span>
-              <h2>Explore the DA team</h2>
-              <p>Select any portrait to meet the educator behind it.</p>
-            </div>
-          )}
-        </div>
-      </div>
-
-      <div className="tutor-directory__mobile-list" aria-label="Filtered DA Tuition educators">
-        {focusedRecords.length > 0 ? focusedRecords.map(record => {
-          const selected = selectedTutorId === record.tutor.id;
-          return (
-            <article key={record.tutor.id} className={selected ? 'is-selected' : ''}>
-              <button
-                className="tutor-directory__mobile-select"
-                type="button"
-                aria-pressed={selected}
-                onClick={() => setSelectedTutorId(record.tutor.id)}
-              >
-                <span className="tutor-directory__mobile-portrait"><Portrait tutor={record.tutor} /></span>
-                <span className="tutor-directory__mobile-copy">
-                  <strong>{record.tutor.name}</strong>
-                  <span>{record.tutor.designation}</span>
-                  <small>{selectedSubjects(record).join(' · ')}</small>
-                </span>
-              </button>
-              {selected && (
-                <button className="tutor-directory__mobile-profile" type="button" onClick={event => openProfile(record.tutor, event.currentTarget)}>
-                  View full profile <ArrowRight aria-hidden="true" />
-                </button>
-              )}
             </article>
-          );
-        }) : (
-          <div className="tutor-directory__empty">
-            <h2>No educators match those filters.</h2>
-            <p>Clear the filters to explore the full DA team.</p>
+
+            <div className="impact-directory__stories" aria-label="Educator stories">
+              {focusedRecords.map(record => {
+                const { tutor } = record;
+                const isSelected = tutor.id === featuredTutor.id;
+                return (
+                  <article key={tutor.id} className={`impact-directory__story-card${isSelected ? ' is-selected' : ''}`}>
+                    <button type="button" onClick={() => selectStory(tutor)} aria-pressed={isSelected}>
+                      <span className="impact-directory__card-photo"><Portrait tutor={tutor} /></span>
+                      <span className="impact-directory__card-copy">
+                        <strong>{tutor.name}</strong>
+                        <em>{tutor.designation}</em>
+                        <small>{tutor.subjects}</small>
+                        <span className="impact-directory__card-link">Explore story <ArrowRight aria-hidden="true" /></span>
+                      </span>
+                    </button>
+                  </article>
+                );
+              })}
+            </div>
+          </>
+        ) : (
+          <div className="impact-directory__empty">
+            <h2>No educators match those filters yet.</h2>
+            <p>Try removing a filter, or search by a different name or subject.</p>
             <button type="button" onClick={resetFilters}>Show all educators</button>
           </div>
         )}
-      </div>
+      </section>
 
       <AnimatePresence>
         {profileTutor && (
@@ -384,8 +228,8 @@ export function TutorDirectory() {
             teacher={profileTutor}
             position={profilePosition + 1}
             onClose={closeProfile}
-            onPrevious={showPreviousProfile}
-            onNext={showNextProfile}
+            onPrevious={() => setProfileTutorId(TUTORS[Math.max(0, profilePosition - 1)]?.id ?? null)}
+            onNext={() => setProfileTutorId(TUTORS[Math.min(TUTORS.length - 1, profilePosition + 1)]?.id ?? null)}
             returnFocusTo={profileTriggerRef.current}
             fallbackFocusTo={directoryRef.current}
           />
