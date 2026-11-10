@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { HelmetProvider } from 'react-helmet-async';
 import { AnimatePresence } from "framer-motion";
+import { useEffect } from "react";
 import PageTransition from "@/components/animations/PageTransition";
 import ScrollProgress from "@/components/animations/ScrollProgress";
 import StickyBookButton from "@/components/StickyBookButton";
@@ -52,8 +53,15 @@ import TestimonialDetail from "./pages/TestimonialDetail";
 import ScrollToTop from "./components/ScrollToTop";
 import RouteScrollReset from "./components/RouteScrollReset";
 import BookIntroCalibration from "./pages/BookIntroCalibration";
+import { signalInitialRoutePainted } from "./lib/initialLoader";
 
 const queryClient = new QueryClient();
+
+const InitialLoaderReadySignal = () => {
+  useEffect(() => signalInitialRoutePainted(), []);
+
+  return null;
+};
 
 const AnimatedRoutes = () => {
   const location = useLocation();
@@ -129,6 +137,7 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
+          <InitialLoaderReadySignal />
           <RouteScrollReset />
           <ScrollProgress />
           <StickyBookButton />

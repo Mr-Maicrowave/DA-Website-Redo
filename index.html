@@ -54,52 +54,838 @@
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=Cabin:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
 
     <style>
-      /* Static first-paint loader — pure CSS, no JS dependency, so it
-         appears instantly and is automatically wiped the moment React
-         mounts and calls render() on #root. */
+      /* A pre-React shell: it stays mounted long enough to receive the route's
+         post-paint event, while keeping the actual route immediately beneath it. */
       #initial-loader {
+        --ivory: #f8f2e7;
+        --gold: #b8832f;
+        --navy: #102744;
         position: fixed;
         inset: 0;
         z-index: 9999;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 16px;
-        background: #0f172a;
+        display: grid;
+        place-items: center;
+        overflow: hidden;
+        isolation: isolate;
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+        background:
+          radial-gradient(circle at 50% 47%, rgba(255, 255, 255, .94), transparent 20rem),
+          radial-gradient(circle at 50% 58%, rgba(218, 174, 99, .1), transparent 28rem),
+          var(--ivory);
+        color: var(--navy);
+        transition: opacity 180ms ease, visibility 0s linear 180ms;
       }
-      #initial-loader img {
-        width: 72px;
-        height: 72px;
+      #initial-loader.is-visible {
+        opacity: 1;
+        visibility: visible;
+        transition: opacity 220ms ease;
+      }
+      #initial-loader::before,
+      #initial-loader::after {
+        content: '';
+        position: absolute;
+        pointer-events: none;
+      }
+      #initial-loader::before {
+        inset: 0;
+        z-index: -2;
+        opacity: .28;
+        background-image: radial-gradient(rgba(77, 56, 27, .18) .55px, transparent .7px);
+        background-size: 7px 7px;
+        mix-blend-mode: multiply;
+      }
+      #initial-loader::after {
+        z-index: 4;
+        left: 50%;
+        top: 47%;
+        width: 32vmax;
+        aspect-ratio: 1;
+        border-radius: 50%;
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(.04);
+        background: radial-gradient(circle, #fffdf8 0 18%, rgba(255, 250, 238, .94) 39%, rgba(247, 233, 202, .58) 58%, transparent 73%);
+      }
+      #initial-loader.is-ready:not(.is-completing) {
+        animation: initial-loader-dismiss 760ms cubic-bezier(.65, 0, .2, 1) forwards;
+      }
+      #initial-loader.is-ready:not(.is-completing)::after {
+        animation: initial-loader-reveal 720ms cubic-bezier(.2, .7, .25, 1) forwards;
+      }
+      .initial-loader__field,
+      .initial-loader__fragment {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+      }
+      .initial-loader__fragment { opacity: 0; }
+      /* The crest is deliberately untouched; this is the living construction
+         system around it. Its incomplete paths read as drafted geometry, not
+         as a conventional loading spinner. */
+      .initial-loader__orbit,
+      .initial-loader__orbit-track,
+      .initial-loader__orbit-radial,
+      .initial-loader__orbit-intersection {
+        position: absolute;
+        left: 50%;
+        top: 47%;
+        pointer-events: none;
+      }
+      .initial-loader__orbit {
+        width: clamp(24rem, 43vw, 36rem);
+        height: clamp(18rem, 32vw, 27rem);
+        border: 1px solid rgba(166, 115, 43, .24);
+        border-radius: 50%;
+        opacity: 0;
+        transform: translate(-50%, -50%) rotate(-12deg);
+        animation: initial-loader-orbit-appear 840ms cubic-bezier(.2,.78,.25,1) 1.06s forwards;
+      }
+      .initial-loader__orbit--outer {
+        border-right-color: transparent;
+        border-bottom-color: transparent;
+      }
+      .initial-loader__orbit--middle {
+        width: clamp(21rem, 37vw, 31rem);
+        height: clamp(20rem, 35vw, 29rem);
+        border-color: rgba(166, 115, 43, .18);
+        border-left-color: transparent;
+        border-bottom-color: transparent;
+        transform: translate(-50%, -50%) rotate(27deg);
+        animation-delay: 1.28s;
+      }
+      .initial-loader__orbit--inner {
+        width: clamp(26rem, 45vw, 34rem);
+        height: clamp(20rem, 35vw, 28rem);
+        border-color: rgba(166, 115, 43, .2);
+        border-top-color: transparent;
+        border-right-color: transparent;
+        transform: translate(-50%, -50%) rotate(-31deg);
+        animation-delay: 1.46s;
+      }
+      .initial-loader__orbit-track {
+        width: clamp(24rem, 43vw, 36rem);
+        height: clamp(18rem, 32vw, 27rem);
+        transform: translate(-50%, -50%);
+        animation: initial-loader-orbit-turn 6.1s linear 1.16s infinite;
+      }
+      .initial-loader__orbit-tracer {
+        position: absolute;
+        left: 50%;
+        top: -4px;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #c78b30;
+        box-shadow: 0 0 0 2px rgba(255, 249, 231, .9), 0 0 .8rem .18rem rgba(190, 133, 38, .48);
+      }
+      .initial-loader__orbit-tracer::after {
+        content: '';
+        position: absolute;
+        right: 5px;
+        top: 3px;
+        width: 1.75rem;
+        height: 1px;
+        transform-origin: right center;
+        background: linear-gradient(90deg, transparent, rgba(196, 139, 47, .54));
+      }
+      .initial-loader__orbit-radial {
+        width: clamp(10rem, 18vw, 15rem);
+        height: 1px;
+        transform-origin: left center;
+        transform: rotate(-23deg);
+        background: linear-gradient(90deg, rgba(185, 128, 35, 0), rgba(185, 128, 35, .42), rgba(185, 128, 35, 0));
+        opacity: 0;
+        animation: initial-loader-radial-pulse 9.7s ease-in-out 2.3s infinite;
+      }
+      .initial-loader__orbit-intersection {
+        width: 4px;
+        height: 4px;
+        border-radius: 50%;
+        background: rgba(185, 128, 35, .92);
+        box-shadow: 0 0 .55rem rgba(185, 128, 35, .45);
+        opacity: 0;
+        transform: translate(-50%, -50%);
+        animation: initial-loader-intersection-pulse 7.9s ease-in-out 2.5s infinite;
+      }
+      .initial-loader__orbit-intersection--upper { margin: -10.4rem 0 0 12.6rem; }
+      .initial-loader__orbit-intersection--lower { margin: 9.5rem 0 0 -13rem; animation-delay: 5.3s; }
+      .initial-loader__fragment--arc-left {
+        left: -19vw;
+        top: 12vh;
+        width: min(45vw, 36rem);
+        height: min(45vw, 36rem);
+        border: 1.15px solid rgba(166, 115, 43, .14);
+        border-right-color: transparent;
+        border-bottom-color: transparent;
+        border-radius: 50%;
+        transform: rotate(-26deg);
+        animation: initial-loader-fragment-in 2.8s ease-out 5.15s forwards, initial-loader-arc-drift 21s ease-in-out 8.2s infinite alternate;
+      }
+      .initial-loader__fragment--arc-right {
+        right: -13vw;
+        bottom: 7vh;
+        width: min(32vw, 27rem);
+        height: min(32vw, 27rem);
+        border: 1.15px solid rgba(166, 115, 43, .13);
+        border-left-color: transparent;
+        border-top-color: transparent;
+        border-radius: 50%;
+        transform: rotate(19deg);
+        animation: initial-loader-fragment-in 3.2s ease-out 6.9s forwards, initial-loader-arc-drift 27s ease-in-out 10.2s infinite alternate-reverse;
+      }
+      .initial-loader__fragment--tangent {
+        left: 11vw;
+        bottom: 18vh;
+        width: min(13rem, 20vw);
+        height: 5rem;
+        border-top: 1.15px solid rgba(166, 115, 43, .16);
+        border-right: 1.15px solid rgba(166, 115, 43, .11);
+        transform: rotate(-13deg);
+        animation: initial-loader-fragment-in 3s ease-out 7.55s forwards;
+      }
+      .initial-loader__fragment--curve {
+        right: 12vw;
+        top: 21vh;
+        width: min(12rem, 19vw);
+        height: 4.5rem;
+        border-top: 1.15px solid rgba(166, 115, 43, .14);
+        border-radius: 50%;
+        transform: rotate(18deg);
+        animation: initial-loader-fragment-in 3.2s ease-out 8.55s forwards;
+      }
+      .initial-loader__fragment--proportion {
+        right: 18vw;
+        bottom: 20vh;
+        width: 7rem;
+        height: 4rem;
+        border-left: 1.15px solid rgba(166, 115, 43, .14);
+        border-bottom: 1.15px solid rgba(166, 115, 43, .14);
+        animation: initial-loader-fragment-in 3.5s ease-out 9.45s forwards;
+      }
+      .initial-loader__fragment--points {
+        left: 23vw;
+        top: 24vh;
+        width: 3px;
+        height: 3px;
+        border-radius: 50%;
+        background: rgba(184, 131, 47, .72);
+        box-shadow: 9rem 4rem 0 rgba(184, 131, 47, .36), 38rem -1rem 0 rgba(184, 131, 47, .3), 23rem 19rem 0 rgba(184, 131, 47, .24);
+        animation: initial-loader-fragment-in 2.5s ease-out 5.85s forwards, initial-loader-point-breathe 13s ease-in-out 9s infinite alternate;
+      }
+      .initial-loader__field-point {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: 5px;
+        aspect-ratio: 1;
+        border-radius: 50%;
+        background: var(--gold);
+        box-shadow: 0 0 18px 4px rgba(199, 142, 43, .32);
+        transform: translate(-50%, -50%);
+        animation: initial-loader-spark 1.4s ease-out both;
+      }
+      .initial-loader__composition {
+        position: relative;
+        z-index: 1;
+        display: grid;
+        justify-items: center;
+        padding: 2rem 1.25rem 1.75rem;
+        transform: translateY(-.4rem);
+      }
+      .initial-loader__crest {
+        position: relative;
+        width: clamp(15.5rem, 29vw, 23rem);
+        /* Crop below the crest: the source file is a full lock-up, but the
+           loading composition deliberately uses only its unchanged emblem. */
+        /* One stable artboard: this small shared lower overscan clears the
+           source crest point before the wordmark begins, for every layer. */
+        aspect-ratio: 7 / 6;
+        height: auto;
+        overflow: visible;
+        filter: drop-shadow(0 1.4rem 1.6rem rgba(61, 43, 20, .18));
+        transform: translateZ(0);
+      }
+      .initial-loader__crest::after {
+        content: '';
+        position: absolute;
+        left: 50%;
+        bottom: -4%;
+        width: 72%;
+        height: 12%;
+        transform: translateX(-50%);
+        border-radius: 50%;
+        background: radial-gradient(ellipse, rgba(188, 129, 42, .34), transparent 69%);
+        filter: blur(11px);
+        z-index: -1;
+        animation: initial-loader-ground-glow 15.6s ease-in-out 3s infinite alternate;
+      }
+      .initial-loader__logo-layer {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: auto;
+        transform: translateY(-.5%);
         object-fit: contain;
-        animation: initial-loader-pulse 1.6s ease-in-out infinite;
+        object-position: top center;
+        transform-origin: 50% 50%;
+        pointer-events: none;
       }
-      #initial-loader p {
-        margin: 0;
-        font-family: Georgia, 'Times New Roman', serif;
-        font-size: 13px;
-        font-weight: 500;
-        letter-spacing: 0.32em;
+      .initial-loader__shield-interior {
+        display: none;
+      }
+      .initial-loader__logo-layer--outline-top {
+        z-index: 2;
+        clip-path: none;
+        opacity: 0;
+        transform-origin: 50% 8%;
+        animation: initial-loader-trace-top 500ms cubic-bezier(.25, .8, .28, 1) .62s forwards;
+      }
+      .initial-loader__logo-layer--outline-left {
+        z-index: 2;
+        /* Keep the mask on the shield stroke itself: the source lock-up's
+           wreath starts just outside this perimeter. */
+        clip-path: none;
+        opacity: 0;
+        transform-origin: 22% 13%;
+        animation: initial-loader-trace-side 520ms cubic-bezier(.25, .8, .28, 1) .7s forwards;
+      }
+      .initial-loader__logo-layer--outline-right {
+        z-index: 2;
+        clip-path: none;
+        opacity: 0;
+        transform-origin: 78% 13%;
+        animation: initial-loader-trace-side 520ms cubic-bezier(.25, .8, .28, 1) .76s forwards;
+      }
+      .initial-loader__logo-layer--outline-base {
+        z-index: 2;
+        clip-path: none;
+        opacity: 0;
+        transform-origin: 50% 90%;
+        animation: initial-loader-trace-base 360ms ease-out 1.05s forwards;
+      }
+      .initial-loader__logo-layer--d {
+        z-index: 3;
+        /* A single shape-aware contour follows the navy D around the gold A,
+           so the first monogram event reads as D rather than a logo crop. */
+        /* Generous source-aligned overscan protects the D's serifs and bowl
+           throughout its fade; colour isolation, not a tight crop, separates
+           it from the A. */
+        clip-path: none;
+        filter: none;
+        opacity: 0;
+        animation: initial-loader-d 620ms cubic-bezier(.25, .8, .28, 1) 1.72s forwards;
+      }
+      .initial-loader__logo-layer--a {
+        z-index: 5;
+        /* The gold A is isolated to its own form and does not reveal the
+           surrounding navy field before its dedicated stage. */
+        clip-path: none;
+        opacity: 0;
+        animation: initial-loader-a 620ms cubic-bezier(.25, .8, .28, 1) 2.48s forwards;
+      }
+      .initial-loader__logo-layer--laurel-left {
+        clip-path: none;
+        transform-origin: 16% 88%;
+        opacity: 0;
+        z-index: 2;
+        animation: initial-loader-laurel-left 820ms cubic-bezier(.2, .75, .25, 1) 3.23s forwards;
+      }
+      .initial-loader__logo-layer--laurel-right {
+        clip-path: none;
+        transform-origin: 84% 88%;
+        opacity: 0;
+        z-index: 2;
+        animation: initial-loader-laurel-right 820ms cubic-bezier(.2, .75, .25, 1) 3.36s forwards;
+      }
+      .initial-loader__logo-layer--star {
+        clip-path: none;
+        opacity: 0;
+        z-index: 6;
+        animation: initial-loader-star 480ms ease-out 4.18s forwards, initial-loader-star-breathe 14s ease-in-out 5.3s infinite alternate;
+      }
+      .initial-loader__logo-layer--complete {
+        z-index: 7;
+        opacity: 0;
+        animation: initial-loader-complete 420ms ease-out 4.42s forwards;
+      }
+      .initial-loader__crest-highlight {
+        position: absolute;
+        inset: 7% 17% 12%;
+        border: 1px solid transparent;
+        border-radius: 44% 44% 38% 38% / 18% 18% 42% 42%;
+        opacity: 0;
+        background: linear-gradient(125deg, transparent 38%, rgba(255, 246, 214, .96) 49%, transparent 60%) border-box;
+        -webkit-mask: linear-gradient(#000 0 0) padding-box, linear-gradient(#000 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        z-index: 8;
+        animation: initial-loader-highlight 1.15s ease-out 4.45s both;
+      }
+      .initial-loader__status {
+        position: relative;
+        margin: .9rem 0 0;
+        /* The loader is part of the existing DA system: this is the same
+           small, tracked body treatment used for site chapter labels. */
+        font-family: var(--font-body);
+        font-size: clamp(.6rem, 1.2vw, .72rem);
+        font-weight: 700;
+        letter-spacing: .22em;
         text-transform: uppercase;
-        color: rgba(212, 175, 55, 0.85);
+        color: rgba(139, 91, 29, .82);
+        opacity: 0;
+        animation: initial-loader-copy 520ms ease-out 4.62s forwards;
       }
-      @keyframes initial-loader-pulse {
-        0%, 100% { opacity: 0.55; transform: scale(0.97); }
-        50% { opacity: 1; transform: scale(1); }
+      .initial-loader__status::after {
+        content: '';
+        display: block;
+        width: 4.8rem;
+        height: 1px;
+        margin: .55rem auto 0;
+        background: linear-gradient(90deg, rgba(166,115,43,.16), rgba(193,135,43,.84), rgba(166,115,43,.16));
+        background-size: 220% 100%;
+        animation: initial-loader-status-glint 6.1s ease-in-out 2.15s infinite;
+      }
+      #initial-loader.is-ready .initial-loader__crest {
+        animation: initial-loader-crest-exit 700ms cubic-bezier(.25, .8, .28, 1) forwards;
+      }
+      #initial-loader.is-ready .initial-loader__status { animation: initial-loader-copy-exit 260ms ease-out forwards; }
+      #initial-loader.is-ready .initial-loader__crest-highlight { animation: initial-loader-exit-highlight 460ms ease-out forwards; }
+      #initial-loader.is-ready .initial-loader__logo-layer--star { animation: initial-loader-exit-star 360ms ease-out forwards; }
+      #initial-loader.is-ready .initial-loader__field { animation: initial-loader-field-exit 580ms ease-out forwards; }
+      /* Readiness turns the active tracer into the handoff: it acknowledges
+         the route, curves into the crest, then releases the real page below. */
+      #initial-loader.is-completing {
+        -webkit-mask-image: radial-gradient(circle at 50% 47%, transparent 0, #000 .1px);
+        mask-image: radial-gradient(circle at 50% 47%, transparent 0, #000 .1px);
+        animation: initial-loader-radial-unmask 440ms cubic-bezier(.2,.78,.2,1) 570ms forwards;
+      }
+      #initial-loader.is-completing::after {
+        animation: initial-loader-central-release 440ms cubic-bezier(.2,.78,.2,1) 570ms forwards;
+      }
+      #initial-loader.is-completing .initial-loader__orbit-track {
+        animation: initial-loader-tracer-to-core 480ms cubic-bezier(.35,.02,.18,1) forwards;
+      }
+      #initial-loader.is-completing .initial-loader__orbit-tracer {
+        box-shadow: 0 0 0 2px rgba(255, 252, 241, .95), 0 0 1.15rem .3rem rgba(211, 157, 56, .68);
+      }
+      #initial-loader.is-completing .initial-loader__orbit-tracer::after {
+        width: 2.5rem;
+        background: linear-gradient(90deg, transparent, rgba(232, 190, 103, .88));
+      }
+      #initial-loader.is-completing .initial-loader__orbit {
+        opacity: 0;
+        transition: opacity 360ms ease, transform 420ms cubic-bezier(.2,.78,.25,1);
+      }
+      #initial-loader.is-completing .initial-loader__orbit--outer { transform: translate(-50%, -50%) rotate(-12deg) scale(.88); }
+      #initial-loader.is-completing .initial-loader__orbit--middle { transform: translate(-50%, -50%) rotate(27deg) scale(.88); }
+      #initial-loader.is-completing .initial-loader__orbit--inner { transform: translate(-50%, -50%) rotate(-31deg) scale(.88); }
+      #initial-loader.is-completing .initial-loader__orbit-radial,
+      #initial-loader.is-completing .initial-loader__orbit-intersection,
+      #initial-loader.is-completing .initial-loader__fragment { animation: none; opacity: 0; transition: opacity 260ms ease; }
+      #initial-loader.is-completing .initial-loader__impact { animation: initial-loader-centre-impact 150ms ease-out 480ms forwards; }
+      #initial-loader.is-completing.is-ready {
+        animation: none;
+        visibility: hidden;
+        opacity: 0;
+        -webkit-mask-image: none;
+        mask-image: none;
+      }
+      /* Local review states are unreachable on deployed hosts; they make each
+         storyboard checkpoint inspectable without extending real load time. */
+      #initial-loader.is-review-initial .initial-loader__crest,
+      #initial-loader.is-review-initial .initial-loader__status { opacity: 0 !important; animation: none !important; }
+      #initial-loader.is-review-construction .initial-loader__logo-layer,
+      #initial-loader.is-review-construction .initial-loader__shield-interior,
+      #initial-loader.is-review-construction .initial-loader__shield-interior-fill,
+      #initial-loader.is-review-construction .initial-loader__status { animation: none !important; opacity: 0; }
+      #initial-loader.is-review-construction .initial-loader__logo-layer--outline-top,
+      #initial-loader.is-review-construction .initial-loader__logo-layer--outline-left,
+      #initial-loader.is-review-construction .initial-loader__logo-layer--outline-right,
+      #initial-loader.is-review-construction .initial-loader__logo-layer--outline-base,
+      #initial-loader.is-review-construction .initial-loader__shield-interior,
+      #initial-loader.is-review-construction .initial-loader__shield-interior-fill { opacity: 1; }
+      #initial-loader.is-review-assembly .initial-loader__logo-layer,
+      #initial-loader.is-review-assembly .initial-loader__shield-interior,
+      #initial-loader.is-review-assembly .initial-loader__shield-interior-fill,
+      #initial-loader.is-review-assembly .initial-loader__status { animation: none !important; }
+      #initial-loader.is-review-assembly .initial-loader__shield-interior,
+      #initial-loader.is-review-assembly .initial-loader__shield-interior-fill,
+      #initial-loader.is-review-assembly .initial-loader__logo-layer--outline-top,
+      #initial-loader.is-review-assembly .initial-loader__logo-layer--outline-left,
+      #initial-loader.is-review-assembly .initial-loader__logo-layer--outline-right,
+      #initial-loader.is-review-assembly .initial-loader__logo-layer--outline-base,
+      #initial-loader.is-review-assembly .initial-loader__logo-layer--d,
+      #initial-loader.is-review-assembly .initial-loader__logo-layer--a,
+      #initial-loader.is-review-assembly .initial-loader__logo-layer--laurel-left,
+      #initial-loader.is-review-assembly .initial-loader__logo-layer--laurel-right { opacity: 1; }
+      #initial-loader.is-review-assembly .initial-loader__logo-layer--star,
+      #initial-loader.is-review-assembly .initial-loader__logo-layer--complete,
+      #initial-loader.is-review-assembly .initial-loader__status { opacity: 0; }
+      #initial-loader.is-review-d .initial-loader__logo-layer,
+      #initial-loader.is-review-d .initial-loader__shield-interior,
+      #initial-loader.is-review-d .initial-loader__shield-interior-fill,
+      #initial-loader.is-review-d .initial-loader__status { animation: none !important; opacity: 0; }
+      #initial-loader.is-review-d .initial-loader__shield-interior,
+      #initial-loader.is-review-d .initial-loader__shield-interior-fill,
+      #initial-loader.is-review-d .initial-loader__logo-layer--outline-top,
+      #initial-loader.is-review-d .initial-loader__logo-layer--outline-left,
+      #initial-loader.is-review-d .initial-loader__logo-layer--outline-right,
+      #initial-loader.is-review-d .initial-loader__logo-layer--outline-base,
+      #initial-loader.is-review-d .initial-loader__logo-layer--d { opacity: 1; }
+      #initial-loader.is-review-a .initial-loader__logo-layer,
+      #initial-loader.is-review-a .initial-loader__shield-interior,
+      #initial-loader.is-review-a .initial-loader__shield-interior-fill,
+      #initial-loader.is-review-a .initial-loader__status { animation: none !important; opacity: 0; }
+      #initial-loader.is-review-a .initial-loader__shield-interior,
+      #initial-loader.is-review-a .initial-loader__shield-interior-fill,
+      #initial-loader.is-review-a .initial-loader__logo-layer--outline-top,
+      #initial-loader.is-review-a .initial-loader__logo-layer--outline-left,
+      #initial-loader.is-review-a .initial-loader__logo-layer--outline-right,
+      #initial-loader.is-review-a .initial-loader__logo-layer--outline-base,
+      #initial-loader.is-review-a .initial-loader__logo-layer--d,
+      #initial-loader.is-review-a .initial-loader__logo-layer--a { opacity: 1; }
+      #initial-loader.is-review-laurels .initial-loader__logo-layer,
+      #initial-loader.is-review-laurels .initial-loader__shield-interior,
+      #initial-loader.is-review-laurels .initial-loader__shield-interior-fill,
+      #initial-loader.is-review-laurels .initial-loader__status { animation: none !important; opacity: 0; }
+      #initial-loader.is-review-laurels .initial-loader__shield-interior,
+      #initial-loader.is-review-laurels .initial-loader__shield-interior-fill,
+      #initial-loader.is-review-laurels .initial-loader__logo-layer--outline-top,
+      #initial-loader.is-review-laurels .initial-loader__logo-layer--outline-left,
+      #initial-loader.is-review-laurels .initial-loader__logo-layer--outline-right,
+      #initial-loader.is-review-laurels .initial-loader__logo-layer--outline-base,
+      #initial-loader.is-review-laurels .initial-loader__logo-layer--d,
+      #initial-loader.is-review-laurels .initial-loader__logo-layer--a,
+      #initial-loader.is-review-laurels .initial-loader__logo-layer--laurel-left,
+      #initial-loader.is-review-laurels .initial-loader__logo-layer--laurel-right { opacity: 1; }
+      #initial-loader.is-review-complete .initial-loader__logo-layer,
+      #initial-loader.is-review-complete .initial-loader__shield-interior,
+      #initial-loader.is-review-complete .initial-loader__shield-interior-fill,
+      #initial-loader.is-review-complete .initial-loader__status { animation: none !important; opacity: 1; }
+      @keyframes initial-loader-spark { 0% { opacity: 0; transform: translate(-50%, -50%) scale(.2); } 45% { opacity: 1; } 100% { opacity: .72; transform: translate(-50%, -50%) scale(1); } }
+      /* Every ambient fragment enters once and then remains available for its
+         own long, asynchronous drift/breathing motion—assembly never loops. */
+      @keyframes initial-loader-fragment-in { 0% { opacity: 0; } 62% { opacity: 1; } 100% { opacity: .55; } }
+      @keyframes initial-loader-orbit-appear { from { opacity: 0; } to { opacity: 1; } }
+      @keyframes initial-loader-orbit-turn { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg); } }
+      @keyframes initial-loader-radial-pulse { 0%, 27%, 100% { opacity: 0; transform: rotate(-23deg) scaleX(.25); } 38% { opacity: .8; transform: rotate(-23deg) scaleX(1); } 58% { opacity: .16; transform: rotate(-23deg) scaleX(.72); } }
+      @keyframes initial-loader-intersection-pulse { 0%, 29%, 100% { opacity: .08; transform: translate(-50%, -50%) scale(.65); } 39% { opacity: 1; transform: translate(-50%, -50%) scale(1.35); } 53% { opacity: .22; transform: translate(-50%, -50%) scale(.85); } }
+      @keyframes initial-loader-status-glint { 0%, 22%, 100% { background-position: 100% 0; opacity: .5; } 38% { background-position: 0 0; opacity: 1; } 60% { background-position: -100% 0; opacity: .6; } }
+      @keyframes initial-loader-tracer-to-core {
+        0%, 34% { transform: var(--tracer-current-transform); filter: brightness(1) saturate(1); opacity: 1; }
+        51% { filter: brightness(1.32) saturate(1.18); opacity: 1; }
+        100% { transform: translate(-50%, -50%) rotate(158deg) scale(.026); filter: brightness(1.7) saturate(1.08); opacity: .98; }
+      }
+      @keyframes initial-loader-centre-impact {
+        0% { opacity: 0; transform: translate(-50%, -50%) scale(.18); }
+        38% { opacity: 1; transform: translate(-50%, -50%) scale(.72); }
+        100% { opacity: 0; transform: translate(-50%, -50%) scale(1.65); }
+      }
+      @keyframes initial-loader-central-release {
+        0% { opacity: 0; transform: translate(-50%, -50%) scale(.05); }
+        20% { opacity: .94; }
+        100% { opacity: 1; transform: translate(-50%, -50%) scale(4.1); }
+      }
+      @keyframes initial-loader-radial-unmask {
+        from { -webkit-mask-image: radial-gradient(circle at 50% 47%, transparent 0, #000 .1px); mask-image: radial-gradient(circle at 50% 47%, transparent 0, #000 .1px); }
+        to { -webkit-mask-image: radial-gradient(circle at 50% 47%, transparent 150vmax, #000 calc(150vmax + 2px)); mask-image: radial-gradient(circle at 50% 47%, transparent 150vmax, #000 calc(150vmax + 2px)); }
+      }
+      @keyframes initial-loader-arc-drift { from { rotate: -6deg; } to { rotate: 6deg; } }
+      @keyframes initial-loader-point-breathe { from { opacity: .46; transform: scale(.86); filter: drop-shadow(0 0 0 rgba(184,131,47,0)); } to { opacity: 1; transform: scale(1.32); filter: drop-shadow(0 0 .45rem rgba(184,131,47,.45)); } }
+      @keyframes initial-loader-trace-top { from { opacity: 0; transform: scaleX(.05); } to { opacity: 1; transform: scaleX(1); } }
+      @keyframes initial-loader-trace-side { from { opacity: 0; transform: scaleY(.06); } to { opacity: 1; transform: scaleY(1); } }
+      @keyframes initial-loader-trace-base { from { opacity: 0; transform: scale(.2); } to { opacity: 1; transform: scale(1); } }
+      @keyframes initial-loader-interior { to { opacity: 1; } }
+      @keyframes initial-loader-d { from { opacity: 0; } to { opacity: 1; } }
+      @keyframes initial-loader-a { from { opacity: 0; transform: translateY(6%); } to { opacity: 1; transform: translateY(0); } }
+      @keyframes initial-loader-laurel-left { from { opacity: 0; clip-path: polygon(0 88%, 0 88%, 0 96%, 0 96%); } to { opacity: 1; clip-path: polygon(0 26%, 31% 25%, 43% 96%, 0 96%); } }
+      @keyframes initial-loader-laurel-right { from { opacity: 0; clip-path: polygon(100% 88%, 100% 88%, 100% 96%, 100% 96%); } to { opacity: 1; clip-path: polygon(69% 25%, 100% 26%, 100% 96%, 57% 96%); } }
+      @keyframes initial-loader-star { from { opacity: 0; transform: translateY(5%) scale(.5); } 62% { opacity: 1; transform: translateY(-.5%) scale(1.12); } to { opacity: 1; transform: translateY(-.5%) scale(1); } }
+      @keyframes initial-loader-star-breathe { from { filter: brightness(1); } to { filter: brightness(1.13); } }
+      @keyframes initial-loader-complete { to { opacity: 1; } }
+      @keyframes initial-loader-highlight { 0% { opacity: 0; } 40% { opacity: .84; } 100% { opacity: 0; } }
+      @keyframes initial-loader-copy { to { opacity: 1; } }
+      @keyframes initial-loader-ground-glow { from { opacity: .44; transform: translateX(-50%) scale(.9); } to { opacity: .78; transform: translateX(-50%) scale(1.1); } }
+      @keyframes initial-loader-crest-exit { 0% { transform: translateY(0) scale(1); filter: drop-shadow(0 1.4rem 1.6rem rgba(61, 43, 20, .18)); } 40% { transform: translateY(-.25rem) scale(1.035); } 100% { transform: translateY(-1rem) scale(1.23); filter: drop-shadow(0 1.8rem 2.2rem rgba(61, 43, 20, .06)); } }
+      @keyframes initial-loader-copy-exit { to { opacity: 0; transform: translateY(.3rem); } }
+      @keyframes initial-loader-exit-highlight { 0% { opacity: .2; } 45% { opacity: 1; } 100% { opacity: 0; } }
+      @keyframes initial-loader-exit-star { to { opacity: 1; filter: brightness(1.8); transform: scale(1.16); } }
+      @keyframes initial-loader-field-exit { to { opacity: 0; transform: scale(1.08); } }
+      @keyframes initial-loader-reveal { 14% { opacity: .5; } 100% { opacity: 1; transform: translate(-50%, -50%) scale(3.8); } }
+      @keyframes initial-loader-dismiss { 0%, 55% { opacity: 1; visibility: visible; } 100% { opacity: 0; visibility: hidden; } }
+      /* Crest Awakens: the complete emblem is always geometrically present.
+         Semantic layers only change material/contrast; no artwork is sliced. */
+      .initial-loader__emboss {
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        opacity: 0;
+        filter: grayscale(1) sepia(.35) brightness(1.5) contrast(.65) drop-shadow(1px 1px 0 rgba(160, 122, 70, .16)) drop-shadow(-1px -1px 0 rgba(255, 255, 255, .84));
+        animation: initial-loader-emboss 420ms ease-out .3s forwards;
+      }
+      .initial-loader__logo-layer--outline-top,
+      .initial-loader__logo-layer--outline-left,
+      .initial-loader__logo-layer--outline-right,
+      .initial-loader__logo-layer--outline-base { animation: initial-loader-awaken 460ms cubic-bezier(.22,.8,.25,1) .65s forwards; transform: none; }
+      .initial-loader__logo-layer--d { animation: initial-loader-awaken 420ms cubic-bezier(.22,.8,.25,1) .95s forwards; transform: none; }
+      .initial-loader__logo-layer--a { animation: initial-loader-awaken 420ms cubic-bezier(.22,.8,.25,1) 1.2s forwards; transform: none; }
+      .initial-loader__logo-layer--laurel-left { animation: initial-loader-awaken 480ms cubic-bezier(.22,.8,.25,1) 1.45s forwards; transform: none; }
+      .initial-loader__logo-layer--laurel-right { animation: initial-loader-awaken 480ms cubic-bezier(.22,.8,.25,1) 1.56s forwards; transform: none; }
+      .initial-loader__logo-layer--star { animation: initial-loader-awaken 360ms cubic-bezier(.22,.8,.25,1) 1.85s forwards, initial-loader-star-breathe 14s ease-in-out 3s infinite alternate; transform: none; }
+      .initial-loader__logo-layer--complete { animation: initial-loader-complete 300ms ease-out 2.08s forwards; }
+      .initial-loader__crest-highlight { animation-delay: 2.08s; }
+      .initial-loader__status { animation-delay: 2.25s; }
+      @keyframes initial-loader-emboss { to { opacity: .16; } }
+      @keyframes initial-loader-awaken { from { opacity: 0; filter: brightness(1.28) saturate(.34); } to { opacity: 1; filter: none; } }
+      /* The Crest Arrives: the emblem is one pristine, crest-only source.
+         All legacy semantic construction layers are retired from rendering. */
+      .initial-loader__emboss,
+      .initial-loader__shield-interior,
+      .initial-loader__logo-layer--outline-top,
+      .initial-loader__logo-layer--outline-left,
+      .initial-loader__logo-layer--outline-right,
+      .initial-loader__logo-layer--outline-base,
+      .initial-loader__logo-layer--d,
+      .initial-loader__logo-layer--a,
+      .initial-loader__logo-layer--laurel-left,
+      .initial-loader__logo-layer--laurel-right,
+      .initial-loader__logo-layer--star { display: none; }
+      .initial-loader__logo-layer--complete {
+        z-index: 4;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        opacity: 0;
+        filter: blur(5px) brightness(1.08);
+        transform: translateY(.35rem) scale(.94);
+        transform-origin: 50% 50%;
+        animation: initial-loader-crest-arrives 640ms cubic-bezier(.2,.78,.25,1) .42s forwards;
+      }
+      .initial-loader__impact {
+        position: absolute;
+        z-index: 9;
+        left: 50%;
+        top: 48%;
+        width: 1rem;
+        height: 1rem;
+        border-radius: 50%;
+        pointer-events: none;
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(.18);
+        background: radial-gradient(circle, #fffdf8 0 12%, #f8e8c0 24%, #e7c46a 48%, rgba(201,162,77,0) 72%);
+        box-shadow: 0 0 1.7rem .75rem rgba(231, 196, 106, .48);
+      }
+      .initial-loader__impact::after {
+        content: '';
+        position: absolute;
+        inset: -1.1rem;
+        border: 1px solid rgba(231, 196, 106, .78);
+        border-radius: 50%;
+      }
+      .initial-loader__status { animation-delay: 1.72s; }
+      .initial-loader__crest-highlight { animation-delay: 1.15s; }
+      .initial-loader__fragment--arc-left { animation-delay: 1.05s, 4.8s; }
+      .initial-loader__fragment--points { animation-delay: 1.35s, 5.6s; }
+      .initial-loader__fragment--tangent { animation-delay: 1.9s; }
+      .initial-loader__fragment--arc-right { animation-delay: 2.75s, 6.6s; }
+      .initial-loader__fragment--curve { animation-delay: 3.8s; }
+      .initial-loader__fragment--proportion { animation-delay: 5.4s; }
+      .initial-loader__fragment--upper-construction {
+        right: 16vw;
+        top: 14vh;
+        width: min(11rem, 18vw);
+        height: min(7rem, 12vw);
+        border-top: 1px solid rgba(166, 115, 43, .16);
+        border-right: 1px solid rgba(166, 115, 43, .13);
+        background: linear-gradient(32deg, transparent 49.5%, rgba(166,115,43,.13) 50%, transparent 50.5%);
+        transform: rotate(8deg);
+        animation: initial-loader-fragment-in 2.2s ease-out 1.45s forwards;
+      }
+      .initial-loader__fragment--lower-curve {
+        left: 13vw;
+        bottom: 13vh;
+        width: min(15rem, 23vw);
+        height: 6rem;
+        border-top: 1px solid rgba(166, 115, 43, .17);
+        border-radius: 50%;
+        transform: rotate(-18deg);
+        animation: initial-loader-fragment-in 2.8s ease-out 2.25s forwards;
+      }
+      .initial-loader__fragment--lower-grid {
+        right: 13vw;
+        bottom: 14vh;
+        width: 8rem;
+        height: 5rem;
+        border-left: 1px solid rgba(166,115,43,.14);
+        border-bottom: 1px solid rgba(166,115,43,.14);
+        background: repeating-linear-gradient(90deg, transparent 0 1.95rem, rgba(166,115,43,.1) 2rem), repeating-linear-gradient(0deg, transparent 0 1.45rem, rgba(166,115,43,.08) 1.5rem);
+        animation: initial-loader-fragment-in 3s ease-out 4.15s forwards;
+      }
+      .initial-loader__fragment--point-cluster {
+        right: 23vw;
+        top: 30vh;
+        width: 3px;
+        height: 3px;
+        border-radius: 50%;
+        background: rgba(184,131,47,.7);
+        box-shadow: 2.8rem 1.5rem 0 rgba(184,131,47,.42), 5.6rem -.7rem 0 rgba(184,131,47,.32), 7.8rem 2.6rem 0 rgba(184,131,47,.26);
+        animation: initial-loader-fragment-in 2.5s ease-out 3.15s forwards, initial-loader-point-breathe 11s ease-in-out 7s infinite alternate;
+      }
+      #initial-loader.is-review-crest .initial-loader__logo-layer--complete,
+      #initial-loader.is-review-world .initial-loader__logo-layer--complete,
+      #initial-loader.is-review-ambient .initial-loader__logo-layer--complete { opacity: 1; animation: none; filter: none; transform: none; }
+      #initial-loader.is-review-crest .initial-loader__status { opacity: 0; animation: none; }
+      #initial-loader.is-review-world .initial-loader__status,
+      #initial-loader.is-review-ambient .initial-loader__status { opacity: 1; animation: none; }
+      #initial-loader.is-review-crest .initial-loader__fragment { opacity: 0; animation: none; }
+      #initial-loader.is-review-world .initial-loader__fragment--arc-left,
+      #initial-loader.is-review-world .initial-loader__fragment--points { opacity: .42; animation: none; }
+      #initial-loader.is-review-ambient .initial-loader__fragment { opacity: .58; animation: none; }
+      #initial-loader.is-review-crest .initial-loader__orbit,
+      #initial-loader.is-review-crest .initial-loader__orbit-track,
+      #initial-loader.is-review-crest .initial-loader__orbit-radial,
+      #initial-loader.is-review-crest .initial-loader__orbit-intersection { opacity: 0; animation: none; }
+      #initial-loader.is-review-world .initial-loader__orbit,
+      #initial-loader.is-review-ambient .initial-loader__orbit { opacity: 1; animation: none; }
+      #initial-loader.is-review-world .initial-loader__orbit-track,
+      #initial-loader.is-review-ambient .initial-loader__orbit-track { animation: none; }
+      #initial-loader.is-review-world .initial-loader__orbit-radial,
+      #initial-loader.is-review-world .initial-loader__orbit-intersection,
+      #initial-loader.is-review-ambient .initial-loader__orbit-radial,
+      #initial-loader.is-review-ambient .initial-loader__orbit-intersection { opacity: .7; animation: none; }
+      @keyframes initial-loader-crest-arrives {
+        from { opacity: 0; filter: blur(5px) brightness(1.08); transform: translateY(.35rem) scale(.94); }
+        to { opacity: 1; filter: blur(0) brightness(1); transform: translateY(0) scale(1); }
+      }
+      @media (max-height: 640px) { .initial-loader__composition { transform: scale(.84); } }
+      @media (max-width: 560px) {
+        .initial-loader__fragment--curve, .initial-loader__fragment--proportion { display: none; }
+        .initial-loader__orbit,
+        .initial-loader__orbit-track { width: calc(100vw - 1.4rem); height: min(76vw, 21rem); }
+        .initial-loader__orbit--middle { width: calc(100vw - 2.6rem); height: min(73vw, 20rem); }
+        .initial-loader__orbit--inner { width: calc(100vw - 2rem); height: min(72vw, 20rem); }
+        .initial-loader__orbit-intersection--upper { margin: -7.8rem 0 0 8.8rem; }
+        .initial-loader__orbit-intersection--lower { margin: 7.2rem 0 0 -9rem; }
       }
       @media (prefers-reduced-motion: reduce) {
-        #initial-loader img { animation: none; }
+        .initial-loader__fragment,
+        .initial-loader__orbit,
+        .initial-loader__orbit-track,
+        .initial-loader__orbit-radial,
+        .initial-loader__orbit-intersection,
+        .initial-loader__impact,
+        .initial-loader__crest,
+        .initial-loader__crest::after,
+        .initial-loader__crest-highlight,
+        .initial-loader__emboss,
+        .initial-loader__logo-layer,
+        .initial-loader__shield-interior,
+        .initial-loader__status,
+        .initial-loader__status::after { animation: none; }
+        .initial-loader__logo-layer--complete,
+        .initial-loader__shield-interior,
+        .initial-loader__emboss,
+        .initial-loader__status { opacity: 1; }
+        .initial-loader__fragment { opacity: .03; }
+        .initial-loader__orbit { opacity: .24; animation: initial-loader-reduced-orbit-pulse 5.8s ease-in-out infinite alternate; }
+        .initial-loader__orbit-track { opacity: .78; }
+        .initial-loader__orbit-radial,
+        .initial-loader__orbit-intersection { opacity: 0; }
+        #initial-loader.is-completing { -webkit-mask-image: none; mask-image: none; }
+        #initial-loader.is-completing::after { animation: initial-loader-reduced-release 360ms ease-out forwards; }
+        #initial-loader.is-ready { animation-duration: 260ms; }
+        #initial-loader.is-ready::after { animation-duration: 260ms; }
       }
+      @keyframes initial-loader-reduced-orbit-pulse { from { opacity: .15; } to { opacity: .31; } }
+      @keyframes initial-loader-reduced-release { from { opacity: .18; transform: translate(-50%, -50%) scale(.28); } to { opacity: .92; transform: translate(-50%, -50%) scale(4.1); } }
     </style>
   </head>
 
   <body>
-    <div id="root">
-      <div id="initial-loader" role="status" aria-live="polite">
-        <img src="/images/da-logo.png" alt="" width="72" height="72" fetchpriority="high" />
-        <p>Loading…</p>
+    <div id="root"></div>
+    <div id="initial-loader" role="status" aria-label="Preparing your experience">
+      <div class="initial-loader__field" aria-hidden="true">
+        <span class="initial-loader__orbit initial-loader__orbit--outer"></span>
+        <span class="initial-loader__orbit initial-loader__orbit--middle"></span>
+        <span class="initial-loader__orbit initial-loader__orbit--inner"></span>
+        <span class="initial-loader__orbit-track"><span class="initial-loader__orbit-tracer"></span></span>
+        <span class="initial-loader__orbit-radial"></span>
+        <span class="initial-loader__orbit-intersection initial-loader__orbit-intersection--upper"></span>
+        <span class="initial-loader__orbit-intersection initial-loader__orbit-intersection--lower"></span>
+        <span class="initial-loader__fragment initial-loader__fragment--arc-left"></span>
+        <span class="initial-loader__fragment initial-loader__fragment--arc-right"></span>
+        <span class="initial-loader__fragment initial-loader__fragment--tangent"></span>
+        <span class="initial-loader__fragment initial-loader__fragment--curve"></span>
+        <span class="initial-loader__fragment initial-loader__fragment--proportion"></span>
+        <span class="initial-loader__fragment initial-loader__fragment--points"></span>
+        <span class="initial-loader__fragment initial-loader__fragment--upper-construction"></span>
+        <span class="initial-loader__fragment initial-loader__fragment--lower-curve"></span>
+        <span class="initial-loader__fragment initial-loader__fragment--lower-grid"></span>
+        <span class="initial-loader__fragment initial-loader__fragment--point-cluster"></span>
+      </div>
+      <div class="initial-loader__field-point" aria-hidden="true"></div>
+      <div class="initial-loader__composition">
+        <div class="initial-loader__crest" aria-hidden="true">
+          <img class="initial-loader__emboss" src="/images/loader-crest/emblem.png" alt="" fetchpriority="high" />
+          <img class="initial-loader__shield-interior" src="/images/loader-crest/interior.png" alt="" />
+          <img class="initial-loader__logo-layer initial-loader__logo-layer--outline-top" src="/images/loader-crest/shield.png" alt="" fetchpriority="high" />
+          <img class="initial-loader__logo-layer initial-loader__logo-layer--outline-left" src="/images/loader-crest/shield.png" alt="" />
+          <img class="initial-loader__logo-layer initial-loader__logo-layer--outline-right" src="/images/loader-crest/shield.png" alt="" />
+          <img class="initial-loader__logo-layer initial-loader__logo-layer--outline-base" src="/images/loader-crest/shield.png" alt="" />
+          <img class="initial-loader__logo-layer initial-loader__logo-layer--d" src="/images/loader-crest/d.png" alt="" />
+          <img class="initial-loader__logo-layer initial-loader__logo-layer--a" src="/images/loader-crest/a.png" alt="" />
+          <img class="initial-loader__logo-layer initial-loader__logo-layer--laurel-left" src="/images/loader-crest/laurel-left.png" alt="" />
+          <img class="initial-loader__logo-layer initial-loader__logo-layer--laurel-right" src="/images/loader-crest/laurel-right.png" alt="" />
+          <img class="initial-loader__logo-layer initial-loader__logo-layer--star" src="/images/loader-crest/star.png" alt="" />
+          <img class="initial-loader__logo-layer initial-loader__logo-layer--complete" src="/images/loader-crest/emblem.png" alt="" />
+          <span class="initial-loader__crest-highlight"></span>
+          <span class="initial-loader__impact"></span>
+        </div>
+        <p class="initial-loader__status">Preparing your experience</p>
       </div>
     </div>
+    <script>
+      (() => {
+        const loader = document.getElementById('initial-loader');
+        if (!loader) return;
+        const isLocalReview = location.hostname === '127.0.0.1';
+        const reviewParams = new URLSearchParams(location.search);
+        const holdForLocalReview = isLocalReview && reviewParams.get('loaderHold') === '1';
+        const reviewPhase = isLocalReview
+          ? reviewParams.get('loaderPhase')
+          : null;
+        if (reviewPhase && ['initial', 'construction', 'assembly', 'd', 'a', 'laurels', 'complete', 'crest', 'world', 'ambient'].includes(reviewPhase)) {
+          loader.classList.add(`is-review-${reviewPhase}`);
+        }
+        const showTimer = window.setTimeout(() => loader.classList.add('is-visible'), 120);
+        const dismiss = () => {
+          window.clearTimeout(showTimer);
+          if (loader.classList.contains('is-completing') || loader.classList.contains('is-ready')) return;
+          const tracerTrack = loader.querySelector('.initial-loader__orbit-track');
+          if (tracerTrack) {
+            const currentTransform = getComputedStyle(tracerTrack).transform;
+            tracerTrack.style.setProperty('--tracer-current-transform', currentTransform === 'none' ? 'translate(-50%, -50%)' : currentTransform);
+          }
+          loader.classList.add('is-completing');
+          const completionDuration = matchMedia('(prefers-reduced-motion: reduce)').matches ? 420 : 1010;
+          window.setTimeout(() => loader.classList.add('is-ready'), completionDuration);
+          window.setTimeout(() => loader.remove(), completionDuration + 110);
+        };
+        if (holdForLocalReview) {
+          const releaseAfter = Number(reviewParams.get('loaderReleaseAfter'));
+          if (Number.isFinite(releaseAfter) && releaseAfter > 0) {
+            window.setTimeout(dismiss, releaseAfter);
+          }
+        } else {
+          window.addEventListener('da:initial-route-painted', dismiss, { once: true });
+        }
+      })();
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
